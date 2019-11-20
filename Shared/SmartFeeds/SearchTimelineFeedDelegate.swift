@@ -13,6 +13,10 @@ import Articles
 
 struct SearchTimelineFeedDelegate: SmartFeedDelegate {
 
+	var feedID: FeedIdentifier? {
+		return FeedIdentifier.smartFeed(String(describing: SearchTimelineFeedDelegate.self))
+	}
+
 	var nameForDisplay: String {
 		return nameForDisplayPrefix + searchString
 	}
@@ -20,7 +24,7 @@ struct SearchTimelineFeedDelegate: SmartFeedDelegate {
 	let nameForDisplayPrefix = NSLocalizedString("Search: ", comment: "Search smart feed title prefix")
 	let searchString: String
 	let fetchType: FetchType
-	var smallIcon: RSImage? = AppAssets.searchFeedImage
+	var smallIcon: IconImage? = AppAssets.searchFeedImage
 
 	init(searchString: String, articleIDs: Set<String>) {
 		self.searchString = searchString

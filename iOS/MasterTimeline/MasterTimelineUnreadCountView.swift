@@ -10,6 +10,10 @@ import UIKit
 
 class MasterTimelineUnreadCountView: MasterFeedUnreadCountView {
 
+	override var padding: UIEdgeInsets {
+		return UIEdgeInsets(top: 2.0, left: 9.0, bottom: 2.0, right: 9.0)
+	}
+
 	override var textColor: UIColor {
 		return UIColor.systemBackground
 	}

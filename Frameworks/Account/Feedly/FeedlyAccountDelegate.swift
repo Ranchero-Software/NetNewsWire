@@ -14,6 +14,14 @@ import SyncDatabase
 import os.log
 
 final class FeedlyAccountDelegate: AccountDelegate {
+	
+	/// Feedly has a sandbox API and a production API.
+	/// This property is referred to when clients need to know which environment it should be pointing to.
+	/// The value of this proptery must match any `OAuthAuthorizationClient` used.
+	/// Currently this is always returning the cloud API, but we are leaving it stubbed out for now.
+	static var environment: FeedlyAPICaller.API {
+		return .cloud
+	}
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
 	// See https://developer.feedly.com/v3/opml/
@@ -38,18 +46,30 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
+	let oauthAuthorizationClient: OAuthAuthorizationClient
+	
 	var accountMetadata: AccountMetadata?
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	private let caller: FeedlyAPICaller
+	internal let caller: FeedlyAPICaller
+	
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 	private let database: SyncDatabase
 	
-	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API = .default) {
+	private weak var currentSyncAllOperation: FeedlySyncAllOperation?
+	private let operationQueue: OperationQueue
+	
+	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
+		self.operationQueue = OperationQueue()
+		// Many operations have their own operation queues, such as the sync all operation.
+		// Making this a serial queue at this higher level of abstraction means we can ensure,
+		// for example, a `FeedlyRefreshAccessTokenOperation` occurs before a `FeedlySyncAllOperation`,
+		// improving our ability to debug, reason about and predict the behaviour of the code.
+		self.operationQueue.maxConcurrentOperationCount = 1
 		
 		if let transport = transport {
-			caller = FeedlyAPICaller(transport: transport, api: api)
+			self.caller = FeedlyAPICaller(transport: transport, api: api)
 			
 		} else {
 			
@@ -67,38 +87,66 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 			
 			let session = URLSession(configuration: sessionConfiguration)
-			caller = FeedlyAPICaller(transport: session, api: api)
+			self.caller = FeedlyAPICaller(transport: session, api: api)
 		}
-		
+				
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
+		self.oauthAuthorizationClient = api.oauthAuthorizationClient
 	}
 	
 	// MARK: Account API
 	
-	private var syncStrategy: FeedlySyncStrategy?
+	func cancelAll(for account: Account) {
+		operationQueue.cancelAllOperations()
+	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		let date = Date()
+		assert(Thread.isMainThread)
+		
+		guard currentSyncAllOperation == nil else {
+			os_log(.debug, log: log, "Ignoring refreshAll: Feedly sync already in progress.")
+			completion(.success(()))
+			return
+		}
+		
+		guard let credentials = credentials else {
+			os_log(.debug, log: log, "Ignoring refreshAll: Feedly account has no credentials.")
+			completion(.failure(FeedlyAccountDelegateError.notLoggedIn))
+			return
+		}
+		
 		let log = self.log
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
-		syncStrategy?.startSync { result in
-			os_log(.debug, log: log, "Sync took %.3f seconds", -date.timeIntervalSinceNow)
+		
+		let operation = FeedlySyncAllOperation(account: account, credentials: credentials, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetch, log: log)
+		
+		let date = Date()
+		operation.syncCompletionHandler = { [weak self] result in
+			if case .success = result {
+				self?.accountMetadata?.lastArticleFetch = date
+			}
+			
+			os_log(.debug, log: log, "Sync took %{public}.3f seconds", -date.timeIntervalSinceNow)
 			progress.completeTask()
 			completion(result)
 		}
+		
+		currentSyncAllOperation = operation
+		
+		operationQueue.addOperation(operation)
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
-		let send = FeedlySendArticleStatusesOperation(database: database, caller: caller, log: log)
+		let send = FeedlySendArticleStatusesOperation(database: database, service: caller, log: log)
 		send.completionBlock = {
 			DispatchQueue.main.async {
-				completion()
+				completion(.success(()))
 			}
 		}
-		OperationQueue.main.addOperation(send)
+		operationQueue.addOperation(send)
 	}
 	
 	/// Attempts to ensure local articles have the same status as they do remotely.
@@ -111,10 +159,33 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	///
 	/// - Parameter account: The account whose articles have a remote status.
 	/// - Parameter completion: Call on the main queue.
-	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		refreshAll(for: account) { _ in
-			completion()
+	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		guard let credentials = credentials else {
+			return completion(.success(()))
 		}
+		
+		let group = DispatchGroup()
+		
+		let syncUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
+		
+		group.enter()
+		syncUnread.completionBlock = {
+			group.leave()
+			
+		}
+		
+		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, service: caller, log: log)
+		
+		group.enter()
+		syncStarred.completionBlock = {
+			group.leave()
+		}
+		
+		group.notify(queue: .main) {
+			completion(.success(()))
+		}
+		
+		operationQueue.addOperations([syncUnread, syncStarred], waitUntilFinished: false)
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -223,7 +294,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	var createFeedRequest: FeedlyAddFeedRequest?
 	
-	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
@@ -239,14 +310,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
 		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
 			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
 			return
 		}
 		
-		let feedId = FeedlyFeedResourceId(id: feed.feedID)
+		let feedId = FeedlyFeedResourceId(id: feed.webFeedID)
 		let editedNameBefore = feed.editedName
 		
 		// Adding an existing feed updates it.
@@ -268,7 +339,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	var addFeedRequest: FeedlyAddFeedRequest?
 	
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		let progress = refreshProgress
 		progress.addToNumberOfTasksAndRemaining(1)
@@ -291,62 +362,62 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let folder = container as? Folder, let collectionId = folder.externalID else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed)))
 			}
 		}
 		
-		caller.removeFeed(feed.feedID, fromCollectionWith: collectionId) { result in
+		caller.removeFeed(feed.webFeedID, fromCollectionWith: collectionId) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
 			case .failure(let error):
-				folder.addFeed(feed)
+				folder.addWebFeed(feed)
 				completion(.failure(error))
 			}
 		}
 		
-		folder.removeFeed(feed)
+		folder.removeWebFeed(feed)
 	}
 	
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let from = from as? Folder, let to = to as? Folder else {
 			return DispatchQueue.main.async {
 				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
 			}
 		}
 		
-		addFeed(for: account, with: feed, to: to) { [weak self] addResult in
+		addWebFeed(for: account, with: feed, to: to) { [weak self] addResult in
 			switch addResult {
 				// now that we have added the feed, remove it from the other collection
 			case .success:
-				self?.removeFeed(for: account, with: feed, from: from) { removeResult in
+				self?.removeWebFeed(for: account, with: feed, from: from) { removeResult in
 					switch removeResult {
 					case .success:
 						completion(.success(()))
 					case .failure:
-						from.addFeed(feed)
+						from.addWebFeed(feed)
 						completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed, from, to)))
 					}
 				}
 			case .failure(let error):
-				from.addFeed(feed)
-				to.removeFeed(feed)
+				from.addWebFeed(feed)
+				to.removeWebFeed(feed)
 				completion(.failure(error))
 			}
 			
 		}
 		
 		// optimistically move the feed, undoing as appropriate to the failure
-		from.removeFeed(feed)
-		to.addFeed(feed)
+		from.removeWebFeed(feed)
+		to.addWebFeed(feed)
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let existingFeed = account.existingFeed(withURL: feed.url) {
-			account.addFeed(existingFeed, to: container) { result in
+	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
+			account.addWebFeed(existingFeed, to: container) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -355,7 +426,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				}
 			}
 		} else {
-			createFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -369,12 +440,12 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		let group = DispatchGroup()
 		
-		for feed in folder.topLevelFeeds {
+		for feed in folder.topLevelWebFeeds {
 			
-			folder.topLevelFeeds.remove(feed)
+			folder.topLevelWebFeeds.remove(feed)
 			
 			group.enter()
-			restoreFeed(for: account, feed: feed, container: folder) { result in
+			restoreWebFeed(for: account, feed: feed, container: folder) { result in
 				group.leave()
 				switch result {
 				case .success:
@@ -402,7 +473,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		os_log(.debug, log: log, "Marking %@ as %@.", articles.map { $0.title }, syncStatuses)
 		
 		if database.selectPendingCount() > 100 {
-			sendArticleStatus(for: account) { }
+			sendArticleStatus(for: account) { _ in }
 		}
 		
 		return account.update(articles, statusKey: statusKey, flag: flag)
@@ -411,13 +482,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		
-		syncStrategy = FeedlySyncStrategy(account: account,
-										  caller: caller,
-										  database: database,
-										  log: log)
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
+		operationQueue.addOperation(refreshAccessToken)
+	}
+	
+	func accountWillBeDeleted(_ account: Account) {
+		let logout = FeedlyLogoutOperation(account: account, service: caller, log: log)
+		// Dispatch on the main queue because the lifetime of the account delegate is uncertain.
+		OperationQueue.main.addOperation(logout)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		fatalError()
+		assertionFailure("An `account` instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
+		completion(.success(credentials))
 	}
 }

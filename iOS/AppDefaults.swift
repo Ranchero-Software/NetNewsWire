@@ -10,24 +10,24 @@ import UIKit
 
 struct AppDefaults {
 
-	private static var suiteName: String = {
+	static var shared: UserDefaults = {
 		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
-		return "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
-	}()
-	
-	static var shared: UserDefaults {
+		let suiteName = "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
 		return UserDefaults.init(suiteName: suiteName)!
-	}
+	}()
 	
 	struct Key {
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
+		static let timelineIconSize = "timelineIconSize"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let displayUndoAvailableTip = "displayUndoAvailableTip"
-		static let refreshInterval = "refreshInterval"
 		static let lastRefresh = "lastRefresh"
+		static let addWebFeedAccountID = "addWebFeedAccountID"
+		static let addWebFeedFolderName = "addWebFeedFolderName"
+		static let addFolderAccountID = "addFolderAccountID"
 	}
 
 	static let isFirstRun: Bool = {
@@ -37,6 +37,33 @@ struct AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
+
+	static var addWebFeedAccountID: String? {
+		get {
+			return string(for: Key.addWebFeedAccountID)
+		}
+		set {
+			setString(for: Key.addWebFeedAccountID, newValue)
+		}
+	}
+	
+	static var addWebFeedFolderName: String? {
+		get {
+			return string(for: Key.addWebFeedFolderName)
+		}
+		set {
+			setString(for: Key.addWebFeedFolderName, newValue)
+		}
+	}
+	
+	static var addFolderAccountID: String? {
+		get {
+			return string(for: Key.addFolderAccountID)
+		}
+		set {
+			setString(for: Key.addFolderAccountID, newValue)
+		}
+	}
 	
 	static var lastImageCacheFlushDate: Date? {
 		get {
@@ -47,16 +74,6 @@ struct AppDefaults {
 		}
 	}
 
-	static var refreshInterval: RefreshInterval {
-		get {
-			let rawValue = AppDefaults.shared.integer(forKey: Key.refreshInterval)
-			return RefreshInterval(rawValue: rawValue) ?? RefreshInterval.everyHour
-		}
-		set {
-			AppDefaults.shared.set(newValue.rawValue, forKey: Key.refreshInterval)
-		}
-	}
-	
 	static var timelineGroupByFeed: Bool {
 		get {
 			return bool(for: Key.timelineGroupByFeed)
@@ -102,11 +119,21 @@ struct AppDefaults {
 		}
 	}
 	
+	static var timelineIconSize: IconSize {
+		get {
+			let rawValue = AppDefaults.shared.integer(forKey: Key.timelineIconSize)
+			return IconSize(rawValue: rawValue) ?? IconSize.medium
+		}
+		set {
+			AppDefaults.shared.set(newValue.rawValue, forKey: Key.timelineIconSize)
+		}
+	}
+	
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
-										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.timelineNumberOfLines: 2,
+										Key.timelineIconSize: IconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.displayUndoAvailableTip: true]
 		AppDefaults.shared.register(defaults: defaults)
@@ -123,6 +150,14 @@ private extension AppDefaults {
 		set {
 			setDate(for: Key.firstRunDate, newValue)
 		}
+	}
+
+	static func string(for key: String) -> String? {
+		return UserDefaults.standard.string(forKey: key)
+	}
+	
+	static func setString(for key: String, _ value: String?) {
+		UserDefaults.standard.set(value, forKey: key)
 	}
 
 	static func bool(for key: String) -> Bool {
@@ -167,5 +202,3 @@ private extension AppDefaults {
 	}
 	
 }
-
-

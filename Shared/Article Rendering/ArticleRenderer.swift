@@ -16,6 +16,8 @@ struct ArticleRenderer {
 	typealias Rendering = (style: String, html: String)
 	typealias Page = (html: String, baseURL: URL)
 
+	static var imageIconScheme = "nnwImageIcon"
+	
 	static var page: Page = {
 		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
 		let html = try! String(contentsOf: pageURL)
@@ -46,7 +48,7 @@ struct ArticleRenderer {
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> Rendering {
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle, useImageIcon: Bool = false) -> Rendering {
 		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
 		return (renderer.styleString(), renderer.articleHTML)
 	}
@@ -100,9 +102,6 @@ private extension ArticleRenderer {
 		return renderHTML(withBody: "")
 	}
 
-	static var faviconImgTagCache = [Feed: String]()
-	static var feedIconImgTagCache = [Feed: String]()
-
 	static var defaultStyleSheet: String = {
 		let path = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
 		let s = try! NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
@@ -142,28 +141,16 @@ private extension ArticleRenderer {
 		d["title"] = title
 
 		d["body"] = body
-
-		d["avatars"] = ""
-		var didAddAvatar = false
-		if let avatarHTML = avatarImgTag() {
-			d["avatars"] = "<td class=\"header rightAlign avatar\">\(avatarHTML)</td>";
-			didAddAvatar = true
-		}
+		d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(ArticleRenderer.imageIconScheme)://\" height=48 width=48 /></td>";
 
 		var feedLink = ""
-		if let feedTitle = article.feed?.nameForDisplay {
+		if let feedTitle = article.webFeed?.nameForDisplay {
 			feedLink = feedTitle
-			if let feedURL = article.feed?.homePageURL {
+			if let feedURL = article.webFeed?.homePageURL {
 				feedLink = feedLink.htmlByAddingLink(feedURL, className: "feedLink")
 			}
 		}
 		d["feedlink"] = feedLink
-
-		if !didAddAvatar, let feed = article.feed {
-			if let favicon = faviconImgTag(forFeed: feed) {
-				d["avatars"] = "<td class=\"header rightAlign\">\(favicon)</td>";
-			}
-		}
 
 		let datePublished = article.logicalDatePublished
 		let longDate = dateString(datePublished, .long, .medium)
@@ -196,108 +183,8 @@ private extension ArticleRenderer {
 		return permalink != preferredLink // Make date a link if it’s a different link from the title’s link
 	}
 
-	func faviconImgTag(forFeed feed: Feed) -> String? {
-
-		if let cachedImgTag = ArticleRenderer.faviconImgTagCache[feed] {
-			return cachedImgTag
-		}
-
-		if let favicon = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
-			if let s = base64String(forImage: favicon) {
-				var dimension = min(favicon.size.height, CGFloat(ArticleRenderer.avatarDimension)) // Assuming square images.
-				dimension = max(dimension, 16) // Some favicons say they’re < 16. Force them larger.
-				if dimension >= CGFloat(ArticleRenderer.avatarDimension) * 0.8 { //Close enough to scale up.
-					dimension = CGFloat(ArticleRenderer.avatarDimension)
-				}
-
-				let imgTag: String
-				if dimension >= CGFloat(ArticleRenderer.avatarDimension) {
-					// Use rounded corners.
-					imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=\(Int(dimension)) width=\(Int(dimension)) style=\"border-radius:4px\" />"
-				}
-				else {
-					imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=\(Int(dimension)) width=\(Int(dimension)) />"
-				}
-				ArticleRenderer.faviconImgTagCache[feed] = imgTag
-				return imgTag
-			}
-		}
-
-		return nil
-	}
-
-	func feedIconImgTag(forFeed feed: Feed) -> String? {
-		if let cachedImgTag = ArticleRenderer.feedIconImgTagCache[feed] {
-			return cachedImgTag
-		}
-
-		if let icon = appDelegate.feedIconDownloader.icon(for: feed) {
-			if let s = base64String(forImage: icon) {
-				#if os(macOS)
-				let imgTag = "<img src=\"data:image/tiff;base64, " + s + "\" height=48 width=48 />"
-				#else
-				let imgTag = "<img src=\"data:image/png;base64, " + s + "\" height=48 width=48 />"
-				#endif
-				ArticleRenderer.feedIconImgTagCache[feed] = imgTag
-				return imgTag
-			}
-		}
-
-		return nil
-	}
-
-	func base64String(forImage image: RSImage) -> String? {
-		return image.dataRepresentation()?.base64EncodedString()
-	}
-
-	func singleArticleSpecifiedAuthor() -> Author? {
-		// The author of this article, if just one.
-		if let authors = article?.authors, authors.count == 1 {
-			return authors.first!
-		}
-		return nil
-	}
-
-	func singleFeedSpecifiedAuthor() -> Author? {
-		if let authors = article?.feed?.authors, authors.count == 1 {
-			return authors.first!
-		}
-		return nil
-	}
-
-	static let avatarDimension = 48
-
-	struct Avatar {
-		let imageURL: String
-		let url: String?
-
-		func html(dimension: Int) -> String {
-			let imageTag = "<img src=\"\(imageURL)\" width=\(dimension) height=\(dimension) />"
-			if let url = url {
-				return imageTag.htmlByAddingLink(url)
-			}
-			return imageTag
-		}
-	}
-
-	func avatarImgTag() -> String? {
-		if let author = singleArticleSpecifiedAuthor(), let imageURL = author.avatarURL {
-			return Avatar(imageURL: imageURL, url: author.url).html(dimension: ArticleRenderer.avatarDimension)
-		}
-		if let feed = article?.feed, let imgTag = feedIconImgTag(forFeed: feed) {
-			return imgTag
-		}
-		if let feedIconURL = article?.feed?.iconURL {
-			return Avatar(imageURL: feedIconURL, url: article?.feed?.homePageURL ?? article?.feed?.url).html(dimension: ArticleRenderer.avatarDimension)
-		}
-		if let author = singleFeedSpecifiedAuthor(), let imageURL = author.avatarURL {
-			return Avatar(imageURL: imageURL, url: author.url).html(dimension: ArticleRenderer.avatarDimension)
-		}
-		return nil
-	}
-
 	func byline() -> String {
-		guard let authors = article?.authors ?? article?.feed?.authors, !authors.isEmpty else {
+		guard let authors = article?.authors ?? article?.webFeed?.authors, !authors.isEmpty else {
 			return ""
 		}
 
@@ -305,7 +192,7 @@ private extension ArticleRenderer {
 		// This code assumes that multiple authors would never match the feed name so that
 		// if there feed owner has an article co-author all authors are given the byline.
 		if authors.count == 1, let author = authors.first {
-			if author.name == article?.feed?.nameForDisplay {
+			if author.name == article?.webFeed?.nameForDisplay {
 				return ""
 			}
 		}
@@ -369,10 +256,10 @@ private extension Article {
 	var baseURL: URL? {
 		var s = url
 		if s == nil {
-			s = feed?.homePageURL
+			s = webFeed?.homePageURL
 		}
 		if s == nil {
-			s = feed?.url
+			s = webFeed?.url
 		}
 
 		guard let urlString = s else {

@@ -9,11 +9,11 @@
 	<key>INIntentDefinitionNamespace</key>
 	<string>U6u7RF</string>
 	<key>INIntentDefinitionSystemVersion</key>
-	<string>19A602</string>
+	<string>19B88</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>11B41</string>
+	<string>11B53</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>11.2</string>
+	<string>11.2.1</string>
 	<key>INIntents</key>
 	<array>
 		<dict>
@@ -22,7 +22,7 @@
 			<key>INIntentConfigurable</key>
 			<true/>
 			<key>INIntentDescription</key>
-			<string>Add a feed</string>
+			<string>Add a web feed</string>
 			<key>INIntentDescriptionID</key>
 			<string>IuAbef</string>
 			<key>INIntentIneligibleForSuggestions</key>
@@ -59,7 +59,7 @@
 				</dict>
 			</dict>
 			<key>INIntentName</key>
-			<string>AddFeed</string>
+			<string>AddWebFeed</string>
 			<key>INIntentParameters</key>
 			<array>
 				<dict>
@@ -303,7 +303,7 @@
 				</array>
 			</dict>
 			<key>INIntentTitle</key>
-			<string>Add Feed</string>
+			<string>Add Web Feed</string>
 			<key>INIntentTitleID</key>
 			<string>oV681v</string>
 			<key>INIntentType</key>

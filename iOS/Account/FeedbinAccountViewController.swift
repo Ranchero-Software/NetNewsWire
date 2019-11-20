@@ -39,8 +39,24 @@ class FeedbinAccountViewController: UITableViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: emailTextField)
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
+
+		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+	}
+
+	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return section == 0 ? 64.0 : super.tableView(tableView, heightForHeaderInSection: section)
 	}
 	
+	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		if section == 0 {
+			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
+			headerView.imageView.image = AppAssets.image(for: .feedbin)
+			return headerView
+		} else {
+			return super.tableView(tableView, viewForHeaderInSection: section)
+		}
+	}
+
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
 		delegate?.dismiss()

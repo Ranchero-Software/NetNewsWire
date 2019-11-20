@@ -53,14 +53,14 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		}
 		let account = accountAndFolderSpecifier.account
 
-		if account.hasFeed(withURL: url.absoluteString) {
+		if account.hasWebFeed(withURL: url.absoluteString) {
 			showAlreadySubscribedError(url.absoluteString)
 			return
 		}
 
 		BatchUpdate.shared.start()
 		
-		account.createFeed(url: url.absoluteString, name: title, container: container) { result in
+		account.createWebFeed(url: url.absoluteString, name: title, container: container) { result in
 			
 			DispatchQueue.main.async {
 				self.endShowingProgress()
@@ -70,7 +70,7 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 
 			switch result {
 			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
 			case .failure(let error):
 				switch error {
 				case AccountError.createErrorAlreadySubscribed:

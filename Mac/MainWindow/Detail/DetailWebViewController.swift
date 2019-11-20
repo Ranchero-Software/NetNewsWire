@@ -39,6 +39,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		}
 	#endif
 	
+	private let articleIconSchemeHandler = ArticleIconSchemeHandler()
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	
@@ -61,12 +62,11 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
-		preferences.javaEnabled = false
 		preferences.javaScriptEnabled = true
-		preferences.plugInsEnabled = false
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
+		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.mouseDidEnter)
@@ -100,14 +100,31 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 		#if !MAC_APP_STORE
 			webInspectorEnabled = AppDefaults.webInspectorEnabled
-
 			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 		#endif
+
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
 		webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
 		
 	}
 
+	// MARK: Notifications
+	
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+
+	@objc func avatarDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+	
 	// MARK: Scrolling
 
 	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
@@ -175,6 +192,10 @@ struct TemplateData: Codable {
 
 private extension DetailWebViewController {
 
+	func reloadArticleImage() {
+		webView.evaluateJavaScript("reloadArticleImage()")
+	}
+
 	func reloadHTML() {
 		let style = ArticleStylesManager.shared.currentStyle
 		let rendering: ArticleRenderer.Rendering
@@ -187,8 +208,10 @@ private extension DetailWebViewController {
 		case .loading:
 			rendering = ArticleRenderer.loadingHTML(style: style)
 		case .article(let article):
+			articleIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, style: style)
 		case .extracted(let article, let extractedArticle):
+			articleIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
 		}
 		

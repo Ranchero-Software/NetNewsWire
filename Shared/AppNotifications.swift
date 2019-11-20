@@ -18,18 +18,3 @@ extension Notification.Name {
 		static let WebInspectorEnabledDidChange = Notification.Name("WebInspectorEnabledDidChange")
 	#endif
 }
-
-typealias UserInfoDictionary = [AnyHashable: Any]
-
-struct UserInfoKey {
-
-	static let view = "view"
-	static let article = "article"
-	static let articles = "articles"
-	static let navigationKeyPressed = "navigationKeyPressed"
-	static let objects = "objects"
-	static let feed = "feed"
-	static let url = "url"
-	static let author = "author"
-}
-

@@ -11,7 +11,7 @@ import RSWeb
 
 /// Client-specific information for requesting an authorization code grant.
 /// Accounts are responsible for the scope.
-public struct OAuthAuthorizationClient {
+public struct OAuthAuthorizationClient: Equatable {
 	public var id: String
 	public var redirectUri: String
 	public var state: String?
@@ -61,7 +61,7 @@ public struct OAuthAuthorizationResponse {
 public extension OAuthAuthorizationResponse {
 	
 	init(url: URL, client: OAuthAuthorizationClient) throws {
-		guard let host = url.host, client.redirectUri.contains(host) else {
+		guard let scheme = url.scheme, client.redirectUri.hasPrefix(scheme) else {
 			throw URLError(.unsupportedURL)
 		}
 		guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
@@ -142,7 +142,7 @@ public protocol OAuthAccessTokenResponse {
 }
 
 /// The access and refresh tokens from a successful authorization grant.
-public struct OAuthAuthorizationGrant {
+public struct OAuthAuthorizationGrant: Equatable {
 	public var accessToken: Credentials
 	public var refreshToken: Credentials?
 }
@@ -153,19 +153,20 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 	associatedtype AccessTokenResponse: OAuthAccessTokenResponse
 	
 	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
-	/// - Parameter request: The
-	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest) -> URLRequest
+	/// - Parameter request: The information about the client requesting authorization to be granted access tokens.
+	/// - Parameter baseUrlComponents: The scheme and host of the url except for the path.
+	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest
 		
 	
 	/// Performs the request for the access token given an authorization code.
-	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokes on the user's behalf.
+	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokens on the user's behalf.
 	/// - Parameter completionHandler: On success, the access token response appropriate for concrete type's service. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
 	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completionHandler: @escaping (Result<AccessTokenResponse, Error>) -> ())
 }
 
 protocol OAuthAuthorizationGranting: AccountDelegate {
+		
+	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
 	
-	static func oauthAuthorizationCodeGrantRequest(for client: OAuthAuthorizationClient) -> URLRequest
-	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, client: OAuthAuthorizationClient, transport: Transport, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
 }

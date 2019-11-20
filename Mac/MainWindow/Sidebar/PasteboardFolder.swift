@@ -52,7 +52,7 @@ struct PasteboardFolder: Hashable {
 		}
 
 		if let foundType = pasteboardType {
-			if let folderDictionary = pasteboardItem.propertyList(forType: foundType) as? PasteboardFeedDictionary {
+			if let folderDictionary = pasteboardItem.propertyList(forType: foundType) as? PasteboardWebFeedDictionary {
 				self.init(dictionary: folderDictionary)
 				return
 			}
@@ -72,7 +72,7 @@ struct PasteboardFolder: Hashable {
 	// MARK: - Writing
 	
 	func internalDictionary() -> PasteboardFolderDictionary {
-		var d = PasteboardFeedDictionary()
+		var d = PasteboardWebFeedDictionary()
 		d[PasteboardFolder.Key.name] = name
 		if let folderID = folderID {
 			d[PasteboardFolder.Key.folderID] = folderID
@@ -131,7 +131,7 @@ private extension FolderPasteboardWriter {
 		return PasteboardFolder(name: folder.name ?? "", folderID: String(folder.folderID), accountID: folder.account?.accountID)
 	}
 	
-	var internalDictionary: PasteboardFeedDictionary {
+	var internalDictionary: PasteboardWebFeedDictionary {
 		return pasteboardFolder.internalDictionary()
 	}
 }

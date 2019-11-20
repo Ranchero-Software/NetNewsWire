@@ -11,19 +11,19 @@ import RSCore
 
 extension RSImage {
 	
-	static let avatarSize = 48
+	static let maxIconSize = 48
 	
-	static func scaledForAvatar(_ data: Data, imageResultBlock: @escaping (RSImage?) -> Void) {
-		DispatchQueue.global().async {
-			let image = RSImage.scaledForAvatar(data)
+	static func scaledForIcon(_ data: Data, imageResultBlock: @escaping (RSImage?) -> Void) {
+		DispatchQueue.global(qos: .default).async {
+			let image = RSImage.scaledForIcon(data)
 			DispatchQueue.main.async {
 				imageResultBlock(image)
 			}
 		}
 	}
 
-	static func scaledForAvatar(_ data: Data) -> RSImage? {
-		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.avatarSize) * RSScreen.mainScreenScale))
+	static func scaledForIcon(_ data: Data) -> RSImage? {
+		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.maxIconSize) * RSScreen.mainScreenScale))
 		guard var cgImage = RSImage.scaleImage(data, maxPixelSize: scaledMaxPixelSize) else {
 			return nil
 		}

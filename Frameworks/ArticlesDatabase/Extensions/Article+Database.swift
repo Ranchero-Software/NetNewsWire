@@ -14,10 +14,10 @@ import RSParser
 extension Article {
 	
 	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?, attachments: Set<Attachment>?) {
-		self.init(accountID: accountID, articleID: databaseArticle.articleID, feedID: databaseArticle.feedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, attachments: attachments, status: databaseArticle.status)
+		self.init(accountID: accountID, articleID: databaseArticle.articleID, webFeedID: databaseArticle.webFeedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, attachments: attachments, status: databaseArticle.status)
 	}
 
-	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
+	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, webFeedID: String, status: ArticleStatus) {
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
 		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
 
@@ -35,7 +35,7 @@ extension Article {
 			dateModified = nil
 		}
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, webFeedID: webFeedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
@@ -84,11 +84,11 @@ extension Article {
 //		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
 //	}
 
-	static func articlesWithFeedIDsAndItems(_ feedIDsAndItems: [String: Set<ParsedItem>], _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
+	static func articlesWithWebFeedIDsAndItems(_ webFeedIDsAndItems: [String: Set<ParsedItem>], _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
 		let maximumDateAllowed = Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
 		var articles = Set<Article>()
-		for (feedID, parsedItems) in feedIDsAndItems {
-			let feedArticles = Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
+		for (webFeedID, parsedItems) in webFeedIDsAndItems {
+			let feedArticles = Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, webFeedID: webFeedID, status: statusesDictionary[$0.articleID]!) })
 			articles.formUnion(feedArticles)
 		}
 		return articles
@@ -101,7 +101,7 @@ extension Article: DatabaseObject {
 		var d = DatabaseDictionary()
 
 		d[DatabaseKey.articleID] = articleID
-		d[DatabaseKey.feedID] = feedID
+		d[DatabaseKey.feedID] = webFeedID
 		d[DatabaseKey.uniqueID] = uniqueID
 
 		if let title = title {

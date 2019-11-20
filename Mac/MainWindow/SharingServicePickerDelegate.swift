@@ -32,7 +32,6 @@ import RSCore
 	}()
 
 	static func customSharingServices(for items: [Any]) -> [NSSharingService] {
-
 		let customServices = sendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
 
 			guard let object = items.first else {
@@ -42,7 +41,7 @@ import RSCore
 				return nil
 			}
 
-			let image = sendToCommand.image ?? AppAssets.genericFeedImage ?? NSImage()
+			let image = sendToCommand.image ?? NSImage()
 			return NSSharingService(title: sendToCommand.title, image: image, alternateImage: nil) {
 				sendToCommand.sendObject(object, selectedText: nil)
 			}

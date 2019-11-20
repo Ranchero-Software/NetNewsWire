@@ -20,6 +20,7 @@ class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 		super.init(tableView: tableView, cellProvider: cellProvider)
 		self.coordinator = coordinator
 		self.errorHandler = errorHandler
+		self.defaultRowAnimation = .middle
 	}
 	
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -33,12 +34,12 @@ class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 		guard let node = itemIdentifier(for: indexPath) else {
 			return false
 		}
-		return node.representedObject is Feed
+		return node.representedObject is WebFeed
 	}
 	
 	override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
 
-		guard let sourceNode = itemIdentifier(for: sourceIndexPath), let feed = sourceNode.representedObject as? Feed else {
+		guard let sourceNode = itemIdentifier(for: sourceIndexPath), let webFeed = sourceNode.representedObject as? WebFeed else {
 			return
 		}
 
@@ -66,15 +67,15 @@ class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 			}
 		}()
 		
-		// Move the Feed
+		// Move the Web Feed
 		guard let source = sourceNode.parent?.representedObject as? Container, let destination = destParentNode?.representedObject as? Container else {
 			return
 		}
 		
 		if sameAccount(sourceNode, destParentNode!) {
-			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
+			moveWebFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		} else {
-			moveFeedBetweenAccounts(feed: feed, sourceContainer: source, destinationContainer: destination)
+			moveWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		}
 
 	}
@@ -93,8 +94,8 @@ class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 			return account
 		} else if let folder = node.representedObject as? Folder {
 			return folder.account
-		} else if let feed = node.representedObject as? Feed {
-			return feed.account
+		} else if let webFeed = node.representedObject as? WebFeed {
+			return webFeed.account
 		} else {
 			return nil
 		}
@@ -105,9 +106,9 @@ class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 		return nodeAccount(node)?.accountID
 	}
 
-	func moveFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+	func moveWebFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
 		BatchUpdate.shared.start()
-		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
+		sourceContainer.account?.moveWebFeed(feed, from: sourceContainer, to: destinationContainer) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -118,15 +119,15 @@ class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 		}
 	}
 	
-	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+	func moveWebFeedBetweenAccounts(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
 		
-		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
+		if let existingFeed = destinationContainer.account?.existingWebFeed(withURL: feed.url) {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
+			destinationContainer.account?.addWebFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
-					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
+					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
 						case .success:
@@ -144,10 +145,10 @@ class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
 		} else {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+			destinationContainer.account?.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
 				switch result {
 				case .success:
-					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
+					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in
 						BatchUpdate.shared.end()
 						switch result {
 						case .success:

@@ -74,12 +74,12 @@ extension TimelineViewController {
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
 		
-		guard let menuItem = sender as? NSMenuItem, let feed = menuItem.representedObject as? Feed else {
+		guard let menuItem = sender as? NSMenuItem, let feed = menuItem.representedObject as? WebFeed else {
 			return
 		}
 		
 		var userInfo = UserInfoDictionary()
-		userInfo[UserInfoKey.feed] = feed
+		userInfo[UserInfoKey.webFeed] = feed
 		
 		NotificationCenter.default.post(name: .UserDidRequestSidebarSelection, object: self, userInfo: userInfo)
 		
@@ -174,7 +174,7 @@ private extension TimelineViewController {
 
 		menu.addSeparatorIfNeeded()
 		
-		if articles.count == 1, let feed = articles.first!.feed {
+		if articles.count == 1, let feed = articles.first!.webFeed {
 			menu.addItem(selectFeedInSidebarMenuItem(feed))
 			if let markAllMenuItem = markAllAsReadMenuItem(feed) {
 				menu.addItem(markAllMenuItem)
@@ -247,13 +247,13 @@ private extension TimelineViewController {
 		return menuItem(NSLocalizedString("Mark Older as Read", comment: "Command"),  #selector(markOlderArticlesReadFromContextualMenu(_:)), articles)
 	}
 
-	func selectFeedInSidebarMenuItem(_ feed: Feed) -> NSMenuItem {
+	func selectFeedInSidebarMenuItem(_ feed: WebFeed) -> NSMenuItem {
 		let localizedMenuText = NSLocalizedString("Select “%@” in Sidebar", comment: "Command")
 		let formattedMenuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay)
 		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed)
 	}
 
-	func markAllAsReadMenuItem(_ feed: Feed) -> NSMenuItem? {
+	func markAllAsReadMenuItem(_ feed: WebFeed) -> NSMenuItem? {
 		
 		let articles = Array(feed.fetchArticles())
 		guard articles.canMarkAllAsRead() else {

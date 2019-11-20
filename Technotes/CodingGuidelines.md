@@ -66,6 +66,10 @@ Consider this a hard rule: all Swift classes must be marked as `final`, and all 
 
 Protocols and delegates (which are also protocol-conforming) are preferred.
 
+Protocol conformance should be implemented in Swift extensions.
+
+If a delegate protocol is defined in the same file as the delegator class or struct, the protocol interface should be specified before the delegator.
+
 Default implementations in protocols are allowed but ever-so-slightly discouraged. You’ll find several instances in the code, but this is done carefully — we don’t want this to be just another form of inheritance, where you find that you have to bounce back-and-forth between files to figure out what’s going on.
 
 There is one unfortunate case about protocols to note: in Swift you can’t create a Set of some protocol-conforming objects, and we use sets frequently. In those situations another solution — such as a thin object with a delegate — might be better.

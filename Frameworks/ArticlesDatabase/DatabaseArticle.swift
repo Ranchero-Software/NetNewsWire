@@ -15,7 +15,7 @@ import Articles
 struct DatabaseArticle: Hashable {
 
 	let articleID: String
-	let feedID: String
+	let webFeedID: String
 	let uniqueID: String
 	let title: String?
 	let contentHTML: String?

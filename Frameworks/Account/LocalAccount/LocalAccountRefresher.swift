@@ -24,10 +24,15 @@ final class LocalAccountRefresher {
 		return downloadSession.progress
 	}
 
-	public func refreshFeeds(_ feeds: Set<Feed>, completion: @escaping () -> Void) {
+	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: @escaping () -> Void) {
 		self.completion = completion
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
+	
+	public func cancelAll() {
+		downloadSession.cancelAll()
+	}
+	
 }
 
 // MARK: - DownloadSessionDelegate
@@ -35,7 +40,7 @@ final class LocalAccountRefresher {
 extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, requestForRepresentedObject representedObject: AnyObject) -> URLRequest? {
-		guard let feed = representedObject as? Feed else {
+		guard let feed = representedObject as? WebFeed else {
 			return nil
 		}
 		guard let url = URL(string: feed.url) else {
@@ -51,7 +56,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?) {
-		guard let feed = representedObject as? Feed, !data.isEmpty else {
+		guard let feed = representedObject as? WebFeed, !data.isEmpty else {
 			return
 		}
 
@@ -81,7 +86,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
-		guard let feed = representedObject as? Feed else {
+		guard let feed = representedObject as? WebFeed else {
 			return false
 		}
 		

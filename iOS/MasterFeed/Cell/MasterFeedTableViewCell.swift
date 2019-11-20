@@ -31,24 +31,9 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		}
 	}
 
-	var faviconImage: UIImage? {
+	var iconImage: IconImage? {
 		didSet {
-			faviconImageView.image = faviconImage
-			
-			if self.traitCollection.userInterfaceStyle == .dark {
-				DispatchQueue.global(qos: .background).async {
-					if self.faviconImage?.isDark() ?? false {
-						DispatchQueue.main.async {
-							self.faviconImageView.backgroundColor = AppAssets.avatarBackgroundColor
-						}
-					} else {
-						DispatchQueue.main.async {
-							self.faviconImageView.backgroundColor = nil
-						}
-					}
-				}
-			}
-			
+			iconView.iconImage = iconImage
 		}
 	}
 
@@ -56,6 +41,18 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		didSet {
 			if isDisclosureAvailable != oldValue {
 				setNeedsLayout()
+			}
+		}
+	}
+	
+	var isSeparatorShown = true {
+		didSet {
+			if isSeparatorShown != oldValue {
+				if isSeparatorShown {
+					showView(bottomSeparatorView)
+				} else {
+					hideView(bottomSeparatorView)
+				}
 			}
 		}
 	}
@@ -90,17 +87,20 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		label.numberOfLines = 0
 		label.allowsDefaultTighteningForTruncation = false
 		label.adjustsFontForContentSizeCategory = true
+		label.lineBreakMode = .byTruncatingTail
 		label.font = .preferredFont(forTextStyle: .body)
 		return label
 	}()
 
-	private let faviconImageView: UIImageView = {
-		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
-		imageView.layer.cornerRadius = MasterFeedTableViewCellLayout.faviconCornerRadius
-		imageView.clipsToBounds = true
-		return imageView
-	}()
+	private let iconView = IconView()
 
+	private let bottomSeparatorView: UIView = {
+		let view = UIView()
+		view.backgroundColor = UIColor.separator
+		view.alpha = 0.5
+		return view
+	}()
+	
 	private var isDisclosureExpanded = false
 	private var disclosureButton: UIButton?
 	private var unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
@@ -128,19 +128,8 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	
 	override func applyThemeProperties() {
 		super.applyThemeProperties()
-		titleView.highlightedTextColor = AppAssets.vibrantTextColor
 	}
 
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-		super.setHighlighted(highlighted, animated: animated)
-		updateVibrancy(animated: animated)
-	}
-
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		super.setSelected(selected, animated: animated)
-		updateVibrancy(animated: animated)
-	}
-	
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
 		isShowingEditControl = state.contains(.showingEditControl)
@@ -164,21 +153,34 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		}
 	}
 	
+	override func updateVibrancy(animated: Bool) {
+		super.updateVibrancy(animated: animated)
+		let iconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
+		UIView.animate(withDuration: duration(animated: animated)) {
+			self.iconView.tintColor = iconTintColor
+		}
+		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
+	}
+	
 }
 
 private extension MasterFeedTableViewCell {
 
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
-		addSubviewAtInit(faviconImageView)
+		addSubviewAtInit(iconView)
 		addSubviewAtInit(titleView)
 		addDisclosureView()
+		addSubviewAtInit(bottomSeparatorView)
 	}
 
 	func addDisclosureView() {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
-		disclosureButton?.setImage(AppAssets.chevronBaseImage, for: .normal)
+		disclosureButton?.setImage(AppAssets.disclosureImage, for: .normal)
+		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
+		disclosureButton?.imageView?.contentMode = .center
+		disclosureButton?.imageView?.clipsToBounds = false
 		addSubviewAtInit(disclosureButton!)
 	}
 	
@@ -188,20 +190,23 @@ private extension MasterFeedTableViewCell {
 	}
 
 	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
-		faviconImageView.setFrameIfNotEqual(layout.faviconRect)
+		iconView.setFrameIfNotEqual(layout.faviconRect)
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton?.setFrameIfNotEqual(layout.disclosureButtonRect)
 		disclosureButton?.isHidden = !isDisclosureAvailable
-		separatorInset = layout.separatorInsets
+		bottomSeparatorView.setFrameIfNotEqual(layout.separatorRect)
 	}
 
-	func updateVibrancy(animated: Bool) {
-		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
-		let duration = animated ? 0.6 : 0.0
-		UIView.animate(withDuration: duration) {
-			self.disclosureButton?.tintColor  = tintColor
-			self.faviconImageView.tintColor = tintColor
+	func hideView(_ view: UIView) {
+		if !view.isHidden {
+			view.isHidden = true
+		}
+	}
+	
+	func showView(_ view: UIView) {
+		if view.isHidden {
+			view.isHidden = false
 		}
 	}
 	

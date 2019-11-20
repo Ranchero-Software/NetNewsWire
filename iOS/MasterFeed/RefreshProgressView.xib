@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="RefreshProgressView" customModule="NetNewsWire" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <progressView hidden="YES" opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gKH-fc-zh7" customClass="RoundedProgressView" customModule="NetNewsWire" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="27.5" width="375" height="5"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="5" id="OCl-qi-owb"/>
+                    </constraints>
+                </progressView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="07B-Zy-FCt">
+                    <rect key="frame" x="0.0" y="22" width="375" height="16"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                    <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="07B-Zy-FCt" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="6eL-GN-NIE"/>
+                <constraint firstItem="07B-Zy-FCt" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="QJ0-os-kZt"/>
+                <constraint firstAttribute="trailing" secondItem="gKH-fc-zh7" secondAttribute="trailing" id="SbS-0T-bdo"/>
+                <constraint firstItem="gKH-fc-zh7" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="V0P-ix-fa3"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="07B-Zy-FCt" secondAttribute="trailing" id="Zor-53-U98"/>
+                <constraint firstItem="gKH-fc-zh7" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="mnf-7m-knt"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="label" destination="07B-Zy-FCt" id="UEr-Dh-NBo"/>
+                <outlet property="progressView" destination="gKH-fc-zh7" id="Una-CD-Zi8"/>
+            </connections>
+            <point key="canvasLocation" x="-151" y="6"/>
+        </view>
+    </objects>
+</document>

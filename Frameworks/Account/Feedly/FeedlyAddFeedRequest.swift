@@ -29,7 +29,7 @@ final class FeedlyAddFeedRequest {
 			self.resourceProvider = resourceProvider
 		}
 		
-		var completionHandler: ((Result<Feed, Error>) -> ())?
+		var completionHandler: ((Result<WebFeed, Error>) -> ())?
 		var error: Error?
 		
 		func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
@@ -37,17 +37,17 @@ final class FeedlyAddFeedRequest {
 		}
 	}
 	
-	func addNewFeed(at url: String, name: String? = nil, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func addNewFeed(at url: String, name: String? = nil, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		let resource = FeedlyFeedResourceId(url: url)
 		self.start(resource: resource, name: name, refreshes: true, completion: completion)
 	}
 	
-	func add(existing feed: Feed, name: String? = nil, completion: @escaping (Result<Feed, Error>) -> Void) {
-		let resource = FeedlyFeedResourceId(id: feed.feedID)
+	func add(existing feed: WebFeed, name: String? = nil, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		let resource = FeedlyFeedResourceId(id: feed.webFeedID)
 		self.start(resource: resource, name: name, refreshes: false, completion: completion)
 	}
 	
-	private func start(resource: FeedlyFeedResourceId, name: String?, refreshes: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
+	private func start(resource: FeedlyFeedResourceId, name: String?, refreshes: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		
 		let (folder, collectionId): (Folder, String)
 		do {
@@ -68,9 +68,9 @@ final class FeedlyAddFeedRequest {
 			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 			createFeeds.addDependency(addRequest)
 			
-			let getStream: FeedlyGetStreamOperation? = {
+			let getStream: FeedlyGetStreamContentsOperation? = {
 				if refreshes {
-					let op = FeedlyGetStreamOperation(account: account, resourceProvider: addRequest, caller: caller, newerThan: nil)
+					let op = FeedlyGetStreamContentsOperation(account: account, resourceProvider: addRequest, service: caller, newerThan: nil)
 					op.addDependency(createFeeds)
 					return op
 				}
@@ -79,7 +79,7 @@ final class FeedlyAddFeedRequest {
 			
 			let organiseByFeed: FeedlyOrganiseParsedItemsByFeedOperation? = {
 				if let getStream = getStream {
-					let op = FeedlyOrganiseParsedItemsByFeedOperation(account: account, entryProvider: getStream, log: log)
+					let op = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: getStream, log: log)
 					op.addDependency(getStream)
 					return op
 				}
@@ -115,7 +115,7 @@ final class FeedlyAddFeedRequest {
 			if let error = delegate.error {
 				handler(.failure(error))
 				
-			} else if let feed = folder.existingFeed(withFeedID: resource.id) {
+			} else if let feed = folder.existingWebFeed(withWebFeedID: resource.id) {
 				handler(.success(feed))
 				
 			} else {

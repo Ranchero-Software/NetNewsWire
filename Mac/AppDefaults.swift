@@ -27,7 +27,8 @@ struct AppDefaults {
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let mainWindowWidths = "mainWindowWidths"
 		static let refreshInterval = "refreshInterval"
-		static let addFeedAccountID = "addFeedAccountID"
+		static let addWebFeedAccountID = "addWebFeedAccountID"
+		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
 		static let importOPMLAccountID = "importOPMLAccountID"
 		static let exportOPMLAccountID = "exportOPMLAccountID"
@@ -99,15 +100,24 @@ struct AppDefaults {
 		}
 	}
 
-	static var addFeedAccountID: String? {
+	static var addWebFeedAccountID: String? {
 		get {
-			return string(for: Key.addFeedAccountID)
+			return string(for: Key.addWebFeedAccountID)
 		}
 		set {
-			setString(for: Key.addFeedAccountID, newValue)
+			setString(for: Key.addWebFeedAccountID, newValue)
 		}
 	}
 	
+	static var addWebFeedFolderName: String? {
+		get {
+			return string(for: Key.addWebFeedFolderName)
+		}
+		set {
+			setString(for: Key.addWebFeedFolderName, newValue)
+		}
+	}
+
 	static var addFolderAccountID: String? {
 		get {
 			return string(for: Key.addFolderAccountID)

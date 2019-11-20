@@ -11,14 +11,14 @@ import Articles
 import RSParser
 
 public extension Notification.Name {
-	static let FeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
+	static let WebFeedSettingDidChange = Notification.Name(rawValue: "FeedSettingDidChangeNotification")
 }
 
-public extension Feed {
+public extension WebFeed {
 
-	static let FeedSettingUserInfoKey = "feedSetting"
+	static let WebFeedSettingUserInfoKey = "feedSetting"
 
-	struct FeedSettingKey {
+	struct WebFeedSettingKey {
 		public static let homePageURL = "homePageURL"
 		public static let iconURL = "iconURL"
 		public static let faviconURL = "faviconURL"
@@ -30,7 +30,7 @@ public extension Feed {
 	}
 }
 
-extension Feed {
+extension WebFeed {
 
 	func takeSettings(from parsedFeed: ParsedFeed) {
 		iconURL = parsedFeed.iconURL
@@ -40,9 +40,9 @@ extension Feed {
 		authors = Author.authorsWithParsedAuthors(parsedFeed.authors)
 	}
 
-	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
-		let userInfo = [Feed.FeedSettingUserInfoKey: codingKey.stringValue]
-		NotificationCenter.default.post(name: .FeedSettingDidChange, object: self, userInfo: userInfo)
+	func postFeedSettingDidChangeNotification(_ codingKey: WebFeedMetadata.CodingKeys) {
+		let userInfo = [WebFeed.WebFeedSettingUserInfoKey: codingKey.stringValue]
+		NotificationCenter.default.post(name: .WebFeedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }
 
@@ -56,8 +56,8 @@ public extension Article {
 		return manager.existingAccount(with: accountID)
 	}
 	
-	var feed: Feed? {
-		return account?.existingFeed(withFeedID: feedID)
+	var webFeed: WebFeed? {
+		return account?.existingWebFeed(withWebFeedID: webFeedID)
 	}
 }
 

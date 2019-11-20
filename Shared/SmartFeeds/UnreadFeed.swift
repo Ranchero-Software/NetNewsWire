@@ -19,6 +19,10 @@ import Articles
 
 final class UnreadFeed: PseudoFeed {
 
+	var feedID: FeedIdentifier? {
+		return FeedIdentifier.smartFeed(String(describing: UnreadFeed.self))
+	}
+
 	let nameForDisplay = NSLocalizedString("All Unread", comment: "All Unread pseudo-feed title")
 	let fetchType = FetchType.unread
 	
@@ -30,7 +34,7 @@ final class UnreadFeed: PseudoFeed {
 		}
 	}
 
-	var smallIcon: RSImage? = AppAssets.unreadFeedImage
+	var smallIcon: IconImage? = AppAssets.unreadFeedImage
 	
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
@@ -52,7 +56,7 @@ final class UnreadFeed: PseudoFeed {
 }
 
 extension UnreadFeed: ArticleFetcher {
-
+	
 	func fetchArticles() -> Set<Article> {
 		return fetchUnreadArticles()
 	}

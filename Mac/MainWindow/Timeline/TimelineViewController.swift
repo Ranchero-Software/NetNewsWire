@@ -25,7 +25,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
 				unreadCount = 0
 				if let representedObjects = representedObjects {
-					if representedObjects.count == 1 && representedObjects.first is Feed {
+					if representedObjects.count == 1 && representedObjects.first is WebFeed {
 						showFeedNames = false
 					}
 					else {
@@ -79,7 +79,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				reloadVisibleCells()
 				return
 			}
-			updateShowAvatars()
+			updateShowIcons()
 			articleRowMap = [String: Int]()
 			tableView.reloadData()
 		}
@@ -98,18 +98,18 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	private var cellAppearance: TimelineCellAppearance!
-	private var cellAppearanceWithAvatar: TimelineCellAppearance!
+	private var cellAppearanceWithIcon: TimelineCellAppearance!
 	private var showFeedNames = false {
 		didSet {
 			if showFeedNames != oldValue {
-				updateShowAvatars()
+				updateShowIcons()
 				updateTableViewRowHeight()
 				reloadVisibleCells()
 			}
 		}
 	}
 
-	private var showAvatars = false
+	private var showIcons = false
 	private var rowHeightWithFeedName: CGFloat = 0.0
 	private var rowHeightWithoutFeedName: CGFloat = 0.0
 
@@ -156,8 +156,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	override func viewDidLoad() {
-		cellAppearance = TimelineCellAppearance(showAvatar: false, fontSize: fontSize)
-		cellAppearanceWithAvatar = TimelineCellAppearance(showAvatar: true, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize)
 
 		updateRowHeights()
 		tableView.rowHeight = currentRowHeight
@@ -168,7 +168,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
@@ -388,7 +388,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - Navigation
 	
 	func goToDeepLink(for userInfo: [AnyHashable : Any]) {
-		guard let articleID = userInfo[DeepLinkKey.articleID.rawValue] as? String else { return }
+		guard let articleID = userInfo[ArticlePathKey.articleID] as? String else { return }
 		guard let ix = articles.firstIndex(where: { $0.articleID == articleID }) else {	return }
 		
 		NSCursor.setHiddenUntilMouseMoves(true)
@@ -437,15 +437,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		updateUnreadCount()
 	}
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard showAvatars, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		guard showIcons, let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
 			guard let article = articles.articleAtRow(row) else {
 				return false
 			}
-			return feed == article.feed
+			return feed == article.webFeed
 		}
 		if let indexesToReload = indexesToReload {
 			reloadCells(for: indexesToReload)
@@ -453,7 +453,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		guard showAvatars, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 
@@ -474,17 +474,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if showAvatars {
+		if showIcons {
 			queueReloadAvailableCells()
 		}
 	}
 
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
+		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
 			return
 		}
 
-		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
+		let shouldFetchAndMergeArticles = representedObjectsContainsAnyWebFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
@@ -568,9 +568,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 		
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: showingFeedNames, feedName: "Prototype Feed Name", avatar: nil, showAvatar: false, featuredImage: nil)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: showingFeedNames, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
@@ -674,7 +674,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 
 		func configure(_ cell: TimelineTableCellView) {
-			cell.cellAppearance = showAvatars ? cellAppearanceWithAvatar : cellAppearance
+			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
 			if let article = articles.articleAtRow(row) {
 				configureTimelineCell(cell, article: article)
 			}
@@ -716,12 +716,12 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
-		let avatar = article.avatarImage()
-		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, avatar: avatar, showAvatar: showAvatars, featuredImage: nil)
+		let iconImage = article.iconImage()
+		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
 	}
 
-	private func avatarFor(_ article: Article) -> NSImage? {
-		if !showAvatars {
+	private func iconFor(_ article: Article) -> IconImage? {
+		if !showIcons {
 			return nil
 		}
 		
@@ -733,22 +733,22 @@ extension TimelineViewController: NSTableViewDelegate {
 			}
 		}
 
-		guard let feed = article.feed else {
+		guard let feed = article.webFeed else {
 			return nil
 		}
 
-		if let feedIcon = appDelegate.feedIconDownloader.icon(for: feed) {
+		if let feedIcon = appDelegate.webFeedIconDownloader.icon(for: feed) {
 			return feedIcon
 		}
 
-		if let favicon = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
+		if let favicon = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
 			return favicon
 		}
 		
 		return FaviconGenerator.favicon(feed)
 	}
 
-	private func avatarForAuthor(_ author: Author) -> NSImage? {
+	private func avatarForAuthor(_ author: Author) -> IconImage? {
 		return appDelegate.authorAvatarDownloader.image(for: author)
 	}
 
@@ -779,19 +779,19 @@ extension TimelineViewController: NSTableViewDelegate {
 
 		switch edge {
 			case .leading:
-				let title = article.status.read ? NSLocalizedString("Mark Unread", comment: "mark unread") : NSLocalizedString("Mark Read", comment: "mark read")
-				let action = NSTableViewRowAction(style: .regular, title: title) { (action, row) in
+				let action = NSTableViewRowAction(style: .regular, title: "") { (action, row) in
 					self.toggleArticleRead(article);
 					tableView.rowActionsVisible = false
 				}
+				action.image = article.status.read ? AppAssets.swipeMarkUnreadImage : AppAssets.swipeMarkReadImage
 				return [action]
 
 			case .trailing:
-				let title = article.status.starred ? NSLocalizedString("Mark Unstarred", comment: "mark unstarred") : NSLocalizedString("Mark Starred", comment: "mark starred")
-				let action = NSTableViewRowAction(style: .regular, title: title) { (action, row) in
+				let action = NSTableViewRowAction(style: .regular, title: "") { (action, row) in
 					self.toggleArticleStarred(article);
 					tableView.rowActionsVisible = false
 				}
+				action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
 				return [action]
 
 			@unknown default:
@@ -842,9 +842,9 @@ private extension TimelineViewController {
 		tableView.rowHeight = currentRowHeight
 	}
 
-	func updateShowAvatars() {
+	func updateShowIcons() {
 		if showFeedNames {
-			self.showAvatars = true
+			self.showIcons = true
 			return
 		}
 
@@ -852,14 +852,14 @@ private extension TimelineViewController {
 			if let authors = article.authors {
 			for author in authors {
 				if author.avatarURL != nil {
-					self.showAvatars = true
+					self.showIcons = true
 					return
 				}
 			}
 			}
 		}
 
-		self.showAvatars = false
+		self.showIcons = false
 	}
 
 	func emptyTheTimeline() {
@@ -935,8 +935,8 @@ private extension TimelineViewController {
 	// MARK: - Appearance Change
 
 	private func fontSizeDidChange() {
-		cellAppearance = TimelineCellAppearance(showAvatar: false, fontSize: fontSize)
-		cellAppearanceWithAvatar = TimelineCellAppearance(showAvatar: true, fontSize: fontSize)
+		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize)
 		updateRowHeights()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
@@ -1056,23 +1056,23 @@ private extension TimelineViewController {
 		return representedObjects?.contains(where: { $0 is Folder }) ?? false
 	}
 
-	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
+	func representedObjectsContainsAnyWebFeed(_ webFeeds: Set<WebFeed>) -> Bool {
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 
 		guard let representedObjects = representedObjects else {
 			return false
 		}
 		for representedObject in representedObjects {
-			if let feed = representedObject as? Feed {
-				for oneFeed in feeds {
-					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
+			if let feed = representedObject as? WebFeed {
+				for oneFeed in webFeeds {
+					if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
 						return true
 					}
 				}
 			}
 			else if let folder = representedObject as? Folder {
-				for oneFeed in feeds {
-					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
+				for oneFeed in webFeeds {
+					if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
 						return true
 					}
 				}

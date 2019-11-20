@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,13 +13,6 @@
             <rect key="frame" x="0.0" y="0.0" width="190" height="38"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Rne-3c-G6E">
-                    <rect key="frame" x="0.0" y="9" width="20" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="FDb-aT-C3x"/>
-                        <constraint firstAttribute="width" constant="20" id="jOK-1W-SEO"/>
-                    </constraints>
-                </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5F6-2v-qSS">
                     <rect key="frame" x="28" y="9" width="43.5" height="20"/>
                     <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -30,23 +23,31 @@
                     <rect key="frame" x="79.5" y="9" width="110.5" height="20"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5gI-Wl-lnK" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="9" width="20" height="20"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="20" id="TgA-1l-WQJ"/>
+                        <constraint firstAttribute="height" constant="20" id="VUB-ip-zXU"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
+                <constraint firstItem="5gI-Wl-lnK" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="1Yh-ha-Pu8"/>
                 <constraint firstItem="5F6-2v-qSS" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="CeZ-D5-NOV"/>
                 <constraint firstItem="z9o-XA-3t4" firstAttribute="leading" secondItem="5F6-2v-qSS" secondAttribute="trailing" constant="8" symbolic="YES" id="CiV-5P-T1S"/>
-                <constraint firstItem="5F6-2v-qSS" firstAttribute="leading" secondItem="Rne-3c-G6E" secondAttribute="trailing" constant="8" id="OUK-1k-4Gc"/>
                 <constraint firstAttribute="trailing" secondItem="z9o-XA-3t4" secondAttribute="trailing" id="OVL-Ac-Rtt"/>
                 <constraint firstItem="z9o-XA-3t4" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="ZkY-jG-eZO"/>
-                <constraint firstItem="Rne-3c-G6E" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="e1Z-hg-3Cc"/>
-                <constraint firstItem="Rne-3c-G6E" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="h3i-G1-ays"/>
+                <constraint firstItem="5gI-Wl-lnK" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="eQU-mX-qmd"/>
+                <constraint firstItem="5F6-2v-qSS" firstAttribute="leading" secondItem="5gI-Wl-lnK" secondAttribute="trailing" constant="8" id="fVr-vW-alg"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>
             <nil key="simulatedBottomBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
-                <outlet property="imageView" destination="Rne-3c-G6E" id="sHA-Vh-kck"/>
+                <outlet property="iconView" destination="5gI-Wl-lnK" id="IiR-qS-d22"/>
                 <outlet property="label" destination="5F6-2v-qSS" id="ec7-8Y-PRv"/>
                 <outlet property="unreadCountView" destination="z9o-XA-3t4" id="JBy-aa-feL"/>
             </connections>

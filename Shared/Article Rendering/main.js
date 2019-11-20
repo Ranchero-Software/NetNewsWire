@@ -14,6 +14,18 @@ function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
 }
 
+// Convert all image locations to be absolute
+function convertImgSrc() {
+	document.querySelectorAll("img").forEach(element => {
+		element.src = new URL(element.src, document.baseURI).href;
+	});
+}
+
+function reloadArticleImage() {
+	var image = document.getElementById("nnwImageIcon");
+	image.src = "nnwImageIcon://";
+}
+
 function error() {
 	document.body.innerHTML = "error";
 }
@@ -26,5 +38,7 @@ function render(data) {
 	
 	wrapFrames()
 	stripStyles()
+	convertImgSrc()
+	
 	postRenderProcessing()
 }

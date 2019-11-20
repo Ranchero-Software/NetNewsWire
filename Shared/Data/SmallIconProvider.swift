@@ -13,31 +13,30 @@ import RSCore
 
 protocol SmallIconProvider {
 
-	var smallIcon: RSImage? { get }
+	var smallIcon: IconImage? { get }
 }
 
-extension Feed: SmallIconProvider {
-
-	var smallIcon: RSImage? {
-		if let image = appDelegate.faviconDownloader.favicon(for: self) {
-			return image
+extension Account: SmallIconProvider {
+	var smallIcon: IconImage? {
+		if let image = AppAssets.image(for: type) {
+			return IconImage(image)
 		}
-		#if os(macOS)
-		return AppAssets.genericFeedImage
-		#else
+		return nil
+	}
+}
+
+extension WebFeed: SmallIconProvider {
+
+	var smallIcon: IconImage? {
+		if let iconImage = appDelegate.faviconDownloader.favicon(for: self) {
+			return iconImage
+		}
 		return FaviconGenerator.favicon(self)
-		#endif
 	}
 }
 
 extension Folder: SmallIconProvider {
-
-	var smallIcon: RSImage? {
-		#if os(macOS)
-		return RSImage(named: NSImage.folderName)
-		#else
-		return AppAssets.masterFolderImage
-		#endif
+	var smallIcon: IconImage? {
+		AppAssets.masterFolderImage
 	}
-	
 }

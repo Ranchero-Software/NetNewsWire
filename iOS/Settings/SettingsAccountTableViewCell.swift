@@ -13,25 +13,12 @@ class SettingsAccountTableViewCell: VibrantTableViewCell {
 	@IBOutlet weak var accountImage: UIImageView!
 	@IBOutlet weak var accountNameLabel: UILabel!
 
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-		super.setHighlighted(highlighted, animated: animated)
-		updateVibrancy(animated: animated)
-	}
-
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		super.setSelected(selected, animated: animated)
-		updateVibrancy(animated: animated)
-	}
-	
-	override func applyThemeProperties() {
-		super.applyThemeProperties()
-		accountNameLabel?.highlightedTextColor = AppAssets.vibrantTextColor
-	}
-
-	func updateVibrancy(animated: Bool) {
+	override func updateVibrancy(animated: Bool) {
+		super.updateVibrancy(animated: animated)
+		updateLabelVibrancy(accountNameLabel, color: labelColor, animated: animated)
+		
 		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
-		let duration = animated ? 0.6 : 0.0
-		UIView.animate(withDuration: duration) {
+		UIView.animate(withDuration: duration(animated: animated)) {
 			self.accountImage?.tintColor = tintColor
 		}
 	}

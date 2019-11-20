@@ -60,8 +60,8 @@
              <element type="account">
                  <cocoa key="accounts"/>
              </element>
-             <element type="feed">
-                 <cocoa key="feeds"/>
+             <element type="webFeed">
+                 <cocoa key="webFeeds"/>
              </element>
          </class>
 
@@ -88,30 +88,30 @@
 			<property name="active" code="Actv" type="boolean" access="rw" description="Whether or not the account is active">
 				<cocoa key="scriptingIsActive"/>
 			</property>
-           	<property name="allFeeds" code="Feds" access="r" description="All feeds, including feeds inside folders">
-                <cocoa key="allFeeds"/>
-                <type type="feed" list="yes"/>
+           	<property name="allWebFeeds" code="Feds" access="r" description="All feeds, including feeds inside folders">
+                <cocoa key="allWebFeeds"/>
+                <type type="webFeed" list="yes"/>
             </property>
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the account">
                 <cocoa key="opmlRepresentation"/>
             </property>
-            <element type="feed">
-                <cocoa key="feeds"/>
+            <element type="webFeed">
+                <cocoa key="webFeeds"/>
             </element>
             <element type="folder">
                 <cocoa key="folders"/>
             </element>
         </class>
         
-        <class name="feed" code="Feed" plural="feeds" description="An RSS feeds">
-            <cocoa class="ScriptableFeed"/>
+        <class name="webFeed" code="Feed" plural="webFeeds" description="An RSS feed">
+            <cocoa class="ScriptableWebFeed"/>
             <property name="name" code="pnam" type="text" access="r" description="The name of the feed">
                 <cocoa key="name"/>
             </property>
-            <property name="id" code="ID  " type="text" access="r" description="The unique id of the account">
+            <property name="id" code="ID  " type="text" access="r" description="The unique id of the feed">
                 <cocoa key="uniqueId"/>
             </property>
-            <property name="url" code="URL " type="text" access="r" description="The type of the account">
+            <property name="url" code="URL " type="text" access="r" description="The type of the feed">
                 <cocoa key="url"/>
             </property>
             <property name="homepage url" code="HpUr" type="text" access="r" description="url for the feed homepage (optional)">
@@ -164,8 +164,8 @@
             <property name="opml representation" code="OPML" type="text" access="r" description="OPML representation for the folder">
                 <cocoa key="opmlRepresentation"/>
             </property>
-            <element type="feed">
-                <cocoa key="feeds"/>
+            <element type="webFeed">
+                <cocoa key="webFeeds"/>
             </element>
         </class>
 

@@ -22,7 +22,6 @@ class AccountFeedbinSyncTest: XCTestCase {
 		let testTransport = TestTransport()
 		testTransport.testFiles["tags.json"] = "tags_add.json"
 		testTransport.testFiles["subscriptions.json"] = "subscriptions_initial.json"
-		testTransport.testFiles["icons.json"] = "icons.json"
 		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
 		
 		// Test initial folders
@@ -37,13 +36,12 @@ class AccountFeedbinSyncTest: XCTestCase {
 		}
 		waitForExpectations(timeout: 5, handler: nil)
 		
-		XCTAssertEqual(224, account.flattenedFeeds().count)
+		XCTAssertEqual(224, account.flattenedWebFeeds().count)
 
-		let daringFireball = account.idToFeedDictionary["1296379"]
+		let daringFireball = account.idToWebFeedDictionary["1296379"]
 		XCTAssertEqual("Daring Fireball", daringFireball!.name)
 		XCTAssertEqual("https://daringfireball.net/feeds/json", daringFireball!.url)
 		XCTAssertEqual("https://daringfireball.net/", daringFireball!.homePageURL)
-		XCTAssertEqual("https://favicons.feedbinusercontent.com/6ac/6acc098f35ed2bcc0915ca89d50a97e5793eda45.png", daringFireball!.faviconURL)
 
 		// Test Adding a Feed
 		testTransport.testFiles["subscriptions.json"] = "subscriptions_add.json"
@@ -59,13 +57,12 @@ class AccountFeedbinSyncTest: XCTestCase {
 		}
 		waitForExpectations(timeout: 5, handler: nil)
 		
-		XCTAssertEqual(225, account.flattenedFeeds().count)
+		XCTAssertEqual(225, account.flattenedWebFeeds().count)
 		
-		let bPixels = account.idToFeedDictionary["1096623"]
+		let bPixels = account.idToWebFeedDictionary["1096623"]
 		XCTAssertEqual("Beautiful Pixels", bPixels?.name)
 		XCTAssertEqual("https://feedpress.me/beautifulpixels", bPixels?.url)
 		XCTAssertEqual("https://beautifulpixels.com/", bPixels?.homePageURL)
-		XCTAssertEqual("https://favicons.feedbinusercontent.com/ea0/ea010c658d6e356e49ab239b793dc415af707b05.png", bPixels?.faviconURL)
 
 		TestAccountManager.shared.deleteAccount(account)
 

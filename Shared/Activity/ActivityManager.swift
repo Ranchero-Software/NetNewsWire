@@ -9,6 +9,7 @@
 import Foundation
 import CoreSpotlight
 import CoreServices
+import RSCore
 import Account
 import Articles
 import Intents
@@ -28,7 +29,7 @@ class ActivityManager {
 	}
 	
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .FeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 	}
 	
 	func invalidateCurrentActivities() {
@@ -37,54 +38,15 @@ class ActivityManager {
 		invalidateNextUnread()
 	}
 	
-	func selectingToday() {
+	func selecting(feed: Feed) {
 		invalidateCurrentActivities()
 		
-		let title = NSLocalizedString("See articles for “Today”", comment: "Today")
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectToday, title: title, identifier: "smartfeed.today")
-		donate(selectingActivity!)
-	}
-	
-	func selectingAllUnread() {
-		invalidateCurrentActivities()
+		selectingActivity = makeSelectFeedActivity(feed: feed)
 		
-		let title = NSLocalizedString("See articles in “All Unread”", comment: "All Unread")
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectAllUnread, title: title, identifier: "smartfeed.allUnread")
-		donate(selectingActivity!)
-	}
-	
-	func selectingStarred() {
-		invalidateCurrentActivities()
+		if let webFeed = feed as? WebFeed {
+			updateSelectingActivityFeedSearchAttributes(with: webFeed)
+		}
 		
-		let title = NSLocalizedString("See articles in “Starred”", comment: "Starred")
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectStarred, title: title, identifier: "smartfeed.starred")
-		donate(selectingActivity!)
-	}
-	
-	func selectingFolder(_ folder: Folder) {
-		invalidateCurrentActivities()
-		
-		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
-		let title = NSString.localizedStringWithFormat(localizedText as NSString, folder.nameForDisplay) as String
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectFolder, title: title, identifier: ActivityManager.identifer(for: folder))
-	 
-		let userInfo = folder.deepLinkUserInfo
-		selectingActivity!.userInfo = userInfo
-		selectingActivity!.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
-		donate(selectingActivity!)
-	}
-	
-	func selectingFeed(_ feed: Feed) {
-		invalidateCurrentActivities()
-		
-		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Feed")
-		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
-		selectingActivity = makeSelectingActivity(type: ActivityType.selectFeed, title: title, identifier: ActivityManager.identifer(for: feed))
-		
-		let userInfo = feed.deepLinkUserInfo
-		selectingActivity!.userInfo = userInfo
-		selectingActivity!.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
-		updateSelectingActivityFeedSearchAttributes(with: feed)
 		donate(selectingActivity!)
 	}
 	
@@ -95,8 +57,17 @@ class ActivityManager {
 	
 	func selectingNextUnread() {
 		guard nextUnreadActivity == nil else { return }
-		let title = NSLocalizedString("See first unread article", comment: "First Unread")
-		nextUnreadActivity = makeSelectingActivity(type: ActivityType.nextUnread, title: title, identifier: "action.nextUnread")
+
+		nextUnreadActivity = NSUserActivity(activityType: ActivityType.nextUnread.rawValue)
+		nextUnreadActivity!.title = NSLocalizedString("See first unread article", comment: "First Unread")
+		
+		#if os(iOS)
+		nextUnreadActivity!.suggestedInvocationPhrase = nextUnreadActivity!.title
+		nextUnreadActivity!.isEligibleForPrediction = true
+		nextUnreadActivity!.persistentIdentifier = "nextUnread:"
+		nextUnreadActivity!.contentAttributeSet?.relatedUniqueIdentifier = "nextUnread:"
+		#endif
+
 		donate(nextUnreadActivity!)
 	}
 	
@@ -105,12 +76,12 @@ class ActivityManager {
 		nextUnreadActivity = nil
 	}
 	
-	func reading(_ article: Article?) {
+	func reading(feed: Feed?, article: Article?) {
 		invalidateReading()
 		invalidateNextUnread()
 		
 		guard let article = article else { return }
-		readingActivity = makeReadArticleActivity(article)
+		readingActivity = makeReadArticleActivity(feed: feed, article: article)
 		
 		#if os(iOS)
 		updateReadArticleSearchAttributes(with: article)
@@ -135,8 +106,8 @@ class ActivityManager {
 			}
 		}
 		
-		for feed in account.flattenedFeeds() {
-			ids.append(contentsOf: identifers(for: feed))
+		for webFeed in account.flattenedWebFeeds() {
+			ids.append(contentsOf: identifers(for: webFeed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
@@ -146,31 +117,31 @@ class ActivityManager {
 		var ids = [String]()
 		ids.append(identifer(for: folder))
 		
-		for feed in folder.flattenedFeeds() {
-			ids.append(contentsOf: identifers(for: feed))
+		for webFeed in folder.flattenedWebFeeds() {
+			ids.append(contentsOf: identifers(for: webFeed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
-	static func cleanUp(_ feed: Feed) {
-		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifers(for: feed))
+	static func cleanUp(_ webFeed: WebFeed) {
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifers(for: webFeed))
 	}
 	#endif
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.webFeedID] as? String else {
 			return
 		}
 		
 		#if os(iOS)
-		if let article = readingArticle, activityFeedId == article.feedID {
+		if let article = readingArticle, activityFeedId == article.webFeedID {
 			updateReadArticleSearchAttributes(with: article)
 		}
 		#endif
 		
-		if activityFeedId == feed.feedID {
-			updateSelectingActivityFeedSearchAttributes(with: feed)
+		if activityFeedId == webFeed.webFeedID {
+			updateSelectingActivityFeedSearchAttributes(with: webFeed)
 		}
 	}
 
@@ -180,28 +151,43 @@ class ActivityManager {
 
 private extension ActivityManager {
 	
-	func makeSelectingActivity(type: ActivityType, title: String, identifier: String) -> NSUserActivity {
-		let activity = NSUserActivity(activityType: type.rawValue)
+	func makeSelectFeedActivity(feed: Feed) -> NSUserActivity {
+		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)
+		
+		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
+		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		activity.title = title
+		
 		activity.keywords = Set(makeKeywords(title))
 		activity.isEligibleForSearch = true
+		
+		let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
+		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo]
+		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 
 		#if os(iOS)
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
-		activity.persistentIdentifier = identifier
-		activity.contentAttributeSet?.relatedUniqueIdentifier = identifier
+		activity.persistentIdentifier = feed.feedID?.description ?? ""
+		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.feedID?.description ?? ""
 		#endif
 		
 		return activity
 	}
 	
-	func makeReadArticleActivity(_ article: Article) -> NSUserActivity {
+	func makeReadArticleActivity(feed: Feed?, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
 		activity.title = ArticleStringFormatter.truncatedTitle(article)
-		let userInfo = article.deepLinkUserInfo
-		activity.userInfo = userInfo
-		activity.requiredUserInfoKeys = Set(userInfo.keys.map { $0 as! String })
+		
+		if let feed = feed {
+			let articleFetcherIdentifierUserInfo = feed.feedID?.userInfo ?? [AnyHashable: Any]()
+			let articlePathUserInfo = article.pathUserInfo
+			activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
+		} else {
+			activity.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
+		}
+		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
+		
 		activity.isEligibleForHandoff = true
 		
 		#if os(iOS)
@@ -226,8 +212,8 @@ private extension ActivityManager {
 		attributeSet.keywords = makeKeywords(article)
 		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: article)
 
-		if let image = article.avatarImage() {
-			attributeSet.thumbnailData = image.pngData()
+		if let iconImage = article.iconImage() {
+			attributeSet.thumbnailData = iconImage.image.pngData()
 		}
 		
 		readingActivity?.contentAttributeSet = attributeSet
@@ -237,7 +223,7 @@ private extension ActivityManager {
 	#endif
 	
 	func makeKeywords(_ article: Article) -> [String] {
-		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
+		let feedNameKeywords = makeKeywords(article.webFeed?.nameForDisplay)
 		let articleTitleKeywords = makeKeywords(ArticleStringFormatter.truncatedTitle(article))
 		return feedNameKeywords + articleTitleKeywords
 	}
@@ -246,24 +232,16 @@ private extension ActivityManager {
 		return value?.components(separatedBy: " ").filter { $0.count > 2 } ?? []
 	}
 	
-	func updateSelectingActivityFeedSearchAttributes(with feed: Feed) {
+	func updateSelectingActivityFeedSearchAttributes(with feed: WebFeed) {
 		
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
 		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: feed)
-		if let image = appDelegate.feedIconDownloader.icon(for: feed) {
-			#if os(iOS)
-			attributeSet.thumbnailData = image.pngData()
-			#else
-			attributeSet.thumbnailData = image.tiffRepresentation
-			#endif
-		} else if let image = appDelegate.faviconDownloader.faviconAsAvatar(for: feed) {
-			#if os(iOS)
-			attributeSet.thumbnailData = image.pngData()
-			#else
-			attributeSet.thumbnailData = image.tiffRepresentation
-			#endif
+		if let iconImage = appDelegate.webFeedIconDownloader.icon(for: feed) {
+			attributeSet.thumbnailData = iconImage.image.dataRepresentation()
+		} else if let iconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
+			attributeSet.thumbnailData = iconImage.image.dataRepresentation()
 		}
 		
 		selectingActivity!.contentAttributeSet = attributeSet
@@ -288,15 +266,15 @@ private extension ActivityManager {
 		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
 	}
 	
-	static func identifer(for feed: Feed) -> String {
-		return "account_\(feed.account!.accountID)_feed_\(feed.feedID)"
+	static func identifer(for feed: WebFeed) -> String {
+		return "account_\(feed.account!.accountID)_feed_\(feed.webFeedID)"
 	}
 	
 	static func identifer(for article: Article) -> String {
-		return "account_\(article.accountID)_feed_\(article.feedID)_article_\(article.articleID)"
+		return "account_\(article.accountID)_feed_\(article.webFeedID)_article_\(article.articleID)"
 	}
 	
-	static func identifers(for feed: Feed) -> [String] {
+	static func identifers(for feed: WebFeed) -> [String] {
 		var ids = [String]()
 		ids.append(identifer(for: feed))
 		

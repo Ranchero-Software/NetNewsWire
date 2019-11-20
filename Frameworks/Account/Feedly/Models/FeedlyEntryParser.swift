@@ -84,7 +84,7 @@ struct FeedlyEntryParser {
 	
 	var parsedItemRepresentation: ParsedItem {
 		return ParsedItem(syncServiceID: id,
-						  uniqueID: id,
+						  uniqueID: id, // This value seems to get ignored or replaced.
 						  feedURL: feedUrl,
 						  url: nil,
 						  externalURL: externalUrl,

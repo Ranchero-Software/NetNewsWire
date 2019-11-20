@@ -13,7 +13,7 @@ protocol MasterTimelineCellLayout {
 	var height: CGFloat {get}
 	var unreadIndicatorRect: CGRect {get}
 	var starRect: CGRect {get}
-	var avatarImageRect: CGRect {get}
+	var iconImageRect: CGRect {get}
 	var titleRect: CGRect {get}
 	var summaryRect: CGRect {get}
 	var feedNameRect: CGRect {get}
@@ -42,9 +42,9 @@ extension MasterTimelineCellLayout {
 		return r
 	}
 	
-	static func rectForAvatar(_ point: CGPoint) -> CGRect {
+	static func rectForIconView(_ point: CGPoint, iconSize: IconSize) -> CGRect {
 		var r = CGRect.zero
-		r.size = MasterTimelineDefaultCellLayout.avatarSize
+		r.size = iconSize.size
 		r.origin.x = point.x
 		r.origin.y = point.y + 4
 		return r

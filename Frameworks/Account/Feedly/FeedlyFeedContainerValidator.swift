@@ -25,7 +25,7 @@ struct FeedlyFeedContainerValidator {
 			throw FeedlyAccountDelegateError.notLoggedIn
 		}
 		
-		let uncategorized = FeedlyCategoryResourceId.uncategorized(for: userId)
+		let uncategorized = FeedlyCategoryResourceId.Global.uncategorized(for: userId)
 		
 		guard collectionId != uncategorized.id else {
 			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder)

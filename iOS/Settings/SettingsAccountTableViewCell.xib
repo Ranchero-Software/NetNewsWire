@@ -22,19 +22,20 @@
                             <constraint firstAttribute="height" constant="22" id="mTY-cQ-1R1"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TRx-RV-za8">
-                        <rect key="frame" x="50" y="11.5" width="42" height="21"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TRx-RV-za8">
+                        <rect key="frame" x="50" y="14" width="42" height="16"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="TRx-RV-za8" firstAttribute="centerY" secondItem="FzD-t2-JGy" secondAttribute="centerY" id="95H-d4-DVW"/>
                     <constraint firstItem="TRx-RV-za8" firstAttribute="leading" secondItem="yiw-9t-gil" secondAttribute="trailing" constant="8" symbolic="YES" id="RUN-Ol-xSl"/>
+                    <constraint firstItem="TRx-RV-za8" firstAttribute="top" secondItem="FzD-t2-JGy" secondAttribute="top" constant="14" id="cze-hi-8Uh"/>
                     <constraint firstItem="yiw-9t-gil" firstAttribute="leading" secondItem="FzD-t2-JGy" secondAttribute="leading" constant="20" symbolic="YES" id="oU9-E3-lEt"/>
                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="TRx-RV-za8" secondAttribute="trailing" constant="8" id="sJ6-wr-JIw"/>
                     <constraint firstItem="yiw-9t-gil" firstAttribute="centerY" secondItem="FzD-t2-JGy" secondAttribute="centerY" id="tUD-tI-dgr"/>
+                    <constraint firstAttribute="bottom" secondItem="TRx-RV-za8" secondAttribute="bottom" constant="14" id="zls-MW-Ffp"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

@@ -28,6 +28,7 @@ class AddContainerViewController: UIViewController {
 	@IBOutlet weak var cancelButton: UIBarButtonItem!
 	@IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!
+	@IBOutlet weak var typeSelectorContainer: UIView!
 	@IBOutlet weak var typeSelectorSegmentedControl: UISegmentedControl!
 	@IBOutlet weak var containerView: UIView!
 	
@@ -43,6 +44,7 @@ class AddContainerViewController: UIViewController {
 		activityIndicatorView.color = UIColor.label
 		activityIndicatorView.isHidden = true
 
+		typeSelectorContainer.layer.cornerRadius = 10
 		typeSelectorSegmentedControl.selectedSegmentIndex = initialControllerType?.rawValue ?? 0
 		switch initialControllerType {
 		case .feed:
@@ -105,14 +107,14 @@ private extension AddContainerViewController {
 	
 	func switchToFeed() {
 		
-		guard !(currentViewController is AddFeedViewController) else {
+		guard !(currentViewController is AddWebFeedViewController) else {
 			return
 		}
 		
+		navigationItem.title = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
 		resetUI()
-		hideCurrentController()
 		
-		let addFeedController = UIStoryboard.add.instantiateController(ofType: AddFeedViewController.self)
+		let addFeedController = UIStoryboard.add.instantiateController(ofType: AddWebFeedViewController.self)
 		addFeedController.initialFeed = initialFeed
 		addFeedController.initialFeedName = initialFeedName
 
@@ -126,8 +128,8 @@ private extension AddContainerViewController {
 			return
 		}
 		
+		navigationItem.title = NSLocalizedString("Add Folder", comment: "Add Folder")
 		resetUI()
-		hideCurrentController()
 		displayContentController(UIStoryboard.add.instantiateController(ofType: AddFolderViewController.self))
 		
 	}
@@ -137,30 +139,32 @@ private extension AddContainerViewController {
 	}
 	
 	func displayContentController(_ controller: AddContainerViewControllerChild) {
-		
-		currentViewController = controller
 		controller.delegate = self
 		
-		addChild(controller)
-		
-		containerView.addSubview(controller.view)
-		controller.view.translatesAutoresizingMaskIntoConstraints = false
-		controller.view.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-		controller.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-		controller.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-		controller.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-		
-		controller.didMove(toParent: self)
-		
-	}
-	
-	func hideCurrentController() {
-		guard let currentViewController = currentViewController else {
-			return
+		if let currentViewController = currentViewController {
+			
+			let transition = CATransition()
+			transition.type = .push
+			transition.subtype = currentViewController is AddWebFeedViewController ? .fromRight : .fromLeft
+			containerView.layer.add(transition, forKey: "transition")
+
+			containerView.addChildAndPin(controller.view)
+			addChild(controller)
+			controller.didMove(toParent: self)
+
+			currentViewController.willMove(toParent: nil)
+			currentViewController.view.removeFromSuperview()
+			currentViewController.removeFromParent()
+
+		} else {
+			
+			containerView.addChildAndPin(controller.view)
+			addChild(controller)
+			controller.didMove(toParent: self)
+
 		}
-		currentViewController.willMove(toParent: nil)
-		currentViewController.view.removeFromSuperview()
-		currentViewController.removeFromParent()
+		
+		currentViewController = controller
 	}
-	
+		
 }

@@ -7,21 +7,30 @@
 //
 
 import UIKit
+import RSCore
 import Account
 
 protocol ShareFolderPickerControllerDelegate: class {
-	func shareFolderPickerDidSelect(_ container: Container, _ selectionName: String)
+	func shareFolderPickerDidSelect(_ container: Container)
 }
 
 class ShareFolderPickerController: UITableViewController {
 
-	var pickerData: FlattenedAccountFolderPickerData?
 	var selectedContainer: Container?
-	
+	var containers = [Container]()
+
 	weak var delegate: ShareFolderPickerControllerDelegate?
 	
 	override func viewDidLoad() {
-		tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+		for account in AccountManager.shared.sortedActiveAccounts {
+			containers.append(account)
+			if let sortedFolders = account.sortedFolders {
+				containers.append(contentsOf: sortedFolders)
+			}
+		}
+
+		tableView.register(UINib(nibName: "ShareFolderPickerAccountCell", bundle: Bundle.main), forCellReuseIdentifier: "AccountCell")
+		tableView.register(UINib(nibName: "ShareFolderPickerFolderCell", bundle: Bundle.main), forCellReuseIdentifier: "FolderCell")
 	}
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -29,23 +38,48 @@ class ShareFolderPickerController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return pickerData?.containerNames.count ?? 0
+		return containers.count
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-		cell.textLabel?.text = pickerData?.containerNames[indexPath.row] ?? ""
-		if pickerData?.containers[indexPath.row] === selectedContainer {
+		let container = containers[indexPath.row]
+		let cell: ShareFolderPickerCell = {
+			if container is Account {
+				return tableView.dequeueReusableCell(withIdentifier: "AccountCell", for: indexPath) as! ShareFolderPickerCell
+			} else {
+				return tableView.dequeueReusableCell(withIdentifier: "FolderCell", for: indexPath) as! ShareFolderPickerCell
+			}
+		}()
+		
+		if let account = container as? Account {
+			cell.icon.image = AppAssets.image(for: account.type)
+		} else {
+			cell.icon.image = AppAssets.masterFolderImage.image
+		}
+		
+		if let displayNameProvider = container as? DisplayNameProvider {
+			cell.label?.text = displayNameProvider.nameForDisplay
+		}
+		
+		if let compContainer = selectedContainer, container === compContainer {
 			cell.accessoryType = .checkmark
 		} else {
 			cell.accessoryType = .none
 		}
-		return cell
+		
+        return cell
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		guard let pickerData = pickerData else { return }
-		delegate?.shareFolderPickerDidSelect(pickerData.containers[indexPath.row], pickerData.containerNames[indexPath.row])
+		let container = containers[indexPath.row]
+		
+		if let account = container as? Account, account.behaviors.contains(.disallowFeedInRootFolder) {
+			tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
+		} else {
+			let cell = tableView.cellForRow(at: indexPath)
+			cell?.accessoryType = .checkmark
+			delegate?.shareFolderPickerDidSelect(container)
+		}
 	}
 	
 }

@@ -51,9 +51,9 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     }
  
     func deleteElement(_ element:ScriptingObject) {
-       if let scriptableFeed = element as? ScriptableFeed {
+       if let scriptableFeed = element as? ScriptableWebFeed {
             BatchUpdate.shared.perform {
-				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { result in }
+				folder.account?.removeWebFeed(scriptableFeed.webFeed, from: folder) { result in }
             }
         }
     }
@@ -95,10 +95,10 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
     
     // MARK: --- Scriptable elements ---
     
-    @objc(feeds)
-    var feeds:NSArray  {
-		let feeds = Array(folder.topLevelFeeds)
-        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
+    @objc(webFeeds)
+    var webFeeds:NSArray  {
+		let feeds = Array(folder.topLevelWebFeeds)
+        return feeds.map { ScriptableWebFeed($0, container:self) } as NSArray
     }
 
     // MARK: --- Scriptable properties ---

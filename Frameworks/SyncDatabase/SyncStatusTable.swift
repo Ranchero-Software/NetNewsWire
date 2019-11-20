@@ -56,28 +56,37 @@ final class SyncStatusTable: DatabaseTable {
 		
 	}
 	
-	func resetSelectedForProcessing(_ articleIDs: [String]) {
+	func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
 		self.queue.update { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 			let updateSQL = "update syncStatus set selected = false where articleID in \(placeholders)"
 			database.executeUpdate(updateSQL, withArgumentsIn: parameters)
+            if let handler = completionHandler {
+                DispatchQueue.main.async(execute: handler)
+            }
 		}
 	}
 	
-	func deleteSelectedForProcessing(_ articleIDs: [String]) {
+    func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
 		self.queue.update { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 			let deleteSQL = "delete from syncStatus where articleID in \(placeholders)"
 			database.executeUpdate(deleteSQL, withArgumentsIn: parameters)
+            if let handler = completionHandler {
+                DispatchQueue.main.async(execute: handler)
+            }
 		}
 	}
 	
-	func insertStatuses(_ statuses: [SyncStatus]) {
+	func insertStatuses(_ statuses: [SyncStatus], completionHandler: (() -> ())? = nil) {
 		self.queue.update { database in
 			let statusArray = statuses.map { $0.databaseDictionary() }
 			self.insertRows(statusArray, insertType: .orReplace, in: database)
+            if let handler = completionHandler {
+                DispatchQueue.main.async(execute: handler)
+            }
 		}
 	}
 	

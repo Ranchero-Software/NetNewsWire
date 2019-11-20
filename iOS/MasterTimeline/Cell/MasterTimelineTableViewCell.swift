@@ -17,7 +17,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 	private let dateView = MasterTimelineTableViewCell.singleLineUILabel()
 	private let feedNameView = MasterTimelineTableViewCell.singleLineUILabel()
 	
-	private lazy var avatarView = MasterTimelineAvatarView()
+	private lazy var iconView = IconView()
 	
 	private lazy var starView = {
 		return NonIntrinsicImageView(image: AppAssets.timelineStarImage)
@@ -34,33 +34,27 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		commonInit()
 	}
 	
-	override func applyThemeProperties() {
-		super.applyThemeProperties()
-
-		let highlightedTextColor = AppAssets.vibrantTextColor
-		
-		titleView.highlightedTextColor = highlightedTextColor
-		summaryView.highlightedTextColor = highlightedTextColor
-		dateView.highlightedTextColor = highlightedTextColor
-		feedNameView.highlightedTextColor = highlightedTextColor
-	}
-	
 	override var frame: CGRect {
 		didSet {
 			setNeedsLayout()
 		}
 	}
 	
-	override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-		super.setHighlighted(highlighted, animated: animated)
-		unreadIndicatorView.isSelected = isHighlighted || isSelected
+	override func updateVibrancy(animated: Bool) {
+		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
+		updateLabelVibrancy(summaryView, color: labelColor, animated: animated)
+		updateLabelVibrancy(dateView, color: secondaryLabelColor, animated: animated)
+		updateLabelVibrancy(feedNameView, color: secondaryLabelColor, animated: animated)
+		
+		UIView.animate(withDuration: duration(animated: animated)) {
+			if self.isHighlighted || self.isSelected {
+				self.unreadIndicatorView.backgroundColor = AppAssets.vibrantTextColor
+			} else {
+				self.unreadIndicatorView.backgroundColor = AppAssets.secondaryAccentColor
+			}
+		}
 	}
-
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		super.setSelected(selected, animated: animated)
-		unreadIndicatorView.isSelected = isHighlighted || isSelected
-	}
-
+	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		let layout = updatedLayout(width: size.width)
 		return CGSize(width: size.width, height: layout.height)
@@ -74,18 +68,17 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 
 		unreadIndicatorView.setFrameIfNotEqual(layout.unreadIndicatorRect)
 		starView.setFrameIfNotEqual(layout.starRect)
-		avatarView.setFrameIfNotEqual(layout.avatarImageRect)
+		iconView.setFrameIfNotEqual(layout.iconImageRect)
 		setFrame(for: titleView, rect: layout.titleRect)
 		setFrame(for: summaryView, rect: layout.summaryRect)
 		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
 		dateView.setFrameIfNotEqual(layout.dateRect)
 
 		separatorInset = layout.separatorInsets
-		
 	}
 	
-	func setAvatarImage(_ image: UIImage) {
-		avatarView.image = image
+	func setIconImage(_ image: IconImage) {
+		iconView.iconImage = image
 	}
 	
 }
@@ -135,9 +128,8 @@ private extension MasterTimelineTableViewCell {
 		addSubviewAtInit(unreadIndicatorView, hidden: true)
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
-		addSubviewAtInit(avatarView, hidden: true)
+		addSubviewAtInit(iconView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
-		
 	}
 	
 	func updatedLayout(width: CGFloat) -> MasterTimelineCellLayout {
@@ -150,19 +142,19 @@ private extension MasterTimelineTableViewCell {
 	
 	func updateTitleView() {
 		titleView.font = MasterTimelineDefaultCellLayout.titleFont
-		titleView.textColor = .label
+		titleView.textColor = labelColor
 		updateTextFieldText(titleView, cellData?.title)
 	}
 	
 	func updateSummaryView() {
 		summaryView.font = MasterTimelineDefaultCellLayout.summaryFont
-		summaryView.textColor = .label
+		summaryView.textColor = labelColor
 		updateTextFieldText(summaryView, cellData?.summary)
 	}
 	
 	func updateDateView() {
 		dateView.font = MasterTimelineDefaultCellLayout.dateFont
-		dateView.textColor = .secondaryLabel
+		dateView.textColor = secondaryLabelColor
 		updateTextFieldText(dateView, cellData.dateString)
 	}
 	
@@ -175,11 +167,10 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateFeedNameView() {
-		
 		if cellData.showFeedName {
 			showView(feedNameView)
 			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
-			feedNameView.textColor = .secondaryLabel
+			feedNameView.textColor = secondaryLabelColor
 			updateTextFieldText(feedNameView, cellData.feedName)
 		} else {
 			hideView(feedNameView)
@@ -195,30 +186,26 @@ private extension MasterTimelineTableViewCell {
 		showOrHideView(starView, !cellData.starred)
 	}
 	
-	func updateAvatar() {
-		
-		guard let image = cellData.avatar, cellData.showAvatar else {
-			makeAvatarEmpty()
+	func updateIconImage() {
+		guard let image = cellData.iconImage, cellData.showIcon else {
+			makeIconEmpty()
 			return
 		}
 
-		showView(avatarView)
-		avatarView.layer.cornerRadius = MasterTimelineDefaultCellLayout.avatarCornerRadius
-		avatarView.clipsToBounds = true
+		showView(iconView)
 		
-		if avatarView.image !== cellData.avatar {
-			avatarView.image = image
+		if iconView.iconImage !== cellData.iconImage {
+			iconView.iconImage = image
 			setNeedsLayout()
 		}
 	}
 	
-	func makeAvatarEmpty() {
-		
-		if avatarView.image != nil {
-			avatarView.image = nil
+	func makeIconEmpty() {
+		if iconView.iconImage != nil {
+			iconView.iconImage = nil
 			setNeedsLayout()
 		}
-		hideView(avatarView)
+		hideView(iconView)
 	}
 	
 	func hideView(_ view: UIView) {
@@ -244,7 +231,7 @@ private extension MasterTimelineTableViewCell {
 		updateFeedNameView()
 		updateUnreadIndicator()
 		updateStarView()
-		updateAvatar()
+		updateIconImage()
 	}
 	
 }

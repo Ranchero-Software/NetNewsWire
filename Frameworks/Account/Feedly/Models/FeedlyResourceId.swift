@@ -43,19 +43,32 @@ extension FeedlyFeedResourceId {
 struct FeedlyCategoryResourceId: FeedlyResourceId {
 	var id: String
 	
-	static func uncategorized(for userId: String) -> FeedlyCategoryResourceId {
-		// https://developer.feedly.com/cloud/#global-resource-ids
-		let id = "user/\(userId)/category/global.uncategorized"
-		return FeedlyCategoryResourceId(id: id)
+	enum Global {
+		
+		static func uncategorized(for userId: String) -> FeedlyCategoryResourceId {
+			// https://developer.feedly.com/cloud/#global-resource-ids
+			let id = "user/\(userId)/category/global.uncategorized"
+			return FeedlyCategoryResourceId(id: id)
+		}
+		
+		/// All articles from all the feeds the user subscribes to.
+		static func all(for userId: String) -> FeedlyCategoryResourceId {
+			// https://developer.feedly.com/cloud/#global-resource-ids
+			let id = "user/\(userId)/category/global.all"
+			return FeedlyCategoryResourceId(id: id)
+		}
 	}
 }
 
 struct FeedlyTagResourceId: FeedlyResourceId {
 	var id: String
 	
-	static func saved(for userId: String) -> FeedlyTagResourceId {
-		// https://developer.feedly.com/cloud/#global-resource-ids
-		let id = "user/\(userId)/tag/global.saved"
-		return FeedlyTagResourceId(id: id)
+	enum Global {
+		
+		static func saved(for userId: String) -> FeedlyTagResourceId {
+			// https://developer.feedly.com/cloud/#global-resource-ids
+			let id = "user/\(userId)/tag/global.saved"
+			return FeedlyTagResourceId(id: id)
+		}
 	}
 }

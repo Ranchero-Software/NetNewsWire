@@ -10,7 +10,7 @@ import RSCore
 import Account
 
 struct AppAssets {
-
+	
 	static var accountLocalPadImage: UIImage = {
 		return UIImage(named: "accountLocalPad")!
 	}()
@@ -21,6 +21,10 @@ struct AppAssets {
 
 	static var accountFeedbinImage: UIImage = {
 		return UIImage(named: "accountFeedbin")!
+	}()
+
+	static var accountFeedlyImage: UIImage = {
+		return UIImage(named: "accountFeedly")!
 	}()
 
 	static var accountFreshRSSImage: UIImage = {
@@ -49,8 +53,8 @@ struct AppAssets {
 		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
 	}()
 
-	static var avatarBackgroundColor: UIColor = {
-		return UIColor(named: "avatarBackgroundColor")!
+	static var iconBackgroundColor: UIColor = {
+		return UIColor(named: "iconBackgroundColor")!
 	}()
 
 	static var barBackgroundColor: UIColor = {
@@ -65,12 +69,8 @@ struct AppAssets {
 		return UIImage(systemName: "circle")!
 	}()
 	
-	static var chevronSmallImage: UIImage = {
-		return UIImage(named: "chevronSmall")!
-	}()
-	
-	static var chevronBaseImage: UIImage = {
-		return UIImage(named: "chevronBase")!
+	static var disclosureImage: UIImage = {
+		return UIImage(named: "disclosure")!
 	}()
 	
 	static var copyImage: UIImage = {
@@ -109,8 +109,8 @@ struct AppAssets {
 		return UIImage(systemName: "arrowtriangle.up.circle")!
 	}()
 	
-	static var masterFolderImage: UIImage = {
-		return UIImage(systemName: "folder.fill")!
+	static var masterFolderImage: IconImage = {
+		return IconImage(UIImage(systemName: "folder.fill")!)
 	}()
 	
 	static var moreImage: UIImage = {
@@ -129,12 +129,16 @@ struct AppAssets {
 		return UIImage(systemName: "safari")!
 	}()
 	
-	static var searchFeedImage: UIImage = {
-		return UIImage(systemName: "magnifyingglass")!
+	static var searchFeedImage: IconImage = {
+		return IconImage(UIImage(systemName: "magnifyingglass")!)
 	}()
 	
 	static var secondaryAccentColor: UIColor = {
 		return UIColor(named: "secondaryAccentColor")!
+	}()
+	
+	static var sectionHeaderColor: UIColor = {
+		return UIColor(named: "sectionHeaderColor")!
 	}()
 	
 	static var shareImage: UIImage = {
@@ -157,29 +161,37 @@ struct AppAssets {
 		return UIImage(systemName: "star")!
 	}()
 	
-	static var starredFeedImage: UIImage = {
-		return UIImage(systemName: "star.fill")!
+	static var starredFeedImage: IconImage = {
+		return IconImage(UIImage(systemName: "star.fill")!)
 	}()
 
+	static var tickMarkColor: UIColor = {
+		return UIColor(named: "tickMarkColor")!
+	}()
+	
 	static var timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
-	static var todayFeedImage: UIImage = {
-		return UIImage(systemName: "sun.max.fill")!
+	static var todayFeedImage: IconImage = {
+		return IconImage(UIImage(systemName: "sun.max.fill")!)
 	}()
 
 	static var trashImage: UIImage = {
 		return UIImage(systemName: "trash")!
 	}()
 	
-	static var unreadFeedImage: UIImage = {
-		return UIImage(systemName: "largecircle.fill.circle")!
+	static var unreadFeedImage: IconImage = {
+		return IconImage(UIImage(systemName: "largecircle.fill.circle")!)
 	}()
 	
 	static var vibrantTextColor: UIColor = {
 		return UIColor(named: "vibrantTextColor")!
+	}()
+
+	static var controlBackgroundColor: UIColor = {
+		return UIColor(named: "controlBackgroundColor")!
 	}()
 
 	static func image(for accountType: AccountType) -> UIImage? {
@@ -192,6 +204,8 @@ struct AppAssets {
 			}
 		case .feedbin:
 			return AppAssets.accountFeedbinImage
+		case .feedly:
+			return AppAssets.accountFeedlyImage
 		case .freshRSS:
 			return AppAssets.accountFreshRSSImage
 		default:

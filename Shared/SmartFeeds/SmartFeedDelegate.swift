@@ -11,10 +11,8 @@ import Account
 import Articles
 import RSCore
 
-protocol SmartFeedDelegate: DisplayNameProvider, ArticleFetcher, SmallIconProvider {
-
+protocol SmartFeedDelegate: FeedIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 	var fetchType: FetchType { get }
-
 	func fetchUnreadCount(for: Account, callback: @escaping (Int) -> Void)
 }
 

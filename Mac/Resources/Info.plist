@@ -45,7 +45,7 @@
 	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>com.ranchero.NetNewsWire.ReadArticle</string>
+		<string>ReadArticle</string>
 	</array>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>NetNewsWire communicates with other apps on your Mac when you choose to share an article.</string>
@@ -60,9 +60,9 @@
 	<key>OSAScriptingDefinition</key>
 	<string>NetNewsWire.sdef</string>
 	<key>SUFeedURL</key>
-	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
+	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
 	<key>FeedURLForTestBuilds</key>
-	<string>https://ranchero.com/downloads/netnewswire-beta.xml</string>
+	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
 	<key>UserAgent</key>
 	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
 </dict>

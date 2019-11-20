@@ -10,6 +10,10 @@ import Foundation
 import RSWeb
 import XCTest
 
+protocol TestTransportMockResponseProviding: class {
+	func mockResponseFileUrl(for components: URLComponents) -> URL?
+}
+
 final class TestTransport: Transport {
 	
 	enum TestTransportError: String, Error {
@@ -19,12 +23,7 @@ final class TestTransport: Transport {
 	var testFiles = [String: String]()
 	var testStatusCodes = [String: Int]()
 	
-	/// Allows tests to filter time sensitive state out to make matching against test data easier.
-	var blacklistedQueryItemNames = Set([
-		"newerThan",		// Feedly: Mock data has a fixed date.
-		"unreadOnly",		// Feedly: Mock data is read/unread by test expectation.
-		"count",			// Feedly: Mock data is limited by test expectation.
-	])
+	weak var mockResponseFileUrlProvider: TestTransportMockResponseProviding?
 	
 	private func httpResponse(for request: URLRequest, statusCode: Int = 200) -> HTTPURLResponse {
 		guard let url = request.url else {
@@ -33,43 +32,49 @@ final class TestTransport: Transport {
 		return HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: "HTTP/1.1", headerFields: nil)!
 	}
 	
+	func cancelAll() { }
+	
 	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		
-		guard let url = request.url, var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+		guard let url = request.url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
 			completion(.failure(TestTransportError.invalidState))
 			return
 		}
 		
-		components.queryItems = components
-			.queryItems?
-			.filter { !blacklistedQueryItemNames.contains($0.name) }
-		
-		guard let urlString = components.url?.absoluteString else {
-			completion(.failure(TestTransportError.invalidState))
-			return
-		}
-		
+		let urlString = url.absoluteString
 		let response = httpResponse(for: request, statusCode: testStatusCodes[urlString] ?? 200)
+		let testFileURL: URL
 		
-		var mockResponseFound = false
-		for (key, testFileName) in testFiles where urlString.contains(key) {
-			let testFileURL = Bundle(for: TestTransport.self).resourceURL!.appendingPathComponent(testFileName)
-			let data = try! Data(contentsOf: testFileURL)
-			DispatchQueue.global(qos: .background).async {
-				completion(.success((response, data)))
+		if let provider = mockResponseFileUrlProvider {
+			guard let providerUrl = provider.mockResponseFileUrl(for: components) else {
+				XCTFail("Test behaviour undefined. Mock provider failed to provide non-nil URL for \(components).")
+				return
 			}
-			mockResponseFound = true
-			break
-		}
-		
-		if !mockResponseFound {
-//			XCTFail("Missing mock response for: \(urlString)")
+			testFileURL = providerUrl
+			
+		} else if let testKeyAndFileName = testFiles.first(where: { urlString.contains($0.key) }) {
+			testFileURL = Bundle(for: TestTransport.self).resourceURL!.appendingPathComponent(testKeyAndFileName.value)
+			
+		} else {
+			// XCTFail("Missing mock response for: \(urlString)")
 			print("***\nWARNING: \(self) missing mock response for:\n\(urlString)\n***")
 			DispatchQueue.global(qos: .background).async {
 				completion(.success((response, nil)))
 			}
+			return
 		}
 		
+		do {
+			let data = try Data(contentsOf: testFileURL)
+			DispatchQueue.global(qos: .background).async {
+				completion(.success((response, data)))
+			}
+		} catch {
+			XCTFail("Unable to read file at \(testFileURL) because \(error).")
+			DispatchQueue.global(qos: .background).async {
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void) {

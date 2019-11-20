@@ -14,7 +14,7 @@ public struct Article: Hashable {
 
 	public let articleID: String // Unique database ID (possibly sync service ID)
 	public let accountID: String
-	public let feedID: String // Likely a URL, but not necessarily
+	public let webFeedID: String // Likely a URL, but not necessarily
 	public let uniqueID: String // Unique per feed (RSS guid, for example)
 	public let title: String?
 	public let contentHTML: String?
@@ -30,10 +30,10 @@ public struct Article: Hashable {
 	public let attachments: Set<Attachment>?
 	public let status: ArticleStatus
 
-	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, attachments: Set<Attachment>?, status: ArticleStatus) {
+	public init(accountID: String, articleID: String?, webFeedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, attachments: Set<Attachment>?, status: ArticleStatus) {
 		
 		self.accountID = accountID
-		self.feedID = feedID
+		self.webFeedID = webFeedID
 		self.uniqueID = uniqueID
 		self.title = title
 		self.contentHTML = contentHTML
@@ -53,12 +53,12 @@ public struct Article: Hashable {
 			self.articleID = articleID
 		}
 		else {
-			self.articleID = Article.calculatedArticleID(feedID: feedID, uniqueID: uniqueID)
+			self.articleID = Article.calculatedArticleID(webFeedID: webFeedID, uniqueID: uniqueID)
 		}
 	}
 
-	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
-		return databaseIDWithString("\(feedID) \(uniqueID)")
+	public static func calculatedArticleID(webFeedID: String, uniqueID: String) -> String {
+		return databaseIDWithString("\(webFeedID) \(uniqueID)")
 	}
 
 	// MARK: - Hashable
@@ -78,6 +78,11 @@ public extension Set where Element == Article {
 		let articles = self.filter { !$0.status.read }
 		return Set(articles)
 	}
+
+	func contains(accountID: String, articleID: String) -> Bool {
+		return contains(where: { $0.accountID == accountID && $0.articleID == articleID})
+	}
+	
 }
 
 public extension Array where Element == Article {
@@ -85,4 +90,5 @@ public extension Array where Element == Article {
 	func articleIDs() -> [String] {
 		return map { $0.articleID }
 	}
+	
 }

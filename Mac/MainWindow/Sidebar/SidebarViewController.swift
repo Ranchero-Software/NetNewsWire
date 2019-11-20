@@ -23,7 +23,7 @@ protocol SidebarDelegate: class {
 
 	weak var delegate: SidebarDelegate?
 
-	let treeControllerDelegate = FeedTreeControllerDelegate()
+	let treeControllerDelegate = WebFeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
 	}()
@@ -49,7 +49,7 @@ protocol SidebarDelegate: class {
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
-		outlineView.registerForDraggedTypes([FeedPasteboardWriter.feedUTIInternalType, FeedPasteboardWriter.feedUTIType, .URL, .string])
+		outlineView.registerForDraggedTypes([WebFeedPasteboardWriter.webFeedUTIInternalType, WebFeedPasteboardWriter.webFeedUTIType, .URL, .string])
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
@@ -59,7 +59,7 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidRequestSidebarSelection(_:)), name: .UserDidRequestSidebarSelection, object: nil)
 
@@ -110,7 +110,7 @@ protocol SidebarDelegate: class {
 	}
 	
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let feed = notification.userInfo?[UserInfoKey.feed] else {
+		guard let feed = notification.userInfo?[UserInfoKey.webFeed] else {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
@@ -120,12 +120,12 @@ protocol SidebarDelegate: class {
 		applyToAvailableCells(configureFavicon)
 	}
 
-	@objc func feedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
+	@objc func webFeedSettingDidChange(_ note: Notification) {
+		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
-		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
-			configureCellsForRepresentedObject(feed)
+		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
+			configureCellsForRepresentedObject(webFeed)
 		}
 	}
 
@@ -140,7 +140,7 @@ protocol SidebarDelegate: class {
 	}
 
 	@objc func userDidRequestSidebarSelection(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] else {
+		guard let feed = note.userInfo?[UserInfoKey.webFeed] else {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
@@ -370,11 +370,11 @@ private extension SidebarViewController {
 		return selectedNodes.first!
 	}
 
-	var singleSelectedFeed: Feed? {
+	var singleSelectedFeed: WebFeed? {
 		guard let node = singleSelectedNode else {
 			return nil
 		}
-		return node.representedObject as? Feed
+		return node.representedObject as? WebFeed
 	}
 
 	func rebuildTreeAndReloadDataIfNeeded() {
@@ -413,11 +413,11 @@ private extension SidebarViewController {
 		// For feeds, actually fetch from database.
 
 		for object in objects {
-			if let feed = object as? Feed, let account = feed.account {
+			if let feed = object as? WebFeed, let account = feed.account {
 				account.updateUnreadCounts(for: Set([feed]))
 			}
 			else if let folder = object as? Folder, let account = folder.account {
-				account.updateUnreadCounts(for: folder.flattenedFeeds())
+				account.updateUnreadCounts(for: folder.flattenedWebFeeds())
 			}
 		}
 	}
@@ -484,7 +484,7 @@ private extension SidebarViewController {
 	}
 
 	func findAccountNode(_ userInfo: [AnyHashable : Any]?) -> Node? {
-		guard let accountID = userInfo?[DeepLinkKey.accountID.rawValue] as? String else {
+		guard let accountID = userInfo?[ArticlePathKey.accountID] as? String else {
 			return nil
 		}
 		
@@ -492,7 +492,7 @@ private extension SidebarViewController {
 			return node
 		}
 
-		guard let accountName = userInfo?[DeepLinkKey.accountName.rawValue] as? String else {
+		guard let accountName = userInfo?[ArticlePathKey.accountName] as? String else {
 			return nil
 		}
 
@@ -504,10 +504,10 @@ private extension SidebarViewController {
 	}
 	
 	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
-		guard let feedID = userInfo?[DeepLinkKey.feedID.rawValue] as? String else {
+		guard let webFeedID = userInfo?[ArticlePathKey.webFeedID] as? String else {
 			return nil
 		}
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? WebFeed)?.webFeedID == webFeedID }) {
 			return node
 		}
 		return nil
@@ -526,14 +526,14 @@ private extension SidebarViewController {
 	}
 
 	func configureFavicon(_ cell: SidebarCell, _ node: Node) {
-		cell.image = imageFor(node)
+		cell.image = imageFor(node)?.image
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
 		cell.textField?.stringValue = nameFor(node)
 	}
 
-	func imageFor(_ node: Node) -> NSImage? {
+	func imageFor(_ node: Node) -> IconImage? {
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
 			return smallIconProvider.smallIcon
 		}
@@ -620,7 +620,7 @@ private extension Node {
 		if representedObject === object {
 			return true
 		}
-		if let feed1 = object as? Feed, let feed2 = representedObject as? Feed {
+		if let feed1 = object as? WebFeed, let feed2 = representedObject as? WebFeed {
 			return feed1 == feed2
 		}
 		return false

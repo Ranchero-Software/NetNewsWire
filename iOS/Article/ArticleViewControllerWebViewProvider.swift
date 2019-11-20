@@ -15,6 +15,8 @@ class ArticleViewControllerWebViewProvider: NSObject, WKNavigationDelegate {
 	
 	static let shared = ArticleViewControllerWebViewProvider()
 	
+	let articleIconSchemeHandler = ArticleIconSchemeHandler()
+	
 	private let minimumQueueDepth = 3
 	private let maximumQueueDepth = 6
 	private var queue: [WKWebView] = []
@@ -72,6 +74,7 @@ class ArticleViewControllerWebViewProvider: NSObject, WKNavigationDelegate {
 			configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 			configuration.allowsInlineMediaPlayback = true
 			configuration.mediaTypesRequiringUserActionForPlayback = .video
+			configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 			
 			let webView = WKWebView(frame: .zero, configuration: configuration)
 			enqueueWebView(webView)

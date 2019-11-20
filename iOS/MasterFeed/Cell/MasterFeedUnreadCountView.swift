@@ -11,17 +11,17 @@ import UIKit
 class MasterFeedUnreadCountView : UIView {
 	
 	var padding: UIEdgeInsets {
-		return UIEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
+		return UIEdgeInsets(top: 1.0, left: 9.0, bottom: 1.0, right: 9.0)
 	}
 	
 	let cornerRadius = 8.0
-	let bgColor = UIColor.darkGray
+	let bgColor = AppAssets.controlBackgroundColor
 	var textColor: UIColor {
 		return UIColor.white
 	}
 	
 	var textAttributes: [NSAttributedString.Key: AnyObject] {
-		let textFont = UIFont.preferredFont(forTextStyle: .caption1)
+		let textFont = UIFont.preferredFont(forTextStyle: .caption1).bold()
 		return [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.kern: NSNull()]
 	}
 	var textSizeCache = [Int: CGSize]()

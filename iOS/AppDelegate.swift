@@ -18,6 +18,9 @@ var appDelegate: AppDelegate!
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 	
+	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
+	
+	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	
 	var syncTimer: ArticleStatusSyncTimer?
@@ -31,13 +34,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
 	}
 	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "application")
+	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
-	var feedIconDownloader: FeedIconDownloader!
+	var webFeedIconDownloader: WebFeedIconDownloader!
 	
 	var unreadCount = 0 {
 		didSet {
@@ -49,7 +52,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	override init() {
-		
 		super.init()
 		appDelegate = self
 
@@ -57,17 +59,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		let _ = ArticleViewControllerWebViewProvider.shared
 		AccountManager.shared = AccountManager()
 		
-		registerBackgroundTasks()
-		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		
 	}
 	
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-		
 		AppDefaults.registerDefaults()
+
 		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			os_log("Is first run.", log: log, type: .info)
@@ -78,6 +76,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
 		
+		registerBackgroundTasks()
+		CacheCleaner.purgeIfNecessary()
 		initializeDownloaders()
 		initializeHomeScreenQuickActions()
 		
@@ -108,6 +108,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
+		AccountManager.shared.suspendAll()
 	}
 	
 	// MARK: Notifications
@@ -118,10 +119,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
 	}
 	
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		scheduleBackgroundFeedRefresh()
-	}
-	
 	@objc func accountRefreshDidFinish(_ note: Notification) {
 		AppDefaults.lastRefresh = Date()
 	}
@@ -130,28 +127,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func prepareAccountsForBackground() {
 		syncTimer?.invalidate()
-		
-		// Schedule background app refresh
 		scheduleBackgroundFeedRefresh()
-		
-		// Sync article status
-		let completeProcessing = { [unowned self] in
-			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-		}
-		
-		DispatchQueue.global(qos: .background).async {
-			self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
-				completeProcessing()
-				os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
-			}
-			
-			DispatchQueue.main.async {
-				AccountManager.shared.syncArticleStatusAll() {
-					completeProcessing()
-				}
-			}
-		}
+		waitForProgressToFinish()
+		syncArticleStatus()
 	}
 	
 	func prepareAccountsForForeground() {
@@ -199,24 +177,6 @@ private extension AppDelegate {
 		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 		let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
 		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-		let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
-
-		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
-		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
-			if let reachability = try? Reachability(hostname: "apple.com") {
-				if reachability.connection != .unavailable {
-					for tempItem in [faviconsFolderURL, imagesFolderURL, homePageToIconURL] {
-						do {
-							os_log(.info, log: self.log, "Removing cache file: %@", tempItem.absoluteString)
-							try FileManager.default.removeItem(at: tempItem)
-						} catch {
-							os_log(.error, log: self.log, "Could not delete cache file: %@", error.localizedDescription)
-						}
-					}
-					AppDefaults.lastImageCacheFlushDate = Date()
-				}
-			}
-		}
 		
 		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
 		let faviconsFolder = faviconsFolderURL.absoluteString
@@ -232,7 +192,7 @@ private extension AppDelegate {
 		
 		let tempFolder = tempDir.absoluteString
 		let tempFolderPath = tempFolder.suffix(from: tempFolder.index(tempFolder.startIndex, offsetBy: 7))
-		feedIconDownloader = FeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
+		webFeedIconDownloader = WebFeedIconDownloader(imageDownloader: imageDownloader, folder: String(tempFolderPath))
 	}
 	
 	private func initializeHomeScreenQuickActions() {
@@ -253,6 +213,68 @@ private extension AppDelegate {
 	
 }
 
+// MARK: Go To Background
+private extension AppDelegate {
+	
+	func waitForProgressToFinish() {
+		let completeProcessing = { [unowned self] in
+			AccountManager.shared.suspendAll()
+			UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
+			self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+		}
+		
+		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+			completeProcessing()
+			os_log("Accounts wait for progress terminated for running too long.", log: self.log, type: .info)
+		}
+		
+		DispatchQueue.main.async { [weak self] in
+			self?.waitToComplete() {
+				completeProcessing()
+			}
+		}
+	}
+	
+	func waitToComplete(completion: @escaping () -> Void) {
+		guard UIApplication.shared.applicationState != .active else {
+			os_log("App came back to forground, no longer waiting.", log: self.log, type: .info)
+			completion()
+			return
+		}
+		
+		if AccountManager.shared.refreshInProgress {
+			os_log("Waiting for refresh progress to finish...", log: self.log, type: .info)
+			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+				self?.waitToComplete() {
+					completion()
+				}
+			}
+		} else {
+			os_log("Refresh progress complete.", log: self.log, type: .info)
+			completion()
+		}
+	}
+	
+	func syncArticleStatus() {
+		let completeProcessing = { [unowned self] in
+			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
+			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+		}
+		
+		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+			completeProcessing()
+			os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
+		}
+		
+		DispatchQueue.main.async {
+			AccountManager.shared.syncArticleStatusAll() {
+				completeProcessing()
+			}
+		}
+	}
+	
+}
+
 // MARK: Background Tasks
 
 private extension AppDelegate {
@@ -268,11 +290,16 @@ private extension AppDelegate {
 	/// Schedules a background app refresh based on `AppDefaults.refreshInterval`.
 	func scheduleBackgroundFeedRefresh() {
 		let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
-		request.earliestBeginDate = Date(timeIntervalSinceNow: AppDefaults.refreshInterval.inSeconds())
-		do {
-			try BGTaskScheduler.shared.submit(request)
-		} catch {
-			os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
+		request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+
+		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
+		// task scheduler can hang indefinitely.
+		bgTaskDispatchQueue.async {
+			do {
+				try BGTaskScheduler.shared.submit(request)
+			} catch {
+				os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
+			}
 		}
 	}
 	

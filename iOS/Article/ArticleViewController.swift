@@ -33,9 +33,10 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var readBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
-	@IBOutlet private weak var browserBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var webViewContainer: UIView!
-
+	@IBOutlet private weak var showNavigationView: UIView!
+	@IBOutlet private weak var showToolbarView: UIView!
+	
 	private var articleExtractorButton: ArticleExtractorButton = {
 		let button = ArticleExtractorButton(type: .system)
 		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
@@ -85,6 +86,9 @@ class ArticleViewController: UIViewController {
 	
 	deinit {
 		if webView != nil  {
+			webView?.evaluateJavaScript("cancelImageLoad();")
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
+			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 			webView.removeFromSuperview()
 			ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
 			webView = nil
@@ -96,13 +100,18 @@ class ArticleViewController: UIViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		navigationItem.titleView = articleExtractorButton
+		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
 
+		showNavigationView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showBars(_:))))
+		showToolbarView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showBars(_:))))
+		
 		ArticleViewControllerWebViewProvider.shared.dequeueWebView() { webView in
 			
 			self.webView = webView
@@ -110,8 +119,6 @@ class ArticleViewController: UIViewController {
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
 
-			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
-			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
@@ -119,16 +126,14 @@ class ArticleViewController: UIViewController {
 			// to work around this bug: http://www.openradar.me/22855188
 			let url = Bundle.main.url(forResource: "page", withExtension: "html")!
 			webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-//			let request = URLRequest(url: url)
-//			webView.load(request)
 
 		}
 		
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		updateProgressIndicatorIfNeeded()
+		super.viewDidAppear(true)
+		coordinator.isArticleViewControllerPending = false
 	}
 	
 	func updateUI() {
@@ -140,7 +145,6 @@ class ArticleViewController: UIViewController {
 			nextArticleBarButtonItem.isEnabled = false
 			readBarButtonItem.isEnabled = false
 			starBarButtonItem.isEnabled = false
-			browserBarButtonItem.isEnabled = false
 			actionBarButtonItem.isEnabled = false
 			return
 		}
@@ -152,7 +156,6 @@ class ArticleViewController: UIViewController {
 		articleExtractorButton.isEnabled = true
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
-		browserBarButtonItem.isEnabled = true
 		actionBarButtonItem.isEnabled = true
 
 		let readImage = article.status.read ? AppAssets.circleOpenImage : AppAssets.circleClosedImage
@@ -176,9 +179,9 @@ class ArticleViewController: UIViewController {
 		case .loading:
 			rendering = ArticleRenderer.loadingHTML(style: style)
 		case .article(let article):
-			rendering = ArticleRenderer.articleHTML(article: article, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, style: style, useImageIcon: true)
 		case .extracted(let article, let extractedArticle):
-			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style, useImageIcon: true)
 		}
 		
 		let templateData = TemplateData(style: rendering.style, body: rendering.html)
@@ -190,6 +193,8 @@ class ArticleViewController: UIViewController {
 			render = "render(\(json));"
 		}
 
+		ArticleViewControllerWebViewProvider.shared.articleIconSchemeHandler.currentArticle = currentArticle
+		webView?.scrollView.setZoomScale(1.0, animated: false)
 		webView?.evaluateJavaScript(render)
 		
 	}
@@ -209,30 +214,32 @@ class ArticleViewController: UIViewController {
 		}
 	}
 
-	@objc func progressDidChange(_ note: Notification) {
-		updateProgressIndicatorIfNeeded()
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
 	}
-	
+
+	@objc func avatarDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+		reloadArticleImage()
+	}
+
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		reloadHTML()
 	}
 	
-	// Don't delete this even though it looks like it isn't doing anything.  This is to work
-	// around a bug (don't know if it is an Apple one or ours) that happens when the root
-	// split view controller is not collapsed.  When the app goes to the background and then
-	// comes back to the foreground the article extractor button will disappear.  The
-	// navigationItem will still have a reference to the articleExtractorButton, but if you
-	// check in the view debugger, the button isn't in the view hierarchy anymore.
-	// Setting the titleView to nil and then back to the articleExtractorButton hides that
-	// this happened.  If we move the articleExtractorButton to someplace other than the
-	// titleView, then this code can be safely deleted.
 	@objc func willEnterForeground(_ note: Notification) {
-		navigationItem.titleView = nil
-		navigationItem.titleView = articleExtractorButton
+		showBars()
 	}
 	
 	// MARK: Actions
-	
+
+	@objc func showBars(_ sender: Any) {
+		showBars()
+	}
+
 	@IBAction func toggleArticleExtractor(_ sender: Any) {
 		coordinator.toggleArticleExtractor()
 	}
@@ -350,6 +357,14 @@ extension ArticleViewController: WKNavigationDelegate {
 	
 }
 
+// MARK: InteractiveNavigationControllerTappable
+
+extension ArticleViewController: InteractiveNavigationControllerTappable {
+	func didTapNavigationBar() {
+		hideBars()
+	}
+}
+
 // MARK: WKUIDelegate
 
 extension ArticleViewController: WKUIDelegate {
@@ -427,10 +442,8 @@ private struct ImageClickMessage: Codable {
 
 private extension ArticleViewController {
 	
-	func updateProgressIndicatorIfNeeded() {
-		if !(UIDevice.current.userInterfaceIdiom == .pad) {
-			navigationController?.updateAccountRefreshProgressIndicator()
-		}
+	func reloadArticleImage() {
+		webView?.evaluateJavaScript("reloadArticleImage()")
 	}
 	
 	func imageWasClicked(body: String?) {
@@ -448,6 +461,22 @@ private extension ArticleViewController {
 			transition.originImage = image
 			
 			coordinator.showFullScreenImage(image: image, transitioningDelegate: self)
+		}
+	}
+	
+	func showBars() {
+		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			coordinator.showStatusBar()
+			navigationController?.setNavigationBarHidden(false, animated: true)
+			navigationController?.setToolbarHidden(false, animated: true)
+		}
+	}
+	
+	func hideBars() {
+		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			coordinator.hideStatusBar()
+			navigationController?.setNavigationBarHidden(true, animated: true)
+			navigationController?.setToolbarHidden(true, animated: true)
 		}
 	}
 	

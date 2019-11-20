@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -32,19 +31,11 @@
         <!--Feed-->
         <scene sceneID="vUh-Rc-fPi">
             <objects>
-                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="FeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="WebFeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ecA-UY-KEd">
                         <rect key="frame" x="0.0" y="0.0" width="256" height="332"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="H9X-OG-K0p">
-                                <rect key="frame" x="104" y="264" width="48" height="48"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="48" id="1Cy-0w-dBg"/>
-                                    <constraint firstAttribute="height" constant="48" id="edb-lw-Ict"/>
-                                </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSNetwork" id="MZ2-89-Bje"/>
-                            </imageView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IWu-80-XC5">
                                 <rect key="frame" x="20" y="200" width="216" height="56"/>
                                 <constraints>
@@ -114,13 +105,19 @@ Field</string>
                                     <action selector="isNotifyAboutNewArticlesChanged:" target="sfH-oR-GXm" id="Vx9-pQ-RnP"/>
                                 </connections>
                             </button>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="I6k-QR-VmV" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                                <rect key="frame" x="104" y="264" width="48" height="48"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="Faa-nE-lkA"/>
+                                    <constraint firstAttribute="width" constant="48" id="esD-dT-oWU"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="zm0-15-BFy" firstAttribute="top" secondItem="2WO-Iu-p5e" secondAttribute="bottom" constant="4" id="2fb-QO-XIm"/>
-                            <constraint firstItem="IWu-80-XC5" firstAttribute="top" secondItem="H9X-OG-K0p" secondAttribute="bottom" constant="8" symbolic="YES" id="4WB-WJ-3Z4"/>
                             <constraint firstItem="ZBX-E8-k9c" firstAttribute="top" secondItem="IWu-80-XC5" secondAttribute="bottom" constant="20" id="5L7-aZ-vdg"/>
                             <constraint firstItem="nH2-ab-KJ5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="8pK-lW-xQk"/>
-                            <constraint firstItem="H9X-OG-K0p" firstAttribute="centerX" secondItem="ecA-UY-KEd" secondAttribute="centerX" id="9CA-KA-HEg"/>
+                            <constraint firstItem="IWu-80-XC5" firstAttribute="top" secondItem="I6k-QR-VmV" secondAttribute="bottom" constant="8" symbolic="YES" id="Bea-j0-QMb"/>
                             <constraint firstItem="nH2-ab-KJ5" firstAttribute="top" secondItem="ZBX-E8-k9c" secondAttribute="bottom" constant="20" id="CpA-X9-EbP"/>
                             <constraint firstAttribute="bottom" secondItem="Vvk-KG-JlG" secondAttribute="bottom" constant="20" id="IxJ-5N-NhL"/>
                             <constraint firstAttribute="trailing" secondItem="ju6-Zo-8X4" secondAttribute="trailing" constant="20" symbolic="YES" id="Jzi-tP-TIw"/>
@@ -128,11 +125,12 @@ Field</string>
                             <constraint firstItem="ju6-Zo-8X4" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="NwI-2x-dAr"/>
                             <constraint firstItem="ju6-Zo-8X4" firstAttribute="top" secondItem="zm0-15-BFy" secondAttribute="bottom" constant="20" id="PFv-jF-JIZ"/>
                             <constraint firstItem="2WO-Iu-p5e" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="PeT-mm-2HJ"/>
+                            <constraint firstItem="I6k-QR-VmV" firstAttribute="top" secondItem="ecA-UY-KEd" secondAttribute="top" constant="20" symbolic="YES" id="URB-DN-7vz"/>
                             <constraint firstAttribute="trailing" secondItem="IWu-80-XC5" secondAttribute="trailing" constant="20" symbolic="YES" id="WW6-xR-Zue"/>
-                            <constraint firstItem="H9X-OG-K0p" firstAttribute="top" secondItem="ecA-UY-KEd" secondAttribute="top" constant="20" symbolic="YES" id="Z6q-PN-wOC"/>
                             <constraint firstItem="zm0-15-BFy" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="aho-BJ-kmB"/>
                             <constraint firstItem="ZBX-E8-k9c" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="cjR-0i-YNG"/>
                             <constraint firstAttribute="trailing" secondItem="2WO-Iu-p5e" secondAttribute="trailing" constant="20" symbolic="YES" id="dLU-a6-nfx"/>
+                            <constraint firstItem="I6k-QR-VmV" firstAttribute="centerX" secondItem="ecA-UY-KEd" secondAttribute="centerX" id="gFG-ZY-eNp"/>
                             <constraint firstAttribute="trailing" secondItem="zm0-15-BFy" secondAttribute="trailing" constant="20" symbolic="YES" id="js6-b2-FIR"/>
                             <constraint firstItem="IWu-80-XC5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="r6h-Z0-g7b"/>
                             <constraint firstItem="2WO-Iu-p5e" firstAttribute="top" secondItem="nH2-ab-KJ5" secondAttribute="bottom" constant="20" id="rRv-qO-dPa"/>
@@ -142,7 +140,7 @@ Field</string>
                     </view>
                     <connections>
                         <outlet property="homePageURLTextField" destination="zm0-15-BFy" id="0Jh-yy-mnF"/>
-                        <outlet property="imageView" destination="H9X-OG-K0p" id="Rm6-X6-csH"/>
+                        <outlet property="iconView" destination="I6k-QR-VmV" id="zrk-zx-zk7"/>
                         <outlet property="isNotifyAboutNewArticlesCheckBox" destination="ZBX-E8-k9c" id="FWc-Ds-LUy"/>
                         <outlet property="isReaderViewAlwaysOnCheckBox" destination="nH2-ab-KJ5" id="xPg-P5-3cr"/>
                         <outlet property="nameTextField" destination="IWu-80-XC5" id="zg4-5h-hoP"/>
@@ -151,7 +149,7 @@ Field</string>
                 </viewController>
                 <customObject id="1ho-ZO-Gkb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="67" y="69.5"/>
+            <point key="canvasLocation" x="67" y="69"/>
         </scene>
         <!--Folder-->
         <scene sceneID="8By-fa-WDQ">
@@ -294,7 +292,6 @@ Field</string>
     </scenes>
     <resources>
         <image name="NSFolder" width="32" height="32"/>
-        <image name="NSNetwork" width="32" height="32"/>
         <image name="NSSmartBadgeTemplate" width="14" height="14"/>
     </resources>
 </document>

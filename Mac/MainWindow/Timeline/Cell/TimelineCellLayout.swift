@@ -21,11 +21,11 @@ struct TimelineCellLayout {
 	let textRect: NSRect
 	let unreadIndicatorRect: NSRect
 	let starRect: NSRect
-	let avatarImageRect: NSRect
+	let iconImageRect: NSRect
 	let separatorRect: NSRect
 	let paddingBottom: CGFloat
 	
-	init(width: CGFloat, height: CGFloat, feedNameRect: NSRect, dateRect: NSRect, titleRect: NSRect, numberOfLinesForTitle: Int, summaryRect: NSRect, textRect: NSRect, unreadIndicatorRect: NSRect, starRect: NSRect, avatarImageRect: NSRect, separatorRect: NSRect, paddingBottom: CGFloat) {
+	init(width: CGFloat, height: CGFloat, feedNameRect: NSRect, dateRect: NSRect, titleRect: NSRect, numberOfLinesForTitle: Int, summaryRect: NSRect, textRect: NSRect, unreadIndicatorRect: NSRect, starRect: NSRect, iconImageRect: NSRect, separatorRect: NSRect, paddingBottom: CGFloat) {
 		
 		self.width = width
 		self.feedNameRect = feedNameRect
@@ -36,7 +36,7 @@ struct TimelineCellLayout {
 		self.textRect = textRect
 		self.unreadIndicatorRect = unreadIndicatorRect
 		self.starRect = starRect
-		self.avatarImageRect = avatarImageRect
+		self.iconImageRect = iconImageRect
 		self.separatorRect = separatorRect
 		self.paddingBottom = paddingBottom
 
@@ -44,16 +44,16 @@ struct TimelineCellLayout {
 			self.height = height
 		}
 		else {
-			self.height = [feedNameRect, dateRect, titleRect, summaryRect, textRect, unreadIndicatorRect, avatarImageRect].maxY() + paddingBottom
+			self.height = [feedNameRect, dateRect, titleRect, summaryRect, textRect, unreadIndicatorRect, iconImageRect].maxY() + paddingBottom
 		}
 	}
 
-	init(width: CGFloat, height: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance, hasAvatar: Bool) {
+	init(width: CGFloat, height: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance, hasIcon: Bool) {
 
 		// If height == 0.0, then height is calculated.
 
-		let showAvatar = cellData.showAvatar
-		var textBoxRect = TimelineCellLayout.rectForTextBox(appearance, cellData, showAvatar, width)
+		let showIcon = cellData.showIcon
+		var textBoxRect = TimelineCellLayout.rectForTextBox(appearance, cellData, showIcon, width)
 
 		let (titleRect, numberOfLinesForTitle) = TimelineCellLayout.rectForTitle(textBoxRect, appearance, cellData)
 		let summaryRect = numberOfLinesForTitle > 0 ? TimelineCellLayout.rectForSummary(textBoxRect, titleRect, numberOfLinesForTitle, appearance, cellData) : NSRect.zero
@@ -72,19 +72,19 @@ struct TimelineCellLayout {
 		let feedNameRect = TimelineCellLayout.rectForFeedName(textBoxRect, dateRect, appearance, cellData)
 
 		textBoxRect.size.height = ceil([titleRect, summaryRect, textRect, dateRect, feedNameRect].maxY() - textBoxRect.origin.y)
-		let avatarImageRect = TimelineCellLayout.rectForAvatar(cellData, appearance, showAvatar, textBoxRect, width, height)
+		let iconImageRect = TimelineCellLayout.rectForIcon(cellData, appearance, showIcon, textBoxRect, width, height)
 		let unreadIndicatorRect = TimelineCellLayout.rectForUnreadIndicator(appearance, textBoxRect)
 		let starRect = TimelineCellLayout.rectForStar(appearance, unreadIndicatorRect)
-		let separatorRect = TimelineCellLayout.rectForSeparator(cellData, appearance, showAvatar ? avatarImageRect : titleRect, width, height)
+		let separatorRect = TimelineCellLayout.rectForSeparator(cellData, appearance, showIcon ? iconImageRect : titleRect, width, height)
 
 		let paddingBottom = appearance.cellPadding.bottom
 
-		self.init(width: width, height: height, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, numberOfLinesForTitle: numberOfLinesForTitle, summaryRect: summaryRect, textRect: textRect, unreadIndicatorRect: unreadIndicatorRect, starRect: starRect, avatarImageRect: avatarImageRect, separatorRect: separatorRect, paddingBottom: paddingBottom)
+		self.init(width: width, height: height, feedNameRect: feedNameRect, dateRect: dateRect, titleRect: titleRect, numberOfLinesForTitle: numberOfLinesForTitle, summaryRect: summaryRect, textRect: textRect, unreadIndicatorRect: unreadIndicatorRect, starRect: starRect, iconImageRect: iconImageRect, separatorRect: separatorRect, paddingBottom: paddingBottom)
 	}
 
 	static func height(for width: CGFloat, cellData: TimelineCellData, appearance: TimelineCellAppearance) -> CGFloat {
 
-		let layout = TimelineCellLayout(width: width, height: 0.0, cellData: cellData, appearance: appearance, hasAvatar: true)
+		let layout = TimelineCellLayout(width: width, height: 0.0, cellData: cellData, appearance: appearance, hasIcon: true)
 		return layout.height
 	}
 }
@@ -93,12 +93,12 @@ struct TimelineCellLayout {
 
 private extension TimelineCellLayout {
 
-	static func rectForTextBox(_ appearance: TimelineCellAppearance, _ cellData: TimelineCellData, _ showAvatar: Bool, _ width: CGFloat) -> NSRect {
+	static func rectForTextBox(_ appearance: TimelineCellAppearance, _ cellData: TimelineCellData, _ showIcon: Bool, _ width: CGFloat) -> NSRect {
 
 		// Returned height is a placeholder. Not needed when this is calculated.
 
-		let avatarSpace = showAvatar ? appearance.avatarSize.width + appearance.avatarMarginRight : 0.0
-		let textBoxOriginX = appearance.cellPadding.left + appearance.unreadCircleDimension + appearance.unreadCircleMarginRight + avatarSpace
+		let iconSpace = showIcon ? appearance.iconSize.width + appearance.iconMarginRight : 0.0
+		let textBoxOriginX = appearance.cellPadding.left + appearance.unreadCircleDimension + appearance.unreadCircleMarginRight + iconSpace
 		let textBoxMaxX = floor(width - appearance.cellPadding.right)
 		let textBoxWidth = floor(textBoxMaxX - textBoxOriginX)
 		let textBoxRect = NSRect(x: textBoxOriginX, y: appearance.cellPadding.top, width: textBoxWidth, height: 1000000)
@@ -201,15 +201,15 @@ private extension TimelineCellLayout {
 		return r
 	}
 
-	static func rectForAvatar(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ showAvatar: Bool, _ textBoxRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
+	static func rectForIcon(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ showIcon: Bool, _ textBoxRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
 
 		var r = NSRect.zero
-		if !showAvatar {
+		if !showIcon {
 			return r
 		}
-		r.size = appearance.avatarSize
+		r.size = appearance.iconSize
 		r.origin.x = appearance.cellPadding.left + appearance.unreadCircleDimension + appearance.unreadCircleMarginRight
-		r.origin.y = textBoxRect.origin.y + appearance.avatarAdjustmentTop
+		r.origin.y = textBoxRect.origin.y + appearance.iconAdjustmentTop
 
 		return r
 	}

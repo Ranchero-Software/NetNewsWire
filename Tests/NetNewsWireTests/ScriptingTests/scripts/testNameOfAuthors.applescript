@@ -2,7 +2,7 @@
 --  and that the returned list is greater than 0
 try
 	tell application "NetNewsWire"
-		set namesResult to name of every author of every feed of every account
+		set namesResult to name of every author of every webFeed of every account
 	end tell
 	set test_result to ((count items of namesResult) > 0)
 on error message

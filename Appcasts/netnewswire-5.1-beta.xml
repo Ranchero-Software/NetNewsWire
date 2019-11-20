@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+<title>NetNewsWire Betas</title>
+<link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
+<description>Most recent NetNewsWire changes with links to updates.</description>
+<language>en</language>
+
+<item>
+	<title>NetNewsWire 5.1d2</title>
+	<description><![CDATA[
+<p>Testing Sparkle. Does it work?</p>
+ 		]]>
+ 	</description>
+	<pubDate>Tue, 29 Oct 2019 22:35:00 -0700</pubDate>
+	<enclosure url="https://ranchero.com/downloads/NetNewsWire5.1d2.zip" sparkle:version="3002" sparkle:shortVersionString="5.1d2" length="5391151" type="application/zip" />
+	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+</channel>
+</rss>

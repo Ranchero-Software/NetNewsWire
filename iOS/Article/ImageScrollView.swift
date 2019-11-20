@@ -246,7 +246,7 @@ open class ImageScrollView: UIScrollView {
 		}
 		
 		maximumZoomScale = maxScale
-		minimumZoomScale = minScale * 0.999 // the multiply factor to prevent user cannot scroll page while they use this control in UIPageViewController
+		minimumZoomScale = minScale // * 0.999 // the multiply factor to prevent user cannot scroll page while they use this control in UIPageViewController
 	}
 	
 	// MARK: - Gesture

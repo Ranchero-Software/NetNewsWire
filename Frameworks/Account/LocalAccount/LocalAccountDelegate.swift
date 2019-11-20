@@ -31,18 +31,22 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
+	func cancelAll(for account: Account) {
+		refresher.cancelAll()
+	}
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		refresher.refreshFeeds(account.flattenedFeeds()) {
+		refresher.refreshFeeds(account.flattenedWebFeeds()) {
 			completion(.success(()))
 		}
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		completion()
+	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		completion(.success(()))
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
-		completion()
+	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		completion(.success(()))
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -87,7 +91,7 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	}
 	
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
@@ -105,13 +109,13 @@ final class LocalAccountDelegate: AccountDelegate {
 						return
 				}
 				
-				if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
+				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
 					self.refreshProgress.completeTask()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
 				}
 				
-				let feed = account.createFeed(with: nil, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
+				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 				
 				InitialFeedDownloader.download(url) { parsedFeed in
 					self.refreshProgress.completeTask()
@@ -122,7 +126,7 @@ final class LocalAccountDelegate: AccountDelegate {
 					
 					feed.editedName = name
 					
-					container.addFeed(feed)
+					container.addWebFeed(feed)
 					completion(.success(feed))
 					
 				}
@@ -136,29 +140,29 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		feed.editedName = name
 		completion(.success(()))
 	}
 
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.removeFeed(feed)
+	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.removeWebFeed(feed)
 		completion(.success(()))
 	}
 	
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		from.removeFeed(feed)
-		to.addFeed(feed)
+	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		from.removeWebFeed(feed)
+		to.addWebFeed(feed)
 		completion(.success(()))
 	}
 	
-	func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addFeed(feed)
+	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.addWebFeed(feed)
 		completion(.success(()))
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addFeed(feed)
+	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		container.addWebFeed(feed)
 		completion(.success(()))
 	}
 	
@@ -190,6 +194,9 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
+	}
+	
+	func accountWillBeDeleted(_ account: Account) {
 	}
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {

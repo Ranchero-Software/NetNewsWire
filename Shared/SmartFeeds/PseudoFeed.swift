@@ -13,12 +13,11 @@ import Articles
 import Account
 import RSCore
 
-protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider, PasteboardWriterOwner {
+protocol PseudoFeed: class, Feed, SmallIconProvider, PasteboardWriterOwner {
 
 }
 
 private var smartFeedIcon: RSImage = {
-
 	return RSImage(named: NSImage.smartBadgeTemplateName)!
 }()
 
@@ -35,7 +34,7 @@ import Articles
 import Account
 import RSCore
 
-protocol PseudoFeed: class, DisplayNameProvider, UnreadCountProvider, SmallIconProvider {
+protocol PseudoFeed: class, Feed, SmallIconProvider {
 	
 }
 

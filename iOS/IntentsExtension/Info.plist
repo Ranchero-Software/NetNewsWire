@@ -34,7 +34,7 @@
 			<array/>
 			<key>IntentsSupported</key>
 			<array>
-				<string>AddFeedIntent</string>
+				<string>AddWebFeedIntent</string>
 			</array>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>

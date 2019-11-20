@@ -81,8 +81,7 @@ class SidebarCell : NSTableCellView {
 	}()
 
 	private let faviconImageView: NSImageView = {
-		let image = AppAssets.genericFeedImage
-		let imageView = image != nil ? NSImageView(image: image!) : NSImageView(frame: NSRect.zero)
+		let imageView = NSImageView(frame: NSRect.zero)
 		imageView.animates = false
 		imageView.imageAlignment = .alignCenter
 		imageView.imageScaling = .scaleProportionallyDown

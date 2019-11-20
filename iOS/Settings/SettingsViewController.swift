@@ -15,13 +15,8 @@ class SettingsViewController: UITableViewController {
 	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 	private weak var opmlAccount: Account?
 	
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
-	
-	@IBOutlet weak var refreshIntervalLabel: UILabel!
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
-	@IBOutlet weak var numberOfTextLinesLabel: UILabel!
-	@IBOutlet weak var numberOfTextLinesSteppper: UIStepper!
 	
 	weak var presentingParentController: UIViewController?
 	
@@ -33,6 +28,7 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsAccountTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsAccountTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -54,19 +50,17 @@ class SettingsViewController: UITableViewController {
 			groupByFeedSwitch.isOn = false
 		}
 
-		refreshIntervalLabel.text = AppDefaults.refreshInterval.description()
-		
-		let numberOfTextLines = AppDefaults.timelineNumberOfLines
-		numberOfTextLinesSteppper.value = Double(numberOfTextLines)
-		updateNumberOfTextLinesLabel(value: numberOfTextLines)
-		
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 20.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
 		buildLabel.text = "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
 		buildLabel.sizeToFit()
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
-		tableView.tableFooterView = buildLabel
+		
+		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
+		wrapperView.translatesAutoresizingMaskIntoConstraints = false
+		wrapperView.addSubview(buildLabel)
+		tableView.tableFooterView = wrapperView
 
 	}
 	
@@ -81,7 +75,7 @@ class SettingsViewController: UITableViewController {
 		switch section {
 		case 1:
 			return AccountManager.shared.accounts.count + 1
-		case 4:
+		case 2:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 				return defaultNumberOfRows - 1
@@ -100,7 +94,6 @@ class SettingsViewController: UITableViewController {
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
 				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-				cell.textLabel?.adjustsFontForContentSizeCategory = true
 				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Accounts")
 			} else {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsAccountTableViewCell
@@ -110,7 +103,7 @@ class SettingsViewController: UITableViewController {
 				acctCell.accountNameLabel?.text = account.nameForDisplay
 				cell = acctCell
 			}
-			
+		
 		default:
 			
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
@@ -135,23 +128,31 @@ class SettingsViewController: UITableViewController {
 				controller.account = sortedAccounts[indexPath.row]
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
-		case 3:
+		case 2:
 			switch indexPath.row {
 			case 0:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: RefreshIntervalViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
-			case 1:
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 				if let sourceView = tableView.cellForRow(at: indexPath) {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					importOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
-			case 2:
+			case 1:
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 				if let sourceView = tableView.cellForRow(at: indexPath) {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
+			case 2:
+				addFeed()
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			default:
+				break
+			}
+		case 3:
+			switch indexPath.row {
+			case 2:
+				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break
 			}
@@ -174,9 +175,6 @@ class SettingsViewController: UITableViewController {
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 5:
 				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 6:
-				addFeed()
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
 				break
@@ -236,12 +234,6 @@ class SettingsViewController: UITableViewController {
 		}
 	}
 	
-	@IBAction func stepNumberOfTextLines(_ sender: UIStepper) {
-		let numberOfLines = Int(sender.value)
-		AppDefaults.timelineNumberOfLines = numberOfLines
-		updateNumberOfTextLinesLabel(value: numberOfLines)
-	}
-	
 	// MARK: Notifications
 	
 	@objc func contentSizeCategoryDidChange() {
@@ -256,6 +248,10 @@ class SettingsViewController: UITableViewController {
 		tableView.reloadData()
 	}
 
+	@objc func userDefaultsDidChange() {
+		tableView.reloadData()
+	}
+	
 }
 
 // MARK: OPML Document Picker
@@ -264,7 +260,15 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		for url in urls {
-			opmlAccount?.importOPML(url) { result in}
+			opmlAccount?.importOPML(url) { result in
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					let title = NSLocalizedString("Import Failed", comment: "Import Failed")
+					self.presentError(title: title, message: error.localizedDescription)
+				}
+			}
 		}
 	}
 	
@@ -273,11 +277,6 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 // MARK: Private
 
 private extension SettingsViewController {
-	
-	func updateNumberOfTextLinesLabel(value: Int) {
-		let localizedText = NSLocalizedString("Number of Text Lines: %d", comment: "Number of Text Lines")
-		numberOfTextLinesLabel.text = NSString.localizedStringWithFormat(localizedText as NSString, value) as String
-	}
 	
 	func addFeed() {
 		self.dismiss(animated: true)

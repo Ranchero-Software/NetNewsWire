@@ -117,14 +117,16 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	func handle(_ response: UNNotificationResponse) {
 		let userInfo = response.notification.request.content.userInfo
-		sidebarViewController?.deepLinkRevealAndSelect(for: userInfo)
-		currentTimelineViewController?.goToDeepLink(for: userInfo)
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
+		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
 
 	func handle(_ activity: NSUserActivity) {
 		guard let userInfo = activity.userInfo else { return }
-		sidebarViewController?.deepLinkRevealAndSelect(for: userInfo)
-		currentTimelineViewController?.goToDeepLink(for: userInfo)
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
+		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
 
 	// MARK: - Notifications
@@ -170,7 +172,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			}
 		}
 		
-		if let feed = currentFeedOrFolder as? Feed, let noteObject = noteObject as? Feed {
+		if let feed = currentFeedOrFolder as? WebFeed, let noteObject = noteObject as? WebFeed {
 			if feed == noteObject {
 				updateWindowTitle()
 				return
@@ -479,8 +481,8 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		let detailState: DetailState
 		if let articles = articles {
 			if articles.count == 1 {
-				activityManager.reading(articles.first!)
-				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
+				activityManager.reading(feed: nil, article: articles.first)
+				if articles.first?.webFeed?.isArticleExtractorAlwaysOn ?? false {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {

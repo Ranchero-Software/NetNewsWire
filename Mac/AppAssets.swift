@@ -8,6 +8,7 @@
 
 import AppKit
 import RSCore
+import Account
 
 extension NSImage.Name {
 	static let star = NSImage.Name("star")
@@ -15,12 +16,6 @@ extension NSImage.Name {
 }
 
 struct AppAssets {
-
-	static var genericFeedImage: RSImage? = {
-		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
-		let image = RSImage(contentsOfFile: path)
-		return image
-	}()
 
 	static var timelineStar: RSImage! = {
 		return RSImage(named: .timelineStar)
@@ -54,6 +49,14 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorError")
 	}()
 	
+	static var articleExtractorInactiveDark: RSImage! = {
+		return RSImage(named: "articleExtractorInactiveDark")
+	}()
+	
+	static var articleExtractorInactiveLight: RSImage! = {
+		return RSImage(named: "articleExtractorInactiveLight")
+	}()
+	
 	static var articleExtractorProgress1: RSImage! = {
 		return RSImage(named: "articleExtractorProgress1")
 	}()
@@ -74,28 +77,63 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 
-	static var avatarLightBackgroundColor: NSColor = {
-		return NSColor(named: NSColor.Name("avatarLightBackgroundColor"))!
+	static var iconLightBackgroundColor: NSColor = {
+		return NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
 	}()
 
-	static var avatarDarkBackgroundColor: NSColor = {
-		return NSColor(named: NSColor.Name("avatarDarkBackgroundColor"))!
+	static var iconDarkBackgroundColor: NSColor = {
+		return NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
 	}()
 
-	static var searchFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	static var masterFolderImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.folderName)!)
 	}()
 
-	static var starredFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	static var searchFeedImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()
 
-	static var todayFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	static var starredFeedImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()
 
-	static var unreadFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	static var todayFeedImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()
 
+	static var unreadFeedImage: IconImage = {
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
+	}()
+
+	static var swipeMarkReadImage: RSImage = {
+		return RSImage(named: "swipeMarkRead")!
+	}()
+
+	static var swipeMarkUnreadImage: RSImage = {
+		return RSImage(named: "swipeMarkUnread")!
+	}()
+
+	static var swipeMarkStarredImage: RSImage = {
+		return RSImage(named: "swipeMarkStarred")!
+	}()
+
+	static var swipeMarkUnstarredImage: RSImage = {
+		return RSImage(named: "swipeMarkUnstarred")!
+	}()
+	
+	static func image(for accountType: AccountType) -> NSImage? {
+		switch accountType {
+		case .onMyMac:
+			return AppAssets.accountLocal
+		case .feedbin:
+			return AppAssets.accountFeedbin
+		case .feedly:
+			return AppAssets.accountFeedly
+		case .freshRSS:
+			return AppAssets.accountFreshRSS
+		default:
+			return nil
+		}
+	}
+	
 }

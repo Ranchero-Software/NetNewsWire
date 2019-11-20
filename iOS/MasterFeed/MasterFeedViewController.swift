@@ -14,8 +14,8 @@ import RSTree
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
-	@IBOutlet private weak var markAllAsReadButton: UIBarButtonItem!
-	@IBOutlet private weak var addNewItemButton: UIBarButtonItem!
+	private var refreshProgressView: RefreshProgressView?
+	private var addNewItemButton: UIBarButtonItem!
 	
 	private lazy var dataSource = makeDataSource()
 	var undoableCommands = [UndoableCommand]()
@@ -39,7 +39,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		navigationItem.rightBarButtonItem = editButtonItem
-		
+
+		// Set the bar button item so that it doesn't show on the timeline view
+		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+
 		// If you don't have an empty table header, UIKit tries to help out by putting one in for you
 		// that makes a gap between the first section header and the navigation bar
 		var frame = CGRect.zero
@@ -48,32 +51,29 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		tableView.register(MasterFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		tableView.dataSource = dataSource
-		
+		resetEstimatedRowHeight()
+		tableView.separatorStyle = .none
+
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .FeedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedMetadataDidChange(_:)), name: .FeedMetadataDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedMetadataDidChange(_:)), name: .WebFeedMetadataDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
-		updateUI()
+		configureToolbar()
 		becomeFirstResponder()
-		
+
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
-		navigationController?.title = NSLocalizedString("Feeds", comment: "Feeds")
-		applyChanges(animate: false)
+		updateUI()
 		super.viewWillAppear(animated)
-	}
-	
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(animated)
-		navigationController?.updateAccountRefreshProgressIndicator()
 	}
 
 	// MARK: Notifications
@@ -96,49 +96,64 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		var node: Node? = nil
-		if let coordinator = representedObject as? SceneCoordinator, let fetcher = coordinator.timelineFetcher {
+		if let coordinator = representedObject as? SceneCoordinator, let fetcher = coordinator.timelineFeed {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(fetcher as AnyObject)
 		} else {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		if let node = node, let indexPath = dataSource.indexPath(for: node), let unreadCountProvider = node.representedObject as? UnreadCountProvider {
-			if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
-				cell.unreadCount = unreadCountProvider.unreadCount
+		// Only do the reload of the node when absolutely necessary.  It can stop programatic scrolling from
+		// completing if called to soon after a selectRow where scrolling is necessary.  See discloseFeed.
+		if let node = node,
+			let indexPath = dataSource.indexPath(for: node),
+			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell,
+			let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+			
+			if cell.unreadCount != unreadCountProvider.unreadCount {
+				self.reloadNode(node)
 			}
+			
 		}
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		applyToAvailableCells(configureFavicon)
+		applyToAvailableCells(configureIcon)
 	}
 
-	@objc func feedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.FeedSettingUserInfoKey] as? String else {
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
-		if key == Feed.FeedSettingKey.homePageURL || key == Feed.FeedSettingKey.faviconURL {
-			configureCellsForRepresentedObject(feed)
+		applyToCellsForRepresentedObject(webFeed, configureIcon(_:_:))
+	}
+
+	@objc func webFeedSettingDidChange(_ note: Notification) {
+		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
+			return
+		}
+		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
+			configureCellsForRepresentedObject(webFeed)
 		}
 	}
 	
-	@objc func feedMetadataDidChange(_ note: Notification) {
+	@objc func webFeedMetadataDidChange(_ note: Notification) {
 		reloadAllVisibleCells()
 	}
 	
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
+		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
-		discloseFeed(feed)
-	}
-	
-	@objc func progressDidChange(_ note: Notification) {
-		navigationController?.updateAccountRefreshProgressIndicator()
+		discloseFeed(webFeed, animated: true)
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
-		applyChanges(animate: false)
+		resetEstimatedRowHeight()
+		applyChanges(animated: false)
+	}
+	
+	@objc func willEnterForeground(_ note: Notification) {
+		updateUI()
 	}
 	
 	// MARK: Table View
@@ -178,6 +193,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		headerView.tag = section
 		headerView.disclosureExpanded = sectionNode.isExpanded
+		
+		if section == tableView.numberOfSections - 1 {
+			headerView.isLastSection = true
+		} else {
+			headerView.isLastSection = false
+		}
 
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
@@ -219,13 +240,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		renameAction.backgroundColor = UIColor.systemOrange
 		actions.append(renameAction)
 		
-		if let feed = dataSource.itemIdentifier(for: indexPath)?.representedObject as? Feed {
+		if let webFeed = dataSource.itemIdentifier(for: indexPath)?.representedObject as? WebFeed {
 			let moreTitle = NSLocalizedString("More", comment: "More")
 			let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completionHandler) in
 				
 				if let self = self {
 				
-					let alert = UIAlertController(title: feed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
+					let alert = UIAlertController(title: webFeed.nameForDisplay, message: nil, preferredStyle: .actionSheet)
 					if let popoverController = alert.popoverPresentationController {
 						popoverController.sourceView = view
 						popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
@@ -270,7 +291,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		guard let node = dataSource.itemIdentifier(for: indexPath), !(node.representedObject is PseudoFeed) else {
 			return nil
 		}
-		if node.representedObject is Feed {
+		if node.representedObject is WebFeed {
 			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else {
 			return makeFolderContextMenu(indexPath: indexPath)
@@ -292,9 +313,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return coordinator.cappedIndexPath(proposedDestinationIndexPath)
 		}()
 		
-		guard let draggedNode = dataSource.itemIdentifier(for: sourceIndexPath), let destNode = dataSource.itemIdentifier(for: destIndexPath), let parentNode = destNode.parent else {
+		guard let draggedNode = dataSource.itemIdentifier(for: sourceIndexPath) else {
 			assertionFailure("This should never happen")
 			return sourceIndexPath
+		}
+		
+		// If there is no destination node, we are dragging onto an empty Account
+		guard let destNode = dataSource.itemIdentifier(for: destIndexPath), let parentNode = destNode.parent else {
+			return proposedDestinationIndexPath
 		}
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
@@ -344,19 +370,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
 	}
-
-	@IBAction func markAllAsRead(_ sender: Any) {
-		if coordinator.displayUndoAvailableTip {
-			let alertController = UndoAvailableAlertController.alert { [weak self] _ in
-				self?.coordinator.displayUndoAvailableTip = false
-				self?.coordinator.markAllAsRead()
-			}
-			
-			present(alertController, animated: true)
-		} else {
-			coordinator.markAllAsRead()
-		}		
-	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
 		coordinator.showAdd(.feed)
@@ -374,11 +387,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		if sectionNode.isExpanded {
 			headerView.disclosureExpanded = false
 			coordinator.collapse(sectionNode)
-			self.applyChanges(animate: true)
+			self.applyChanges(animated: true)
 		} else {
 			headerView.disclosureExpanded = true
 			coordinator.expand(sectionNode)
-			self.applyChanges(animate: true)
+			self.applyChanges(animated: true)
 		}
 		
 	}
@@ -419,7 +432,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func expandSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath, let node = dataSource.itemIdentifier(for: indexPath) {
 			coordinator.expand(node)
-			self.applyChanges(animate: true) {
+			self.applyChanges(animated: true) {
 				self.reloadAllVisibleCells()
 			}
 		}
@@ -428,7 +441,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func collapseSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath, let node = dataSource.itemIdentifier(for: indexPath) {
 			coordinator.collapse(node)
-			self.applyChanges(animate: true) {
+			self.applyChanges(animated: true) {
 				self.reloadAllVisibleCells()
 			}
 		}
@@ -436,14 +449,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func expandAll(_ sender: Any?) {
 		coordinator.expandAllSectionsAndFolders()
-		self.applyChanges(animate: true) {
+		self.applyChanges(animated: true) {
 			self.reloadAllVisibleCells()
 		}
 	}
 	
 	@objc func collapseAllExceptForGroupItems(_ sender: Any?) {
 		coordinator.collapseAllFolders()
-		self.applyChanges(animate: true) {
+		self.applyChanges(animated: true) {
 			self.reloadAllVisibleCells()
 		}
 	}
@@ -460,14 +473,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 
-	func updateFeedSelection() {
+	func updateFeedSelection(animated: Bool) {
 		if dataSource.snapshot().numberOfItems > 0 {
 			if let indexPath = coordinator.currentFeedIndexPath {
 				if tableView.indexPathForSelectedRow != indexPath {
-					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
+					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: animated)
 				}
 			} else {
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+				tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
 			}
 		}
 	}
@@ -478,7 +491,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		// We have to reload all the visible cells because if we got here by doing a table cell move,
 		// then the table itself is in a weird state.  This is because we do unusual things like allowing
 		// drops on a "folder" that should cause the dropped cell to disappear.
-		applyChanges(animate: true) { [weak self] in
+		applyChanges(animated: true) { [weak self] in
 			self?.reloadAllVisibleCells()
 		}
 	}
@@ -490,7 +503,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		if !sectionNode.isExpanded {
 			coordinator.expand(sectionNode)
-			self.applyChanges(animate: true) {
+			self.applyChanges(animated: true) {
 				completion?()
 			}
 		} else {
@@ -498,7 +511,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	func discloseFeed(_ feed: Feed, completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
 		
 		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
 			completion?()
@@ -506,8 +519,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if let indexPath = dataSource.indexPath(for: node) {
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
-			coordinator.selectFeed(indexPath)
+			coordinator.selectFeed(indexPath, animated: animated)
 			completion?()
 			return
 		}
@@ -519,11 +531,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		coordinator.expand(parent)
+		reloadNode(parent)
 
-		self.applyChanges(animate: true, adjustScroll: true) { [weak self] in
+		self.applyChanges(animated: true, adjustScroll: true) { [weak self] in
 			if let indexPath = self?.dataSource.indexPath(for: node) {
-				self?.coordinator.selectFeed(indexPath)
-				completion?()
+				self?.coordinator.selectFeed(indexPath, animated: animated) {
+					completion?()
+				}
 			}
 		}
 
@@ -573,9 +587,22 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 
 private extension MasterFeedViewController {
 	
+	func configureToolbar() {
+		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
+			return
+		}
+
+		self.refreshProgressView = refreshProgressView
+
+		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
+		let spaceItemButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+		addNewItemButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add(_:)))
+		setToolbarItems([refreshProgressItemButton, spaceItemButton, addNewItemButton], animated: false)
+	}
+	
 	func updateUI() {
-		markAllAsReadButton.isEnabled = coordinator.isAnyUnreadAvailable
-		addNewItemButton.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+		refreshProgressView?.updateRefreshLabel()
+		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 	
 	func reloadNode(_ node: Node) {
@@ -586,7 +613,7 @@ private extension MasterFeedViewController {
 		}
 	}
 	
-	func applyChanges(animate: Bool, adjustScroll: Bool = false, completion: (() -> Void)? = nil) {
+	func applyChanges(animated: Bool, adjustScroll: Bool = false, completion: (() -> Void)? = nil) {
         var snapshot = NSDiffableDataSourceSnapshot<Node, Node>()
 		let sectionNodes = coordinator.rootNode.childNodes
 		snapshot.appendSections(sectionNodes)
@@ -596,7 +623,7 @@ private extension MasterFeedViewController {
 			snapshot.appendItems(shadowTableNodes, toSection: sectionNode)
 		}
         
-		dataSource.apply(snapshot, animatingDifferences: animate) { [weak self] in
+		dataSource.apply(snapshot, animatingDifferences: animated) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: adjustScroll)
 			completion?()
 		}
@@ -609,32 +636,65 @@ private extension MasterFeedViewController {
 			return cell
 		})
     }
+
+	func resetEstimatedRowHeight() {
+		let titleLabel = NonIntrinsicLabel()
+		titleLabel.text = "But I must explain"
+		
+		let unreadCountView = MasterFeedUnreadCountView()
+		unreadCountView.unreadCount = 10
+		
+		let layout = MasterFeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false)
+		tableView.estimatedRowHeight = layout.height
+	}
 	
 	func configure(_ cell: MasterFeedTableViewCell, _ node: Node) {
 		
 		cell.delegate = self
-		if node.parent?.representedObject is Folder {
-			cell.indentationLevel = 1
-		} else {
+		if node.representedObject is Folder {
 			cell.indentationLevel = 0
+		} else {
+			cell.indentationLevel = 1
 		}
 		cell.setDisclosure(isExpanded: node.isExpanded, animated: false)
 		cell.isDisclosureAvailable = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
 		cell.unreadCount = coordinator.unreadCountFor(node)
-		configureFavicon(cell, node)
+		configureIcon(cell, node)
+		
+		guard let indexPath = dataSource.indexPath(for: node) else { return }
+		let rowsInSection = tableView.numberOfRows(inSection: indexPath.section)
+		if indexPath.row == rowsInSection - 1 {
+			cell.isSeparatorShown = false
+		} else {
+			cell.isSeparatorShown = true
+		}
 		
 	}
 	
-	func configureFavicon(_ cell: MasterFeedTableViewCell, _ node: Node) {
-		cell.faviconImage = imageFor(node)
+	func configureIcon(_ cell: MasterFeedTableViewCell, _ node: Node) {
+		cell.iconImage = imageFor(node)
 	}
 
-	func imageFor(_ node: Node) -> UIImage? {
+	func imageFor(_ node: Node) -> IconImage? {
+		if let webFeed = node.representedObject as? WebFeed {
+			
+			let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: webFeed)
+			if feedIconImage != nil {
+				return feedIconImage
+			}
+			
+			if let faviconImage = appDelegate.faviconDownloader.favicon(for: webFeed) {
+				return faviconImage
+			}
+			
+		}
+		
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
 			return smallIconProvider.smallIcon
 		}
+		
 		return nil
 	}
 	
@@ -686,7 +746,7 @@ private extension MasterFeedViewController {
 		if let folder = node.representedObject as? Folder {
 			return folder.account
 		}
-		if let feed = node.representedObject as? Feed {
+		if let feed = node.representedObject as? WebFeed {
 			return feed.account
 		}
 		return nil
@@ -697,7 +757,9 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.expand(node)
-		self.applyChanges(animate: true)
+		applyChanges(animated: true) { [weak self] in
+			self?.reloadNode(node)
+		}
 	}
 
 	func collapse(_ cell: MasterFeedTableViewCell) {
@@ -705,7 +767,9 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.collapse(node)
-		self.applyChanges(animate: true)
+		applyChanges(animated: true) { [weak self] in
+			self?.reloadNode(node)
+		}
 	}
 
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
@@ -783,7 +847,7 @@ private extension MasterFeedViewController {
 	
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let url = URL(string: feed.url) else {
 				return nil
 		}
@@ -797,7 +861,7 @@ private extension MasterFeedViewController {
 	
 	func copyFeedPageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let url = URL(string: feed.url) else {
 				return nil
 		}
@@ -812,7 +876,7 @@ private extension MasterFeedViewController {
 	
 	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
 				return nil
@@ -827,7 +891,7 @@ private extension MasterFeedViewController {
 	
 	func copyHomePageAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
-			let feed = node.representedObject as? Feed,
+			let feed = node.representedObject as? WebFeed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
 				return nil
@@ -859,7 +923,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func getInfoAction(indexPath: IndexPath) -> UIAction? {
-		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? Feed else {
+		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? WebFeed else {
 			return nil
 		}
 		
@@ -887,7 +951,7 @@ private extension MasterFeedViewController {
 	}
 
 	func getInfoAlertAction(indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? Feed else {
+		guard let node = dataSource.itemIdentifier(for: indexPath), let feed = node.representedObject as? WebFeed else {
 			return nil
 		}
 
@@ -919,7 +983,7 @@ private extension MasterFeedViewController {
 					return
 			}
 			
-			if let feed = node.representedObject as? Feed {
+			if let feed = node.representedObject as? WebFeed {
 				feed.rename(to: name) { result in
 					switch result {
 					case .success:
@@ -963,7 +1027,7 @@ private extension MasterFeedViewController {
 
 		if let folder = deleteNode.representedObject as? Folder {
 			ActivityManager.cleanUp(folder)
-		} else if let feed = deleteNode.representedObject as? Feed {
+		} else if let feed = deleteNode.representedObject as? WebFeed {
 			ActivityManager.cleanUp(feed)
 		}
 		
@@ -971,7 +1035,7 @@ private extension MasterFeedViewController {
 		deleteCommand.perform()
 		
 		if indexPath == coordinator.currentFeedIndexPath {
-			coordinator.selectFeed(nil)
+			coordinator.selectFeed(nil, animated: false)
 		}
 		
 	}

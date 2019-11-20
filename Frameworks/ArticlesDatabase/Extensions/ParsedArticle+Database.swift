@@ -17,6 +17,6 @@ extension ParsedItem {
 			return s
 		}
 		// Must be same calculation as for Article.
-		return Article.calculatedArticleID(feedID: feedURL, uniqueID: uniqueID)
+		return Article.calculatedArticleID(webFeedID: feedURL, uniqueID: uniqueID)
 	}
 }

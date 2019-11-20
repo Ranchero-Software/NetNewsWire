@@ -26,7 +26,6 @@ final class FeedbinAPICaller: NSObject {
 		static let subscriptions = "subscriptions"
 		static let tags = "tags"
 		static let taggings = "taggings"
-		static let icons = "icons"
 		static let unreadEntries = "unreadEntries"
 		static let starredEntries = "starredEntries"
 	}
@@ -40,6 +39,10 @@ final class FeedbinAPICaller: NSObject {
 	init(transport: Transport) {
 		super.init()
 		self.transport = transport
+	}
+	
+	func cancelAll() {
+		transport.cancelAll()
 	}
 	
 	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
@@ -145,9 +148,11 @@ final class FeedbinAPICaller: NSObject {
 	
 	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
 		
-		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
+		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
+		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
+
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinSubscription].self) { result in
 			
@@ -165,8 +170,10 @@ final class FeedbinAPICaller: NSObject {
 	
 	func createSubscription(url: String, completion: @escaping (Result<CreateSubscriptionResult, Error>) -> Void) {
 		
-		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions.json")
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
+		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
+
+		var request = URLRequest(url: callComponents.url!, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		
 		let payload: Data
@@ -268,7 +275,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 	
-	func createTagging(feedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
+	func createTagging(webFeedID: Int, name: String, completion: @escaping (Result<Int, Error>) -> Void) {
 		
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
@@ -276,7 +283,7 @@ final class FeedbinAPICaller: NSObject {
 
 		let payload: Data
 		do {
-			payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
+			payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: webFeedID, name: name))
 		} catch {
 			completion(.failure(error))
 			return
@@ -307,26 +314,6 @@ final class FeedbinAPICaller: NSObject {
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
-	}
-	
-	func retrieveIcons(completion: @escaping (Result<[FeedbinIcon]?, Error>) -> Void) {
-		
-		let callURL = feedbinBaseURL.appendingPathComponent("icons.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.icons]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
-		transport.send(request: request, resultType: [FeedbinIcon].self) { result in
-			
-			switch result {
-			case .success(let (response, icons)):
-				self.storeConditionalGet(key: ConditionalGetKeys.icons, headers: response.allHeaderFields)
-				completion(.success(icons))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
 	}
 	
 	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
@@ -390,7 +377,7 @@ final class FeedbinAPICaller: NSObject {
 		
 	}
 
-	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Int?), Error>) -> Void) {
+	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Date?, Int?), Error>) -> Void) {
 		
 		let since: Date = {
 			if let lastArticleFetch = accountMetadata?.lastArticleFetch {
@@ -416,14 +403,12 @@ final class FeedbinAPICaller: NSObject {
 			case .success(let (response, entries)):
 				
 				let dateInfo = HTTPDateInfo(urlResponse: response)
-				self.accountMetadata?.lastArticleFetch = dateInfo?.date
 
 				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
 				let lastPageNumber = self.extractPageNumber(link: pagingInfo.lastPage)
-				completion(.success((entries, pagingInfo.nextPage, lastPageNumber)))
+				completion(.success((entries, pagingInfo.nextPage, dateInfo?.date, lastPageNumber)))
 				
 			case .failure(let error):
-				self.accountMetadata?.lastArticleFetch = nil
 				completion(.failure(error))
 			}
 			
@@ -449,7 +434,6 @@ final class FeedbinAPICaller: NSObject {
 				completion(.success((entries, pagingInfo.nextPage)))
 
 			case .failure(let error):
-				self.accountMetadata?.lastArticleFetch = nil
 				completion(.failure(error))
 			}
 			

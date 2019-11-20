@@ -50,10 +50,12 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	var disclosureExpanded = false {
 		didSet {
-			updateDisclosureImage()
+			updateExpandedState()
 			updateUnreadCountView()
 		}
 	}
+	
+	var isLastSection = false
 	
 	private let titleView: UILabel = {
 		let label = NonIntrinsicLabel()
@@ -68,7 +70,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	private var disclosureView: UIImageView = {
 		let iView = NonIntrinsicImageView()
 		iView.tintColor = UIColor.tertiaryLabel
-		iView.image = AppAssets.chevronSmallImage
+		iView.image = AppAssets.disclosureImage
 		iView.contentMode = .center
 		return iView
 	}()
@@ -96,26 +98,14 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		
-		let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
-
-		// Since we can't reload Section Headers to reset the height after we get the
-		// unread count did change, we always assume a large unread count
-		//
-		// This means that sometimes on the second to largest font size will have extra
-		// space under the account name.  This is better than having it overflow into the
-		// cell below.
-		unreadCountView.unreadCount = 888
-		
-		let layout = MasterFeedTableViewCellLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: true)
-		
+		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
 		return CGSize(width: bounds.width, height: layout.height)
 		
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: true)
+		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
 
@@ -126,28 +116,41 @@ private extension MasterFeedTableViewSectionHeader {
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
-		updateDisclosureImage()
+		updateExpandedState()
 		addSubviewAtInit(disclosureView)
 		addBackgroundView()
 		addSubviewAtInit(topSeparatorView)
 		addSubviewAtInit(bottomSeparatorView)
 	}
 	
-	func updateDisclosureImage() {
-		UIView.animate(withDuration: 0.3) {
-			if self.disclosureExpanded {
-				self.disclosureView.transform = CGAffineTransform(rotationAngle: 1.570796)
-			} else {
-				self.disclosureView.transform = CGAffineTransform(rotationAngle: 0)
-			}
+	func updateExpandedState() {
+		if !isLastSection && self.disclosureExpanded {
+			self.bottomSeparatorView.isHidden = false
 		}
+		UIView.animate(
+			withDuration: 0.3,
+			animations: {
+				if self.disclosureExpanded {
+					self.disclosureView.transform = CGAffineTransform(rotationAngle: 1.570796)
+				} else {
+					self.disclosureView.transform = CGAffineTransform(rotationAngle: 0)
+				}
+			}, completion: { _ in
+				if !self.isLastSection && !self.disclosureExpanded {
+					self.bottomSeparatorView.isHidden = true
+				}
+			})
 	}
 	
 	func updateUnreadCountView() {
 		if !disclosureExpanded && unreadCount > 0 {
-			unreadCountView.isHidden = false
+			UIView.animate(withDuration: 0.3) {
+				self.unreadCountView.alpha = 1
+			}
 		} else {
-			self.unreadCountView.isHidden = true
+			UIView.animate(withDuration: 0.3) {
+				self.unreadCountView.alpha = 0
+			}
 		}
 	}
 
@@ -156,20 +159,20 @@ private extension MasterFeedTableViewSectionHeader {
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
-	func layoutWith(_ layout: MasterFeedTableViewCellLayout) {
+	func layoutWith(_ layout: MasterFeedTableViewSectionHeaderLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)
 		
-		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.5)
+		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.33)
 		topSeparatorView.setFrameIfNotEqual(top)
-		let bottom = CGRect(x: safeAreaInsets.left, y: frame.height - 0.5, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.5)
+		let bottom = CGRect(x: safeAreaInsets.left, y: frame.height - 0.33, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.33)
 		bottomSeparatorView.setFrameIfNotEqual(bottom)
 	}
 	
 	func addBackgroundView() {
 		self.backgroundView = UIView(frame: self.bounds)
-		self.backgroundView?.backgroundColor = UIColor.systemGroupedBackground
+		self.backgroundView?.backgroundColor = AppAssets.sectionHeaderColor
 	}
 	
 }

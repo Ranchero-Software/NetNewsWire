@@ -9,7 +9,7 @@
 import Foundation
 
 enum ArticleExtractorConfig {
-	static let clientId = "{MERCURYID}"
-	static let clientSecret = "{MERCURYSECRET}"
+	static let clientId = "netnewswire"
+	static let clientSecret = "PM9QZZwckFPLcJdUt4BADDqwHdKCAy8zxaAakjmpGdbjEjfcAdU3CTNdBf8Lw"
 	static let clientURL = "https://extract.feedbin.com/parser"
 }

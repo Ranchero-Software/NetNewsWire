@@ -13,6 +13,10 @@ import Account
 
 final class SmartFeed: PseudoFeed {
 
+	var feedID: FeedIdentifier? {
+		delegate.feedID
+	}
+
 	var nameForDisplay: String {
 		return delegate.nameForDisplay
 	}
@@ -25,7 +29,7 @@ final class SmartFeed: PseudoFeed {
 		}
 	}
 
-	var smallIcon: RSImage? {
+	var smallIcon: IconImage? {
 		return delegate.smallIcon
 	}
 	
@@ -51,8 +55,23 @@ final class SmartFeed: PseudoFeed {
 	}
 
 	@objc func fetchUnreadCounts() {
-		AccountManager.shared.activeAccounts.forEach { self.fetchUnreadCount(for: $0) }
+		let activeAccounts = AccountManager.shared.activeAccounts
+		
+		// Remove any accounts that are no longer active or have been deleted
+		let activeAccountIDs = activeAccounts.map { $0.accountID }
+		unreadCounts.keys.forEach { accountID in
+			if !activeAccountIDs.contains(accountID) {
+				unreadCounts.removeValue(forKey: accountID)
+			}
+		}
+		
+		if activeAccounts.isEmpty {
+			updateUnreadCount()
+		} else {
+			activeAccounts.forEach { self.fetchUnreadCount(for: $0) }
+		}
 	}
+	
 }
 
 extension SmartFeed: ArticleFetcher {

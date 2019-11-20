@@ -138,6 +138,8 @@ public final class AccountManager: UnreadCountProvider {
 			return
 		}
 		
+		account.prepareForDeletion()
+		
 		accountsDictionary.removeValue(forKey: account.accountID)
 		account.isDeleted = true
 		
@@ -158,6 +160,10 @@ public final class AccountManager: UnreadCountProvider {
 	
 	public func existingAccount(with accountID: String) -> Account? {
 		return accountsDictionary[accountID]
+	}
+	
+	public func suspendAll() {
+		accounts.forEach { $0.suspend() }
 	}
 	
 	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() ->Void)? = nil) {
@@ -187,7 +193,7 @@ public final class AccountManager: UnreadCountProvider {
 		
 		activeAccounts.forEach {
 			group.enter()
-			$0.syncArticleStatus() {
+			$0.syncArticleStatus() { _ in
 				group.leave()
 			}
 		}
@@ -203,7 +209,7 @@ public final class AccountManager: UnreadCountProvider {
 	
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
-			if account.hasAtLeastOneFeed() {
+			if account.hasAtLeastOneWebFeed() {
 				return true
 			}
 		}
@@ -213,7 +219,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		for account in activeAccounts {
-			if let _ = account.existingFeed(withURL: urlString) {
+			if let _ = account.existingWebFeed(withURL: urlString) {
 				return true
 			}
 		}

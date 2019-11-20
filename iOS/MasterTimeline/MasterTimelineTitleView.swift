@@ -10,15 +10,7 @@ import UIKit
 
 class MasterTimelineTitleView: UIView {
 
-	@IBOutlet weak var imageView: UIImageView! {
-		didSet {
-			if let imageView = imageView {
-				imageView.layer.cornerRadius = 2
-				imageView.clipsToBounds = true
-			}
-		}
-	}
-
+	@IBOutlet weak var iconView: IconView!
 	@IBOutlet weak var label: UILabel!
 	@IBOutlet weak var unreadCountView: MasterTimelineUnreadCountView!
 	
