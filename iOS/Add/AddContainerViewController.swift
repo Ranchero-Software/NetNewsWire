@@ -139,6 +139,8 @@ private extension AddContainerViewController {
 	}
 	
 	func displayContentController(_ controller: AddContainerViewControllerChild) {
+		controller.delegate = self
+		
 		if let currentViewController = currentViewController {
 			
 			let transition = CATransition()
@@ -163,8 +165,6 @@ private extension AddContainerViewController {
 		}
 		
 		currentViewController = controller
-		currentViewController?.delegate = self
-		
 	}
 		
 }
