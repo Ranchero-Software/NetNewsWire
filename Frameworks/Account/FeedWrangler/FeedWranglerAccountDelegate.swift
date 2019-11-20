@@ -57,7 +57,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
-		fatalError()
+		// noop
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -122,7 +122,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func cancelAll(for account: Account) {
-		fatalError()
+		caller.cancelAll()
 	}
 	
 	func refreshCredentials(for account: Account, completion: @escaping (() -> Void)) {
