@@ -69,6 +69,11 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		case .feedly:
 			assertionFailure("Implement feedly logout window controller")
 			break
+		case .feedWrangler:
+			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
+			accountsFeedWranglerWindowController.account = account
+			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
+			accountsWindowController = accountsFeedWranglerWindowController
 		default:
 			break
 		}
