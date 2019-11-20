@@ -71,6 +71,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		resetUI()
 		applyChanges(animated: false)
 		
+		// Set the bar button item so that it doesn't show on the article view
+		navigationItem.backBarButtonItem = UIBarButtonItem()
+		
 		// Restore the scroll position if we have one stored
 		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
 			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
