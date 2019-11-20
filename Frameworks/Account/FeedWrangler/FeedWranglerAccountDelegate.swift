@@ -56,6 +56,10 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		database = SyncDatabase(databaseFilePath: dataFolder.appending("/DB.sqlite3"))
 	}
 	
+	func accountWillBeDeleted(_ account: Account) {
+		fatalError()
+	}
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
@@ -63,9 +67,9 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 			self.refreshProgress.completeTask()
 			self.refreshSubscriptions(for: account) { _ in
 				self.refreshProgress.completeTask()
-				self.sendArticleStatus(for: account) {
+				self.sendArticleStatus(for: account) { _ in
 					self.refreshProgress.completeTask()
-					self.refreshArticleStatus(for: account) {
+					self.refreshArticleStatus(for: account) { _ in
 						self.refreshProgress.completeTask()
 						self.refreshArticles(for: account) {
 							self.refreshProgress.completeTask()
@@ -80,6 +84,10 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 				}
 			}
 		}
+	}
+	
+	func cancelAll(for account: Account) {
+		fatalError()
 	}
 	
 	func refreshCredentials(for account: Account, completion: @escaping (() -> Void)) {
@@ -157,7 +165,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Sending article status...")
 		
 		let syncStatuses = database.selectForProcessing()
@@ -174,11 +182,11 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done sending article statuses.")
-			completion()
+			completion(.success(()))
 		}
 	}
 	
-	func refreshArticleStatus(for account: Account, completion: @escaping (() -> Void)) {
+	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Refreshing article status...")
 		let group = DispatchGroup()
 		
@@ -211,7 +219,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			completion()
+			completion(.success(()))
 		}
 	}
 	
@@ -231,7 +239,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		fatalError()
 	}
 	
-	func createFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<Feed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(3)
 		
 		self.refreshCredentials(for: account) {
@@ -243,7 +251,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 				
 					switch result {
 					case .success:
-						let feed = account.createFeed(with: name, url: url, feedID: url, homePageURL: url)
+						let feed = account.createWebFeed(with: name, url: url, webFeedID: url, homePageURL: url)
 						completion(.success(feed))
 							
 					case .failure(let error):
@@ -254,12 +262,12 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		self.refreshCredentials(for: account) {
 			self.refreshProgress.completeTask()
-			self.caller.renameSubscription(feedID: feed.feedID, newName: name) { result in
+			self.caller.renameSubscription(feedID: feed.webFeedID, newName: name) { result in
 				self.refreshProgress.completeTask()
 				
 				switch result {
@@ -279,23 +287,23 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func addFeed(for account: Account, with: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addWebFeed(for account: Account, with: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		fatalError()
 	}
 	
-	func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		self.refreshCredentials(for: account) {
 			self.refreshProgress.completeTask()
-			self.caller.removeSubscription(feedID: feed.feedID) { result in
+			self.caller.removeSubscription(feedID: feed.webFeedID) { result in
 				self.refreshProgress.completeTask()
 				
 				switch result {
 				case .success:
 					DispatchQueue.main.async {
-						account.clearFeedMetadata(feed)
-						account.removeFeed(feed)
+						account.clearWebFeedMetadata(feed)
+						account.removeWebFeed(feed)
 						completion(.success(()))
 					}
 					
@@ -309,11 +317,11 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		fatalError()
 	}
 	
-	func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		fatalError()
 	}
 	
@@ -326,7 +334,9 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		database.insertStatuses(syncStatuses)
 		
 		if database.selectPendingCount() > 0 {
-			sendArticleStatus(for: account) {} // do it in the background
+			sendArticleStatus(for: account) { _ in
+					// do it in the background
+			}
 		}
 		
 		return account.update(articles, statusKey: statusKey, flag: flag)
@@ -354,14 +364,14 @@ private extension FeedWranglerAccountDelegate {
 		assert(Thread.isMainThread)
 		let feedIds = subscriptions.map { String($0.feedID) }
 		
-		let feedsToRemove = account.topLevelFeeds.filter { !feedIds.contains($0.feedID) }
+		let feedsToRemove = account.topLevelWebFeeds.filter { !feedIds.contains($0.webFeedID) }
 		account.removeFeeds(feedsToRemove)
 
 		var subscriptionsToAdd = Set<FeedWranglerSubscription>()
 		subscriptions.forEach { subscription in
 			let subscriptionId = String(subscription.feedID)
 			
-			if let feed = account.existingFeed(withFeedID: subscriptionId) {
+			if let feed = account.existingWebFeed(withWebFeedID: subscriptionId) {
 				feed.name = subscription.title
 				feed.editedName = nil
 				feed.homePageURL = subscription.siteURL
@@ -373,9 +383,9 @@ private extension FeedWranglerAccountDelegate {
 		
 		subscriptionsToAdd.forEach { subscription in
 			let feedId = String(subscription.feedID)
-			let feed = account.createFeed(with: subscription.title, url: subscription.feedURL, feedID: feedId, homePageURL: subscription.siteURL)
+			let feed = account.createWebFeed(with: subscription.title, url: subscription.feedURL, webFeedID: feedId, homePageURL: subscription.siteURL)
 			feed.subscriptionID = nil
-			account.addFeed(feed)
+			account.addWebFeed(feed)
 		}
 	}
 	
@@ -389,7 +399,7 @@ private extension FeedWranglerAccountDelegate {
 		}
 		
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { $0.feedURL }).mapValues { Set($0) }
-		account.update(feedIDsAndItems: feedIDsAndItems, defaultRead: true, completion: completion)
+		account.update(webFeedIDsAndItems: feedIDsAndItems, defaultRead: true, completion: completion)
 	}
 	
 	func syncArticleReadState(_ account: Account, _ unreadFeedItems: [FeedWranglerFeedItem]) {
