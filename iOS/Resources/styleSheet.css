@@ -219,8 +219,11 @@ img[src*="share-buttons"] {
 	display: none !important;
 }
 
-
-
+/* Site specific styles */
+.wp-smiley {
+	height: 1em;
+	max-height: 1em;
+}
 
 /* Newsfoot specific styles. Structural styles come first, theme styles second */
 .newsfoot-footnote-container {
