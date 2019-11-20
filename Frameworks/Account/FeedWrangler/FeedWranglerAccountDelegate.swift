@@ -65,22 +65,57 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		
 		self.refreshCredentials(for: account) {
 			self.refreshProgress.completeTask()
-			self.refreshSubscriptions(for: account) { _ in
+			self.refreshSubscriptions(for: account) { result in
 				self.refreshProgress.completeTask()
-				self.sendArticleStatus(for: account) { _ in
-					self.refreshProgress.completeTask()
-					self.refreshArticleStatus(for: account) { _ in
+				
+				switch result {
+				case .success:
+					self.sendArticleStatus(for: account) { result in
 						self.refreshProgress.completeTask()
-						self.refreshArticles(for: account) {
-							self.refreshProgress.completeTask()
-							self.refreshMissingArticles(for: account) {
+						
+						switch result {
+						case .success:
+							self.refreshArticleStatus(for: account) { result in
 								self.refreshProgress.completeTask()
-								DispatchQueue.main.async {
-									completion(.success(()))
+								
+								switch result {
+								case .success:
+									self.refreshArticles(for: account) { result in
+										self.refreshProgress.completeTask()
+										
+										switch result {
+										case .success:
+											self.refreshMissingArticles(for: account) { result in
+												self.refreshProgress.completeTask()
+												
+												switch result {
+												case .success:
+													DispatchQueue.main.async {
+														completion(.success(()))
+													}
+												
+												case .failure(let error):
+													completion(.failure(error))
+												}
+											}
+										
+										case .failure(let error):
+											completion(.failure(error))
+										}
+									}
+								
+								case .failure(let error):
+									completion(.failure(error))
 								}
 							}
+						
+						case .failure(let error):
+							completion(.failure(error))
 						}
 					}
+				
+				case .failure(let error):
+					completion(.failure(error))
 				}
 			}
 		}
@@ -113,7 +148,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func refreshArticles(for account: Account, page: Int = 0, completion: @escaping (() -> Void)) {
+	func refreshArticles(for account: Account, page: Int = 0, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Refreshing articles, page: %d...", page)
 		
 		caller.retrieveFeedItems(page: page) { result in
@@ -121,20 +156,19 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 			case .success(let items):
 				self.syncFeedItems(account, items) {
 					if items.count == 0 {
-						completion()
+						completion(.success(()))
 					} else {
 						self.refreshArticles(for: account, page: (page + 1), completion: completion)
 					}
 				}
 
-			case .failure:
-				// TODO Handle error
-				completion()
+			case .failure(let error):
+				completion(.failure(error))
 			}
 		}
 	}
 	
-	func refreshMissingArticles(for account: Account, completion: @escaping (() -> Void)) {
+	func refreshMissingArticles(for account: Account, completion: @escaping ((Result<Void, Error>)-> Void)) {
 		os_log(.debug, log: log, "Refreshing missing articles...")
 		let group = DispatchGroup()
 		
@@ -161,7 +195,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		group.notify(queue: DispatchQueue.main) {
 			self.refreshProgress.completeTask()
 			os_log(.debug, log: self.log, "Done refreshing missing articles.")
-			completion()
+			completion(.success(()))
 		}
 	}
 	
