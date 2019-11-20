@@ -29,11 +29,10 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		let callURL = FeedWranglerConfig.clientURL.appendingPathComponent("users/authorize")
-		let request = URLRequest(url: callURL, credentials: credentials)
+		let url = FeedWranglerConfig.clientURL.appendingPathComponent("users/authorize")
 		let username = self.credentials?.username ?? ""
-		
-		transport.send(request: request, resultType: FeedWranglerAuthorizationResult.self) { result in
+
+		standardSend(url: url, resultType: FeedWranglerAuthorizationResult.self) { result in
 			switch result {
 			case .success(let (_, results)):
 				if let accessToken = results?.accessToken {
@@ -50,9 +49,8 @@ final class FeedWranglerAPICaller: NSObject {
 	
 	func retrieveSubscriptions(completion: @escaping (Result<[FeedWranglerSubscription], Error>) -> Void) {
 		let url = FeedWranglerConfig.clientURL.appendingPathComponent("subscriptions/list")
-		let request = URLRequest(url: url, credentials: credentials)
 		
-		transport.send(request: request, resultType: FeedWranglerSubscriptionsRequest.self) { result in
+		standardSend(url: url, resultType: FeedWranglerSubscriptionsRequest.self) { result in
 			switch result {
 			case .success(let (_, results)):
 				completion(.success(results?.feeds ?? []))
@@ -64,17 +62,12 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	func addSubscription(url: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let callURL = FeedWranglerConfig
+		let url = FeedWranglerConfig
 			.clientURL
 			.appendingPathComponent("subscriptions/add_feed")
-			.appendingQueryItem(URLQueryItem(name: "feed_url", value: url)) else {
-				completion(.failure(TransportError.noURL))
-				return
-			}
+			.appendingQueryItem(URLQueryItem(name: "feed_url", value: url))
 		
-		let request = URLRequest(url: callURL, credentials: credentials)
-		
-		transport.send(request: request, resultType: FeedWranglerGenericResult.self) { result in
+		standardSend(url: url, resultType: FeedWranglerGenericResult.self) { result in
 			switch result {
 			case .success(let (_, results)):
 				if let error = results?.error {
@@ -82,7 +75,7 @@ final class FeedWranglerAPICaller: NSObject {
 				} else {
 					completion(.success(()))
 				}
-				
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -90,7 +83,6 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	func renameSubscription(feedID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
 		let url = FeedWranglerConfig.clientURL
 			.appendingPathComponent("subscriptions/rename_feed")
 			.appendingQueryItems([
@@ -98,14 +90,7 @@ final class FeedWranglerAPICaller: NSObject {
 				URLQueryItem(name: "feed_name", value: newName),
 			])
 		
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-		
-		let request = URLRequest(url: callURL, credentials: credentials)
-		
-		transport.send(request: request, resultType: FeedWranglerSubscriptionsRequest.self) { result in
+		standardSend(url: url, resultType: FeedWranglerSubscriptionsRequest.self) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -117,19 +102,11 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	func removeSubscription(feedID: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
 		let url = FeedWranglerConfig.clientURL
 			.appendingPathComponent("subscriptions/remove_feed")
 			.appendingQueryItem(URLQueryItem(name: "feed_id", value: feedID))
 		
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-		
-		let request = URLRequest(url: callURL, credentials: credentials)
-		
-		transport.send(request: request, resultType: FeedWranglerGenericResult.self) { result in
+		standardSend(url: url, resultType: FeedWranglerGenericResult.self) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -146,16 +123,8 @@ final class FeedWranglerAPICaller: NSObject {
 		let url = FeedWranglerConfig.clientURL
 			.appendingPathComponent("feed_items/get")
 			.appendingQueryItem(URLQueryItem(name: "feed_item_ids", value: IDs))
-		print("\(url!)")
 		
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-		
-		let request = URLRequest(url: callURL, credentials: credentials)
-		
-		transport.send(request: request, resultType: FeedWranglerFeedItemsRequest.self) { result in
+		standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
 			switch result {
 			case .success(let (_, results)):
 				completion(.success(results?.feedItems ?? []))
@@ -168,7 +137,6 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	func retrieveFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-		
 		// todo: handle initial sync better
 		let url = FeedWranglerConfig.clientURL
 			.appendingPathComponent("feed_items/list")
@@ -177,14 +145,7 @@ final class FeedWranglerAPICaller: NSObject {
 				URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
 			])
 		
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-		
-		let request = URLRequest(url: callURL, credentials: credentials)
-
-		transport.send(request: request, resultType: FeedWranglerFeedItemsRequest.self) { result in
+		standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
 			switch result {
 			case .success(let (_, results)):
 				completion(.success(results?.feedItems ?? []))
@@ -196,22 +157,14 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	func retrieveUnreadFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-		
 		let url = FeedWranglerConfig.clientURL
 			.appendingPathComponent("feed_items/list")
 			.appendingQueryItems([
 				URLQueryItem(name: "read", value: "false"),
 				URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
 			])
-			
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-			
-		let request = URLRequest(url: callURL, credentials: credentials)
-
-		transport.send(request: request, resultType: FeedWranglerFeedItemsRequest.self) { result in
+		
+		standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
 			switch result {
 			case .success(let (_, results)):
 				completion(.success(results?.feedItems ?? []))
@@ -239,22 +192,14 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	func retrieveStarredFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-		
 		let url = FeedWranglerConfig.clientURL
 			.appendingPathComponent("feed_items/list")
 			.appendingQueryItems([
 				URLQueryItem(name: "starred", value: "true"),
 				URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
 			])
-				
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-				
-		let request = URLRequest(url: callURL, credentials: credentials)
-
-		transport.send(request: request, resultType: FeedWranglerFeedItemsRequest.self) { result in
+		
+		standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
 			switch result {
 			case .success(let (_, results)):
 				completion(.success(results?.feedItems ?? []))
@@ -300,16 +245,19 @@ final class FeedWranglerAPICaller: NSObject {
 			.appendingPathComponent("feed_items/update")
 			.appendingQueryItems(queryItems)
 					
-		guard let callURL = url else {
+		standardSend(url: url, resultType: FeedWranglerGenericResult.self) { result in
 			completion()
+		}
+	}
+	
+	private func standardSend<R: Decodable>(url: URL?, resultType: R.Type, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+		guard let callURL = url else {
+			completion(.failure(TransportError.noURL))
 			return
 		}
-					
 		let request = URLRequest(url: callURL, credentials: credentials)
 		
-		transport.send(request: request, resultType: FeedWranglerGenericResult.self) { result in
-			completion()
-		}
+		transport.send(request: request, resultType: resultType, completion: completion)
 	}
 
 }
