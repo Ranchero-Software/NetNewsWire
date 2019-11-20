@@ -60,12 +60,17 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
 		self.refreshCredentials(for: account) {
+			self.refreshProgress.completeTask()
 			self.refreshSubscriptions(for: account) { _ in
+				self.refreshProgress.completeTask()
 				self.sendArticleStatus(for: account) {
+					self.refreshProgress.completeTask()
 					self.refreshArticleStatus(for: account) {
+						self.refreshProgress.completeTask()
 						self.refreshArticles(for: account) {
+							self.refreshProgress.completeTask()
 							self.refreshMissingArticles(for: account) {
-								self.refreshProgress.clear()
+								self.refreshProgress.completeTask()
 								DispatchQueue.main.async {
 									completion(.success(()))
 								}
