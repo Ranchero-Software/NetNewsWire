@@ -65,20 +65,28 @@ final class FeedWranglerAPICaller: NSObject {
 		}
 	}
 	
-	func addSubscription(url: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func addSubscription(url: String, completion: @escaping (Result<FeedWranglerSubscription, Error>) -> Void) {
 		let url = FeedWranglerConfig
 			.clientURL
-			.appendingPathComponent("subscriptions/add_feed")
-			.appendingQueryItem(URLQueryItem(name: "feed_url", value: url))
-		
-		standardSend(url: url, resultType: FeedWranglerGenericResult.self) { result in
+			.appendingPathComponent("subscriptions/add_feed_and_wait")
+			.appendingQueryItems([
+				URLQueryItem(name: "feed_url", value: url),
+				URLQueryItem(name: "choose_first", value: "true")
+			])
+
+		standardSend(url: url, resultType: FeedWranglerSubscriptionResult.self) { result in
 			switch result {
 			case .success(let (_, results)):
-				if let error = results?.error {
-					completion(.failure(FeedWranglerError.general(message: error)))
+				if let results = results {
+					if let error = results.error {
+						completion(.failure(FeedWranglerError.general(message: error)))
+					} else {
+						completion(.success(results.feed))
+					}
 				} else {
-					completion(.success(()))
+					completion(.failure(FeedWranglerError.general(message: "No feed found")))
 				}
+				
 
 			case .failure(let error):
 				completion(.failure(error))

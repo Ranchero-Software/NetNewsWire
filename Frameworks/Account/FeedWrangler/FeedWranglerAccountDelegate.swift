@@ -284,8 +284,8 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 					self.refreshProgress.completeTask()
 				
 					switch result {
-					case .success:
-						let feed = account.createWebFeed(with: name, url: url, webFeedID: url, homePageURL: url)
+					case .success(let subscription):
+						let feed = account.createWebFeed(with: subscription.title, url: subscription.feedURL, webFeedID: String(subscription.feedID), homePageURL: subscription.siteURL)
 						completion(.success(feed))
 							
 					case .failure(let error):
