@@ -13,6 +13,11 @@ import Articles
 import RSCore
 import RSTree
 
+enum PanelMode {
+	case unset
+	case three
+	case standard
+}
 enum SearchScope: Int {
 	case timeline = 0
 	case global = 1
@@ -25,6 +30,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController.undoManager
 	}
 	
+	private var panelMode: PanelMode = .unset
+	
 	private var activityManager = ActivityManager()
 	
 	private var isShowingExtractedArticle = false
@@ -34,10 +41,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var masterNavigationController: UINavigationController!
 	private var masterFeedViewController: MasterFeedViewController!
 	private var masterTimelineViewController: MasterTimelineViewController?
-	
-	private var subSplitViewController: UISplitViewController? {
-		return rootSplitViewController.children.last as? UISplitViewController
-	}
+	private var subSplitViewController: UISplitViewController?
 	
 	private var articleViewController: ArticleViewController? {
 		if let detail = masterNavigationController.viewControllers.last as? ArticleViewController {
@@ -54,6 +58,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		return nil
 	}
+	
+	private var wasRootSplitViewControllerCollapsed = false
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	private var fetchSerialNumber = 0
@@ -103,7 +109,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	var isThreePanelMode: Bool {
-		return subSplitViewController != nil
+		return panelMode == .three
 	}
 	
 	var rootNode: Node {
@@ -297,7 +303,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		let detailNavigationController = addNavControllerIfNecessary(articleViewController, showButton: true)
 		rootSplitViewController.showDetailViewController(detailNavigationController, sender: self)
 
-		configureThreePanelMode(for: size)
+		configurePanelMode(for: size)
 		
 		return rootSplitViewController
 	}
@@ -325,19 +331,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		handleReadArticle(userInfo)
 	}
 	
-	func configureThreePanelMode(for size: CGSize) {
-		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad && !rootSplitViewController.isCollapsed else {
+	func configurePanelMode(for size: CGSize) {
+		guard rootSplitViewController.traitCollection.userInterfaceIdiom == .pad else {
 			return
 		}
+		
 		if (size.width / size.height) > 1.2 {
-			if !isThreePanelMode {
-				transitionToThreePanelMode()
+			if panelMode == .unset || panelMode == .standard {
+				panelMode = .three
+				configureThreePanelMode()
 			}
 		} else {
-			if isThreePanelMode {
-				transitionFromThreePanelMode()
+			if panelMode == .unset || panelMode == .three {
+				panelMode = .standard
+				configureStandardPanelMode()
 			}
 		}
+		
+		wasRootSplitViewControllerCollapsed = rootSplitViewController.isCollapsed
 	}
 	
 	func selectFirstUnreadInAllUnread() {
@@ -608,9 +619,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		let currentArticleViewController: ArticleViewController
 		if articleViewController == nil {
-			currentArticleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-			currentArticleViewController.coordinator = self
-			installArticleController(currentArticleViewController, animated: animated)
+			currentArticleViewController = installArticleController(animated: animated)
 		} else {
 			currentArticleViewController = articleViewController!
 		}
@@ -963,15 +972,36 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 extension SceneCoordinator: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
+		guard !isThreePanelMode else {
+			return true
+		}
+		
+		if let articleViewController = (secondaryViewController as? UINavigationController)?.topViewController as? ArticleViewController {
+			masterNavigationController.pushViewController(articleViewController, animated: false)
+			return false
+		}
+		
 		return currentArticle == nil
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-		if currentArticle == nil {
+		guard !isThreePanelMode else {
+			return subSplitViewController
+		}
+		
+		guard currentArticle != nil else {
 			let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
 			articleViewController.coordinator = self
-			return articleViewController
+			let controller = addNavControllerIfNecessary(articleViewController, showButton: true)
+			return controller
 		}
+		
+		if let articleViewController = masterNavigationController.viewControllers.last as? ArticleViewController {
+			masterNavigationController.popViewController(animated: false)
+			let controller = addNavControllerIfNecessary(articleViewController, showButton: true)
+			return controller
+		}
+		
 		return nil
 	}
 	
@@ -986,7 +1016,6 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		if UIApplication.shared.applicationState == .background {
 			return
 		}
-		
 
 		// If we are showing the Feeds and only the feeds start clearing stuff
 		if viewController === masterFeedViewController && !isThreePanelMode && !isTimelineViewControllerPending {
@@ -1518,26 +1547,39 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	func installArticleController(_ articleController: UIViewController, animated: Bool) {
+	@discardableResult
+	func installArticleController(_ recycledArticleController: ArticleViewController? = nil, animated: Bool) -> ArticleViewController {
 
 		isArticleViewControllerPending = true
 
+		let articleController: ArticleViewController = {
+			if let controller = recycledArticleController {
+				return controller
+			} else {
+				let controller = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+				controller.coordinator = self
+				return controller
+			}
+		}()
+				
 		if let subSplit = subSplitViewController {
 			let controller = addNavControllerIfNecessary(articleController, showButton: false)
 			subSplit.showDetailViewController(controller, sender: self)
-		} else if rootSplitViewController.isCollapsed {
-			let controller = addNavControllerIfNecessary(articleController, showButton: false)
-			masterNavigationController.pushViewController(controller, animated: animated)
+		} else if rootSplitViewController.isCollapsed || wasRootSplitViewControllerCollapsed {
+			masterNavigationController.pushViewController(articleController, animated: animated)
 		} else {
 			let controller = addNavControllerIfNecessary(articleController, showButton: true)
 			rootSplitViewController.showDetailViewController(controller, sender: self)
   	 	}
 		
+		return articleController
+		
 	}
 	
 	func addNavControllerIfNecessary(_ controller: UIViewController, showButton: Bool) -> UIViewController {
 		
-		if rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
+		// You will sometimes get a compact horizontal size class while in three panel mode.  Dunno why it lies.
+		if rootSplitViewController.traitCollection.horizontalSizeClass == .compact && !isThreePanelMode {
 			
 			return controller
 			
@@ -1560,14 +1602,16 @@ private extension SceneCoordinator {
 		
 	}
 
-	func configureDoubleSplit() {
+	func installSubSplit() {
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
 		
-		let subSplit = UISplitViewController.template()
-		subSplit.preferredDisplayMode = .allVisible
-		subSplit.preferredPrimaryColumnWidthFraction = 0.4285
+		subSplitViewController = UISplitViewController()
+		subSplitViewController!.preferredDisplayMode = .allVisible
+		subSplitViewController!.viewControllers = [InteractiveNavigationController.template()]
+		subSplitViewController!.preferredPrimaryColumnWidthFraction = 0.4285
 		
-		rootSplitViewController.showDetailViewController(subSplit, sender: self)
+		rootSplitViewController.showDetailViewController(subSplitViewController!, sender: self)
+		rootSplitViewController.setOverrideTraitCollection(UITraitCollection(horizontalSizeClass: .regular), forChild: subSplitViewController!)
 	}
 	
 	func navControllerForTimeline() -> UINavigationController {
@@ -1578,67 +1622,50 @@ private extension SceneCoordinator {
 		}
 	}
 	
-	@discardableResult
-	func transitionToThreePanelMode() -> UIViewController {
-		
+	func configureThreePanelMode() {
+		let recycledArticleController = articleViewController
 		defer {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
 		
-		let controller: UIViewController = {
-			if let result = articleViewController {
-				return result
-			} else {
-				let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-				articleViewController.coordinator = self
-				return articleViewController
-			}
-		}()
 		
-		configureDoubleSplit()
+		if rootSplitViewController.viewControllers.last is InteractiveNavigationController {
+			_ = rootSplitViewController.viewControllers.popLast()
+		}
+
+		installSubSplit()
 		installTimelineControllerIfNecessary(animated: false)
 		masterTimelineViewController?.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 		masterTimelineViewController?.navigationItem.leftItemsSupplementBackButton = true
 
-		// Create the new sub split controller and add the timeline in the primary position
-		let masterTimelineNavController = subSplitViewController!.viewControllers.first as! UINavigationController
-		masterTimelineNavController.viewControllers = [masterTimelineViewController!]
-
-		// Put the detail or no selection controller in the secondary (or detail) position of the sub split
-		let navController = addNavControllerIfNecessary(controller, showButton: false)
-		subSplitViewController!.showDetailViewController(navController, sender: self)
+		installArticleController(recycledArticleController, animated: false)
 		
 		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
 		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: false)
-		
-		// We made sure this was there above when we called configureDoubleSplit
-		return subSplitViewController!
-
 	}
 	
-	func transitionFromThreePanelMode() {
-
+	func configureStandardPanelMode() {
+		let recycledArticleController = articleViewController
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
 		
-		if let subSplit = rootSplitViewController.viewControllers.last as? UISplitViewController {
+		// Set the is Pending flags early to prevent the navigation controller delegate from thinking that we
+		// swiping around in the user interface
+		isTimelineViewControllerPending = true
+		isArticleViewControllerPending = true
 
-			// Push a new timeline on to the master navigation controller.  For some reason recycling the timeline can freak
-			// the system out and throw it into an infinite loop.
-			if currentFeedIndexPath != nil {
-				masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
-				masterTimelineViewController!.coordinator = self
-				masterNavigationController.pushViewController(masterTimelineViewController!, animated: false)
-			}
-
-			// Pull the detail or no selection controller out of the sub split second position and move it to the root split controller
-			// secondary (detail) position.
-			if let detailNav = subSplit.viewControllers.last as? UINavigationController, let topController = detailNav.topViewController {
-				let newNav = addNavControllerIfNecessary(topController, showButton: true)
-				rootSplitViewController.showDetailViewController(newNav, sender: self)
-			}
-
+		masterNavigationController.viewControllers = [masterFeedViewController]
+		if rootSplitViewController.viewControllers.last is UISplitViewController {
+			subSplitViewController = nil
+			_ = rootSplitViewController.viewControllers.popLast()
 		}
-		
+			
+		if currentFeedIndexPath != nil {
+			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
+			masterTimelineViewController!.coordinator = self
+			masterNavigationController.pushViewController(masterTimelineViewController!, animated: false)
+		}
+
+		installArticleController(recycledArticleController, animated: false)
 	}
 	
 	// MARK: NSUserActivity
