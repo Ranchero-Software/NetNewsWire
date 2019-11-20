@@ -123,7 +123,33 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	
 	func refreshMissingArticles(for account: Account, completion: @escaping (() -> Void)) {
 		os_log(.debug, log: log, "Refreshing missing articles...")
-		completion()
+		let group = DispatchGroup()
+		
+		let fetchedArticleIDs = account.fetchArticleIDsForStatusesWithoutArticles()
+		let articleIDs = Array(fetchedArticleIDs)
+		let chunkedArticleIDs = articleIDs.chunked(into: 100)
+		
+		for chunk in chunkedArticleIDs {
+			group.enter()
+			self.caller.retrieveEntries(articleIDs: chunk) { result in
+				switch result {
+				case .success(let entries):
+					self.syncFeedItems(account, entries) {
+						group.leave()
+					}
+				
+				case .failure(let error):
+					os_log(.error, log: self.log, "Refresh missing articles failed: %@", error.localizedDescription)
+					group.leave()
+				}
+			}
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			self.refreshProgress.completeTask()
+			os_log(.debug, log: self.log, "Done refreshing missing articles.")
+			completion()
+		}
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping (() -> Void)) {

@@ -154,6 +154,32 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	// MARK: FeedItems
+	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
+		let IDs = articleIDs.joined(separator: ",")
+		let url = FeedWranglerConfig.clientURL
+			.appendingPathComponent("feed_items/get")
+			.appendingQueryItem(URLQueryItem(name: "feed_item_ids", value: IDs))
+		print("\(url!)")
+		
+		guard let callURL = url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+		
+		let request = URLRequest(url: callURL, credentials: credentials)
+		
+		transport.send(request: request, resultType: FeedWranglerFeedItemsRequest.self) { result in
+			switch result {
+			case .success(let (_, results)):
+				completion(.success(results?.feedItems ?? []))
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+		
+	}
+	
 	func retrieveFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
 		
 		// todo: handle initial sync better
