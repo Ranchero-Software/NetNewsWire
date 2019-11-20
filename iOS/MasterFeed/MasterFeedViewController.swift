@@ -39,7 +39,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		navigationItem.rightBarButtonItem = editButtonItem
-		
+
+		// Set the bar button item so that it doesn't show on the timeline view
+		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+
 		// If you don't have an empty table header, UIKit tries to help out by putting one in for you
 		// that makes a gap between the first section header and the navigation bar
 		var frame = CGRect.zero
