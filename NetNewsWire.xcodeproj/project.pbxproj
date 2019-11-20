@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3B29BC69233EA81F002A346D /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29BC5F233EA81F002A346D /* AccountsFeedWranglerWindowController.swift */; };
-		3B29BC6A233EA81F002A346D /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B29BC68233EA81F002A346D /* AccountsFeedWrangler.xib */; };
+		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
+		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
+		3B826DCD2385C89600FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
+		3B826DCE2385C89600FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
 		49F40DF82335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		49F40DF92335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		5108F6B62375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
@@ -1215,8 +1217,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3B29BC5F233EA81F002A346D /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
-		3B29BC68233EA81F002A346D /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
+		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
+		3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
 		5108F6B52375E612001ABC45 /* CacheCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheCleaner.swift; sourceTree = "<group>"; };
 		5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerViewController.swift; sourceTree = "<group>"; };
@@ -2520,13 +2522,8 @@
 				5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */,
 				5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */,
 				5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */,
-<<<<<<< HEAD
-				9EA33BB82318F8C10097B644 /* AccountsFeedlyWeb.xib */,
-				9EA33BB72318F8C10097B644 /* AccountsFeedlyWebWindowController.swift */,
-				3B29BC68233EA81F002A346D /* AccountsFeedWrangler.xib */,
-				3B29BC5F233EA81F002A346D /* AccountsFeedWranglerWindowController.swift */,
-=======
->>>>>>> master
+				3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */,
+				3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */,
 				55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */,
 				55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */,
 				5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */,
@@ -3398,6 +3395,7 @@
 				65ED4066235DEF6C0081F399 /* TimelineTableView.xib in Resources */,
 				65ED4067235DEF6C0081F399 /* page.html in Resources */,
 				65ED4068235DEF6C0081F399 /* MainWindow.storyboard in Resources */,
+				3B826DCD2385C89600FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				65ED4069235DEF6C0081F399 /* AccountsReaderAPI.xib in Resources */,
 				65ED406A235DEF6C0081F399 /* newsfoot.js in Resources */,
 				65ED406B235DEF6C0081F399 /* CrashReporterWindow.xib in Resources */,
@@ -3483,13 +3481,13 @@
 				8405DDA222168920008CE1BF /* TimelineTableView.xib in Resources */,
 				B528F81E23333C7E00E735DD /* page.html in Resources */,
 				8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */,
+				3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
 				84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */,
 				84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */,
 				84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */,
 				848363022262A3BD00DA1D35 /* AddFeedSheet.xib in Resources */,
-				3B29BC6A233EA81F002A346D /* AccountsFeedWrangler.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3835,6 +3833,7 @@
 				65ED3FFF235DEF6C0081F399 /* SidebarOutlineDataSource.swift in Sources */,
 				65ED4000235DEF6C0081F399 /* SidebarCellAppearance.swift in Sources */,
 				65ED4001235DEF6C0081F399 /* StarredFeedDelegate.swift in Sources */,
+				3B826DCE2385C89600FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */,
 				65ED4002235DEF6C0081F399 /* FaviconDownloader.swift in Sources */,
 				65ED4003235DEF6C0081F399 /* AdvancedPreferencesViewController.swift in Sources */,
 				65ED4004235DEF6C0081F399 /* SharingServicePickerDelegate.swift in Sources */,
@@ -4055,7 +4054,6 @@
 				847CD6CA232F4CBF00FAC46D /* IconView.swift in Sources */,
 				51FA73AA2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */,
 				84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */,
-				3B29BC69233EA81F002A346D /* AccountsFeedWranglerWindowController.swift in Sources */,
 				51EF0F7A22771B890050506E /* ColorHash.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
 				D5907D972004B7EB005947E5 /* Account+Scriptability.swift in Sources */,
@@ -4156,6 +4154,7 @@
 				84CAFCAF22BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */,
 				849A976E1ED9EBC8007D329B /* TimelineViewController.swift in Sources */,
+				3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */,
 				5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */,
 				5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */,
 				849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */,
