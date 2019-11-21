@@ -17,7 +17,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	private var refreshProgressView: RefreshProgressView?
 	private var addNewItemButton: UIBarButtonItem!
 	
-	private lazy var dataSource = makeDataSource()
+	lazy var dataSource = makeDataSource()
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 	
@@ -38,8 +38,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			navigationController?.navigationBar.prefersLargeTitles = true
 		}
 		
-		navigationItem.rightBarButtonItem = editButtonItem
-
 		// Set the bar button item so that it doesn't show on the timeline view
 		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 
@@ -51,6 +49,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		tableView.register(MasterFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		tableView.dataSource = dataSource
+		tableView.dragDelegate = self
+		tableView.dropDelegate = self
+		tableView.dragInteractionEnabled = true
 		resetEstimatedRowHeight()
 		tableView.separatorStyle = .none
 
@@ -630,7 +631,7 @@ private extension MasterFeedViewController {
 	}
 
     func makeDataSource() -> UITableViewDiffableDataSource<Node, Node> {
-		return MasterFeedDataSource(coordinator: coordinator, errorHandler: ErrorHandler.present(self), tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
+		return MasterFeedDataSource(coordinator: coordinator, tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
 			self?.configure(cell, node)
 			return cell
