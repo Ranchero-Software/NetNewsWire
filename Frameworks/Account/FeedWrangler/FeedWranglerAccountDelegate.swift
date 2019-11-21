@@ -274,23 +274,68 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(3)
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		self.refreshCredentials(for: account) {
 			self.refreshProgress.completeTask()
 			self.caller.addSubscription(url: url) { result in
 				self.refreshProgress.completeTask()
-				self.caller.addSubscription(url:  url) { result in
-					self.refreshProgress.completeTask()
 				
-					switch result {
-					case .success(let subscription):
-						let feed = account.createWebFeed(with: subscription.title, url: subscription.feedURL, webFeedID: String(subscription.feedID), homePageURL: subscription.siteURL)
-						completion(.success(feed))
-							
-					case .failure(let error):
+				switch result {
+				case .success(let subscription):
+					self.addFeedWranglerSubscription(account: account, subscription: subscription, name: name, container: container, completion: completion)
+						
+				case .failure(let error):
+					DispatchQueue.main.async {
 						completion(.failure(error))
 					}
+				}
+			}
+		}
+	}
+	
+	private func addFeedWranglerSubscription(account: Account, subscription sub: FeedWranglerSubscription, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		DispatchQueue.main.async {
+			let feed = account.createWebFeed(with: sub.title, url: sub.feedURL, webFeedID: String(sub.feedID), homePageURL: sub.siteURL)
+			
+			account.addWebFeed(feed, to: container) { result in
+				switch result {
+				case .success:
+					if let name = name {
+						account.renameWebFeed(feed, to: name) { result in
+							switch result {
+							case .success:
+								self.initialFeedDownload(account: account, feed: feed, completion: completion)
+								
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+					} else {
+						self.initialFeedDownload(account: account, feed: feed, completion: completion)
+					}
+					
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		}
+	}
+	
+	private func initialFeedDownload(account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		
+		self.caller.retrieveFeedItems(page: 0, feed: feed) { results in
+			switch results {
+			case .success(let entries):
+				self.syncFeedItems(account, entries) {
+					DispatchQueue.main.async {
+						completion(.success(feed))
+					}
+				}
+				
+			case .failure(let error):
+				DispatchQueue.main.async {
+					completion(.failure(error))
 				}
 			}
 		}
@@ -321,8 +366,12 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func addWebFeed(for account: Account, with: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		fatalError()
+	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		// just add to account, folders are not supported
+		DispatchQueue.main.async {
+			account.addFeedIfNotInAnyFolder(feed)
+			completion(.success(()))
+		}
 	}
 	
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {

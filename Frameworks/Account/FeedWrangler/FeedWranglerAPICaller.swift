@@ -148,15 +148,16 @@ final class FeedWranglerAPICaller: NSObject {
 		
 	}
 	
-	func retrieveFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-		// todo: handle initial sync better
+	func retrieveFeedItems(page: Int = 0, feed: WebFeed? = nil, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
+		let queryItems = [
+			URLQueryItem(name: "read", value: "false"),
+			URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
+			feed.map { URLQueryItem(name: "feed_id", value: $0.webFeedID) }
+		].compactMap { $0 }
 		let url = FeedWranglerConfig.clientURL
 			.appendingPathComponent("feed_items/list")
-			.appendingQueryItems([
-				URLQueryItem(name: "read", value: "false"),
-				URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
-			])
-		
+			.appendingQueryItems(queryItems)
+
 		standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
 			switch result {
 			case .success(let (_, results)):
