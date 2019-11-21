@@ -129,6 +129,8 @@ struct AppAssets {
 			return AppAssets.accountFeedbin
 		case .feedly:
 			return AppAssets.accountFeedly
+		case .feedWrangler:
+			return AppAssets.accountFeedWrangler
 		case .freshRSS:
 			return AppAssets.accountFreshRSS
 		default:
