@@ -353,13 +353,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			
 			sortedNodes.remove(at: index)
 			
-			let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
-			let adjustedIndex = index - movementAdjustment
-			if adjustedIndex >= sortedNodes.count {
+			if index >= sortedNodes.count {
 				let lastSortedIndexPath = dataSource.indexPath(for: sortedNodes[sortedNodes.count - 1])!
 				return IndexPath(row: lastSortedIndexPath.row + 1, section: lastSortedIndexPath.section)
 			} else {
-				return dataSource.indexPath(for: sortedNodes[adjustedIndex])!
+				return dataSource.indexPath(for: sortedNodes[index])!
 			}
 			
 		}

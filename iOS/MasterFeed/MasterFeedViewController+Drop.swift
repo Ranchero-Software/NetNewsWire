@@ -18,45 +18,67 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	}
 	
 	func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-		if tableView.hasActiveDrag {
-			if let destIndexPath = destinationIndexPath, let destNode = dataSource.itemIdentifier(for: destIndexPath) {
-				if destNode.representedObject is Folder {
-					return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
-				} else {
-					return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-				}
-			}
+		guard let destIndexPath = destinationIndexPath,
+			destIndexPath.section > 0,
+			tableView.hasActiveDrag,
+			let destNode = dataSource.itemIdentifier(for: destIndexPath),
+			let destCell = tableView.cellForRow(at: destIndexPath) else {
+				return UITableViewDropProposal(operation: .forbidden)
 		}
-		return UITableViewDropProposal(operation: .forbidden)
+		
+		if destNode.representedObject is Folder && session.location(in: destCell).y >= 0 {
+			return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+		} else {
+			return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+		}
+
 	}
 	
 	func tableView(_ tableView: UITableView, performDropWith dropCoordinator: UITableViewDropCoordinator) {
 		guard let dragItem = dropCoordinator.items.first?.dragItem,
 			let sourceNode = dragItem.localObject as? Node,
-			let sourceIndexPath = dataSource.indexPath(for: sourceNode),
 			let webFeed = sourceNode.representedObject as? WebFeed,
-			let destinationIndexPath = dropCoordinator.destinationIndexPath else {
+			let destIndexPath = dropCoordinator.destinationIndexPath else {
 				return
 		}
 		
-		// Based on the drop we have to determine a node to start looking for a parent container.
-		let destNode: Node = {
-			if destinationIndexPath.row == 0 {
-				return coordinator.rootNode.childAtIndex(destinationIndexPath.section)!
-			} else {
-				let movementAdjustment = sourceIndexPath > destinationIndexPath ? 1 : 0
-				let adjustedDestIndexPath = IndexPath(row: destinationIndexPath.row - movementAdjustment, section: destinationIndexPath.section)
-				return dataSource.itemIdentifier(for: adjustedDestIndexPath)!
+		let isFolderDrop: Bool = {
+			if let propDestNode = dataSource.itemIdentifier(for: destIndexPath), let propCell = tableView.cellForRow(at: destIndexPath) {
+				return propDestNode.representedObject is Folder && dropCoordinator.session.location(in: propCell).y >= 0
 			}
+			return false
+		}()
+		
+		// Based on the drop we have to determine a node to start looking for a parent container.
+		let destNode: Node? = {
+			
+			if destIndexPath.row == 0 {
+				
+				return coordinator.rootNode.childAtIndex(destIndexPath.section)!
+				
+			} else {
+				
+				if isFolderDrop {
+					return dataSource.itemIdentifier(for: destIndexPath)
+				} else {
+					if destIndexPath.row > 0 {
+						return dataSource.itemIdentifier(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))
+					} else {
+						return nil
+					}
+				}
+				
+			}
+			
 		}()
 
 		// Now we start looking for the parent container
 		let destParentNode: Node? = {
-			if destNode.representedObject is Container {
+			if destNode?.representedObject is Container {
 				return destNode
 			} else {
-				if destNode.parent?.representedObject is Container {
-					return destNode.parent!
+				if destNode?.parent?.representedObject is Container {
+					return destNode!.parent!
 				} else {
 					return nil
 				}
