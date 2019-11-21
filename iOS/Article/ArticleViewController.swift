@@ -59,6 +59,8 @@ class ArticleViewController: UIViewController {
 		}
 	}
 	
+	var restoreOffset = 0
+	
 	var currentArticle: Article? {
 		switch state {
 		case .article(let article):
@@ -190,9 +192,11 @@ class ArticleViewController: UIViewController {
 		var render = "error();"
 		if let data = try? encoder.encode(templateData) {
 			let json = String(data: data, encoding: .utf8)!
-			render = "render(\(json));"
+			render = "render(\(json), \(restoreOffset));"
 		}
 
+		restoreOffset = 0
+		
 		ArticleViewControllerWebViewProvider.shared.articleIconSchemeHandler.currentArticle = currentArticle
 		webView?.scrollView.setZoomScale(1.0, animated: false)
 		webView?.evaluateJavaScript(render)
@@ -317,6 +321,13 @@ class ArticleViewController: UIViewController {
 	func showClickedImage(completion: @escaping () -> Void) {
 		clickedImageCompletion = completion
 		webView?.evaluateJavaScript("showClickedImage();")
+	}
+	
+	func fullReload() {
+		if let offset = webView?.scrollView.contentOffset.y {
+			restoreOffset = Int(offset)
+			webView?.reload()
+		}
 	}
 	
 }

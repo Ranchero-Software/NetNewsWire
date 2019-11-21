@@ -221,7 +221,7 @@ private extension DetailWebViewController {
 		var render = "error();"
 		if let data = try? encoder.encode(templateData) {
 			let json = String(data: data, encoding: .utf8)!
-			render = "render(\(json));"
+			render = "render(\(json), 0);"
 		}
 
 		webView.evaluateJavaScript(render)

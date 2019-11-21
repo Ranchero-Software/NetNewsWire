@@ -1572,6 +1572,10 @@ private extension SceneCoordinator {
 			rootSplitViewController.showDetailViewController(controller, sender: self)
   	 	}
 		
+		// We have to do a full reload when installing an article controller.  We may have changed color contexts
+		// and need to update the article colors.  An example is in dark mode.  Split screen doesn't use true black
+		// like darkmode usually does.
+		articleController.fullReload()
 		return articleController
 		
 	}
