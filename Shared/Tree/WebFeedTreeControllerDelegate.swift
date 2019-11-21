@@ -13,8 +13,9 @@ import Account
 
 final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 
+	var isUnreadFiltered = false
+	
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
-		
 		if node.isRoot {
 			return childNodesForRootNode(node)
 		}
@@ -32,29 +33,47 @@ final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 private extension WebFeedTreeControllerDelegate {
 	
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
+		var topLevelNodes = [Node]()
 
-		// The top-level nodes are Smart Feeds and accounts.
+		// Check to see if we should show the SmartFeeds top level by checking the unreadFeed
+		if !(isUnreadFiltered && SmartFeedsController.shared.unreadFeed.unreadCount == 0) {
+			let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
+			smartFeedsNode.canHaveChildNodes = true
+			smartFeedsNode.isGroupItem = true
+			topLevelNodes.append(smartFeedsNode)
+		}
 
-		let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
-		smartFeedsNode.canHaveChildNodes = true
-		smartFeedsNode.isGroupItem = true
-
-		return [smartFeedsNode] + sortedAccountNodes(rootNode)
+		topLevelNodes.append(contentsOf: sortedAccountNodes(rootNode))
+		
+		return topLevelNodes
 	}
 
 	func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
-
-		return SmartFeedsController.shared.smartFeeds.map { parentNode.existingOrNewChildNode(with: $0) }
+		return SmartFeedsController.shared.smartFeeds.compactMap { (feed) -> Node? in
+			if isUnreadFiltered && feed.unreadCount == 0 {
+				return nil
+			}
+			return parentNode.existingOrNewChildNode(with: feed as AnyObject)
+		}
 	}
 
 	func childNodesForContainerNode(_ containerNode: Node) -> [Node]? {
-
 		let container = containerNode.representedObject as! Container
 
 		var children = [AnyObject]()
-		children.append(contentsOf: Array(container.topLevelWebFeeds))
+		
+		for webFeed in container.topLevelWebFeeds {
+			if !(isUnreadFiltered && webFeed.unreadCount == 0) {
+				children.append(webFeed)
+			}
+		}
+		
 		if let folders = container.folders {
-			children.append(contentsOf: Array(folders))
+			for folder in folders {
+				if !(isUnreadFiltered && folder.unreadCount == 0) {
+					children.append(folder)
+				}
+			}
 		}
 
 		var updatedChildNodes = [Node]()
@@ -77,13 +96,14 @@ private extension WebFeedTreeControllerDelegate {
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {
-		
 		if let webFeed = representedObject as? WebFeed {
 			return createNode(webFeed: webFeed, parent: parent)
 		}
+
 		if let folder = representedObject as? Folder {
 			return createNode(folder: folder, parent: parent)
 		}
+		
 		if let account = representedObject as? Account {
 			return createNode(account: account, parent: parent)
 		}
@@ -92,19 +112,16 @@ private extension WebFeedTreeControllerDelegate {
 	}
 	
 	func createNode(webFeed: WebFeed, parent: Node) -> Node {
-
 		return parent.createChildNode(webFeed)
 	}
 	
 	func createNode(folder: Folder, parent: Node) -> Node {
-
 		let node = parent.createChildNode(folder)
 		node.canHaveChildNodes = true
 		return node
 	}
 
 	func createNode(account: Account, parent: Node) -> Node {
-
 		let node = parent.createChildNode(account)
 		node.canHaveChildNodes = true
 		node.isGroupItem = true
@@ -112,8 +129,10 @@ private extension WebFeedTreeControllerDelegate {
 	}
 
 	func sortedAccountNodes(_ parent: Node) -> [Node] {
-
-		let nodes = AccountManager.shared.sortedActiveAccounts.map { (account) -> Node in
+		let nodes = AccountManager.shared.sortedActiveAccounts.compactMap { (account) -> Node? in
+			if isUnreadFiltered && account.unreadCount == 0 {
+				return nil
+			}
 			let accountNode = parent.existingOrNewChildNode(with: account)
 			accountNode.canHaveChildNodes = true
 			accountNode.isGroupItem = true
@@ -123,7 +142,6 @@ private extension WebFeedTreeControllerDelegate {
 	}
 
 	func nodeInArrayRepresentingObject(_ nodes: [Node], _ representedObject: AnyObject) -> Node? {
-		
 		for oneNode in nodes {
 			if oneNode.representedObject === representedObject {
 				return oneNode

@@ -8,13 +8,14 @@
 
 import Foundation
 import RSCore
+import Account
 
 final class SmartFeedsController: DisplayNameProvider {
 
 	public static let shared = SmartFeedsController()
 	let nameForDisplay = NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")
 
-	var smartFeeds = [AnyObject]()
+	var smartFeeds = [Feed]()
 	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 	let unreadFeed = UnreadFeed()
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())

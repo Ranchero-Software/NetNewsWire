@@ -214,9 +214,17 @@
                                 <action selector="settings:" destination="7bK-jq-Zjz" id="Y8a-lz-Im7"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="ZJu-oJ-c1R">
+                            <connections>
+                                <action selector="toggleFilter:" destination="7bK-jq-Zjz" id="7lh-Bz-nfD"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="filterButton" destination="ZJu-oJ-c1R" id="jiO-wg-qrG"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
             </objects>
@@ -289,6 +297,7 @@
         <image name="chevron.up" catalog="system" width="64" height="36"/>
         <image name="circle" catalog="system" width="64" height="60"/>
         <image name="gear" catalog="system" width="64" height="58"/>
+        <image name="line.horizontal.3.decrease.circle" catalog="system" width="64" height="60"/>
         <image name="multiply.circle.fill" catalog="system" width="64" height="60"/>
         <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="56" height="64"/>

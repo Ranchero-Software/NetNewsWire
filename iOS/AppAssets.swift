@@ -89,6 +89,14 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 	
+	static var filterInactiveImage: UIImage = {
+		UIImage(systemName: "line.horizontal.3.decrease.circle")!
+	}()
+	
+	static var filterActiveImage: UIImage = {
+		UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
+	}()
+	
 	static var fullScreenBackgroundColor: UIColor = {
 		return UIColor(named: "fullScreenBackgroundColor")!
 	}()

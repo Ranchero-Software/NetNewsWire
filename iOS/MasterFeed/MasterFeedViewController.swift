@@ -14,6 +14,7 @@ import RSTree
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
+	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
 	private var addNewItemButton: UIBarButtonItem!
 	
@@ -368,6 +369,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
+	}
+	
+	@IBAction func toggleFilter(_ sender: Any) {
+		if coordinator.isUnreadFeedsFiltered {
+			filterButton.image = AppAssets.filterInactiveImage
+			coordinator.showAllFeeds()
+		} else {
+			filterButton.image = AppAssets.filterActiveImage
+			coordinator.hideUnreadFeeds()
+		}
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {

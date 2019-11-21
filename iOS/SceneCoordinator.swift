@@ -112,6 +112,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return panelMode == .three
 	}
 	
+	var isUnreadFeedsFiltered: Bool {
+		return treeControllerDelegate.isUnreadFiltered
+	}
+	
 	var rootNode: Node {
 		return treeController.rootNode
 	}
@@ -483,6 +487,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return unreadCountProvider.unreadCount
 		}
 		return 0
+	}
+	
+	func showAllFeeds() {
+		treeControllerDelegate.isUnreadFiltered = false
+		rebuildBackingStores()
+	}
+	
+	func hideUnreadFeeds() {
+		treeControllerDelegate.isUnreadFiltered = true
+		rebuildBackingStores()
 	}
 		
 	func expand(_ node: Node) {
