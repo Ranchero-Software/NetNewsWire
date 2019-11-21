@@ -57,7 +57,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
-		// noop
+		caller.logout() { _ in }
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {

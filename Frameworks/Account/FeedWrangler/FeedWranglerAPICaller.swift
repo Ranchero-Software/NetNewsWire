@@ -32,6 +32,21 @@ final class FeedWranglerAPICaller: NSObject {
 		transport.cancelAll()
 	}
 	
+	func logout(completion: @escaping (Result<Void, Error>) -> Void) {
+		let url = FeedWranglerConfig.clientURL.appendingPathComponent("users/logout")
+		let request = URLRequest(url: url, credentials: credentials)
+		
+		transport.send(request: request) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
 	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		let url = FeedWranglerConfig.clientURL.appendingPathComponent("users/authorize")
 		let username = self.credentials?.username ?? ""
