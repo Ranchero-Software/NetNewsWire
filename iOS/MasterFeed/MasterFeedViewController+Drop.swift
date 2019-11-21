@@ -14,7 +14,7 @@ import RSTree
 extension MasterFeedViewController: UITableViewDropDelegate {
 	
 	func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
-		return session.localDragSession != nil //&& session.canLoadObjects(ofClass: URL.self)
+		return session.localDragSession != nil
 	}
 	
 	func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {

@@ -20,7 +20,7 @@ extension MasterFeedViewController: UITableViewDragDelegate {
 		let data = webFeed.url.data(using: .utf8)
 		let itemProvider = NSItemProvider()
 		  
-		itemProvider.registerDataRepresentation(forTypeIdentifier: kUTTypeURL as String, visibility: .all) { completion in
+		itemProvider.registerDataRepresentation(forTypeIdentifier: kUTTypeURL as String, visibility: .ownProcess) { completion in
 			completion(data, nil)
 			return nil
 		}
