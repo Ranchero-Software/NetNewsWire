@@ -268,7 +268,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		super.init()
 		
 		for section in treeController.rootNode.childNodes {
-			section.isExpanded = true
 			shadowTable.append([Node]())
 		}
 		
@@ -392,51 +391,23 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	@objc func accountStateDidChange(_ note: Notification) {
-		
-		let rebuildAndExpand = {
-			guard let account = note.userInfo?[Account.UserInfoKey.account] as? Account else {
-				assertionFailure()
-				return
-			}
-			
-			self.rebuildBackingStores() {
-				// If we are activating an account, then automatically expand it
-				if account.isActive, let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-					node.isExpanded = true
-				}
-			}
-		}
-		
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync {
-				rebuildAndExpand()
+				self.rebuildBackingStores()
 			}
 		} else {
-			rebuildAndExpand()
+			rebuildBackingStores()
 		}
-		
 	}
 	
 	@objc func userDidAddAccount(_ note: Notification) {
-		
-		let rebuildAndExpand = {
-			self.rebuildBackingStores() {
-				// Automatically expand any new accounts
-				if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
-					let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-					node.isExpanded = true
-				}
-			}
-		}
-		
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync {
-				rebuildAndExpand()
+				self.rebuildBackingStores()
 			}
 		} else {
-			rebuildAndExpand()
+			rebuildBackingStores()
 		}
-		
 	}
 
 	@objc func userDidDeleteAccount(_ note: Notification) {
