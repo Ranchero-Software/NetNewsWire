@@ -20,7 +20,7 @@ import Articles
 final class UnreadFeed: PseudoFeed {
 
 	public var defaultReadFilter: ReadFilter {
-		return .unavailable
+		return .alwaysRead
 	}
 
 	var feedID: FeedIdentifier? {

@@ -96,7 +96,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		case .read:
 			filterButton.image = AppAssets.filterInactiveImage
 			coordinator.showAllArticles()
-		case .unavailable:
+		case .alwaysRead:
 			filterButton.image = AppAssets.filterActiveImage
 			coordinator.refreshTimeline()
 		}
