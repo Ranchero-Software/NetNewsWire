@@ -536,7 +536,7 @@ private extension MasterTimelineViewController {
 	
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
-			MasterTimelineDataSource(coordinator: coordinator, tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
+			MasterTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
 				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
 				self?.configure(cell, article: article)
 				return cell

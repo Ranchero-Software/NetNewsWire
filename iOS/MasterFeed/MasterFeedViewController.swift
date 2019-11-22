@@ -640,11 +640,13 @@ private extension MasterFeedViewController {
 	}
 
     func makeDataSource() -> UITableViewDiffableDataSource<Node, Node> {
-		return MasterFeedDataSource(coordinator: coordinator, tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
+		let dataSource = MasterFeedDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
 			self?.configure(cell, node)
 			return cell
 		})
+		dataSource.defaultRowAnimation = .middle
+		return dataSource
     }
 
 	func resetEstimatedRowHeight() {
