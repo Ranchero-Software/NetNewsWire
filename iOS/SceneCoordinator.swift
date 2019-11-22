@@ -379,7 +379,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
-			fetchAndReplaceArticlesAsync() {}
+			refreshTimeline()
 		}
 		rebuildBackingStores()
 	}
@@ -395,6 +395,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	@objc func accountStateDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync {
+				self.masterTimelineViewController?.reinitializeArticles()
 				self.rebuildBackingStores()
 			}
 		} else {
@@ -405,6 +406,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	@objc func userDidAddAccount(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync {
+				self.masterTimelineViewController?.reinitializeArticles()
 				self.rebuildBackingStores()
 			}
 		} else {
@@ -415,6 +417,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	@objc func userDidDeleteAccount(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync {
+				self.masterTimelineViewController?.reinitializeArticles()
 				self.rebuildBackingStores()
 			}
 		} else {
@@ -462,6 +465,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return 0
 	}
 	
+	func refreshTimeline() {
+		fetchAndReplaceArticlesAsync() {
+			self.masterTimelineViewController?.reinitializeArticles()
+		}
+	}
+	
 	func showAllFeeds() {
 		treeControllerDelegate.isUnreadFiltered = false
 		rebuildBackingStores()
@@ -474,16 +483,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func showAllArticles() {
 		articleReadFilter = .none
-		fetchAndReplaceArticlesAsync {
-			self.rebuildBackingStores()
-		}
+		refreshTimeline()
 	}
 	
 	func hideUnreadArticles() {
 		articleReadFilter = .read
-		fetchAndReplaceArticlesAsync {
-			self.rebuildBackingStores()
-		}
+		refreshTimeline()
 	}
 		
 	func expand(_ node: Node) {

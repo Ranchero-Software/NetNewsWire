@@ -96,8 +96,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		case .read:
 			filterButton.image = AppAssets.filterInactiveImage
 			coordinator.showAllArticles()
-		default:
-			break
+		case .unavailable:
+			filterButton.image = AppAssets.filterActiveImage
+			coordinator.refreshTimeline()
 		}
 	}
 	
@@ -494,13 +495,9 @@ private extension MasterTimelineViewController {
 
 		switch coordinator.articleReadFilter {
 		case .none:
-			filterButton.isHidden = false
 			filterButton.image = AppAssets.filterInactiveImage
-		case .read:
-			filterButton.isHidden = false
-			filterButton.image = AppAssets.filterActiveImage
 		default:
-			filterButton.isHidden = true
+			filterButton.image = AppAssets.filterActiveImage
 		}
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
