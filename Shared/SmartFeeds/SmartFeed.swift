@@ -14,7 +14,7 @@ import Account
 final class SmartFeed: PseudoFeed {
 
 	public var defaultReadFilter: ReadFilter {
-		return .all
+		return .none
 	}
 
 	var feedID: FeedIdentifier? {

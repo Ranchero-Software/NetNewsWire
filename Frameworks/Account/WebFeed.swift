@@ -14,7 +14,7 @@ import Articles
 public final class WebFeed: Feed, Renamable, Hashable {
 
 	public var defaultReadFilter: ReadFilter {
-		return .all
+		return .none
 	}
 
 	public var feedID: FeedIdentifier? {

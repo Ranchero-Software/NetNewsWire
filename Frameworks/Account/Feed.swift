@@ -11,8 +11,8 @@ import RSCore
 
 public enum ReadFilter {
 	case read
-	case all
 	case none
+	case unavailable
 }
 
 public protocol Feed: FeedIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {

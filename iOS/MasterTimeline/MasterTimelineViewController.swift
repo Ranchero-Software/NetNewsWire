@@ -90,7 +90,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	// MARK: Actions
 	@IBAction func toggleFilter(_ sender: Any) {
 		switch coordinator.articleReadFilter {
-		case .all:
+		case .none:
 			filterButton.image = AppAssets.filterActiveImage
 			coordinator.hideUnreadArticles()
 		case .read:
@@ -497,7 +497,7 @@ private extension MasterTimelineViewController {
 		}
 
 		switch coordinator.articleReadFilter {
-		case .all:
+		case .none:
 			filterButton.isHidden = false
 			filterButton.image = AppAssets.filterInactiveImage
 		case .read:
@@ -548,7 +548,7 @@ private extension MasterTimelineViewController {
 				self?.configure(cell, article: article)
 				return cell
 			})
-		dataSource.defaultRowAnimation = .left
+		dataSource.defaultRowAnimation = .middle
 		return dataSource
     }
 	

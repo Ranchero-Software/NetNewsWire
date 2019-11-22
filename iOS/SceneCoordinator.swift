@@ -116,7 +116,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return treeControllerDelegate.isUnreadFiltered
 	}
 	
-	var articleReadFilter: ReadFilter = .all
+	var articleReadFilter: ReadFilter = .none
 	
 	var rootNode: Node {
 		return treeController.rootNode
@@ -473,11 +473,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showAllArticles() {
-		articleReadFilter = .all
+		articleReadFilter = .none
+		fetchAndReplaceArticlesAsync {
+			self.rebuildBackingStores()
+		}
 	}
 	
 	func hideUnreadArticles() {
 		articleReadFilter = .read
+		fetchAndReplaceArticlesAsync {
+			self.rebuildBackingStores()
+		}
 	}
 		
 	func expand(_ node: Node) {
@@ -1139,7 +1145,7 @@ private extension SceneCoordinator {
 	func setTimelineFeed(_ feed: Feed?, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
 		timelineMiddleIndexPath = nil
-		articleReadFilter = feed?.defaultReadFilter ?? .all
+		articleReadFilter = feed?.defaultReadFilter ?? .none
 		
 		fetchAndReplaceArticlesAsync {
 			self.masterTimelineViewController?.reinitializeArticles()
@@ -1480,7 +1486,7 @@ private extension SceneCoordinator {
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
 		
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: articleReadFilter, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
