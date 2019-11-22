@@ -343,7 +343,7 @@ protocol SidebarDelegate: class {
 		} else {
 			treeControllerDelegate.isReadFiltered = true
 		}
-		rebuildTreeAndReloadDataIfNeeded()
+		rebuildTreeAndRestoreSelection()
 	}
 
 }
