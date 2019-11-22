@@ -1483,7 +1483,6 @@ private extension SceneCoordinator {
 		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
-				callback(Set<Article>())
 				return
 			}
 			callback(articles)
