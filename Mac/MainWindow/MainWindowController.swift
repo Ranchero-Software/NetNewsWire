@@ -237,8 +237,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return currentSearchField != nil
 		}
 
-		if item.action == #selector(toggleReadFilter(_:)) {
+		if item.action == #selector(toggleReadFeedsFilter(_:)) {
 			(item as! NSMenuItem).state = sidebarViewController?.isReadFiltered ?? false ? .on : .off
+		}
+
+		if item.action == #selector(toggleReadArticlesFilter(_:)) {
+			if let timelineContainer = timelineContainerViewController {
+				(item as! NSMenuItem).isEnabled = true
+				(item as! NSMenuItem).state = timelineContainer.isReadFiltered ? .on : .off
+			} else {
+				(item as! NSMenuItem).isEnabled = false
+			}
 		}
 
 		if item.action == #selector(toggleSidebar(_:)) {
@@ -443,9 +452,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		window?.makeFirstResponder(searchField)
 	}
 
-	@IBAction func toggleReadFilter(_ sender: Any?) {
+	@IBAction func toggleReadFeedsFilter(_ sender: Any?) {
 		sidebarViewController?.toggleReadFilter()
 	}
+	
+	@IBAction func toggleReadArticlesFilter(_ sender: Any?) {
+		timelineContainerViewController?.toggleReadFilter()
+	}
+	
 }
 
 // MARK: - SidebarDelegate

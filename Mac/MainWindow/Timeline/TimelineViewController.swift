@@ -20,6 +20,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
+	private var articleReadFilterType: ReadFilterType?
+	var isReadFiltered: Bool {
+		return articleReadFilterType ?? .read != .none
+	}
+	
 	var representedObjects: [AnyObject]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
@@ -36,6 +41,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 					showFeedNames = false
 				}
 
+				determineReadFilterType()
 				selectionDidChange(nil)
 				if showsSearchResults {
 					fetchAndReplaceArticlesAsync()
@@ -213,6 +219,19 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		return representedObjects.first! === object
 	}
 
+	func toggleReadFilter() {
+		guard let filterType = articleReadFilterType else { return }
+		switch filterType {
+		case .alwaysRead:
+			break
+		case .read:
+			articleReadFilterType = ReadFilterType.none
+		case .none:
+			articleReadFilterType = ReadFilterType.read
+		}
+		fetchAndReplaceArticlesAsync()
+	}
+	
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
@@ -944,6 +963,14 @@ private extension TimelineViewController {
 	}
 
 	// MARK: - Fetching Articles
+	
+	func determineReadFilterType() {
+		if representedObjects?.count ?? 0 == 1, let feed = representedObjects?.first as? Feed {
+			articleReadFilterType = feed.defaultReadFilterType
+		} else {
+			articleReadFilterType = .read
+		}
+	}
 
 	func fetchAndReplaceArticlesSync() {
 		// To be called when the user has made a change of selection in the sidebar.
@@ -990,7 +1017,11 @@ private extension TimelineViewController {
 
 		var fetchedArticles = Set<Article>()
 		for articleFetcher in articleFetchers {
-			fetchedArticles.formUnion(articleFetcher.fetchArticles())
+			if articleReadFilterType != ReadFilterType.none {
+				fetchedArticles.formUnion(articleFetcher.fetchUnreadArticles())
+			} else {
+				fetchedArticles.formUnion(articleFetcher.fetchArticles())
+			}
 		}
 		return fetchedArticles
 	}
@@ -1000,7 +1031,8 @@ private extension TimelineViewController {
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: false, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let readFilter = articleReadFilterType != ReadFilterType.none
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: readFilter, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
