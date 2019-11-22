@@ -142,10 +142,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: API
 	
-	func restoreTimelinePosition() {
-		
-	}
-	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if adjustScroll {
