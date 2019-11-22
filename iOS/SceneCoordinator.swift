@@ -113,7 +113,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	var isUnreadFeedsFiltered: Bool {
-		return treeControllerDelegate.isUnreadFiltered
+		return treeControllerDelegate.isReadFiltered
 	}
 	
 	var articleReadFilterType: ReadFilterType = .none
@@ -472,12 +472,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showAllFeeds() {
-		treeControllerDelegate.isUnreadFiltered = false
+		treeControllerDelegate.isReadFiltered = false
 		rebuildBackingStores()
 	}
 	
 	func hideUnreadFeeds() {
-		treeControllerDelegate.isUnreadFiltered = true
+		treeControllerDelegate.isReadFiltered = true
 		rebuildBackingStores()
 	}
 	

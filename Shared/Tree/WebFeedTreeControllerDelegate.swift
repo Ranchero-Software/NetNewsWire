@@ -13,7 +13,7 @@ import Account
 
 final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 
-	var isUnreadFiltered = false
+	var isReadFiltered = false
 	
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 		if node.isRoot {
@@ -36,7 +36,7 @@ private extension WebFeedTreeControllerDelegate {
 		var topLevelNodes = [Node]()
 
 		// Check to see if we should show the SmartFeeds top level by checking the unreadFeed
-		if !(isUnreadFiltered && SmartFeedsController.shared.unreadFeed.unreadCount == 0) {
+		if !(isReadFiltered && SmartFeedsController.shared.unreadFeed.unreadCount == 0) {
 			let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
 			smartFeedsNode.canHaveChildNodes = true
 			smartFeedsNode.isGroupItem = true
@@ -51,7 +51,7 @@ private extension WebFeedTreeControllerDelegate {
 
 	func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
 		return SmartFeedsController.shared.smartFeeds.compactMap { (feed) -> Node? in
-			if isUnreadFiltered && feed.unreadCount == 0 {
+			if isReadFiltered && feed.unreadCount == 0 {
 				return nil
 			}
 			return parentNode.existingOrNewChildNode(with: feed as AnyObject)
@@ -64,14 +64,14 @@ private extension WebFeedTreeControllerDelegate {
 		var children = [AnyObject]()
 		
 		for webFeed in container.topLevelWebFeeds {
-			if !(isUnreadFiltered && webFeed.unreadCount == 0) {
+			if !(isReadFiltered && webFeed.unreadCount == 0) {
 				children.append(webFeed)
 			}
 		}
 		
 		if let folders = container.folders {
 			for folder in folders {
-				if !(isUnreadFiltered && folder.unreadCount == 0) {
+				if !(isReadFiltered && folder.unreadCount == 0) {
 					children.append(folder)
 				}
 			}
@@ -131,7 +131,7 @@ private extension WebFeedTreeControllerDelegate {
 
 	func sortedAccountNodes(_ parent: Node) -> [Node] {
 		let nodes = AccountManager.shared.sortedActiveAccounts.compactMap { (account) -> Node? in
-			if isUnreadFiltered && account.unreadCount == 0 {
+			if isReadFiltered && account.unreadCount == 0 {
 				return nil
 			}
 			let accountNode = parent.existingOrNewChildNode(with: account)

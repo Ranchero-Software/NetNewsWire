@@ -237,6 +237,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return currentSearchField != nil
 		}
 
+		if item.action == #selector(toggleReadFilter(_:)) {
+			(item as! NSMenuItem).state = sidebarViewController?.isReadFiltered ?? false ? .on : .off
+		}
+
 		if item.action == #selector(toggleSidebar(_:)) {
 			guard let splitViewItem = sidebarSplitViewItem else {
 				return false
@@ -437,6 +441,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return
 		}
 		window?.makeFirstResponder(searchField)
+	}
+
+	@IBAction func toggleReadFilter(_ sender: Any?) {
+		sidebarViewController?.toggleReadFilter()
 	}
 }
 
