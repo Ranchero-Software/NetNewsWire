@@ -49,11 +49,20 @@ extension WebFeed: ArticleFetcher {
 extension Folder: ArticleFetcher {
 	
 	public func fetchArticles() -> Set<Article> {
-		return fetchUnreadArticles()
+		guard let account = account else {
+			assertionFailure("Expected folder.account, but got nil.")
+			return Set<Article>()
+		}
+		return account.fetchArticles(.folder(self, false))
 	}
 
 	public func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock) {
-		fetchUnreadArticlesAsync(callback)
+		guard let account = account else {
+			assertionFailure("Expected folder.account, but got nil.")
+			callback(Set<Article>())
+			return
+		}
+		account.fetchArticlesAsync(.folder(self, false), callback)
 	}
 
 	public func fetchUnreadArticles() -> Set<Article> {
@@ -61,7 +70,7 @@ extension Folder: ArticleFetcher {
 			assertionFailure("Expected folder.account, but got nil.")
 			return Set<Article>()
 		}
-		return account.fetchArticles(.unreadForFolder(self))
+		return account.fetchArticles(.folder(self, true))
 	}
 
 	public func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
@@ -70,6 +79,6 @@ extension Folder: ArticleFetcher {
 			callback(Set<Article>())
 			return
 		}
-		account.fetchArticlesAsync(.unreadForFolder(self), callback)
+		account.fetchArticlesAsync(.folder(self, true), callback)
 	}
 }

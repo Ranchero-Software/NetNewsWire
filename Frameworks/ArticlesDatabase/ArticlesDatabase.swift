@@ -48,12 +48,16 @@ public final class ArticlesDatabase {
 		return articlesTable.fetchArticles(webFeedID)
 	}
 	
+	public func fetchArticles(_ webFeedIDs: Set<String>) -> Set<Article> {
+		return articlesTable.fetchArticles(webFeedIDs)
+	}
+
 	public func fetchArticles(articleIDs: Set<String>) -> Set<Article> {
 		return articlesTable.fetchArticles(articleIDs: articleIDs)
 	}
 
-	public func fetchUnreadArticles(_ webFeedID: Set<String>) -> Set<Article> {
-		return articlesTable.fetchUnreadArticles(webFeedID)
+	public func fetchUnreadArticles(_ webFeedIDs: Set<String>) -> Set<Article> {
+		return articlesTable.fetchUnreadArticles(webFeedIDs)
 	}
 
 	public func fetchTodayArticles(_ webFeedIDs: Set<String>) -> Set<Article> {
@@ -76,6 +80,10 @@ public final class ArticlesDatabase {
 
 	public func fetchArticlesAsync(_ webFeedID: String, _ callback: @escaping ArticleSetBlock) {
 		articlesTable.fetchArticlesAsync(webFeedID, callback)
+	}
+
+	public func fetchArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		articlesTable.fetchArticlesAsync(webFeedIDs, callback)
 	}
 
 	public func fetchArticlesAsync(articleIDs: Set<String>, _ callback: @escaping  ArticleSetBlock) {

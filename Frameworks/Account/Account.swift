@@ -47,7 +47,7 @@ public enum FetchType {
 	case starred
 	case unread
 	case today
-	case unreadForFolder(Folder)
+	case folder(Folder, Bool)
 	case webFeed(WebFeed)
 	case articleIDs(Set<String>)
 	case search(String)
@@ -589,8 +589,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return fetchUnreadArticles()
 		case .today:
 			return fetchTodayArticles()
-		case .unreadForFolder(let folder):
-			return fetchArticles(folder: folder)
+		case .folder(let folder, let readFilter):
+			if readFilter {
+				return fetchUnreadArticles(folder: folder)
+			} else {
+				return fetchArticles(folder: folder)
+			}
 		case .webFeed(let webFeed):
 			return fetchArticles(webFeed: webFeed)
 		case .articleIDs(let articleIDs):
@@ -610,8 +614,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fetchUnreadArticlesAsync(callback)
 		case .today:
 			fetchTodayArticlesAsync(callback)
-		case .unreadForFolder(let folder):
-			fetchArticlesAsync(folder: folder, callback)
+		case .folder(let folder, let readFilter):
+			if readFilter {
+				return fetchUnreadArticlesAsync(folder: folder, callback)
+			} else {
+				return fetchArticlesAsync(folder: folder, callback)
+			}
 		case .webFeed(let webFeed):
 			fetchArticlesAsync(webFeed: webFeed, callback)
 		case .articleIDs(let articleIDs):
@@ -887,10 +895,18 @@ private extension Account {
 	}
 
 	func fetchArticles(folder: Folder) -> Set<Article> {
-		return fetchUnreadArticles(forContainer: folder)
+		return fetchArticles(forContainer: folder)
 	}
 
 	func fetchArticlesAsync(folder: Folder, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync(forContainer: folder, callback)
+	}
+
+	func fetchUnreadArticles(folder: Folder) -> Set<Article> {
+		return fetchUnreadArticles(forContainer: folder)
+	}
+
+	func fetchUnreadArticlesAsync(folder: Folder, _ callback: @escaping ArticleSetBlock) {
 		fetchUnreadArticlesAsync(forContainer: folder, callback)
 	}
 
@@ -944,6 +960,21 @@ private extension Account {
 		//		}
 	}
 
+
+	func fetchArticles(forContainer container: Container) -> Set<Article> {
+		let feeds = container.flattenedWebFeeds()
+		let articles = database.fetchArticles(feeds.webFeedIDs())
+		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		return articles
+	}
+
+	func fetchArticlesAsync(forContainer container: Container, _ callback: @escaping ArticleSetBlock) {
+		let webFeeds = container.flattenedWebFeeds()
+		database.fetchArticlesAsync(webFeeds.webFeedIDs()) { [weak self] (articles) in
+			self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
+			callback(articles)
+		}
+	}
 
 	func fetchUnreadArticles(forContainer container: Container) -> Set<Article> {
 		let feeds = container.flattenedWebFeeds()
