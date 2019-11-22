@@ -19,6 +19,10 @@ import Articles
 
 final class UnreadFeed: PseudoFeed {
 
+	public var defaultReadFilter: ReadFilter {
+		return .none
+	}
+
 	var feedID: FeedIdentifier? {
 		return FeedIdentifier.smartFeed(String(describing: UnreadFeed.self))
 	}

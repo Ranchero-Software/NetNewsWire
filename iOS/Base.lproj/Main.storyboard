@@ -167,10 +167,17 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4"/>
+                    <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4">
+                        <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="af2-lj-EcA">
+                            <connections>
+                                <action selector="toggleFilter:" destination="Kyk-vK-QRX" id="jxP-b2-V1n"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
                     <connections>
+                        <outlet property="filterButton" destination="af2-lj-EcA" id="uGR-n0-YKf"/>
                         <outlet property="firstUnreadButton" destination="2v2-jD-C9k" id="8NP-Uc-3Fn"/>
                         <outlet property="markAllAsReadButton" destination="fTv-eX-72r" id="12S-lN-Sxa"/>
                     </connections>

@@ -12,6 +12,10 @@ import RSCore
 
 public final class Folder: Feed, Renamable, Container, Hashable {
 
+	public var defaultReadFilter: ReadFilter {
+		return .read
+	}
+	
 	public var feedID: FeedIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")

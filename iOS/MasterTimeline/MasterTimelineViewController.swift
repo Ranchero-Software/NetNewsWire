@@ -17,6 +17,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
 	
+	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
 	
@@ -87,7 +88,19 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	// MARK: Actions
-
+	@IBAction func toggleFilter(_ sender: Any) {
+		switch coordinator.articleReadFilter {
+		case .all:
+			filterButton.image = AppAssets.filterActiveImage
+			coordinator.hideUnreadArticles()
+		case .read:
+			filterButton.image = AppAssets.filterInactiveImage
+			coordinator.showAllArticles()
+		default:
+			break
+		}
+	}
+	
 	@IBAction func markAllAsRead(_ sender: Any) {
 		if coordinator.displayUndoAvailableTip {
 			let alertController = UndoAvailableAlertController.alert { [weak self] _ in
@@ -466,7 +479,6 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 private extension MasterTimelineViewController {
 
 	func resetUI() {
-		title = coordinator.timelineFeed?.nameForDisplay
 		
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			self.titleView = titleView
@@ -484,6 +496,16 @@ private extension MasterTimelineViewController {
 			navigationItem.titleView = titleView
 		}
 
+		switch coordinator.articleReadFilter {
+		case .all:
+			filterButton.isHidden = false
+			filterButton.image = AppAssets.filterInactiveImage
+		case .read:
+			filterButton.isHidden = false
+			filterButton.image = AppAssets.filterActiveImage
+		default:
+			filterButton.isHidden = true
+		}
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
 		if dataSource.snapshot().itemIdentifiers(inSection: 0).count > 0 {

@@ -116,6 +116,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return treeControllerDelegate.isUnreadFiltered
 	}
 	
+	var articleReadFilter: ReadFilter = .all
+	
 	var rootNode: Node {
 		return treeController.rootNode
 	}
@@ -468,6 +470,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func hideUnreadFeeds() {
 		treeControllerDelegate.isUnreadFiltered = true
 		rebuildBackingStores()
+	}
+	
+	func showAllArticles() {
+		articleReadFilter = .all
+	}
+	
+	func hideUnreadArticles() {
+		articleReadFilter = .read
 	}
 		
 	func expand(_ node: Node) {
@@ -1129,6 +1139,7 @@ private extension SceneCoordinator {
 	func setTimelineFeed(_ feed: Feed?, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
 		timelineMiddleIndexPath = nil
+		articleReadFilter = feed?.defaultReadFilter ?? .all
 		
 		fetchAndReplaceArticlesAsync {
 			self.masterTimelineViewController?.reinitializeArticles()

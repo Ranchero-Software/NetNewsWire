@@ -9,6 +9,14 @@
 import Foundation
 import RSCore
 
+public enum ReadFilter {
+	case read
+	case all
+	case none
+}
+
 public protocol Feed: FeedIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 
+	var defaultReadFilter: ReadFilter { get }
+	
 }
