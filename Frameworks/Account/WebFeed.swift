@@ -13,7 +13,7 @@ import Articles
 
 public final class WebFeed: Feed, Renamable, Hashable {
 
-	public var defaultReadFilter: ReadFilter {
+	public var defaultReadFilterType: ReadFilterType {
 		return .none
 	}
 

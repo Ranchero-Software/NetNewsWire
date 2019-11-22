@@ -19,13 +19,13 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 final class FetchRequestOperation {
 
 	let id: Int
-	let readFilter: ReadFilter
+	let readFilter: Bool
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
 	private let representedObjects: [Any]
 
-	init(id: Int, readFilter: ReadFilter, representedObjects: [Any], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilter: Bool, representedObjects: [Any], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
 		self.readFilter = readFilter
@@ -82,7 +82,7 @@ final class FetchRequestOperation {
 		}
 		
 		for articleFetcher in articleFetchers {
-			if readFilter == .read {
+			if readFilter {
 				articleFetcher.fetchUnreadArticlesAsync { (articles) in
 					process(articles: articles)
 				}

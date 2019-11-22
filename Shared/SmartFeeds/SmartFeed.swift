@@ -13,7 +13,7 @@ import Account
 
 final class SmartFeed: PseudoFeed {
 
-	public var defaultReadFilter: ReadFilter {
+	public var defaultReadFilterType: ReadFilterType {
 		return .none
 	}
 

@@ -19,7 +19,7 @@ import Articles
 
 final class UnreadFeed: PseudoFeed {
 
-	public var defaultReadFilter: ReadFilter {
+	public var defaultReadFilterType: ReadFilterType {
 		return .alwaysRead
 	}
 

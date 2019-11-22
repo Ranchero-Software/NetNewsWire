@@ -9,7 +9,7 @@
 import Foundation
 import RSCore
 
-public enum ReadFilter {
+public enum ReadFilterType {
 	case read
 	case none
 	case alwaysRead
@@ -17,6 +17,6 @@ public enum ReadFilter {
 
 public protocol Feed: FeedIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 
-	var defaultReadFilter: ReadFilter { get }
+	var defaultReadFilterType: ReadFilterType { get }
 	
 }

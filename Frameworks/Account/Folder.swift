@@ -12,7 +12,7 @@ import RSCore
 
 public final class Folder: Feed, Renamable, Container, Hashable {
 
-	public var defaultReadFilter: ReadFilter {
+	public var defaultReadFilterType: ReadFilterType {
 		return .read
 	}
 	
