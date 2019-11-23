@@ -36,6 +36,8 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var webViewContainer: UIView!
 	@IBOutlet private weak var showNavigationView: UIView!
 	@IBOutlet private weak var showToolbarView: UIView!
+	@IBOutlet private weak var showNavigationViewConstraint: NSLayoutConstraint!
+	@IBOutlet private weak var showToolbarViewConstraint: NSLayoutConstraint!
 	
 	private var articleExtractorButton: ArticleExtractorButton = {
 		let button = ArticleExtractorButton(type: .system)
@@ -478,6 +480,8 @@ private extension ArticleViewController {
 	func showBars() {
 		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
 			coordinator.showStatusBar()
+			showNavigationViewConstraint.constant = 0
+			showToolbarViewConstraint.constant = 0
 			navigationController?.setNavigationBarHidden(false, animated: true)
 			navigationController?.setToolbarHidden(false, animated: true)
 		}
@@ -486,6 +490,8 @@ private extension ArticleViewController {
 	func hideBars() {
 		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
 			coordinator.hideStatusBar()
+			showNavigationViewConstraint.constant = 44.0
+			showToolbarViewConstraint.constant = 44.0
 			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
 		}
