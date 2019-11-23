@@ -1684,14 +1684,14 @@ private extension SceneCoordinator {
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
 			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : Any],
-			let articleFetcherType = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
+			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				return
 		}
 
-		switch articleFetcherType {
+		switch feedIdentifier {
 		
-		case .smartFeed(let identifier):
-			guard let smartFeed = SmartFeedsController.shared.find(by: identifier) else { return }
+		case .smartFeed:
+			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
 			if let indexPath = indexPathFor(smartFeed) {
 				selectFeed(indexPath, animated: false)
 			}
@@ -1744,14 +1744,14 @@ private extension SceneCoordinator {
 	
 	func restoreFeed(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
 		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : Any],
-			let articleFetcherType = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
+			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				return false
 		}
 
-		switch articleFetcherType {
+		switch feedIdentifier {
 
-		case .smartFeed(let identifier):
-			guard let smartFeed = SmartFeedsController.shared.find(by: identifier) else { return false }
+		case .smartFeed:
+			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return false }
 			if smartFeed.fetchArticles().contains(accountID: accountID, articleID: articleID) {
 				if let indexPath = indexPathFor(smartFeed) {
 					selectFeed(indexPath, animated: false) {

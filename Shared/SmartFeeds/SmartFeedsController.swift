@@ -24,14 +24,19 @@ final class SmartFeedsController: DisplayNameProvider {
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}
 	
-	func find(by identifier: String) -> PseudoFeed? {
+	func find(by identifier: FeedIdentifier) -> PseudoFeed? {
 		switch identifier {
-		case String(describing: TodayFeedDelegate.self):
-			return todayFeed
-		case String(describing: UnreadFeed.self):
-			return unreadFeed
-		case String(describing: StarredFeedDelegate.self):
-			return starredFeed
+		case .smartFeed(let stringIdentifer):
+			switch stringIdentifer {
+			case String(describing: TodayFeedDelegate.self):
+				return todayFeed
+			case String(describing: UnreadFeed.self):
+				return unreadFeed
+			case String(describing: StarredFeedDelegate.self):
+				return starredFeed
+			default:
+				return nil
+			}
 		default:
 			return nil
 		}
