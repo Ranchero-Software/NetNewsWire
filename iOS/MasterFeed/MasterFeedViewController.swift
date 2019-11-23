@@ -327,8 +327,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
 		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !destNode.isExpanded) {
-			let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
-			return IndexPath(row: destIndexPath.row + movementAdjustment, section: destIndexPath.section)
+			return proposedDestinationIndexPath
 		}
 		
 		// If we are dragging around in the same container, just return the original source
@@ -353,12 +352,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		} else {
 			
 			sortedNodes.remove(at: index)
-			
+
 			if index >= sortedNodes.count {
 				let lastSortedIndexPath = dataSource.indexPath(for: sortedNodes[sortedNodes.count - 1])!
-				return IndexPath(row: lastSortedIndexPath.row + 1, section: lastSortedIndexPath.section)
+				let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
+				return IndexPath(row: lastSortedIndexPath.row + movementAdjustment, section: lastSortedIndexPath.section)
 			} else {
-				return dataSource.indexPath(for: sortedNodes[index])!
+				let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
+				return dataSource.indexPath(for: sortedNodes[index - movementAdjustment])!
 			}
 			
 		}

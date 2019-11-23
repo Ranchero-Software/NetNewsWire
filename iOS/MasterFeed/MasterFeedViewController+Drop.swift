@@ -26,8 +26,12 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 				return UITableViewDropProposal(operation: .forbidden)
 		}
 		
-		if destNode.representedObject is Folder && session.location(in: destCell).y >= 0 {
-			return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+		if destNode.representedObject is Folder {
+			if session.location(in: destCell).y >= 0 {
+				return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+			} else {
+				return UITableViewDropProposal(operation: .move, intent: .unspecified)
+			}
 		} else {
 			return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
 		}
