@@ -130,6 +130,8 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	}
 
 	func moveWebFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
+		guard sourceContainer !== destinationContainer else { return }
+		
 		BatchUpdate.shared.start()
 		sourceContainer.account?.moveWebFeed(feed, from: sourceContainer, to: destinationContainer) { result in
 			BatchUpdate.shared.end()
