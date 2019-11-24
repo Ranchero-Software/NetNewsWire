@@ -269,7 +269,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 		super.init()
 		
-		for section in treeController.rootNode.childNodes {
+		for _ in treeController.rootNode.childNodes {
 			shadowTable.append([Node]())
 		}
 		
@@ -519,7 +519,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return indexPathFor(node)
 	}
 	
-	func selectFeed(_ indexPath: IndexPath?, animated: Bool, completion: (() -> Void)? = nil) {
+	func selectFeed(_ indexPath: IndexPath?, animated: Bool, deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		guard indexPath != currentFeedIndexPath else {
 			completion?()
 			return
@@ -529,7 +529,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.updateFeedSelection(animated: animated)
 
 		emptyTheTimeline()
-		selectArticle(nil)
+		if deselectArticle {
+			selectArticle(nil)
+		}
 
 		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
 			
@@ -718,9 +720,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		
-		selectNextUnreadFeedFetcher()
-		if selectNextUnreadArticleInTimeline() {
-			activityManager.selectingNextUnread()
+		selectNextUnreadFeed() {
+			if self.selectNextUnreadArticleInTimeline() {
+				self.activityManager.selectingNextUnread()
+			}
 		}
 
 	}
@@ -1315,7 +1318,7 @@ private extension SceneCoordinator {
 		
 	}
 	
-	func selectNextUnreadFeedFetcher() {
+	func selectNextUnreadFeed(completion: @escaping () -> Void) {
 		
 		let indexPath: IndexPath = {
 			if currentFeedIndexPath == nil {
@@ -1338,15 +1341,19 @@ private extension SceneCoordinator {
 			}
 		}()
 		
-		if selectNextUnreadFeedFetcher(startingWith: nextIndexPath) {
-			return
+		selectNextUnreadFeed(startingWith: nextIndexPath) { found in
+			if !found {
+				self.selectNextUnreadFeed(startingWith: IndexPath(row: 0, section: 0)) { _ in
+					completion()
+				}
+			} else {
+				completion()
+			}
 		}
-		selectNextUnreadFeedFetcher(startingWith: IndexPath(row: 0, section: 0))
 		
 	}
 	
-	@discardableResult
-	func selectNextUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
+	func selectNextUnreadFeed(startingWith indexPath: IndexPath, completion: @escaping (Bool) -> Void) {
 		
 		for i in indexPath.section..<shadowTable.count {
 			
@@ -1363,7 +1370,8 @@ private extension SceneCoordinator {
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
 					assertionFailure()
-					return true
+					completion(true)
+					return
 				}
 				
 				if node.isExpanded {
@@ -1371,15 +1379,17 @@ private extension SceneCoordinator {
 				}
 				
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(nextIndexPath, animated: true)
-					return true
+					selectFeed(nextIndexPath, animated: false, deselectArticle: false) {
+						completion(true)
+					}
+					return
 				}
 				
 			}
 			
 		}
 		
-		return false
+		completion(false)
 		
 	}
 	

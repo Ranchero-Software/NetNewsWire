@@ -141,7 +141,8 @@ class ArticleViewController: UIViewController {
 	}
 	
 	override func viewSafeAreaInsetsDidChange() {
-		UIView.animate(withDuration: 1) {
+		// When the bars are hiding, the bar hiding duration is used.  In all other cases, execute immediately.
+		UIView.animate(withDuration: 0.0) {
 			self.view.layoutIfNeeded()
 		}
 	}

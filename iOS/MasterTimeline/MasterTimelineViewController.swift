@@ -76,8 +76,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		resetUI()
 		applyChanges(animated: false)
 		
-		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
-
 		// Restore the scroll position if we have one stored
 		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
 			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
@@ -509,6 +507,8 @@ private extension MasterTimelineViewController {
 
 	func resetUI() {
 		
+		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
+
 		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
