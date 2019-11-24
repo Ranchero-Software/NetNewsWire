@@ -67,6 +67,7 @@ body .headerTable {
 	border-bottom: 1px solid var(--header-table-border-color);
 }
 body .header {
+	font: -apple-system-body; 
 	color: var(--header-color);
 }
 body .header a:link, body .header a:visited {
