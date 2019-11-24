@@ -393,36 +393,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	@objc func accountStateDidChange(_ note: Notification) {
-		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync {
-				self.masterTimelineViewController?.reinitializeArticles()
-				self.rebuildBackingStores()
-			}
-		} else {
-			rebuildBackingStores()
-		}
+		updateForAccountChanges()
 	}
 	
 	@objc func userDidAddAccount(_ note: Notification) {
-		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync {
-				self.masterTimelineViewController?.reinitializeArticles()
-				self.rebuildBackingStores()
-			}
-		} else {
-			rebuildBackingStores()
-		}
+		updateForAccountChanges()
 	}
 
 	@objc func userDidDeleteAccount(_ note: Notification) {
-		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync {
-				self.masterTimelineViewController?.reinitializeArticles()
-				self.rebuildBackingStores()
-			}
-		} else {
-			rebuildBackingStores()
-		}
+		updateForAccountChanges()
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
@@ -466,7 +445,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func refreshTimeline() {
-		fetchAndReplaceArticlesAsync() {
+		fetchAndReplaceArticlesAsync(animated: true) {
 			self.masterTimelineViewController?.reinitializeArticles()
 		}
 	}
@@ -556,13 +535,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			
 			self.activityManager.selecting(feed: feed)
 			self.installTimelineControllerIfNecessary(animated: animated)
-			setTimelineFeed(feed) {
+			setTimelineFeed(feed, animated: false) {
 				completion?()
 			}
 			
 		} else {
 			
-			setTimelineFeed(nil) {
+			setTimelineFeed(nil, animated: false) {
 				self.activityManager.invalidateSelecting()
 				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
 					self.navControllerForTimeline().popViewController(animated: animated)
@@ -647,7 +626,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		isSearching = true
 		savedSearchArticles = articles
 		savedSearchArticleIds = Set(articles.map { $0.articleID })
-		setTimelineFeed(nil)
+		setTimelineFeed(nil, animated: true)
 		selectArticle(nil)
 	}
 
@@ -655,9 +634,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if let ip = currentFeedIndexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
 			timelineFeed = feed
 			masterTimelineViewController?.reinitializeArticles()
-			replaceArticles(with: savedSearchArticles!, animate: true)
+			replaceArticles(with: savedSearchArticles!, animated: true)
 		} else {
-			setTimelineFeed(nil)
+			setTimelineFeed(nil, animated: true)
 		}
 		
 		lastSearchString = ""
@@ -673,7 +652,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard isSearching else { return }
 		
 		if searchString.count < 3 {
-			setTimelineFeed(nil)
+			setTimelineFeed(nil, animated: true)
 			return
 		}
 		
@@ -681,9 +660,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			
 			switch searchScope {
 			case .global:
-				setTimelineFeed(SmartFeed(delegate: SearchFeedDelegate(searchString: searchString)))
+				setTimelineFeed(SmartFeed(delegate: SearchFeedDelegate(searchString: searchString)), animated: true)
 			case .timeline:
-				setTimelineFeed(SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: savedSearchArticleIds!)))
+				setTimelineFeed(SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: savedSearchArticleIds!)), animated: true)
 			}
 			
 			lastSearchString = searchString
@@ -1090,6 +1069,17 @@ private extension SceneCoordinator {
 		}
 		unreadCount = count
 	}
+	
+	func updateForAccountChanges() {
+		if timelineFetcherContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesAsync(animated: true) {
+				self.masterTimelineViewController?.reinitializeArticles()
+				self.rebuildBackingStores()
+			}
+		} else {
+			rebuildBackingStores()
+		}
+	}
 
 	func rebuildBackingStores(_ updateExpandedNodes: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
@@ -1147,12 +1137,12 @@ private extension SceneCoordinator {
 		return indexPathFor(node)
 	}
 	
-	func setTimelineFeed(_ feed: Feed?, completion: (() -> Void)? = nil) {
+	func setTimelineFeed(_ feed: Feed?, animated: Bool, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
 		timelineMiddleIndexPath = nil
 		articleReadFilterType = feed?.defaultReadFilterType ?? .none
 		
-		fetchAndReplaceArticlesAsync {
+		fetchAndReplaceArticlesAsync(animated: animated) {
 			self.masterTimelineViewController?.reinitializeArticles()
 			completion?()
 		}
@@ -1413,25 +1403,25 @@ private extension SceneCoordinator {
 	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
-			replaceArticles(with: Set<Article>(), animate: false)
+			replaceArticles(with: Set<Article>(), animated: false)
 		}
 	}
 	
 	func sortParametersDidChange() {
-		replaceArticles(with: Set(articles), animate: true)
+		replaceArticles(with: Set(articles), animated: true)
 	}
 		
-	func replaceArticles(with unsortedArticles: Set<Article>, animate: Bool) {
+	func replaceArticles(with unsortedArticles: Set<Article>, animated: Bool) {
 		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection, groupByFeed: groupByFeed)
-		replaceArticles(with: sortedArticles, animate: animate)
+		replaceArticles(with: sortedArticles, animated: animated)
 	}
 	
-	func replaceArticles(with sortedArticles: ArticleArray, animate: Bool) {
+	func replaceArticles(with sortedArticles: ArticleArray, animated: Bool) {
 		if articles != sortedArticles {
 			articles = sortedArticles
 			updateShowNamesAndIcons()
 			updateUnreadCount()
-			masterTimelineViewController?.reloadArticles(animated: animate)
+			masterTimelineViewController?.reloadArticles(animated: animated)
 		}
 	}
 	
@@ -1458,7 +1448,7 @@ private extension SceneCoordinator {
 				}
 			}
 
-			strongSelf.replaceArticles(with: updatedArticles, animate: true)
+			strongSelf.replaceArticles(with: updatedArticles, animated: true)
 		}
 		
 	}
@@ -1468,7 +1458,7 @@ private extension SceneCoordinator {
 		fetchRequestQueue.cancelAllRequests()
 	}
 
-	func fetchAndReplaceArticlesAsync(completion: @escaping () -> Void) {
+	func fetchAndReplaceArticlesAsync(animated: Bool, completion: @escaping () -> Void) {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
@@ -1479,7 +1469,7 @@ private extension SceneCoordinator {
 		}
 		
 		fetchUnsortedArticlesAsync(for: [timelineFetcher]) { [weak self] (articles) in
-			self?.replaceArticles(with: articles, animate: true)
+			self?.replaceArticles(with: articles, animated: animated)
 			completion()
 		}
 		
@@ -1543,14 +1533,10 @@ private extension SceneCoordinator {
 	
 	func installTimelineControllerIfNecessary(animated: Bool) {
 		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
-			
 			isTimelineViewControllerPending = true
-			
 			masterTimelineViewController = UIStoryboard.main.instantiateController(ofType: MasterTimelineViewController.self)
 			masterTimelineViewController!.coordinator = self
 			navControllerForTimeline().pushViewController(masterTimelineViewController!, animated: animated)
-			
-			masterTimelineViewController?.reloadArticles(animated: false)
 		}
 	}
 	
