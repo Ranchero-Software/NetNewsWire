@@ -13,9 +13,9 @@ import Articles
 
 class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
 
-	private var titleView: MasterTimelineTitleView?
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
+	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 	
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
@@ -69,6 +69,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		iconSize = AppDefaults.timelineIconSize
 		resetEstimatedRowHeight()
 		
+		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
+			navigationItem.titleView = titleView
+		}
+
 		resetUI()
 		applyChanges(animated: false)
 		
@@ -358,7 +362,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		titleView?.iconView.iconImage = coordinator.timelineIconImage
+		
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+			titleView.iconView.iconImage = coordinator.timelineIconImage
+		}
+		
 		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
@@ -389,7 +397,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		titleView?.iconView.iconImage = coordinator.timelineIconImage
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+			titleView.iconView.iconImage = coordinator.timelineIconImage
+		}
 		if coordinator.showIcons {
 			queueReloadAvailableCells()
 		}
@@ -409,7 +419,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		titleView?.label.text = coordinator.timelineFeed?.nameForDisplay
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
+		}
 	}
 	
 	@objc func scrollPositionDidChange() {
@@ -497,17 +509,16 @@ private extension MasterTimelineViewController {
 
 	func resetUI() {
 		
-		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
-			self.titleView = titleView
-			
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 			updateTitleUnreadCount()
 
 			if coordinator.timelineFeed is WebFeed {
 				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
-				let tap = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
-				titleView.addGestureRecognizer(tap)
+				titleView.addGestureRecognizer(feedTapGestureRecognizer)
+			} else {
+				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
 			}
 			
 			navigationItem.titleView = titleView
@@ -544,7 +555,9 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateTitleUnreadCount() {
-		self.titleView?.unreadCountView.unreadCount = coordinator.unreadCount
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+			titleView.unreadCountView.unreadCount = coordinator.unreadCount
+		}
 	}
 	
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
