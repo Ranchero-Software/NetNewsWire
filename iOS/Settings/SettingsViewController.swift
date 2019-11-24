@@ -159,8 +159,8 @@ class SettingsViewController: UITableViewController {
 		case 4:
 			switch indexPath.row {
 			case 0:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
+				openURL("https://ranchero.com/netnewswire/help/ios/5.0/en/")
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 1:
 				openURL("https://ranchero.com/netnewswire/")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -176,6 +176,9 @@ class SettingsViewController: UITableViewController {
 			case 5:
 				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			case 6:
+				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break
 			}
