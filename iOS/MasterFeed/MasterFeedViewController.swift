@@ -294,10 +294,21 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return nil
 		}
 		if node.representedObject is WebFeed {
-			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
+			return makeFeedContextMenu(node: node, indexPath: indexPath, includeDeleteRename: true)
 		} else {
-			return makeFolderContextMenu(indexPath: indexPath)
+			return makeFolderContextMenu(node: node, indexPath: indexPath)
 		}
+	}
+	
+	override func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+		guard let nodeUniqueId = configuration.identifier as? Int,
+			let node = coordinator.rootNode.descendantNode(where: { $0.uniqueID == nodeUniqueId }),
+			let indexPath = dataSource.indexPath(for: node),
+			let cell = tableView.cellForRow(at: indexPath) else {
+				return nil
+		}
+		
+		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -572,12 +583,22 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 					return nil
 		}
 		
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { suggestedActions in
+		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { suggestedActions in
 			let accountInfoAction = self.getAccountInfoAction(account: account)
 			let deactivateAction = self.deactivateAccountAction(account: account)
             return UIMenu(title: "", children: [accountInfoAction, deactivateAction])
         }
     }
+	
+	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+		
+		guard let sectionIndex = configuration.identifier as? Int,
+			let cell = tableView.headerView(forSection: sectionIndex) else {
+				return nil
+		}
+		
+		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
+	}
 }
 
 // MARK: MasterTableViewCellDelegate
@@ -785,8 +806,8 @@ private extension MasterFeedViewController {
 		}
 	}
 
-	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
+	func makeFeedContextMenu(node: Node, indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
+		return UIContextMenuConfiguration(identifier: node.uniqueID as NSCopying, previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
 			
 			guard let self = self else { return nil }
 			
@@ -819,8 +840,8 @@ private extension MasterFeedViewController {
 		
 	}
 	
-	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+	func makeFolderContextMenu(node: Node, indexPath: IndexPath) -> UIContextMenuConfiguration {
+		return UIContextMenuConfiguration(identifier: node.uniqueID as NSCopying, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
 			guard let self = self else { return nil }
 			

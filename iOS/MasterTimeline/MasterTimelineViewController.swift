@@ -286,7 +286,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 		
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: indexPath.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
 			guard let self = self else { return nil }
 			
@@ -315,6 +315,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		})
 		
+	}
+
+	override func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+		guard let row = configuration.identifier as? Int,
+			let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) else {
+				return nil
+		}
+		
+		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
