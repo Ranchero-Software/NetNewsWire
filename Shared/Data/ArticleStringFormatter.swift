@@ -89,7 +89,7 @@ struct ArticleStringFormatter {
 			return cachedBody
 		}
 		var s = body.rsparser_stringByDecodingHTMLEntities()
-		s = s.rs_string(byStrippingHTML: 150)
+		s = s.rs_string(byStrippingHTML: 250)
 		s = s.rs_stringByTrimmingWhitespace()
 		s = s.rs_stringWithCollapsedWhitespace()
 		if s == "Comments" { // Hacker News.
