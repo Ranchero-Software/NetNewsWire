@@ -1370,7 +1370,7 @@ private extension SceneCoordinator {
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
 					assertionFailure()
-					completion(true)
+					completion(false)
 					return
 				}
 				
@@ -1380,6 +1380,7 @@ private extension SceneCoordinator {
 				
 				if unreadCountProvider.unreadCount > 0 {
 					selectFeed(nextIndexPath, animated: false, deselectArticle: false) {
+						self.currentArticle = nil
 						completion(true)
 					}
 					return
