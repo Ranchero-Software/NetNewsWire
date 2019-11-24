@@ -135,6 +135,13 @@ class ArticleViewController: UIViewController {
 		
 	}
 
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		if AppDefaults.articleFullscreenEnabled {
+			hideBars()
+		}
+	}
+	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isArticleViewControllerPending = false
@@ -484,6 +491,7 @@ private extension ArticleViewController {
 	
 	func showBars() {
 		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			AppDefaults.articleFullscreenEnabled = false
 			coordinator.showStatusBar()
 			showNavigationViewConstraint.constant = 0
 			showToolbarViewConstraint.constant = 0
@@ -494,6 +502,7 @@ private extension ArticleViewController {
 	
 	func hideBars() {
 		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			AppDefaults.articleFullscreenEnabled = true
 			coordinator.hideStatusBar()
 			showNavigationViewConstraint.constant = 44.0
 			showToolbarViewConstraint.constant = 44.0
