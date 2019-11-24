@@ -140,6 +140,12 @@ class ArticleViewController: UIViewController {
 		coordinator.isArticleViewControllerPending = false
 	}
 	
+	override func viewSafeAreaInsetsDidChange() {
+		UIView.animate(withDuration: 1) {
+			self.view.layoutIfNeeded()
+		}
+	}
+	
 	func updateUI() {
 		
 		guard let article = currentArticle else {
