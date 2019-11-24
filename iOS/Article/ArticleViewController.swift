@@ -249,7 +249,10 @@ class ArticleViewController: UIViewController {
 	}
 	
 	@objc func willEnterForeground(_ note: Notification) {
-		showBars()
+		// The toolbar will come back on you if you don't hide it again
+		if AppDefaults.articleFullscreenEnabled {
+			hideBars()
+		}
 	}
 	
 	// MARK: Actions
