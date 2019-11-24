@@ -30,7 +30,8 @@ final class TimelineContainerViewController: NSViewController {
 
 	weak var delegate: TimelineContainerViewControllerDelegate?
 
-	var isReadFiltered: Bool {
+	var isReadFiltered: Bool? {
+		guard let currentTimelineViewController = currentTimelineViewController, mode(for: currentTimelineViewController) == .regular else { return nil }
 		return regularTimelineViewController.isReadFiltered
 	}
 

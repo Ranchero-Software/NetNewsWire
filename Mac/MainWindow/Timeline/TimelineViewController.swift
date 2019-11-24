@@ -21,8 +21,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	@IBOutlet var tableView: TimelineTableView!
 
 	private var articleReadFilterType: ReadFilterType?
-	var isReadFiltered: Bool {
-		return articleReadFilterType ?? .read != .none
+	var isReadFiltered: Bool? {
+		guard let articleReadFilterType = articleReadFilterType, articleReadFilterType != .alwaysRead else { return nil}
+		return articleReadFilterType != .none
 	}
 	
 	var representedObjects: [AnyObject]? {

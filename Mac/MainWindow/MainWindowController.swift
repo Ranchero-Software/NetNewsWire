@@ -238,16 +238,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 
 		if item.action == #selector(toggleReadFeedsFilter(_:)) {
-			(item as! NSMenuItem).state = sidebarViewController?.isReadFiltered ?? false ? .on : .off
+			return validateToggleReadFeeds(item)
 		}
 
 		if item.action == #selector(toggleReadArticlesFilter(_:)) {
-			if let timelineContainer = timelineContainerViewController {
-				(item as! NSMenuItem).isEnabled = true
-				(item as! NSMenuItem).state = timelineContainer.isReadFiltered ? .on : .off
-			} else {
-				(item as! NSMenuItem).isEnabled = false
-			}
+			return validateToggleReadArticles(item)
 		}
 
 		if item.action == #selector(toggleSidebar(_:)) {
@@ -831,6 +826,30 @@ private extension MainWindowController {
 		}
 
 		return result
+	}
+	
+	func validateToggleReadFeeds(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		guard let menuItem = item as? NSMenuItem else { return false }
+
+		let showCommand = NSLocalizedString("Show Read Feeds", comment: "Command")
+		let hideCommand = NSLocalizedString("Hide Read Feeds", comment: "Command")
+		menuItem.title = sidebarViewController?.isReadFiltered ?? false ? showCommand : hideCommand
+		return true
+	}
+
+	func validateToggleReadArticles(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		guard let menuItem = item as? NSMenuItem else { return false }
+		
+		let showCommand = NSLocalizedString("Show Read Articles", comment: "Command")
+		let hideCommand = NSLocalizedString("Hide Read Articles", comment: "Command")
+
+		if let isReadFiltered = timelineContainerViewController?.isReadFiltered {
+			menuItem.title = isReadFiltered ? showCommand : hideCommand
+			return true
+		} else {
+			menuItem.title = hideCommand
+			return false
+		}
 	}
 
 	// MARK: - Misc.
