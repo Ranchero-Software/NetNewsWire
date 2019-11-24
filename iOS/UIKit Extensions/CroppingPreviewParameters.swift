@@ -17,11 +17,4 @@ class CroppingPreviewParameters: UIPreviewParameters {
 		self.visiblePath = visiblePath
 	}
 
-	init(view: UIView, size: CGSize) {
-		super.init()
-		let newBounds = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-		let visiblePath = UIBezierPath(roundedRect: newBounds, cornerRadius: 10)
-		self.visiblePath = visiblePath
-	}
-
 }

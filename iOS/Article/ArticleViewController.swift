@@ -123,8 +123,6 @@ class ArticleViewController: UIViewController {
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
 
-			webView.addInteraction(UIContextMenuInteraction(delegate: self))
-
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
@@ -348,36 +346,6 @@ extension ArticleViewController: InteractiveNavigationControllerTappable {
 	func didTapNavigationBar() {
 		hideBars()
 	}
-}
-
-// MARK: UIContextMenuInteractionDelegate
-
-extension ArticleViewController: UIContextMenuInteractionDelegate {
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { suggestedActions in
-			let action1 = UIAction(title: "Action 1", image: AppAssets.infoImage) { [weak self] action in
-			}
-			let action2 = UIAction(title: "Action 2", image: AppAssets.infoImage) { [weak self] action in
-			}
-			let action3 = UIAction(title: "Action 3", image: AppAssets.infoImage) { [weak self] action in
-			}
-			let action4 = UIAction(title: "Action 4", image: AppAssets.infoImage) { [weak self] action in
-			}
-			let action5 = UIAction(title: "Action 5", image: AppAssets.infoImage) { [weak self] action in
-			}
-			let action6 = UIAction(title: "Action 6", image: AppAssets.infoImage) { [weak self] action in
-			}
-			let action7 = UIAction(title: "Action 7", image: AppAssets.infoImage) { [weak self] action in
-			}
-			return UIMenu(title: "", children: [action1, action2, action3, action4, action5, action6, action7])
-        }
-    }
-	
-	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-		return UITargetedPreview(view: webView, parameters: CroppingPreviewParameters(view: webView, size: CGSize(width: webView.bounds.width, height: 200)))
-	}
-
 }
 
 // MARK: WKNavigationDelegate
