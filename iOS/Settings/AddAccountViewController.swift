@@ -24,6 +24,12 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		localAccountNameLabel.text = Account.defaultLocalAccountName
 	}
 	
+	#if !DEBUG
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return 3
+	}
+	#endif
+	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch indexPath.row {
 		case 0:
