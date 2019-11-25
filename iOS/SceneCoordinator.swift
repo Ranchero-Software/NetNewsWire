@@ -66,6 +66,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private let fetchRequestQueue = FetchRequestQueue()
 	
 	private var animatingChanges = false
+	private var expandedTable = Set<ContainerIdentifier>()
 	private var shadowTable = [[Node]]()
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
@@ -269,7 +270,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 		super.init()
 		
-		for _ in treeController.rootNode.childNodes {
+		for sectionNode in treeController.rootNode.childNodes {
+			markExpanded(sectionNode)
 			shadowTable.append([Node]())
 		}
 		
@@ -393,15 +395,59 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	@objc func accountStateDidChange(_ note: Notification) {
-		updateForAccountChanges()
+		if timelineFetcherContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesAsync(animated: true) {
+				self.masterTimelineViewController?.reinitializeArticles()
+				self.rebuildBackingStores()
+			}
+		} else {
+			rebuildBackingStores()
+		}
+		
 	}
 	
 	@objc func userDidAddAccount(_ note: Notification) {
-		updateForAccountChanges()
+		let expandNewAccount = {
+			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
+				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
+				self.markExpanded(node)
+			}
+		}
+		
+		if timelineFetcherContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesAsync(animated: true) {
+				self.masterTimelineViewController?.reinitializeArticles()
+				self.rebuildBackingStores() {
+					expandNewAccount()
+				}
+			}
+		} else {
+			rebuildBackingStores() {
+				expandNewAccount()
+			}
+		}
 	}
 
 	@objc func userDidDeleteAccount(_ note: Notification) {
-		updateForAccountChanges()
+		let cleanupAccount = {
+			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
+				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
+				self.unmarkExpanded(node)
+			}
+		}
+		
+		if timelineFetcherContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesAsync(animated: true) {
+				self.masterTimelineViewController?.reinitializeArticles()
+				self.rebuildBackingStores() {
+					cleanupAccount()
+				}
+			}
+		} else {
+			rebuildBackingStores() {
+				cleanupAccount()
+			}
+		}
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
@@ -469,9 +515,28 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		articleReadFilterType = .read
 		refreshTimeline()
 	}
+	
+	func markExpanded(_ node: Node) {
+		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
+			expandedTable.insert(containerID)
+		}
+	}
+	
+	func unmarkExpanded(_ node: Node) {
+		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
+			expandedTable.remove(containerID)
+		}
+	}
+
+	func isExpanded(_ node: Node) -> Bool {
+		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
+			return expandedTable.contains(containerID)
+		}
+		return false
+	}
 		
 	func expand(_ node: Node) {
-		node.isExpanded = true
+		markExpanded(node)
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
@@ -479,10 +544,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func expandAllSectionsAndFolders() {
 		for sectionNode in treeController.rootNode.childNodes {
-			sectionNode.isExpanded = true
+			markExpanded(sectionNode)
 			for topLevelNode in sectionNode.childNodes {
 				if topLevelNode.representedObject is Folder {
-					topLevelNode.isExpanded = true
+					markExpanded(topLevelNode)
 				}
 			}
 		}
@@ -492,7 +557,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func collapse(_ node: Node) {
-		node.isExpanded = false
+		unmarkExpanded(node)
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
@@ -500,10 +565,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func collapseAllFolders() {
 		for sectionNode in treeController.rootNode.childNodes {
-			sectionNode.isExpanded = true
+			unmarkExpanded(sectionNode)
 			for topLevelNode in sectionNode.childNodes {
 				if topLevelNode.representedObject is Folder {
-					topLevelNode.isExpanded = true
+					unmarkExpanded(topLevelNode)
 				}
 			}
 		}
@@ -1073,17 +1138,6 @@ private extension SceneCoordinator {
 		unreadCount = count
 	}
 	
-	func updateForAccountChanges() {
-		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync(animated: true) {
-				self.masterTimelineViewController?.reinitializeArticles()
-				self.rebuildBackingStores()
-			}
-		} else {
-			rebuildBackingStores()
-		}
-	}
-
 	func rebuildBackingStores(_ updateExpandedNodes: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()
@@ -1101,10 +1155,10 @@ private extension SceneCoordinator {
 			var result = [Node]()
 			let sectionNode = treeController.rootNode.childAtIndex(i)!
 			
-			if sectionNode.isExpanded {
+			if isExpanded(sectionNode) {
 				for node in sectionNode.childNodes {
 					result.append(node)
-					if node.isExpanded {
+					if isExpanded(node) {
 						for child in node.childNodes {
 							result.append(child)
 						}
@@ -1263,7 +1317,7 @@ private extension SceneCoordinator {
 					return true
 				}
 				
-				if node.isExpanded {
+				if isExpanded(node) {
 					continue
 				}
 				
@@ -1374,7 +1428,7 @@ private extension SceneCoordinator {
 					return
 				}
 				
-				if node.isExpanded {
+				if isExpanded(node) {
 					continue
 				}
 				

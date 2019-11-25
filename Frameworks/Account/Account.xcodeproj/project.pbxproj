@@ -33,6 +33,7 @@
 		5170743C232AEDB500A461A3 /* OPMLFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5170743B232AEDB500A461A3 /* OPMLFile.swift */; };
 		51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7B83233531BC008E8144 /* AccountBehaviors.swift */; };
 		51BC8FCC237EC055004F8B56 /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC8FCB237EC055004F8B56 /* Feed.swift */; };
+		51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BFDECD238B508D00216323 /* ContainerIdentifier.swift */; };
 		51D58755227F53BE00900287 /* FeedbinTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D58754227F53BE00900287 /* FeedbinTag.swift */; };
 		51D5875A227F630B00900287 /* tags_delete.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58757227F630B00900287 /* tags_delete.json */; };
 		51D5875B227F630B00900287 /* tags_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58758227F630B00900287 /* tags_add.json */; };
@@ -235,6 +236,7 @@
 		518B2EA52351306200400001 /* Account_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_test.xcconfig; sourceTree = "<group>"; };
 		51BB7B83233531BC008E8144 /* AccountBehaviors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBehaviors.swift; sourceTree = "<group>"; };
 		51BC8FCB237EC055004F8B56 /* Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
+		51BFDECD238B508D00216323 /* ContainerIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerIdentifier.swift; sourceTree = "<group>"; };
 		51D58754227F53BE00900287 /* FeedbinTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinTag.swift; sourceTree = "<group>"; };
 		51D58757227F630B00900287 /* tags_delete.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_delete.json; sourceTree = "<group>"; };
 		51D58758227F630B00900287 /* tags_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_add.json; sourceTree = "<group>"; };
@@ -535,6 +537,7 @@
 				84F73CF0202788D80000BCEF /* ArticleFetcher.swift */,
 				84C365491F899F3B001EC85C /* CombinedRefreshProgress.swift */,
 				8419740D1F6DD25F006346C4 /* Container.swift */,
+				51BFDECD238B508D00216323 /* ContainerIdentifier.swift */,
 				84B99C9E1FAE8D3200ECDEDB /* ContainerPath.swift */,
 				84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */,
 				51BC8FCB237EC055004F8B56 /* Feed.swift */,
@@ -1039,6 +1042,7 @@
 				515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */,
 				844B297F210CE37E004020B3 /* UnreadCountProvider.swift in Sources */,
 				9E1773D5234570E30056A5A8 /* FeedlyEntryParser.swift in Sources */,
+				51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */,
 				9E1D1555233431A600F4944C /* FeedlyOperation.swift in Sources */,
 				9E1AF38B2353D41A008BD1D5 /* FeedlySetStarredArticlesOperation.swift in Sources */,
 				84F1F06E2243524700DA0616 /* AccountMetadata.swift in Sources */,

@@ -40,7 +40,6 @@ private extension WebFeedTreeControllerDelegate {
 			let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
 			smartFeedsNode.canHaveChildNodes = true
 			smartFeedsNode.isGroupItem = true
-			smartFeedsNode.isExpanded = true
 			topLevelNodes.append(smartFeedsNode)
 		}
 
@@ -137,7 +136,6 @@ private extension WebFeedTreeControllerDelegate {
 			let accountNode = parent.existingOrNewChildNode(with: account)
 			accountNode.canHaveChildNodes = true
 			accountNode.isGroupItem = true
-			accountNode.isExpanded = true
 			return accountNode
 		}
 		return nodes

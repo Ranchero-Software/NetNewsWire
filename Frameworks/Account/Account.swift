@@ -84,6 +84,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public var isDeleted = false
 	
+	public var containerID: ContainerIdentifier? {
+		return ContainerIdentifier.account(accountID)
+	}
+	
 	public var account: Account? {
 		return self
 	}

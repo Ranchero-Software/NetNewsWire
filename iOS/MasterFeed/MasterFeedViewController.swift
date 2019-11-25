@@ -191,7 +191,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		headerView.tag = section
-		headerView.disclosureExpanded = sectionNode.isExpanded
+		headerView.disclosureExpanded = coordinator.isExpanded(sectionNode)
 		
 		if section == tableView.numberOfSections - 1 {
 			headerView.isLastSection = true
@@ -334,7 +334,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
-		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !destNode.isExpanded) {
+		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !coordinator.isExpanded(destNode)) {
 			return proposedDestinationIndexPath
 		}
 		
@@ -403,7 +403,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 					return
 		}
 		
-		if sectionNode.isExpanded {
+		if coordinator.isExpanded(sectionNode) {
 			headerView.disclosureExpanded = false
 			coordinator.collapse(sectionNode)
 			self.applyChanges(animated: true)
@@ -520,7 +520,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				return
 		}
 		
-		if !sectionNode.isExpanded {
+		if !coordinator.isExpanded(sectionNode) {
 			coordinator.expand(sectionNode)
 			self.applyChanges(animated: true) {
 				completion?()
@@ -687,7 +687,7 @@ private extension MasterFeedViewController {
 		} else {
 			cell.indentationLevel = 1
 		}
-		cell.setDisclosure(isExpanded: node.isExpanded, animated: false)
+		cell.setDisclosure(isExpanded: coordinator.isExpanded(node), animated: false)
 		cell.isDisclosureAvailable = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
