@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9cW-lu-HoC">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -19,7 +19,7 @@
                             <tableViewSection headerTitle="Notifications, Badge, Data, &amp; More" id="Bmb-Oi-RZK">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="F9H-Kr-npj" style="IBUITableViewCellStyleDefault" id="zvg-7C-BlH" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="55.5" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="55.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zvg-7C-BlH" id="Tqk-Tu-E6K">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
@@ -267,7 +267,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="Pm8-6D-fdE" style="IBUITableViewCellStyleDefault" id="3cU-BG-6kK" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="819.5" width="374" height="44"/>
+                                        <rect key="frame" x="0.0" y="819.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="3cU-BG-6kK" id="Qm0-SY-0vx">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
@@ -284,7 +284,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="TEA-EG-V6d" style="IBUITableViewCellStyleDefault" id="4yc-ig-I61" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="863.5" width="374" height="44"/>
+                                        <rect key="frame" x="0.0" y="863.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4yc-ig-I61" id="uQl-VP-9p9">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
@@ -301,7 +301,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="Q9a-Pi-uCc" style="IBUITableViewCellStyleDefault" id="mSW-A7-8lf" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="907.5" width="374" height="44"/>
+                                        <rect key="frame" x="0.0" y="907.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mSW-A7-8lf" id="shF-ro-Zpx">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
@@ -318,14 +318,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="dWz-1o-EpJ" style="IBUITableViewCellStyleDefault" id="2MG-qn-idJ" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="951.5" width="374" height="44"/>
+                                        <rect key="frame" x="0.0" y="951.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2MG-qn-idJ" id="gP9-ry-keC">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Technotes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="dWz-1o-EpJ">
-                                                    <rect key="frame" x="20" y="0.0" width="334" height="44"/>
+                                                    <rect key="frame" x="15" y="0.0" width="351" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
@@ -335,14 +335,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="2o6-8W-nyK" style="IBUITableViewCellStyleDefault" id="he9-Ql-yfa" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="995.5" width="374" height="44"/>
+                                        <rect key="frame" x="0.0" y="995.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="he9-Ql-yfa" id="q6L-C8-H9a">
-                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="355" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="About NetNewsWire" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="2o6-8W-nyK">
-                                                    <rect key="frame" x="20" y="0.0" width="315" height="44"/>
+                                                    <rect key="frame" x="15" y="0.0" width="332" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
@@ -482,6 +482,39 @@
                                             <constraints>
                                                 <constraint firstItem="cXZ-17-bhe" firstAttribute="leading" secondItem="3VG-Ax-7gi" secondAttribute="leading" constant="20" symbolic="YES" id="BYO-oH-a6T"/>
                                                 <constraint firstItem="cXZ-17-bhe" firstAttribute="centerY" secondItem="3VG-Ax-7gi" secondAttribute="centerY" id="r36-pZ-Siw"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="56" id="sKj-1P-BwI" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="185" width="374" height="56"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="sKj-1P-BwI" id="PdS-21-hdl">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="56"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="TmQ-Hs-znP">
+                                                    <rect key="frame" x="20" y="12" width="223.5" height="32"/>
+                                                    <subviews>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountFeedWrangler" translatesAutoresizingMaskIntoConstraints="NO" id="pIU-f0-h1H">
+                                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                                            <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="32" id="zA7-8h-8WG"/>
+                                                                <constraint firstAttribute="width" constant="32" id="ze0-RG-buU"/>
+                                                            </constraints>
+                                                        </imageView>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Feed Wrangler" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dur-Qf-YYi">
+                                                            <rect key="frame" x="48" y="0.0" width="175.5" height="32"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="TmQ-Hs-znP" firstAttribute="leading" secondItem="PdS-21-hdl" secondAttribute="leading" constant="20" symbolic="YES" id="IFO-xv-Y0K"/>
+                                                <constraint firstItem="TmQ-Hs-znP" firstAttribute="centerY" secondItem="PdS-21-hdl" secondAttribute="centerY" id="oQy-rL-HV3"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -842,6 +875,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="accountFeedWrangler" width="512" height="512"/>
         <image name="accountFeedbin" width="120" height="102"/>
         <image name="accountFeedly" width="138" height="123"/>
         <image name="accountLocal" width="99" height="77"/>

@@ -43,6 +43,12 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			OperationQueue.main.addOperation(addAccount)
+		case 3:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedWranglerAccountNavigationViewController") as! UINavigationController
+			navController.modalPresentationStyle = .currentContext
+			let addViewController = navController.topViewController as! FeedWranglerAccountViewController
+			addViewController.delegate = self
+			present(navController, animated: true)
 		default:
 			break
 		}
