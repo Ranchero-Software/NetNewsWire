@@ -879,18 +879,15 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		guard var components = URLComponents(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue), resolvingAgainstBaseURL: false) else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
+		let url = baseURL
+			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
+			.appendingQueryItems([
+				URLQueryItem(name: "s", value: "user/-/state/com.google/starred"),
+				URLQueryItem(name: "n", value: "10000"),
+				URLQueryItem(name: "output", value: "json")
+			])
 		
-		components.queryItems = [
-			URLQueryItem(name: "s", value: "user/-/state/com.google/starred"),
-			URLQueryItem(name: "n", value: "10000"),
-			URLQueryItem(name: "output", value: "json")
-		]
-		
-		guard let callURL = components.url else {
+		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))
 			return
 		}

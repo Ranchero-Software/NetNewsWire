@@ -103,18 +103,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? NSTableCellView {
 			let account = sortedAccounts[row]
 			cell.textField?.stringValue = account.nameForDisplay
-			switch account.type {
-			case .onMyMac:
-				cell.imageView?.image = AppAssets.accountLocal
-			case .feedbin:
-				cell.imageView?.image = AppAssets.accountFeedbin
-			case .freshRSS:
-				cell.imageView?.image = AppAssets.accountFreshRSS
-			case .feedly:
-				cell.imageView?.image = AppAssets.accountFeedly
-			default:
-				break
-			}
+			cell.imageView?.image = account.smallIcon?.image
 			return cell
 		}
 		return nil

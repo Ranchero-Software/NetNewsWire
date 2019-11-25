@@ -80,6 +80,11 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			accountsFreshRSSWindowController.runSheetOnWindow(self.view.window!)
 			accountsWindowController = accountsFreshRSSWindowController
 			break
+		case .feedWrangler:
+			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
+			accountsFeedWranglerWindowController.account = account
+			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
+			accountsWindowController = accountsFeedWranglerWindowController
 		default:
 			break
 		}

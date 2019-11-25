@@ -15,7 +15,7 @@ class AccountsAddViewController: NSViewController {
 	
 	private var accountsAddWindowController: NSWindowController?
 	
-	private let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .freshRSS]
+	private let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS]
 	
 	init() {
 		super.init(nibName: "AccountsAdd", bundle: nil)
@@ -65,6 +65,9 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			case .feedbin:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
 				cell.accountImageView?.image = AppAssets.accountFeedbin
+			case .feedWrangler:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("Feed Wrangler", comment: "Feed Wrangler")
+				cell.accountImageView?.image = AppAssets.accountFeedWrangler
 			case .freshRSS:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("FreshRSS", comment: "FreshRSS")
 				cell.accountImageView?.image = AppAssets.accountFreshRSS
@@ -95,6 +98,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsFeedbinWindowController
+		case .feedWrangler:
+			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
+			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsFeedWranglerWindowController
 		case .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = .freshRSS
