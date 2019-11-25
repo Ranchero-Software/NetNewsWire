@@ -106,6 +106,14 @@ class SettingsViewController: UITableViewController {
 		}
 	}
 	
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		var adjustedSection = section
+		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
+			adjustedSection = adjustedSection + 1
+		}
+		return super.tableView(tableView, titleForHeaderInSection: adjustedSection)
+	}
+	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		var adjustedSection = indexPath.section
 		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
