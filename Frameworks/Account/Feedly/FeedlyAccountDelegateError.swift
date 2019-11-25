@@ -10,6 +10,7 @@ import Foundation
 
 enum FeedlyAccountDelegateError: LocalizedError {
 	case notLoggedIn
+	case unexpectedResourceId(String)
 	case unableToAddFolder(String)
 	case unableToRenameFolder(String, String)
 	case unableToRemoveFolder(String)
@@ -23,6 +24,10 @@ enum FeedlyAccountDelegateError: LocalizedError {
 		switch self {
 		case .notLoggedIn:
 			return NSLocalizedString("Please add the Feedly account again.", comment: "Feedly – Credentials not found.")
+			
+		case .unexpectedResourceId(let resourceId):
+			let template = NSLocalizedString("Could not encode the identifier “%@”.", comment: "Feedly – Could not encode resource id to send to Feedly.")
+			return String(format: template, resourceId)
 			
 		case .unableToAddFolder(let name):
 			let template = NSLocalizedString("Could not create a folder named “%@”.", comment: "Feedly – Could not create a folder/collection.")
@@ -61,6 +66,10 @@ enum FeedlyAccountDelegateError: LocalizedError {
 		switch self {
 		case .notLoggedIn:
 			return nil
+			
+		case .unexpectedResourceId:
+			let template = NSLocalizedString("Please contact NetNewsWire support.", comment: "Feedly – Recovery suggestion for not being able to encode a resource id to send to Feedly..")
+			return String(format: template)
 			
 		case .unableToAddFolder:
 			return nil

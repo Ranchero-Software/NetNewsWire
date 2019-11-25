@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import SyncDatabase
+import RSWeb
 
 /// Single responsibility is to compose the operations necessary to get the entire set of articles, feeds and folders with the statuses the user expects between now and a certain date in the past.
 final class FeedlySyncAllOperation: FeedlyOperation {
@@ -18,7 +19,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 	
 	var syncCompletionHandler: ((Result<Void, Error>) -> ())?
 	
-	init(account: Account, credentials: Credentials, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIdsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredArticlesService: FeedlyGetStreamContentsService, database: SyncDatabase, log: OSLog) {
+	init(account: Account, credentials: Credentials, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIdsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredArticlesService: FeedlyGetStreamContentsService, database: SyncDatabase, downloadProgress: DownloadProgress, log: OSLog) {
 		self.syncUUID = UUID()
 		self.log = log
 		self.operationQueue = OperationQueue()
@@ -26,20 +27,25 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		
 		super.init()
 		
+		self.downloadProgress = downloadProgress
+		
 		// Send any read/unread/starred article statuses to Feedly before anything else.
 		let sendArticleStatuses = FeedlySendArticleStatusesOperation(database: database, service: markArticlesService, log: log)
 		sendArticleStatuses.delegate = self
+		sendArticleStatuses.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(sendArticleStatuses)
 		
 		// Get each page of unread article ids in the global.all stream for the last 31 days (nil = Feedly API default).
 		let getUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: getUnreadService, newerThan: nil, log: log)
 		getUnread.delegate = self
 		getUnread.addDependency(sendArticleStatuses)
+		getUnread.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(getUnread)
 		
 		// Get all the Collections the user has.
 		let getCollections = FeedlyGetCollectionsOperation(service: getCollectionsService, log: log)
 		getCollections.delegate = self
+		getCollections.downloadProgress = downloadProgress
 		getCollections.addDependency(sendArticleStatuses)
 		self.operationQueue.addOperation(getCollections)
 		
@@ -58,6 +64,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		// Get each page of the global.all stream until we get either the content from the last sync or the last 31 days.
 		let getStreamContents = FeedlySyncStreamContentsOperation(account: account, credentials: credentials, service: getStreamContentsService, newerThan: lastSuccessfulFetchStartDate, log: log)
 		getStreamContents.delegate = self
+		getStreamContents.downloadProgress = downloadProgress
 		getStreamContents.addDependency(getCollections)
 		getStreamContents.addDependency(getUnread)
 		getStreamContents.addDependency(createFeedsOperation)
@@ -65,19 +72,21 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		
 		// Get each and every starred article.
 		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, service: getStarredArticlesService, log: log)
+		syncStarred.downloadProgress = downloadProgress
 		syncStarred.addDependency(createFeedsOperation)
 		self.operationQueue.addOperation(syncStarred)
 		
 		// Once this operation's dependencies, their dependencies etc finish, we can finish.
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
+		finishOperation.downloadProgress = downloadProgress
 		finishOperation.addDependency(getStreamContents)
 		finishOperation.addDependency(syncStarred)
 
 		self.operationQueue.addOperation(finishOperation)
 	}
 	
-	convenience init(account: Account, credentials: Credentials, caller: FeedlyAPICaller, database: SyncDatabase, lastSuccessfulFetchStartDate: Date?, log: OSLog) {
+	convenience init(account: Account, credentials: Credentials, caller: FeedlyAPICaller, database: SyncDatabase, lastSuccessfulFetchStartDate: Date?, downloadProgress: DownloadProgress, log: OSLog) {
 		
 		let newerThan: Date? = {
 			if let date = lastSuccessfulFetchStartDate {
@@ -87,7 +96,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 			}
 		}()
 		
-		self.init(account: account, credentials: credentials, lastSuccessfulFetchStartDate: newerThan, markArticlesService: caller, getUnreadService: caller, getCollectionsService: caller, getStreamContentsService: caller, getStarredArticlesService: caller, database: database, log: log)
+		self.init(account: account, credentials: credentials, lastSuccessfulFetchStartDate: newerThan, markArticlesService: caller, getUnreadService: caller, getCollectionsService: caller, getStreamContentsService: caller, getStarredArticlesService: caller, database: database, downloadProgress: downloadProgress, log: log)
 	}
 	
 	override func cancel() {

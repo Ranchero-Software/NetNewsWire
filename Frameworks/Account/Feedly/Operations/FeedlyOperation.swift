@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSWeb
 
 protocol FeedlyOperationDelegate: class {
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)
@@ -18,9 +19,22 @@ class FeedlyOperation: Operation {
 	
 	weak var delegate: FeedlyOperationDelegate?
 	
+	var downloadProgress: DownloadProgress? {
+		didSet {
+			guard downloadProgress == nil || !isExecuting else {
+				fatalError("\(\FeedlyOperation.downloadProgress) was set to late. Set before operation starts executing.")
+			}
+			oldValue?.completeTask()
+			downloadProgress?.addToNumberOfTasksAndRemaining(1)
+		}
+	}
+	
 	func didFinish() {
 		assert(Thread.isMainThread)
 		assert(!isFinished, "Finished operation is attempting to finish again.")
+		
+		downloadProgress = nil
+		
 		isExecutingOperation = false
 		isFinishedOperation = true
 	}
@@ -36,6 +50,13 @@ class FeedlyOperation: Operation {
 		guard !isCancelled else {
 			isExecutingOperation = false
 			isFinishedOperation = true
+			
+			if downloadProgress != nil {
+				DispatchQueue.main.async {
+					self.downloadProgress = nil
+				}
+			}
+			
 			return
 		}
 		

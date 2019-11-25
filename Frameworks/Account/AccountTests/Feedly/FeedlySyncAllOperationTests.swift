@@ -48,6 +48,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		getStarredContents.getStreamContentsExpectation = expectation(description: "Get Contents of global.saved")
 		getStarredContents.getStreamContentsExpectation?.isInverted = true
 		
+		let progress = DownloadProgress(numberOfTasks: 0)
 		let container = support.makeTestDatabaseContainer()
 		let syncAll = FeedlySyncAllOperation(account: account,
 											 credentials: support.accessToken,
@@ -58,6 +59,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 											 getStreamContentsService: getGlobalStreamContents,
 											 getStarredArticlesService: getStarredContents,
 											 database: container.database,
+											 downloadProgress: progress,
 											 log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
@@ -81,6 +83,9 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		OperationQueue.main.addOperation(syncAll)
 		
+		XCTAssertTrue(progress.numberOfTasks > 1)
+		
+		// This operation cancels asynchronously, so it is hard to test the number of tasks == 0
 		syncAll.cancel()
 		
 		waitForExpectations(timeout: 2)
@@ -115,6 +120,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		let provider = FeedlyMockResponseProvider(findingMocksIn: subdirectory)
 		transport.mockResponseFileUrlProvider = provider
 		
+		let progress = DownloadProgress(numberOfTasks: 0)
 		// lastSuccessfulFetchStartDate does not matter for the test, content will always be the same.
 		// It is tested in `FeedlyGetStreamContentsOperationTests`.
 		let syncAll = FeedlySyncAllOperation(account: account,
@@ -122,6 +128,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 											 caller: caller,
 											 database: databaseContainer.database,
 											 lastSuccessfulFetchStartDate: nil,
+											 downloadProgress: progress,
 											 log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
@@ -132,7 +139,11 @@ class FeedlySyncAllOperationTests: XCTestCase {
 				
 		OperationQueue.main.addOperation(syncAll)
 		
+		XCTAssertTrue(progress.numberOfTasks > 1)
+		
 		waitForExpectations(timeout: 5)
+		
+		XCTAssertTrue(progress.numberOfTasks == 0)
 	}
 	
 	func performInitialSync() {
@@ -225,8 +236,9 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		let caller = FeedlyAPICaller(transport: URLSession.webserviceTransport(), api: .sandbox)
 		let credentials = Credentials(type: .oauthAccessToken, username: "<#USERNAME#>", secret: "<#SECRET#>")
 		caller.credentials = credentials
-				
-		let syncAll = FeedlySyncAllOperation(account: account, credentials: credentials, caller: caller, database: databaseContainer.database, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, log: support.log)
+		
+		let progress = DownloadProgress(numberOfTasks: 0)
+		let syncAll = FeedlySyncAllOperation(account: account, credentials: credentials, caller: caller, database: databaseContainer.database, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, downloadProgress: progress, log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
@@ -238,7 +250,11 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		OperationQueue.main.addOperation(syncAll)
 		
+		XCTAssertTrue(progress.numberOfTasks > 1)
+		
 		waitForExpectations(timeout: 60)
+		
+		XCTAssertTrue(progress.numberOfTasks == 0)
 	}
 	
 	// Prefix with "test" to manually run this particular function, e.g.: func test_getTestData()
