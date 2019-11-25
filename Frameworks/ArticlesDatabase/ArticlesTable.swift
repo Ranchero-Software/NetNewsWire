@@ -60,6 +60,25 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [webFeedID as AnyObject], withLimits: withLimits)
 	}
 
+	func fetchArticles(_ webFeedIDs: Set<String>) -> Set<Article> {
+		return fetchArticles{ self.fetchArticles(webFeedIDs, $0) }
+	}
+
+	func fetchArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticles(webFeedIDs, $0) }, callback)
+	}
+
+	private func fetchArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
+		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read=0
+		if webFeedIDs.isEmpty {
+			return Set<Article>()
+		}
+		let parameters = webFeedIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
+		let whereClause = "feedID in \(placeholders)"
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+	}
+
 	// MARK: - Fetching Articles by articleID
 
 	func fetchArticles(articleIDs: Set<String>) -> Set<Article> {

@@ -10,6 +10,8 @@ import UIKit
 
 class ImageHeaderView: UITableViewHeaderFooterView {
 
+	static let rowHeight = CGFloat(integerLiteral: 88)
+	
 	var imageView = UIImageView()
 	
 	override init(reuseIdentifier: String?) {

@@ -36,6 +36,8 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var webViewContainer: UIView!
 	@IBOutlet private weak var showNavigationView: UIView!
 	@IBOutlet private weak var showToolbarView: UIView!
+	@IBOutlet private weak var showNavigationViewConstraint: NSLayoutConstraint!
+	@IBOutlet private weak var showToolbarViewConstraint: NSLayoutConstraint!
 	
 	private var articleExtractorButton: ArticleExtractorButton = {
 		let button = ArticleExtractorButton(type: .system)
@@ -58,6 +60,8 @@ class ArticleViewController: UIViewController {
 			}
 		}
 	}
+	
+	var restoreOffset = 0
 	
 	var currentArticle: Article? {
 		switch state {
@@ -131,9 +135,21 @@ class ArticleViewController: UIViewController {
 		
 	}
 
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		if AppDefaults.articleFullscreenEnabled {
+			hideBars()
+		}
+	}
+	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isArticleViewControllerPending = false
+	}
+	
+	override func viewSafeAreaInsetsDidChange() {
+		// This will animate if the show/hide bars animation is happening.
+		view.layoutIfNeeded()
 	}
 	
 	func updateUI() {
@@ -190,9 +206,11 @@ class ArticleViewController: UIViewController {
 		var render = "error();"
 		if let data = try? encoder.encode(templateData) {
 			let json = String(data: data, encoding: .utf8)!
-			render = "render(\(json));"
+			render = "render(\(json), \(restoreOffset));"
 		}
 
+		restoreOffset = 0
+		
 		ArticleViewControllerWebViewProvider.shared.articleIconSchemeHandler.currentArticle = currentArticle
 		webView?.scrollView.setZoomScale(1.0, animated: false)
 		webView?.evaluateJavaScript(render)
@@ -231,7 +249,10 @@ class ArticleViewController: UIViewController {
 	}
 	
 	@objc func willEnterForeground(_ note: Notification) {
-		showBars()
+		// The toolbar will come back on you if you don't hide it again
+		if AppDefaults.articleFullscreenEnabled {
+			hideBars()
+		}
 	}
 	
 	// MARK: Actions
@@ -319,6 +340,21 @@ class ArticleViewController: UIViewController {
 		webView?.evaluateJavaScript("showClickedImage();")
 	}
 	
+	func fullReload() {
+		if let offset = webView?.scrollView.contentOffset.y {
+			restoreOffset = Int(offset)
+			webView?.reload()
+		}
+	}
+	
+}
+
+// MARK: InteractiveNavigationControllerTappable
+
+extension ArticleViewController: InteractiveNavigationControllerTappable {
+	func didTapNavigationBar() {
+		hideBars()
+	}
 }
 
 // MARK: WKNavigationDelegate
@@ -355,14 +391,6 @@ extension ArticleViewController: WKNavigationDelegate {
 		self.reloadHTML()
 	}
 	
-}
-
-// MARK: InteractiveNavigationControllerTappable
-
-extension ArticleViewController: InteractiveNavigationControllerTappable {
-	func didTapNavigationBar() {
-		hideBars()
-	}
 }
 
 // MARK: WKUIDelegate
@@ -466,7 +494,10 @@ private extension ArticleViewController {
 	
 	func showBars() {
 		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			AppDefaults.articleFullscreenEnabled = false
 			coordinator.showStatusBar()
+			showNavigationViewConstraint.constant = 0
+			showToolbarViewConstraint.constant = 0
 			navigationController?.setNavigationBarHidden(false, animated: true)
 			navigationController?.setToolbarHidden(false, animated: true)
 		}
@@ -474,7 +505,10 @@ private extension ArticleViewController {
 	
 	func hideBars() {
 		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+			AppDefaults.articleFullscreenEnabled = true
 			coordinator.hideStatusBar()
+			showNavigationViewConstraint.constant = 44.0
+			showToolbarViewConstraint.constant = 44.0
 			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
 		}

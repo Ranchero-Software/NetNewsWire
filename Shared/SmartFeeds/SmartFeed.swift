@@ -13,6 +13,10 @@ import Account
 
 final class SmartFeed: PseudoFeed {
 
+	public var defaultReadFilterType: ReadFilterType {
+		return .none
+	}
+
 	var feedID: FeedIdentifier? {
 		delegate.feedID
 	}

@@ -58,7 +58,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	func sceneWillEnterForeground(_ scene: UIScene) {
 		appDelegate.prepareAccountsForForeground()
-		self.coordinator.configureThreePanelMode(for: window!.frame.size)
+		self.coordinator.configurePanelMode(for: window!.frame.size)
 	}
 	
     func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {

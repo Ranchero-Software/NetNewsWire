@@ -30,6 +30,9 @@ protocol SidebarDelegate: class {
 	lazy var dataSource: SidebarOutlineDataSource = {
 		return SidebarOutlineDataSource(treeController: treeController)
 	}()
+	var isReadFiltered: Bool {
+		return treeControllerDelegate.isReadFiltered
+	}
 
     var undoableCommands = [UndoableCommand]()
 	private var animatingChanges = false
@@ -333,7 +336,16 @@ protocol SidebarDelegate: class {
 		}
 		revealAndSelectRepresentedObject(feedNode.representedObject)
 	}
-	
+
+	func toggleReadFilter() {
+		if treeControllerDelegate.isReadFiltered {
+			treeControllerDelegate.isReadFiltered = false
+		} else {
+			treeControllerDelegate.isReadFiltered = true
+		}
+		rebuildTreeAndRestoreSelection()
+	}
+
 }
 
 // MARK: - NSUserInterfaceValidations

@@ -8,13 +8,18 @@
 
 import Foundation
 import RSCore
+import Account
 
-final class SmartFeedsController: DisplayNameProvider {
+final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
+	
+	var containerID: ContainerIdentifier? {
+		return ContainerIdentifier.smartFeedController
+	}
 
 	public static let shared = SmartFeedsController()
 	let nameForDisplay = NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")
 
-	var smartFeeds = [AnyObject]()
+	var smartFeeds = [Feed]()
 	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 	let unreadFeed = UnreadFeed()
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
@@ -23,14 +28,19 @@ final class SmartFeedsController: DisplayNameProvider {
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}
 	
-	func find(by identifier: String) -> PseudoFeed? {
+	func find(by identifier: FeedIdentifier) -> PseudoFeed? {
 		switch identifier {
-		case String(describing: TodayFeedDelegate.self):
-			return todayFeed
-		case String(describing: UnreadFeed.self):
-			return unreadFeed
-		case String(describing: StarredFeedDelegate.self):
-			return starredFeed
+		case .smartFeed(let stringIdentifer):
+			switch stringIdentifer {
+			case String(describing: TodayFeedDelegate.self):
+				return todayFeed
+			case String(describing: UnreadFeed.self):
+				return unreadFeed
+			case String(describing: StarredFeedDelegate.self):
+				return starredFeed
+			default:
+				return nil
+			}
 		default:
 			return nil
 		}

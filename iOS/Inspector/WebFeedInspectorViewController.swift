@@ -78,7 +78,7 @@ class WebFeedInspectorViewController: UITableViewController {
 extension WebFeedInspectorViewController {
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return section == 0 ? 64.0 : super.tableView(tableView, heightForHeaderInSection: section)
+		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
 	}
 	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

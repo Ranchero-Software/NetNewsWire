@@ -13,9 +13,12 @@ class TickMarkSlider: UISlider {
 	private var enableFeedback = false
 	private let feedbackGenerator = UISelectionFeedbackGenerator()
 	
+	private var roundedValue: Float?
 	override var value: Float {
 		didSet {
-			if enableFeedback && value.truncatingRemainder(dividingBy: 1) == 0 {
+			let testValue = value.rounded()
+			if testValue != roundedValue && enableFeedback && value.truncatingRemainder(dividingBy: 1) == 0 {
+				roundedValue = testValue
 				feedbackGenerator.selectionChanged()
 			}
 		}
@@ -65,6 +68,12 @@ class TickMarkSlider: UISlider {
 			}
 		}
 				
+	}
+	
+	override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+		let result = super.continueTracking(touch, with: event)
+		value = value.rounded()
+		return result
 	}
 
 	override func endTracking(_ touch: UITouch?, with event: UIEvent?) {

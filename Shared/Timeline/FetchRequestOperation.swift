@@ -19,14 +19,16 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 final class FetchRequestOperation {
 
 	let id: Int
+	let readFilter: Bool
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
 	private let representedObjects: [Any]
 
-	init(id: Int, representedObjects: [Any], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilter: Bool, representedObjects: [Any], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
+		self.readFilter = readFilter
 		self.representedObjects = representedObjects
 		self.resultBlock = resultBlock
 	}
@@ -60,25 +62,38 @@ final class FetchRequestOperation {
 		let numberOfFetchers = articleFetchers.count
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
-		for articleFetcher in articleFetchers {
-			articleFetcher.fetchArticlesAsync { (articles) in
-				precondition(Thread.isMainThread)
-				guard !self.isCanceled else {
-					callCompletionIfNeeded()
-					return
-				}
-				
-				assert(!self.isFinished)
+		
+		func process(articles: Set<Article>) {
+			precondition(Thread.isMainThread)
+			guard !self.isCanceled else {
+				callCompletionIfNeeded()
+				return
+			}
+			
+			assert(!self.isFinished)
 
-				fetchedArticles.formUnion(articles)
-				fetchersReturned += 1
-				if fetchersReturned == numberOfFetchers {
-					self.isFinished = true
-					self.resultBlock(fetchedArticles, self)
-					callCompletionIfNeeded()
+			fetchedArticles.formUnion(articles)
+			fetchersReturned += 1
+			if fetchersReturned == numberOfFetchers {
+				self.isFinished = true
+				self.resultBlock(fetchedArticles, self)
+				callCompletionIfNeeded()
+			}
+		}
+		
+		for articleFetcher in articleFetchers {
+			if readFilter {
+				articleFetcher.fetchUnreadArticlesAsync { (articles) in
+					process(articles: articles)
+				}
+			} else {
+				articleFetcher.fetchArticlesAsync { (articles) in
+					process(articles: articles)
 				}
 			}
 		}
+		
 	}
+	
 }
 

@@ -57,7 +57,7 @@ struct MasterFeedTableViewSectionHeaderLayout {
 		labelWidth = cellWidth - (rLabelx + MasterFeedTableViewSectionHeaderLayout.labelMarginRight + maxUnreadCountSize.width + MasterFeedTableViewSectionHeaderLayout.unreadCountMarginRight)
 		
 		let labelSizeInfo = MultilineUILabelSizer.size(for: label.text ?? "", font: label.font, numberOfLines: 0, width: Int(floor(labelWidth)))
-		let rLabel = CGRect(x: rLabelx, y: rLabely, width: labelWidth, height: labelSizeInfo.size.height)
+		var rLabel = CGRect(x: rLabelx, y: rLabely, width: labelWidth, height: labelSizeInfo.size.height)
 		
 		// Determine cell height
 		let paddedLabelHeight = rLabel.maxY + UIFontMetrics.default.scaledValue(for: MasterFeedTableViewSectionHeaderLayout.verticalPadding)
@@ -74,6 +74,11 @@ struct MasterFeedTableViewSectionHeaderLayout {
 		}
 		rDisclosure = MasterFeedTableViewCellLayout.centerVertically(rDisclosure, newBounds)
 
+		// Small fonts need centered if we hit the minimum row height
+		if cellHeight == MasterFeedTableViewSectionHeaderLayout.minRowHeight {
+			rLabel = MasterFeedTableViewCellLayout.centerVertically(rLabel, newBounds)
+		}
+		
 		//  Assign the properties
 		self.height = cellHeight
 		self.unreadCountRect = rUnread

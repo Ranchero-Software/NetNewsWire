@@ -30,11 +30,11 @@ function error() {
 	document.body.innerHTML = "error";
 }
 
-function render(data) {
+function render(data, scrollY) {
 	document.getElementsByTagName("style")[0].innerHTML = data.style;
 	document.body.innerHTML = data.body;
 	
-	window.scrollTo(0, 0);
+	window.scrollTo(0, scrollY);
 	
 	wrapFrames()
 	stripStyles()

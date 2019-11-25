@@ -13,6 +13,10 @@ import Articles
 
 public final class WebFeed: Feed, Renamable, Hashable {
 
+	public var defaultReadFilterType: ReadFilterType {
+		return .none
+	}
+
 	public var feedID: FeedIdentifier? {
 		guard let accountID = account?.accountID else {
 			assertionFailure("Expected feed.account, but got nil.")

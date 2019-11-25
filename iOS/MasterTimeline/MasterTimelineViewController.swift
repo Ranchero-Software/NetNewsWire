@@ -13,10 +13,11 @@ import Articles
 
 class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
 
-	private var titleView: MasterTimelineTitleView?
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
+	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 	
+	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
 	
@@ -68,12 +69,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		iconSize = AppDefaults.timelineIconSize
 		resetEstimatedRowHeight()
 		
+		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
+			navigationItem.titleView = titleView
+		}
+
 		resetUI()
 		applyChanges(animated: false)
 		
-		// Set the bar button item so that it doesn't show on the article view
-		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-
 		// Restore the scroll position if we have one stored
 		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
 			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
@@ -81,13 +83,38 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 	}
 	
+	override func viewWillAppear(_ animated: Bool) {
+		// If the nav bar is hidden, fade it in to avoid it showing stuff as it is getting laid out
+		if navigationController?.navigationBar.isHidden ?? false {
+			navigationController?.navigationBar.alpha = 0
+		}
+	}
+	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isTimelineViewControllerPending = false
+
+		if navigationController?.navigationBar.alpha == 0 {
+			UIView.animate(withDuration: 0.5) {
+				self.navigationController?.navigationBar.alpha = 1
+			}
+		}
 	}
 	
 	// MARK: Actions
-
+	@IBAction func toggleFilter(_ sender: Any) {
+		switch coordinator.articleReadFilterType {
+		case .none:
+			filterButton.image = AppAssets.filterActiveImage
+			coordinator.hideUnreadArticles()
+		case .read:
+			filterButton.image = AppAssets.filterInactiveImage
+			coordinator.showAllArticles()
+		case .alwaysRead:
+			break
+		}
+	}
+	
 	@IBAction func markAllAsRead(_ sender: Any) {
 		if coordinator.displayUndoAvailableTip {
 			let alertController = UndoAvailableAlertController.alert { [weak self] _ in
@@ -128,10 +155,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	// MARK: API
-	
-	func restoreTimelinePosition() {
-		
-	}
 	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
@@ -263,7 +286,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 		
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: indexPath.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
 			guard let self = self else { return nil }
 			
@@ -292,6 +315,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		})
 		
+	}
+
+	override func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+		guard let row = configuration.identifier as? Int,
+			let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) else {
+				return nil
+		}
+		
+		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -328,7 +360,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		titleView?.iconView.iconImage = coordinator.timelineIconImage
+		
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+			titleView.iconView.iconImage = coordinator.timelineIconImage
+		}
+		
 		guard let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
@@ -359,7 +395,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		titleView?.iconView.iconImage = coordinator.timelineIconImage
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+			titleView.iconView.iconImage = coordinator.timelineIconImage
+		}
 		if coordinator.showIcons {
 			queueReloadAvailableCells()
 		}
@@ -379,7 +417,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		titleView?.label.text = coordinator.timelineFeed?.nameForDisplay
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
+		}
 	}
 	
 	@objc func scrollPositionDidChange() {
@@ -466,24 +506,34 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 private extension MasterTimelineViewController {
 
 	func resetUI() {
-		title = coordinator.timelineFeed?.nameForDisplay
 		
-		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
-			self.titleView = titleView
-			
+		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
+
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
 			titleView.iconView.iconImage = coordinator.timelineIconImage
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 			updateTitleUnreadCount()
 
 			if coordinator.timelineFeed is WebFeed {
 				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
-				let tap = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
-				titleView.addGestureRecognizer(tap)
+				titleView.addGestureRecognizer(feedTapGestureRecognizer)
+			} else {
+				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
 			}
 			
 			navigationItem.titleView = titleView
 		}
 
+		switch coordinator.articleReadFilterType {
+		case .none:
+			filterButton.isHidden = false
+			filterButton.image = AppAssets.filterInactiveImage
+		case .read:
+			filterButton.isHidden = false
+			filterButton.image = AppAssets.filterActiveImage
+		case .alwaysRead:
+			filterButton.isHidden = true
+		}
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
 		if dataSource.snapshot().itemIdentifiers(inSection: 0).count > 0 {
@@ -505,7 +555,9 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateTitleUnreadCount() {
-		self.titleView?.unreadCountView.unreadCount = coordinator.unreadCount
+		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
+			titleView.unreadCountView.unreadCount = coordinator.unreadCount
+		}
 	}
 	
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
@@ -521,12 +573,12 @@ private extension MasterTimelineViewController {
 	
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
-			MasterTimelineDataSource(coordinator: coordinator, tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
+			MasterTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
 				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
 				self?.configure(cell, article: article)
 				return cell
 			})
-		dataSource.defaultRowAnimation = .left
+		dataSource.defaultRowAnimation = .middle
 		return dataSource
     }
 	

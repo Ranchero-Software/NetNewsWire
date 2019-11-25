@@ -14,10 +14,11 @@ import RSTree
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
+	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
 	private var addNewItemButton: UIBarButtonItem!
 	
-	private lazy var dataSource = makeDataSource()
+	lazy var dataSource = makeDataSource()
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 	
@@ -38,11 +39,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			navigationController?.navigationBar.prefersLargeTitles = true
 		}
 		
-		navigationItem.rightBarButtonItem = editButtonItem
-
-		// Set the bar button item so that it doesn't show on the timeline view
-		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-
 		// If you don't have an empty table header, UIKit tries to help out by putting one in for you
 		// that makes a gap between the first section header and the navigation bar
 		var frame = CGRect.zero
@@ -51,6 +47,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		tableView.register(MasterFeedTableViewSectionHeader.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		tableView.dataSource = dataSource
+		tableView.dragDelegate = self
+		tableView.dropDelegate = self
+		tableView.dragInteractionEnabled = true
 		resetEstimatedRowHeight()
 		tableView.separatorStyle = .none
 
@@ -192,7 +191,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		headerView.tag = section
-		headerView.disclosureExpanded = sectionNode.isExpanded
+		headerView.disclosureExpanded = coordinator.isExpanded(sectionNode)
 		
 		if section == tableView.numberOfSections - 1 {
 			headerView.isLastSection = true
@@ -292,10 +291,21 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return nil
 		}
 		if node.representedObject is WebFeed {
-			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
+			return makeFeedContextMenu(node: node, indexPath: indexPath, includeDeleteRename: true)
 		} else {
-			return makeFolderContextMenu(indexPath: indexPath)
+			return makeFolderContextMenu(node: node, indexPath: indexPath)
 		}
+	}
+	
+	override func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+		guard let nodeUniqueId = configuration.identifier as? Int,
+			let node = coordinator.rootNode.descendantNode(where: { $0.uniqueID == nodeUniqueId }),
+			let indexPath = dataSource.indexPath(for: node),
+			let cell = tableView.cellForRow(at: indexPath) else {
+				return nil
+		}
+		
+		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -324,9 +334,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
-		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !destNode.isExpanded) {
-			let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
-			return IndexPath(row: destIndexPath.row + movementAdjustment, section: destIndexPath.section)
+		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !coordinator.isExpanded(destNode)) {
+			return proposedDestinationIndexPath
 		}
 		
 		// If we are dragging around in the same container, just return the original source
@@ -351,14 +360,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		} else {
 			
 			sortedNodes.remove(at: index)
-			
-			let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
-			let adjustedIndex = index - movementAdjustment
-			if adjustedIndex >= sortedNodes.count {
+
+			if index >= sortedNodes.count {
 				let lastSortedIndexPath = dataSource.indexPath(for: sortedNodes[sortedNodes.count - 1])!
-				return IndexPath(row: lastSortedIndexPath.row + 1, section: lastSortedIndexPath.section)
+				let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
+				return IndexPath(row: lastSortedIndexPath.row + movementAdjustment, section: lastSortedIndexPath.section)
 			} else {
-				return dataSource.indexPath(for: sortedNodes[adjustedIndex])!
+				let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
+				return dataSource.indexPath(for: sortedNodes[index - movementAdjustment])!
 			}
 			
 		}
@@ -369,6 +378,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
+	}
+	
+	@IBAction func toggleFilter(_ sender: Any) {
+		if coordinator.isUnreadFeedsFiltered {
+			filterButton.image = AppAssets.filterInactiveImage
+			coordinator.showAllFeeds()
+		} else {
+			filterButton.image = AppAssets.filterActiveImage
+			coordinator.hideUnreadFeeds()
+		}
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
@@ -384,7 +403,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 					return
 		}
 		
-		if sectionNode.isExpanded {
+		if coordinator.isExpanded(sectionNode) {
 			headerView.disclosureExpanded = false
 			coordinator.collapse(sectionNode)
 			self.applyChanges(animated: true)
@@ -501,7 +520,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				return
 		}
 		
-		if !sectionNode.isExpanded {
+		if !coordinator.isExpanded(sectionNode) {
 			coordinator.expand(sectionNode)
 			self.applyChanges(animated: true) {
 				completion?()
@@ -561,12 +580,22 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 					return nil
 		}
 		
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { suggestedActions in
+		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { suggestedActions in
 			let accountInfoAction = self.getAccountInfoAction(account: account)
 			let deactivateAction = self.deactivateAccountAction(account: account)
             return UIMenu(title: "", children: [accountInfoAction, deactivateAction])
         }
     }
+	
+	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+		
+		guard let sectionIndex = configuration.identifier as? Int,
+			let cell = tableView.headerView(forSection: sectionIndex) else {
+				return nil
+		}
+		
+		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
+	}
 }
 
 // MARK: MasterTableViewCellDelegate
@@ -630,11 +659,13 @@ private extension MasterFeedViewController {
 	}
 
     func makeDataSource() -> UITableViewDiffableDataSource<Node, Node> {
-		return MasterFeedDataSource(coordinator: coordinator, errorHandler: ErrorHandler.present(self), tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
+		let dataSource = MasterFeedDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
 			self?.configure(cell, node)
 			return cell
 		})
+		dataSource.defaultRowAnimation = .middle
+		return dataSource
     }
 
 	func resetEstimatedRowHeight() {
@@ -656,7 +687,7 @@ private extension MasterFeedViewController {
 		} else {
 			cell.indentationLevel = 1
 		}
-		cell.setDisclosure(isExpanded: node.isExpanded, animated: false)
+		cell.setDisclosure(isExpanded: coordinator.isExpanded(node), animated: false)
 		cell.isDisclosureAvailable = node.canHaveChildNodes
 		
 		cell.name = nameFor(node)
@@ -772,8 +803,8 @@ private extension MasterFeedViewController {
 		}
 	}
 
-	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
+	func makeFeedContextMenu(node: Node, indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
+		return UIContextMenuConfiguration(identifier: node.uniqueID as NSCopying, previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
 			
 			guard let self = self else { return nil }
 			
@@ -806,8 +837,8 @@ private extension MasterFeedViewController {
 		
 	}
 	
-	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+	func makeFolderContextMenu(node: Node, indexPath: IndexPath) -> UIContextMenuConfiguration {
+		return UIContextMenuConfiguration(identifier: node.uniqueID as NSCopying, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
 			guard let self = self else { return nil }
 			

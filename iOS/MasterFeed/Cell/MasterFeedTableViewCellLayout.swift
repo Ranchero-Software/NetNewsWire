@@ -98,7 +98,7 @@ struct MasterFeedTableViewCellLayout {
 			}
 		}
 
-		let rLabel = CGRect(x: rLabelx, y: rLabely, width: labelWidth, height: labelSizeInfo.size.height)
+		var rLabel = CGRect(x: rLabelx, y: rLabely, width: labelWidth, height: labelSizeInfo.size.height)
 		
 		// Determine cell height
 		let paddedLabelHeight = rLabel.maxY + UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding)
@@ -115,6 +115,12 @@ struct MasterFeedTableViewCellLayout {
 		}
 		if shouldShowDisclosure {
 			rDisclosure = MasterFeedTableViewCellLayout.centerVertically(rDisclosure, newBounds)
+		}
+
+		// Small fonts and the Favicon need centered if we hit the minimum row height
+		if cellHeight == MasterFeedTableViewCellLayout.minRowHeight {
+			rLabel = MasterFeedTableViewCellLayout.centerVertically(rLabel, newBounds)
+			rFavicon = MasterFeedTableViewCellLayout.centerVertically(rFavicon, newBounds)
 		}
 
 		//  Separator Insets

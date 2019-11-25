@@ -23,6 +23,7 @@ struct AppDefaults {
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineIconSize = "timelineIconSize"
 		static let timelineSortDirection = "timelineSortDirection"
+		static let articleFullscreenEnabled = "articleFullscreenEnabled"
 		static let displayUndoAvailableTip = "displayUndoAvailableTip"
 		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
@@ -92,6 +93,15 @@ struct AppDefaults {
 		}
 	}
 
+	static var articleFullscreenEnabled: Bool {
+		get {
+			return bool(for: Key.articleFullscreenEnabled)
+		}
+		set {
+			setBool(for: Key.articleFullscreenEnabled, newValue)
+		}
+	}
+
 	static var displayUndoAvailableTip: Bool {
 		get {
 			return bool(for: Key.displayUndoAvailableTip)
@@ -135,6 +145,7 @@ struct AppDefaults {
 										Key.timelineNumberOfLines: 2,
 										Key.timelineIconSize: IconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+										Key.articleFullscreenEnabled: false,
 										Key.displayUndoAvailableTip: true]
 		AppDefaults.shared.register(defaults: defaults)
 	}

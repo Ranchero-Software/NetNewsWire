@@ -17,6 +17,7 @@ class SettingsViewController: UITableViewController {
 	
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
+	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	
 	weak var presentingParentController: UIViewController?
 	
@@ -50,10 +51,16 @@ class SettingsViewController: UITableViewController {
 			groupByFeedSwitch.isOn = false
 		}
 
+		if AppDefaults.articleFullscreenEnabled {
+			showFullscreenArticlesSwitch.isOn = true
+		} else {
+			showFullscreenArticlesSwitch.isOn = false
+		}
+
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 20.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
-		buildLabel.text = "\(Bundle.main.appName) v \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
+		buildLabel.text = "\(Bundle.main.appName) \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
 		buildLabel.sizeToFit()
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
 		
@@ -71,24 +78,42 @@ class SettingsViewController: UITableViewController {
 	
 	// MARK: UITableView
 	
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		var sections = super.numberOfSections(in: tableView)
+		if traitCollection.userInterfaceIdiom != .phone {
+			sections = sections - 1
+		}
+		return sections
+	}
+	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		switch section {
+		var adjustedSection = section
+		if traitCollection.userInterfaceIdiom != .phone && section > 3 {
+			adjustedSection = adjustedSection + 1
+		}
+		
+		switch adjustedSection {
 		case 1:
 			return AccountManager.shared.accounts.count + 1
 		case 2:
-			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
+			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: adjustedSection)
 			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
 		default:
-			return super.tableView(tableView, numberOfRowsInSection: section)
+			return super.tableView(tableView, numberOfRowsInSection: adjustedSection)
 		}
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		var adjustedSection = indexPath.section
+		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
+			adjustedSection = adjustedSection + 1
+		}
+
 		let cell: UITableViewCell
-		switch indexPath.section {
+		switch adjustedSection {
 		case 1:
 						
 			let sortedAccounts = AccountManager.shared.sortedAccounts
@@ -105,8 +130,8 @@ class SettingsViewController: UITableViewController {
 			}
 		
 		default:
-			
-			cell = super.tableView(tableView, cellForRowAt: indexPath)
+			let adjustedIndexPath = IndexPath(row: indexPath.row, section: adjustedSection)
+			cell = super.tableView(tableView, cellForRowAt: adjustedIndexPath)
 			
 		}
 		
@@ -114,7 +139,12 @@ class SettingsViewController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		switch indexPath.section {
+		var adjustedSection = indexPath.section
+		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
+			adjustedSection = adjustedSection + 1
+		}
+
+		switch adjustedSection {
 		case 0:
 			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
 			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -156,11 +186,11 @@ class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case 4:
+		case 5:
 			switch indexPath.row {
 			case 0:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
+				openURL("https://ranchero.com/netnewswire/help/ios/5.0/en/")
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 1:
 				openURL("https://ranchero.com/netnewswire/")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -176,6 +206,9 @@ class SettingsViewController: UITableViewController {
 			case 5:
 				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			case 6:
+				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break
 			}
@@ -197,19 +230,11 @@ class SettingsViewController: UITableViewController {
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		if indexPath.section == 1 {
-			return super.tableView(tableView, heightForRowAt: IndexPath(row: 0, section: 1))
-		} else {
-			return super.tableView(tableView, heightForRowAt: indexPath)
-		}
+		return super.tableView(tableView, heightForRowAt: IndexPath(row: 0, section: 1))
 	}
 	
 	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
-		if indexPath.section == 1 {
-			return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 1))
-		} else {
-			return super.tableView(tableView, indentationLevelForRowAt: indexPath)
-		}
+		return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 1))
 	}
 	
 	// MARK: Actions
@@ -231,6 +256,14 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.timelineGroupByFeed = true
 		} else {
 			AppDefaults.timelineGroupByFeed = false
+		}
+	}
+	
+	@IBAction func switchFullscreenArticles(_ sender: Any) {
+		if showFullscreenArticlesSwitch.isOn {
+			AppDefaults.articleFullscreenEnabled = true
+		} else {
+			AppDefaults.articleFullscreenEnabled = false
 		}
 	}
 	
