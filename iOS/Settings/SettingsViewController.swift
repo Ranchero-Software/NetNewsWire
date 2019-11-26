@@ -384,7 +384,7 @@ private extension SettingsViewController {
 	}
 	
 	func exportOPMLAccountPicker(sourceView: UIView, sourceRect: CGRect) {
-		let title = NSLocalizedString("Select an Export Account", comment: "Select an Export Account")
+		let title = NSLocalizedString("Choose an account with the subscriptions to export", comment: "Export Account")
 		let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 		
 		if let popoverController = alert.popoverPresentationController {
