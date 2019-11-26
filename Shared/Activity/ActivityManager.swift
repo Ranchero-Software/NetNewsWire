@@ -31,7 +31,9 @@ class ActivityManager {
 		}
 		
 		let activity = NSUserActivity(activityType: ActivityType.restoration.rawValue)
+		#if os(iOS)
 		activity.persistentIdentifier = UUID().uuidString
+		#endif
 		activity.becomeCurrent()
 		return activity
 	}
