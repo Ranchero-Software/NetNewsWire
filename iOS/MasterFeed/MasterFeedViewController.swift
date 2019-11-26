@@ -349,18 +349,20 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		var sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
 		let index = sortedNodes.firstIndex(of: draggedNode)!
 
+		sortedNodes.remove(at: index)
+
 		if index == 0 {
 			
 			if parentNode.representedObject is Account {
 				return IndexPath(row: 0, section: destIndexPath.section)
 			} else {
-				return dataSource.indexPath(for: parentNode)!
+				let candidateIndexPath = dataSource.indexPath(for: sortedNodes[index])!
+				let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
+				return IndexPath(row: candidateIndexPath.row - movementAdjustment, section: candidateIndexPath.section)
 			}
 			
 		} else {
 			
-			sortedNodes.remove(at: index)
-
 			if index >= sortedNodes.count {
 				let lastSortedIndexPath = dataSource.indexPath(for: sortedNodes[sortedNodes.count - 1])!
 				let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
