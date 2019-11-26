@@ -346,7 +346,7 @@ private extension SettingsViewController {
 	}
 	
 	func importOPMLAccountPicker(sourceView: UIView, sourceRect: CGRect) {
-		let title = NSLocalizedString("Select an Import Account", comment: "Select an Import Account")
+		let title = NSLocalizedString("Choose an account to receive the imported feeds and folders", comment: "Import Account")
 		let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 		
 		if let popoverController = alert.popoverPresentationController {
