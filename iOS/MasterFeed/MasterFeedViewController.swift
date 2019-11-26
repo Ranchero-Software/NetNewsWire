@@ -540,8 +540,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		if let indexPath = dataSource.indexPath(for: node) {
-			coordinator.selectFeed(indexPath, animated: animated)
-			completion?()
+			coordinator.selectFeed(indexPath, animated: animated) {
+				completion?()
+			}
 			return
 		}
 	

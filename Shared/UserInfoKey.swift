@@ -23,4 +23,7 @@ struct UserInfoKey {
 	static let articlePath = "articlePath"
 	static let feedIdentifier = "feedIdentifier"
 	
+	static let windowState = "windowState"
+	static let containerExpandedWindowState = "containerExpandedWindowState"
+	
 }

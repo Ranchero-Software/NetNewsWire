@@ -101,8 +101,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
 	private let treeController: TreeController
 	
-	var stateRestorationActivity: NSUserActivity? {
-		return activityManager.stateRestorationActivity
+	var stateRestorationActivity: NSUserActivity {
+		let activity = activityManager.stateRestorationActivity
+		var userInfo = activity.userInfo == nil ? [AnyHashable: Any]() : activity.userInfo
+		userInfo![UserInfoKey.windowState] = windowState()
+		activity.userInfo = userInfo
+		return activity
 	}
 	
 	var isRootSplitCollapsed: Bool {
@@ -315,11 +319,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController
 	}
 	
+	func restoreWindowState(_ activity: NSUserActivity) {
+		if let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
+			restoreWindowState(windowState)
+			rebuildShadowTable()
+			masterFeedViewController.reloadFeeds()
+		}
+	}
+	
 	func handle(_ activity: NSUserActivity) {
 		selectFeed(nil, animated: false) {
-		
 			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 			switch activityType {
+			case .restoration:
+				break
 			case .selectFeed:
 				self.handleSelectFeed(activity.userInfo)
 			case .nextUnread:
@@ -329,7 +342,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			case .addFeedIntent:
 				self.showAdd(.feed)
 			}
-			
 		}
 	}
 	
@@ -1743,6 +1755,20 @@ private extension SceneCoordinator {
 	}
 	
 	// MARK: NSUserActivity
+	
+	func windowState() -> [AnyHashable: Any] {
+		let containerIdentifierUserInfos = expandedTable.map( { $0.userInfo })
+		return [
+			UserInfoKey.containerExpandedWindowState: containerIdentifierUserInfos
+		]
+	}
+	
+	func restoreWindowState(_ windowState: [AnyHashable: Any]) {
+		if let containerIdentifierUserInfos = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: Any]] {
+			let containerIdentifers = containerIdentifierUserInfos.compactMap( { ContainerIdentifier(userInfo: $0) })
+			expandedTable = Set(containerIdentifers)
+		}
+	}
 	
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,

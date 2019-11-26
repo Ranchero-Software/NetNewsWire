@@ -23,6 +23,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window!.tintColor = AppAssets.primaryAccentColor
 		window!.rootViewController = coordinator.start(for: window!.frame.size)
 
+		if let stateRestorationActivity = session.stateRestorationActivity {
+			coordinator.restoreWindowState(stateRestorationActivity)
+		}
+		
 		if let shortcutItem = connectionOptions.shortcutItem {
 			window!.makeKeyAndVisible()
 			handleShortcutItem(shortcutItem)

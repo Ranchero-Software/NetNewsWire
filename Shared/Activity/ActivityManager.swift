@@ -21,11 +21,19 @@ class ActivityManager {
 	private var readingActivity: NSUserActivity?
 	private var readingArticle: Article?
 
-	var stateRestorationActivity: NSUserActivity? {
-		if readingActivity != nil {
-			return readingActivity
+	var stateRestorationActivity: NSUserActivity {
+		if let activity = readingActivity {
+			return activity
 		}
-		return selectingActivity
+		
+		if let activity = selectingActivity {
+			return activity
+		}
+		
+		let activity = NSUserActivity(activityType: ActivityType.restoration.rawValue)
+		activity.persistentIdentifier = UUID().uuidString
+		activity.becomeCurrent()
+		return activity
 	}
 	
 	init() {
