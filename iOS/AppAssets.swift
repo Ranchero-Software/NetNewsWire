@@ -43,7 +43,7 @@ struct AppAssets {
 		return UIImage(named: "articleExtractorOff")!
 	}()
 
-	static var articleExtractorOffSmall: UIImage = {
+	static var articleExtractorOffSF: UIImage = {
 		return UIImage(systemName: "doc.plaintext")!
 	}()
 
@@ -56,8 +56,8 @@ struct AppAssets {
 		return UIImage(named: "articleExtractorOn")!
 	}()
 
-	static var articleExtractorOnSmall: UIImage = {
-		return UIImage(systemName: "doc.plaintext")!
+	static var articleExtractorOnSF: UIImage = {
+		return UIImage(named: "articleExtractorOnSF")!
 	}()
 
 	static var articleExtractorOnTinted: UIImage = {
