@@ -540,18 +540,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		refreshTimeline()
 	}
 	
-	func markExpanded(_ node: Node) {
-		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
-			expandedTable.insert(containerID)
-		}
-	}
-	
-	func unmarkExpanded(_ node: Node) {
-		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
-			expandedTable.remove(containerID)
-		}
-	}
-
 	func isExpanded(_ node: Node) -> Bool {
 		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
 			return expandedTable.contains(containerID)
@@ -1256,6 +1244,18 @@ private extension SceneCoordinator {
 		self.showIcons = false
 	}
 	
+	func markExpanded(_ node: Node) {
+		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
+			expandedTable.insert(containerID)
+		}
+	}
+	
+	func unmarkExpanded(_ node: Node) {
+		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
+			expandedTable.remove(containerID)
+		}
+	}
+
 	// MARK: Select Prev Unread
 
 	@discardableResult
@@ -1618,7 +1618,7 @@ private extension SceneCoordinator {
 		
 	}
 	
-	// MARK: Double Split
+	// MARK: Three Panel Mode
 	
 	func installTimelineControllerIfNecessary(animated: Bool) {
 		if navControllerForTimeline().viewControllers.filter({ $0 is MasterTimelineViewController }).count < 1 {
