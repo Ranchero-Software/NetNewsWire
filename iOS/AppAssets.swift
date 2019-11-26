@@ -43,6 +43,10 @@ struct AppAssets {
 		return UIImage(named: "articleExtractorOff")!
 	}()
 
+	static var articleExtractorOffSmall: UIImage = {
+		return UIImage(systemName: "doc.plaintext")!
+	}()
+
 	static var articleExtractorOffTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOff")!
 		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
@@ -50,6 +54,10 @@ struct AppAssets {
 
 	static var articleExtractorOn: UIImage = {
 		return UIImage(named: "articleExtractorOn")!
+	}()
+
+	static var articleExtractorOnSmall: UIImage = {
+		return UIImage(systemName: "doc.plaintext")!
 	}()
 
 	static var articleExtractorOnTinted: UIImage = {
@@ -127,6 +135,18 @@ struct AppAssets {
 	
 	static var moreImage: UIImage = {
 		return UIImage(systemName: "ellipsis.circle")!
+	}()
+	
+	static var nextArticleImage: UIImage = {
+		return UIImage(systemName: "chevron.down")!
+	}()
+	
+	static var nextUnreadArticleImage: UIImage = {
+		return UIImage(systemName: "chevron.down.circle")!
+	}()
+	
+	static var prevArticleImage: UIImage = {
+		return UIImage(systemName: "chevron.up")!
 	}()
 	
 	static var openInSidebarImage: UIImage = {

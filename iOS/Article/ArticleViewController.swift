@@ -47,6 +47,10 @@ class ArticleViewController: UIViewController {
 	}()
 	
 	private var webView: WKWebView!
+	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
+	private var isFullScreenAvailable: Bool {
+		return traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
+	}
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
 
@@ -93,6 +97,7 @@ class ArticleViewController: UIViewController {
 			webView?.evaluateJavaScript("cancelImageLoad();")
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
+			webView.removeInteraction(contextMenuInteraction)
 			webView.removeFromSuperview()
 			ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
 			webView = nil
@@ -122,6 +127,7 @@ class ArticleViewController: UIViewController {
 			self.webViewContainer.addChildAndPin(webView)
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
+			self.configureContextMenuInteraction()
 
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
@@ -285,19 +291,8 @@ class ArticleViewController: UIViewController {
 		coordinator.toggleStarredForCurrentArticle()
 	}
 	
-	@IBAction func openBrowser(_ sender: Any) {
-		coordinator.showBrowserForCurrentArticle()
-	}
-	
 	@IBAction func showActivityDialog(_ sender: Any) {
-		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-		
-		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle!.title)
-		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
-		activityViewController.popoverPresentationController?.barButtonItem = actionBarButtonItem
-		present(activityViewController, animated: true)
+		showActivityDialog()
 	}
 	
 	// MARK: Keyboard Shortcuts
@@ -355,6 +350,39 @@ extension ArticleViewController: InteractiveNavigationControllerTappable {
 	func didTapNavigationBar() {
 		hideBars()
 	}
+}
+
+// MARK: UIContextMenuInteractionDelegate
+
+extension ArticleViewController: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+	
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: contextMenuPreviewProvider) { [weak self] suggestedActions in
+			guard let self = self else { return nil }
+			var actions = [UIAction]()
+			
+			if let action = self.prevArticleAction() {
+				actions.append(action)
+			}
+			if let action = self.nextArticleAction() {
+				actions.append(action)
+			}
+			actions.append(self.toggleReadAction())
+			actions.append(self.toggleStarredAction())
+			if let action = self.nextUnreadArticleAction() {
+				actions.append(action)
+			}
+			actions.append(self.toggleArticleExtractorAction())
+			actions.append(self.shareAction())
+			
+			return UIMenu(title: "", children: actions)
+        }
+    }
+	
+	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+		coordinator.showBrowserForCurrentArticle()
+	}
+	
 }
 
 // MARK: WKNavigationDelegate
@@ -492,25 +520,113 @@ private extension ArticleViewController {
 		}
 	}
 	
+	func showActivityDialog() {
+		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+		
+		let itemSource = ArticleActivityItemSource(url: url, subject: currentArticle!.title)
+		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		activityViewController.popoverPresentationController?.barButtonItem = actionBarButtonItem
+		present(activityViewController, animated: true)
+	}
+	
 	func showBars() {
-		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+		if isFullScreenAvailable {
 			AppDefaults.articleFullscreenEnabled = false
 			coordinator.showStatusBar()
 			showNavigationViewConstraint.constant = 0
 			showToolbarViewConstraint.constant = 0
 			navigationController?.setNavigationBarHidden(false, animated: true)
 			navigationController?.setToolbarHidden(false, animated: true)
+			configureContextMenuInteraction()
 		}
 	}
 	
 	func hideBars() {
-		if traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed {
+		if isFullScreenAvailable {
 			AppDefaults.articleFullscreenEnabled = true
 			coordinator.hideStatusBar()
 			showNavigationViewConstraint.constant = 44.0
 			showToolbarViewConstraint.constant = 44.0
 			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
+			configureContextMenuInteraction()
+		}
+	}
+	
+	func configureContextMenuInteraction() {
+		if isFullScreenAvailable {
+			if navigationController?.isNavigationBarHidden ?? false {
+				webView?.addInteraction(contextMenuInteraction)
+			} else {
+				webView?.removeInteraction(contextMenuInteraction)
+			}
+		}
+		
+	}
+	
+	func contextMenuPreviewProvider() -> UIViewController {
+		let previewProvider = UIStoryboard.main.instantiateController(ofType: ContextMenuPreviewViewController.self)
+		previewProvider.article = currentArticle
+		return previewProvider
+	}
+	
+	func prevArticleAction() -> UIAction? {
+		guard coordinator.isPrevArticleAvailable else { return nil }
+		let title = NSLocalizedString("Previous Article", comment: "Previous Article")
+		return UIAction(title: title, image: AppAssets.prevArticleImage) { [weak self] action in
+			self?.coordinator.selectPrevArticle()
+		}
+	}
+	
+	func nextArticleAction() -> UIAction? {
+		guard coordinator.isNextArticleAvailable else { return nil }
+		let title = NSLocalizedString("Next Article", comment: "Next Article")
+		return UIAction(title: title, image: AppAssets.nextArticleImage) { [weak self] action in
+			self?.coordinator.selectNextArticle()
+		}
+	}
+	
+	func toggleReadAction() -> UIAction {
+		let read = currentArticle?.status.read ?? false
+		let title = read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
+		let readImage = read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+		return UIAction(title: title, image: readImage) { [weak self] action in
+			self?.coordinator.toggleReadForCurrentArticle()
+		}
+	}
+
+	func toggleStarredAction() -> UIAction {
+		let starred = currentArticle?.status.starred ?? false
+		let title = starred ? NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") : NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
+		let starredImage = starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		return UIAction(title: title, image: starredImage) { [weak self] action in
+			self?.coordinator.toggleStarredForCurrentArticle()
+		}
+	}
+
+	func nextUnreadArticleAction() -> UIAction? {
+		guard coordinator.isAnyUnreadAvailable else { return nil }
+		let title = NSLocalizedString("Next Unread Article", comment: "Next Unread Article")
+		return UIAction(title: title, image: AppAssets.nextUnreadArticleImage) { [weak self] action in
+			self?.coordinator.selectNextArticle()
+		}
+	}
+	
+	func toggleArticleExtractorAction() -> UIAction {
+		let extracted = articleExtractorButton.buttonState == .on
+		let title = extracted ? NSLocalizedString("Show Feed Article", comment: "Show Feed Article") : NSLocalizedString("Show Reader View", comment: "Show Reader View")
+		let extractorImage = extracted ? AppAssets.articleExtractorOffSmall : AppAssets.articleExtractorOnSmall
+		return UIAction(title: title, image: extractorImage) { [weak self] action in
+			self?.coordinator.toggleArticleExtractor()
+		}
+	}
+
+	func shareAction() -> UIAction {
+		let title = NSLocalizedString("Share", comment: "Share")
+		return UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
+			self?.showActivityDialog()
 		}
 	}
 	

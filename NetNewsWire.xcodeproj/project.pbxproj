@@ -151,6 +151,7 @@
 		51B62E68233186730085F949 /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B62E67233186730085F949 /* IconView.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
+		51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
 		51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51C451B9226377C900C03939 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; };
@@ -1321,6 +1322,7 @@
 		51B62E67233186730085F949 /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
+		51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreviewViewController.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
 		51C45250226506F400C03939 /* String-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String-Extensions.swift"; sourceTree = "<group>"; };
 		51C45254226507D200C03939 /* AppAssets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppAssets.swift; sourceTree = "<group>"; };
@@ -1948,6 +1950,7 @@
 				51C4527E2265092C00C03939 /* ArticleViewController.swift */,
 				517630222336657E00E15FFF /* ArticleViewControllerWebViewProvider.swift */,
 				51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */,
+				51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */,
 				5142192923522B5500E07E2C /* ImageViewController.swift */,
 				514219362352510100E07E2C /* ImageScrollView.swift */,
 				518651D9235621840078E021 /* ImageTransition.swift */,
@@ -2963,7 +2966,7 @@
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = 8EQFQ9RY84;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
@@ -2973,7 +2976,7 @@
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = 8EQFQ9RY84;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
@@ -2986,7 +2989,7 @@
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = 8EQFQ9RY84;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -2996,7 +2999,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 8EQFQ9RY84;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -3006,7 +3009,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 8EQFQ9RY84;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -4027,6 +4030,7 @@
 				51934CCE2310792F006127BE /* ActivityManager.swift in Sources */,
 				5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */,
 				518651DA235621840078E021 /* ImageTransition.swift in Sources */,
+				51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */,
 				51627A6923861DED007B3B4B /* MasterFeedViewController+Drop.swift in Sources */,
 				514219372352510100E07E2C /* ImageScrollView.swift in Sources */,
 				516AE9B32371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift in Sources */,
