@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9cW-lu-HoC">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -617,36 +617,10 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="ACKNOWLEDGMENTS" id="0Jq-ba-ylz">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="62" id="0Ge-wc-h3h">
-                                        <rect key="frame" x="20" y="316" width="374" height="62"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0Ge-wc-h3h" id="tFb-3V-qIg">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="62"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YLf-rp-9nE">
-                                                    <rect key="frame" x="16" y="0.0" width="342" height="62"/>
-                                                    <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
-                                                    <attributedString key="attributedText"/>
-                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                                </textView>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="YLf-rp-9nE" secondAttribute="trailing" constant="16" id="PdJ-fJ-4Kg"/>
-                                                <constraint firstItem="YLf-rp-9nE" firstAttribute="top" secondItem="tFb-3V-qIg" secondAttribute="top" id="XqY-0L-gjF"/>
-                                                <constraint firstItem="YLf-rp-9nE" firstAttribute="leading" secondItem="tFb-3V-qIg" secondAttribute="leading" constant="16" id="wBJ-7b-fOB"/>
-                                                <constraint firstAttribute="bottom" secondItem="YLf-rp-9nE" secondAttribute="bottom" id="yLw-Qs-gyo"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                             <tableViewSection headerTitle="THANKS" id="Sgx-f1-hsT">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="62" id="bLz-mu-psL">
-                                        <rect key="frame" x="20" y="434" width="374" height="62"/>
+                                        <rect key="frame" x="20" y="316" width="374" height="62"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bLz-mu-psL" id="cxy-IZ-zFZ">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="62"/>
@@ -672,7 +646,7 @@
                             <tableViewSection headerTitle="DEDICATION" id="nbm-Bs-te6">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="62" id="aab-HD-ce6">
-                                        <rect key="frame" x="20" y="552" width="374" height="62"/>
+                                        <rect key="frame" x="20" y="434" width="374" height="62"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aab-HD-ce6" id="6pH-5O-3V8">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="62"/>
@@ -704,7 +678,6 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
                         <outlet property="aboutTextView" destination="5fQ-qz-qbW" id="R2a-em-Nq0"/>
-                        <outlet property="acknowledgmentsTextView" destination="YLf-rp-9nE" id="vRI-bi-wef"/>
                         <outlet property="creditsTextView" destination="LiZ-Tv-tqb" id="x3n-Vb-KYr"/>
                         <outlet property="dedicationTextView" destination="DIp-6a-oPH" id="iCz-xX-xEn"/>
                         <outlet property="thanksTextView" destination="wTL-xl-1rK" id="6qr-Ue-2jp"/>
