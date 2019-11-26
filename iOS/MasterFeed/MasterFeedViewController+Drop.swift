@@ -56,24 +56,18 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		// Based on the drop we have to determine a node to start looking for a parent container.
 		let destNode: Node? = {
 			
-			if destIndexPath.row == 0 {
-				
-				return coordinator.rootNode.childAtIndex(destIndexPath.section)!
-				
+			if isFolderDrop {
+				return dataSource.itemIdentifier(for: destIndexPath)
 			} else {
-				
-				if isFolderDrop {
-					return dataSource.itemIdentifier(for: destIndexPath)
+				if destIndexPath.row == 0 {
+					return coordinator.rootNode.childAtIndex(destIndexPath.section)!
+				} else if destIndexPath.row > 0 {
+					return dataSource.itemIdentifier(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))
 				} else {
-					if destIndexPath.row > 0 {
-						return dataSource.itemIdentifier(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))
-					} else {
-						return nil
-					}
+					return nil
 				}
-				
 			}
-			
+				
 		}()
 
 		// Now we start looking for the parent container
