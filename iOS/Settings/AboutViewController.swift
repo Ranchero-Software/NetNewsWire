@@ -29,7 +29,7 @@ class AboutViewController: UITableViewController {
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 20.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
-		buildLabel.text = NSLocalizedString("Copyright © 2002-2019 Ranchero Software", comment: "Copyright")
+		buildLabel.text = NSLocalizedString("Copyright © 2002-2019 Brent Simmons", comment: "Copyright")
 		buildLabel.numberOfLines = 0
 		buildLabel.sizeToFit()
 		buildLabel.translatesAutoresizingMaskIntoConstraints = false
