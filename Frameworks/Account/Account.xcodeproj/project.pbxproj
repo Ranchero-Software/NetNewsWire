@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B3A33E7238D3D6800314204 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A33E6238D3D6800314204 /* Secrets.swift */; };
 		3B826DA72385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D9E2385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift */; };
 		3B826DA82385C81C00FC1ADB /* FeedWranglerFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D9F2385C81C00FC1ADB /* FeedWranglerFeedItem.swift */; };
 		3B826DA92385C81C00FC1ADB /* FeedWranglerAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DA02385C81C00FC1ADB /* FeedWranglerAPICaller.swift */; };
@@ -219,6 +220,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3B3A33E6238D3D6800314204 /* Secrets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = ../../Shared/Secrets.swift; sourceTree = "<group>"; };
 		3B826D9E2385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAuthorizationResult.swift; sourceTree = "<group>"; };
 		3B826D9F2385C81C00FC1ADB /* FeedWranglerFeedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerFeedItem.swift; sourceTree = "<group>"; };
 		3B826DA02385C81C00FC1ADB /* FeedWranglerAPICaller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAPICaller.swift; sourceTree = "<group>"; };
@@ -563,6 +565,7 @@
 		848934EC1F62484F00CEBD24 = {
 			isa = PBXGroup;
 			children = (
+				3B3A33E6238D3D6800314204 /* Secrets.swift */,
 				848935101F62486800CEBD24 /* Account.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				51BB7B83233531BC008E8144 /* AccountBehaviors.swift */,
@@ -1115,6 +1118,7 @@
 				9EAEC62823331C350085D7C9 /* FeedlyCategory.swift in Sources */,
 				3B826DAE2385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift in Sources */,
 				9E964EB823754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift in Sources */,
+				3B3A33E7238D3D6800314204 /* Secrets.swift in Sources */,
 				9EF1B10923590E93000A486A /* FeedlyStreamIds.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,
 				84CAD7161FDF2E22000F0755 /* FeedbinEntry.swift in Sources */,
