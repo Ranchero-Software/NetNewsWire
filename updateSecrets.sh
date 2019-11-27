@@ -1,7 +1,7 @@
 #!/bin/bash
 
-find . -name '*.gyb' |
+find "${PROJECT_DIR}" -name '*.gyb' |
   while read file; do
-    echo "running ${file%.gyb}";
-    ./Vendor/gyb --line-directive '' -o "${file%.gyb}" "$file";
+    echo "Generating ${file%.gyb}";
+    "${PROJECT_DIR}/Vendor/gyb" --line-directive '' -o "${file%.gyb}" "$file";
   done
