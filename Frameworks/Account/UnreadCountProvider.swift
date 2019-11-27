@@ -9,7 +9,7 @@
 import Foundation
 
 public extension Notification.Name {
-
+	static let UnreadCountDidInitialize = Notification.Name("UnreadCountDidInitialize")
 	static let UnreadCountDidChange = Notification.Name(rawValue: "UnreadCountDidChange")
 }
 
@@ -24,6 +24,10 @@ public protocol UnreadCountProvider {
 
 public extension UnreadCountProvider {
 	
+	func postUnreadCountDidInitializeNotification() {
+		NotificationCenter.default.post(name: .UnreadCountDidInitialize, object: self, userInfo: nil)
+	}
+
 	func postUnreadCountDidChangeNotification() {
 		NotificationCenter.default.post(name: .UnreadCountDidChange, object: self, userInfo: nil)
 	}

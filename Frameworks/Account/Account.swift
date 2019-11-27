@@ -1098,6 +1098,7 @@ private extension Account {
 				self.fetchingAllUnreadCounts = false
 				self.updateUnreadCount()
 				self.isUnreadCountsInitialized = true
+				self.postUnreadCountDidInitializeNotification()
 				return
 			}
 
@@ -1111,9 +1112,11 @@ private extension Account {
 					feed.unreadCount = 0
 				}
 			}
+			
 			self.fetchingAllUnreadCounts = false
 			self.updateUnreadCount()
 			self.isUnreadCountsInitialized = true
+			self.postUnreadCountDidInitializeNotification()
 		}
 	}
 }

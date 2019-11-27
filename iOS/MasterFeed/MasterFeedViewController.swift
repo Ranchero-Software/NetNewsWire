@@ -383,12 +383,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@IBAction func toggleFilter(_ sender: Any) {
-		if coordinator.isUnreadFeedsFiltered {
+		if coordinator.isReadFeedsFiltered {
 			filterButton.image = AppAssets.filterInactiveImage
 			coordinator.showAllFeeds()
 		} else {
 			filterButton.image = AppAssets.filterActiveImage
-			coordinator.hideUnreadFeeds()
+			coordinator.hideReadFeeds()
 		}
 	}
 	
@@ -506,14 +506,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 
-	func reloadFeeds() {
+	func reloadFeeds(initialLoad: Bool) {
 		updateUI()
 
 		// We have to reload all the visible cells because if we got here by doing a table cell move,
 		// then the table itself is in a weird state.  This is because we do unusual things like allowing
 		// drops on a "folder" that should cause the dropped cell to disappear.
-		applyChanges(animated: true) { [weak self] in
-			self?.reloadAllVisibleCells()
+		applyChanges(animated: !initialLoad) { [weak self] in
+			if !initialLoad {
+				self?.reloadAllVisibleCells()
+			}
 		}
 	}
 	
@@ -633,6 +635,11 @@ private extension MasterFeedViewController {
 	}
 	
 	func updateUI() {
+		if coordinator.isReadFeedsFiltered {
+			filterButton.image = AppAssets.filterActiveImage
+		} else {
+			filterButton.image = AppAssets.filterInactiveImage
+		}
 		refreshProgressView?.updateRefreshLabel()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}

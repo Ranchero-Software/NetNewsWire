@@ -117,7 +117,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return panelMode == .three
 	}
 	
-	var isUnreadFeedsFiltered: Bool {
+	var isReadFeedsFiltered: Bool {
 		return treeControllerDelegate.isReadFiltered
 	}
 	
@@ -279,8 +279,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			shadowTable.append([Node]())
 		}
 		
-		rebuildShadowTable()
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
@@ -307,7 +306,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController = UIStoryboard.main.instantiateController(ofType: MasterFeedViewController.self)
 		masterFeedViewController.coordinator = self
 		masterNavigationController.pushViewController(masterFeedViewController, animated: false)
-		masterFeedViewController.reloadFeeds()
 		
 		let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
 		articleViewController.coordinator = self
@@ -319,12 +317,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController
 	}
 	
-	func restoreWindowState(_ activity: NSUserActivity) {
-		if let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
+	func restoreWindowState(_ activity: NSUserActivity?) {
+		if let activity = activity, let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
 			restoreWindowState(windowState)
-			rebuildShadowTable()
-			masterFeedViewController.reloadFeeds()
 		}
+		rebuildBackingStores(initialLoad: true)
 	}
 	
 	func handle(_ activity: NSUserActivity) {
@@ -387,6 +384,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	// MARK: Notifications
 	
+	@objc func unreadCountDidInitialize(_ notification: Notification) {
+		guard notification.object is AccountManager else {
+			return
+		}
+		if isReadFeedsFiltered {
+			rebuildBackingStores()
+		}
+	}
+
 	@objc func statusesDidChange(_ note: Notification) {
 		updateUnreadCount()
 	}
@@ -525,7 +531,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rebuildBackingStores()
 	}
 	
-	func hideUnreadFeeds() {
+	func hideReadFeeds() {
 		treeControllerDelegate.isReadFiltered = true
 		rebuildBackingStores()
 	}
@@ -1150,12 +1156,12 @@ private extension SceneCoordinator {
 		unreadCount = count
 	}
 	
-	func rebuildBackingStores(_ updateExpandedNodes: (() -> Void)? = nil) {
+	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()
 			updateExpandedNodes?()
 			rebuildShadowTable()
-			masterFeedViewController.reloadFeeds()
+			masterFeedViewController.reloadFeeds(initialLoad: initialLoad)
 		}
 	}
 	
@@ -1759,11 +1765,15 @@ private extension SceneCoordinator {
 	func windowState() -> [AnyHashable: Any] {
 		let containerIdentifierUserInfos = expandedTable.map( { $0.userInfo })
 		return [
+			UserInfoKey.readFeedsFilterState: isReadFeedsFiltered,
 			UserInfoKey.containerExpandedWindowState: containerIdentifierUserInfos
 		]
 	}
 	
 	func restoreWindowState(_ windowState: [AnyHashable: Any]) {
+		if let readFeedsFilterState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
+			treeControllerDelegate.isReadFiltered = readFeedsFilterState
+		}
 		if let containerIdentifierUserInfos = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: Any]] {
 			let containerIdentifers = containerIdentifierUserInfos.compactMap( { ContainerIdentifier(userInfo: $0) })
 			expandedTable = Set(containerIdentifers)
