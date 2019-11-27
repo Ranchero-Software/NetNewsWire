@@ -776,10 +776,8 @@
 			buildConfigurationList = 8489350A1F62485000CEBD24 /* Build configuration list for PBXNativeTarget "Account" */;
 			buildPhases = (
 				9E964EBB2375512300A7AF2E /* Run Script: Update OAuthAuthorizationClient+Feedly.swift */,
-				3B826DCF2385CE1B00FC1ADB /* Run Script: Update FeedWranglerConfig.swift */,
 				848934F11F62484F00CEBD24 /* Sources */,
 				9E964EBC2375517100A7AF2E /* Run Script: Reset OAuthAuthorizationClient+Feedly.swift */,
-				3B826DD02385CE9500FC1ADB /* Run Script: Reset FeedWranglerConfig.swift */,
 				848934F21F62484F00CEBD24 /* Frameworks */,
 				848934F31F62484F00CEBD24 /* Headers */,
 				848934F41F62484F00CEBD24 /* Resources */,
@@ -934,42 +932,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3B826DCF2385CE1B00FC1ADB /* Run Script: Update FeedWranglerConfig.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Update FeedWranglerConfig.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "FAILED=false\n\nif [ -z \"${FEED_WRANGLER_KEY}\" ]; then\nFAILED=true\nfi\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feed Wrangler Key. FeedWranglerConfig.swift not changed.\"\nexit 0\nfi\n\nsed -i .tmp \"s|{FEEDWRANGLERKEY}|${FEED_WRANGLER_KEY}|g; s|{FEEDWRANGLERKEY}|${FEED_WRANGLER_KEY}|g\" \"${SRCROOT}/FeedWrangler/FeedWranglerConfig.swift\"\n\nrm -f \"${SRCROOT}/FeedWrangler/FeedWranglerConfig.swift.tmp\"\n\necho \"All Feed Wrangler env values found!\"\n\n";
-		};
-		3B826DD02385CE9500FC1ADB /* Run Script: Reset FeedWranglerConfig.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Reset FeedWranglerConfig.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "git checkout \"${SRCROOT}/FeedWrangler/FeedWranglerConfig.swift\"\n";
-		};
 		51C8F34C234FB14B0048ED95 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
