@@ -26,6 +26,7 @@ final class SingleFaviconDownloader {
 
 	let faviconURL: String
 	var iconImage: IconImage?
+	let homePageURL: String?
 
 	private var lastDownloadAttemptDate: Date
 	private var diskStatus = DiskStatus.unknown
@@ -36,9 +37,10 @@ final class SingleFaviconDownloader {
 		return (faviconURL as NSString).rs_md5Hash()
 	}
 
-	init(faviconURL: String, diskCache: BinaryDiskCache, queue: DispatchQueue) {
+	init(faviconURL: String, homePageURL: String?, diskCache: BinaryDiskCache, queue: DispatchQueue) {
 
 		self.faviconURL = faviconURL
+		self.homePageURL = homePageURL
 		self.diskCache = diskCache
 		self.queue = queue
 		self.lastDownloadAttemptDate = Date()
@@ -85,6 +87,7 @@ private extension SingleFaviconDownloader {
 					self.iconImage = IconImage(image)
 					self.postDidLoadFaviconNotification()
 				}
+				
 			}
 		}
 	}

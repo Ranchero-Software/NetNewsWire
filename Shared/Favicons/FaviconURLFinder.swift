@@ -9,11 +9,11 @@
 import Foundation
 import RSParser
 
-// The favicon URL may be specified in the head section of the home page.
+// The favicon URLs may be specified in the head section of the home page.
 
 struct FaviconURLFinder {
 
-	static func findFaviconURL(_ homePageURL: String, _ callback: @escaping (String?) -> Void) {
+	static func findFaviconURLs(_ homePageURL: String, _ callback: @escaping ([String]?) -> Void) {
 
 		guard let _ = URL(string: homePageURL) else {
 			callback(nil)
@@ -21,7 +21,7 @@ struct FaviconURLFinder {
 		}
 
 		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (htmlMetadata) in
-			callback(htmlMetadata?.faviconLink)
+			callback(htmlMetadata?.faviconLinks)
 		}
 	}
 }
