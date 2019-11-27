@@ -3524,7 +3524,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./updateSecrets.sh\n\n";
+			shellScript = "./buildscripts/updateSecrets.sh\n\n";
 		};
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
