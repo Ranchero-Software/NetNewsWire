@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Account
 
 public enum ArticleExtractorState {
     case ready
@@ -35,9 +36,9 @@ class ArticleExtractor {
     public init?(_ articleLink: String) {
 		self.articleLink = articleLink
 		
-		let clientURL = ArticleExtractorConfig.clientURL
-		let username = ArticleExtractorConfig.clientId
-		let signiture = articleLink.hmacUsingSHA1(key: ArticleExtractorConfig.clientSecret)
+		let clientURL = "https://extract.feedbin.com/parser"
+		let username = Secrets.mercuryClientId
+		let signiture = articleLink.hmacUsingSHA1(key: Secrets.mercuryClientSecret)
 		
 		if let base64URL = articleLink.data(using: .utf8)?.base64EncodedString() {
 			let fullURL = "\(clientURL)/\(username)/\(signiture)?base64_url=\(base64URL)"

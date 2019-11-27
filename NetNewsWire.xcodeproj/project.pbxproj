@@ -2891,9 +2891,7 @@
 			buildConfigurationList = 849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "NetNewsWire" */;
 			buildPhases = (
 				3B3A341B238D3FB200314204 /* Run Script: Update Secrets */,
-				51D6803823330CFF0097A009 /* Run Script: Update ArticleExtractorConfig.swift */,
 				849C645C1ED37A5D003D8FC0 /* Sources */,
-				517D2D82233A53D600FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */,
 				849C645D1ED37A5D003D8FC0 /* Frameworks */,
 				849C645E1ED37A5D003D8FC0 /* Resources */,
 				84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */,
@@ -3581,42 +3579,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n";
-		};
-		517D2D82233A53D600FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Reset ArticleExtractorConfig.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n";
-		};
-		51D6803823330CFF0097A009 /* Run Script: Update ArticleExtractorConfig.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Update ArticleExtractorConfig.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "FAILED=false\n\nif [ -z \"${MERCURY_CLIENT_ID}\" ]; then\nFAILED=true\nfi\n\nif [ -z \"${MERCURY_CLIENT_SECRET}\" ]; then\nFAILED=true\nfi\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedbin Mercury credetials.  ArticleExtractorConfig.swift not changed.\"\nexit 0\nfi\n\nsed -i .tmp \"s|{MERCURYID}|${MERCURY_CLIENT_ID}|g; s|{MERCURYSECRET}|${MERCURY_CLIENT_SECRET}|g\" \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n\nrm -f \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift.tmp\"\n\necho \"All env values found!\"\n\n";
 		};
 		65ED3FB5235DEF6C0081F399 /* Run Script: Update ArticleExtractorConfig.swift */ = {
 			isa = PBXShellScriptBuildPhase;

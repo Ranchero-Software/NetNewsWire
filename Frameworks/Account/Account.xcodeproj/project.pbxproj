@@ -775,9 +775,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8489350A1F62485000CEBD24 /* Build configuration list for PBXNativeTarget "Account" */;
 			buildPhases = (
-				9E964EBB2375512300A7AF2E /* Run Script: Update OAuthAuthorizationClient+Feedly.swift */,
 				848934F11F62484F00CEBD24 /* Sources */,
-				9E964EBC2375517100A7AF2E /* Run Script: Reset OAuthAuthorizationClient+Feedly.swift */,
 				848934F21F62484F00CEBD24 /* Frameworks */,
 				848934F31F62484F00CEBD24 /* Headers */,
 				848934F41F62484F00CEBD24 /* Resources */,
@@ -949,42 +947,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
-		};
-		9E964EBB2375512300A7AF2E /* Run Script: Update OAuthAuthorizationClient+Feedly.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Update OAuthAuthorizationClient+Feedly.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "FAILED=false\n\nif [ -z \"${FEEDLY_CLIENT_ID}\" ]; then\necho \"Missing Feedly Client ID\"\nFAILED=true\nfi\n\nif [ -z \"${FEEDLY_CLIENT_SECRET}\" ]; then\necho \"Missing Feedly Client Secret\"\nFAILED=true\nfi\n\nFEEDLY_CLIENT_SOURCE=\"${SRCROOT}/Feedly/OAuthAuthorizationClient+Feedly.swift\"\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedly client ID or secret. ${FEEDLY_CLIENT_SOURCE} not changed.\"\nexit 0\nfi\n\n# echo \"Substituting variables in: ${FEEDLY_CLIENT_SOURCE}\"\n\nif [ -e \"${FEEDLY_CLIENT_SOURCE}\" ]\nthen\n    sed -i .tmp \"s|{FEEDLY_CLIENT_ID}|${FEEDLY_CLIENT_ID}|g; s|{FEEDLY_CLIENT_SECRET}|${FEEDLY_CLIENT_SECRET}|g\" $FEEDLY_CLIENT_SOURCE\n    # echo \"`git diff ${FEEDLY_CLIENT_SOURCE}`\"\n    rm -f \"${FEEDLY_CLIENT_SOURCE}.tmp\"\nelse\n    echo \"File does not exist at ${FEEDLY_CLIENT_SOURCE}. Has it been moved or renamed?\"\n    exit -1\nfi\n\necho \"All env values found!\"\n";
-		};
-		9E964EBC2375517100A7AF2E /* Run Script: Reset OAuthAuthorizationClient+Feedly.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Reset OAuthAuthorizationClient+Feedly.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "git checkout \"${SRCROOT}/Feedly/OAuthAuthorizationClient+Feedly.swift\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
