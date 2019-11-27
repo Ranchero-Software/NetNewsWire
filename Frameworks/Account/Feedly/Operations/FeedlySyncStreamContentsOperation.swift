@@ -68,7 +68,8 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 													   resource: resource,
 													   service: service,
 													   continuation: continuation,
-													   newerThan: newerThan)
+													   newerThan: newerThan,
+													   log: log)
 
 		
 		let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,

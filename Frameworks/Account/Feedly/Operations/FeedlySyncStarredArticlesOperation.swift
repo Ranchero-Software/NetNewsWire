@@ -66,7 +66,8 @@ final class FeedlySyncStarredArticlesOperation: FeedlyOperation, FeedlyOperation
 		let getFirstPage = FeedlyGetStreamContentsOperation(account: account,
 													resource: resource,
 													service: service,
-													newerThan: nil)
+													newerThan: nil,
+													log: log)
 		
 		let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
 																	  parsedItemProvider: provider,
@@ -128,7 +129,8 @@ final class FeedlySyncStarredArticlesOperation: FeedlyOperation, FeedlyOperation
 														 resource: operation.resource,
 														 service: operation.service,
 														 continuation: continuation,
-														 newerThan: operation.newerThan)
+														 newerThan: operation.newerThan,
+														 log: log)
 		nextPageOperation.delegate = self
 		nextPageOperation.streamDelegate = self
 		

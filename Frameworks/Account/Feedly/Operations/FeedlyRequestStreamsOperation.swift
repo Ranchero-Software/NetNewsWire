@@ -50,7 +50,8 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 															   resource: resource,
 															   service: service,
 															   newerThan: newerThan,
-															   unreadOnly: unreadOnly)
+															   unreadOnly: unreadOnly,
+															   log: log)
 			queueDelegate?.feedlyRequestStreamsOperation(self, enqueue: operation)
 		}
 		
