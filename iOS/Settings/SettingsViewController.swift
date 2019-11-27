@@ -215,6 +215,9 @@ class SettingsViewController: UITableViewController {
 				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 6:
+				openURL("https://ranchero.com/netnewswire/slack")
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			case 7:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
