@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Account
+import RSWeb
 
 class FeedlyOperationTests: XCTestCase {
 	
@@ -143,5 +144,75 @@ class FeedlyOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
     }
-
+	
+	func testProgressReporting() {
+		let progress = DownloadProgress(numberOfTasks: 0)
+        let testOperation = TestOperation()
+		
+		testOperation.downloadProgress = progress
+		XCTAssertTrue(progress.numberRemaining == 1)
+		
+		testOperation.downloadProgress = nil
+		XCTAssertTrue(progress.numberRemaining == 0)
+	}
+	
+	func testProgressReportingOnCancel() {
+		let progress = DownloadProgress(numberOfTasks: 0)
+		let testOperation = TestOperation()
+		testOperation.downloadProgress = progress
+		
+		let completionExpectation = expectation(description: "Operation Completed")
+		testOperation.completionBlock = {
+			completionExpectation.fulfill()
+		}
+		
+		OperationQueue.main.addOperation(testOperation)
+		
+		XCTAssertTrue(progress.numberRemaining == 1)
+		testOperation.cancel()
+		XCTAssertTrue(progress.numberRemaining == 1)
+		
+		waitForExpectations(timeout: 2)
+		
+		XCTAssertTrue(progress.numberRemaining == 0)
+    }
+	
+	func testDoesProgressReportingOnSuccess() {
+		let progress = DownloadProgress(numberOfTasks: 0)
+		let testOperation = TestOperation()
+		testOperation.downloadProgress = progress
+		
+		let completionExpectation = expectation(description: "Operation Completed")
+		testOperation.completionBlock = {
+			completionExpectation.fulfill()
+		}
+		
+		OperationQueue.main.addOperation(testOperation)
+		
+		XCTAssertTrue(progress.numberRemaining == 1)
+		
+		waitForExpectations(timeout: 2)
+		
+		XCTAssertTrue(progress.numberRemaining == 0)
+    }
+	
+	func testProgressReportingOnFailure() {
+		let progress = DownloadProgress(numberOfTasks: 0)
+		let testOperation = TestOperation()
+		testOperation.mockError = TestOperationError.mockError
+		testOperation.downloadProgress = progress
+		
+		let completionExpectation = expectation(description: "Operation Completed")
+		testOperation.completionBlock = {
+			completionExpectation.fulfill()
+		}
+		
+		OperationQueue.main.addOperation(testOperation)
+		
+		XCTAssertTrue(progress.numberRemaining == 1)
+		
+		waitForExpectations(timeout: 2)
+		
+		XCTAssertTrue(progress.numberRemaining == 0)
+    }
 }

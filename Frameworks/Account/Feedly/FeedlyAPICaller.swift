@@ -196,7 +196,7 @@ final class FeedlyAPICaller {
 		}
 		guard let encodedId = encodeForURLPath(id) else {
 			return DispatchQueue.main.async {
-				completionHandler(.failure(FeedbinAccountDelegateError.invalidParameter))
+				completionHandler(.failure(FeedlyAccountDelegateError.unexpectedResourceId(id)))
 			}
 		}
 		var components = baseUrlComponents
@@ -235,7 +235,7 @@ final class FeedlyAPICaller {
 
 		guard let encodedId = encodeForURLPath(collectionId) else {
 			return DispatchQueue.main.async {
-				completionHandler(.failure(FeedbinAccountDelegateError.invalidParameter))
+				completionHandler(.failure(FeedlyAccountDelegateError.unexpectedResourceId(collectionId)))
 			}
 		}
 		var components = baseUrlComponents
@@ -286,11 +286,18 @@ final class FeedlyAPICaller {
 			}
 		}
 
-		guard let encodedCollectionId = encodeForURLPath(collectionId), let encodedFeedId = encodeForURLPath(feedId) else {
+		guard let encodedCollectionId = encodeForURLPath(collectionId) else {
 			return DispatchQueue.main.async {
-				completionHandler(.failure(FeedbinAccountDelegateError.invalidParameter))
+				completionHandler(.failure(FeedlyAccountDelegateError.unexpectedResourceId(collectionId)))
 			}
 		}
+		
+		guard let encodedFeedId = encodeForURLPath(feedId) else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(FeedlyAccountDelegateError.unexpectedResourceId(feedId)))
+			}
+		}
+		
 		var components = baseUrlComponents
 		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/\(encodedFeedId)"
 		
