@@ -136,6 +136,7 @@ final class FaviconDownloader {
 
 			if (!hasIcons) {
 				self.homePageURLsWithNoFaviconURLCache.insert(url)
+				self.homePageURLsWithNoFaviconURLCacheDirty = true
 			}
 		}
 
@@ -169,6 +170,7 @@ final class FaviconDownloader {
 		if let url = singleFaviconDownloader.homePageURL {
 			if self.homePageToFaviconURLCache[url] == nil {
 				self.homePageToFaviconURLCache[url] = singleFaviconDownloader.faviconURL
+				self.homePageToFaviconURLCacheDirty = true
 			}
 		}
 
