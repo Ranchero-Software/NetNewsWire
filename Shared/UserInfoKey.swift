@@ -26,5 +26,5 @@ struct UserInfoKey {
 	static let windowState = "windowState"
 	static let containerExpandedWindowState = "containerExpandedWindowState"
 	static let readFeedsFilterState = "readFeedsFilterState"
-	
+	static let readArticlesFilterState = "readArticlesFilterState"
 }

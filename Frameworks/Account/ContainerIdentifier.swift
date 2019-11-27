@@ -17,7 +17,7 @@ public enum ContainerIdentifier: Hashable {
 	case account(String) // accountID
 	case folder(String, String) // accountID, folderName
 	
-	public var userInfo: [AnyHashable: Any] {
+	public var userInfo: [AnyHashable: AnyHashable] {
 		switch self {
 		case .smartFeedController:
 			return [
@@ -37,7 +37,7 @@ public enum ContainerIdentifier: Hashable {
 		}
 	}
 	
-	public init?(userInfo: [AnyHashable: Any]) {
+	public init?(userInfo: [AnyHashable: AnyHashable]) {
 		guard let type = userInfo["type"] as? String else { return nil }
 		
 		switch type {

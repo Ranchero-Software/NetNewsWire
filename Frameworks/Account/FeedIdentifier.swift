@@ -12,7 +12,7 @@ public protocol FeedIdentifiable {
 	var feedID: FeedIdentifier? { get }
 }
 
-public enum FeedIdentifier: CustomStringConvertible {
+public enum FeedIdentifier: CustomStringConvertible, Hashable {
 	
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
@@ -32,7 +32,7 @@ public enum FeedIdentifier: CustomStringConvertible {
 		}
 	}
 	
-	public var userInfo: [AnyHashable: Any] {
+	public var userInfo: [AnyHashable: AnyHashable] {
 		switch self {
 		case .smartFeed(let id):
 			return [
@@ -59,7 +59,7 @@ public enum FeedIdentifier: CustomStringConvertible {
 		}
 	}
 	
-	public init?(userInfo: [AnyHashable: Any]) {
+	public init?(userInfo: [AnyHashable: AnyHashable]) {
 		guard let type = userInfo["type"] as? String else { return nil }
 		
 		switch type {

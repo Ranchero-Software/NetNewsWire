@@ -67,6 +67,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private var animatingChanges = false
 	private var expandedTable = Set<ContainerIdentifier>()
+	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
 	private var shadowTable = [[Node]]()
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
@@ -121,7 +122,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return treeControllerDelegate.isReadFiltered
 	}
 	
-	var articleReadFilterType: ReadFilterType = .none
+	var isReadArticlesFiltered: Bool {
+		if let feedID = timelineFeed?.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+			return readFilterEnabled
+		} else {
+			return timelineDefaultReadFilterType != .none
+		}
+	}
+	
+	var timelineDefaultReadFilterType: ReadFilterType {
+		return timelineFeed?.defaultReadFilterType ?? .none
+	}
 	
 	var rootNode: Node {
 		return treeController.rootNode
@@ -537,12 +548,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showAllArticles() {
-		articleReadFilterType = .none
+		if let feedID = timelineFeed?.feedID {
+			readFilterEnabledTable[feedID] = false
+		}
 		refreshTimeline()
 	}
 	
-	func hideUnreadArticles() {
-		articleReadFilterType = .read
+	func hideReadArticles() {
+		if let feedID = timelineFeed?.feedID {
+			readFilterEnabledTable[feedID] = true
+		}
 		refreshTimeline()
 	}
 	
@@ -1215,7 +1230,6 @@ private extension SceneCoordinator {
 	func setTimelineFeed(_ feed: Feed?, animated: Bool, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
 		timelineMiddleIndexPath = nil
-		articleReadFilterType = feed?.defaultReadFilterType ?? .none
 		
 		fetchAndReplaceArticlesAsync(animated: animated) {
 			self.masterTimelineViewController?.reinitializeArticles()
@@ -1576,8 +1590,7 @@ private extension SceneCoordinator {
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
 		
-		let readFilter = articleReadFilterType != .none
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: readFilter, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: isReadArticlesFiltered, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
@@ -1763,10 +1776,15 @@ private extension SceneCoordinator {
 	// MARK: NSUserActivity
 	
 	func windowState() -> [AnyHashable: Any] {
-		let containerIdentifierUserInfos = expandedTable.map( { $0.userInfo })
+		let containerExpandedWindowState = expandedTable.map( { $0.userInfo })
+		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
+		for key in readFilterEnabledTable.keys {
+			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
+		}
 		return [
 			UserInfoKey.readFeedsFilterState: isReadFeedsFiltered,
-			UserInfoKey.containerExpandedWindowState: containerIdentifierUserInfos
+			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
+			UserInfoKey.readArticlesFilterState: readArticlesFilterState
 		]
 	}
 	
@@ -1774,15 +1792,22 @@ private extension SceneCoordinator {
 		if let readFeedsFilterState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
 			treeControllerDelegate.isReadFiltered = readFeedsFilterState
 		}
-		if let containerIdentifierUserInfos = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: Any]] {
-			let containerIdentifers = containerIdentifierUserInfos.compactMap( { ContainerIdentifier(userInfo: $0) })
+		if let containerExpandedWindowState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
+			let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
 			expandedTable = Set(containerIdentifers)
+		}
+		if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
+			for key in readArticlesFilterState.keys {
+				if let feedIdentifier = FeedIdentifier(userInfo: key) {
+					readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
+				}
+			}
 		}
 	}
 	
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
-			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : Any],
+			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
 			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				return
 		}
@@ -1842,7 +1867,7 @@ private extension SceneCoordinator {
 	}
 	
 	func restoreFeed(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
-		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : Any],
+		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
 			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				return false
 		}

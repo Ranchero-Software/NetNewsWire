@@ -103,15 +103,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: Actions
 	@IBAction func toggleFilter(_ sender: Any) {
-		switch coordinator.articleReadFilterType {
-		case .none:
-			filterButton.image = AppAssets.filterActiveImage
-			coordinator.hideUnreadArticles()
-		case .read:
+		if coordinator.isReadArticlesFiltered {
 			filterButton.image = AppAssets.filterInactiveImage
 			coordinator.showAllArticles()
-		case .alwaysRead:
-			break
+		} else {
+			filterButton.image = AppAssets.filterActiveImage
+			coordinator.hideReadArticles()
 		}
 	}
 	
@@ -524,15 +521,17 @@ private extension MasterTimelineViewController {
 			navigationItem.titleView = titleView
 		}
 
-		switch coordinator.articleReadFilterType {
-		case .none:
+		switch coordinator.timelineDefaultReadFilterType {
+		case .none, .read:
 			filterButton.isHidden = false
-			filterButton.image = AppAssets.filterInactiveImage
-		case .read:
-			filterButton.isHidden = false
-			filterButton.image = AppAssets.filterActiveImage
 		case .alwaysRead:
 			filterButton.isHidden = true
+		}
+		
+		if coordinator.isReadArticlesFiltered {
+			filterButton.image = AppAssets.filterActiveImage
+		} else {
+			filterButton.image = AppAssets.filterInactiveImage
 		}
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
