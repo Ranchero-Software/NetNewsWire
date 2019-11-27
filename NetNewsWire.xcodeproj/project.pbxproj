@@ -2890,6 +2890,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 849C647A1ED37A5D003D8FC0 /* Build configuration list for PBXNativeTarget "NetNewsWire" */;
 			buildPhases = (
+				3B3A341B238D3FB200314204 /* Run Script: Update Secrets */,
 				51D6803823330CFF0097A009 /* Run Script: Update ArticleExtractorConfig.swift */,
 				849C645C1ED37A5D003D8FC0 /* Sources */,
 				517D2D82233A53D600FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */,
@@ -3509,6 +3510,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3B3A341B238D3FB200314204 /* Run Script: Update Secrets */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Update Secrets";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./updateSecrets.sh\n\n";
+		};
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
