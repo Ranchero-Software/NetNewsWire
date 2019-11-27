@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "&quot;${PROJECT_DIR}/updateSecrets.sh&quot;&#10;">
+               scriptText = "&quot;${PROJECT_DIR}/buildscripts/updateSecrets.sh&quot;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"

@@ -2817,9 +2817,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 65ED407F235DEF6C0081F399 /* Build configuration list for PBXNativeTarget "NetNewsWire MAS" */;
 			buildPhases = (
-				65ED3FB5235DEF6C0081F399 /* Run Script: Update ArticleExtractorConfig.swift */,
 				65ED3FB6235DEF6C0081F399 /* Sources */,
-				65ED4041235DEF6C0081F399 /* Run Script: Reset ArticleExtractorConfig.swift */,
 				65ED4042235DEF6C0081F399 /* Frameworks */,
 				65ED404D235DEF6C0081F399 /* Resources */,
 				65ED406F235DEF6C0081F399 /* Run Script: Automated build numbers */,
@@ -2867,9 +2865,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 840D61A32029031E009BC708 /* Build configuration list for PBXNativeTarget "NetNewsWire-iOS" */;
 			buildPhases = (
-				517D2D80233A46ED00FF3E35 /* Run Script: Update ArticleExtractorConfig.swift */,
 				840D61782029031C009BC708 /* Sources */,
-				517D2D81233A47AD00FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */,
 				840D61792029031C009BC708 /* Frameworks */,
 				840D617A2029031C009BC708 /* Resources */,
 				51C451DF2264C7F200C03939 /* Embed Frameworks */,
@@ -3543,78 +3539,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
-		};
-		517D2D80233A46ED00FF3E35 /* Run Script: Update ArticleExtractorConfig.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Update ArticleExtractorConfig.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "FAILED=false\n\nif [ -z \"${MERCURY_CLIENT_ID}\" ]; then\nFAILED=true\nfi\n\nif [ -z \"${MERCURY_CLIENT_SECRET}\" ]; then\nFAILED=true\nfi\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedbin Mercury credetials.  ArticleExtractorConfig.swift not changed.\"\nexit 0\nfi\n\nsed -i .tmp \"s|{MERCURYID}|${MERCURY_CLIENT_ID}|g; s|{MERCURYSECRET}|${MERCURY_CLIENT_SECRET}|g\" \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n\nrm -f \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift.tmp\"\n\necho \"All env values found!\"\n";
-		};
-		517D2D81233A47AD00FF3E35 /* Run Script: Reset ArticleExtractorConfig.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Reset ArticleExtractorConfig.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n";
-		};
-		65ED3FB5235DEF6C0081F399 /* Run Script: Update ArticleExtractorConfig.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Update ArticleExtractorConfig.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "FAILED=false\n\nif [ -z \"${MERCURY_CLIENT_ID}\" ]; then\nFAILED=true\nfi\n\nif [ -z \"${MERCURY_CLIENT_SECRET}\" ]; then\nFAILED=true\nfi\n\nif [ \"$FAILED\" = true ]; then\necho \"Missing Feedbin Mercury credetials.  ArticleExtractorConfig.swift not changed.\"\nexit 0\nfi\n\nsed -i .tmp \"s|{MERCURYID}|${MERCURY_CLIENT_ID}|g; s|{MERCURYSECRET}|${MERCURY_CLIENT_SECRET}|g\" \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n\nrm -f \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift.tmp\"\n\necho \"All env values found!\"\n\n";
-		};
-		65ED4041235DEF6C0081F399 /* Run Script: Reset ArticleExtractorConfig.swift */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script: Reset ArticleExtractorConfig.swift";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "git checkout \"${SRCROOT}/Shared/Article Extractor/ArticleExtractorConfig.swift\"\n";
 		};
 		65ED406F235DEF6C0081F399 /* Run Script: Automated build numbers */ = {
 			isa = PBXShellScriptBuildPhase;
