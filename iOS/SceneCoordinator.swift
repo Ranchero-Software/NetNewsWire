@@ -330,9 +330,33 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func restoreWindowState(_ activity: NSUserActivity?) {
 		if let activity = activity, let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
-			restoreWindowState(windowState)
+			
+			if let containerExpandedWindowState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
+				let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
+				expandedTable = Set(containerIdentifers)
+			}
+			
+			if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
+				for key in readArticlesFilterState.keys {
+					if let feedIdentifier = FeedIdentifier(userInfo: key) {
+						readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
+					}
+				}
+			}
+			
+			rebuildBackingStores(initialLoad: true)
+			
+			// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
+			// for state restoration to work with while we are waiting for the unread counts to initialize.
+			if let readFeedsFilterState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
+				treeControllerDelegate.isReadFiltered = readFeedsFilterState
+			}
+			
+		} else {
+			
+			rebuildBackingStores(initialLoad: true)
+			
 		}
-		rebuildBackingStores(initialLoad: true)
 	}
 	
 	func handle(_ activity: NSUserActivity) {
@@ -1786,23 +1810,6 @@ private extension SceneCoordinator {
 			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
 			UserInfoKey.readArticlesFilterState: readArticlesFilterState
 		]
-	}
-	
-	func restoreWindowState(_ windowState: [AnyHashable: Any]) {
-		if let readFeedsFilterState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
-			treeControllerDelegate.isReadFiltered = readFeedsFilterState
-		}
-		if let containerExpandedWindowState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-			let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
-			expandedTable = Set(containerIdentifers)
-		}
-		if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
-			for key in readArticlesFilterState.keys {
-				if let feedIdentifier = FeedIdentifier(userInfo: key) {
-					readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
-				}
-			}
-		}
 	}
 	
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
