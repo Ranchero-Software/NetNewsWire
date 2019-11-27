@@ -344,11 +344,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 				}
 			}
 			
-			rebuildBackingStores(initialLoad: true)
-			
 			// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 			// for state restoration to work with while we are waiting for the unread counts to initialize.
 			if let readFeedsFilterState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
+				if readFeedsFilterState {
+					treeController.rebuild()
+					rebuildShadowTable()
+				} else {
+					rebuildBackingStores(initialLoad: true)
+				}
 				treeControllerDelegate.isReadFiltered = readFeedsFilterState
 			}
 			
@@ -424,7 +428,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		if isReadFeedsFiltered {
-			rebuildBackingStores()
+			rebuildBackingStores(initialLoad: true)
 		}
 	}
 
