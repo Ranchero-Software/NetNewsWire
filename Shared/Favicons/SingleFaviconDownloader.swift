@@ -85,8 +85,9 @@ private extension SingleFaviconDownloader {
 
 				if let image = image {
 					self.iconImage = IconImage(image)
-					self.postDidLoadFaviconNotification()
 				}
+
+				self.postDidLoadFaviconNotification()
 				
 			}
 		}
