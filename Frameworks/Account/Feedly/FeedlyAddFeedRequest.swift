@@ -70,7 +70,7 @@ final class FeedlyAddFeedRequest {
 			
 			let getStream: FeedlyGetStreamContentsOperation? = {
 				if refreshes {
-					let op = FeedlyGetStreamContentsOperation(account: account, resourceProvider: addRequest, service: caller, newerThan: nil)
+					let op = FeedlyGetStreamContentsOperation(account: account, resourceProvider: addRequest, service: caller, newerThan: nil, log: log)
 					op.addDependency(createFeeds)
 					return op
 				}

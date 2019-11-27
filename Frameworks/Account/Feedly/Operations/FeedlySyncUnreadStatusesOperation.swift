@@ -60,7 +60,8 @@ final class FeedlySyncUnreadStatusesOperation: FeedlyOperation, FeedlyOperationD
 																  resource: resource,
 																  service: service,
 																  newerThan: nil,
-																  unreadOnly: true)
+																  unreadOnly: true,
+																  log: log)
 		
 		getFirstPageOfUnreadIds.delegate = self
 		getFirstPageOfUnreadIds.streamIdsDelegate = self
@@ -110,7 +111,8 @@ final class FeedlySyncUnreadStatusesOperation: FeedlyOperation, FeedlyOperationD
 															service: operation.service,
 															continuation: continuation,
 															newerThan: operation.newerThan,
-															unreadOnly: operation.unreadOnly)
+															unreadOnly: operation.unreadOnly,
+															log: log)
 		nextPageOperation.delegate = self
 		nextPageOperation.streamIdsDelegate = self
 		

@@ -42,7 +42,7 @@ final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProv
 				self.didFinish()
 				
 			case .failure(let error):
-				os_log(.debug, log: self.log, "Unable to request collections %@.", error as NSError)
+				os_log(.debug, log: self.log, "Unable to request collections: %{public}@.", error as NSError)
 				self.didFinish(error)
 			}
 		}

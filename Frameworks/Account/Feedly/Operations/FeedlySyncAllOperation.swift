@@ -139,7 +139,7 @@ extension FeedlySyncAllOperation: FeedlyOperationDelegate {
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		assert(Thread.isMainThread)
-		os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", operation, error.localizedDescription)
+		os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", operation, error as NSError)
 		
 		syncCompletionHandler?(.failure(error))
 		syncCompletionHandler = nil
