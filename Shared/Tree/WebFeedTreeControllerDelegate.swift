@@ -13,7 +13,16 @@ import Account
 
 final class WebFeedTreeControllerDelegate: TreeControllerDelegate {
 
+	private var filterExceptions = Set<FeedIdentifier>()
 	var isReadFiltered = false
+	
+	func addFilterException(_ feedID: FeedIdentifier) {
+		filterExceptions.insert(feedID)
+	}
+	
+	func resetFilterExceptions() {
+		filterExceptions = Set<FeedIdentifier>()
+	}
 	
 	func treeController(treeController: TreeController, childNodesFor node: Node) -> [Node]? {
 		if node.isRoot {
@@ -50,7 +59,7 @@ private extension WebFeedTreeControllerDelegate {
 
 	func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
 		return SmartFeedsController.shared.smartFeeds.compactMap { (feed) -> Node? in
-			if isReadFiltered && feed.unreadCount == 0 {
+			if let feedID = feed.feedID, !filterExceptions.contains(feedID) && isReadFiltered && feed.unreadCount == 0 {
 				return nil
 			}
 			return parentNode.existingOrNewChildNode(with: feed as AnyObject)
@@ -63,14 +72,14 @@ private extension WebFeedTreeControllerDelegate {
 		var children = [AnyObject]()
 		
 		for webFeed in container.topLevelWebFeeds {
-			if !(isReadFiltered && webFeed.unreadCount == 0) {
+			if let feedID = webFeed.feedID, !(!filterExceptions.contains(feedID) && isReadFiltered && webFeed.unreadCount == 0) {
 				children.append(webFeed)
 			}
 		}
 		
 		if let folders = container.folders {
 			for folder in folders {
-				if !(isReadFiltered && folder.unreadCount == 0) {
+				if let feedID = folder.feedID, !(!filterExceptions.contains(feedID) && isReadFiltered && folder.unreadCount == 0) {
 					children.append(folder)
 				}
 			}
@@ -129,10 +138,21 @@ private extension WebFeedTreeControllerDelegate {
 	}
 
 	func sortedAccountNodes(_ parent: Node) -> [Node] {
+		
+		var accountFilterException: String? = nil
+		switch filterExceptions.first {
+		case .folder(let accountID, _), .webFeed(let accountID, _):
+			accountFilterException = accountID
+		default:
+			break
+		}
+		
 		let nodes = AccountManager.shared.sortedActiveAccounts.compactMap { (account) -> Node? in
-			if isReadFiltered && account.unreadCount == 0 {
+			
+			if isReadFiltered && account.accountID != accountFilterException && account.unreadCount == 0 {
 				return nil
 			}
+			
 			let accountNode = parent.existingOrNewChildNode(with: account)
 			accountNode.canHaveChildNodes = true
 			accountNode.isGroupItem = true
