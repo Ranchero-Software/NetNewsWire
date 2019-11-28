@@ -312,18 +312,18 @@ private extension AppDelegate {
 		
 		os_log("Woken to perform account refresh.", log: self.log, type: .info)
 
-		DispatchQueue.main.async {
+		DispatchQueue.main.async { [weak task] in
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) {
 				AccountManager.shared.saveAll()
 				os_log("Account refresh operation completed.", log: self.log, type: .info)
-				task.setTaskCompleted(success: true)
+				task?.setTaskCompleted(success: true)
 			}
 		}
 					
 		// set expiration handler
-		task.expirationHandler = {
+		task.expirationHandler = { [weak task] in
 			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
-			task.setTaskCompleted(success: false)
+			task?.setTaskCompleted(success: false)
 		}
 	}
 	
