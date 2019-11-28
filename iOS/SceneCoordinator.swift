@@ -424,7 +424,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		if isReadFeedsFiltered {
-			rebuildBackingStores(initialLoad: true)
+			rebuildBackingStores()
 		}
 	}
 
