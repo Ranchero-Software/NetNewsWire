@@ -147,6 +147,11 @@ class FeedlyOperationTests: XCTestCase {
 	
 	func testProgressReporting() {
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let didChangeExpectation = expectation(forNotification: .DownloadProgressDidChange, object: progress)
+		// This number is the number of times breakpoints on calls to DownloadProgress.postDidChangeNotification is hit.
+		didChangeExpectation.expectedFulfillmentCount = 4
+		didChangeExpectation.assertForOverFulfill = true
+		
         let testOperation = TestOperation()
 		
 		testOperation.downloadProgress = progress
@@ -154,10 +159,17 @@ class FeedlyOperationTests: XCTestCase {
 		
 		testOperation.downloadProgress = nil
 		XCTAssertTrue(progress.numberRemaining == 0)
+		
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testProgressReportingOnCancel() {
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let didChangeExpectation = expectation(forNotification: .DownloadProgressDidChange, object: progress)
+		// This number is the number of times breakpoints on calls to DownloadProgress.postDidChangeNotification is hit.
+		didChangeExpectation.expectedFulfillmentCount = 4
+		didChangeExpectation.assertForOverFulfill = true
+		
 		let testOperation = TestOperation()
 		testOperation.downloadProgress = progress
 		
@@ -179,6 +191,11 @@ class FeedlyOperationTests: XCTestCase {
 	
 	func testDoesProgressReportingOnSuccess() {
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let didChangeExpectation = expectation(forNotification: .DownloadProgressDidChange, object: progress)
+		// This number is the number of times breakpoints on calls to DownloadProgress.postDidChangeNotification is hit.
+		didChangeExpectation.expectedFulfillmentCount = 4
+		didChangeExpectation.assertForOverFulfill = true
+		
 		let testOperation = TestOperation()
 		testOperation.downloadProgress = progress
 		
@@ -198,6 +215,11 @@ class FeedlyOperationTests: XCTestCase {
 	
 	func testProgressReportingOnFailure() {
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let didChangeExpectation = expectation(forNotification: .DownloadProgressDidChange, object: progress)
+		// This number is the number of times breakpoints on calls to DownloadProgress.postDidChangeNotification is hit.
+		didChangeExpectation.expectedFulfillmentCount = 4
+		didChangeExpectation.assertForOverFulfill = true
+		
 		let testOperation = TestOperation()
 		testOperation.mockError = TestOperationError.mockError
 		testOperation.downloadProgress = progress
