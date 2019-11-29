@@ -288,22 +288,34 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 	}
-	
-	var createFeedRequest: FeedlyAddFeedRequest?
-	
+		
 	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-
-		let progress = refreshProgress
-		progress.addToNumberOfTasksAndRemaining(1)
 		
-		let request = FeedlyAddFeedRequest(account: account, caller: caller, container: container, log: log)
-		
-		self.createFeedRequest = request
-		
-		request.addNewFeed(at: url, name: name) { [weak self] result in
-			progress.completeTask()
-			self?.createFeedRequest = nil
-			completion(result)
+		do {
+			guard let credentials = credentials else {
+				throw FeedlyAccountDelegateError.notLoggedIn
+			}
+			
+			let resource = FeedlyFeedResourceId(url: url)
+			let addNewFeed = try FeedlyAddNewFeedOperation(account: account,
+														   credentials: credentials,
+														   resource: resource,
+														   feedName: name,
+														   caller: caller,
+														   container: container,
+														   progress: refreshProgress,
+														   log: log)
+			
+			addNewFeed.addCompletionHandler = { result in
+				completion(result)
+			}
+			
+			operationQueue.addOperation(addNewFeed)
+			
+		} catch {
+			DispatchQueue.main.async {
+				completion(.failure(error))
+			}
 		}
 	}
 	
@@ -334,26 +346,31 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		feed.editedName = name
 	}
 	
-	var addFeedRequest: FeedlyAddFeedRequest?
-	
 	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		let progress = refreshProgress
-		progress.addToNumberOfTasksAndRemaining(1)
 		
-		let request = FeedlyAddFeedRequest(account: account, caller: caller, container: container, log: log)
-		
-		self.addFeedRequest = request
-		
-		request.add(existing: feed) { [weak self] result in
-			progress.completeTask()
+		do {
+			guard let credentials = credentials else {
+				throw FeedlyAccountDelegateError.notLoggedIn
+			}
 			
-			self?.addFeedRequest = nil
+			let resource = FeedlyFeedResourceId(id: feed.webFeedID)
+			let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
+																	 credentials: credentials,
+																	 resource: resource,
+																	 caller: caller,
+																	 container: container,
+																	 progress: refreshProgress,
+																	 log: log)
 			
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
+			
+			addExistingFeed.addCompletionHandler = { result in
+				completion(result)
+			}
+			
+			operationQueue.addOperation(addExistingFeed)
+			
+		} catch {
+			DispatchQueue.main.async {
 				completion(.failure(error))
 			}
 		}
