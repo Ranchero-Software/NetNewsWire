@@ -610,7 +610,7 @@ private extension ArticleViewController {
 		guard coordinator.isAnyUnreadAvailable else { return nil }
 		let title = NSLocalizedString("Next Unread Article", comment: "Next Unread Article")
 		return UIAction(title: title, image: AppAssets.nextUnreadArticleImage) { [weak self] action in
-			self?.coordinator.selectNextArticle()
+			self?.coordinator.selectNextUnread()
 		}
 	}
 	
