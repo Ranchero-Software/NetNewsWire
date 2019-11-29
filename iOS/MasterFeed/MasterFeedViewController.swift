@@ -27,6 +27,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		return keyboardManager.keyCommands
 	}
 	
+	var restoreSelection = false
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -75,6 +76,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		super.viewWillAppear(animated)
 	}
 
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		
+		// We have to delay the selection of the Feed until the subviews have been layed out
+		// so that the visible area is correct and we scroll correctly.
+		if restoreSelection {
+			restoreSelectionIfNecessary(adjustScroll: true)
+			restoreSelection = false
+		}
+	}
+	
 	// MARK: Notifications
 	
 	@objc func unreadCountDidChange(_ note: Notification) {

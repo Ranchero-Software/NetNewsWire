@@ -1829,7 +1829,9 @@ private extension SceneCoordinator {
 		}
 
 		treeControllerDelegate.addFilterException(feedIdentifier)
+		masterFeedViewController.restoreSelection = true
 		
+
 		switch feedIdentifier {
 		
 		case .smartFeed:
@@ -1902,6 +1904,8 @@ private extension SceneCoordinator {
 				return false
 		}
 
+		masterFeedViewController.restoreSelection = true
+		
 		switch feedIdentifier {
 
 		case .smartFeed:
