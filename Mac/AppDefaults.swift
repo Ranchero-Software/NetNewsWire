@@ -34,6 +34,7 @@ struct AppDefaults {
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 
 		// Hidden prefs
+		static let showDebugMenu = "ShowDebugMenu"
 		static let timelineShowsSeparators = "CorreiaSeparators"
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
@@ -149,6 +150,10 @@ struct AppDefaults {
 		return bool(for: Key.showTitleOnMainWindow)
 	}
 
+	static var showDebugMenu: Bool {
+ 		return bool(for: Key.showDebugMenu)
+ 	}
+
 	static var hideDockUnreadCount: Bool {
 		return bool(for: Key.hideDockUnreadCount)
 	}
@@ -215,6 +220,12 @@ struct AppDefaults {
 	}
 
 	static func registerDefaults() {
+		#if DEBUG
+ 		let showDebugMenu = true
+ 		#else
+ 		let showDebugMenu = false
+ 		#endif
+
 		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
 										Key.sidebarFontSize: FontSize.medium.rawValue,
 										Key.timelineFontSize: FontSize.medium.rawValue,
@@ -222,7 +233,8 @@ struct AppDefaults {
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.timelineGroupByFeed: false,
 										"NSScrollViewShouldScrollUnderTitlebar": false,
-										Key.refreshInterval: RefreshInterval.everyHour.rawValue]
+										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+										Key.showDebugMenu: showDebugMenu]
 
 		UserDefaults.standard.register(defaults: defaults)
 
