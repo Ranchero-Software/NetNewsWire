@@ -27,6 +27,19 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		super.tearDown()
 	}
 	
+	func expectationForCompletion(of progress: DownloadProgress) -> XCTestExpectation {
+		return expectation(forNotification: .DownloadProgressDidChange, object: progress) { notification -> Bool in
+			guard let progress = notification.object as? DownloadProgress else {
+				return false
+			}
+			// We want to assert the progress completes.
+			if progress.isComplete {
+				return true
+			}
+			return false
+		}
+	}
+	
 	func testCancel() {
 		let markArticlesService = TestMarkArticlesService()
 		markArticlesService.didMarkExpectation = expectation(description: "Set Article Statuses")
@@ -49,6 +62,8 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		getStarredContents.getStreamContentsExpectation?.isInverted = true
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let _ = expectationForCompletion(of: progress)
+		
 		let container = support.makeTestDatabaseContainer()
 		let syncAll = FeedlySyncAllOperation(account: account,
 											 credentials: support.accessToken,
@@ -85,7 +100,6 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		XCTAssertTrue(progress.numberOfTasks > 1)
 		
-		// This operation cancels asynchronously, so it is hard to test the number of tasks == 0
 		syncAll.cancel()
 		
 		waitForExpectations(timeout: 2)
@@ -121,6 +135,8 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		transport.mockResponseFileUrlProvider = provider
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let _ = expectationForCompletion(of: progress)
+		
 		// lastSuccessfulFetchStartDate does not matter for the test, content will always be the same.
 		// It is tested in `FeedlyGetStreamContentsOperationTests`.
 		let syncAll = FeedlySyncAllOperation(account: account,
@@ -238,6 +254,8 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		caller.credentials = credentials
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let _ = expectationForCompletion(of: progress)
+		
 		let syncAll = FeedlySyncAllOperation(account: account, credentials: credentials, caller: caller, database: databaseContainer.database, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, downloadProgress: progress, log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.

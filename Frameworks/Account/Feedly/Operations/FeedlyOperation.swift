@@ -46,6 +46,16 @@ class FeedlyOperation: Operation {
 		didFinish()
 	}
 	
+	override func cancel() {
+		// If the operation never started, disown the download progress.
+		if !isExecuting && !isFinished, downloadProgress != nil {
+			DispatchQueue.main.async {
+				self.downloadProgress = nil
+			}
+		}
+		super.cancel()
+	}
+	
 	override func start() {
 		guard !isCancelled else {
 			isExecutingOperation = false
