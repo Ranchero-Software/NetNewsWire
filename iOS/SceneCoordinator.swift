@@ -157,6 +157,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return (timelineFeed as? SmallIconProvider)?.smallIcon
 	}
 	
+	private var exceptionArticleFetcher: ArticleFetcher?
 	private(set) var timelineFeed: Feed?
 	
 	var timelineMiddleIndexPath: IndexPath?
@@ -1596,13 +1597,20 @@ private extension SceneCoordinator {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
-		guard let timelineFetcher = timelineFeed else {
+		guard let timelineFeed = timelineFeed else {
 			emptyTheTimeline()
 			completion()
 			return
 		}
 		
-		fetchUnsortedArticlesAsync(for: [timelineFetcher]) { [weak self] (articles) in
+		var fetchers = [ArticleFetcher]()
+		fetchers.append(timelineFeed)
+		if exceptionArticleFetcher != nil {
+			fetchers.append(exceptionArticleFetcher!)
+			exceptionArticleFetcher = nil
+		}
+		
+		fetchUnsortedArticlesAsync(for: fetchers) { [weak self] (articles) in
 			self?.replaceArticles(with: articles, animated: animated)
 			completion()
 		}
@@ -1862,16 +1870,19 @@ private extension SceneCoordinator {
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
 			let webFeedID = articlePathUserInfo[ArticlePathKey.webFeedID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String,
+			let accountNode = findAccountNode(accountID: accountID, accountName: accountName),
+			let account = accountNode.representedObject as? Account else {
 				return
 		}
+		
+		exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 
 		if restoreFeedSelection(userInfo, accountID: accountID, webFeedID: webFeedID, articleID: articleID) {
 			return
 		}
 		
-		guard let accountNode = findAccountNode(accountID: accountID, accountName: accountName),
-			let webFeedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode),
+		guard let webFeedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode),
 			let webFeed = webFeedNode.representedObject as? WebFeed,
 			let webFeedFeedID = webFeed.feedID else {
 				return
