@@ -1,5 +1,5 @@
 //
-//  FeedlyAddFeedOperation.swift
+//  FeedlyAddFeedToCollectionOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 11/10/19.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class FeedlyAddFeedOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
+final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
 	let feedName: String?
 	let collectionId: String
 	let caller: FeedlyAPICaller
@@ -37,8 +37,12 @@ final class FeedlyAddFeedOperation: FeedlyOperation, FeedlyFeedsAndFoldersProvid
 		}
 		
 		caller.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
-			guard let self = self else { return }
-			guard !self.isCancelled else { return self.didFinish() }
+			guard let self = self else {
+				return
+			}
+			guard !self.isCancelled else {
+				return self.didFinish()
+			}
 			self.didCompleteRequest(result)
 		}
 	}
