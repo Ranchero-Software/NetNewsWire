@@ -74,6 +74,7 @@
 		844B297F210CE37E004020B3 /* UnreadCountProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B297E210CE37E004020B3 /* UnreadCountProvider.swift */; };
 		844B2981210CE3BF004020B3 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844B2980210CE3BF004020B3 /* RSWeb.framework */; };
 		8469F81C1F6DD15E0084783E /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935101F62486800CEBD24 /* Account.swift */; };
+		846CA1882392349E00B55117 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846CA1872392349E00B55117 /* SyncDatabase.framework */; };
 		846E77451F6EF9B900A165E2 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419740D1F6DD25F006346C4 /* Container.swift */; };
 		846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419742C1F6DDE84006346C4 /* LocalAccountDelegate.swift */; };
 		846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419742D1F6DDE96006346C4 /* LocalAccountRefresher.swift */; };
@@ -292,6 +293,7 @@
 		844B297C2106C7EC004020B3 /* WebFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebFeed.swift; sourceTree = "<group>"; };
 		844B297E210CE37E004020B3 /* UnreadCountProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadCountProvider.swift; sourceTree = "<group>"; };
 		844B2980210CE3BF004020B3 /* RSWeb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSWeb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		846CA1872392349E00B55117 /* SyncDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SyncDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		846E77531F6F00E300A165E2 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		848934F61F62484F00CEBD24 /* Account.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Account.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		848934FA1F62484F00CEBD24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };

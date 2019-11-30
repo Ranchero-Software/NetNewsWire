@@ -22,21 +22,29 @@ public typealias UpdateArticlesCompletionBlock = (Set<Article>?, Set<Article>?) 
 
 public final class ArticlesDatabase {
 
+	/// When ArticlesDatabase is suspended, database calls will crash the app.
+	public var isSuspended: Bool {
+		return queue.isSuspended
+	}
+
 	private let articlesTable: ArticlesTable
+	private let queue: DatabaseQueue
 
 	public init(databaseFilePath: String, accountID: String) {
-		let queue = RSDatabaseQueue(filepath: databaseFilePath, excludeFromBackup: false)
+		let queue = DatabaseQueue(databasePath: databaseFilePath)
+		self.queue = queue
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue)
 
-		queue.createTables(usingStatements: ArticlesDatabase.tableCreationStatements)
-		queue.update { (database) in
+		queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
+		queue.runInDatabase { database in
 			if !self.articlesTable.containsColumn("searchRowID", in: database) {
 				database.executeStatements("ALTER TABLE articles add column searchRowID INTEGER;")
 			}
 			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;")
 		}
-		queue.vacuumIfNeeded()
+
+		queue.vacuumIfNeeded(daysBetweenVacuums: 9)
 		DispatchQueue.main.async {
 			self.articlesTable.indexUnindexedArticles()
 		}
@@ -159,6 +167,19 @@ public final class ArticlesDatabase {
 	
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {
 		return articlesTable.mark(articles, statusKey, flag)
+	}
+
+	// MARK: - Suspend and Resume (for iOS)
+
+	/// Close the database and stop running database calls.
+	/// Any pending calls will complete first.
+	public func suspend() {
+		queue.suspend()
+	}
+
+	/// Open the database and allow for running database calls again.
+	public func resume() {
+		queue.resume()
 	}
 
 	// MARK: - Caches

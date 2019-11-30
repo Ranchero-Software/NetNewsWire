@@ -19,9 +19,9 @@ final class StatusesTable: DatabaseTable {
 
 	let name = DatabaseTableName.statuses
 	private let cache = StatusCache()
-	private let queue: RSDatabaseQueue
+	private let queue: DatabaseQueue
 	
-	init(queue: RSDatabaseQueue) {
+	init(queue: DatabaseQueue) {
 		self.queue = queue
 	}
 
@@ -88,7 +88,7 @@ final class StatusesTable: DatabaseTable {
 	
 	func fetchArticleIDs(_ sql: String) -> Set<String> {
 		var articleIDs = Set<String>()
-		queue.fetchSync { (database) in
+		queue.runInDatabaseSync { (database) in
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 				return
 			}
