@@ -542,7 +542,7 @@ private extension FeedWranglerAccountDelegate {
 	}
 	
 	func syncArticleState(_ account: Account, key: ArticleStatus.Key, flag: Bool, serverFeedItems: [FeedWranglerFeedItem]) {
-		let serverFeedItemIDs = serverFeedItems.map { String($0.feedID) }
+		let _ /*serverFeedItemIDs*/ = serverFeedItems.map { String($0.feedID) }
 		
 		// todo generalize this logic
 	}
