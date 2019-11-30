@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import RSDatabase
 import RSParser
 import Articles
@@ -147,7 +148,7 @@ public final class ArticlesDatabase {
 		articlesTable.update(webFeedIDsAndItems, defaultRead, completion)
 	}
 
-	public func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: (() -> ())? = nil) {
+	public func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: VoidCompletionBlock? = nil) {
 		articlesTable.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completionHandler: completionHandler)
 	}
 	

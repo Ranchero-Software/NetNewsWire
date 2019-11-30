@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import RSDatabase
 
 public struct SyncDatabase {
@@ -30,7 +31,7 @@ public struct SyncDatabase {
 
 	// MARK: - API
 
-	public func insertStatuses(_ statuses: [SyncStatus], completionHandler: (() -> ())? = nil) {
+	public func insertStatuses(_ statuses: [SyncStatus], completionHandler: VoidCompletionBlock? = nil) {
 		syncStatusTable.insertStatuses(statuses, completionHandler: completionHandler)
 	}
 	
@@ -42,11 +43,11 @@ public struct SyncDatabase {
 		return syncStatusTable.selectPendingCount()
 	}
 	
-	public func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
+	public func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
 		syncStatusTable.resetSelectedForProcessing(articleIDs, completionHandler: completionHandler)
 	}
 	
-    public func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
+    public func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
 		syncStatusTable.deleteSelectedForProcessing(articleIDs, completionHandler: completionHandler)
 	}
 

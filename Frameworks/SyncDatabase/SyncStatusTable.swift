@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import Articles
 import RSDatabase
 
@@ -48,36 +49,36 @@ struct SyncStatusTable: DatabaseTable {
 		return count
 	}
 	
-	func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
+	func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
 		queue.runInTransaction { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 			let updateSQL = "update syncStatus set selected = false where articleID in \(placeholders)"
 			database.executeUpdate(updateSQL, withArgumentsIn: parameters)
             if let handler = completionHandler {
-                DispatchQueue.main.async(execute: handler)
+				callVoidCompletionBlock(handler)
             }
 		}
 	}
 	
-    func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
+    func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
 		queue.runInTransaction { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 			let deleteSQL = "delete from syncStatus where articleID in \(placeholders)"
 			database.executeUpdate(deleteSQL, withArgumentsIn: parameters)
             if let handler = completionHandler {
-                DispatchQueue.main.async(execute: handler)
+ 				callVoidCompletionBlock(handler)
             }
 		}
 	}
 	
-	func insertStatuses(_ statuses: [SyncStatus], completionHandler: (() -> ())? = nil) {
+	func insertStatuses(_ statuses: [SyncStatus], completionHandler: VoidCompletionBlock? = nil) {
 		queue.runInTransaction { database in
 			let statusArray = statuses.map { $0.databaseDictionary() }
 			self.insertRows(statusArray, insertType: .orReplace, in: database)
             if let handler = completionHandler {
-                DispatchQueue.main.async(execute: handler)
+				callVoidCompletionBlock(handler)
             }
 		}
 	}
