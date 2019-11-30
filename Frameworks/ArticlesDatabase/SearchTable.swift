@@ -61,10 +61,10 @@ final class ArticleSearchInfo: Hashable {
 final class SearchTable: DatabaseTable {
 
 	let name = "search"
-	private let queue: RSDatabaseQueue
+	private let queue: DatabaseQueue
 	private weak var articlesTable: ArticlesTable?
 
-	init(queue: RSDatabaseQueue, articlesTable: ArticlesTable) {
+	init(queue: DatabaseQueue, articlesTable: ArticlesTable) {
 		self.queue = queue
 		self.articlesTable = articlesTable
 	}
@@ -73,7 +73,7 @@ final class SearchTable: DatabaseTable {
 		if articleIDs.isEmpty {
 			return
 		}
-		queue.update { (database) in
+		queue.runInTransaction { (database) in
 			self.ensureIndexedArticles(articleIDs, database)
 		}
 	}

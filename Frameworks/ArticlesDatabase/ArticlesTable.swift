@@ -16,7 +16,7 @@ final class ArticlesTable: DatabaseTable {
 
 	let name: String
 	private let accountID: String
-	private let queue: RSDatabaseQueue
+	private let queue: DatabaseQueue
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let attachmentsLookupTable: DatabaseLookupTable
@@ -32,7 +32,7 @@ final class ArticlesTable: DatabaseTable {
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
 
-	init(name: String, accountID: String, queue: RSDatabaseQueue) {
+	init(name: String, accountID: String, queue: DatabaseQueue) {
 
 		self.name = name
 		self.accountID = accountID
@@ -149,7 +149,7 @@ final class ArticlesTable: DatabaseTable {
 
 	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) -> Set<Article> {
 		var articles: Set<Article> = Set<Article>()
-		queue.fetchSync { (database) in
+		queue.runInDatabaseSync { (database) in
 			articles = self.fetchArticlesMatching(searchString, database)
 		}
 		articles = articles.filter{ feedIDs.contains($0.feedID) }
@@ -229,7 +229,7 @@ final class ArticlesTable: DatabaseTable {
 			articleIDs.formUnion(parsedItems.articleIDs())
 		}
 
-		self.queue.update { (database) in
+		self.queue.runInTransaction { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
 			assert(statusesDictionary.count == articleIDs.count)
 
@@ -273,7 +273,7 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool) {
-		self.queue.update { (database) in
+		self.queue.runInTransaction { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, defaultRead, database)
 			let statuses = Set(statusesDictionary.values)
 			self.statusesTable.mark(statuses, statusKey, flag, database)
@@ -290,7 +290,7 @@ final class ArticlesTable: DatabaseTable {
 
 		var unreadCountDictionary = UnreadCountDictionary()
 
-		queue.fetch { (database) in
+		queue.runInDatabase { (database) in
 			for feedID in feedIDs {
 				unreadCountDictionary[feedID] = self.fetchUnreadCount(feedID, database)
 			}
@@ -309,7 +309,7 @@ final class ArticlesTable: DatabaseTable {
 			return
 		}
 		
-		queue.fetch { (database) in
+		queue.runInDatabase { (database) in
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0 and userDeleted=0;"
 
@@ -331,7 +331,7 @@ final class ArticlesTable: DatabaseTable {
 
 		let cutoffDate = articleCutoffDate
 
-		queue.fetch { (database) in
+		queue.runInDatabase { (database) in
 			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
 
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
@@ -361,7 +361,7 @@ final class ArticlesTable: DatabaseTable {
 			return
 		}
 
-		queue.fetch { (database) in
+		queue.runInDatabase { (database) in
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1 and userDeleted=0;"
 			let parameters = Array(feedIDs) as [Any]
@@ -390,7 +390,7 @@ final class ArticlesTable: DatabaseTable {
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
 		var statuses: Set<ArticleStatus>?
-		self.queue.updateSync { (database) in
+		self.queue.runInTransactionSync { (database) in
 			statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
 		}
 		return statuses
@@ -399,7 +399,7 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
-		queue.fetch { (database) in
+		queue.runInDatabase { (database) in
 			let sql = "select articleID from articles where searchRowID is null limit 500;"
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 				return
@@ -419,7 +419,7 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Caches
 
 	func emptyCaches() {
-		queue.run { _ in
+		queue.runInDatabase { _ in
 			self.databaseArticlesCache = [String: DatabaseArticle]()
 		}
 	}
@@ -433,7 +433,7 @@ final class ArticlesTable: DatabaseTable {
 		if feedIDs.isEmpty {
 			return
 		}
-		queue.run { (database) in
+		queue.runInDatabase { (database) in
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let sql = "select articleID from articles where feedID not in \(placeholders);"
 			let parameters = Array(feedIDs) as [Any]
@@ -458,14 +458,14 @@ private extension ArticlesTable {
 
 	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) -> Set<Article> {
 		var articles = Set<Article>()
-		queue.fetchSync { (database) in
+		queue.runInDatabaseSync { (database) in
 			articles = fetchMethod(database)
 		}
 		return articles
 	}
 
 	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ callback: @escaping ArticleSetBlock) {
-		queue.fetch { (database) in
+		queue.runInDatabase { (database) in
 			let articles = fetchMethod(database)
 			DispatchQueue.main.async {
 				callback(articles)
