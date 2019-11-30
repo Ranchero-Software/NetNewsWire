@@ -407,9 +407,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	public func suspend() {
 		delegate.cancelAll(for: self)
+		delegate.suspend()
+		database.suspend()
 		save()
 	}
-	
+
+	public func resume() {
+		database.resume()
+		delegate.resume()
+	}
+
 	public func save() {
 		metadataFile.save()
 		webFeedMetadataFile.save()

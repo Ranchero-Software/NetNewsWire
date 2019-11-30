@@ -166,7 +166,11 @@ public final class AccountManager: UnreadCountProvider {
 	public func suspendAll() {
 		accounts.forEach { $0.suspend() }
 	}
-	
+
+	public func resumeAll() {
+		accounts.forEach { $0.resume() }
+	}
+
 	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() ->Void)? = nil) {
 		let group = DispatchGroup()
 		

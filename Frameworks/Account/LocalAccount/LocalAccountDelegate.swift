@@ -202,4 +202,14 @@ final class LocalAccountDelegate: AccountDelegate {
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {
 		return completion(.success(nil))
 	}
+
+	// MARK: Suspend and Resume (for iOS)
+
+	func suspend() {
+		// Nothing to do
+	}
+
+	func resume() {
+		// Nothing to do
+	}
 }
