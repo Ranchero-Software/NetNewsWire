@@ -97,7 +97,6 @@ class ArticleViewController: UIViewController {
 			webView?.evaluateJavaScript("cancelImageLoad();")
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
-			webView.removeInteraction(contextMenuInteraction)
 			webView.removeFromSuperview()
 			ArticleViewControllerWebViewProvider.shared.enqueueWebView(webView)
 			webView = nil
