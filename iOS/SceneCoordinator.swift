@@ -1089,11 +1089,12 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		}
 		
 		if let articleViewController = (secondaryViewController as? UINavigationController)?.topViewController as? ArticleViewController {
-			masterNavigationController.pushViewController(articleViewController, animated: false)
-			return false
+			if currentArticle != nil {
+				masterNavigationController.pushViewController(articleViewController, animated: false)
+			}
 		}
 		
-		return currentArticle == nil
+		return true
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
