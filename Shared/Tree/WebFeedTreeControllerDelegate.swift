@@ -44,13 +44,10 @@ private extension WebFeedTreeControllerDelegate {
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()
 
-		// Check to see if we should show the SmartFeeds top level by checking the unreadFeed
-		if !(isReadFiltered && SmartFeedsController.shared.unreadFeed.unreadCount == 0) {
-			let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
-			smartFeedsNode.canHaveChildNodes = true
-			smartFeedsNode.isGroupItem = true
-			topLevelNodes.append(smartFeedsNode)
-		}
+		let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
+		smartFeedsNode.canHaveChildNodes = true
+		smartFeedsNode.isGroupItem = true
+		topLevelNodes.append(smartFeedsNode)
 
 		topLevelNodes.append(contentsOf: sortedAccountNodes(rootNode))
 		
@@ -138,21 +135,7 @@ private extension WebFeedTreeControllerDelegate {
 	}
 
 	func sortedAccountNodes(_ parent: Node) -> [Node] {
-		
-		var accountFilterException: String? = nil
-		switch filterExceptions.first {
-		case .folder(let accountID, _), .webFeed(let accountID, _):
-			accountFilterException = accountID
-		default:
-			break
-		}
-		
 		let nodes = AccountManager.shared.sortedActiveAccounts.compactMap { (account) -> Node? in
-			
-			if isReadFiltered && account.accountID != accountFilterException && account.unreadCount == 0 {
-				return nil
-			}
-			
 			let accountNode = parent.existingOrNewChildNode(with: account)
 			accountNode.canHaveChildNodes = true
 			accountNode.isGroupItem = true
