@@ -24,6 +24,7 @@ public final class AccountManager: UnreadCountProvider {
 	private let defaultAccountFolderName = "OnMyMac"
 	private let defaultAccountIdentifier = "OnMyMac"
 
+	public var isSuspended = false
 	public var isUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
 			if !account.isUnreadCountsInitialized {
@@ -164,10 +165,12 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public func suspendAll() {
+		isSuspended = true
 		accounts.forEach { $0.suspend() }
 	}
 
 	public func resumeAll() {
+		isSuspended = false
 		accounts.forEach { $0.resume() }
 	}
 

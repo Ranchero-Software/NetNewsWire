@@ -51,6 +51,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
 	}
 	
+	var isSyncArticleStatusRunning = false
+	var isWaitingForSyncTasks = false
+	
+	var isAnySceneInForeground: Bool {
+		for scene in UIApplication.shared.connectedScenes {
+			if scene.activationState != .background {
+				return true
+			}
+		}
+		return false
+	}
+	
 	override init() {
 		super.init()
 		appDelegate = self
@@ -108,7 +120,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
-		AccountManager.shared.suspendAll()
 	}
 	
 	// MARK: Notifications
@@ -128,11 +139,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	func prepareAccountsForBackground() {
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
-		waitForProgressToFinish()
 		syncArticleStatus()
+		waitForSyncTasksToFinish()
 	}
 	
 	func prepareAccountsForForeground() {
+		if AccountManager.shared.isSuspended {
+			AccountManager.shared.resumeAll()
+		}
+		
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
@@ -216,46 +231,58 @@ private extension AppDelegate {
 // MARK: Go To Background
 private extension AppDelegate {
 	
-	func waitForProgressToFinish() {
-		let completeProcessing = { [unowned self] in
-			UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
-			self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-		}
+	func waitForSyncTasksToFinish() {
+		guard !isAnySceneInForeground && !isWaitingForSyncTasks else { return }
 		
-		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
-			completeProcessing()
+		isWaitingForSyncTasks = true
+		
+		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
+			guard let self = self else { return }
+			self.completeProcessing(true)
 			os_log("Accounts wait for progress terminated for running too long.", log: self.log, type: .info)
 		}
 		
 		DispatchQueue.main.async { [weak self] in
-			self?.waitToComplete() {
-				completeProcessing()
+			self?.waitToComplete() { [weak self] suspend in
+				self?.completeProcessing(suspend)
 			}
 		}
 	}
 	
-	func waitToComplete(completion: @escaping () -> Void) {
-		guard UIApplication.shared.applicationState != .active else {
+	func waitToComplete(completion: @escaping (Bool) -> Void) {
+		guard !isAnySceneInForeground else {
 			os_log("App came back to forground, no longer waiting.", log: self.log, type: .info)
-			completion()
+			completion(false)
 			return
 		}
 		
-		if AccountManager.shared.refreshInProgress {
-			os_log("Waiting for refresh progress to finish...", log: self.log, type: .info)
+		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning {
+			os_log("Waiting for sync to finish...", log: self.log, type: .info)
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-				self?.waitToComplete() {
-					completion()
-				}
+				self?.waitToComplete(completion: completion)
 			}
 		} else {
 			os_log("Refresh progress complete.", log: self.log, type: .info)
-			completion()
+			completion(true)
 		}
 	}
 	
+	func completeProcessing(_ suspend: Bool) {
+		if suspend {
+			AccountManager.shared.suspendAll()
+		}
+		UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
+		self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+		isWaitingForSyncTasks = false
+	}
+	
 	func syncArticleStatus() {
+		guard !isSyncArticleStatusRunning else { return }
+		
+		isSyncArticleStatusRunning = true
+		
 		let completeProcessing = { [unowned self] in
+			self.isSyncArticleStatusRunning = false
 			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
 			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 		}
@@ -312,8 +339,12 @@ private extension AppDelegate {
 		os_log("Woken to perform account refresh.", log: self.log, type: .info)
 
 		DispatchQueue.main.async { [weak task] in
+			if AccountManager.shared.isSuspended {
+				AccountManager.shared.resumeAll()
+			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) {
 				AccountManager.shared.saveAll()
+				AccountManager.shared.suspendAll()
 				os_log("Account refresh operation completed.", log: self.log, type: .info)
 				task?.setTaskCompleted(success: true)
 			}
