@@ -1102,15 +1102,15 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 			return subSplitViewController
 		}
 		
-		guard currentArticle != nil else {
-			let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-			articleViewController.coordinator = self
+		if let articleViewController = masterNavigationController.viewControllers.last as? ArticleViewController {
+			masterNavigationController.popViewController(animated: false)
 			let controller = addNavControllerIfNecessary(articleViewController, showButton: true)
 			return controller
 		}
 		
-		if let articleViewController = masterNavigationController.viewControllers.last as? ArticleViewController {
-			masterNavigationController.popViewController(animated: false)
+		if currentArticle == nil {
+			let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+			articleViewController.coordinator = self
 			let controller = addNavControllerIfNecessary(articleViewController, showButton: true)
 			return controller
 		}
