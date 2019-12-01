@@ -510,4 +510,16 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		assertionFailure("An `account` instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
 		completion(.success(credentials))
 	}
+
+	// MARK: Suspend and Resume (for iOS)
+
+	/// Suspend the sync database so that it can close its SQLite file.
+	func suspend() {
+		database.suspend()
+	}
+
+	/// Resume the sync database — let it reopen its SQLite file.
+	func resume() {
+		database.resume()
+	}
 }

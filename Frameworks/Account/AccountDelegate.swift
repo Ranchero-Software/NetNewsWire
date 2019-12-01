@@ -50,5 +50,8 @@ protocol AccountDelegate {
 	func accountWillBeDeleted(_ account: Account)
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void)
-	
+
+	// For iOS, so we can suspend and resume properly.
+	func suspend() // Make sure no SQLite databases are open.
+	func resume()
 }

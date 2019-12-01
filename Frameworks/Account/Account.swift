@@ -407,9 +407,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	public func suspend() {
 		delegate.cancelAll(for: self)
+		delegate.suspend()
+		database.suspend()
 		save()
 	}
-	
+
+	public func resume() {
+		database.resume()
+		delegate.resume()
+	}
+
 	public func save() {
 		metadataFile.save()
 		webFeedMetadataFile.save()
@@ -725,7 +732,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return updatedArticles
 	}
 
-	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: (() -> ())? = nil) {
+	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: VoidCompletionBlock? = nil) {
 		guard !articleIDs.isEmpty else {
 			completionHandler?()
 			return

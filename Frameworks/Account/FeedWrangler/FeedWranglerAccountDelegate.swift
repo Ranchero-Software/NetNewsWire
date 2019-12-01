@@ -438,6 +438,18 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 			}
 		}
 	}
+
+	// MARK: Suspend and Resume (for iOS)
+
+	/// Suspend the sync database so that it can close its SQLite file.
+	func suspend() {
+		database.suspend()
+	}
+
+	/// Resume the sync database — let it reopen its SQLite file.
+	func resume() {
+		database.resume()
+	}
 }
 
 // MARK: Private
@@ -530,7 +542,7 @@ private extension FeedWranglerAccountDelegate {
 	}
 	
 	func syncArticleState(_ account: Account, key: ArticleStatus.Key, flag: Bool, serverFeedItems: [FeedWranglerFeedItem]) {
-		let serverFeedItemIDs = serverFeedItems.map { String($0.feedID) }
+		let _ /*serverFeedItemIDs*/ = serverFeedItems.map { String($0.feedID) }
 		
 		// todo generalize this logic
 	}

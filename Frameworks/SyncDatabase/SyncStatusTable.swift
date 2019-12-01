@@ -7,24 +7,23 @@
 //
 
 import Foundation
+import RSCore
 import Articles
 import RSDatabase
 
-final class SyncStatusTable: DatabaseTable {
-	
+struct SyncStatusTable: DatabaseTable {
+
 	let name = DatabaseTableName.syncStatus
-	private let queue: RSDatabaseQueue
-	
-	init(queue: RSDatabaseQueue) {
+	private let queue: DatabaseQueue
+
+	init(queue: DatabaseQueue) {
 		self.queue = queue
 	}
 
 	func selectForProcessing() -> [SyncStatus] {
-
 		var statuses: Set<SyncStatus>? = nil
 		
-		self.queue.updateSync { database in
-			
+		queue.runInDatabaseSync { database in
 			let updateSQL = "update syncStatus set selected = true"
 			database.executeUpdate(updateSQL, withArgumentsIn: nil)
 			
@@ -32,70 +31,62 @@ final class SyncStatusTable: DatabaseTable {
 			if let resultSet = database.executeQuery(selectSQL, withArgumentsIn: nil) {
 				statuses = resultSet.mapToSet(self.statusWithRow)
 			}
-			
 		}
 
 		return statuses != nil ? Array(statuses!) : [SyncStatus]()
-		
 	}
 	
 	func selectPendingCount() -> Int {
-		
 		var count: Int = 0
 		
-		self.queue.fetchSync { (database) in
+		queue.runInDatabaseSync { database in
 			let sql = "select count(*) from syncStatus"
 			if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
-				resultSet.next()
-				count = Int(resultSet.int(forColumnIndex: 0))
+				count = numberWithCountResultSet(resultSet)
 			}
-			
 		}
 		
 		return count
-		
 	}
 	
-	func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
-		self.queue.update { database in
+	func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
+		queue.runInTransaction { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 			let updateSQL = "update syncStatus set selected = false where articleID in \(placeholders)"
 			database.executeUpdate(updateSQL, withArgumentsIn: parameters)
             if let handler = completionHandler {
-                DispatchQueue.main.async(execute: handler)
+				callVoidCompletionBlock(handler)
             }
 		}
 	}
 	
-    func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: (() -> ())? = nil) {
-		self.queue.update { database in
+    func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
+		queue.runInTransaction { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 			let deleteSQL = "delete from syncStatus where articleID in \(placeholders)"
 			database.executeUpdate(deleteSQL, withArgumentsIn: parameters)
             if let handler = completionHandler {
-                DispatchQueue.main.async(execute: handler)
+ 				callVoidCompletionBlock(handler)
             }
 		}
 	}
 	
-	func insertStatuses(_ statuses: [SyncStatus], completionHandler: (() -> ())? = nil) {
-		self.queue.update { database in
+	func insertStatuses(_ statuses: [SyncStatus], completionHandler: VoidCompletionBlock? = nil) {
+		queue.runInTransaction { database in
 			let statusArray = statuses.map { $0.databaseDictionary() }
 			self.insertRows(statusArray, insertType: .orReplace, in: database)
             if let handler = completionHandler {
-                DispatchQueue.main.async(execute: handler)
+				callVoidCompletionBlock(handler)
             }
 		}
 	}
-	
 }
 
 private extension SyncStatusTable {
 
 	func statusWithRow(_ row: FMResultSet) -> SyncStatus? {
-		
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID),
 			let rawKey = row.string(forColumn: DatabaseKey.key),
 			let key = ArticleStatus.Key(rawValue: rawKey) else {
@@ -106,6 +97,5 @@ private extension SyncStatusTable {
 		let selected = row.bool(forColumn: DatabaseKey.selected)
 		
 		return SyncStatus(articleID: articleID, key: key, flag: flag, selected: selected)
-		
 	}
 }

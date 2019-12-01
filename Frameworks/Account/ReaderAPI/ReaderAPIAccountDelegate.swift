@@ -436,7 +436,18 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 		
 	}
-	
+
+	// MARK: Suspend and Resume (for iOS)
+
+	/// Suspend the sync database so that it can close its SQLite file.
+	func suspend() {
+		database.suspend()
+	}
+
+	/// Resume the sync database — let it reopen its SQLite file.
+	func resume() {
+		database.resume()
+	}
 }
 
 // MARK: Private
