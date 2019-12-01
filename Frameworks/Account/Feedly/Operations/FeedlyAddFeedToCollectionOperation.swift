@@ -8,21 +8,25 @@
 
 import Foundation
 
+protocol FeedlyAddFeedToCollectionService {
+	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completionHandler: @escaping (Result<[FeedlyFeed], Error>) -> ())
+}
+
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
 	let feedName: String?
 	let collectionId: String
-	let caller: FeedlyAPICaller
+	let service: FeedlyAddFeedToCollectionService
 	let account: Account
 	let folder: Folder
 	let feedResource: FeedlyFeedResourceId
 	
-	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, caller: FeedlyAPICaller) {
+	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
 		self.account = account
 		self.folder = folder
 		self.feedResource = feedResource
 		self.feedName = feedName
 		self.collectionId = collectionId
-		self.caller = caller
+		self.service = service
 	}
 	
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
@@ -36,7 +40,7 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 			return didFinish()
 		}
 		
-		caller.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
+		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
 			guard let self = self else {
 				return
 			}
@@ -52,7 +56,7 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 		case .success(let feedlyFeeds):
 			feedsAndFolders = [(feedlyFeeds, folder)]
 			
-			let feedsWithCreatedFeedId = feedlyFeeds.filter { $0.feedId == resource.id }
+			let feedsWithCreatedFeedId = feedlyFeeds.filter { $0.id == resource.id }
 			
 			if feedsWithCreatedFeedId.isEmpty {
 				didFinish(AccountError.createErrorNotFound)

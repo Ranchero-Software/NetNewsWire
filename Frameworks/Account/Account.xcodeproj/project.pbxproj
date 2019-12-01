@@ -140,6 +140,8 @@
 		9E964EBA23754B4000A7AF2E /* OAuthAccountAuthorizationOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E964EB923754B4000A7AF2E /* OAuthAccountAuthorizationOperation.swift */; };
 		9EA3133B231E368100268BA0 /* FeedlyAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA3133A231E368100268BA0 /* FeedlyAccountDelegate.swift */; };
 		9EA643CF2391D3560018A28C /* FeedlyAddExistingFeedOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA643CE2391D3550018A28C /* FeedlyAddExistingFeedOperation.swift */; };
+		9EA643D3239305680018A28C /* FeedlySearchOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA643D2239305680018A28C /* FeedlySearchOperation.swift */; };
+		9EA643D5239306AC0018A28C /* FeedlyFeedsSearchResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA643D4239306AC0018A28C /* FeedlyFeedsSearchResponse.swift */; };
 		9EAEC60C2332FE830085D7C9 /* FeedlyCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEC60B2332FE830085D7C9 /* FeedlyCollection.swift */; };
 		9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEC60D2332FEC20085D7C9 /* FeedlyFeed.swift */; };
 		9EAEC624233315F60085D7C9 /* FeedlyEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEC623233315F60085D7C9 /* FeedlyEntry.swift */; };
@@ -360,6 +362,8 @@
 		9E964EB923754B4000A7AF2E /* OAuthAccountAuthorizationOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthAccountAuthorizationOperation.swift; sourceTree = "<group>"; };
 		9EA3133A231E368100268BA0 /* FeedlyAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedlyAccountDelegate.swift; sourceTree = "<group>"; };
 		9EA643CE2391D3550018A28C /* FeedlyAddExistingFeedOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedlyAddExistingFeedOperation.swift; sourceTree = "<group>"; };
+		9EA643D2239305680018A28C /* FeedlySearchOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlySearchOperation.swift; sourceTree = "<group>"; };
+		9EA643D4239306AC0018A28C /* FeedlyFeedsSearchResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyFeedsSearchResponse.swift; sourceTree = "<group>"; };
 		9EAEC60B2332FE830085D7C9 /* FeedlyCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyCollection.swift; sourceTree = "<group>"; };
 		9EAEC60D2332FEC20085D7C9 /* FeedlyFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyFeed.swift; sourceTree = "<group>"; };
 		9EAEC623233315F60085D7C9 /* FeedlyEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyEntry.swift; sourceTree = "<group>"; };
@@ -697,6 +701,7 @@
 			children = (
 				9E1D1554233431A600F4944C /* FeedlyOperation.swift */,
 				9EF35F79234E830E003AE2AE /* FeedlyCompoundOperation.swift */,
+				9EA643D2239305680018A28C /* FeedlySearchOperation.swift */,
 				9E7299D623505E9600DAEFB7 /* FeedlyAddFeedToCollectionOperation.swift */,
 				9EB1D575238E6A3900A753D7 /* FeedlyAddNewFeedOperation.swift */,
 				9EA643CE2391D3550018A28C /* FeedlyAddExistingFeedOperation.swift */,
@@ -737,6 +742,7 @@
 				9EAEC62923331EE70085D7C9 /* FeedlyOrigin.swift */,
 				9E1773D22345700E0056A5A8 /* FeedlyLink.swift */,
 				9E1773D6234575AB0056A5A8 /* FeedlyTag.swift */,
+				9EA643D4239306AC0018A28C /* FeedlyFeedsSearchResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -974,6 +980,7 @@
 				514BF5202391B0DB00902FE8 /* SingleArticleFetcher.swift in Sources */,
 				9EC688EC232C583300A8D0A2 /* FeedlyAccountDelegate+OAuth.swift in Sources */,
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
+				9EA643D5239306AC0018A28C /* FeedlyFeedsSearchResponse.swift in Sources */,
 				9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */,
 				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,
 				3B826DAF2385C81C00FC1ADB /* FeedWranglerGenericResult.swift in Sources */,
@@ -981,6 +988,7 @@
 				9EA3133B231E368100268BA0 /* FeedlyAccountDelegate.swift in Sources */,
 				51E5959B228C781500FCC42B /* FeedbinStarredEntry.swift in Sources */,
 				846E77451F6EF9B900A165E2 /* Container.swift in Sources */,
+				9EA643D3239305680018A28C /* FeedlySearchOperation.swift in Sources */,
 				9E1D15532334304B00F4944C /* FeedlyGetStreamContentsOperation.swift in Sources */,
 				9E12B0202334696A00ADE5A0 /* FeedlyCreateFeedsForCollectionFoldersOperation.swift in Sources */,
 				552032FD229D5D5A009559E0 /* ReaderAPITagging.swift in Sources */,
