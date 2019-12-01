@@ -218,7 +218,6 @@ private extension AppDelegate {
 	
 	func waitForProgressToFinish() {
 		let completeProcessing = { [unowned self] in
-			AccountManager.shared.suspendAll()
 			UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
 			self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 		}
