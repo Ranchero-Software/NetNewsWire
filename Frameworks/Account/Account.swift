@@ -410,11 +410,20 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.suspend()
 		database.suspend()
 		save()
+		metadataFile.suspend()
+		webFeedMetadataFile.suspend()
+		opmlFile.suspend()
 	}
 
 	public func resume() {
 		database.resume()
 		delegate.resume()
+		metadataFile.resume()
+		webFeedMetadataFile.resume()
+		opmlFile.resume()
+		metadataFile.load()
+		webFeedMetadataFile.load()
+		opmlFile.load()
 	}
 
 	public func save() {

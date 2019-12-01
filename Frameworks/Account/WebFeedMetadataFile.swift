@@ -35,6 +35,14 @@ final class WebFeedMetadataFile {
 		managedFile.saveIfNecessary()
 	}
 	
+	func suspend() {
+		managedFile.suspend()
+	}
+	
+	func resume() {
+		managedFile.resume()
+	}
+	
 }
 
 private extension WebFeedMetadataFile {

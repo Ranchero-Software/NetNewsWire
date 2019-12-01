@@ -35,6 +35,14 @@ final class AccountMetadataFile {
 		managedFile.saveIfNecessary()
 	}
 	
+	func suspend() {
+		managedFile.suspend()
+	}
+	
+	func resume() {
+		managedFile.resume()
+	}
+	
 }
 
 private extension AccountMetadataFile {
