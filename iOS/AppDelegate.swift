@@ -301,12 +301,15 @@ private extension AppDelegate {
 	}
 	
 	func suspendApplication() {
+		guard !isAnySceneInForeground else { return }
+		
 		CoalescingQueue.standard.performCallsImmediately()
 		for scene in UIApplication.shared.connectedScenes {
 			if let sceneDelegate = scene.delegate as? SceneDelegate {
 				sceneDelegate.suspend()
 			}
 		}
+		AccountManager.shared.saveAll()
 		AccountManager.shared.suspendAll()
 	}
 	
@@ -354,7 +357,6 @@ private extension AppDelegate {
 				AccountManager.shared.resumeAll()
 			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
-				AccountManager.shared.saveAll()
 				self.suspendApplication()
 				os_log("Account refresh operation completed.", log: self.log, type: .info)
 				task?.setTaskCompleted(success: true)
@@ -363,6 +365,7 @@ private extension AppDelegate {
 					
 		// set expiration handler
 		task.expirationHandler = { [weak task] in
+			self.suspendApplication()
 			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
 			task?.setTaskCompleted(success: false)
 		}
