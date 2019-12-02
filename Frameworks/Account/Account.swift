@@ -406,7 +406,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func suspend() {
-		delegate.cancelAll(for: self)
 		delegate.suspend()
 		database.suspend()
 		save()

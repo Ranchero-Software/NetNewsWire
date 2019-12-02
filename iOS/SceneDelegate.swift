@@ -73,6 +73,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		coordinator.handle(response)
 	}
 
+	func suspend() {
+		coordinator.suspend()
+	}
+	
 }
 
 private extension SceneDelegate {

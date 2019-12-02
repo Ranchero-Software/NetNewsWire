@@ -46,12 +46,6 @@ final class FetchRequestOperation {
 			}
 		}
 
-		// The account manager may have been suspended while we were queued up
-		if AccountManager.shared.isSuspended {
-			callCompletionIfNeeded()
-			return
-		}
-		
 		if isCanceled {
 			callCompletionIfNeeded()
 			return

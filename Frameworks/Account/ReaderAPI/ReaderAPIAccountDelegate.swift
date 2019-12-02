@@ -79,10 +79,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	func cancelAll(for account: Account) {
-		caller.cancelAll()
-	}
-	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
@@ -441,6 +437,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	/// Suspend the sync database so that it can close its SQLite file.
 	func suspend() {
+		caller.cancelAll()
 		database.suspend()
 	}
 

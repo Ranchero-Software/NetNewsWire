@@ -97,10 +97,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	// MARK: Account API
 	
-	func cancelAll(for account: Account) {
-		operationQueue.cancelAllOperations()
-	}
-	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		assert(Thread.isMainThread)
 		
@@ -515,6 +511,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	/// Suspend the sync database so that it can close its SQLite file.
 	func suspend() {
+		operationQueue.cancelAllOperations()
 		database.suspend()
 	}
 

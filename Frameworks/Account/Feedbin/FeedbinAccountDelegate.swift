@@ -73,10 +73,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	func cancelAll(for account: Account) {
-		caller.cancelAll()
-	}
-
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
@@ -560,11 +556,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	/// Suspend the sync database so that it can close its SQLite file.
 	func suspend() {
+		caller.suspend()
 		database.suspend()
 	}
 
 	/// Resume the sync database — let it reopen its SQLite file.
 	func resume() {
+		caller.resume()
 		database.resume()
 	}
 }

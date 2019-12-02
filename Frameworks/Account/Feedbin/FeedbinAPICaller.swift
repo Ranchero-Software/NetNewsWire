@@ -32,6 +32,7 @@ final class FeedbinAPICaller: NSObject {
 	
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
 	private var transport: Transport!
+	private var suspended = false
 	
 	var credentials: Credentials?
 	weak var accountMetadata: AccountMetadata?
@@ -41,8 +42,14 @@ final class FeedbinAPICaller: NSObject {
 		self.transport = transport
 	}
 	
-	func cancelAll() {
+	/// Cancels all pending requests rejects any that come in later
+	func suspend() {
 		transport.cancelAll()
+		suspended = true
+	}
+	
+	func resume() {
+		suspended = false
 	}
 	
 	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
@@ -51,6 +58,12 @@ final class FeedbinAPICaller: NSObject {
 		let request = URLRequest(url: callURL, credentials: credentials)
 		
 		transport.send(request: request) { result in
+			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
 			switch result {
 			case .success:
 				completion(.success(self.credentials))
@@ -77,6 +90,11 @@ final class FeedbinAPICaller: NSObject {
 		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
 		transport.send(request: request, method: HTTPMethod.post, payload: opmlData) { result in
+			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
 			
 			switch result {
 			case .success(let (_, data)):
@@ -108,6 +126,11 @@ final class FeedbinAPICaller: NSObject {
 		
 		transport.send(request: request, resultType: FeedbinImportResult.self) { result in
 			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
 			switch result {
 			case .success(let (_, importResult)):
 				completion(.success(importResult))
@@ -127,6 +150,11 @@ final class FeedbinAPICaller: NSObject {
 
 		transport.send(request: request, resultType: [FeedbinTag].self) { result in
 			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
 			switch result {
 			case .success(let (response, tags)):
 				self.storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
@@ -143,7 +171,20 @@ final class FeedbinAPICaller: NSObject {
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinRenameTag(oldName: oldName, newName: newName)
-		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+		
+		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func retrieveSubscriptions(completion: @escaping (Result<[FeedbinSubscription]?, Error>) -> Void) {
@@ -155,6 +196,11 @@ final class FeedbinAPICaller: NSObject {
 		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinSubscription].self) { result in
+			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
 			
 			switch result {
 			case .success(let (response, subscriptions)):
@@ -185,6 +231,11 @@ final class FeedbinAPICaller: NSObject {
 		}
 		
 		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
+			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
 			
 			switch result {
 			case .success(let (response, data)):
@@ -246,13 +297,38 @@ final class FeedbinAPICaller: NSObject {
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID)/update.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUpdateSubscription(title: newName)
-		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+		
+		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func deleteSubscription(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID).json")
 		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
+		transport.send(request: request, method: HTTPMethod.delete) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func retrieveTaggings(completion: @escaping (Result<[FeedbinTagging]?, Error>) -> Void) {
@@ -262,7 +338,11 @@ final class FeedbinAPICaller: NSObject {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [FeedbinTagging].self) { result in
-			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let (response, taggings)):
 				self.storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
@@ -291,6 +371,11 @@ final class FeedbinAPICaller: NSObject {
 		
 		transport.send(request: request, method: HTTPMethod.post, payload:payload) { result in
 			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let (response, _)):
 				if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
@@ -313,7 +398,19 @@ final class FeedbinAPICaller: NSObject {
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings/\(taggingID).json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		transport.send(request: request, method: HTTPMethod.delete, completion: completion)
+		transport.send(request: request, method: HTTPMethod.delete) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([FeedbinEntry]?), Error>) -> Void) {
@@ -336,6 +433,11 @@ final class FeedbinAPICaller: NSObject {
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let (_, entries)):
 				completion(.success((entries)))
@@ -363,6 +465,11 @@ final class FeedbinAPICaller: NSObject {
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let (response, entries)):
 				
@@ -399,6 +506,11 @@ final class FeedbinAPICaller: NSObject {
 		
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let (response, entries)):
 				
@@ -427,6 +539,11 @@ final class FeedbinAPICaller: NSObject {
 
 		transport.send(request: request, resultType: [FeedbinEntry].self) { result in
 			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let (response, entries)):
 				
@@ -449,6 +566,11 @@ final class FeedbinAPICaller: NSObject {
 		
 		transport.send(request: request, resultType: [Int].self) { result in
 			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let (response, unreadEntries)):
 				self.storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
@@ -465,14 +587,38 @@ final class FeedbinAPICaller: NSObject {
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUnreadEntry(unreadEntries: entries)
-		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func deleteUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUnreadEntry(unreadEntries: entries)
-		transport.send(request: request, method: HTTPMethod.delete, payload: payload, completion: completion)
+		transport.send(request: request, method: HTTPMethod.delete, payload: payload) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
@@ -482,7 +628,11 @@ final class FeedbinAPICaller: NSObject {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 		
 		transport.send(request: request, resultType: [Int].self) { result in
-			
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let (response, starredEntries)):
 				self.storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
@@ -499,14 +649,38 @@ final class FeedbinAPICaller: NSObject {
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinStarredEntry(starredEntries: entries)
-		transport.send(request: request, method: HTTPMethod.post, payload: payload, completion: completion)
+		transport.send(request: request, method: HTTPMethod.post, payload: payload) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func deleteStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinStarredEntry(starredEntries: entries)
-		transport.send(request: request, method: HTTPMethod.delete, payload: payload, completion: completion)
+		transport.send(request: request, method: HTTPMethod.delete, payload: payload) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+			
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 }

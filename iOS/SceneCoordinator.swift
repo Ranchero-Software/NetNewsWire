@@ -535,6 +535,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	// MARK: API
 	
+	func suspend() {
+		fetchAndMergeArticlesQueue.performCallsImmediately()
+		fetchRequestQueue.cancelAllRequests()
+	}
+	
 	func shadowNodesFor(section: Int) -> [Node] {
 		return shadowTable[section]
 	}

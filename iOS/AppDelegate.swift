@@ -229,6 +229,7 @@ private extension AppDelegate {
 }
 
 // MARK: Go To Background
+
 private extension AppDelegate {
 	
 	func waitForSyncTasksToFinish() {
@@ -269,7 +270,7 @@ private extension AppDelegate {
 	
 	func completeProcessing(_ suspend: Bool) {
 		if suspend {
-			AccountManager.shared.suspendAll()
+			suspendApplication()
 		}
 		UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
 		self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
@@ -297,6 +298,16 @@ private extension AppDelegate {
 				completeProcessing()
 			}
 		}
+	}
+	
+	func suspendApplication() {
+		CoalescingQueue.standard.performCallsImmediately()
+		for scene in UIApplication.shared.connectedScenes {
+			if let sceneDelegate = scene.delegate as? SceneDelegate {
+				sceneDelegate.suspend()
+			}
+		}
+		AccountManager.shared.suspendAll()
 	}
 	
 }
@@ -342,9 +353,9 @@ private extension AppDelegate {
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				AccountManager.shared.saveAll()
-				AccountManager.shared.suspendAll()
+				self.suspendApplication()
 				os_log("Account refresh operation completed.", log: self.log, type: .info)
 				task?.setTaskCompleted(success: true)
 			}
