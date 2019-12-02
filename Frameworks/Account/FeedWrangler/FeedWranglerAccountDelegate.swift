@@ -121,10 +121,6 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func cancelAll(for account: Account) {
-		caller.cancelAll()
-	}
-	
 	func refreshCredentials(for account: Account, completion: @escaping (() -> Void)) {
 		os_log(.debug, log: log, "Refreshing credentials...")
 		// MARK: TODO
@@ -443,6 +439,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 
 	/// Suspend the sync database so that it can close its SQLite file.
 	func suspend() {
+		caller.cancelAll()
 		database.suspend()
 	}
 
