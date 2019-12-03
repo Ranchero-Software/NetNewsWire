@@ -11,7 +11,7 @@ import Foundation
 struct FeedlyFeed: Codable {
 	var feedId: String
 	var id: String
-	var title: String
+	var title: String?
 	var updated: Date?
 	var website: String?
 }
