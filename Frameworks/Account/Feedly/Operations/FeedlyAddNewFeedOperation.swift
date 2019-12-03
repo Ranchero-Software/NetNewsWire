@@ -10,17 +10,6 @@ import Foundation
 import os.log
 import RSWeb
 
-protocol FeedlyFeedResourceIdProviding {
-	var feedResourceId: String { get }
-}
-
-extension FeedlyFeedResourceId: FeedlyFeedResourceIdProviding {
-	
-	var feedResourceId: String {
-		return id
-	}
-}
-
 class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
 	private let operationQueue: OperationQueue
 	private let folder: Folder
@@ -66,7 +55,11 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	override func cancel() {
 		operationQueue.cancelAllOperations()
 		super.cancel()
+		
 		didFinish()
+		
+		// Operation should silently cancel.
+		addCompletionHandler = nil
 	}
 	
 	override func main() {
