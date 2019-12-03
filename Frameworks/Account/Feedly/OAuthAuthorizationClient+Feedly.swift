@@ -25,10 +25,11 @@ extension OAuthAuthorizationClient {
 		/// See https://developer.feedly.com/v3/sandbox/ for more information.
 		/// The return value models public sandbox API values found at:
 		/// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
-		/// They are due to expire on November 30 2019.
+		/// They are due to expire on January 31 2020.
+		/// Verify the sandbox URL host in the FeedlyAPICaller.API.baseUrlComponents method, too.
 		return OAuthAuthorizationClient(id: "sandbox",
 										redirectUri: "urn:ietf:wg:oauth:2.0:oob",
 										state: nil,
-										secret: "ReVGXA6WekanCxbf")
+										secret: "nZmS4bqxgRQkdPks")
 	}
 }
