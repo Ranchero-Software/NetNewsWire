@@ -70,7 +70,7 @@ final class SearchTable: DatabaseTable {
 	}
 
 	func ensureIndexedArticles(for articleIDs: Set<String>) {
-		if articleIDs.isEmpty {
+		guard !queue.isSuspended && !articleIDs.isEmpty else {
 			return
 		}
 		queue.runInTransaction { (database) in

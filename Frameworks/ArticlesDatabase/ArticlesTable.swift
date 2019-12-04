@@ -428,6 +428,9 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
+		guard !queue.isSuspended else {
+			return
+		}
 		queue.runInDatabase { (database) in
 			let sql = "select articleID from articles where searchRowID is null limit 500;"
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
