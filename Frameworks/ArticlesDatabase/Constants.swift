@@ -16,8 +16,6 @@ struct DatabaseTableName {
 	static let authors = "authors"
 	static let authorsLookup = "authorsLookup"
 	static let statuses = "statuses"
-	static let attachments = "attachments"
-	static let attachmentsLookup = "attachmentsLookup"
 }
 
 struct DatabaseKey {
@@ -39,7 +37,6 @@ struct DatabaseKey {
 	static let datePublished = "datePublished"
 	static let dateModified = "dateModified"
 	static let authors = "authors"
-	static let attachments = "attachments"
 	static let searchRowID = "searchRowID"
 	
 	// ArticleStatus
@@ -47,12 +44,6 @@ struct DatabaseKey {
 	static let starred = "starred"
 	static let userDeleted = "userDeleted"
 	static let dateArrived = "dateArrived"
-
-	// Attachment
-	static let attachmentID = "attachmentID"
-	static let mimeType = "mimeType"
-	static let sizeInBytes = "sizeInBytes"
-	static let durationInSeconds = "durationInSeconds"
 
 	// Tag
 	static let tagName = "tagName"
@@ -71,5 +62,4 @@ struct DatabaseKey {
 struct RelationshipName {
 	
 	static let authors = "authors"
-	static let attachments = "attachments"
 }

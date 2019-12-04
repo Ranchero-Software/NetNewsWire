@@ -13,13 +13,12 @@ import RSParser
 
 extension Article {
 	
-	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?, attachments: Set<Attachment>?) {
-		self.init(accountID: accountID, articleID: databaseArticle.articleID, feedID: databaseArticle.feedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, attachments: attachments, status: databaseArticle.status)
+	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?) {
+		self.init(accountID: accountID, articleID: databaseArticle.articleID, feedID: databaseArticle.feedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, status: databaseArticle.status)
 	}
 
 	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
-		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
 
 		// Deal with future datePublished and dateModified dates.
 		var datePublished = parsedItem.datePublished
@@ -35,7 +34,7 @@ extension Article {
 			dateModified = nil
 		}
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
@@ -145,8 +144,6 @@ extension Article: DatabaseObject {
 		switch name {
 		case RelationshipName.authors:
 			return databaseObjectArray(with: authors)
-		case RelationshipName.attachments:
-			return databaseObjectArray(with: attachments)
 		default:
 			return nil
 		}
