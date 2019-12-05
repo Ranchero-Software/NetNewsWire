@@ -27,11 +27,9 @@ public struct Article: Hashable {
 	public let datePublished: Date?
 	public let dateModified: Date?
 	public let authors: Set<Author>?
-	public let attachments: Set<Attachment>?
 	public let status: ArticleStatus
 
-	public init(accountID: String, articleID: String?, webFeedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, attachments: Set<Attachment>?, status: ArticleStatus) {
-		
+	public init(accountID: String, articleID: String?, webFeedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, status: ArticleStatus) {
 		self.accountID = accountID
 		self.webFeedID = webFeedID
 		self.uniqueID = uniqueID
@@ -46,7 +44,6 @@ public struct Article: Hashable {
 		self.datePublished = datePublished
 		self.dateModified = dateModified
 		self.authors = authors
-		self.attachments = attachments
 		self.status = status
 		
 		if let articleID = articleID {
@@ -90,5 +87,4 @@ public extension Array where Element == Article {
 	func articleIDs() -> [String] {
 		return map { $0.articleID }
 	}
-	
 }

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		51C451FF2264CF2100C03939 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C451FE2264CF2100C03939 /* RSParser.framework */; };
-		840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405CE1F1A963700DF0296 /* AttachmentsTable.swift */; };
 		841D4D742106B59F00DD04E6 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D732106B59F00DD04E6 /* Articles.framework */; };
 		84288A001F6A3C4400395871 /* DatabaseObject+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */; };
 		84288A021F6A3D8000395871 /* RelatedObjectsMap+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */; };
@@ -21,7 +20,6 @@
 		845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580661F0AEBCD003CCFA1 /* Constants.swift */; };
 		845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580751F0AF670003CCFA1 /* Article+Database.swift */; };
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
-		8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */; };
 		8477ACBC2221E76F00DF7F37 /* SearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBB2221E76F00DF7F37 /* SearchTable.swift */; };
 		848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EB820FBCFD20004B7ED /* RSCore.framework */; };
 		848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */; };
@@ -114,7 +112,6 @@
 /* Begin PBXFileReference section */
 		518B2EA7235130CD00400001 /* ArticlesDatabase_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ArticlesDatabase_project_test.xcconfig; sourceTree = "<group>"; };
 		51C451FE2264CF2100C03939 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		840405CE1F1A963700DF0296 /* AttachmentsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsTable.swift; sourceTree = "<group>"; };
 		841D4D732106B59F00DD04E6 /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseObject+Database.swift"; sourceTree = "<group>"; };
 		84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RelatedObjectsMap+Database.swift"; sourceTree = "<group>"; };
@@ -128,7 +125,6 @@
 		845580661F0AEBCD003CCFA1 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		845580751F0AF670003CCFA1 /* Article+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Article+Database.swift"; path = "Extensions/Article+Database.swift"; sourceTree = "<group>"; };
 		845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ArticleStatus+Database.swift"; path = "Extensions/ArticleStatus+Database.swift"; sourceTree = "<group>"; };
-		8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Attachment+Database.swift"; path = "Extensions/Attachment+Database.swift"; sourceTree = "<group>"; };
 		8461461E1F0ABC7300870CB3 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		8477ACBB2221E76F00DF7F37 /* SearchTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTable.swift; sourceTree = "<group>"; };
 		848E3EB820FBCFD20004B7ED /* RSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -183,7 +179,6 @@
 				843577151F744FC800F460AE /* DatabaseArticle.swift */,
 				84E156ED1F0AB81400F8CC05 /* StatusesTable.swift */,
 				84F20F8E1F180D8700D8E682 /* AuthorsTable.swift */,
-				840405CE1F1A963700DF0296 /* AttachmentsTable.swift */,
 				8461462A1F0AC44100870CB3 /* Extensions */,
 				84E156E81F0AB75600F8CC05 /* Info.plist */,
 				844BEE441F0AB3AB004AB7CD /* DatabaseTests */,
@@ -229,7 +224,6 @@
 				843702C21F70D15D00B18807 /* ParsedArticle+Database.swift */,
 				845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */,
 				84F20F901F1810DD00D8E682 /* Author+Database.swift */,
-				8455807B1F0C0DBD003CCFA1 /* Attachment+Database.swift */,
 				842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */,
 				84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */,
 			);
@@ -524,9 +518,7 @@
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
 				8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */,
-				8455807C1F0C0DBD003CCFA1 /* Attachment+Database.swift in Sources */,
 				84288A021F6A3D8000395871 /* RelatedObjectsMap+Database.swift in Sources */,
-				840405CF1F1A963700DF0296 /* AttachmentsTable.swift in Sources */,
 				84F20F8F1F180D8700D8E682 /* AuthorsTable.swift in Sources */,
 				84288A001F6A3C4400395871 /* DatabaseObject+Database.swift in Sources */,
 				8477ACBC2221E76F00DF7F37 /* SearchTable.swift in Sources */,

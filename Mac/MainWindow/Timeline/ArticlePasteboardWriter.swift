@@ -122,20 +122,12 @@ private extension ArticlePasteboardWriter {
 		static let starred = "starred"
 		static let userDeleted = "userDeleted"
 		static let authors = "authors"
-		static let attachments = "attachments"
 
 		// Author
 		static let authorName = "name"
 		static let authorURL = "url"
 		static let authorAvatarURL = "avatarURL"
 		static let authorEmailAddress = "emailAddress"
-
-		// Attachment
-		static let attachmentURL = "url"
-		static let attachmentMimeType = "mimeType"
-		static let attachmentTitle = "title"
-		static let attachmentSizeInBytes = "sizeInBytes"
-		static let attachmentDurationInSeconds = "durationInSeconds"
 
 		// Internal
 		static let accountID = "accountID"
@@ -164,7 +156,6 @@ private extension ArticlePasteboardWriter {
 		d[Key.dateModified] = article.dateModified ?? nil
 		d[Key.dateArrived] = article.status.dateArrived
 		d[Key.authors] = authorDictionaries() ?? nil
-		d[Key.attachments] = attachmentDictionaries() ?? nil
 
 		return d
 	}
@@ -184,19 +175,6 @@ private extension ArticlePasteboardWriter {
 		d[Key.authorEmailAddress] = author.emailAddress ?? nil
 
 		return d
-
-	}
-
-	func attachmentDictionary(_ attachment: Attachment) -> [String: Any] {
-		var d = [String: Any]()
-
-		d[Key.attachmentURL] = attachment.url
-		d[Key.attachmentMimeType] = attachment.mimeType ?? nil
-		d[Key.attachmentTitle] = attachment.title ?? nil
-		d[Key.attachmentSizeInBytes] = attachment.sizeInBytes ?? nil
-		d[Key.attachmentDurationInSeconds] = attachment.durationInSeconds ?? nil
-
-		return d
 	}
 
 	func authorDictionaries() -> [[String: Any]]? {
@@ -204,13 +182,6 @@ private extension ArticlePasteboardWriter {
 			return nil
 		}
 		return authors.map{ authorDictionary($0) }
-	}
-
-	func attachmentDictionaries() -> [[String: Any]]? {
-		guard let attachments = article.attachments, !attachments.isEmpty else {
-			return nil
-		}
-		return attachments.map { attachmentDictionary($0) }
 	}
 }
 
