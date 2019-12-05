@@ -175,6 +175,7 @@ public final class AccountManager: UnreadCountProvider {
 
 	public func resumeAll() {
 		isSuspended = false
+		accounts.forEach { $0.resumeDatabaseAndDelegate() }
 		accounts.forEach { $0.resume() }
 	}
 

@@ -417,9 +417,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		opmlFile.suspend()
 	}
 
-	public func resume() {
+	/// Re-open the SQLite database and allow database calls.
+	/// Call this *before* calling resume.
+	public func resumeDatabaseAndDelegate() {
 		database.resume()
 		delegate.resume()
+	}
+
+	/// Reload OPML, etc.
+	public func resume() {
 		metadataFile.resume()
 		webFeedMetadataFile.resume()
 		opmlFile.resume()
@@ -481,6 +487,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		for feed in flattenedWebFeeds() {
 			feed.metadata = webFeedMetadata(feedURL: feed.url, webFeedID: feed.webFeedID)
 		}
+		precondition(!database.isSuspended)
 		fetchAllUnreadCounts()
 		NotificationCenter.default.post(name: .WebFeedMetadataDidChange, object: self, userInfo: nil)
 	}
