@@ -303,14 +303,16 @@ private extension AppDelegate {
 	func suspendApplication() {
 		guard !isAnySceneInForeground else { return }
 		
+		AccountManager.shared.suspendNetworkAll()
+		
 		CoalescingQueue.standard.performCallsImmediately()
 		for scene in UIApplication.shared.connectedScenes {
 			if let sceneDelegate = scene.delegate as? SceneDelegate {
 				sceneDelegate.suspend()
 			}
 		}
-		AccountManager.shared.saveAll()
-		AccountManager.shared.suspendAll()
+		
+		AccountManager.shared.suspendDatabaseAll()
 	}
 	
 }

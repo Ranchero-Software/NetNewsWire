@@ -31,10 +31,6 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
-	func cancelAll(for account: Account) {
-		refresher.cancelAll()
-	}
-	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refresher.refreshFeeds(account.flattenedWebFeeds()) {
 			completion(.success(()))
@@ -205,10 +201,14 @@ final class LocalAccountDelegate: AccountDelegate {
 
 	// MARK: Suspend and Resume (for iOS)
 
-	func suspend() {
-		// Nothing to do
+	func suspendNetwork() {
+		refresher.cancelAll()
 	}
 
+	func suspendDatabase() {
+		// Nothing to do
+	}
+	
 	func resume() {
 		// Nothing to do
 	}

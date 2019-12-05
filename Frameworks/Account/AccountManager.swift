@@ -164,9 +164,13 @@ public final class AccountManager: UnreadCountProvider {
 		return accountsDictionary[accountID]
 	}
 	
-	public func suspendAll() {
+	public func suspendNetworkAll() {
 		isSuspended = true
-		accounts.forEach { $0.suspend() }
+		accounts.forEach { $0.suspendNetwork() }
+	}
+
+	public func suspendDatabaseAll() {
+		accounts.forEach { $0.suspendDatabase() }
 	}
 
 	public func resumeAll() {

@@ -405,8 +405,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 	}
 	
-	public func suspend() {
-		delegate.suspend()
+	public func suspendNetwork() {
+		delegate.suspendNetwork()
+	}
+	
+	public func suspendDatabase() {
 		database.suspend()
 		save()
 		metadataFile.suspend()

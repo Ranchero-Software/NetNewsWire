@@ -437,13 +437,17 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 
 	// MARK: Suspend and Resume (for iOS)
 
-	/// Suspend the sync database so that it can close its SQLite file.
-	func suspend() {
+	/// Suspend all network activity
+	func suspendNetwork() {
 		caller.cancelAll()
+	}
+	
+	/// Suspend the SQLLite databases
+	func suspendDatabase() {
 		database.suspend()
 	}
-
-	/// Resume the sync database — let it reopen its SQLite file.
+	
+	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		database.resume()
 	}

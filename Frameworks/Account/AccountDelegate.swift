@@ -50,7 +50,12 @@ protocol AccountDelegate {
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void)
 
-	// For iOS, so we can suspend and resume properly.
-	func suspend() // Make sure no SQLite databases are open.
+	/// Suspend all network activity
+	func suspendNetwork()
+	
+	/// Suspend the SQLLite databases
+	func suspendDatabase()
+	
+	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume()
 }

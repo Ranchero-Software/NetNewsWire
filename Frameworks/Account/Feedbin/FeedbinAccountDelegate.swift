@@ -554,13 +554,17 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
 	// MARK: Suspend and Resume (for iOS)
 
-	/// Suspend the sync database so that it can close its SQLite file.
-	func suspend() {
+	/// Suspend all network activity
+	func suspendNetwork() {
 		caller.suspend()
+	}
+	
+	/// Suspend the SQLLite databases
+	func suspendDatabase() {
 		database.suspend()
 	}
-
-	/// Resume the sync database — let it reopen its SQLite file.
+	
+	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		caller.resume()
 		database.resume()
