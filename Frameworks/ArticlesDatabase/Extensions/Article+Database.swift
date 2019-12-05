@@ -13,7 +13,7 @@ import RSParser
 
 extension Article {
 	
-	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?, attachments: Set<Attachment>?) {
+	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?) {
 		self.init(accountID: accountID, articleID: databaseArticle.articleID, webFeedID: databaseArticle.webFeedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, status: databaseArticle.status)
 	}
 
