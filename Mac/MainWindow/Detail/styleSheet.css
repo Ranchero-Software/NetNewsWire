@@ -181,3 +181,9 @@ img[src*="feedblitz"],
 img[src*="share-buttons"] {
 	display: none !important;
 }
+
+/* Site specific styles */
+.wp-smiley {
+	height: 1em;
+	max-height: 1em;
+}
