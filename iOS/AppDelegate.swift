@@ -347,7 +347,7 @@ private extension AppDelegate {
 		
 		os_log("Woken to perform account refresh.", log: self.log, type: .info)
 
-		DispatchQueue.main.async { [weak task] in
+		DispatchQueue.main.async {
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
@@ -355,7 +355,7 @@ private extension AppDelegate {
 				if !AccountManager.shared.isSuspended {
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
-					task?.setTaskCompleted(success: true)
+					task.setTaskCompleted(success: true)
 				}
 			}
 		}
