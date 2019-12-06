@@ -202,7 +202,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	// MARK: Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
-		refresher.cancelAll()
+		refresher.suspend()
 	}
 
 	func suspendDatabase() {
@@ -210,6 +210,6 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func resume() {
-		// Nothing to do
+		refresher.resume()
 	}
 }

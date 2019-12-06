@@ -15,6 +15,7 @@ import Articles
 final class LocalAccountRefresher {
 	
 	private var completion: (() -> Void)?
+	private var isSuspended = false
 	
 	private lazy var downloadSession: DownloadSession = {
 		return DownloadSession(delegate: self)
@@ -29,8 +30,13 @@ final class LocalAccountRefresher {
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
 	
-	public func cancelAll() {
+	public func suspend() {
 		downloadSession.cancelAll()
+		isSuspended = true
+	}
+	
+	public func resume() {
+		isSuspended = false
 	}
 	
 }
@@ -56,7 +62,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?) {
-		guard let feed = representedObject as? WebFeed, !data.isEmpty else {
+		guard let feed = representedObject as? WebFeed, !data.isEmpty, !isSuspended else {
 			return
 		}
 
@@ -86,13 +92,14 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
-		guard let feed = representedObject as? WebFeed else {
+		guard !isSuspended, let feed = representedObject as? WebFeed else {
 			return false
 		}
 		
 		if data.isEmpty {
 			return true
 		}
+		
 		if data.isDefinitelyNotFeed() {
 			return false
 		}
