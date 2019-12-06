@@ -292,12 +292,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				throw FeedlyAccountDelegateError.notLoggedIn
 			}
 			
-			let resource = FeedlyFeedResourceId(url: url)
 			let addNewFeed = try FeedlyAddNewFeedOperation(account: account,
 														   credentials: credentials,
-														   resource: resource,
+														   url: url,
 														   feedName: name,
-														   caller: caller,
+														   searchService: caller,
+														   addToCollectionService: caller,
+														   syncUnreadIdsService: caller,
+														   getStreamContentsService: caller,
 														   container: container,
 														   progress: refreshProgress,
 														   log: log)
@@ -353,7 +355,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
 																	 credentials: credentials,
 																	 resource: resource,
-																	 caller: caller,
+																	 service: caller,
 																	 container: container,
 																	 progress: refreshProgress,
 																	 log: log)

@@ -32,13 +32,13 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 	
 	func testAddFeeds() {
 		let feedsForFolderOne = [
-			FeedlyFeed(feedId: "feed/1", id: "feed/1", title: "Feed One", updated: nil, website: nil),
-			FeedlyFeed(feedId: "feed/2", id: "feed/2", title: "Feed Two", updated: nil, website: nil)
+			FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil),
+			FeedlyFeed(id: "feed/2", title: "Feed Two", updated: nil, website: nil)
 		]
 		
 		let feedsForFolderTwo = [
-			FeedlyFeed(feedId: "feed/1", id: "feed/1", title: "Feed One", updated: nil, website: nil),
-			FeedlyFeed(feedId: "feed/3", id: "feed/3", title: "Feed Three", updated: nil, website: nil),
+			FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil),
+			FeedlyFeed(id: "feed/3", title: "Feed Three", updated: nil, website: nil),
 		]
 		
 		let folderOne: (name: String, id: String) = ("FolderOne", "folder/1")
@@ -66,7 +66,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		
 		let feedIds = Set([feedsForFolderOne, feedsForFolderTwo]
 			.flatMap { $0 }
-			.map { $0.feedId })
+			.map { $0.id })
 		
 		let feedTitles = Set([feedsForFolderOne, feedsForFolderTwo]
 			.flatMap { $0 }
@@ -85,7 +85,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		let expectedFolderAndFeedIds = namesAndFeeds
 			.sorted { $0.0.id < $1.0.id }
 			.map { folder, feeds -> [String: [String]] in
-			return [folder.id: feeds.map { $0.feedId }.sorted(by: <)]
+			return [folder.id: feeds.map { $0.id }.sorted(by: <)]
 		}
 		
 		let ingestedFolderAndFeedIds = (account.folders ?? Set())
@@ -100,16 +100,16 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 	func testRemoveFeeds() {
 		let folderOne: (name: String, id: String) = ("FolderOne", "folder/1")
 		let folderTwo: (name: String, id: String) = ("FolderTwo", "folder/2")
-		let feedToRemove = FeedlyFeed(feedId: "feed/1", id: "feed/1", title: "Feed One", updated: nil, website: nil)
+		let feedToRemove = FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil)
 		
 		var feedsForFolderOne = [
 			feedToRemove,
-			FeedlyFeed(feedId: "feed/2", id: "feed/2", title: "Feed Two", updated: nil, website: nil)
+			FeedlyFeed(id: "feed/2", title: "Feed Two", updated: nil, website: nil)
 		]
 		
 		var feedsForFolderTwo = [
 			feedToRemove,
-			FeedlyFeed(feedId: "feed/3", id: "feed/3", title: "Feed Three", updated: nil, website: nil),
+			FeedlyFeed(id: "feed/3", title: "Feed Three", updated: nil, website: nil),
 		]
 		
 		// Add initial content.
@@ -159,7 +159,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		
 		let feedIds = Set([feedsForFolderOne, feedsForFolderTwo]
 			.flatMap { $0 }
-			.map { $0.feedId })
+			.map { $0.id })
 		
 		let feedTitles = Set([feedsForFolderOne, feedsForFolderTwo]
 			.flatMap { $0 }
@@ -181,7 +181,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		let expectedFolderAndFeedIds = namesAndFeeds
 			.sorted { $0.0.id < $1.0.id }
 			.map { folder, feeds -> [String: [String]] in
-			return [folder.id: feeds.map { $0.feedId }.sorted(by: <)]
+			return [folder.id: feeds.map { $0.id }.sorted(by: <)]
 		}
 		
 		let ingestedFolderAndFeedIds = (account.folders ?? Set())

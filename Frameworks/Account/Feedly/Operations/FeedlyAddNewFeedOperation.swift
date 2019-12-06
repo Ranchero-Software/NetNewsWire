@@ -10,58 +10,56 @@ import Foundation
 import os.log
 import RSWeb
 
-class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
+class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
 	private let operationQueue: OperationQueue
 	private let folder: Folder
-	private let feedResourceId: FeedlyFeedResourceId
+	private let collectionId: String
+	private let url: String
+	private let account: Account
+	private let credentials: Credentials
+	private let feedName: String?
+	private let addToCollectionService: FeedlyAddFeedToCollectionService
+	private let syncUnreadIdsService: FeedlyGetStreamIdsService
+	private let getStreamContentsService: FeedlyGetStreamContentsService
+	private let log: OSLog
 	
 	var addCompletionHandler: ((Result<WebFeed, Error>) -> ())?
 	
-	init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, feedName: String?, caller: FeedlyAPICaller, container: Container, progress: DownloadProgress, log: OSLog) throws {
+	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, container: Container, progress: DownloadProgress, log: OSLog) throws {
 		
 		let validator = FeedlyFeedContainerValidator(container: container, userId: credentials.username)
-		let (folder, collectionId) = try validator.getValidContainer()
+		(self.folder, self.collectionId) = try validator.getValidContainer()
 		
-		self.folder = folder
-		self.feedResourceId = resource
+		self.url = url
 		self.operationQueue = OperationQueue()
 		self.operationQueue.isSuspended = true
+		self.account = account
+		self.credentials = credentials
+		self.feedName = feedName
+		self.addToCollectionService = addToCollectionService
+		self.syncUnreadIdsService = syncUnreadIdsService
+		self.getStreamContentsService = getStreamContentsService
+		self.log = log
 		
 		super.init()
 		
 		self.downloadProgress = progress
 		
-		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: feedName, collectionId: collectionId, caller: caller)
-		addRequest.delegate = self
-		addRequest.downloadProgress = progress
-		self.operationQueue.addOperation(addRequest)
-		
-		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
-		createFeeds.addDependency(addRequest)
-		createFeeds.downloadProgress = progress
-		self.operationQueue.addOperation(createFeeds)
-		
-		let syncUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
-		syncUnread.addDependency(addRequest)
-		syncUnread.downloadProgress = progress
-		self.operationQueue.addOperation(syncUnread)
-		
-		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: caller, newerThan: nil, log: log)
-		syncFeed.addDependency(syncUnread)
-		syncFeed.downloadProgress = progress
-		self.operationQueue.addOperation(syncFeed)
-		
-		let finishOperation = FeedlyCheckpointOperation()
-		finishOperation.checkpointDelegate = self
-		finishOperation.downloadProgress = progress
-		finishOperation.addDependency(syncFeed)
-		self.operationQueue.addOperation(finishOperation)
+		let search = FeedlySearchOperation(query: url, locale: .current, service: searchService)
+		search.delegate = self
+		search.searchDelegate = self
+		search.downloadProgress = progress
+		self.operationQueue.addOperation(search)
 	}
 	
 	override func cancel() {
 		operationQueue.cancelAllOperations()
 		super.cancel()
+		
 		didFinish()
+		
+		// Operation should silently cancel.
+		addCompletionHandler = nil
 	}
 	
 	override func main() {
@@ -69,6 +67,46 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 			return
 		}
 		operationQueue.isSuspended = false
+	}
+	
+	private var feedResourceId: FeedlyFeedResourceId?
+	
+	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse) {
+		guard !isCancelled else {
+			return
+		}
+		guard let first = response.results.first else {
+			return didFinish(AccountError.createErrorNotFound)
+		}
+		
+		let feedResourceId = FeedlyFeedResourceId(id: first.feedId)
+		self.feedResourceId = feedResourceId
+		
+		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: feedResourceId, feedName: feedName, collectionId: collectionId, service: addToCollectionService)
+		addRequest.delegate = self
+		addRequest.downloadProgress = downloadProgress
+		self.operationQueue.addOperation(addRequest)
+		
+		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
+		createFeeds.addDependency(addRequest)
+		createFeeds.downloadProgress = downloadProgress
+		self.operationQueue.addOperation(createFeeds)
+		
+		let syncUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: syncUnreadIdsService, newerThan: nil, log: log)
+		syncUnread.addDependency(addRequest)
+		syncUnread.downloadProgress = downloadProgress
+		self.operationQueue.addOperation(syncUnread)
+		
+		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, newerThan: nil, log: log)
+		syncFeed.addDependency(syncUnread)
+		syncFeed.downloadProgress = downloadProgress
+		self.operationQueue.addOperation(syncFeed)
+		
+		let finishOperation = FeedlyCheckpointOperation()
+		finishOperation.checkpointDelegate = self
+		finishOperation.downloadProgress = downloadProgress
+		finishOperation.addDependency(syncFeed)
+		self.operationQueue.addOperation(finishOperation)
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
@@ -91,7 +129,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 			return
 		}
 		
-		if let feed = folder.existingWebFeed(withWebFeedID: feedResourceId.id) {
+		if let feedResource = feedResourceId, let feed = folder.existingWebFeed(withWebFeedID: feedResource.id) {
 			handler(.success(feed))
 			
 		} else {

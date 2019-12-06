@@ -110,13 +110,13 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 	
 	class CollectionsAndFeedsProvider: FeedlyCollectionProviding {
 		var feedsForCollectionOne = [
-			FeedlyFeed(feedId: "feed/1", id: "feed/1", title: "Feed One", updated: nil, website: nil),
-			FeedlyFeed(feedId: "feed/2", id: "feed/2", title: "Feed Two", updated: nil, website: nil)
+			FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil),
+			FeedlyFeed(id: "feed/2", title: "Feed Two", updated: nil, website: nil)
 		]
 		
 		var feedsForCollectionTwo = [
-			FeedlyFeed(feedId: "feed/1", id: "feed/1", title: "Feed One", updated: nil, website: nil),
-			FeedlyFeed(feedId: "feed/3", id: "feed/3", title: "Feed Three", updated: nil, website: nil),
+			FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil),
+			FeedlyFeed(id: "feed/3", title: "Feed Three", updated: nil, website: nil),
 		]
 		
 		var collections: [FeedlyCollection] {
