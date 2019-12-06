@@ -56,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	var isAnySceneInForeground: Bool {
 		for scene in UIApplication.shared.connectedScenes {
-			if scene.activationState != .background {
+			if scene.activationState == .foregroundInactive || scene.activationState == .foregroundActive {
 				return true
 			}
 		}
