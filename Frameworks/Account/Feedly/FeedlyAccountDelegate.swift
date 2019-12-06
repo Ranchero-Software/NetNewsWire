@@ -513,6 +513,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	/// Suspend all network activity
 	func suspendNetwork() {
+		caller.suspend()
 		operationQueue.cancelAllOperations()
 	}
 	
@@ -524,5 +525,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		database.resume()
+		caller.resume()
 	}
 }
