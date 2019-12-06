@@ -146,6 +146,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	func prepareAccountsForForeground() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
+			os_log("Application processing resumed.", log: self.log, type: .info)
 		}
 		
 		if let lastRefresh = AppDefaults.lastRefresh {
@@ -313,6 +314,7 @@ private extension AppDelegate {
 		}
 		
 		AccountManager.shared.suspendDatabaseAll()
+		os_log("Application processing suspended.", log: self.log, type: .info)
 	}
 	
 }
@@ -359,9 +361,11 @@ private extension AppDelegate {
 				AccountManager.shared.resumeAll()
 			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
-				self.suspendApplication()
-				os_log("Account refresh operation completed.", log: self.log, type: .info)
-				task?.setTaskCompleted(success: true)
+				if !AccountManager.shared.isSuspended {
+					self.suspendApplication()
+					os_log("Account refresh operation completed.", log: self.log, type: .info)
+					task?.setTaskCompleted(success: true)
+				}
 			}
 		}
 					
