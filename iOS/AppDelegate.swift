@@ -54,15 +54,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var isSyncArticleStatusRunning = false
 	var isWaitingForSyncTasks = false
 	
-	var isAnySceneInForeground: Bool {
-		for scene in UIApplication.shared.connectedScenes {
-			if scene.activationState == .foregroundInactive || scene.activationState == .foregroundActive {
-				return true
-			}
-		}
-		return false
-	}
-	
 	override init() {
 		super.init()
 		appDelegate = self
@@ -234,7 +225,7 @@ private extension AppDelegate {
 private extension AppDelegate {
 	
 	func waitForSyncTasksToFinish() {
-		guard !isAnySceneInForeground && !isWaitingForSyncTasks else { return }
+		guard !isWaitingForSyncTasks && UIApplication.shared.applicationState == .background else { return }
 		
 		isWaitingForSyncTasks = true
 		
@@ -252,7 +243,7 @@ private extension AppDelegate {
 	}
 	
 	func waitToComplete(completion: @escaping (Bool) -> Void) {
-		guard !isAnySceneInForeground else {
+		guard UIApplication.shared.applicationState == .background else {
 			os_log("App came back to forground, no longer waiting.", log: self.log, type: .info)
 			completion(false)
 			return
@@ -302,7 +293,7 @@ private extension AppDelegate {
 	}
 	
 	func suspendApplication() {
-		guard !isAnySceneInForeground else { return }
+		guard UIApplication.shared.applicationState == .background else { return }
 		
 		AccountManager.shared.suspendNetworkAll()
 		
