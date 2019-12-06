@@ -53,11 +53,11 @@ struct FeedlyEntryParser {
 	}
 	
 	var datePublished: Date {
-		return entry.published
+		return entry.crawled
 	}
 	
 	var dateModified: Date? {
-		return entry.updated
+		return entry.recrawled
 	}
 	
 	var authors: Set<ParsedAuthor>? {

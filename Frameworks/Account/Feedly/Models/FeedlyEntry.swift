@@ -34,17 +34,17 @@ struct FeedlyEntry: Decodable {
     /// the author’s name
     var author: String?
     
-//    ///  the immutable timestamp, in ms, when this article was processed by the feedly Cloud servers.
-//    var crawled: Date
-//
-//    // the timestamp, in ms, when this article was re-processed and updated by the feedly Cloud servers.
-//    var recrawled: Date?
-//
+    ///  the immutable timestamp, in ms, when this article was processed by the feedly Cloud servers.
+    var crawled: Date
+
+    /// the timestamp, in ms, when this article was re-processed and updated by the feedly Cloud servers.
+    var recrawled: Date?
+
     /// the timestamp, in ms, when this article was published, as reported by the RSS feed (often inaccurate).
-    var published: Date
+//    var published: Date
 
     /// the timestamp, in ms, when this article was updated, as reported by the RSS feed
-    var updated: Date?
+//    var updated: Date?
 	
 	/// the feed from which this article was crawled. If present, “streamId” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
 	var origin: FeedlyOrigin?
