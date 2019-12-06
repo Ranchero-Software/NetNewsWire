@@ -57,7 +57,25 @@ final class FeedlyAPICaller {
 		transport.cancelAll()
 	}
 	
+	private var isSuspended = false
+	
+	/// Cancels all pending requests rejects any that come in later
+	func suspend() {
+		transport.cancelAll()
+		isSuspended = true
+	}
+	
+	func resume() {
+		isSuspended = false
+	}
+	
 	func importOpml(_ opmlData: Data, completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -92,6 +110,12 @@ final class FeedlyAPICaller {
 	}
 	
 	func createCollection(named label: String, completionHandler: @escaping (Result<FeedlyCollection, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -138,6 +162,12 @@ final class FeedlyAPICaller {
 	}
 	
 	func renameCollection(with id: String, to name: String, completionHandler: @escaping (Result<FeedlyCollection, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -189,6 +219,12 @@ final class FeedlyAPICaller {
 	}
 	
 	func deleteCollection(with id: String, completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -227,6 +263,12 @@ final class FeedlyAPICaller {
 	}
 	
 	func removeFeed(_ feedId: String, fromCollectionWith collectionId: String, completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -276,6 +318,12 @@ final class FeedlyAPICaller {
 extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 	
 	func addFeed(with feedId: FeedlyFeedResourceId, title: String? = nil, toCollectionWith collectionId: String, completionHandler: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -351,6 +399,12 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 	typealias AccessTokenResponse = FeedlyOAuthAccessTokenResponse
 	
 	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completionHandler: @escaping (Result<FeedlyOAuthAccessTokenResponse, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		var components = baseUrlComponents
 		components.path = "/v3/auth/token"
 		
@@ -392,6 +446,12 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 extension FeedlyAPICaller: OAuthAcessTokenRefreshRequesting {
 		
 	func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest, completionHandler: @escaping (Result<FeedlyOAuthAccessTokenResponse, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		var components = baseUrlComponents
 		components.path = "/v3/auth/token"
 		
@@ -433,6 +493,12 @@ extension FeedlyAPICaller: OAuthAcessTokenRefreshRequesting {
 extension FeedlyAPICaller: FeedlyGetCollectionsService {
 	
 	func getCollections(completionHandler: @escaping (Result<[FeedlyCollection], Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -468,6 +534,12 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 	
 	func getStreamContents(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -530,6 +602,12 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 extension FeedlyAPICaller: FeedlyGetStreamIdsService {
 	
 	func getStreamIds(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completionHandler: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -592,6 +670,12 @@ extension FeedlyAPICaller: FeedlyGetStreamIdsService {
 extension FeedlyAPICaller: FeedlyGetEntriesService {
 	
 	func getEntries(for ids: Set<String>, completionHandler: @escaping (Result<[FeedlyEntry], Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -647,6 +731,12 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 	}
 	
 	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
@@ -695,6 +785,12 @@ extension FeedlyAPICaller: FeedlySearchService {
 	
 	func getFeeds(for query: String, count: Int, locale: String, completionHandler: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> ()) {
 		
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		var components = baseUrlComponents
 		components.path = "/v3/search/feeds"
 		
@@ -732,6 +828,12 @@ extension FeedlyAPICaller: FeedlySearchService {
 extension FeedlyAPICaller: FeedlyLogoutService {
 	
 	func logout(completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		guard !isSuspended else {
+			return DispatchQueue.main.async {
+				completionHandler(.failure(TransportError.suspended))
+			}
+		}
+		
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
 				completionHandler(.failure(CredentialsError.incompleteCredentials))
