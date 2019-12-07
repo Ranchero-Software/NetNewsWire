@@ -108,11 +108,6 @@ final class FaviconDownloader {
 	}
 
 	func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
-		if let homePageURL = homePageURL, let url = URL(string: homePageURL) {
-			if url.host == "nnw.ranchero.com" {
-				return IconImage.appIcon
-			}
-		}
 		let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
 		return downloader.iconImage
 	}
@@ -120,6 +115,13 @@ final class FaviconDownloader {
 	func favicon(withHomePageURL homePageURL: String) -> IconImage? {
 
 		let url = homePageURL.rs_normalizedURL()
+
+		if let url = URL(string: homePageURL) {
+			if url.host == "nnw.ranchero.com" {
+				return IconImage.appIcon
+			}
+		}
+
 		if homePageURLsWithNoFaviconURLCache.contains(url) {
 			return nil
 		}
