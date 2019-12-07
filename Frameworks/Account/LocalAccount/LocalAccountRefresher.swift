@@ -61,7 +61,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		return request as URLRequest
 	}
 	
-	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?) {
+	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void) {
 		guard let feed = representedObject as? WebFeed, !data.isEmpty, !isSuspended else {
 			return
 		}
@@ -87,6 +87,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 				}
 				
 				feed.contentHash = dataHash
+				completion()
 			}
 		}
 	}
