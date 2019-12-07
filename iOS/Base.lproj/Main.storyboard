@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DNb-lt-KzC">
-                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
                             <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iEi-hX-TYy">
@@ -38,9 +38,9 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="iEi-hX-TYy" secondAttribute="top" id="4fZ-pn-fmB"/>
-                            <constraint firstItem="DNb-lt-KzC" firstAttribute="top" secondItem="VUw-jc-0yf" secondAttribute="top" id="Bfh-RL-m4d"/>
+                            <constraint firstItem="DNb-lt-KzC" firstAttribute="top" secondItem="svH-Pt-448" secondAttribute="top" id="Bfh-RL-m4d"/>
                             <constraint firstItem="A7j-8T-DqE" firstAttribute="trailing" secondItem="VUw-jc-0yf" secondAttribute="trailing" id="Feu-hj-K01"/>
-                            <constraint firstItem="DNb-lt-KzC" firstAttribute="bottom" secondItem="VUw-jc-0yf" secondAttribute="bottom" id="FfW-6G-Bcp"/>
+                            <constraint firstItem="DNb-lt-KzC" firstAttribute="bottom" secondItem="svH-Pt-448" secondAttribute="bottom" id="FfW-6G-Bcp"/>
                             <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="iEi-hX-TYy" secondAttribute="trailing" id="Ij6-ri-sBN"/>
                             <constraint firstItem="iEi-hX-TYy" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="Muc-gr-S7o"/>
                             <constraint firstItem="DNb-lt-KzC" firstAttribute="trailing" secondItem="VUw-jc-0yf" secondAttribute="trailing" id="QJ5-Ne-ndd"/>
@@ -155,7 +155,6 @@
                             <outlet property="delegate" destination="Kyk-vK-QRX" id="rH3-5N-a6z"/>
                         </connections>
                     </tableView>
-                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
                     <toolbarItems>
                         <barButtonItem title="Mark All as Read" id="fTv-eX-72r">
                             <connections>

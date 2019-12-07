@@ -58,17 +58,14 @@ private extension InteractiveNavigationController {
 	
 	func configure() {
 		isToolbarHidden = false
-		view.backgroundColor = AppAssets.barBackgroundColor
 		
 		let navigationAppearance = UINavigationBarAppearance()
-		navigationAppearance.backgroundColor = AppAssets.barBackgroundColor
 		navigationAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
 		navigationAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
 		navigationBar.standardAppearance = navigationAppearance
 		navigationBar.tintColor = AppAssets.primaryAccentColor
 		
 		let toolbarAppearance = UIToolbarAppearance()
-		toolbarAppearance.backgroundColor = AppAssets.barBackgroundColor
 		toolbar.standardAppearance = toolbarAppearance
 		toolbar.compactAppearance = toolbarAppearance
 		toolbar.tintColor = AppAssets.primaryAccentColor

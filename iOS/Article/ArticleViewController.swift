@@ -124,6 +124,16 @@ class ArticleViewController: UIViewController {
 			
 			self.webView = webView
 			self.webViewContainer.addChildAndPin(webView)
+			
+			webView.translatesAutoresizingMaskIntoConstraints = false
+			self.webViewContainer.addSubview(webView)
+			NSLayoutConstraint.activate([
+				self.webViewContainer.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
+				self.webViewContainer.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
+				self.webViewContainer.topAnchor.constraint(equalTo: webView.topAnchor),
+				self.webViewContainer.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
+			])
+			
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
 			self.configureContextMenuInteraction()
