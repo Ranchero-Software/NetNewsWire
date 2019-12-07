@@ -74,7 +74,7 @@ class AccountInspectorViewController: UITableViewController {
 			case .feedly:
 				return NSLocalizedString("Are you sure you want to delete this account?  NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Log Out and Delete Account")
 			default:
-				return NSLocalizedString("Are you sure you want to delete this account?  This can not be undone.", comment: "Delete Account")
+				return NSLocalizedString("Are you sure you want to delete this account?  This cannot be undone.", comment: "Delete Account")
 			}
 		}()
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
