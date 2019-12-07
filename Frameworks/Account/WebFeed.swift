@@ -232,7 +232,6 @@ public final class WebFeed: Feed, Renamable, Hashable {
 
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(webFeedID)
-		hasher.combine(accountID)
 	}
 
 	// MARK: - Equatable
