@@ -53,6 +53,20 @@ public struct Author: Codable, Hashable {
 		}
 		return nil
 	}
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(authorID)
+	}
+
+	// MARK: - Equatable
+
+	static public func ==(lhs: Author, rhs: Author) -> Bool {
+		// The authorID is a calculation based on all the properties,
+		// and so it’s a quick shortcut to determine equality.
+		return lhs.authorID == rhs.authorID
+	}
 }
 
 extension Set where Element == Author {
