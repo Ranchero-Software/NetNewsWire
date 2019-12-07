@@ -329,7 +329,7 @@ final class ArticlesTable: DatabaseTable {
 	func fetchUnreadCount(_ webFeedIDs: Set<String>, _ since: Date, _ callback: @escaping (Int) -> Void) {
 		// Get unread count for today, for instance.
 
-		if webFeedIDs.isEmpty {
+		if webFeedIDs.isEmpty || queue.isSuspended {
 			callback(0)
 			return
 		}
