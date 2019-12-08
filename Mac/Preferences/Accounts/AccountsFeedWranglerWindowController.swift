@@ -102,7 +102,7 @@ class AccountsFeedWranglerWindowController: NSWindowController {
 
 			case .failure:
 
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error.  Try again later.", comment: "Credentials Error")
+				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
 
 			}
 		}
