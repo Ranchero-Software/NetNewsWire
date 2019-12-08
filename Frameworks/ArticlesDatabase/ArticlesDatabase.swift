@@ -153,9 +153,10 @@ public final class ArticlesDatabase {
 	}
 	
 	// MARK: - Status
-	
-	public func fetchUnreadArticleIDs() -> Set<String> {
-		return articlesTable.fetchUnreadArticleIDs()
+
+	/// Fetch the articleIDs of unread articles for feeds specified by webFeedIDs.
+	public func fetchUnreadArticleIDsAsync(webFeedIDs: Set<String>, callback: @escaping (Set<String>) -> Void) {
+		articlesTable.fetchUnreadArticleIDsAsync(webFeedIDs, callback)
 	}
 	
 	public func fetchStarredArticleIDs() -> Set<String> {

@@ -500,46 +500,46 @@ private extension FeedWranglerAccountDelegate {
 	
 	func syncArticleReadState(_ account: Account, _ unreadFeedItems: [FeedWranglerFeedItem]) {
 		let unreadServerItemIDs = Set(unreadFeedItems.map { String($0.feedItemID) })
-		let unreadLocalItemIDs = account.fetchUnreadArticleIDs()
-		
-		// unread if unread on server
-		let unreadDiffItemIDs = unreadServerItemIDs.subtracting(unreadLocalItemIDs)
-		let unreadFoundArticles = account.fetchArticles(.articleIDs(unreadDiffItemIDs))
-		account.update(unreadFoundArticles, statusKey: .read, flag: false)
-		
-		let unreadFoundItemIDs = Set(unreadFoundArticles.map { $0.articleID })
-		let missingArticleIDs = unreadDiffItemIDs.subtracting(unreadFoundItemIDs)
-		account.ensureStatuses(missingArticleIDs, true, .read, false)
+		account.fetchUnreadArticleIDs { unreadLocalItemIDs in
+			// unread if unread on server
+			let unreadDiffItemIDs = unreadServerItemIDs.subtracting(unreadLocalItemIDs)
+			let unreadFoundArticles = account.fetchArticles(.articleIDs(unreadDiffItemIDs))
+			account.update(unreadFoundArticles, statusKey: .read, flag: false)
 
-		let readItemIDs = unreadLocalItemIDs.subtracting(unreadServerItemIDs)
-		let readArtices = account.fetchArticles(.articleIDs(readItemIDs))
-		account.update(readArtices, statusKey: .read, flag: true)
-		
-		let foundReadArticleIDs = Set(readArtices.map { $0.articleID })
-		let readMissingIDs = readItemIDs.subtracting(foundReadArticleIDs)
-		account.ensureStatuses(readMissingIDs, true, .read, true)
+			let unreadFoundItemIDs = Set(unreadFoundArticles.map { $0.articleID })
+			let missingArticleIDs = unreadDiffItemIDs.subtracting(unreadFoundItemIDs)
+			account.ensureStatuses(missingArticleIDs, true, .read, false)
+
+			let readItemIDs = unreadLocalItemIDs.subtracting(unreadServerItemIDs)
+			let readArtices = account.fetchArticles(.articleIDs(readItemIDs))
+			account.update(readArtices, statusKey: .read, flag: true)
+
+			let foundReadArticleIDs = Set(readArtices.map { $0.articleID })
+			let readMissingIDs = readItemIDs.subtracting(foundReadArticleIDs)
+			account.ensureStatuses(readMissingIDs, true, .read, true)
+		}
 	}
 	
 	func syncArticleStarredState(_ account: Account, _ unreadFeedItems: [FeedWranglerFeedItem]) {
 		let unreadServerItemIDs = Set(unreadFeedItems.map { String($0.feedItemID) })
-		let unreadLocalItemIDs = account.fetchUnreadArticleIDs()
-		
-		// starred if start on server
-		let unreadDiffItemIDs = unreadServerItemIDs.subtracting(unreadLocalItemIDs)
-		let unreadFoundArticles = account.fetchArticles(.articleIDs(unreadDiffItemIDs))
-		account.update(unreadFoundArticles, statusKey: .starred, flag: true)
-		
-		let unreadFoundItemIDs = Set(unreadFoundArticles.map { $0.articleID })
-		let missingArticleIDs = unreadDiffItemIDs.subtracting(unreadFoundItemIDs)
-		account.ensureStatuses(missingArticleIDs, true, .starred, true)
+		account.fetchUnreadArticleIDs { unreadLocalItemIDs in
+			// starred if start on server
+			let unreadDiffItemIDs = unreadServerItemIDs.subtracting(unreadLocalItemIDs)
+			let unreadFoundArticles = account.fetchArticles(.articleIDs(unreadDiffItemIDs))
+			account.update(unreadFoundArticles, statusKey: .starred, flag: true)
 
-		let readItemIDs = unreadLocalItemIDs.subtracting(unreadServerItemIDs)
-		let readArtices = account.fetchArticles(.articleIDs(readItemIDs))
-		account.update(readArtices, statusKey: .starred, flag: false)
-		
-		let foundReadArticleIDs = Set(readArtices.map { $0.articleID })
-		let readMissingIDs = readItemIDs.subtracting(foundReadArticleIDs)
-		account.ensureStatuses(readMissingIDs, true, .starred, false)
+			let unreadFoundItemIDs = Set(unreadFoundArticles.map { $0.articleID })
+			let missingArticleIDs = unreadDiffItemIDs.subtracting(unreadFoundItemIDs)
+			account.ensureStatuses(missingArticleIDs, true, .starred, true)
+
+			let readItemIDs = unreadLocalItemIDs.subtracting(unreadServerItemIDs)
+			let readArtices = account.fetchArticles(.articleIDs(readItemIDs))
+			account.update(readArtices, statusKey: .starred, flag: false)
+
+			let foundReadArticleIDs = Set(readArtices.map { $0.articleID })
+			let readMissingIDs = readItemIDs.subtracting(foundReadArticleIDs)
+			account.ensureStatuses(readMissingIDs, true, .starred, false)
+		}
 	}
 	
 	func syncArticleState(_ account: Account, key: ArticleStatus.Key, flag: Bool, serverFeedItems: [FeedWranglerFeedItem]) {

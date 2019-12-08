@@ -404,7 +404,27 @@ final class ArticlesTable: DatabaseTable {
 	func fetchUnreadArticleIDs() -> Set<String>{
 		return statusesTable.fetchUnreadArticleIDs()
 	}
-	
+
+	func fetchUnreadArticleIDsAsync(_ webFeedIDs: Set<String>, _ callback: @escaping (Set<String>) -> Void) {
+		queue.runInDatabase { database in
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
+			let sql = "select articleID from articles natural join statuses where feedID in \(placeholders) and read=0 and userDeleted=0;"
+			let parameters = Array(webFeedIDs) as [Any]
+
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+				DispatchQueue.main.async {
+					callback(Set<String>())
+				}
+				return
+			}
+
+			let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
+			DispatchQueue.main.async {
+				callback(articleIDs)
+			}
+		}
+	}
+
 	func fetchStarredArticleIDs() -> Set<String> {
 		return statusesTable.fetchStarredArticleIDs()
 	}

@@ -36,37 +36,37 @@ final class FeedlySetUnreadArticlesOperation: FeedlyOperation {
 		
 		let remoteUnreadArticleIds = allUnreadIdsProvider.entryIds
 		//Set(entries.filter { $0.unread }.map { $0.id })
-		let localUnreadArticleIds = account.fetchUnreadArticleIDs()
-		
-		// Mark articles as unread
-		let deltaUnreadArticleIds = remoteUnreadArticleIds.subtracting(localUnreadArticleIds)
-		let markUnreadArticles = account.fetchArticles(.articleIDs(deltaUnreadArticleIds))
-		account.update(markUnreadArticles, statusKey: .read, flag: false)
+		account.fetchUnreadArticleIDs { localUnreadArticleIds in
+			// Mark articles as unread
+			let deltaUnreadArticleIds = remoteUnreadArticleIds.subtracting(localUnreadArticleIds)
+			let markUnreadArticles = self.account.fetchArticles(.articleIDs(deltaUnreadArticleIds))
+			self.account.update(markUnreadArticles, statusKey: .read, flag: false)
 
-		// Save any unread statuses for articles we haven't yet received
-		let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
-		let missingUnreadArticleIDs = deltaUnreadArticleIds.subtracting(markUnreadArticleIDs)
-		
-		group.enter()
-		account.ensureStatuses(missingUnreadArticleIDs, true, .read, false) {
-			group.leave()
-		}
+			// Save any unread statuses for articles we haven't yet received
+			let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
+			let missingUnreadArticleIDs = deltaUnreadArticleIds.subtracting(markUnreadArticleIDs)
 
-		// Mark articles as read
-		let deltaReadArticleIds = localUnreadArticleIds.subtracting(remoteUnreadArticleIds)
-		let markReadArticles = account.fetchArticles(.articleIDs(deltaReadArticleIds))
-		account.update(markReadArticles, statusKey: .read, flag: true)
+			group.enter()
+			self.account.ensureStatuses(missingUnreadArticleIDs, true, .read, false) {
+				group.leave()
+			}
 
-		// Save any read statuses for articles we haven't yet received
-		let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
-		let missingReadArticleIDs = deltaReadArticleIds.subtracting(markReadArticleIDs)
-		group.enter()
-		account.ensureStatuses(missingReadArticleIDs, true, .read, true) {
-			group.leave()
-		}
-		
-		group.notify(queue: .main) {
-			self.didFinish()
+			// Mark articles as read
+			let deltaReadArticleIds = localUnreadArticleIds.subtracting(remoteUnreadArticleIds)
+			let markReadArticles = self.account.fetchArticles(.articleIDs(deltaReadArticleIds))
+			self.account.update(markReadArticles, statusKey: .read, flag: true)
+
+			// Save any read statuses for articles we haven't yet received
+			let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
+			let missingReadArticleIDs = deltaReadArticleIds.subtracting(markReadArticleIDs)
+			group.enter()
+			self.account.ensureStatuses(missingReadArticleIDs, true, .read, true) {
+				group.leave()
+			}
+
+			group.notify(queue: .main) {
+				self.didFinish()
+			}
 		}
 	}
 }

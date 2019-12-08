@@ -673,8 +673,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredAndUnreadCount(for: flattenedWebFeeds().webFeedIDs(), callback: callback)
 	}
 
-	public func fetchUnreadArticleIDs() -> Set<String> {
-		return database.fetchUnreadArticleIDs()
+	public func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		return database.fetchUnreadArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), callback: callback)
 	}
 
 	public func fetchStarredArticleIDs() -> Set<String> {
