@@ -8,9 +8,19 @@
 
 import UIKit
 
-class AddWebFeedFolderTableViewCell: UITableViewCell {
+class AddWebFeedFolderTableViewCell: VibrantTableViewCell {
 
 	@IBOutlet weak var icon: UIImageView!
 	@IBOutlet weak var label: UILabel!
+	
+	override func updateVibrancy(animated: Bool) {
+		super.updateVibrancy(animated: animated)
+		
+		let iconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
+		UIView.animate(withDuration: duration(animated: animated)) {
+			self.icon.tintColor = iconTintColor
+		}
+		updateLabelVibrancy(label, color: labelColor, animated: animated)
+	}
 	
 }

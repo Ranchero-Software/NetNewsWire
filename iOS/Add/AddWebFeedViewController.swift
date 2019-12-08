@@ -16,8 +16,8 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 	
 	@IBOutlet private weak var urlTextField: UITextField!
 	@IBOutlet private weak var nameTextField: UITextField!
-	@IBOutlet private weak var folderLabel: UILabel!
 	
+	private var folderLabel = ""
 	private var userCancelled = false
 
 	weak var delegate: AddContainerViewControllerChildDelegate?
@@ -59,6 +59,8 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
 		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
 		
+		tableView.register(UINib(nibName: "AddWebFeedSelectFolderTableViewCell", bundle: nil), forCellReuseIdentifier: "AddWebFeedSelectFolderTableViewCell")
+
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: urlTextField)
 
 	}
@@ -119,6 +121,16 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		delegate?.readyToAdd(state: urlTextField.text?.rs_stringMayBeURL() ?? false)
 	}
 	
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		if indexPath.row == 2 {
+			let cell = tableView.dequeueReusableCell(withIdentifier: "AddWebFeedSelectFolderTableViewCell", for: indexPath) as? AddWebFeedSelectFolderTableViewCell
+			cell!.detailLabel.text = folderLabel
+			return cell!
+		} else {
+			return super.tableView(tableView, cellForRowAt: indexPath)
+		}
+	}
+	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		if indexPath.row == 2 {
 			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedFolderNavViewController") as! UINavigationController
@@ -159,10 +171,11 @@ private extension AddWebFeedViewController {
 	func updateFolderLabel() {
 		if let containerName = (container as? DisplayNameProvider)?.nameForDisplay {
 			if container is Folder {
-				folderLabel.text = "\(container?.account?.nameForDisplay ?? "") / \(containerName)"
+				folderLabel = "\(container?.account?.nameForDisplay ?? "") / \(containerName)"
 			} else {
-				folderLabel.text = containerName
+				folderLabel = containerName
 			}
+			tableView.reloadData()
 		}
 	}
 }

@@ -228,6 +228,8 @@
 		51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */; };
 		51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D87EE02311D34700E63F03 /* ActivityType.swift */; };
+		51E36E71239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */; };
+		51E36E8C239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */; };
 		51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB32229AB02C00645299 /* ErrorHandler.swift */; };
 		51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB3C229AB08300645299 /* ErrorHandler.swift */; };
 		51E43962238037C400015C31 /* AddWebFeedFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */; };
@@ -1349,6 +1351,8 @@
 		51CE1C0A23622006005548FC /* RefreshProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
 		51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineDataSource.swift; sourceTree = "<group>"; };
 		51D87EE02311D34700E63F03 /* ActivityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityType.swift; sourceTree = "<group>"; };
+		51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedSelectFolderTableViewCell.swift; sourceTree = "<group>"; };
+		51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddWebFeedSelectFolderTableViewCell.xib; sourceTree = "<group>"; };
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E3EB3C229AB08300645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedFolderViewController.swift; sourceTree = "<group>"; };
@@ -1969,6 +1973,8 @@
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
 				51C452842265093600C03939 /* AddWebFeedViewController.swift */,
 				51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */,
+				51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */,
+				51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */,
 				51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */,
 			);
 			path = Add;
@@ -3453,6 +3459,7 @@
 				51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 				514219582353C28900E07E2C /* main_ios.js in Resources */,
+				51E36E8C239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib in Resources */,
 				51C452B82265178500C03939 /* styleSheet.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3814,6 +3821,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51E36E71239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift in Sources */,
 				840D617F2029031C009BC708 /* AppDelegate.swift in Sources */,
 				51236339236915B100951F16 /* RoundedProgressView.swift in Sources */,
 				512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */,
