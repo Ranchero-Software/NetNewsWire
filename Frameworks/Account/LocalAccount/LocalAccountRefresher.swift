@@ -63,16 +63,19 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void) {
 		guard let feed = representedObject as? WebFeed, !data.isEmpty, !isSuspended else {
+			completion()
 			return
 		}
 
 		if let error = error {
 			print("Error downloading \(feed.url) - \(error)")
+			completion()
 			return
 		}
 
 		let dataHash = (data as NSData).rs_md5HashString()
 		if dataHash == feed.contentHash {
+			completion()
 			return
 		}
 
