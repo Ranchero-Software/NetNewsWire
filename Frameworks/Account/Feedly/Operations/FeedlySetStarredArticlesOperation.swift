@@ -35,36 +35,36 @@ final class FeedlySetStarredArticlesOperation: FeedlyOperation {
 		let group = DispatchGroup()
 		
 		let remoteStarredArticleIds = allStarredEntryIdsProvider.entryIds
-		let localStarredArticleIDs = account.fetchStarredArticleIDs()
-		
-		// Mark articles as starred
-		let deltaStarredArticleIDs = remoteStarredArticleIds.subtracting(localStarredArticleIDs)
-		let markStarredArticles = account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
-		account.update(markStarredArticles, statusKey: .starred, flag: true)
+		account.fetchStarredArticleIDs { localStarredArticleIDs in
+			// Mark articles as starred
+			let deltaStarredArticleIDs = remoteStarredArticleIds.subtracting(localStarredArticleIDs)
+			let markStarredArticles = self.account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
+			self.account.update(markStarredArticles, statusKey: .starred, flag: true)
 
-		// Save any starred statuses for articles we haven't yet received
-		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
-		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
-		group.enter()
-		account.ensureStatuses(missingStarredArticleIDs, true, .starred, true) {
-			group.leave()
-		}
+			// Save any starred statuses for articles we haven't yet received
+			let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
+			let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
+			group.enter()
+			self.account.ensureStatuses(missingStarredArticleIDs, true, .starred, true) {
+				group.leave()
+			}
 
-		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIds)
-		let markUnstarredArticles = account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
-		account.update(markUnstarredArticles, statusKey: .starred, flag: false)
+			// Mark articles as unstarred
+			let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIds)
+			let markUnstarredArticles = self.account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
+			self.account.update(markUnstarredArticles, statusKey: .starred, flag: false)
 
-		// Save any unstarred statuses for articles we haven't yet received
-		let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
-		let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
-		group.enter()
-		account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false) {
-			group.leave()
-		}
-		
-		group.notify(queue: .main) {
-			self.didFinish()
+			// Save any unstarred statuses for articles we haven't yet received
+			let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
+			let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
+			group.enter()
+			self.account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false) {
+				group.leave()
+			}
+
+			group.notify(queue: .main) {
+				self.didFinish()
+			}
 		}
 	}
 }

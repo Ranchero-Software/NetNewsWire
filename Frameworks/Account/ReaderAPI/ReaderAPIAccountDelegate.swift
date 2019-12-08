@@ -942,27 +942,27 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-		let currentStarredArticleIDs = account.fetchStarredArticleIDs()
-		
-		// Mark articles as starred
-		let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-		let markStarredArticles = account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
-		account.update(markStarredArticles, statusKey: .starred, flag: true)
+		account.fetchStarredArticleIDs { currentStarredArticleIDs in
+			// Mark articles as starred
+			let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+			let markStarredArticles = account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
+			account.update(markStarredArticles, statusKey: .starred, flag: true)
 
-		// Save any starred statuses for articles we haven't yet received
-		let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
-		let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
-		account.ensureStatuses(missingStarredArticleIDs, true, .starred, true)
+			// Save any starred statuses for articles we haven't yet received
+			let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
+			let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
+			account.ensureStatuses(missingStarredArticleIDs, true, .starred, true)
 
-		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
-		let markUnstarredArticles = account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
-		account.update(markUnstarredArticles, statusKey: .starred, flag: false)
+			// Mark articles as unstarred
+			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
+			let markUnstarredArticles = account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
+			account.update(markUnstarredArticles, statusKey: .starred, flag: false)
 
-		// Save any unstarred statuses for articles we haven't yet received
-		let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
-		let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
-		account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false)
+			// Save any unstarred statuses for articles we haven't yet received
+			let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
+			let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
+			account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false)
+		}
 	}
 
 

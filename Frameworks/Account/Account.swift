@@ -674,13 +674,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func fetchUnreadArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
-		return database.fetchUnreadArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), callback: callback)
+		database.fetchUnreadArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), callback: callback)
 	}
 
-	public func fetchStarredArticleIDs() -> Set<String> {
-		return database.fetchStarredArticleIDs()
+	public func fetchStarredArticleIDs(_ callback: @escaping (Set<String>) -> Void) {
+		database.fetchStarredArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), callback: callback)
 	}
-	
+
 	public func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
 		return database.fetchArticleIDsForStatusesWithoutArticles()
 	}
