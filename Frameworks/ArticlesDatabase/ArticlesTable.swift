@@ -440,6 +440,7 @@ final class ArticlesTable: DatabaseTable {
 			if articleIDs.isEmpty {
 				return
 			}
+			self.searchTable.ensureIndexedArticles(articleIDs, database)
 
 			DispatchQueue.main.async {
 				self.indexUnindexedArticles()
