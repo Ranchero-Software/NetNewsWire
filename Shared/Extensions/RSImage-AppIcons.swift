@@ -21,9 +21,8 @@ extension RSImage {
             let lastIcon = iconFiles.last {
             return RSImage(named: lastIcon)
         }
-		#endif
-
 		return nil
+		#endif
 	}
 }
 
