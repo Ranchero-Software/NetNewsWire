@@ -776,6 +776,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		savedSearchArticles = nil
 		isSearching = false
 		selectArticle(nil)
+		masterTimelineViewController?.focus()
 	}
 	
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
