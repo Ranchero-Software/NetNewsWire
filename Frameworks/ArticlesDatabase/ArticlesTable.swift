@@ -163,6 +163,9 @@ final class ArticlesTable: DatabaseTable {
 
 	func fetchArticlesMatching(_ searchString: String) -> Set<Article> {
 		var articles: Set<Article> = Set<Article>()
+		guard !queue.isSuspended else {
+			return articles
+		}
 		queue.runInDatabaseSync { (database) in
 			articles = self.fetchArticlesMatching(searchString, database)
 		}
@@ -250,6 +253,11 @@ final class ArticlesTable: DatabaseTable {
 			articleIDs.formUnion(parsedItems.articleIDs())
 		}
 
+		guard !self.queue.isSuspended else {
+			self.callUpdateArticlesCompletionBlock(nil, nil, completion)
+			return
+		}
+		
 		self.queue.runInTransaction { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
 			assert(statusesDictionary.count == articleIDs.count)
@@ -286,6 +294,13 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: VoidCompletionBlock? = nil) {
+		guard !queue.isSuspended else {
+			if let handler = completionHandler {
+				callVoidCompletionBlock(handler)
+			}
+			return
+		}
+		
 		queue.runInTransaction { (database) in
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, defaultRead, database)
 			let statuses = Set(statusesDictionary.values)
@@ -305,7 +320,11 @@ final class ArticlesTable: DatabaseTable {
 		}
 
 		var unreadCountDictionary = UnreadCountDictionary()
-
+		guard !queue.isSuspended else {
+			completion(unreadCountDictionary)
+			return
+		}
+		
 		queue.runInDatabase { (database) in
 			for webFeedID in webFeedIDs {
 				unreadCountDictionary[webFeedID] = self.fetchUnreadCount(webFeedID, database)
@@ -347,6 +366,11 @@ final class ArticlesTable: DatabaseTable {
 
 		let cutoffDate = articleCutoffDate
 
+		guard !queue.isSuspended else {
+			completion(UnreadCountDictionary())
+			return
+		}
+		
 		queue.runInDatabase { (database) in
 			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or (datePublished > ? or (datePublished is null and dateArrived > ?))) group by feedID;"
 
@@ -372,7 +396,7 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	func fetchStarredAndUnreadCount(_ webFeedIDs: Set<String>, _ callback: @escaping (Int) -> Void) {
-		if webFeedIDs.isEmpty {
+		if webFeedIDs.isEmpty || queue.isSuspended {
 			callback(0)
 			return
 		}
@@ -410,9 +434,15 @@ final class ArticlesTable: DatabaseTable {
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {
 		var statuses: Set<ArticleStatus>?
+		
+		guard !self.queue.isSuspended else {
+			return statuses
+		}
+		
 		self.queue.runInTransactionSync { (database) in
 			statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
 		}
+		
 		return statuses
 	}
 
@@ -453,7 +483,7 @@ final class ArticlesTable: DatabaseTable {
 	/// This deletes from the articles and articleStatuses tables,
 	/// and, via a trigger, it also deletes from the search index.
 	func deleteArticlesNotInSubscribedToFeedIDs(_ webFeedIDs: Set<String>) {
-		if webFeedIDs.isEmpty {
+		if webFeedIDs.isEmpty || queue.isSuspended {
 			return
 		}
 		queue.runInDatabase { (database) in
@@ -481,6 +511,9 @@ private extension ArticlesTable {
 
 	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) -> Set<Article> {
 		var articles = Set<Article>()
+		guard !queue.isSuspended else {
+			return articles
+		}
 		queue.runInDatabaseSync { (database) in
 			articles = fetchMethod(database)
 		}
@@ -488,6 +521,10 @@ private extension ArticlesTable {
 	}
 
 	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ callback: @escaping ArticleSetBlock) {
+		guard !queue.isSuspended else {
+			callback(Set<Article>())
+			return
+		}
 		queue.runInDatabase { (database) in
 			let articles = fetchMethod(database)
 			DispatchQueue.main.async {
@@ -645,6 +682,10 @@ private extension ArticlesTable {
 	}
 
 	func fetchArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ value: Bool, _ webFeedIDs: Set<String>, _ callback: @escaping (Set<String>) -> Void) {
+		guard !queue.isSuspended else {
+			callback(Set<String>())
+			return
+		}
 		queue.runInDatabase { database in
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
 			var sql = "select articleID from articles natural join statuses where feedID in \(placeholders) and \(statusKey.rawValue)="

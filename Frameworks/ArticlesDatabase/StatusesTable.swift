@@ -88,6 +88,9 @@ final class StatusesTable: DatabaseTable {
 	
 	func fetchArticleIDs(_ sql: String) -> Set<String> {
 		var articleIDs = Set<String>()
+		guard !queue.isSuspended else {
+			return articleIDs
+		}
 		queue.runInDatabaseSync { (database) in
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 				return

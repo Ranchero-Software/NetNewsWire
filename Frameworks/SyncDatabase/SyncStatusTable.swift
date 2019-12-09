@@ -23,6 +23,10 @@ struct SyncStatusTable: DatabaseTable {
 	func selectForProcessing() -> [SyncStatus] {
 		var statuses: Set<SyncStatus>? = nil
 		
+		guard !queue.isSuspended else {
+			return [SyncStatus]()
+		}
+		
 		queue.runInDatabaseSync { database in
 			let updateSQL = "update syncStatus set selected = true"
 			database.executeUpdate(updateSQL, withArgumentsIn: nil)
@@ -39,6 +43,10 @@ struct SyncStatusTable: DatabaseTable {
 	func selectPendingCount() -> Int {
 		var count: Int = 0
 		
+		guard !queue.isSuspended else {
+			return count
+		}
+		
 		queue.runInDatabaseSync { database in
 			let sql = "select count(*) from syncStatus"
 			if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
@@ -50,6 +58,12 @@ struct SyncStatusTable: DatabaseTable {
 	}
 	
 	func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
+		guard !queue.isSuspended else {
+            if let handler = completionHandler {
+				callVoidCompletionBlock(handler)
+            }
+			return
+		}
 		queue.runInTransaction { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
@@ -62,6 +76,12 @@ struct SyncStatusTable: DatabaseTable {
 	}
 	
     func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
+		guard !queue.isSuspended else {
+            if let handler = completionHandler {
+				callVoidCompletionBlock(handler)
+            }
+			return
+		}
 		queue.runInTransaction { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
@@ -74,6 +94,12 @@ struct SyncStatusTable: DatabaseTable {
 	}
 	
 	func insertStatuses(_ statuses: [SyncStatus], completionHandler: VoidCompletionBlock? = nil) {
+		guard !queue.isSuspended else {
+            if let handler = completionHandler {
+				callVoidCompletionBlock(handler)
+            }
+			return
+		}
 		queue.runInTransaction { database in
 			let statusArray = statuses.map { $0.databaseDictionary() }
 			self.insertRows(statusArray, insertType: .orReplace, in: database)
