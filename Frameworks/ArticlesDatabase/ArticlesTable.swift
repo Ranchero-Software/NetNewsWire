@@ -277,19 +277,11 @@ final class ArticlesTable: DatabaseTable {
 			self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
 
 			// 8. Update search index.
-			var articlesToIndex = Set<Article>()
 			if let newArticles = newArticles {
-				articlesToIndex.formUnion(newArticles)
+				self.searchTable.indexNewArticles(newArticles, database)
 			}
 			if let updatedArticles = updatedArticles {
-				articlesToIndex.formUnion(updatedArticles)
-			}
-			let articleIDsToIndex = articlesToIndex.articleIDs()
-			if articleIDsToIndex.isEmpty {
-				return
-			}
-			DispatchQueue.main.async {
-				self.searchTable.ensureIndexedArticles(for: articleIDsToIndex)
+				self.searchTable.indexUpdatedArticles(updatedArticles, database)
 			}
 		}
 	}
@@ -440,6 +432,7 @@ final class ArticlesTable: DatabaseTable {
 			if articleIDs.isEmpty {
 				return
 			}
+			self.searchTable.ensureIndexedArticles(articleIDs, database)
 
 			DispatchQueue.main.async {
 				self.indexUnindexedArticles()
