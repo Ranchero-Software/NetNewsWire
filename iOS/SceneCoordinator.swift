@@ -1843,7 +1843,9 @@ private extension SceneCoordinator {
 		case .smartFeed:
 			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
 			if let indexPath = indexPathFor(smartFeed) {
-				selectFeed(indexPath, animated: false)
+				selectFeed(indexPath, animated: false) {
+					self.masterFeedViewController.focus()
+				}
 			}
 		
 		case .script:
@@ -1854,7 +1856,9 @@ private extension SceneCoordinator {
 				return
 			}
 			if let indexPath = indexPathFor(folderNode) {
-				selectFeed(indexPath, animated: false)
+				selectFeed(indexPath, animated: false) {
+					self.masterFeedViewController.focus()
+				}
 			}
 		
 		case .webFeed(let accountID, let webFeedID):
@@ -1865,7 +1869,9 @@ private extension SceneCoordinator {
 				treeControllerDelegate.addFilterException(folderFeedID)
 			}
 			if let feed = feedNode.representedObject as? WebFeed {
-				discloseFeed(feed, animated: false)
+				discloseFeed(feed, animated: false) {
+					self.masterFeedViewController.focus()
+				}
 			}
 			
 		}
