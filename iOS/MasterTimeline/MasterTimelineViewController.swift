@@ -73,7 +73,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			navigationItem.titleView = titleView
 		}
 
-		resetUI()
+		resetUI(resetScroll: true)
 		applyChanges(animated: false)
 		
 		// Restore the scroll position if we have one stored
@@ -163,8 +163,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 
-	func reinitializeArticles() {
-		resetUI()
+	func reinitializeArticles(resetScroll: Bool) {
+		resetUI(resetScroll: resetScroll)
 	}
 	
 	func reloadArticles(animated: Bool) {
@@ -502,7 +502,7 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
-	func resetUI() {
+	func resetUI(resetScroll: Bool) {
 		
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
 
@@ -535,7 +535,7 @@ private extension MasterTimelineViewController {
 		}
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
-		if dataSource.snapshot().itemIdentifiers(inSection: 0).count > 0 {
+		if resetScroll && dataSource.snapshot().itemIdentifiers(inSection: 0).count > 0 {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 		
