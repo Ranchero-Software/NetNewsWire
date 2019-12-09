@@ -164,7 +164,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		XCTAssert(progress.isComplete)
 		
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "feedStream", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
 	}
 	
 	class TestFeedlyAddFeedToCollectionService: FeedlyAddFeedToCollectionService {
