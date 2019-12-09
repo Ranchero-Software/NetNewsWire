@@ -27,7 +27,6 @@ final class ArticlesTable: DatabaseTable {
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 90)!
-	private var maximumArticleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 4 * 31)!
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
 
@@ -795,9 +794,9 @@ private extension ArticlesTable {
 			return false
 		}
 		if let datePublished = article.datePublished {
-			return datePublished < maximumArticleCutoffDate
+			return datePublished < articleCutoffDate
 		}
-		return article.status.dateArrived < maximumArticleCutoffDate
+		return article.status.dateArrived < articleCutoffDate
 	}
 
 	func filterIncomingArticles(_ articles: Set<Article>) -> Set<Article> {
