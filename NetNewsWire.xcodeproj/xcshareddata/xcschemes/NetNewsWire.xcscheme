@@ -55,6 +55,26 @@
                BlueprintName = "AccountTests"
                ReferencedContainer = "container:Frameworks/Account/Account.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "FeedlyAddNewFeedOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlySetStarredArticlesOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlySetUnreadArticlesOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlySyncAllOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlySyncStarredArticlesOperationTests">
+               </Test>
+               <Test
+                  Identifier = "FeedlySyncUnreadStatusesOperationTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">
