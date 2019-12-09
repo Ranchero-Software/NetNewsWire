@@ -349,9 +349,9 @@ final class ArticlesTable: DatabaseTable {
 		let cutoffDate = articleCutoffDate
 
 		queue.runInDatabase { (database) in
-			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
+			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or (datePublished > ? or (datePublished is null and dateArrived > ?))) group by feedID;"
 
-			guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate, cutoffDate]) else {
 				DispatchQueue.main.async {
 					completion(UnreadCountDictionary())
 				}
@@ -586,8 +586,8 @@ private extension ArticlesTable {
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 
 		if withLimits {
-			let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);"
-			return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
+			let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or (datePublished > ? or (datePublished is null and dateArrived > ?)));"
+			return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject] + [articleCutoffDate as AnyObject], database)
 		}
 		else {
 			let sql = "select * from articles natural join statuses where \(whereClause);"
@@ -601,8 +601,8 @@ private extension ArticlesTable {
 		// * Must not be deleted.
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 
-		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
-		return numberWithSQLAndParameters(sql, [webFeedID, articleCutoffDate], in: database)
+		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or (datePublished > ? or (datePublished is null and dateArrived > ?)));"
+		return numberWithSQLAndParameters(sql, [webFeedID, articleCutoffDate, articleCutoffDate], in: database)
 	}
 	
 	func fetchArticlesMatching(_ searchString: String, _ database: FMDatabase) -> Set<Article> {
@@ -786,20 +786,23 @@ private extension ArticlesTable {
 		}
 	}
 
-	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
+	func articleIsIgnorable(_ article: Article) -> Bool {
 		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
-		if status.userDeleted {
+		if article.status.userDeleted {
 			return true
 		}
-		if status.starred {
+		if article.status.starred {
 			return false
 		}
-		return status.dateArrived < maximumArticleCutoffDate
+		if let datePublished = article.datePublished {
+			return datePublished < maximumArticleCutoffDate
+		}
+		return article.status.dateArrived < maximumArticleCutoffDate
 	}
 
 	func filterIncomingArticles(_ articles: Set<Article>) -> Set<Article> {
 		// Drop Articles that we can ignore.
-		return Set(articles.filter{ !statusIndicatesArticleIsIgnorable($0.status) })
+		return Set(articles.filter{ !articleIsIgnorable($0) })
 	}
 
 	func removeArticles(_ articleIDs: Set<String>, _ database: FMDatabase) {
