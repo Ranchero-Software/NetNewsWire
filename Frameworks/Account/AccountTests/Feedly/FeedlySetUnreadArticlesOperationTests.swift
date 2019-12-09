@@ -48,9 +48,14 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let accountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertTrue(accountArticlesIDs.isEmpty)
-		XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { accountArticlesIDs in
+			XCTAssertTrue(accountArticlesIDs.isEmpty)
+			XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+			fetchIdsExpectation.fulfill()
+		}
+		
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSetOneArticleIdUnread() {
@@ -68,8 +73,12 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let accountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { accountArticlesIDs in
+			XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSetManyArticleIdsUnread() {
@@ -87,8 +96,12 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let accountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { accountArticlesIDs in
+			XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSetSomeArticleIdsRead() {
@@ -121,8 +134,12 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let remainingAccountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { remainingAccountArticlesIDs in
+			XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSetAllArticleIdsRead() {
@@ -155,8 +172,12 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let remainingAccountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { remainingAccountArticlesIDs in
+			XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	// MARK: - Updating Article Unread Status
@@ -200,15 +221,18 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let accountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-		
-		let idsOfUnreadArticles = Set(account
-			.fetchArticles(.articleIDs(remainingUnreadIds))
-			.filter { $0.status.boolStatus(forKey: .read) == false }
-			.map { $0.articleID })
-		
-		XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { accountArticlesIDs in
+			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+			let idsOfUnreadArticles = Set(self.account
+				.fetchArticles(.articleIDs(remainingUnreadIds))
+				.filter { $0.status.boolStatus(forKey: .read) == false }
+				.map { $0.articleID })
+			
+			XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSetManyArticlesUnread() {
@@ -250,15 +274,18 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let accountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-		
-		let idsOfUnreadArticles = Set(account
-			.fetchArticles(.articleIDs(remainingUnreadIds))
-			.filter { $0.status.boolStatus(forKey: .read) == false }
-			.map { $0.articleID })
-		
-		XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { accountArticlesIDs in
+			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+			
+			let idsOfUnreadArticles = Set(self.account
+				.fetchArticles(.articleIDs(remainingUnreadIds))
+				.filter { $0.status.boolStatus(forKey: .read) == false }
+				.map { $0.articleID })
+			
+			XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+			fetchIdsExpectation.fulfill()
+		}
 	}
 	
 	func testSetOneArticleUnread() {
@@ -294,15 +321,19 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let accountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-		
-		let idsOfUnreadArticles = Set(account
-			.fetchArticles(.articleIDs(remainingUnreadIds))
-			.filter { $0.status.boolStatus(forKey: .read) == false }
-			.map { $0.articleID })
-		
-		XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { accountArticlesIDs in
+			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+			
+			let idsOfUnreadArticles = Set(self.account
+				.fetchArticles(.articleIDs(remainingUnreadIds))
+				.filter { $0.status.boolStatus(forKey: .read) == false }
+				.map { $0.articleID })
+			
+			XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSetNoArticlesRead() {
@@ -337,15 +368,18 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let accountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-		
-		let idsOfUnreadArticles = Set(account
-			.fetchArticles(.articleIDs(remainingUnreadIds))
-			.filter { $0.status.boolStatus(forKey: .read) == false }
-			.map { $0.articleID })
-		
-		XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { accountArticlesIDs in
+			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+			
+			let idsOfUnreadArticles = Set(self.account
+				.fetchArticles(.articleIDs(remainingUnreadIds))
+				.filter { $0.status.boolStatus(forKey: .read) == false }
+				.map { $0.articleID })
+			
+			XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+			fetchIdsExpectation.fulfill()
+		}
 	}
 	
 	func testSetAllArticlesAndArticleIdsWithSomeArticlesIngested() {
@@ -383,16 +417,19 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let accountArticlesIDs = account.fetchUnreadArticleIDs()
-		XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-		
-		let someTestItems = Set(someItemsAndFeeds.flatMap { $0.value })
-		let someRemainingUnreadIdsOfIngestedArticles = Set(someTestItems.compactMap { $0.syncServiceID })
-		let idsOfUnreadArticles = Set(account
-			.fetchArticles(.articleIDs(someRemainingUnreadIdsOfIngestedArticles))
-			.filter { $0.status.boolStatus(forKey: .read) == false }
-			.map { $0.articleID })
-		
-		XCTAssertEqual(idsOfUnreadArticles, someRemainingUnreadIdsOfIngestedArticles)
+		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
+		account.fetchUnreadArticleIDs { accountArticlesIDs in
+			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+			
+			let someTestItems = Set(someItemsAndFeeds.flatMap { $0.value })
+			let someRemainingUnreadIdsOfIngestedArticles = Set(someTestItems.compactMap { $0.syncServiceID })
+			let idsOfUnreadArticles = Set(self.account
+				.fetchArticles(.articleIDs(someRemainingUnreadIdsOfIngestedArticles))
+				.filter { $0.status.boolStatus(forKey: .read) == false }
+				.map { $0.articleID })
+			
+			XCTAssertEqual(idsOfUnreadArticles, someRemainingUnreadIdsOfIngestedArticles)
+			fetchIdsExpectation.fulfill()
+		}
 	}
 }

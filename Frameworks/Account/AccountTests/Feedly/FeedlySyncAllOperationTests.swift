@@ -171,9 +171,9 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all@MTZkOTdkZWQ1NzM6NTE2OjUzYjgyNmEy", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTRhOTNhZTQ6MzExOjUzYjgyNmEy", subdirectory: subdirectory)
-		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTRhOTNhZTQ6MzExOjUzYjgyNmEy", subdirectory: subdirectory, testCase: self)
+		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
@@ -187,9 +187,9 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		let subdirectory = "feedly-2-changestatuses"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTJkNjIwM2Q6MTEzYjpkNDUwNjA3MQ==", subdirectory: subdirectory)
-		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTJkNjIwM2Q6MTEzYjpkNDUwNjA3MQ==", subdirectory: subdirectory, testCase: self)
+		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
@@ -203,9 +203,9 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		let subdirectory = "feedly-3-changestatusesagain"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOGRlMjVmM2M6M2YyOmQ0NTA2MDcx", subdirectory: subdirectory)
-		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOGRlMjVmM2M6M2YyOmQ0NTA2MDcx", subdirectory: subdirectory, testCase: self)
+		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
@@ -219,9 +219,9 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		let subdirectory = "feedly-4-addfeedsandfolders"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTE3YTRlMzQ6YWZjOmQ0NTA2MDcx", subdirectory: subdirectory)
-		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTE3YTRlMzQ6YWZjOmQ0NTA2MDcx", subdirectory: subdirectory, testCase: self)
+		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
@@ -235,9 +235,9 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		let subdirectory = "feedly-5-removefeedsandfolders"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory)
-		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOGRlMjVmM2M6M2YxOmQ0NTA2MDcx", subdirectory: subdirectory)
-		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
+		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOGRlMjVmM2M6M2YxOmQ0NTA2MDcx", subdirectory: subdirectory, testCase: self)
+		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
 		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	

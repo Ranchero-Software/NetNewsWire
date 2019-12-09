@@ -55,9 +55,13 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let expectedArticleIds = Set(ids)
-		let unreadArticleIds = account.fetchUnreadArticleIDs()
-		let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
-		XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
+		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
+		account.fetchUnreadArticleIDs { unreadArticleIds in
+			let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
+			XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testIngestsOnePageFailure() {
@@ -88,8 +92,12 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		let unreadArticleIds = account.fetchUnreadArticleIDs()
-		XCTAssertTrue(unreadArticleIds.isEmpty)
+		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
+		account.fetchUnreadArticleIDs { unreadArticleIds in
+			XCTAssertTrue(unreadArticleIds.isEmpty)
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testIngestsManyPagesSuccess() {
@@ -133,8 +141,12 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 		
 		// Find statuses inserted.
 		let expectedArticleIds = Set(service.pages.values.map { $0.ids }.flatMap { $0 })
-		let unreadArticleIds = account.fetchUnreadArticleIDs()
-		let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
-		XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
+		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
+		account.fetchUnreadArticleIDs { unreadArticleIds in
+			let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
+			XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
+			fetchIdsExpectation.fulfill()
+		}
+		waitForExpectations(timeout: 2)
 	}
 }

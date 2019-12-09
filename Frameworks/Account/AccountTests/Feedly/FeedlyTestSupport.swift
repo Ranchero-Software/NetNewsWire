@@ -212,33 +212,41 @@ class FeedlyTestSupport {
 		}
 	}
 	
-	func checkUnreadStatuses(in account: Account, againstIdsInStreamInJSONNamed name: String, subdirectory: String? = nil) {
+	func checkUnreadStatuses(in account: Account, againstIdsInStreamInJSONNamed name: String, subdirectory: String? = nil, testCase: XCTestCase) {
 		let streamIds = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
-		checkUnreadStatuses(in: account, correspondToIdsInJSONPayload: streamIds)
+		checkUnreadStatuses(in: account, correspondToIdsInJSONPayload: streamIds, testCase: testCase)
 	}
 	
-	func checkUnreadStatuses(in testAccount: Account, correspondToIdsInJSONPayload streamIds: [String: Any]) {
+	func checkUnreadStatuses(in testAccount: Account, correspondToIdsInJSONPayload streamIds: [String: Any], testCase: XCTestCase) {
 		let ids = Set(streamIds["ids"] as! [String])
-		let articleIds = testAccount.fetchUnreadArticleIDs()
-		// Unread statuses can be paged from Feedly.
-		// Instead of joining test data, the best we can do is
-		// make sure that these ids are marked as unread (a subset of the total).
-		XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as unread.")
+		let fetchIdsExpectation = testCase.expectation(description: "Fetch Article Ids")
+		testAccount.fetchUnreadArticleIDs { articleIds in
+			// Unread statuses can be paged from Feedly.
+			// Instead of joining test data, the best we can do is
+			// make sure that these ids are marked as unread (a subset of the total).
+			XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as unread.")
+			fetchIdsExpectation.fulfill()
+		}
+		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
 	}
 	
-	func checkStarredStatuses(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil) {
+	func checkStarredStatuses(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil, testCase: XCTestCase) {
 		let streamIds = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
-		checkStarredStatuses(in: account, correspondToStreamItemsIn: streamIds)
+		checkStarredStatuses(in: account, correspondToStreamItemsIn: streamIds, testCase: testCase)
 	}
 	
-	func checkStarredStatuses(in testAccount: Account, correspondToStreamItemsIn stream: [String: Any]) {
+	func checkStarredStatuses(in testAccount: Account, correspondToStreamItemsIn stream: [String: Any], testCase: XCTestCase) {
 		let items = stream["items"] as! [[String: Any]]
 		let ids = Set(items.map { $0["id"] as! String })
-		let articleIds = testAccount.fetchStarredArticleIDs()
-		// Starred articles can be paged from Feedly.
-		// Instead of joining test data, the best we can do is
-		// make sure that these articles are marked as starred (a subset of the total).
-		XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as starred.")
+		let fetchIdsExpectation = testCase.expectation(description: "Fetch Article Ids")
+		testAccount.fetchStarredArticleIDs { articleIds in
+			// Starred articles can be paged from Feedly.
+			// Instead of joining test data, the best we can do is
+			// make sure that these articles are marked as starred (a subset of the total).
+			XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as starred.")
+			fetchIdsExpectation.fulfill()
+		}
+		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
 	}
 	
 	func check(_ entries: [FeedlyEntry], correspondToStreamItemsIn stream: [String: Any]) {

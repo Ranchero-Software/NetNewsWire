@@ -93,7 +93,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		self.operationQueue.addOperation(createFeeds)
 		
 		let syncUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: syncUnreadIdsService, newerThan: nil, log: log)
-		syncUnread.addDependency(addRequest)
+		syncUnread.addDependency(createFeeds)
 		syncUnread.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(syncUnread)
 		

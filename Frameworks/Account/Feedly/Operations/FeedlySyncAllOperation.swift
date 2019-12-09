@@ -35,13 +35,6 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		sendArticleStatuses.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(sendArticleStatuses)
 		
-		// Get each page of unread article ids in the global.all stream for the last 31 days (nil = Feedly API default).
-		let getUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: getUnreadService, newerThan: nil, log: log)
-		getUnread.delegate = self
-		getUnread.addDependency(sendArticleStatuses)
-		getUnread.downloadProgress = downloadProgress
-		self.operationQueue.addOperation(getUnread)
-		
 		// Get all the Collections the user has.
 		let getCollections = FeedlyGetCollectionsOperation(service: getCollectionsService, log: log)
 		getCollections.delegate = self
@@ -61,13 +54,18 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		createFeedsOperation.addDependency(mirrorCollectionsAsFolders)
 		self.operationQueue.addOperation(createFeedsOperation)
 		
+		// Get each page of unread article ids in the global.all stream for the last 31 days (nil = Feedly API default).
+		let getUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: getUnreadService, newerThan: nil, log: log)
+		getUnread.delegate = self
+		getUnread.addDependency(createFeedsOperation)
+		getUnread.downloadProgress = downloadProgress
+		self.operationQueue.addOperation(getUnread)
+		
 		// Get each page of the global.all stream until we get either the content from the last sync or the last 31 days.
 		let getStreamContents = FeedlySyncStreamContentsOperation(account: account, credentials: credentials, service: getStreamContentsService, newerThan: lastSuccessfulFetchStartDate, log: log)
 		getStreamContents.delegate = self
 		getStreamContents.downloadProgress = downloadProgress
-		getStreamContents.addDependency(getCollections)
 		getStreamContents.addDependency(getUnread)
-		getStreamContents.addDependency(createFeedsOperation)
 		self.operationQueue.addOperation(getStreamContents)
 		
 		// Get each and every starred article.
