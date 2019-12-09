@@ -14,7 +14,6 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 	private let duration = 0.4
 	var presenting = true
 	var originFrame: CGRect!
-	var maskFrame: CGRect!
 	var originImage: UIImage!
 	
 	init(controller: ArticleViewController) {
@@ -68,22 +67,11 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 		imageView.frame = imageController.zoomedFrame
 		
 		let fromView = transitionContext.view(forKey: .from)!
-		let windowFrame = fromView.window!.frame
 		fromView.removeFromSuperview()
 		
 		let toView = transitionContext.view(forKey: .to)!
 		transitionContext.containerView.addSubview(toView)
-		
-		let maskingView = UIView()
-		
-		let fullMaskFrame = CGRect(x: windowFrame.minX, y: maskFrame.minY, width: windowFrame.width, height: maskFrame.height)
-        let path = UIBezierPath(rect: fullMaskFrame)
-        let maskLayer = CAShapeLayer()
-		maskLayer.path = path.cgPath
-		maskingView.layer.mask = maskLayer
-		
-		maskingView.addSubview(imageView)
-		transitionContext.containerView.addSubview(maskingView)
+		transitionContext.containerView.addSubview(imageView)
 
 		UIView.animate(
 			withDuration: duration,
