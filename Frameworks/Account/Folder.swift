@@ -189,7 +189,7 @@ extension Folder: OPMLRepresentable {
 
 		var hasAtLeastOneChild = false
 
-		for feed in topLevelWebFeeds  {
+		for feed in topLevelWebFeeds.sorted(by: { $0.nameForDisplay < $1.nameForDisplay })  {
 			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 			hasAtLeastOneChild = true
 		}

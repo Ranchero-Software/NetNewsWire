@@ -49,7 +49,17 @@ final class OPMLFile {
 private extension OPMLFile {
 
 	func loadCallback() {
-		guard let opmlItems = parsedOPMLItems() else { return }
+		guard let fileData = opmlFileData() else {
+			return
+		}
+		
+		// Don't rebuild the account if the OPML hasn't changed since the last save
+		guard let opml = String(data: fileData, encoding: .utf8), opml != opmlDocument() else {
+			return
+		}
+		
+		guard let opmlItems = parsedOPMLItems(fileData: fileData) else { return }
+		
 		BatchUpdate.shared.perform {
 			account.topLevelWebFeeds.removeAll()
 			account.loadOPMLItems(opmlItems, parentFolder: nil)
@@ -77,8 +87,7 @@ private extension OPMLFile {
 		}
 	}
 	
-	func parsedOPMLItems() -> [RSOPMLItem]? {
-
+	func opmlFileData() -> Data? {
 		var fileData: Data? = nil
 		let errorPointer: NSErrorPointer = nil
 		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
@@ -98,11 +107,11 @@ private extension OPMLFile {
 			os_log(.error, log: log, "OPML read from disk coordination failed: %@.", error.localizedDescription)
 		}
 
-		guard let opmlData = fileData else {
-			return nil
-		}
-
-		let parserData = ParserData(url: fileURL.absoluteString, data: opmlData)
+		return fileData
+	}
+	
+	func parsedOPMLItems(fileData: Data) -> [RSOPMLItem]? {
+		let parserData = ParserData(url: fileURL.absoluteString, data: fileData)
 		var opmlDocument: RSOPMLDocument?
 
 		do {
@@ -113,7 +122,6 @@ private extension OPMLFile {
 		}
 		
 		return opmlDocument?.children
-		
 	}
 	
 	func opmlDocument() -> String {
