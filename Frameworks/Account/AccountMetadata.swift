@@ -20,7 +20,8 @@ final class AccountMetadata: Codable {
 		case isActive
 		case username
 		case conditionalGetInfo
-		case lastArticleFetch
+		case lastArticleFetchStartTime = "lastArticleFetch"
+		case lastArticleFetchEndTime
 		case endpointURL
 	}
 
@@ -56,10 +57,18 @@ final class AccountMetadata: Codable {
 		}
 	}
 	
-	var lastArticleFetch: Date? {
+	var lastArticleFetchStartTime: Date? {
 		didSet {
-			if lastArticleFetch != oldValue {
-				valueDidChange(.lastArticleFetch)
+			if lastArticleFetchStartTime != oldValue {
+				valueDidChange(.lastArticleFetchStartTime)
+			}
+		}
+	}
+	
+	var lastArticleFetchEndTime: Date? {
+		didSet {
+			if lastArticleFetchEndTime != oldValue {
+				valueDidChange(.lastArticleFetchEndTime)
 			}
 		}
 	}

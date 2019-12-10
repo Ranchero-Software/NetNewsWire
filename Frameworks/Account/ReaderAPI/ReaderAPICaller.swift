@@ -659,7 +659,7 @@ final class ReaderAPICaller: NSObject {
 		}
 		
 		let since: Date = {
-			if let lastArticleFetch = self.accountMetadata?.lastArticleFetch {
+			if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
 				return lastArticleFetch
 			} else {
 				return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
@@ -721,8 +721,8 @@ final class ReaderAPICaller: NSObject {
 								}
 								
 								let dateInfo = HTTPDateInfo(urlResponse: response)
-								self.accountMetadata?.lastArticleFetch = dateInfo?.date
-								
+								self.accountMetadata?.lastArticleFetchStartTime = dateInfo?.date
+								self.accountMetadata?.lastArticleFetchEndTime = Date()
 								
 								completion(.success((entryWrapper.entries, nil, nil)))
 							case .failure(let error):
@@ -737,7 +737,7 @@ final class ReaderAPICaller: NSObject {
 				}
 				
 			case .failure(let error):
-				self.accountMetadata?.lastArticleFetch = nil
+				self.accountMetadata?.lastArticleFetchStartTime = nil
 				completion(.failure(error))
 			}
 			
@@ -761,7 +761,7 @@ final class ReaderAPICaller: NSObject {
 				completion(.success((entries, pagingInfo.nextPage)))
 
 			case .failure(let error):
-				self.accountMetadata?.lastArticleFetch = nil
+				self.accountMetadata?.lastArticleFetchStartTime = nil
 				completion(.failure(error))
 			}
 			

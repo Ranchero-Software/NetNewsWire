@@ -113,13 +113,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 		
 		let log = self.log
-		let operation = FeedlySyncAllOperation(account: account, credentials: credentials, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetch, downloadProgress: refreshProgress, log: log)
+		let operation = FeedlySyncAllOperation(account: account, credentials: credentials, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
 		
 		operation.downloadProgress = refreshProgress
 		let date = Date()
 		operation.syncCompletionHandler = { [weak self] result in
 			if case .success = result {
-				self?.accountMetadata?.lastArticleFetch = date
+				self?.accountMetadata?.lastArticleFetchStartTime = date
+				self?.accountMetadata?.lastArticleFetchEndTime = Date()
 			}
 			
 			os_log(.debug, log: log, "Sync took %{public}.3f seconds", -date.timeIntervalSinceNow)

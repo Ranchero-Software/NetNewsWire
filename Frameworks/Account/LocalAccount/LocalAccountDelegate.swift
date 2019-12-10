@@ -33,6 +33,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refresher.refreshFeeds(account.flattenedWebFeeds()) {
+			account.metadata.lastArticleFetchEndTime = Date()
 			completion(.success(()))
 		}
 	}

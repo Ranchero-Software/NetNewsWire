@@ -396,7 +396,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			case .success:
 				guard let self = self else { return }
 				// Reset the last fetch date to get the article history for the added feeds.
-				self.metadata.lastArticleFetch = nil
+				self.metadata.lastArticleFetchStartTime = nil
 				self.delegate.refreshAll(for: self, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))

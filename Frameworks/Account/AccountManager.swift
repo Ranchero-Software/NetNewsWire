@@ -58,6 +58,18 @@ public final class AccountManager: UnreadCountProvider {
 	public var sortedActiveAccounts: [Account] {
 		return sortByName(activeAccounts)
 	}
+	
+	public var lastArticleFetchEndTime: Date? {
+		var lastArticleFetchEndTime: Date? = nil
+		for account in activeAccounts {
+			if let accountLastArticleFetchEndTime = account.metadata.lastArticleFetchEndTime {
+				if lastArticleFetchEndTime == nil || lastArticleFetchEndTime! < accountLastArticleFetchEndTime {
+					lastArticleFetchEndTime = accountLastArticleFetchEndTime
+				}
+			}
+		}
+		return lastArticleFetchEndTime
+	}
 
 	public func findActiveAccount(forDisplayName displayName: String) -> Account? {
 		return AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })

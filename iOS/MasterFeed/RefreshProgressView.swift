@@ -30,17 +30,19 @@ class RefreshProgressView: UIView {
 	}
 
 	func updateRefreshLabel() {
-		if let lastRefresh = AppDefaults.lastRefresh {
-			if Date() > lastRefresh.addingTimeInterval(1) {
+		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
+			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(1) {
 				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 				relativeDateTimeFormatter.dateTimeStyle = .named
-				let refreshed = relativeDateTimeFormatter.localizedString(for: lastRefresh, relativeTo: Date())
+				let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
 				let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
 				let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
 				label.text = refreshText
 			} else {
 				label.text = NSLocalizedString("Updated just now", comment: "Updated Just Now")
 			}
+		} else {
+			label.text = ""
 		}
 
 	}

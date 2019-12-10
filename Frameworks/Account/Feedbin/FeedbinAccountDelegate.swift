@@ -1147,7 +1147,8 @@ private extension FeedbinAccountDelegate {
 	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard let page = page else {
 			if let lastArticleFetch = updateFetchDate {
-				self.accountMetadata?.lastArticleFetch = lastArticleFetch
+				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
+				self.accountMetadata?.lastArticleFetchEndTime = Date()
 			}
 			completion(.success(()))
 			return

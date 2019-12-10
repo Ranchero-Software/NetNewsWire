@@ -487,7 +487,7 @@ final class FeedbinAPICaller: NSObject {
 	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Date?, Int?), Error>) -> Void) {
 		
 		let since: Date = {
-			if let lastArticleFetch = accountMetadata?.lastArticleFetch {
+			if let lastArticleFetch = accountMetadata?.lastArticleFetchStartTime {
 				return lastArticleFetch
 			} else {
 				return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
