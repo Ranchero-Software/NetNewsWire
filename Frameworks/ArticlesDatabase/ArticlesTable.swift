@@ -682,7 +682,7 @@ private extension ArticlesTable {
 	}
 
 	func fetchArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ value: Bool, _ webFeedIDs: Set<String>, _ callback: @escaping (Set<String>) -> Void) {
-		guard !queue.isSuspended else {
+		guard !queue.isSuspended && !webFeedIDs.isEmpty else {
 			callback(Set<String>())
 			return
 		}
