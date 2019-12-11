@@ -65,6 +65,7 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidRequestSidebarSelection(_:)), name: .UserDidRequestSidebarSelection, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(downloadArticlesDidUpdateUnreadCounts(_:)), name: .DownloadArticlesDidUpdateUnreadCounts, object: nil)
 
 		outlineView.reloadData()
 
@@ -147,6 +148,10 @@ protocol SidebarDelegate: class {
 			return
 		}
 		revealAndSelectRepresentedObject(feed as AnyObject)
+	}
+	
+	@objc func downloadArticlesDidUpdateUnreadCounts(_ note: Notification) {
+		rebuildTreeAndRestoreSelection()
 	}
 	
 	// MARK: - Actions

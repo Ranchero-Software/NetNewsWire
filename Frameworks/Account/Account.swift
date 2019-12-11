@@ -26,6 +26,7 @@ public extension Notification.Name {
 	static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
 	static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
 	static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
+	static let DownloadArticlesDidUpdateUnreadCounts = Notification.Name(rawValue: "DownloadArticlesDidUpdateUnreadCounts")
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
@@ -601,7 +602,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		structureDidChange()
 	}
 	
-	public func updateUnreadCounts(for webFeeds: Set<WebFeed>) {
+	public func updateUnreadCounts(for webFeeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
 		if webFeeds.isEmpty {
 			return
 		}
@@ -612,6 +613,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 					webFeed.unreadCount = unreadCount
 				}
 			}
+			completion?()
 		}
 	}
 
@@ -722,7 +724,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				self.existingWebFeed(withWebFeedID: key)
 			})
 			if let newArticles = newArticles, !newArticles.isEmpty {
-				self.updateUnreadCounts(for: webFeeds)
+				self.updateUnreadCounts(for: webFeeds) {
+					NotificationCenter.default.post(name: .DownloadArticlesDidUpdateUnreadCounts, object: self, userInfo: nil)
+				}
 				userInfo[UserInfoKey.newArticles] = newArticles
 			}
 			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
