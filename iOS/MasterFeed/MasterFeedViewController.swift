@@ -211,10 +211,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			headerView.isLastSection = false
 		}
 
+		headerView.gestureRecognizers?.removeAll()
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
 
 		if section != 0 {
+			headerView.interactions.removeAll()
 			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
 		}
 		
