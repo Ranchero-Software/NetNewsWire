@@ -46,6 +46,19 @@ final class StatusesTable: DatabaseTable {
 		return statusesDictionary(articleIDs)
 	}
 
+	func existingStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: ArticleStatus] {
+		// Check cache.
+		let articleIDsMissingCachedStatus = articleIDsWithNoCachedStatus(articleIDs)
+		if articleIDsMissingCachedStatus.isEmpty {
+			return statusesDictionary(articleIDs)
+		}
+
+		// Check database.
+		fetchAndCacheStatusesForArticleIDs(articleIDsMissingCachedStatus, database)
+
+		return statusesDictionary(articleIDs)
+	}
+
 	// MARK: - Marking
 
 	@discardableResult

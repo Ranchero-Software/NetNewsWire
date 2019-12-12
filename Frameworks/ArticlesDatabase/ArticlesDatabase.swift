@@ -172,6 +172,10 @@ public final class ArticlesDatabase {
 		return articlesTable.mark(articles, statusKey, flag)
 	}
 
+	public func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, callback: @escaping (Set<ArticleStatus>?) -> Void) {
+		articlesTable.fetchStatuses(articleIDs, createIfNeeded, callback)
+	}
+
 	// MARK: - Suspend and Resume (for iOS)
 
 	/// Close the database and stop running database calls.

@@ -762,6 +762,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completionHandler: completionHandler)
 	}
 
+	/// Update statuses — set a key and value. This updates the database, and sends a .StatusesDidChange notification.
+	func update(statuses: Set<ArticleStatus>, statusKey: ArticleStatus.Key, flag: Bool) {
+		// TODO: https://github.com/brentsimmons/NetNewsWire/issues/1420
+	}
+
+	/// Fetch statuses for the specified articleIDs. The completionHandler will get nil if the app is suspended.
+	/// To update the properties in the database, call the update method that takes Set<ArticleStatus> as first parameter.
+	func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, completionHandler: @escaping (Set<ArticleStatus>?) -> Void) {
+		database.fetchStatuses(articleIDs: articleIDs, createIfNeeded: createIfNeeded, callback: completionHandler)
+	}
+
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
 	func emptyCaches() {
 		database.emptyCaches()

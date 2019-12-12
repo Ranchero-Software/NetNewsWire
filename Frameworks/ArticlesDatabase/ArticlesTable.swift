@@ -310,7 +310,28 @@ final class ArticlesTable: DatabaseTable {
 			}
 		}
 	}
-	
+
+	func fetchStatuses(_ articleIDs: Set<String>, _ createIfNeeded: Bool, _ callback: @escaping (Set<ArticleStatus>?) -> Void) {
+		guard !queue.isSuspended else {
+			callback(nil)
+			return
+		}
+
+		queue.runInTransaction { (database) in
+			var statusesDictionary = [String: ArticleStatus]()
+			if createIfNeeded {
+				statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database)
+			}
+			else {
+				statusesDictionary = self.statusesTable.existingStatusesForArticleIDs(articleIDs, database)
+			}
+			let statuses = Set(statusesDictionary.values)
+			DispatchQueue.main.async {
+				callback(statuses)
+			}
+		}
+	}
+
 	// MARK: - Unread Counts
 	
 	func fetchUnreadCounts(_ webFeedIDs: Set<String>, _ completion: @escaping UnreadCountCompletionBlock) {
