@@ -84,6 +84,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			}
 		}
 	}
+	
 	private(set) var groupByFeed = AppDefaults.timelineGroupByFeed {
 		didSet {
 			if groupByFeed != oldValue {
@@ -266,7 +267,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	var isTimelineUnreadAvailable: Bool {
-		return timelineFeed?.unreadCount ?? 0 > 0
+		return unreadCount > 0
 	}
 	
 	var isAnyUnreadAvailable: Bool {
