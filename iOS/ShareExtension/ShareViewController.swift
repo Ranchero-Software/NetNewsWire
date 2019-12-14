@@ -114,6 +114,8 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			switch result {
 			case .success:
 				account!.save()
+				AccountManager.shared.suspendNetworkAll()
+				AccountManager.shared.suspendDatabaseAll()
 				self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 			case .failure(let error):
 				self.presentError(error) {

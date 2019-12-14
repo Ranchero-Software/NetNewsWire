@@ -116,6 +116,8 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 			validAccount.createWebFeed(url: url.absoluteString, name: nil, container: validContainer) { result in
 				switch result {
 				case .success:
+					AccountManager.shared.suspendNetworkAll()
+					AccountManager.shared.suspendDatabaseAll()
 					completion(AddWebFeedIntentResponse(code: .success, userActivity: nil))
 				case .failure(let error):
 					switch error {
