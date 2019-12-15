@@ -41,7 +41,7 @@ final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
 		return "\(stream.id)@\(continuation ?? "")"
 	}
 	
-	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completionHandler: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
+	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ()) {
 		let key = TestGetPagedStreamIdsService.getPagingKey(for: resource, continuation: continuation)
 		guard let page = pages[key] else {
 			XCTFail("Missing page for \(resource.id) and continuation \(String(describing: continuation)). Test may time out because the completion will not be called.")
@@ -49,7 +49,7 @@ final class TestGetPagedStreamIdsService: FeedlyGetStreamIdsService {
 		}
 		parameterTester?(resource, continuation, newerThan, unreadOnly)
 		DispatchQueue.main.async {
-			completionHandler(.success(page))
+			completion(.success(page))
 			self.getStreamIdsExpectation?.fulfill()
 		}
 	}

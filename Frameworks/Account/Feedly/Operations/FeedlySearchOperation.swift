@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlySearchService: class {
-	func getFeeds(for query: String, count: Int, locale: String, completionHandler: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> ())
+	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> ())
 }
 
 protocol FeedlySearchOperationDelegate: class {

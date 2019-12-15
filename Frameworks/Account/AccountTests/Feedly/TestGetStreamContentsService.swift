@@ -15,14 +15,14 @@ final class TestGetStreamContentsService: FeedlyGetStreamContentsService {
 	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
 	var getStreamContentsExpectation: XCTestExpectation?
 	
-	func getStreamContents(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completionHandler: @escaping (Result<FeedlyStream, Error>) -> ()) {
+	func getStreamContents(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		guard let result = mockResult else {
 			XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 			return
 		}
 		parameterTester?(resource, continuation, newerThan, unreadOnly)
 		DispatchQueue.main.async {
-			completionHandler(result)
+			completion(result)
 			self.getStreamContentsExpectation?.fulfill()
 		}
 	}

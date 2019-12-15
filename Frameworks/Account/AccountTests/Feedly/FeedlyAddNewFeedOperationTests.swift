@@ -172,14 +172,14 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		var addFeedExpectation: XCTestExpectation?
 		var parameterTester: ((FeedlyFeedResourceId, String?, String) -> ())?
 		
-		func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completionHandler: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
+		func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ()) {
 			guard let result = mockResult else {
 				XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 				return
 			}
 			parameterTester?(feedId, title, collectionId)
 			DispatchQueue.main.async {
-				completionHandler(result)
+				completion(result)
 				self.addFeedExpectation?.fulfill()
 			}
 		}

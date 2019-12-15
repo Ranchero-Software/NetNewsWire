@@ -37,7 +37,7 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 		return FeedlyAPICaller.authorizationCodeUrlRequest(for: authorizationRequest, baseUrlComponents: baseURLComponents)
 	}
 	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
 		let client = environment.oauthAuthorizationClient
 		let request = OAuthAccessTokenRequest(authorizationResponse: response,
 											  scope: oauthAuthorizationGrantScope,
@@ -57,17 +57,17 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 				
 				let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
 				
-				completionHandler(.success(grant))
+				completion(.success(grant))
 				
 			case .failure(let error):
-				completionHandler(.failure(error))
+				completion(.failure(error))
 			}
 		}
 	}
 }
 
 extension FeedlyAccountDelegate: OAuthAccessTokenRefreshing {
-	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+	func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
 		let request = OAuthRefreshAccessTokenRequest(refreshToken: refreshToken, scope: nil, client: client)
 		
 		caller.refreshAccessToken(request) { result in
@@ -84,10 +84,10 @@ extension FeedlyAccountDelegate: OAuthAccessTokenRefreshing {
 				
 				let grant = OAuthAuthorizationGrant(accessToken: accessToken, refreshToken: refreshToken)
 				
-				completionHandler(.success(grant))
+				completion(.success(grant))
 				
 			case .failure(let error):
-				completionHandler(.failure(error))
+				completion(.failure(error))
 			}
 		}
 	}

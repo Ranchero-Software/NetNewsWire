@@ -31,8 +31,8 @@ public struct SyncDatabase {
 
 	// MARK: - API
 
-	public func insertStatuses(_ statuses: [SyncStatus], completionHandler: VoidCompletionBlock? = nil) {
-		syncStatusTable.insertStatuses(statuses, completionHandler: completionHandler)
+	public func insertStatuses(_ statuses: [SyncStatus], completion: VoidCompletionBlock? = nil) {
+		syncStatusTable.insertStatuses(statuses, completion: completion)
 	}
 	
 	public func selectForProcessing() -> [SyncStatus] {
@@ -43,12 +43,12 @@ public struct SyncDatabase {
 		return syncStatusTable.selectPendingCount()
 	}
 	
-	public func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
-		syncStatusTable.resetSelectedForProcessing(articleIDs, completionHandler: completionHandler)
+	public func resetSelectedForProcessing(_ articleIDs: [String], completion: VoidCompletionBlock? = nil) {
+		syncStatusTable.resetSelectedForProcessing(articleIDs, completion: completion)
 	}
 	
-    public func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
-		syncStatusTable.deleteSelectedForProcessing(articleIDs, completionHandler: completionHandler)
+    public func deleteSelectedForProcessing(_ articleIDs: [String], completion: VoidCompletionBlock? = nil) {
+		syncStatusTable.deleteSelectedForProcessing(articleIDs, completion: completion)
 	}
 
 	// MARK: - Suspend and Resume (for iOS)

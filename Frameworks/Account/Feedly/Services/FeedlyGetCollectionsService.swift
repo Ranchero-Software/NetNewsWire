@@ -9,5 +9,5 @@
 import Foundation
 
 protocol FeedlyGetCollectionsService: class {
-	func getCollections(completionHandler: @escaping (Result<[FeedlyCollection], Error>) -> ())
+	func getCollections(completion: @escaping (Result<[FeedlyCollection], Error>) -> ())
 }

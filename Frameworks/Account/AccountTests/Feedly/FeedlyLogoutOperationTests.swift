@@ -38,13 +38,13 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		var mockResult: Result<Void, Error>?
 		var logoutExpectation: XCTestExpectation?
 		
-		func logout(completionHandler: @escaping (Result<Void, Error>) -> ()) {
+		func logout(completion: @escaping (Result<Void, Error>) -> ()) {
 			guard let result = mockResult else {
 				XCTFail("Missing mock result. Test may time out because the completion will not be called.")
 				return
 			}
 			DispatchQueue.main.async {
-				completionHandler(result)
+				completion(result)
 				self.logoutExpectation?.fulfill()
 			}
 		}

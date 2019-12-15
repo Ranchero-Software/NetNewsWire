@@ -84,7 +84,7 @@ public final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthentic
 			
 			let response = try OAuthAuthorizationResponse(url: url, client: oauthClient)
 			
-			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, completionHandler: didEndRequestingAccessToken(_:))
+			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, completion: didEndRequestingAccessToken(_:))
 			
 		} catch is ASWebAuthenticationSessionError {
 			didFinish() // Primarily, cancellation.

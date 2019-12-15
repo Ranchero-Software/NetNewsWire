@@ -32,7 +32,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		var refreshAccessTokenExpectation: XCTestExpectation?
 		var parameterTester: ((String, OAuthAuthorizationClient) -> ())?
 		
-		func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+		func refreshAccessToken(with refreshToken: String, client: OAuthAuthorizationClient, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
 			
 			guard let result = mockResult else {
 				XCTFail("Missing mock result. Test may time out because the completion will not be called.")
@@ -40,7 +40,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			}
 			parameterTester?(refreshToken, client)
 			DispatchQueue.main.async {
-				completionHandler(result)
+				completion(result)
 				self.refreshAccessTokenExpectation?.fulfill()
 			}
 		}

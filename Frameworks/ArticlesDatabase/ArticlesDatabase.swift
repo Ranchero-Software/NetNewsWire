@@ -148,8 +148,8 @@ public final class ArticlesDatabase {
 		articlesTable.update(webFeedIDsAndItems, defaultRead, completion)
 	}
 
-	public func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: VoidCompletionBlock? = nil) {
-		articlesTable.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completionHandler: completionHandler)
+	public func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completion: VoidCompletionBlock? = nil) {
+		articlesTable.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completion: completion)
 	}
 	
 	// MARK: - Status

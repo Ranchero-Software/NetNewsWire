@@ -160,13 +160,13 @@ public protocol OAuthAuthorizationCodeGrantRequesting {
 	
 	/// Performs the request for the access token given an authorization code.
 	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokens on the user's behalf.
-	/// - Parameter completionHandler: On success, the access token response appropriate for concrete type's service. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
-	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completionHandler: @escaping (Result<AccessTokenResponse, Error>) -> ())
+	/// - Parameter completion: On success, the access token response appropriate for concrete type's service. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
+	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completion: @escaping (Result<AccessTokenResponse, Error>) -> ())
 }
 
 protocol OAuthAuthorizationGranting: AccountDelegate {
 		
 	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
 	
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ())
 }

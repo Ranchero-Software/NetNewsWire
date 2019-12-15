@@ -203,9 +203,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Unread", comment: "Unread") :
 			NSLocalizedString("Read", comment: "Read")
 		
-		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completionHandler) in
+		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completion) in
 			self?.coordinator.toggleRead(article)
-			completionHandler(true)
+			completion(true)
 		}
 		
 		readAction.image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
@@ -223,9 +223,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			NSLocalizedString("Unstar", comment: "Unstar") :
 			NSLocalizedString("Star", comment: "Star")
 		
-		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completionHandler) in
+		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completion) in
 			self?.coordinator.toggleStar(article)
-			completionHandler(true)
+			completion(true)
 		}
 		
 		starAction.image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
@@ -233,7 +233,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		// Set up the read action
 		let moreTitle = NSLocalizedString("More", comment: "More")
-		let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completionHandler) in
+		let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completion) in
 			
 			if let self = self {
 			
@@ -243,27 +243,27 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
 				}
 				
-				alert.addAction(self.markOlderAsReadAlertAction(article, completionHandler: completionHandler))
+				alert.addAction(self.markOlderAsReadAlertAction(article, completion: completion))
 				
-				if let action = self.discloseFeedAlertAction(article, completionHandler: completionHandler) {
+				if let action = self.discloseFeedAlertAction(article, completion: completion) {
 					alert.addAction(action)
 				}
 				
-				if let action = self.markAllInFeedAsReadAlertAction(article, completionHandler: completionHandler) {
+				if let action = self.markAllInFeedAsReadAlertAction(article, completion: completion) {
 					alert.addAction(action)
 				}
 
-				if let action = self.openInBrowserAlertAction(article, completionHandler: completionHandler) {
+				if let action = self.openInBrowserAlertAction(article, completion: completion) {
 					alert.addAction(action)
 				}
 
-				if let action = self.shareAlertAction(article, indexPath: indexPath, completionHandler: completionHandler) {
+				if let action = self.shareAlertAction(article, indexPath: indexPath, completion: completion) {
 					alert.addAction(action)
 				}
 
 				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 				alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
-					completionHandler(true)
+					completion(true)
 				})
 
 				self.present(alert, animated: true)
@@ -643,11 +643,11 @@ private extension MasterTimelineViewController {
 		return action
 	}
 	
-	func markOlderAsReadAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction {
+	func markOlderAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction {
 		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
-			completionHandler(true)
+			completion(true)
 		}
 		return action
 	}
@@ -662,13 +662,13 @@ private extension MasterTimelineViewController {
 		return action
 	}
 	
-	func discloseFeedAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let webFeed = article.webFeed else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.discloseFeed(webFeed, animated: true)
-			completionHandler(true)
+			completion(true)
 		}
 		return action
 	}
@@ -690,7 +690,7 @@ private extension MasterTimelineViewController {
 		return action
 	}
 
-	func markAllInFeedAsReadAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+	func markAllInFeedAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let webFeed = article.webFeed else { return nil }
 
 		let articles = Array(webFeed.fetchArticles())
@@ -703,7 +703,7 @@ private extension MasterTimelineViewController {
 		
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.markAllAsRead(articles)
-			completionHandler(true)
+			completion(true)
 		}
 		return action
 	}
@@ -719,14 +719,14 @@ private extension MasterTimelineViewController {
 		return action
 	}
 
-	func openInBrowserAlertAction(_ article: Article, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+	func openInBrowserAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let preferredLink = article.preferredLink, let _ = URL(string: preferredLink) else {
 			return nil
 		}
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showBrowserForArticle(article)
-			completionHandler(true)
+			completion(true)
 		}
 		return action
 	}
@@ -755,14 +755,14 @@ private extension MasterTimelineViewController {
 		return action
 	}
 	
-	func shareAlertAction(_ article: Article, indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) -> UIAlertAction? {
+	func shareAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
 			return nil
 		}
 		
 		let title = NSLocalizedString("Share", comment: "Share")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			completionHandler(true)
+			completion(true)
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
 		return action

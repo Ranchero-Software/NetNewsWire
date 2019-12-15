@@ -57,10 +57,10 @@ struct SyncStatusTable: DatabaseTable {
 		return count
 	}
 	
-	func resetSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
+	func resetSelectedForProcessing(_ articleIDs: [String], completion: VoidCompletionBlock? = nil) {
 		guard !queue.isSuspended else {
-            if let handler = completionHandler {
-				callVoidCompletionBlock(handler)
+            if let completion = completion {
+				callVoidCompletionBlock(completion)
             }
 			return
 		}
@@ -69,16 +69,16 @@ struct SyncStatusTable: DatabaseTable {
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 			let updateSQL = "update syncStatus set selected = false where articleID in \(placeholders)"
 			database.executeUpdate(updateSQL, withArgumentsIn: parameters)
-            if let handler = completionHandler {
-				callVoidCompletionBlock(handler)
+            if let completion = completion {
+				callVoidCompletionBlock(completion)
             }
 		}
 	}
 	
-    func deleteSelectedForProcessing(_ articleIDs: [String], completionHandler: VoidCompletionBlock? = nil) {
+    func deleteSelectedForProcessing(_ articleIDs: [String], completion: VoidCompletionBlock? = nil) {
 		guard !queue.isSuspended else {
-            if let handler = completionHandler {
-				callVoidCompletionBlock(handler)
+            if let completion = completion {
+				callVoidCompletionBlock(completion)
             }
 			return
 		}
@@ -87,24 +87,24 @@ struct SyncStatusTable: DatabaseTable {
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 			let deleteSQL = "delete from syncStatus where articleID in \(placeholders)"
 			database.executeUpdate(deleteSQL, withArgumentsIn: parameters)
-            if let handler = completionHandler {
- 				callVoidCompletionBlock(handler)
+            if let completion = completion {
+ 				callVoidCompletionBlock(completion)
             }
 		}
 	}
 	
-	func insertStatuses(_ statuses: [SyncStatus], completionHandler: VoidCompletionBlock? = nil) {
+	func insertStatuses(_ statuses: [SyncStatus], completion: VoidCompletionBlock? = nil) {
 		guard !queue.isSuspended else {
-            if let handler = completionHandler {
-				callVoidCompletionBlock(handler)
+            if let completion = completion {
+				callVoidCompletionBlock(completion)
             }
 			return
 		}
 		queue.runInTransaction { database in
 			let statusArray = statuses.map { $0.databaseDictionary() }
 			self.insertRows(statusArray, insertType: .orReplace, in: database)
-            if let handler = completionHandler {
-				callVoidCompletionBlock(handler)
+            if let completion = completion {
+				callVoidCompletionBlock(completion)
             }
 		}
 	}

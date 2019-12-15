@@ -9,7 +9,7 @@
 import Foundation
 
 protocol FeedlyAddFeedToCollectionService {
-	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completionHandler: @escaping (Result<[FeedlyFeed], Error>) -> ())
+	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping (Result<[FeedlyFeed], Error>) -> ())
 }
 
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {

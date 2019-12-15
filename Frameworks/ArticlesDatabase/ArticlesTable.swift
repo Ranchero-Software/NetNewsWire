@@ -293,9 +293,9 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: VoidCompletionBlock? = nil) {
+	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completion: VoidCompletionBlock? = nil) {
 		guard !queue.isSuspended else {
-			if let handler = completionHandler {
+			if let handler = completion {
 				callVoidCompletionBlock(handler)
 			}
 			return
@@ -305,7 +305,7 @@ final class ArticlesTable: DatabaseTable {
 			let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, defaultRead, database)
 			let statuses = Set(statusesDictionary.values)
 			self.statusesTable.mark(statuses, statusKey, flag, database)
-			if let handler = completionHandler {
+			if let handler = completion {
 				callVoidCompletionBlock(handler)
 			}
 		}

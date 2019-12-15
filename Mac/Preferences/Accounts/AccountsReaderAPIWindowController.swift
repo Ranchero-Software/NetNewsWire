@@ -53,9 +53,9 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	
 	// MARK: API
 	
-	func runSheetOnWindow(_ hostWindow: NSWindow, completionHandler handler: ((NSApplication.ModalResponse) -> Void)? = nil) {
+	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: handler)
+		hostWindow.beginSheet(window!, completionHandler: completion)
 	}
 
 	// MARK: Actions

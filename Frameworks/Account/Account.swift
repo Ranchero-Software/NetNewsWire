@@ -351,7 +351,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 											   client: OAuthAuthorizationClient,
 											   accountType: AccountType,
 											   transport: Transport = URLSession.webserviceTransport(),
-											   completionHandler: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+											   completion: @escaping (Result<OAuthAuthorizationGrant, Error>) -> ()) {
 		let grantingType: OAuthAuthorizationGranting.Type
 		
 		switch accountType {
@@ -361,7 +361,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}
 		
-		grantingType.requestOAuthAccessToken(with: response, transport: transport, completionHandler: completionHandler)
+		grantingType.requestOAuthAccessToken(with: response, transport: transport, completion: completion)
 	}
 
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -754,12 +754,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return updatedArticles
 	}
 
-	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completionHandler: VoidCompletionBlock? = nil) {
+	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completion: VoidCompletionBlock? = nil) {
 		guard !articleIDs.isEmpty else {
-			completionHandler?()
+			completion?()
 			return
 		}
-		database.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completionHandler: completionHandler)
+		database.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completion: completion)
 	}
 
 	/// Update statuses — set a key and value. This updates the database, and sends a .StatusesDidChange notification.
@@ -767,10 +767,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// TODO: https://github.com/brentsimmons/NetNewsWire/issues/1420
 	}
 
-	/// Fetch statuses for the specified articleIDs. The completionHandler will get nil if the app is suspended.
+	/// Fetch statuses for the specified articleIDs. The completion handler will get nil if the app is suspended.
 	/// To update the properties in the database, call the update method that takes Set<ArticleStatus> as first parameter.
-	func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, completionHandler: @escaping (Set<ArticleStatus>?) -> Void) {
-		database.fetchStatuses(articleIDs: articleIDs, createIfNeeded: createIfNeeded, callback: completionHandler)
+	func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, completion: @escaping (Set<ArticleStatus>?) -> Void) {
+		database.fetchStatuses(articleIDs: articleIDs, createIfNeeded: createIfNeeded, callback: completion)
 	}
 
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.

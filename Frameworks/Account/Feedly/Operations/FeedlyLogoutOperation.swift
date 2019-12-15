@@ -10,7 +10,7 @@ import Foundation
 import os.log
 
 protocol FeedlyLogoutService {
-	func logout(completionHandler: @escaping (Result<Void, Error>) -> ())
+	func logout(completion: @escaping (Result<Void, Error>) -> ())
 }
 
 final class FeedlyLogoutOperation: FeedlyOperation {
@@ -30,7 +30,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 			return
 		}
 		os_log("Requesting logout of %{public}@ account.", "\(account.type)")
-		service.logout(completionHandler: didCompleteLogout(_:))
+		service.logout(completion: didCompleteLogout(_:))
 	}
 	
 	func didCompleteLogout(_ result: Result<Void, Error>) {

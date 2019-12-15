@@ -31,5 +31,5 @@ enum FeedlyMarkAction: String {
  }
 
 protocol FeedlyMarkArticlesService: class {
-	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completionHandler: @escaping (Result<Void, Error>) -> ())
+	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ())
 }
