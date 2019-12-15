@@ -84,16 +84,16 @@ extension SmartFeed: ArticleFetcher {
 		return delegate.fetchArticles()
 	}
 
-	func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock) {
-		delegate.fetchArticlesAsync(callback)
+	func fetchArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+		delegate.fetchArticlesAsync(completion)
 	}
 
 	func fetchUnreadArticles() -> Set<Article> {
 		return delegate.fetchUnreadArticles()
 	}
 
-	func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
-		delegate.fetchUnreadArticlesAsync(callback)
+	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+		delegate.fetchUnreadArticlesAsync(completion)
 	}
 }
 

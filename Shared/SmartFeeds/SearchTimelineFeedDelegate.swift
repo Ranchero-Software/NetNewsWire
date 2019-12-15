@@ -31,7 +31,7 @@ struct SearchTimelineFeedDelegate: SmartFeedDelegate {
 		self.fetchType = .searchWithArticleIDs(searchString, articleIDs)
 	}
 
-	func fetchUnreadCount(for: Account, callback: @escaping (Int) -> Void) {
+	func fetchUnreadCount(for: Account, completion: @escaping (Int) -> Void) {
 		// TODO: after 5.0
 	}
 }

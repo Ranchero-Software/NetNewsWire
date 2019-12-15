@@ -21,8 +21,8 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 	let fetchType = FetchType.today
 	var smallIcon: IconImage? = AppAssets.todayFeedImage
 	
-	func fetchUnreadCount(for account: Account, callback: @escaping (Int) -> Void) {
-		account.fetchUnreadCountForToday(callback)
+	func fetchUnreadCount(for account: Account, completion: @escaping (Int) -> Void) {
+		account.fetchUnreadCountForToday(completion)
 	}
 }
 

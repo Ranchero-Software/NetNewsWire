@@ -595,19 +595,19 @@ private extension SidebarViewController {
 		return rowView.view(atColumn: 0) as? SidebarCell
 	}
 
-	func applyToAvailableCells(_ callback: (SidebarCell, Node) -> Void) {
+	func applyToAvailableCells(_ completion: (SidebarCell, Node) -> Void) {
 		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
 			guard let cell = cellForRowView(rowView), let node = nodeForRow(row) else {
 				return
 			}
-			callback(cell, node)
+			completion(cell, node)
 		}
 	}
 
-	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (SidebarCell, Node) -> Void) {
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (SidebarCell, Node) -> Void) {
 		applyToAvailableCells { (cell, node) in
 			if node.representsSidebarObject(representedObject) {
-				callback(cell, node)
+				completion(cell, node)
 			}
 		}
 	}

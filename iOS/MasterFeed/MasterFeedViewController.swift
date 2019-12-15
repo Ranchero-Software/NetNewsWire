@@ -764,20 +764,20 @@ private extension MasterFeedViewController {
 		applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
-	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ callback: (MasterFeedTableViewCell, Node) -> Void) {
+	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MasterFeedTableViewCell, Node) -> Void) {
 		applyToAvailableCells { (cell, node) in
 			if node.representedObject === representedObject {
-				callback(cell, node)
+				completion(cell, node)
 			}
 		}
 	}
 	
-	func applyToAvailableCells(_ callback: (MasterFeedTableViewCell, Node) -> Void) {
+	func applyToAvailableCells(_ completion: (MasterFeedTableViewCell, Node) -> Void) {
 		tableView.visibleCells.forEach { cell in
 			guard let indexPath = tableView.indexPath(for: cell), let node = dataSource.itemIdentifier(for: indexPath) else {
 				return
 			}
-			callback(cell as! MasterFeedTableViewCell, node)
+			completion(cell as! MasterFeedTableViewCell, node)
 		}
 	}
 

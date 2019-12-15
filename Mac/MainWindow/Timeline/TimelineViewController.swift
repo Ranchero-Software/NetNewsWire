@@ -1027,7 +1027,7 @@ private extension TimelineViewController {
 		return fetchedArticles
 	}
 
-	func fetchUnsortedArticlesAsync(for representedObjects: [Any], callback: @escaping ArticleSetBlock) {
+	func fetchUnsortedArticlesAsync(for representedObjects: [Any], completion: @escaping ArticleSetBlock) {
 		// The callback will *not* be called if the fetch is no longer relevant — that is,
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
@@ -1038,7 +1038,7 @@ private extension TimelineViewController {
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
 			}
-			callback(articles)
+			completion(articles)
 		}
 		fetchRequestQueue.add(fetchOperation)
 	}

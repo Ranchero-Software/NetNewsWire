@@ -87,58 +87,58 @@ public final class ArticlesDatabase {
 
 	// MARK: - Fetching Articles Async
 
-	public func fetchArticlesAsync(_ webFeedID: String, _ callback: @escaping ArticleSetBlock) {
-		articlesTable.fetchArticlesAsync(webFeedID, callback)
+	public func fetchArticlesAsync(_ webFeedID: String, _ completion: @escaping ArticleSetBlock) {
+		articlesTable.fetchArticlesAsync(webFeedID, completion)
 	}
 
-	public func fetchArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		articlesTable.fetchArticlesAsync(webFeedIDs, callback)
+	public func fetchArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		articlesTable.fetchArticlesAsync(webFeedIDs, completion)
 	}
 
-	public func fetchArticlesAsync(articleIDs: Set<String>, _ callback: @escaping  ArticleSetBlock) {
-		articlesTable.fetchArticlesAsync(articleIDs: articleIDs, callback)
+	public func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping  ArticleSetBlock) {
+		articlesTable.fetchArticlesAsync(articleIDs: articleIDs, completion)
 	}
 
-	public func fetchUnreadArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		articlesTable.fetchUnreadArticlesAsync(webFeedIDs, callback)
+	public func fetchUnreadArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		articlesTable.fetchUnreadArticlesAsync(webFeedIDs, completion)
 	}
 
-	public func fetchTodayArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		articlesTable.fetchArticlesSinceAsync(webFeedIDs, todayCutoffDate(), callback)
+	public func fetchTodayArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		articlesTable.fetchArticlesSinceAsync(webFeedIDs, todayCutoffDate(), completion)
 	}
 
-	public func fetchedStarredArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		articlesTable.fetchStarredArticlesAsync(webFeedIDs, callback)
+	public func fetchedStarredArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		articlesTable.fetchStarredArticlesAsync(webFeedIDs, completion)
 	}
 
-	public func fetchArticlesMatchingAsync(_ searchString: String, _ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		articlesTable.fetchArticlesMatchingAsync(searchString, webFeedIDs, callback)
+	public func fetchArticlesMatchingAsync(_ searchString: String, _ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		articlesTable.fetchArticlesMatchingAsync(searchString, webFeedIDs, completion)
 	}
 
-	public func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		articlesTable.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, callback)
+	public func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		articlesTable.fetchArticlesMatchingWithArticleIDsAsync(searchString, articleIDs, completion)
 	}
 
 	// MARK: - Unread Counts
 	
-	public func fetchUnreadCounts(for webFeedIDs: Set<String>, _ callback: @escaping UnreadCountCompletionBlock) {
-		articlesTable.fetchUnreadCounts(webFeedIDs, callback)
+	public func fetchUnreadCounts(for webFeedIDs: Set<String>, _ completion: @escaping UnreadCountCompletionBlock) {
+		articlesTable.fetchUnreadCounts(webFeedIDs, completion)
 	}
 
-	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, callback: @escaping (Int) -> Void) {
-		fetchUnreadCount(for: webFeedIDs, since: todayCutoffDate(), callback: callback)
+	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, completion: @escaping (Int) -> Void) {
+		fetchUnreadCount(for: webFeedIDs, since: todayCutoffDate(), completion: completion)
 	}
 
-	public func fetchUnreadCount(for webFeedIDs: Set<String>, since: Date, callback: @escaping (Int) -> Void) {
-		articlesTable.fetchUnreadCount(webFeedIDs, since, callback)
+	public func fetchUnreadCount(for webFeedIDs: Set<String>, since: Date, completion: @escaping (Int) -> Void) {
+		articlesTable.fetchUnreadCount(webFeedIDs, since, completion)
 	}
 
-	public func fetchStarredAndUnreadCount(for webFeedIDs: Set<String>, callback: @escaping (Int) -> Void) {
-		articlesTable.fetchStarredAndUnreadCount(webFeedIDs, callback)
+	public func fetchStarredAndUnreadCount(for webFeedIDs: Set<String>, completion: @escaping (Int) -> Void) {
+		articlesTable.fetchStarredAndUnreadCount(webFeedIDs, completion)
 	}
 
-	public func fetchAllNonZeroUnreadCounts(_ callback: @escaping UnreadCountCompletionBlock) {
-		articlesTable.fetchAllUnreadCounts(callback)
+	public func fetchAllNonZeroUnreadCounts(_ completion: @escaping UnreadCountCompletionBlock) {
+		articlesTable.fetchAllUnreadCounts(completion)
 	}
 
 	// MARK: - Saving and Updating Articles
@@ -155,13 +155,13 @@ public final class ArticlesDatabase {
 	// MARK: - Status
 
 	/// Fetch the articleIDs of unread articles in feeds specified by webFeedIDs.
-	public func fetchUnreadArticleIDsAsync(webFeedIDs: Set<String>, callback: @escaping (Set<String>) -> Void) {
-		articlesTable.fetchUnreadArticleIDsAsync(webFeedIDs, callback)
+	public func fetchUnreadArticleIDsAsync(webFeedIDs: Set<String>, completion: @escaping (Set<String>) -> Void) {
+		articlesTable.fetchUnreadArticleIDsAsync(webFeedIDs, completion)
 	}
 	
 	/// Fetch the articleIDs of starred articles in feeds specified by webFeedIDs.
-	public func fetchStarredArticleIDsAsync(webFeedIDs: Set<String>, callback: @escaping (Set<String>) -> Void) {
-		articlesTable.fetchStarredArticleIDsAsync(webFeedIDs, callback)
+	public func fetchStarredArticleIDsAsync(webFeedIDs: Set<String>, completion: @escaping (Set<String>) -> Void) {
+		articlesTable.fetchStarredArticleIDsAsync(webFeedIDs, completion)
 	}
 
 	public func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
@@ -172,8 +172,8 @@ public final class ArticlesDatabase {
 		return articlesTable.mark(articles, statusKey, flag)
 	}
 
-	public func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, callback: @escaping (Set<ArticleStatus>?) -> Void) {
-		articlesTable.fetchStatuses(articleIDs, createIfNeeded, callback)
+	public func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, completion: @escaping (Set<ArticleStatus>?) -> Void) {
+		articlesTable.fetchStatuses(articleIDs, createIfNeeded, completion)
 	}
 
 	// MARK: - Suspend and Resume (for iOS)

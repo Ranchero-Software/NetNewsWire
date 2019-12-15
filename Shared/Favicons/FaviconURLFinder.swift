@@ -13,15 +13,15 @@ import RSParser
 
 struct FaviconURLFinder {
 
-	static func findFaviconURLs(_ homePageURL: String, _ callback: @escaping ([String]?) -> Void) {
+	static func findFaviconURLs(_ homePageURL: String, _ completion: @escaping ([String]?) -> Void) {
 
 		guard let _ = URL(string: homePageURL) else {
-			callback(nil)
+			completion(nil)
 			return
 		}
 
 		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (htmlMetadata) in
-			callback(htmlMetadata?.faviconLinks)
+			completion(htmlMetadata?.faviconLinks)
 		}
 	}
 }

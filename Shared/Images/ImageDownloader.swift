@@ -76,27 +76,27 @@ private extension ImageDownloader {
 		}
 	}
 
-	func readFromDisk(_ url: String, _ callback: @escaping (Data?) -> Void) {
+	func readFromDisk(_ url: String, _ completion: @escaping (Data?) -> Void) {
 
 		queue.async {
 
 			if let data = self.diskCache[self.diskKey(url)], !data.isEmpty {
 				DispatchQueue.main.async {
-					callback(data)
+					completion(data)
 				}
 				return
 			}
 
 			DispatchQueue.main.async {
-				callback(nil)
+				completion(nil)
 			}
 		}
 	}
 
-	func downloadImage(_ url: String, _ callback: @escaping (Data?) -> Void) {
+	func downloadImage(_ url: String, _ completion: @escaping (Data?) -> Void) {
 
 		guard let imageURL = URL(string: url) else {
-			callback(nil)
+			completion(nil)
 			return
 		}
 
@@ -104,7 +104,7 @@ private extension ImageDownloader {
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				self.saveToDisk(url, data)
-				callback(data)
+				completion(data)
 				return
 			}
 
@@ -115,7 +115,7 @@ private extension ImageDownloader {
 				appDelegate.logMessage("Error downloading image at \(url): \(error)", type: .warning)
 			}
 
-			callback(nil)
+			completion(nil)
 		}
 	}
 

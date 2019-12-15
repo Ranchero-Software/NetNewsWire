@@ -265,7 +265,7 @@ public final class AccountManager: UnreadCountProvider {
 		return articles
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType, _ callback: @escaping ArticleSetBlock) {
+	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetBlock) {
 		precondition(Thread.isMainThread)
 		
 		var allFetchedArticles = Set<Article>()
@@ -277,7 +277,7 @@ public final class AccountManager: UnreadCountProvider {
 				allFetchedArticles.formUnion(articles)
 				accountsReporting += 1
 				if accountsReporting == numberOfAccounts {
-					callback(allFetchedArticles)
+					completion(allFetchedArticles)
 				}
 			}
 		}

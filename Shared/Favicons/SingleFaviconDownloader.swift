@@ -93,22 +93,22 @@ private extension SingleFaviconDownloader {
 		}
 	}
 
-	func readFromDisk(_ callback: @escaping (RSImage?) -> Void) {
+	func readFromDisk(_ completion: @escaping (RSImage?) -> Void) {
 
 		guard diskStatus != .notOnDisk else {
-			callback(nil)
+			completion(nil)
 			return
 		}
 
 		queue.async {
 
 			if let data = self.diskCache[self.diskKey], !data.isEmpty {
-				RSImage.rs_image(with: data, imageResultBlock: callback)
+				RSImage.rs_image(with: data, imageResultBlock: completion)
 				return
 			}
 
 			DispatchQueue.main.async {
-				callback(nil)
+				completion(nil)
 			}
 		}
 	}
@@ -127,10 +127,10 @@ private extension SingleFaviconDownloader {
 		}
 	}
 
-	func downloadFavicon(_ callback: @escaping (RSImage?) -> Void) {
+	func downloadFavicon(_ completion: @escaping (RSImage?) -> Void) {
 
 		guard let url = URL(string: faviconURL) else {
-			callback(nil)
+			completion(nil)
 			return
 		}
 
@@ -138,7 +138,7 @@ private extension SingleFaviconDownloader {
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
 				self.saveToDisk(data)
-				RSImage.rs_image(with: data, imageResultBlock: callback)
+				RSImage.rs_image(with: data, imageResultBlock: completion)
 				return
 			}
 
@@ -146,7 +146,7 @@ private extension SingleFaviconDownloader {
 				appDelegate.logMessage("Error downloading favicon at \(url): \(error)", type: .warning)
 			}
 
-			callback(nil)
+			completion(nil)
 		}
 	}
 

@@ -23,7 +23,7 @@ struct StarredFeedDelegate: SmartFeedDelegate {
 	let fetchType: FetchType = .starred
 	var smallIcon: IconImage? = AppAssets.starredFeedImage
 
-	func fetchUnreadCount(for account: Account, callback: @escaping (Int) -> Void) {
-		account.fetchUnreadCountForStarredArticles(callback)
+	func fetchUnreadCount(for account: Account, completion: @escaping (Int) -> Void) {
+		account.fetchUnreadCountForStarredArticles(completion)
 	}
 }

@@ -13,7 +13,7 @@ import RSCore
 
 protocol SmartFeedDelegate: FeedIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 	var fetchType: FetchType { get }
-	func fetchUnreadCount(for: Account, callback: @escaping (Int) -> Void)
+	func fetchUnreadCount(for: Account, completion: @escaping (Int) -> Void)
 }
 
 extension SmartFeedDelegate {
@@ -22,15 +22,15 @@ extension SmartFeedDelegate {
 		return AccountManager.shared.fetchArticles(fetchType)
 	}
 
-	func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock) {
-		AccountManager.shared.fetchArticlesAsync(fetchType, callback)
+	func fetchArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+		AccountManager.shared.fetchArticlesAsync(fetchType, completion)
 	}
 
 	func fetchUnreadArticles() -> Set<Article> {
 		return fetchArticles().unreadArticles()
 	}
 
-	func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync{ callback($0.unreadArticles()) }
+	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+		fetchArticlesAsync{ completion($0.unreadArticles()) }
 	}
 }

@@ -127,9 +127,9 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 	
 	// MARK: Scrolling
 
-	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
+	func canScrollDown(_ completion: @escaping (Bool) -> Void) {
 		fetchScrollInfo { (scrollInfo) in
-			callback(scrollInfo?.canScrollDown ?? false)
+			completion(scrollInfo?.canScrollDown ?? false)
 		}
 	}
 
@@ -227,7 +227,7 @@ private extension DetailWebViewController {
 		webView.evaluateJavaScript(render)
 	}
 
-	func fetchScrollInfo(_ callback: @escaping (ScrollInfo?) -> Void) {
+	func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
 		var javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
 		if #available(macOS 10.15, *) {
 			javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: window.pageYOffset}; x"
@@ -235,16 +235,16 @@ private extension DetailWebViewController {
 
 		webView.evaluateJavaScript(javascriptString) { (info, error) in
 			guard let info = info as? [String: Any] else {
-				callback(nil)
+				completion(nil)
 				return
 			}
 			guard let contentHeight = info["contentHeight"] as? CGFloat, let offsetY = info["offsetY"] as? CGFloat else {
-				callback(nil)
+				completion(nil)
 				return
 			}
 
 			let scrollInfo = ScrollInfo(contentHeight: contentHeight, viewHeight: self.webView.frame.height, offsetY: offsetY)
-			callback(scrollInfo)
+			completion(scrollInfo)
 		}
 	}
 

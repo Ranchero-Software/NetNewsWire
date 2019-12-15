@@ -47,8 +47,8 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticles{ self.fetchArticlesForFeedID(webFeedID, withLimits: true, $0) }
 	}
 
-	func fetchArticlesAsync(_ webFeedID: String, _ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync({ self.fetchArticlesForFeedID(webFeedID, withLimits: true, $0) }, callback)
+	func fetchArticlesAsync(_ webFeedID: String, _ completion: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticlesForFeedID(webFeedID, withLimits: true, $0) }, completion)
 	}
 
 	private func fetchArticlesForFeedID(_ webFeedID: String, withLimits: Bool, _ database: FMDatabase) -> Set<Article> {
@@ -59,8 +59,8 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticles{ self.fetchArticles(webFeedIDs, $0) }
 	}
 
-	func fetchArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync({ self.fetchArticles(webFeedIDs, $0) }, callback)
+	func fetchArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticles(webFeedIDs, $0) }, completion)
 	}
 
 	private func fetchArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -80,8 +80,8 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticles{ self.fetchArticles(articleIDs: articleIDs, $0) }
 	}
 
-	func fetchArticlesAsync(articleIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		return fetchArticlesAsync({ self.fetchArticles(articleIDs: articleIDs, $0) }, callback)
+	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		return fetchArticlesAsync({ self.fetchArticles(articleIDs: articleIDs, $0) }, completion)
 	}
 
 	private func fetchArticles(articleIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -100,8 +100,8 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticles{ self.fetchUnreadArticles(webFeedIDs, $0) }
 	}
 
-	func fetchUnreadArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync({ self.fetchUnreadArticles(webFeedIDs, $0) }, callback)
+	func fetchUnreadArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchUnreadArticles(webFeedIDs, $0) }, completion)
 	}
 
 	private func fetchUnreadArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -121,8 +121,8 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticles{ self.fetchArticlesSince(webFeedIDs, cutoffDate, $0) }
 	}
 
-	func fetchArticlesSinceAsync(_ webFeedIDs: Set<String>, _ cutoffDate: Date, _ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync({ self.fetchArticlesSince(webFeedIDs, cutoffDate, $0) }, callback)
+	func fetchArticlesSinceAsync(_ webFeedIDs: Set<String>, _ cutoffDate: Date, _ completion: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticlesSince(webFeedIDs, cutoffDate, $0) }, completion)
 	}
 
 	private func fetchArticlesSince(_ webFeedIDs: Set<String>, _ cutoffDate: Date, _ database: FMDatabase) -> Set<Article> {
@@ -144,8 +144,8 @@ final class ArticlesTable: DatabaseTable {
 		return fetchArticles{ self.fetchStarredArticles(webFeedIDs, $0) }
 	}
 
-	func fetchStarredArticlesAsync(_ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync({ self.fetchStarredArticles(webFeedIDs, $0) }, callback)
+	func fetchStarredArticlesAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchStarredArticles(webFeedIDs, $0) }, completion)
 	}
 
 	private func fetchStarredArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -184,12 +184,12 @@ final class ArticlesTable: DatabaseTable {
 		return articles
 	}
 
-	func fetchArticlesMatchingAsync(_ searchString: String, _ webFeedIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync({ self.fetchArticlesMatching(searchString, webFeedIDs, $0) }, callback)
+	func fetchArticlesMatchingAsync(_ searchString: String, _ webFeedIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticlesMatching(searchString, webFeedIDs, $0) }, completion)
 	}
 
-	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ callback: @escaping ArticleSetBlock) {
-		fetchArticlesAsync({ self.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs, $0) }, callback)
+	func fetchArticlesMatchingWithArticleIDsAsync(_ searchString: String, _ articleIDs: Set<String>, _ completion: @escaping ArticleSetBlock) {
+		fetchArticlesAsync({ self.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs, $0) }, completion)
 	}
 
 	private func fetchArticlesMatching(_ searchString: String, _ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -311,9 +311,9 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchStatuses(_ articleIDs: Set<String>, _ createIfNeeded: Bool, _ callback: @escaping (Set<ArticleStatus>?) -> Void) {
+	func fetchStatuses(_ articleIDs: Set<String>, _ createIfNeeded: Bool, _ completion: @escaping (Set<ArticleStatus>?) -> Void) {
 		guard !queue.isSuspended else {
-			callback(nil)
+			completion(nil)
 			return
 		}
 
@@ -327,7 +327,7 @@ final class ArticlesTable: DatabaseTable {
 			}
 			let statuses = Set(statusesDictionary.values)
 			DispatchQueue.main.async {
-				callback(statuses)
+				completion(statuses)
 			}
 		}
 	}
@@ -357,11 +357,11 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchUnreadCount(_ webFeedIDs: Set<String>, _ since: Date, _ callback: @escaping (Int) -> Void) {
+	func fetchUnreadCount(_ webFeedIDs: Set<String>, _ since: Date, _ completion: @escaping (Int) -> Void) {
 		// Get unread count for today, for instance.
 
 		if webFeedIDs.isEmpty || queue.isSuspended {
-			callback(0)
+			completion(0)
 			return
 		}
 		
@@ -377,7 +377,7 @@ final class ArticlesTable: DatabaseTable {
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
 			DispatchQueue.main.async {
-				callback(unreadCount)
+				completion(unreadCount)
 			}
 		}
 	}
@@ -416,9 +416,9 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchStarredAndUnreadCount(_ webFeedIDs: Set<String>, _ callback: @escaping (Int) -> Void) {
+	func fetchStarredAndUnreadCount(_ webFeedIDs: Set<String>, _ completion: @escaping (Int) -> Void) {
 		if webFeedIDs.isEmpty || queue.isSuspended {
-			callback(0)
+			completion(0)
 			return
 		}
 
@@ -430,19 +430,19 @@ final class ArticlesTable: DatabaseTable {
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
 			DispatchQueue.main.async {
-				callback(unreadCount)
+				completion(unreadCount)
 			}
 		}
 	}
 
 	// MARK: - Statuses
 	
-	func fetchUnreadArticleIDsAsync(_ webFeedIDs: Set<String>, _ callback: @escaping (Set<String>) -> Void) {
-		fetchArticleIDsAsync(.read, false, webFeedIDs, callback)
+	func fetchUnreadArticleIDsAsync(_ webFeedIDs: Set<String>, _ completion: @escaping (Set<String>) -> Void) {
+		fetchArticleIDsAsync(.read, false, webFeedIDs, completion)
 	}
 
-	func fetchStarredArticleIDsAsync(_ webFeedIDs: Set<String>, _ callback: @escaping (Set<String>) -> Void) {
-		fetchArticleIDsAsync(.starred, true, webFeedIDs, callback)
+	func fetchStarredArticleIDsAsync(_ webFeedIDs: Set<String>, _ completion: @escaping (Set<String>) -> Void) {
+		fetchArticleIDsAsync(.starred, true, webFeedIDs, completion)
 	}
 
 	func fetchStarredArticleIDs() -> Set<String> {
@@ -541,15 +541,15 @@ private extension ArticlesTable {
 		return articles
 	}
 
-	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ callback: @escaping ArticleSetBlock) {
+	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ completion: @escaping ArticleSetBlock) {
 		guard !queue.isSuspended else {
-			callback(Set<Article>())
+			completion(Set<Article>())
 			return
 		}
 		queue.runInDatabase { (database) in
 			let articles = fetchMethod(database)
 			DispatchQueue.main.async {
-				callback(articles)
+				completion(articles)
 			}
 		}
 	}
@@ -702,9 +702,9 @@ private extension ArticlesTable {
 		return articlesWithResultSet(resultSet, database)
 	}
 
-	func fetchArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ value: Bool, _ webFeedIDs: Set<String>, _ callback: @escaping (Set<String>) -> Void) {
+	func fetchArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ value: Bool, _ webFeedIDs: Set<String>, _ completion: @escaping (Set<String>) -> Void) {
 		guard !queue.isSuspended && !webFeedIDs.isEmpty else {
-			callback(Set<String>())
+			completion(Set<String>())
 			return
 		}
 		queue.runInDatabase { database in
@@ -720,14 +720,14 @@ private extension ArticlesTable {
 
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
 				DispatchQueue.main.async {
-					callback(Set<String>())
+					completion(Set<String>())
 				}
 				return
 			}
 
 			let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
 			DispatchQueue.main.async {
-				callback(articleIDs)
+				completion(articleIDs)
 			}
 		}
 	}

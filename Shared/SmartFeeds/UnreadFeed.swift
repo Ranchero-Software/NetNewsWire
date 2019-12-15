@@ -65,15 +65,15 @@ extension UnreadFeed: ArticleFetcher {
 		return fetchUnreadArticles()
 	}
 
-	func fetchArticlesAsync(_ callback: @escaping ArticleSetBlock) {
-		fetchUnreadArticlesAsync(callback)
+	func fetchArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+		fetchUnreadArticlesAsync(completion)
 	}
 
 	func fetchUnreadArticles() -> Set<Article> {
 		return AccountManager.shared.fetchArticles(fetchType)
 	}
 
-	func fetchUnreadArticlesAsync(_ callback: @escaping ArticleSetBlock) {
-		AccountManager.shared.fetchArticlesAsync(fetchType, callback)
+	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+		AccountManager.shared.fetchArticlesAsync(fetchType, completion)
 	}
 }
