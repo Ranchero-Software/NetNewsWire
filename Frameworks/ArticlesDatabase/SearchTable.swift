@@ -74,11 +74,13 @@ final class SearchTable: DatabaseTable {
 	}
 
 	func ensureIndexedArticles(for articleIDs: Set<String>) {
-		guard !queue.isSuspended && !articleIDs.isEmpty else {
+		guard !articleIDs.isEmpty else {
 			return
 		}
-		queue.runInTransaction { (database) in
-			self.ensureIndexedArticles(articleIDs, database)
+		queue.runInTransaction { databaseResult in
+			if let database = databaseResult.database {
+				self.ensureIndexedArticles(articleIDs, database)
+			}
 		}
 	}
 

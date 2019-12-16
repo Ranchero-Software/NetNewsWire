@@ -87,28 +87,34 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: - Fetching
 
-	func fetchUnreadArticleIDs() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses where read=0 and userDeleted=0;")
+	func fetchUnreadArticleIDs() throws -> Set<String> {
+		return try fetchArticleIDs("select articleID from statuses where read=0 and userDeleted=0;")
 	}
 
-	func fetchStarredArticleIDs() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses where starred=1 and userDeleted=0;")
+	func fetchStarredArticleIDs() throws -> Set<String> {
+		return try fetchArticleIDs("select articleID from statuses where starred=1 and userDeleted=0;")
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);")
+	func fetchArticleIDsForStatusesWithoutArticles() throws -> Set<String> {
+		return try fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);")
 	}
 	
-	func fetchArticleIDs(_ sql: String) -> Set<String> {
+	func fetchArticleIDs(_ sql: String) throws -> Set<String> {
+		var error: ArticlesDatabaseError?
 		var articleIDs = Set<String>()
-		guard !queue.isSuspended else {
-			return articleIDs
-		}
-		queue.runInDatabaseSync { (database) in
-			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-				return
+		queue.runInDatabaseSync { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
+					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
+				}
+			case .failure(let databaseQueueError):
+				error = databaseError(with: databaseQueueError)
 			}
-			articleIDs = resultSet.mapToSet(self.articleIDWithRow)
+		}
+
+		if let error = error {
+			throw(error)
 		}
 		return articleIDs
 	}
