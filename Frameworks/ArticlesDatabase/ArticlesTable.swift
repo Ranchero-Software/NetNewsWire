@@ -295,26 +295,21 @@ final class ArticlesTable: DatabaseTable {
 			return
 		}
 
-		queue.runInDatabase { databaseResult in
+		fetchAllUnreadCounts { (unreadCountsResult) in
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				var unreadCountDictionary = UnreadCountDictionary()
+			func createUnreadCountDictionary(_ unreadCountDictionary: UnreadCountDictionary) -> UnreadCountDictionary {
+				var d = UnreadCountDictionary()
 				for webFeedID in webFeedIDs {
-					unreadCountDictionary[webFeedID] = self.fetchUnreadCount(webFeedID, database)
+					d[webFeedID] = unreadCountDictionary[webFeedID] ?? 0
 				}
-
-				DispatchQueue.main.async {
-					completion(.success(unreadCountDictionary))
-				}
+				return d
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
+			switch unreadCountsResult {
+				case .success(let unreadCountDictionary):
+					completion(.success(createUnreadCountDictionary(unreadCountDictionary)))
+				case .failure(let databaseError):
 					completion(.failure(databaseError))
-				}
 			}
 		}
 	}
