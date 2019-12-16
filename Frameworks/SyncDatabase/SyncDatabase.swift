@@ -10,6 +10,9 @@ import Foundation
 import RSCore
 import RSDatabase
 
+public typealias SyncStatusesResult = Result<Array<SyncStatus>, DatabaseError>
+public typealias SyncStatusesCompletionBlock = (SyncStatusesResult) -> Void
+
 public struct SyncDatabase {
 
 	private let syncStatusTable: SyncStatusTable
@@ -30,8 +33,8 @@ public struct SyncDatabase {
 		syncStatusTable.insertStatuses(statuses, completion: completion)
 	}
 	
-	public func selectForProcessing() throws -> [SyncStatus] {
-		return try syncStatusTable.selectForProcessing()
+	public func selectForProcessing(completion: @escaping SyncStatusesCompletionBlock) {
+		return syncStatusTable.selectForProcessing(completion)
 	}
 
 	public func selectPendingCount(completion: @escaping DatabaseIntCompletionBlock) {

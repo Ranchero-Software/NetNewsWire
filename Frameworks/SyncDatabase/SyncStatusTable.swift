@@ -20,11 +20,10 @@ struct SyncStatusTable: DatabaseTable {
 		self.queue = queue
 	}
 
-	func selectForProcessing() throws -> [SyncStatus] {
-		var statuses: Set<SyncStatus>? = nil
-		var error: DatabaseError?
-
-		queue.runInTransactionSync { databaseResult in
+	func selectForProcessing(_ completion: @escaping SyncStatusesCompletionBlock) {
+		queue.runInTransaction { databaseResult in
+			var statuses = Set<SyncStatus>()
+			var error: DatabaseError?
 
 			func makeDatabaseCall(_ database: FMDatabase) {
 				let updateSQL = "update syncStatus set selected = true"
@@ -42,12 +41,16 @@ struct SyncStatusTable: DatabaseTable {
 			case .failure(let databaseError):
 				error = databaseError
 			}
-		}
 
-		if let error = error {
-			throw(error)
+			DispatchQueue.main.async {
+				if let error = error {
+					completion(.failure(error))
+				}
+				else {
+					completion(.success(Array(statuses)))
+				}
+			}
 		}
-		return statuses != nil ? Array(statuses!) : [SyncStatus]()
 	}
 	
 	func selectPendingCount(_ completion: @escaping DatabaseIntCompletionBlock) {
