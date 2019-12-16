@@ -524,13 +524,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
 		}
 		database.insertStatuses(syncStatuses)
-		
-		if database.selectPendingCount() > 100 {
-			sendArticleStatus(for: account) { _ in }
+
+		database.selectPendingCount { result in
+			if let count = try? result.get(), count > 100 {
+				self.sendArticleStatus(for: account) { _ in }
+			}
 		}
-		
-		return account.update(articles, statusKey: statusKey, flag: flag)
-		
+
+		return account.update(articles, statusKey: statusKey, flag: flag)		
 	}
 	
 	func accountDidInitialize(_ account: Account) {

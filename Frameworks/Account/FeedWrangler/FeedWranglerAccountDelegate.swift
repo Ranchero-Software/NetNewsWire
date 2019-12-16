@@ -412,9 +412,9 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		let syncStatuses = articles.map { SyncStatus(articleID: $0.articleID, key: statusKey, flag: flag)}
 		database.insertStatuses(syncStatuses)
 		
-		if database.selectPendingCount() > 0 {
-			sendArticleStatus(for: account) { _ in
-					// do it in the background
+		database.selectPendingCount { result in
+			if let count = try? result.get(), count > 0 {
+				self.sendArticleStatus(for: account) { _ in }
 			}
 		}
 		

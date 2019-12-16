@@ -33,11 +33,11 @@ public struct SyncDatabase {
 	public func selectForProcessing() throws -> [SyncStatus] {
 		return try syncStatusTable.selectForProcessing()
 	}
-	
-	public func selectPendingCount() throws -> Int {
-		return try syncStatusTable.selectPendingCount()
+
+	public func selectPendingCount(completion: @escaping DatabaseIntCompletionBlock) {
+		syncStatusTable.selectPendingCount(completion)
 	}
-	
+
 	public func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.resetSelectedForProcessing(articleIDs, completion: completion)
 	}

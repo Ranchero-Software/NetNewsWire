@@ -484,11 +484,13 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		database.insertStatuses(syncStatuses)
 		os_log(.debug, log: log, "Marking %@ as %@.", articles.map { $0.title }, syncStatuses)
-		
-		if database.selectPendingCount() > 100 {
-			sendArticleStatus(for: account) { _ in }
+
+		database.selectPendingCount { result in
+			if let count = try? result.get(), count > 100 {
+				self.sendArticleStatus(for: account) { _ in }
+			}
 		}
-		
+
 		return account.update(articles, statusKey: statusKey, flag: flag)
 	}
 	

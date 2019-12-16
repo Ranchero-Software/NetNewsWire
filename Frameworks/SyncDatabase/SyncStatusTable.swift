@@ -50,16 +50,15 @@ struct SyncStatusTable: DatabaseTable {
 		return statuses != nil ? Array(statuses!) : [SyncStatus]()
 	}
 	
-	func selectPendingCount() throws -> Int {
-		var count: Int = 0
-		var error: DatabaseError?
-
-		queue.runInDatabaseSync { databaseResult in
+	func selectPendingCount(_ completion: @escaping DatabaseIntCompletionBlock) {
+		queue.runInDatabase { databaseResult in
+			var count: Int = 0
+			var error: DatabaseError?
 
 			func makeDatabaseCall(_ database: FMDatabase) {
 				let sql = "select count(*) from syncStatus"
 				if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
-					count = numberWithCountResultSet(resultSet)
+					count = self.numberWithCountResultSet(resultSet)
 				}
 			}
 
@@ -69,12 +68,16 @@ struct SyncStatusTable: DatabaseTable {
 			case .failure(let databaseError):
 				error = databaseError
 			}
-		}
 
-		if let error = error {
-			throw(error)
+			DispatchQueue.main.async {
+				if let error = error {
+					completion(.failure(error))
+				}
+				else {
+					completion(.success(count))
+				}
+			}
 		}
-		return count
 	}
 
 	func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
