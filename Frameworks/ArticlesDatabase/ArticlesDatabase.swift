@@ -17,17 +17,11 @@ import Articles
 
 // Main thread only.
 
-/// Sync methods may throw this error. Async methods use a result type which will include
-/// this error when the database is suspended and therefore not available.
-public enum ArticlesDatabaseError: Error {
-	case databaseIsSuspended
-}
-
 public typealias UnreadCountDictionary = [String: Int] // webFeedID: unreadCount
-public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary, ArticlesDatabaseError>
+public typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary,DatabaseError>
 public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCompletionResult) -> Void
 
-public typealias SingleUnreadCountResult = Result<Int, ArticlesDatabaseError>
+public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
 public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) -> Void
 
 public struct NewAndUpdatedArticles {
@@ -35,18 +29,16 @@ public struct NewAndUpdatedArticles {
 	let updatedArticles: Set<Article>?
 }
 
-public typealias UpdateArticlesResult = Result<NewAndUpdatedArticles, ArticlesDatabaseError>
+public typealias UpdateArticlesResult = Result<NewAndUpdatedArticles, DatabaseError>
 public typealias UpdateArticlesCompletionBlock = (UpdateArticlesResult) -> Void
 
-public typealias ArticleSetResult = Result<Set<Article>, ArticlesDatabaseError>
+public typealias ArticleSetResult = Result<Set<Article>, DatabaseError>
 public typealias ArticleSetResultBlock = (ArticleSetResult) -> Void
 
-public typealias DatabaseCompletionBlock = (ArticlesDatabaseError?) -> Void
-
-public typealias ArticleIDsResult = Result<Set<String>, ArticlesDatabaseError>
+public typealias ArticleIDsResult = Result<Set<String>, DatabaseError>
 public typealias ArticleIDsCompletionBlock = (ArticleIDsResult) -> Void
 
-public typealias ArticleStatusesResult = Result<Set<ArticleStatus>, ArticlesDatabaseError>
+public typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseError>
 public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 
 public final class ArticlesDatabase {
@@ -228,13 +220,6 @@ public final class ArticlesDatabase {
 	/// Calls the various clean-up functions.
 	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
 		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
-	}
-}
-
-func databaseError(with databaseQueueError: DatabaseQueueError) -> ArticlesDatabaseError {
-	switch databaseQueueError {
-	case .isSuspended:
-		return .databaseIsSuspended
 	}
 }
 

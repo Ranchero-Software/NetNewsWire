@@ -100,7 +100,7 @@ final class StatusesTable: DatabaseTable {
 	}
 	
 	func fetchArticleIDs(_ sql: String) throws -> Set<String> {
-		var error: ArticlesDatabaseError?
+		var error: DatabaseError?
 		var articleIDs = Set<String>()
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
@@ -108,8 +108,8 @@ final class StatusesTable: DatabaseTable {
 				if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
 					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
 				}
-			case .failure(let databaseQueueError):
-				error = databaseError(with: databaseQueueError)
+			case .failure(let databaseError):
+				error = databaseError
 			}
 		}
 

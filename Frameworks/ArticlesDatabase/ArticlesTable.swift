@@ -103,13 +103,13 @@ final class ArticlesTable: DatabaseTable {
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
 		var articles: Set<Article> = Set<Article>()
-		var error: ArticlesDatabaseError? = nil
+		var error: DatabaseError? = nil
 		queue.runInDatabaseSync { (databaseResult) in
 			switch databaseResult {
 			case .success(let database):
 				articles = self.fetchArticlesMatching(searchString, database)
-			case .failure(let databaseQueueError):
-				error = databaseError(with: databaseQueueError)
+			case .failure(let databaseError):
+				error = databaseError
 			}
 		}
 		if let error = error {
@@ -190,7 +190,7 @@ final class ArticlesTable: DatabaseTable {
 		self.queue.runInTransaction { (databaseResult) in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion(.failure(databaseError(with: databaseResult.error!)))
+					completion(.failure(databaseResult.error!))
 				}
 				return
 			}
@@ -233,7 +233,7 @@ final class ArticlesTable: DatabaseTable {
 		queue.runInTransaction { databaseResult in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion?(databaseError(with: databaseResult.error!))
+					completion?(databaseResult.error!)
 				}
 				return
 			}
@@ -253,7 +253,7 @@ final class ArticlesTable: DatabaseTable {
 		queue.runInTransaction { databaseResult in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion(.failure(databaseError(with: databaseResult.error!)))
+					completion(.failure(databaseResult.error!))
 				}
 				return
 			}
@@ -283,7 +283,7 @@ final class ArticlesTable: DatabaseTable {
 		queue.runInDatabase { databaseResult in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion(.failure(databaseError(with: databaseResult.error!)))
+					completion(.failure(databaseResult.error!))
 				}
 				return
 			}
@@ -309,7 +309,7 @@ final class ArticlesTable: DatabaseTable {
 		queue.runInDatabase { databaseResult in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion(.failure(databaseError(with: databaseResult.error!)))
+					completion(.failure(databaseResult.error!))
 				}
 				return
 			}
@@ -337,7 +337,7 @@ final class ArticlesTable: DatabaseTable {
 		queue.runInDatabase { databaseResult in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion(.failure(databaseError(with: databaseResult.error!)))
+					completion(.failure(databaseResult.error!))
 				}
 				return
 			}
@@ -374,7 +374,7 @@ final class ArticlesTable: DatabaseTable {
 		queue.runInDatabase { databaseResult in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion(.failure(databaseError(with: databaseResult.error!)))
+					completion(.failure(databaseResult.error!))
 				}
 				return
 			}
@@ -411,13 +411,13 @@ final class ArticlesTable: DatabaseTable {
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) throws -> Set<ArticleStatus>? {
 		var statuses: Set<ArticleStatus>?
-		var error: ArticlesDatabaseError?
+		var error: DatabaseError?
 		self.queue.runInTransactionSync { databaseResult in
 			switch databaseResult {
 			case .success(let database):
 				statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
-			case .failure(let databaseQueueError):
-				error = databaseError(with: databaseQueueError)
+			case .failure(let databaseError):
+				error = databaseError
 			}
 		}
 
@@ -496,13 +496,13 @@ private extension ArticlesTable {
 
 	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) throws -> Set<Article> {
 		var articles = Set<Article>()
-		var error: ArticlesDatabaseError? = nil
+		var error: DatabaseError? = nil
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
 			case .success(let database):
 				articles = fetchMethod(database)
-			case .failure(let databaseQueueError):
-				error = databaseError(with: databaseQueueError)
+			case .failure(let databaseError):
+				error = databaseError
 			}
 		}
 		if let error = error {
@@ -515,7 +515,7 @@ private extension ArticlesTable {
 		queue.runInDatabase { databaseResult in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion(.failure(databaseError(with: databaseResult.error!)))
+					completion(.failure(databaseResult.error!))
 				}
 				return
 			}
@@ -684,7 +684,7 @@ private extension ArticlesTable {
 		queue.runInDatabase { databaseResult in
 			guard let database = databaseResult.database else {
 				DispatchQueue.main.async {
-					completion(.failure(databaseError(with: databaseResult.error!)))
+					completion(.failure(databaseResult.error!))
 				}
 				return
 			}
