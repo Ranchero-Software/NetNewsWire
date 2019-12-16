@@ -12,17 +12,12 @@ import RSDatabase
 
 public struct SyncDatabase {
 
-	/// When SyncDatabase is suspended, database calls will crash the app.
-	public var isSuspended: Bool {
-		return queue.isSuspended
-	}
-
 	private let syncStatusTable: SyncStatusTable
 	private let queue: DatabaseQueue
 
 	public init(databaseFilePath: String) {
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
-		queue.runCreateStatements(SyncDatabase.tableCreationStatements)
+		try! queue.runCreateStatements(SyncDatabase.tableCreationStatements)
 		queue.vacuumIfNeeded(daysBetweenVacuums: 11)
 		self.queue = queue
 
