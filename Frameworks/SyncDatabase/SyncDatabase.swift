@@ -26,23 +26,23 @@ public struct SyncDatabase {
 
 	// MARK: - API
 
-	public func insertStatuses(_ statuses: [SyncStatus], completion: VoidCompletionBlock? = nil) {
+	public func insertStatuses(_ statuses: [SyncStatus], completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.insertStatuses(statuses, completion: completion)
 	}
 	
-	public func selectForProcessing() -> [SyncStatus] {
-		return syncStatusTable.selectForProcessing()
+	public func selectForProcessing() throws -> [SyncStatus] {
+		return try syncStatusTable.selectForProcessing()
 	}
 	
-	public func selectPendingCount() -> Int {
-		return syncStatusTable.selectPendingCount()
+	public func selectPendingCount() throws -> Int {
+		return try syncStatusTable.selectPendingCount()
 	}
 	
-	public func resetSelectedForProcessing(_ articleIDs: [String], completion: VoidCompletionBlock? = nil) {
+	public func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.resetSelectedForProcessing(articleIDs, completion: completion)
 	}
 	
-    public func deleteSelectedForProcessing(_ articleIDs: [String], completion: VoidCompletionBlock? = nil) {
+    public func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.deleteSelectedForProcessing(articleIDs, completion: completion)
 	}
 
