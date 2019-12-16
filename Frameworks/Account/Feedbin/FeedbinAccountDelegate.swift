@@ -109,57 +109,67 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
 		os_log(.debug, log: log, "Sending article statuses...")
-		
-		let syncStatuses = database.selectForProcessing()
-		let createUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == false }
-		let deleteUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == true }
-		let createStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == true }
-		let deleteStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == false }
 
-		let group = DispatchGroup()
-		var errorOccurred = false
+		database.selectForProcessing { result in
 
-		group.enter()
-		sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries) { result in
-			group.leave()
-			if case .failure = result {
-				errorOccurred = true
+			func processStatuses(_ syncStatuses: [SyncStatus]) {
+				let createUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == false }
+				let deleteUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == true }
+				let createStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == true }
+				let deleteStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == false }
+
+				let group = DispatchGroup()
+				var errorOccurred = false
+
+				group.enter()
+				self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+
+				group.enter()
+				self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+
+				group.enter()
+				self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+
+				group.enter()
+				self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+
+				group.notify(queue: DispatchQueue.main) {
+					os_log(.debug, log: self.log, "Done sending article statuses.")
+					if errorOccurred {
+						completion(.failure(FeedbinAccountDelegateError.unknown))
+					} else {
+						completion(.success(()))
+					}
+				}
+			}
+
+			switch result {
+			case .success(let syncStatuses):
+				processStatuses(syncStatuses)
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
 			}
 		}
-		
-		group.enter()
-		sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries) { result in
-			group.leave()
-			if case .failure = result {
-				errorOccurred = true
-			}
-		}
-		
-		group.enter()
-		sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries) { result in
-			group.leave()
-			if case .failure = result {
-				errorOccurred = true
-			}
-		}
-		
-		group.enter()
-		sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries) { result in
-			group.leave()
-			if case .failure = result {
-				errorOccurred = true
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done sending article statuses.")
-			if errorOccurred {
-				completion(.failure(FeedbinAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
-			}
-		}
-		
 	}
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -531,7 +541,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			}
 		}
 
-		return account.update(articles, statusKey: statusKey, flag: flag)		
+		return account.update(articles, statusKey: statusKey, flag: flag)
 	}
 	
 	func accountDidInitialize(_ account: Account) {

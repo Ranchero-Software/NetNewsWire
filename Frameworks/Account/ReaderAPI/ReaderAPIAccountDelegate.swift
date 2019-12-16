@@ -113,42 +113,51 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-
 		os_log(.debug, log: log, "Sending article statuses...")
-		
-		let syncStatuses = database.selectForProcessing()
-		let createUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == false }
-		let deleteUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == true }
-		let createStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == true }
-		let deleteStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == false }
 
-		let group = DispatchGroup()
-		
-		group.enter()
-		sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries) {
-			group.leave()
+		database.selectForProcessing { result in
+
+			func processStatuses(_ syncStatuses: [SyncStatus]) {
+				let createUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == false }
+				let deleteUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == true }
+				let createStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == true }
+				let deleteStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == false }
+
+				let group = DispatchGroup()
+
+				group.enter()
+				self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) {
+					group.leave()
+				}
+
+				group.enter()
+				self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) {
+					group.leave()
+				}
+
+				group.enter()
+				self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) {
+					group.leave()
+				}
+
+				group.enter()
+				self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) {
+					group.leave()
+				}
+
+				group.notify(queue: DispatchQueue.main) {
+					os_log(.debug, log: self.log, "Done sending article statuses.")
+					completion(.success(()))
+				}
+			}
+
+			switch result {
+			case .success(let syncStatuses):
+				processStatuses(syncStatuses)
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
+			}
 		}
-		
-		group.enter()
-		sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries) {
-			group.leave()
-		}
-		
-		group.enter()
-		sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries) {
-			group.leave()
-		}
-		
-		group.enter()
-		sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries) {
-			group.leave()
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done sending article statuses.")
-			completion(.success(()))
-		}
-		
 	}
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {

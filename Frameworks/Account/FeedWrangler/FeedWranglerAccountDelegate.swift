@@ -195,24 +195,34 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func sendArticleStatus(for account: Account, completion: @escaping VoidResultCompletionBlock) {
 		os_log(.debug, log: log, "Sending article status...")
-		
-		let syncStatuses = database.selectForProcessing()
-		let articleStatuses = Dictionary(grouping: syncStatuses, by: { $0.articleID })
-		let group = DispatchGroup()
-		
-		articleStatuses.forEach { articleID, statuses in
-			group.enter()
-			caller.updateArticleStatus(articleID, statuses) {
-				group.leave()
+
+		database.selectForProcessing { result in
+
+			func processStatuses(_ syncStatuses: [SyncStatus]) {
+				let articleStatuses = Dictionary(grouping: syncStatuses, by: { $0.articleID })
+				let group = DispatchGroup()
+
+				articleStatuses.forEach { articleID, statuses in
+					group.enter()
+					self.caller.updateArticleStatus(articleID, statuses) {
+						group.leave()
+					}
+				}
+
+				group.notify(queue: DispatchQueue.main) {
+					os_log(.debug, log: self.log, "Done sending article statuses.")
+					completion(.success(()))
+				}
 			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done sending article statuses.")
-			completion(.success(()))
+
+			switch result {
+			case .success(let syncStatuses):
+				processStatuses(syncStatuses)
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
+			}
 		}
 	}
 	
