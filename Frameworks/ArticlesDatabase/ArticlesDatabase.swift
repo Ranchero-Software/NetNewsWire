@@ -36,8 +36,9 @@ public final class ArticlesDatabase {
 		self.queue = queue
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue)
 
-		queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
-		queue.runInDatabase { database in
+		try! queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
+		queue.runInDatabase { databaseResult in
+			let database = databaseResult.database!
 			if !self.articlesTable.containsColumn("searchRowID", in: database) {
 				database.executeStatements("ALTER TABLE articles add column searchRowID INTEGER;")
 			}
@@ -45,7 +46,7 @@ public final class ArticlesDatabase {
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
 		}
 
-		queue.vacuumIfNeeded(daysBetweenVacuums: 9)
+//		queue.vacuumIfNeeded(daysBetweenVacuums: 9) // TODO: restore this after we do database cleanups.
 		DispatchQueue.main.async {
 			self.articlesTable.indexUnindexedArticles()
 		}
