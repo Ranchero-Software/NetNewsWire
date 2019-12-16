@@ -601,17 +601,21 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		structureDidChange()
 	}
 	
-	public func updateUnreadCounts(for webFeeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
+	public func updateUnreadCounts(for webFeeds: Set<WebFeed>, completion: VoidCompletionBlock? = nil) {
 		if webFeeds.isEmpty {
+			completion?()
 			return
 		}
 		
-		database.fetchUnreadCounts(for: webFeeds.webFeedIDs()) { (unreadCountDictionary) in
-			for webFeed in webFeeds {
-				if let unreadCount = unreadCountDictionary[webFeed.webFeedID] {
-					webFeed.unreadCount = unreadCount
+		database.fetchUnreadCounts(for: webFeeds.webFeedIDs()) { unreadCountDictionaryResult in
+			if let unreadCountDictionary = try? unreadCountDictionaryResult.get() {
+				for webFeed in webFeeds {
+					if let unreadCount = unreadCountDictionary[webFeed.webFeedID] {
+						webFeed.unreadCount = unreadCount
+					}
 				}
 			}
+
 			completion?()
 		}
 	}
