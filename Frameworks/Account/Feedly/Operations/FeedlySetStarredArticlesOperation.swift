@@ -31,11 +31,21 @@ final class FeedlySetStarredArticlesOperation: FeedlyOperation {
 			didFinish()
 			return
 		}
-		
-		account.fetchStarredArticleIDs(didFetchStarredArticleIDs(_:))
+
+		account.fetchStarredArticleIDs { (articleIDsResult) in
+			if let localStarredArticleIDs = try? articleIDsResult.get() {
+				self.didFetchStarredArticleIDs(localStarredArticleIDs)
+			}
+			else {
+				self.didFinish()
+			}
+		}
 	}
-	
-	private func didFetchStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
+}
+
+private extension FeedlySetStarredArticlesOperation {
+
+	func didFetchStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
 		guard !isCancelled else {
 			didFinish()
 			return

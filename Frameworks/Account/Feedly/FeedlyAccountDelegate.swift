@@ -476,7 +476,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) throws -> Set<Article>? {
 		
 		let syncStatuses = articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
@@ -491,7 +491,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 
-		return account.update(articles, statusKey: statusKey, flag: flag)
+		return try account.update(articles, statusKey: statusKey, flag: flag)
 	}
 	
 	func accountDidInitialize(_ account: Account) {

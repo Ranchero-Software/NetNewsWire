@@ -17,7 +17,7 @@ public enum LocalAccountDelegateError: String, Error {
 }
 
 final class LocalAccountDelegate: AccountDelegate {
-	
+
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
 	
@@ -187,7 +187,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		return account.update(articles, statusKey: statusKey, flag: flag)
+		return try account.update(articles, statusKey: statusKey, flag: flag)
 	}
 
 	func accountDidInitialize(_ account: Account) {

@@ -53,7 +53,7 @@ protocol AccountDelegate {
 	/// Suspend all network activity
 	func suspendNetwork()
 	
-	/// Suspend the SQLLite databases
+	/// Suspend the SQLite databases
 	func suspendDatabase()
 	
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
