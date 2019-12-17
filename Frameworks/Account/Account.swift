@@ -64,6 +64,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		public static let updatedArticles = "updatedArticles" // AccountDidDownloadArticles
 		public static let statuses = "statuses" // StatusesDidChange
 		public static let articles = "articles" // StatusesDidChange
+		public static let articleIDs = "articleIDs" // StatusesDidChange
 		public static let webFeeds = "webFeeds" // AccountDidDownloadArticles, StatusesDidChange
 	}
 
@@ -776,16 +777,41 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completion: completion)
 	}
 
-	/// Update statuses — set a key and value. This updates the database, and sends a .StatusesDidChange notification.
-	func update(statuses: Set<ArticleStatus>, statusKey: ArticleStatus.Key, flag: Bool) {
-		// TODO: https://github.com/brentsimmons/NetNewsWire/issues/1420
+	/// Mark articleIDs statuses based on statusKey and flag.
+	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {
+		guard !articleIDs.isEmpty else {
+			completion?(nil)
+			return
+		}
+		database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { error in
+			if let error = error {
+				completion?(error)
+				return
+			}
+			self.noteStatusesForArticleIDsDidChange(articleIDs)
+			completion?(nil)
+		}
 	}
 
-	/// Update statuses specified by articleIDs — set a key and value.
-	/// This updates the database, and sends a .StatusesDidChange notification.
-	/// Any statuses that don’t exist will be automatically created.
-	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {
-		// TODO
+	/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+	func markAsRead(_ articleIDs: Set<String>) {
+		mark(articleIDs: articleIDs, statusKey: .read, flag: true)
+	}
+
+	/// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+	func markAsUnread(_ articleIDs: Set<String>) {
+		mark(articleIDs: articleIDs, statusKey: .read, flag: false)
+	}
+
+	/// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+	func markAsStarred(_ articleIDs: Set<String>) {
+		mark(articleIDs: articleIDs, statusKey: .starred, flag: true)
+	}
+
+	/// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
+	func markAsUnstarred(_ articleIDs: Set<String>) {
+		mark(articleIDs: articleIDs, statusKey: .starred, flag: false)
 	}
 
 	/// Fetch statuses for the specified articleIDs. The completion handler will get nil if the app is suspended.
@@ -1158,13 +1184,19 @@ private extension Account {
     func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
 		let feeds = Set(articles.compactMap { $0.webFeed })
 		let statuses = Set(articles.map { $0.status })
-        
+		let articleIDs = Set(articles.map { $0.articleID })
+
         // .UnreadCountDidChange notification will get sent to Folder and Account objects,
         // which will update their own unread counts.
         updateUnreadCounts(for: feeds)
         
-        NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.webFeeds: feeds])
+		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.articleIDs: articleIDs, UserInfoKey.webFeeds: feeds])
     }
+
+	func noteStatusesForArticleIDsDidChange(_ articleIDs: Set<String>) {
+		fetchAllUnreadCounts()
+		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.articleIDs: articleIDs])
+	}
 
 	func fetchAllUnreadCounts() {
 		fetchingAllUnreadCounts = true

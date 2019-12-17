@@ -287,12 +287,12 @@ private extension ActivityManager {
 	static func identifers(for feed: WebFeed) -> [String] {
 		var ids = [String]()
 		ids.append(identifer(for: feed))
-		
-		for article in feed.fetchArticles() {
-			ids.append(identifer(for: article))
+		if let articles = try? feed.fetchArticles() {
+			for article in articles {
+				ids.append(identifer(for: article))
+			}
 		}
-		
+
 		return ids
 	}
-	
 }

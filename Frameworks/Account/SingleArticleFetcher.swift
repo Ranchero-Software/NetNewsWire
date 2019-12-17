@@ -8,6 +8,7 @@
 
 import Foundation
 import Articles
+import ArticlesDatabase
 
 public struct SingleArticleFetcher: ArticleFetcher {
 	
@@ -19,19 +20,19 @@ public struct SingleArticleFetcher: ArticleFetcher {
 		self.articleID = articleID
 	}
 	
-	public func fetchArticles() -> Set<Article> {
-		return account.fetchArticles(.articleIDs(Set([articleID])))
+	public func fetchArticles() throws -> Set<Article> {
+		return try account.fetchArticles(.articleIDs(Set([articleID])))
 	}
 	
-	public func fetchArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+	public func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		return account.fetchArticlesAsync(.articleIDs(Set([articleID])), completion)
 	}
 	
-	public func fetchUnreadArticles() -> Set<Article> {
-		return account.fetchArticles(.articleIDs(Set([articleID])))
+	public func fetchUnreadArticles() throws -> Set<Article> {
+		return try account.fetchArticles(.articleIDs(Set([articleID])))
 	}
 	
-	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		return account.fetchArticlesAsync(.articleIDs(Set([articleID])), completion)
 	}
 	

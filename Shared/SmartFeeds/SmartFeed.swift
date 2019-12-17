@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import Articles
+import ArticlesDatabase
 import Account
 
 final class SmartFeed: PseudoFeed {
@@ -80,19 +81,19 @@ final class SmartFeed: PseudoFeed {
 
 extension SmartFeed: ArticleFetcher {
 
-	func fetchArticles() -> Set<Article> {
-		return delegate.fetchArticles()
+	func fetchArticles() throws -> Set<Article> {
+		return try delegate.fetchArticles()
 	}
 
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		delegate.fetchArticlesAsync(completion)
 	}
 
-	func fetchUnreadArticles() -> Set<Article> {
-		return delegate.fetchUnreadArticles()
+	func fetchUnreadArticles() throws -> Set<Article> {
+		return try delegate.fetchUnreadArticles()
 	}
 
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		delegate.fetchUnreadArticlesAsync(completion)
 	}
 }
@@ -104,7 +105,10 @@ private extension SmartFeed {
 	}
 
 	func fetchUnreadCount(for account: Account) {
-		delegate.fetchUnreadCount(for: account) { (accountUnreadCount) in
+		delegate.fetchUnreadCount(for: account) { singleUnreadCountResult in
+			guard let accountUnreadCount = try? singleUnreadCountResult.get() else {
+				return
+			}
 			self.unreadCounts[account.accountID] = accountUnreadCount
 			self.updateUnreadCount()
 		}

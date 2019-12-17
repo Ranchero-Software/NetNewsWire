@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import Articles
+import ArticlesDatabase
 import Account
 
 // Main thread only.
@@ -23,7 +24,7 @@ struct StarredFeedDelegate: SmartFeedDelegate {
 	let fetchType: FetchType = .starred
 	var smallIcon: IconImage? = AppAssets.starredFeedImage
 
-	func fetchUnreadCount(for account: Account, completion: @escaping (Int) -> Void) {
+	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
 		account.fetchUnreadCountForStarredArticles(completion)
 	}
 }

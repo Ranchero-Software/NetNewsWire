@@ -165,7 +165,7 @@ class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(articles)
     var articles:NSArray {
-        let feedArticles = webFeed.fetchArticles()
+        let feedArticles = (try? webFeed.fetchArticles()) ?? Set<Article>()
         // the articles are a set, use the sorting algorithm from the viewer
         let sortedArticles = feedArticles.sorted(by:{
             return $0.logicalDatePublished > $1.logicalDatePublished
@@ -175,7 +175,7 @@ class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(valueInArticlesWithUniqueID:)
     func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
-        let articles = webFeed.fetchArticles()
+        let articles = (try? webFeed.fetchArticles()) ?? Set<Article>()
         guard let article = articles.first(where:{$0.uniqueID == id}) else { return nil }
         return ScriptableArticle(article, container:self)
     }

@@ -14,7 +14,7 @@ import SyncDatabase
 import os.log
 
 final class FeedlyAccountDelegate: AccountDelegate {
-	
+
 	/// Feedly has a sandbox API and a production API.
 	/// This property is referred to when clients need to know which environment it should be pointing to.
 	/// The value of this proptery must match any `OAuthAuthorizationClient` used.
@@ -476,7 +476,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) throws -> Set<Article>? {
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
 		
 		let syncStatuses = articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
@@ -491,7 +491,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 		}
 
-		return try account.update(articles, statusKey: statusKey, flag: flag)
+		return try? account.update(articles, statusKey: statusKey, flag: flag)
 	}
 	
 	func accountDidInitialize(_ account: Account) {

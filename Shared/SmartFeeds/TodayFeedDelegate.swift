@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import Articles
+import ArticlesDatabase
 import Account
 
 struct TodayFeedDelegate: SmartFeedDelegate {
@@ -21,7 +22,7 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 	let fetchType = FetchType.today
 	var smallIcon: IconImage? = AppAssets.todayFeedImage
 	
-	func fetchUnreadCount(for account: Account, completion: @escaping (Int) -> Void) {
+	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
 		account.fetchUnreadCountForToday(completion)
 	}
 }

@@ -457,6 +457,18 @@ final class ArticlesTable: DatabaseTable {
 		return statuses
 	}
 
+	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping DatabaseCompletionBlock) {
+		queue.runInTransaction { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				self.statusesTable.mark(articleIDs, statusKey, flag, database)
+				completion(nil)
+			case .failure(let databaseError):
+				completion(databaseError)
+			}
+		}
+	}
+
 	// MARK: - Indexing
 
 	func indexUnindexedArticles() {

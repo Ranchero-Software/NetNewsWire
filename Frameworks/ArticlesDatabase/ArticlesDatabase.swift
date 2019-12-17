@@ -188,6 +188,10 @@ public final class ArticlesDatabase {
 		return try articlesTable.mark(articles, statusKey, flag)
 	}
 
+	public func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping DatabaseCompletionBlock) {
+		articlesTable.mark(articleIDs, statusKey, flag, completion)
+	}
+
 	public func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, completion: @escaping ArticleStatusesResultBlock) {
 		articlesTable.fetchStatuses(articleIDs, createIfNeeded, completion)
 	}

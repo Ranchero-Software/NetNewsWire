@@ -84,12 +84,14 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
 				return
 			}
-			account.update(feed, with: parsedFeed) {
-				if let httpResponse = response as? HTTPURLResponse {
-					feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+			account.update(feed, with: parsedFeed) { error in
+				if error == nil {
+					if let httpResponse = response as? HTTPURLResponse {
+						feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+					}
+
+					feed.contentHash = dataHash
 				}
-				
-				feed.contentHash = dataHash
 				completion()
 			}
 		}

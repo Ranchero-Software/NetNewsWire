@@ -239,10 +239,13 @@ class ArticleViewController: UIViewController {
 	}
 	
 	@objc func statusesDidChange(_ note: Notification) {
-		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
+		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
 			return
 		}
-		if articles.count == 1 && articles.first?.articleID == currentArticle?.articleID {
+		guard let currentArticle = currentArticle else {
+			return
+		}
+		if articleIDs.contains(currentArticle.articleID) {
 			updateUI()
 		}
 	}

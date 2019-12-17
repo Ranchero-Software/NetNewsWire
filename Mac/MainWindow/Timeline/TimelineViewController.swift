@@ -450,10 +450,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - Notifications
 
 	@objc func statusesDidChange(_ note: Notification) {
-		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
+		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
 			return
 		}
-		reloadVisibleCells(for: articles)
+		reloadVisibleCells(for: articleIDs)
 		updateUnreadCount()
 	}
 
@@ -1019,9 +1019,13 @@ private extension TimelineViewController {
 		var fetchedArticles = Set<Article>()
 		for articleFetcher in articleFetchers {
 			if articleReadFilterType != ReadFilterType.none {
-				fetchedArticles.formUnion(articleFetcher.fetchUnreadArticles())
+				if let articles = try? articleFetcher.fetchUnreadArticles() {
+					fetchedArticles.formUnion(articles)
+				}
 			} else {
-				fetchedArticles.formUnion(articleFetcher.fetchArticles())
+				if let articles = try? articleFetcher.fetchArticles() {
+					fetchedArticles.formUnion(articles)
+				}
 			}
 		}
 		return fetchedArticles

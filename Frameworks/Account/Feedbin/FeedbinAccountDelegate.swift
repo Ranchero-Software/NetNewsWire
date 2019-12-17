@@ -8,6 +8,7 @@
 
 import Articles
 import RSCore
+import RSDatabase
 import RSParser
 import RSWeb
 import SyncDatabase
@@ -541,7 +542,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			}
 		}
 
-		return account.update(articles, statusKey: statusKey, flag: flag)
+		return try? account.update(articles, statusKey: statusKey, flag: flag)
 	}
 	
 	func accountDidInitialize(_ account: Account) {
@@ -1035,7 +1036,12 @@ private extension FeedbinAccountDelegate {
 			switch result {
 			case .success(let (entries, page)):
 				
-				self.processEntries(account: account, entries: entries) {
+				self.processEntries(account: account, entries: entries) { error in
+					if let error = error {
+						completion(.failure(error))
+						return
+					}
+
 					self.refreshArticleStatus(for: account) { result in
 						switch result {
 						case .success:
@@ -1080,7 +1086,7 @@ private extension FeedbinAccountDelegate {
  
 	}
 	
-	func refreshArticles(_ account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func refreshArticles(_ account: Account, completion: @escaping VoidResultCompletionBlock) {
 
 		os_log(.debug, log: log, "Refreshing articles...")
 		
@@ -1093,9 +1099,15 @@ private extension FeedbinAccountDelegate {
 					self.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
 				}
 				
-				self.processEntries(account: account, entries: entries) {
+				self.processEntries(account: account, entries: entries) { error in
 					
 					self.refreshProgress.completeTask()
+
+					if let error = error {
+						completion(.failure(error))
+						return
+					}
+
 					self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate) { result in
 						os_log(.debug, log: self.log, "Done refreshing articles.")
 						switch result {
@@ -1105,23 +1117,29 @@ private extension FeedbinAccountDelegate {
 							completion(.failure(error))
 						}
 					}
-					
 				}
 
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
-		
 	}
 	
 	func refreshMissingArticles(_ account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Refreshing missing articles...")
 		let group = DispatchGroup()
 		var errorOccurred = false
+		var fetchedArticleIDs = Set<String>()
 
-		let fetchedArticleIDs = account.fetchArticleIDsForStatusesWithoutArticles()
+		do {
+			fetchedArticleIDs = try account.fetchArticleIDsForStatusesWithoutArticles()
+		}
+		catch(let error) {
+			self.refreshProgress.completeTask()
+			completion(.failure(error))
+			return
+		}
+
 		let articleIDs = Array(fetchedArticleIDs)
 		let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
@@ -1132,7 +1150,7 @@ private extension FeedbinAccountDelegate {
 				switch result {
 				case .success(let entries):
 
-					self.processEntries(account: account, entries: entries) {
+					self.processEntries(account: account, entries: entries) { _ in
 						group.leave()
 					}
 
@@ -1170,7 +1188,7 @@ private extension FeedbinAccountDelegate {
 			switch result {
 			case .success(let (entries, nextPage)):
 				
-				self.processEntries(account: account, entries: entries) {
+				self.processEntries(account: account, entries: entries) { _ in
 					self.refreshProgress.completeTask()
 					self.refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate, completion: completion)
 				}
@@ -1181,7 +1199,7 @@ private extension FeedbinAccountDelegate {
 		}
 	}
 	
-	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: @escaping (() -> Void)) {
+	func processEntries(account: Account, entries: [FeedbinEntry]?, completion: @escaping DatabaseCompletionBlock) {
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true, completion: completion)
@@ -1207,26 +1225,18 @@ private extension FeedbinAccountDelegate {
 		}
 
 		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-		account.fetchUnreadArticleIDs { currentUnreadArticleIDs in
+		account.fetchUnreadArticleIDs { articleIDsResult in
+			guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
+				return
+			}
+
 			// Mark articles as unread
 			let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-			let markUnreadArticles = account.fetchArticles(.articleIDs(deltaUnreadArticleIDs))
-			account.update(markUnreadArticles, statusKey: .read, flag: false)
-
-			// Save any unread statuses for articles we haven't yet received
-			let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
-			let missingUnreadArticleIDs = deltaUnreadArticleIDs.subtracting(markUnreadArticleIDs)
-			account.ensureStatuses(missingUnreadArticleIDs, true, .read, false)
+			account.markAsUnread(deltaUnreadArticleIDs)
 
 			// Mark articles as read
 			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
-			let markReadArticles = account.fetchArticles(.articleIDs(deltaReadArticleIDs))
-			account.update(markReadArticles, statusKey: .read, flag: true)
-
-			// Save any read statuses for articles we haven't yet received
-			let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
-			let missingReadArticleIDs = deltaReadArticleIDs.subtracting(markReadArticleIDs)
-			account.ensureStatuses(missingReadArticleIDs, true, .read, true)
+			account.markAsRead(deltaReadArticleIDs)
 		}
 	}
 	
@@ -1236,26 +1246,18 @@ private extension FeedbinAccountDelegate {
 		}
 
 		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-		account.fetchStarredArticleIDs { currentStarredArticleIDs in
+		account.fetchStarredArticleIDs { articleIDsResult in
+			guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
+				return
+			}
+
 			// Mark articles as starred
 			let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-			let markStarredArticles = account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
-			account.update(markStarredArticles, statusKey: .starred, flag: true)
-
-			// Save any starred statuses for articles we haven't yet received
-			let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
-			let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
-			account.ensureStatuses(missingStarredArticleIDs, true, .starred, true)
+			account.markAsStarred(deltaStarredArticleIDs)
 
 			// Mark articles as unstarred
 			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
-			let markUnstarredArticles = account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
-			account.update(markUnstarredArticles, statusKey: .starred, flag: false)
-
-			// Save any unstarred statuses for articles we haven't yet received
-			let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
-			let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
-			account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false)
+			account.markAsUnstarred(deltaUnstarredArticleIDs)
 		}
 	}
 

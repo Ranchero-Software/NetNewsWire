@@ -118,7 +118,7 @@ final class LocalAccountDelegate: AccountDelegate {
 					self.refreshProgress.completeTask()
 
 					if let parsedFeed = parsedFeed {
-						account.update(feed, with: parsedFeed, {})
+						account.update(feed, with: parsedFeed, {_ in})
 					}
 					
 					feed.editedName = name
@@ -187,7 +187,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		return try account.update(articles, statusKey: statusKey, flag: flag)
+		return try? account.update(articles, statusKey: statusKey, flag: flag)
 	}
 
 	func accountDidInitialize(_ account: Account) {

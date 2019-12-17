@@ -14,6 +14,7 @@ import Foundation
 import RSCore
 import Account
 import Articles
+import ArticlesDatabase
 
 // This just shows the global unread count, which appDelegate already has. Easy.
 
@@ -61,19 +62,19 @@ final class UnreadFeed: PseudoFeed {
 
 extension UnreadFeed: ArticleFetcher {
 	
-	func fetchArticles() -> Set<Article> {
-		return fetchUnreadArticles()
+	func fetchArticles() throws -> Set<Article> {
+		return try fetchUnreadArticles()
 	}
 
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		fetchUnreadArticlesAsync(completion)
 	}
 
-	func fetchUnreadArticles() -> Set<Article> {
-		return AccountManager.shared.fetchArticles(fetchType)
+	func fetchUnreadArticles() throws -> Set<Article> {
+		return try AccountManager.shared.fetchArticles(fetchType)
 	}
 
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		AccountManager.shared.fetchArticlesAsync(fetchType, completion)
 	}
 }

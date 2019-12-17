@@ -254,12 +254,14 @@ private extension TimelineViewController {
 	}
 
 	func markAllAsReadMenuItem(_ feed: WebFeed) -> NSMenuItem? {
-		
-		let articles = Array(feed.fetchArticles())
+		guard let articlesSet = try? feed.fetchArticles() else {
+			return nil
+		}
+		let articles = Array(articlesSet)
 		guard articles.canMarkAllAsRead() else {
 			return nil
 		}
-		
+
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let menuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		

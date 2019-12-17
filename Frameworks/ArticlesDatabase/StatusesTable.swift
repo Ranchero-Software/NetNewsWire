@@ -85,6 +85,12 @@ final class StatusesTable: DatabaseTable {
 		return updatedStatuses
 	}
 
+	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) {
+		let statusesDictionary = ensureStatusesForArticleIDs(articleIDs, flag, database)
+		let statuses = Set(statusesDictionary.values)
+		mark(statuses, statusKey, flag, database)
+	}
+
 	// MARK: - Fetching
 
 	func fetchUnreadArticleIDs() throws -> Set<String> {

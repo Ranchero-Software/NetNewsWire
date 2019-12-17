@@ -417,7 +417,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 		}
 		
-		return account.update(articles, statusKey: statusKey, flag: flag)
+		return try? account.update(articles, statusKey: statusKey, flag: flag)
 		
 	}
 	
@@ -836,12 +836,15 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func refreshMissingArticles(_ account: Account, completion: @escaping (() -> Void)) {
-		
+	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
+		guard let fetchedArticleIDs = try? account.fetchArticleIDsForStatusesWithoutArticles() else {
+			self.refreshProgress.completeTask()
+			return
+		}
+
 		os_log(.debug, log: log, "Refreshing missing articles...")
 		let group = DispatchGroup()
 
-		let fetchedArticleIDs = account.fetchArticleIDsForStatusesWithoutArticles()
 		let articleIDs = Array(fetchedArticleIDs)
 		let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
@@ -895,10 +898,12 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping (() -> Void)) {
+	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping VoidCompletionBlock) {
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
 		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true, completion: completion)
+		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { _ in
+			completion()
+		}
 	}
 	
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
@@ -924,26 +929,18 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-		account.fetchUnreadArticleIDs { currentUnreadArticleIDs in
+		account.fetchUnreadArticleIDs { articleIDsResult in
+			guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
+				return
+			}
+
 			// Mark articles as unread
 			let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-			let markUnreadArticles = account.fetchArticles(.articleIDs(deltaUnreadArticleIDs))
-			account.update(markUnreadArticles, statusKey: .read, flag: false)
-
-			// Save any unread statuses for articles we haven't yet received
-			let markUnreadArticleIDs = Set(markUnreadArticles.map { $0.articleID })
-			let missingUnreadArticleIDs = deltaUnreadArticleIDs.subtracting(markUnreadArticleIDs)
-			account.ensureStatuses(missingUnreadArticleIDs, true, .read, false)
+			account.markAsUnread(deltaUnreadArticleIDs)
 
 			// Mark articles as read
 			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
-			let markReadArticles = account.fetchArticles(.articleIDs(deltaReadArticleIDs))
-			account.update(markReadArticles, statusKey: .read, flag: true)
-
-			// Save any read statuses for articles we haven't yet received
-			let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
-			let missingReadArticleIDs = deltaReadArticleIDs.subtracting(markReadArticleIDs)
-			account.ensureStatuses(missingReadArticleIDs, true, .read, true)
+			account.markAsRead(deltaReadArticleIDs)
 		}
 	}
 	
@@ -953,26 +950,18 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-		account.fetchStarredArticleIDs { currentStarredArticleIDs in
+		account.fetchStarredArticleIDs { articleIDsResult in
+			guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
+				return
+			}
+
 			// Mark articles as starred
 			let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-			let markStarredArticles = account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
-			account.update(markStarredArticles, statusKey: .starred, flag: true)
-
-			// Save any starred statuses for articles we haven't yet received
-			let markStarredArticleIDs = Set(markStarredArticles.map { $0.articleID })
-			let missingStarredArticleIDs = deltaStarredArticleIDs.subtracting(markStarredArticleIDs)
-			account.ensureStatuses(missingStarredArticleIDs, true, .starred, true)
+			account.markAsStarred(deltaStarredArticleIDs)
 
 			// Mark articles as unstarred
 			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
-			let markUnstarredArticles = account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
-			account.update(markUnstarredArticles, statusKey: .starred, flag: false)
-
-			// Save any unstarred statuses for articles we haven't yet received
-			let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
-			let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
-			account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false)
+			account.markAsUnstarred(deltaUnstarredArticleIDs)
 		}
 	}
 

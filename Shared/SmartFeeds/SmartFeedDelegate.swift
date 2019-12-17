@@ -9,28 +9,36 @@
 import Foundation
 import Account
 import Articles
+import ArticlesDatabase
 import RSCore
 
 protocol SmartFeedDelegate: FeedIdentifiable, DisplayNameProvider, ArticleFetcher, SmallIconProvider {
 	var fetchType: FetchType { get }
-	func fetchUnreadCount(for: Account, completion: @escaping (Int) -> Void)
+	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock)
 }
 
 extension SmartFeedDelegate {
 
-	func fetchArticles() -> Set<Article> {
-		return AccountManager.shared.fetchArticles(fetchType)
+	func fetchArticles() throws -> Set<Article> {
+		return try AccountManager.shared.fetchArticles(fetchType)
 	}
 
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetBlock) {
+	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		AccountManager.shared.fetchArticlesAsync(fetchType, completion)
 	}
 
-	func fetchUnreadArticles() -> Set<Article> {
-		return fetchArticles().unreadArticles()
+	func fetchUnreadArticles() throws -> Set<Article> {
+		return try fetchArticles().unreadArticles()
 	}
 
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetBlock) {
-		fetchArticlesAsync{ completion($0.unreadArticles()) }
+	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
+		fetchArticlesAsync{ articleSetResult in
+			switch articleSetResult {
+			case .success(let articles):
+				completion(.success(articles.unreadArticles()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 }

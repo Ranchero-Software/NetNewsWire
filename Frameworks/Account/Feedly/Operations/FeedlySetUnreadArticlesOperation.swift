@@ -52,13 +52,10 @@ private extension FeedlySetUnreadArticlesOperation {
 		}
 
 		let remoteUnreadArticleIDs = allUnreadIdsProvider.entryIds
+		account.markAsUnread(remoteUnreadArticleIDs)
 
-		// Mark articles as unread
-		account.mark(articleIDs: remoteUnreadArticleIDs, statusKey: .read, flag: false)
-
-		// Mark articles as read
 		let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
-		account.mark(articleIDs: articleIDsToMarkRead, statusKey: .read, flag: true)
+		account.markAsRead(articleIDsToMarkRead)
 
 		didFinish()
 	}

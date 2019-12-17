@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import Account
 import Articles
+import ArticlesDatabase
 
 struct SearchTimelineFeedDelegate: SmartFeedDelegate {
 
@@ -31,7 +32,7 @@ struct SearchTimelineFeedDelegate: SmartFeedDelegate {
 		self.fetchType = .searchWithArticleIDs(searchString, articleIDs)
 	}
 
-	func fetchUnreadCount(for: Account, completion: @escaping (Int) -> Void) {
+	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
 		// TODO: after 5.0
 	}
 }

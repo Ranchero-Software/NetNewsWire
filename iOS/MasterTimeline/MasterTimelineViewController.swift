@@ -340,12 +340,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@objc func statusesDidChange(_ note: Notification) {
-		guard let updatedArticles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
+		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
 			return
 		}
-		
+
 		let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
-		let visibleUpdatedArticles = visibleArticles.filter { updatedArticles.contains($0) }
+		let visibleUpdatedArticles = visibleArticles.filter { articleIDs.contains($0.articleID) }
 
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
@@ -675,8 +675,11 @@ private extension MasterTimelineViewController {
 	
 	func markAllInFeedAsReadAction(_ article: Article) -> UIAction? {
 		guard let webFeed = article.webFeed else { return nil }
+		guard let fetchedArticles = try? webFeed.fetchArticles() else {
+			return nil
+		}
 
-		let articles = Array(webFeed.fetchArticles())
+		let articles = Array(fetchedArticles)
 		guard articles.canMarkAllAsRead() else {
 			return nil
 		}
@@ -692,8 +695,11 @@ private extension MasterTimelineViewController {
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let webFeed = article.webFeed else { return nil }
-
-		let articles = Array(webFeed.fetchArticles())
+		guard let fetchedArticles = try? webFeed.fetchArticles() else {
+			return nil
+		}
+		
+		let articles = Array(fetchedArticles)
 		guard articles.canMarkAllAsRead() else {
 			return nil
 		}

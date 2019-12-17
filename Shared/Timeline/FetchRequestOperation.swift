@@ -63,7 +63,7 @@ final class FetchRequestOperation {
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
 		
-		func process(articles: Set<Article>) {
+		func process(_ articles: Set<Article>) {
 			precondition(Thread.isMainThread)
 			guard !self.isCanceled else {
 				callCompletionIfNeeded()
@@ -83,17 +83,18 @@ final class FetchRequestOperation {
 		
 		for articleFetcher in articleFetchers {
 			if readFilter {
-				articleFetcher.fetchUnreadArticlesAsync { (articles) in
-					process(articles: articles)
+				articleFetcher.fetchUnreadArticlesAsync { articleSetResult in
+					let articles = (try? articleSetResult.get()) ?? Set<Article>()
+					process(articles)
 				}
-			} else {
-				articleFetcher.fetchArticlesAsync { (articles) in
-					process(articles: articles)
+			}
+			else {
+				articleFetcher.fetchArticlesAsync { articleSetResult in
+					let articles = (try? articleSetResult.get()) ?? Set<Article>()
+					process(articles)
 				}
 			}
 		}
-		
 	}
-	
 }
 
