@@ -236,29 +236,6 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completion: @escaping DatabaseCompletionBlock) {
-		queue.runInTransaction { databaseResult in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, defaultRead, database)
-				let statuses = Set(statusesDictionary.values)
-				self.statusesTable.mark(statuses, statusKey, flag, database)
-				DispatchQueue.main.async {
-					completion(nil)
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(databaseError)
-				}
-			}
-		}
-	}
-
 	func fetchStatuses(_ articleIDs: Set<String>, _ createIfNeeded: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
 		queue.runInTransaction { databaseResult in
 

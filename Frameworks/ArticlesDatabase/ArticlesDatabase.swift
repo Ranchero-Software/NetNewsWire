@@ -164,10 +164,6 @@ public final class ArticlesDatabase {
 		articlesTable.update(webFeedIDsAndItems, defaultRead, completion)
 	}
 
-	public func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completion: @escaping DatabaseCompletionBlock) {
-		articlesTable.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completion: completion)
-	}
-	
 	// MARK: - Status
 
 	/// Fetch the articleIDs of unread articles in feeds specified by webFeedIDs.

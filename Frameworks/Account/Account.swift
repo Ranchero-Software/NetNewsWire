@@ -770,14 +770,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return updatedArticles
 	}
 
-	func ensureStatuses(_ articleIDs: Set<String>, _ defaultRead: Bool, _ statusKey: ArticleStatus.Key, _ flag: Bool, completion: @escaping DatabaseCompletionBlock) {
-		guard !articleIDs.isEmpty else {
-			completion(nil)
-			return
-		}
-		database.ensureStatuses(articleIDs, defaultRead, statusKey, flag, completion: completion)
-	}
-
 	/// Mark articleIDs statuses based on statusKey and flag.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {
