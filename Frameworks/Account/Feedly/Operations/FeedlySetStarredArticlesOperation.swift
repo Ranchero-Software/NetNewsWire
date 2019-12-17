@@ -32,12 +32,13 @@ final class FeedlySetStarredArticlesOperation: FeedlyOperation {
 			return
 		}
 
-		account.fetchStarredArticleIDs { (articleIDsResult) in
-			if let localStarredArticleIDs = try? articleIDsResult.get() {
+		account.fetchStarredArticleIDs { result in
+			switch result {
+			case .success(let localStarredArticleIDs):
 				self.processStarredArticleIDs(localStarredArticleIDs)
-			}
-			else {
-				self.didFinish()
+				
+			case .failure(let error):
+				self.didFinish(error)
 			}
 		}
 	}

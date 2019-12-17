@@ -32,12 +32,13 @@ final class FeedlySetUnreadArticlesOperation: FeedlyOperation {
 			return
 		}
 
-		account.fetchUnreadArticleIDs { articleIDsResult in
-			if let localUnreadArticleIDs = try? articleIDsResult.get() {
+		account.fetchUnreadArticleIDs { result in
+			switch result {
+			case .success(let localUnreadArticleIDs):
 				self.processUnreadArticleIDs(localUnreadArticleIDs)
-			}
-			else {
-				self.didFinish()
+				
+			case .failure(let error):
+				self.didFinish(error)
 			}
 		}
 	}
