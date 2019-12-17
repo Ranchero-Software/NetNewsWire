@@ -387,7 +387,11 @@ final class ArticlesTable: DatabaseTable {
 	func fetchArticleIDsForStatusesWithoutArticles() throws -> Set<String> {
 		return try statusesTable.fetchArticleIDsForStatusesWithoutArticles()
 	}
-	
+
+	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
+		statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate, completion)
+	}
+
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) throws -> Set<ArticleStatus>? {
 		var statuses: Set<ArticleStatus>?
 		var error: DatabaseError?
