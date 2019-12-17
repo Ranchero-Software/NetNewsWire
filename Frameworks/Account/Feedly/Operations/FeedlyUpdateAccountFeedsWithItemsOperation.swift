@@ -23,7 +23,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 	}
 	
 	override func main() {
-		assert(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
+		precondition(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
 		guard !isCancelled else {
 			didFinish()
 			return
@@ -31,7 +31,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 		
 		let webFeedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 		
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) {
+		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { _ in
 			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", webFeedIDsAndItems.count, self.organisedItemsProvider.providerName)
 			self.didFinish()
 		}
