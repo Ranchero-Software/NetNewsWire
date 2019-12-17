@@ -781,6 +781,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// TODO: https://github.com/brentsimmons/NetNewsWire/issues/1420
 	}
 
+	/// Update statuses specified by articleIDs — set a key and value.
+	/// This updates the database, and sends a .StatusesDidChange notification.
+	/// Any statuses that don’t exist will be automatically created.
+	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping DatabaseCompletionBlock? = nil) {
+		// TODO
+	}
+
 	/// Fetch statuses for the specified articleIDs. The completion handler will get nil if the app is suspended.
 	/// To update the properties in the database, call the update method that takes Set<ArticleStatus> as first parameter.
 	func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, completion: @escaping ArticleStatusesResultBlock) {
