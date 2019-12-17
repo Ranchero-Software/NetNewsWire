@@ -1150,8 +1150,11 @@ private extension FeedbinAccountDelegate {
 				switch result {
 				case .success(let entries):
 
-					self.processEntries(account: account, entries: entries) { _ in
+					self.processEntries(account: account, entries: entries) { error in
 						group.leave()
+						if error != nil {
+							errorOccurred = true
+						}
 					}
 
 				case .failure(let error):
@@ -1188,8 +1191,14 @@ private extension FeedbinAccountDelegate {
 			switch result {
 			case .success(let (entries, nextPage)):
 				
-				self.processEntries(account: account, entries: entries) { _ in
+				self.processEntries(account: account, entries: entries) { error in
 					self.refreshProgress.completeTask()
+
+					if let error = error {
+						completion(.failure(error))
+						return
+					}
+					
 					self.refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate, completion: completion)
 				}
 				
