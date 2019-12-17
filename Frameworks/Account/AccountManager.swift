@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import Articles
+import ArticlesDatabase
 
 // Main thread only.
 
@@ -255,17 +256,17 @@ public final class AccountManager: UnreadCountProvider {
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
 
-	public func fetchArticles(_ fetchType: FetchType) ->  Set<Article> {
+	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		precondition(Thread.isMainThread)
 
 		var articles = Set<Article>()
 		for account in activeAccounts {
-			articles.formUnion(account.fetchArticles(fetchType))
+			articles.formUnion(try account.fetchArticles(fetchType))
 		}
 		return articles
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetBlock) {
+	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
 		precondition(Thread.isMainThread)
 		
 		var allFetchedArticles = Set<Article>()
@@ -273,11 +274,18 @@ public final class AccountManager: UnreadCountProvider {
 		var accountsReporting = 0
 
 		for account in activeAccounts {
-			account.fetchArticlesAsync(fetchType) { (articles) in
-				allFetchedArticles.formUnion(articles)
+			account.fetchArticlesAsync(fetchType) { (articleSetResult) in
 				accountsReporting += 1
-				if accountsReporting == numberOfAccounts {
-					completion(allFetchedArticles)
+
+				switch articleSetResult {
+				case .success(let articles):
+					allFetchedArticles.formUnion(articles)
+					if accountsReporting == numberOfAccounts {
+						completion(.success(allFetchedArticles))
+					}
+				case .failure(let databaseError):
+					completion(.failure(databaseError))
+					return
 				}
 			}
 		}

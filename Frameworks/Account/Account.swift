@@ -624,7 +624,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		switch fetchType {
 		case .starred:
-			return fetchStarredArticles()
+			return try fetchStarredArticles()
 		case .unread:
 			return try fetchUnreadArticles()
 		case .today:
@@ -784,7 +784,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	/// Update statuses specified by articleIDs — set a key and value.
 	/// This updates the database, and sends a .StatusesDidChange notification.
 	/// Any statuses that don’t exist will be automatically created.
-	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping DatabaseCompletionBlock? = nil) {
+	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {
 		// TODO
 	}
 
@@ -853,7 +853,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func debugRunSearch() {
 		#if DEBUG
 			let t1 = Date()
-			let articles = fetchArticlesMatching("Brent NetNewsWire")
+			let articles = try! fetchArticlesMatching("Brent NetNewsWire")
 			let t2 = Date()
 			print(t2.timeIntervalSince(t1))
 			print(articles.count)
@@ -940,8 +940,8 @@ extension Account: WebFeedMetadataDelegate {
 
 private extension Account {
 
-	func fetchStarredArticles() -> Set<Article> {
-		return database.fetchStarredArticles(flattenedWebFeeds().webFeedIDs())
+	func fetchStarredArticles() throws -> Set<Article> {
+		return try database.fetchStarredArticles(flattenedWebFeeds().webFeedIDs())
 	}
 
 	func fetchStarredArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
@@ -987,9 +987,14 @@ private extension Account {
 	}
 
 	func fetchArticlesAsync(webFeed: WebFeed, _ completion: @escaping ArticleSetResultBlock) {
-		database.fetchArticlesAsync(webFeed.webFeedID) { [weak self] (articles) in
-			self?.validateUnreadCount(webFeed, articles)
-			completion(articles)
+		database.fetchArticlesAsync(webFeed.webFeedID) { [weak self] articleSetResult in
+			switch articleSetResult {
+			case .success(let articles):
+				self?.validateUnreadCount(webFeed, articles)
+				completion(.success(articles))
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
+			}
 		}
 	}
 
@@ -1040,9 +1045,14 @@ private extension Account {
 
 	func fetchArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
 		let webFeeds = container.flattenedWebFeeds()
-		database.fetchArticlesAsync(webFeeds.webFeedIDs()) { [weak self] (articles) in
-			self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
-			completion(articles)
+		database.fetchArticlesAsync(webFeeds.webFeedIDs()) { [weak self] (articleSetResult) in
+			switch articleSetResult {
+			case .success(let articles):
+				self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
+				completion(.success(articles))
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
+			}
 		}
 	}
 
@@ -1055,9 +1065,14 @@ private extension Account {
 
 	func fetchUnreadArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
 		let webFeeds = container.flattenedWebFeeds()
-		database.fetchUnreadArticlesAsync(webFeeds.webFeedIDs()) { [weak self] (articles) in
-			self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
-			completion(articles)
+		database.fetchUnreadArticlesAsync(webFeeds.webFeedIDs()) { [weak self] (articleSetResult) in
+			switch articleSetResult {
+			case .success(let articles):
+				self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
+				completion(.success(articles))
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
+			}
 		}
 	}
 
