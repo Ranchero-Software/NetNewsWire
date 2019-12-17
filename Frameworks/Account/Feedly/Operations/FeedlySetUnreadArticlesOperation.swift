@@ -53,11 +53,40 @@ private extension FeedlySetUnreadArticlesOperation {
 		}
 
 		let remoteUnreadArticleIDs = allUnreadIdsProvider.entryIds
-		account.markAsUnread(remoteUnreadArticleIDs)
+		guard !remoteUnreadArticleIDs.isEmpty else {
+			didFinish()
+			return
+		}
+		
+		let group = DispatchGroup()
+		
+		final class ReadStatusResults {
+			var markAsUnreadError: Error?
+			var markAsReadError: Error?
+		}
+		
+		let results = ReadStatusResults()
+		
+		group.enter()
+		account.markAsUnread(remoteUnreadArticleIDs) { error in
+			results.markAsUnreadError = error
+			group.leave()
+		}
 
 		let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
-		account.markAsRead(articleIDsToMarkRead)
+		group.enter()
+		account.markAsRead(articleIDsToMarkRead) { error in
+			results.markAsReadError = error
+			group.leave()
+		}
 
-		didFinish()
+		group.notify(queue: .main) {
+			let markingError = results.markAsReadError ?? results.markAsUnreadError
+			guard let error = markingError else {
+				self.didFinish()
+				return
+			}
+			self.didFinish(error)
+		}
 	}
 }
