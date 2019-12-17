@@ -236,34 +236,6 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
-	func fetchStatuses(_ articleIDs: Set<String>, _ createIfNeeded: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
-		queue.runInTransaction { databaseResult in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				var statusesDictionary = [String: ArticleStatus]()
-				if createIfNeeded {
-					statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database)
-				}
-				else {
-					statusesDictionary = self.statusesTable.existingStatusesForArticleIDs(articleIDs, database)
-				}
-				let statuses = Set(statusesDictionary.values)
-				DispatchQueue.main.async {
-					completion(.success(statuses))
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
-			}
-		}
-	}
-
 	// MARK: - Unread Counts
 	
 	func fetchUnreadCounts(_ webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {

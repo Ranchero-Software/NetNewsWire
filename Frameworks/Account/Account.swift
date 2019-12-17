@@ -807,12 +807,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		mark(articleIDs: articleIDs, statusKey: .starred, flag: false)
 	}
 
-	/// Fetch statuses for the specified articleIDs. The completion handler will get nil if the app is suspended.
-	/// To update the properties in the database, call the update method that takes Set<ArticleStatus> as first parameter.
-	func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, completion: @escaping ArticleStatusesResultBlock) {
-		database.fetchStatuses(articleIDs: articleIDs, createIfNeeded: createIfNeeded, completion: completion)
-	}
-
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
 	func emptyCaches() {
 		database.emptyCaches()

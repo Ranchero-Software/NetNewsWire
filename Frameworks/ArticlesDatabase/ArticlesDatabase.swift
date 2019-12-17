@@ -188,10 +188,6 @@ public final class ArticlesDatabase {
 		articlesTable.mark(articleIDs, statusKey, flag, completion)
 	}
 
-	public func fetchStatuses(articleIDs: Set<String>, createIfNeeded: Bool, completion: @escaping ArticleStatusesResultBlock) {
-		articlesTable.fetchStatuses(articleIDs, createIfNeeded, completion)
-	}
-
 	// MARK: - Suspend and Resume (for iOS)
 
 	/// Close the database and stop running database calls.
