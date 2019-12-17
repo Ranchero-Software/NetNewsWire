@@ -462,9 +462,13 @@ final class ArticlesTable: DatabaseTable {
 			switch databaseResult {
 			case .success(let database):
 				self.statusesTable.mark(articleIDs, statusKey, flag, database)
-				completion(nil)
+				DispatchQueue.main.async {
+					completion(nil)
+				}
 			case .failure(let databaseError):
-				completion(databaseError)
+				DispatchQueue.main.async {
+					completion(databaseError)
+				}
 			}
 		}
 	}
