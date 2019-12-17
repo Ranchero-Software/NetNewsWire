@@ -724,36 +724,56 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			completion(nil)
 			return
 		}
-		database.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
+		
+		let group = DispatchGroup()
+		var possibleError: DatabaseError? = nil
+		var newArticles = Set<Article>()
+		var updatedArticles = Set<Article>()
+		
+		for (webFeedID, items) in webFeedIDsAndItems {
+			
+			group.enter()
+			database.update(webFeedID: webFeedID, items: items, defaultRead: defaultRead) { updateArticlesResult in
 
-			func process(_ newAndUpdatedArticles: NewAndUpdatedArticles) {
-				var userInfo = [String: Any]()
-				let webFeeds = Set(webFeedIDsAndItems.compactMap { (key, _) -> WebFeed? in
-					self.existingWebFeed(withWebFeedID: key)
-				})
-				if let newArticles = newAndUpdatedArticles.newArticles, !newArticles.isEmpty {
-					self.updateUnreadCounts(for: webFeeds) {
-						NotificationCenter.default.post(name: .DownloadArticlesDidUpdateUnreadCounts, object: self, userInfo: nil)
+				switch updateArticlesResult {
+				case .success(let newAndUpdatedArticles):
+					if let articles = newAndUpdatedArticles.newArticles {
+						newArticles.formUnion(articles)
 					}
-					userInfo[UserInfoKey.newArticles] = newArticles
+					if let articles = newAndUpdatedArticles.updatedArticles {
+						updatedArticles.formUnion(articles)
+					}
+				case .failure(let databaseError):
+					possibleError = databaseError
 				}
-				if let updatedArticles = newAndUpdatedArticles.updatedArticles, !updatedArticles.isEmpty {
-					userInfo[UserInfoKey.updatedArticles] = updatedArticles
-				}
-				userInfo[UserInfoKey.webFeeds] = webFeeds
-
-				completion(nil)
-
-				NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
+				
+				group.leave()
 			}
-
-			switch updateArticlesResult {
-			case .success(let newAndUpdatedArticles):
-				process(newAndUpdatedArticles)
-			case .failure(let databaseError):
-				completion(databaseError)
-			}
+			
 		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			var userInfo = [String: Any]()
+			var webFeeds = Set(newArticles.compactMap { $0.webFeed })
+			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.webFeed }))
+			
+			if !newArticles.isEmpty {
+				self.updateUnreadCounts(for: webFeeds) {
+					NotificationCenter.default.post(name: .DownloadArticlesDidUpdateUnreadCounts, object: self, userInfo: nil)
+				}
+				userInfo[UserInfoKey.newArticles] = newArticles
+			}
+			
+			if !updatedArticles.isEmpty {
+				userInfo[UserInfoKey.updatedArticles] = updatedArticles
+			}
+			
+			userInfo[UserInfoKey.webFeeds] = webFeeds
+			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
+			
+			completion(possibleError)
+		}
+		
 	}
 
 	@discardableResult

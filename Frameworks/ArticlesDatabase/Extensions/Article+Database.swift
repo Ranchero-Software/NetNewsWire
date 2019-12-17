@@ -83,14 +83,10 @@ extension Article {
 //		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
 //	}
 
-	static func articlesWithWebFeedIDsAndItems(_ webFeedIDsAndItems: [String: Set<ParsedItem>], _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
+	static func articlesWithWebFeedIDsAndItems(_ webFeedID: String, _ items: Set<ParsedItem>, _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
 		let maximumDateAllowed = Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
-		var articles = Set<Article>()
-		for (webFeedID, parsedItems) in webFeedIDsAndItems {
-			let feedArticles = Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, webFeedID: webFeedID, status: statusesDictionary[$0.articleID]!) })
-			articles.formUnion(feedArticles)
-		}
-		return articles
+		let feedArticles = Set(items.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, webFeedID: webFeedID, status: statusesDictionary[$0.articleID]!) })
+		return feedArticles
 	}
 }
 

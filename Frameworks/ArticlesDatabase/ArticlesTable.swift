@@ -169,8 +169,8 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Updating
 
-	func update(_ webFeedIDsAndItems: [String: Set<ParsedItem>], _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
-		if webFeedIDsAndItems.isEmpty {
+	func update(_ webFeedID: String, _ items: Set<ParsedItem>, _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
+		if items.isEmpty {
 			callUpdateArticlesCompletionBlock(nil, nil, completion)
 			return
 		}
@@ -184,18 +184,14 @@ final class ArticlesTable: DatabaseTable {
 		// 7. Call back with new and updated Articles.
 		// 8. Update search index.
 
-		var articleIDs = Set<String>()
-		for (_, parsedItems) in webFeedIDsAndItems {
-			articleIDs.formUnion(parsedItems.articleIDs())
-		}
-
 		self.queue.runInTransaction { (databaseResult) in
 
 			func makeDatabaseCalls(_ database: FMDatabase) {
+				let articleIDs = items.articleIDs()
 				let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
 				assert(statusesDictionary.count == articleIDs.count)
 
-				let allIncomingArticles = Article.articlesWithWebFeedIDsAndItems(webFeedIDsAndItems, self.accountID, statusesDictionary) //2
+				let allIncomingArticles = Article.articlesWithWebFeedIDsAndItems(webFeedID, items, self.accountID, statusesDictionary) //2
 				if allIncomingArticles.isEmpty {
 					self.callUpdateArticlesCompletionBlock(nil, nil, completion)
 					return
