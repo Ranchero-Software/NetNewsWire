@@ -51,15 +51,42 @@ private extension FeedlySetStarredArticlesOperation {
 			didFinish()
 			return
 		}
-
-		// Mark as starred
+		
 		let remoteStarredArticleIDs = allStarredEntryIdsProvider.entryIds
-		account.mark(articleIDs: remoteStarredArticleIDs, statusKey: .starred, flag: true)
+		guard !remoteStarredArticleIDs.isEmpty else {
+			didFinish()
+			return
+		}
+		
+		let group = DispatchGroup()
+		
+		final class StarredStatusResults {
+			var markAsStarredError: Error?
+			var markAsUnstarredError: Error?
+		}
+		
+		let results = StarredStatusResults()
+		
+		group.enter()
+		account.markAsStarred(remoteStarredArticleIDs) { error in
+			results.markAsStarredError = error
+			group.leave()
+		}
 
-		// Mark as unstarred
 		let deltaUnstarredArticleIDs = localStarredArticleIDs.subtracting(remoteStarredArticleIDs)
-		account.mark(articleIDs: deltaUnstarredArticleIDs, statusKey: .starred, flag: false)
+		group.enter()
+		account.markAsUnstarred(deltaUnstarredArticleIDs) { error in
+			results.markAsUnstarredError = error
+			group.leave()
+		}
 
-		didFinish()
+		group.notify(queue: .main) {
+			let markingError = results.markAsStarredError ?? results.markAsUnstarredError
+			guard let error = markingError else {
+				self.didFinish()
+				return
+			}
+			self.didFinish(error)
+		}
 	}
 }
