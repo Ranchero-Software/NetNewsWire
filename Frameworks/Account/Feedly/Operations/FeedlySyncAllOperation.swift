@@ -70,6 +70,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		
 		// Get each and every starred article.
 		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, service: getStarredArticlesService, log: log)
+		syncStarred.delegate = self
 		syncStarred.downloadProgress = downloadProgress
 		syncStarred.addDependency(createFeedsOperation)
 		self.operationQueue.addOperation(syncStarred)
