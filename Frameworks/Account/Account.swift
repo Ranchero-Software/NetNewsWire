@@ -243,11 +243,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
 		case .feedWrangler:
 			self.delegate = FeedWranglerAccountDelegate(dataFolder: dataFolder, transport: transport)
-
 		default:
 			return nil
 		}
 
+		self.delegate.accountMetadata = metadata
+		
 		self.accountID = accountID
 		self.type = type
 		self.dataFolder = dataFolder
