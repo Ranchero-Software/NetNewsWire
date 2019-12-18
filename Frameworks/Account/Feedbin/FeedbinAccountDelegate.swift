@@ -1130,9 +1130,7 @@ private extension FeedbinAccountDelegate {
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 			
-			switch result {
-			case .success(let fetchedArticleIDs):
-				
+			func process(_ fetchedArticleIDs: Set<String>) {
 				let group = DispatchGroup()
 				var errorOccurred = false
 				
@@ -1170,13 +1168,16 @@ private extension FeedbinAccountDelegate {
 						completion(.success(()))
 					}
 				}
-				
+			}
+
+			switch result {
+			case .success(let fetchedArticleIDs):
+				process(fetchedArticleIDs)
 			case .failure(let error):
+				self.refreshProgress.completeTask()
 				completion(.failure(error))
 			}
-			
 		}
-		
 	}
 
 	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?, completion: @escaping ((Result<Void, Error>) -> Void)) {
