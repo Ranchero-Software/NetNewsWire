@@ -101,10 +101,6 @@ final class StatusesTable: DatabaseTable {
 		return try fetchArticleIDs("select articleID from statuses where starred=1 and userDeleted=0;")
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticles() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);")
-	}
-
 	func fetchArticleIDsForStatusesWithoutArticlesNewerThan(_ cutoffDate: Date, _ completion: @escaping ArticleIDsCompletionBlock) {
 		queue.runInDatabase { databaseResult in
 			

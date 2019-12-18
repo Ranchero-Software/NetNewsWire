@@ -837,38 +837,46 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
-		guard let fetchedArticleIDs = try? account.fetchArticleIDsForStatusesWithoutArticles() else {
-			self.refreshProgress.completeTask()
-			return
-		}
+		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDsResult in
 
-		os_log(.debug, log: log, "Refreshing missing articles...")
-		let group = DispatchGroup()
+			func process(_ fetchedArticleIDs: Set<String>) {
+				os_log(.debug, log: self.log, "Refreshing missing articles...")
+				let group = DispatchGroup()
 
-		let articleIDs = Array(fetchedArticleIDs)
-		let chunkedArticleIDs = articleIDs.chunked(into: 100)
+				let articleIDs = Array(fetchedArticleIDs)
+				let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
-		for chunk in chunkedArticleIDs {
-			group.enter()
-			self.caller.retrieveEntries(articleIDs: chunk) { result in
+				for chunk in chunkedArticleIDs {
+					group.enter()
+					self.caller.retrieveEntries(articleIDs: chunk) { result in
 
-				switch result {
-				case .success(let entries):
-					self.processEntries(account: account, entries: entries) {
-						group.leave()
+						switch result {
+						case .success(let entries):
+							self.processEntries(account: account, entries: entries) {
+								group.leave()
+							}
+
+						case .failure(let error):
+							os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
+							group.leave()
+						}
 					}
+				}
 
-				case .failure(let error):
-					os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
-					group.leave()
+				group.notify(queue: DispatchQueue.main) {
+					self.refreshProgress.completeTask()
+					os_log(.debug, log: self.log, "Done refreshing missing articles.")
+					completion()
 				}
 			}
-		}
 
-		group.notify(queue: DispatchQueue.main) {
-			self.refreshProgress.completeTask()
-			os_log(.debug, log: self.log, "Done refreshing missing articles.")
-			completion()
+			switch articleIDsResult {
+			case .success(let articleIDs):
+				process(articleIDs)
+			case .failure:
+				self.refreshProgress.completeTask()
+				completion()
+			}
 		}
 	}
 

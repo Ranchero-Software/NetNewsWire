@@ -380,10 +380,6 @@ final class ArticlesTable: DatabaseTable {
 		return try statusesTable.fetchStarredArticleIDs()
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticles() throws -> Set<String> {
-		return try statusesTable.fetchArticleIDsForStatusesWithoutArticles()
-	}
-
 	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate, completion)
 	}
