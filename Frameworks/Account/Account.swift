@@ -689,10 +689,16 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), completion: completion)
 	}
 
+	/// Deprecated.  Use fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate instead.
 	public func fetchArticleIDsForStatusesWithoutArticles() throws -> Set<String> {
 		return try database.fetchArticleIDsForStatusesWithoutArticles()
 	}
 
+	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (unread and newer than the article cutoff date).
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
+		database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
+	}
+	
 	public func unreadCount(for webFeed: WebFeed) -> Int {
 		return unreadCounts[webFeed.webFeedID] ?? 0
 	}
