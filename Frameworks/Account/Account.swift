@@ -808,23 +808,23 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	func markAsRead(_ articleIDs: Set<String>) {
-		mark(articleIDs: articleIDs, statusKey: .read, flag: true)
+	func markAsRead(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+		mark(articleIDs: articleIDs, statusKey: .read, flag: true, completion: completion)
 	}
 
 	/// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	func markAsUnread(_ articleIDs: Set<String>) {
-		mark(articleIDs: articleIDs, statusKey: .read, flag: false)
+	func markAsUnread(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+		mark(articleIDs: articleIDs, statusKey: .read, flag: false, completion: completion)
 	}
 
 	/// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	func markAsStarred(_ articleIDs: Set<String>) {
-		mark(articleIDs: articleIDs, statusKey: .starred, flag: true)
+	func markAsStarred(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+		mark(articleIDs: articleIDs, statusKey: .starred, flag: true, completion: completion)
 	}
 
 	/// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
-	func markAsUnstarred(_ articleIDs: Set<String>) {
-		mark(articleIDs: articleIDs, statusKey: .starred, flag: false)
+	func markAsUnstarred(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+		mark(articleIDs: articleIDs, statusKey: .starred, flag: false, completion: completion)
 	}
 
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.

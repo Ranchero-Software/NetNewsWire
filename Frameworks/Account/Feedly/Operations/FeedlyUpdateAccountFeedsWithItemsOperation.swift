@@ -31,7 +31,12 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 		
 		let webFeedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 		
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { _ in
+		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { databaseError in
+			if let error = databaseError {
+				self.didFinish(error)
+				return
+			}
+			
 			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", webFeedIDsAndItems.count, self.organisedItemsProvider.providerName)
 			self.didFinish()
 		}
