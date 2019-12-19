@@ -548,37 +548,53 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	func discloseFeed(_ feed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
+	func discloseFeed(_ webFeed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
 		
-		guard let node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject) else {
-			completion?()
-			return
-		}
-		
-		if let indexPath = dataSource.indexPath(for: node) {
-			coordinator.selectFeed(indexPath, animated: animated) {
+		func discloseFeedInAccount() {
+			guard let node = coordinator.rootNode.descendantNodeRepresentingObject(webFeed as AnyObject) else {
 				completion?()
+				return
 			}
-			return
-		}
-	
-		// It wasn't already visable, so expand its folder and try again
-		guard let parent = node.parent else {
-			completion?()
-			return
-		}
-		
-		coordinator.expand(parent)
-		reloadNode(parent)
-
-		self.applyChanges(animated: true, adjustScroll: true) { [weak self] in
-			if let indexPath = self?.dataSource.indexPath(for: node) {
-				self?.coordinator.selectFeed(indexPath, animated: animated) {
+			
+			if let indexPath = dataSource.indexPath(for: node) {
+				coordinator.selectFeed(indexPath, animated: animated) {
 					completion?()
+				}
+				return
+			}
+		
+			// It wasn't already visable, so expand its folder and try again
+			guard let parent = node.parent else {
+				completion?()
+				return
+			}
+			
+			coordinator.expand(parent)
+			reloadNode(parent)
+
+			applyChanges(animated: true, adjustScroll: true) { [weak self] in
+				if let indexPath = self?.dataSource.indexPath(for: node) {
+					self?.coordinator.selectFeed(indexPath, animated: animated) {
+						completion?()
+					}
 				}
 			}
 		}
-
+		
+		// If the account for the feed is collapsed, expand it
+		if let account = webFeed.account,
+			let accountNode = coordinator.rootNode.childNodeRepresentingObject(account as AnyObject),
+			!coordinator.isExpanded(accountNode) {
+			
+				coordinator.expand(accountNode)
+				applyChanges(animated: false) {
+					discloseFeedInAccount()
+				}
+			
+		} else {
+			discloseFeedInAccount()
+		}
+		
 	}
 
 	func focus() {
