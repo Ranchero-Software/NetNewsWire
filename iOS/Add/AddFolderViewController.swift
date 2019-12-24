@@ -20,7 +20,22 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		return accounts.count > 1
 	}
 	
-	private var accounts: [Account]!
+	private var accounts: [Account]! {
+		didSet {
+			if let predefinedAccount = accounts.first(where: { $0.accountID == AppDefaults.addFolderAccountID }) {
+				selectedAccount = predefinedAccount
+			} else {
+				selectedAccount = accounts[0]
+			}
+		}
+	}
+
+	private var selectedAccount: Account! {
+		didSet {
+			guard selectedAccount != oldValue else { return }
+			accountLabel.text = selectedAccount.flatMap { ($0 as DisplayNameProvider).nameForDisplay }
+		}
+	}
 	
 	weak var delegate: AddContainerViewControllerChildDelegate?
 	
@@ -32,13 +47,11 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		
 		nameTextField.delegate = self
 		
-		accountLabel.text = (accounts[0] as DisplayNameProvider).nameForDisplay
-		
 		if shouldDisplayPicker {
 			accountPickerView.dataSource = self
 			accountPickerView.delegate = self
 			
-			if let index = accounts.firstIndex(where: { $0.accountID == AppDefaults.addFolderAccountID }) {
+			if let index = accounts.firstIndex(of: selectedAccount) {
 				accountPickerView.selectRow(index, inComponent: 0, animated: false)
 			}
 			
@@ -52,21 +65,26 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: nameTextField)
 		
     }
+	
+	private func didSelect(_ account: Account) {
+		AppDefaults.addFolderAccountID = account.accountID
+		selectedAccount = account
+	}
 
 	func cancel() {
 		delegate?.processingDidEnd()
 	}
 	
 	func add() {
-		let account = accounts[accountPickerView.selectedRow(inComponent: 0)]
-		if let folderName = nameTextField.text {
-			account.addFolder(folderName) { result in
-				switch result {
-				case .success:
-					self.delegate?.processingDidEnd()
-				case .failure(let error):
-					self.presentError(error)
-				}
+		guard let folderName = nameTextField.text else {
+			return
+		}
+		selectedAccount.addFolder(folderName) { result in
+			switch result {
+			case .success:
+				self.delegate?.processingDidEnd()
+			case .failure(let error):
+				self.presentError(error)
 			}
 		}
 	}
@@ -100,8 +118,7 @@ extension AddFolderViewController: UIPickerViewDataSource, UIPickerViewDelegate 
 	}
 	
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-		accountLabel.text = (accounts[row] as DisplayNameProvider).nameForDisplay
-		AppDefaults.addFolderAccountID = accounts[row].accountID
+		didSelect(accounts[row])
 	}
 	
 }
