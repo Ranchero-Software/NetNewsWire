@@ -1551,6 +1551,7 @@ private extension SceneCoordinator {
 	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
+			timelineMiddleIndexPath = nil
 			replaceArticles(with: Set<Article>(), animated: false)
 		}
 	}
