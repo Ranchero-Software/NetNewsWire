@@ -74,11 +74,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 
 		resetUI(resetScroll: true)
-		applyChanges(animated: false)
 		
-		// Restore the scroll position if we have one stored
-		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
-			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
+		// Load the table and then scroll to the saved position if available
+		applyChanges(animated: false) {
+			if let restoreIndexPath = self.coordinator.timelineMiddleIndexPath {
+				self.tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
+			}
 		}
 		
 	}
