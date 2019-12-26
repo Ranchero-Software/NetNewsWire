@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol InteractiveNavigationControllerTappable {
-	func didTapNavigationBar()
-}
-
 class InteractiveNavigationController: UINavigationController {
 	
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
@@ -33,8 +29,6 @@ class InteractiveNavigationController: UINavigationController {
 		poppableDelegate.originalDelegate = interactivePopGestureRecognizer?.delegate
 		poppableDelegate.navigationController = self
 		interactivePopGestureRecognizer?.delegate = poppableDelegate
-		
-		navigationBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapNavigationBar)))
 	}
 	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -44,13 +38,7 @@ class InteractiveNavigationController: UINavigationController {
 		}
 	}
 		
-	@objc func didTapNavigationBar() {
-		if let tappable = topViewController as? InteractiveNavigationControllerTappable {
-			tappable.didTapNavigationBar()
-		}
 	}
-	
-}
 
 // MARK: Private
 

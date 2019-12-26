@@ -114,6 +114,14 @@ class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
+		let fullScreenTapZone = UIView()
+		NSLayoutConstraint.activate([
+			fullScreenTapZone.widthAnchor.constraint(equalToConstant: 150),
+			fullScreenTapZone.heightAnchor.constraint(equalToConstant: 44)
+		])
+		fullScreenTapZone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapNavigationBar)))
+		navigationItem.titleView = fullScreenTapZone
+		
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
 
@@ -275,6 +283,10 @@ class ArticleViewController: UIViewController {
 	
 	// MARK: Actions
 
+	@objc func didTapNavigationBar() {
+		hideBars()
+	}
+
 	@objc func showBars(_ sender: Any) {
 		showBars()
 	}
@@ -354,14 +366,6 @@ class ArticleViewController: UIViewController {
 		}
 	}
 	
-}
-
-// MARK: InteractiveNavigationControllerTappable
-
-extension ArticleViewController: InteractiveNavigationControllerTappable {
-	func didTapNavigationBar() {
-		hideBars()
-	}
 }
 
 // MARK: UIContextMenuInteractionDelegate
