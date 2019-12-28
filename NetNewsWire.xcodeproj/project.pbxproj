@@ -259,8 +259,6 @@
 		51FA73A52332BE110090D516 /* ArticleExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A32332BE110090D516 /* ArticleExtractor.swift */; };
 		51FA73A72332BE880090D516 /* ExtractedArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A62332BE880090D516 /* ExtractedArticle.swift */; };
 		51FA73A82332BE880090D516 /* ExtractedArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A62332BE880090D516 /* ExtractedArticle.swift */; };
-		51FA73AA2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */; };
-		51FA73AB2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */; };
 		51FA73B72332D5F70090D516 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */; };
 		51FD413B2342BD0500880194 /* MasterTimelineUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FD413A2342BD0500880194 /* MasterTimelineUnreadCountView.swift */; };
 		51FE10032345529D0056195D /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE10022345529D0056195D /* UserNotificationManager.swift */; };
@@ -279,7 +277,6 @@
 		65ED3FB7235DEF6C0081F399 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		65ED3FB8235DEF6C0081F399 /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
 		65ED3FB9235DEF6C0081F399 /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847CD6C9232F4CBF00FAC46D /* IconView.swift */; };
-		65ED3FBA235DEF6C0081F399 /* ArticleExtractorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */; };
 		65ED3FBB235DEF6C0081F399 /* InspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BBB12C20142A4700F054F5 /* InspectorWindowController.swift */; };
 		65ED3FBC235DEF6C0081F399 /* ColorHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F78227716380050506E /* ColorHash.swift */; };
 		65ED3FBD235DEF6C0081F399 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E46C7C1F75EF7B005ECFB3 /* AppDefaults.swift */; };
@@ -1379,7 +1376,6 @@
 		51F85BFC2275DCA800C787DC /* SingleLineUILabelSizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLineUILabelSizer.swift; sourceTree = "<group>"; };
 		51FA73A32332BE110090D516 /* ArticleExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractor.swift; sourceTree = "<group>"; };
 		51FA73A62332BE880090D516 /* ExtractedArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractedArticle.swift; sourceTree = "<group>"; };
-		51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorConfig.swift; sourceTree = "<group>"; };
 		51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
 		51FD413A2342BD0500880194 /* MasterTimelineUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineUnreadCountView.swift; sourceTree = "<group>"; };
 		51FE10022345529D0056195D /* UserNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationManager.swift; sourceTree = "<group>"; };
@@ -2014,7 +2010,6 @@
 		51FA739A2332BDE70090D516 /* Article Extractor */ = {
 			isa = PBXGroup;
 			children = (
-				51FA73A92332C2FD0090D516 /* ArticleExtractorConfig.swift */,
 				51FA73A32332BE110090D516 /* ArticleExtractor.swift */,
 				51FA73A62332BE880090D516 /* ExtractedArticle.swift */,
 			);
@@ -3668,7 +3663,6 @@
 				65ED3FB7235DEF6C0081F399 /* ArticleArray.swift in Sources */,
 				65ED3FB8235DEF6C0081F399 /* CrashReporter.swift in Sources */,
 				65ED3FB9235DEF6C0081F399 /* IconView.swift in Sources */,
-				65ED3FBA235DEF6C0081F399 /* ArticleExtractorConfig.swift in Sources */,
 				65ED3FBB235DEF6C0081F399 /* InspectorWindowController.swift in Sources */,
 				65ED3FBC235DEF6C0081F399 /* ColorHash.swift in Sources */,
 				65ED3FBD235DEF6C0081F399 /* AppDefaults.swift in Sources */,
@@ -3860,7 +3854,6 @@
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
-				51FA73AB2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
@@ -3965,7 +3958,6 @@
 				84F204E01FAACBB30076E152 /* ArticleArray.swift in Sources */,
 				848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */,
 				847CD6CA232F4CBF00FAC46D /* IconView.swift in Sources */,
-				51FA73AA2332C2FD0090D516 /* ArticleExtractorConfig.swift in Sources */,
 				84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */,
 				51EF0F7A22771B890050506E /* ColorHash.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,
