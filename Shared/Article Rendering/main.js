@@ -21,6 +21,19 @@ function convertImgSrc() {
 	});
 }
 
+// Wrap tables in an overflow-x: auto; div
+function wrapTables() {
+	var tables = document.querySelectorAll("div.articleBody")[0].getElementsByTagName("table");
+
+	for (table of tables) {
+		var wrapper = document.createElement("div");
+		wrapper.className = "nnw-overflow";
+		var tableCopy = table.cloneNode(true);
+		wrapper.appendChild(tableCopy);
+		table.parentNode.replaceChild(wrapper, table);
+	}
+}
+
 function reloadArticleImage() {
 	var image = document.getElementById("nnwImageIcon");
 	image.src = "nnwImageIcon://";
@@ -39,6 +52,7 @@ function render(data, scrollY) {
 	wrapFrames()
 	stripStyles()
 	convertImgSrc()
+	wrapTables()
 	
 	postRenderProcessing()
 }
