@@ -34,6 +34,40 @@ function wrapTables() {
 	}
 }
 
+// Remove some children (currently just spans) from pre elements to work around a strange clipping issue
+var ElementUnwrapper = {
+	unwrapSelector: "span",
+	unwrapElement: function (element) {
+		var parent = element.parentNode;
+		var children = Array.from(element.childNodes);
+
+		for (child of children) {
+			parent.insertBefore(child, element);
+		}
+
+		parent.removeChild(element);
+	},
+	// `elements` can be a selector string, a node, or a list of nodes
+	unwrapAppropriateChildren: function (elements) {
+		if (typeof elements[Symbol.iterator] !== 'function')
+			elements = [elements];
+		else if (typeof elements === "string")
+			elements = document.querySelectorAll(elements);
+
+		for (element of elements) {
+			for (unwrap of element.querySelectorAll(this.unwrapSelector)) {
+				this.unwrapElement(unwrap);
+			}
+
+			element.normalize()
+		}
+	}
+};
+
+function flattenPreElements() {
+	ElementUnwrapper.unwrapAppropriateChildren(".articleBody td > pre");
+}
+
 function reloadArticleImage() {
 	var image = document.getElementById("nnwImageIcon");
 	image.src = "nnwImageIcon://";
@@ -53,5 +87,7 @@ function render(data, scrollY) {
 	wrapTables()
 	stripStyles()
 	convertImgSrc()
+	flattenPreElements()
+
 	postRenderProcessing()
 }
