@@ -564,7 +564,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 		
 			// It wasn't already visable, so expand its folder and try again
-			guard let parent = node.parent else {
+			guard let parent = node.parent, parent.representedObject is Folder else {
 				completion?()
 				return
 			}
