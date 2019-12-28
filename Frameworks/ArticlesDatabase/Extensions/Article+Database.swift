@@ -13,8 +13,32 @@ import RSParser
 
 extension Article {
 	
-	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?) {
-		self.init(accountID: accountID, articleID: databaseArticle.articleID, webFeedID: databaseArticle.webFeedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, status: databaseArticle.status)
+	init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
+		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+			assertionFailure("Expected articleID.")
+			return nil
+		}
+		guard let webFeedID = row.string(forColumn: DatabaseKey.feedID) else {
+			assertionFailure("Expected feedID.")
+			return nil
+		}
+		guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
+			assertionFailure("Expected uniqueID.")
+			return nil
+		}
+
+		let title = row.string(forColumn: DatabaseKey.title)
+		let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
+		let contentText = row.string(forColumn: DatabaseKey.contentText)
+		let url = row.string(forColumn: DatabaseKey.url)
+		let externalURL = row.string(forColumn: DatabaseKey.externalURL)
+		let summary = row.string(forColumn: DatabaseKey.summary)
+		let imageURL = row.string(forColumn: DatabaseKey.imageURL)
+		let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
+		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
+		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
+
+		self.init(accountID: accountID, articleID: articleID, webFeedID: webFeedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
 	}
 
 	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, webFeedID: String, status: ArticleStatus) {
@@ -42,7 +66,14 @@ extension Article {
 			dictionary[key] = self[keyPath: comparisonKeyPath] ?? ""
 		}
 	}
-	
+
+	func byAdding(_ authors: Set<Author>) -> Article {
+		if authors.isEmpty {
+			return self
+		}
+		return Article(accountID: self.accountID, articleID: self.articleID, webFeedID: self.webFeedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, url: self.url, externalURL: self.externalURL, summary: self.summary, imageURL: self.imageURL, bannerImageURL: self.bannerImageURL, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
+	}
+
 	func changesFrom(_ existingArticle: Article) -> DatabaseDictionary? {
 		if self == existingArticle {
 			return nil
