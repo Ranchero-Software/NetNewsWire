@@ -50,9 +50,8 @@ function render(data, scrollY) {
 	window.scrollTo(0, scrollY);
 	
 	wrapFrames()
+	wrapTables()
 	stripStyles()
 	convertImgSrc()
-	wrapTables()
-	
 	postRenderProcessing()
 }
