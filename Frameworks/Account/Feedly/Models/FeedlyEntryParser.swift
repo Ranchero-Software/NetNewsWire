@@ -17,10 +17,10 @@ struct FeedlyEntryParser {
 		return entry.id
 	}
 	
-	var feedUrl: String {
+	var feedUrl: String? {
 		guard let id = entry.origin?.streamId else {
 			assertionFailure()
-			return ""
+			return nil
 		}
 		return id
 	}
@@ -82,7 +82,11 @@ struct FeedlyEntryParser {
 		return attachments.isEmpty ? nil : Set(attachments)
 	}
 	
-	var parsedItemRepresentation: ParsedItem {
+	var parsedItemRepresentation: ParsedItem? {
+		guard let feedUrl = feedUrl else {
+			return nil
+		}
+		
 		return ParsedItem(syncServiceID: id,
 						  uniqueID: id, // This value seems to get ignored or replaced.
 						  feedURL: feedUrl,

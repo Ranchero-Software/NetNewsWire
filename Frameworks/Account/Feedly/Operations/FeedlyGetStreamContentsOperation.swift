@@ -50,7 +50,17 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 			return entries
 		}
 		
-		let parsed = Set(entries.map { FeedlyEntryParser(entry: $0).parsedItemRepresentation })
+		let parsed = Set(entries.compactMap {
+			FeedlyEntryParser(entry: $0).parsedItemRepresentation
+		})
+		
+		if parsed.count != entries.count {
+			let entryIds = Set(entries.map { $0.id })
+			let parsedIds = Set(parsed.map { $0.uniqueID })
+			let difference = entryIds.subtracting(parsedIds)
+			os_log(.debug, log: log, "Dropping articles with ids: %{public}@.", difference)
+		}
+		
 		storedParsedEntries = parsed
 		
 		return parsed
