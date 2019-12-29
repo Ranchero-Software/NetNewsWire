@@ -34,11 +34,10 @@ extension Article {
 		let externalURL = row.string(forColumn: DatabaseKey.externalURL)
 		let summary = row.string(forColumn: DatabaseKey.summary)
 		let imageURL = row.string(forColumn: DatabaseKey.imageURL)
-		let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 
-		self.init(accountID: accountID, articleID: articleID, webFeedID: webFeedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
+		self.init(accountID: accountID, articleID: articleID, webFeedID: webFeedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
 	}
 
 	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, webFeedID: String, status: ArticleStatus) {
@@ -58,7 +57,7 @@ extension Article {
 			dateModified = nil
 		}
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, webFeedID: webFeedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, webFeedID: webFeedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
@@ -71,7 +70,7 @@ extension Article {
 		if authors.isEmpty {
 			return self
 		}
-		return Article(accountID: self.accountID, articleID: self.articleID, webFeedID: self.webFeedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, url: self.url, externalURL: self.externalURL, summary: self.summary, imageURL: self.imageURL, bannerImageURL: self.bannerImageURL, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
+		return Article(accountID: self.accountID, articleID: self.articleID, webFeedID: self.webFeedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, url: self.url, externalURL: self.externalURL, summary: self.summary, imageURL: self.imageURL, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
 	}
 
 	func changesFrom(_ existingArticle: Article) -> DatabaseDictionary? {
@@ -91,7 +90,6 @@ extension Article {
 		addPossibleStringChangeWithKeyPath(\Article.externalURL, existingArticle, DatabaseKey.externalURL, &d)
 		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, &d)
 		addPossibleStringChangeWithKeyPath(\Article.imageURL, existingArticle, DatabaseKey.imageURL, &d)
-		addPossibleStringChangeWithKeyPath(\Article.bannerImageURL, existingArticle, DatabaseKey.bannerImageURL, &d)
 
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
@@ -150,9 +148,6 @@ extension Article: DatabaseObject {
 		}
 		if let imageURL = imageURL {
 			d[DatabaseKey.imageURL] = imageURL
-		}
-		if let bannerImageURL = bannerImageURL {
-			d[DatabaseKey.bannerImageURL] = bannerImageURL
 		}
 		if let datePublished = datePublished {
 			d[DatabaseKey.datePublished] = datePublished
