@@ -212,6 +212,9 @@ final class ArticlesTable: DatabaseTable {
 
 				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
 
+				self.addArticlesToCache(newArticles)
+				self.addArticlesToCache(updatedArticles)
+
 				// 8. Update search index.
 				if let newArticles = newArticles {
 					self.searchTable.indexNewArticles(newArticles, database)
@@ -537,8 +540,6 @@ private extension ArticlesTable {
 				continue
 			}
 
-			// Articles are removed from the cache when they’re updated.
-			// See saveUpdatedArticles.
 			if let article = articlesCache[articleID] {
 				cachedArticles.insert(article)
 				continue
@@ -843,7 +844,6 @@ private extension ArticlesTable {
 	
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-		removeArticlesFromArticlesCache(updatedArticles)
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
 		
 		for updatedArticle in updatedArticles {
@@ -868,10 +868,12 @@ private extension ArticlesTable {
 		updateRowsWithDictionary(changesDictionary, whereKey: DatabaseKey.articleID, matches: updatedArticle.articleID, database: database)
 	}
 
-	func removeArticlesFromArticlesCache(_ updatedArticles: Set<Article>) {
-		let articleIDs = updatedArticles.articleIDs()
-		for articleID in articleIDs {
-			articlesCache[articleID] = nil
+	func addArticlesToCache(_ articles: Set<Article>?) {
+		guard let articles = articles else {
+			return
+		}
+		for article in articles {
+			articlesCache[article.articleID] = article
 		}
 	}
 
