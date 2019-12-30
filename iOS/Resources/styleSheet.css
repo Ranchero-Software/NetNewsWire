@@ -134,9 +134,6 @@ pre {
 .nnw-overflow {
 	overflow-x: auto;
 }
-td > pre {
-	overflow-x: hidden;
-}
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: 14px;
