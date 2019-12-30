@@ -65,7 +65,7 @@ var ElementUnwrapper = {
 };
 
 function flattenPreElements() {
-	ElementUnwrapper.unwrapAppropriateChildren(".articleBody td > pre");
+	ElementUnwrapper.unwrapAppropriateChildren("div.articleBody td > pre");
 }
 
 function reloadArticleImage() {
