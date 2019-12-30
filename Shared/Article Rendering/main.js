@@ -23,14 +23,13 @@ function convertImgSrc() {
 
 // Wrap tables in an overflow-x: auto; div
 function wrapTables() {
-	var tables = document.querySelectorAll("div.articleBody")[0].getElementsByTagName("table");
+	var tables = document.querySelector("div.articleBody").getElementsByTagName("table");
 
 	for (table of tables) {
 		var wrapper = document.createElement("div");
 		wrapper.className = "nnw-overflow";
-		var tableCopy = table.cloneNode(true);
-		wrapper.appendChild(tableCopy);
-		table.parentNode.replaceChild(wrapper, table);
+		table.parentNode.insertBefore(wrapper, table);
+		wrapper.appendChild(table);
 	}
 }
 
