@@ -46,7 +46,7 @@ var ElementUnwrapper = {
 
 		parent.removeChild(element);
 	},
-	// `elements` can be a selector string, a node, or a list of nodes
+	// `elements` can be a selector string, an element, or a list of elements
 	unwrapAppropriateChildren: function (elements) {
 		if (typeof elements[Symbol.iterator] !== 'function')
 			elements = [elements];
