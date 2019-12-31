@@ -8,10 +8,18 @@ function wrapFrames() {
 	});
 }
 
-// Strip out all styling so that we have better control over layout
+// Strip out color and font styling
+
+function stripStylesFromElement(element, propertiesToStrip) {
+	for (name of propertiesToStrip) {
+		element.style.removeProperty(name);
+	}
+}
+
 function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
-	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
+	// Removing "background" and "font" will also remove properties that would be reflected in them, e.g., "background-color" and "font-family"
+	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font"]));
 }
 
 // Convert all image locations to be absolute
