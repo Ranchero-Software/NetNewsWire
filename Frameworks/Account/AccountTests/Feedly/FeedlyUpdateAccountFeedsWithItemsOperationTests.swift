@@ -32,7 +32,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		var parsedItemsKeyedByFeedId: [String: Set<ParsedItem>]
 	}
 	
-	func testUpdateAccountWithEmptyItems() {
+	func testUpdateAccountWithEmptyItems() throws {
 		let testItems = support.makeParsedItemTestDataFor(numberOfFeeds: 0, numberOfItemsInFeeds: 0)
 		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
 		let provider = TestItemsByFeedProvider(providerName: resource.id, parsedItemsKeyedByFeedId: testItems)
@@ -52,11 +52,11 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let articleIds = Set(entries.compactMap { $0.syncServiceID })
 		XCTAssertEqual(articleIds.count, entries.count, "Not every item has a value for \(\ParsedItem.syncServiceID).")
 		
-		let accountArticles = account.fetchArticles(.articleIDs(articleIds))
+		let accountArticles = try account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertTrue(accountArticles.isEmpty)
 	}
 	
-	func testUpdateAccountWithOneItem() {
+	func testUpdateAccountWithOneItem() throws {
 		let testItems = support.makeParsedItemTestDataFor(numberOfFeeds: 1, numberOfItemsInFeeds: 1)
 		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
 		let provider = TestItemsByFeedProvider(providerName: resource.id, parsedItemsKeyedByFeedId: testItems)
@@ -76,7 +76,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let articleIds = Set(entries.compactMap { $0.syncServiceID })
 		XCTAssertEqual(articleIds.count, entries.count, "Not every item has a value for \(\ParsedItem.syncServiceID).")
 		
-		let accountArticles = account.fetchArticles(.articleIDs(articleIds))
+		let accountArticles = try account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertTrue(accountArticles.count == entries.count)
 		
 		let accountArticleIds = Set(accountArticles.map { $0.articleID })
@@ -84,7 +84,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		XCTAssertTrue(missingIds.isEmpty)
 	}
 	
-	func testUpdateAccountWithManyItems() {
+	func testUpdateAccountWithManyItems() throws {
 		let testItems = support.makeParsedItemTestDataFor(numberOfFeeds: 100, numberOfItemsInFeeds: 100)
 		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
 		let provider = TestItemsByFeedProvider(providerName: resource.id, parsedItemsKeyedByFeedId: testItems)
@@ -104,7 +104,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let articleIds = Set(entries.compactMap { $0.syncServiceID })
 		XCTAssertEqual(articleIds.count, entries.count, "Not every item has a value for \(\ParsedItem.syncServiceID).")
 		
-		let accountArticles = account.fetchArticles(.articleIDs(articleIds))
+		let accountArticles = try account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertTrue(accountArticles.count == entries.count)
 		
 		let accountArticleIds = Set(accountArticles.map { $0.articleID })
@@ -112,7 +112,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		XCTAssertTrue(missingIds.isEmpty)
 	}
 	
-	func testCancelUpdateAccount() {
+	func testCancelUpdateAccount() throws {
 		let testItems = support.makeParsedItemTestDataFor(numberOfFeeds: 1, numberOfItemsInFeeds: 1)
 		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
 		let provider = TestItemsByFeedProvider(providerName: resource.id, parsedItemsKeyedByFeedId: testItems)
@@ -134,7 +134,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let articleIds = Set(entries.compactMap { $0.syncServiceID })
 		XCTAssertEqual(articleIds.count, entries.count, "Not every item has a value for \(\ParsedItem.syncServiceID).")
 		
-		let accountArticles = account.fetchArticles(.articleIDs(articleIds))
+		let accountArticles = try account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertTrue(accountArticles.isEmpty)
 	}
 }
