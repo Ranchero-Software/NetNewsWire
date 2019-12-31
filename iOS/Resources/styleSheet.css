@@ -131,6 +131,9 @@ pre {
 	word-break: normal;
 	-webkit-hyphens: none;
 }
+.nnw-overflow {
+	overflow-x: auto;
+}
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: 14px;
@@ -219,12 +222,6 @@ img[src*="feedburner"],
 img[src*="feedblitz"],
 img[src*="share-buttons"] {
 	display: none !important;
-}
-
-/* Site specific styles */
-.wp-smiley {
-	height: 1em;
-	max-height: 1em;
 }
 
 /* Newsfoot specific styles. Structural styles come first, theme styles second */
