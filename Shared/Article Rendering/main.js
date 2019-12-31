@@ -29,6 +29,52 @@ function convertImgSrc() {
 	});
 }
 
+// Wrap tables in an overflow-x: auto; div
+function wrapTables() {
+	var tables = document.querySelector("div.articleBody").getElementsByTagName("table");
+
+	for (table of tables) {
+		var wrapper = document.createElement("div");
+		wrapper.className = "nnw-overflow";
+		table.parentNode.insertBefore(wrapper, table);
+		wrapper.appendChild(table);
+	}
+}
+
+// Remove some children (currently just spans) from pre elements to work around a strange clipping issue
+var ElementUnwrapper = {
+	unwrapSelector: "span",
+	unwrapElement: function (element) {
+		var parent = element.parentNode;
+		var children = Array.from(element.childNodes);
+
+		for (child of children) {
+			parent.insertBefore(child, element);
+		}
+
+		parent.removeChild(element);
+	},
+	// `elements` can be a selector string, an element, or a list of elements
+	unwrapAppropriateChildren: function (elements) {
+		if (typeof elements[Symbol.iterator] !== 'function')
+			elements = [elements];
+		else if (typeof elements === "string")
+			elements = document.querySelectorAll(elements);
+
+		for (element of elements) {
+			for (unwrap of element.querySelectorAll(this.unwrapSelector)) {
+				this.unwrapElement(unwrap);
+			}
+
+			element.normalize()
+		}
+	}
+};
+
+function flattenPreElements() {
+	ElementUnwrapper.unwrapAppropriateChildren("div.articleBody td > pre");
+}
+
 function reloadArticleImage() {
 	var image = document.getElementById("nnwImageIcon");
 	image.src = "nnwImageIcon://";
@@ -45,8 +91,10 @@ function render(data, scrollY) {
 	window.scrollTo(0, scrollY);
 	
 	wrapFrames()
+	wrapTables()
 	stripStyles()
 	convertImgSrc()
-	
+	flattenPreElements()
+
 	postRenderProcessing()
 }

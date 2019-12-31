@@ -131,6 +131,9 @@ pre {
 	word-break: normal;
 	-webkit-hyphens: none;
 }
+.nnw-overflow {
+	overflow-x: auto;
+}
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: 14px;
