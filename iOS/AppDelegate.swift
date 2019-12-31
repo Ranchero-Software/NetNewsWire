@@ -59,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		appDelegate = self
 
 		// Force lazy initialization of the web view provider so that it can warm up the queue of prepared web views
-		let _ = ArticleViewControllerWebViewProvider.shared
+		let _ = WebViewProvider.shared
 		AccountManager.shared = AccountManager()
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)

@@ -15,39 +15,7 @@
                     <view key="view" contentMode="scaleToFill" id="svH-Pt-448">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DNb-lt-KzC">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                            </view>
-                            <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iEi-hX-TYy">
-                                <rect key="frame" x="0.0" y="813" width="414" height="100"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="xX2-AK-xJX"/>
-                                </constraints>
-                            </view>
-                            <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A7j-8T-DqE">
-                                <rect key="frame" x="0.0" y="-12" width="414" height="100"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="3HX-Dm-bA6"/>
-                                </constraints>
-                            </view>
-                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="iEi-hX-TYy" secondAttribute="top" id="4fZ-pn-fmB"/>
-                            <constraint firstItem="DNb-lt-KzC" firstAttribute="top" secondItem="svH-Pt-448" secondAttribute="top" id="Bfh-RL-m4d"/>
-                            <constraint firstItem="A7j-8T-DqE" firstAttribute="trailing" secondItem="VUw-jc-0yf" secondAttribute="trailing" id="Feu-hj-K01"/>
-                            <constraint firstItem="DNb-lt-KzC" firstAttribute="bottom" secondItem="svH-Pt-448" secondAttribute="bottom" id="FfW-6G-Bcp"/>
-                            <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="iEi-hX-TYy" secondAttribute="trailing" id="Ij6-ri-sBN"/>
-                            <constraint firstItem="iEi-hX-TYy" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="Muc-gr-S7o"/>
-                            <constraint firstItem="DNb-lt-KzC" firstAttribute="trailing" secondItem="VUw-jc-0yf" secondAttribute="trailing" id="QJ5-Ne-ndd"/>
-                            <constraint firstItem="A7j-8T-DqE" firstAttribute="bottom" secondItem="VUw-jc-0yf" secondAttribute="top" id="b2h-zZ-xwi"/>
-                            <constraint firstItem="DNb-lt-KzC" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="ezE-0p-35X"/>
-                            <constraint firstItem="A7j-8T-DqE" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="wny-M6-akA"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                     </view>
                     <toolbarItems>
@@ -75,7 +43,7 @@
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Next Unread"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="nextUnread:" destination="JEX-9P-axG" id="USD-hC-C6z"/>
+                                <action selector="nextUnread:" destination="JEX-9P-axG" id="nI3-pz-tc8"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="vAq-iW-Yyo"/>
@@ -117,15 +85,10 @@
                     <connections>
                         <outlet property="actionBarButtonItem" destination="9Ut-5B-JKP" id="9bO-kz-cTz"/>
                         <outlet property="nextArticleBarButtonItem" destination="2qz-M5-Yhk" id="IQd-jx-qEr"/>
-                        <outlet property="nextUnreadBarButtonItem" destination="2w5-e9-C2V" id="xJr-5y-p1N"/>
+                        <outlet property="nextUnreadBarButtonItem" destination="2w5-e9-C2V" id="Ekf-My-AHN"/>
                         <outlet property="prevArticleBarButtonItem" destination="v4j-fq-23N" id="Gny-Oh-cQa"/>
                         <outlet property="readBarButtonItem" destination="hy0-LS-MzE" id="BzM-x9-tuj"/>
-                        <outlet property="showNavigationView" destination="A7j-8T-DqE" id="D59-3C-HmS"/>
-                        <outlet property="showNavigationViewConstraint" destination="b2h-zZ-xwi" id="CaG-8F-5kF"/>
-                        <outlet property="showToolbarView" destination="iEi-hX-TYy" id="zoa-h3-H8b"/>
-                        <outlet property="showToolbarViewConstraint" destination="4fZ-pn-fmB" id="ayD-Mq-kft"/>
                         <outlet property="starBarButtonItem" destination="wU4-eH-wC9" id="Z8Q-Lt-dKk"/>
-                        <outlet property="webViewContainer" destination="DNb-lt-KzC" id="Fc1-Ae-pWK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>

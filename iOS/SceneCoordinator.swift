@@ -34,9 +34,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private var activityManager = ActivityManager()
 	
-	private var isShowingExtractedArticle = false
-	private var articleExtractor: ArticleExtractor? = nil
-
 	private var rootSplitViewController: RootSplitViewController!
 	private var masterNavigationController: UINavigationController!
 	private var masterFeedViewController: MasterFeedViewController!
@@ -723,7 +720,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func selectArticle(_ article: Article?, animated: Bool = false) {
 		guard article != currentArticle else { return }
 		
-		stopArticleExtractor()
 		currentArticle = article
 		activityManager.reading(feed: timelineFeed, article: article)
 		
@@ -733,7 +729,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 					masterNavigationController.popViewController(animated: animated)
 				}
 			} else {
-				articleViewController?.state = .noSelection
+				articleViewController?.article = nil
 			}
 			masterTimelineViewController?.updateArticleSelection(animated: animated)
 			return
@@ -747,13 +743,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		masterTimelineViewController?.updateArticleSelection(animated: animated)
-		
-		if article!.webFeed?.isArticleExtractorAlwaysOn ?? false {
-			startArticleExtractorForCurrentLink()
-			currentArticleViewController.state = .loading
-		} else {
-			currentArticleViewController.state = .article(article!)
-		}
+		currentArticleViewController.article = article
 		
 		markArticles(Set([article!]), statusKey: .read, flag: true)
 		
@@ -1006,37 +996,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rootSplitViewController.present(imageVC, animated: true)
 	}
 	
-	func toggleArticleExtractor() {
-		
-		guard let article = currentArticle else {
-			return
-		}
-
-		guard articleExtractor?.state != .processing else {
-			stopArticleExtractor()
-			articleViewController?.state = .article(article)
-			return
-		}
-		
-		guard !isShowingExtractedArticle else {
-			isShowingExtractedArticle = false
-			articleViewController?.articleExtractorButtonState = .off
-			articleViewController?.state = .article(article)
-			return
-		}
-		
-		if let articleExtractor = articleExtractor, let extractedArticle = articleExtractor.article {
-			if currentArticle?.preferredLink == articleExtractor.articleLink {
-				isShowingExtractedArticle = true
-				articleViewController?.articleExtractorButtonState = .on
-				articleViewController?.state = .extracted(article, extractedArticle)
-			}
-		} else {
-			startArticleExtractorForCurrentLink()
-		}
-		
-	}
-	
 	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
 		guard let node = nodeFor(indexPath),
 			let feed = node.representedObject as? WebFeed,
@@ -1154,7 +1113,6 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will breifly show the Timeline.  Don't clear things out when that happens.
 		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
-			stopArticleExtractor()
 			currentArticle = nil
 			masterTimelineViewController?.updateArticleSelection(animated: animated)
 			activityManager.invalidateReading()
@@ -1166,25 +1124,6 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 			return
 		}
 		
-	}
-	
-}
-
-// MARK: ArticleExtractorDelegate
-
-extension SceneCoordinator: ArticleExtractorDelegate {
-	
-	func articleExtractionDidFail(with: Error) {
-		stopArticleExtractor()
-		articleViewController?.articleExtractorButtonState = .error
-	}
-	
-	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
-		if let article = currentArticle, articleExtractor?.state != .cancelled {
-			isShowingExtractedArticle = true
-			articleViewController?.state = .extracted(article, extractedArticle)
-			articleViewController?.articleExtractorButtonState = .on
-		}
 	}
 	
 }
@@ -1533,22 +1472,6 @@ private extension SceneCoordinator {
 	
 	// MARK: Fetching Articles
 	
-	func startArticleExtractorForCurrentLink() {
-		if let link = currentArticle?.preferredLink, let extractor = ArticleExtractor(link) {
-			extractor.delegate = self
-			extractor.process()
-			articleExtractor = extractor
-			articleViewController?.articleExtractorButtonState = .animated
-		}
-	}
-
-	func stopArticleExtractor() {
-		articleExtractor?.cancel()
-		articleExtractor = nil
-		isShowingExtractedArticle = false
-		articleViewController?.articleExtractorButtonState = .off
-	}
-	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
 			timelineMiddleIndexPath = nil
@@ -1723,6 +1646,8 @@ private extension SceneCoordinator {
 		// We have to do a full reload when installing an article controller.  We may have changed color contexts
 		// and need to update the article colors.  An example is in dark mode.  Split screen doesn't use true black
 		// like darkmode usually does.
+		
+		// TODO: This should probably only happen to recycled article controllers
 		articleController.fullReload()
 		return articleController
 		
