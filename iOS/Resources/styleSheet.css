@@ -189,6 +189,13 @@ sub {
 	width: 100% !important;
 }
 
+@media (max-width: 420px) {
+	blockquote {
+		margin-inline-start: 25px;
+		margin-inline-end: 0;
+	}
+}
+
 /*Block ads and junk*/
 
 iframe[src*="feedads"],

@@ -37,7 +37,8 @@ async function imageWasClicked(img) {
 				x: rect.x,
 				y: rect.y,
 				width: rect.width,
-				height: rect.height
+				height: rect.height,
+				imageTitle: img.title
 			};
 			message.imageURL = reader.result;
 			
