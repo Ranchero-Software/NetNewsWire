@@ -75,14 +75,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendUnreadFailure() {
@@ -115,14 +118,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, statuses.count)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendReadSuccess() {
@@ -155,14 +161,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendReadFailure() {
@@ -195,14 +204,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, statuses.count)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendStarredSuccess() {
@@ -235,14 +247,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendStarredFailure() {
@@ -275,14 +290,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, statuses.count)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendUnstarredSuccess() {
@@ -315,14 +333,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendUnstarredFailure() {
@@ -355,14 +376,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let expectedCount = try result.get()
 				XCTAssertEqual(expectedCount, statuses.count)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendAllSuccess() {
@@ -412,14 +436,17 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendAllFailure() {
@@ -470,13 +497,16 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
+		let selectPendingCountExpectation = expectation(description: "Did Select Pending Count")
 		container.database.selectPendingCount { result in
 			do {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, statuses.count)
+				selectPendingCountExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error unwrapping database result: \(e)")
 			}
 		}
+		waitForExpectations(timeout: 2)
 	}
 }
