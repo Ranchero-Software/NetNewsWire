@@ -29,6 +29,10 @@ class FeedlyOperation: Operation {
 		}
 	}
 	
+	override var isAsynchronous: Bool {
+		return true
+	}
+	
 	func didFinish() {
 		assert(Thread.isMainThread)
 		assert(!isFinished, "Finished operation is attempting to finish again.")
