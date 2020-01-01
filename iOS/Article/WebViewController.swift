@@ -61,7 +61,7 @@ class WebViewController: UIViewController {
 			if article?.webFeed?.isArticleExtractorAlwaysOn ?? false {
 				startArticleExtractor()
 			}
-			if oldValue != nil && article != oldValue {
+			if article != oldValue {
 				reloadHTML()
 			}
 		}
@@ -124,7 +124,8 @@ class WebViewController: UIViewController {
 	}
 
 	func reloadHTML() {
-
+		guard let webView = webView else { return }
+		
 		let style = ArticleStylesManager.shared.currentStyle
 		let rendering: ArticleRenderer.Rendering
 
@@ -154,8 +155,8 @@ class WebViewController: UIViewController {
 		restoreOffset = 0
 		
 		WebViewProvider.shared.articleIconSchemeHandler.currentArticle = article
-		webView?.scrollView.setZoomScale(1.0, animated: false)
-		webView?.evaluateJavaScript(render)
+		webView.scrollView.setZoomScale(1.0, animated: false)
+		webView.evaluateJavaScript(render)
 		
 	}
 	
