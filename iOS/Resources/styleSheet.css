@@ -189,9 +189,11 @@ sub {
 	width: 100% !important;
 }
 
-blockquote {
-	margin-inline-start: 25px;
-	margin-inline-end: 0;
+@media (max-width: 400px) {
+	blockquote {
+		margin-inline-start: 25px;
+		margin-inline-end: 0;
+	}
 }
 
 /*Block ads and junk*/
