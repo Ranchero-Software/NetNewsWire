@@ -257,6 +257,7 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 					.map { $0.articleID })
 				
 				XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
+				fetchIdsExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error checking articles IDs: \(e)")
 			}
@@ -315,6 +316,7 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 					.map { $0.articleID })
 				
 				XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
+				fetchIdsExpectation.fulfill()
 			} catch let e {
 				XCTFail("Error checking articles IDs: \(e)")
 			}
