@@ -56,7 +56,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let expectedArticleIds = Set(items.map { $0.id })
-		let expectedArticles = account.fetchArticles(.articleIDs(expectedArticleIds))
+		let expectedArticles = try! account.fetchArticles(.articleIDs(expectedArticleIds))
 		XCTAssertEqual(expectedArticles.count, expectedArticleIds.count, "Did not fetch all the articles.")
 	}
 	
@@ -132,7 +132,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 		
 		// Find articles inserted.
 		let articleIds = Set(service.pages.values.map { $0.items }.flatMap { $0 }.map { $0.id })
-		let articles = account.fetchArticles(.articleIDs(articleIds))
+		let articles = try! account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertEqual(articleIds.count, articles.count)
 	}
 }

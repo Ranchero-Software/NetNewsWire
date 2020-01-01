@@ -52,7 +52,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let articleIds = Set(entries.compactMap { $0.syncServiceID })
 		XCTAssertEqual(articleIds.count, entries.count, "Not every item has a value for \(\ParsedItem.syncServiceID).")
 		
-		let accountArticles = account.fetchArticles(.articleIDs(articleIds))
+		let accountArticles = try! account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertTrue(accountArticles.isEmpty)
 	}
 	
@@ -76,7 +76,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let articleIds = Set(entries.compactMap { $0.syncServiceID })
 		XCTAssertEqual(articleIds.count, entries.count, "Not every item has a value for \(\ParsedItem.syncServiceID).")
 		
-		let accountArticles = account.fetchArticles(.articleIDs(articleIds))
+		let accountArticles = try! account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertTrue(accountArticles.count == entries.count)
 		
 		let accountArticleIds = Set(accountArticles.map { $0.articleID })
@@ -104,7 +104,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let articleIds = Set(entries.compactMap { $0.syncServiceID })
 		XCTAssertEqual(articleIds.count, entries.count, "Not every item has a value for \(\ParsedItem.syncServiceID).")
 		
-		let accountArticles = account.fetchArticles(.articleIDs(articleIds))
+		let accountArticles = try! account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertTrue(accountArticles.count == entries.count)
 		
 		let accountArticleIds = Set(accountArticles.map { $0.articleID })
@@ -134,7 +134,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let articleIds = Set(entries.compactMap { $0.syncServiceID })
 		XCTAssertEqual(articleIds.count, entries.count, "Not every item has a value for \(\ParsedItem.syncServiceID).")
 		
-		let accountArticles = account.fetchArticles(.articleIDs(articleIds))
+		let accountArticles = try! account.fetchArticles(.articleIDs(articleIds))
 		XCTAssertTrue(accountArticles.isEmpty)
 	}
 }

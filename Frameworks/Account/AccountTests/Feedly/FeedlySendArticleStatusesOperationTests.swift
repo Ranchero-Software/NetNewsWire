@@ -50,7 +50,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -73,8 +73,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), 0)
+
+		let selectPendingExpectation = expectation(description: "Select Pending")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, 0)
+					selectPendingExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendUnreadFailure() {
@@ -82,7 +93,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: false) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -105,8 +116,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), statuses.count)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, statuses.count)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendReadSuccess() {
@@ -114,7 +136,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -137,8 +159,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), 0)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, 0)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendReadFailure() {
@@ -146,7 +179,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .read, flag: true) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -169,8 +202,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), statuses.count)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, statuses.count)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendStarredSuccess() {
@@ -178,7 +222,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -201,8 +245,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), 0)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, 0)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendStarredFailure() {
@@ -210,7 +265,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: true) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -233,8 +288,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), statuses.count)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount() { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, statuses.count)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendUnstarredSuccess() {
@@ -242,7 +308,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -265,8 +331,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), 0)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, 0)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendUnstarredFailure() {
@@ -274,7 +351,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let statuses = articleIds.map { SyncStatus(articleID: $0, key: .starred, flag: false) }
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -297,8 +374,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), statuses.count)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, statuses.count)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendAllSuccess() {
@@ -313,7 +401,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		}
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -346,7 +434,19 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		XCTAssertEqual(container.database.selectPendingCount(), 0)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, 0)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 	
 	func testSendAllFailure() {
@@ -361,7 +461,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		}
 		
 		let insertExpectation = expectation(description: "Inserted Statuses")
-		container.database.insertStatuses(statuses) {
+		container.database.insertStatuses(statuses) { error in
 			insertExpectation.fulfill()
 		}
 		
@@ -395,7 +495,18 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		OperationQueue.main.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
-		
-		XCTAssertEqual(container.database.selectPendingCount(), statuses.count)
+
+		let pendingCountExpectation = expectation(description: "Pending Count")
+		container.database.selectPendingCount { result in
+			switch (result) {
+				case let .success(pendingCount):
+					XCTAssertEqual(pendingCount, statuses.count)
+					pendingCountExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
+		}
+
+		waitForExpectations(timeout: 2)
 	}
 }

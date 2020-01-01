@@ -49,10 +49,15 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { accountArticlesIDs in
-			XCTAssertTrue(accountArticlesIDs.isEmpty)
-			XCTAssertEqual(accountArticlesIDs, testIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(accountArticlesIDs):
+					XCTAssertTrue(accountArticlesIDs.isEmpty)
+					XCTAssertEqual(accountArticlesIDs, testIds)
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -73,9 +78,14 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs.count, testIds.count)
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(accountArticlesIDs):
+					XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -96,9 +106,14 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs.count, testIds.count)
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(accountArticlesIDs):
+					XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -134,9 +149,14 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { remainingAccountArticlesIDs in
-			XCTAssertEqual(remainingAccountArticlesIDs, remainingStarredIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(remainingAccountArticlesIDs):
+					XCTAssertEqual(remainingAccountArticlesIDs, remainingStarredIds)
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -172,9 +192,14 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { remainingAccountArticlesIDs in
-			XCTAssertEqual(remainingAccountArticlesIDs, remainingStarredIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(remainingAccountArticlesIDs):
+					XCTAssertEqual(remainingAccountArticlesIDs, remainingStarredIds)
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -221,15 +246,21 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
-			
-			let idsOfStarredArticles = Set(self.account
-				.fetchArticles(.articleIDs(remainingStarredIds))
-				.filter { $0.status.boolStatus(forKey: .starred) == true }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(accountArticlesIDs):
+					XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
+
+					let idsOfStarredArticles = try! Set(self.account
+						.fetchArticles(.articleIDs(remainingStarredIds))
+						.filter { $0.status.boolStatus(forKey: .starred) == true }
+						.map { $0.articleID })
+
+					XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -274,15 +305,20 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
-			
-			let idsOfStarredArticles = Set(self.account
-				.fetchArticles(.articleIDs(remainingStarredIds))
-				.filter { $0.status.boolStatus(forKey: .starred) == true }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(accountArticlesIDs):
+					XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
+
+					let idsOfStarredArticles = try! Set(self.account
+						.fetchArticles(.articleIDs(remainingStarredIds))
+						.filter { $0.status.boolStatus(forKey: .starred) == true }
+						.map { $0.articleID })
+
+					XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -321,16 +357,21 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
-			
-			let idsOfStarredArticles = Set(self.account
-				.fetchArticles(.articleIDs(remainingStarredIds))
-				.filter { $0.status.boolStatus(forKey: .starred) == true }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(accountArticlesIDs):
+					XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
+
+					let idsOfStarredArticles = try! Set(self.account
+						.fetchArticles(.articleIDs(remainingStarredIds))
+						.filter { $0.status.boolStatus(forKey: .starred) == true }
+						.map { $0.articleID })
+
+					XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -368,16 +409,21 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
-			
-			let idsOfStarredArticles = Set(self.account
-				.fetchArticles(.articleIDs(remainingStarredIds))
-				.filter { $0.status.boolStatus(forKey: .starred) == true }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(accountArticlesIDs):
+					XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
+
+					let idsOfStarredArticles = try! Set(self.account
+						.fetchArticles(.articleIDs(remainingStarredIds))
+						.filter { $0.status.boolStatus(forKey: .starred) == true }
+						.map { $0.articleID })
+
+					XCTAssertEqual(idsOfStarredArticles, remainingStarredIds)
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -418,19 +464,24 @@ class FeedlySetStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
-			
-			let someTestItems = Set(someItemsAndFeeds.flatMap { $0.value })
-			let someRemainingStarredIdsOfIngestedArticles = Set(someTestItems.compactMap { $0.syncServiceID })
-			let idsOfStarredArticles = Set(self.account
-				.fetchArticles(.articleIDs(someRemainingStarredIdsOfIngestedArticles))
-				.filter { $0.status.boolStatus(forKey: .starred) == true }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfStarredArticles, someRemainingStarredIdsOfIngestedArticles)
-			
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { result in
+			switch (result) {
+				case let .success(accountArticlesIDs):
+					XCTAssertEqual(accountArticlesIDs, remainingStarredIds)
+
+					let someTestItems = Set(someItemsAndFeeds.flatMap { $0.value })
+					let someRemainingStarredIdsOfIngestedArticles = Set(someTestItems.compactMap { $0.syncServiceID })
+					let idsOfStarredArticles = try! Set(self.account
+						.fetchArticles(.articleIDs(someRemainingStarredIdsOfIngestedArticles))
+						.filter { $0.status.boolStatus(forKey: .starred) == true }
+						.map { $0.articleID })
+
+					XCTAssertEqual(idsOfStarredArticles, someRemainingStarredIdsOfIngestedArticles)
+
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}

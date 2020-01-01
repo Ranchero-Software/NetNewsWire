@@ -194,7 +194,7 @@ class FeedlyTestSupport {
 		let articleItems = items.map { ArticleItem(item: $0) }
 		let itemIds = Set(articleItems.map { $0.id })
 		
-		let articles = testAccount.fetchArticles(.articleIDs(itemIds))
+		let articles = try! testAccount.fetchArticles(.articleIDs(itemIds))
 		let articleIds = Set(articles.map { $0.articleID })
 		
 		let missing = itemIds.subtracting(articleIds)
@@ -220,12 +220,17 @@ class FeedlyTestSupport {
 	func checkUnreadStatuses(in testAccount: Account, correspondToIdsInJSONPayload streamIds: [String: Any], testCase: XCTestCase) {
 		let ids = Set(streamIds["ids"] as! [String])
 		let fetchIdsExpectation = testCase.expectation(description: "Fetch Article Ids")
-		testAccount.fetchUnreadArticleIDs { articleIds in
+		testAccount.fetchUnreadArticleIDs { result in
 			// Unread statuses can be paged from Feedly.
 			// Instead of joining test data, the best we can do is
 			// make sure that these ids are marked as unread (a subset of the total).
-			XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as unread.")
-			fetchIdsExpectation.fulfill()
+			switch (result) {
+				case let .success(articleIds):
+					XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as unread.")
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+			}
 		}
 		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
 	}
@@ -239,12 +244,17 @@ class FeedlyTestSupport {
 		let items = stream["items"] as! [[String: Any]]
 		let ids = Set(items.map { $0["id"] as! String })
 		let fetchIdsExpectation = testCase.expectation(description: "Fetch Article Ids")
-		testAccount.fetchStarredArticleIDs { articleIds in
+		testAccount.fetchStarredArticleIDs { result in
 			// Starred articles can be paged from Feedly.
 			// Instead of joining test data, the best we can do is
 			// make sure that these articles are marked as starred (a subset of the total).
-			XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as starred.")
-			fetchIdsExpectation.fulfill()
+			switch (result) {
+				case let .success(articleIds):
+					XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as starred.")
+					fetchIdsExpectation.fulfill()
+				case let .failure(error):
+					XCTFail("\(error)")
+}
 		}
 		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
 	}
