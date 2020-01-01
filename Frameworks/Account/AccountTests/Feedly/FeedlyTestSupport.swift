@@ -141,13 +141,13 @@ class FeedlyTestSupport {
 		XCTAssertTrue(missingFeedIds.isEmpty, "Feeds with these ids were not found in the \"\(label)\" folder.")
 	}
 	
-	func checkArticles(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil) {
+	func checkArticles(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil) throws {
 		let stream = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
-		checkArticles(in: account, againstItemsInStreamInJSONPayload: stream)
+		try checkArticles(in: account, againstItemsInStreamInJSONPayload: stream)
 	}
 	
-	func checkArticles(in account: Account, againstItemsInStreamInJSONPayload stream: [String: Any]) {
-		checkArticles(in: account, correspondToStreamItemsIn: stream)
+	func checkArticles(in account: Account, againstItemsInStreamInJSONPayload stream: [String: Any]) throws {
+		try checkArticles(in: account, correspondToStreamItemsIn: stream)
 	}
 	
 	private struct ArticleItem {
@@ -188,13 +188,13 @@ class FeedlyTestSupport {
 	}
 	
 	/// Awkwardly titled to make it clear the JSON given is from a stream response.
-	func checkArticles(in testAccount: Account, correspondToStreamItemsIn stream: [String: Any]) {
+	func checkArticles(in testAccount: Account, correspondToStreamItemsIn stream: [String: Any]) throws {
 
 		let items = stream["items"] as! [[String: Any]]
 		let articleItems = items.map { ArticleItem(item: $0) }
 		let itemIds = Set(articleItems.map { $0.id })
 		
-		let articles = testAccount.fetchArticles(.articleIDs(itemIds))
+		let articles = try testAccount.fetchArticles(.articleIDs(itemIds))
 		let articleIds = Set(articles.map { $0.articleID })
 		
 		let missing = itemIds.subtracting(articleIds)
