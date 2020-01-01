@@ -11,5 +11,5 @@ import Foundation
 struct FeedlyOrigin: Decodable {
 	var title: String?
 	var streamId: String?
-	var htmlUrl: String
+	var htmlUrl: String?
 }
