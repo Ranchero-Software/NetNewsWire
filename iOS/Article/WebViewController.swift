@@ -448,6 +448,7 @@ private struct ImageClickMessage: Codable {
 	let y: Float
 	let width: Float
 	let height: Float
+	let imageTitle: String?
 	let imageURL: String
 }
 
@@ -497,7 +498,7 @@ private extension WebViewController {
 			
 			transition.originImage = image
 			
-			coordinator.showFullScreenImage(image: image, transitioningDelegate: self)
+			coordinator.showFullScreenImage(image: image, imageTitle: clickMessage.imageTitle, transitioningDelegate: self)
 		}
 	}
 	

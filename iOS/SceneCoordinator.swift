@@ -988,9 +988,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		masterFeedViewController.present(addViewController, animated: true)
 	}
 	
-	func showFullScreenImage(image: UIImage, transitioningDelegate: UIViewControllerTransitioningDelegate) {
+	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
 		let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
 		imageVC.image = image
+		imageVC.imageTitle = imageTitle
 		imageVC.modalPresentationStyle = .currentContext
 		imageVC.transitioningDelegate = transitioningDelegate
 		rootSplitViewController.present(imageVC, animated: true)

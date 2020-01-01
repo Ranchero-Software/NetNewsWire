@@ -214,6 +214,12 @@
                                 <viewLayoutGuide key="contentLayoutGuide" id="phv-DN-krZ"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="NNU-C8-Fsz"/>
                             </scrollView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eMj-1g-3xm">
+                                <rect key="frame" x="0.0" y="862" width="414" height="0.0"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-a3-hUg">
                                 <rect key="frame" x="362" y="44" width="44" height="44"/>
                                 <constraints>
@@ -243,9 +249,12 @@
                         <constraints>
                             <constraint firstItem="RmY-a3-hUg" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="A0i-Hs-1Ac"/>
                             <constraint firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
+                            <constraint firstItem="eMj-1g-3xm" firstAttribute="trailing" secondItem="mbY-02-GFL" secondAttribute="trailing" id="E7e-Lv-6ZA"/>
                             <constraint firstAttribute="trailing" secondItem="msG-pz-EKk" secondAttribute="trailing" id="R49-qV-8nm"/>
                             <constraint firstItem="msG-pz-EKk" firstAttribute="leading" secondItem="w6Q-vH-063" secondAttribute="leading" id="XN1-xN-hYS"/>
+                            <constraint firstItem="eMj-1g-3xm" firstAttribute="leading" secondItem="mbY-02-GFL" secondAttribute="leading" id="Xni-Dn-I3Z"/>
                             <constraint firstItem="mbY-02-GFL" firstAttribute="trailing" secondItem="RmY-a3-hUg" secondAttribute="trailing" constant="8" id="Zlz-lM-LV8"/>
+                            <constraint firstItem="mbY-02-GFL" firstAttribute="bottom" secondItem="eMj-1g-3xm" secondAttribute="bottom" id="eaS-iG-yMv"/>
                             <constraint firstItem="msG-pz-EKk" firstAttribute="top" secondItem="w6Q-vH-063" secondAttribute="top" id="p1a-s0-wdK"/>
                             <constraint firstItem="cXR-ll-xBx" firstAttribute="leading" secondItem="mbY-02-GFL" secondAttribute="leading" constant="8" id="vJs-LN-Ydd"/>
                             <constraint firstItem="cXR-ll-xBx" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="xVN-Qt-WYA"/>
@@ -255,6 +264,7 @@
                     <connections>
                         <outlet property="imageScrollView" destination="msG-pz-EKk" id="dGi-M6-dcO"/>
                         <outlet property="shareButton" destination="RmY-a3-hUg" id="Z54-ah-WAI"/>
+                        <outlet property="titleLabel" destination="eMj-1g-3xm" id="6wF-IZ-fNw"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZPN-tH-JAG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
