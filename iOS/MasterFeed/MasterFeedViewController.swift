@@ -876,14 +876,14 @@ private extension MasterFeedViewController {
 			if let copyHomePageAction = self.copyHomePageAction(indexPath: indexPath) {
 				actions.append(copyHomePageAction)
 			}
-			
-			if includeDeleteRename {
-				actions.append(self.deleteAction(indexPath: indexPath))
-				actions.append(self.renameAction(indexPath: indexPath))
-			}
 
 			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
 				actions.append(markAllAction)
+			}
+			
+			if includeDeleteRename {
+				actions.append(self.renameAction(indexPath: indexPath))
+				actions.append(self.deleteAction(indexPath: indexPath))
 			}
 			
 			return UIMenu(title: "", children: actions)
