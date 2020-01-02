@@ -36,6 +36,8 @@ Functions should tend to be small. One-liners are a-okay, especially when the fu
 
 We mostly avoid Swift generics, since generics is an advanced feature that can be relatively hard to understand. We *do* use them, though, when appropriate.
 
+It’s totally okay to use the magic `error` variable when catching errors. In accessors, use of the magic `oldValue` and `newValue` is expected when you need the old or new value.
+
 We use assertions and preconditions (assertions are hit only when running a debug build; preconditions will crash a release build). We also allow force-unwrapping of optionals as a shorthand for a precondition failure, though these should be used sparingly.
 
 Extensions, including private extensions, are used — though we take care not to extend Foundation and AppKit objects too much, lest we end up with our own Cocoa dialect.
