@@ -73,8 +73,8 @@ class FeedlySyncStarredArticlesOperationTests: XCTestCase {
 				XCTAssertEqual(expectedArticles, starredArticles)
 				
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking starred article IDs: \(e)")
+			} catch {
+				XCTFail("Error checking starred article IDs: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -114,8 +114,8 @@ class FeedlySyncStarredArticlesOperationTests: XCTestCase {
 				let starredArticleIds = try starredArticleIdsResult.get()
 				XCTAssertTrue(starredArticleIds.isEmpty)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking starred article IDs: \(e)")
+			} catch {
+				XCTFail("Error checking starred article IDs: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -180,8 +180,8 @@ class FeedlySyncStarredArticlesOperationTests: XCTestCase {
 				XCTAssertEqual(expectedArticles, starredArticles)
 				
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking starred article IDs: \(e)")
+			} catch {
+				XCTFail("Error checking starred article IDs: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)

@@ -62,8 +62,8 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 				let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
 				XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking unread article IDs: \(e)")
+			} catch {
+				XCTFail("Error checking unread article IDs: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -103,8 +103,8 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 				let unreadArticleIds = try unreadArticleIdsResult.get()
 				XCTAssertTrue(unreadArticleIds.isEmpty)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking unread article IDs: \(e)")
+			} catch {
+				XCTFail("Error checking unread article IDs: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -158,8 +158,8 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 				let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
 				XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking unread article IDs: \(e)")
+			} catch {
+				XCTFail("Error checking unread article IDs: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)

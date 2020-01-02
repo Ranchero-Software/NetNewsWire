@@ -228,8 +228,8 @@ class FeedlyTestSupport {
 				// make sure that these ids are marked as unread (a subset of the total).
 				XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as unread.")
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping article IDs: \(e)")
+			} catch {
+				XCTFail("Error unwrapping article IDs: \(error)")
 			}
 		}
 		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
@@ -252,8 +252,8 @@ class FeedlyTestSupport {
 				// make sure that these articles are marked as starred (a subset of the total).
 				XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as starred.")
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping article IDs: \(e)")
+			} catch {
+				XCTFail("Error unwrapping article IDs: \(error)")
 			}
 		}
 		testCase.wait(for: [fetchIdsExpectation], timeout: 2)

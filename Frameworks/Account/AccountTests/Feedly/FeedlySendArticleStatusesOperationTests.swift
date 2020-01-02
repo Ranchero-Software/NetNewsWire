@@ -81,8 +81,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -124,8 +124,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, statuses.count)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -167,8 +167,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -210,8 +210,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, statuses.count)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -253,8 +253,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -296,8 +296,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, statuses.count)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -339,8 +339,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -382,8 +382,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let expectedCount = try result.get()
 				XCTAssertEqual(expectedCount, statuses.count)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -442,8 +442,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, 0)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -503,8 +503,8 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 				let statusCount = try result.get()
 				XCTAssertEqual(statusCount, statuses.count)
 				selectPendingCountExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error unwrapping database result: \(e)")
+			} catch {
+				XCTFail("Error unwrapping database result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)

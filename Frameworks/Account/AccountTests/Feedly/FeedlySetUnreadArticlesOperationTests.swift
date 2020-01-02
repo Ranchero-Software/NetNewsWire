@@ -55,8 +55,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				XCTAssertTrue(accountArticlesIDs.isEmpty)
 				XCTAssertEqual(accountArticlesIDs.count, testIds.count)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 		
@@ -84,8 +84,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				let accountArticlesIDs = try accountArticlesIDsResult.get()
 				XCTAssertEqual(accountArticlesIDs.count, testIds.count)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -112,8 +112,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				let accountArticlesIDs = try accountArticlesIDsResult.get()
 				XCTAssertEqual(accountArticlesIDs.count, testIds.count)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -155,8 +155,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				let remainingAccountArticlesIDs = try remainingAccountArticlesIDsResult.get()
 				XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -198,8 +198,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				let remainingAccountArticlesIDs = try remainingAccountArticlesIDsResult.get()
 				XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -258,8 +258,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				
 				XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -317,8 +317,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				
 				XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 	}
@@ -369,8 +369,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				
 				XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 		waitForExpectations(timeout: 2)
@@ -421,8 +421,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				
 				XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 	}
@@ -477,8 +477,8 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 				
 				XCTAssertEqual(idsOfUnreadArticles, someRemainingUnreadIdsOfIngestedArticles)
 				fetchIdsExpectation.fulfill()
-			} catch let e {
-				XCTFail("Error checking account articles IDs result: \(e)")
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
 			}
 		}
 	}
