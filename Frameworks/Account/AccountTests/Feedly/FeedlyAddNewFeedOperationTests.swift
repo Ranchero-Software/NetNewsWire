@@ -120,7 +120,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		XCTAssert(progress.isComplete)
 	}
 	
-	func testAddNewFeedSuccess() {
+	func testAddNewFeedSuccess() throws {
 		guard let folder = getFolderByLoadingInitialContent() else {
 			return
 		}
@@ -163,7 +163,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		
 		XCTAssert(progress.isComplete)
 		
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "feedStream", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "feedStream", subdirectory: subdirectory)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
 	}
 	

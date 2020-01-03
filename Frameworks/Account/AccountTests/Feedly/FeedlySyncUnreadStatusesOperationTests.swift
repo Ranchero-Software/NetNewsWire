@@ -56,10 +56,15 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 		
 		let expectedArticleIds = Set(ids)
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchUnreadArticleIDs { unreadArticleIds in
-			let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
-			XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { unreadArticleIdsResult in
+			do {
+				let unreadArticleIds = try unreadArticleIdsResult.get()
+				let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
+				XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking unread article IDs: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -93,9 +98,14 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchUnreadArticleIDs { unreadArticleIds in
-			XCTAssertTrue(unreadArticleIds.isEmpty)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { unreadArticleIdsResult in
+			do {
+				let unreadArticleIds = try unreadArticleIdsResult.get()
+				XCTAssertTrue(unreadArticleIds.isEmpty)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking unread article IDs: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -142,10 +152,15 @@ class FeedlySyncUnreadStatusesOperationTests: XCTestCase {
 		// Find statuses inserted.
 		let expectedArticleIds = Set(service.pages.values.map { $0.ids }.flatMap { $0 })
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchUnreadArticleIDs { unreadArticleIds in
-			let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
-			XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { unreadArticleIdsResult in
+			do {
+				let unreadArticleIds = try unreadArticleIdsResult.get()
+				let missingIds = expectedArticleIds.subtracting(unreadArticleIds)
+				XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as unread.")
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking unread article IDs: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
