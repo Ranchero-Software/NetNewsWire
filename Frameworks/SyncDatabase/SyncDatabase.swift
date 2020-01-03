@@ -45,7 +45,15 @@ public struct SyncDatabase {
 	public func resetSelectedForProcessing(_ articleIDs: [String]) {
 		syncStatusTable.resetSelectedForProcessing(articleIDs)
 	}
-	
+
+	public func selectPendingReadStatusArticleIDs() -> [String] {
+        return syncStatusTable.selectPendingReadStatusArticleIDs()
+    }
+    
+    public func selectPendingStarredStatusArticleIDs() -> [String] {
+        return syncStatusTable.selectPendingStarredStatusArticleIDs()
+    }
+    	
 	public func deleteSelectedForProcessing(_ articleIDs: [String]) {
 		syncStatusTable.deleteSelectedForProcessing(articleIDs)
 	}

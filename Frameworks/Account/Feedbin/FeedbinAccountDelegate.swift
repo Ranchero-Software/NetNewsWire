@@ -1073,11 +1073,13 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
+		let pendingArticleIDs = database.selectPendingReadStatusArticleIDs()
 		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+		let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
 		let currentUnreadArticleIDs = account.fetchUnreadArticleIDs()
 		
 		// Mark articles as unread
-		let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+		let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
 		let markUnreadArticles = account.fetchArticles(.articleIDs(deltaUnreadArticleIDs))
 		account.update(markUnreadArticles, statusKey: .read, flag: false)
 
@@ -1087,7 +1089,7 @@ private extension FeedbinAccountDelegate {
 		account.ensureStatuses(missingUnreadArticleIDs, true, .read, false)
 
 		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
 		let markReadArticles = account.fetchArticles(.articleIDs(deltaReadArticleIDs))
 		account.update(markReadArticles, statusKey: .read, flag: true)
 
@@ -1095,7 +1097,7 @@ private extension FeedbinAccountDelegate {
 		let markReadArticleIDs = Set(markReadArticles.map { $0.articleID })
 		let missingReadArticleIDs = deltaReadArticleIDs.subtracting(markReadArticleIDs)
 		account.ensureStatuses(missingReadArticleIDs, true, .read, true)
-
+		
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
@@ -1103,11 +1105,13 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
+		let pendingArticleIDs = database.selectPendingStarredStatusArticleIDs()
 		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
+		let updatableFeedbinUnreadArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
 		let currentStarredArticleIDs = account.fetchStarredArticleIDs()
 		
 		// Mark articles as starred
-		let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+		let deltaStarredArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentStarredArticleIDs)
 		let markStarredArticles = account.fetchArticles(.articleIDs(deltaStarredArticleIDs))
 		account.update(markStarredArticles, statusKey: .starred, flag: true)
 
@@ -1117,7 +1121,7 @@ private extension FeedbinAccountDelegate {
 		account.ensureStatuses(missingStarredArticleIDs, true, .starred, true)
 
 		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
 		let markUnstarredArticles = account.fetchArticles(.articleIDs(deltaUnstarredArticleIDs))
 		account.update(markUnstarredArticles, statusKey: .starred, flag: false)
 
@@ -1125,6 +1129,7 @@ private extension FeedbinAccountDelegate {
 		let markUnstarredArticleIDs = Set(markUnstarredArticles.map { $0.articleID })
 		let missingUnstarredArticleIDs = deltaUnstarredArticleIDs.subtracting(markUnstarredArticleIDs)
 		account.ensureStatuses(missingUnstarredArticleIDs, true, .starred, false)
+		
 	}
 
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {

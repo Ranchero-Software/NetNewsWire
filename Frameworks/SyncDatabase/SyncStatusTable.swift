@@ -56,7 +56,15 @@ struct SyncStatusTable: DatabaseTable {
 			database.executeUpdate(updateSQL, withArgumentsIn: parameters)
 		}
 	}
-	
+
+    func selectPendingReadStatusArticleIDs() -> [String] {
+        selectPendingArticleIDsAsync(.read)
+    }
+    
+    func selectPendingStarredStatusArticleIDs() -> [String] {
+        selectPendingArticleIDsAsync(.starred)
+    }
+    
 	func deleteSelectedForProcessing(_ articleIDs: [String]) {
 		queue.runInTransaction { database in
 			let parameters = articleIDs.map { $0 as AnyObject }
@@ -88,4 +96,16 @@ private extension SyncStatusTable {
 		
 		return SyncStatus(articleID: articleID, key: key, flag: flag, selected: selected)
 	}
+    
+    func selectPendingArticleIDsAsync(_ statusKey: ArticleStatus.Key) -> [String] {
+		var articleIDs: [String]? = nil
+		queue.runInDatabaseSync { database in
+			let selectSQL = "select articleID from syncStatus where selected == false and key = \"\(statusKey.rawValue)\";"
+			if let resultSet = database.executeQuery(selectSQL, withArgumentsIn: nil) {
+				articleIDs = resultSet.compactMap { $0.string(forColumnIndex: 0) }
+			}
+		}
+		return articleIDs != nil ? articleIDs! : [String]()
+    }
+    
 }
