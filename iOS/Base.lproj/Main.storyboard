@@ -119,13 +119,20 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem title="Mark All as Read" id="fTv-eX-72r">
+                        <barButtonItem image="asterisk.circle" catalog="system" id="fTv-eX-72r">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="markAllAsRead:" destination="Kyk-vK-QRX" id="4nd-Gg-APm"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="53V-wq-bat"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="93y-8j-WBh"/>
-                        <barButtonItem title="First Unread" id="2v2-jD-C9k">
+                        <barButtonItem image="chevron.down.circle" catalog="system" id="2v2-jD-C9k">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="First Unread"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="firstUnread:" destination="Kyk-vK-QRX" id="d5y-x5-Qht"/>
                             </connections>
@@ -360,6 +367,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="asterisk.circle" catalog="system" width="64" height="60"/>
         <image name="chevron.down" catalog="system" width="64" height="36"/>
         <image name="chevron.down.circle" catalog="system" width="64" height="60"/>
         <image name="chevron.up" catalog="system" width="64" height="36"/>

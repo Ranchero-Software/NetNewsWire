@@ -14,33 +14,40 @@ class RefreshProgressView: UIView {
 	@IBOutlet weak var progressView: UIProgressView!
 	@IBOutlet weak var label: UILabel!
 	private lazy var progressWidth = progressView.widthAnchor.constraint(equalToConstant: 100.0)
-
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-		commonInit()
-	}
+	private var lastLabelDisplayedTime: Date? = nil
 	
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
-		commonInit()
-	}
-	
-	func commonInit() {
+	override func awakeFromNib() {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
+		
+		if !AccountManager.shared.combinedRefreshProgress.isComplete {
+			progressChanged()
+		} else {
+			updateRefreshLabel()
+		}
 	}
 
 	func updateRefreshLabel() {
 		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
+			
+			if let lastLabelDisplayedTime = lastLabelDisplayedTime, lastLabelDisplayedTime.addingTimeInterval(2) > Date()  {
+				return
+			}
+
+			lastLabelDisplayedTime = Date()
+
 			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(1) {
+				
 				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 				relativeDateTimeFormatter.dateTimeStyle = .named
 				let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
 				let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
 				let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
 				label.text = refreshText
+				
 			} else {
 				label.text = NSLocalizedString("Updated just now", comment: "Updated Just Now")
 			}
+			
 		} else {
 			label.text = ""
 		}
@@ -48,7 +55,20 @@ class RefreshProgressView: UIView {
 	}
 	
 	@objc func progressDidChange(_ note: Notification) {
-		
+		progressChanged()
+	}
+
+	deinit {
+		NotificationCenter.default.removeObserver(self)
+	}
+	
+}
+
+// MARK: Private
+
+private extension RefreshProgressView {
+
+	func progressChanged() {
 		let progress = AccountManager.shared.combinedRefreshProgress
 		
 		if progress.isComplete {
@@ -60,18 +80,12 @@ class RefreshProgressView: UIView {
 				self.progressWidth.isActive = false
 			}
 		} else {
+			lastLabelDisplayedTime = nil
 			label.isHidden = true
 			progressView.isHidden = false
 			self.progressWidth.isActive = true
 			let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
 			progressView.progress = percent
 		}
-		
 	}
-
-	deinit {
-		NotificationCenter.default.removeObserver(self)
-	}
-	
 }
-

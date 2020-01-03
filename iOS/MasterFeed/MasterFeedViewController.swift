@@ -669,10 +669,16 @@ private extension MasterFeedViewController {
 
 		self.refreshProgressView = refreshProgressView
 
+		let spaceItemButton1 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		let spaceItemButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+		let spaceItemButton2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 		addNewItemButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add(_:)))
-		setToolbarItems([refreshProgressItemButton, spaceItemButton, addNewItemButton], animated: false)
+		
+		setToolbarItems([spaceItemButton1,
+						 refreshProgressItemButton,
+						 spaceItemButton2,
+						 addNewItemButton
+		], animated: false)
 	}
 	
 	func updateUI() {

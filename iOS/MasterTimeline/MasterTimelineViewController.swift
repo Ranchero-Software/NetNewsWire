@@ -17,6 +17,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private var iconSize = IconSize.medium
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 	
+	private var refreshProgressView: RefreshProgressView?
+
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
@@ -72,7 +74,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			navigationItem.titleView = titleView
 		}
-
+		
+		refreshControl = UIRefreshControl()
+		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
+		configureToolbar()
 		resetUI(resetScroll: true)
 		
 		// Load the table and then scroll to the saved position if available
@@ -128,6 +134,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@IBAction func firstUnread(_ sender: Any) {
 		coordinator.selectFirstUnread()
+	}
+	
+	@objc func refreshAccounts(_ sender: Any) {
+		refreshControl?.endRefreshing()
+		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+		}
 	}
 	
 	// MARK: Keyboard shortcuts
@@ -516,6 +531,22 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
+	func configureToolbar() {
+		
+		if coordinator.isThreePanelMode {
+			firstUnreadButton.isHidden = true
+			return
+		}
+		
+		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
+			return
+		}
+
+		self.refreshProgressView = refreshProgressView
+		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
+	}
+
 	func resetUI(resetScroll: Bool) {
 		
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
@@ -558,6 +589,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateUI() {
+		refreshProgressView?.updateRefreshLabel()
 		updateTitleUnreadCount()
 		updateToolbar()
 	}
