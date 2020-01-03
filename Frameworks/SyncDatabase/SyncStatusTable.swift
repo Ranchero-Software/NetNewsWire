@@ -83,6 +83,14 @@ struct SyncStatusTable: DatabaseTable {
 		}
 	}
 
+    func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
+        selectPendingArticleIDsAsync(.read, completion)
+    }
+    
+    func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
+        selectPendingArticleIDsAsync(.starred, completion)
+    }
+    
 	func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		queue.runInTransaction { databaseResult in
 
@@ -156,6 +164,38 @@ private extension SyncStatusTable {
 		
 		return SyncStatus(articleID: articleID, key: key, flag: flag, selected: selected)
 	}
+    
+    func selectPendingArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ completion: @escaping SyncStatusArticleIDsCompletionBlock) {
+
+        queue.runInDatabase { databaseResult in
+
+            func makeDatabaseCall(_ database: FMDatabase) {
+                let sql = "select articleID from syncStatus where selected == false and key = \"\(statusKey.rawValue)\";"
+
+                guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
+                    DispatchQueue.main.async {
+                        completion(.success(Set<String>()))
+                    }
+                    return
+                }
+
+                let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
+                DispatchQueue.main.async {
+                    completion(.success(articleIDs))
+                }
+            }
+
+            switch databaseResult {
+            case .success(let database):
+                makeDatabaseCall(database)
+            case .failure(let databaseError):
+                DispatchQueue.main.async {
+                    completion(.failure(databaseError))
+                }
+            }
+        }
+    }
+    
 }
 
 private func callCompletion(_ completion: DatabaseCompletionBlock?, _ databaseError: DatabaseError?) {
