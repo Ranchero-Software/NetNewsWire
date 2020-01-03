@@ -63,8 +63,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
-		refreshControl = AccountRefreshControl(errorHandler: ErrorHandler.present(self))
-
+		refreshControl = UIRefreshControl()
+		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
 		configureToolbar()
 		becomeFirstResponder()
 
@@ -435,28 +436,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func refreshAccounts(_ sender: Any) {
-		guard let refreshControl = refreshControl else { return }
-		
+		refreshControl?.endRefreshing()
 		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
-		}
-		
-		let checkImageView = UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
-		checkImageView.tintColor = .label
-		checkImageView.translatesAutoresizingMaskIntoConstraints = false
-		refreshControl.addSubview(checkImageView)
-		NSLayoutConstraint.activate([
-			checkImageView.heightAnchor.constraint(equalToConstant: 35.0),
-			checkImageView.widthAnchor.constraint(equalToConstant: 35.0),
-			checkImageView.centerXAnchor.constraint(equalTo: refreshControl.centerXAnchor),
-			checkImageView.centerYAnchor.constraint(equalTo: refreshControl.centerYAnchor)
-		])
-		
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
-			refreshControl.endRefreshing()
-			checkImageView.removeFromSuperview()
 		}
 	}
 	
