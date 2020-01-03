@@ -870,19 +870,45 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		markAllAsRead(articles)
 		masterNavigationController.popViewController(animated: true)
 	}
-	
-	func markAsReadOlderArticlesInTimeline() {
-		if let article = currentArticle {
-			markAsReadOlderArticlesInTimeline(article)
-		}
+
+	func canMarkAboveAsRead(for article: Article) -> Bool {
+		return articles.first != article
 	}
-	
-	func markAsReadOlderArticlesInTimeline(_ article: Article) {
-		let articlesToMark = articles.filter { $0.logicalDatePublished < article.logicalDatePublished }
-		if articlesToMark.isEmpty {
+
+	func markAboveAsRead(_ article: Article) {
+		guard let position = articles.firstIndex(of: article) else {
 			return
 		}
-		markAllAsRead(articlesToMark)
+
+		let articlesAbove = articles[..<position]
+		markAllAsRead(Array(articlesAbove))
+	}
+
+	func canMarkBelowAsRead(for article: Article) -> Bool {
+		return articles.last != article
+	}
+
+	func markBelowAsRead() {
+		guard let currentArticle = currentArticle else {
+			return
+		}
+
+		markBelowAsRead(currentArticle)
+	}
+
+	func markBelowAsRead(_ article: Article) {
+		guard let position = articles.firstIndex(of: article) else {
+			return
+		}
+
+		var articlesBelow = Array(articles[position...])
+
+		guard !articlesBelow.isEmpty else {
+			return
+		}
+
+		articlesBelow.removeFirst()
+		markAllAsRead(articlesBelow)
 	}
 	
 	func markAsReadForCurrentArticle() {
