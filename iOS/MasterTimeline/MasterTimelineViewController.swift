@@ -245,8 +245,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					popoverController.sourceView = view
 					popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
 				}
-				
-				alert.addAction(self.markOlderAsReadAlertAction(article, completion: completion))
+
+				if let action = self.markAboveAsReadAlertAction(article, completion: completion) {
+					alert.addAction(action)
+				}
+
+				if let action = self.markBelowAsReadAlertAction(article, completion: completion) {
+					alert.addAction(action)
+				}
 				
 				if let action = self.discloseFeedAlertAction(article, completion: completion) {
 					alert.addAction(action)
@@ -293,7 +299,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			var actions = [UIAction]()
 			actions.append(self.toggleArticleReadStatusAction(article))
 			actions.append(self.toggleArticleStarStatusAction(article))
-			actions.append(self.markOlderAsReadAction(article))
+
+			if let action = self.markAboveAsReadAction(article) {
+				actions.append(action)
+			}
+
+			if let action = self.markBelowAsReadAction(article) {
+				actions.append(action)
+			}
 			
 			if let action = self.discloseFeedAction(article) {
 				actions.append(action)
@@ -636,20 +649,54 @@ private extension MasterTimelineViewController {
 		
 		return action
 	}
-	
-	func markOlderAsReadAction(_ article: Article) -> UIAction {
-		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
-		let image = coordinator.sortDirection == .orderedDescending ? AppAssets.markOlderAsReadDownImage : AppAssets.markOlderAsReadUpImage
+
+	func markAboveAsReadAction(_ article: Article) -> UIAction? {
+		guard coordinator.canMarkAboveAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+		let image = AppAssets.markAboveAsReadImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
+			self?.coordinator.markAboveAsRead(article)
 		}
 		return action
 	}
 	
-	func markOlderAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction {
-		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
+	func markBelowAsReadAction(_ article: Article) -> UIAction? {
+		guard coordinator.canMarkBelowAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		let image = AppAssets.markBelowAsReadImage
+		let action = UIAction(title: title, image: image) { [weak self] action in
+			self?.coordinator.markBelowAsRead(article)
+		}
+		return action
+	}
+	
+	func markAboveAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard coordinator.canMarkAboveAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
+			self?.coordinator.markAboveAsRead(article)
+			completion(true)
+		}
+		return action
+	}
+
+	func markBelowAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard coordinator.canMarkBelowAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			self?.coordinator.markBelowAsRead(article)
 			completion(true)
 		}
 		return action
