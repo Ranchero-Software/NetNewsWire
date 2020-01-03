@@ -50,6 +50,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 
+		refreshControl = AccountRefreshControl(errorHandler: ErrorHandler.present(self))
+
 		// Setup the Search Controller
 		searchController.delegate = self
 		searchController.searchResultsUpdater = self
