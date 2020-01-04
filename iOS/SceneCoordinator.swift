@@ -875,6 +875,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return articles.first != article
 	}
 
+	func markAboveAsRead() {
+		guard let currentArticle = currentArticle else {
+			return
+		}
+
+		markAboveAsRead(currentArticle)
+	}
+
 	func markAboveAsRead(_ article: Article) {
 		guard let position = articles.firstIndex(of: article) else {
 			return

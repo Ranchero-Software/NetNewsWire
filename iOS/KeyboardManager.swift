@@ -168,8 +168,11 @@ private extension KeyboardManager {
 		let toggleReadTitle = NSLocalizedString("Toggle Read Status", comment: "Toggle Read Status")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleReadTitle, action: "toggleRead:", input: "u", modifiers: [.command, .shift]))
 
-		let markOlderAsReadTitle = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
-		keys.append(KeyboardManager.createKeyCommand(title: markOlderAsReadTitle, action: "markBelowAsRead:", input: "k", modifiers: [.command, .shift]))
+		let markAboveAsReadTitle = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+		keys.append(KeyboardManager.createKeyCommand(title: markAboveAsReadTitle, action: "markAboveAsRead:", input: "k", modifiers: [.command, .control]))
+
+		let markBelowAsReadTitle = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		keys.append(KeyboardManager.createKeyCommand(title: markBelowAsReadTitle, action: "markBelowAsRead:", input: "k", modifiers: [.command, .shift]))
 
 		let toggleStarredTitle = NSLocalizedString("Toggle Starred Status", comment: "Toggle Starred Status")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleStarredTitle, action: "toggleStarred:", input: "l", modifiers: [.command, .shift]))
