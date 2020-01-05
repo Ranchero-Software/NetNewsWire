@@ -94,19 +94,19 @@ class FeedlyOperation: Operation {
 		let isFinishedDidChange = finished != isFinishedOperation
 
 		if isFinishedDidChange {
-			willChangeValue(for: \.isFinished)
+			willChangeValue(forKey: #keyPath(isFinished))
 		}
 		if isExecutingDidChange {
-			willChangeValue(for: \.isExecuting)
+			willChangeValue(forKey: #keyPath(isExecuting))
 		}
 		isExecutingOperation = executing
 		isFinishedOperation = finished
 
 		if isExecutingDidChange {
-			didChangeValue(for: \.isExecuting)
+			didChangeValue(forKey: #keyPath(isExecuting))
 		}
 		if isFinishedDidChange {
-			didChangeValue(for: \.isFinished)
+			didChangeValue(forKey: #keyPath(isFinished))
 		}
 	}
 }
