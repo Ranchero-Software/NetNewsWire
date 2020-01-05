@@ -23,7 +23,18 @@ class ArticleActivityItemSource: NSObject, UIActivityItemSource {
 	}
 	
 	func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
-		return url
+		guard let activityType = activityType,
+			let subject = subject else {
+				return url
+		}
+
+		switch activityType.rawValue {
+		case "com.omnigroup.OmniFocus3.iOS.QuickEntry",
+			 "com.culturedcode.ThingsiPhone.ShareExtension":
+			return "\(subject)\n\(url)"
+		default:
+			return url
+		}
 	}
 	
 	func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
