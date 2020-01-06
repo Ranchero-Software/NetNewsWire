@@ -8,6 +8,7 @@ body {
 	word-wrap: break-word;
 	word-break: break-word;
 	-webkit-hyphens: auto;
+	-webkit-text-size-adjust: none;
 }
 
 a {
@@ -130,6 +131,9 @@ pre {
 	word-break: normal;
 	-webkit-hyphens: none;
 }
+.nnw-overflow {
+	overflow-x: auto;
+}
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: 14px;
@@ -185,6 +189,13 @@ sub {
 	width: 100% !important;
 }
 
+@media (max-width: 420px) {
+	blockquote {
+		margin-inline-start: 25px;
+		margin-inline-end: 0;
+	}
+}
+
 /*Block ads and junk*/
 
 iframe[src*="feedads"],
@@ -218,12 +229,6 @@ img[src*="feedburner"],
 img[src*="feedblitz"],
 img[src*="share-buttons"] {
 	display: none !important;
-}
-
-/* Site specific styles */
-.wp-smiley {
-	height: 1em;
-	max-height: 1em;
 }
 
 /* Newsfoot specific styles. Structural styles come first, theme styles second */

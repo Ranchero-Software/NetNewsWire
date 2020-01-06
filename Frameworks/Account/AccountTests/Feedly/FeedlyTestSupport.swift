@@ -141,13 +141,13 @@ class FeedlyTestSupport {
 		XCTAssertTrue(missingFeedIds.isEmpty, "Feeds with these ids were not found in the \"\(label)\" folder.")
 	}
 	
-	func checkArticles(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil) {
+	func checkArticles(in account: Account, againstItemsInStreamInJSONNamed name: String, subdirectory: String? = nil) throws {
 		let stream = testJSON(named: name, subdirectory: subdirectory) as! [String:Any]
-		checkArticles(in: account, againstItemsInStreamInJSONPayload: stream)
+		try checkArticles(in: account, againstItemsInStreamInJSONPayload: stream)
 	}
 	
-	func checkArticles(in account: Account, againstItemsInStreamInJSONPayload stream: [String: Any]) {
-		checkArticles(in: account, correspondToStreamItemsIn: stream)
+	func checkArticles(in account: Account, againstItemsInStreamInJSONPayload stream: [String: Any]) throws {
+		try checkArticles(in: account, correspondToStreamItemsIn: stream)
 	}
 	
 	private struct ArticleItem {
@@ -188,13 +188,13 @@ class FeedlyTestSupport {
 	}
 	
 	/// Awkwardly titled to make it clear the JSON given is from a stream response.
-	func checkArticles(in testAccount: Account, correspondToStreamItemsIn stream: [String: Any]) {
+	func checkArticles(in testAccount: Account, correspondToStreamItemsIn stream: [String: Any]) throws {
 
 		let items = stream["items"] as! [[String: Any]]
 		let articleItems = items.map { ArticleItem(item: $0) }
 		let itemIds = Set(articleItems.map { $0.id })
 		
-		let articles = testAccount.fetchArticles(.articleIDs(itemIds))
+		let articles = try testAccount.fetchArticles(.articleIDs(itemIds))
 		let articleIds = Set(articles.map { $0.articleID })
 		
 		let missing = itemIds.subtracting(articleIds)
@@ -220,12 +220,17 @@ class FeedlyTestSupport {
 	func checkUnreadStatuses(in testAccount: Account, correspondToIdsInJSONPayload streamIds: [String: Any], testCase: XCTestCase) {
 		let ids = Set(streamIds["ids"] as! [String])
 		let fetchIdsExpectation = testCase.expectation(description: "Fetch Article Ids")
-		testAccount.fetchUnreadArticleIDs { articleIds in
-			// Unread statuses can be paged from Feedly.
-			// Instead of joining test data, the best we can do is
-			// make sure that these ids are marked as unread (a subset of the total).
-			XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as unread.")
-			fetchIdsExpectation.fulfill()
+		testAccount.fetchUnreadArticleIDs { articleIdsResult in
+			do {
+				let articleIds = try articleIdsResult.get()
+				// Unread statuses can be paged from Feedly.
+				// Instead of joining test data, the best we can do is
+				// make sure that these ids are marked as unread (a subset of the total).
+				XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as unread.")
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error unwrapping article IDs: \(error)")
+			}
 		}
 		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
 	}
@@ -239,12 +244,17 @@ class FeedlyTestSupport {
 		let items = stream["items"] as! [[String: Any]]
 		let ids = Set(items.map { $0["id"] as! String })
 		let fetchIdsExpectation = testCase.expectation(description: "Fetch Article Ids")
-		testAccount.fetchStarredArticleIDs { articleIds in
-			// Starred articles can be paged from Feedly.
-			// Instead of joining test data, the best we can do is
-			// make sure that these articles are marked as starred (a subset of the total).
-			XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as starred.")
-			fetchIdsExpectation.fulfill()
+		testAccount.fetchStarredArticleIDs { articleIdsResult in
+			do {
+				let articleIds = try articleIdsResult.get()
+				// Starred articles can be paged from Feedly.
+				// Instead of joining test data, the best we can do is
+				// make sure that these articles are marked as starred (a subset of the total).
+				XCTAssertTrue(ids.isSubset(of: articleIds), "Some articles in `ids` are not marked as starred.")
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error unwrapping article IDs: \(error)")
+			}
 		}
 		testCase.wait(for: [fetchIdsExpectation], timeout: 2)
 	}

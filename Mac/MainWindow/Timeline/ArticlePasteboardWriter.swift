@@ -151,7 +151,6 @@ private extension ArticlePasteboardWriter {
 		d[Key.externalURL] = article.externalURL ?? nil
 		d[Key.summary] = article.summary ?? nil
 		d[Key.imageURL] = article.imageURL ?? nil
-		d[Key.bannerImageURL] = article.bannerImageURL ?? nil
 		d[Key.datePublished] = article.datePublished ?? nil
 		d[Key.dateModified] = article.dateModified ?? nil
 		d[Key.dateArrived] = article.status.dateArrived

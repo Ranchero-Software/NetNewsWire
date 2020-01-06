@@ -17,6 +17,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private var iconSize = IconSize.medium
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 	
+	private var refreshProgressView: RefreshProgressView?
+
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
@@ -72,13 +74,18 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			navigationItem.titleView = titleView
 		}
-
-		resetUI(resetScroll: true)
-		applyChanges(animated: false)
 		
-		// Restore the scroll position if we have one stored
-		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
-			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
+		refreshControl = UIRefreshControl()
+		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
+		configureToolbar()
+		resetUI(resetScroll: true)
+		
+		// Load the table and then scroll to the saved position if available
+		applyChanges(animated: false) {
+			if let restoreIndexPath = self.coordinator.timelineMiddleIndexPath {
+				self.tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
+			}
 		}
 		
 	}
@@ -127,6 +134,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@IBAction func firstUnread(_ sender: Any) {
 		coordinator.selectFirstUnread()
+	}
+	
+	@objc func refreshAccounts(_ sender: Any) {
+		refreshControl?.endRefreshing()
+		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+		}
 	}
 	
 	// MARK: Keyboard shortcuts
@@ -242,8 +258,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					popoverController.sourceView = view
 					popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
 				}
-				
-				alert.addAction(self.markOlderAsReadAlertAction(article, completion: completion))
+
+				if let action = self.markAboveAsReadAlertAction(article, completion: completion) {
+					alert.addAction(action)
+				}
+
+				if let action = self.markBelowAsReadAlertAction(article, completion: completion) {
+					alert.addAction(action)
+				}
 				
 				if let action = self.discloseFeedAlertAction(article, completion: completion) {
 					alert.addAction(action)
@@ -290,7 +312,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			var actions = [UIAction]()
 			actions.append(self.toggleArticleReadStatusAction(article))
 			actions.append(self.toggleArticleStarStatusAction(article))
-			actions.append(self.markOlderAsReadAction(article))
+
+			if let action = self.markAboveAsReadAction(article) {
+				actions.append(action)
+			}
+
+			if let action = self.markBelowAsReadAction(article) {
+				actions.append(action)
+			}
 			
 			if let action = self.discloseFeedAction(article) {
 				actions.append(action)
@@ -450,7 +479,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
 		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
@@ -502,6 +531,22 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
+	func configureToolbar() {
+		
+		if coordinator.isThreePanelMode {
+			firstUnreadButton.isHidden = true
+			return
+		}
+		
+		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
+			return
+		}
+
+		self.refreshProgressView = refreshProgressView
+		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
+	}
+
 	func resetUI(resetScroll: Bool) {
 		
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
@@ -544,6 +589,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateUI() {
+		refreshProgressView?.updateRefreshLabel()
 		updateTitleUnreadCount()
 		updateToolbar()
 	}
@@ -633,20 +679,54 @@ private extension MasterTimelineViewController {
 		
 		return action
 	}
-	
-	func markOlderAsReadAction(_ article: Article) -> UIAction {
-		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
-		let image = coordinator.sortDirection == .orderedDescending ? AppAssets.markOlderAsReadDownImage : AppAssets.markOlderAsReadUpImage
+
+	func markAboveAsReadAction(_ article: Article) -> UIAction? {
+		guard coordinator.canMarkAboveAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+		let image = AppAssets.markAboveAsReadImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
+			self?.coordinator.markAboveAsRead(article)
 		}
 		return action
 	}
 	
-	func markOlderAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction {
-		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
+	func markBelowAsReadAction(_ article: Article) -> UIAction? {
+		guard coordinator.canMarkBelowAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		let image = AppAssets.markBelowAsReadImage
+		let action = UIAction(title: title, image: image) { [weak self] action in
+			self?.coordinator.markBelowAsRead(article)
+		}
+		return action
+	}
+	
+	func markAboveAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard coordinator.canMarkAboveAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
+			self?.coordinator.markAboveAsRead(article)
+			completion(true)
+		}
+		return action
+	}
+
+	func markBelowAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard coordinator.canMarkBelowAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			self?.coordinator.markBelowAsRead(article)
 			completion(true)
 		}
 		return action

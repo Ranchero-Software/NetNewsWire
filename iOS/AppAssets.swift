@@ -117,11 +117,11 @@ struct AppAssets {
 		return UIImage(systemName: "asterisk.circle")!
 	}()
 	
-	static var markOlderAsReadDownImage: UIImage = {
+	static var markBelowAsReadImage: UIImage = {
 		return UIImage(systemName: "arrowtriangle.down.circle")!
 	}()
 	
-	static var markOlderAsReadUpImage: UIImage = {
+	static var markAboveAsReadImage: UIImage = {
 		return UIImage(systemName: "arrowtriangle.up.circle")!
 	}()
 	

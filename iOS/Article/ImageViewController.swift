@@ -12,8 +12,10 @@ class ImageViewController: UIViewController {
 
 	@IBOutlet weak var shareButton: UIButton!
 	@IBOutlet weak var imageScrollView: ImageScrollView!
+	@IBOutlet weak var titleLabel: UILabel!
 	
 	var image: UIImage!
+	var imageTitle: String?
 	var zoomedFrame: CGRect {
 		return imageScrollView.zoomedFrame
 	}
@@ -26,6 +28,8 @@ class ImageViewController: UIViewController {
         imageScrollView.imageContentMode = .aspectFit
         imageScrollView.initialOffset = .center
 		imageScrollView.display(image: image)
+		
+		titleLabel.text = imageTitle ?? ""
     }
 
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

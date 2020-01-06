@@ -100,6 +100,9 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			account = containerAccount
 		} else if let containerFolder = container as? Folder, let containerAccount = containerFolder.account {
 			account = containerAccount
+		} else {
+			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
+			return
 		}
 		
 		if let urlString = url?.absoluteString, account!.hasWebFeed(withURL: urlString) {

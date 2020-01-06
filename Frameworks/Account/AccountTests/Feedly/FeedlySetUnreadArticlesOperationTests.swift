@@ -49,10 +49,15 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { accountArticlesIDs in
-			XCTAssertTrue(accountArticlesIDs.isEmpty)
-			XCTAssertEqual(accountArticlesIDs.count, testIds.count)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { accountArticlesIDsResult in
+			do {
+				let accountArticlesIDs = try accountArticlesIDsResult.get()
+				XCTAssertTrue(accountArticlesIDs.isEmpty)
+				XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 		
 		waitForExpectations(timeout: 2)
@@ -74,9 +79,14 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs.count, testIds.count)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { accountArticlesIDsResult in
+			do {
+				let accountArticlesIDs = try accountArticlesIDsResult.get()
+				XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -97,9 +107,14 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs.count, testIds.count)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { accountArticlesIDsResult in
+			do {
+				let accountArticlesIDs = try accountArticlesIDsResult.get()
+				XCTAssertEqual(accountArticlesIDs.count, testIds.count)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -135,9 +150,14 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { remainingAccountArticlesIDs in
-			XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { remainingAccountArticlesIDsResult in
+			do {
+				let remainingAccountArticlesIDs = try remainingAccountArticlesIDsResult.get()
+				XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -173,9 +193,14 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { remainingAccountArticlesIDs in
-			XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { remainingAccountArticlesIDsResult in
+			do {
+				let remainingAccountArticlesIDs = try remainingAccountArticlesIDsResult.get()
+				XCTAssertEqual(remainingAccountArticlesIDs, remainingUnreadIds)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -222,15 +247,20 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-			let idsOfUnreadArticles = Set(self.account
-				.fetchArticles(.articleIDs(remainingUnreadIds))
-				.filter { $0.status.boolStatus(forKey: .read) == false }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { accountArticlesIDsResult in
+			do {
+				let accountArticlesIDs = try accountArticlesIDsResult.get()
+				XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+				let idsOfUnreadArticles = Set(try self.account
+					.fetchArticles(.articleIDs(remainingUnreadIds))
+					.filter { $0.status.boolStatus(forKey: .read) == false }
+					.map { $0.articleID })
+				
+				XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -275,16 +305,21 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-			
-			let idsOfUnreadArticles = Set(self.account
-				.fetchArticles(.articleIDs(remainingUnreadIds))
-				.filter { $0.status.boolStatus(forKey: .read) == false }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { accountArticlesIDsResult in
+			do {
+				let accountArticlesIDs = try accountArticlesIDsResult.get()
+				XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+				
+				let idsOfUnreadArticles = Set(try self.account
+					.fetchArticles(.articleIDs(remainingUnreadIds))
+					.filter { $0.status.boolStatus(forKey: .read) == false }
+					.map { $0.articleID })
+				
+				XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 	}
 	
@@ -322,16 +357,21 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-			
-			let idsOfUnreadArticles = Set(self.account
-				.fetchArticles(.articleIDs(remainingUnreadIds))
-				.filter { $0.status.boolStatus(forKey: .read) == false }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { accountArticlesIDsResult in
+			do {
+				let accountArticlesIDs = try accountArticlesIDsResult.get()
+				XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+				
+				let idsOfUnreadArticles = Set(try self.account
+					.fetchArticles(.articleIDs(remainingUnreadIds))
+					.filter { $0.status.boolStatus(forKey: .read) == false }
+					.map { $0.articleID })
+				
+				XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -369,16 +409,21 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-			
-			let idsOfUnreadArticles = Set(self.account
-				.fetchArticles(.articleIDs(remainingUnreadIds))
-				.filter { $0.status.boolStatus(forKey: .read) == false }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { accountArticlesIDsResult in
+			do {
+				let accountArticlesIDs = try accountArticlesIDsResult.get()
+				XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+				
+				let idsOfUnreadArticles = Set(try self.account
+					.fetchArticles(.articleIDs(remainingUnreadIds))
+					.filter { $0.status.boolStatus(forKey: .read) == false }
+					.map { $0.articleID })
+				
+				XCTAssertEqual(idsOfUnreadArticles, remainingUnreadIds)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 	}
 	
@@ -418,18 +463,23 @@ class FeedlySetUnreadArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetched Articles Ids")
-		account.fetchUnreadArticleIDs { accountArticlesIDs in
-			XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
-			
-			let someTestItems = Set(someItemsAndFeeds.flatMap { $0.value })
-			let someRemainingUnreadIdsOfIngestedArticles = Set(someTestItems.compactMap { $0.syncServiceID })
-			let idsOfUnreadArticles = Set(self.account
-				.fetchArticles(.articleIDs(someRemainingUnreadIdsOfIngestedArticles))
-				.filter { $0.status.boolStatus(forKey: .read) == false }
-				.map { $0.articleID })
-			
-			XCTAssertEqual(idsOfUnreadArticles, someRemainingUnreadIdsOfIngestedArticles)
-			fetchIdsExpectation.fulfill()
+		account.fetchUnreadArticleIDs { accountArticlesIDsResult in
+			do {
+				let accountArticlesIDs = try accountArticlesIDsResult.get()
+				XCTAssertEqual(accountArticlesIDs, remainingUnreadIds)
+				
+				let someTestItems = Set(someItemsAndFeeds.flatMap { $0.value })
+				let someRemainingUnreadIdsOfIngestedArticles = Set(someTestItems.compactMap { $0.syncServiceID })
+				let idsOfUnreadArticles = Set(try self.account
+					.fetchArticles(.articleIDs(someRemainingUnreadIdsOfIngestedArticles))
+					.filter { $0.status.boolStatus(forKey: .read) == false }
+					.map { $0.articleID })
+				
+				XCTAssertEqual(idsOfUnreadArticles, someRemainingUnreadIdsOfIngestedArticles)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking account articles IDs result: \(error)")
+			}
 		}
 	}
 }

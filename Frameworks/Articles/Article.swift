@@ -23,13 +23,12 @@ public struct Article: Hashable {
 	public let externalURL: String?
 	public let summary: String?
 	public let imageURL: String?
-	public let bannerImageURL: String?
 	public let datePublished: Date?
 	public let dateModified: Date?
 	public let authors: Set<Author>?
 	public let status: ArticleStatus
 
-	public init(accountID: String, articleID: String?, webFeedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, bannerImageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, status: ArticleStatus) {
+	public init(accountID: String, articleID: String?, webFeedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, status: ArticleStatus) {
 		self.accountID = accountID
 		self.webFeedID = webFeedID
 		self.uniqueID = uniqueID
@@ -40,7 +39,6 @@ public struct Article: Hashable {
 		self.externalURL = externalURL
 		self.summary = summary
 		self.imageURL = imageURL
-		self.bannerImageURL = bannerImageURL
 		self.datePublished = datePublished
 		self.dateModified = dateModified
 		self.authors = authors

@@ -29,14 +29,17 @@ class FeedlyOperation: Operation {
 		}
 	}
 	
+	override var isAsynchronous: Bool {
+		return true
+	}
+	
 	func didFinish() {
 		assert(Thread.isMainThread)
 		assert(!isFinished, "Finished operation is attempting to finish again.")
 		
 		downloadProgress = nil
 		
-		isExecutingOperation = false
-		isFinishedOperation = true
+		updateExecutingAndFinished(false, true)
 	}
 	
 	func didFinish(_ error: Error) {
@@ -58,9 +61,8 @@ class FeedlyOperation: Operation {
 	
 	override func start() {
 		guard !isCancelled else {
-			isExecutingOperation = false
-			isFinishedOperation = true
-			
+			updateExecutingAndFinished(false, true)
+
 			if downloadProgress != nil {
 				DispatchQueue.main.async {
 					self.downloadProgress = nil
@@ -69,8 +71,8 @@ class FeedlyOperation: Operation {
 			
 			return
 		}
-		
-		isExecutingOperation = true
+
+		updateExecutingAndFinished(true, false)
 		DispatchQueue.main.async {
 			self.main()
 		}
@@ -80,25 +82,31 @@ class FeedlyOperation: Operation {
 		return isExecutingOperation
 	}
 	
-	private var isExecutingOperation = false {
-		willSet {
-			willChangeValue(for: \.isExecuting)
-		}
-		didSet {
-			didChangeValue(for: \.isExecuting)
-		}
-	}
-	
 	override var isFinished: Bool {
 		return isFinishedOperation
 	}
-	
-	private var isFinishedOperation = false {
-		willSet {
-			willChangeValue(for: \.isFinished)
+
+	private var isExecutingOperation = false
+	private var isFinishedOperation = false
+
+	private func updateExecutingAndFinished(_ executing: Bool, _ finished: Bool) {
+		let isExecutingDidChange = executing != isExecutingOperation
+		let isFinishedDidChange = finished != isFinishedOperation
+
+		if isFinishedDidChange {
+			willChangeValue(forKey: #keyPath(isFinished))
 		}
-		didSet {
-			didChangeValue(for: \.isFinished)
+		if isExecutingDidChange {
+			willChangeValue(forKey: #keyPath(isExecuting))
+		}
+		isExecutingOperation = executing
+		isFinishedOperation = finished
+
+		if isExecutingDidChange {
+			didChangeValue(forKey: #keyPath(isExecuting))
+		}
+		if isFinishedDidChange {
+			didChangeValue(forKey: #keyPath(isFinished))
 		}
 	}
 }
