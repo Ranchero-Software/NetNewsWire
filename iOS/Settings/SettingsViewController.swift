@@ -380,6 +380,7 @@ private extension SettingsViewController {
 	
 	func exportOPML(sourceView: UIView, sourceRect: CGRect) {
 		if AccountManager.shared.accounts.count == 1 {
+			opmlAccount = AccountManager.shared.accounts.first!
 			exportOPMLDocumentPicker()
 		} else {
 			exportOPMLAccountPicker(sourceView: sourceView, sourceRect: sourceRect)

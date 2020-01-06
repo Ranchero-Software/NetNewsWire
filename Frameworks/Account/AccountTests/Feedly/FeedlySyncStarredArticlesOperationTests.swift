@@ -56,21 +56,26 @@ class FeedlySyncStarredArticlesOperationTests: XCTestCase {
 		
 		let expectedArticleIds = Set(items.map { $0.id })
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { starredArticleIds in
-			let missingIds = expectedArticleIds.subtracting(starredArticleIds)
-			XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as starred.")
-			
-			// Fetch articles directly because account.fetchArticles(.starred) fetches starred articles for feeds subscribed to.
-			let expectedArticles = self.account.fetchArticles(.articleIDs(expectedArticleIds))
-			XCTAssertEqual(expectedArticles.count, expectedArticleIds.count, "Did not fetch all the articles.")
-			
-			let starredArticles = self.account.fetchArticles(.articleIDs(starredArticleIds))
-			XCTAssertEqual(expectedArticleIds.count, expectedArticles.count)
-			let missingArticles = expectedArticles.subtracting(starredArticles)
-			XCTAssertTrue(missingArticles.isEmpty, "These articles should be starred and fetched.")
-			XCTAssertEqual(expectedArticles, starredArticles)
-			
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { starredArticleIdsResult in
+			do {
+				let starredArticleIds = try starredArticleIdsResult.get()
+				let missingIds = expectedArticleIds.subtracting(starredArticleIds)
+				XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as starred.")
+				
+				// Fetch articles directly because account.fetchArticles(.starred) fetches starred articles for feeds subscribed to.
+				let expectedArticles = try self.account.fetchArticles(.articleIDs(expectedArticleIds))
+				XCTAssertEqual(expectedArticles.count, expectedArticleIds.count, "Did not fetch all the articles.")
+				
+				let starredArticles = try self.account.fetchArticles(.articleIDs(starredArticleIds))
+				XCTAssertEqual(expectedArticleIds.count, expectedArticles.count)
+				let missingArticles = expectedArticles.subtracting(starredArticles)
+				XCTAssertTrue(missingArticles.isEmpty, "These articles should be starred and fetched.")
+				XCTAssertEqual(expectedArticles, starredArticles)
+				
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking starred article IDs: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -104,9 +109,14 @@ class FeedlySyncStarredArticlesOperationTests: XCTestCase {
 		waitForExpectations(timeout: 2)
 		
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { starredArticleIds in
-			XCTAssertTrue(starredArticleIds.isEmpty)
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { starredArticleIdsResult in
+			do {
+				let starredArticleIds = try starredArticleIdsResult.get()
+				XCTAssertTrue(starredArticleIds.isEmpty)
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking starred article IDs: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}
@@ -153,21 +163,26 @@ class FeedlySyncStarredArticlesOperationTests: XCTestCase {
 		// Find articles inserted.
 		let expectedArticleIds = Set(service.pages.values.map { $0.items }.flatMap { $0 }.map { $0.id })
 		let fetchIdsExpectation = expectation(description: "Fetch Article Ids")
-		account.fetchStarredArticleIDs { starredArticleIds in
-			let missingIds = expectedArticleIds.subtracting(starredArticleIds)
-			XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as starred.")
-			
-			// Fetch articles directly because account.fetchArticles(.starred) fetches starred articles for feeds subscribed to.
-			let expectedArticles = self.account.fetchArticles(.articleIDs(expectedArticleIds))
-			XCTAssertEqual(expectedArticles.count, expectedArticleIds.count, "Did not fetch all the articles.")
-			
-			let starredArticles = self.account.fetchArticles(.articleIDs(starredArticleIds))
-			XCTAssertEqual(expectedArticleIds.count, expectedArticles.count)
-			let missingArticles = expectedArticles.subtracting(starredArticles)
-			XCTAssertTrue(missingArticles.isEmpty, "These articles should be starred and fetched.")
-			XCTAssertEqual(expectedArticles, starredArticles)
-			
-			fetchIdsExpectation.fulfill()
+		account.fetchStarredArticleIDs { starredArticleIdsResult in
+			do {
+				let starredArticleIds = try starredArticleIdsResult.get()
+				let missingIds = expectedArticleIds.subtracting(starredArticleIds)
+				XCTAssertTrue(missingIds.isEmpty, "These article ids were not marked as starred.")
+				
+				// Fetch articles directly because account.fetchArticles(.starred) fetches starred articles for feeds subscribed to.
+				let expectedArticles = try self.account.fetchArticles(.articleIDs(expectedArticleIds))
+				XCTAssertEqual(expectedArticles.count, expectedArticleIds.count, "Did not fetch all the articles.")
+				
+				let starredArticles = try self.account.fetchArticles(.articleIDs(starredArticleIds))
+				XCTAssertEqual(expectedArticleIds.count, expectedArticles.count)
+				let missingArticles = expectedArticles.subtracting(starredArticles)
+				XCTAssertTrue(missingArticles.isEmpty, "These articles should be starred and fetched.")
+				XCTAssertEqual(expectedArticles, starredArticles)
+				
+				fetchIdsExpectation.fulfill()
+			} catch {
+				XCTFail("Error checking starred article IDs: \(error)")
+			}
 		}
 		waitForExpectations(timeout: 2)
 	}

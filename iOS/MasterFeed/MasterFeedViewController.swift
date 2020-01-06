@@ -301,13 +301,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-		guard let node = dataSource.itemIdentifier(for: indexPath), !(node.representedObject is PseudoFeed) else {
+		guard let node = dataSource.itemIdentifier(for: indexPath) else {
 			return nil
 		}
 		if node.representedObject is WebFeed {
 			return makeFeedContextMenu(node: node, indexPath: indexPath, includeDeleteRename: true)
-		} else {
+		} else if node.representedObject is Folder {
 			return makeFolderContextMenu(node: node, indexPath: indexPath)
+		} else if node.representedObject is PseudoFeed  {
+			return makePseudoFeedContextMenu(node: node, indexPath: indexPath)
+		} else {
+			return nil
 		}
 	}
 	
@@ -564,7 +568,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 		
 			// It wasn't already visable, so expand its folder and try again
-			guard let parent = node.parent else {
+			guard let parent = node.parent, parent.representedObject is Folder else {
 				completion?()
 				return
 			}
@@ -618,7 +622,14 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { suggestedActions in
 			let accountInfoAction = self.getAccountInfoAction(account: account)
 			let deactivateAction = self.deactivateAccountAction(account: account)
-            return UIMenu(title: "", children: [accountInfoAction, deactivateAction])
+
+			var actions = [accountInfoAction, deactivateAction]
+
+			if let markAllAction = self.markAllAsReadAction(account: account) {
+				actions.insert(markAllAction, at: 1)
+			}
+
+            return UIMenu(title: "", children: actions)
         }
     }
 	
@@ -658,10 +669,16 @@ private extension MasterFeedViewController {
 
 		self.refreshProgressView = refreshProgressView
 
+		let spaceItemButton1 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		let spaceItemButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+		let spaceItemButton2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 		addNewItemButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add(_:)))
-		setToolbarItems([refreshProgressItemButton, spaceItemButton, addNewItemButton], animated: false)
+		
+		setToolbarItems([spaceItemButton1,
+						 refreshProgressItemButton,
+						 spaceItemButton2,
+						 addNewItemButton
+		], animated: false)
 	}
 	
 	func updateUI() {
@@ -865,10 +882,14 @@ private extension MasterFeedViewController {
 			if let copyHomePageAction = self.copyHomePageAction(indexPath: indexPath) {
 				actions.append(copyHomePageAction)
 			}
+
+			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
+				actions.append(markAllAction)
+			}
 			
 			if includeDeleteRename {
-				actions.append(self.deleteAction(indexPath: indexPath))
 				actions.append(self.renameAction(indexPath: indexPath))
+				actions.append(self.deleteAction(indexPath: indexPath))
 			}
 			
 			return UIMenu(title: "", children: actions)
@@ -885,9 +906,23 @@ private extension MasterFeedViewController {
 			var actions = [UIAction]()
 			actions.append(self.deleteAction(indexPath: indexPath))
 			actions.append(self.renameAction(indexPath: indexPath))
+
+			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
+				actions.append(markAllAction)
+			}
 			
 			return UIMenu(title: "", children: actions)
 
+		})
+	}
+
+	func makePseudoFeedContextMenu(node: Node, indexPath: IndexPath) -> UIContextMenuConfiguration? {
+		guard let markAllAction = self.markAllAsReadAction(indexPath: indexPath) else {
+			return nil
+		}
+
+		return UIContextMenuConfiguration(identifier: node.uniqueID as NSCopying, previewProvider: nil, actionProvider: { suggestedActions in
+			return UIMenu(title: "", children: [markAllAction])
 		})
 	}
 
@@ -1031,6 +1066,45 @@ private extension MasterFeedViewController {
 			self?.coordinator.showFeedInspector(for: feed)
 			completion(true)
 		}
+		return action
+	}
+
+	func markAllAsReadAction(indexPath: IndexPath) -> UIAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath),
+			coordinator.unreadCountFor(node) > 0 else {
+			return nil
+		}
+
+		guard let articleFetcher = node.representedObject as? Feed,
+			let fetchedArticles = try? articleFetcher.fetchArticles() else {
+			return nil
+		}
+
+		let articles = Array(fetchedArticles)
+		return markAllAsReadAction(articles: articles, nameForDisplay: articleFetcher.nameForDisplay)
+	}
+
+	func markAllAsReadAction(account: Account) -> UIAction? {
+		guard let fetchedArticles = try? account.fetchArticles(FetchType.unread) else {
+			return nil
+		}
+
+		let articles = Array(fetchedArticles)
+		return markAllAsReadAction(articles: articles, nameForDisplay: account.nameForDisplay)
+	}
+
+	func markAllAsReadAction(articles: [Article], nameForDisplay: String) -> UIAction? {
+		guard articles.canMarkAllAsRead() else {
+			return nil
+		}
+
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, nameForDisplay) as String
+
+		let action = UIAction(title: title, image: AppAssets.markAllInFeedAsReadImage) { [weak self] action in
+			self?.coordinator.markAllAsRead(articles)
+		}
+
 		return action
 	}
 	
