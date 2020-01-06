@@ -189,7 +189,7 @@ extension Folder: OPMLRepresentable {
 
 		var hasAtLeastOneChild = false
 
-		for feed in topLevelWebFeeds.sorted(by: { $0.nameForDisplay < $1.nameForDisplay })  {
+		for feed in topLevelWebFeeds.sorted()  {
 			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 			hasAtLeastOneChild = true
 		}
@@ -206,3 +206,14 @@ extension Folder: OPMLRepresentable {
 	}
 }
 
+// MARK: Set
+
+extension Set where Element == Folder {
+	
+	func sorted() -> Array<Folder> {
+		return sorted(by: { (folder1, folder2) -> Bool in
+			return folder1.nameForDisplay.localizedStandardCompare(folder2.nameForDisplay) == .orderedAscending
+		})
+	}
+	
+}

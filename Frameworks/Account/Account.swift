@@ -1245,10 +1245,10 @@ extension Account: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
 		var s = ""
-		for feed in topLevelWebFeeds.sorted(by: { $0.nameForDisplay < $1.nameForDisplay }) {
+		for feed in topLevelWebFeeds.sorted() {
 			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 		}
-		for folder in folders!.sorted(by: { $0.nameForDisplay < $1.nameForDisplay }) {
+		for folder in folders!.sorted() {
 			s += folder.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 		}
 		return s
