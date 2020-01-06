@@ -33,7 +33,11 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 				return UITableViewDropProposal(operation: .move, intent: .unspecified)
 			}
 		} else {
-			return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+			// Rearranging cells is not allowed within the same section (a.k.a folder).
+			// By specifying the operation is forbidden, the system will also provide
+			// a nice "🚫" icon in the upper right corner of the dragged cell, to
+			// indicate to the user the operation will be cancelled.
+			return UITableViewDropProposal(operation: .forbidden, intent: .insertAtDestinationIndexPath)
 		}
 
 	}
