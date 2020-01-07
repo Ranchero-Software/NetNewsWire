@@ -65,19 +65,26 @@ private extension RefreshProgressView {
 		let progress = AccountManager.shared.combinedRefreshProgress
 		
 		if progress.isComplete {
-			progressView.progress = 1
+			progressView.setProgress(1, animated: true)
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 				self.updateRefreshLabel()
 				self.label.isHidden = false
 				self.progressView.isHidden = true
 				self.progressWidth.isActive = false
+				self.progressView.setProgress(0, animated: true)
 			}
 		} else {
 			label.isHidden = true
 			progressView.isHidden = false
 			self.progressWidth.isActive = true
+			self.progressView.setNeedsLayout()
+			self.progressView.layoutIfNeeded()
 			let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
-			progressView.progress = percent
+			
+			// Don't let the progress bar go backwards unless we need to go back more than 25%
+			if percent > progressView.progress || progressView.progress - percent > 0.25 {
+				progressView.setProgress(percent, animated: true)
+			}
 		}
 	}
 }
