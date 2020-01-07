@@ -109,5 +109,30 @@ extension Array where Element == Article {
 		}
 		return true
 	}
+
+	func articlesAbove(article: Article) -> [Article] {
+		guard let position = firstIndex(of: article) else {
+			return []
+		}
+
+		let articlesAbove = self[..<position]
+		return Array(articlesAbove)
+	}
+
+	func articlesBelow(article: Article) -> [Article] {
+		guard let position = firstIndex(of: article) else {
+			return []
+		}
+
+		var articlesBelow = Array(self[position...])
+
+		guard !articlesBelow.isEmpty else {
+			return []
+		}
+
+		articlesBelow.removeFirst()
+
+		return articlesBelow
+	}
 }
 

@@ -872,7 +872,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func canMarkAboveAsRead(for article: Article) -> Bool {
-		return articles.first != article
+		let articlesAboveArray = articles.articlesAbove(article: article)
+		return articlesAboveArray.canMarkAllAsRead()
 	}
 
 	func markAboveAsRead() {
@@ -884,16 +885,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func markAboveAsRead(_ article: Article) {
-		guard let position = articles.firstIndex(of: article) else {
-			return
-		}
-
-		let articlesAbove = articles[..<position]
-		markAllAsRead(Array(articlesAbove))
+		let articlesAboveArray = articles.articlesAbove(article: article)
+		markAllAsRead(articlesAboveArray)
 	}
 
 	func canMarkBelowAsRead(for article: Article) -> Bool {
-		return articles.last != article
+		let articleBelowArray = articles.articlesBelow(article: article)
+		return articleBelowArray.canMarkAllAsRead()
 	}
 
 	func markBelowAsRead() {
@@ -905,18 +903,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func markBelowAsRead(_ article: Article) {
-		guard let position = articles.firstIndex(of: article) else {
-			return
-		}
-
-		var articlesBelow = Array(articles[position...])
-
-		guard !articlesBelow.isEmpty else {
-			return
-		}
-
-		articlesBelow.removeFirst()
-		markAllAsRead(articlesBelow)
+		let articleBelowArray = articles.articlesBelow(article: article)
+		markAllAsRead(articleBelowArray)
 	}
 	
 	func markAsReadForCurrentArticle() {
