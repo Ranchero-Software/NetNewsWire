@@ -113,8 +113,8 @@ struct AppAssets {
 		UIImage(systemName: "info.circle")!
 	}()
 	
-	static var markAllInFeedAsReadImage: UIImage = {
-		return UIImage(systemName: "asterisk.circle")!
+	static var markAllAsReadImage: UIImage = {
+		return UIImage(named: "markAllAsRead")!
 	}()
 	
 	static var markBelowAsReadImage: UIImage = {

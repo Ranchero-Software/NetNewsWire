@@ -14,7 +14,6 @@ class RefreshProgressView: UIView {
 	@IBOutlet weak var progressView: UIProgressView!
 	@IBOutlet weak var label: UILabel!
 	private lazy var progressWidth = progressView.widthAnchor.constraint(equalToConstant: 100.0)
-	private var lastLabelDisplayedTime: Date? = nil
 	
 	override func awakeFromNib() {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
@@ -29,13 +28,7 @@ class RefreshProgressView: UIView {
 	func updateRefreshLabel() {
 		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
 			
-			if let lastLabelDisplayedTime = lastLabelDisplayedTime, lastLabelDisplayedTime.addingTimeInterval(2) > Date()  {
-				return
-			}
-
-			lastLabelDisplayedTime = Date()
-
-			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(1) {
+			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(60) {
 				
 				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 				relativeDateTimeFormatter.dateTimeStyle = .named
@@ -45,7 +38,7 @@ class RefreshProgressView: UIView {
 				label.text = refreshText
 				
 			} else {
-				label.text = NSLocalizedString("Updated just now", comment: "Updated Just Now")
+				label.text = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
 			}
 			
 		} else {
@@ -72,20 +65,26 @@ private extension RefreshProgressView {
 		let progress = AccountManager.shared.combinedRefreshProgress
 		
 		if progress.isComplete {
-			progressView.progress = 1
+			progressView.setProgress(1, animated: true)
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 				self.updateRefreshLabel()
 				self.label.isHidden = false
 				self.progressView.isHidden = true
 				self.progressWidth.isActive = false
+				self.progressView.setProgress(0, animated: true)
 			}
 		} else {
-			lastLabelDisplayedTime = nil
 			label.isHidden = true
 			progressView.isHidden = false
 			self.progressWidth.isActive = true
+			self.progressView.setNeedsLayout()
+			self.progressView.layoutIfNeeded()
 			let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
-			progressView.progress = percent
+			
+			// Don't let the progress bar go backwards unless we need to go back more than 25%
+			if percent > progressView.progress || progressView.progress - percent > 0.25 {
+				progressView.setProgress(percent, animated: true)
+			}
 		}
 	}
 }

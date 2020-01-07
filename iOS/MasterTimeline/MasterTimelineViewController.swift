@@ -52,6 +52,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		// Setup the Search Controller
 		searchController.delegate = self
@@ -451,6 +452,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 	
+	@objc func willEnterForeground(_ note: Notification) {
+		updateUI()
+	}
+	
 	@objc func scrollPositionDidChange() {
 		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
 	}
@@ -770,7 +775,7 @@ private extension MasterTimelineViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		
-		let action = UIAction(title: title, image: AppAssets.markAllInFeedAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			self?.coordinator.markAllAsRead(articles)
 		}
 		return action

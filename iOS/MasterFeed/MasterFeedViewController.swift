@@ -14,7 +14,7 @@ import RSTree
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
-	@IBOutlet weak var filterButton: UIBarButtonItem!
+	private var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
 	private var addNewItemButton: UIBarButtonItem!
 	
@@ -400,7 +400,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		coordinator.showSettings()
 	}
 	
-	@IBAction func toggleFilter(_ sender: Any) {
+	@objc func toggleFilter(_ sender: Any) {
 		if coordinator.isReadFeedsFiltered {
 			filterButton.image = AppAssets.filterInactiveImage
 			coordinator.showAllFeeds()
@@ -410,7 +410,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	@IBAction func add(_ sender: UIBarButtonItem) {
+	@objc func add(_ sender: UIBarButtonItem) {
 		coordinator.showAdd(.feed)
 	}
 	
@@ -669,12 +669,15 @@ private extension MasterFeedViewController {
 
 		self.refreshProgressView = refreshProgressView
 
+		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+		filterButton.accLabelText = NSLocalizedString("Filter Feeds", comment: "Filter Feeds")
 		let spaceItemButton1 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
 		let spaceItemButton2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 		addNewItemButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add(_:)))
 		
-		setToolbarItems([spaceItemButton1,
+		setToolbarItems([filterButton,
+						 spaceItemButton1,
 						 refreshProgressItemButton,
 						 spaceItemButton2,
 						 addNewItemButton
@@ -683,9 +686,9 @@ private extension MasterFeedViewController {
 	
 	func updateUI() {
 		if coordinator.isReadFeedsFiltered {
-			filterButton.image = AppAssets.filterActiveImage
+			filterButton?.image = AppAssets.filterActiveImage
 		} else {
-			filterButton.image = AppAssets.filterInactiveImage
+			filterButton?.image = AppAssets.filterInactiveImage
 		}
 		refreshProgressView?.updateRefreshLabel()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
@@ -1101,7 +1104,7 @@ private extension MasterFeedViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, nameForDisplay) as String
 
-		let action = UIAction(title: title, image: AppAssets.markAllInFeedAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			self?.coordinator.markAllAsRead(articles)
 		}
 
