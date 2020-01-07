@@ -18,7 +18,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 	
 	private var refreshProgressView: RefreshProgressView?
-	private var currentlyPreviewedArticle: Article?
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
@@ -307,36 +306,41 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 		
-		currentlyPreviewedArticle = article
-		
-		return UIContextMenuConfiguration(
-			identifier: indexPath.row as NSCopying,
-			previewProvider: { [weak self] in
-				
-				guard let self = self else { return nil }
-				
-				let articleViewController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-				articleViewController.coordinator = self.coordinator
-				articleViewController.article = article
-				return articleViewController
-				
-			}, actionProvider: { [weak self] suggestedActions in
-				
-				guard let self = self else { return nil }
-				
-				return UIMenu(title: "", children: [
-					self.toggleArticleReadStatusAction(article),
-					self.toggleArticleStarStatusAction(article),
-					self.markAboveAsReadAction(article),
-					self.markBelowAsReadAction(article),
-					self.discloseFeedAction(article),
-					self.markAllInFeedAsReadAction(article),
-					self.openInBrowserAction(article),
-					self.shareAction(article, indexPath: indexPath)
-				].compactMap { $0 })
-				
+		return UIContextMenuConfiguration(identifier: indexPath.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+
+			guard let self = self else { return nil }
+			
+			var actions = [UIAction]()
+			actions.append(self.toggleArticleReadStatusAction(article))
+			actions.append(self.toggleArticleStarStatusAction(article))
+
+			if let action = self.markAboveAsReadAction(article) {
+				actions.append(action)
 			}
-		)
+
+			if let action = self.markBelowAsReadAction(article) {
+				actions.append(action)
+			}
+			
+			if let action = self.discloseFeedAction(article) {
+				actions.append(action)
+			}
+			
+			if let action = self.markAllInFeedAsReadAction(article) {
+				actions.append(action)
+			}
+			
+			if let action = self.openInBrowserAction(article) {
+				actions.append(action)
+			}
+			
+			if let action = self.shareAction(article, indexPath: indexPath) {
+				actions.append(action)
+			}
+			
+			return UIMenu(title: "", children: actions)
+
+		})
 		
 	}
 
@@ -347,13 +351,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 		
 		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
-	}
-	
-	override func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-		if let article = currentlyPreviewedArticle	{
-			coordinator.selectArticle(article)
-			currentlyPreviewedArticle = nil
-		}
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
