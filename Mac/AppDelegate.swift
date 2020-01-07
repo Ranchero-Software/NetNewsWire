@@ -111,7 +111,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	func showAddFolderSheetOnWindow(_ window: NSWindow) {
-
 		addFolderWindowController = AddFolderWindowController()
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
