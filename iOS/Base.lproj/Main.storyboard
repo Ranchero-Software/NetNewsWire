@@ -119,12 +119,12 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem title="Item" image="markAllAsRead" id="fTv-eX-72r">
+                        <barButtonItem image="line.horizontal.3.decrease.circle" catalog="system" id="af2-lj-EcA">
                             <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="FIlter Articles"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="markAllAsRead:" destination="Kyk-vK-QRX" id="4nd-Gg-APm"/>
+                                <action selector="toggleFilter:" destination="Kyk-vK-QRX" id="jxP-b2-V1n"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="53V-wq-bat"/>
@@ -139,9 +139,12 @@
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4">
-                        <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="af2-lj-EcA">
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="markAllAsRead" id="fTv-eX-72r">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="toggleFilter:" destination="Kyk-vK-QRX" id="jxP-b2-V1n"/>
+                                <action selector="markAllAsRead:" destination="Kyk-vK-QRX" id="4nd-Gg-APm"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -192,17 +195,9 @@
                                 <action selector="settings:" destination="7bK-jq-Zjz" id="Y8a-lz-Im7"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="ZJu-oJ-c1R">
-                            <connections>
-                                <action selector="toggleFilter:" destination="7bK-jq-Zjz" id="7lh-Bz-nfD"/>
-                            </connections>
-                        </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="filterButton" destination="ZJu-oJ-c1R" id="jiO-wg-qrG"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
             </objects>
@@ -373,7 +368,7 @@
         <image name="circle" catalog="system" width="64" height="60"/>
         <image name="gear" catalog="system" width="64" height="58"/>
         <image name="line.horizontal.3.decrease.circle" catalog="system" width="64" height="60"/>
-        <image name="markAllAsRead" width="17" height="17"/>
+        <image name="markAllAsRead" width="17" height="26"/>
         <image name="multiply.circle.fill" catalog="system" width="64" height="60"/>
         <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="56" height="64"/>
