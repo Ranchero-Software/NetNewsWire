@@ -107,7 +107,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	func logDebugMessage(_ message: String) {
-
 		logMessage(message, type: .debug)
 	}
 
