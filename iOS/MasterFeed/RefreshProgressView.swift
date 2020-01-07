@@ -14,7 +14,6 @@ class RefreshProgressView: UIView {
 	@IBOutlet weak var progressView: UIProgressView!
 	@IBOutlet weak var label: UILabel!
 	private lazy var progressWidth = progressView.widthAnchor.constraint(equalToConstant: 100.0)
-	private var lastLabelDisplayedTime: Date? = nil
 	
 	override func awakeFromNib() {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
@@ -29,13 +28,7 @@ class RefreshProgressView: UIView {
 	func updateRefreshLabel() {
 		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
 			
-			if let lastLabelDisplayedTime = lastLabelDisplayedTime, lastLabelDisplayedTime.addingTimeInterval(2) > Date()  {
-				return
-			}
-
-			lastLabelDisplayedTime = Date()
-
-			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(1) {
+			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(60) {
 				
 				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 				relativeDateTimeFormatter.dateTimeStyle = .named
@@ -45,7 +38,7 @@ class RefreshProgressView: UIView {
 				label.text = refreshText
 				
 			} else {
-				label.text = NSLocalizedString("Updated just now", comment: "Updated Just Now")
+				label.text = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
 			}
 			
 		} else {
@@ -80,7 +73,6 @@ private extension RefreshProgressView {
 				self.progressWidth.isActive = false
 			}
 		} else {
-			lastLabelDisplayedTime = nil
 			label.isHidden = true
 			progressView.isHidden = false
 			self.progressWidth.isActive = true
