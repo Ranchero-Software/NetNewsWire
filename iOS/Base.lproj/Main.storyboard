@@ -119,7 +119,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem image="asterisk.circle" catalog="system" id="fTv-eX-72r">
+                        <barButtonItem title="Item" image="markAllAsRead" id="fTv-eX-72r">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
                             </userDefinedRuntimeAttributes>
@@ -367,13 +367,13 @@
         </scene>
     </scenes>
     <resources>
-        <image name="asterisk.circle" catalog="system" width="64" height="60"/>
         <image name="chevron.down" catalog="system" width="64" height="36"/>
         <image name="chevron.down.circle" catalog="system" width="64" height="60"/>
         <image name="chevron.up" catalog="system" width="64" height="36"/>
         <image name="circle" catalog="system" width="64" height="60"/>
         <image name="gear" catalog="system" width="64" height="58"/>
         <image name="line.horizontal.3.decrease.circle" catalog="system" width="64" height="60"/>
+        <image name="markAllAsRead" width="17" height="17"/>
         <image name="multiply.circle.fill" catalog="system" width="64" height="60"/>
         <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="56" height="64"/>

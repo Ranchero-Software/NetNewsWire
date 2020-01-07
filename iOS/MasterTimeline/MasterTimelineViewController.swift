@@ -767,7 +767,7 @@ private extension MasterTimelineViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		
-		let action = UIAction(title: title, image: AppAssets.markAllInFeedAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			self?.coordinator.markAllAsRead(articles)
 		}
 		return action
