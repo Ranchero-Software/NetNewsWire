@@ -25,7 +25,7 @@ class WebFeedInspectorViewController: UITableViewController {
 		if let feedIcon = appDelegate.webFeedIconDownloader.icon(for: webFeed) {
 			return feedIcon
 		}
-		if let favicon = appDelegate.faviconDownloader.favicon(for: webFeed) {
+		if let favicon = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
 			return favicon
 		}
 		return FaviconGenerator.favicon(webFeed)
