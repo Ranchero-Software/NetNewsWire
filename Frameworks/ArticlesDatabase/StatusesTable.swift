@@ -108,7 +108,7 @@ final class StatusesTable: DatabaseTable {
 			var articleIDs = Set<String>()
 			
 			func makeDatabaseCall(_ database: FMDatabase) {
-				let sql = "select articleID from statuses s where ((starred=1) || (read=0 and dateArrived > ?)) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);"
+				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);"
 				if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
 					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
 				}
