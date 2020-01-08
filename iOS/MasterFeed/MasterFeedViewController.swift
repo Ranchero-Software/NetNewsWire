@@ -1144,6 +1144,7 @@ private extension MasterFeedViewController {
 		alertController.addAction(renameAction)
 		
 		alertController.addTextField() { textField in
+			textField.text = name
 			textField.placeholder = NSLocalizedString("Name", comment: "Name")
 		}
 		
