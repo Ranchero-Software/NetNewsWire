@@ -230,8 +230,8 @@ class WebViewController: UIViewController {
 		if isFullScreenAvailable {
 			AppDefaults.articleFullscreenEnabled = false
 			coordinator.showStatusBar()
-			topShowBarsViewConstraint.constant = 0
-			bottomShowBarsViewConstraint.constant = 0
+			topShowBarsViewConstraint?.constant = 0
+			bottomShowBarsViewConstraint?.constant = 0
 			navigationController?.setNavigationBarHidden(false, animated: true)
 			navigationController?.setToolbarHidden(false, animated: true)
 			configureContextMenuInteraction()
@@ -242,8 +242,8 @@ class WebViewController: UIViewController {
 		if isFullScreenAvailable {
 			AppDefaults.articleFullscreenEnabled = true
 			coordinator.hideStatusBar()
-			topShowBarsViewConstraint.constant = -44.0
-			bottomShowBarsViewConstraint.constant = 44.0
+			topShowBarsViewConstraint?.constant = -44.0
+			bottomShowBarsViewConstraint?.constant = 44.0
 			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
 			configureContextMenuInteraction()
