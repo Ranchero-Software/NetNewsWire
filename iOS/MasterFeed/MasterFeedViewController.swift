@@ -591,7 +591,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			!coordinator.isExpanded(accountNode) {
 			
 				coordinator.expand(accountNode)
-				applyChanges(animated: false) {
+				applyChanges(animated: true) {
 					discloseFeedInAccount()
 				}
 			
