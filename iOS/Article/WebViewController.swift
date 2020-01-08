@@ -48,12 +48,12 @@ class WebViewController: UIViewController {
 
 	var articleExtractorButtonState: ArticleExtractorButtonState = .off {
 		didSet {
-			delegate.webViewController(self, articleExtractorButtonStateDidUpdate: articleExtractorButtonState)
+			delegate?.webViewController(self, articleExtractorButtonStateDidUpdate: articleExtractorButtonState)
 		}
 	}
 	
 	weak var coordinator: SceneCoordinator!
-	weak var delegate: WebViewControllerDelegate!
+	weak var delegate: WebViewControllerDelegate?
 	
 	var article: Article? {
 		didSet {
