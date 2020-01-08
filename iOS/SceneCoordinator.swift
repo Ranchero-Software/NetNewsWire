@@ -257,7 +257,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var currentArticle: Article?
 
-	private(set) var articles = ArticleArray()
+	private(set) var articles = ArticleArray() {
+		didSet {
+			timelineMiddleIndexPath = nil
+		}
+	}
+	
 	private var currentArticleRow: Int? {
 		guard let article = currentArticle else { return nil }
 		return articles.firstIndex(of: article)
@@ -1230,7 +1235,6 @@ private extension SceneCoordinator {
 	
 	func setTimelineFeed(_ feed: Feed?, animated: Bool, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
-		timelineMiddleIndexPath = nil
 		
 		fetchAndReplaceArticlesAsync(animated: animated) {
 			self.masterTimelineViewController?.reinitializeArticles(resetScroll: true)
@@ -1497,7 +1501,6 @@ private extension SceneCoordinator {
 	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
-			timelineMiddleIndexPath = nil
 			replaceArticles(with: Set<Article>(), animated: false)
 		}
 	}
