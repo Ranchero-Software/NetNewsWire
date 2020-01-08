@@ -14,9 +14,9 @@ import RSTree
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
-	private var filterButton: UIBarButtonItem!
+	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
-	private var addNewItemButton: UIBarButtonItem!
+	@IBOutlet weak var addNewItemButton: UIBarButtonItem!
 	
 	lazy var dataSource = makeDataSource()
 	var undoableCommands = [UndoableCommand]()
@@ -400,7 +400,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		coordinator.showSettings()
 	}
 	
-	@objc func toggleFilter(_ sender: Any) {
+	@IBAction func toggleFilter(_ sender: Any) {
 		if coordinator.isReadFeedsFiltered {
 			filterButton.image = AppAssets.filterInactiveImage
 			coordinator.showAllFeeds()
@@ -410,7 +410,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	@objc func add(_ sender: UIBarButtonItem) {
+	@IBAction func add(_ sender: UIBarButtonItem) {
 		coordinator.showAdd(.feed)
 	}
 	
@@ -668,20 +668,8 @@ private extension MasterFeedViewController {
 		}
 
 		self.refreshProgressView = refreshProgressView
-
-		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
-		filterButton.accLabelText = NSLocalizedString("Filter Feeds", comment: "Filter Feeds")
-		let spaceItemButton1 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		let spaceItemButton2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-		addNewItemButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add(_:)))
-		
-		setToolbarItems([filterButton,
-						 spaceItemButton1,
-						 refreshProgressItemButton,
-						 spaceItemButton2,
-						 addNewItemButton
-		], animated: false)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
 	
 	func updateUI() {
