@@ -38,6 +38,24 @@ class ArticleExtractorButton: UIButton {
 		}
 	}
 	
+	override var accessibilityLabel: String? {
+		get {
+			switch buttonState {
+			case .error:
+				return NSLocalizedString("Error - Reader View", comment: "Error - Reader View")
+			case .animated:
+				return NSLocalizedString("Processing - Reader View", comment: "Processing - Reader View")
+			case .on:
+				return NSLocalizedString("Selected - Reader View", comment: "Selected - Reader View")
+			case .off:
+				return NSLocalizedString("Reader View", comment: "Reader View")
+			}
+		}
+		set {
+			super.accessibilityLabel = newValue
+		}
+	}
+	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		guard case .animated = buttonState else {

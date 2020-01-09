@@ -402,10 +402,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@IBAction func toggleFilter(_ sender: Any) {
 		if coordinator.isReadFeedsFiltered {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 			coordinator.showAllFeeds()
 		} else {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 			coordinator.hideReadFeeds()
 		}
 	}
@@ -674,12 +674,22 @@ private extension MasterFeedViewController {
 	
 	func updateUI() {
 		if coordinator.isReadFeedsFiltered {
-			filterButton?.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 		} else {
-			filterButton?.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 		}
 		refreshProgressView?.updateRefreshLabel()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+	}
+	
+	func setFilterButtonToActive() {
+		filterButton?.image = AppAssets.filterActiveImage
+		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
+	}
+	
+	func setFilterButtonToInactive() {
+		filterButton?.image = AppAssets.filterInactiveImage
+		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 	
 	func reloadNode(_ node: Node) {

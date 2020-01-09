@@ -112,10 +112,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	// MARK: Actions
 	@IBAction func toggleFilter(_ sender: Any) {
 		if coordinator.isReadArticlesFiltered {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 			coordinator.showAllArticles()
 		} else {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 			coordinator.hideReadArticles()
 		}
 	}
@@ -579,9 +579,9 @@ private extension MasterTimelineViewController {
 		}
 		
 		if coordinator.isReadArticlesFiltered {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 		} else {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 		}
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
@@ -597,6 +597,16 @@ private extension MasterTimelineViewController {
 		refreshProgressView?.updateRefreshLabel()
 		updateTitleUnreadCount()
 		updateToolbar()
+	}
+	
+	func setFilterButtonToActive() {
+		filterButton?.image = AppAssets.filterActiveImage
+		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
+	}
+	
+	func setFilterButtonToInactive() {
+		filterButton?.image = AppAssets.filterInactiveImage
+		filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 	}
 	
 	func updateToolbar() {
