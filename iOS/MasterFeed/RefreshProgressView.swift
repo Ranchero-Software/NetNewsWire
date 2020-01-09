@@ -23,6 +23,8 @@ class RefreshProgressView: UIView {
 		} else {
 			updateRefreshLabel()
 		}
+		
+		scheduleUpdateRefreshLabel()
 	}
 
 	func updateRefreshLabel() {
@@ -87,4 +89,12 @@ private extension RefreshProgressView {
 			}
 		}
 	}
+	
+	func scheduleUpdateRefreshLabel() {
+		DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+			self?.updateRefreshLabel()
+			self?.scheduleUpdateRefreshLabel()
+		}
+	}
+	
 }
