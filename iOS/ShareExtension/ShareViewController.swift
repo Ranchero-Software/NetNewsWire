@@ -112,21 +112,19 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		
 		let feedName = contentText.isEmpty ? nil : contentText
 		
-		account!.createWebFeed(url: url!.absoluteString, name: feedName, container: container!) { result in
-
-			switch result {
-			case .success:
-				account!.save()
-				AccountManager.shared.suspendNetworkAll()
-				AccountManager.shared.suspendDatabaseAll()
-				self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
-			case .failure(let error):
-				self.presentError(error) {
-					self.extensionContext!.cancelRequest(withError: error)
+		ProcessInfo.processInfo.performExpiringActivity(withReason: "Adding web feed to account.") { expired in
+			guard !expired else { return }
+			
+			DispatchQueue.main.async {
+				account!.createWebFeed(url: self.url!.absoluteString, name: feedName, container: self.container!) { result in
+					account!.save()
+					AccountManager.shared.suspendNetworkAll()
+					AccountManager.shared.suspendDatabaseAll()
 				}
 			}
-
 		}
+		
+		self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 	}
 	
 	func shareFolderPickerDidSelect(_ container: Container) {
