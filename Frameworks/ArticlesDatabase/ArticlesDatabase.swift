@@ -216,6 +216,7 @@ public final class ArticlesDatabase {
 
 	/// Calls the various clean-up functions.
 	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
+		articlesTable.deleteOldArticles()
 		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
 	}
 }
