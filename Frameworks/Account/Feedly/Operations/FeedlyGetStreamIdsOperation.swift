@@ -9,17 +9,12 @@
 import Foundation
 import os.log
 
-protocol FeedlyEntryIdenifierProviding: class {
-	var resource: FeedlyResourceId { get }
-	var entryIds: Set<String> { get }
-}
-
 protocol FeedlyGetStreamIdsOperationDelegate: class {
 	func feedlyGetStreamIdsOperation(_ operation: FeedlyGetStreamIdsOperation, didGet streamIds: FeedlyStreamIds)
 }
 
 /// Single responsibility is to get the stream ids from Feedly.
-final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdenifierProviding, FeedlyUnreadEntryIdProviding {
+final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 	
 	var entryIds: Set<String> {
 		guard let ids = streamIds?.ids else {

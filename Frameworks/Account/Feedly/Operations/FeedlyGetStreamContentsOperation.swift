@@ -15,7 +15,7 @@ protocol FeedlyEntryProviding {
 }
 
 protocol FeedlyParsedItemProviding {
-	var resource: FeedlyResourceId { get }
+	var parsedItemProviderName: String { get }
 	var parsedEntries: Set<ParsedItem> { get }
 }
 
@@ -32,8 +32,8 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 	
 	let resourceProvider: FeedlyResourceProviding
 	
-	var resource: FeedlyResourceId {
-		return resourceProvider.resource
+	var parsedItemProviderName: String {
+		return resourceProvider.resource.id
 	}
 	
 	var entries: [FeedlyEntry] {
