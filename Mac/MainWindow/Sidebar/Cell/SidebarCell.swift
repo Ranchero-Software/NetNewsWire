@@ -142,9 +142,9 @@ private extension SidebarCell {
 	}
 
 	func layoutWith(_ layout: SidebarCellLayout) {
-		faviconImageView.rs_setFrameIfNotEqual(layout.faviconRect)
-		titleView.rs_setFrameIfNotEqual(layout.titleRect)
-		unreadCountView.rs_setFrameIfNotEqual(layout.unreadCountRect)
+		faviconImageView.setFrame(ifNotEqualTo: layout.faviconRect)
+		titleView.setFrame(ifNotEqualTo: layout.titleRect)
+		unreadCountView.setFrame(ifNotEqualTo: layout.unreadCountRect)
 	}
 }
 
