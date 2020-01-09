@@ -149,7 +149,7 @@ private extension AccountsPreferencesViewController {
 		addChild(controller)
 		controller.view.translatesAutoresizingMaskIntoConstraints = false
 		detailView.addSubview(controller.view)
-		detailView.rs_addFullSizeConstraints(forSubview: controller.view)
+		detailView.addFullSizeConstraints(forSubview: controller.view)
 		
 	}
 	
