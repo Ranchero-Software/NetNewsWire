@@ -1102,6 +1102,7 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		}
 		
 		if let articleViewController = masterNavigationController.viewControllers.last as? ArticleViewController {
+			articleViewController.showBars(self)
 			masterNavigationController.popViewController(animated: false)
 			let controller = addNavControllerIfNecessary(articleViewController, showButton: true)
 			return controller

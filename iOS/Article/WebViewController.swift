@@ -227,15 +227,13 @@ class WebViewController: UIViewController {
 	}
 
 	func showBars() {
-		if isFullScreenAvailable {
-			AppDefaults.articleFullscreenEnabled = false
-			coordinator.showStatusBar()
-			topShowBarsViewConstraint?.constant = 0
-			bottomShowBarsViewConstraint?.constant = 0
-			navigationController?.setNavigationBarHidden(false, animated: true)
-			navigationController?.setToolbarHidden(false, animated: true)
-			configureContextMenuInteraction()
-		}
+		AppDefaults.articleFullscreenEnabled = false
+		coordinator.showStatusBar()
+		topShowBarsViewConstraint?.constant = 0
+		bottomShowBarsViewConstraint?.constant = 0
+		navigationController?.setNavigationBarHidden(false, animated: true)
+		navigationController?.setToolbarHidden(false, animated: true)
+		configureContextMenuInteraction()
 	}
 		
 	func hideBars() {
