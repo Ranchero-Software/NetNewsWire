@@ -200,6 +200,10 @@ private extension MasterTimelineTableViewCell {
 		}
 	}
 	
+	func updateAccessiblityLabel() {
+		accessibilityLabel = "\(cellData.feedName), \(cellData.title), \(cellData.summary), \(cellData.dateString)"
+	}
+	
 	func makeIconEmpty() {
 		if iconView.iconImage != nil {
 			iconView.iconImage = nil
@@ -232,6 +236,7 @@ private extension MasterTimelineTableViewCell {
 		updateUnreadIndicator()
 		updateStarView()
 		updateIconImage()
+		updateAccessiblityLabel()
 	}
 	
 }
