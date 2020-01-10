@@ -791,6 +791,24 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return updatedArticles
 	}
 
+	/// Make sure statuses exist. Any existing statuses won’t be touched.
+	/// All created statuses will be marked as read and not starred.
+	/// Sends a .StatusesDidChange notification.
+	func createStatusesIfNeeded(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+		guard !articleIDs.isEmpty else {
+			completion?(nil)
+			return
+		}
+		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
+			if let error = error {
+				completion?(error)
+				return
+			}
+			self.noteStatusesForArticleIDsDidChange(articleIDs)
+			completion?(nil)
+		}
+	}
+
 	/// Mark articleIDs statuses based on statusKey and flag.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {

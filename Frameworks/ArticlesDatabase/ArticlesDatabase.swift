@@ -189,6 +189,12 @@ public final class ArticlesDatabase {
 		articlesTable.mark(articleIDs, statusKey, flag, completion)
 	}
 
+	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
+	/// For newly-created statuses, mark them as read and not-starred.
+	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
+		articlesTable.createStatusesIfNeeded(articleIDs, completion)
+	}
+
 	// MARK: - Suspend and Resume (for iOS)
 
 	/// Close the database and stop running database calls.

@@ -421,6 +421,22 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func createStatusesIfNeeded(_ articleIDs: Set<String>, _ completion: @escaping DatabaseCompletionBlock) {
+		queue.runInTransaction { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				let _ = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
+				DispatchQueue.main.async {
+					completion(nil)
+				}
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(databaseError)
+				}
+			}
+		}
+	}
+
 	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
