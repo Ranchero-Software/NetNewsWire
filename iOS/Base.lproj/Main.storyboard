@@ -239,13 +239,13 @@
                                 <viewLayoutGuide key="contentLayoutGuide" id="phv-DN-krZ"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="NNU-C8-Fsz"/>
                             </scrollView>
-                            <visualEffectView opaque="NO" alpha="0.55000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bHh-pW-oTS">
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bHh-pW-oTS">
                                 <rect key="frame" x="0.0" y="862" width="414" height="0.0"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="StS-kO-TuW">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
-                                <blurEffect style="systemMaterial"/>
+                                <blurEffect style="systemUltraThinMaterial"/>
                             </visualEffectView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eMj-1g-3xm">
                                 <rect key="frame" x="0.0" y="862" width="414" height="0.0"/>
