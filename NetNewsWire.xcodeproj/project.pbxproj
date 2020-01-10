@@ -37,6 +37,7 @@
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
 		512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */; };
 		512AF9DD236F05230066F8BE /* InteractiveLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512AF9DC236F05230066F8BE /* InteractiveLabel.swift */; };
+		512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */; };
 		512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
 		512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97611ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift */; };
 		512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */; };
@@ -1245,6 +1246,7 @@
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
 		512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageHeaderView.swift; sourceTree = "<group>"; };
 		512AF9DC236F05230066F8BE /* InteractiveLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveLabel.swift; sourceTree = "<group>"; };
+		512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInSafariActivity.swift; sourceTree = "<group>"; };
 		512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeader.swift; sourceTree = "<group>"; };
 		51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSintentextension_target.xcconfig; sourceTree = "<group>"; };
 		51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Intents Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1951,14 +1953,15 @@
 		51C4527D2265092C00C03939 /* Article */ = {
 			isa = PBXGroup;
 			children = (
-				51C4527E2265092C00C03939 /* ArticleViewController.swift */,
-				51AB8AB223B7F4C6008F147D /* WebViewController.swift */,
-				517630222336657E00E15FFF /* WebViewProvider.swift */,
 				51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */,
+				51C4527E2265092C00C03939 /* ArticleViewController.swift */,
 				51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */,
-				5142192923522B5500E07E2C /* ImageViewController.swift */,
 				514219362352510100E07E2C /* ImageScrollView.swift */,
 				518651D9235621840078E021 /* ImageTransition.swift */,
+				5142192923522B5500E07E2C /* ImageViewController.swift */,
+				512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */,
+				51AB8AB223B7F4C6008F147D /* WebViewController.swift */,
+				517630222336657E00E15FFF /* WebViewProvider.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -3917,6 +3920,7 @@
 				51C452AC22650FD200C03939 /* AppNotifications.swift in Sources */,
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
 				51A1699B235E10D700EB091F /* AccountInspectorViewController.swift in Sources */,
+				512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5108F6D823763094001ABC45 /* TickMarkSlider.swift in Sources */,
 				51C452882265093600C03939 /* AddWebFeedViewController.swift in Sources */,

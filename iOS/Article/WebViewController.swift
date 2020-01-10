@@ -284,7 +284,7 @@ class WebViewController: UIViewController {
 		}
 		
 		let itemSource = ArticleActivityItemSource(url: url, subject: article!.title)
-		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: [OpenInSafariActivity()])
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
