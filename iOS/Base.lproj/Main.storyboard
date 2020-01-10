@@ -51,7 +51,7 @@
                         <barButtonItem image="square.and.arrow.up" catalog="system" id="9Ut-5B-JKP">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Action"/>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Share"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="showActivityDialog:" destination="JEX-9P-axG" id="t7U-uT-fs5"/>
