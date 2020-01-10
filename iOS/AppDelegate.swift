@@ -126,6 +126,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	// MARK: - API
+	func resumeDatabaseProcessingIfNecessary() {
+		if AccountManager.shared.isSuspended {
+			AccountManager.shared.resumeAll()
+			os_log("Application processing resumed.", log: self.log, type: .info)
+		}
+	}
 	
 	func prepareAccountsForBackground() {
 		syncTimer?.invalidate()
@@ -135,11 +141,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	func prepareAccountsForForeground() {
-		if AccountManager.shared.isSuspended {
-			AccountManager.shared.resumeAll()
-			os_log("Application processing resumed.", log: self.log, type: .info)
-		}
-		
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
