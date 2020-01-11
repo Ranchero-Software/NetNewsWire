@@ -8,6 +8,7 @@
 
 import UIKit
 import Account
+import SafariServices
 
 class WebFeedInspectorViewController: UITableViewController {
 	
@@ -30,6 +31,8 @@ class WebFeedInspectorViewController: UITableViewController {
 		}
 		return FaviconGenerator.favicon(webFeed)
 	}
+	
+	private let homePageIndexPath = IndexPath(row: 0, section: 1)
 	
 	override func viewDidLoad() {
 		tableView.register(InspectorIconHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
@@ -88,6 +91,17 @@ extension WebFeedInspectorViewController {
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)
+		}
+	}
+	
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		if indexPath == homePageIndexPath,
+			let homePageUrlString = webFeed.homePageURL,
+			let homePageUrl = URL(string: homePageUrlString) {
+			
+			let safari = SFSafariViewController(url: homePageUrl)
+			present(safari, animated: true)
+			
 		}
 	}
 	
