@@ -857,8 +857,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func shareDialogForTableCell(indexPath: IndexPath, url: URL, title: String?) {
-		let itemSource = ArticleActivityItemSource(url: url, subject: title)
-		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		let activityViewController = UIActivityViewController(url: url, title: title, applicationActivities: nil)
 		
 		guard let cell = tableView.cellForRow(at: indexPath) else { return }
 		let popoverController = activityViewController.popoverPresentationController
