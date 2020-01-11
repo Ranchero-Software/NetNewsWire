@@ -280,9 +280,8 @@ class WebViewController: UIViewController {
 		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
-		
-		let itemSource = ArticleActivityItemSource(url: url, subject: article!.title)
-		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: [OpenInSafariActivity()])
+
+		let activityViewController = UIActivityViewController(url: url, title: article?.title, applicationActivities: [OpenInSafariActivity()])
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
