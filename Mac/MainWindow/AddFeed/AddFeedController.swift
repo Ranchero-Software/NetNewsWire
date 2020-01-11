@@ -98,7 +98,7 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 private extension AddFeedController {
 
 	var urlStringFromPasteboard: String? {
-		if let urlString = NSPasteboard.rs_urlString(from: NSPasteboard.general) {
+		if let urlString = NSPasteboard.urlString(from: NSPasteboard.general) {
 			return urlString.rs_normalizedURL()
 		}
 		return nil

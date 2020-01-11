@@ -24,7 +24,7 @@ private let styleSuffixes = [styleSuffix, nnwStyleSuffix, cssStyleSuffix];
 final class ArticleStylesManager {
 
 	static let shared = ArticleStylesManager()
-	private let folderPath = RSDataSubfolder(nil, stylesFolderName)!
+	private let folderPath = Platform.dataSubfolder(forApplication: nil, folderName: stylesFolderName)!
 
 	var currentStyleName: String {
 		get {

@@ -57,25 +57,31 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		getGlobalStreamContents.getStreamContentsExpectation = expectation(description: "Get Contents of global.all")
 		getGlobalStreamContents.getStreamContentsExpectation?.isInverted = true
 		
-		let getStarredContents = TestGetStreamContentsService()
-		getStarredContents.getStreamContentsExpectation = expectation(description: "Get Contents of global.saved")
-		getStarredContents.getStreamContentsExpectation?.isInverted = true
+		let getStarredIds = TestGetStreamIdsService()
+		getStarredIds.getStreamIdsExpectation = expectation(description: "Get Ids of global.saved")
+		getStarredIds.getStreamIdsExpectation?.isInverted = true
+		
+		let getEntriesService = TestGetEntriesService()
+		getEntriesService.getEntriesExpectation = expectation(description: "Get Entries")
+		getEntriesService.getEntriesExpectation?.isInverted = true
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
 		let _ = expectationForCompletion(of: progress)
 		
 		let container = support.makeTestDatabaseContainer()
 		let syncAll = FeedlySyncAllOperation(account: account,
-											 credentials: support.accessToken,
-											 lastSuccessfulFetchStartDate: nil,
-											 markArticlesService: markArticlesService,
-											 getUnreadService: getStreamIdsService,
-											 getCollectionsService: getCollectionsService,
-											 getStreamContentsService: getGlobalStreamContents,
-											 getStarredArticlesService: getStarredContents,
-											 database: container.database,
-											 downloadProgress: progress,
-											 log: support.log)
+										  credentials: support.accessToken,
+										  lastSuccessfulFetchStartDate: nil,
+										  markArticlesService: markArticlesService,
+										  getUnreadService: getStreamIdsService,
+										  getCollectionsService: getCollectionsService,
+										  getStreamContentsService: getGlobalStreamContents,
+										  getStarredService: getStarredIds,
+										  getStreamIdsService: getStreamIdsService,
+										  getEntriesService: getEntriesService,
+										  database: container.database,
+										  downloadProgress: progress,
+										  log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")

@@ -37,7 +37,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 				return
 			}
 			
-			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", webFeedIDsAndItems.count, self.organisedItemsProvider.providerName)
+			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", webFeedIDsAndItems.count, self.organisedItemsProvider.parsedItemsByFeedProviderName)
 			self.didFinish()
 		}
 	}
