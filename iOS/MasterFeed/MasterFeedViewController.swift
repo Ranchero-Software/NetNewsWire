@@ -281,6 +281,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 						alert.addAction(action)
 					}
 					
+					if let action = self.markAllAsReadAlertAction(indexPath: indexPath, completion: completion) {
+						alert.addAction(action)
+					}
+					
 					let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 					alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 						completion(true)
@@ -1017,6 +1021,29 @@ private extension MasterFeedViewController {
 		return action
 	}
 	
+	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath),
+			coordinator.unreadCountFor(node) > 0,
+			let feed = node.representedObject as? WebFeed,
+			let articles = try? feed.fetchArticles() else {
+				return nil
+		}
+		
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let cancel = {
+			completion(true)
+		}
+		
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markAllAsRead(Array(articles))
+				completion(true)
+			}
+		}
+		return action
+	}
+	
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
 		
@@ -1108,7 +1135,9 @@ private extension MasterFeedViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, nameForDisplay) as String
 
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
-			self?.coordinator.markAllAsRead(articles)
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markAllAsRead(articles)
+			}
 		}
 
 		return action

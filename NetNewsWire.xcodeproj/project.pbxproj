@@ -651,7 +651,7 @@
 		FF3ABF13232599810074C542 /* ArticleSorterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF09232599450074C542 /* ArticleSorterTests.swift */; };
 		FF3ABF1523259DDB0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
 		FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
-		FFD43E412340F488009E5CA3 /* UndoAvailableAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD43E372340F320009E5CA3 /* UndoAvailableAlertController.swift */; };
+		FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD43E372340F320009E5CA3 /* MarkAsReadAlertController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1592,7 +1592,7 @@
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };
 		FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorter.swift; sourceTree = "<group>"; };
-		FFD43E372340F320009E5CA3 /* UndoAvailableAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoAvailableAlertController.swift; sourceTree = "<group>"; };
+		FFD43E372340F320009E5CA3 /* MarkAsReadAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkAsReadAlertController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1929,7 +1929,7 @@
 				5148F4542336DB7000F8CD8B /* MasterTimelineTitleView.swift */,
 				5148F44A2336DB4700F8CD8B /* MasterTimelineTitleView.xib */,
 				51FD413A2342BD0500880194 /* MasterTimelineUnreadCountView.swift */,
-				FFD43E372340F320009E5CA3 /* UndoAvailableAlertController.swift */,
+				FFD43E372340F320009E5CA3 /* MarkAsReadAlertController.swift */,
 				51C4526F2265091600C03939 /* Cell */,
 			);
 			path = MasterTimeline;
@@ -3941,7 +3941,7 @@
 				51C4529F22650A1900C03939 /* AuthorAvatarDownloader.swift in Sources */,
 				5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */,
 				519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */,
-				FFD43E412340F488009E5CA3 /* UndoAvailableAlertController.swift in Sources */,
+				FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */,
 				51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */,
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,

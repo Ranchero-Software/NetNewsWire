@@ -121,15 +121,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@IBAction func markAllAsRead(_ sender: Any) {
-		if coordinator.displayUndoAvailableTip {
-			let alertController = UndoAvailableAlertController.alert { [weak self] _ in
-				self?.coordinator.displayUndoAvailableTip = false
-				self?.coordinator.markAllAsReadInTimeline()
-			}
-			
-			present(alertController, animated: true)
-		} else {
-			coordinator.markAllAsReadInTimeline()
+		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title) { [weak self] in
+			self?.coordinator.markAllAsReadInTimeline()
 		}
 	}
 	
@@ -710,7 +704,9 @@ private extension MasterTimelineViewController {
 		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
 		let image = AppAssets.markAboveAsReadImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.coordinator.markAboveAsRead(article)
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markAboveAsRead(article)
+			}
 		}
 		return action
 	}
@@ -723,7 +719,9 @@ private extension MasterTimelineViewController {
 		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
 		let image = AppAssets.markBelowAsReadImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.coordinator.markBelowAsRead(article)
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markBelowAsRead(article)
+			}
 		}
 		return action
 	}
@@ -734,9 +732,15 @@ private extension MasterTimelineViewController {
 		}
 
 		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.markAboveAsRead(article)
+		let cancel = {
 			completion(true)
+		}
+
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markAboveAsRead(article)
+				completion(true)
+			}
 		}
 		return action
 	}
@@ -747,9 +751,15 @@ private extension MasterTimelineViewController {
 		}
 
 		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.markBelowAsRead(article)
+		let cancel = {
 			completion(true)
+		}
+		
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markBelowAsRead(article)
+				completion(true)
+			}
 		}
 		return action
 	}
@@ -790,7 +800,9 @@ private extension MasterTimelineViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
-			self?.coordinator.markAllAsRead(articles)
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markAllAsRead(articles)
+			}
 		}
 		return action
 	}
@@ -808,10 +820,15 @@ private extension MasterTimelineViewController {
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let cancel = {
+			completion(true)
+		}
 		
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.markAllAsRead(articles)
-			completion(true)
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markAllAsRead(articles)
+				completion(true)
+			}
 		}
 		return action
 	}

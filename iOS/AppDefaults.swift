@@ -25,7 +25,7 @@ struct AppDefaults {
 		static let timelineIconSize = "timelineIconSize"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
-		static let displayUndoAvailableTip = "displayUndoAvailableTip"
+		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
@@ -112,12 +112,12 @@ struct AppDefaults {
 		}
 	}
 
-	static var displayUndoAvailableTip: Bool {
+	static var confirmMarkAllAsRead: Bool {
 		get {
-			return bool(for: Key.displayUndoAvailableTip)
+			return bool(for: Key.confirmMarkAllAsRead)
 		}
 		set {
-			setBool(for: Key.displayUndoAvailableTip, newValue)
+			setBool(for: Key.confirmMarkAllAsRead, newValue)
 		}
 	}
 	
@@ -157,7 +157,7 @@ struct AppDefaults {
 										Key.timelineIconSize: IconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.articleFullscreenEnabled: false,
-										Key.displayUndoAvailableTip: true]
+										Key.confirmMarkAllAsRead: true]
 		AppDefaults.shared.register(defaults: defaults)
 	}
 

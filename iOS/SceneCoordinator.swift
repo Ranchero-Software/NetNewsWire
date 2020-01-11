@@ -92,11 +92,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var prefersStatusBarHidden = false
 	
-	var displayUndoAvailableTip: Bool {
-		get { AppDefaults.displayUndoAvailableTip }
-		set { AppDefaults.displayUndoAvailableTip = newValue }
-	}
-
 	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
 	private let treeController: TreeController
 	
@@ -964,9 +959,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func showSettings() {
+	func showSettings(scrollToArticlesSection: Bool = false) {
 		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
 		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
+		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
 		settingsNavController.modalPresentationStyle = .formSheet
 		settingsViewController.presentingParentController = rootSplitViewController
 		rootSplitViewController.present(settingsNavController, animated: true)
