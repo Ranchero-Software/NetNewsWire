@@ -100,7 +100,7 @@ struct ArticleStringFormatter {
 	}
 
 	static func dateString(_ date: Date) -> String {
-		if NSCalendar.rs_dateIsToday(date) {
+		if Calendar.dateIsToday(date) {
 			return timeFormatter.string(from: date)
 		}
 		return dateFormatter.string(from: date)
