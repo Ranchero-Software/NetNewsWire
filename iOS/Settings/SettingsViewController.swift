@@ -17,6 +17,7 @@ class SettingsViewController: UITableViewController {
 	
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
+	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	
 	weak var presentingParentController: UIViewController?
@@ -49,6 +50,12 @@ class SettingsViewController: UITableViewController {
 			groupByFeedSwitch.isOn = true
 		} else {
 			groupByFeedSwitch.isOn = false
+		}
+
+		if AppDefaults.refreshClearsReadArticles {
+			refreshClearsReadArticlesSwitch.isOn = true
+		} else {
+			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
 		if AppDefaults.articleFullscreenEnabled {
@@ -188,7 +195,7 @@ class SettingsViewController: UITableViewController {
 			}
 		case 3:
 			switch indexPath.row {
-			case 2:
+			case 3:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
@@ -267,6 +274,14 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.timelineGroupByFeed = true
 		} else {
 			AppDefaults.timelineGroupByFeed = false
+		}
+	}
+	
+	@IBAction func switchClearsReadArticles(_ sender: Any) {
+		if refreshClearsReadArticlesSwitch.isOn {
+			AppDefaults.refreshClearsReadArticles = true
+		} else {
+			AppDefaults.refreshClearsReadArticles = false
 		}
 	}
 	
