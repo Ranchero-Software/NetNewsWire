@@ -637,7 +637,7 @@ extension FeedlyAPICaller: FeedlyGetStreamIdsService {
 		}
 		
 		queryItems.append(contentsOf: [
-			URLQueryItem(name: "count", value: "1000"),
+			URLQueryItem(name: "count", value: "10000"),
 			URLQueryItem(name: "streamId", value: resource.id),
 		])
 		

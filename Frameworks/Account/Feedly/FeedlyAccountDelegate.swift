@@ -147,10 +147,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	/// So if the user is using another client roughly simultaneously with this app,
 	/// this app does its part to ensure the articles have a consistent status between both.
 	///
-	/// Feedly has no API that allows the app to fetch the identifiers of unread articles only.
-	/// The only way to identify unread articles is to pull all of the article data,
-	/// which is effectively equivalent of a full refresh.
-	///
 	/// - Parameter account: The account whose articles have a remote status.
 	/// - Parameter completion: Call on the main queue.
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -160,18 +156,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let syncUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
+		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
 		
 		group.enter()
-		syncUnread.completionBlock = {
+		ingestUnread.completionBlock = {
 			group.leave()
 			
 		}
 		
-		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, service: caller, log: log)
+		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
 		
 		group.enter()
-		syncStarred.completionBlock = {
+		ingestStarred.completionBlock = {
 			group.leave()
 		}
 		
@@ -179,7 +175,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			completion(.success(()))
 		}
 		
-		operationQueue.addOperations([syncUnread, syncStarred], waitUntilFinished: false)
+		operationQueue.addOperations([ingestUnread, ingestStarred], waitUntilFinished: false)
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {

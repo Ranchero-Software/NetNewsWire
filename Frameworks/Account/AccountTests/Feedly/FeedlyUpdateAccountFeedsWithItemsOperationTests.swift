@@ -28,14 +28,14 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 	}
 	
 	struct TestItemsByFeedProvider: FeedlyParsedItemsByFeedProviding {
-		var providerName: String
+		var parsedItemsByFeedProviderName: String
 		var parsedItemsKeyedByFeedId: [String: Set<ParsedItem>]
 	}
 	
 	func testUpdateAccountWithEmptyItems() throws {
 		let testItems = support.makeParsedItemTestDataFor(numberOfFeeds: 0, numberOfItemsInFeeds: 0)
 		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
-		let provider = TestItemsByFeedProvider(providerName: resource.id, parsedItemsKeyedByFeedId: testItems)
+		let provider = TestItemsByFeedProvider(parsedItemsByFeedProviderName: resource.id, parsedItemsKeyedByFeedId: testItems)
 		
 		let update = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: provider, log: support.log)
 		
@@ -59,7 +59,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 	func testUpdateAccountWithOneItem() throws {
 		let testItems = support.makeParsedItemTestDataFor(numberOfFeeds: 1, numberOfItemsInFeeds: 1)
 		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
-		let provider = TestItemsByFeedProvider(providerName: resource.id, parsedItemsKeyedByFeedId: testItems)
+		let provider = TestItemsByFeedProvider(parsedItemsByFeedProviderName: resource.id, parsedItemsKeyedByFeedId: testItems)
 		
 		let update = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: provider, log: support.log)
 		
@@ -87,7 +87,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 	func testUpdateAccountWithManyItems() throws {
 		let testItems = support.makeParsedItemTestDataFor(numberOfFeeds: 100, numberOfItemsInFeeds: 100)
 		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
-		let provider = TestItemsByFeedProvider(providerName: resource.id, parsedItemsKeyedByFeedId: testItems)
+		let provider = TestItemsByFeedProvider(parsedItemsByFeedProviderName: resource.id, parsedItemsKeyedByFeedId: testItems)
 		
 		let update = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: provider, log: support.log)
 		
@@ -115,7 +115,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 	func testCancelUpdateAccount() throws {
 		let testItems = support.makeParsedItemTestDataFor(numberOfFeeds: 1, numberOfItemsInFeeds: 1)
 		let resource = FeedlyCategoryResourceId(id: "user/12345/category/6789")
-		let provider = TestItemsByFeedProvider(providerName: resource.id, parsedItemsKeyedByFeedId: testItems)
+		let provider = TestItemsByFeedProvider(parsedItemsByFeedProviderName: resource.id, parsedItemsKeyedByFeedId: testItems)
 		
 		let update = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: provider, log: support.log)
 		
