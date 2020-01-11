@@ -52,15 +52,22 @@ extension CGImage {
 			let r = ptr[i]
 			let g = ptr[i + 1]
 			let b = ptr[i + 2]
+			let a = ptr[i + 3]
 			let luminance = (0.299 * Double(r) + 0.587 * Double(g) + 0.114 * Double(b))
 			
-			totalLuminance += luminance
-			pixelCount += 1
+			if Double(a) > 0 {
+				totalLuminance += luminance
+				pixelCount += 1
+			}
 			
 		}
 		
 		let avgLuminance = totalLuminance / Double(pixelCount)
-		return avgLuminance < 37.5
+		if totalLuminance == 0 {
+			return true
+		} else {
+			return avgLuminance < 40
+		}
 	}
 	
 }
