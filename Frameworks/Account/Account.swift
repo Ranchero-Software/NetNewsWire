@@ -689,7 +689,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), completion: completion)
 	}
 
-	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (unread and newer than the article cutoff date).
+	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (newer than the article cutoff date).
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
@@ -789,6 +789,24 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		noteStatusesForArticlesDidChange(updatedArticles)
 		return updatedArticles
+	}
+
+	/// Make sure statuses exist. Any existing statuses won’t be touched.
+	/// All created statuses will be marked as read and not starred.
+	/// Sends a .StatusesDidChange notification.
+	func createStatusesIfNeeded(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+		guard !articleIDs.isEmpty else {
+			completion?(nil)
+			return
+		}
+		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
+			if let error = error {
+				completion?(error)
+				return
+			}
+			self.noteStatusesForArticleIDsDidChange(articleIDs)
+			completion?(nil)
+		}
 	}
 
 	/// Mark articleIDs statuses based on statusKey and flag.
@@ -1245,10 +1263,10 @@ extension Account: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
 		var s = ""
-		for feed in topLevelWebFeeds.sorted(by: { $0.nameForDisplay < $1.nameForDisplay }) {
+		for feed in topLevelWebFeeds.sorted() {
 			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 		}
-		for folder in folders!.sorted(by: { $0.nameForDisplay < $1.nameForDisplay }) {
+		for folder in folders!.sorted() {
 			s += folder.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
 		}
 		return s

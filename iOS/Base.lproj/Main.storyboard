@@ -51,7 +51,7 @@
                         <barButtonItem image="square.and.arrow.up" catalog="system" id="9Ut-5B-JKP">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
-                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Action"/>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Share"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="showActivityDialog:" destination="JEX-9P-axG" id="t7U-uT-fs5"/>
@@ -119,7 +119,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem image="asterisk.circle" catalog="system" id="fTv-eX-72r">
+                        <barButtonItem title="Item" image="markAllAsRead" id="fTv-eX-72r">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
                             </userDefinedRuntimeAttributes>
@@ -140,6 +140,9 @@
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Timeline" largeTitleDisplayMode="never" id="wcC-1L-ug4">
                         <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="af2-lj-EcA">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="FIlter Articles"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="toggleFilter:" destination="Kyk-vK-QRX" id="jxP-b2-V1n"/>
                             </connections>
@@ -182,9 +185,8 @@
                             <outlet property="delegate" destination="7bK-jq-Zjz" id="RA6-mI-bju"/>
                         </connections>
                     </tableView>
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
-                        <barButtonItem key="leftBarButtonItem" title="Settings" image="gear" catalog="system" id="TlU-Pg-ATe">
+                    <toolbarItems>
+                        <barButtonItem title="Settings" image="gear" catalog="system" id="TlU-Pg-ATe">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Settings"/>
                             </userDefinedRuntimeAttributes>
@@ -192,16 +194,32 @@
                                 <action selector="settings:" destination="7bK-jq-Zjz" id="Y8a-lz-Im7"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="ZJu-oJ-c1R">
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Rbh-Vg-Wo8"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Vhj-bc-20A"/>
+                        <barButtonItem systemItem="add" id="YFE-wd-vFC">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Add Item"/>
+                            </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="toggleFilter:" destination="7bK-jq-Zjz" id="7lh-Bz-nfD"/>
+                                <action selector="add:" destination="7bK-jq-Zjz" id="d1n-0d-2gR"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" title="Feeds" id="Zdf-7t-Un8">
+                        <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="9ro-XY-5xU">
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Feeds Filter"/>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="toggleFilter:" destination="7bK-jq-Zjz" id="jmL-ei-avl"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="filterButton" destination="ZJu-oJ-c1R" id="jiO-wg-qrG"/>
+                        <outlet property="addNewItemButton" destination="YFE-wd-vFC" id="NMJ-uE-zGh"/>
+                        <outlet property="filterButton" destination="9ro-XY-5xU" id="PSL-lE-ITK"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
@@ -221,6 +239,14 @@
                                 <viewLayoutGuide key="contentLayoutGuide" id="phv-DN-krZ"/>
                                 <viewLayoutGuide key="frameLayoutGuide" id="NNU-C8-Fsz"/>
                             </scrollView>
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bHh-pW-oTS">
+                                <rect key="frame" x="0.0" y="862" width="414" height="0.0"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="StS-kO-TuW">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                                <blurEffect style="systemUltraThinMaterial"/>
+                            </visualEffectView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eMj-1g-3xm">
                                 <rect key="frame" x="0.0" y="862" width="414" height="0.0"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -257,12 +283,16 @@
                             <constraint firstItem="RmY-a3-hUg" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="A0i-Hs-1Ac"/>
                             <constraint firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
                             <constraint firstItem="eMj-1g-3xm" firstAttribute="trailing" secondItem="mbY-02-GFL" secondAttribute="trailing" id="E7e-Lv-6ZA"/>
+                            <constraint firstItem="bHh-pW-oTS" firstAttribute="bottom" secondItem="eMj-1g-3xm" secondAttribute="bottom" id="P3m-i2-3pJ"/>
                             <constraint firstAttribute="trailing" secondItem="msG-pz-EKk" secondAttribute="trailing" id="R49-qV-8nm"/>
                             <constraint firstItem="msG-pz-EKk" firstAttribute="leading" secondItem="w6Q-vH-063" secondAttribute="leading" id="XN1-xN-hYS"/>
                             <constraint firstItem="eMj-1g-3xm" firstAttribute="leading" secondItem="mbY-02-GFL" secondAttribute="leading" id="Xni-Dn-I3Z"/>
                             <constraint firstItem="mbY-02-GFL" firstAttribute="trailing" secondItem="RmY-a3-hUg" secondAttribute="trailing" constant="8" id="Zlz-lM-LV8"/>
                             <constraint firstItem="mbY-02-GFL" firstAttribute="bottom" secondItem="eMj-1g-3xm" secondAttribute="bottom" id="eaS-iG-yMv"/>
+                            <constraint firstItem="bHh-pW-oTS" firstAttribute="leading" secondItem="eMj-1g-3xm" secondAttribute="leading" id="f8r-dq-Irr"/>
+                            <constraint firstItem="bHh-pW-oTS" firstAttribute="top" secondItem="eMj-1g-3xm" secondAttribute="top" id="gTP-i5-FYQ"/>
                             <constraint firstItem="msG-pz-EKk" firstAttribute="top" secondItem="w6Q-vH-063" secondAttribute="top" id="p1a-s0-wdK"/>
+                            <constraint firstItem="bHh-pW-oTS" firstAttribute="trailing" secondItem="eMj-1g-3xm" secondAttribute="trailing" id="qB9-zk-5JN"/>
                             <constraint firstItem="cXR-ll-xBx" firstAttribute="leading" secondItem="mbY-02-GFL" secondAttribute="leading" constant="8" id="vJs-LN-Ydd"/>
                             <constraint firstItem="cXR-ll-xBx" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="xVN-Qt-WYA"/>
                         </constraints>
@@ -367,13 +397,13 @@
         </scene>
     </scenes>
     <resources>
-        <image name="asterisk.circle" catalog="system" width="64" height="60"/>
         <image name="chevron.down" catalog="system" width="64" height="36"/>
         <image name="chevron.down.circle" catalog="system" width="64" height="60"/>
         <image name="chevron.up" catalog="system" width="64" height="36"/>
         <image name="circle" catalog="system" width="64" height="60"/>
         <image name="gear" catalog="system" width="64" height="58"/>
         <image name="line.horizontal.3.decrease.circle" catalog="system" width="64" height="60"/>
+        <image name="markAllAsRead" width="17" height="26"/>
         <image name="multiply.circle.fill" catalog="system" width="64" height="60"/>
         <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="56" height="64"/>

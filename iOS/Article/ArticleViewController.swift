@@ -135,11 +135,21 @@ class ArticleViewController: UIViewController {
 		starBarButtonItem.isEnabled = true
 		actionBarButtonItem.isEnabled = true
 
-		let readImage = article.status.read ? AppAssets.circleOpenImage : AppAssets.circleClosedImage
-		readBarButtonItem.image = readImage
+		if article.status.read {
+			readBarButtonItem.image = AppAssets.circleOpenImage
+			readBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
+		} else {
+			readBarButtonItem.image = AppAssets.circleClosedImage
+			readBarButtonItem.accLabelText = NSLocalizedString("Selected - Mark Article Unread", comment: "Selected - Mark Article Unread")
+		}
 		
-		let starImage = article.status.starred ? AppAssets.starClosedImage : AppAssets.starOpenImage
-		starBarButtonItem.image = starImage
+		if article.status.starred {
+			starBarButtonItem.image = AppAssets.starClosedImage
+			starBarButtonItem.accLabelText = NSLocalizedString("Selected - Star Article", comment: "Selected - Star Article")
+		} else {
+			starBarButtonItem.image = AppAssets.starOpenImage
+			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
+		}
 		
 	}
 	

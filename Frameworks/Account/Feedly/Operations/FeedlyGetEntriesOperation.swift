@@ -8,15 +8,16 @@
 
 import Foundation
 import os.log
+import RSParser
 
 /// Single responsibility is to get full entries for the entry identifiers.
-final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding {
+final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
 	let account: Account
 	let service: FeedlyGetEntriesService
-	let provider: FeedlyEntryIdenifierProviding
+	let provider: FeedlyEntryIdentifierProviding
 	let log: OSLog
 		
-	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdenifierProviding, log: OSLog) {
+	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding, log: OSLog) {
 		self.account = account
 		self.service = service
 		self.provider = provider
@@ -24,6 +25,33 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding {
 	}
 	
 	private (set) var entries = [FeedlyEntry]()
+	
+	private var storedParsedEntries: Set<ParsedItem>?
+	
+	var parsedEntries: Set<ParsedItem> {
+		if let entries = storedParsedEntries {
+			return entries
+		}
+		
+		let parsed = Set(entries.compactMap {
+			FeedlyEntryParser(entry: $0).parsedItemRepresentation
+		})
+		
+		if parsed.count != entries.count {
+			let entryIds = Set(entries.map { $0.id })
+			let parsedIds = Set(parsed.map { $0.uniqueID })
+			let difference = entryIds.subtracting(parsedIds)
+			os_log(.debug, log: log, "%{public}@ dropping articles with ids: %{public}@.", self, difference)
+		}
+		
+		storedParsedEntries = parsed
+		
+		return parsed
+	}
+	
+	var parsedItemProviderName: String {
+		return name ?? String(describing: Self.self)
+	}
 	
 	override func main() {
 		guard !isCancelled else {

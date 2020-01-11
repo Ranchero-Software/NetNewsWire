@@ -92,11 +92,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var prefersStatusBarHidden = false
 	
-	var displayUndoAvailableTip: Bool {
-		get { AppDefaults.displayUndoAvailableTip }
-		set { AppDefaults.displayUndoAvailableTip = newValue }
-	}
-
 	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
 	private let treeController: TreeController
 	
@@ -257,7 +252,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var currentArticle: Article?
 
-	private(set) var articles = ArticleArray()
+	private(set) var articles = ArticleArray() {
+		didSet {
+			timelineMiddleIndexPath = nil
+		}
+	}
+	
 	private var currentArticleRow: Int? {
 		guard let article = currentArticle else { return nil }
 		return articles.firstIndex(of: article)
@@ -872,20 +872,26 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func canMarkAboveAsRead(for article: Article) -> Bool {
-		return articles.first != article
+		let articlesAboveArray = articles.articlesAbove(article: article)
+		return articlesAboveArray.canMarkAllAsRead()
 	}
 
-	func markAboveAsRead(_ article: Article) {
-		guard let position = articles.firstIndex(of: article) else {
+	func markAboveAsRead() {
+		guard let currentArticle = currentArticle else {
 			return
 		}
 
-		let articlesAbove = articles[..<position]
-		markAllAsRead(Array(articlesAbove))
+		markAboveAsRead(currentArticle)
+	}
+
+	func markAboveAsRead(_ article: Article) {
+		let articlesAboveArray = articles.articlesAbove(article: article)
+		markAllAsRead(articlesAboveArray)
 	}
 
 	func canMarkBelowAsRead(for article: Article) -> Bool {
-		return articles.last != article
+		let articleBelowArray = articles.articlesBelow(article: article)
+		return articleBelowArray.canMarkAllAsRead()
 	}
 
 	func markBelowAsRead() {
@@ -897,18 +903,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func markBelowAsRead(_ article: Article) {
-		guard let position = articles.firstIndex(of: article) else {
-			return
-		}
-
-		var articlesBelow = Array(articles[position...])
-
-		guard !articlesBelow.isEmpty else {
-			return
-		}
-
-		articlesBelow.removeFirst()
-		markAllAsRead(articlesBelow)
+		let articleBelowArray = articles.articlesBelow(article: article)
+		markAllAsRead(articleBelowArray)
 	}
 	
 	func markAsReadForCurrentArticle() {
@@ -963,9 +959,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func showSettings() {
+	func showSettings(scrollToArticlesSection: Bool = false) {
 		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
 		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
+		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
 		settingsNavController.modalPresentationStyle = .formSheet
 		settingsViewController.presentingParentController = rootSplitViewController
 		rootSplitViewController.present(settingsNavController, animated: true)
@@ -1101,6 +1098,7 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		}
 		
 		if let articleViewController = masterNavigationController.viewControllers.last as? ArticleViewController {
+			articleViewController.showBars(self)
 			masterNavigationController.popViewController(animated: false)
 			let controller = addNavControllerIfNecessary(articleViewController, showButton: true)
 			return controller
@@ -1234,7 +1232,6 @@ private extension SceneCoordinator {
 	
 	func setTimelineFeed(_ feed: Feed?, animated: Bool, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
-		timelineMiddleIndexPath = nil
 		
 		fetchAndReplaceArticlesAsync(animated: animated) {
 			self.masterTimelineViewController?.reinitializeArticles(resetScroll: true)
@@ -1501,7 +1498,6 @@ private extension SceneCoordinator {
 	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
-			timelineMiddleIndexPath = nil
 			replaceArticles(with: Set<Article>(), animated: false)
 		}
 	}

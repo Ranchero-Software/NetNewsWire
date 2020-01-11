@@ -421,6 +421,22 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func createStatusesIfNeeded(_ articleIDs: Set<String>, _ completion: @escaping DatabaseCompletionBlock) {
+		queue.runInTransaction { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				let _ = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
+				DispatchQueue.main.async {
+					completion(nil)
+				}
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(databaseError)
+				}
+			}
+		}
+	}
+
 	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
@@ -457,6 +473,24 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	// MARK: - Cleanup
+
+	/// Delete articles that we won’t show in the UI any longer
+	/// — their arrival date is before our 90-day recency window.
+	/// Keep all starred articles, no matter their age.
+	func deleteOldArticles() {
+		queue.runInTransaction { databaseResult in
+
+			func makeDatabaseCalls(_ database: FMDatabase) {
+				let sql = "delete from articles where articleID in (select articleID from articles natural join statuses where dateArrived<? and starred=0);"
+				let parameters = [self.articleCutoffDate] as [Any]
+				database.executeUpdate(sql, withArgumentsIn: parameters)
+			}
+
+			if let database = databaseResult.database {
+				makeDatabaseCalls(database)
+			}
+		}
+	}
 
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
 	/// This deletes from the articles and articleStatuses tables,

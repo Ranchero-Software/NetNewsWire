@@ -20,11 +20,12 @@ struct AppDefaults {
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
+		static let refreshClearsReadArticles = "refreshClearsReadArticles"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineIconSize = "timelineIconSize"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
-		static let displayUndoAvailableTip = "displayUndoAvailableTip"
+		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
@@ -84,6 +85,15 @@ struct AppDefaults {
 		}
 	}
 
+	static var refreshClearsReadArticles: Bool {
+		get {
+			return bool(for: Key.refreshClearsReadArticles)
+		}
+		set {
+			setBool(for: Key.refreshClearsReadArticles, newValue)
+		}
+	}
+
 	static var timelineSortDirection: ComparisonResult {
 		get {
 			return sortDirection(for: Key.timelineSortDirection)
@@ -102,12 +112,12 @@ struct AppDefaults {
 		}
 	}
 
-	static var displayUndoAvailableTip: Bool {
+	static var confirmMarkAllAsRead: Bool {
 		get {
-			return bool(for: Key.displayUndoAvailableTip)
+			return bool(for: Key.confirmMarkAllAsRead)
 		}
 		set {
-			setBool(for: Key.displayUndoAvailableTip, newValue)
+			setBool(for: Key.confirmMarkAllAsRead, newValue)
 		}
 	}
 	
@@ -142,11 +152,12 @@ struct AppDefaults {
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
 										Key.timelineGroupByFeed: false,
+										Key.refreshClearsReadArticles: false,
 										Key.timelineNumberOfLines: 2,
 										Key.timelineIconSize: IconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.articleFullscreenEnabled: false,
-										Key.displayUndoAvailableTip: true]
+										Key.confirmMarkAllAsRead: true]
 		AppDefaults.shared.register(defaults: defaults)
 	}
 

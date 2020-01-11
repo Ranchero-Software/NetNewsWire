@@ -32,10 +32,10 @@ final class UserNotificationManager: NSObject {
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
-		guard let articles = note.userInfo?[Account.UserInfoKey.articles] as? Set<Article> else {
+		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
 			return
 		}
-		let identifiers = articles.filter({ $0.status.read }).map { "articleID:\($0.articleID)" }
+		let identifiers = articleIDs.map { "articleID:\($0)" }
 		UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
 	}
 	

@@ -65,11 +65,11 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
+                        <barButtonItem title="Item" image="gear" catalog="system" id="AK3-N5-4ke"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="Kjl-Sb-QP1"/>
                         <barButtonItem systemItem="add" id="PVr-3K-nPg"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Feeds" largeTitleDisplayMode="never" id="lE1-xw-gjH">
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="gear" catalog="system" id="AK3-N5-4ke"/>
                         <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="Khk-Hd-iNS"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>

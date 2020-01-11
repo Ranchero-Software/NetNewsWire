@@ -17,8 +17,11 @@ class SettingsViewController: UITableViewController {
 	
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
+	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
+	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	
+	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
 	
 	override func viewDidLoad() {
@@ -33,7 +36,7 @@ class SettingsViewController: UITableViewController {
 
 		tableView.register(UINib(nibName: "SettingsAccountTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsAccountTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
-
+		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -49,6 +52,18 @@ class SettingsViewController: UITableViewController {
 			groupByFeedSwitch.isOn = true
 		} else {
 			groupByFeedSwitch.isOn = false
+		}
+
+		if AppDefaults.refreshClearsReadArticles {
+			refreshClearsReadArticlesSwitch.isOn = true
+		} else {
+			refreshClearsReadArticlesSwitch.isOn = false
+		}
+
+		if AppDefaults.confirmMarkAllAsRead {
+			confirmMarkAllAsReadSwitch.isOn = true
+		} else {
+			confirmMarkAllAsReadSwitch.isOn = false
 		}
 
 		if AppDefaults.articleFullscreenEnabled {
@@ -74,6 +89,12 @@ class SettingsViewController: UITableViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+		
+		if scrollToArticlesSection {
+			tableView.scrollToRow(at: IndexPath(row: 0, section: 4), at: .top, animated: true)
+			scrollToArticlesSection = false
+		}
+
 	}
 	
 	// MARK: UITableView
@@ -188,7 +209,7 @@ class SettingsViewController: UITableViewController {
 			}
 		case 3:
 			switch indexPath.row {
-			case 2:
+			case 4:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
@@ -267,6 +288,22 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.timelineGroupByFeed = true
 		} else {
 			AppDefaults.timelineGroupByFeed = false
+		}
+	}
+	
+	@IBAction func switchClearsReadArticles(_ sender: Any) {
+		if refreshClearsReadArticlesSwitch.isOn {
+			AppDefaults.refreshClearsReadArticles = true
+		} else {
+			AppDefaults.refreshClearsReadArticles = false
+		}
+	}
+	
+	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
+		if confirmMarkAllAsReadSwitch.isOn {
+			AppDefaults.confirmMarkAllAsRead = true
+		} else {
+			AppDefaults.confirmMarkAllAsRead = false
 		}
 	}
 	

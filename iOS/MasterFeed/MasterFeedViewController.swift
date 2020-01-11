@@ -16,7 +16,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
-	private var addNewItemButton: UIBarButtonItem!
+	@IBOutlet weak var addNewItemButton: UIBarButtonItem!
 	
 	lazy var dataSource = makeDataSource()
 	var undoableCommands = [UndoableCommand]()
@@ -281,6 +281,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 						alert.addAction(action)
 					}
 					
+					if let action = self.markAllAsReadAlertAction(indexPath: indexPath, completion: completion) {
+						alert.addAction(action)
+					}
+					
 					let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 					alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 						completion(true)
@@ -402,10 +406,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@IBAction func toggleFilter(_ sender: Any) {
 		if coordinator.isReadFeedsFiltered {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 			coordinator.showAllFeeds()
 		} else {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 			coordinator.hideReadFeeds()
 		}
 	}
@@ -437,10 +441,15 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func refreshAccounts(_ sender: Any) {
 		refreshControl?.endRefreshing()
+		
 		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self)) {
+				if AppDefaults.refreshClearsReadArticles {
+					self.coordinator.refreshTimeline(resetScroll: false)
+				}
+			}
 		}
 	}
 	
@@ -591,7 +600,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			!coordinator.isExpanded(accountNode) {
 			
 				coordinator.expand(accountNode)
-				applyChanges(animated: false) {
+				applyChanges(animated: true) {
 					discloseFeedInAccount()
 				}
 			
@@ -668,27 +677,28 @@ private extension MasterFeedViewController {
 		}
 
 		self.refreshProgressView = refreshProgressView
-
-		let spaceItemButton1 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		let spaceItemButton2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-		addNewItemButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add(_:)))
-		
-		setToolbarItems([spaceItemButton1,
-						 refreshProgressItemButton,
-						 spaceItemButton2,
-						 addNewItemButton
-		], animated: false)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
 	
 	func updateUI() {
 		if coordinator.isReadFeedsFiltered {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 		} else {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 		}
 		refreshProgressView?.updateRefreshLabel()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+	}
+	
+	func setFilterButtonToActive() {
+		filterButton?.image = AppAssets.filterActiveImage
+		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
+	}
+	
+	func setFilterButtonToInactive() {
+		filterButton?.image = AppAssets.filterInactiveImage
+		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 	
 	func reloadNode(_ node: Node) {
@@ -773,7 +783,7 @@ private extension MasterFeedViewController {
 				return feedIconImage
 			}
 			
-			if let faviconImage = appDelegate.faviconDownloader.favicon(for: webFeed) {
+			if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
 				return faviconImage
 			}
 			
@@ -1011,6 +1021,29 @@ private extension MasterFeedViewController {
 		return action
 	}
 	
+	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath),
+			coordinator.unreadCountFor(node) > 0,
+			let feed = node.representedObject as? WebFeed,
+			let articles = try? feed.fetchArticles() else {
+				return nil
+		}
+		
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let cancel = {
+			completion(true)
+		}
+		
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markAllAsRead(Array(articles))
+				completion(true)
+			}
+		}
+		return action
+	}
+	
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
 		
@@ -1101,8 +1134,10 @@ private extension MasterFeedViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, nameForDisplay) as String
 
-		let action = UIAction(title: title, image: AppAssets.markAllInFeedAsReadImage) { [weak self] action in
-			self?.coordinator.markAllAsRead(articles)
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markAllAsRead(articles)
+			}
 		}
 
 		return action
@@ -1153,6 +1188,7 @@ private extension MasterFeedViewController {
 		alertController.addAction(renameAction)
 		
 		alertController.addTextField() { textField in
+			textField.text = name
 			textField.placeholder = NSLocalizedString("Name", comment: "Name")
 		}
 		

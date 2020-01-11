@@ -48,12 +48,12 @@ class WebViewController: UIViewController {
 
 	var articleExtractorButtonState: ArticleExtractorButtonState = .off {
 		didSet {
-			delegate.webViewController(self, articleExtractorButtonStateDidUpdate: articleExtractorButtonState)
+			delegate?.webViewController(self, articleExtractorButtonStateDidUpdate: articleExtractorButtonState)
 		}
 	}
 	
 	weak var coordinator: SceneCoordinator!
-	weak var delegate: WebViewControllerDelegate!
+	weak var delegate: WebViewControllerDelegate?
 	
 	var article: Article? {
 		didSet {
@@ -227,23 +227,21 @@ class WebViewController: UIViewController {
 	}
 
 	func showBars() {
-		if isFullScreenAvailable {
-			AppDefaults.articleFullscreenEnabled = false
-			coordinator.showStatusBar()
-			topShowBarsViewConstraint.constant = 0
-			bottomShowBarsViewConstraint.constant = 0
-			navigationController?.setNavigationBarHidden(false, animated: true)
-			navigationController?.setToolbarHidden(false, animated: true)
-			configureContextMenuInteraction()
-		}
+		AppDefaults.articleFullscreenEnabled = false
+		coordinator.showStatusBar()
+		topShowBarsViewConstraint?.constant = 0
+		bottomShowBarsViewConstraint?.constant = 0
+		navigationController?.setNavigationBarHidden(false, animated: true)
+		navigationController?.setToolbarHidden(false, animated: true)
+		configureContextMenuInteraction()
 	}
 		
 	func hideBars() {
 		if isFullScreenAvailable {
 			AppDefaults.articleFullscreenEnabled = true
 			coordinator.hideStatusBar()
-			topShowBarsViewConstraint.constant = -44.0
-			bottomShowBarsViewConstraint.constant = 44.0
+			topShowBarsViewConstraint?.constant = -44.0
+			bottomShowBarsViewConstraint?.constant = 44.0
 			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
 			configureContextMenuInteraction()
@@ -282,9 +280,8 @@ class WebViewController: UIViewController {
 		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
 			return
 		}
-		
-		let itemSource = ArticleActivityItemSource(url: url, subject: article!.title)
-		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+
+		let activityViewController = UIActivityViewController(url: url, title: article?.title, applicationActivities: [OpenInSafariActivity()])
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}

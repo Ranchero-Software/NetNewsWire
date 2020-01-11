@@ -276,4 +276,14 @@ extension Set where Element == WebFeed {
 	func webFeedIDs() -> Set<String> {
 		return Set<String>(map { $0.webFeedID })
 	}
+	
+	func sorted() -> Array<WebFeed> {
+		return sorted(by: { (webFeed1, webFeed2) -> Bool in
+			if webFeed1.nameForDisplay.localizedStandardCompare(webFeed2.nameForDisplay) == .orderedSame {
+				return webFeed1.url < webFeed2.url
+			}
+			return webFeed1.nameForDisplay.localizedStandardCompare(webFeed2.nameForDisplay) == .orderedAscending
+		})
+	}
+	
 }

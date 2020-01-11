@@ -176,7 +176,7 @@ public final class ArticlesDatabase {
 		articlesTable.fetchStarredArticleIDsAsync(webFeedIDs, completion)
 	}
 
-	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (unread and newer than the article cutoff date).
+	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (newer than the article cutoff date).
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
@@ -187,6 +187,12 @@ public final class ArticlesDatabase {
 
 	public func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping DatabaseCompletionBlock) {
 		articlesTable.mark(articleIDs, statusKey, flag, completion)
+	}
+
+	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
+	/// For newly-created statuses, mark them as read and not-starred.
+	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
+		articlesTable.createStatusesIfNeeded(articleIDs, completion)
 	}
 
 	// MARK: - Suspend and Resume (for iOS)
@@ -216,6 +222,7 @@ public final class ArticlesDatabase {
 
 	/// Calls the various clean-up functions.
 	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
+		articlesTable.deleteOldArticles()
 		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
 	}
 }

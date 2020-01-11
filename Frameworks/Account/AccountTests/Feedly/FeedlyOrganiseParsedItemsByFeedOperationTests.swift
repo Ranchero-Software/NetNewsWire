@@ -28,6 +28,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	}
 	
 	struct TestParsedItemsProvider: FeedlyParsedItemProviding {
+		let parsedItemProviderName = "TestParsedItemsProvider"
 		var resource: FeedlyResourceId
 		var parsedEntries: Set<ParsedItem>
 	}
@@ -51,7 +52,6 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
 		XCTAssertEqual(itemsAndFeedIds, entries)
-		XCTAssertEqual(resource.id, organise.providerName)
 	}
 	
 	func testGroupsOneEntryByFeedId() {
@@ -73,7 +73,6 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
 		XCTAssertEqual(itemsAndFeedIds, entries)
-		XCTAssertEqual(resource.id, organise.providerName)
 	}
 	
 	func testGroupsManyEntriesByFeedId() {
@@ -95,6 +94,5 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		
 		let itemsAndFeedIds = organise.parsedItemsKeyedByFeedId
 		XCTAssertEqual(itemsAndFeedIds, entries)
-		XCTAssertEqual(resource.id, organise.providerName)
 	}
 }
