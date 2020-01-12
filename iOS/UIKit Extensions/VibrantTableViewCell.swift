@@ -67,3 +67,35 @@ class VibrantTableViewCell: UITableViewCell {
 	}
 	
 }
+
+class VibrantBasicTableViewCell: VibrantTableViewCell {
+	
+	@IBOutlet private var label: UILabel!
+	@IBOutlet private var icon: UIImageView!
+	
+	@IBInspectable var imageNormal: UIImage?
+	@IBInspectable var imageSelected: UIImage?
+	
+	var iconTint: UIColor {
+		return isHighlighted || isSelected ? .systemBackground : AppAssets.primaryAccentColor
+	}
+	
+	var iconImage: UIImage? {
+		return isHighlighted || isSelected ? imageSelected : imageNormal
+	}
+	
+	override func updateVibrancy(animated: Bool) {
+		super.updateVibrancy(animated: animated)
+		updateIconVibrancy(icon, color: iconTint, image: iconImage, animated: animated)
+		updateLabelVibrancy(label, color: labelColor, animated: animated)
+	}
+	
+	private func updateIconVibrancy(_ icon: UIImageView?, color: UIColor, image: UIImage?, animated: Bool) {
+		guard let icon = icon else { return }
+		UIView.transition(with: label, duration: duration(animated: animated), options: .transitionCrossDissolve, animations: {
+			icon.tintColor = color
+			icon.image = image
+		}, completion: nil)
+	}
+	
+}

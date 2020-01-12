@@ -101,8 +101,9 @@ extension WebFeedInspectorViewController {
 			
 			let safari = SFSafariViewController(url: homePageUrl)
 			safari.modalPresentationStyle = .pageSheet
-			present(safari, animated: true)
-		
+			present(safari, animated: true) {
+				tableView.deselectRow(at: indexPath, animated: true)
+			}
 		}
 	}
 	
