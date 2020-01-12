@@ -100,8 +100,9 @@ extension WebFeedInspectorViewController {
 			let homePageUrl = URL(string: homePageUrlString) {
 			
 			let safari = SFSafariViewController(url: homePageUrl)
+			safari.modalPresentationStyle = .pageSheet
 			present(safari, animated: true)
-			
+		
 		}
 	}
 	
