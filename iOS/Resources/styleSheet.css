@@ -133,7 +133,6 @@ pre {
 	padding: 5px;
 	word-wrap: normal;
 	word-break: normal;
-	-webkit-hyphens: none;
 }
 .nnw-overflow {
 	overflow-x: auto;
@@ -141,6 +140,7 @@ pre {
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: .8235rem;
+	-webkit-hyphens: none;
 }
 img, figure, video, iframe, div {
 	max-width: 100%;
