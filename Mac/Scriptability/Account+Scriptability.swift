@@ -170,6 +170,6 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 		case .freshRSS:
 				osType = "Frsh"
         }
-        return osType.fourCharCode()
+        return osType.fourCharCode
     }
 }

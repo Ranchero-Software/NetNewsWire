@@ -6,7 +6,12 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
+
 import RSCore
 
 let ArticleStyleNamesDidChangeNotification = "ArticleStyleNamesDidChangeNotification"
