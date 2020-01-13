@@ -69,18 +69,23 @@ protocol SidebarDelegate: class {
 
 		outlineView.reloadData()
 
-		// Always expand all group items on initial display.
-		var row = 0
-		while(true) {
-			guard let item = outlineView.item(atRow: row) else {
-				break
+		// Always expand all group items on first run.
+		if AppDefaults.isFirstRun {
+			var row = 0
+			while(true) {
+				guard let item = outlineView.item(atRow: row) else {
+					break
+				}
+				let node = item as! Node
+				if node.isGroupItem {
+					outlineView.expandItem(item)
+				}
+				row += 1
 			}
-			let node = item as! Node
-			if node.isGroupItem {
-				outlineView.expandItem(item)
-			}
-			row += 1
 		}
+
+		outlineView.autosaveExpandedItems = true
+
 	}
 
 	// MARK: - Notifications

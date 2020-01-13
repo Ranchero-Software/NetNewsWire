@@ -47,6 +47,49 @@ import Account
 		return (node.representedObject as? PasteboardWriterOwner)?.pasteboardWriter
 	}
 
+	func outlineView(_ outlineView: NSOutlineView, persistentObjectForItem item: Any?) -> Any? {
+		if let folder = nodeForItem(item).representedObject as? Folder {
+			return ["folder": folder.name, "account": folder.account?.accountID]
+		}
+
+		if let _ = nodeForItem(item).representedObject as? SmartFeedsController {
+			return "SmartFeeds"
+		}
+
+		if let account = nodeForItem(item).representedObject as? Account {
+			return ["account": account.accountID]
+		}
+
+		return nil
+	}
+
+	func outlineView(_ outlineView: NSOutlineView, itemForPersistentObject object: Any) -> Any? {
+		if let dict = object as? [String: String] {
+			guard let accountName = dict["account"] else {
+				return nil
+			}
+
+			guard let account = AccountManager.shared.existingAccount(with: accountName) else {
+				return nil
+			}
+
+			if let name = dict["folder"] {
+				guard let folder = account.existingFolder(with: name) else {
+					return nil
+				}
+				return treeController.nodeInTreeRepresentingObject(folder)
+			}
+
+			return treeController.nodeInTreeRepresentingObject(account)
+		} else if let identifier = object as? String {
+			if identifier == "SmartFeeds" {
+				return treeController.nodeInTreeRepresentingObject(SmartFeedsController.shared)
+			}
+		}
+
+		return nil
+	}
+
 	// MARK: - Drag and Drop
 
 	func outlineView(_ outlineView: NSOutlineView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItems draggedItems: [Any]) {
