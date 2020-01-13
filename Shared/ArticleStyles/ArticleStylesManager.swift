@@ -133,8 +133,8 @@ final class ArticleStylesManager {
 
 private func allStylePaths(_ folder: String) -> [String] {
 
-	let filepaths = FileManager.default.rs_filepaths(inFolder: folder)
-	return filepaths.filter { fileAtPathIsStyle($0) }
+	let filepaths = FileManager.default.filePaths(inFolder: folder)
+	return filepaths?.filter { fileAtPathIsStyle($0) } ?? []
 }
 
 private func fileAtPathIsStyle(_ f: String) -> Bool {
@@ -174,7 +174,6 @@ private func pathIsPathForStyleName(_ styleName: String, path: String) -> Bool {
 }
 
 private func pathForStyleName(_ styleName: String, folder: String) -> String? {
-
 	for onePath in allStylePaths(folder) {
 		if pathIsPathForStyleName(styleName, path: onePath) {
 			return onePath

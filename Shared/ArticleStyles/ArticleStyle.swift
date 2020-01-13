@@ -37,7 +37,7 @@ struct ArticleStyle: Equatable {
 
 		self.path = path
 
-		let isFolder = FileManager.default.rs_fileIsFolder(path)
+		let isFolder = FileManager.default.isFolder(atPath: path)
 
 		if isFolder {
 
