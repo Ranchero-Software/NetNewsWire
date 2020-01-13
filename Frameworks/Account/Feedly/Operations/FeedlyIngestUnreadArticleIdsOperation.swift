@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import RSParser
+import SyncDatabase
 
 /// Single responsibility is to clone locally the remote unread article state.
 ///
@@ -20,19 +21,20 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
-	private let entryIdsProvider: FeedlyEntryIdentifierProvider
+	private let database: SyncDatabase
+	private var remoteEntryIds = Set<String>()
 	private let log: OSLog
 	
-	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
+	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
 		let resource = FeedlyCategoryResourceId.Global.all(for: credentials.username)
-		self.init(account: account, resource: resource, service: service, newerThan: newerThan, log: log)
+		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan, log: log)
 	}
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
-		self.entryIdsProvider = FeedlyEntryIdentifierProvider()
+		self.database = database
 		self.log = log
 	}
 	
@@ -58,10 +60,10 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 		switch result {
 		case .success(let streamIds):
 			
-			entryIdsProvider.addEntryIds(in: streamIds.ids)
+			remoteEntryIds.formUnion(streamIds.ids)
 			
 			guard let continuation = streamIds.continuation else {
-				updateUnreadStatuses()
+				removeEntryIdsWithPendingStatus()
 				return
 			}
 			
@@ -69,6 +71,26 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 			
 		case .failure(let error):
 			didFinish(error)
+		}
+	}
+	
+	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
+	private func removeEntryIdsWithPendingStatus() {
+		guard !isCancelled else {
+			didFinish()
+			return
+		}
+		
+		database.selectPendingReadStatusArticleIDs { result in
+			switch result {
+			case .success(let pendingArticleIds):
+				self.remoteEntryIds.subtract(pendingArticleIds)
+				
+				self.updateUnreadStatuses()
+				
+			case .failure(let error):
+				self.didFinish(error)
+			}
 		}
 	}
 	
@@ -95,7 +117,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 			return
 		}
 
-		let remoteUnreadArticleIDs = entryIdsProvider.entryIds
+		let remoteUnreadArticleIDs = remoteEntryIds
 		let group = DispatchGroup()
 		
 		final class ReadStatusResults {

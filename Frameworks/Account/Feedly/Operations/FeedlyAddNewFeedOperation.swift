@@ -8,6 +8,7 @@
 
 import Foundation
 import os.log
+import SyncDatabase
 import RSWeb
 
 class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
@@ -17,6 +18,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	private let url: String
 	private let account: Account
 	private let credentials: Credentials
+	private let database: SyncDatabase
 	private let feedName: String?
 	private let addToCollectionService: FeedlyAddFeedToCollectionService
 	private let syncUnreadIdsService: FeedlyGetStreamIdsService
@@ -25,7 +27,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	
 	var addCompletionHandler: ((Result<WebFeed, Error>) -> ())?
 	
-	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, container: Container, progress: DownloadProgress, log: OSLog) throws {
+	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress, log: OSLog) throws {
 		
 		let validator = FeedlyFeedContainerValidator(container: container, userId: credentials.username)
 		(self.folder, self.collectionId) = try validator.getValidContainer()
@@ -35,6 +37,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		self.operationQueue.isSuspended = true
 		self.account = account
 		self.credentials = credentials
+		self.database = database
 		self.feedName = feedName
 		self.addToCollectionService = addToCollectionService
 		self.syncUnreadIdsService = syncUnreadIdsService
@@ -92,7 +95,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		createFeeds.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(createFeeds)
 		
-		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: syncUnreadIdsService, newerThan: nil, log: log)
+		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: syncUnreadIdsService, database: database, newerThan: nil, log: log)
 		syncUnread.addDependency(createFeeds)
 		syncUnread.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(syncUnread)

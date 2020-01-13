@@ -156,7 +156,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
+		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: caller, database: database, newerThan: nil, log: log)
 		
 		group.enter()
 		ingestUnread.completionBlock = {
@@ -164,7 +164,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			
 		}
 		
-		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
+		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: caller, database: database, newerThan: nil, log: log)
 		
 		group.enter()
 		ingestStarred.completionBlock = {
@@ -297,6 +297,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 														   addToCollectionService: caller,
 														   syncUnreadIdsService: caller,
 														   getStreamContentsService: caller,
+														   database: database,
 														   container: container,
 														   progress: refreshProgress,
 														   log: log)
