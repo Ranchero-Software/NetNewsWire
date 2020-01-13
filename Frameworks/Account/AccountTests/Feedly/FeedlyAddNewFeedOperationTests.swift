@@ -89,6 +89,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		}
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let container = support.makeTestDatabaseContainer()
 		let _ = expectationForCompletion(of: progress)
 		
 		let addNewFeed = try! FeedlyAddNewFeedOperation(account: account,
@@ -99,6 +100,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 														addToCollectionService: caller,
 														syncUnreadIdsService: caller,
 														getStreamContentsService: caller,
+														database: container.database,
 														container: folder,
 														progress: progress,
 														log: support.log)
@@ -126,6 +128,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		}
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let container = support.makeTestDatabaseContainer()
 		let _ = expectationForCompletion(of: progress)
 		
 		let subdirectory = "feedly-add-new-feed"
@@ -145,6 +148,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 														addToCollectionService: caller,
 														syncUnreadIdsService: caller,
 														getStreamContentsService: caller,
+														database: container.database,
 														container: folder,
 														progress: progress,
 														log: support.log)
@@ -191,6 +195,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		}
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let container = support.makeTestDatabaseContainer()
 		let _ = expectationForCompletion(of: progress)
 		
 		let subdirectory = "feedly-add-new-feed"
@@ -220,6 +225,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 														addToCollectionService: service,
 														syncUnreadIdsService: caller,
 														getStreamContentsService: caller,
+														database: container.database,
 														container: folder,
 														progress: progress,
 														log: support.log)

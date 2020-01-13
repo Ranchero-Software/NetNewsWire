@@ -73,7 +73,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		self.operationQueue.addOperation(getAllArticleIds)
 		
 		// Get each page of unread article ids in the global.all stream for the last 31 days (nil = Feedly API default).
-		let getUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: getUnreadService, newerThan: nil, log: log)
+		let getUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: getUnreadService, database: database, newerThan: nil, log: log)
 		getUnread.delegate = self
 		getUnread.addDependency(getAllArticleIds)
 		getUnread.downloadProgress = downloadProgress
@@ -88,7 +88,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		self.operationQueue.addOperation(getUpdated)
 		
 		// Get each page of the article ids for starred articles.
-		let getStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: getStarredService, newerThan: nil, log: log)
+		let getStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: getStarredService, database: database, newerThan: nil, log: log)
 		getStarred.delegate = self
 		getStarred.downloadProgress = downloadProgress
 		getStarred.addDependency(createFeedsOperation)
