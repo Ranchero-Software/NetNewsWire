@@ -93,7 +93,7 @@ private extension NNW3ImportController {
 		guard let document = NNW3Document(subscriptionsPlistURL: url) else {
 			return nil
 		}
-		let opml = document.OPMLString(indentLevel: 0, strictConformance: true)
+		let opml = document.OPMLString(indentLevel: 0)
 
 		let opmlURL = FileManager.default.temporaryDirectory.appendingPathComponent("NNW3.opml")
 		do {

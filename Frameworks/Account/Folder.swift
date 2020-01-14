@@ -173,10 +173,10 @@ private extension Folder {
 
 extension Folder: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		
 		let attrExternalID: String = {
-			if !strictConformance, let externalID = externalID {
+			if allowCustomAttributes, let externalID = externalID {
 				return " nnw_externalID=\"\(externalID)\""
 			} else {
 				return ""
@@ -190,7 +190,7 @@ extension Folder: OPMLRepresentable {
 		var hasAtLeastOneChild = false
 
 		for feed in topLevelWebFeeds.sorted()  {
-			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
+			s += feed.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 			hasAtLeastOneChild = true
 		}
 
