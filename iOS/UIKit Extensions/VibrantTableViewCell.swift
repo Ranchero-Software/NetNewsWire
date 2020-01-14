@@ -92,7 +92,7 @@ class VibrantBasicTableViewCell: VibrantTableViewCell {
 	
 	private func updateIconVibrancy(_ icon: UIImageView?, color: UIColor, image: UIImage?, animated: Bool) {
 		guard let icon = icon else { return }
-		UIView.transition(with: label, duration: duration(animated: animated), options: .transitionCrossDissolve, animations: {
+		UIView.transition(with: icon, duration: duration(animated: animated), options: .transitionCrossDissolve, animations: {
 			icon.tintColor = color
 			icon.image = image
 		}, completion: nil)
