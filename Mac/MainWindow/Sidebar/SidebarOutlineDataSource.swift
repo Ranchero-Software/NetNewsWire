@@ -47,17 +47,23 @@ import Account
 		return (node.representedObject as? PasteboardWriterOwner)?.pasteboardWriter
 	}
 
+	enum PersistentObjectKey {
+		static let smartFeeds = "SmartFeeds"
+		static let account = "account"
+		static let folder = "folder"
+	}
+
 	func outlineView(_ outlineView: NSOutlineView, persistentObjectForItem item: Any?) -> Any? {
 		if let folder = nodeForItem(item).representedObject as? Folder {
-			return ["folder": folder.name, "account": folder.account?.accountID]
+			return [PersistentObjectKey.folder: folder.name, PersistentObjectKey.account: folder.account?.accountID]
 		}
 
 		if let _ = nodeForItem(item).representedObject as? SmartFeedsController {
-			return "SmartFeeds"
+			return PersistentObjectKey.smartFeeds
 		}
 
 		if let account = nodeForItem(item).representedObject as? Account {
-			return ["account": account.accountID]
+			return [PersistentObjectKey.account: account.accountID]
 		}
 
 		return nil
@@ -65,7 +71,7 @@ import Account
 
 	func outlineView(_ outlineView: NSOutlineView, itemForPersistentObject object: Any) -> Any? {
 		if let dict = object as? [String: String] {
-			guard let accountName = dict["account"] else {
+			guard let accountName = dict[PersistentObjectKey.account] else {
 				return nil
 			}
 
@@ -73,7 +79,7 @@ import Account
 				return nil
 			}
 
-			if let name = dict["folder"] {
+			if let name = dict[PersistentObjectKey.folder] {
 				guard let folder = account.existingFolder(with: name) else {
 					return nil
 				}
@@ -82,7 +88,7 @@ import Account
 
 			return treeController.nodeInTreeRepresentingObject(account)
 		} else if let identifier = object as? String {
-			if identifier == "SmartFeeds" {
+			if identifier == PersistentObjectKey.smartFeeds {
 				return treeController.nodeInTreeRepresentingObject(SmartFeedsController.shared)
 			}
 		}
