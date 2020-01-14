@@ -27,7 +27,7 @@ struct OPMLExporter {
 			
 			"""
 
-		let middleText = account.OPMLString(indentLevel: 0, strictConformance: true)
+		let middleText = account.OPMLString(indentLevel: 0)
 
 		let closingText =
 			"""

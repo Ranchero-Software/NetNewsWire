@@ -146,7 +146,7 @@ class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     @objc(opmlRepresentation)
     var opmlRepresentation:String  {
-        return self.webFeed.OPMLString(indentLevel:0, strictConformance: true)
+        return self.webFeed.OPMLString(indentLevel:0)
     }
     
     // MARK: --- scriptable elements ---

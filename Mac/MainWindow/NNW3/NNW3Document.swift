@@ -32,7 +32,7 @@ struct NNW3Document {
 
 extension NNW3Document: OPMLRepresentable {
 
-	func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		var s =
 		"""
 		<?xml version="1.0" encoding="UTF-8"?>
@@ -46,7 +46,7 @@ extension NNW3Document: OPMLRepresentable {
 
 		if let children = children {
 			for child in children {
-				s += child.OPMLString(indentLevel: indentLevel + 1, strictConformance: true)
+				s += child.OPMLString(indentLevel: indentLevel + 1)
 			}
 		}
 
@@ -94,7 +94,7 @@ private struct NNW3Folder {
 
 extension NNW3Folder: OPMLRepresentable {
 
-	func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		let t = title?.rs_stringByEscapingSpecialXMLCharacters() ?? ""
 		guard let children = children else {
 			// Empty folder.
@@ -103,7 +103,7 @@ extension NNW3Folder: OPMLRepresentable {
 
 		var s = "<outline text=\"\(t)\" title=\"\(t)\">\n".rs_string(byPrependingNumberOfTabs: indentLevel)
 		for child in children {
-			s += child.OPMLString(indentLevel: indentLevel + 1, strictConformance: true)
+			s += child.OPMLString(indentLevel: indentLevel + 1)
 		}
 
 		s += "</outline>\n".rs_string(byPrependingNumberOfTabs: indentLevel)
@@ -130,7 +130,7 @@ private struct NNW3Feed {
 
 extension NNW3Feed: OPMLRepresentable {
 
-	func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		let t = title?.rs_stringByEscapingSpecialXMLCharacters() ?? ""
 		let p = homePageURL?.rs_stringByEscapingSpecialXMLCharacters() ?? ""
 		let f = feedURL?.rs_stringByEscapingSpecialXMLCharacters() ?? ""

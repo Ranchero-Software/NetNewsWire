@@ -138,7 +138,7 @@ private extension OPMLFile {
 
 		"""
 
-		let middleText = account.OPMLString(indentLevel: 0, strictConformance: false)
+		let middleText = account.OPMLString(indentLevel: 0, allowCustomAttributes: true)
 
 		let closingText =
 		"""

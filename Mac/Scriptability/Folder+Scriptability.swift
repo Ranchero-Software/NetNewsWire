@@ -110,7 +110,7 @@ class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContai
 
     @objc(opmlRepresentation)
     var opmlRepresentation:String  {
-        return self.folder.OPMLString(indentLevel:0, strictConformance: true)
+        return self.folder.OPMLString(indentLevel:0)
     }
 
 }
