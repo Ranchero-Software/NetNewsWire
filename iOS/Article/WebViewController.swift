@@ -354,9 +354,17 @@ extension WebViewController: WKNavigationDelegate {
 			
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
-				let vc = SFSafariViewController(url: url)
-				present(vc, animated: true)
 				decisionHandler(.cancel)
+				
+				// If the resource cannot be opened with an installed app, present the web view.
+				UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { didOpen in
+					assert(Thread.isMainThread)
+					guard didOpen == false else {
+						return
+					}
+					let vc = SFSafariViewController(url: url)
+					self.present(vc, animated: true)
+				}
 			} else {
 				decisionHandler(.allow)
 			}
