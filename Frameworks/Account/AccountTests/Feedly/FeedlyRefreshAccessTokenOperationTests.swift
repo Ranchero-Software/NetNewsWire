@@ -63,7 +63,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		
 		MainThreadOperationQueue.shared.addOperation(refresh)
 		
-		refresh.cancel()
+		MainThreadOperationQueue.shared.cancelOperations([refresh])
 		
 		waitForExpectations(timeout: 1)
 		

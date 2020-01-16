@@ -55,7 +55,7 @@ class FeedlyCheckpointOperationTests: XCTestCase {
 		
 		MainThreadOperationQueue.shared.addOperation(operation)
 		
-		operation.cancel()
+		MainThreadOperationQueue.shared.cancelOperations([operation])
 		
 		waitForExpectations(timeout: 1)
 	}

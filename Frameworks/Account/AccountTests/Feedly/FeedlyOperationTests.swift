@@ -117,7 +117,7 @@ class FeedlyOperationTests: XCTestCase {
 		
 		MainThreadOperationQueue.shared.addOperation(testOperation)
 		
-		testOperation.cancel()
+		MainThreadOperationQueue.shared.cancelOperations([testOperation])
 		
 		waitForExpectations(timeout: 2)
 		
@@ -180,8 +180,8 @@ class FeedlyOperationTests: XCTestCase {
 		MainThreadOperationQueue.shared.addOperation(testOperation)
 		
 		XCTAssertTrue(progress.numberRemaining == 1)
-		testOperation.cancel()
-		XCTAssertTrue(progress.numberRemaining == 1)
+		MainThreadOperationQueue.shared.cancelOperations([testOperation])
+		XCTAssertTrue(progress.numberRemaining == 0)
 		
 		waitForExpectations(timeout: 2)
 		
