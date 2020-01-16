@@ -107,8 +107,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		var node: Node? = nil
-		if let coordinator = representedObject as? SceneCoordinator, let fetcher = coordinator.timelineFeed {
-			node = coordinator.rootNode.descendantNodeRepresentingObject(fetcher as AnyObject)
+		if let coordinator = representedObject as? SceneCoordinator, let feed = coordinator.timelineFeed {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
 		} else {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
