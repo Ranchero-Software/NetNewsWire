@@ -91,6 +91,7 @@ class ArticleViewController: UIViewController {
 		])
 				
 		let controller = createWebViewController(article)
+		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
 		
 		updateUI()

@@ -59,7 +59,6 @@ class ImageViewer {
 
 	showImage() {
 		this.img.style.opacity = 1
-		window.webkit.messageHandlers.imageWasShown.postMessage("");
 	}
 
 	showLoadingIndicator() {
@@ -129,6 +128,7 @@ function showClickedImage() {
 	if (activeImageViewer) {
 		activeImageViewer.showImage();
 	}
+	window.webkit.messageHandlers.imageWasShown.postMessage("");
 }
 
 // Add the playsinline attribute to any HTML5 videos that don"t have it.

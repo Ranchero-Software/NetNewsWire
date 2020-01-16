@@ -940,6 +940,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func discloseFeed(_ feed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
+		if isSearching {
+			masterTimelineViewController?.hideSearch()
+		}
+		
 		masterFeedViewController.discloseFeed(feed, animated: animated) {
 			completion?()
 		}
