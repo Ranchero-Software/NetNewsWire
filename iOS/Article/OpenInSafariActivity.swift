@@ -37,7 +37,11 @@ class OpenInSafariActivity: UIActivity {
 	}
 	
 	override func perform() {
-		guard let url = activityItems?.first as? URL else { return }
+		guard let url = activityItems?.firstElementPassingTest({ $0 is URL }) as? URL else {
+			activityDidFinish(false)
+			return
+		}
+		
 		UIApplication.shared.open(url, options: [:], completionHandler: nil)
 		activityDidFinish(true)
 	}
