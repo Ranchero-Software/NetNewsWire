@@ -27,7 +27,7 @@ public enum AccountError: LocalizedError {
 		case .wrappedError(let error, let account):
 			switch error {
 			case TransportError.httpError(let status):
-				if status == 401 {
+				if status == 401 || status == 403 {
 					let localizedText = NSLocalizedString("Your “%@” credentials are invalid or expired.", comment: "Invalid or expired")
 					return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay) as String
 				} else {
