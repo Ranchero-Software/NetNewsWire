@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import RSCore
 
 class AccountsAddViewController: NSViewController {
 	
