@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Account
+import RSCore
 
 class FeedlyGetStreamIdsOperationTests: XCTestCase {
 	
@@ -35,11 +36,11 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 		service.mockResult = .failure(URLError(.fileDoesNotExist))
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		getStreamIds.completionBlock = {
+		getStreamIds.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(getStreamIds)
+		MainThreadOperationQueue.shared.addOperation(getStreamIds)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -68,11 +69,11 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 		}
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		getStreamIds.completionBlock = {
+		getStreamIds.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(getStreamIds)
+		MainThreadOperationQueue.shared.addOperation(getStreamIds)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -95,11 +96,11 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 		let getStreamIds = FeedlyGetStreamIdsOperation(account: account, resource: resource, service: caller, continuation: nil, newerThan: nil, unreadOnly: nil, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		getStreamIds.completionBlock = {
+		getStreamIds.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(getStreamIds)
+		MainThreadOperationQueue.shared.addOperation(getStreamIds)
 		
 		waitForExpectations(timeout: 2)
 		

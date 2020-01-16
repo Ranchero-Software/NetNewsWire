@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import RSWeb
+import RSCore
 
 class FeedlySyncAllOperationTests: XCTestCase {
 	
@@ -85,7 +86,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		syncAll.completionBlock = {
+		syncAll.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
@@ -102,7 +103,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 			syncCompletionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(syncAll)
+		MainThreadOperationQueue.shared.addOperation(syncAll)
 		
 		XCTAssertTrue(progress.numberOfTasks > 1)
 		
@@ -155,11 +156,11 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		syncAll.completionBlock = {
+		syncAll.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 				
-		OperationQueue.main.addOperation(syncAll)
+		MainThreadOperationQueue.shared.addOperation(syncAll)
 		
 		XCTAssertTrue(progress.numberOfTasks > 1)
 		
@@ -266,13 +267,13 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		syncAll.completionBlock = {
+		syncAll.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
 		lastSuccessfulFetchStartDate = Date()
 		
-		OperationQueue.main.addOperation(syncAll)
+		MainThreadOperationQueue.shared.addOperation(syncAll)
 		
 		XCTAssertTrue(progress.numberOfTasks > 1)
 		

@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Account
+import RSCore
 
 class FeedlyGetStreamContentsOperationTests: XCTestCase {
 	
@@ -35,11 +36,11 @@ class FeedlyGetStreamContentsOperationTests: XCTestCase {
 		service.mockResult = .failure(URLError(.fileDoesNotExist))
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		getStreamContents.completionBlock = {
+		getStreamContents.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(getStreamContents)
+		MainThreadOperationQueue.shared.addOperation(getStreamContents)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -68,11 +69,11 @@ class FeedlyGetStreamContentsOperationTests: XCTestCase {
 		}
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		getStreamContents.completionBlock = {
+		getStreamContents.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(getStreamContents)
+		MainThreadOperationQueue.shared.addOperation(getStreamContents)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -100,11 +101,11 @@ class FeedlyGetStreamContentsOperationTests: XCTestCase {
 		let getStreamContents = FeedlyGetStreamContentsOperation(account: account, resource: resource, service: caller, continuation: nil, newerThan: nil, unreadOnly: nil, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		getStreamContents.completionBlock = {
+		getStreamContents.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(getStreamContents)
+		MainThreadOperationQueue.shared.addOperation(getStreamContents)
 		
 		waitForExpectations(timeout: 2)
 		

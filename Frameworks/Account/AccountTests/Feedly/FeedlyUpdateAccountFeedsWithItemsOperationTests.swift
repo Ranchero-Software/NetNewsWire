@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import RSParser
+import RSCore
 
 class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 	
@@ -40,11 +41,11 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let update = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: provider, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		update.completionBlock = {
+		update.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 				
-		OperationQueue.main.addOperation(update)
+		MainThreadOperationQueue.shared.addOperation(update)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -64,11 +65,11 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let update = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: provider, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		update.completionBlock = {
+		update.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(update)
+		MainThreadOperationQueue.shared.addOperation(update)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -92,11 +93,11 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let update = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: provider, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		update.completionBlock = {
+		update.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(update)
+		MainThreadOperationQueue.shared.addOperation(update)
 		
 		waitForExpectations(timeout: 10) // 10,000 articles takes ~ three seconds for me.
 		
@@ -120,11 +121,11 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		let update = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: provider, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		update.completionBlock = {
+		update.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(update)
+		MainThreadOperationQueue.shared.addOperation(update)
 		
 		update.cancel()
 		

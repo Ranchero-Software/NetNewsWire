@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import RSWeb
+import RSCore
 
 class FeedlyAddNewFeedOperationTests: XCTestCase {
 
@@ -42,17 +43,17 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		let getCollections = FeedlyGetCollectionsOperation(service: caller, log: support.log)
 		
 		let mirrorCollectionsAsFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: getCollections, log: support.log)
-		mirrorCollectionsAsFolders.addDependency(getCollections)
-		
+		MainThreadOperationQueue.shared.make(mirrorCollectionsAsFolders, dependOn: getCollections)
+
 		let createFolders = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: mirrorCollectionsAsFolders, log: support.log)
-		createFolders.addDependency(mirrorCollectionsAsFolders)
+		MainThreadOperationQueue.shared.make(createFolders, dependOn: mirrorCollectionsAsFolders)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		createFolders.completionBlock = {
+		createFolders.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperations([getCollections, mirrorCollectionsAsFolders, createFolders], waitUntilFinished: false)
+		MainThreadOperationQueue.shared.addOperations([getCollections, mirrorCollectionsAsFolders, createFolders])
 		
 		waitForExpectations(timeout: 2)
 		
@@ -107,11 +108,11 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		addNewFeed.completionBlock = {
+		addNewFeed.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(addNewFeed)
+		MainThreadOperationQueue.shared.addOperation(addNewFeed)
 		
 		XCTAssert(progress.numberRemaining > 0)
 		
@@ -155,11 +156,11 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		addNewFeed.completionBlock = {
+		addNewFeed.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(addNewFeed)
+		MainThreadOperationQueue.shared.addOperation(addNewFeed)
 		
 		XCTAssert(progress.numberRemaining > 0)
 				
@@ -232,11 +233,11 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		addNewFeed.completionBlock = {
+		addNewFeed.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(addNewFeed)
+		MainThreadOperationQueue.shared.addOperation(addNewFeed)
 		
 		XCTAssert(progress.numberRemaining > 0)
 				

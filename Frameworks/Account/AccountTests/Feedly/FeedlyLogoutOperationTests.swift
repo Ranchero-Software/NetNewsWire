@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Account
+import RSCore
 
 class FeedlyLogoutOperationTests: XCTestCase {
 
@@ -68,17 +69,17 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		logout.completionBlock = {
+		logout.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(logout)
+		MainThreadOperationQueue.shared.addOperation(logout)
 		
 		logout.cancel()
 		
 		waitForExpectations(timeout: 1)
 		
-		XCTAssertTrue(logout.isCancelled)
+		XCTAssertTrue(logout.isCanceled)
 		XCTAssertTrue(logout.isFinished)
 		
 		do {
@@ -101,15 +102,15 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		logout.completionBlock = {
+		logout.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(logout)
+		MainThreadOperationQueue.shared.addOperation(logout)
 		
 		waitForExpectations(timeout: 1)
 		
-		XCTAssertFalse(logout.isCancelled)
+		XCTAssertFalse(logout.isCanceled)
 		
 		do {
 			let accountAccessToken = try account.retrieveCredentials(type: .oauthAccessToken)
@@ -147,15 +148,15 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		logout.completionBlock = {
+		logout.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(logout)
+		MainThreadOperationQueue.shared.addOperation(logout)
 		
 		waitForExpectations(timeout: 1)
 		
-		XCTAssertFalse(logout.isCancelled)
+		XCTAssertFalse(logout.isCanceled)
 		
 		do {
 			let accountAccessToken = try account.retrieveCredentials(type: .oauthAccessToken)			
@@ -193,15 +194,15 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		logout.completionBlock = {
+		logout.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(logout)
+		MainThreadOperationQueue.shared.addOperation(logout)
 				
 		waitForExpectations(timeout: 1)
 		
-		XCTAssertFalse(logout.isCancelled)
+		XCTAssertFalse(logout.isCanceled)
 		
 		do {
 			let accountAccessToken = try account.retrieveCredentials(type: .oauthAccessToken)
