@@ -131,6 +131,8 @@ class WebViewController: UIViewController {
 
 		if let articleExtractor = articleExtractor, articleExtractor.state == .processing {
 			rendering = ArticleRenderer.loadingHTML(style: style)
+		} else if let articleExtractor = articleExtractor, articleExtractor.state == .failedToParse, let article = article {
+			rendering = ArticleRenderer.articleHTML(article: article, style: style, useImageIcon: true)
 		} else if let article = article, let extractedArticle = extractedArticle {
 			if isShowingExtractedArticle {
 				rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style, useImageIcon: true)
@@ -295,6 +297,7 @@ extension WebViewController: ArticleExtractorDelegate {
 	func articleExtractionDidFail(with: Error) {
 		stopArticleExtractor()
 		articleExtractorButtonState = .error
+		reloadHTML()
 	}
 
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
