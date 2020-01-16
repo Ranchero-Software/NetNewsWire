@@ -127,7 +127,7 @@ class FeedlyUpdateAccountFeedsWithItemsOperationTests: XCTestCase {
 		
 		MainThreadOperationQueue.shared.addOperation(update)
 		
-		update.cancel()
+		MainThreadOperationQueue.shared.cancelOperations([update])
 		
 		waitForExpectations(timeout: 2)
 		
