@@ -34,6 +34,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyCo
 	}
 	
 	override func run() {
+		super.run()
 		defer {
 			didFinish()
 		}

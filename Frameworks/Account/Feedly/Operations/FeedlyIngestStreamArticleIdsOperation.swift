@@ -33,6 +33,7 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 	}
 	
 	override func run() {
+		super.run()
 		getStreamIds(nil)
 	}
 	

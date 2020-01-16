@@ -55,6 +55,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 	}
 	
 	override func run() {
+		super.run()
 		
 		service.getEntries(for: provider.entryIds) { result in
 			switch result {

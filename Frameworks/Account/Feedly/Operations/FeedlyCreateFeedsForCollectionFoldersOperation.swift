@@ -23,6 +23,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 	}
 	
 	override func run() {
+		super.run()
 		defer {
 			didFinish()
 		}

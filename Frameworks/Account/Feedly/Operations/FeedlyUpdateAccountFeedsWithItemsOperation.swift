@@ -23,6 +23,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 	}
 	
 	override func run() {
+		super.run()
 		let webFeedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 		
 		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { databaseError in

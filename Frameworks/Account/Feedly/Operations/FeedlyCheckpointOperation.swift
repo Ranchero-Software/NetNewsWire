@@ -18,6 +18,7 @@ final class FeedlyCheckpointOperation: FeedlyOperation {
 	weak var checkpointDelegate: FeedlyCheckpointOperationDelegate?
 	
 	override func run() {
+		super.run()
 		defer {
 			didFinish()
 		}

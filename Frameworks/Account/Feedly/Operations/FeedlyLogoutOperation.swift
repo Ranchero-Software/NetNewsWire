@@ -25,6 +25,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 	}
 	
 	override func run() {
+		super.run()
 		os_log("Requesting logout of %{public}@ account.", "\(account.type)")
 		service.logout(completion: didCompleteLogout(_:))
 	}

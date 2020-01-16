@@ -24,6 +24,7 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 	}
 	
 	override func run() {
+		super.run()
 		os_log(.debug, log: log, "Sending article statuses...")
 
 		database.selectForProcessing { result in

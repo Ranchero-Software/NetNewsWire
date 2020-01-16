@@ -49,6 +49,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	override func run() {
+		super.run()
 		operationQueue.resume()
 	}
 	

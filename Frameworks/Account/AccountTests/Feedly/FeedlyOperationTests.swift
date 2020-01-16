@@ -23,6 +23,7 @@ class FeedlyOperationTests: XCTestCase {
 		var mockError: Error?
 		
 		override func run() {
+			super.run()
 			// Should always call on main thread.
 			XCTAssertTrue(Thread.isMainThread)
 			
