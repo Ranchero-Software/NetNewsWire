@@ -35,10 +35,11 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	override func main() {
-		defer { didFinish() }
-		
-		guard !isCancelled else { return }
+	override func run() {
+		super.run()
+		defer {
+			didFinish()
+		}
 		
 		assert(queueDelegate != nil, "This is not particularly useful unless the `queueDelegate` is non-nil.")
 		

@@ -38,12 +38,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		getStreamIds(nil)
 	}
 	
@@ -52,7 +47,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 	}
 	
 	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}
@@ -76,7 +71,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 	
 	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
 	private func removeEntryIdsWithPendingStatus() {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}
@@ -95,7 +90,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 	}
 	
 	private func updateUnreadStatuses() {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}
@@ -112,7 +107,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 	}
 	
 	private func processUnreadArticleIDs(_ localUnreadArticleIDs: Set<String>) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}

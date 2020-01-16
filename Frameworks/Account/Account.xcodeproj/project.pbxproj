@@ -177,7 +177,6 @@
 		9EF1B10723590D61000A486A /* FeedlyGetStreamIdsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF1B10623590D61000A486A /* FeedlyGetStreamIdsOperation.swift */; };
 		9EF1B10923590E93000A486A /* FeedlyStreamIds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF1B10823590E93000A486A /* FeedlyStreamIds.swift */; };
 		9EF2602C23C91FFE006D160C /* FeedlyGetUpdatedArticleIdsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF2602B23C91FFE006D160C /* FeedlyGetUpdatedArticleIdsOperation.swift */; };
-		9EF35F7A234E830E003AE2AE /* FeedlyCompoundOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF35F79234E830E003AE2AE /* FeedlyCompoundOperation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -839,11 +838,11 @@
 					848934F51F62484F00CEBD24 = {
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					848934FE1F62484F00CEBD24 = {
 						CreatedOnToolsVersion = 9.0;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -975,7 +974,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */,
-				9EF35F7A234E830E003AE2AE /* FeedlyCompoundOperation.swift in Sources */,
 				552032F9229D5D5A009559E0 /* ReaderAPISubscription.swift in Sources */,
 				84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */,
 				9EC688EE232C58E800A8D0A2 /* OAuthAuthorizationCodeGranting.swift in Sources */,

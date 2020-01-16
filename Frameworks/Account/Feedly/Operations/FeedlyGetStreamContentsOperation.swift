@@ -97,11 +97,8 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 		self.init(account: account, resource: resourceProvider.resource, service: service, newerThan: newerThan, unreadOnly: unreadOnly, log: log)
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
+	override func run() {
+		super.run()
 		
 		service.getStreamContents(for: resourceProvider.resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {

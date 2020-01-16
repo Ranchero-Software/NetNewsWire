@@ -39,12 +39,8 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 	
 	private var storedUpdatedArticleIds = Set<String>()
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
+		super.run()
 		getStreamIds(nil)
 	}
 	
@@ -59,7 +55,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 	}
 	
 	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}

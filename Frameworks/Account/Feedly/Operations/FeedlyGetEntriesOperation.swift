@@ -37,12 +37,13 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 			FeedlyEntryParser(entry: $0).parsedItemRepresentation
 		})
 		
-		if parsed.count != entries.count {
-			let entryIds = Set(entries.map { $0.id })
-			let parsedIds = Set(parsed.map { $0.uniqueID })
-			let difference = entryIds.subtracting(parsedIds)
-			os_log(.debug, log: log, "%{public}@ dropping articles with ids: %{public}@.", self, difference)
-		}
+		// TODO: Fix the below. There’s an error on the os.log line: "Expression type '()' is ambiguous without more context"
+//		if parsed.count != entries.count {
+//			let entryIds = Set(entries.map { $0.id })
+//			let parsedIds = Set(parsed.map { $0.uniqueID })
+//			let difference = entryIds.subtracting(parsedIds)
+//			os_log(.debug, log: log, "%{public}@ dropping articles with ids: %{public}@.", self, difference)
+//		}
 		
 		storedParsedEntries = parsed
 		
@@ -53,11 +54,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 		return name ?? String(describing: Self.self)
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
+	override func run() {
 		
 		service.getEntries(for: provider.entryIds) { result in
 			switch result {

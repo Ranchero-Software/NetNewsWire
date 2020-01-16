@@ -8,6 +8,7 @@
 
 import Foundation
 import RSWeb
+import RSCore
 
 protocol FeedlyOperationDelegate: class {
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)
@@ -15,10 +16,26 @@ protocol FeedlyOperationDelegate: class {
 
 /// Abstract class common to all the tasks required to ingest content from Feedly into NetNewsWire.
 /// Each task should try to have a single responsibility so they can be easily composed with others.
-class FeedlyOperation: Operation {
-	
+class FeedlyOperation: MainThreadOperation {
+
 	weak var delegate: FeedlyOperationDelegate?
-	
+
+	// MainThreadOperationDelegate
+	var isCanceled = false {
+		didSet {
+			if isCanceled {
+				cancel()
+			}
+		}
+	}
+	var id: Int?
+	weak var operationDelegate: MainThreadOperationDelegate?
+	var completionBlock: FeedlyOperation.MainThreadOperationCompletionBlock?
+	var name: String?
+
+	var isExecuting = false
+	var isFinished = false
+
 	var downloadProgress: DownloadProgress? {
 		didSet {
 			guard downloadProgress == nil || !isExecuting else {
@@ -28,85 +45,29 @@ class FeedlyOperation: Operation {
 			downloadProgress?.addToNumberOfTasksAndRemaining(1)
 		}
 	}
-	
-	override var isAsynchronous: Bool {
-		return true
+
+	// Override this. Call super.run() first in the overridden method.
+	func run() {
+		isExecuting = true
 	}
-	
+
+	// Called when isCanceled is set to true. Useful to override.
+	func cancel() {
+		didFinish()
+	}
+
 	func didFinish() {
-		assert(Thread.isMainThread)
-		assert(!isFinished, "Finished operation is attempting to finish again.")
-		
+		precondition(Thread.isMainThread)
+		isExecuting = false
+		isFinished = true
 		downloadProgress = nil
-		
-		updateExecutingAndFinished(false, true)
+		if !isCanceled {
+			operationDelegate?.operationDidComplete(self)
+		}
 	}
 	
 	func didFinish(_ error: Error) {
-		assert(Thread.isMainThread)
-		assert(!isFinished, "Finished operation is attempting to finish again.")
 		delegate?.feedlyOperation(self, didFailWith: error)
 		didFinish()
-	}
-	
-	override func cancel() {
-		// If the operation never started, disown the download progress.
-		if !isExecuting && !isFinished, downloadProgress != nil {
-			DispatchQueue.main.async {
-				self.downloadProgress = nil
-			}
-		}
-		super.cancel()
-	}
-	
-	override func start() {
-		guard !isCancelled else {
-			updateExecutingAndFinished(false, true)
-
-			if downloadProgress != nil {
-				DispatchQueue.main.async {
-					self.downloadProgress = nil
-				}
-			}
-			
-			return
-		}
-
-		updateExecutingAndFinished(true, false)
-		DispatchQueue.main.async {
-			self.main()
-		}
-	}
-	
-	override var isExecuting: Bool {
-		return isExecutingOperation
-	}
-	
-	override var isFinished: Bool {
-		return isFinishedOperation
-	}
-
-	private var isExecutingOperation = false
-	private var isFinishedOperation = false
-
-	private func updateExecutingAndFinished(_ executing: Bool, _ finished: Bool) {
-		let isExecutingDidChange = executing != isExecutingOperation
-		let isFinishedDidChange = finished != isFinishedOperation
-
-		if isFinishedDidChange {
-			willChangeValue(forKey: #keyPath(isFinished))
-		}
-		if isExecutingDidChange {
-			willChangeValue(forKey: #keyPath(isExecuting))
-		}
-		isExecutingOperation = executing
-		isFinishedOperation = finished
-
-		if isExecutingDidChange {
-			didChangeValue(forKey: #keyPath(isExecuting))
-		}
-		if isFinishedDidChange {
-			didChangeValue(forKey: #keyPath(isFinished))
-		}
 	}
 }

@@ -23,15 +23,15 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		os_log(.debug, log: log, "Sending article statuses...")
 
 		database.selectForProcessing { result in
+			if self.isCanceled {
+				self.didFinish()
+				return
+			}
+			
 			switch result {
 			case .success(let syncStatuses):
 				self.processStatuses(syncStatuses)

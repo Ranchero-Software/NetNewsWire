@@ -22,13 +22,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	override func main() {
-		precondition(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		let webFeedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
 		
 		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { databaseError in

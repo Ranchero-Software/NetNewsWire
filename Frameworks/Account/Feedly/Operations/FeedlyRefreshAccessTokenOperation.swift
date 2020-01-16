@@ -23,12 +23,7 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		let refreshToken: Credentials
 		
 		do {

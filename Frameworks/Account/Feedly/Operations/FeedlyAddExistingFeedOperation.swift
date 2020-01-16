@@ -9,9 +9,10 @@
 import Foundation
 import os.log
 import RSWeb
+import RSCore
 
 class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
-	private let operationQueue: OperationQueue
+	private let operationQueue: MainThreadOperationQueue
 	
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
 	
@@ -20,8 +21,8 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		let validator = FeedlyFeedContainerValidator(container: container, userId: credentials.username)
 		let (folder, collectionId) = try validator.getValidContainer()
 		
-		self.operationQueue = OperationQueue()
-		self.operationQueue.isSuspended = true
+		self.operationQueue = MainThreadOperationQueue()
+		self.operationQueue.suspend()
 		
 		super.init()
 		
@@ -34,13 +35,13 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 		createFeeds.downloadProgress = progress
-		createFeeds.addDependency(addRequest)
+		self.operationQueue.make(createFeeds, dependOn: addRequest)
 		self.operationQueue.addOperation(createFeeds)
 		
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = progress
-		finishOperation.addDependency(createFeeds)
+		self.operationQueue.make(finishOperation, dependOn: createFeeds)
 		self.operationQueue.addOperation(finishOperation)
 	}
 	
@@ -50,11 +51,9 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		didFinish()
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			return
-		}
-		operationQueue.isSuspended = false
+	override func run() {
+		super.run()
+		operationQueue.resume()
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
@@ -65,7 +64,7 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 	}
 	
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			return
 		}
 		

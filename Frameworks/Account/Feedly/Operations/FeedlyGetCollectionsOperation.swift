@@ -26,11 +26,8 @@ final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProv
 		self.log = log
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
+	override func run() {
+		super.run()
 		
 		os_log(.debug, log: log, "Requesting collections.")
 		

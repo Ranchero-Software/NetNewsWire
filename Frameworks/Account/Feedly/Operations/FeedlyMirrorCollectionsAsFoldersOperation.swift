@@ -33,10 +33,10 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyCo
 		self.log = log
 	}
 	
-	override func main() {
-		defer { didFinish() }
-		
-		guard !isCancelled else { return }
+	override func run() {
+		defer {
+			didFinish()
+		}
 		
 		let localFolders = account.folders ?? Set()
 		let collections = collectionsProvider.collections

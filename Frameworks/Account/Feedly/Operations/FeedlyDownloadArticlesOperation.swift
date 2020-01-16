@@ -8,6 +8,7 @@
 
 import Foundation
 import os.log
+import RSCore
 
 class FeedlyDownloadArticlesOperation: FeedlyOperation {
 	private let account: Account
@@ -15,13 +16,12 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 	private let missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding
 	private let updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding
 	private let getEntriesService: FeedlyGetEntriesService
-	private let operationQueue: OperationQueue
+	private let operationQueue = MainThreadOperationQueue()
 	private let finishOperation: FeedlyCheckpointOperation
 	
 	init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService, log: OSLog) {
 		self.account = account
-		self.operationQueue = OperationQueue()
-		self.operationQueue.isSuspended = true
+		self.operationQueue.suspend()
 		self.missingArticleEntryIdProvider = missingArticleEntryIdProvider
 		self.updatedArticleEntryIdProvider = updatedArticleEntryIdProvider
 		self.getEntriesService = getEntriesService
@@ -35,18 +35,16 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 	}
 	
 	override func cancel() {
-		os_log(.debug, log: log, "Cancelling %{public}@.", self)
+		// TODO: fix error on below line: "Expression type '()' is ambiguous without more context"
+		//os_log(.debug, log: log, "Cancelling %{public}@.", self)
 		operationQueue.cancelAllOperations()
 		super.cancel()
 		didFinish()
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			// override of cancel calls didFinish().
-			return
-		}
-		
+	override func run() {
+		super.run()
+
 		var articleIds = missingArticleEntryIdProvider.entryIds
 		articleIds.formUnion(updatedArticleEntryIdProvider.entryIds)
 		
@@ -64,7 +62,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 																		  parsedItemProvider: getEntries,
 																		  log: log)
 			organiseByFeed.delegate = self
-			organiseByFeed.addDependency(getEntries)
+			self.operationQueue.make(organiseByFeed, dependOn: getEntries)
 			self.operationQueue.addOperation(organiseByFeed)
 			
 			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
@@ -72,13 +70,13 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 			log: log)
 			
 			updateAccount.delegate = self
-			updateAccount.addDependency(organiseByFeed)
+			self.operationQueue.make(updateAccount, dependOn: organiseByFeed)
 			self.operationQueue.addOperation(updateAccount)
-			
-			finishOperation.addDependency(updateAccount)
+
+			self.operationQueue.make(finishOperation, dependOn: updateAccount)
 		}
 		
-		operationQueue.isSuspended = false
+		operationQueue.resume()
 	}
 }
 
@@ -93,7 +91,8 @@ extension FeedlyDownloadArticlesOperation: FeedlyOperationDelegate {
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		assert(Thread.isMainThread)
-		os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", operation, error as NSError)
+		// TODO: fix error for below line "Error is not convertible to NSError"
+		//os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", operation, error as NSError)
 		cancel()
 	}
 }

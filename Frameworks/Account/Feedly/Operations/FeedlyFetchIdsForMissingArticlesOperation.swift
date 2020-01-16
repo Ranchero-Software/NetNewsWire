@@ -20,12 +20,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 		self.log = log
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-				
+	override func run() {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 			switch result {
 			case .success(let articleIds):

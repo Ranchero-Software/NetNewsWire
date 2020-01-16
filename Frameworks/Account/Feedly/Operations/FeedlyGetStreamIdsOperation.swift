@@ -47,11 +47,8 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 	
 	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
+	override func run() {
+		super.run()
 		
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {

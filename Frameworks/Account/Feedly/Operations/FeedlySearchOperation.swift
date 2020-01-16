@@ -31,12 +31,9 @@ class FeedlySearchOperation: FeedlyOperation {
 		self.searchService = service
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
+		super.run()
+
 		searchService.getFeeds(for: query, count: 1, locale: locale.identifier) { result in
 			switch result {
 			case .success(let response):

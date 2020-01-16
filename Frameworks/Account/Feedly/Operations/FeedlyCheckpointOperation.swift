@@ -17,10 +17,9 @@ final class FeedlyCheckpointOperation: FeedlyOperation {
 
 	weak var checkpointDelegate: FeedlyCheckpointOperationDelegate?
 	
-	override func main() {
-		defer { didFinish() }
-		guard !isCancelled else {
-			return
+	override func run() {
+		defer {
+			didFinish()
 		}
 		checkpointDelegate?.feedlyCheckpointOperationDidReachCheckpoint(self)
 	}

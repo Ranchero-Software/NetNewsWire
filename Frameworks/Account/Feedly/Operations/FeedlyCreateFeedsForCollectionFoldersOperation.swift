@@ -22,10 +22,10 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	override func main() {
-		defer { didFinish() }
-		
-		guard !isCancelled else { return }
+	override func run() {
+		defer {
+			didFinish()
+		}
 
 		let pairs = feedsAndFoldersProvider.feedsAndFolders
 		

@@ -35,17 +35,16 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 		return feedResource
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			return didFinish()
-		}
+	override func run() {
+		super.run()
 		
 		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
 			guard let self = self else {
 				return
 			}
-			guard !self.isCancelled else {
-				return self.didFinish()
+			if self.isCanceled {
+				self.didFinish()
+				return
 			}
 			self.didCompleteRequest(result)
 		}

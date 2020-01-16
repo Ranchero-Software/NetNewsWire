@@ -32,12 +32,7 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 		self.init(account: account, resource: all, service: service, log: log)
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		getStreamIds(nil)
 	}
 	
@@ -46,7 +41,7 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 	}
 	
 	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}

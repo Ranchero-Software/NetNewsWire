@@ -10,9 +10,10 @@ import Foundation
 import os.log
 import SyncDatabase
 import RSWeb
+import RSCore
 
 class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
-	private let operationQueue: OperationQueue
+	private let operationQueue: MainThreadOperationQueue
 	private let folder: Folder
 	private let collectionId: String
 	private let url: String
@@ -26,15 +27,15 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	private let log: OSLog
 	
 	var addCompletionHandler: ((Result<WebFeed, Error>) -> ())?
-	
+
 	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress, log: OSLog) throws {
 		
 		let validator = FeedlyFeedContainerValidator(container: container, userId: credentials.username)
 		(self.folder, self.collectionId) = try validator.getValidContainer()
 		
 		self.url = url
-		self.operationQueue = OperationQueue()
-		self.operationQueue.isSuspended = true
+		self.operationQueue = MainThreadOperationQueue()
+		self.operationQueue.suspend()
 		self.account = account
 		self.credentials = credentials
 		self.database = database
@@ -55,27 +56,21 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		self.operationQueue.addOperation(search)
 	}
 	
+	override func run() {
+		super.run()
+		operationQueue.resume()
+	}
+
 	override func cancel() {
-		operationQueue.cancelAllOperations()
 		super.cancel()
-		
-		didFinish()
-		
-		// Operation should silently cancel.
+		operationQueue.cancelAllOperations()
 		addCompletionHandler = nil
 	}
-	
-	override func main() {
-		guard !isCancelled else {
-			return
-		}
-		operationQueue.isSuspended = false
-	}
-	
+
 	private var feedResourceId: FeedlyFeedResourceId?
 	
 	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			return
 		}
 		guard let first = response.results.first else {
@@ -91,24 +86,24 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		self.operationQueue.addOperation(addRequest)
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
-		createFeeds.addDependency(addRequest)
+		operationQueue.make(createFeeds, dependOn: addRequest)
 		createFeeds.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(createFeeds)
 		
 		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: syncUnreadIdsService, database: database, newerThan: nil, log: log)
-		syncUnread.addDependency(createFeeds)
+		operationQueue.make(syncUnread, dependOn: createFeeds)
 		syncUnread.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(syncUnread)
 		
 		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, newerThan: nil, log: log)
-		syncFeed.addDependency(syncUnread)
+		operationQueue.make(syncFeed, dependOn: syncUnread)
 		syncFeed.downloadProgress = downloadProgress
 		self.operationQueue.addOperation(syncFeed)
 		
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = downloadProgress
-		finishOperation.addDependency(syncFeed)
+		operationQueue.make(finishOperation, dependOn: syncFeed)
 		self.operationQueue.addOperation(finishOperation)
 	}
 	
@@ -120,7 +115,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	}
 	
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			return
 		}
 		

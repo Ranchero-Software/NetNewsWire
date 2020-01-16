@@ -9,11 +9,12 @@
 import Foundation
 import os.log
 import RSParser
+import RSCore
 
 final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyGetStreamContentsOperationDelegate, FeedlyCheckpointOperationDelegate {
 	private let account: Account
 	private let resource: FeedlyResourceId
-	private let operationQueue: OperationQueue
+	private let operationQueue = MainThreadOperationQueue()
 	private let service: FeedlyGetStreamContentsService
 	private let newerThan: Date?
 	private let log: OSLog
@@ -23,8 +24,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		self.account = account
 		self.resource = resource
 		self.service = service
-		self.operationQueue = OperationQueue()
-		self.operationQueue.isSuspended = true
+		self.operationQueue.suspend()
 		self.newerThan = newerThan
 		self.log = log
 		self.finishOperation = FeedlyCheckpointOperation()
@@ -48,22 +48,17 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		didFinish()
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			// override of cancel calls didFinish().
-			return
-		}
-		
-		operationQueue.isSuspended = false
+	override func run() {
+		operationQueue.resume()
 	}
 	
 	func enqueueOperations(for continuation: String?) {
 		os_log(.debug, log: log, "Requesting page for %@", resource.id)
 		let operations = pageOperations(for: continuation)
-		operationQueue.addOperations(operations, waitUntilFinished: false)
+		operationQueue.addOperations(operations)
 	}
 	
-	func pageOperations(for continuation: String?) -> [Operation] {
+	func pageOperations(for continuation: String?) -> [MainThreadOperation] {
 		let getPage = FeedlyGetStreamContentsOperation(account: account,
 													   resource: resource,
 													   service: service,
@@ -82,20 +77,20 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		
 		getPage.delegate = self
 		getPage.streamDelegate = self
-		
-		organiseByFeed.addDependency(getPage)
+
+		operationQueue.make(organiseByFeed, dependOn: getPage)
 		organiseByFeed.delegate = self
-		
-		updateAccount.addDependency(organiseByFeed)
+
+		operationQueue.make(updateAccount, dependOn: organiseByFeed)
 		updateAccount.delegate = self
-		
-		finishOperation.addDependency(updateAccount)
-		
+
+		operationQueue.make(finishOperation, dependOn: updateAccount)
+
 		return [getPage, organiseByFeed, updateAccount]
 	}
 	
 	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			os_log(.debug, log: log, "Cancelled requesting page for %@", resource.id)
 			return
 		}
