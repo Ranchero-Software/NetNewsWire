@@ -83,28 +83,28 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: feedResourceId, feedName: feedName, collectionId: collectionId, service: addToCollectionService)
 		addRequest.delegate = self
 		addRequest.downloadProgress = downloadProgress
-		self.operationQueue.addOperation(addRequest)
+		operationQueue.addOperation(addRequest)
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 		operationQueue.make(createFeeds, dependOn: addRequest)
 		createFeeds.downloadProgress = downloadProgress
-		self.operationQueue.addOperation(createFeeds)
+		operationQueue.addOperation(createFeeds)
 		
 		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: syncUnreadIdsService, database: database, newerThan: nil, log: log)
 		operationQueue.make(syncUnread, dependOn: createFeeds)
 		syncUnread.downloadProgress = downloadProgress
-		self.operationQueue.addOperation(syncUnread)
+		operationQueue.addOperation(syncUnread)
 		
-		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, newerThan: nil, log: log)
+		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil, log: log)
 		operationQueue.make(syncFeed, dependOn: syncUnread)
 		syncFeed.downloadProgress = downloadProgress
-		self.operationQueue.addOperation(syncFeed)
+		operationQueue.addOperation(syncFeed)
 		
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = downloadProgress
 		operationQueue.make(finishOperation, dependOn: syncFeed)
-		self.operationQueue.addOperation(finishOperation)
+		operationQueue.addOperation(finishOperation)
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {

@@ -17,13 +17,15 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	private let operationQueue = MainThreadOperationQueue()
 	private let service: FeedlyGetStreamContentsService
 	private let newerThan: Date?
+	private let isPagingEnabled: Bool
 	private let log: OSLog
 	private let finishOperation: FeedlyCheckpointOperation
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, newerThan: Date?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, isPagingEnabled: Bool, newerThan: Date?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
+		self.isPagingEnabled = isPagingEnabled
 		self.operationQueue.suspend()
 		self.newerThan = newerThan
 		self.log = log
@@ -38,7 +40,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	
 	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamContentsService, newerThan: Date?, log: OSLog) {
 		let all = FeedlyCategoryResourceId.Global.all(for: credentials.username)
-		self.init(account: account, resource: all, service: service, newerThan: newerThan, log: log)
+		self.init(account: account, resource: all, service: service, isPagingEnabled: true, newerThan: newerThan, log: log)
 	}
 	
 	override func cancel() {
@@ -98,7 +100,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		
 		os_log(.debug, log: log, "Ingesting %i items from %@", stream.items.count, stream.id)
 		
-		guard let continuation = stream.continuation else {
+		guard isPagingEnabled, let continuation = stream.continuation else {
 			os_log(.debug, log: log, "Reached end of stream for %@", stream.id)
 			return
 		}
