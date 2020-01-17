@@ -30,7 +30,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 
 	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress, log: OSLog) throws {
 		
-		let validator = FeedlyFeedContainerValidator(container: container, userId: credentials.username)
+		let validator = FeedlyFeedContainerValidator(container: container)
 		(self.folder, self.collectionId) = try validator.getValidContainer()
 		
 		self.url = url
