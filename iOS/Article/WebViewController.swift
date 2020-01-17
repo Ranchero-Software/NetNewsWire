@@ -177,7 +177,7 @@ class WebViewController: UIViewController {
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
-		reloadHTML()
+		fullReload()
 	}
 	
 	// MARK: Actions
