@@ -17,7 +17,8 @@ class RefreshProgressView: UIView {
 	
 	override func awakeFromNib() {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+
 		if !AccountManager.shared.combinedRefreshProgress.isComplete {
 			progressChanged()
 		} else {
@@ -51,6 +52,12 @@ class RefreshProgressView: UIView {
 	
 	@objc func progressDidChange(_ note: Notification) {
 		progressChanged()
+	}
+
+	@objc func contentSizeCategoryDidChange(_ note: Notification) {
+		// This hack is probably necessary because custom views in the toolbar don't get
+		// notifications that the content size changed.
+		label.font = UIFont.preferredFont(forTextStyle: .footnote)
 	}
 
 	deinit {
