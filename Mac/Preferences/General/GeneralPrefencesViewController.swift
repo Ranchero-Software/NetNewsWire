@@ -177,7 +177,7 @@ private struct RSSReader: Hashable {
 		let name = (path as NSString).lastPathComponent
 		self.name = name
 		if name.hasSuffix(".app") {
-			self.nameMinusAppSuffix = name.rs_string(byStrippingSuffix: ".app", caseSensitive: false)
+			self.nameMinusAppSuffix = name.stripping(suffix: ".app")
 		}
 		else {
 			self.nameMinusAppSuffix = name

@@ -69,10 +69,10 @@ private extension FeedSpecifier {
 			score = score + 50
 		}
 		
-		if urlString.rs_caseInsensitiveContains("comments") {
+		if urlString.caseInsensitiveContains("comments") {
 			score = score - 10
 		}
-		if urlString.rs_caseInsensitiveContains("rss") {
+		if urlString.caseInsensitiveContains("rss") {
 			score = score + 5
 		}
 		if urlString.hasSuffix("/feed/") {
@@ -81,15 +81,15 @@ private extension FeedSpecifier {
 		if urlString.hasSuffix("/feed") {
 			score = score + 4
 		}
-		if urlString.rs_caseInsensitiveContains("json") {
+		if urlString.caseInsensitiveContains("json") {
 			score = score + 6
 		}
 		
 		if let title = title {
-			if title.rs_caseInsensitiveContains("comments") {
+			if title.caseInsensitiveContains("comments") {
 				score = score - 10
 			}
-			if title.rs_caseInsensitiveContains("json") {
+			if title.caseInsensitiveContains("json") {
 				score = score + 1
 			}
 		}

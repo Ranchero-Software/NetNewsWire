@@ -65,8 +65,8 @@ struct ArticleStringFormatter {
 		s = s.replacingOccurrences(of: "\r", with: "")
 		s = s.replacingOccurrences(of: "\t", with: "")
 		s = s.rsparser_stringByDecodingHTMLEntities()
-		s = s.rs_stringByTrimmingWhitespace()
-		s = s.rs_stringWithCollapsedWhitespace()
+		s = s.trimmingWhitespace
+		s = s.collapsingWhitespace
 
 		let maxLength = 1000
 		if s.count < maxLength {
@@ -89,9 +89,9 @@ struct ArticleStringFormatter {
 			return cachedBody
 		}
 		var s = body.rsparser_stringByDecodingHTMLEntities()
-		s = s.rs_string(byStrippingHTML: 250)
-		s = s.rs_stringByTrimmingWhitespace()
-		s = s.rs_stringWithCollapsedWhitespace()
+		s = s.strippingHTML(maxCharacters: 250)
+		s = s.trimmingWhitespace
+		s = s.collapsingWhitespace
 		if s == "Comments" { // Hacker News.
 			s = ""
 		}

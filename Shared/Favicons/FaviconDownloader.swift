@@ -114,7 +114,7 @@ final class FaviconDownloader {
 
 	func favicon(withHomePageURL homePageURL: String) -> IconImage? {
 
-		let url = homePageURL.rs_normalizedURL()
+		let url = homePageURL.normalizedURL
 
 		if let url = URL(string: homePageURL) {
 			if url.host == "nnw.ranchero.com" {

@@ -125,7 +125,7 @@ private extension OPMLFile {
 	}
 	
 	func opmlDocument() -> String {
-		let escapedTitle = account.nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
+		let escapedTitle = account.nameForDisplay.escapingSpecialXMLCharacters
 		let openingText =
 		"""
 		<?xml version="1.0" encoding="UTF-8"?>

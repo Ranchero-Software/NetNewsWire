@@ -14,7 +14,7 @@ struct OPMLExporter {
 
 	static func OPMLString(with account: Account, title: String) -> String {
 
-		let escapedTitle = title.rs_stringByEscapingSpecialXMLCharacters()
+		let escapedTitle = title.escapingSpecialXMLCharacters
 		let openingText =
 			"""
 			<?xml version="1.0" encoding="UTF-8"?>

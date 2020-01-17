@@ -183,9 +183,9 @@ extension Folder: OPMLRepresentable {
 			}
 		}()
 		
-		let escapedTitle = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
+		let escapedTitle = nameForDisplay.escapingSpecialXMLCharacters
 		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)>\n"
-		s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
+		s = s.prepending(tabCount: indentLevel)
 
 		var hasAtLeastOneChild = false
 
@@ -196,11 +196,11 @@ extension Folder: OPMLRepresentable {
 
 		if !hasAtLeastOneChild {
 			s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)/>\n"
-			s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
+			s = s.prepending(tabCount: indentLevel)
 			return s
 		}
 
-		s = s + NSString.rs_string(withNumberOfTabs: indentLevel) + "</outline>\n"
+		s = s + String(tabCount: indentLevel) + "</outline>\n"
 
 		return s
 	}

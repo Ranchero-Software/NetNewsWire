@@ -95,18 +95,18 @@ private struct NNW3Folder {
 extension NNW3Folder: OPMLRepresentable {
 
 	func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
-		let t = title?.rs_stringByEscapingSpecialXMLCharacters() ?? ""
+		let t = title?.escapingSpecialXMLCharacters ?? ""
 		guard let children = children else {
 			// Empty folder.
-			return "<outline text=\"\(t)\" title=\"\(t)\" />\n".rs_string(byPrependingNumberOfTabs: indentLevel)
+			return "<outline text=\"\(t)\" title=\"\(t)\" />\n".prepending(tabCount: indentLevel)
 		}
 
-		var s = "<outline text=\"\(t)\" title=\"\(t)\">\n".rs_string(byPrependingNumberOfTabs: indentLevel)
+		var s = "<outline text=\"\(t)\" title=\"\(t)\">\n".prepending(tabCount: indentLevel)
 		for child in children {
 			s += child.OPMLString(indentLevel: indentLevel + 1)
 		}
 
-		s += "</outline>\n".rs_string(byPrependingNumberOfTabs: indentLevel)
+		s += "</outline>\n".prepending(tabCount: indentLevel)
 		return s
 	}
 }
@@ -131,12 +131,12 @@ private struct NNW3Feed {
 extension NNW3Feed: OPMLRepresentable {
 
 	func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
-		let t = title?.rs_stringByEscapingSpecialXMLCharacters() ?? ""
-		let p = homePageURL?.rs_stringByEscapingSpecialXMLCharacters() ?? ""
-		let f = feedURL?.rs_stringByEscapingSpecialXMLCharacters() ?? ""
+		let t = title?.escapingSpecialXMLCharacters ?? ""
+		let p = homePageURL?.escapingSpecialXMLCharacters ?? ""
+		let f = feedURL?.escapingSpecialXMLCharacters ?? ""
 
 		var s = "<outline text=\"\(t)\" title=\"\(t)\" description=\"\" type=\"rss\" version=\"RSS\" htmlUrl=\"\(p)\" xmlUrl=\"\(f)\"/>\n"
-		s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
+		s = s.prepending(tabCount: indentLevel)
 
 		return s
 	}
