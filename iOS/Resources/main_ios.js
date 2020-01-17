@@ -137,6 +137,7 @@ function showClickedImage() {
 function inlineVideos() {
 	document.querySelectorAll("video").forEach(element => {
 		element.setAttribute("playsinline", true)
+		element.setAttribute("controls", true)
 	});
 }
 

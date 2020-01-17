@@ -142,9 +142,15 @@ code, pre {
 	font-size: .8235rem;
 	-webkit-hyphens: none;
 }
-img, figure, video, iframe, div {
+img, figure, iframe, div {
 	max-width: 100%;
 	height: auto !important;
+	margin: 0 auto;
+}
+
+video {
+    width: 100% !important;
+    height: auto !important;
 	margin: 0 auto;
 }
 
