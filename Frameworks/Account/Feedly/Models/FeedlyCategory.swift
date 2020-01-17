@@ -9,6 +9,6 @@
 import Foundation
 
 struct FeedlyCategory: Decodable {
-    var label: String
-    var id: String
+    let label: String
+    let id: String
 }
