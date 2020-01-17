@@ -1,6 +1,6 @@
 # ![Icon](Technotes/Images/icon.png) NetNewsWire
 
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fbrentsimmons%2FNetNewsWire%2Fbadge&style=flat)](https://actions-badge.atrox.dev/brentsimmons/NetNewsWire/goto)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FRanchero-Software%2FNetNewsWire%2Fbadge&style=flat)](https://actions-badge.atrox.dev/Ranchero-Software/NetNewsWire/goto)
 
 It’s a free and open source feed reader for macOS. An iOS version is in progress.
 
@@ -27,7 +27,7 @@ See the [Contributing](CONTRIBUTING.md) page for our process. It’s pretty stra
 #### Building
 
 ```bash
-git clone https://github.com/brentsimmons/NetNewsWire.git
+git clone https://github.com/Ranchero-Software/NetNewsWire.git
 cd NetNewsWire
 git submodule update --init --recursive
 ```
