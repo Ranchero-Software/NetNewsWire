@@ -17,7 +17,7 @@ protocol FeedlyResourceId {
 
 /// The Feed Resource is documented here: https://developer.feedly.com/cloud/
 struct FeedlyFeedResourceId: FeedlyResourceId {
-	var id: String
+	let id: String
 	
 	/// The location of the kind of resource a concrete type represents.
 	/// If the conrete type cannot strip the resource type from the Id, it should just return the Id
@@ -45,7 +45,7 @@ extension FeedlyFeedResourceId {
 }
 
 struct FeedlyCategoryResourceId: FeedlyResourceId {
-	var id: String
+	let id: String
 	
 	enum Global {
 		
@@ -72,7 +72,7 @@ struct FeedlyCategoryResourceId: FeedlyResourceId {
 }
 
 struct FeedlyTagResourceId: FeedlyResourceId {
-	var id: String
+	let id: String
 	
 	enum Global {
 		

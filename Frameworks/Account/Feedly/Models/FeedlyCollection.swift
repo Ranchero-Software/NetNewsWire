@@ -9,7 +9,7 @@
 import Foundation
 
 struct FeedlyCollection: Codable {
-	var feeds: [FeedlyFeed]
-	var label: String
-	var id: String
+	let feeds: [FeedlyFeed]
+	let label: String
+	let id: String
 }

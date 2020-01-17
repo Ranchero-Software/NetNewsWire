@@ -11,7 +11,7 @@ import Articles
 import RSParser
 
 struct FeedlyEntryParser {
-	var entry: FeedlyEntry
+	let entry: FeedlyEntry
 	
 	var id: String {
 		return entry.id

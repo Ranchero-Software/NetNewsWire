@@ -11,9 +11,9 @@ import Foundation
 struct FeedlyFeedsSearchResponse: Decodable {
 	
 	struct Feed: Decodable {
-		var title: String
-		var feedId: String
+		let title: String
+		let feedId: String
 	}
 	
-	var results: [Feed]
+	let results: [Feed]
 }
