@@ -9,6 +9,6 @@
 import Foundation
 
 struct FeedlyTag: Decodable {
-	var id: String
-	var label: String?
+	let id: String
+	let label: String?
 }
