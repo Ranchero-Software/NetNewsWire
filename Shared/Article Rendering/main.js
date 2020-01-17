@@ -25,8 +25,8 @@ function stripStyles() {
 // Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute
 function convertImgSrc() {
 	document.querySelectorAll("img").forEach(element => {
-		if (element.hasAttribute("data-camo-src")) {
-			element.src = element.getAttribute("data-camo-src")
+		if (element.hasAttribute("data-canonical-src")) {
+			element.src = element.getAttribute("data-canonical-src")
 		} else {
 			element.src = new URL(element.src, document.baseURI).href;
 		}
