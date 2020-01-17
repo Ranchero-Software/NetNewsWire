@@ -75,7 +75,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		
 		MainThreadOperationQueue.shared.addOperation(logout)
 		
-		logout.cancel()
+		MainThreadOperationQueue.shared.cancelOperations([logout])
 		
 		waitForExpectations(timeout: 1)
 		
