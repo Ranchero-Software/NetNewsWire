@@ -195,8 +195,10 @@ sub {
 
 @media (max-width: 420px) {
 	blockquote {
-		margin-inline-start: 25px;
+		margin-inline-start: 0;
 		margin-inline-end: 0;
+		padding-left: 15px;
+		border-left: 3px solid var(--secondary-accent-color);
 	}
 }
 
