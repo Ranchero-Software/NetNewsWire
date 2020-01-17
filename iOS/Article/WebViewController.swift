@@ -192,17 +192,13 @@ class WebViewController: UIViewController {
 		webView.becomeFirstResponder()
 	}
 
-	func finalScrollPosition() -> CGFloat {
-		return webView.scrollView.contentSize.height - webView.scrollView.bounds.size.height + webView.scrollView.contentInset.bottom
-	}
-	
 	func canScrollDown() -> Bool {
 		return webView.scrollView.contentOffset.y < finalScrollPosition()
 	}
 
 	func scrollPageDown() {
 		let scrollToY: CGFloat = {
-			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.bounds.size.height
+			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.layoutMarginsGuide.layoutFrame.height
 			let final = finalScrollPosition()
 			return fullScroll < final ? fullScroll : final
 		}()
@@ -464,6 +460,10 @@ private struct ImageClickMessage: Codable {
 
 private extension WebViewController {
 
+	func finalScrollPosition() -> CGFloat {
+		return webView.scrollView.contentSize.height - webView.scrollView.bounds.height + webView.scrollView.safeAreaInsets.bottom
+	}
+	
 	func startArticleExtractor() {
 		if let link = article?.preferredLink, let extractor = ArticleExtractor(link) {
 			extractor.delegate = self

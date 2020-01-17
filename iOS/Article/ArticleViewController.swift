@@ -228,10 +228,6 @@ class ArticleViewController: UIViewController {
 		currentWebViewController?.focus()
 	}
 
-	func finalScrollPosition() -> CGFloat {
-		return currentWebViewController?.finalScrollPosition() ?? 0.0
-	}
-	
 	func canScrollDown() -> Bool {
 		return currentWebViewController?.canScrollDown() ?? false
 	}
