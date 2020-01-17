@@ -80,6 +80,7 @@ class ArticleViewController: UIViewController {
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
+		pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
 		
 		view.addSubview(pageViewController.view)
 		addChild(pageViewController!)
