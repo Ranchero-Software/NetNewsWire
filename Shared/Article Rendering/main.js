@@ -22,10 +22,14 @@ function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font"]));
 }
 
-// Convert all image locations to be absolute
+// Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute
 function convertImgSrc() {
 	document.querySelectorAll("img").forEach(element => {
-		element.src = new URL(element.src, document.baseURI).href;
+		if (element.hasAttribute("data-camo-src")) {
+			element.src = element.getAttribute("data-camo-src")
+		} else {
+			element.src = new URL(element.src, document.baseURI).href;
+		}
 	});
 }
 
