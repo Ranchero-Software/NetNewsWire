@@ -6,7 +6,12 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
+
 import RSCore
 
 extension RSImage {

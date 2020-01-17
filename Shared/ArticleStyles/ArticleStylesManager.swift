@@ -159,7 +159,7 @@ private func filenameWithStyleSuffixRemoved(_ filename: String) -> String {
 
 	for oneSuffix in styleSuffixes {
 		if filename.hasSuffix(oneSuffix) {
-			return (filename as NSString).rs_string(byStrippingSuffix: oneSuffix, caseSensitive: false)
+			return filename.stripping(suffix: oneSuffix)
 		}
 	}
 

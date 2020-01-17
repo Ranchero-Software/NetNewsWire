@@ -30,9 +30,9 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		
         super.viewDidLoad()
 		
-		if initialFeed == nil, let urlString = UIPasteboard.general.string as NSString? {
-			if urlString.rs_stringMayBeURL() {
-				initialFeed = urlString.rs_normalizedURL()
+		if initialFeed == nil, let urlString = UIPasteboard.general.string {
+			if urlString.mayBeURL {
+				initialFeed = urlString.normalizedURL
 			}
 		}
 		
@@ -73,7 +73,7 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 	func add() {
 
 		let urlString = urlTextField.text ?? ""
-		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
+		let normalizedURLString = urlString.normalizedURL
 		
 		guard !normalizedURLString.isEmpty, let url = URL(string: normalizedURLString) else {
 			delegate?.processingDidCancel()
@@ -118,7 +118,7 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 	}
 	
 	@objc func textDidChange(_ note: Notification) {
-		delegate?.readyToAdd(state: urlTextField.text?.rs_stringMayBeURL() ?? false)
+		delegate?.readyToAdd(state: urlTextField.text?.mayBeURL ?? false)
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

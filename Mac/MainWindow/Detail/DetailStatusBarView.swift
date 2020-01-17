@@ -67,7 +67,7 @@ private extension DetailStatusBarView {
 
 	func updateLinkForDisplay() {
 		if let mouseoverLink = mouseoverLink, !mouseoverLink.isEmpty {
-			linkForDisplay = (mouseoverLink as NSString).rs_stringByStrippingHTTPOrHTTPSScheme()
+			linkForDisplay = mouseoverLink.strippingHTTPOrHTTPSScheme
 		}
 		else {
 			linkForDisplay = nil
