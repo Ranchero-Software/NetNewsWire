@@ -51,7 +51,7 @@ a:hover {
 	:root {
 		--primary-accent-color: #2D80F1;
 		--secondary-accent-color: #5E9EF4;
-		--header-table-border-color: rgba(255, 255, 255, 0.1);
+		--header-table-border-color: rgba(255, 255, 255, 0.2);
 		--header-color: #d2d2d2;
 		--body-code-color: #b2b2b2;
 		--system-message-color: #5f5f5f;
@@ -200,6 +200,12 @@ sub {
 		padding-left: 15px;
 		border-left: 3px solid var(--secondary-accent-color);
 	}
+}
+
+/* Feed Specific */
+
+.feedbin--article-wrap {
+	border-top: 1px solid var(--header-table-border-color);
 }
 
 /*Block ads and junk*/
