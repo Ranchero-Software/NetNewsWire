@@ -212,6 +212,7 @@ img[src*="share-buttons"] {
 .newsfoot-footnote-container {
 	position: relative;
 	display: inline-block;
+	z-index: 9999;
 }
 .newsfoot-footnote-popover {
 	position: absolute;
