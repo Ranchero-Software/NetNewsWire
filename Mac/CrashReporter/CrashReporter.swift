@@ -30,7 +30,7 @@ struct CrashLog {
 			return nil
 		}
 		self.content = s
-		self.contentHash = s.md5HashString
+		self.contentHash = s.md5String
 		self.path = path
 		self.modificationDate = modificationDate
 	}

@@ -73,7 +73,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			return
 		}
 
-		let dataHash = (data as NSData).rs_md5HashString()
+		let dataHash = data.md5String
 		if dataHash == feed.contentHash {
 			completion()
 			return
@@ -137,6 +137,6 @@ private extension Data {
 	
 	func isDefinitelyNotFeed() -> Bool {
 		// We only detect a few image types for now. This should get fleshed-out at some later date.
-		return (self as NSData).rs_dataIsImage()
+		return self.isImage
 	}
 }
