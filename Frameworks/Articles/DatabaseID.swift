@@ -26,7 +26,7 @@ public func databaseIDWithString(_ s: String) -> String {
 		return identifier
 	}
 	
-	let identifier = s.md5HashString
+	let identifier = s.md5String
 	databaseIDCache[s] = identifier
 	return identifier
 }

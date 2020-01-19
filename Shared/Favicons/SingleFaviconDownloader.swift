@@ -34,7 +34,7 @@ final class SingleFaviconDownloader {
 	private let queue: DispatchQueue
 
 	private var diskKey: String {
-		return faviconURL.md5HashString
+		return faviconURL.md5String
 	}
 
 	init(faviconURL: String, homePageURL: String?, diskCache: BinaryDiskCache, queue: DispatchQueue) {
