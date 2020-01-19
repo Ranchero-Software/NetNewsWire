@@ -51,6 +51,7 @@ private extension InteractiveNavigationController {
 		navigationAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
 		navigationAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
 		navigationBar.standardAppearance = navigationAppearance
+		navigationBar.scrollEdgeAppearance = navigationAppearance
 		navigationBar.tintColor = AppAssets.primaryAccentColor
 		
 		let toolbarAppearance = UIToolbarAppearance()
