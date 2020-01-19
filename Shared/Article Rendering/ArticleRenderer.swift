@@ -48,7 +48,7 @@ struct ArticleRenderer {
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle, useImageIcon: Bool = false) -> Rendering {
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
 		return (renderer.styleString(), renderer.articleHTML)
 	}
