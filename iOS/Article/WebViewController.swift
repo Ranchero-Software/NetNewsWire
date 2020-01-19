@@ -180,9 +180,9 @@ class WebViewController: UIViewController {
 	}
 	
 	func fullReload() {
-		if let offset = webView?.scrollView.contentOffset.y {
-			restoreOffset = Int(offset)
-			webView?.reload()
+		webView?.evaluateJavaScript("window.scrollY") { (scrollY, _) in
+			self.restoreOffset = scrollY as! Int
+			self.reloadHTML()
 		}
 	}
 
@@ -436,7 +436,9 @@ private extension WebViewController {
 		// play on the iPad where we aren't constantly pushing and popping this controller.
 		if (renderingTracker > 10) {
 			reloadHTML()
+			return
 		}
+		
 		renderingTracker += 1
 		
 		let style = ArticleStylesManager.shared.currentStyle
