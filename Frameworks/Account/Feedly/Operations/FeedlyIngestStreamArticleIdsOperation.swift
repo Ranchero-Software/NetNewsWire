@@ -9,12 +9,13 @@
 import Foundation
 import os.log
 
-/// Single responsibility is to ensure a status exists for every article id the user might be interested in.
+/// Ensure a status exists for every article id the user might be interested in.
 ///
 /// Typically, it pages through the article ids of the global.all stream.
 /// As the article ids are collected, a default read status is created for each.
 /// So this operation has side effects *for the entire account* it operates on.
 class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
+
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
@@ -33,7 +34,6 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		super.run()
 		getStreamIds(nil)
 	}
 	
@@ -52,7 +52,7 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 			account.createStatusesIfNeeded(articleIDs: Set(streamIds.ids)) { databaseError in
 				
 				if let error = databaseError {
-					self.didFinish(error)
+					self.didFinish(with: error)
 					return
 				}
 				
@@ -65,7 +65,7 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 				self.getStreamIds(continuation)
 			}
 		case .failure(let error):
-			didFinish(error)
+			didFinish(with: error)
 		}
 	}
 }

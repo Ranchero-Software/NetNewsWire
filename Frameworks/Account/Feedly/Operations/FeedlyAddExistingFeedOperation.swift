@@ -12,18 +12,17 @@ import RSWeb
 import RSCore
 
 class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
-	private let operationQueue: MainThreadOperationQueue
-	
+
+	private let operationQueue = MainThreadOperationQueue()
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
-	
+
 	init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, log: OSLog) throws {
 		
 		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionId) = try validator.getValidContainer()
 		
-		self.operationQueue = MainThreadOperationQueue()
 		self.operationQueue.suspend()
-		
+
 		super.init()
 		
 		self.downloadProgress = progress
@@ -35,25 +34,23 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 		createFeeds.downloadProgress = progress
-		self.operationQueue.make(createFeeds, dependOn: addRequest)
+		createFeeds.addDependency(addRequest)
 		self.operationQueue.addOperation(createFeeds)
 		
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = progress
-		self.operationQueue.make(finishOperation, dependOn: createFeeds)
+		finishOperation.addDependency(createFeeds)
 		self.operationQueue.addOperation(finishOperation)
 	}
 	
-	override func cancel() {
-		operationQueue.cancelAllOperations()
-		super.cancel()
-		didFinish()
-	}
-	
 	override func run() {
-		super.run()
 		operationQueue.resume()
+	}
+
+	override func didCancel() {
+		operationQueue.cancelAllOperations()
+		addCompletionHandler = nil
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {

@@ -11,13 +11,14 @@ import os.log
 import RSParser
 import SyncDatabase
 
-/// Single responsibility is to clone locally the remote unread article state.
+/// Clone locally the remote unread article state.
 ///
 /// Typically, it pages through the unread article ids of the global.all stream.
 /// When all the unread article ids are collected, a status is created for each.
 /// The article ids previously marked as unread but not collected become read.
 /// So this operation has side effects *for the entire account* it operates on.
 final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
+
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
@@ -39,7 +40,6 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		super.run()
 		getStreamIds(nil)
 	}
 	
@@ -66,7 +66,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 			getStreamIds(continuation)
 			
 		case .failure(let error):
-			didFinish(error)
+			didFinish(with: error)
 		}
 	}
 	
@@ -85,7 +85,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 				self.updateUnreadStatuses()
 				
 			case .failure(let error):
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}
@@ -102,7 +102,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 				self.processUnreadArticleIDs(localUnreadArticleIDs)
 				
 			case .failure(let error):
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}
@@ -142,7 +142,7 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 				self.didFinish()
 				return
 			}
-			self.didFinish(error)
+			self.didFinish(with: error)
 		}
 	}
 }

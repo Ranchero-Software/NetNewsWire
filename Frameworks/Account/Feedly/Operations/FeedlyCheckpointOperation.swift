@@ -12,13 +12,12 @@ protocol FeedlyCheckpointOperationDelegate: class {
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation)
 }
 
-/// Single responsibility is to let the delegate know an instance is executing. The semantics are up to the delegate.
+/// Let the delegate know an instance is executing. The semantics are up to the delegate.
 final class FeedlyCheckpointOperation: FeedlyOperation {
 
 	weak var checkpointDelegate: FeedlyCheckpointOperationDelegate?
-	
+
 	override func run() {
-		super.run()
 		defer {
 			didFinish()
 		}

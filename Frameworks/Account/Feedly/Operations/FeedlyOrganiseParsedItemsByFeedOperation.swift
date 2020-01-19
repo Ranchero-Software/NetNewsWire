@@ -15,8 +15,9 @@ protocol FeedlyParsedItemsByFeedProviding {
 	var parsedItemsKeyedByFeedId: [String: Set<ParsedItem>] { get }
 }
 
-/// Single responsibility is to group articles by their feeds.
+/// Group articles by their feeds.
 final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyParsedItemsByFeedProviding {
+
 	private let account: Account
 	private let parsedItemProvider: FeedlyParsedItemProviding
 	private let log: OSLog
@@ -42,8 +43,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 		defer {
 			didFinish()
 		}
-		super.run()
-		
+
 		let items = parsedItemProvider.parsedEntries
 		var dict = [String: Set<ParsedItem>](minimumCapacity: items.count)
 		

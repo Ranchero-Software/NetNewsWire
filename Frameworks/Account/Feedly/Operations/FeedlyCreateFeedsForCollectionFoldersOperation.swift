@@ -15,7 +15,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 	let account: Account
 	let feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding
 	let log: OSLog
-		
+
 	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding, log: OSLog) {
 		self.feedsAndFoldersProvider = feedsAndFoldersProvider
 		self.account = account
@@ -23,7 +23,6 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		super.run()
 		defer {
 			didFinish()
 		}

@@ -11,12 +11,14 @@ import Articles
 import SyncDatabase
 import os.log
 
-/// Single responsibility is to take changes to statuses of articles locally and apply them to the corresponding the articles remotely.
+
+/// Take changes to statuses of articles locally and apply them to the corresponding the articles remotely.
 final class FeedlySendArticleStatusesOperation: FeedlyOperation {
+
 	private let database: SyncDatabase
 	private let log: OSLog
 	private let service: FeedlyMarkArticlesService
-	
+
 	init(database: SyncDatabase, service: FeedlyMarkArticlesService, log: OSLog) {
 		self.database = database
 		self.service = service
@@ -24,7 +26,6 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		super.run()
 		os_log(.debug, log: log, "Sending article statuses...")
 
 		database.selectForProcessing { result in

@@ -14,6 +14,7 @@ import os.log
 /// Typically, it pages through the article ids of the global.all stream.
 /// When all the article ids are collected, it is the responsibility of another operation to download them when appropriate.
 class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
@@ -40,7 +41,6 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 	private var storedUpdatedArticleIds = Set<String>()
 	
 	override func run() {
-		super.run()
 		getStreamIds(nil)
 	}
 	
@@ -73,7 +73,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 			getStreamIds(continuation)
 			
 		case .failure(let error):
-			didFinish(error)
+			didFinish(with: error)
 		}
 	}
 }
