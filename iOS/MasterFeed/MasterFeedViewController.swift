@@ -1167,7 +1167,7 @@ private extension MasterFeedViewController {
 				feed.rename(to: name) { result in
 					switch result {
 					case .success:
-						self?.reloadNode(node)
+						break
 					case .failure(let error):
 						self?.presentError(error)
 					}
@@ -1176,7 +1176,7 @@ private extension MasterFeedViewController {
 				folder.rename(to: name) { result in
 					switch result {
 					case .success:
-						self?.reloadNode(node)
+						break
 					case .failure(let error):
 						self?.presentError(error)
 					}
