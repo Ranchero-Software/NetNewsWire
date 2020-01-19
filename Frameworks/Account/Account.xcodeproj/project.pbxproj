@@ -399,7 +399,6 @@
 		9EF1B10623590D61000A486A /* FeedlyGetStreamIdsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyGetStreamIdsOperation.swift; sourceTree = "<group>"; };
 		9EF1B10823590E93000A486A /* FeedlyStreamIds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyStreamIds.swift; sourceTree = "<group>"; };
 		9EF2602B23C91FFE006D160C /* FeedlyGetUpdatedArticleIdsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyGetUpdatedArticleIdsOperation.swift; sourceTree = "<group>"; };
-		9EF35F79234E830E003AE2AE /* FeedlyCompoundOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedlyCompoundOperation.swift; sourceTree = "<group>"; };
 		D511EEB5202422BB00712EC3 /* Account_project_debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_debug.xcconfig; sourceTree = "<group>"; };
 		D511EEB6202422BB00712EC3 /* Account_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_target.xcconfig; sourceTree = "<group>"; };
 		D511EEB7202422BB00712EC3 /* Account_project_release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_release.xcconfig; sourceTree = "<group>"; };
@@ -700,7 +699,7 @@
 			isa = PBXGroup;
 			children = (
 				9E1D1554233431A600F4944C /* FeedlyOperation.swift */,
-				9EF35F79234E830E003AE2AE /* FeedlyCompoundOperation.swift */,
+				9E1D154C233370D800F4944C /* FeedlySyncAllOperation.swift */,
 				9EA643D2239305680018A28C /* FeedlySearchOperation.swift */,
 				9E7299D623505E9600DAEFB7 /* FeedlyAddFeedToCollectionOperation.swift */,
 				9EB1D575238E6A3900A753D7 /* FeedlyAddNewFeedOperation.swift */,
@@ -721,7 +720,6 @@
 				9EEEF7202355277F009E9D80 /* FeedlyIngestStarredArticleIdsOperation.swift */,
 				9E84DC462359A23200D6E809 /* FeedlyIngestUnreadArticleIdsOperation.swift */,
 				9EF2602B23C91FFE006D160C /* FeedlyGetUpdatedArticleIdsOperation.swift */,
-				9E1D154C233370D800F4944C /* FeedlySyncAllOperation.swift */,
 				9E672393236F7CA0000BE141 /* FeedlyRefreshAccessTokenOperation.swift */,
 				9E784EBD237E890600099B1B /* FeedlyLogoutOperation.swift */,
 				9E5DE60D23C3F4B70064DA30 /* FeedlyFetchIdsForMissingArticlesOperation.swift */,

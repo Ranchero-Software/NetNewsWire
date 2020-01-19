@@ -18,7 +18,6 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 	
 	var entryIds: Set<String> {
 		guard let ids = streamIds?.ids else {
-			assert(isFinished, "This should only be called when the operation finishes without error.")
 			assertionFailure("Has this operation been addeded as a dependency on the caller?")
 			return []
 		}
@@ -34,7 +33,7 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 	let unreadOnly: Bool?
 	let newerThan: Date?
 	let log: OSLog
-		
+
 	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?, log: OSLog) {
 		self.account = account
 		self.resource = resource
@@ -48,8 +47,6 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
 	
 	override func run() {
-		super.run()
-		
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
@@ -61,7 +58,7 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 				
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Unable to get stream ids: %{public}@.", error as NSError)
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}

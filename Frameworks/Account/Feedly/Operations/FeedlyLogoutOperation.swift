@@ -14,6 +14,7 @@ protocol FeedlyLogoutService {
 }
 
 final class FeedlyLogoutOperation: FeedlyOperation {
+
 	let service: FeedlyLogoutService
 	let account: Account
 	let log: OSLog
@@ -25,7 +26,6 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		super.run()
 		os_log("Requesting logout of %{public}@ account.", "\(account.type)")
 		service.logout(completion: didCompleteLogout(_:))
 	}
@@ -45,7 +45,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 			
 		case .failure(let error):
 			os_log("Logout failed because %{public}@.", error as NSError)
-			didFinish(error)
+			didFinish(with: error)
 		}
 	}
 }

@@ -13,7 +13,7 @@ protocol FeedlyRequestStreamsOperationDelegate: class {
 	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue collectionStreamOperation: FeedlyGetStreamContentsOperation)
 }
 
-/// Single responsibility is to create one stream request operation for one Feedly collection.
+/// Create one stream request operation for one Feedly collection.
 /// This is the start of the process of refreshing the entire contents of a Folder.
 final class FeedlyRequestStreamsOperation: FeedlyOperation {
 	
@@ -25,7 +25,7 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 	let log: OSLog
 	let newerThan: Date?
 	let unreadOnly: Bool?
-		
+
 	init(account: Account, collectionsProvider: FeedlyCollectionProviding, newerThan: Date?, unreadOnly: Bool?, service: FeedlyGetStreamContentsService, log: OSLog) {
 		self.account = account
 		self.service = service
@@ -36,7 +36,6 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		super.run()
 		defer {
 			didFinish()
 		}

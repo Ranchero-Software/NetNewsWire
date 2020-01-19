@@ -10,13 +10,14 @@ import Foundation
 import os.log
 import SyncDatabase
 
-/// Single responsibility is to clone locally the remote starred article state.
+/// Clone locally the remote starred article state.
 ///
 /// Typically, it pages through the article ids of the global.saved stream.
 /// When all the article ids are collected, a status is created for each.
 /// The article ids previously marked as starred but not collected become unstarred.
 /// So this operation has side effects *for the entire account* it operates on.
 final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
+
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
@@ -38,7 +39,6 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	}
 	
 	override func run() {
-		super.run()
 		getStreamIds(nil)
 	}
 	
@@ -65,7 +65,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 			getStreamIds(continuation)
 			
 		case .failure(let error):
-			didFinish(error)
+			didFinish(with: error)
 		}
 	}
 	
@@ -84,7 +84,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 				self.updateStarredStatuses()
 				
 			case .failure(let error):
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}
@@ -101,7 +101,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 				self.processStarredArticleIDs(localStarredArticleIDs)
 				
 			case .failure(let error):
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}
@@ -142,7 +142,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 				self.didFinish()
 				return
 			}
-			self.didFinish(error)
+			self.didFinish(with: error)
 		}
 	}
 }

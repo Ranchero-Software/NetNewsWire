@@ -10,8 +10,10 @@ import Foundation
 import os.log
 import RSParser
 import RSCore
+import RSWeb
 
 final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyGetStreamContentsOperationDelegate, FeedlyCheckpointOperationDelegate {
+
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let operationQueue = MainThreadOperationQueue()
@@ -43,18 +45,15 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		self.init(account: account, resource: all, service: service, isPagingEnabled: true, newerThan: newerThan, log: log)
 	}
 	
-	override func cancel() {
-		os_log(.debug, log: log, "Canceling sync stream contents")
-		operationQueue.cancelAllOperations()
-		super.cancel()
-		didFinish()
-	}
-	
 	override func run() {
-		super.run()
 		operationQueue.resume()
 	}
-	
+
+	override func didCancel() {
+		os_log(.debug, log: log, "Canceling sync stream contents")
+		operationQueue.cancelAllOperations()
+	}
+
 	func enqueueOperations(for continuation: String?) {
 		os_log(.debug, log: log, "Requesting page for %@", resource.id)
 		let operations = pageOperations(for: continuation)
@@ -70,24 +69,20 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 													   log: log)
 
 		
-		let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
-																	  parsedItemProvider: getPage,
-																	  log: log)
+		let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: getPage, log: log)
 		
-		let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
-																	   organisedItemsProvider: organiseByFeed,
-																	   log: log)
+		let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account, organisedItemsProvider: organiseByFeed, log: log)
 		
 		getPage.delegate = self
 		getPage.streamDelegate = self
 
-		operationQueue.make(organiseByFeed, dependOn: getPage)
+		organiseByFeed.addDependency(getPage)
 		organiseByFeed.delegate = self
 
-		operationQueue.make(updateAccount, dependOn: organiseByFeed)
+		updateAccount.addDependency(organiseByFeed)
 		updateAccount.delegate = self
 
-		operationQueue.make(finishOperation, dependOn: updateAccount)
+		finishOperation.addDependency(updateAccount)
 
 		return [getPage, organiseByFeed, updateAccount]
 	}
@@ -115,6 +110,6 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		operationQueue.cancelAllOperations()
-		didFinish(error)
+		didFinish(with: error)
 	}
 }

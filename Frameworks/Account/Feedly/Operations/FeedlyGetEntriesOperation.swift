@@ -10,13 +10,14 @@ import Foundation
 import os.log
 import RSParser
 
-/// Single responsibility is to get full entries for the entry identifiers.
+/// Get full entries for the entry identifiers.
 final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
+
 	let account: Account
 	let service: FeedlyGetEntriesService
 	let provider: FeedlyEntryIdentifierProviding
 	let log: OSLog
-		
+
 	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding, log: OSLog) {
 		self.account = account
 		self.service = service
@@ -55,8 +56,6 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 	}
 	
 	override func run() {
-		super.run()
-		
 		service.getEntries(for: provider.entryIds) { result in
 			switch result {
 			case .success(let entries):
@@ -65,7 +64,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 				
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Unable to get entries: %{public}@.", error as NSError)
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}

@@ -9,8 +9,10 @@
 import Foundation
 import os.log
 import RSCore
+import RSWeb
 
 class FeedlyDownloadArticlesOperation: FeedlyOperation {
+
 	private let account: Account
 	private let log: OSLog
 	private let missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding
@@ -27,24 +29,12 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 		self.getEntriesService = getEntriesService
 		self.finishOperation = FeedlyCheckpointOperation()
 		self.log = log
-		
 		super.init()
-		
 		self.finishOperation.checkpointDelegate = self
 		self.operationQueue.addOperation(self.finishOperation)
 	}
 	
-	override func cancel() {
-		// TODO: fix error on below line: "Expression type '()' is ambiguous without more context"
-		//os_log(.debug, log: log, "Cancelling %{public}@.", self)
-		operationQueue.cancelAllOperations()
-		super.cancel()
-		didFinish()
-	}
-	
 	override func run() {
-		super.run()
-
 		var articleIds = missingArticleEntryIdProvider.entryIds
 		articleIds.formUnion(updatedArticleEntryIdProvider.entryIds)
 		
@@ -62,7 +52,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 																		  parsedItemProvider: getEntries,
 																		  log: log)
 			organiseByFeed.delegate = self
-			self.operationQueue.make(organiseByFeed, dependOn: getEntries)
+			organiseByFeed.addDependency(getEntries)
 			self.operationQueue.addOperation(organiseByFeed)
 			
 			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
@@ -70,13 +60,20 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 			log: log)
 			
 			updateAccount.delegate = self
-			self.operationQueue.make(updateAccount, dependOn: organiseByFeed)
+			updateAccount.addDependency(organiseByFeed)
 			self.operationQueue.addOperation(updateAccount)
 
-			self.operationQueue.make(finishOperation, dependOn: updateAccount)
+			finishOperation.addDependency(updateAccount)
 		}
 		
 		operationQueue.resume()
+	}
+
+	override func didCancel() {
+		// TODO: fix error on below line: "Expression type '()' is ambiguous without more context"
+			//os_log(.debug, log: log, "Cancelling %{public}@.", self)
+		operationQueue.cancelAllOperations()
+		didFinish()
 	}
 }
 
