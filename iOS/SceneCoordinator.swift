@@ -290,6 +290,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
@@ -426,6 +427,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
+		treeControllerDelegate.resetFilterExceptions()
+	}
+
+	@objc func unreadCountDidChange(_ note: Notification) {
+		// If we are filtering reads, the new unread count is greater than 1, and the feed isn't shown then continue
+		guard let feed = note.object as? Feed, isReadFeedsFiltered, feed.unreadCount > 0, !shadowTableContains(feed) else {
+			return
+		}
+
+		for section in shadowTable {
+			for node in section {
+				if let feed = node.representedObject as? Feed, let feedID = feed.feedID {
+					treeControllerDelegate.addFilterException(feedID)
+				}
+			}
+		}
+		
+		rebuildBackingStores()
 		treeControllerDelegate.resetFilterExceptions()
 	}
 
@@ -1210,6 +1229,17 @@ private extension SceneCoordinator {
 			shadowTable.append(result)
 			
 		}
+	}
+	
+	func shadowTableContains(_ feed: Feed) -> Bool {
+		for section in shadowTable {
+			for node in section {
+				if let nodeFeed = node.representedObject as? Feed, nodeFeed.feedID == feed.feedID {
+					return true
+				}
+			}
+		}
+		return false
 	}
 
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
