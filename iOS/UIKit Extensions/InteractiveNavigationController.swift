@@ -47,11 +47,15 @@ private extension InteractiveNavigationController {
 	func configure() {
 		isToolbarHidden = false
 		
-		let navigationAppearance = UINavigationBarAppearance()
-		navigationAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
-		navigationAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
-		navigationBar.standardAppearance = navigationAppearance
-		navigationBar.scrollEdgeAppearance = navigationAppearance
+		let navigationStandardAppearance = UINavigationBarAppearance()
+		navigationStandardAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+		navigationStandardAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
+		navigationBar.standardAppearance = navigationStandardAppearance
+		
+		let scrollEdgeStandardAppearance = UINavigationBarAppearance()
+		scrollEdgeStandardAppearance.backgroundColor = .systemBackground
+		navigationBar.scrollEdgeAppearance = scrollEdgeStandardAppearance
+		
 		navigationBar.tintColor = AppAssets.primaryAccentColor
 		
 		let toolbarAppearance = UIToolbarAppearance()
