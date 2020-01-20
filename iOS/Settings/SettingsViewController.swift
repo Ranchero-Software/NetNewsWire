@@ -318,9 +318,10 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 				switch result {
 				case .success:
 					break
-				case .failure(let error):
+				case .failure:
 					let title = NSLocalizedString("Import Failed", comment: "Import Failed")
-					self.presentError(title: title, message: error.localizedDescription)
+					let message = NSLocalizedString("We were unable to process the selected file.  Please ensure that it is a properly formatted OPML file.", comment: "Import Failed Message")
+					self.presentError(title: title, message: message)
 				}
 			}
 		}
@@ -382,7 +383,7 @@ private extension SettingsViewController {
 	}
 	
 	func importOPMLDocumentPicker() {
-		let docPicker = UIDocumentPickerViewController(documentTypes: ["public.xml", "org.opml.opml"], in: .import)
+		let docPicker = UIDocumentPickerViewController(documentTypes: ["public.text"], in: .import)
 		docPicker.delegate = self
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
