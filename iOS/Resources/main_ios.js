@@ -145,3 +145,14 @@ function postRenderProcessing() {
 	ImageViewer.init();
 	inlineVideos();
 }
+
+function stopMediaPlayback() {
+	document.querySelectorAll("iframe").forEach(element => {
+		var iframeSrc = element.src;
+		element.src = iframeSrc;
+	});
+
+	document.querySelectorAll("video, audio").forEach(element => {
+		element.pause();
+	});
+}

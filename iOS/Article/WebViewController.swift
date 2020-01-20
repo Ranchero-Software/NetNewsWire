@@ -123,6 +123,12 @@ class WebViewController: UIViewController {
 		}
 		
 	}
+
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+
+		stopMediaPlayback()
+	}
 	
 	// MARK: Notifications
 	
@@ -525,6 +531,10 @@ private extension WebViewController {
 			
 			coordinator.showFullScreenImage(image: image, imageTitle: clickMessage.imageTitle, transitioningDelegate: self)
 		}
+	}
+
+	func stopMediaPlayback() {
+		webView?.evaluateJavaScript("stopMediaPlayback();")
 	}
 	
 	func configureTopShowBarsView() {
