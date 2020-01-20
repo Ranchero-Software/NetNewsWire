@@ -214,6 +214,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		headerView.gestureRecognizers?.removeAll()
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
+		
+		// Without this the swipe gesture registers on the cell below
+		headerView.addGestureRecognizer(UIPanGestureRecognizer(target: nil, action: nil))
 
 		headerView.interactions.removeAll()
 		if section != 0 {
