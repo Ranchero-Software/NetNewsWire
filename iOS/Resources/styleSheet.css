@@ -216,6 +216,11 @@ blockquote {
 	border-top: 1px solid var(--header-table-border-color);
 }
 
+.wp-smiley {
+   height: 1em;
+   max-height: 1em;
+}
+
 /*Block ads and junk*/
 
 iframe[src*="feedads"],
