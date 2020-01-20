@@ -177,7 +177,7 @@ extension Folder: OPMLRepresentable {
 		
 		let attrExternalID: String = {
 			if allowCustomAttributes, let externalID = externalID {
-				return " nnw_externalID=\"\(externalID)\""
+				return " nnw_externalID=\"\(externalID.escapingSpecialXMLCharacters)\""
 			} else {
 				return ""
 			}
