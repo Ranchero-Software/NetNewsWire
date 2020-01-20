@@ -48,6 +48,7 @@ class FeedlyOperation: MainThreadOperation {
 		if !isCanceled {
 			operationDelegate?.operationDidComplete(self)
 		}
+		downloadProgress?.completeTask()
 	}
 
 	func didFinish(with error: Error) {
@@ -56,5 +57,6 @@ class FeedlyOperation: MainThreadOperation {
 	}
 
 	func didCancel() {
+		didFinish()
 	}
 }

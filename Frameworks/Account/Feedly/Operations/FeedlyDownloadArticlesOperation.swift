@@ -73,7 +73,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 		// TODO: fix error on below line: "Expression type '()' is ambiguous without more context"
 			//os_log(.debug, log: log, "Cancelling %{public}@.", self)
 		operationQueue.cancelAllOperations()
-		didFinish()
+		super.didCancel()
 	}
 }
 
