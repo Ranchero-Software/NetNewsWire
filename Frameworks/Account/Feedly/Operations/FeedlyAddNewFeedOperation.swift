@@ -64,6 +64,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 	override func didCancel() {
 		operationQueue.cancelAllOperations()
 		addCompletionHandler = nil
+		super.didCancel()
 	}
 
 	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse) {

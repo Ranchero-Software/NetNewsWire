@@ -52,6 +52,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	override func didCancel() {
 		os_log(.debug, log: log, "Canceling sync stream contents")
 		operationQueue.cancelAllOperations()
+		super.didCancel()
 	}
 
 	func enqueueOperations(for continuation: String?) {

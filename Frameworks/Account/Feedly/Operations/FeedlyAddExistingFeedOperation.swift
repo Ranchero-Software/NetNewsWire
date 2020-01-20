@@ -51,6 +51,7 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 	override func didCancel() {
 		operationQueue.cancelAllOperations()
 		addCompletionHandler = nil
+		super.didCancel()
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
