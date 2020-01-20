@@ -99,50 +99,28 @@ class SettingsViewController: UITableViewController {
 	
 	// MARK: UITableView
 	
-	override func numberOfSections(in tableView: UITableView) -> Int {
-		var sections = super.numberOfSections(in: tableView)
-		if traitCollection.userInterfaceIdiom != .phone {
-			sections = sections - 1
-		}
-		return sections
-	}
-	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		var adjustedSection = section
-		if traitCollection.userInterfaceIdiom != .phone && section > 3 {
-			adjustedSection = adjustedSection + 1
-		}
 		
-		switch adjustedSection {
+		switch section {
 		case 1:
 			return AccountManager.shared.accounts.count + 1
 		case 2:
-			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: adjustedSection)
+			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
+		case 4:
+			return traitCollection.userInterfaceIdiom == .phone ? 2 : 1
 		default:
-			return super.tableView(tableView, numberOfRowsInSection: adjustedSection)
+			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
-	}
-	
-	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		var adjustedSection = section
-		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
-			adjustedSection = adjustedSection + 1
-		}
-		return super.tableView(tableView, titleForHeaderInSection: adjustedSection)
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		var adjustedSection = indexPath.section
-		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
-			adjustedSection = adjustedSection + 1
-		}
 
 		let cell: UITableViewCell
-		switch adjustedSection {
+		switch indexPath.section {
 		case 1:
 						
 			let sortedAccounts = AccountManager.shared.sortedAccounts
@@ -159,8 +137,7 @@ class SettingsViewController: UITableViewController {
 			}
 		
 		default:
-			let adjustedIndexPath = IndexPath(row: indexPath.row, section: adjustedSection)
-			cell = super.tableView(tableView, cellForRowAt: adjustedIndexPath)
+			cell = super.tableView(tableView, cellForRowAt: indexPath)
 			
 		}
 		
@@ -168,12 +145,8 @@ class SettingsViewController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		var adjustedSection = indexPath.section
-		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
-			adjustedSection = adjustedSection + 1
-		}
 
-		switch adjustedSection {
+		switch indexPath.section {
 		case 0:
 			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
 			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
