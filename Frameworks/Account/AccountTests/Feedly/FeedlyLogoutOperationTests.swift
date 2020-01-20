@@ -80,7 +80,6 @@ class FeedlyLogoutOperationTests: XCTestCase {
 		waitForExpectations(timeout: 1)
 		
 		XCTAssertTrue(logout.isCanceled)
-		XCTAssertTrue(logout.isFinished)
 		
 		do {
 			let accountAccessToken = try account.retrieveCredentials(type: .oauthAccessToken)

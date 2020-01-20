@@ -30,7 +30,7 @@ class FeedlyOperationTests: XCTestCase {
 			didCallMainExpectation?.fulfill()
 			
 			if let error = mockError {
-				didFinish(error)
+				didFinish(with: error)
 			} else {
 				didFinish()
 			}
@@ -88,16 +88,12 @@ class FeedlyOperationTests: XCTestCase {
 		}
 		
 
-		XCTAssertFalse(testOperation.isFinished)
-		XCTAssertFalse(testOperation.isExecuting)
 		XCTAssertFalse(testOperation.isCanceled)
 		
 		MainThreadOperationQueue.shared.addOperation(testOperation)
 		
 		waitForExpectations(timeout: 2)
 		
-		XCTAssertTrue(testOperation.isFinished)
-		XCTAssertFalse(testOperation.isExecuting)
 		XCTAssertFalse(testOperation.isCanceled)
     }
 	
@@ -111,8 +107,6 @@ class FeedlyOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		XCTAssertFalse(testOperation.isFinished)
-		XCTAssertFalse(testOperation.isExecuting)
 		XCTAssertFalse(testOperation.isCanceled)
 		
 		MainThreadOperationQueue.shared.addOperation(testOperation)
@@ -121,8 +115,6 @@ class FeedlyOperationTests: XCTestCase {
 		
 		waitForExpectations(timeout: 2)
 		
-		XCTAssertTrue(testOperation.isFinished)
-		XCTAssertFalse(testOperation.isExecuting)
 		XCTAssertTrue(testOperation.isCanceled)
     }
 	
