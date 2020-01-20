@@ -528,7 +528,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: animated)
 				}
 			} else {
-				tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+				if animated {
+					// This nasty bit of duct tape is because there is something, somewhere
+					// interrupting the deselection animation, which will leave the row selected.
+					// This seems to get it far enough away the problem that it always works.
+					DispatchQueue.main.async {
+						self.tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+					}
+				} else {
+					self.tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+				}
 			}
 		}
 	}
