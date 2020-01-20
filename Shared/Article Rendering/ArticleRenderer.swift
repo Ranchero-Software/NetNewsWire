@@ -157,7 +157,7 @@ private extension ArticleRenderer {
 		let mediumDate = dateString(datePublished, .medium, .short)
 		let shortDate = dateString(datePublished, .short, .short)
 
-		if dateShouldBeLink() || self.title == "", let permalink = article.url {
+		if let permalink = article.url {
 			d["date_long"] = longDate.htmlByAddingLink(permalink)
 			d["date_medium"] = mediumDate.htmlByAddingLink(permalink)
 			d["date_short"] = shortDate.htmlByAddingLink(permalink)
@@ -171,16 +171,6 @@ private extension ArticleRenderer {
 		d["byline"] = byline()
 
 		return d
-	}
-
-	func dateShouldBeLink() -> Bool {
-		guard let permalink = article?.url else {
-			return false
-		}
-		guard let preferredLink = article?.preferredLink else { // Title uses preferredLink
-			return false
-		}
-		return permalink != preferredLink // Make date a link if it’s a different link from the title’s link
 	}
 
 	func byline() -> String {
