@@ -116,6 +116,10 @@ body > .systemMessage {
 	font-weight: bold;
 }
 
+.articleDateline a:link, .articleDateline a:visited {
+	color: var(--article-title-color);
+}
+
 .articleBody {
 	line-height: 1.6em;
 }
