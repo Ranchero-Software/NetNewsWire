@@ -88,8 +88,10 @@ extension FeedlyDownloadArticlesOperation: FeedlyOperationDelegate {
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		assert(Thread.isMainThread)
-		// TODO: fix error for below line "Error is not convertible to NSError"
-		//os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", operation, error as NSError)
+		
+		// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
+		os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", String(describing: operation), error as NSError)
+		
 		cancel()
 	}
 }
