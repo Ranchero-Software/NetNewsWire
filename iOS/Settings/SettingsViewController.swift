@@ -8,6 +8,7 @@
 
 import UIKit
 import Account
+import CoreServices
 import SafariServices
 
 class SettingsViewController: UITableViewController {
@@ -383,7 +384,17 @@ private extension SettingsViewController {
 	}
 	
 	func importOPMLDocumentPicker() {
-		let docPicker = UIDocumentPickerViewController(documentTypes: ["public.text"], in: .import)
+		
+		let utiArray = UTTypeCreateAllIdentifiersForTag(kUTTagClassFilenameExtension, "opml" as NSString, nil)?.takeRetainedValue() as? [String] ?? [String]()
+
+		var opmlUTIs = utiArray
+			.compactMap({ UTTypeCopyDeclaration($0 as NSString)?.takeUnretainedValue() as? [String: Any] })
+			.reduce([String]()) { (result, dict) in
+				return result + dict.values.compactMap({ $0 as? String })
+			}
+		opmlUTIs.append("public.xml")
+		
+		let docPicker = UIDocumentPickerViewController(documentTypes: opmlUTIs, in: .import)
 		docPicker.delegate = self
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
