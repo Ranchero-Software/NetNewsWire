@@ -45,7 +45,7 @@ a:hover {
 	--system-message-color: #cbcbcb;
 	--feedlink-color: rgba(0, 0, 0, 0.6);
 	--article-title-color: #333;
-	--table-border-color: lightgray;
+	--table-cell-border-color: lightgray;
 }
 
 @media(prefers-color-scheme: dark) {
@@ -57,7 +57,7 @@ a:hover {
 		--body-code-color: #b2b2b2;
 		--system-message-color: #5f5f5f;
 		--article-title-color: #e0e0e0;
-		--table-border-color: dimgray;
+		--table-cell-border-color: dimgray;
 	}
 }
 
@@ -162,7 +162,7 @@ code, pre {
 .nnw-overflow td, .nnw-overflow th {
 	-webkit-hyphens: none;
 	word-break: normal;
-	border: 1px solid var(--table-border-color);
+	border: 1px solid var(--table-cell-border-color);
 	border-top: none;
 	border-left: none;
 	padding: 5px;
