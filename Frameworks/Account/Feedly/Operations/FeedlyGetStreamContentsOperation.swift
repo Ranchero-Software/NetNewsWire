@@ -23,7 +23,7 @@ protocol FeedlyGetStreamContentsOperationDelegate: class {
 	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream)
 }
 
-/// Single responsibility is to get the stream content of a Collection from Feedly.
+/// Get the stream content of a Collection from Feedly.
 final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
 	
 	struct ResourceProvider: FeedlyResourceProviding {
@@ -38,7 +38,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 	
 	var entries: [FeedlyEntry] {
 		guard let entries = stream?.items else {
-			assert(isFinished, "This should only be called when the operation finishes without error.")
+//			assert(isFinished, "This should only be called when the operation finishes without error.")
 			assertionFailure("Has this operation been addeded as a dependency on the caller?")
 			return []
 		}
@@ -82,7 +82,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 	let log: OSLog
 	
 	weak var streamDelegate: FeedlyGetStreamContentsOperationDelegate?
-	
+
 	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil, log: OSLog) {
 		self.account = account
 		self.resourceProvider = ResourceProvider(resource: resource)
@@ -97,12 +97,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 		self.init(account: account, resource: resourceProvider.resource, service: service, newerThan: newerThan, unreadOnly: unreadOnly, log: log)
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		service.getStreamContents(for: resourceProvider.resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
@@ -114,7 +109,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 				
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Unable to get stream contents: %{public}@.", error as NSError)
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}

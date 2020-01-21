@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Account
+import RSCore
 
 class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 	
@@ -54,13 +55,13 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
 		let completionExpectation = expectation(description: "Did Finish")
-		createFeeds.completionBlock = {
+		createFeeds.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
 		XCTAssertTrue(account.flattenedWebFeeds().isEmpty, "Expected empty account.")
 		
-		OperationQueue.main.addOperation(createFeeds)
+		MainThreadOperationQueue.shared.addOperation(createFeeds)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -125,13 +126,13 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			
 			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
 			let completionExpectation = expectation(description: "Did Finish")
-			createFeeds.completionBlock = {
+			createFeeds.completionBlock = { _ in
 				completionExpectation.fulfill()
 			}
 			
 			XCTAssertTrue(account.flattenedWebFeeds().isEmpty, "Expected empty account.")
 			
-			OperationQueue.main.addOperation(createFeeds)
+			MainThreadOperationQueue.shared.addOperation(createFeeds)
 			
 			waitForExpectations(timeout: 2)
 		}
@@ -149,11 +150,11 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		
 		let removeFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: provider, log: support.log)
 		let completionExpectation = expectation(description: "Did Finish")
-		removeFeeds.completionBlock = {
+		removeFeeds.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(removeFeeds)
+		MainThreadOperationQueue.shared.addOperation(removeFeeds)
 		
 		waitForExpectations(timeout: 2)
 		

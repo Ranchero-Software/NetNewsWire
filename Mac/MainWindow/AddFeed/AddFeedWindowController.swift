@@ -36,7 +36,7 @@ class AddFeedWindowController : NSWindowController {
 
 	private var userEnteredTitle: String? {
 		var s = nameTextField.stringValue
-		s = s.rs_stringWithCollapsedWhitespace()
+		s = s.collapsingWhitespace
 		if s.isEmpty {
 			return nil
 		}
@@ -93,7 +93,7 @@ class AddFeedWindowController : NSWindowController {
     
     @IBAction func addFeed(_ sender: Any?) {
 		let urlString = urlTextField.stringValue
-		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
+		let normalizedURLString = urlString.normalizedURL
 
 		if normalizedURLString.isEmpty {
 			cancelSheet()
@@ -130,7 +130,7 @@ class AddFeedWindowController : NSWindowController {
 private extension AddFeedWindowController {
 	
 	private func updateUI() {
-		addButton.isEnabled = urlTextField.stringValue.rs_stringMayBeURL()
+		addButton.isEnabled = urlTextField.stringValue.mayBeURL
 	}
 
 	func cancelSheet() {

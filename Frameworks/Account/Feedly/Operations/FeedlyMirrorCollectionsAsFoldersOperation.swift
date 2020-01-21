@@ -17,7 +17,7 @@ protocol FeedlyFeedsAndFoldersProviding {
 	var feedsAndFolders: [([FeedlyFeed], Folder)] { get }
 }
 
-/// Single responsibility is accurately reflect Collections from Feedly as Folders.
+/// Reflect Collections from Feedly as Folders.
 final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyCollectionsAndFoldersProviding, FeedlyFeedsAndFoldersProviding {
 	
 	let account: Account
@@ -26,17 +26,17 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyCo
 	
 	private(set) var collectionsAndFolders = [(FeedlyCollection, Folder)]()
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
-	
+
 	init(account: Account, collectionsProvider: FeedlyCollectionProviding, log: OSLog) {
 		self.collectionsProvider = collectionsProvider
 		self.account = account
 		self.log = log
 	}
 	
-	override func main() {
-		defer { didFinish() }
-		
-		guard !isCancelled else { return }
+	override func run() {
+		defer {
+			didFinish()
+		}
 		
 		let localFolders = account.folders ?? Set()
 		let collections = collectionsProvider.collections

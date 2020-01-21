@@ -10,6 +10,7 @@ import Foundation
 import os.log
 
 final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+
 	private let account: Account
 	private let log: OSLog
 	
@@ -20,12 +21,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 		self.log = log
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-				
+	override func run() {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 			switch result {
 			case .success(let articleIds):
@@ -33,7 +29,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 				self.didFinish()
 				
 			case .failure(let error):
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}

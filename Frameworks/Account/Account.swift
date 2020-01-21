@@ -1261,13 +1261,13 @@ extension Account {
 
 extension Account: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		var s = ""
 		for feed in topLevelWebFeeds.sorted() {
-			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
+			s += feed.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 		}
 		for folder in folders!.sorted() {
-			s += folder.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
+			s += folder.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 		}
 		return s
 	}

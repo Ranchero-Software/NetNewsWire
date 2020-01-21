@@ -16,6 +16,23 @@ public enum AccountError: LocalizedError {
 	case opmlImportInProgress
 	case wrappedError(error: Error, account: Account)
 	
+	public var acount: Account? {
+		if case .wrappedError(_, let account) = self {
+			return account
+		} else {
+			return nil
+		}
+	}
+	
+	public var isCredentialsError: Bool {
+		if case .wrappedError(let error, _) = self {
+			if case TransportError.httpError(let status) = error {
+				return isCredentialsError(status: status)
+			}
+		}
+		return false
+	}
+	
 	public var errorDescription: String? {
 		switch self {
 		case .createErrorNotFound:
@@ -27,7 +44,7 @@ public enum AccountError: LocalizedError {
 		case .wrappedError(let error, let account):
 			switch error {
 			case TransportError.httpError(let status):
-				if status == 401 {
+				if isCredentialsError(status: status) {
 					let localizedText = NSLocalizedString("Your “%@” credentials are invalid or expired.", comment: "Invalid or expired")
 					return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay) as String
 				} else {
@@ -48,7 +65,7 @@ public enum AccountError: LocalizedError {
 		case .wrappedError(let error, _):
 			switch error {
 			case TransportError.httpError(let status):
-				if status == 401  || status == 403 {
+				if isCredentialsError(status: status) {
 					return NSLocalizedString("Please update your credentials for this account, or ensure that your account with this service is still valid.", comment: "Expired credentials")
 				} else {
 					return NSLocalizedString("Please try again later.", comment: "Try later")
@@ -61,8 +78,19 @@ public enum AccountError: LocalizedError {
 		}
 	}
 	
-	private func unknownError(_ error: Error, _ account: Account) -> String {
+}
+
+// MARK: Private
+
+private extension AccountError {
+	
+	func unknownError(_ error: Error, _ account: Account) -> String {
 		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
 		return NSString.localizedStringWithFormat(localizedText as NSString, account.nameForDisplay, error.localizedDescription) as String
 	}
+	
+	func isCredentialsError(status: Int) -> Bool {
+		return status == 401  || status == 403
+	}
+	
 }

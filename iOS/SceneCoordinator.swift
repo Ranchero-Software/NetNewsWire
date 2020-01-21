@@ -290,6 +290,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
@@ -429,6 +430,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		treeControllerDelegate.resetFilterExceptions()
 	}
 
+	@objc func unreadCountDidChange(_ note: Notification) {
+		// If we are filtering reads, the new unread count is greater than 1, and the feed isn't shown then continue
+		guard let feed = note.object as? Feed, isReadFeedsFiltered, feed.unreadCount > 0, !shadowTableContains(feed) else {
+			return
+		}
+
+		for section in shadowTable {
+			for node in section {
+				if let feed = node.representedObject as? Feed, let feedID = feed.feedID {
+					treeControllerDelegate.addFilterException(feedID)
+				}
+			}
+		}
+		
+		rebuildBackingStores()
+		treeControllerDelegate.resetFilterExceptions()
+	}
+
 	@objc func statusesDidChange(_ note: Notification) {
 		updateUnreadCount()
 	}
@@ -555,13 +574,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func unreadCountFor(_ node: Node) -> Int {
-		// The coordinator supplies the unread count for the currently selected feed node
-		if let indexPath = currentFeedIndexPath, let selectedNode = nodeFor(indexPath), selectedNode == node {
+		// The coordinator supplies the unread count for the currently selected feed
+		if let feed = timelineFeed, let selectedNode = rootNode.descendantNodeRepresentingObject(feed as AnyObject), selectedNode == node {
 			return unreadCount
 		}
 		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
 			return unreadCountProvider.unreadCount
 		}
+		assertionFailure("This method should only be called for nodes that have an UnreadCountProvider as the represented object.")
 		return 0
 	}
 	
@@ -940,6 +960,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func discloseFeed(_ feed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
+		if isSearching {
+			masterTimelineViewController?.hideSearch()
+		}
+		
 		masterFeedViewController.discloseFeed(feed, animated: animated) {
 			completion?()
 		}
@@ -1205,6 +1229,17 @@ private extension SceneCoordinator {
 			shadowTable.append(result)
 			
 		}
+	}
+	
+	func shadowTableContains(_ feed: Feed) -> Bool {
+		for section in shadowTable {
+			for node in section {
+				if let nodeFeed = node.representedObject as? Feed, nodeFeed.feedID == feed.feedID {
+					return true
+				}
+			}
+		}
+		return false
 	}
 
 	func nodeFor(_ indexPath: IndexPath) -> Node? {

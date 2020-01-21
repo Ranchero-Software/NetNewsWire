@@ -106,7 +106,9 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		}
 		
 		if let urlString = url?.absoluteString, account!.hasWebFeed(withURL: urlString) {
-			presentError(AccountError.createErrorAlreadySubscribed)
+			let errorTitle = NSLocalizedString("Error", comment: "Error")
+			presentError(title: errorTitle, message: AccountError.createErrorAlreadySubscribed.localizedDescription)
+			self.extensionContext!.cancelRequest(withError: AccountError.createErrorAlreadySubscribed)
  			return
 		}
 		

@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import RSParser
+import RSCore
 
 class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 	
@@ -42,11 +43,11 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		organise.completionBlock = {
+		organise.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(organise)
+		MainThreadOperationQueue.shared.addOperation(organise)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -63,11 +64,11 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		organise.completionBlock = {
+		organise.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(organise)
+		MainThreadOperationQueue.shared.addOperation(organise)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -84,11 +85,11 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 		let organise = FeedlyOrganiseParsedItemsByFeedOperation(account: account, parsedItemProvider: provider, log: support.log)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		organise.completionBlock = {
+		organise.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(organise)
+		MainThreadOperationQueue.shared.addOperation(organise)
 		
 		waitForExpectations(timeout: 2)
 		

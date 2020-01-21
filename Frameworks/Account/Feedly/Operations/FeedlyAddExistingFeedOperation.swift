@@ -9,20 +9,20 @@
 import Foundation
 import os.log
 import RSWeb
+import RSCore
 
 class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
-	private let operationQueue: OperationQueue
-	
+
+	private let operationQueue = MainThreadOperationQueue()
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
-	
+
 	init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, log: OSLog) throws {
 		
-		let validator = FeedlyFeedContainerValidator(container: container, userId: credentials.username)
+		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionId) = try validator.getValidContainer()
 		
-		self.operationQueue = OperationQueue()
-		self.operationQueue.isSuspended = true
-		
+		self.operationQueue.suspend()
+
 		super.init()
 		
 		self.downloadProgress = progress
@@ -44,17 +44,14 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		self.operationQueue.addOperation(finishOperation)
 	}
 	
-	override func cancel() {
-		operationQueue.cancelAllOperations()
-		super.cancel()
-		didFinish()
+	override func run() {
+		operationQueue.resume()
 	}
-	
-	override func main() {
-		guard !isCancelled else {
-			return
-		}
-		operationQueue.isSuspended = false
+
+	override func didCancel() {
+		operationQueue.cancelAllOperations()
+		addCompletionHandler = nil
+		super.didCancel()
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
@@ -65,7 +62,7 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 	}
 	
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			return
 		}
 		

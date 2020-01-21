@@ -10,6 +10,7 @@ import XCTest
 @testable import Account
 import SyncDatabase
 import Articles
+import RSCore
 
 class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	
@@ -36,11 +37,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 	}
@@ -67,11 +68,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -110,11 +111,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -153,11 +154,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -196,11 +197,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -239,11 +240,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -282,11 +283,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -325,11 +326,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -368,11 +369,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -428,11 +429,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -489,11 +490,11 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		let send = FeedlySendArticleStatusesOperation(database: container.database, service: service, log: support.log)
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		send.completionBlock = {
+		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(send)
+		MainThreadOperationQueue.shared.addOperation(send)
 		
 		waitForExpectations(timeout: 2)
 		

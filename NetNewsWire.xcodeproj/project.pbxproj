@@ -123,6 +123,7 @@
 		518B2EE82351B45600400001 /* NetNewsWire_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840D61952029031D009BC708 /* NetNewsWire_iOSTests.swift */; };
 		518C3193237B00D9004D740F /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7552374A2890013FF27 /* ArticleIconSchemeHandler.swift */; };
 		518C3194237B00DA004D740F /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7552374A2890013FF27 /* ArticleIconSchemeHandler.swift */; };
+		518ED21D23D0F26000E0A862 /* UIViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518ED21C23D0F26000E0A862 /* UIViewController-Extensions.swift */; };
 		51934CCB230F599B006127BE /* InteractiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CC1230F5963006127BE /* InteractiveNavigationController.swift */; };
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
@@ -1307,6 +1308,7 @@
 		5186A634235EF3A800C97195 /* VibrantLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantLabel.swift; sourceTree = "<group>"; };
 		518B2ED22351B3DD00400001 /* NetNewsWire-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NetNewsWire-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		518B2EE92351B4C200400001 /* NetNewsWire_iOSTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSTests_target.xcconfig; sourceTree = "<group>"; };
+		518ED21C23D0F26000E0A862 /* UIViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController-Extensions.swift"; sourceTree = "<group>"; };
 		51934CC1230F5963006127BE /* InteractiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveNavigationController.swift; sourceTree = "<group>"; };
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
@@ -1889,13 +1891,14 @@
 				512363372369155100951F16 /* RoundedProgressView.swift */,
 				51C45250226506F400C03939 /* String-Extensions.swift */,
 				5108F6D723763094001ABC45 /* TickMarkSlider.swift */,
+				C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */,
 				51F85BF82274AA7B00C787DC /* UIBarButtonItem-Extensions.swift */,
 				51F85BF622749FA100C787DC /* UIFont-Extensions.swift */,
 				51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */,
+				518ED21C23D0F26000E0A862 /* UIViewController-Extensions.swift */,
 				51FFF0C3235EE8E5002762AA /* VibrantButton.swift */,
 				5186A634235EF3A800C97195 /* VibrantLabel.swift */,
 				5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */,
-				C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */,
 			);
 			path = "UIKit Extensions";
 			sourceTree = "<group>";
@@ -3835,6 +3838,7 @@
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,
 				B2B80778239C4C7000F191E0 /* RSImage-AppIcons.swift in Sources */,
+				518ED21D23D0F26000E0A862 /* UIViewController-Extensions.swift in Sources */,
 				51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */,
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,

@@ -8,39 +8,37 @@
 
 import Foundation
 import os.log
+import SyncDatabase
 
-/// Single responsibility is to clone locally the remote starred article state.
+/// Clone locally the remote starred article state.
 ///
 /// Typically, it pages through the article ids of the global.saved stream.
 /// When all the article ids are collected, a status is created for each.
 /// The article ids previously marked as starred but not collected become unstarred.
 /// So this operation has side effects *for the entire account* it operates on.
 final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
+
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
-	private let entryIdsProvider: FeedlyEntryIdentifierProvider
+	private let database: SyncDatabase
+	private var remoteEntryIds = Set<String>()
 	private let log: OSLog
 	
-	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
+	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
 		let resource = FeedlyTagResourceId.Global.saved(for: credentials.username)
-		self.init(account: account, resource: resource, service: service, newerThan: newerThan, log: log)
+		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan, log: log)
 	}
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
 		self.account = account
 		self.resource = resource
 		self.service = service
-		self.entryIdsProvider = FeedlyEntryIdentifierProvider()
+		self.database = database
 		self.log = log
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		getStreamIds(nil)
 	}
 	
@@ -49,7 +47,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	}
 	
 	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}
@@ -57,22 +55,42 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 		switch result {
 		case .success(let streamIds):
 			
-			entryIdsProvider.addEntryIds(in: streamIds.ids)
+			remoteEntryIds.formUnion(streamIds.ids)
 			
 			guard let continuation = streamIds.continuation else {
-				updateStarredStatuses()
+				removeEntryIdsWithPendingStatus()
 				return
 			}
 			
 			getStreamIds(continuation)
 			
 		case .failure(let error):
-			didFinish(error)
+			didFinish(with: error)
+		}
+	}
+	
+	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
+	private func removeEntryIdsWithPendingStatus() {
+		guard !isCanceled else {
+			didFinish()
+			return
+		}
+		
+		database.selectPendingStarredStatusArticleIDs { result in
+			switch result {
+			case .success(let pendingArticleIds):
+				self.remoteEntryIds.subtract(pendingArticleIds)
+				
+				self.updateStarredStatuses()
+				
+			case .failure(let error):
+				self.didFinish(with: error)
+			}
 		}
 	}
 	
 	private func updateStarredStatuses() {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}
@@ -83,18 +101,18 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 				self.processStarredArticleIDs(localStarredArticleIDs)
 				
 			case .failure(let error):
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}
 	
 	func processStarredArticleIDs(_ localStarredArticleIDs: Set<String>) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}
 		
-		let remoteStarredArticleIDs = entryIdsProvider.entryIds
+		let remoteStarredArticleIDs = remoteEntryIds
 		
 		let group = DispatchGroup()
 		
@@ -124,7 +142,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 				self.didFinish()
 				return
 			}
-			self.didFinish(error)
+			self.didFinish(with: error)
 		}
 	}
 }

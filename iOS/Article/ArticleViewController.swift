@@ -80,6 +80,7 @@ class ArticleViewController: UIViewController {
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
+		pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
 		
 		view.addSubview(pageViewController.view)
 		addChild(pageViewController!)
@@ -91,6 +92,7 @@ class ArticleViewController: UIViewController {
 		])
 				
 		let controller = createWebViewController(article)
+		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
 		
 		updateUI()
@@ -227,10 +229,6 @@ class ArticleViewController: UIViewController {
 		currentWebViewController?.focus()
 	}
 
-	func finalScrollPosition() -> CGFloat {
-		return currentWebViewController?.finalScrollPosition() ?? 0.0
-	}
-	
 	func canScrollDown() -> Bool {
 		return currentWebViewController?.canScrollDown() ?? false
 	}

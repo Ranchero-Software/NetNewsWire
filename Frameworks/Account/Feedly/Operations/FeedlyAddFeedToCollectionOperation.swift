@@ -13,13 +13,14 @@ protocol FeedlyAddFeedToCollectionService {
 }
 
 final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
+
 	let feedName: String?
 	let collectionId: String
 	let service: FeedlyAddFeedToCollectionService
 	let account: Account
 	let folder: Folder
 	let feedResource: FeedlyFeedResourceId
-	
+
 	init(account: Account, folder: Folder, feedResource: FeedlyFeedResourceId, feedName: String? = nil, collectionId: String, service: FeedlyAddFeedToCollectionService) {
 		self.account = account
 		self.folder = folder
@@ -35,23 +36,23 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 		return feedResource
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			return didFinish()
-		}
-		
+	override func run() {
 		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
 			guard let self = self else {
 				return
 			}
-			guard !self.isCancelled else {
-				return self.didFinish()
+			if self.isCanceled {
+				self.didFinish()
+				return
 			}
 			self.didCompleteRequest(result)
 		}
 	}
-	
-	private func didCompleteRequest(_ result: Result<[FeedlyFeed], Error>) {
+}
+
+private extension FeedlyAddFeedToCollectionOperation {
+
+	func didCompleteRequest(_ result: Result<[FeedlyFeed], Error>) {
 		switch result {
 		case .success(let feedlyFeeds):
 			feedsAndFolders = [(feedlyFeeds, folder)]
@@ -59,13 +60,13 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 			let feedsWithCreatedFeedId = feedlyFeeds.filter { $0.id == resource.id }
 			
 			if feedsWithCreatedFeedId.isEmpty {
-				didFinish(AccountError.createErrorNotFound)
+				didFinish(with: AccountError.createErrorNotFound)
 			} else {
 				didFinish()
 			}
 			
 		case .failure(let error):
-			didFinish(error)
+			didFinish(with: error)
 		}
 	}
 }

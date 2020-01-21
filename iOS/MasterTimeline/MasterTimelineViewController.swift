@@ -198,6 +198,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		updateUI()
 	}
+	
+	func hideSearch() {
+		navigationItem.searchController?.isActive = false
+	}
 
 	func showSearchAll() {
 		navigationItem.searchController?.isActive = true

@@ -28,6 +28,7 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
+	private var renderingTracker = 0
 	private var webView: WKWebView!
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
@@ -41,7 +42,7 @@ class WebViewController: UIViewController {
 	private var isShowingExtractedArticle = false {
 		didSet {
 			if isShowingExtractedArticle != oldValue {
-				reloadHTML()
+				renderPage()
 			}
 		}
 	}
@@ -62,7 +63,7 @@ class WebViewController: UIViewController {
 				startArticleExtractor()
 			}
 			if article != oldValue {
-				reloadHTML()
+				renderPage()
 			}
 		}
 	}
@@ -101,6 +102,7 @@ class WebViewController: UIViewController {
 				self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
 			])
 
+			// Configure the tap zones
 			self.configureTopShowBarsView()
 			self.configureBottomShowBarsView()
 			
@@ -114,50 +116,18 @@ class WebViewController: UIViewController {
 
 			// Even though page.html should be loaded into this webview, we have to do it again
 			// to work around this bug: http://www.openradar.me/22855188
-			let url = Bundle.main.url(forResource: "page", withExtension: "html")!
-			webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-
+			self.reloadHTML()
+			
 			self.view.setNeedsLayout()
 			self.view.layoutIfNeeded()
 		}
 		
 	}
 
-	func reloadHTML() {
-		guard let webView = webView else { return }
-		
-		let style = ArticleStylesManager.shared.currentStyle
-		let rendering: ArticleRenderer.Rendering
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
 
-		if let articleExtractor = articleExtractor, articleExtractor.state == .processing {
-			rendering = ArticleRenderer.loadingHTML(style: style)
-		} else if let article = article, let extractedArticle = extractedArticle {
-			if isShowingExtractedArticle {
-				rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style, useImageIcon: true)
-			} else {
-				rendering = ArticleRenderer.articleHTML(article: article, style: style, useImageIcon: true)
-			}
-		} else if let article = article {
-			rendering = ArticleRenderer.articleHTML(article: article, style: style, useImageIcon: true)
-		} else {
-			rendering = ArticleRenderer.noSelectionHTML(style: style)
-		}
-		
-		let templateData = TemplateData(style: rendering.style, body: rendering.html)
-		
-		let encoder = JSONEncoder()
-		var render = "error();"
-		if let data = try? encoder.encode(templateData) {
-			let json = String(data: data, encoding: .utf8)!
-			render = "render(\(json), \(restoreOffset));"
-		}
-
-		restoreOffset = 0
-		
-		WebViewProvider.shared.articleIconSchemeHandler.currentArticle = article
-		webView.scrollView.setZoomScale(1.0, animated: false)
-		webView.evaluateJavaScript(render)
-		
+		stopMediaPlayback()
 	}
 	
 	// MARK: Notifications
@@ -175,7 +145,7 @@ class WebViewController: UIViewController {
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
-		reloadHTML()
+		fullReload()
 	}
 	
 	// MARK: Actions
@@ -190,17 +160,13 @@ class WebViewController: UIViewController {
 		webView.becomeFirstResponder()
 	}
 
-	func finalScrollPosition() -> CGFloat {
-		return webView.scrollView.contentSize.height - webView.scrollView.bounds.size.height + webView.scrollView.contentInset.bottom
-	}
-	
 	func canScrollDown() -> Bool {
 		return webView.scrollView.contentOffset.y < finalScrollPosition()
 	}
 
 	func scrollPageDown() {
 		let scrollToY: CGFloat = {
-			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.bounds.size.height
+			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.layoutMarginsGuide.layoutFrame.height
 			let final = finalScrollPosition()
 			return fullScroll < final ? fullScroll : final
 		}()
@@ -220,9 +186,9 @@ class WebViewController: UIViewController {
 	}
 	
 	func fullReload() {
-		if let offset = webView?.scrollView.contentOffset.y {
-			restoreOffset = Int(offset)
-			webView?.reload()
+		webView?.evaluateJavaScript("window.scrollY") { (scrollY, _) in
+			self.restoreOffset = scrollY as! Int
+			self.reloadHTML()
 		}
 	}
 
@@ -295,6 +261,7 @@ extension WebViewController: ArticleExtractorDelegate {
 	func articleExtractionDidFail(with: Error) {
 		stopArticleExtractor()
 		articleExtractorButtonState = .error
+		renderPage()
 	}
 
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
@@ -354,9 +321,17 @@ extension WebViewController: WKNavigationDelegate {
 			
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
-				let vc = SFSafariViewController(url: url)
-				present(vc, animated: true)
 				decisionHandler(.cancel)
+				
+				// If the resource cannot be opened with an installed app, present the web view.
+				UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { didOpen in
+					assert(Thread.isMainThread)
+					guard didOpen == false else {
+						return
+					}
+					let vc = SFSafariViewController(url: url)
+					self.present(vc, animated: true)
+				}
 			} else {
 				decisionHandler(.allow)
 			}
@@ -370,7 +345,7 @@ extension WebViewController: WKNavigationDelegate {
 	}
 
 	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		self.reloadHTML()
+		self.renderPage()
 	}
 	
 }
@@ -453,6 +428,65 @@ private struct ImageClickMessage: Codable {
 
 private extension WebViewController {
 
+	func reloadHTML() {
+		let url = Bundle.main.url(forResource: "page", withExtension: "html")!
+		webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+		renderingTracker = 0
+	}
+
+	func renderPage() {
+		guard let webView = webView else { return }
+		 
+		// It looks like we need to clean up the webview every once in a while by reloading it from scratch
+		// Otherwise it will stop responding or cause rendering artifacts.  This typically only comes into
+		// play on the iPad where we aren't constantly pushing and popping this controller.
+		if (renderingTracker > 10) {
+			reloadHTML()
+			return
+		}
+		
+		renderingTracker += 1
+		
+		let style = ArticleStylesManager.shared.currentStyle
+		let rendering: ArticleRenderer.Rendering
+
+		if let articleExtractor = articleExtractor, articleExtractor.state == .processing {
+			rendering = ArticleRenderer.loadingHTML(style: style)
+		} else if let articleExtractor = articleExtractor, articleExtractor.state == .failedToParse, let article = article {
+			rendering = ArticleRenderer.articleHTML(article: article, style: style)
+		} else if let article = article, let extractedArticle = extractedArticle {
+			if isShowingExtractedArticle {
+				rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
+			} else {
+				rendering = ArticleRenderer.articleHTML(article: article, style: style)
+			}
+		} else if let article = article {
+			rendering = ArticleRenderer.articleHTML(article: article, style: style)
+		} else {
+			rendering = ArticleRenderer.noSelectionHTML(style: style)
+		}
+		
+		let templateData = TemplateData(style: rendering.style, body: rendering.html)
+		
+		let encoder = JSONEncoder()
+		var render = "error();"
+		if let data = try? encoder.encode(templateData) {
+			let json = String(data: data, encoding: .utf8)!
+			render = "render(\(json), \(restoreOffset));"
+		}
+
+		restoreOffset = 0
+		
+		WebViewProvider.shared.articleIconSchemeHandler.currentArticle = article
+		webView.scrollView.setZoomScale(1.0, animated: false)
+		webView.evaluateJavaScript(render)
+		
+	}
+	
+	func finalScrollPosition() -> CGFloat {
+		return webView.scrollView.contentSize.height - webView.scrollView.bounds.height + webView.scrollView.safeAreaInsets.bottom
+	}
+	
 	func startArticleExtractor() {
 		if let link = article?.preferredLink, let extractor = ArticleExtractor(link) {
 			extractor.delegate = self
@@ -497,6 +531,10 @@ private extension WebViewController {
 			
 			coordinator.showFullScreenImage(image: image, imageTitle: clickMessage.imageTitle, transitioningDelegate: self)
 		}
+	}
+
+	func stopMediaPlayback() {
+		webView?.evaluateJavaScript("stopMediaPlayback();")
 	}
 	
 	func configureTopShowBarsView() {

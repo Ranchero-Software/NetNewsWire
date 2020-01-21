@@ -29,7 +29,7 @@ extension PseudoFeed {
 }
 #else
 
-import Foundation
+import UIKit
 import Articles
 import Account
 import RSCore

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -252,27 +252,45 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Home Page" id="dTd-6q-SZd">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="0zc-o6-Sjh">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="0zc-o6-Sjh" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="204.5" width="374" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0zc-o6-Sjh" id="vJs-XK-ebf">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HUP-Cu-FGT" customClass="InteractiveLabel" customModule="NetNewsWire" customModuleProvider="target">
-                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HUP-Cu-FGT">
+                                                    <rect key="frame" x="20" y="11" width="301" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="safari" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="p82-kn-lfh">
+                                                    <rect key="frame" x="329" y="10" width="25" height="24"/>
+                                                    <color key="tintColor" name="primaryAccentColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="25" id="Suu-bu-Lar"/>
+                                                        <constraint firstAttribute="height" constant="25" id="gD0-zu-2pr"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="p82-kn-lfh" firstAttribute="leading" secondItem="HUP-Cu-FGT" secondAttribute="trailing" constant="8" symbolic="YES" id="4Ze-t9-SMR"/>
+                                                <constraint firstAttribute="trailing" secondItem="p82-kn-lfh" secondAttribute="trailing" constant="20" symbolic="YES" id="69m-bk-BHO"/>
                                                 <constraint firstItem="HUP-Cu-FGT" firstAttribute="leading" secondItem="vJs-XK-ebf" secondAttribute="leadingMargin" id="GrO-sc-ZMe"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="HUP-Cu-FGT" secondAttribute="bottom" id="Jtq-bB-vJN"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="HUP-Cu-FGT" secondAttribute="trailing" id="Nbf-dl-g4K"/>
+                                                <constraint firstItem="p82-kn-lfh" firstAttribute="centerY" secondItem="vJs-XK-ebf" secondAttribute="centerY" id="f1u-Mm-Arn"/>
                                                 <constraint firstItem="HUP-Cu-FGT" firstAttribute="top" secondItem="vJs-XK-ebf" secondAttribute="topMargin" id="lBd-G7-RdW"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="image" keyPath="imageNormal" value="safari" catalog="system"/>
+                                            <userDefinedRuntimeAttribute type="image" keyPath="imageSelected" value="safari.fill" catalog="system"/>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <outlet property="icon" destination="p82-kn-lfh" id="qYr-gp-cbS"/>
+                                            <outlet property="label" destination="HUP-Cu-FGT" id="FWP-ba-TIm"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -361,6 +379,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="safari" catalog="system" width="64" height="60"/>
+        <image name="safari.fill" catalog="system" width="64" height="60"/>
         <namedColor name="deleteBackgroundColor">
             <color red="1" green="0.23100000619888306" blue="0.18799999356269836" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

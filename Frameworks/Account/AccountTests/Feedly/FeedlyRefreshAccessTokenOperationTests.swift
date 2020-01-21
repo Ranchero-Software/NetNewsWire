@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import RSWeb
+import RSCore
 
 class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 	
@@ -56,17 +57,17 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		refresh.completionBlock = {
+		refresh.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(refresh)
+		MainThreadOperationQueue.shared.addOperation(refresh)
 		
-		refresh.cancel()
+		MainThreadOperationQueue.shared.cancelOperations([refresh])
 		
 		waitForExpectations(timeout: 1)
 		
-		XCTAssertTrue(refresh.isCancelled)
+		XCTAssertTrue(refresh.isCanceled)
 	}
 	
 	class TestRefreshTokenDelegate: FeedlyOperationDelegate {
@@ -95,11 +96,11 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		refresh.completionBlock = {
+		refresh.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(refresh)
+		MainThreadOperationQueue.shared.addOperation(refresh)
 		
 		waitForExpectations(timeout: 1)
 		
@@ -142,11 +143,11 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		refresh.completionBlock = {
+		refresh.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(refresh)
+		MainThreadOperationQueue.shared.addOperation(refresh)
 				
 		waitForExpectations(timeout: 1)
 		
@@ -196,11 +197,11 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		refresh.completionBlock = {
+		refresh.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(refresh)
+		MainThreadOperationQueue.shared.addOperation(refresh)
 				
 		waitForExpectations(timeout: 1)
 		

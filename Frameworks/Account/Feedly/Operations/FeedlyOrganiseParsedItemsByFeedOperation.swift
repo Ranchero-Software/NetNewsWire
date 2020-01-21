@@ -15,8 +15,9 @@ protocol FeedlyParsedItemsByFeedProviding {
 	var parsedItemsKeyedByFeedId: [String: Set<ParsedItem>] { get }
 }
 
-/// Single responsibility is to group articles by their feeds.
+/// Group articles by their feeds.
 final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyParsedItemsByFeedProviding {
+
 	private let account: Account
 	private let parsedItemProvider: FeedlyParsedItemProviding
 	private let log: OSLog
@@ -26,7 +27,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 	}
 	
 	var parsedItemsKeyedByFeedId: [String : Set<ParsedItem>] {
-		assert(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
+		precondition(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
 		return itemsKeyedByFeedId
 	}
 	
@@ -38,11 +39,11 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 		self.log = log
 	}
 	
-	override func main() {
-		defer { didFinish() }
-		
-		guard !isCancelled else { return }
-		
+	override func run() {
+		defer {
+			didFinish()
+		}
+
 		let items = parsedItemProvider.parsedEntries
 		var dict = [String: Set<ParsedItem>](minimumCapacity: items.count)
 		
@@ -57,8 +58,6 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 				}
 			}()
 			dict[key] = value
-			
-			guard !isCancelled else { return }
 		}
 		
 		os_log(.debug, log: log, "Grouped %i items by %i feeds for %@", items.count, dict.count, parsedItemProvider.parsedItemProviderName)

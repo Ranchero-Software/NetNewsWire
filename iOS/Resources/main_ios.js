@@ -59,7 +59,6 @@ class ImageViewer {
 
 	showImage() {
 		this.img.style.opacity = 1
-		window.webkit.messageHandlers.imageWasShown.postMessage("");
 	}
 
 	showLoadingIndicator() {
@@ -129,6 +128,7 @@ function showClickedImage() {
 	if (activeImageViewer) {
 		activeImageViewer.showImage();
 	}
+	window.webkit.messageHandlers.imageWasShown.postMessage("");
 }
 
 // Add the playsinline attribute to any HTML5 videos that don"t have it.
@@ -137,10 +137,22 @@ function showClickedImage() {
 function inlineVideos() {
 	document.querySelectorAll("video").forEach(element => {
 		element.setAttribute("playsinline", true)
+		element.setAttribute("controls", true)
 	});
 }
 
 function postRenderProcessing() {
 	ImageViewer.init();
 	inlineVideos();
+}
+
+function stopMediaPlayback() {
+	document.querySelectorAll("iframe").forEach(element => {
+		var iframeSrc = element.src;
+		element.src = iframeSrc;
+	});
+
+	document.querySelectorAll("video, audio").forEach(element => {
+		element.pause();
+	});
 }

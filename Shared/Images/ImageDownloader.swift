@@ -128,7 +128,7 @@ private extension ImageDownloader {
 
 	func diskKey(_ url: String) -> String {
 
-		return (url as NSString).rs_md5Hash()
+		return url.md5String
 	}
 
 	func postImageDidBecomeAvailableNotification(_ url: String) {

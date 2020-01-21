@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import RSCore
 
 class AccountsAddViewController: NSViewController {
 	
@@ -111,7 +112,7 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
-			OperationQueue.main.addOperation(addAccount)
+			MainThreadOperationQueue.shared.addOperation(addAccount)
 		default:
 			break
 		}

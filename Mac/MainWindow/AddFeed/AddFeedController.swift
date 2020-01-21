@@ -99,7 +99,7 @@ private extension AddFeedController {
 
 	var urlStringFromPasteboard: String? {
 		if let urlString = NSPasteboard.urlString(from: NSPasteboard.general) {
-			return urlString.rs_normalizedURL()
+			return urlString.normalizedURL
 		}
 		return nil
 	}

@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Account
+import RSCore
 
 class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 	
@@ -37,14 +38,14 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		let provider = CollectionsProvider()
 		let mirrorOperation = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
 		let completionExpectation = expectation(description: "Did Finish")
-		mirrorOperation.completionBlock = {
+		mirrorOperation.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
 		XCTAssertTrue(mirrorOperation.collectionsAndFolders.isEmpty)
 		XCTAssertTrue(mirrorOperation.feedsAndFolders.isEmpty)
 		
-		OperationQueue.main.addOperation(mirrorOperation)
+		MainThreadOperationQueue.shared.addOperation(mirrorOperation)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -69,11 +70,11 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		do {
 			let addFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
 			let completionExpectation = expectation(description: "Did Finish")
-			addFolders.completionBlock = {
+			addFolders.completionBlock = { _ in
 				completionExpectation.fulfill()
 			}
 			
-			OperationQueue.main.addOperation(addFolders)
+			MainThreadOperationQueue.shared.addOperation(addFolders)
 			
 			waitForExpectations(timeout: 2)
 		}
@@ -83,11 +84,11 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		
 		let removeFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
 		let completionExpectation = expectation(description: "Did Finish")
-		removeFolders.completionBlock = {
+		removeFolders.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(removeFolders)
+		MainThreadOperationQueue.shared.addOperation(removeFolders)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -131,11 +132,11 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		let provider = CollectionsAndFeedsProvider()
 		let mirrorOperation = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
 		let completionExpectation = expectation(description: "Did Finish")
-		mirrorOperation.completionBlock = {
+		mirrorOperation.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(mirrorOperation)
+		MainThreadOperationQueue.shared.addOperation(mirrorOperation)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -172,14 +173,14 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 			let addFoldersAndFeeds = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
 			
 			let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addFoldersAndFeeds, log: support.log)
-			createFeeds.addDependency(addFoldersAndFeeds)
+			MainThreadOperationQueue.shared.make(createFeeds, dependOn: addFoldersAndFeeds)
 			
 			let completionExpectation = expectation(description: "Did Finish")
-			createFeeds.completionBlock = {
+			createFeeds.completionBlock = { _ in
 				completionExpectation.fulfill()
 			}
 			
-			OperationQueue.main.addOperations([addFoldersAndFeeds, createFeeds], waitUntilFinished: false)
+			MainThreadOperationQueue.shared.addOperations([addFoldersAndFeeds, createFeeds])
 			
 			waitForExpectations(timeout: 2)
 			
@@ -192,11 +193,11 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		
 		let removeFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: provider, log: support.log)
 		let completionExpectation = expectation(description: "Did Finish")
-		removeFolders.completionBlock = {
+		removeFolders.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(removeFolders)
+		MainThreadOperationQueue.shared.addOperation(removeFolders)
 		
 		waitForExpectations(timeout: 2)
 		

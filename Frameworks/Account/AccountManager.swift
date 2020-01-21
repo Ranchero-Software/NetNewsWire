@@ -389,7 +389,7 @@ private struct AccountSpecifier {
 
 
 	init?(folderPath: String) {
-		if !FileManager.default.rs_fileIsFolder(folderPath) {
+		if !FileManager.default.isFolder(atPath: folderPath) {
 			return nil
 		}
 		

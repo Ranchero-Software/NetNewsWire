@@ -15,17 +15,17 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 	let account: Account
 	let feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding
 	let log: OSLog
-		
+
 	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding, log: OSLog) {
 		self.feedsAndFoldersProvider = feedsAndFoldersProvider
 		self.account = account
 		self.log = log
 	}
 	
-	override func main() {
-		defer { didFinish() }
-		
-		guard !isCancelled else { return }
+	override func run() {
+		defer {
+			didFinish()
+		}
 
 		let pairs = feedsAndFoldersProvider.feedsAndFolders
 		

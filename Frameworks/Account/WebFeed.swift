@@ -43,7 +43,7 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 		set {
 			if let url = newValue, !url.isEmpty {
-				metadata.homePageURL = url.rs_normalizedURL()
+				metadata.homePageURL = url.normalizedURL
 			}
 			else {
 				metadata.homePageURL = nil
@@ -245,7 +245,7 @@ public final class WebFeed: Feed, Renamable, Hashable {
 
 extension WebFeed: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		// https://github.com/brentsimmons/NetNewsWire/issues/527
 		// Don’t use nameForDisplay because that can result in a feed name "Untitled" written to disk,
 		// which NetNewsWire may take later to be the actual name.
@@ -256,16 +256,16 @@ extension WebFeed: OPMLRepresentable {
 		if nameToUse == nil {
 			nameToUse = ""
 		}
-		let escapedName = nameToUse!.rs_stringByEscapingSpecialXMLCharacters()
+		let escapedName = nameToUse!.escapingSpecialXMLCharacters
 		
 		var escapedHomePageURL = ""
 		if let homePageURL = homePageURL {
-			escapedHomePageURL = homePageURL.rs_stringByEscapingSpecialXMLCharacters()
+			escapedHomePageURL = homePageURL.escapingSpecialXMLCharacters
 		}
-		let escapedFeedURL = url.rs_stringByEscapingSpecialXMLCharacters()
+		let escapedFeedURL = url.escapingSpecialXMLCharacters
 
 		var s = "<outline text=\"\(escapedName)\" title=\"\(escapedName)\" description=\"\" type=\"rss\" version=\"RSS\" htmlUrl=\"\(escapedHomePageURL)\" xmlUrl=\"\(escapedFeedURL)\"/>\n"
-		s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
+		s = s.prepending(tabCount: indentLevel)
 
 		return s
 	}

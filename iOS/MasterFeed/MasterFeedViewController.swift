@@ -107,8 +107,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		var node: Node? = nil
-		if let coordinator = representedObject as? SceneCoordinator, let fetcher = coordinator.timelineFeed {
-			node = coordinator.rootNode.descendantNodeRepresentingObject(fetcher as AnyObject)
+		if let coordinator = representedObject as? SceneCoordinator, let feed = coordinator.timelineFeed {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
 		} else {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
@@ -214,6 +214,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		headerView.gestureRecognizers?.removeAll()
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
+		
+		// Without this the swipe gesture registers on the cell below
+		headerView.addGestureRecognizer(UIPanGestureRecognizer(target: nil, action: nil))
 
 		headerView.interactions.removeAll()
 		if section != 0 {
@@ -528,7 +531,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: animated)
 				}
 			} else {
-				tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+				if animated {
+					// This nasty bit of duct tape is because there is something, somewhere
+					// interrupting the deselection animation, which will leave the row selected.
+					// This seems to get it far enough away the problem that it always works.
+					DispatchQueue.main.async {
+						self.tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+					}
+				} else {
+					self.tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+				}
 			}
 		}
 	}
@@ -1167,7 +1179,7 @@ private extension MasterFeedViewController {
 				feed.rename(to: name) { result in
 					switch result {
 					case .success:
-						self?.reloadNode(node)
+						break
 					case .failure(let error):
 						self?.presentError(error)
 					}
@@ -1176,7 +1188,7 @@ private extension MasterFeedViewController {
 				folder.rename(to: name) { result in
 					switch result {
 					case .success:
-						self?.reloadNode(node)
+						break
 					case .failure(let error):
 						self?.presentError(error)
 					}

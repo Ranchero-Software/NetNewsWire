@@ -16,27 +16,22 @@ protocol FeedlySearchOperationDelegate: class {
 	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse)
 }
 
-/// Single responsibility is to find one and only one feed for a given query (usually, a URL).
+/// Find one and only one feed for a given query (usually, a URL).
 /// What happens when a feed is found for the URL is delegated to the `searchDelegate`.
 class FeedlySearchOperation: FeedlyOperation {
+
 	let query: String
 	let locale: Locale
 	let searchService: FeedlySearchService
-	
 	weak var searchDelegate: FeedlySearchOperationDelegate?
-	
+
 	init(query: String, locale: Locale = .current, service: FeedlySearchService) {
 		self.query = query
 		self.locale = locale
 		self.searchService = service
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		searchService.getFeeds(for: query, count: 1, locale: locale.identifier) { result in
 			switch result {
 			case .success(let response):
@@ -45,7 +40,7 @@ class FeedlySearchOperation: FeedlyOperation {
 				self.didFinish()
 				
 			case .failure(let error):
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}

@@ -10,10 +10,12 @@ import Foundation
 import os.log
 import SyncDatabase
 import RSWeb
+import RSCore
 
-/// Single responsibility is to compose the operations necessary to get the entire set of articles, feeds and folders with the statuses the user expects between now and a certain date in the past.
+/// Compose the operations necessary to get the entire set of articles, feeds and folders with the statuses the user expects between now and a certain date in the past.
 final class FeedlySyncAllOperation: FeedlyOperation {
-	private let operationQueue: OperationQueue
+
+	private let operationQueue = MainThreadOperationQueue()
 	private let log: OSLog
 	let syncUUID: UUID
 	
@@ -34,8 +36,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 	init(account: Account, credentials: Credentials, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIdsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredService: FeedlyGetStreamIdsService, getStreamIdsService: FeedlyGetStreamIdsService, getEntriesService: FeedlyGetEntriesService, database: SyncDatabase, downloadProgress: DownloadProgress, log: OSLog) {
 		self.syncUUID = UUID()
 		self.log = log
-		self.operationQueue = OperationQueue()
-		self.operationQueue.isSuspended = true
+		self.operationQueue.suspend()
 		
 		super.init()
 		
@@ -52,7 +53,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		getCollections.delegate = self
 		getCollections.downloadProgress = downloadProgress
 		getCollections.addDependency(sendArticleStatuses)
-		self.operationQueue.addOperation(getCollections)
+			self.operationQueue.addOperation(getCollections)
 		
 		// Ensure a folder exists for each Collection, removing Folders without a corresponding Collection.
 		let mirrorCollectionsAsFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: getCollections, log: log)
@@ -73,7 +74,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		self.operationQueue.addOperation(getAllArticleIds)
 		
 		// Get each page of unread article ids in the global.all stream for the last 31 days (nil = Feedly API default).
-		let getUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: getUnreadService, newerThan: nil, log: log)
+		let getUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: getUnreadService, database: database, newerThan: nil, log: log)
 		getUnread.delegate = self
 		getUnread.addDependency(getAllArticleIds)
 		getUnread.downloadProgress = downloadProgress
@@ -88,7 +89,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		self.operationQueue.addOperation(getUpdated)
 		
 		// Get each page of the article ids for starred articles.
-		let getStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: getStarredService, newerThan: nil, log: log)
+		let getStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: getStarredService, database: database, newerThan: nil, log: log)
 		getStarred.delegate = self
 		getStarred.downloadProgress = downloadProgress
 		getStarred.addDependency(createFeedsOperation)
@@ -128,26 +129,16 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		self.init(account: account, credentials: credentials, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, markArticlesService: caller, getUnreadService: caller, getCollectionsService: caller, getStreamContentsService: caller, getStarredService: caller, getStreamIdsService: caller, getEntriesService: caller, database: database, downloadProgress: downloadProgress, log: log)
 	}
 	
-	override func cancel() {
+	override func run() {
+		os_log(.debug, log: log, "Starting sync %{public}@", syncUUID.uuidString)
+		operationQueue.resume()
+	}
+
+	override func didCancel() {
 		os_log(.debug, log: log, "Cancelling sync %{public}@", syncUUID.uuidString)
 		self.operationQueue.cancelAllOperations()
-		
-		super.cancel()
-		
-		didFinish()
-		
-		// Operation should silently cancel.
 		syncCompletionHandler = nil
-	}
-	
-	override func main() {
-		guard !isCancelled else {
-			// override of cancel calls didFinish().
-			return
-		}
-		
-		os_log(.debug, log: log, "Starting sync %{public}@", syncUUID.uuidString)
-		operationQueue.isSuspended = false
+		super.didCancel()
 	}
 }
 
@@ -168,7 +159,8 @@ extension FeedlySyncAllOperation: FeedlyOperationDelegate {
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		assert(Thread.isMainThread)
-		os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", operation, error as NSError)
+		// TODO: fix error for below line "Error is not convertible to NSError"
+		//os_log(.debug, log: log, "%{public}@ failed with error: %{public}@.", operation, error as NSError)
 		
 		syncCompletionHandler?(.failure(error))
 		syncCompletionHandler = nil

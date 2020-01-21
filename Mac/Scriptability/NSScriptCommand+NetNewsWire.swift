@@ -22,7 +22,7 @@ extension NSScriptCommand {
     func isCreateCommand(forClass whatClass:String) -> Bool {
         guard let arguments = self.arguments else {return false}
         guard let newObjectClass = arguments["ObjectClass"] as? Int else {return false}
-        guard (newObjectClass.fourCharCode() == whatClass.fourCharCode()) else {return false}
+        guard (newObjectClass.fourCharCode == whatClass.fourCharCode) else {return false}
         return true
     }
 
@@ -36,12 +36,12 @@ extension NSScriptCommand {
                  print("insertionLocation : \(insertionLocationDescriptor)")
                  // insertion location can be a typeObjectSpecifier, e.g.  'in account "Acct"'
                  // or a typeInsertionLocation, e.g.   'at end of folder "
-                 if (insertionLocationDescriptor.descriptorType == "insl".fourCharCode())  {
-                     descriptorToConsider = insertionLocationDescriptor.forKeyword("kobj".fourCharCode())
-                 } else if ( insertionLocationDescriptor.descriptorType == "obj ".fourCharCode())  {
+                 if (insertionLocationDescriptor.descriptorType == "insl".fourCharCode)  {
+                     descriptorToConsider = insertionLocationDescriptor.forKeyword("kobj".fourCharCode)
+                 } else if ( insertionLocationDescriptor.descriptorType == "obj ".fourCharCode)  {
                      descriptorToConsider = insertionLocationDescriptor
                  }
-            } else if let subjectDescriptor = appleEvent.attributeDescriptor(forKeyword:"subj".fourCharCode()) {
+            } else if let subjectDescriptor = appleEvent.attributeDescriptor(forKeyword:"subj".fourCharCode) {
                 descriptorToConsider = subjectDescriptor
             }
             
