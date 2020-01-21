@@ -42,7 +42,7 @@ public final class WebFeed: Feed, Renamable, Hashable {
 			return metadata.homePageURL
 		}
 		set {
-			if let url = newValue, !url.isEmpty {
+			if let url = newValue {
 				metadata.homePageURL = url.normalizedURL
 			}
 			else {
