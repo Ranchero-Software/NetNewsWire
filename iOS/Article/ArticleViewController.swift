@@ -53,6 +53,7 @@ class ArticleViewController: UIViewController {
 			updateUI()
 		}
 	}
+	var restoreWindowScrollY = 0
 	
 	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
@@ -92,6 +93,7 @@ class ArticleViewController: UIViewController {
 		])
 				
 		let controller = createWebViewController(article)
+		controller.restoreWindowScrollY = restoreWindowScrollY
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
 		
@@ -246,6 +248,13 @@ class ArticleViewController: UIViewController {
 // MARK: WebViewControllerDelegate
 
 extension ArticleViewController: WebViewControllerDelegate {
+	
+	func webViewController(_ webViewController: WebViewController, restoreWindowScrollYDidUpdate restoreWindowScrollY: Int) {
+		if webViewController === currentWebViewController {
+			self.restoreWindowScrollY = restoreWindowScrollY
+		}
+	}
+	
 	func webViewController(_ webViewController: WebViewController, articleExtractorButtonStateDidUpdate buttonState: ArticleExtractorButtonState) {
 		if webViewController === currentWebViewController {
 			articleExtractorButton.buttonState = buttonState

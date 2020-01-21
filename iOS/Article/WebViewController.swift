@@ -8,11 +8,13 @@
 
 import UIKit
 import WebKit
+import RSCore
 import Account
 import Articles
 import SafariServices
 
 protocol WebViewControllerDelegate: class {
+	func webViewController(_: WebViewController, restoreWindowScrollYDidUpdate: Int)
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
 
@@ -68,7 +70,12 @@ class WebViewController: UIViewController {
 		}
 	}
 	
-	var restoreOffset = 0
+	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 1.0)
+	var restoreWindowScrollY = 0 {
+		didSet {
+			delegate?.webViewController(self, restoreWindowScrollYDidUpdate: restoreWindowScrollY)
+		}
+	}
 	
 	deinit {
 		if webView != nil  {
@@ -109,6 +116,7 @@ class WebViewController: UIViewController {
 			// Configure the webview
 			webView.navigationDelegate = self
 			webView.uiDelegate = self
+			webView.scrollView.delegate = self
 			self.configureContextMenuInteraction()
 
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
@@ -186,10 +194,7 @@ class WebViewController: UIViewController {
 	}
 	
 	func fullReload() {
-		webView?.evaluateJavaScript("window.scrollY") { (scrollY, _) in
-			self.restoreOffset = scrollY as! Int
-			self.reloadHTML()
-		}
+		self.reloadHTML()
 	}
 
 	func showBars() {
@@ -408,6 +413,22 @@ extension WebViewController: UIViewControllerTransitioningDelegate {
 	}
 }
 
+// MARK:
+
+extension WebViewController: UIScrollViewDelegate {
+	
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+	}
+	
+	@objc func scrollPositionDidChange() {
+		webView?.evaluateJavaScript("window.scrollY") { (scrollY, _) in
+			self.restoreWindowScrollY = scrollY as! Int
+		}
+	}
+	
+}
+
 // MARK: JSON
 
 private struct TemplateData: Codable {
@@ -472,10 +493,10 @@ private extension WebViewController {
 		var render = "error();"
 		if let data = try? encoder.encode(templateData) {
 			let json = String(data: data, encoding: .utf8)!
-			render = "render(\(json), \(restoreOffset));"
+			render = "render(\(json), \(restoreWindowScrollY));"
 		}
 
-		restoreOffset = 0
+		restoreWindowScrollY = 0
 		
 		WebViewProvider.shared.articleIconSchemeHandler.currentArticle = article
 		webView.scrollView.setZoomScale(1.0, animated: false)
