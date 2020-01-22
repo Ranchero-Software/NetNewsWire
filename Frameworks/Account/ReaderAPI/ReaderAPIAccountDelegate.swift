@@ -598,14 +598,7 @@ private extension ReaderAPIAccountDelegate {
 		os_log(.debug, log: log, "Syncing taggings with %ld subscriptions.", subscriptions.count)
 		
 		// Set up some structures to make syncing easier
-		let folderDict: [String: Folder] = {
-			if let folders = account.folders {
-				return Dictionary(uniqueKeysWithValues: folders.map { ($0.name ?? "", $0) } )
-			} else {
-				return [String: Folder]()
-			}
-		}()
-
+		let folderDict = nameToFolderDictionary(with: account.folders)
 		let taggingsDict = subscriptions.reduce([String: [ReaderAPISubscription]]()) { (dict, subscription) in
 			var taggedFeeds = dict
 			
@@ -667,6 +660,21 @@ private extension ReaderAPIAccountDelegate {
 
 	}
 	
+	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
+		guard let folders = folders else {
+			return [String: Folder]()
+		}
+
+		var d = [String: Folder]()
+		for folder in folders {
+			let name = folder.name ?? ""
+			if d[name] == nil {
+				d[name] = folder
+			}
+		}
+		return d
+	}
+
 	func sendArticleStatuses(_ statuses: [SyncStatus],
 							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
 							 completion: @escaping (() -> Void)) {
