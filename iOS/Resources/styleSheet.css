@@ -158,6 +158,7 @@ code, pre {
 	margin-bottom: 1px;
 	border-spacing: 0;
 	border: 1px solid var(--secondary-accent-color);
+	font-size: inherit;
 }
 .nnw-overflow td, .nnw-overflow th {
 	-webkit-hyphens: none;
