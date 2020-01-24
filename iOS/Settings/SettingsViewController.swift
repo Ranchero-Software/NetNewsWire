@@ -181,6 +181,9 @@ class SettingsViewController: UITableViewController {
 					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
 			case 2:
+				let controller = UIStoryboard.settings.instantiateController(ofType: SourceListOrderingViewController.self)
+				self.navigationController?.pushViewController(controller, animated: true)
+			case 3:
 				addFeed()
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
