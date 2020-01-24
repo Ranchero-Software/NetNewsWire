@@ -454,9 +454,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
-			refreshTimeline(resetScroll: false)
+			fetchAndMergeArticlesAsync(animated: true) {
+				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.rebuildBackingStores()
+			}
+		} else {
+			rebuildBackingStores()
 		}
-		rebuildBackingStores()
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
@@ -477,7 +481,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync(animated: true) {
+			fetchAndMergeArticlesAsync(animated: true) {
 				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores() {
 					expandNewlyActivatedAccount()
@@ -500,7 +504,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync(animated: true) {
+			fetchAndMergeArticlesAsync(animated: true) {
 				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores() {
 					expandNewAccount()
@@ -522,7 +526,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync(animated: true) {
+			fetchAndMergeArticlesAsync(animated: true) {
 				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores() {
 					cleanupAccount()
@@ -1556,10 +1560,14 @@ private extension SceneCoordinator {
 	}
 	
 	func queueFetchAndMergeArticles() {
-		fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+			fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticlesAsync))
+	}
+
+	@objc func fetchAndMergeArticlesAsync() {
+		fetchAndMergeArticlesAsync(animated: true, completion: nil)
 	}
 	
-	@objc func fetchAndMergeArticles() {
+	func fetchAndMergeArticlesAsync(animated: Bool = true, completion: (() -> Void)? = nil) {
 		
 		guard let timelineFeed = timelineFeed else {
 			return
@@ -1576,9 +1584,13 @@ private extension SceneCoordinator {
 				if !unsortedArticleIDs.contains(article.articleID) {
 					updatedArticles.insert(article)
 				}
+				if article.account?.existingWebFeed(withWebFeedID: article.webFeedID) == nil {
+					updatedArticles.remove(article)
+				}
 			}
 
-			strongSelf.replaceArticles(with: updatedArticles, animated: true)
+			strongSelf.replaceArticles(with: updatedArticles, animated: animated)
+			completion?()
 		}
 		
 	}
