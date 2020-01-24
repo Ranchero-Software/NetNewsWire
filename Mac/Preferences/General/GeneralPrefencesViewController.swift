@@ -12,6 +12,7 @@ import RSCore
 final class GeneralPreferencesViewController: NSViewController {
 
 	@IBOutlet var defaultRSSReaderPopup: NSPopUpButton!
+	@IBOutlet var sourceListOrgeringPopup: NSPopUpButton!
 	private var rssReaderInfo = RSSReaderInfo()
 
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
@@ -46,6 +47,10 @@ final class GeneralPreferencesViewController: NSViewController {
 		}
 		registerAppWithBundleID(bundleID)
 		updateUI()
+	}
+	
+	@IBAction func sourceListOrderingPopupDidChangeValue(_ sender: Any?) {
+		NotificationCenter.default.post(name: .SourceListOrderingDidChange, object: self, userInfo: nil)
 	}
 }
 

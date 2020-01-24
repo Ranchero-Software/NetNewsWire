@@ -66,6 +66,7 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidRequestSidebarSelection(_:)), name: .UserDidRequestSidebarSelection, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadArticlesDidUpdateUnreadCounts(_:)), name: .DownloadArticlesDidUpdateUnreadCounts, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(sourceListOrderingDidChange(_:)), name: .SourceListOrderingDidChange, object: nil)
 
 		outlineView.reloadData()
 
@@ -152,6 +153,10 @@ protocol SidebarDelegate: class {
 	
 	@objc func downloadArticlesDidUpdateUnreadCounts(_ note: Notification) {
 		rebuildTreeAndRestoreSelection()
+	}
+	
+	@objc func sourceListOrderingDidChange(_ note: Notification) {
+		rebuildTreeAndReloadDataIfNeeded()
 	}
 	
 	// MARK: - Actions
