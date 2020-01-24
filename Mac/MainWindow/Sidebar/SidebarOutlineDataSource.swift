@@ -683,7 +683,7 @@ private extension SidebarOutlineDataSource {
 		let nodes = parentNode.childNodes + [draggedFeedNode]
 
 		// Revisit if the tree controller can ever be sorted in some other way.
-		let sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
+		let sortedNodes = nodes.sortedAlphabeticallyWith(AppDefaults.sourceListOrdering)
 		let index = sortedNodes.firstIndex(of: draggedFeedNode)!
 		return index
 	}
@@ -695,7 +695,7 @@ private extension SidebarOutlineDataSource {
 		let nodes = parentNode.childNodes + [draggedFolderNode]
 		
 		// Revisit if the tree controller can ever be sorted in some other way.
-		let sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
+		let sortedNodes = nodes.sortedAlphabeticallyWith(AppDefaults.sourceListOrdering)
 		let index = sortedNodes.firstIndex(of: draggedFolderNode)!
 		return index
 	}

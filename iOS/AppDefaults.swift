@@ -29,6 +29,7 @@ struct AppDefaults {
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
+		static let sourceListOrdering = "sourceListOrdering"
 	}
 
 	static let isFirstRun: Bool = {
@@ -136,6 +137,16 @@ struct AppDefaults {
 		}
 		set {
 			AppDefaults.shared.set(newValue.rawValue, forKey: Key.timelineIconSize)
+		}
+	}
+	
+	static var sourceListOrdering: SourceListOrdering {
+		get {
+			let rawValue = AppDefaults.shared.integer(forKey: Key.sourceListOrdering)
+			return SourceListOrdering(rawValue: rawValue) ?? SourceListOrdering.topLevelFeedsFirst
+		}
+		set {
+			AppDefaults.shared.set(newValue.rawValue, forKey: Key.sourceListOrdering)
 		}
 	}
 	

@@ -360,7 +360,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		// Suggest to the user the best place to drop the feed
 		// Revisit if the tree controller can ever be sorted in some other way.
 		let nodes = parentNode.childNodes + [draggedNode]
-		var sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
+		var sortedNodes = nodes.sortedAlphabeticallyWith(AppDefaults.sourceListOrdering)
 		let index = sortedNodes.firstIndex(of: draggedNode)!
 
 		sortedNodes.remove(at: index)

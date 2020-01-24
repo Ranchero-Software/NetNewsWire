@@ -98,7 +98,7 @@ private extension WebFeedTreeControllerDelegate {
 			}
 		}
 
-		return updatedChildNodes.sortedAlphabeticallyWithFoldersAtEnd()
+		return updatedChildNodes.sortedAlphabeticallyWith(AppDefaults.sourceListOrdering)
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {

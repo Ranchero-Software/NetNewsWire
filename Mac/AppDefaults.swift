@@ -32,6 +32,7 @@ struct AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let importOPMLAccountID = "importOPMLAccountID"
 		static let exportOPMLAccountID = "exportOPMLAccountID"
+		static let sourceListOrdering = "sourceListOrdering"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -218,6 +219,16 @@ struct AppDefaults {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
 		}
 	}
+	
+	static var sourceListOrdering: SourceListOrdering {
+		get {
+			let rawValue = UserDefaults.standard.integer(forKey: Key.sourceListOrdering)
+			return SourceListOrdering(rawValue: rawValue) ?? SourceListOrdering.topLevelFeedsFirst
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.sourceListOrdering)
+		}
+	}
 
 	static func registerDefaults() {
 		#if DEBUG
@@ -234,6 +245,7 @@ struct AppDefaults {
 										Key.timelineGroupByFeed: false,
 										"NSScrollViewShouldScrollUnderTitlebar": false,
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+										Key.sourceListOrdering: SourceListOrdering.topLevelFeedsFirst.rawValue,
 										Key.showDebugMenu: showDebugMenu]
 
 		UserDefaults.standard.register(defaults: defaults)
