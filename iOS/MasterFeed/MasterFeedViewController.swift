@@ -867,9 +867,7 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.expand(node)
-		applyChanges(animated: true) { [weak self] in
-			self?.reloadNode(node)
-		}
+		applyChanges(animated: true)
 	}
 
 	func collapse(_ cell: MasterFeedTableViewCell) {
@@ -877,9 +875,7 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.collapse(node)
-		applyChanges(animated: true) { [weak self] in
-			self?.reloadNode(node)
-		}
+		applyChanges(animated: true)
 	}
 
 	func makeFeedContextMenu(node: Node, indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
