@@ -837,14 +837,7 @@ private extension FeedbinAccountDelegate {
 		os_log(.debug, log: log, "Syncing taggings with %ld taggings.", taggings.count)
 		
 		// Set up some structures to make syncing easier
-		let folderDict: [String: Folder] = {
-			if let folders = account.folders {
-				return Dictionary(uniqueKeysWithValues: folders.map { ($0.name ?? "", $0) } )
-			} else {
-				return [String: Folder]()
-			}
-		}()
-
+		let folderDict = nameToFolderDictionary(with: account.folders)
 		let taggingsDict = taggings.reduce([String: [FeedbinTagging]]()) { (dict, tagging) in
 			var taggedFeeds = dict
 			if var taggedFeed = taggedFeeds[tagging.name] {
@@ -897,7 +890,22 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 	}
-	
+
+	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
+		guard let folders = folders else {
+			return [String: Folder]()
+		}
+
+		var d = [String: Folder]()
+		for folder in folders {
+			let name = folder.name ?? ""
+			if d[name] == nil {
+				d[name] = folder
+			}
+		}
+		return d
+	}
+
 	func sendArticleStatuses(_ statuses: [SyncStatus],
 							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
 							 completion: @escaping ((Result<Void, Error>) -> Void)) {

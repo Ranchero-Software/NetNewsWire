@@ -454,9 +454,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
-			refreshTimeline(resetScroll: false)
+			fetchAndMergeArticlesAsync(animated: true) {
+				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+				self.rebuildBackingStores()
+			}
+		} else {
+			rebuildBackingStores()
 		}
-		rebuildBackingStores()
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
@@ -477,7 +481,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync(animated: true) {
+			fetchAndMergeArticlesAsync(animated: true) {
 				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores() {
 					expandNewlyActivatedAccount()
@@ -500,7 +504,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync(animated: true) {
+			fetchAndMergeArticlesAsync(animated: true) {
 				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores() {
 					expandNewAccount()
@@ -522,7 +526,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		if timelineFetcherContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync(animated: true) {
+			fetchAndMergeArticlesAsync(animated: true) {
 				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
 				self.rebuildBackingStores() {
 					cleanupAccount()
@@ -1556,10 +1560,14 @@ private extension SceneCoordinator {
 	}
 	
 	func queueFetchAndMergeArticles() {
-		fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+			fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticlesAsync))
+	}
+
+	@objc func fetchAndMergeArticlesAsync() {
+		fetchAndMergeArticlesAsync(animated: true, completion: nil)
 	}
 	
-	@objc func fetchAndMergeArticles() {
+	func fetchAndMergeArticlesAsync(animated: Bool = true, completion: (() -> Void)? = nil) {
 		
 		guard let timelineFeed = timelineFeed else {
 			return
@@ -1576,9 +1584,13 @@ private extension SceneCoordinator {
 				if !unsortedArticleIDs.contains(article.articleID) {
 					updatedArticles.insert(article)
 				}
+				if article.account?.existingWebFeed(withWebFeedID: article.webFeedID) == nil {
+					updatedArticles.remove(article)
+				}
 			}
 
-			strongSelf.replaceArticles(with: updatedArticles, animated: true)
+			strongSelf.replaceArticles(with: updatedArticles, animated: animated)
+			completion?()
 		}
 		
 	}
@@ -1677,19 +1689,14 @@ private extension SceneCoordinator {
 	}
 	
 	@discardableResult
-	func installArticleController(_ recycledArticleController: ArticleViewController? = nil, animated: Bool) -> ArticleViewController {
+	func installArticleController(restoreWindowScrollY: Int = 0, animated: Bool) -> ArticleViewController {
 
 		isArticleViewControllerPending = true
 
-		let articleController: ArticleViewController = {
-			if let controller = recycledArticleController {
-				return controller
-			} else {
-				let controller = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
-				controller.coordinator = self
-				return controller
-			}
-		}()
+		let articleController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
+		articleController.coordinator = self
+		articleController.article = currentArticle
+		articleController.restoreWindowScrollY = restoreWindowScrollY
 				
 		if let subSplit = subSplitViewController {
 			let controller = addNavControllerIfNecessary(articleController, showButton: false)
@@ -1701,12 +1708,6 @@ private extension SceneCoordinator {
 			rootSplitViewController.showDetailViewController(controller, sender: self)
   	 	}
 		
-		// We have to do a full reload when installing an article controller.  We may have changed color contexts
-		// and need to update the article colors.  An example is in dark mode.  Split screen doesn't use true black
-		// like darkmode usually does.
-		
-		// TODO: This should probably only happen to recycled article controllers
-		articleController.fullReload()
 		return articleController
 		
 	}
@@ -1758,7 +1759,7 @@ private extension SceneCoordinator {
 	}
 	
 	func configureThreePanelMode() {
-		let recycledArticleController = articleViewController
+		let articleRestoreWindowScrollY = articleViewController?.restoreWindowScrollY ?? 0
 		defer {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
@@ -1773,14 +1774,14 @@ private extension SceneCoordinator {
 		masterTimelineViewController?.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 		masterTimelineViewController?.navigationItem.leftItemsSupplementBackButton = true
 
-		installArticleController(recycledArticleController, animated: false)
+		installArticleController(restoreWindowScrollY: articleRestoreWindowScrollY, animated: false)
 		
 		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
 		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: false)
 	}
 	
 	func configureStandardPanelMode() {
-		let recycledArticleController = articleViewController
+		let articleRestoreWindowScrollY = articleViewController?.restoreWindowScrollY ?? 0
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
 		
 		// Set the is Pending flags early to prevent the navigation controller delegate from thinking that we
@@ -1800,7 +1801,7 @@ private extension SceneCoordinator {
 			masterNavigationController.pushViewController(masterTimelineViewController!, animated: false)
 		}
 
-		installArticleController(recycledArticleController, animated: false)
+		installArticleController(restoreWindowScrollY: articleRestoreWindowScrollY, animated: false)
 	}
 	
 	// MARK: NSUserActivity

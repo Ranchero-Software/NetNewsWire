@@ -178,12 +178,25 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateUnreadIndicator() {
-		showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
-		unreadIndicatorView.setNeedsDisplay()
+		if !unreadIndicatorView.isHidden && cellData.read && !cellData.starred {
+			UIView.animate(withDuration: 0.66, animations: { self.unreadIndicatorView.alpha = 0 }) { _ in
+				self.unreadIndicatorView.isHidden = true
+				self.unreadIndicatorView.alpha = 1
+			}
+		} else {
+			showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
+		}
 	}
 	
 	func updateStarView() {
-		showOrHideView(starView, !cellData.starred)
+		if !starView.isHidden &&  cellData.read && !cellData.starred {
+			UIView.animate(withDuration: 0.66, animations: { self.starView.alpha = 0 }) { _ in
+				self.starView.isHidden = true
+				self.starView.alpha = 1
+			}
+		} else {
+			showOrHideView(starView, !cellData.starred)
+		}
 	}
 	
 	func updateIconImage() {
