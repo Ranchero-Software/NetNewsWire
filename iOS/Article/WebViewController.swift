@@ -423,7 +423,7 @@ extension WebViewController: UIScrollViewDelegate {
 	
 	@objc func scrollPositionDidChange() {
 		webView?.evaluateJavaScript("window.scrollY") { (scrollY, _) in
-			self.restoreWindowScrollY = scrollY as! Int
+			self.restoreWindowScrollY = scrollY as? Int ?? 0
 		}
 	}
 	
