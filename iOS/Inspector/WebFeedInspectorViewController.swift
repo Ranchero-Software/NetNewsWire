@@ -80,8 +80,26 @@ class WebFeedInspectorViewController: UITableViewController {
 
 extension WebFeedInspectorViewController {
 	
+	private func shouldHideSection(_ section: Int) -> Bool {
+		// Hide homepage section if there is no url to show
+		return (section == 1) && (webFeed.homePageURL == nil)
+	}
+	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		if shouldHideSection(section) { return 0.01 }
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+		return shouldHideSection(section) ? 0.01 : super.tableView(tableView, heightForFooterInSection: section)
+	}
+	
+	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+		return shouldHideSection(indexPath.section) ? 0.01 : super.tableView(tableView, heightForRowAt: indexPath)
+	}
+	
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		return shouldHideSection(section) ? nil : super.tableView(tableView, titleForHeaderInSection: section)
 	}
 	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
