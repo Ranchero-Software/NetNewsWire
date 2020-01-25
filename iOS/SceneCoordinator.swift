@@ -404,8 +404,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectFirstUnreadInAllUnread() {
-		selectFeed(IndexPath(row: 1, section: 0), animated: false) {
-			self.selectFirstUnreadArticleInTimeline()
+		masterFeedViewController.ensureSectionIsExpanded(0) {
+			self.selectFeed(IndexPath(row: 1, section: 0), animated: false) {
+				self.selectFirstUnreadArticleInTimeline()
+			}
 		}
 	}
 
