@@ -65,6 +65,7 @@ class WebViewController: UIViewController {
 				startArticleExtractor()
 			}
 			if article != oldValue {
+				restoreWindowScrollY = 0
 				renderPage()
 			}
 		}
