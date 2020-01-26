@@ -825,6 +825,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 	}
 	
+	func findPrevArticle(_ article: Article) -> Article? {
+		guard let index = articles.firstIndex(of: article), index > 0 else {
+			return nil
+		}
+		return articles[index - 1]
+	}
+	
+	func findNextArticle(_ article: Article) -> Article? {
+		guard let index = articles.firstIndex(of: article), index + 1 != articles.count else {
+			return nil
+		}
+		return articles[index + 1]
+	}
+	
 	func selectPrevArticle() {
 		if let article = prevArticle {
 			selectArticle(article)
