@@ -34,10 +34,6 @@ class ArticleViewController: UIViewController {
 		return button
 	}()
 	
-	private var isFullScreenAvailable: Bool {
-		return traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
-	}
-
 	weak var coordinator: SceneCoordinator!
 	
 	var article: Article? {
