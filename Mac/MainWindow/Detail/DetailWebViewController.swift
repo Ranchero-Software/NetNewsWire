@@ -39,7 +39,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		}
 	#endif
 	
-	private let articleIconSchemeHandler = ArticleIconSchemeHandler()
+	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	
@@ -66,7 +66,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
-		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
+		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.mouseDidEnter)
@@ -208,10 +208,10 @@ private extension DetailWebViewController {
 		case .loading:
 			rendering = ArticleRenderer.loadingHTML(style: style)
 		case .article(let article):
-			articleIconSchemeHandler.currentArticle = article
+			detailIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, style: style)
 		case .extracted(let article, let extractedArticle):
-			articleIconSchemeHandler.currentArticle = article
+			detailIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
 		}
 		

@@ -83,7 +83,7 @@ class WebViewController: UIViewController {
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 			webView.removeFromSuperview()
-			WebViewProvider.shared.enqueueWebView(webView)
+			coordinator.webViewProvider.enqueueWebView(webView)
 			webView = nil
 		}
 	}
@@ -96,7 +96,7 @@ class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
-		WebViewProvider.shared.dequeueWebView() { webView in
+		coordinator.webViewProvider.dequeueWebView() { webView in
 			
 			// Add the webview
 			self.webView = webView
@@ -486,7 +486,6 @@ private extension WebViewController {
 
 		restoreWindowScrollY = 0
 		
-		WebViewProvider.shared.articleIconSchemeHandler.currentArticle = article
 		webView.scrollView.setZoomScale(1.0, animated: false)
 		webView.evaluateJavaScript(render)
 		

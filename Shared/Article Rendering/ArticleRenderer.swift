@@ -140,7 +140,7 @@ private extension ArticleRenderer {
 		d["title"] = title
 
 		d["body"] = body
-		d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(ArticleRenderer.imageIconScheme)://\" height=48 width=48 /></td>";
+		d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(ArticleRenderer.imageIconScheme)://\(article.articleID)\" height=48 width=48 /></td>";
 
 		var feedLink = ""
 		if let feedTitle = article.webFeed?.nameForDisplay {

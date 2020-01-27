@@ -30,6 +30,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController.undoManager
 	}
 	
+	lazy var webViewProvider = WebViewProvider(coordinator: self)
+	
 	private var panelMode: PanelMode = .unset
 	
 	private var activityManager = ActivityManager()
@@ -255,9 +257,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var articles = ArticleArray() {
 		didSet {
 			timelineMiddleIndexPath = nil
+			articleDictionaryNeedsUpdate = true
 		}
 	}
-	
+
+	private var articleDictionaryNeedsUpdate = true
+	private var _idToArticleDictionary = [String: Article]()
+	private var idToAticleDictionary: [String: Article] {
+		if articleDictionaryNeedsUpdate {
+			rebuildArticleDictionaries()
+		}
+		return _idToArticleDictionary
+	}
+
 	private var currentArticleRow: Int? {
 		guard let article = currentArticle else { return nil }
 		return articles.firstIndex(of: article)
@@ -570,6 +582,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func shadowNodesFor(section: Int) -> [Node] {
 		return shadowTable[section]
+	}
+	
+	func articleFor(_ articleID: String) -> Article? {
+		return idToAticleDictionary[articleID]
 	}
 	
 	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
@@ -1222,6 +1238,17 @@ private extension SceneCoordinator {
 		unreadCount = count
 	}
 	
+	func rebuildArticleDictionaries() {
+		var idDictionary = [String: Article]()
+
+		articles.forEach { article in
+			idDictionary[article.articleID] = article
+		}
+
+		_idToArticleDictionary = idDictionary
+		articleDictionaryNeedsUpdate = false
+	}
+
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()

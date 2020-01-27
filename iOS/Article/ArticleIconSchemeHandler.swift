@@ -1,9 +1,9 @@
 //
-//  AccountViewControllerSchemeHandler.swift
+//  ArticleIconSchemeHandler.swift
 //  NetNewsWire-iOS
 //
-//  Created by Maurice Parker on 11/7/19.
-//  Copyright © 2019 Ranchero Software. All rights reserved.
+//  Created by Maurice Parker on 1/27/20.
+//  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
 import Foundation
@@ -12,11 +12,22 @@ import Articles
 
 class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 	
-	var currentArticle: Article?
+	let coordinator: SceneCoordinator
+	
+	init(coordinator: SceneCoordinator) {
+		self.coordinator = coordinator
+	}
 	
 	func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
 
-		guard let responseURL = urlSchemeTask.request.url, let iconImage = self.currentArticle?.iconImage() else {
+		guard let url = urlSchemeTask.request.url else {
+			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
+			return
+		}
+		
+		let articleID = url.absoluteString.stripping(prefix: "\(ArticleRenderer.imageIconScheme)://")
+		
+		guard let iconImage = coordinator.articleFor(articleID)?.iconImage() else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}
@@ -31,7 +42,7 @@ class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 		}
 		
 		let headerFields = ["Cache-Control": "no-cache"]
-		if let response = HTTPURLResponse(url: responseURL, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
+		if let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
 			urlSchemeTask.didReceive(response)
 			urlSchemeTask.didReceive(data)
 			urlSchemeTask.didFinish()
@@ -44,3 +55,4 @@ class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 	}
 	
 }
+
