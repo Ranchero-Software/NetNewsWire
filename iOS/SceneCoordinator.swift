@@ -594,6 +594,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func refreshTimeline(resetScroll: Bool) {
 		fetchAndReplaceArticlesAsync(animated: true) {
 			self.masterTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
+			if let article = self.currentArticle, self.articles.firstIndex(of: article) == nil {
+				self.selectArticle(nil)
+			}
 		}
 	}
 	
@@ -654,6 +657,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
+		clearTimelineIfNoLongerAvailable()
 	}
 	
 	func collapseAllFolders() {
@@ -668,6 +672,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
+		clearTimelineIfNoLongerAvailable()
 	}
 	
 	func masterFeedIndexPathForCurrentTimeline() -> IndexPath? {
@@ -1224,6 +1229,7 @@ private extension SceneCoordinator {
 			updateExpandedNodes?()
 			rebuildShadowTable()
 			masterFeedViewController.reloadFeeds(initialLoad: initialLoad)
+			clearTimelineIfNoLongerAvailable()
 		}
 	}
 	
@@ -1260,6 +1266,12 @@ private extension SceneCoordinator {
 			}
 		}
 		return false
+	}
+	
+	func clearTimelineIfNoLongerAvailable() {
+		if let feed = timelineFeed, !shadowTableContains(feed) {
+			selectFeed(nil, animated: false, deselectArticle: true)
+		}
 	}
 
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
