@@ -39,6 +39,7 @@ a:hover {
 	color-scheme: light dark;
 	--primary-accent-color: #086AEE;
 	--secondary-accent-color: #086AEE;
+	--block-quote-border-color: rgba(8, 106, 238, 0.75);
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
 	--header-color: rgba(0, 0, 0, 0.3);
 	--body-code-color: #666;
@@ -52,6 +53,7 @@ a:hover {
 	:root {
 		--primary-accent-color: #2D80F1;
 		--secondary-accent-color: #5E9EF4;
+		--block-quote-border-color: rgba(94, 158, 244, 0.75);
 		--header-table-border-color: rgba(255, 255, 255, 0.2);
 		--header-color: #d2d2d2;
 		--body-code-color: #b2b2b2;
@@ -240,7 +242,7 @@ blockquote {
 	margin-inline-start: 0;
 	margin-inline-end: 0;
 	padding-left: 15px;
-	border-left: 3px solid var(--secondary-accent-color);
+	border-left: 3px solid var(--block-quote-border-color);
 }
 
 /* Feed Specific */
