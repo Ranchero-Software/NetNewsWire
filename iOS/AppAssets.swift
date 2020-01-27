@@ -49,7 +49,7 @@ struct AppAssets {
 
 	static var articleExtractorOffTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOff")!
-		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
+		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
 
 	static var articleExtractorOn: UIImage = {
@@ -62,7 +62,7 @@ struct AppAssets {
 
 	static var articleExtractorOnTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOn")!
-		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
+		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
 
 	static var iconBackgroundColor: UIColor = {
