@@ -691,7 +691,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		currentFeedIndexPath = indexPath
 		masterFeedViewController.updateFeedSelection(animated: animated)
 
-		emptyTheTimeline()
 		if deselectArticle {
 			selectArticle(nil)
 		}
