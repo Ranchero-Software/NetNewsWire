@@ -512,7 +512,8 @@ private extension WebViewController {
 	}
 
 	func reloadArticleImage() {
-		webView?.evaluateJavaScript("reloadArticleImage()")
+		guard let article = article else { return }
+		webView?.evaluateJavaScript("reloadArticleImage(\"\(article.articleID)\")")
 	}
 	
 	func imageWasClicked(body: String?) {

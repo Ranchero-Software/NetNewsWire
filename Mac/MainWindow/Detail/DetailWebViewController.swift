@@ -27,6 +27,17 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			}
 		}
 	}
+	
+	var article: Article? {
+		switch state {
+		case .article(let article):
+			return article
+		case .extracted(let article, _):
+			return article
+		default:
+			return nil
+		}
+	}
 
 	#if !MAC_APP_STORE
 		private var webInspectorEnabled: Bool {
@@ -193,7 +204,8 @@ struct TemplateData: Codable {
 private extension DetailWebViewController {
 
 	func reloadArticleImage() {
-		webView.evaluateJavaScript("reloadArticleImage()")
+		guard let article = article else { return }
+		webView?.evaluateJavaScript("reloadArticleImage(\"\(article.articleID)\")")
 	}
 
 	func reloadHTML() {
