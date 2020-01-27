@@ -14,15 +14,14 @@ import Account
 struct ArticleRenderer {
 
 	typealias Rendering = (style: String, html: String)
-	typealias Page = (html: String, baseURL: URL)
+	typealias Page = (url: URL, baseURL: URL)
 
 	static var imageIconScheme = "nnwImageIcon"
 	
 	static var page: Page = {
-		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
-		let html = try! String(contentsOf: pageURL)
-		let baseURL = pageURL.deletingLastPathComponent()
-		return Page(html: html, baseURL: baseURL)
+		let url = Bundle.main.url(forResource: "page", withExtension: "html")!
+		let baseURL = url.deletingLastPathComponent()
+		return Page(url: url, baseURL: baseURL)
 	}()
 	
 	private let article: Article?

@@ -40,7 +40,7 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 		webView.navigationDelegate = self
 		queue.insert(webView, at: 0)
 
-		webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadFileURL(ArticleRenderer.page.url, allowingReadAccessTo: ArticleRenderer.page.baseURL)
 
 	}
 
