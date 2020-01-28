@@ -272,6 +272,11 @@ public final class AccountManager: UnreadCountProvider {
 		var allFetchedArticles = Set<Article>()
 		let numberOfAccounts = activeAccounts.count
 		var accountsReporting = 0
+		
+		guard numberOfAccounts > 0 else {
+			completion(.success(allFetchedArticles))
+			return
+		}
 
 		for account in activeAccounts {
 			account.fetchArticlesAsync(fetchType) { (articleSetResult) in
