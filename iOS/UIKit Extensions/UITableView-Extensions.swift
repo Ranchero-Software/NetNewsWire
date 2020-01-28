@@ -18,7 +18,7 @@ extension UITableView {
 
 		if let visibleIndexPaths = indexPathsForRows(in: safeAreaLayoutGuide.layoutFrame) {
 			if !(visibleIndexPaths.contains(indexPath) && cellCompletelyVisable(indexPath)) {
-				selectRow(at: indexPath, animated: animations.contains(.scroll), scrollPosition: .middle)
+				scrollToRow(at: indexPath, at: .middle, animated: animations.contains(.scroll))
 			}
 		}
 	}
