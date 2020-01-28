@@ -34,6 +34,11 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		commonInit()
 	}
 	
+	override func prepareForReuse() {
+		unreadIndicatorView.isHidden = true
+		starView.isHidden = true
+	}
+	
 	override var frame: CGRect {
 		didSet {
 			setNeedsLayout()
