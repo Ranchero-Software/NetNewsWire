@@ -1251,11 +1251,31 @@ private extension SceneCoordinator {
 
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
+			
+			addCurrentFeedToFilterExeptionsIfNecessary()
 			treeController.rebuild()
+			treeControllerDelegate.resetFilterExceptions()
+			
 			updateExpandedNodes?()
 			rebuildShadowTable()
 			masterFeedViewController.reloadFeeds(initialLoad: initialLoad)
-			clearTimelineIfNoLongerAvailable()
+			
+		}
+	}
+	
+	func addCurrentFeedToFilterExeptionsIfNecessary() {
+		if isReadFeedsFiltered, let feedID = timelineFeed?.feedID {
+			if timelineFeed is SmartFeed {
+				treeControllerDelegate.addFilterException(feedID)
+			} else if let folderFeed = timelineFeed as? Folder {
+				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
+					treeControllerDelegate.addFilterException(feedID)
+				}
+			} else if let webFeed = timelineFeed as? WebFeed {
+				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
+					treeControllerDelegate.addFilterException(feedID)
+				}
+			}
 		}
 	}
 	
