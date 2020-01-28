@@ -230,6 +230,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	var refreshProgress: DownloadProgress {
 		return delegate.refreshProgress
 	}
+
+	private var operationQueue = MainThreadOperationQueue()
+	private enum OperationName {
+		static let FetchAllUnreadCounts = "FetchAllUnreadCounts"
+	}
 	
 	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
 		switch type {
@@ -414,6 +419,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func suspendDatabase() {
+		operationQueue.suspend()
+		cancelDiscardableOperations()
 		database.suspend()
 		save()
 		metadataFile.suspend()
@@ -426,6 +433,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func resumeDatabaseAndDelegate() {
 		database.resume()
 		delegate.resume()
+		operationQueue.resume()
 	}
 
 	/// Reload OPML, etc.
@@ -446,6 +454,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	
 	public func prepareForDeletion() {
 		delegate.accountWillBeDeleted(self)
+	}
+
+	public func cancelDiscardableOperations() {
+		operationQueue.cancelOperations(named: OperationName.FetchAllUnreadCounts)
 	}
 	
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
@@ -1226,24 +1238,31 @@ private extension Account {
 
 	func fetchAllUnreadCounts() {
 		fetchingAllUnreadCounts = true
+		operationQueue.cancelOperations(named: OperationName.FetchAllUnreadCounts)
 
-		database.fetchAllNonZeroUnreadCounts { (unreadCountDictionaryResult) in
-			if let unreadCountDictionary = try? unreadCountDictionaryResult.get() {
-				self.flattenedWebFeeds().forEach{ (feed) in
-					// When the unread count is zero, it won’t appear in unreadCountDictionary.
-					if let unreadCount = unreadCountDictionary[feed.webFeedID] {
-						feed.unreadCount = unreadCount
-					}
-					else {
-						feed.unreadCount = 0
-					}
-				}
-
-				self.fetchingAllUnreadCounts = false
-				self.updateUnreadCount()
-				self.isUnreadCountsInitialized = true
-				self.postUnreadCountDidInitializeNotification()
+		let operation = database.createFetchAllUnreadCountsOperation()
+		operation.name = OperationName.FetchAllUnreadCounts
+		operation.completionBlock = { operation in
+			let fetchOperation = operation as! FetchAllUnreadCountsOperation
+			guard let unreadCountDictionary = fetchOperation.unreadCountDictionary else {
+				return
 			}
+			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary)
+
+			self.fetchingAllUnreadCounts = false
+			self.updateUnreadCount()
+			self.isUnreadCountsInitialized = true
+			self.postUnreadCountDidInitializeNotification()
+		}
+
+		operationQueue.addOperation(operation)
+	}
+
+	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary) {
+		for feed in flattenedWebFeeds() {
+			// When the unread count is zero, it won’t appear in unreadCountDictionary.
+			let unreadCount = unreadCountDictionary[feed.webFeedID] ?? 0
+			feed.unreadCount = unreadCount
 		}
 	}
 }

@@ -10,16 +10,16 @@ import Foundation
 import RSCore
 import RSDatabase
 
-final class FetchAllUnreadCountsOperation: MainThreadOperation {
+public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 
 	public var unreadCountDictionary: UnreadCountDictionary?
 
 	// MainThreadOperation
-	var isCanceled = false
-	var id: Int?
-	weak var operationDelegate: MainThreadOperationDelegate?
-	var name: String? = "FetchAllUnreadCountsOperation"
-	var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
+	public var isCanceled = false
+	public var id: Int?
+	public weak var operationDelegate: MainThreadOperationDelegate?
+	public var name: String?
+	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	private let queue: DatabaseQueue
 	private let cutoffDate: Date
@@ -29,7 +29,7 @@ final class FetchAllUnreadCountsOperation: MainThreadOperation {
 		self.cutoffDate = cutoffDate
 	}
 	
-	func run() {
+	public func run() {
 		queue.runInDatabase { databaseResult in
 			if self.isCanceled {
 				self.informOperationDelegateOfCompletion()
@@ -47,14 +47,6 @@ final class FetchAllUnreadCountsOperation: MainThreadOperation {
 }
 
 private extension FetchAllUnreadCountsOperation {
-
-	func informOperationDelegateOfCompletion() {
-		DispatchQueue.main.async {
-			if !self.isCanceled {
-				self.operationDelegate?.operationDidComplete(self)
-			}
-		}
-	}
 
 	func fetchUnreadCounts(_ database: FMDatabase) {
 		let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"

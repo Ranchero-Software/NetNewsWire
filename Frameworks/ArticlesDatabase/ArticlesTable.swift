@@ -521,6 +521,10 @@ final class ArticlesTable: DatabaseTable {
 			}
 		}
 	}
+
+	func createFetchAllUnreadCountsOperation() -> FetchAllUnreadCountsOperation {
+		return FetchAllUnreadCountsOperation(databaseQueue: queue, cutoffDate: articleCutoffDate)
+	}
 }
 
 // MARK: - Private

@@ -141,10 +141,6 @@ public final class ArticlesDatabase {
 		articlesTable.fetchUnreadCounts(webFeedIDs, completion)
 	}
 
-	public func fetchAllNonZeroUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		articlesTable.fetchAllUnreadCounts(completion)
-	}
-
 	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
 		fetchUnreadCount(for: webFeedIDs, since: todayCutoffDate(), completion: completion)
 	}
@@ -193,6 +189,13 @@ public final class ArticlesDatabase {
 	/// For newly-created statuses, mark them as read and not-starred.
 	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
 		articlesTable.createStatusesIfNeeded(articleIDs, completion)
+	}
+
+	// MARK: - Operations
+
+	/// Create and return an operation that fetches all non-zero unread counts.
+	public func createFetchAllUnreadCountsOperation() -> FetchAllUnreadCountsOperation {
+		return articlesTable.createFetchAllUnreadCountsOperation()
 	}
 
 	// MARK: - Suspend and Resume (for iOS)
