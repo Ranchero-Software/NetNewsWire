@@ -50,7 +50,7 @@ final class SendToMicroBlogCommand: SendToCommand {
 		let s = article.attributionString + article.linkString
 
 		let urlQueryDictionary = ["text": s]
-		guard let urlQueryString = urlQueryDictionary.urlQueryString() else {
+		guard let urlQueryString = urlQueryDictionary.urlQueryString else {
 			return
 		}
 		guard let url = URL(string: "microblog://post?" + urlQueryString) else {
