@@ -53,12 +53,12 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			return nil
 		}
 		
-		let request = NSMutableURLRequest(url: url)
+		var request = URLRequest(url: url)
 		if let conditionalGetInfo = feed.conditionalGetInfo {
-			conditionalGetInfo.addRequestHeadersToURLRequest(request)
+			conditionalGetInfo.addRequestHeadersToURLRequest(&request)
 		}
 
-		return request as URLRequest
+		return request
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void) {
