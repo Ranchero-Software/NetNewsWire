@@ -373,7 +373,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func handle(_ activity: NSUserActivity) {
-		selectFeed(nil, animated: false) {
+		selectFeed(nil) {
 			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 			switch activityType {
 			case .restoration:
@@ -417,14 +417,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func selectFirstUnreadInAllUnread() {
 		masterFeedViewController.ensureSectionIsExpanded(0) {
-			self.selectFeed(IndexPath(row: 1, section: 0), animated: false) {
+			self.selectFeed(IndexPath(row: 1, section: 0)) {
 				self.selectFirstUnreadArticleInTimeline()
 			}
 		}
 	}
 
 	func showSearch() {
-		selectFeed(nil, animated: false) {
+		selectFeed(nil) {
 			self.installTimelineControllerIfNecessary(animated: false)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
 				self.masterTimelineViewController!.showSearchAll()
@@ -698,14 +698,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return indexPathFor(node)
 	}
 	
-	func selectFeed(_ indexPath: IndexPath?, animated: Bool, deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+	func selectFeed(_ indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		guard indexPath != currentFeedIndexPath else {
 			completion?()
 			return
 		}
 		
 		currentFeedIndexPath = indexPath
-		masterFeedViewController.updateFeedSelection(animated: animated)
+		masterFeedViewController.updateFeedSelection(animations: animations)
 
 		if deselectArticle {
 			selectArticle(nil)
@@ -714,7 +714,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
 			
 			self.activityManager.selecting(feed: feed)
-			self.installTimelineControllerIfNecessary(animated: animated)
+			self.installTimelineControllerIfNecessary(animated: animations.contains(.navigation))
 			setTimelineFeed(feed, animated: false) {
 				completion?()
 			}
@@ -724,7 +724,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			setTimelineFeed(nil, animated: false) {
 				self.activityManager.invalidateSelecting()
 				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
-					self.navControllerForTimeline().popViewController(animated: animated)
+					self.navControllerForTimeline().popViewController(animated: animations.contains(.navigation))
 				}
 				completion?()
 			}
@@ -735,35 +735,35 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func selectPrevFeed() {
 		if let indexPath = prevFeedIndexPath {
-			selectFeed(indexPath, animated: true)
+			selectFeed(indexPath, animations: [.navigation, .scroll])
 		}
 	}
 	
 	func selectNextFeed() {
 		if let indexPath = nextFeedIndexPath {
-			selectFeed(indexPath, animated: true)
+			selectFeed(indexPath, animations: [.navigation, .scroll])
 		}
 	}
 	
 	func selectTodayFeed() {
 		masterFeedViewController?.ensureSectionIsExpanded(0) {
-			self.selectFeed(IndexPath(row: 0, section: 0), animated: true)
+			self.selectFeed(IndexPath(row: 0, section: 0), animations: [.navigation, .scroll])
 		}
 	}
 
 	func selectAllUnreadFeed() {
 		masterFeedViewController?.ensureSectionIsExpanded(0) {
-			self.selectFeed(IndexPath(row: 1, section: 0), animated: true)
+			self.selectFeed(IndexPath(row: 1, section: 0), animations: [.navigation, .scroll])
 		}
 	}
 
 	func selectStarredFeed() {
 		masterFeedViewController?.ensureSectionIsExpanded(0) {
-			self.selectFeed(IndexPath(row: 2, section: 0), animated: true)
+			self.selectFeed(IndexPath(row: 2, section: 0), animations: [.navigation, .scroll])
 		}
 	}
 
-	func selectArticle(_ article: Article?, animated: Bool = false) {
+	func selectArticle(_ article: Article?, animations: Animations = []) {
 		guard article != currentArticle else { return }
 		
 		currentArticle = article
@@ -772,23 +772,23 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if article == nil {
 			if rootSplitViewController.isCollapsed {
 				if masterNavigationController.children.last is ArticleViewController {
-					masterNavigationController.popViewController(animated: animated)
+					masterNavigationController.popViewController(animated: animations.contains(.navigation))
 				}
 			} else {
 				articleViewController?.article = nil
 			}
-			masterTimelineViewController?.updateArticleSelection(animated: animated)
+			masterTimelineViewController?.updateArticleSelection(animations: animations)
 			return
 		}
 		
 		let currentArticleViewController: ArticleViewController
 		if articleViewController == nil {
-			currentArticleViewController = installArticleController(animated: animated)
+			currentArticleViewController = installArticleController(animated: animations.contains(.navigation))
 		} else {
 			currentArticleViewController = articleViewController!
 		}
 		
-		masterTimelineViewController?.updateArticleSelection(animated: animated)
+		masterTimelineViewController?.updateArticleSelection(animations: animations)
 		currentArticleViewController.article = article
 		
 		markArticles(Set([article!]), statusKey: .read, flag: true)
@@ -861,13 +861,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func selectPrevArticle() {
 		if let article = prevArticle {
-			selectArticle(article)
+			selectArticle(article, animations: [.navigation, .scroll])
 		}
 	}
 	
 	func selectNextArticle() {
 		if let article = nextArticle {
-			selectArticle(article)
+			selectArticle(article, animations: [.navigation, .scroll])
 		}
 	}
 	
@@ -999,12 +999,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred)
 	}
 
-	func discloseFeed(_ feed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: WebFeed, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
 			masterTimelineViewController?.hideSearch()
 		}
 		
-		masterFeedViewController.discloseFeed(feed, animated: animated) {
+		masterFeedViewController.discloseFeed(feed, animations: animations) {
 			completion?()
 		}
 	}
@@ -1061,7 +1061,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showAdd(_ type: AddControllerType, initialFeed: String? = nil, initialFeedName: String? = nil) {
-		selectFeed(nil, animated: false)
+		selectFeed(nil)
 
 		let addViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
 		
@@ -1193,7 +1193,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// If we are showing the Feeds and only the feeds start clearing stuff
 		if viewController === masterFeedViewController && !isThreePanelMode && !isTimelineViewControllerPending {
 			activityManager.invalidateCurrentActivities()
-			selectFeed(nil, animated: true)
+			selectFeed(nil, animations: [.scroll, .select, .navigation])
 			return
 		}
 
@@ -1203,7 +1203,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// ArticleViewController will be pushed, but we will breifly show the Timeline.  Don't clear things out when that happens.
 		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
 			currentArticle = nil
-			masterTimelineViewController?.updateArticleSelection(animated: animated)
+			masterTimelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])
 			activityManager.invalidateReading()
 
 			// Restore any bars hidden by the article controller
@@ -1296,7 +1296,7 @@ private extension SceneCoordinator {
 	
 	func clearTimelineIfNoLongerAvailable() {
 		if let feed = timelineFeed, !shadowTableContains(feed) {
-			selectFeed(nil, animated: false, deselectArticle: true)
+			selectFeed(nil, deselectArticle: true)
 		}
 	}
 
@@ -1461,7 +1461,7 @@ private extension SceneCoordinator {
 				}
 				
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(prevIndexPath, animated: true)
+					selectFeed(prevIndexPath, animations: [.scroll, .navigation])
 					return true
 				}
 				
@@ -1502,7 +1502,7 @@ private extension SceneCoordinator {
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
-				selectArticle(article, animated: animated)
+				selectArticle(article, animations: [.scroll, .navigation])
 				return true
 			}
 		}
@@ -1572,7 +1572,7 @@ private extension SceneCoordinator {
 				}
 				
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(nextIndexPath, animated: false, deselectArticle: false) {
+					selectFeed(nextIndexPath, animations: [.scroll, .navigation], deselectArticle: false) {
 						self.currentArticle = nil
 						completion(true)
 					}
@@ -1889,7 +1889,7 @@ private extension SceneCoordinator {
 		case .smartFeed:
 			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
 			if let indexPath = indexPathFor(smartFeed) {
-				selectFeed(indexPath, animated: false) {
+				selectFeed(indexPath) {
 					self.masterFeedViewController.focus()
 				}
 			}
@@ -1902,7 +1902,7 @@ private extension SceneCoordinator {
 				return
 			}
 			if let indexPath = indexPathFor(folderNode) {
-				selectFeed(indexPath, animated: false) {
+				selectFeed(indexPath) {
 					self.masterFeedViewController.focus()
 				}
 			}
@@ -1915,7 +1915,7 @@ private extension SceneCoordinator {
 				treeControllerDelegate.addFilterException(folderFeedID)
 			}
 			if let feed = feedNode.representedObject as? WebFeed {
-				discloseFeed(feed, animated: false) {
+				discloseFeed(feed) {
 					self.masterFeedViewController.focus()
 				}
 			}
@@ -1951,7 +1951,7 @@ private extension SceneCoordinator {
 		treeControllerDelegate.addFilterException(webFeedFeedID)
 		addParentFolderToFilterExceptions(webFeedNode)
 		
-		discloseFeed(webFeed, animated: false) {
+		discloseFeed(webFeed) {
 			self.selectArticleInCurrentFeed(articleID)
 		}
 	}
@@ -1969,7 +1969,7 @@ private extension SceneCoordinator {
 		case .smartFeed:
 			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return false }
 			if let indexPath = indexPathFor(smartFeed) {
-				selectFeed(indexPath, animated: false) {
+				selectFeed(indexPath) {
 					self.selectArticleInCurrentFeed(articleID)
 				}
 				treeControllerDelegate.addFilterException(feedIdentifier)
@@ -2034,7 +2034,7 @@ private extension SceneCoordinator {
 	
 	func selectFeedAndArticle(feedNode: Node, articleID: String) -> Bool {
 		if let feedIndexPath = indexPathFor(feedNode) {
-			selectFeed(feedIndexPath, animated: false) {
+			selectFeed(feedIndexPath) {
 				self.selectArticleInCurrentFeed(articleID)
 			}
 			return true

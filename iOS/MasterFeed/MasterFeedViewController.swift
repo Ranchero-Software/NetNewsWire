@@ -154,7 +154,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
 			return
 		}
-		discloseFeed(webFeed, animated: true)
+		discloseFeed(webFeed, animations: [.scroll, .navigation])
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -334,7 +334,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectFeed(indexPath, animated: true)
+		coordinator.selectFeed(indexPath, animations: [.navigation, .select, .scroll])
 	}
 
 	override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
@@ -516,29 +516,29 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
 			if adjustScroll {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
 				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
 		}
 	}
 
-	func updateFeedSelection(animated: Bool) {
+	func updateFeedSelection(animations: Animations) {
 		if dataSource.snapshot().numberOfItems > 0 {
 			if let indexPath = coordinator.currentFeedIndexPath {
 				if tableView.indexPathForSelectedRow != indexPath {
-					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: animated)
+					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
 				}
 			} else {
-				if animated {
+				if animations.contains(.select) {
 					// This nasty bit of duct tape is because there is something, somewhere
 					// interrupting the deselection animation, which will leave the row selected.
 					// This seems to get it far enough away the problem that it always works.
 					DispatchQueue.main.async {
-						self.tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+						self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 					}
 				} else {
-					self.tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+					self.tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
 				}
 			}
 		}
@@ -572,7 +572,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
-	func discloseFeed(_ webFeed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
+	func discloseFeed(_ webFeed: WebFeed, animations: Animations, completion: (() -> Void)? = nil) {
 		
 		func discloseFeedInAccount() {
 			guard let node = coordinator.rootNode.descendantNodeRepresentingObject(webFeed as AnyObject) else {
@@ -581,7 +581,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 			
 			if let indexPath = dataSource.indexPath(for: node) {
-				coordinator.selectFeed(indexPath, animated: animated) {
+				coordinator.selectFeed(indexPath, animations: animations) {
 					completion?()
 				}
 				return
@@ -598,7 +598,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 			applyChanges(animated: true, adjustScroll: true) { [weak self] in
 				if let indexPath = self?.dataSource.indexPath(for: node) {
-					self?.coordinator.selectFeed(indexPath, animated: animated) {
+					self?.coordinator.selectFeed(indexPath, animations: animations) {
 						completion?()
 					}
 				}
@@ -1223,7 +1223,7 @@ private extension MasterFeedViewController {
 		deleteCommand.perform()
 		
 		if indexPath == coordinator.currentFeedIndexPath {
-			coordinator.selectFeed(nil, animated: false)
+			coordinator.selectFeed(nil)
 		}
 		
 	}

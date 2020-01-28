@@ -172,7 +172,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if adjustScroll {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
 				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
@@ -187,13 +187,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		applyChanges(animated: animated)
 	}
 	
-	func updateArticleSelection(animated: Bool) {
+	func updateArticleSelection(animations: Animations) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
 			}
 		} else {
-			tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+			tableView.selectRow(at: nil, animated: animations.contains(.select), scrollPosition: .none)
 		}
 		
 		updateUI()
@@ -359,7 +359,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
 		let article = dataSource.itemIdentifier(for: indexPath)
-		coordinator.selectArticle(article, animated: true)
+		coordinator.selectArticle(article, animations: [.scroll, .select, .navigation])
 	}
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -773,7 +773,7 @@ private extension MasterTimelineViewController {
 		
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
-			self?.coordinator.discloseFeed(webFeed, animated: true)
+			self?.coordinator.discloseFeed(webFeed, animations: [.scroll, .navigation])
 		}
 		return action
 	}
@@ -783,7 +783,7 @@ private extension MasterTimelineViewController {
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.discloseFeed(webFeed, animated: true)
+			self?.coordinator.discloseFeed(webFeed, animations: [.scroll, .navigation])
 			completion(true)
 		}
 		return action
