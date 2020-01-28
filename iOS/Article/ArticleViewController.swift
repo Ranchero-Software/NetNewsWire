@@ -34,10 +34,6 @@ class ArticleViewController: UIViewController {
 		return button
 	}()
 	
-	private var isFullScreenAvailable: Bool {
-		return traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
-	}
-
 	weak var coordinator: SceneCoordinator!
 	
 	var article: Article? {
@@ -268,14 +264,18 @@ extension ArticleViewController: WebViewControllerDelegate {
 extension ArticleViewController: UIPageViewControllerDataSource {
 	
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-		guard let article = coordinator.prevArticle else {
+		guard let webViewController = viewController as? WebViewController,
+			let currentArticle = webViewController.article,
+			let article = coordinator.findPrevArticle(currentArticle) else {
 			return nil
 		}
 		return createWebViewController(article)
 	}
 	
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-		guard let article = coordinator.nextArticle else {
+		guard let webViewController = viewController as? WebViewController,
+			let currentArticle = webViewController.article,
+			let article = coordinator.findNextArticle(currentArticle) else {
 			return nil
 		}
 		return createWebViewController(article)

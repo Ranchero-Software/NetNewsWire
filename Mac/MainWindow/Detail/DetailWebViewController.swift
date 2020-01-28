@@ -27,6 +27,17 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			}
 		}
 	}
+	
+	var article: Article? {
+		switch state {
+		case .article(let article):
+			return article
+		case .extracted(let article, _):
+			return article
+		default:
+			return nil
+		}
+	}
 
 	#if !MAC_APP_STORE
 		private var webInspectorEnabled: Bool {
@@ -39,7 +50,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		}
 	#endif
 	
-	private let articleIconSchemeHandler = ArticleIconSchemeHandler()
+	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	
@@ -66,7 +77,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
-		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
+		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
 		userContentController.add(self, name: MessageName.mouseDidEnter)
@@ -107,7 +118,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
-		webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadFileURL(ArticleRenderer.page.url, allowingReadAccessTo: ArticleRenderer.page.baseURL)
 		
 	}
 
@@ -193,7 +204,8 @@ struct TemplateData: Codable {
 private extension DetailWebViewController {
 
 	func reloadArticleImage() {
-		webView.evaluateJavaScript("reloadArticleImage()")
+		guard let article = article else { return }
+		webView?.evaluateJavaScript("reloadArticleImage(\"\(article.articleID)\")")
 	}
 
 	func reloadHTML() {
@@ -208,10 +220,10 @@ private extension DetailWebViewController {
 		case .loading:
 			rendering = ArticleRenderer.loadingHTML(style: style)
 		case .article(let article):
-			articleIconSchemeHandler.currentArticle = article
+			detailIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, style: style)
 		case .extracted(let article, let extractedArticle):
-			articleIconSchemeHandler.currentArticle = article
+			detailIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
 		}
 		

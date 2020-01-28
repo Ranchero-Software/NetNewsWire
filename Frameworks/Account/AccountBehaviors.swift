@@ -29,7 +29,7 @@ public struct AccountBehaviors: OptionSet {
 	/**
 	 Account doesn't support OPML imports
 	*/
-	public static let disallowOPMLImports = AccountBehaviors(rawValue: 3)
+	public static let disallowOPMLImports = AccountBehaviors(rawValue: 4)
 	
 	public let rawValue: Int
 	public init(rawValue: Int) {

@@ -30,7 +30,6 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	private var renderingTracker = 0
 	private var webView: WKWebView!
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
@@ -44,7 +43,7 @@ class WebViewController: UIViewController {
 	private var isShowingExtractedArticle = false {
 		didSet {
 			if isShowingExtractedArticle != oldValue {
-				renderPage()
+				reloadHTML()
 			}
 		}
 	}
@@ -65,7 +64,8 @@ class WebViewController: UIViewController {
 				startArticleExtractor()
 			}
 			if article != oldValue {
-				renderPage()
+				restoreWindowScrollY = 0
+				reloadHTML()
 			}
 		}
 	}
@@ -83,7 +83,7 @@ class WebViewController: UIViewController {
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
 			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 			webView.removeFromSuperview()
-			WebViewProvider.shared.enqueueWebView(webView)
+			coordinator.webViewProvider.enqueueWebView(webView)
 			webView = nil
 		}
 	}
@@ -96,7 +96,7 @@ class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
-		WebViewProvider.shared.dequeueWebView() { webView in
+		coordinator.webViewProvider.dequeueWebView() { webView in
 			
 			// Add the webview
 			self.webView = webView
@@ -266,7 +266,7 @@ extension WebViewController: ArticleExtractorDelegate {
 	func articleExtractionDidFail(with: Error) {
 		stopArticleExtractor()
 		articleExtractorButtonState = .error
-		renderPage()
+		reloadHTML()
 	}
 
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
@@ -350,7 +350,7 @@ extension WebViewController: WKNavigationDelegate {
 	}
 
 	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		self.renderPage()
+		renderPage()
 	}
 	
 }
@@ -450,24 +450,12 @@ private struct ImageClickMessage: Codable {
 private extension WebViewController {
 
 	func reloadHTML() {
-		let url = Bundle.main.url(forResource: "page", withExtension: "html")!
-		webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-		renderingTracker = 0
+		webView?.loadFileURL(ArticleRenderer.page.url, allowingReadAccessTo: ArticleRenderer.page.baseURL)
 	}
 
 	func renderPage() {
 		guard let webView = webView else { return }
 		 
-		// It looks like we need to clean up the webview every once in a while by reloading it from scratch
-		// Otherwise it will stop responding or cause rendering artifacts.  This typically only comes into
-		// play on the iPad where we aren't constantly pushing and popping this controller.
-		if (renderingTracker > 10) {
-			reloadHTML()
-			return
-		}
-		
-		renderingTracker += 1
-		
 		let style = ArticleStylesManager.shared.currentStyle
 		let rendering: ArticleRenderer.Rendering
 
@@ -498,7 +486,6 @@ private extension WebViewController {
 
 		restoreWindowScrollY = 0
 		
-		WebViewProvider.shared.articleIconSchemeHandler.currentArticle = article
 		webView.scrollView.setZoomScale(1.0, animated: false)
 		webView.evaluateJavaScript(render)
 		
@@ -525,7 +512,8 @@ private extension WebViewController {
 	}
 
 	func reloadArticleImage() {
-		webView?.evaluateJavaScript("reloadArticleImage()")
+		guard let article = article else { return }
+		webView?.evaluateJavaScript("reloadArticleImage(\"\(article.articleID)\")")
 	}
 	
 	func imageWasClicked(body: String?) {

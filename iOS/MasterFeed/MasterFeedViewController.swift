@@ -117,10 +117,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		// completing if called to soon after a selectRow where scrolling is necessary.  See discloseFeed.
 		if let node = node,
 			let indexPath = dataSource.indexPath(for: node),
-			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell,
-			let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
 			
-			if cell.unreadCount != unreadCountProvider.unreadCount {
+			if cell.unreadCount != coordinator.unreadCountFor(node) {
 				self.reloadNode(node)
 			}
 			

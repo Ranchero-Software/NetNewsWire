@@ -13,9 +13,7 @@ import WebKit
 /// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-shite part of their lifecycle.
 class WebViewProvider: NSObject, WKNavigationDelegate {
 	
-	static let shared = WebViewProvider()
-	
-	let articleIconSchemeHandler = ArticleIconSchemeHandler()
+	let articleIconSchemeHandler: ArticleIconSchemeHandler
 	
 	private let minimumQueueDepth = 3
 	private let maximumQueueDepth = 6
@@ -24,6 +22,12 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 	private var waitingForFirstLoad = true
 	private var waitingCompletionHandler: ((WKWebView) -> ())?
 
+	init(coordinator: SceneCoordinator) {
+		articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
+		super.init()
+		replenishQueueIfNeeded()
+	}
+	
 	func dequeueWebView(completion: @escaping (WKWebView) -> ()) {
 		if waitingForFirstLoad {
 			waitingCompletionHandler = completion
@@ -40,7 +44,7 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 		webView.navigationDelegate = self
 		queue.insert(webView, at: 0)
 
-		webView.loadHTMLString(ArticleRenderer.page.html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadFileURL(ArticleRenderer.page.url, allowingReadAccessTo: ArticleRenderer.page.baseURL)
 
 	}
 
@@ -57,11 +61,6 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 	}
 	
 	// MARK: Private
-
-	private override init() {
-		super.init()
-		replenishQueueIfNeeded()
-	}
 
 	private func replenishQueueIfNeeded() {
 		while queue.count < minimumQueueDepth {

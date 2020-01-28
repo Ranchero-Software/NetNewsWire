@@ -30,6 +30,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController.undoManager
 	}
 	
+	lazy var webViewProvider = WebViewProvider(coordinator: self)
+	
 	private var panelMode: PanelMode = .unset
 	
 	private var activityManager = ActivityManager()
@@ -255,9 +257,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var articles = ArticleArray() {
 		didSet {
 			timelineMiddleIndexPath = nil
+			articleDictionaryNeedsUpdate = true
 		}
 	}
-	
+
+	private var articleDictionaryNeedsUpdate = true
+	private var _idToArticleDictionary = [String: Article]()
+	private var idToAticleDictionary: [String: Article] {
+		if articleDictionaryNeedsUpdate {
+			rebuildArticleDictionaries()
+		}
+		return _idToArticleDictionary
+	}
+
 	private var currentArticleRow: Int? {
 		guard let article = currentArticle else { return nil }
 		return articles.firstIndex(of: article)
@@ -572,6 +584,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return shadowTable[section]
 	}
 	
+	func articleFor(_ articleID: String) -> Article? {
+		return idToAticleDictionary[articleID]
+	}
+	
 	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
 		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
 			return IndexPath(row: shadowTable[shadowTable.count - 1].count - 1, section: shadowTable.count - 1)
@@ -594,6 +610,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func refreshTimeline(resetScroll: Bool) {
 		fetchAndReplaceArticlesAsync(animated: true) {
 			self.masterTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
+			if let article = self.currentArticle, self.articles.firstIndex(of: article) == nil {
+				self.selectArticle(nil)
+			}
 		}
 	}
 	
@@ -654,6 +673,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
+		clearTimelineIfNoLongerAvailable()
 	}
 	
 	func collapseAllFolders() {
@@ -668,6 +688,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
+		clearTimelineIfNoLongerAvailable()
 	}
 	
 	func masterFeedIndexPathForCurrentTimeline() -> IndexPath? {
@@ -686,7 +707,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		currentFeedIndexPath = indexPath
 		masterFeedViewController.updateFeedSelection(animated: animated)
 
-		emptyTheTimeline()
 		if deselectArticle {
 			selectArticle(nil)
 		}
@@ -823,6 +843,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			lastSearchScope = searchScope
 		}
 		
+	}
+	
+	func findPrevArticle(_ article: Article) -> Article? {
+		guard let index = articles.firstIndex(of: article), index > 0 else {
+			return nil
+		}
+		return articles[index - 1]
+	}
+	
+	func findNextArticle(_ article: Article) -> Article? {
+		guard let index = articles.firstIndex(of: article), index + 1 != articles.count else {
+			return nil
+		}
+		return articles[index + 1]
 	}
 	
 	func selectPrevArticle() {
@@ -1204,12 +1238,24 @@ private extension SceneCoordinator {
 		unreadCount = count
 	}
 	
+	func rebuildArticleDictionaries() {
+		var idDictionary = [String: Article]()
+
+		articles.forEach { article in
+			idDictionary[article.articleID] = article
+		}
+
+		_idToArticleDictionary = idDictionary
+		articleDictionaryNeedsUpdate = false
+	}
+
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			treeController.rebuild()
 			updateExpandedNodes?()
 			rebuildShadowTable()
 			masterFeedViewController.reloadFeeds(initialLoad: initialLoad)
+			clearTimelineIfNoLongerAvailable()
 		}
 	}
 	
@@ -1246,6 +1292,12 @@ private extension SceneCoordinator {
 			}
 		}
 		return false
+	}
+	
+	func clearTimelineIfNoLongerAvailable() {
+		if let feed = timelineFeed, !shadowTableContains(feed) {
+			selectFeed(nil, animated: false, deselectArticle: true)
+		}
 	}
 
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
