@@ -22,12 +22,12 @@ function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font"]));
 }
 
-// Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute
+// Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute if not already
 function convertImgSrc() {
 	document.querySelectorAll("img").forEach(element => {
 		if (element.hasAttribute("data-canonical-src")) {
 			element.src = element.getAttribute("data-canonical-src")
-		} else {
+		} else if (!element.src.match(/^[a-z]+\:\/\//i)) {
 			element.src = new URL(element.src, document.baseURI).href;
 		}
 	});
