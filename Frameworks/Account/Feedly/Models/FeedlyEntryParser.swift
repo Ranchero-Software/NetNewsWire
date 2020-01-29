@@ -13,6 +13,8 @@ import RSParser
 struct FeedlyEntryParser {
 	let entry: FeedlyEntry
 	
+	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
+	
 	var id: String {
 		return entry.id
 	}
@@ -36,7 +38,7 @@ struct FeedlyEntryParser {
 	}
 	
 	var title: String? {
-		return entry.title
+		return rightToLeftTextSantizer.sanitize(entry.title)
 	}
 	
 	var contentHMTL: String? {
@@ -49,7 +51,7 @@ struct FeedlyEntryParser {
 	}
 	
 	var summary: String? {
-		return entry.summary?.content
+		return rightToLeftTextSantizer.sanitize(entry.summary?.content)
 	}
 	
 	var datePublished: Date {
