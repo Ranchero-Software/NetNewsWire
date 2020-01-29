@@ -1278,11 +1278,22 @@ private extension SceneCoordinator {
 			} else if let webFeed = timelineFeed as? WebFeed {
 				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
 					treeControllerDelegate.addFilterException(feedID)
+					addParentFolderToFilterExceptions(webFeed)
 				}
 			}
 		}
 	}
 	
+	func addParentFolderToFilterExceptions(_ feed: Feed) {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
+			let folder = node.parent?.representedObject as? Folder,
+			let folderFeedID = folder.feedID else {
+				return
+		}
+		
+		treeControllerDelegate.addFilterException(folderFeedID)
+	}
+
 	func rebuildShadowTable() {
 		shadowTable = [[Node]]()
 
