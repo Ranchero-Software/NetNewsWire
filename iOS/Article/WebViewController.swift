@@ -14,7 +14,6 @@ import Articles
 import SafariServices
 
 protocol WebViewControllerDelegate: class {
-	func webViewController(_: WebViewController, restoreWindowScrollYDidUpdate: Int)
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
 
@@ -39,8 +38,12 @@ class WebViewController: UIViewController {
 	private var clickedImageCompletion: (() -> Void)?
 
 	private var articleExtractor: ArticleExtractor? = nil
-	private var extractedArticle: ExtractedArticle?
-	private var isShowingExtractedArticle = false {
+	var extractedArticle: ExtractedArticle? {
+		didSet {
+			windowScrollY = 0
+		}
+	}
+	var isShowingExtractedArticle = false {
 		didSet {
 			if isShowingExtractedArticle != oldValue {
 				reloadHTML()
@@ -64,18 +67,14 @@ class WebViewController: UIViewController {
 				startArticleExtractor()
 			}
 			if article != oldValue {
-				restoreWindowScrollY = 0
+				windowScrollY = 0
 				reloadHTML()
 			}
 		}
 	}
 	
 	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 1.0)
-	var restoreWindowScrollY = 0 {
-		didSet {
-			delegate?.webViewController(self, restoreWindowScrollYDidUpdate: restoreWindowScrollY)
-		}
-	}
+	var windowScrollY = 0 
 	
 	deinit {
 		if webView != nil  {
@@ -245,6 +244,12 @@ class WebViewController: UIViewController {
 			startArticleExtractor()
 		}
 
+	}
+	
+	func stopArticleExtractorIfProcessing() {
+		if articleExtractor?.state == .processing {
+			stopArticleExtractor()
+		}
 	}
 	
 	func showActivityDialog(popOverBarButtonItem: UIBarButtonItem? = nil) {
@@ -423,7 +428,7 @@ extension WebViewController: UIScrollViewDelegate {
 	
 	@objc func scrollPositionDidChange() {
 		webView?.evaluateJavaScript("window.scrollY") { (scrollY, _) in
-			self.restoreWindowScrollY = scrollY as? Int ?? 0
+			self.windowScrollY = scrollY as? Int ?? 0
 		}
 	}
 	
@@ -481,10 +486,10 @@ private extension WebViewController {
 		var render = "error();"
 		if let data = try? encoder.encode(templateData) {
 			let json = String(data: data, encoding: .utf8)!
-			render = "render(\(json), \(restoreWindowScrollY));"
+			render = "render(\(json), \(windowScrollY));"
 		}
 
-		restoreWindowScrollY = 0
+		windowScrollY = 0
 		
 		webView.scrollView.setZoomScale(1.0, animated: false)
 		webView.evaluateJavaScript(render)

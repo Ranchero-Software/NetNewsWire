@@ -1778,14 +1778,14 @@ private extension SceneCoordinator {
 	}
 	
 	@discardableResult
-	func installArticleController(restoreWindowScrollY: Int = 0, animated: Bool) -> ArticleViewController {
+	func installArticleController(state: ArticleViewController.State? = nil, animated: Bool) -> ArticleViewController {
 
 		isArticleViewControllerPending = true
 
 		let articleController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
 		articleController.coordinator = self
 		articleController.article = currentArticle
-		articleController.restoreWindowScrollY = restoreWindowScrollY
+		articleController.restoreState = state
 				
 		if let subSplit = subSplitViewController {
 			let controller = addNavControllerIfNecessary(articleController, showButton: false)
@@ -1848,11 +1848,11 @@ private extension SceneCoordinator {
 	}
 	
 	func configureThreePanelMode() {
-		let articleRestoreWindowScrollY = articleViewController?.restoreWindowScrollY ?? 0
+		articleViewController?.stopArticleExtractorIfProcessing()
+		let articleViewControllerState = articleViewController?.currentState
 		defer {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
-		
 		
 		if rootSplitViewController.viewControllers.last is InteractiveNavigationController {
 			_ = rootSplitViewController.viewControllers.popLast()
@@ -1863,14 +1863,15 @@ private extension SceneCoordinator {
 		masterTimelineViewController?.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 		masterTimelineViewController?.navigationItem.leftItemsSupplementBackButton = true
 
-		installArticleController(restoreWindowScrollY: articleRestoreWindowScrollY, animated: false)
+		installArticleController(state: articleViewControllerState, animated: false)
 		
 		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
 		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: false)
 	}
 	
 	func configureStandardPanelMode() {
-		let articleRestoreWindowScrollY = articleViewController?.restoreWindowScrollY ?? 0
+		articleViewController?.stopArticleExtractorIfProcessing()
+		let articleViewControllerState = articleViewController?.currentState
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
 		
 		// Set the is Pending flags early to prevent the navigation controller delegate from thinking that we
@@ -1890,7 +1891,7 @@ private extension SceneCoordinator {
 			masterNavigationController.pushViewController(masterTimelineViewController!, animated: false)
 		}
 
-		installArticleController(restoreWindowScrollY: articleRestoreWindowScrollY, animated: false)
+		installArticleController(state: articleViewControllerState, animated: false)
 	}
 	
 	// MARK: NSUserActivity
