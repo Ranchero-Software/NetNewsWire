@@ -905,7 +905,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			activityManager.selectingNextUnread()
 			return
 		}
-		
+
+		if self.isSearching {
+			self.masterTimelineViewController?.hideSearch()
+		}
+
 		selectNextUnreadFeed() {
 			if self.selectNextUnreadArticleInTimeline() {
 				self.activityManager.selectingNextUnread()
