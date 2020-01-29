@@ -445,6 +445,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
+		// We will handle the filtering of unread feeds in unreadCountDidInitialize after they have all be calculated
+		guard AccountManager.shared.isUnreadCountsInitialized else {
+			return	
+		}
+		
 		// If we are filtering reads, the new unread count is greater than 1, and the feed isn't shown then continue
 		guard let feed = note.object as? Feed, isReadFeedsFiltered, feed.unreadCount > 0, !shadowTableContains(feed) else {
 			return
