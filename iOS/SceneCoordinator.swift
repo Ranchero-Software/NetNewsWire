@@ -805,6 +805,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	func endSearching() {
 		if let ip = currentFeedIndexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
+			emptyTheTimeline()
 			timelineFeed = feed
 			masterTimelineViewController?.reinitializeArticles(resetScroll: true)
 			replaceArticles(with: savedSearchArticles!, animated: true)
