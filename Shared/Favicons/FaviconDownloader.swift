@@ -24,6 +24,7 @@ final class FaviconDownloader {
 	private let diskCache: BinaryDiskCache
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
+	private var currentHomePageHasOnlyFaviconICO = false
 
 	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
 	private var homePageToFaviconURLCachePath: String
@@ -132,6 +133,8 @@ final class FaviconDownloader {
 
 		findFaviconURLs(with: url) { (faviconURLs) in
 			if let faviconURLs = faviconURLs {
+				self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
+
 				if let firstIconURL = faviconURLs.first {
 					let _ = self.favicon(with: firstIconURL, homePageURL: url)
 					self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
@@ -159,8 +162,11 @@ final class FaviconDownloader {
 					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst();
 				} else {
 					remainingFaviconURLs[homePageURL] = nil
-					self.homePageURLsWithNoFaviconURLCache.insert(homePageURL)
-					self.homePageURLsWithNoFaviconURLCacheDirty = true
+
+					if currentHomePageHasOnlyFaviconICO {
+						self.homePageURLsWithNoFaviconURLCache.insert(homePageURL)
+						self.homePageURLsWithNoFaviconURLCacheDirty = true
+					}
 				}
 			}
 			return
