@@ -133,6 +133,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return treeController.rootNode
 	}
 	
+	// At some point we should refactor the current Feed IndexPath out and only use the timeline feed
 	private(set) var currentFeedIndexPath: IndexPath?
 	
 	var timelineIconImage: IconImage? {
@@ -1321,6 +1322,11 @@ private extension SceneCoordinator {
 			
 			shadowTable.append(result)
 			
+		}
+		
+		// If we have a current Feed IndexPath it is no longer valid and needs reset.
+		if currentFeedIndexPath != nil {
+			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
 	}
 	
