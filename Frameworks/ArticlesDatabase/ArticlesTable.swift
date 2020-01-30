@@ -26,7 +26,7 @@ final class ArticlesTable: DatabaseTable {
 	}()
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
-	private let articleCutoffDate = Date().bySubtracting(days: 90)
+	let articleCutoffDate = Date().bySubtracting(days: 90)
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
 
@@ -520,10 +520,6 @@ final class ArticlesTable: DatabaseTable {
 				makeDatabaseCalls(database)
 			}
 		}
-	}
-
-	func createFetchAllUnreadCountsOperation() -> FetchAllUnreadCountsOperation {
-		return FetchAllUnreadCountsOperation(databaseQueue: queue, cutoffDate: articleCutoffDate)
 	}
 }
 

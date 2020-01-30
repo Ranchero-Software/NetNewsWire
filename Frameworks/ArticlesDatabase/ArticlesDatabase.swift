@@ -193,9 +193,14 @@ public final class ArticlesDatabase {
 
 	// MARK: - Operations
 
-	/// Create and return an operation that fetches all non-zero unread counts.
+	/// Create an operation that fetches all non-zero unread counts.
 	public func createFetchAllUnreadCountsOperation() -> FetchAllUnreadCountsOperation {
-		return articlesTable.createFetchAllUnreadCountsOperation()
+		return FetchAllUnreadCountsOperation(databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+	}
+
+	/// Create an operation that fetches the unread count for a single given feedID.
+	public func createFetchFeedUnreadCountOperation(feedID: String) -> FetchFeedUnreadCountOperation {
+		return FetchFeedUnreadCountOperation(feedID: feedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
 	}
 
 	// MARK: - Suspend and Resume (for iOS)

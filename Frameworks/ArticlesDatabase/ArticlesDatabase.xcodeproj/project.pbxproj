@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		51C451FF2264CF2100C03939 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C451FE2264CF2100C03939 /* RSParser.framework */; };
+		84116B8923E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84116B8823E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift */; };
 		841D4D742106B59F00DD04E6 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D732106B59F00DD04E6 /* Articles.framework */; };
 		84288A001F6A3C4400395871 /* DatabaseObject+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */; };
 		84288A021F6A3D8000395871 /* RelatedObjectsMap+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */; };
@@ -112,6 +113,7 @@
 /* Begin PBXFileReference section */
 		518B2EA7235130CD00400001 /* ArticlesDatabase_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ArticlesDatabase_project_test.xcconfig; sourceTree = "<group>"; };
 		51C451FE2264CF2100C03939 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		84116B8823E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchFeedUnreadCountOperation.swift; sourceTree = "<group>"; };
 		841D4D732106B59F00DD04E6 /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		842889FF1F6A3C4400395871 /* DatabaseObject+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseObject+Database.swift"; sourceTree = "<group>"; };
 		84288A011F6A3D8000395871 /* RelatedObjectsMap+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RelatedObjectsMap+Database.swift"; sourceTree = "<group>"; };
@@ -244,6 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				84C242C823DEB45C00C50516 /* FetchAllUnreadCountsOperation.swift */,
+				84116B8823E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
@@ -525,6 +528,7 @@
 				845580671F0AEBCD003CCFA1 /* Constants.swift in Sources */,
 				843CB9961F34174100EE6581 /* Author+Database.swift in Sources */,
 				845580761F0AF670003CCFA1 /* Article+Database.swift in Sources */,
+				84116B8923E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift in Sources */,
 				8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */,
 				84288A021F6A3D8000395871 /* RelatedObjectsMap+Database.swift in Sources */,
 				84C242C923DEB45C00C50516 /* FetchAllUnreadCountsOperation.swift in Sources */,
