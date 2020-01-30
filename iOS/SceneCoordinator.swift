@@ -30,7 +30,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return rootSplitViewController.undoManager
 	}
 	
-	lazy var webViewProvider = WebViewProvider(coordinator: self)
+	lazy var webViewProvider = WebViewProvider(coordinator: self, viewController: rootSplitViewController)
 	
 	private var panelMode: PanelMode = .unset
 	
@@ -133,6 +133,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return treeController.rootNode
 	}
 	
+	// At some point we should refactor the current Feed IndexPath out and only use the timeline feed
 	private(set) var currentFeedIndexPath: IndexPath?
 	
 	var timelineIconImage: IconImage? {
@@ -445,6 +446,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
+		// We will handle the filtering of unread feeds in unreadCountDidInitialize after they have all be calculated
+		guard AccountManager.shared.isUnreadCountsInitialized else {
+			return	
+		}
+		
 		// If we are filtering reads, the new unread count is greater than 1, and the feed isn't shown then continue
 		guard let feed = note.object as? Feed, isReadFeedsFiltered, feed.unreadCount > 0, !shadowTableContains(feed) else {
 			return
@@ -805,6 +811,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 	func endSearching() {
 		if let ip = currentFeedIndexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
+			emptyTheTimeline()
 			timelineFeed = feed
 			masterTimelineViewController?.reinitializeArticles(resetScroll: true)
 			replaceArticles(with: savedSearchArticles!, animated: true)
@@ -905,7 +912,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			activityManager.selectingNextUnread()
 			return
 		}
-		
+
+		if self.isSearching {
+			self.masterTimelineViewController?.hideSearch()
+		}
+
 		selectNextUnreadFeed() {
 			if self.selectNextUnreadArticleInTimeline() {
 				self.activityManager.selectingNextUnread()
@@ -1251,14 +1262,45 @@ private extension SceneCoordinator {
 
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
+			
+			addCurrentFeedToFilterExeptionsIfNecessary()
 			treeController.rebuild()
+			treeControllerDelegate.resetFilterExceptions()
+			
 			updateExpandedNodes?()
 			rebuildShadowTable()
 			masterFeedViewController.reloadFeeds(initialLoad: initialLoad)
-			clearTimelineIfNoLongerAvailable()
+			
 		}
 	}
 	
+	func addCurrentFeedToFilterExeptionsIfNecessary() {
+		if isReadFeedsFiltered, let feedID = timelineFeed?.feedID {
+			if timelineFeed is SmartFeed {
+				treeControllerDelegate.addFilterException(feedID)
+			} else if let folderFeed = timelineFeed as? Folder {
+				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
+					treeControllerDelegate.addFilterException(feedID)
+				}
+			} else if let webFeed = timelineFeed as? WebFeed {
+				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
+					treeControllerDelegate.addFilterException(feedID)
+					addParentFolderToFilterExceptions(webFeed)
+				}
+			}
+		}
+	}
+	
+	func addParentFolderToFilterExceptions(_ feed: Feed) {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
+			let folder = node.parent?.representedObject as? Folder,
+			let folderFeedID = folder.feedID else {
+				return
+		}
+		
+		treeControllerDelegate.addFilterException(folderFeedID)
+	}
+
 	func rebuildShadowTable() {
 		shadowTable = [[Node]]()
 
@@ -1280,6 +1322,11 @@ private extension SceneCoordinator {
 			
 			shadowTable.append(result)
 			
+		}
+		
+		// If we have a current Feed IndexPath it is no longer valid and needs reset.
+		if currentFeedIndexPath != nil {
+			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
 	}
 	
@@ -1743,14 +1790,14 @@ private extension SceneCoordinator {
 	}
 	
 	@discardableResult
-	func installArticleController(restoreWindowScrollY: Int = 0, animated: Bool) -> ArticleViewController {
+	func installArticleController(state: ArticleViewController.State? = nil, animated: Bool) -> ArticleViewController {
 
 		isArticleViewControllerPending = true
 
 		let articleController = UIStoryboard.main.instantiateController(ofType: ArticleViewController.self)
 		articleController.coordinator = self
 		articleController.article = currentArticle
-		articleController.restoreWindowScrollY = restoreWindowScrollY
+		articleController.restoreState = state
 				
 		if let subSplit = subSplitViewController {
 			let controller = addNavControllerIfNecessary(articleController, showButton: false)
@@ -1813,11 +1860,11 @@ private extension SceneCoordinator {
 	}
 	
 	func configureThreePanelMode() {
-		let articleRestoreWindowScrollY = articleViewController?.restoreWindowScrollY ?? 0
+		articleViewController?.stopArticleExtractorIfProcessing()
+		let articleViewControllerState = articleViewController?.currentState
 		defer {
 			masterNavigationController.viewControllers = [masterFeedViewController]
 		}
-		
 		
 		if rootSplitViewController.viewControllers.last is InteractiveNavigationController {
 			_ = rootSplitViewController.viewControllers.popLast()
@@ -1828,14 +1875,15 @@ private extension SceneCoordinator {
 		masterTimelineViewController?.navigationItem.leftBarButtonItem = rootSplitViewController.displayModeButtonItem
 		masterTimelineViewController?.navigationItem.leftItemsSupplementBackButton = true
 
-		installArticleController(restoreWindowScrollY: articleRestoreWindowScrollY, animated: false)
+		installArticleController(state: articleViewControllerState, animated: false)
 		
 		masterFeedViewController.restoreSelectionIfNecessary(adjustScroll: true)
 		masterTimelineViewController!.restoreSelectionIfNecessary(adjustScroll: false)
 	}
 	
 	func configureStandardPanelMode() {
-		let articleRestoreWindowScrollY = articleViewController?.restoreWindowScrollY ?? 0
+		articleViewController?.stopArticleExtractorIfProcessing()
+		let articleViewControllerState = articleViewController?.currentState
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = UISplitViewController.automaticDimension
 		
 		// Set the is Pending flags early to prevent the navigation controller delegate from thinking that we
@@ -1855,7 +1903,7 @@ private extension SceneCoordinator {
 			masterNavigationController.pushViewController(masterTimelineViewController!, animated: false)
 		}
 
-		installArticleController(restoreWindowScrollY: articleRestoreWindowScrollY, animated: false)
+		installArticleController(state: articleViewControllerState, animated: false)
 	}
 	
 	// MARK: NSUserActivity

@@ -14,6 +14,11 @@ import SafariServices
 
 class ArticleViewController: UIViewController {
 	
+	typealias State = (extractedArticle: ExtractedArticle?,
+		isShowingExtractedArticle: Bool,
+		articleExtractorButtonState: ArticleExtractorButtonState,
+		windowScrollY: Int)
+
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var nextArticleBarButtonItem: UIBarButtonItem!
@@ -49,7 +54,16 @@ class ArticleViewController: UIViewController {
 			updateUI()
 		}
 	}
-	var restoreWindowScrollY = 0
+	
+	var currentState: State? {
+		guard let controller = currentWebViewController else { return nil}
+		return State(extractedArticle: controller.extractedArticle,
+					 isShowingExtractedArticle: controller.isShowingExtractedArticle,
+					 articleExtractorButtonState: controller.articleExtractorButtonState,
+					 windowScrollY: controller.windowScrollY)
+	}
+	
+	var restoreState: State?
 	
 	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
@@ -89,7 +103,12 @@ class ArticleViewController: UIViewController {
 		])
 				
 		let controller = createWebViewController(article)
-		controller.restoreWindowScrollY = restoreWindowScrollY
+		if let state = restoreState {
+			controller.extractedArticle = state.extractedArticle
+			controller.isShowingExtractedArticle = state.isShowingExtractedArticle
+			controller.articleExtractorButtonState = state.articleExtractorButtonState
+			controller.windowScrollY = state.windowScrollY
+		}
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
 		
@@ -239,17 +258,15 @@ class ArticleViewController: UIViewController {
 		currentWebViewController?.fullReload()
 	}
 	
+	func stopArticleExtractorIfProcessing() {
+		currentWebViewController?.stopArticleExtractorIfProcessing()
+	}
+	
 }
 
 // MARK: WebViewControllerDelegate
 
 extension ArticleViewController: WebViewControllerDelegate {
-	
-	func webViewController(_ webViewController: WebViewController, restoreWindowScrollYDidUpdate restoreWindowScrollY: Int) {
-		if webViewController === currentWebViewController {
-			self.restoreWindowScrollY = restoreWindowScrollY
-		}
-	}
 	
 	func webViewController(_ webViewController: WebViewController, articleExtractorButtonStateDidUpdate buttonState: ArticleExtractorButtonState) {
 		if webViewController === currentWebViewController {
@@ -290,7 +307,7 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 	func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
 		guard finished, completed else { return }
 		guard let article = currentWebViewController?.article else { return }
-		coordinator.selectArticle(article)
+		coordinator.selectArticle(article, animations: [.select, .scroll, .navigation])
 		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
 	}
 	
