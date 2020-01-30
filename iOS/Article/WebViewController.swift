@@ -437,6 +437,8 @@ extension WebViewController: UIScrollViewDelegate {
 private struct TemplateData: Codable {
 	let style: String
 	let body: String
+	let title: String
+	let baseURL: String
 }
 
 private struct ImageClickMessage: Codable {
@@ -478,7 +480,7 @@ private extension WebViewController {
 			rendering = ArticleRenderer.noSelectionHTML(style: style)
 		}
 		
-		let templateData = TemplateData(style: rendering.style, body: rendering.html)
+		let templateData = TemplateData(style: rendering.style, body: rendering.html, title: rendering.title, baseURL: rendering.baseURL)
 		
 		let encoder = JSONEncoder()
 		var render = "error();"
