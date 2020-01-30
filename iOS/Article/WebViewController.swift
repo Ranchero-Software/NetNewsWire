@@ -121,8 +121,6 @@ class WebViewController: UIViewController {
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
-			// Even though page.html should be loaded into this webview, we have to do it again
-			// to work around this bug: http://www.openradar.me/22855188
 			self.reloadHTML()
 			
 			self.view.setNeedsLayout()

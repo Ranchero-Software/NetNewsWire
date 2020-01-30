@@ -14,17 +14,20 @@ import WebKit
 class WebViewProvider: NSObject, WKNavigationDelegate {
 	
 	let articleIconSchemeHandler: ArticleIconSchemeHandler
+	let viewController: UIViewController
 	
 	private let minimumQueueDepth = 3
 	private let maximumQueueDepth = 6
-	private var queue: [WKWebView] = []
+	private var queue = UIView()
 	
 	private var waitingForFirstLoad = true
 	private var waitingCompletionHandler: ((WKWebView) -> ())?
 
-	init(coordinator: SceneCoordinator) {
+	init(coordinator: SceneCoordinator, viewController: UIViewController) {
 		articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
+		self.viewController = viewController
 		super.init()
+		self.viewController.view.insertSubview(queue, at: 0)
 		replenishQueueIfNeeded()
 	}
 	
@@ -37,12 +40,12 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 	}
 	
 	func enqueueWebView(_ webView: WKWebView) {
-		guard queue.count < maximumQueueDepth else {
+		guard queue.subviews.count < maximumQueueDepth else {
 			return
 		}
 
 		webView.navigationDelegate = self
-		queue.insert(webView, at: 0)
+		queue.insertSubview(webView, at: 0)
 
 		webView.loadFileURL(ArticleRenderer.page.url, allowingReadAccessTo: ArticleRenderer.page.baseURL)
 
@@ -63,7 +66,7 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 	// MARK: Private
 
 	private func replenishQueueIfNeeded() {
-		while queue.count < minimumQueueDepth {
+		while queue.subviews.count < minimumQueueDepth {
 			let preferences = WKPreferences()
 			preferences.javaScriptCanOpenWindowsAutomatically = false
 			preferences.javaScriptEnabled = true
@@ -81,7 +84,8 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 	}
 	
 	private func completeRequest(completion: @escaping (WKWebView) -> ()) {
-		if let webView = queue.popLast() {
+		if let webView = queue.subviews.last as? WKWebView {
+			webView.removeFromSuperview()
 			webView.navigationDelegate = nil
 			replenishQueueIfNeeded()
 			completion(webView)
