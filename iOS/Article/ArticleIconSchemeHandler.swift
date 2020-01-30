@@ -12,7 +12,7 @@ import Articles
 
 class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 	
-	let coordinator: SceneCoordinator
+	weak var coordinator: SceneCoordinator?
 	
 	init(coordinator: SceneCoordinator) {
 		self.coordinator = coordinator
@@ -20,7 +20,7 @@ class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 	
 	func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
 
-		guard let url = urlSchemeTask.request.url else {
+		guard let url = urlSchemeTask.request.url, let coordinator = coordinator else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}

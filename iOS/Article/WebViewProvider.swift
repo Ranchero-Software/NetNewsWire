@@ -14,7 +14,6 @@ import WebKit
 class WebViewProvider: NSObject, WKNavigationDelegate {
 	
 	let articleIconSchemeHandler: ArticleIconSchemeHandler
-	let viewController: UIViewController
 	
 	private let minimumQueueDepth = 3
 	private let maximumQueueDepth = 6
@@ -25,9 +24,8 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 
 	init(coordinator: SceneCoordinator, viewController: UIViewController) {
 		articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
-		self.viewController = viewController
 		super.init()
-		self.viewController.view.insertSubview(queue, at: 0)
+		viewController.view.insertSubview(queue, at: 0)
 		replenishQueueIfNeeded()
 	}
 	
