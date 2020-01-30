@@ -155,7 +155,7 @@ private extension MasterFeedTableViewSectionHeader {
 	}
 
 	func addSubviewAtInit(_ view: UIView) {
-		addSubview(view)
+		contentView.addSubview(view)
 		view.translatesAutoresizingMaskIntoConstraints = false
 	}
 	
