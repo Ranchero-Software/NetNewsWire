@@ -199,6 +199,8 @@ extension DetailWebViewController: WKNavigationDelegate {
 struct TemplateData: Codable {
 	let style: String
 	let body: String
+	let title: String
+	let baseURL: String
 }
 
 private extension DetailWebViewController {
@@ -227,7 +229,7 @@ private extension DetailWebViewController {
 			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
 		}
 		
-		let templateData = TemplateData(style: rendering.style, body: rendering.html)
+		let templateData = TemplateData(style: rendering.style, body: rendering.html, title: rendering.title, baseURL: rendering.baseURL)
 		
 		let encoder = JSONEncoder()
 		var render = "error();"
