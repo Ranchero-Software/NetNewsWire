@@ -95,6 +95,12 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 	}
 	
 	override func didSelectPost() {
+		
+		guard let url = url, let container = container else {
+			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
+			return
+		}
+		
 		var account: Account?
 		if let containerAccount = container as? Account {
 			account = containerAccount
@@ -105,7 +111,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			return
 		}
 		
-		if let urlString = url?.absoluteString, account!.hasWebFeed(withURL: urlString) {
+		if account!.hasWebFeed(withURL: url.absoluteString) {
 			let errorTitle = NSLocalizedString("Error", comment: "Error")
 			presentError(title: errorTitle, message: AccountError.createErrorAlreadySubscribed.localizedDescription)
 			self.extensionContext!.cancelRequest(withError: AccountError.createErrorAlreadySubscribed)
@@ -118,7 +124,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			guard !expired else { return }
 			
 			DispatchQueue.main.async {
-				account!.createWebFeed(url: self.url!.absoluteString, name: feedName, container: self.container!) { result in
+				account!.createWebFeed(url: url.absoluteString, name: feedName, container: container) { result in
 					account!.save()
 					AccountManager.shared.suspendNetworkAll()
 					AccountManager.shared.suspendDatabaseAll()
