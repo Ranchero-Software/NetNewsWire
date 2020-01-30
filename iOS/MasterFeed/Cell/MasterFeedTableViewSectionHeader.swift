@@ -42,7 +42,6 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		set {
 			if titleView.text != newValue {
 				titleView.text = newValue
-				setNeedsDisplay()
 				setNeedsLayout()
 			}
 		}
@@ -50,7 +49,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	var disclosureExpanded = false {
 		didSet {
-			updateExpandedState()
+			updateExpandedState(animate: true)
 			updateUnreadCountView()
 		}
 	}
@@ -116,19 +115,22 @@ private extension MasterFeedTableViewSectionHeader {
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
-		updateExpandedState()
 		addSubviewAtInit(disclosureView)
+		updateExpandedState(animate: false)
 		addBackgroundView()
 		addSubviewAtInit(topSeparatorView)
 		addSubviewAtInit(bottomSeparatorView)
 	}
 	
-	func updateExpandedState() {
+	func updateExpandedState(animate: Bool) {
 		if !isLastSection && self.disclosureExpanded {
 			self.bottomSeparatorView.isHidden = false
 		}
+		
+		let duration = animate ? 0.3 : 0.0
+		
 		UIView.animate(
-			withDuration: 0.3,
+			withDuration: duration,
 			animations: {
 				if self.disclosureExpanded {
 					self.disclosureView.transform = CGAffineTransform(rotationAngle: 1.570796)
