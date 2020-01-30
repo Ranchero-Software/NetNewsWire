@@ -131,19 +131,11 @@ final class FaviconDownloader {
 		}
 
 		findFaviconURLs(with: url) { (faviconURLs) in
-			var hasIcons = false
-
 			if let faviconURLs = faviconURLs {
 				if let firstIconURL = faviconURLs.first {
-					hasIcons = true
 					let _ = self.favicon(with: firstIconURL, homePageURL: url)
 					self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
 				}
-			}
-
-			if (!hasIcons) {
-				self.homePageURLsWithNoFaviconURLCache.insert(url)
-				self.homePageURLsWithNoFaviconURLCacheDirty = true
 			}
 		}
 
@@ -167,6 +159,8 @@ final class FaviconDownloader {
 					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst();
 				} else {
 					remainingFaviconURLs[homePageURL] = nil
+					self.homePageURLsWithNoFaviconURLCache.insert(homePageURL)
+					self.homePageURLsWithNoFaviconURLCacheDirty = true
 				}
 			}
 			return
