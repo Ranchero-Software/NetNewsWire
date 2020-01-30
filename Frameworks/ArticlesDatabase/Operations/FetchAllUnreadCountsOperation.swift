@@ -59,6 +59,7 @@ private extension FetchAllUnreadCountsOperation {
 		var d = UnreadCountDictionary()
 		while resultSet.next() {
 			if isCanceled {
+				resultSet.close()
 				informOperationDelegateOfCompletion()
 				return
 			}
@@ -67,6 +68,7 @@ private extension FetchAllUnreadCountsOperation {
 				d[webFeedID] = unreadCount
 			}
 		}
+		resultSet.close()
 
 		unreadCountDictionary = d
 		informOperationDelegateOfCompletion()
