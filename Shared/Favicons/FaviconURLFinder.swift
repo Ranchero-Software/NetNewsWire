@@ -16,6 +16,7 @@ struct FaviconURLFinder {
 	private static var ignoredMimeTypes = [String]()
 	private static var ignoredExtensions = [String]()
 
+	/// Uniform types to ignore when finding favicon URLs.
 	static var ignoredTypes: [String]? {
 		didSet {
 			guard let ignoredTypes = ignoredTypes else {
