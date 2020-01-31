@@ -84,6 +84,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		operationQueue.addOperation(addRequest)
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
+		createFeeds.delegate = self
 		createFeeds.addDependency(addRequest)
 		createFeeds.downloadProgress = downloadProgress
 		operationQueue.addOperation(createFeeds)
@@ -91,23 +92,28 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: syncUnreadIdsService, database: database, newerThan: nil, log: log)
 		syncUnread.addDependency(createFeeds)
 		syncUnread.downloadProgress = downloadProgress
+		syncUnread.delegate = self
 		operationQueue.addOperation(syncUnread)
 		
 		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil, log: log)
 		syncFeed.addDependency(syncUnread)
 		syncFeed.downloadProgress = downloadProgress
+		syncFeed.delegate = self
 		operationQueue.addOperation(syncFeed)
 		
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = downloadProgress
 		finishOperation.addDependency(syncFeed)
+		finishOperation.delegate = self
 		operationQueue.addOperation(finishOperation)
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		addCompletionHandler?(.failure(error))
 		addCompletionHandler = nil
+		
+		os_log(.debug, log: log, "Unable to add new feed: %{public}@.", error as NSError)
 		
 		cancel()
 	}
