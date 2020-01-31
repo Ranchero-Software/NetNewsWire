@@ -161,37 +161,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private(set) var showFeedNames = false
 	private(set) var showIcons = false
 
-	var isPrevFeedAvailable: Bool {
-		guard let indexPath = currentFeedIndexPath else {
-			return false
-		}
-		return indexPath.section > 0 || indexPath.row > 0
-	}
-	
-	var isNextFeedAvailable: Bool {
-		guard let indexPath = currentFeedIndexPath else {
-			return false
-		}
-		
-		let nextIndexPath: IndexPath = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].count {
-				return IndexPath(row: 0, section: indexPath.section + 1)
-			} else {
-				return IndexPath(row: indexPath.row + 1, section: indexPath.section)
-			}
-		}()
-		
-		return nextIndexPath.section < shadowTable.count && nextIndexPath.row < shadowTable[nextIndexPath.section].count
-	}
-
 	var prevFeedIndexPath: IndexPath? {
-		guard isPrevFeedAvailable, let indexPath = currentFeedIndexPath else {
+		guard let indexPath = currentFeedIndexPath else {
 			return nil
 		}
 		
-		let prevIndexPath: IndexPath = {
+		let prevIndexPath: IndexPath? = {
 			if indexPath.row - 1 < 0 {
-				return IndexPath(row: shadowTable[indexPath.section - 1].count - 1, section: indexPath.section - 1)
+				for i in (0..<indexPath.section).reversed() {
+					if shadowTable[i].count > 0 {
+						return IndexPath(row: shadowTable[i].count - 1, section: i)
+					}
+				}
+				return nil
 			} else {
 				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
 			}
@@ -201,13 +183,18 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	var nextFeedIndexPath: IndexPath? {
-		guard isNextFeedAvailable, let indexPath = currentFeedIndexPath else {
+		guard let indexPath = currentFeedIndexPath else {
 			return nil
 		}
 		
-		let nextIndexPath: IndexPath = {
+		let nextIndexPath: IndexPath? = {
 			if indexPath.row + 1 >= shadowTable[indexPath.section].count {
-				return IndexPath(row: 0, section: indexPath.section + 1)
+				for i in indexPath.section + 1..<shadowTable.count {
+					if shadowTable[i].count > 0 {
+						return IndexPath(row: 0, section: i)
+					}
+				}
+				return nil
 			} else {
 				return IndexPath(row: indexPath.row + 1, section: indexPath.section)
 			}
