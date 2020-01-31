@@ -93,11 +93,16 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 			animations: {
 				imageView.frame = self.originFrame
 			}, completion: { _ in
-				self.webViewController?.showClickedImage() {
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-						imageView.removeFromSuperview()
-						transitionContext.completeTransition(true)
+				if let controller = self.webViewController {
+					controller.showClickedImage() {
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+							imageView.removeFromSuperview()
+							transitionContext.completeTransition(true)
+						}
 					}
+				} else {
+					imageView.removeFromSuperview()
+					transitionContext.completeTransition(true)
 				}
 		})
 	}
