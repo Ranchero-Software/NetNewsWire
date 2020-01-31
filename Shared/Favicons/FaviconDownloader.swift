@@ -208,7 +208,9 @@ private extension FaviconDownloader {
 			return
 		}
 
-		FaviconURLFinder.findFaviconURLs(homePageURL) { (faviconURLs) in
+		let ignoredTypes = [kUTTypeScalableVectorGraphics as String]
+
+		FaviconURLFinder.findFaviconURLs(with: homePageURL, ignoredTypes: ignoredTypes) { (faviconURLs) in
 			var defaultFaviconURL: String? = nil
 
 			if let scheme = url.scheme, let host = url.host {
