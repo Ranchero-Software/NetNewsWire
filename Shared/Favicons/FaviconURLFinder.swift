@@ -13,23 +13,15 @@ import RSParser
 
 struct FaviconURLFinder {
 
-	/// Finds favicon URLs in a web page.
-	/// - Parameters:
-	///   - homePageURL: The page to search.
-	///   - ignoredTypes: An array of uniform type identifiers to ignore.
-	///   - completion: A closure called when the links have been found.
-	///   - urls: An array of favicon URLs as strings.
-	static func findFaviconURLs(with homePageURL: String, ignoredTypes ignoredTypes: [String]? = nil, _ completion: @escaping (_ urls:[String]?) -> Void) {
+	private static var ignoredMimeTypes = [String]()
+	private static var ignoredExtensions = [String]()
 
-		guard let _ = URL(string: homePageURL) else {
-			completion(nil)
-			return
-		}
+	static var ignoredTypes: [String]? {
+		didSet {
+			guard let ignoredTypes = ignoredTypes else {
+				return
+			}
 
-		var ignoredMimeTypes = [String]()
-		var ignoredExtensions = [String]()
-
-		if let ignoredTypes = ignoredTypes {
 			for type in ignoredTypes {
 				if let mimeTypes = UTTypeCopyAllTagsWithClass(type as CFString, kUTTagClassMIMEType)?.takeRetainedValue() {
 					ignoredMimeTypes.append(contentsOf: mimeTypes as! [String])
@@ -38,6 +30,19 @@ struct FaviconURLFinder {
 					ignoredExtensions.append(contentsOf: extensions as! [String])
 				}
 			}
+		}
+	}
+
+	/// Finds favicon URLs in a web page.
+	/// - Parameters:
+	///   - homePageURL: The page to search.
+	///   - completion: A closure called when the links have been found.
+	///   - urls: An array of favicon URLs as strings.
+	static func findFaviconURLs(with homePageURL: String, _ completion: @escaping (_ urls:[String]?) -> Void) {
+
+		guard let _ = URL(string: homePageURL) else {
+			completion(nil)
+			return
 		}
 
 		// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.

@@ -60,6 +60,8 @@ final class FaviconDownloader {
 		loadHomePageToFaviconURLCache()
 		loadHomePageURLsWithNoFaviconURLCache()
 
+		FaviconURLFinder.ignoredTypes = [kUTTypeScalableVectorGraphics as String]
+
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 	}
 
@@ -208,9 +210,7 @@ private extension FaviconDownloader {
 			return
 		}
 
-		let ignoredTypes = [kUTTypeScalableVectorGraphics as String]
-
-		FaviconURLFinder.findFaviconURLs(with: homePageURL, ignoredTypes: ignoredTypes) { (faviconURLs) in
+		FaviconURLFinder.findFaviconURLs(with: homePageURL) { (faviconURLs) in
 			var defaultFaviconURL: String? = nil
 
 			if let scheme = url.scheme, let host = url.host {
