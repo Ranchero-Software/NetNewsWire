@@ -104,7 +104,10 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
+		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: contentView.bounds.size.width,
+															insets: contentView.safeAreaInsets,
+															label: titleView,
+															unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
 
