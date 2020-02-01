@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreServices
 import RSParser
 
 // The favicon URLs may be specified in the head section of the home page.
@@ -48,19 +49,19 @@ struct FaviconURLFinder {
 
 		// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.
 		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (htmlMetadata) in
-			let faviconURLs = htmlMetadata?.faviconLinks.filter({ (faviconLink) -> Bool in
-				if faviconLink.type != nil {
-					if ignoredMimeTypes.contains(faviconLink.type) {
+			let faviconURLs = htmlMetadata?.favicons.filter({ (favicon) -> Bool in
+				if let type = favicon.type {
+					if ignoredMimeTypes.contains(type) {
 						return false
 					}
 				} else {
-					if let url = URL(string: faviconLink.urlString!), ignoredExtensions.contains(url.pathExtension) {
+					if let url = URL(string: favicon.urlString), ignoredExtensions.contains(url.pathExtension) {
 						return false
 					}
 				}
 
 				return true
-			}).map { $0.urlString! }
+			}).map { $0.urlString }
 
 			completion(faviconURLs)
 		}

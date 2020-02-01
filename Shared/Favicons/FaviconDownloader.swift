@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreServices
 import Articles
 import Account
 import RSCore
