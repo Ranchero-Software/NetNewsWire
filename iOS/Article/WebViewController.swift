@@ -29,7 +29,10 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	private var webView: WKWebView!
+	private var webView: WKWebView? {
+		return view.subviews[0] as? WKWebView
+	}
+	
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
 		return traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
@@ -46,7 +49,7 @@ class WebViewController: UIViewController {
 	var isShowingExtractedArticle = false {
 		didSet {
 			if isShowingExtractedArticle != oldValue {
-				reloadHTML()
+				loadWebView()
 			}
 		}
 	}
@@ -68,25 +71,18 @@ class WebViewController: UIViewController {
 			}
 			if article != oldValue {
 				windowScrollY = 0
-				reloadHTML()
+				loadWebView()
 			}
 		}
 	}
 	
 	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 1.0)
-	var windowScrollY = 0 
+	var windowScrollY = 0
 	
 	deinit {
-		if webView != nil  {
-			webView?.evaluateJavaScript("cancelImageLoad();")
-			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
-			webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
-			webView.removeFromSuperview()
-			coordinator.webViewProvider.enqueueWebView(webView)
-			webView = nil
-		}
+		recycleWebView(webView)
 	}
-
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
@@ -94,44 +90,17 @@ class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-
-		coordinator.webViewProvider.dequeueWebView() { webView in
-			
-			// Add the webview
-			self.webView = webView
-			webView.translatesAutoresizingMaskIntoConstraints = false
-			self.view.addSubview(webView)
-			NSLayoutConstraint.activate([
-				self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
-				self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
-				self.view.topAnchor.constraint(equalTo: webView.topAnchor),
-				self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
-			])
-
-			// Configure the tap zones
-			self.configureTopShowBarsView()
-			self.configureBottomShowBarsView()
-			
-			// Configure the webview
-			webView.navigationDelegate = self
-			webView.uiDelegate = self
-			webView.scrollView.delegate = self
-			self.configureContextMenuInteraction()
-
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
-
-			self.reloadHTML()
-			
-			self.view.setNeedsLayout()
-			self.view.layoutIfNeeded()
-		}
 		
+		// Configure the tap zones
+		configureTopShowBarsView()
+		configureBottomShowBarsView()
+		
+		loadWebView()
+
 	}
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-
 		stopMediaPlayback()
 	}
 	
@@ -162,14 +131,17 @@ class WebViewController: UIViewController {
 	// MARK: API
 
 	func focus() {
-		webView.becomeFirstResponder()
+		webView?.becomeFirstResponder()
 	}
 
 	func canScrollDown() -> Bool {
+		guard let webView = webView else { return false }
 		return webView.scrollView.contentOffset.y < finalScrollPosition()
 	}
 
 	func scrollPageDown() {
+		guard let webView = webView else { return }
+		
 		let scrollToY: CGFloat = {
 			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.layoutMarginsGuide.layoutFrame.height
 			let final = finalScrollPosition()
@@ -191,7 +163,7 @@ class WebViewController: UIViewController {
 	}
 	
 	func fullReload() {
-		self.reloadHTML()
+		self.loadWebView()
 	}
 
 	func showBars() {
@@ -269,7 +241,7 @@ extension WebViewController: ArticleExtractorDelegate {
 	func articleExtractionDidFail(with: Error) {
 		stopArticleExtractor()
 		articleExtractorButtonState = .error
-		reloadHTML()
+		loadWebView()
 	}
 
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
@@ -352,10 +324,6 @@ extension WebViewController: WKNavigationDelegate {
 		
 	}
 
-	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		renderPage()
-	}
-	
 }
 
 // MARK: WKUIDelegate
@@ -454,8 +422,53 @@ private struct ImageClickMessage: Codable {
 
 private extension WebViewController {
 
-	func reloadHTML() {
-		webView?.loadFileURL(ArticleRenderer.page.url, allowingReadAccessTo: ArticleRenderer.page.baseURL)
+	func loadWebView() {
+		guard isViewLoaded else { return }
+		
+		coordinator.webViewProvider.dequeueWebView() { webView in
+			
+			let webViewToRecycle = self.webView
+			
+			// Add the webview
+			webView.translatesAutoresizingMaskIntoConstraints = false
+			self.view.insertSubview(webView, at: 0)
+			NSLayoutConstraint.activate([
+				self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
+				self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
+				self.view.topAnchor.constraint(equalTo: webView.topAnchor),
+				self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
+			])
+			
+			self.view.setNeedsLayout()
+			self.view.layoutIfNeeded()
+
+			// Configure the webview
+			webView.navigationDelegate = self
+			webView.uiDelegate = self
+			webView.scrollView.delegate = self
+			self.configureContextMenuInteraction()
+
+			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
+			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
+
+			self.renderPage()
+			self.recycleWebView(webViewToRecycle)
+			
+		}
+		
+	}
+
+	func recycleWebView(_ webView: WKWebView?) {
+		guard let webView = webView else { return }
+		
+		webView.removeFromSuperview()
+		webView.evaluateJavaScript("cancelImageLoad();")
+		
+		webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
+		webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
+		webView.interactions.removeAll()
+		
+		coordinator.webViewProvider.enqueueWebView(webView)
 	}
 
 	func renderPage() {
@@ -492,11 +505,12 @@ private extension WebViewController {
 		windowScrollY = 0
 		
 		webView.scrollView.setZoomScale(1.0, animated: false)
-		webView.evaluateJavaScript(render)
+		webView.evaluateJavaScript(render) 
 		
 	}
 	
 	func finalScrollPosition() -> CGFloat {
+		guard let webView = webView else { return 0 }
 		return webView.scrollView.contentSize.height - webView.scrollView.bounds.height + webView.scrollView.safeAreaInsets.bottom
 	}
 	
@@ -522,7 +536,8 @@ private extension WebViewController {
 	}
 	
 	func imageWasClicked(body: String?) {
-		guard let body = body,
+		guard let webView = webView,
+			let body = body,
 			let data = body.data(using: .utf8),
 			let clickMessage = try? JSONDecoder().decode(ImageClickMessage.self, from: data),
 			let range = clickMessage.imageURL.range(of: ";base64,")
