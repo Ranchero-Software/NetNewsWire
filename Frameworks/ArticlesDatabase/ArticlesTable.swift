@@ -237,31 +237,6 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Unread Counts
 	
-	func fetchUnreadCounts(_ webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		if webFeedIDs.isEmpty {
-			completion(.success(UnreadCountDictionary()))
-			return
-		}
-
-		fetchAllUnreadCounts { (unreadCountsResult) in
-
-			func createUnreadCountDictionary(_ unreadCountDictionary: UnreadCountDictionary) -> UnreadCountDictionary {
-				var d = UnreadCountDictionary()
-				for webFeedID in webFeedIDs {
-					d[webFeedID] = unreadCountDictionary[webFeedID] ?? 0
-				}
-				return d
-			}
-
-			switch unreadCountsResult {
-				case .success(let unreadCountDictionary):
-					completion(.success(createUnreadCountDictionary(unreadCountDictionary)))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-			}
-		}
-	}
-
 	func fetchUnreadCount(_ webFeedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		// Get unread count for today, for instance.
 		if webFeedIDs.isEmpty {
@@ -284,46 +259,6 @@ final class ArticlesTable: DatabaseTable {
 
 				DispatchQueue.main.async {
 					completion(.success(unreadCount))
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
-			}
-		}
-	}
-
-	func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		// Returns only where unreadCount > 0.
-
-		let cutoffDate = articleCutoffDate
-		queue.runInDatabase { databaseResult in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
-
-				guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
-					DispatchQueue.main.async {
-						completion(.success(UnreadCountDictionary()))
-					}
-					return
-				}
-
-				var d = UnreadCountDictionary()
-				while resultSet.next() {
-					let unreadCount = resultSet.long(forColumnIndex: 1)
-					if let webFeedID = resultSet.string(forColumnIndex: 0) {
-						d[webFeedID] = unreadCount
-					}
-				}
-
-				DispatchQueue.main.async {
-					completion(.success(d))
 				}
 			}
 
@@ -630,15 +565,15 @@ private extension ArticlesTable {
 		}
 	}
 
-	func fetchUnreadCount(_ webFeedID: String, _ database: FMDatabase) -> Int {
-		// Count only the articles that would appear in the UI.
-		// * Must be unread.
-		// * Must not be deleted.
-		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
-
-		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
-		return numberWithSQLAndParameters(sql, [webFeedID, articleCutoffDate], in: database)
-	}
+//	func fetchUnreadCount(_ webFeedID: String, _ database: FMDatabase) -> Int {
+//		// Count only the articles that would appear in the UI.
+//		// * Must be unread.
+//		// * Must not be deleted.
+//		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
+//
+//		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
+//		return numberWithSQLAndParameters(sql, [webFeedID, articleCutoffDate], in: database)
+//	}
 	
 	func fetchArticlesMatching(_ searchString: String, _ database: FMDatabase) -> Set<Article> {
 		let sql = "select rowid from search where search match ?;"

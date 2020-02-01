@@ -137,10 +137,6 @@ public final class ArticlesDatabase {
 
 	// MARK: - Unread Counts
 	
-	public func fetchUnreadCounts(for webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		articlesTable.fetchUnreadCounts(webFeedIDs, completion)
-	}
-
 	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
 		fetchUnreadCount(for: webFeedIDs, since: todayCutoffDate(), completion: completion)
 	}
@@ -201,6 +197,11 @@ public final class ArticlesDatabase {
 	/// Create an operation that fetches the unread count for a single given feedID.
 	public func createFetchFeedUnreadCountOperation(feedID: String) -> FetchFeedUnreadCountOperation {
 		return FetchFeedUnreadCountOperation(feedID: feedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+	}
+
+	/// Create an operation that fetches unread counts for a number of feedIDs.
+	public func createFetchUnreadCountsForFeedsOperation(feedIDs: Set<String>) -> FetchUnreadCountsForFeedsOperation {
+		return FetchUnreadCountsForFeedsOperation(feedIDs: feedIDs, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
 	}
 
 	// MARK: - Suspend and Resume (for iOS)
