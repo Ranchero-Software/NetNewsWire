@@ -623,7 +623,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func updateUnreadCounts(for webFeeds: Set<WebFeed>, completion: VoidCompletionBlock? = nil) {
-		fetchUnreadCounts(webFeeds, completion)
+		fetchUnreadCounts(for: webFeeds, completion: completion)
 	}
 
 	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
@@ -1230,7 +1230,7 @@ private extension Account {
 	/// Fetch unread counts for zero or more feeds.
 	///
 	/// Uses the most efficient method based on how many feeds were passed in.
-	func fetchUnreadCounts(for feeds: Set<WebFeed>, _ completion: VoidCompletionBlock?) {
+	func fetchUnreadCounts(for feeds: Set<WebFeed>, completion: VoidCompletionBlock?) {
 		if feeds.isEmpty {
 			completion?()
 			return
