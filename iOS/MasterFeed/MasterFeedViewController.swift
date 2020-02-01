@@ -215,7 +215,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		headerView.addGestureRecognizer(tap)
 		
 		// Without this the swipe gesture registers on the cell below
-		headerView.addGestureRecognizer(UIPanGestureRecognizer(target: nil, action: nil))
+		let gestureRecognizer = UIPanGestureRecognizer(target: nil, action: nil)
+		gestureRecognizer.delegate = self
+		headerView.addGestureRecognizer(gestureRecognizer)
 
 		headerView.interactions.removeAll()
 		if section != 0 {
@@ -1228,4 +1230,14 @@ private extension MasterFeedViewController {
 		
 	}
 	
+}
+
+extension MasterFeedViewController: UIGestureRecognizerDelegate {
+	func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+		guard let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
+			return false
+		}
+		let velocity = gestureRecognizer.velocity(in: self.view)
+		return abs(velocity.x) > abs(velocity.y);
+	}
 }
