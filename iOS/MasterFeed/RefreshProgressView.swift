@@ -13,7 +13,7 @@ class RefreshProgressView: UIView {
 	
 	@IBOutlet weak var progressView: UIProgressView!
 	@IBOutlet weak var label: UILabel!
-	private lazy var progressWidth = progressView.widthAnchor.constraint(equalToConstant: 100.0)
+	private lazy var progressWidthConstraint = progressView.widthAnchor.constraint(equalToConstant: 100.0)
 	
 	override func awakeFromNib() {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
@@ -26,6 +26,10 @@ class RefreshProgressView: UIView {
 		}
 		
 		scheduleUpdateRefreshLabel()
+	}
+
+	override func didMoveToSuperview() {
+		progressChanged()
 	}
 
 	func updateRefreshLabel() {
@@ -71,28 +75,38 @@ class RefreshProgressView: UIView {
 private extension RefreshProgressView {
 
 	func progressChanged() {
+		// Layout may crash if not in the view hierarchy.
+		// https://github.com/Ranchero-Software/NetNewsWire/issues/1764
+		let isInViewHierarchy = self.superview != nil
+
 		let progress = AccountManager.shared.combinedRefreshProgress
 		
 		if progress.isComplete {
-			progressView.setProgress(1, animated: true)
+			if isInViewHierarchy {
+				progressView.setProgress(1, animated: true)
+			}
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 				self.updateRefreshLabel()
 				self.label.isHidden = false
 				self.progressView.isHidden = true
-				self.progressWidth.isActive = false
-				self.progressView.setProgress(0, animated: true)
+				self.progressWidthConstraint.isActive = false
+				if isInViewHierarchy {
+					self.progressView.setProgress(0, animated: true)
+				}
 			}
 		} else {
 			label.isHidden = true
 			progressView.isHidden = false
-			self.progressWidth.isActive = true
-			self.progressView.setNeedsLayout()
-			self.progressView.layoutIfNeeded()
-			let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
-			
-			// Don't let the progress bar go backwards unless we need to go back more than 25%
-			if percent > progressView.progress || progressView.progress - percent > 0.25 {
-				progressView.setProgress(percent, animated: true)
+			progressWidthConstraint.isActive = true
+			if isInViewHierarchy {
+				progressView.setNeedsLayout()
+				progressView.layoutIfNeeded()
+				let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
+
+				// Don't let the progress bar go backwards unless we need to go back more than 25%
+				if percent > progressView.progress || progressView.progress - percent > 0.25 {
+					progressView.setProgress(percent, animated: true)
+				}
 			}
 		}
 	}
