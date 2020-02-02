@@ -235,8 +235,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	private enum OperationName {
 		static let FetchAllUnreadCounts = "FetchAllUnreadCounts"
 		static let FetchFeedUnreadCount = "FetchFeedUnreadCount"
+		static let FetchUnreadCountsForFeeds = "FetchUnreadCountsForFeeds"
 	}
-	private static let discardableOperationNames = [OperationName.FetchAllUnreadCounts, OperationName.FetchFeedUnreadCount]
+	private static let discardableOperationNames = [OperationName.FetchAllUnreadCounts, OperationName.FetchFeedUnreadCount, OperationName.FetchUnreadCountsForFeeds]
 	
 	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
 		switch type {
@@ -622,27 +623,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func updateUnreadCounts(for webFeeds: Set<WebFeed>, completion: VoidCompletionBlock? = nil) {
-		if webFeeds.isEmpty {
-			completion?()
-			return
-		}
-
-		if webFeeds.count == 1, let feed = webFeeds.first {
-			fetchUnreadCount(feed, completion)
-		}
-		else {
-			database.fetchUnreadCounts(for: webFeeds.webFeedIDs()) { unreadCountDictionaryResult in
-				if let unreadCountDictionary = try? unreadCountDictionaryResult.get() {
-					for webFeed in webFeeds {
-						if let unreadCount = unreadCountDictionary[webFeed.webFeedID] {
-							webFeed.unreadCount = unreadCount
-						}
-					}
-				}
-
-				completion?()
-			}
-		}
+		fetchUnreadCounts(for: webFeeds, completion: completion)
 	}
 
 	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
@@ -1246,6 +1227,25 @@ private extension Account {
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.articleIDs: articleIDs])
 	}
 
+	/// Fetch unread counts for zero or more feeds.
+	///
+	/// Uses the most efficient method based on how many feeds were passed in.
+	func fetchUnreadCounts(for feeds: Set<WebFeed>, completion: VoidCompletionBlock?) {
+		if feeds.isEmpty {
+			completion?()
+			return
+		}
+		if feeds.count == 1, let feed = feeds.first {
+			fetchUnreadCount(feed, completion)
+		}
+		else if feeds.count < 10 {
+			fetchUnreadCounts(feeds, completion)
+		}
+		else {
+			fetchAllUnreadCounts()
+		}
+	}
+
 	func fetchUnreadCount(_ feed: WebFeed, _ completion: VoidCompletionBlock?) {
 		let operation = database.createFetchFeedUnreadCountOperation(feedID: feed.webFeedID)
 		operation.name = OperationName.FetchFeedUnreadCount
@@ -1253,6 +1253,21 @@ private extension Account {
 			let fetchOperation = operation as! FetchFeedUnreadCountOperation
 			if let unreadCount = fetchOperation.unreadCount {
 				feed.unreadCount = unreadCount
+			}
+			completion?()
+		}
+
+		operationQueue.addOperation(operation)
+	}
+
+	func fetchUnreadCounts(_ feeds: Set<WebFeed>, _ completion: VoidCompletionBlock?) {
+		let feedIDs = feeds.map { $0.webFeedID }
+		let operation = database.createFetchUnreadCountsForFeedsOperation(feedIDs: Set(feedIDs))
+		operation.name = OperationName.FetchUnreadCountsForFeeds
+		operation.completionBlock = { operation in
+			let fetchOperation = operation as! FetchUnreadCountsForFeedsOperation
+			if let unreadCountDictionary = fetchOperation.unreadCountDictionary {
+				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
 			}
 			completion?()
 		}
@@ -1271,7 +1286,7 @@ private extension Account {
 			guard let unreadCountDictionary = fetchOperation.unreadCountDictionary else {
 				return
 			}
-			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary)
+			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedWebFeeds())
 
 			self.fetchingAllUnreadCounts = false
 			self.updateUnreadCount()
@@ -1282,8 +1297,8 @@ private extension Account {
 		operationQueue.addOperation(operation)
 	}
 
-	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary) {
-		for feed in flattenedWebFeeds() {
+	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<WebFeed>) {
+		for feed in feeds {
 			// When the unread count is zero, it won’t appear in unreadCountDictionary.
 			let unreadCount = unreadCountDictionary[feed.webFeedID] ?? 0
 			feed.unreadCount = unreadCount

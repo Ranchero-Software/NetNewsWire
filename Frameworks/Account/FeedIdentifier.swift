@@ -79,5 +79,19 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable {
 			return nil
 		}
 	}
-	
+
+	// MARK: - Hashable
+
+	public func hash(into hasher: inout Hasher) {
+		switch self {
+		case .smartFeed(let id):
+			hasher.combine(id)
+		case .script(let id):
+			hasher.combine(id)
+		case .webFeed(_, let webFeedID):
+			hasher.combine(webFeedID)
+		case .folder(_, let folderName):
+			hasher.combine(folderName)
+		}
+	}
 }
