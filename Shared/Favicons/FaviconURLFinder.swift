@@ -40,7 +40,7 @@ struct FaviconURLFinder {
 	///   - homePageURL: The page to search.
 	///   - completion: A closure called when the links have been found.
 	///   - urls: An array of favicon URLs as strings.
-	static func findFaviconURLs(with homePageURL: String, _ completion: @escaping (_ urls:[String]?) -> Void) {
+	static func findFaviconURLs(with homePageURL: String, _ completion: @escaping (_ urls: [String]?) -> Void) {
 
 		guard let _ = URL(string: homePageURL) else {
 			completion(nil)
