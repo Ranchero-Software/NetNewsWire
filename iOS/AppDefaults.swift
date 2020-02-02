@@ -150,8 +150,7 @@ struct AppDefaults {
 	}
 	
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
-										Key.timelineGroupByFeed: false,
+		let defaults: [String : Any] = [Key.timelineGroupByFeed: false,
 										Key.refreshClearsReadArticles: false,
 										Key.timelineNumberOfLines: 2,
 										Key.timelineIconSize: IconSize.medium.rawValue,
