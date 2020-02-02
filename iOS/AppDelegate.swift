@@ -295,7 +295,8 @@ private extension AppDelegate {
 		guard UIApplication.shared.applicationState == .background else { return }
 		
 		AccountManager.shared.suspendNetworkAll()
-		
+		AccountManager.shared.suspendDatabaseAll()
+
 		CoalescingQueue.standard.performCallsImmediately()
 		for scene in UIApplication.shared.connectedScenes {
 			if let sceneDelegate = scene.delegate as? SceneDelegate {
@@ -303,7 +304,6 @@ private extension AppDelegate {
 			}
 		}
 		
-		AccountManager.shared.suspendDatabaseAll()
 		os_log("Application processing suspended.", log: self.log, type: .info)
 	}
 	
