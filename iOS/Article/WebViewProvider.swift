@@ -55,8 +55,10 @@ class WebViewProvider: NSObject, WKNavigationDelegate {
 		if waitingForFirstLoad {
 			waitingForFirstLoad = false
 			if let completion = waitingCompletionHandler {
-				completeRequest(completion: completion)
-				waitingCompletionHandler = nil
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+					self.completeRequest(completion: completion)
+					self.waitingCompletionHandler = nil
+				}
 			}
 		}
 	}
