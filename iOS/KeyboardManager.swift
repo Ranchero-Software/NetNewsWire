@@ -129,13 +129,13 @@ private extension KeyboardManager {
 		let nextUnreadTitle = NSLocalizedString("Next Unread", comment: "Next Unread")
 		keys.append(KeyboardManager.createKeyCommand(title: nextUnreadTitle, action: "nextUnread:", input: "/", modifiers: [.command]))
 
-		let goToTodayTitle = NSLocalizedString("Go To Today", comment: "Go To Today")
+		let goToTodayTitle = NSLocalizedString("Go to Today", comment: "Go to Today")
 		keys.append(KeyboardManager.createKeyCommand(title: goToTodayTitle, action: "goToToday:", input: "1", modifiers: [.command]))
 
-		let goToAllUnreadTitle = NSLocalizedString("Go To All Unread", comment: "Go To All Unread")
+		let goToAllUnreadTitle = NSLocalizedString("Go to All Unread", comment: "Go to All Unread")
 		keys.append(KeyboardManager.createKeyCommand(title: goToAllUnreadTitle, action: "goToAllUnread:", input: "2", modifiers: [.command]))
 
-		let goToStarredTitle = NSLocalizedString("Go To Starred", comment: "Go To Starred")
+		let goToStarredTitle = NSLocalizedString("Go to Starred", comment: "Go to Starred")
 		keys.append(KeyboardManager.createKeyCommand(title: goToStarredTitle, action: "goToStarred:", input: "3", modifiers: [.command]))
 
 		let articleSearchTitle = NSLocalizedString("Article Search", comment: "Article Search")
@@ -162,7 +162,7 @@ private extension KeyboardManager {
 	static func hardcodeArticleKeyCommands() -> [UIKeyCommand] {
 		var keys = [UIKeyCommand]()
 		
-		let openInBrowserTitle = NSLocalizedString("Open In Browser", comment: "Open In Browser")
+		let openInBrowserTitle = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		keys.append(KeyboardManager.createKeyCommand(title: openInBrowserTitle, action: "openInBrowser:", input: UIKeyCommand.inputRightArrow, modifiers: [.command]))
 
 		let toggleReadTitle = NSLocalizedString("Toggle Read Status", comment: "Toggle Read Status")

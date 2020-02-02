@@ -39,10 +39,11 @@ class RefreshProgressView: UIView {
 				
 				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 				relativeDateTimeFormatter.dateTimeStyle = .named
+				//relativeDateTimeFormatter.formattingContext = .dynamic
 				let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
 				let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
 				let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
-				label.text = refreshText
+				label.text = refreshText.prefix(1).capitalized + refreshText.dropFirst()
 				
 			} else {
 				label.text = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")

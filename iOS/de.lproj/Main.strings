@@ -1,0 +1,42 @@
+/* Class = "UILabel"; text = "Label"; ObjectID = "0Hz-Dv-MhU"; */
+"0Hz-Dv-MhU.text" = "Label";
+
+/* Class = "UIBarButtonItem"; title = "Next Article"; ObjectID = "2qz-M5-Yhk"; */
+"2qz-M5-Yhk.title" = "Next Article";
+
+/* Class = "UIBarButtonItem"; title = "Next Unread"; ObjectID = "2w5-e9-C2V"; */
+"2w5-e9-C2V.title" = "Next Unread";
+
+/* Class = "UILabel"; text = "Blog Author"; ObjectID = "7GV-PV-YVq"; */
+"7GV-PV-YVq.text" = "Blog Author";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "fTv-eX-72r"; */
+"fTv-eX-72r.title" = "Item";
+
+/* Class = "UIBarButtonItem"; title = "Toggle Read"; ObjectID = "hy0-LS-MzE"; */
+"hy0-LS-MzE.title" = "Toggle Read";
+
+/* Class = "UILabel"; text = "Article Title"; ObjectID = "iFp-rn-HhQ"; */
+"iFp-rn-HhQ.text" = "Article Title";
+
+/* Class = "UIViewController"; title = "Detail"; ObjectID = "JEX-9P-axG"; */
+"JEX-9P-axG.title" = "Detail";
+
+/* Class = "UIBarButtonItem"; title = "Settings"; ObjectID = "TlU-Pg-ATe"; */
+"TlU-Pg-ATe.title" = "Settings";
+
+/* Class = "UIBarButtonItem"; title = "Previous Article"; ObjectID = "v4j-fq-23N"; */
+"v4j-fq-23N.title" = "Previous Article";
+
+/* Class = "UINavigationItem"; title = "Timeline"; ObjectID = "wcC-1L-ug4"; */
+"wcC-1L-ug4.title" = "Timeline";
+
+/* Class = "UIBarButtonItem"; title = "Toggle Starred"; ObjectID = "wU4-eH-wC9"; */
+"wU4-eH-wC9.title" = "Toggle Starred";
+
+/* Class = "UILabel"; text = "Blog Name"; ObjectID = "YsT-Lt-Zry"; */
+"YsT-Lt-Zry.text" = "Blog Name";
+
+/* Class = "UINavigationItem"; title = "Feeds"; ObjectID = "Zdf-7t-Un8"; */
+"Zdf-7t-Un8.title" = "Feeds";
+

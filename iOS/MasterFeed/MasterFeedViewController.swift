@@ -635,12 +635,14 @@ private extension MasterFeedViewController {
 	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
-		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
+		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
+		filterButton?.accessibilityTraits = UIAccessibilityTraits.selected
 	}
 	
 	func setFilterButtonToInactive() {
 		filterButton?.image = AppAssets.filterInactiveImage
 		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
+		filterButton?.accessibilityTraits = UIAccessibilityTraits.none
 	}
 	
 	func reloadNode(_ node: Node) {

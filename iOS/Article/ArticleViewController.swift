@@ -158,20 +158,23 @@ class ArticleViewController: UIViewController {
 		if article.status.read {
 			readBarButtonItem.image = AppAssets.circleOpenImage
 			readBarButtonItem.isEnabled = article.isAvailableToMarkUnread
-			readBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
+			readBarButtonItem.accessibilityTraits = UIAccessibilityTraits.none
 		} else {
 			readBarButtonItem.image = AppAssets.circleClosedImage
 			readBarButtonItem.isEnabled = true
-			readBarButtonItem.accLabelText = NSLocalizedString("Selected - Mark Article Unread", comment: "Selected - Mark Article Unread")
+			readBarButtonItem.accessibilityTraits = UIAccessibilityTraits.selected
 		}
+		readBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
 		
 		if article.status.starred {
 			starBarButtonItem.image = AppAssets.starClosedImage
-			starBarButtonItem.accLabelText = NSLocalizedString("Selected - Star Article", comment: "Selected - Star Article")
+			starBarButtonItem.accessibilityTraits = UIAccessibilityTraits.selected
 		} else {
 			starBarButtonItem.image = AppAssets.starOpenImage
-			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
+			starBarButtonItem.accessibilityTraits = UIAccessibilityTraits.none
+
 		}
+		starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
 		
 	}
 	

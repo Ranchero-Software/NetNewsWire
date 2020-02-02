@@ -1,0 +1,349 @@
+/* Account Error */
+"Account Error" = "Accountfehler";
+
+/* Accounts
+   Add Account
+   Update Credentials */
+"Add Account" = "Account hinzufügen";
+
+/* Add Feed */
+"Add Feed" = "Feed hinzufügen";
+
+/* Add Folder */
+"Add Folder" = "Ordner hinzufügen";
+
+/* Add Web Feed */
+"Add Web Feed" = "Feed hinzufügen";
+
+/* All Articles */
+"All Articles" = "Alle Artikel";
+
+/* All Unread pseudo-feed title */
+"All Unread" = "Ungelesen";
+
+/* Log Out and Delete Account */
+"Are you sure you want to delete this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again." = "Bist du sicher, dass du diesen Account löschen möchtest? NetNewsWire wird nicht mehr auf Artikel und Feeds zugreifen können, bis du den Account wieder hinzufügst.";
+
+/* Delete Account */
+"Are you sure you want to delete this account? This cannot be undone." = "Bist du sicher, dass du diesen Account löschen möchtest? Dies kann nicht rückgängig gemacht werden.";
+
+/* Article Search */
+"Article Search" = "Artikel durchsuchen";
+
+/* Cancel */
+"Cancel" = "Abbrechen";
+
+/* Import Account */
+"Choose an account to receive the imported feeds and folders" = "Wähle den Account aus, in den die Feeds und Ordner importiert werden sollen";
+
+/* Export Account */
+"Choose an account with the subscriptions to export" = "Wähle den Account aus, dessen Abonnements exportiert werden sollen";
+
+/* Collapse Folder */
+"Collapse Folder" = "Ordner reduzieren";
+
+/* Copy Feed URL */
+"Copy Feed URL" = "Feedadresse kopieren";
+
+/* Copy Home Page URL */
+"Copy Home Page URL" = "Homepageadresse kopieren";
+
+/* Copyright */
+"Copyright © 2002-2020 Brent Simmons" = "Copyright © 2002-2020 Brent Simmons";
+
+/* Deactivate */
+"Deactivate" = "Deaktivieren";
+
+/* command
+   Delete */
+"Delete" = "Löschen";
+
+/* Delete Account */
+"Delete Account" = "Account löschen";
+
+/* command */
+"Delete Feed" = "Feed löschen";
+
+/* command */
+"Delete Feeds" = "Feeds löschen";
+
+/* command */
+"Delete Feeds and Folders" = "Feeds und Order löschen";
+
+/* command */
+"Delete Folder" = "Ordner löschen";
+
+/* command */
+"Delete Folders" = "Ordner löschen";
+
+/* Error */
+"Error" = "Fehler";
+
+/* Error - Reader View */
+"Error - Reader View" = "Fehler - Reader-Darstellung";
+
+/* Every 2 Hours */
+"Every 2 Hours" = "Alle 2 Stunden";
+
+/* Every 4 Hours */
+"Every 4 Hours" = "Alle 4 Stunden";
+
+/* Every 8 Hours */
+"Every 8 Hours" = "Alle 8 Stunden";
+
+/* Every 10 Minutes */
+"Every 10 Minutes" = "Alle 10 Minuten";
+
+/* Every 30 Minutes */
+"Every 30 Minutes" = "Alle 30 Minuten";
+
+/* Every Hour */
+"Every Hour" = "Stündlich";
+
+/* Expand Folder */
+"Expand Folder" = "Ordner erweitern";
+
+/* Filter Read Articles */
+"Filter Read Articles" = "Gelesene Artikel filtern";
+
+/* Filter Read Feeds */
+"Filter Read Feeds" = "Gelesene Feeds filtern";
+
+/* First Unread */
+"First Unread" = "Erster Ungelesener";
+
+/* Get Info */
+"Get Info" = "Informationen";
+
+/* Go to All Unread */
+"Go to All Unread" = "Zu Ungelesen gehen";
+
+/* Go to Feed */
+"Go to Feed" = "Zum Feed gehen";
+
+/* Go to Starred */
+"Go to Starred" = "Zu Favoriten gehen";
+
+/* Go to Today */
+"Go to Today" = "Zu Heute gehen";
+
+/* Here */
+"Here" = "Hier";
+
+/* Button Label */
+"Hide" = "Ausblenden";
+
+/* Import Failed */
+"Import Failed" = "Importieren fehlgeschlagen";
+
+/* Credentials Error */
+"Invalid email/password combination." = "Ungültige E-Mail/Passwort-Kombination.";
+
+/* Credentials Error */
+"Keychain error while storing credentials." = "Schlüsselbund-Fehler beim Sichern der Anmeldedaten.";
+
+/* Article body */
+"Loading…" = "Laden …";
+
+/* Manually */
+"Manually" = "Manuell";
+
+/* Mark Above as Read */
+"Mark Above as Read" = "Alle oberhalb als gelesen markieren";
+
+/* Mark All as Read */
+"Mark All as Read" = "Alle als gelesen markieren";
+
+/* Command
+   Mark All as Read in Feed */
+"Mark All as Read in “%@”" = "Alle in „%@“ als gelesen markieren";
+
+/* Mark Article Unread */
+"Mark Article Unread" = "Als ungelesen markieren";
+
+/* Mark as Read */
+"Mark as Read" = "Als gelesen markieren";
+
+/* Mark as Starred */
+"Mark as Starred" = "Als Favorit markieren";
+
+/* Mark as Unread */
+"Mark as Unread" = "Als ungelesen markieren";
+
+/* Mark as Unstarred */
+"Mark as Unstarred" = "Nicht als Favorit markieren";
+
+/* Mark Below as Read */
+"Mark Below as Read" = "Alle unterhalb als gelesen markieren";
+
+/* command */
+"Mark Read" = "Als gelesen markieren";
+
+/* command */
+"Mark Starred" = "Als Favorit markieren";
+
+/* command */
+"Mark Unread" = "Als ungelesen markieren";
+
+/* command */
+"Mark Unstarred" = "Nicht als Favorit markieren";
+
+/* More */
+"More" = "Mehr";
+
+/* Article body */
+"Multiple selection" = "Mehrere Artikel ausgewählt";
+
+/* Name */
+"Name" = "Name";
+
+/* Credentials Error */
+"Network error. Try again later." = "Netzwerkfehler. Versuche es später erneut.";
+
+/* New Folder */
+"New Folder" = "Neuer Ordner";
+
+/* New Web Feed */
+"New Web Feed" = "Neuer Feed";
+
+/* Next Article */
+"Next Article" = "Nächster Artikel";
+
+/* Next Unread */
+"Next Unread" = "Nächster Ungelesener";
+
+/* Next Unread Article */
+"Next Unread Article" = "Nächster ungelesener Artikel";
+
+/* Article body */
+"No selection" = "Keinen Artikel ausgewählt";
+
+/* OK */
+"OK" = "OK";
+
+/* Open Home Page */
+"Open Home Page" = "Homepage öffnen";
+
+/* Open in Browser */
+"Open in Browser" = "Im Browser öffnen";
+
+/* Open in Safari */
+"Open in Safari" = "In Safari öffnen";
+
+/* Open Settings */
+"Open Settings" = "Einstellungen öffnen";
+
+/* Previous Article */
+"Previous Article" = "Vorheriger Artikel";
+
+/* Processing - Reader View */
+"Processing - Reader View" = "Verarbeiten - Reader-Darstellung";
+
+/* Read */
+"Read" = "Lesen";
+
+/* Reader View */
+"Reader View" = "Reader-Darstellung";
+
+/* Refresh */
+"Refresh" = "Aktualisieren";
+
+/* Rename */
+"Rename" = "Umbenennen";
+
+/* Feed finder */
+"Rename “%@”" = "„%@“ umbenennen";
+
+/* Search */
+"Search" = "Suchen";
+
+/* Search Articles */
+"Search Articles" = "Artikel durchsuchen";
+
+/* Search smart feed title prefix */
+"Search: " = "Suche: ";
+
+/* See articles in Folder */
+"See articles in “%@”" = "Artikel in „%@“ anzeigen";
+
+/* First Unread */
+"See first unread article" = "Ersten ungelesenen Artikel anzeigen";
+
+/* Select Next Down */
+"Select Next Down" = "Nächsten oberhalb auswählen";
+
+/* Select Next Up */
+"Select Next Up" = "Nächsten unterhalb auswählen";
+
+/* Share */
+"Share" = "Teilen";
+
+/* Button Label */
+"Show" = "Einblenden";
+
+/* Show Feed Article */
+"Show Feed Article" = "Feedartikel anzeigen";
+
+/* Show Reader View */
+"Show Reader View" = "Reader-Darstellung einblenden";
+
+/* Smart Feeds group title */
+"Smart Feeds" = "Intelligente Feeds";
+
+/* Star */
+"Star" = "Favorit";
+
+/* Star Article */
+"Star Article" = "Artikel als Favorit markieren";
+
+/* Starred pseudo-feed title */
+"Starred" = "Favoriten";
+
+/* Today pseudo-feed title */
+"Today" = "Heute";
+
+/* Toggle Read Status */
+"Toggle Read Status" = "Gelesen-Status ändern";
+
+/* Toggle Starred Status */
+"Toggle Starred Status" = "Favoritenstatus ändern";
+
+/* command */
+"Undelete" = "Wiederherstellen";
+
+/* Unread label for accessiblity */
+"unread" = "ungelesen";
+
+/* Unread */
+"Unread" = "Ungelesen";
+
+/* Unstar */
+"Unstar" = "Kein Favorit";
+
+/* Feed name */
+"Untitled" = "Ohne Titel";
+
+/* Update Credentials */
+"Update Credentials" = "Anmeldedaten aktualisieren";
+
+/* Updated */
+"Updated %@" = "%@ aktualisiert";
+
+/* Updated Just Now */
+"Updated Just Now" = "Gerade aktualisiert";
+
+/* Credentials Error */
+"Username & password required." = "Benutzername und Passwort erforderlich.";
+
+/* Import Failed Message */
+"We were unable to process the selected file. Please ensure that it is a properly formatted OPML file." = "Die ausgewählte Datei konnte nicht verarbeitet werden. Bitte stelle sicher, dass es sich um eine richtig formatierte OPML-Datei handelt.";
+
+/* You can turn this confirmation off in settings. */
+"You can turn this confirmation off in settings." = "Du kannst diese Bestätigung in den Einstellungen deaktivieren.";
+
+/* Missing active account */
+"You must have at least one active account." = "Du benötigst mindestens einen aktiven Account.";
+
+"On My iPhone" = "Auf meinem iPhone";
+
+"On My iPad" = "Auf meinem iPad";

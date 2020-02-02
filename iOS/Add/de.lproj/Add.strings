@@ -1,0 +1,51 @@
+/* Class = "UISegmentedControl"; 1Ce-E7-rG2.segmentTitles[0] = "Web Feed"; ObjectID = "1Ce-E7-rG2"; */
+"1Ce-E7-rG2.segmentTitles[0]" = "Feed";
+
+/* Class = "UISegmentedControl"; 1Ce-E7-rG2.segmentTitles[1] = "Folder"; ObjectID = "1Ce-E7-rG2"; */
+"1Ce-E7-rG2.segmentTitles[1]" = "Ordner";
+
+/* Class = "UILabel"; text = "Folder"; ObjectID = "3Tp-A7-7rS"; */
+"3Tp-A7-7rS.text" = "Ordner";
+
+/* Class = "UITableViewController"; title = "Web Feed Folder"; ObjectID = "acA-n7-ohN"; */
+"acA-n7-ohN.title" = "Feedordner";
+
+/* Class = "UINavigationItem"; title = "Select Folder"; ObjectID = "e4Y-zR-cTn"; */
+"e4Y-zR-cTn.title" = "Ordner auswählen";
+
+/* Class = "UITextField"; placeholder = "URL"; ObjectID = "eRp-AP-WFq"; */
+"eRp-AP-WFq.placeholder" = "Adresse";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "htg-Nn-3xi"; */
+"htg-Nn-3xi.text" = "Label";
+
+/* Class = "UINavigationItem"; title = "Add Web Feed"; ObjectID = "i1W-2z-PAk"; */
+"i1W-2z-PAk.title" = "Feed hinzufügen";
+
+/* Class = "UINavigationItem"; title = "Add Folder"; ObjectID = "LuA-AC-n99"; */
+"LuA-AC-n99.title" = "Ordner hinzufügen";
+
+/* Class = "UITextField"; placeholder = "Name"; ObjectID = "lZK-wx-jbo"; */
+"lZK-wx-jbo.placeholder" = "Name";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "mxj-Bw-Jfx"; */
+"mxj-Bw-Jfx.text" = "Label";
+
+/* Class = "UILabel"; text = "Folder"; ObjectID = "RtT-rR-5LA"; */
+"RtT-rR-5LA.text" = "Ordner";
+
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "tVq-rz-5pe"; */
+"tVq-rz-5pe.title" = "Hinzufügen";
+
+/* Class = "UITextField"; placeholder = "Title (Optional)"; ObjectID = "u7n-VL-Ho9"; */
+"u7n-VL-Ho9.placeholder" = "Titel (optional)";
+
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "Uz9-n0-t2M"; */
+"Uz9-n0-t2M.title" = "Abbrechen";
+
+/* Class = "UILabel"; text = "Account"; ObjectID = "YRf-I7-nkL"; */
+"YRf-I7-nkL.text" = "Account";
+
+/* Class = "UILabel"; text = "Account"; ObjectID = "ZQp-94-vJz"; */
+"ZQp-94-vJz.text" = "Account";
+

@@ -610,12 +610,14 @@ private extension MasterTimelineViewController {
 	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
-		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
+		filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
+		filterButton?.accessibilityTraits = UIAccessibilityTraits.selected
 	}
 	
 	func setFilterButtonToInactive() {
 		filterButton?.image = AppAssets.filterInactiveImage
 		filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
+		filterButton?.accessibilityTraits = UIAccessibilityTraits.none
 	}
 	
 	func updateToolbar() {

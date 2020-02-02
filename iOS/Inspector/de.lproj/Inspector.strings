@@ -1,0 +1,27 @@
+/* Class = "UILabel"; text = "Always Show Reader View"; ObjectID = "Bf4-3X-Rfr"; */
+"Bf4-3X-Rfr.text" = "Reader-Darstellung";
+
+/* Class = "UITableViewSection"; headerTitle = "Home Page"; ObjectID = "dTd-6q-SZd"; */
+"dTd-6q-SZd.headerTitle" = "Homepage";
+
+/* Class = "UITextField"; placeholder = "Name (Optional)"; ObjectID = "LUW-uv-piz"; */
+"LUW-uv-piz.placeholder" = "Name (optional)";
+
+/* Class = "UITableViewSection"; headerTitle = "Feed URL"; ObjectID = "MtQ-oG-lrU"; */
+"MtQ-oG-lrU.headerTitle" = "Feedadresse";
+
+/* Class = "UIButton"; normalTitle = "Delete Account"; ObjectID = "obv-a5-Pl6"; */
+"obv-a5-Pl6.normalTitle" = "Account löschen";
+
+/* Class = "UIButton"; normalTitle = "Credentials"; ObjectID = "TYD-py-8IF"; */
+"TYD-py-8IF.normalTitle" = "Anmeldedaten";
+
+/* Class = "UILabel"; text = "Notify About New Articles"; ObjectID = "YV2-gG-lMP"; */
+"YV2-gG-lMP.text" = "Benachrichtigungen";
+
+/* Class = "UITextField"; placeholder = "Name"; ObjectID = "ZdA-rl-9eP"; */
+"ZdA-rl-9eP.placeholder" = "Name";
+
+/* Class = "UILabel"; text = "Active"; ObjectID = "zf0-Gm-p4F"; */
+"zf0-Gm-p4F.text" = "Aktiviert";
+

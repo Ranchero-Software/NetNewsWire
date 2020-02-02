@@ -1,0 +1,114 @@
+/* Class = "UITableViewSection"; headerTitle = "Accounts"; ObjectID = "0ac-Ze-Dh4"; */
+"0ac-Ze-Dh4.headerTitle" = "Accounts";
+
+/* Class = "UILabel"; text = "NetNewsWire Slack"; ObjectID = "2o6-8W-nyK"; */
+"2o6-8W-nyK.text" = "NetNewsWire Slack";
+
+/* Class = "UILabel"; text = "Import Subscriptions"; ObjectID = "4Hg-B3-zAE"; */
+"4Hg-B3-zAE.text" = "Abonnements importieren";
+
+/* Class = "UILabel"; text = "Confirm Mark All as Read"; ObjectID = "5tY-5k-v2g"; */
+"5tY-5k-v2g.text" = "„Alle als gelesen markieren“ bestätigen";
+
+/* Class = "UILabel"; text = "Add Account"; ObjectID = "6sn-wY-hHH"; */
+"6sn-wY-hHH.text" = "Add Account";
+
+/* Class = "UITableViewSection"; headerTitle = "Timeline"; ObjectID = "9Pk-Y8-JVJ"; */
+"9Pk-Y8-JVJ.headerTitle" = "Timeline";
+
+/* Class = "UILabel"; text = "Export Subscriptions"; ObjectID = "25J-iX-3at"; */
+"25J-iX-3at.text" = "Abonnements exportieren";
+
+/* Class = "UILabel"; text = "NetNewsWire Help"; ObjectID = "40W-2p-ne4"; */
+"40W-2p-ne4.text" = "NetNewsWire-Hilfe";
+
+/* Class = "UILabel"; text = "Enable Full Screen Articles"; ObjectID = "79e-5s-vd0"; */
+"79e-5s-vd0.text" = "Vollbild für Artikel aktivieren";
+
+/* Class = "UILabel"; text = "On My iPhone"; ObjectID = "116-rt-msI"; */
+"116-rt-msI.text" = "On My iPhone";
+
+/* Class = "UIViewController"; title = "Timeline Layout"; ObjectID = "amD-xZ-U3A"; */
+"amD-xZ-U3A.title" = "Timeline-Layout";
+
+/* Class = "UITableViewSection"; headerTitle = "Notifications, Badge, Data, & More"; ObjectID = "Bmb-Oi-RZK"; */
+"Bmb-Oi-RZK.headerTitle" = "Mitteilungen und mehr";
+
+/* Class = "UILabel"; text = "Sort Oldest to Newest"; ObjectID = "c9W-IF-u6i"; */
+"c9W-IF-u6i.text" = "Ältere Artikel zuerst";
+
+/* Class = "UILabel"; text = "Group by Feed"; ObjectID = "cit-i1-0Hp"; */
+"cit-i1-0Hp.text" = "Nach Feed gruppieren";
+
+/* Class = "UILabel"; text = "Feed Wrangler"; ObjectID = "Dur-Qf-YYi"; */
+"Dur-Qf-YYi.text" = "Feed Wrangler";
+
+/* Class = "UILabel"; text = "Technotes"; ObjectID = "dWz-1o-EpJ"; */
+"dWz-1o-EpJ.text" = "Technotes";
+
+/* Class = "UILabel"; text = "Add NetNewsWire News Feed"; ObjectID = "dXN-Mw-yf2"; */
+"dXN-Mw-yf2.text" = "NetNewsWire-Feed hinzufügen";
+
+/* Class = "UILabel"; text = "Open System Settings"; ObjectID = "F9H-Kr-npj"; */
+"F9H-Kr-npj.text" = "Systemeinstellungen öffnen";
+
+/* Class = "UITableViewSection"; headerTitle = "Feeds"; ObjectID = "hAC-uA-RbS"; */
+"hAC-uA-RbS.headerTitle" = "Feeds";
+
+/* Class = "UITableViewController"; title = "About"; ObjectID = "K5w-58-sQW"; */
+"K5w-58-sQW.title" = "Über";
+
+/* Class = "UILabel"; text = "Refresh to Clear Read Articles"; ObjectID = "KtJ-tk-DlD"; */
+"KtJ-tk-DlD.text" = "Gelesene Artikel beim Aktualisieren ausblenden";
+
+/* Class = "UILabel"; text = "Website"; ObjectID = "lOk-Dh-GfZ"; */
+"lOk-Dh-GfZ.text" = "Website";
+
+/* Class = "UILabel"; text = "NUMBER OF LINES"; ObjectID = "mER-Fl-iHI"; */
+"mER-Fl-iHI.text" = "ZEILENANZAHL";
+
+/* Class = "UITableViewSection"; headerTitle = "DEDICATION"; ObjectID = "nbm-Bs-te6"; */
+"nbm-Bs-te6.headerTitle" = "Widmung";
+
+/* Class = "UITableViewSection"; headerTitle = "CREDITS"; ObjectID = "O1X-Iq-ibE"; */
+"O1X-Iq-ibE.headerTitle" = "Credits";
+
+/* Class = "UILabel"; text = "How To Support NetNewsWire"; ObjectID = "Pm8-6D-fdE"; */
+"Pm8-6D-fdE.text" = "NetNewsWire unterstützen";
+
+/* Class = "UILabel"; text = "Bug Tracker"; ObjectID = "Q9a-Pi-uCc"; */
+"Q9a-Pi-uCc.text" = "Bugtracker";
+
+/* Class = "UITableViewSection"; headerTitle = "THANKS"; ObjectID = "Sgx-f1-hsT"; */
+"Sgx-f1-hsT.headerTitle" = "Danksagung";
+
+/* Class = "UILabel"; text = "GitHub Repository"; ObjectID = "TEA-EG-V6d"; */
+"TEA-EG-V6d.text" = "Github-Repository";
+
+/* Class = "UITableViewSection"; headerTitle = "Help"; ObjectID = "TkH-4v-yhk"; */
+"TkH-4v-yhk.headerTitle" = "Hilfe";
+
+/* Class = "UITableViewSection"; headerTitle = "Articles"; ObjectID = "TRr-Ew-IvU"; */
+"TRr-Ew-IvU.headerTitle" = "Artikel";
+
+/* Class = "UILabel"; text = "Feedly"; ObjectID = "u2M-c5-ujy"; */
+"u2M-c5-ujy.text" = "Feedly";
+
+/* Class = "UINavigationItem"; title = "Settings"; ObjectID = "uf8-rU-NlH"; */
+"uf8-rU-NlH.title" = "Einstellungen";
+
+/* Class = "UILabel"; text = "NetNewsWire"; ObjectID = "UgA-s6-Vvg"; */
+"UgA-s6-Vvg.text" = "NetNewsWire";
+
+/* Class = "UILabel"; text = "Feedbin"; ObjectID = "uiN-cA-Nc5"; */
+"uiN-cA-Nc5.text" = "Feedbin";
+
+/* Class = "UILabel"; text = "About NetNewsWire"; ObjectID = "Uwu-af-31r"; */
+"Uwu-af-31r.text" = "Über NetNewsWire";
+
+/* Class = "UILabel"; text = "ICON SIZE"; ObjectID = "VLq-TU-3d6"; */
+"VLq-TU-3d6.text" = "ICONGRÖSSE";
+
+/* Class = "UILabel"; text = "Timeline Layout"; ObjectID = "YHt-eS-KrX"; */
+"YHt-eS-KrX.text" = "Timeline-Layout";
+

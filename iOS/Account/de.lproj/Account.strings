@@ -1,0 +1,39 @@
+/* Class = "UINavigationItem"; title = "On My Device"; ObjectID = "AOA-LS-PIB"; */
+"AOA-LS-PIB.title" = "On My Device";
+
+/* Class = "UINavigationItem"; title = "Feed Wrangler"; ObjectID = "D6L-4j-gVo"; */
+"D6L-4j-gVo.title" = "Feed Wrangler";
+
+/* Class = "UIButton"; normalTitle = "Action"; ObjectID = "gv7-yG-aE3"; */
+"gv7-yG-aE3.normalTitle" = "Action";
+
+/* Class = "UIButton"; normalTitle = "Action"; ObjectID = "kKc-mk-vsU"; */
+"kKc-mk-vsU.normalTitle" = "Action";
+
+/* Class = "UIButton"; normalTitle = "Show"; ObjectID = "lBg-Pn-8ao"; */
+"lBg-Pn-8ao.normalTitle" = "Einblenden";
+
+/* Class = "UIButton"; normalTitle = "Add Account"; ObjectID = "mQv-3O-Y2d"; */
+"mQv-3O-Y2d.normalTitle" = "Account hinzufügen";
+
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "o06-fe-i3S"; */
+"o06-fe-i3S.placeholder" = "E-Mail";
+
+/* Class = "UIButton"; normalTitle = "Show"; ObjectID = "TfW-wf-V06"; */
+"TfW-wf-V06.normalTitle" = "Einblenden";
+
+/* Class = "UINavigationItem"; title = "Feedbin"; ObjectID = "tYg-9f-kyd"; */
+"tYg-9f-kyd.title" = "Feedbin";
+
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "vJa-NN-yjR"; */
+"vJa-NN-yjR.placeholder" = "E-Mail";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "YC2-RH-QoV"; */
+"YC2-RH-QoV.placeholder" = "Passwort";
+
+/* Class = "UITextField"; placeholder = "Name"; ObjectID = "Yl1-R6-xZi"; */
+"Yl1-R6-xZi.placeholder" = "Name";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "Z6i-nX-CwJ"; */
+"Z6i-nX-CwJ.placeholder" = "Passwort";
+

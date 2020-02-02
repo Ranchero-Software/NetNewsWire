@@ -164,7 +164,7 @@ private extension ActivityManager {
 	func makeSelectFeedActivity(feed: Feed) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)
 		
-		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
+		let localizedText = NSLocalizedString("See articles in “%@”", comment: "See articles in Folder")
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		activity.title = title
 		

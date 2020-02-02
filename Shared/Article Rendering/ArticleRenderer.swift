@@ -83,17 +83,17 @@ private extension ArticleRenderer {
 	}
 
 	private var multipleSelectionHTML: String {
-		let body = "<h3 class='systemMessage'>Multiple selection</h3>"
+		let body = "<h3 class='systemMessage'>"+NSLocalizedString("Multiple selection", comment: "Article body")+"</h3>"
 		return body
 	}
 
 	private var loadingHTML: String {
-		let body = "<h3 class='systemMessage'>Loading...</h3>"
+		let body = "<h3 class='systemMessage'>"+NSLocalizedString("Loading…", comment: "Article body")+"</h3>"
 		return body
 	}
 
 	private var noSelectionHTML: String {
-		let body = "<h3 class='systemMessage'>No selection</h3>"
+		let body = "<h3 class='systemMessage'>"+NSLocalizedString("No selection", comment: "Article body")+"</h3>"
 		return body
 	}
 

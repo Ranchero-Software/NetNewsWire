@@ -30,9 +30,9 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		}
 
 		title = "NetNewsWire"
-		placeholder = "Feed Name (Optional)"
+		placeholder = NSLocalizedString("Feed Name (Optional)", comment: "Feed Name (Optional)")
 		if let button = navigationController?.navigationBar.topItem?.rightBarButtonItem {
-			button.title = "Add Feed"
+			button.title = NSLocalizedString("Add Feed", comment: "Add Feed")
 			button.isEnabled = true
 		}
 
@@ -121,11 +121,11 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 		
 		// To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
 		guard let urlItem = SLComposeSheetConfigurationItem() else { return nil }
-		urlItem.title = "URL"
+		urlItem.title = NSLocalizedString("URL", comment: "URL")
 		urlItem.value = url?.absoluteString ?? ""
 		
 		folderItem = SLComposeSheetConfigurationItem()
-		folderItem.title = "Folder"
+		folderItem.title = NSLocalizedString("Folder", comment: "Folder")
 		updateFolderItemValue()
 		
 		folderItem.tapHandler = {

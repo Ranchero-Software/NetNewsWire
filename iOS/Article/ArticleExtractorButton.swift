@@ -47,14 +47,27 @@ class ArticleExtractorButton: UIButton {
 				return NSLocalizedString("Error - Reader View", comment: "Error - Reader View")
 			case .animated:
 				return NSLocalizedString("Processing - Reader View", comment: "Processing - Reader View")
-			case .on:
-				return NSLocalizedString("Selected - Reader View", comment: "Selected - Reader View")
-			case .off:
+			case .on,
+				 .off:
 				return NSLocalizedString("Reader View", comment: "Reader View")
 			}
 		}
 		set {
 			super.accessibilityLabel = newValue
+		}
+	}
+	
+	override var accessibilityTraits: UIAccessibilityTraits {
+		get {
+			switch buttonState {
+			case .on:
+				return .selected
+			default:
+				return .none
+			}
+		}
+		set {
+			super.accessibilityTraits = newValue
 		}
 	}
 	

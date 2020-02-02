@@ -37,7 +37,7 @@ struct MarkAsReadAlertController {
 							  cancelCompletion: (() -> Void)?,
 							  completion: @escaping (UIAlertAction) -> Void) -> UIAlertController {
 		
-		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
+		let title = NSLocalizedString("Mark as Read", comment: "Mark as Read")
 		let message = NSLocalizedString("You can turn this confirmation off in settings.",
 										comment: "You can turn this confirmation off in settings.")
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
