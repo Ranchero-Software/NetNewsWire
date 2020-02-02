@@ -769,7 +769,8 @@ private extension MasterTimelineViewController {
 	}
 	
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.webFeed,
+			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 		
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
@@ -779,7 +780,8 @@ private extension MasterTimelineViewController {
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.webFeed,
+			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in

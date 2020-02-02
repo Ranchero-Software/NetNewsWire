@@ -997,6 +997,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred)
 	}
 
+	func timelineFeedIsEqualTo(_ feed: WebFeed) -> Bool {
+		guard let timelineFeed = timelineFeed as? WebFeed else {
+			return false
+		}
+
+		return timelineFeed == feed
+	}
+
 	func discloseFeed(_ feed: WebFeed, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
 			masterTimelineViewController?.hideSearch()
