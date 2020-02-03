@@ -14,9 +14,14 @@ struct CacheCleaner {
 	static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
 
 	static func purgeIfNecessary() {
+
+		guard let flushDate = AppDefaults.lastImageCacheFlushDate else {
+			AppDefaults.lastImageCacheFlushDate = Date()
+			return
+		}
 		
 		// If the image disk cache hasn't been flushed for 3 days and the network is available, delete it
-		if let flushDate = AppDefaults.lastImageCacheFlushDate, flushDate.addingTimeInterval(3600*24*3) < Date() {
+		if flushDate.addingTimeInterval(3600 * 24 * 3) < Date() {
 			if let reachability = try? Reachability(hostname: "apple.com") {
 				if reachability.connection != .unavailable {
 
