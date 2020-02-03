@@ -14,13 +14,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Folder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xCU-fd-wms">
-                    <rect key="frame" x="16" y="12.5" width="49" height="21"/>
+                    <rect key="frame" x="20" y="12.5" width="49" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jCz-VR-Elr">
-                    <rect key="frame" x="287" y="12.5" width="44" height="21"/>
+                    <rect key="frame" x="283" y="12.5" width="44" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -30,8 +30,8 @@
             <constraints>
                 <constraint firstItem="xCU-fd-wms" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="KCG-KB-QVx"/>
                 <constraint firstItem="jCz-VR-Elr" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="ZEI-9G-SpU"/>
-                <constraint firstAttribute="trailing" secondItem="jCz-VR-Elr" secondAttribute="trailing" constant="16" id="rCo-rg-mRd"/>
-                <constraint firstItem="xCU-fd-wms" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="rZa-T7-Dy4"/>
+                <constraint firstAttribute="trailing" secondItem="jCz-VR-Elr" secondAttribute="trailing" constant="20" symbolic="YES" id="rCo-rg-mRd"/>
+                <constraint firstItem="xCU-fd-wms" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="rZa-T7-Dy4"/>
                 <constraint firstItem="jCz-VR-Elr" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="xCU-fd-wms" secondAttribute="trailing" constant="8" id="yWW-mq-p2A"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>
