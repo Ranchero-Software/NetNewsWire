@@ -1290,8 +1290,11 @@ private extension Account {
 
 			self.fetchingAllUnreadCounts = false
 			self.updateUnreadCount()
-			self.isUnreadCountsInitialized = true
-			self.postUnreadCountDidInitializeNotification()
+			
+			if !self.isUnreadCountsInitialized {
+				self.isUnreadCountsInitialized = true
+				self.postUnreadCountDidInitializeNotification()
+			}
 		}
 
 		operationQueue.addOperation(operation)
