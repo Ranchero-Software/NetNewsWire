@@ -298,11 +298,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
-
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadArticlesDidUpdateUnreadCounts(_:)), name: .DownloadArticlesDidUpdateUnreadCounts, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+
 	}
 	
 	func start(for size: CGSize) -> UIViewController {
@@ -564,6 +564,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
+	}
+	
+	@objc func willEnterForeground(_ note: Notification) {
+		queueFetchAndMergeArticles()
 	}
 
 	// MARK: API
