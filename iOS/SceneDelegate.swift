@@ -33,12 +33,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		if let notificationResponse = connectionOptions.notificationResponse {
 			window!.makeKeyAndVisible()
-			coordinator.handle(notificationResponse)
+			coordinator.handle(notificationResponse, initialLoad: true)
 			return
 		}
 		
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
-			coordinator.handle(userActivity)
+			coordinator.handle(userActivity, initialLoad: true)
         }
 		
 		window!.makeKeyAndVisible()
@@ -52,7 +52,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
 		appDelegate.resumeDatabaseProcessingIfNecessary()
-		coordinator.handle(userActivity)
+		coordinator.handle(userActivity, initialLoad: false)
 	}
 	
 	func sceneDidEnterBackground(_ scene: UIScene) {
@@ -74,7 +74,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	func handle(_ response: UNNotificationResponse) {
 		appDelegate.resumeDatabaseProcessingIfNecessary()
-		coordinator.handle(response)
+		coordinator.handle(response, initialLoad: false)
 	}
 
 	func suspend() {

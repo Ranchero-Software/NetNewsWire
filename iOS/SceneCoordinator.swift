@@ -360,27 +360,27 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func handle(_ activity: NSUserActivity) {
+	func handle(_ activity: NSUserActivity, initialLoad: Bool) {
 		selectFeed(nil) {
 			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
 			switch activityType {
 			case .restoration:
 				break
 			case .selectFeed:
-				self.handleSelectFeed(activity.userInfo)
+				self.handleSelectFeed(activity.userInfo, initialLoad: initialLoad)
 			case .nextUnread:
 				self.selectFirstUnreadInAllUnread()
 			case .readArticle:
-				self.handleReadArticle(activity.userInfo)
+				self.handleReadArticle(activity.userInfo, initialLoad: initialLoad)
 			case .addFeedIntent:
 				self.showAdd(.feed)
 			}
 		}
 	}
 	
-	func handle(_ response: UNNotificationResponse) {
+	func handle(_ response: UNNotificationResponse, initialLoad: Bool) {
 		let userInfo = response.notification.request.content.userInfo
-		handleReadArticle(userInfo)
+		handleReadArticle(userInfo, initialLoad: initialLoad)
 	}
 	
 	func configurePanelMode(for size: CGSize) {
@@ -1920,7 +1920,7 @@ private extension SceneCoordinator {
 		]
 	}
 	
-	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
+	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?, initialLoad: Bool) {
 		guard let userInfo = userInfo,
 			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
 			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
@@ -1930,11 +1930,20 @@ private extension SceneCoordinator {
 		treeControllerDelegate.addFilterException(feedIdentifier)
 		masterFeedViewController.restoreSelection = true
 		
+		func rebuildIfNecessary() {
+			if !initialLoad && isReadFeedsFiltered {
+				rebuildBackingStores()
+				treeControllerDelegate.resetFilterExceptions()
+			}
+		}
 
 		switch feedIdentifier {
 		
 		case .smartFeed:
 			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
+			
+			rebuildIfNecessary()
+			
 			if let indexPath = indexPathFor(smartFeed) {
 				selectFeed(indexPath) {
 					self.masterFeedViewController.focus()
@@ -1945,6 +1954,8 @@ private extension SceneCoordinator {
 			break
 		
 		case .folder(let accountID, let folderName):
+			rebuildIfNecessary()
+			
 			guard let accountNode = findAccountNode(accountID: accountID), let folderNode = findFolderNode(folderName: folderName, beginningAt: accountNode) else {
 				return
 			}
@@ -1955,22 +1966,29 @@ private extension SceneCoordinator {
 			}
 		
 		case .webFeed(let accountID, let webFeedID):
-			guard let accountNode = findAccountNode(accountID: accountID), let feedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode) else {
+			guard let accountNode = findAccountNode(accountID: accountID),
+				let account = accountNode.representedObject as? Account,
+				let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
 				return
 			}
-			if let folder = feedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
-				treeControllerDelegate.addFilterException(folderFeedID)
-			}
-			if let feed = feedNode.representedObject as? WebFeed {
-				discloseFeed(feed) {
-					self.masterFeedViewController.focus()
+			
+			for folder in account.sortedFolders ?? [Folder]() {
+				if folder.objectIsChild(webFeed), let folderFeedID = folder.feedID {
+					treeControllerDelegate.addFilterException(folderFeedID)
+					break
 				}
+			}
+			
+			rebuildIfNecessary()
+			
+			discloseFeed(webFeed) {
+				self.masterFeedViewController.focus()
 			}
 			
 		}
 	}
 	
-	func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
+	func handleReadArticle(_ userInfo: [AnyHashable : Any]?, initialLoad: Bool) {
 		guard let userInfo = userInfo else { return }
 		
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
@@ -1989,15 +2007,24 @@ private extension SceneCoordinator {
 			return
 		}
 		
-		guard let webFeedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode),
-			let webFeed = webFeedNode.representedObject as? WebFeed,
+		guard let webFeed = account.existingWebFeed(withWebFeedID: webFeedID),
 			let webFeedFeedID = webFeed.feedID else {
 				return
 		}
 		
 		treeControllerDelegate.addFilterException(webFeedFeedID)
-		addParentFolderToFilterExceptions(webFeedNode)
+		for folder in account.sortedFolders ?? [Folder]() {
+			if folder.objectIsChild(webFeed), let folderFeedID = folder.feedID {
+				treeControllerDelegate.addFilterException(folderFeedID)
+				break
+			}
+		}
 		
+		if !initialLoad && isReadFeedsFiltered {
+			rebuildBackingStores()
+			treeControllerDelegate.resetFilterExceptions()
+		}
+
 		discloseFeed(webFeed) {
 			self.selectArticleInCurrentFeed(articleID)
 		}
@@ -2044,7 +2071,9 @@ private extension SceneCoordinator {
 			let found = selectFeedAndArticle(feedNode: webFeedNode, articleID: articleID)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
-				addParentFolderToFilterExceptions(webFeedNode)
+				if let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
+					treeControllerDelegate.addFilterException(folderFeedID)
+				}
 			}
 			return found
 			
@@ -2092,12 +2121,6 @@ private extension SceneCoordinator {
 	func selectArticleInCurrentFeed(_ articleID: String) {
 		if let article = self.articles.first(where: { $0.articleID == articleID }) {
 			self.selectArticle(article)
-		}
-	}
-	
-	func addParentFolderToFilterExceptions(_ feedNode: Node) {
-		if let folder = feedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
-			treeControllerDelegate.addFilterException(folderFeedID)
 		}
 	}
 	
