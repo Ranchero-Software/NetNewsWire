@@ -67,7 +67,7 @@ class SettingsViewController: UITableViewController {
 			confirmMarkAllAsReadSwitch.isOn = false
 		}
 
-		if AppDefaults.articleFullscreenEnabled {
+		if AppDefaults.articleFullscreenAvailable {
 			showFullscreenArticlesSwitch.isOn = true
 		} else {
 			showFullscreenArticlesSwitch.isOn = false
@@ -283,9 +283,9 @@ class SettingsViewController: UITableViewController {
 	
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
 		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.articleFullscreenEnabled = true
+			AppDefaults.articleFullscreenAvailable = true
 		} else {
-			AppDefaults.articleFullscreenEnabled = false
+			AppDefaults.articleFullscreenAvailable = false
 		}
 	}
 	

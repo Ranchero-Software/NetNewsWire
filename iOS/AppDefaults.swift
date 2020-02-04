@@ -24,6 +24,7 @@ struct AppDefaults {
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineIconSize = "timelineIconSize"
 		static let timelineSortDirection = "timelineSortDirection"
+		static let articleFullscreenAvailable = "articleFullscreenAvailable"
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let lastRefresh = "lastRefresh"
@@ -103,6 +104,15 @@ struct AppDefaults {
 		}
 	}
 
+	static var articleFullscreenAvailable: Bool {
+		get {
+			return bool(for: Key.articleFullscreenAvailable)
+		}
+		set {
+			setBool(for: Key.articleFullscreenAvailable, newValue)
+		}
+	}
+
 	static var articleFullscreenEnabled: Bool {
 		get {
 			return bool(for: Key.articleFullscreenEnabled)
@@ -155,6 +165,7 @@ struct AppDefaults {
 										Key.timelineNumberOfLines: 2,
 										Key.timelineIconSize: IconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+										Key.articleFullscreenAvailable: false,
 										Key.articleFullscreenEnabled: false,
 										Key.confirmMarkAllAsRead: true]
 		AppDefaults.shared.register(defaults: defaults)

@@ -35,7 +35,7 @@ class WebViewController: UIViewController {
 	
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
-		return traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
+		return AppDefaults.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
