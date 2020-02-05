@@ -418,7 +418,12 @@ private extension WebViewController {
 				self.view.topAnchor.constraint(equalTo: webView.topAnchor),
 				self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
 			])
-			
+		
+			// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
+			// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
+			// us from easily swiping between WKWebViews.  This hack fixes that.
+			webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
+
 			self.view.setNeedsLayout()
 			self.view.layoutIfNeeded()
 
