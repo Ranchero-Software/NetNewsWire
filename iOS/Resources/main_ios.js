@@ -156,3 +156,7 @@ function stopMediaPlayback() {
 		element.pause();
 	});
 }
+
+window.addEventListener('DOMContentLoaded', (event) => {
+    window.webkit.messageHandlers.domContentLoaded.postMessage("");
+});

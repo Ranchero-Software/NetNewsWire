@@ -224,6 +224,7 @@
 		51C452AF2265108300C03939 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		51C452B42265141B00C03939 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C452B32265141B00C03939 /* WebKit.framework */; };
 		51C452B82265178500C03939 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 51C452B72265178500C03939 /* styleSheet.css */; };
+		51C9DE5823EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */; };
 		51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51CE1C0823621EDA005548FC /* RefreshProgressView.xib */; };
 		51CE1C0B23622007005548FC /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CE1C0A23622006005548FC /* RefreshProgressView.swift */; };
 		51CE1C712367721A005548FC /* testURLsOfCurrentArticle.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADB213660A100CF2DE4 /* testURLsOfCurrentArticle.applescript */; };
@@ -1354,6 +1355,7 @@
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
+		51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperScriptMessageHandler.swift; sourceTree = "<group>"; };
 		51CE1C0823621EDA005548FC /* RefreshProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RefreshProgressView.xib; sourceTree = "<group>"; };
 		51CE1C0A23622006005548FC /* RefreshProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
 		51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineDataSource.swift; sourceTree = "<group>"; };
@@ -1969,6 +1971,7 @@
 			isa = PBXGroup;
 			children = (
 				51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */,
+				51F9F3F623DF6DB200A314FD /* ArticleIconSchemeHandler.swift */,
 				51C4527E2265092C00C03939 /* ArticleViewController.swift */,
 				51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */,
 				514219362352510100E07E2C /* ImageScrollView.swift */,
@@ -1977,7 +1980,7 @@
 				512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */,
 				51AB8AB223B7F4C6008F147D /* WebViewController.swift */,
 				517630222336657E00E15FFF /* WebViewProvider.swift */,
-				51F9F3F623DF6DB200A314FD /* ArticleIconSchemeHandler.swift */,
+				51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -3920,6 +3923,7 @@
 				51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */,
 				51C452AF2265108300C03939 /* ArticleArray.swift in Sources */,
 				51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */,
+				51C9DE5823EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift in Sources */,
 				51627A6B238629D8007B3B4B /* MasterFeedDataSource.swift in Sources */,
 				51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */,
 				5141E7392373C18B0013FF27 /* WebFeedInspectorViewController.swift in Sources */,

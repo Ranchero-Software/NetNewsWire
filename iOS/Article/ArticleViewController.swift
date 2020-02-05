@@ -75,6 +75,7 @@ class ArticleViewController: UIViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		let fullScreenTapZone = UIView()
@@ -190,6 +191,15 @@ class ArticleViewController: UIViewController {
 		}
 	}
 
+	@objc func contentSizeCategoryDidChange(_ note: Notification) {
+		coordinator.webViewProvider.flushQueue()
+		coordinator.webViewProvider.replenishQueueIfNeeded()
+		if let controller = currentWebViewController {
+			controller.fullReload()
+			self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+		}
+	}
+	
 	@objc func willEnterForeground(_ note: Notification) {
 		// The toolbar will come back on you if you don't hide it again
 		if AppDefaults.articleFullscreenEnabled {

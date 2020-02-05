@@ -89,7 +89,6 @@ class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		
 		// Configure the tap zones
 		configureTopShowBarsView()
@@ -118,10 +117,6 @@ class WebViewController: UIViewController {
 		reloadArticleImage()
 	}
 
-	@objc func contentSizeCategoryDidChange(_ note: Notification) {
-		fullReload()
-	}
-	
 	// MARK: Actions
 	
 	@objc func showBars(_ sender: Any) {
@@ -350,21 +345,6 @@ extension WebViewController: WKScriptMessageHandler {
 		default:
 			return
 		}
-	}
-	
-}
-
-class WrapperScriptMessageHandler: NSObject, WKScriptMessageHandler {
-	
-	// We need to wrap a message handler to prevent a circlular reference
-	private weak var handler: WKScriptMessageHandler?
-	
-	init(_ handler: WKScriptMessageHandler) {
-		self.handler = handler
-	}
-	
-	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-		handler?.userContentController(userContentController, didReceive: message)
 	}
 	
 }
