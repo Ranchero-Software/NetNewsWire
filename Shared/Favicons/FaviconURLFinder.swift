@@ -54,14 +54,15 @@ struct FaviconURLFinder {
 					if ignoredMimeTypes.contains(type) {
 						return false
 					}
-				} else {
-					if let url = URL(string: favicon.urlString), ignoredExtensions.contains(url.pathExtension) {
+				}
+				else {
+					if let urlString = favicon.urlString, let url = URL(string: urlString), ignoredExtensions.contains(url.pathExtension) {
 						return false
 					}
 				}
 
 				return true
-			}).map { $0.urlString }
+			}).compactMap { $0.urlString }
 
 			completion(faviconURLs)
 		}
