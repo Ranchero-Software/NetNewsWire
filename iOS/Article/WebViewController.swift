@@ -48,9 +48,7 @@ class WebViewController: UIViewController {
 	}
 	var isShowingExtractedArticle = false {
 		didSet {
-			if isShowingExtractedArticle != oldValue {
-				loadWebView()
-			}
+			loadWebView()
 		}
 	}
 
