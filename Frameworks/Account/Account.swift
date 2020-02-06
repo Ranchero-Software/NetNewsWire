@@ -231,14 +231,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.refreshProgress
 	}
 
-	private var operationQueue = MainThreadOperationQueue()
-	private enum OperationName {
-		static let FetchAllUnreadCounts = "FetchAllUnreadCounts"
-		static let FetchFeedUnreadCount = "FetchFeedUnreadCount"
-		static let FetchUnreadCountsForFeeds = "FetchUnreadCountsForFeeds"
-	}
-	private static let discardableOperationNames = [OperationName.FetchAllUnreadCounts, OperationName.FetchFeedUnreadCount, OperationName.FetchUnreadCountsForFeeds]
-	
 	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
@@ -422,9 +414,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func suspendDatabase() {
-		operationQueue.suspend()
-		cancelDiscardableOperations()
-		database.suspend()
+		database.cancelAndSuspend()
 		save()
 		metadataFile.suspend()
 		webFeedMetadataFile.suspend()
@@ -436,7 +426,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func resumeDatabaseAndDelegate() {
 		database.resume()
 		delegate.resume()
-		operationQueue.resume()
 	}
 
 	/// Reload OPML, etc.
@@ -460,12 +449,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.accountWillBeDeleted(self)
 	}
 
-	public func cancelDiscardableOperations() {
-		for operationName in Self.discardableOperationNames {
-			operationQueue.cancelOperations(named: operationName)
-		}
-	}
-	
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
 		var feedsToAdd = Set<WebFeed>()
 
@@ -1242,43 +1225,34 @@ private extension Account {
 			fetchUnreadCounts(feeds, completion)
 		}
 		else {
-			fetchAllUnreadCounts()
+			fetchAllUnreadCounts(completion)
 		}
 	}
 
 	func fetchUnreadCount(_ feed: WebFeed, _ completion: VoidCompletionBlock?) {
-		let operation = database.createFetchFeedUnreadCountOperation(feedID: feed.webFeedID)
-		operation.name = OperationName.FetchFeedUnreadCount
-		operation.completionBlock = { operation in
-			let fetchOperation = operation as! FetchFeedUnreadCountOperation
-			if let unreadCount = fetchOperation.unreadCount {
+		database.fetchUnreadCount(feed.webFeedID) { result in
+			if let unreadCount = try? result.get() {
 				feed.unreadCount = unreadCount
 			}
 			completion?()
 		}
-
-		operationQueue.add(operation)
 	}
 
 	func fetchUnreadCounts(_ feeds: Set<WebFeed>, _ completion: VoidCompletionBlock?) {
-		let feedIDs = feeds.map { $0.webFeedID }
-		let operation = database.createFetchUnreadCountsForFeedsOperation(feedIDs: Set(feedIDs))
-		operation.name = OperationName.FetchUnreadCountsForFeeds
-		operation.completionBlock = { operation in
-			let fetchOperation = operation as! FetchUnreadCountsForFeedsOperation
-			if let unreadCountDictionary = fetchOperation.unreadCountDictionary {
+		let webFeedIDs = Set(feeds.map { $0.webFeedID })
+		database.fetchUnreadCounts(for: webFeedIDs) { result in
+			if let unreadCountDictionary = try? result.get() {
 				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
 			}
 			completion?()
 		}
-
-		operationQueue.add(operation)
 	}
 
-	func fetchAllUnreadCounts() {
+	func fetchAllUnreadCounts(_ completion: VoidCompletionBlock? = nil) {
 		fetchingAllUnreadCounts = true
-		database.fetchAllUnreadCounts { (result) in
+		database.fetchAllUnreadCounts { result in
 			guard let unreadCountDictionary = try? result.get() else {
+				completion?()
 				return
 			}
 			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedWebFeeds())
@@ -1290,6 +1264,7 @@ private extension Account {
 				self.isUnreadCountsInitialized = true
 				self.postUnreadCountDidInitializeNotification()
 			}
+			completion?()
 		}
 	}
 

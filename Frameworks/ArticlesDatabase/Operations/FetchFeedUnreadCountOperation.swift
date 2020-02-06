@@ -13,8 +13,7 @@ import RSDatabase
 /// Fetch the unread count for a single feed.
 public final class FetchFeedUnreadCountOperation: MainThreadOperation {
 
-	public var unreadCount: Int?
-	public let feedID: String
+	var result: SingleUnreadCountResult = .failure(.isSuspended)
 
 	// MainThreadOperation
 	public var isCanceled = false
@@ -25,9 +24,10 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation {
 
 	private let queue: DatabaseQueue
 	private let cutoffDate: Date
+	private let webFeedID: String
 
-	init(feedID: String, databaseQueue: DatabaseQueue, cutoffDate: Date) {
-		self.feedID = feedID
+	init(webFeedID: String, databaseQueue: DatabaseQueue, cutoffDate: Date) {
+		self.webFeedID = webFeedID
 		self.queue = databaseQueue
 		self.cutoffDate = cutoffDate
 	}
@@ -54,7 +54,7 @@ private extension FetchFeedUnreadCountOperation {
 	func fetchUnreadCount(_ database: FMDatabase) {
 		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
 
-		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [feedID, cutoffDate]) else {
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [webFeedID, cutoffDate]) else {
 			informOperationDelegateOfCompletion()
 			return
 		}
@@ -64,7 +64,8 @@ private extension FetchFeedUnreadCountOperation {
 		}
 
 		if resultSet.next() {
-			unreadCount = resultSet.long(forColumnIndex: 0)
+			let unreadCount = resultSet.long(forColumnIndex: 0)
+			result = .success(unreadCount)
 		}
 		resultSet.close()
 

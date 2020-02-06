@@ -148,7 +148,27 @@ public final class ArticlesDatabase {
 		}
 		operationQueue.add(operation)
 	}
-	
+
+	/// Fetch unread count for a single feed.
+	public func fetchUnreadCount(_ webFeedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+		let operation = FetchFeedUnreadCountOperation(webFeedID: webFeedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+		operation.completionBlock = { operation in
+			let fetchOperation = operation as! FetchFeedUnreadCountOperation
+			completion(fetchOperation.result)
+		}
+		operationQueue.add(operation)
+	}
+
+	/// Fetch non-zero unread counts for given webFeedIDs.
+	public func fetchUnreadCounts(for webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+		let operation = FetchUnreadCountsForFeedsOperation(webFeedIDs: webFeedIDs, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+		operation.completionBlock = { operation in
+			let fetchOperation = operation as! FetchUnreadCountsForFeedsOperation
+			completion(fetchOperation.result)
+		}
+		operationQueue.add(operation)
+	}
+
 	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
 		fetchUnreadCount(for: webFeedIDs, since: todayCutoffDate(), completion: completion)
 	}
@@ -199,33 +219,25 @@ public final class ArticlesDatabase {
 		articlesTable.createStatusesIfNeeded(articleIDs, completion)
 	}
 
-	// MARK: - Operations
-
-	public func cancelOperations() {
-		operationQueue.cancelAllOperations()
-	}
-
-	/// Create an operation that fetches the unread count for a single given feedID.
-	public func createFetchFeedUnreadCountOperation(feedID: String) -> FetchFeedUnreadCountOperation {
-		return FetchFeedUnreadCountOperation(feedID: feedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
-	}
-
-	/// Create an operation that fetches unread counts for a number of feedIDs.
-	public func createFetchUnreadCountsForFeedsOperation(feedIDs: Set<String>) -> FetchUnreadCountsForFeedsOperation {
-		return FetchUnreadCountsForFeedsOperation(feedIDs: feedIDs, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
-	}
-
 	// MARK: - Suspend and Resume (for iOS)
+
+	/// Cancel current operations and close the database.
+	public func cancelAndSuspend() {
+		cancelOperations()
+		suspend()
+	}
 
 	/// Close the database and stop running database calls.
 	/// Any pending calls will complete first.
 	public func suspend() {
+		operationQueue.suspend()
 		queue.suspend()
 	}
 
 	/// Open the database and allow for running database calls again.
 	public func resume() {
 		queue.resume()
+		operationQueue.resume()
 	}
 
 	// MARK: - Caches
@@ -271,5 +283,11 @@ private extension ArticlesDatabase {
 	func todayCutoffDate() -> Date {
 		// 24 hours previous. This is used by the Today smart feed, which should not actually empty out at midnight.
 		return Date(timeIntervalSinceNow: -(60 * 60 * 24)) // This does not need to be more precise.
+	}
+
+	// MARK: - Operations
+
+	func cancelOperations() {
+		operationQueue.cancelAllOperations()
 	}
 }

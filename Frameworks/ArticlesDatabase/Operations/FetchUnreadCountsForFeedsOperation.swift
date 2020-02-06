@@ -13,8 +13,7 @@ import RSDatabase
 /// Fetch the unread counts for a number of feeds.
 public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
 
-	public var unreadCountDictionary: UnreadCountDictionary?
-	public let feedIDs: Set<String>
+	var result: UnreadCountDictionaryCompletionResult = .failure(.isSuspended)
 
 	// MainThreadOperation
 	public var isCanceled = false
@@ -25,9 +24,10 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
 
 	private let queue: DatabaseQueue
 	private let cutoffDate: Date
+	private let webFeedIDs: Set<String>
 
-	init(feedIDs: Set<String>, databaseQueue: DatabaseQueue, cutoffDate: Date) {
-		self.feedIDs = feedIDs
+	init(webFeedIDs: Set<String>, databaseQueue: DatabaseQueue, cutoffDate: Date) {
+		self.webFeedIDs = webFeedIDs
 		self.queue = databaseQueue
 		self.cutoffDate = cutoffDate
 	}
@@ -52,11 +52,11 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
 private extension FetchUnreadCountsForFeedsOperation {
 
 	func fetchUnreadCounts(_ database: FMDatabase) {
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
 		let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
 
 		var parameters = [Any]()
-		parameters += Array(feedIDs) as [Any]
+		parameters += Array(webFeedIDs) as [Any]
 		parameters += [cutoffDate] as [Any]
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
@@ -64,11 +64,12 @@ private extension FetchUnreadCountsForFeedsOperation {
 			return
 		}
 		if isCanceled {
+			resultSet.close()
 			informOperationDelegateOfCompletion()
 			return
 		}
 
-		var d = UnreadCountDictionary()
+		var unreadCountDictionary = UnreadCountDictionary()
 		while resultSet.next() {
 			if isCanceled {
 				resultSet.close()
@@ -77,12 +78,12 @@ private extension FetchUnreadCountsForFeedsOperation {
 			}
 			let unreadCount = resultSet.long(forColumnIndex: 1)
 			if let webFeedID = resultSet.string(forColumnIndex: 0) {
-				d[webFeedID] = unreadCount
+				unreadCountDictionary[webFeedID] = unreadCount
 			}
 		}
 		resultSet.close()
 
-		unreadCountDictionary = d
+		result = .success(unreadCountDictionary)
 		informOperationDelegateOfCompletion()
 	}
 }

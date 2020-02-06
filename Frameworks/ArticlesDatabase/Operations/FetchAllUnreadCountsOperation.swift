@@ -12,7 +12,7 @@ import RSDatabase
 
 public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 
-	public var result: UnreadCountDictionaryCompletionResult = .failure(.isSuspended)
+	var result: UnreadCountDictionaryCompletionResult = .failure(.isSuspended)
 
 	// MainThreadOperation
 	public var isCanceled = false
