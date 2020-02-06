@@ -424,6 +424,8 @@ private extension WebViewController {
 			// us from easily swiping between WKWebViews.  This hack fixes that.
 			webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
 
+			webView.scrollView.setZoomScale(1.0, animated: false)
+
 			self.view.setNeedsLayout()
 			self.view.layoutIfNeeded()
 
@@ -449,6 +451,9 @@ private extension WebViewController {
 		webView.removeFromSuperview()
 		webView.evaluateJavaScript("cancelImageLoad();")
 		
+		webView.navigationDelegate = nil
+		webView.uiDelegate = nil
+		webView.scrollView.delegate = nil
 		webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
 		webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 		webView.interactions.removeAll()
@@ -489,8 +494,7 @@ private extension WebViewController {
 
 		windowScrollY = 0
 		
-		webView.scrollView.setZoomScale(1.0, animated: false)
-		webView.evaluateJavaScript(render) 
+		webView.evaluateJavaScript(render)
 		
 	}
 	
