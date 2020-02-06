@@ -127,7 +127,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		currentSyncAllOperation = operation
 		
-		operationQueue.addOperation(operation)
+		operationQueue.add(operation)
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -139,7 +139,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				completion(.success(()))
 			}
 		}
-		operationQueue.addOperation(send)
+		operationQueue.add(send)
 	}
 	
 	/// Attempts to ensure local articles have the same status as they do remotely.
@@ -305,7 +305,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				completion(result)
 			}
 			
-			operationQueue.addOperation(addNewFeed)
+			operationQueue.add(addNewFeed)
 			
 		} catch {
 			DispatchQueue.main.async {
@@ -362,7 +362,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				completion(result)
 			}
 			
-			operationQueue.addOperation(addExistingFeed)
+			operationQueue.add(addExistingFeed)
 			
 		} catch {
 			DispatchQueue.main.async {
@@ -494,13 +494,13 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		
 		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
-		operationQueue.addOperation(refreshAccessToken)
+		operationQueue.add(refreshAccessToken)
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
 		let logout = FeedlyLogoutOperation(account: account, service: caller, log: log)
 		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
-		MainThreadOperationQueue.shared.addOperation(logout)
+		MainThreadOperationQueue.shared.add(logout)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {

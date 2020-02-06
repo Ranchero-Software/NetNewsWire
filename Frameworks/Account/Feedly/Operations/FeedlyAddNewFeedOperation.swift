@@ -54,7 +54,7 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		search.delegate = self
 		search.searchDelegate = self
 		search.downloadProgress = progress
-		self.operationQueue.addOperation(search)
+		self.operationQueue.add(search)
 	}
 	
 	override func run() {
@@ -81,32 +81,32 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: feedResourceId, feedName: feedName, collectionId: collectionId, service: addToCollectionService)
 		addRequest.delegate = self
 		addRequest.downloadProgress = downloadProgress
-		operationQueue.addOperation(addRequest)
+		operationQueue.add(addRequest)
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 		createFeeds.delegate = self
 		createFeeds.addDependency(addRequest)
 		createFeeds.downloadProgress = downloadProgress
-		operationQueue.addOperation(createFeeds)
+		operationQueue.add(createFeeds)
 		
 		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: syncUnreadIdsService, database: database, newerThan: nil, log: log)
 		syncUnread.addDependency(createFeeds)
 		syncUnread.downloadProgress = downloadProgress
 		syncUnread.delegate = self
-		operationQueue.addOperation(syncUnread)
+		operationQueue.add(syncUnread)
 		
 		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil, log: log)
 		syncFeed.addDependency(syncUnread)
 		syncFeed.downloadProgress = downloadProgress
 		syncFeed.delegate = self
-		operationQueue.addOperation(syncFeed)
+		operationQueue.add(syncFeed)
 		
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = downloadProgress
 		finishOperation.addDependency(syncFeed)
 		finishOperation.delegate = self
-		operationQueue.addOperation(finishOperation)
+		operationQueue.add(finishOperation)
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {

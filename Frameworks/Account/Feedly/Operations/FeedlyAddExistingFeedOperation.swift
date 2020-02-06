@@ -30,18 +30,18 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: nil, collectionId: collectionId, service: service)
 		addRequest.delegate = self
 		addRequest.downloadProgress = progress
-		self.operationQueue.addOperation(addRequest)
+		self.operationQueue.add(addRequest)
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 		createFeeds.downloadProgress = progress
 		createFeeds.addDependency(addRequest)
-		self.operationQueue.addOperation(createFeeds)
+		self.operationQueue.add(createFeeds)
 		
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = progress
 		finishOperation.addDependency(createFeeds)
-		self.operationQueue.addOperation(finishOperation)
+		self.operationQueue.add(finishOperation)
 	}
 	
 	override func run() {

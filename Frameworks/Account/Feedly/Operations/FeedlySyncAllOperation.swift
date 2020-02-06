@@ -46,39 +46,39 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		let sendArticleStatuses = FeedlySendArticleStatusesOperation(database: database, service: markArticlesService, log: log)
 		sendArticleStatuses.delegate = self
 		sendArticleStatuses.downloadProgress = downloadProgress
-		self.operationQueue.addOperation(sendArticleStatuses)
+		self.operationQueue.add(sendArticleStatuses)
 		
 		// Get all the Collections the user has.
 		let getCollections = FeedlyGetCollectionsOperation(service: getCollectionsService, log: log)
 		getCollections.delegate = self
 		getCollections.downloadProgress = downloadProgress
 		getCollections.addDependency(sendArticleStatuses)
-			self.operationQueue.addOperation(getCollections)
+			self.operationQueue.add(getCollections)
 		
 		// Ensure a folder exists for each Collection, removing Folders without a corresponding Collection.
 		let mirrorCollectionsAsFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: getCollections, log: log)
 		mirrorCollectionsAsFolders.delegate = self
 		mirrorCollectionsAsFolders.addDependency(getCollections)
-		self.operationQueue.addOperation(mirrorCollectionsAsFolders)
+		self.operationQueue.add(mirrorCollectionsAsFolders)
 		
 		// Ensure feeds are created and grouped by their folders.
 		let createFeedsOperation = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: mirrorCollectionsAsFolders, log: log)
 		createFeedsOperation.delegate = self
 		createFeedsOperation.addDependency(mirrorCollectionsAsFolders)
-		self.operationQueue.addOperation(createFeedsOperation)
+		self.operationQueue.add(createFeedsOperation)
 		
 		let getAllArticleIds = FeedlyIngestStreamArticleIdsOperation(account: account, credentials: credentials, service: getStreamIdsService, log: log)
 		getAllArticleIds.delegate = self
 		getAllArticleIds.downloadProgress = downloadProgress
 		getAllArticleIds.addDependency(createFeedsOperation)
-		self.operationQueue.addOperation(getAllArticleIds)
+		self.operationQueue.add(getAllArticleIds)
 		
 		// Get each page of unread article ids in the global.all stream for the last 31 days (nil = Feedly API default).
 		let getUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: getUnreadService, database: database, newerThan: nil, log: log)
 		getUnread.delegate = self
 		getUnread.addDependency(getAllArticleIds)
 		getUnread.downloadProgress = downloadProgress
-		self.operationQueue.addOperation(getUnread)
+		self.operationQueue.add(getUnread)
 		
 		// Get each page of the article ids which have been update since the last successful fetch start date.
 		// If the date is nil, this operation provides an empty set (everything is new, nothing is updated).
@@ -86,14 +86,14 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		getUpdated.delegate = self
 		getUpdated.downloadProgress = downloadProgress
 		getUpdated.addDependency(createFeedsOperation)
-		self.operationQueue.addOperation(getUpdated)
+		self.operationQueue.add(getUpdated)
 		
 		// Get each page of the article ids for starred articles.
 		let getStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: getStarredService, database: database, newerThan: nil, log: log)
 		getStarred.delegate = self
 		getStarred.downloadProgress = downloadProgress
 		getStarred.addDependency(createFeedsOperation)
-		self.operationQueue.addOperation(getStarred)
+		self.operationQueue.add(getStarred)
 		
 		// Now all the possible article ids we need have a status, fetch the article ids for missing articles.
 		let getMissingIds = FeedlyFetchIdsForMissingArticlesOperation(account: account, log: log)
@@ -103,7 +103,7 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		getMissingIds.addDependency(getUnread)
 		getMissingIds.addDependency(getStarred)
 		getMissingIds.addDependency(getUpdated)
-		self.operationQueue.addOperation(getMissingIds)
+		self.operationQueue.add(getMissingIds)
 		
 		// Download all the missing and updated articles
 		let downloadMissingArticles = FeedlyDownloadArticlesOperation(account: account,
@@ -115,14 +115,14 @@ final class FeedlySyncAllOperation: FeedlyOperation {
 		downloadMissingArticles.downloadProgress = downloadProgress
 		downloadMissingArticles.addDependency(getMissingIds)
 		downloadMissingArticles.addDependency(getUpdated)
-		self.operationQueue.addOperation(downloadMissingArticles)
+		self.operationQueue.add(downloadMissingArticles)
 		
 		// Once this operation's dependencies, their dependencies etc finish, we can finish.
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = downloadProgress
 		finishOperation.addDependency(downloadMissingArticles)
-		self.operationQueue.addOperation(finishOperation)
+		self.operationQueue.add(finishOperation)
 	}
 	
 	convenience init(account: Account, credentials: Credentials, caller: FeedlyAPICaller, database: SyncDatabase, lastSuccessfulFetchStartDate: Date?, downloadProgress: DownloadProgress, log: OSLog) {

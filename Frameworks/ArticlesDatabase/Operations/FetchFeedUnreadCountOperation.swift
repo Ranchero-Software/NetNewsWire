@@ -20,7 +20,7 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation {
 	public var isCanceled = false
 	public var id: Int?
 	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String?
+	public var name: String? = "FetchFeedUnreadCountOperation"
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	private let queue: DatabaseQueue

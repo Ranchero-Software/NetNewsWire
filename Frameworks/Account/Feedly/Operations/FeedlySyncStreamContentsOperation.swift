@@ -35,7 +35,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 		
 		super.init()
 		
-		self.operationQueue.addOperation(self.finishOperation)
+		self.operationQueue.add(self.finishOperation)
 		self.finishOperation.checkpointDelegate = self
 		enqueueOperations(for: nil)
 	}

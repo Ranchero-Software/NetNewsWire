@@ -45,6 +45,7 @@ public final class ArticlesDatabase {
 
 	private let articlesTable: ArticlesTable
 	private let queue: DatabaseQueue
+	private let operationQueue = MainThreadOperationQueue()
 
 	public init(databaseFilePath: String, accountID: String) {
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
@@ -136,6 +137,15 @@ public final class ArticlesDatabase {
 	}
 
 	// MARK: - Unread Counts
+
+	public func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+		let operation = FetchAllUnreadCountsOperation(databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+		operation.completionBlock = { operation in
+			let fetchOperation = operation as! FetchAllUnreadCountsOperation
+			completion(fetchOperation.result)
+		}
+		operationQueue.add(operation)
+	}
 	
 	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
 		fetchUnreadCount(for: webFeedIDs, since: todayCutoffDate(), completion: completion)
@@ -188,6 +198,10 @@ public final class ArticlesDatabase {
 	}
 
 	// MARK: - Operations
+
+	public func cancelOperations() {
+		operationQueue.cancelAllOperations()
+	}
 
 	/// Create an operation that fetches all non-zero unread counts.
 	public func createFetchAllUnreadCountsOperation() -> FetchAllUnreadCountsOperation {

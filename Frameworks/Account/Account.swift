@@ -1257,7 +1257,7 @@ private extension Account {
 			completion?()
 		}
 
-		operationQueue.addOperation(operation)
+		operationQueue.add(operation)
 	}
 
 	func fetchUnreadCounts(_ feeds: Set<WebFeed>, _ completion: VoidCompletionBlock?) {
@@ -1272,7 +1272,7 @@ private extension Account {
 			completion?()
 		}
 
-		operationQueue.addOperation(operation)
+		operationQueue.add(operation)
 	}
 
 	func fetchAllUnreadCounts() {
@@ -1297,7 +1297,7 @@ private extension Account {
 			}
 		}
 
-		operationQueue.addOperation(operation)
+		operationQueue.add(operation)
 	}
 
 	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<WebFeed>) {

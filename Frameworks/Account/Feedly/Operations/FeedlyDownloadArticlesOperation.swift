@@ -31,7 +31,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 		self.log = log
 		super.init()
 		self.finishOperation.checkpointDelegate = self
-		self.operationQueue.addOperation(self.finishOperation)
+		self.operationQueue.add(self.finishOperation)
 	}
 	
 	override func run() {
@@ -46,14 +46,14 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 			let provider = FeedlyEntryIdentifierProvider(entryIds: Set(articleIds))
 			let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider, log: log)
 			getEntries.delegate = self
-			self.operationQueue.addOperation(getEntries)
+			self.operationQueue.add(getEntries)
 			
 			let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(account: account,
 																		  parsedItemProvider: getEntries,
 																		  log: log)
 			organiseByFeed.delegate = self
 			organiseByFeed.addDependency(getEntries)
-			self.operationQueue.addOperation(organiseByFeed)
+			self.operationQueue.add(organiseByFeed)
 			
 			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(account: account,
 			organisedItemsProvider: organiseByFeed,
@@ -61,7 +61,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation {
 			
 			updateAccount.delegate = self
 			updateAccount.addDependency(organiseByFeed)
-			self.operationQueue.addOperation(updateAccount)
+			self.operationQueue.add(updateAccount)
 
 			finishOperation.addDependency(updateAccount)
 		}

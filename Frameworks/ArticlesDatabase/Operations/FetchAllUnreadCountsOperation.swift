@@ -12,13 +12,13 @@ import RSDatabase
 
 public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 
-	public var unreadCountDictionary: UnreadCountDictionary?
+	public var result: UnreadCountDictionaryCompletionResult = .failure(.isSuspended)
 
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
 	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String?
+	public var name: String? = "FetchAllUnreadCountsOperation"
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	private let queue: DatabaseQueue
@@ -56,7 +56,7 @@ private extension FetchAllUnreadCountsOperation {
 			return
 		}
 
-		var d = UnreadCountDictionary()
+		var unreadCountDictionary = UnreadCountDictionary()
 		while resultSet.next() {
 			if isCanceled {
 				resultSet.close()
@@ -65,12 +65,12 @@ private extension FetchAllUnreadCountsOperation {
 			}
 			let unreadCount = resultSet.long(forColumnIndex: 1)
 			if let webFeedID = resultSet.string(forColumnIndex: 0) {
-				d[webFeedID] = unreadCount
+				unreadCountDictionary[webFeedID] = unreadCount
 			}
 		}
 		resultSet.close()
 
-		unreadCountDictionary = d
+		result = .success(unreadCountDictionary)
 		informOperationDelegateOfCompletion()
 	}
 }
