@@ -52,7 +52,7 @@ class FeedlyOperationTests: XCTestCase {
         let testOperation = TestOperation()
 		testOperation.didCallMainExpectation = expectation(description: "Did Call Main")
 		
-		MainThreadOperationQueue.shared.addOperation(testOperation)
+		MainThreadOperationQueue.shared.add(testOperation)
 		
 		waitForExpectations(timeout: 2)
     }
@@ -67,7 +67,7 @@ class FeedlyOperationTests: XCTestCase {
 		
 		testOperation.delegate = delegate
 		
-		MainThreadOperationQueue.shared.addOperation(testOperation)
+		MainThreadOperationQueue.shared.add(testOperation)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -90,7 +90,7 @@ class FeedlyOperationTests: XCTestCase {
 
 		XCTAssertFalse(testOperation.isCanceled)
 		
-		MainThreadOperationQueue.shared.addOperation(testOperation)
+		MainThreadOperationQueue.shared.add(testOperation)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -109,7 +109,7 @@ class FeedlyOperationTests: XCTestCase {
 		
 		XCTAssertFalse(testOperation.isCanceled)
 		
-		MainThreadOperationQueue.shared.addOperation(testOperation)
+		MainThreadOperationQueue.shared.add(testOperation)
 		
 		MainThreadOperationQueue.shared.cancelOperations([testOperation])
 		
@@ -169,7 +169,7 @@ class FeedlyOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(testOperation)
+		MainThreadOperationQueue.shared.add(testOperation)
 		
 		XCTAssertTrue(progress.numberRemaining == 1)
 		MainThreadOperationQueue.shared.cancelOperations([testOperation])
@@ -195,7 +195,7 @@ class FeedlyOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(testOperation)
+		MainThreadOperationQueue.shared.add(testOperation)
 		
 		XCTAssertTrue(progress.numberRemaining == 1)
 		
@@ -220,7 +220,7 @@ class FeedlyOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(testOperation)
+		MainThreadOperationQueue.shared.add(testOperation)
 		
 		XCTAssertTrue(progress.numberRemaining == 1)
 		

@@ -33,7 +33,7 @@ class FeedlyCheckpointOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(operation)
+		MainThreadOperationQueue.shared.add(operation)
 		
 		waitForExpectations(timeout: 2)
 	}
@@ -53,7 +53,7 @@ class FeedlyCheckpointOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(operation)
+		MainThreadOperationQueue.shared.add(operation)
 		
 		MainThreadOperationQueue.shared.cancelOperations([operation])
 		

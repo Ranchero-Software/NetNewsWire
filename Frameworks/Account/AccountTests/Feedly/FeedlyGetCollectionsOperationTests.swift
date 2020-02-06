@@ -25,7 +25,7 @@ class FeedlyGetCollectionsOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(getCollections)
+		MainThreadOperationQueue.shared.add(getCollections)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -83,7 +83,7 @@ class FeedlyGetCollectionsOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(getCollections)
+		MainThreadOperationQueue.shared.add(getCollections)
 		
 		waitForExpectations(timeout: 2)
 		
