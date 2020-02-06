@@ -1277,27 +1277,20 @@ private extension Account {
 
 	func fetchAllUnreadCounts() {
 		fetchingAllUnreadCounts = true
-		operationQueue.cancelOperations(named: OperationName.FetchAllUnreadCounts)
-
-		let operation = database.createFetchAllUnreadCountsOperation()
-		operation.name = OperationName.FetchAllUnreadCounts
-		operation.completionBlock = { operation in
-			let fetchOperation = operation as! FetchAllUnreadCountsOperation
-			guard let unreadCountDictionary = fetchOperation.unreadCountDictionary else {
+		database.fetchAllUnreadCounts { (result) in
+			guard let unreadCountDictionary = try? result.get() else {
 				return
 			}
 			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedWebFeeds())
 
 			self.fetchingAllUnreadCounts = false
 			self.updateUnreadCount()
-			
+
 			if !self.isUnreadCountsInitialized {
 				self.isUnreadCountsInitialized = true
 				self.postUnreadCountDidInitializeNotification()
 			}
 		}
-
-		operationQueue.add(operation)
 	}
 
 	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<WebFeed>) {

@@ -49,7 +49,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
-			MainThreadOperationQueue.shared.addOperation(addAccount)
+			MainThreadOperationQueue.shared.add(addAccount)
 		case 3:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedWranglerAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext

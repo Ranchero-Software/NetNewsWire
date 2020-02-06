@@ -138,8 +138,10 @@ public final class ArticlesDatabase {
 
 	// MARK: - Unread Counts
 
+	/// Fetch all non-zero unread counts.
 	public func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		let operation = FetchAllUnreadCountsOperation(databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+		operationQueue.cancelOperations(named: operation.name!)
 		operation.completionBlock = { operation in
 			let fetchOperation = operation as! FetchAllUnreadCountsOperation
 			completion(fetchOperation.result)
@@ -201,11 +203,6 @@ public final class ArticlesDatabase {
 
 	public func cancelOperations() {
 		operationQueue.cancelAllOperations()
-	}
-
-	/// Create an operation that fetches all non-zero unread counts.
-	public func createFetchAllUnreadCountsOperation() -> FetchAllUnreadCountsOperation {
-		return FetchAllUnreadCountsOperation(databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
 	}
 
 	/// Create an operation that fetches the unread count for a single given feedID.
