@@ -8,23 +8,26 @@
 
 import UIKit
 import MobileCoreServices
-import Social
 import Account
-import Articles
+import Social
 import RSCore
 import RSTree
 
 class ShareViewController: SLComposeServiceViewController, ShareFolderPickerControllerDelegate {
 	
 	private var url: URL?
-	private var container: Container?
+	private var extensionContainers: ExtensionContainers?
+	private var flattenedContainers: [ExtensionContainer]!
+	private var selectedContainer: ExtensionContainer?
 	private var folderItem: SLComposeSheetConfigurationItem!
 	
 	override func viewDidLoad() {
 		
-		AccountManager.shared = AccountManager()
-
-		container = AddWebFeedDefaultContainer.defaultContainer
+		extensionContainers = ExtensionContainersFile.read()
+		flattenedContainers = extensionContainers?.flattened ?? [ExtensionContainer]()
+		if let extensionContainers = extensionContainers {
+			selectedContainer = ShareDefaultContainer.defaultContainer(containers: extensionContainers)
+		}
 
 		title = "NetNewsWire"
 		placeholder = "Feed Name (Optional)"
@@ -32,14 +35,14 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			button.title = "Add Feed"
 			button.isEnabled = true
 		}
-		
+
 		// Hack the bottom table rows to be smaller since the controller itself doesn't have enough sense to size itself correctly
 		if let nav = self.children.first as? UINavigationController, let tableView = nav.children.first?.view.subviews.first as? UITableView {
 			tableView.rowHeight = 38
 		}
 
 		var provider: NSItemProvider? = nil
-		
+
 		// Try to get any HTML that is maybe passed in
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
 			for itemProvider in item.attachments! {
@@ -48,7 +51,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 				}
 			}
 		}
-		
+
 		if provider != nil  {
 			provider!.loadItem(forTypeIdentifier: kUTTypePropertyList as String, options: nil, completionHandler: { [weak self] (pList, error) in
 				if error != nil {
@@ -66,7 +69,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			})
 			return
 		}
-		
+
 		// Try to get the URL if it is passed in
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
 			for itemProvider in item.attachments! {
@@ -75,7 +78,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 				}
 			}
 		}
-		
+
 		if provider != nil  {
 			provider!.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil, completionHandler: { [weak self] (urlCoded, error) in
 				if error != nil {
@@ -91,53 +94,25 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 	}
 	
 	override func isContentValid() -> Bool {
-		return url != nil && container != nil
+		return url != nil && selectedContainer != nil
 	}
 	
 	override func didSelectPost() {
-		
-		guard let url = url, let container = container else {
+		guard let url = url, let selectedContainer = selectedContainer, let containerID = selectedContainer.containerID else {
 			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 			return
 		}
-		
-		var account: Account?
-		if let containerAccount = container as? Account {
-			account = containerAccount
-		} else if let containerFolder = container as? Folder, let containerAccount = containerFolder.account {
-			account = containerAccount
-		} else {
-			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
-			return
-		}
-		
-		if account!.hasWebFeed(withURL: url.absoluteString) {
-			let errorTitle = NSLocalizedString("Error", comment: "Error")
-			presentError(title: errorTitle, message: AccountError.createErrorAlreadySubscribed.localizedDescription)
-			self.extensionContext!.cancelRequest(withError: AccountError.createErrorAlreadySubscribed)
- 			return
-		}
-		
-		let feedName = contentText.isEmpty ? nil : contentText
-		
-		ProcessInfo.processInfo.performExpiringActivity(withReason: "Adding web feed to account.") { expired in
-			guard !expired else { return }
-			
-			DispatchQueue.main.async {
-				account!.createWebFeed(url: url.absoluteString, name: feedName, container: container) { result in
-					account!.save()
-					AccountManager.shared.suspendNetworkAll()
-					AccountManager.shared.suspendDatabaseAll()
-				}
-			}
-		}
+
+		let name = contentText.isEmpty ? nil : contentText
+		let request = ExtensionFeedAddRequest(name: name, feedURL: url, destinationContainerID: containerID)
+		ExtensionFeedAddRequestFile.save(request)
 		
 		self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 	}
 	
-	func shareFolderPickerDidSelect(_ container: Container) {
-		AddWebFeedDefaultContainer.saveDefaultContainer(container)
-		self.container = container
+	func shareFolderPickerDidSelect(_ container: ExtensionContainer) {
+		ShareDefaultContainer.saveDefaultContainer(container)
+		self.selectedContainer = container
 		updateFolderItemValue()
 		self.popConfigurationViewController()
 	}
@@ -159,7 +134,8 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			
 			folderPickerController.navigationController?.title = NSLocalizedString("Folder", comment: "Folder")
 			folderPickerController.delegate = self
-			folderPickerController.selectedContainer = self.container
+			folderPickerController.containers = self.flattenedContainers
+			folderPickerController.selectedContainerID = self.selectedContainer?.containerID
 			
 			self.pushConfigurationViewController(folderPickerController)
 			
@@ -174,12 +150,10 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 private extension ShareViewController {
 	
 	func updateFolderItemValue() {
-		if let containerName = (container as? DisplayNameProvider)?.nameForDisplay {
-			if container is Folder {
-				self.folderItem.value = "\(container?.account?.nameForDisplay ?? "") / \(containerName)"
-			} else {
-				self.folderItem.value = containerName
-			}
+		if let account = selectedContainer as? ExtensionAccount {
+			self.folderItem.value = account.name
+		} else if let folder = selectedContainer as? ExtensionFolder {
+			self.folderItem.value = "\(folder.accountName) / \(folder.name)"
 		}
 	}
 	

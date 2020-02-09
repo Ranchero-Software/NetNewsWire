@@ -7,30 +7,24 @@
 //
 
 import UIKit
-import RSCore
 import Account
+import RSCore
 
 protocol ShareFolderPickerControllerDelegate: class {
-	func shareFolderPickerDidSelect(_ container: Container)
+	func shareFolderPickerDidSelect(_ container: ExtensionContainer)
 }
 
 class ShareFolderPickerController: UITableViewController {
 
-	var selectedContainer: Container?
-	var containers = [Container]()
+	var containers: [ExtensionContainer]?
+	var selectedContainerID: ContainerIdentifier?
 
 	weak var delegate: ShareFolderPickerControllerDelegate?
 	
 	override func viewDidLoad() {
-		for account in AccountManager.shared.sortedActiveAccounts {
-			containers.append(account)
-			if let sortedFolders = account.sortedFolders {
-				containers.append(contentsOf: sortedFolders)
-			}
-		}
-
 		tableView.register(UINib(nibName: "ShareFolderPickerAccountCell", bundle: Bundle.main), forCellReuseIdentifier: "AccountCell")
 		tableView.register(UINib(nibName: "ShareFolderPickerFolderCell", bundle: Bundle.main), forCellReuseIdentifier: "FolderCell")
+		
 	}
 	
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -38,30 +32,28 @@ class ShareFolderPickerController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return containers.count
+		return containers?.count ?? 0
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let container = containers[indexPath.row]
+		let container = containers?[indexPath.row]
 		let cell: ShareFolderPickerCell = {
-			if container is Account {
+			if container is ExtensionAccount {
 				return tableView.dequeueReusableCell(withIdentifier: "AccountCell", for: indexPath) as! ShareFolderPickerCell
 			} else {
 				return tableView.dequeueReusableCell(withIdentifier: "FolderCell", for: indexPath) as! ShareFolderPickerCell
 			}
 		}()
 		
-		if let account = container as? Account {
+		if let account = container as? ExtensionAccount {
 			cell.icon.image = AppAssets.image(for: account.type)
 		} else {
 			cell.icon.image = AppAssets.masterFolderImage.image
 		}
-		
-		if let displayNameProvider = container as? DisplayNameProvider {
-			cell.label?.text = displayNameProvider.nameForDisplay
-		}
-		
-		if let compContainer = selectedContainer, container === compContainer {
+
+		cell.label?.text = container?.name ?? ""
+
+		if let containerID = container?.containerID, containerID == selectedContainerID {
 			cell.accessoryType = .checkmark
 		} else {
 			cell.accessoryType = .none
@@ -71,9 +63,9 @@ class ShareFolderPickerController: UITableViewController {
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		let container = containers[indexPath.row]
+		guard let container = containers?[indexPath.row] else { return }
 		
-		if let account = container as? Account, account.behaviors.contains(.disallowFeedInRootFolder) {
+		if let account = container as? ExtensionAccount, account.disallowFeedInRootFolder {
 			tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
 		} else {
 			let cell = tableView.cellForRow(at: indexPath)

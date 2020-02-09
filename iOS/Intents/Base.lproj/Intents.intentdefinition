@@ -9,7 +9,7 @@
 	<key>INIntentDefinitionNamespace</key>
 	<string>U6u7RF</string>
 	<key>INIntentDefinitionSystemVersion</key>
-	<string>19B88</string>
+	<string>19D76</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
 	<string>11B53</string>
 	<key>INIntentDefinitionToolsVersion</key>
@@ -177,6 +177,16 @@
 							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
 							<string>JGkCuS</string>
 						</dict>
+						<dict>
+							<key>INIntentParameterUnsupportedReasonCode</key>
+							<string>communication</string>
+							<key>INIntentParameterUnsupportedReasonCustom</key>
+							<true/>
+							<key>INIntentParameterUnsupportedReasonFormatString</key>
+							<string>Unable to communicate with NetNewsWire.</string>
+							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
+							<string>uSfloN</string>
+						</dict>
 					</array>
 				</dict>
 				<dict>
@@ -259,6 +269,16 @@
 							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
 							<string>ef5kBt</string>
 						</dict>
+						<dict>
+							<key>INIntentParameterUnsupportedReasonCode</key>
+							<string>communication</string>
+							<key>INIntentParameterUnsupportedReasonCustom</key>
+							<true/>
+							<key>INIntentParameterUnsupportedReasonFormatString</key>
+							<string>Unable to communicate with NetNewsWire.</string>
+							<key>INIntentParameterUnsupportedReasonFormatStringID</key>
+							<string>ExjqcE</string>
+						</dict>
 					</array>
 				</dict>
 			</array>
@@ -275,30 +295,6 @@
 					<dict>
 						<key>INIntentResponseCodeName</key>
 						<string>failure</string>
-					</dict>
-					<dict>
-						<key>INIntentResponseCodeConciseFormatString</key>
-						<string>You are already subscribed to this feed in this account.</string>
-						<key>INIntentResponseCodeConciseFormatStringID</key>
-						<string>srME8b</string>
-						<key>INIntentResponseCodeFormatString</key>
-						<string>You are already subscribed to this feed in this account.</string>
-						<key>INIntentResponseCodeFormatStringID</key>
-						<string>UGGPkp</string>
-						<key>INIntentResponseCodeName</key>
-						<string>alreadySubscribed</string>
-					</dict>
-					<dict>
-						<key>INIntentResponseCodeConciseFormatString</key>
-						<string>No feed was found at the specified URL.</string>
-						<key>INIntentResponseCodeConciseFormatStringID</key>
-						<string>8Dh9Yy</string>
-						<key>INIntentResponseCodeFormatString</key>
-						<string>No feed was found at the specified URL.</string>
-						<key>INIntentResponseCodeFormatStringID</key>
-						<string>drQfaI</string>
-						<key>INIntentResponseCodeName</key>
-						<string>feedNotFound</string>
 					</dict>
 				</array>
 			</dict>

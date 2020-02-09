@@ -41,6 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var webFeedIconDownloader: WebFeedIconDownloader!
+	var extensionContainersFile: ExtensionContainersFile!
+	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
 	
 	var unreadCount = 0 {
 		didSet {
@@ -58,7 +60,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		super.init()
 		appDelegate = self
 
-		AccountManager.shared = AccountManager()
+		AccountMigrator.migrate()
+		
+		let documentAccountURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+		let documentAccountsFolder = documentAccountURL.appendingPathComponent("Accounts").absoluteString
+		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
+		AccountManager.shared = AccountManager(accountsFolder: documentAccountsFolderPath)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
@@ -97,6 +104,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		UNUserNotificationCenter.current().delegate = self
 		userNotificationManager = UserNotificationManager()
 
+		extensionContainersFile = ExtensionContainersFile()
+		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
+		
 		syncTimer = ArticleStatusSyncTimer()
 		
 		#if DEBUG
@@ -132,6 +142,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	func prepareAccountsForBackground() {
+		extensionFeedAddRequestFile.suspend()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
@@ -139,6 +150,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	func prepareAccountsForForeground() {
+		extensionFeedAddRequestFile.resume()
+		
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)

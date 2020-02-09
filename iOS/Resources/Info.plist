@@ -60,10 +60,10 @@
 	<string>Grant permission to save images from the article.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>Restoration</string>
 		<string>AddWebFeedIntent</string>
 		<string>NextUnread</string>
 		<string>ReadArticle</string>
+		<string>Restoration</string>
 		<string>SelectFeed</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>

@@ -79,9 +79,9 @@ function flattenPreElements() {
 	ElementUnwrapper.unwrapAppropriateChildren("div.articleBody td > pre");
 }
 
-function reloadArticleImage(articleID) {
+function reloadArticleImage(imageSrc) {
 	var image = document.getElementById("nnwImageIcon");
-	image.src = "nnwImageIcon://" + articleID;
+	image.src = imageSrc;
 }
 
 function error() {

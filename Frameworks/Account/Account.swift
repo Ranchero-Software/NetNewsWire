@@ -31,10 +31,9 @@ public extension Notification.Name {
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
-	static let WebFeedMetadataDidChange = Notification.Name(rawValue: "WebFeedMetadataDidChange")
 }
 
-public enum AccountType: Int {
+public enum AccountType: Int, Codable {
 	// Raw values should not change since they’re stored on disk.
 	case onMyMac = 1
 	case feedly = 16
@@ -199,8 +198,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	typealias WebFeedMetadataDictionary = [String: WebFeedMetadata]
 	var webFeedMetadata = WebFeedMetadataDictionary()
 
-	var startingUp = true
-
     public var unreadCount = 0 {
         didSet {
             if unreadCount != oldValue {
@@ -287,7 +284,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 
 		self.delegate.accountDidInitialize(self)
-		startingUp = false
 	}
 	
 	// MARK: - API
@@ -416,9 +412,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func suspendDatabase() {
 		database.cancelAndSuspend()
 		save()
-		metadataFile.suspend()
-		webFeedMetadataFile.suspend()
-		opmlFile.suspend()
 	}
 
 	/// Re-open the SQLite database and allow database calls.
@@ -430,12 +423,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	/// Reload OPML, etc.
 	public func resume() {
-		metadataFile.resume()
-		webFeedMetadataFile.resume()
-		opmlFile.resume()
-		metadataFile.load()
-		webFeedMetadataFile.load()
-		opmlFile.load()
 		fetchAllUnreadCounts()
 	}
 
@@ -486,14 +473,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 		
-	}
-	
-	public func resetWebFeedMetadataAndUnreadCounts() {
-		for feed in flattenedWebFeeds() {
-			feed.metadata = webFeedMetadata(feedURL: feed.url, webFeedID: feed.webFeedID)
-		}
-		fetchAllUnreadCounts()
-		NotificationCenter.default.post(name: .WebFeedMetadataDidChange, object: self, userInfo: nil)
 	}
 	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
@@ -691,9 +670,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func structureDidChange() {
 		// Feeds were added or deleted. Or folders added or deleted.
 		// Or feeds inside folders were added or deleted.
-		if !startingUp {
-			opmlFile.markAsDirty()
-		}
+		opmlFile.markAsDirty()
 		flattenedWebFeedsNeedUpdate = true
 		webFeedDictionaryNeedsUpdate = true
 	}

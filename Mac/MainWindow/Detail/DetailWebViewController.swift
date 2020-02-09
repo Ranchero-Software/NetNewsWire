@@ -207,7 +207,14 @@ private extension DetailWebViewController {
 
 	func reloadArticleImage() {
 		guard let article = article else { return }
-		webView?.evaluateJavaScript("reloadArticleImage(\"\(article.articleID)\")")
+		
+		var components = URLComponents()
+		components.scheme = ArticleRenderer.imageIconScheme
+		components.path = article.articleID
+		
+		if let imageSrc = components.string {
+			webView?.evaluateJavaScript("reloadArticleImage(\"\(imageSrc)\")")
+		}
 	}
 
 	func reloadHTML() {
