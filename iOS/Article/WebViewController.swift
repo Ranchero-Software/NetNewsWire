@@ -437,10 +437,7 @@ private extension WebViewController {
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
 			self.renderPage()
-			
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-				self.recycleWebView(webViewToRecycle)
-			}
+			self.recycleWebView(webViewToRecycle)
 			
 		}
 		
