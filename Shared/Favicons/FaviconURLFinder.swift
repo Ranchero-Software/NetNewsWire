@@ -49,20 +49,20 @@ struct FaviconURLFinder {
 
 		// If the favicon has an explicit type, check that for an ignored type; otherwise, check the file extension.
 		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (htmlMetadata) in
-			let faviconURLs = htmlMetadata?.favicons.filter({ (favicon) -> Bool in
+			let faviconURLs = htmlMetadata?.favicons.compactMap({ (favicon) -> String? in
 				if let type = favicon.type {
 					if ignoredMimeTypes.contains(type) {
-						return false
+						return nil
 					}
 				}
 				else {
 					if let urlString = favicon.urlString, let url = URL(string: urlString), ignoredExtensions.contains(url.pathExtension) {
-						return false
+						return nil
 					}
 				}
 
-				return true
-			}).compactMap { $0.urlString }
+				return favicon.urlString
+			})
 
 			completion(faviconURLs)
 		}

@@ -12,8 +12,9 @@ import RSParser
 extension RSHTMLMetadata {
 
 	func largestOpenGraphImageURL() -> String? {
+		let openGraphImages = openGraphProperties.images
 
-		guard let openGraphImages = openGraphProperties?.images, !openGraphImages.isEmpty else {
+		guard !openGraphImages.isEmpty else {
 			return nil
 		}
 
@@ -47,7 +48,9 @@ extension RSHTMLMetadata {
 
 	func largestAppleTouchIcon() -> String? {
 
-		guard let icons = appleTouchIcons, !icons.isEmpty else {
+		let icons = appleTouchIcons
+
+		guard !icons.isEmpty else {
 			return nil
 		}
 
