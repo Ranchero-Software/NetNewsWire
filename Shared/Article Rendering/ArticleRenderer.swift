@@ -140,7 +140,16 @@ private extension ArticleRenderer {
 		d["title"] = title
 
 		d["body"] = body
-		d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(ArticleRenderer.imageIconScheme)://\(article.articleID)\" height=48 width=48 /></td>";
+
+		var components = URLComponents()
+		components.scheme = Self.imageIconScheme
+		components.path = article.articleID
+		if let imageIconURLString = components.string {
+			d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(imageIconURLString)\" height=48 width=48 /></td>"
+		}
+		else {
+			d["avatars"] = ""
+		}
 
 		var feedLink = ""
 		if let feedTitle = article.webFeed?.nameForDisplay {

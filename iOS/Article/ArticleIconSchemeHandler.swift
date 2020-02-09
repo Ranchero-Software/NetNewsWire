@@ -24,9 +24,11 @@ class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}
-		
-		let articleID = url.absoluteString.stripping(prefix: "\(ArticleRenderer.imageIconScheme)://")
-		
+
+		guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+			return
+		}
+		let articleID = components.path
 		guard let iconImage = coordinator.articleFor(articleID)?.iconImage() else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
