@@ -46,11 +46,7 @@ class WebViewController: UIViewController {
 			windowScrollY = 0
 		}
 	}
-	var isShowingExtractedArticle = false {
-		didSet {
-			loadWebView()
-		}
-	}
+	var isShowingExtractedArticle = false
 
 	var articleExtractorButtonState: ArticleExtractorButtonState = .off {
 		didSet {
@@ -189,11 +185,13 @@ class WebViewController: UIViewController {
 
 		guard articleExtractor?.state != .processing else {
 			stopArticleExtractor()
+			loadWebView()
 			return
 		}
 
 		guard !isShowingExtractedArticle else {
 			isShowingExtractedArticle = false
+			loadWebView()
 			articleExtractorButtonState = .off
 			return
 		}
@@ -201,6 +199,7 @@ class WebViewController: UIViewController {
 		if let articleExtractor = articleExtractor {
 			if article.preferredLink == articleExtractor.articleLink {
 				isShowingExtractedArticle = true
+				loadWebView()
 				articleExtractorButtonState = .on
 			}
 		} else {
@@ -241,6 +240,7 @@ extension WebViewController: ArticleExtractorDelegate {
 		if articleExtractor?.state != .cancelled {
 			self.extractedArticle = extractedArticle
 			isShowingExtractedArticle = true
+			loadWebView()
 			articleExtractorButtonState = .on
 		}
 	}
