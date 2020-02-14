@@ -406,7 +406,8 @@ private extension WebViewController {
 		coordinator.webViewProvider.dequeueWebView() { webView in
 			
 			let webViewToRecycle = self.webView
-			
+			self.renderPage(webViewToRecycle)
+
 			// Add the webview
 			webView.translatesAutoresizingMaskIntoConstraints = false
 			self.view.insertSubview(webView, at: 0)
@@ -436,8 +437,10 @@ private extension WebViewController {
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
-			self.renderPage()
-			self.recycleWebView(webViewToRecycle)
+			self.renderPage(webView)
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+				self.recycleWebView(webViewToRecycle)
+			}
 			
 		}
 		
@@ -459,7 +462,7 @@ private extension WebViewController {
 		coordinator.webViewProvider.enqueueWebView(webView)
 	}
 
-	func renderPage() {
+	func renderPage(_ webView: WKWebView?) {
 		guard let webView = webView else { return }
 		 
 		let style = ArticleStylesManager.shared.currentStyle
