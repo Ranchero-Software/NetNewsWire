@@ -211,21 +211,22 @@ private extension FaviconDownloader {
 		}
 
 		FaviconURLFinder.findFaviconURLs(with: homePageURL) { (faviconURLs) in
+			guard var faviconURLs = faviconURLs else {
+				completion(nil)
+				return
+			}
+
 			var defaultFaviconURL: String? = nil
 
 			if let scheme = url.scheme, let host = url.host {
 				defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
 			}
 
-			if var faviconURLs = faviconURLs {
-				if let defaultFaviconURL = defaultFaviconURL {
-					faviconURLs.append(defaultFaviconURL)
-				}
-				completion(faviconURLs)
-				return
+			if let defaultFaviconURL = defaultFaviconURL {
+				faviconURLs.append(defaultFaviconURL)
 			}
 
-			completion(defaultFaviconURL != nil ? [defaultFaviconURL!] : nil)
+			completion(faviconURLs)
 		}
 	}
 
