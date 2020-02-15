@@ -136,6 +136,7 @@ final class FaviconDownloader {
 
 		findFaviconURLs(with: url) { (faviconURLs) in
 			if let faviconURLs = faviconURLs {
+				// If the site explicitly specifies favicon.ico, it will appear twice.
 				self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 
 				if let firstIconURL = faviconURLs.first {
