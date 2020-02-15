@@ -177,11 +177,9 @@ final class FaviconDownloader {
 
 		remainingFaviconURLs[homePageURL] = nil
 
-		if let url = singleFaviconDownloader.homePageURL {
-			if self.homePageToFaviconURLCache[url] == nil {
-				self.homePageToFaviconURLCache[url] = singleFaviconDownloader.faviconURL
-				self.homePageToFaviconURLCacheDirty = true
-			}
+		if self.homePageToFaviconURLCache[homePageURL] == nil {
+			self.homePageToFaviconURLCache[homePageURL] = singleFaviconDownloader.faviconURL
+			self.homePageToFaviconURLCacheDirty = true
 		}
 
 		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
