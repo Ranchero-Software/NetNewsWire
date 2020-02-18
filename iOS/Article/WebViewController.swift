@@ -92,14 +92,6 @@ class WebViewController: UIViewController {
 
 	}
 
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		if let webView = webView {
-			stopMediaPlayback(webView)
-			cancelImageLoad(webView)
-		}
-	}
-	
 	// MARK: Notifications
 	
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
@@ -214,6 +206,13 @@ class WebViewController: UIViewController {
 	func stopArticleExtractorIfProcessing() {
 		if articleExtractor?.state == .processing {
 			stopArticleExtractor()
+		}
+	}
+
+	func stopWebViewActivity() {
+		if let webView = webView {
+			stopMediaPlayback(webView)
+			cancelImageLoad(webView)
 		}
 	}
 	
