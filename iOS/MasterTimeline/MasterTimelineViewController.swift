@@ -217,7 +217,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
-		
+		guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
+
 		// Set up the read action
 		let readTitle = article.status.read ?
 			NSLocalizedString("Unread", comment: "Unread") :
@@ -314,7 +315,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			guard let self = self else { return nil }
 			
 			var actions = [UIAction]()
-			actions.append(self.toggleArticleReadStatusAction(article))
+			if let action = self.toggleArticleReadStatusAction(article) {
+				actions.append(action)
+			}
+			
 			actions.append(self.toggleArticleStarStatusAction(article))
 
 			if let action = self.markAboveAsReadAction(article) {
@@ -672,8 +676,9 @@ private extension MasterTimelineViewController {
 		return nil
 	}
 	
-	func toggleArticleReadStatusAction(_ article: Article) -> UIAction {
-
+	func toggleArticleReadStatusAction(_ article: Article) -> UIAction? {
+		guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
+		
 		let title = article.status.read ?
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")

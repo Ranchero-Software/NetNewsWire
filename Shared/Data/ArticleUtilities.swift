@@ -63,6 +63,25 @@ extension Article {
 	var logicalDatePublished: Date {
 		return datePublished ?? dateModified ?? status.dateArrived
 	}
+	
+	var isAvailableToMarkUnread: Bool {
+		guard let markUnreadWindow = account?.behaviors.compactMap( { behavior -> Int? in
+			switch behavior {
+			case .disallowMarkAsUnreadAfterPeriod(let days):
+				return days
+			default:
+				return nil
+			}
+		}).first else {
+			return true
+		}
+		
+		if logicalDatePublished.byAdding(days: markUnreadWindow) > Date() {
+			return true
+		} else {
+			return false
+		}
+	}
 
 	func iconImage() -> IconImage? {
 		if let authors = authors, authors.count == 1, let author = authors.first {

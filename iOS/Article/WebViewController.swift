@@ -264,7 +264,9 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 			if let action = self.nextArticleAction() {
 				actions.append(action)
 			}
-			actions.append(self.toggleReadAction())
+			if let action = self.toggleReadAction() {
+				actions.append(action)
+			}
 			actions.append(self.toggleStarredAction())
 			if let action = self.nextUnreadArticleAction() {
 				actions.append(action)
@@ -642,10 +644,11 @@ private extension WebViewController {
 		}
 	}
 	
-	func toggleReadAction() -> UIAction {
-		let read = article?.status.read ?? false
-		let title = read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		let readImage = read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+	func toggleReadAction() -> UIAction? {
+		guard let article = article, !article.status.read || article.isAvailableToMarkUnread else { return nil }
+		
+		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
+		let readImage = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 		return UIAction(title: title, image: readImage) { [weak self] action in
 			self?.coordinator.toggleReadForCurrentArticle()
 		}

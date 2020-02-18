@@ -1008,6 +1008,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func toggleRead(_ article: Article) {
+		guard !article.status.read || article.isAvailableToMarkUnread else { return }
 		markArticlesWithUndo([article], statusKey: .read, flag: !article.status.read)
 	}
 

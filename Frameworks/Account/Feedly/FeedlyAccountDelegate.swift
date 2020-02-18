@@ -25,7 +25,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
 	// See https://developer.feedly.com/v3/opml/
-	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder]
+	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(31)]
 	
 	let isOPMLImportSupported = false
 	
