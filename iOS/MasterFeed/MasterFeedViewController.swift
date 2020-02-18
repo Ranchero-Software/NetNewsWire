@@ -58,7 +58,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
@@ -147,13 +146,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func webFeedMetadataDidChange(_ note: Notification) {
 		reloadAllVisibleCells()
-	}
-	
-	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
-			return
-		}
-		discloseFeed(webFeed, animations: [.scroll, .navigation])
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -335,7 +327,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectFeed(indexPath, animations: [.navigation, .select, .scroll])
+		coordinator.selectFeed(indexPath: indexPath, animations: [.navigation, .select, .scroll])
 	}
 
 	override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
@@ -545,7 +537,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 
-	func reloadFeeds(initialLoad: Bool) {
+	func reloadFeeds(initialLoad: Bool, completion: (() -> Void)? = nil) {
 		updateUI()
 
 		// We have to reload all the visible cells because if we got here by doing a table cell move,
@@ -553,75 +545,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		// drops on a "folder" that should cause the dropped cell to disappear.
 		applyChanges(animated: !initialLoad) { [weak self] in
 			if !initialLoad {
-				self?.reloadAllVisibleCells()
+				self?.reloadAllVisibleCells(completion: completion)
+			} else {
+				completion?()
 			}
 		}
 	}
 	
-	func ensureSectionIsExpanded(_ sectionIndex: Int, completion: (() -> Void)? = nil) {
-		guard let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex) else {
-				return
-		}
-		
-		if !coordinator.isExpanded(sectionNode) {
-			coordinator.expand(sectionNode)
-			self.applyChanges(animated: true) {
-				completion?()
-			}
-		} else {
-			completion?()
-		}
-	}
-	
-	func discloseFeed(_ webFeed: WebFeed, animations: Animations, completion: (() -> Void)? = nil) {
-		
-		func discloseFeedInAccount() {
-			guard let node = coordinator.rootNode.descendantNodeRepresentingObject(webFeed as AnyObject) else {
-				completion?()
-				return
-			}
-			
-			if let indexPath = dataSource.indexPath(for: node) {
-				coordinator.selectFeed(indexPath, animations: animations) {
-					completion?()
-				}
-				return
-			}
-		
-			// It wasn't already visable, so expand its folder and try again
-			guard let parent = node.parent, parent.representedObject is Folder else {
-				completion?()
-				return
-			}
-			
-			coordinator.expand(parent)
-			reloadNode(parent)
-
-			applyChanges(animated: true, adjustScroll: true) { [weak self] in
-				if let indexPath = self?.dataSource.indexPath(for: node) {
-					self?.coordinator.selectFeed(indexPath, animations: animations) {
-						completion?()
-					}
-				}
-			}
-		}
-		
-		// If the account for the feed is collapsed, expand it
-		if let account = webFeed.account,
-			let accountNode = coordinator.rootNode.childNodeRepresentingObject(account as AnyObject),
-			!coordinator.isExpanded(accountNode) {
-			
-				coordinator.expand(accountNode)
-				applyChanges(animated: true) {
-					discloseFeedInAccount()
-				}
-			
-		} else {
-			discloseFeedInAccount()
-		}
-		
-	}
-
 	func focus() {
 		becomeFirstResponder()
 	}
@@ -836,16 +766,17 @@ private extension MasterFeedViewController {
 		}
 	}
 
-	private func reloadAllVisibleCells() {
+	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
 		let visibleNodes = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
-		reloadCells(visibleNodes)
+		reloadCells(visibleNodes, completion: completion)
 	}
 	
-	private func reloadCells(_ nodes: [Node]) {
+	private func reloadCells(_ nodes: [Node], completion: (() -> Void)? = nil) {
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(nodes)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
+			completion?()
 		}
 	}
 	
@@ -1224,7 +1155,7 @@ private extension MasterFeedViewController {
 		deleteCommand.perform()
 		
 		if indexPath == coordinator.currentFeedIndexPath {
-			coordinator.selectFeed(nil)
+			coordinator.selectFeed(indexPath: nil)
 		}
 		
 	}
