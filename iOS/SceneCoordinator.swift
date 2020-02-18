@@ -405,7 +405,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectFirstUnreadInAllUnread() {
-		expand(SmartFeedsController.shared)
+		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
 			self.selectFeed(SmartFeedsController.shared.unreadFeed) {
 				self.selectFirstUnreadArticleInTimeline()
@@ -646,19 +646,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return false
 	}
 		
-	func expand(_ containerIdentifiable: ContainerIdentifiable) {
-		guard !isExpanded(containerIdentifiable) else { return }
-		
+	func expand(_ node: Node) {
+		guard let containerIdentifiable = node.representedObject as? ContainerIdentifiable else {
+			return
+		}
+
 		markExpanded(containerIdentifiable)
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
-	}
-	
-	func expand(_ node: Node) {
-		if let containerIdentifiable = node.representedObject as? ContainerIdentifiable {
-			expand(containerIdentifiable)
-		}
 	}
 	
 	func expandAllSectionsAndFolders() {
@@ -764,21 +760,21 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func selectTodayFeed() {
-		expand(SmartFeedsController.shared)
+		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.todayFeed) {
 			self.selectFeed(SmartFeedsController.shared.todayFeed, animations: [.navigation, .scroll])
 		}
 	}
 
 	func selectAllUnreadFeed() {
-		expand(SmartFeedsController.shared)
+		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
 			self.selectFeed(SmartFeedsController.shared.unreadFeed, animations: [.navigation, .scroll])
 		}
 	}
 
 	func selectStarredFeed() {
-		expand(SmartFeedsController.shared)
+		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.starredFeed) {
 			self.selectFeed(SmartFeedsController.shared.starredFeed, animations: [.navigation, .scroll])
 		}
@@ -1045,9 +1041,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
 		
-		expand(account)
+		markExpanded(account)
 		if let parentFolder = parentFolder {
-			expand(parentFolder)
+			markExpanded(parentFolder)
 		}
 	
 		if let webFeedFeedID = webFeed.feedID {
@@ -1304,7 +1300,7 @@ private extension SceneCoordinator {
 		articleDictionaryNeedsUpdate = false
 	}
 	
-	func ensureFeedIsAvailableToSelect(_ feed: Feed, completion: @escaping () -> Void) {		
+	func ensureFeedIsAvailableToSelect(_ feed: Feed, completion: @escaping () -> Void) {
 		addToFilterExeptionsIfNecessary(feed)
 		addShadowTableToFilterExceptions()
 		
@@ -2012,7 +2008,7 @@ private extension SceneCoordinator {
 		case .smartFeed:
 			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
 
-			expand(SmartFeedsController.shared)
+			markExpanded(SmartFeedsController.shared)
 			rebuildBackingStores() {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
@@ -2031,7 +2027,7 @@ private extension SceneCoordinator {
 				return
 			}
 
-			expand(account)
+			markExpanded(account)
 			
 			rebuildBackingStores() {
 				self.treeControllerDelegate.resetFilterExceptions()
