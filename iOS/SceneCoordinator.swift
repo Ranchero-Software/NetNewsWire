@@ -600,11 +600,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func refreshTimeline(resetScroll: Bool) {
+		if let article = self.currentArticle, let account = article.account {
+			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
+		}
 		fetchAndReplaceArticlesAsync(animated: true) {
 			self.masterTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
-			if let article = self.currentArticle, self.articles.firstIndex(of: article) == nil {
-				self.selectArticle(nil)
-			}
 		}
 	}
 	
