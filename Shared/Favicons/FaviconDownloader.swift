@@ -136,6 +136,7 @@ final class FaviconDownloader {
 
 		findFaviconURLs(with: url) { (faviconURLs) in
 			if let faviconURLs = faviconURLs {
+				// If the site explicitly specifies favicon.ico, it will appear twice.
 				self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 
 				if let firstIconURL = faviconURLs.first {
@@ -177,11 +178,9 @@ final class FaviconDownloader {
 
 		remainingFaviconURLs[homePageURL] = nil
 
-		if let url = singleFaviconDownloader.homePageURL {
-			if self.homePageToFaviconURLCache[url] == nil {
-				self.homePageToFaviconURLCache[url] = singleFaviconDownloader.faviconURL
-				self.homePageToFaviconURLCacheDirty = true
-			}
+		if self.homePageToFaviconURLCache[homePageURL] == nil {
+			self.homePageToFaviconURLCache[homePageURL] = singleFaviconDownloader.faviconURL
+			self.homePageToFaviconURLCacheDirty = true
 		}
 
 		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
@@ -212,21 +211,22 @@ private extension FaviconDownloader {
 		}
 
 		FaviconURLFinder.findFaviconURLs(with: homePageURL) { (faviconURLs) in
+			guard var faviconURLs = faviconURLs else {
+				completion(nil)
+				return
+			}
+
 			var defaultFaviconURL: String? = nil
 
 			if let scheme = url.scheme, let host = url.host {
 				defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
 			}
 
-			if var faviconURLs = faviconURLs {
-				if let defaultFaviconURL = defaultFaviconURL {
-					faviconURLs.append(defaultFaviconURL)
-				}
-				completion(faviconURLs)
-				return
+			if let defaultFaviconURL = defaultFaviconURL {
+				faviconURLs.append(defaultFaviconURL)
 			}
 
-			completion(defaultFaviconURL != nil ? [defaultFaviconURL!] : nil)
+			completion(faviconURLs)
 		}
 	}
 
