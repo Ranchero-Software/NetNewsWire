@@ -94,7 +94,10 @@ class WebViewController: UIViewController {
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-		stopMediaPlayback()
+		if let webView = webView {
+			stopMediaPlayback(webView)
+			cancelImageLoad(webView)
+		}
 	}
 	
 	// MARK: Notifications
@@ -450,8 +453,9 @@ private extension WebViewController {
 		guard let webView = webView else { return }
 		
 		webView.removeFromSuperview()
-		webView.evaluateJavaScript("cancelImageLoad();")
-		
+		stopMediaPlayback(webView)
+		cancelImageLoad(webView)
+
 		webView.navigationDelegate = nil
 		webView.uiDelegate = nil
 		webView.scrollView.delegate = nil
@@ -559,10 +563,14 @@ private extension WebViewController {
 		}
 	}
 
-	func stopMediaPlayback() {
-		webView?.evaluateJavaScript("stopMediaPlayback();")
+	func stopMediaPlayback(_ webView: WKWebView) {
+		webView.evaluateJavaScript("stopMediaPlayback();")
 	}
-	
+
+	func cancelImageLoad(_ webView: WKWebView) {
+		webView.evaluateJavaScript("cancelImageLoad();")
+	}
+
 	func configureTopShowBarsView() {
 		topShowBarsView = UIView()
 		topShowBarsView.backgroundColor = .clear
