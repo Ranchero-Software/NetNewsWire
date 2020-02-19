@@ -184,8 +184,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Refresh to Clear Read Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KtJ-tk-DlD">
-                                                    <rect key="frame" x="20" y="12" width="229" height="20.5"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Refresh to Clear Read Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KtJ-tk-DlD">
+                                                    <rect key="frame" x="20" y="11" width="229" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -199,11 +199,12 @@
                                                 </switch>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="KtJ-tk-DlD" firstAttribute="top" secondItem="XAn-lK-LoN" secondAttribute="topMargin" id="3mX-9g-2Bp"/>
                                                 <constraint firstItem="KtJ-tk-DlD" firstAttribute="leading" secondItem="XAn-lK-LoN" secondAttribute="leadingMargin" id="AOT-A0-ak0"/>
-                                                <constraint firstItem="KtJ-tk-DlD" firstAttribute="centerY" secondItem="XAn-lK-LoN" secondAttribute="centerY" id="DrO-Rb-Hgg"/>
                                                 <constraint firstAttribute="trailing" secondItem="duV-CN-JmH" secondAttribute="trailing" constant="20" symbolic="YES" id="Qkh-LF-zez"/>
                                                 <constraint firstItem="duV-CN-JmH" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="KtJ-tk-DlD" secondAttribute="trailing" constant="8" id="cCz-fb-lta"/>
                                                 <constraint firstItem="duV-CN-JmH" firstAttribute="centerY" secondItem="XAn-lK-LoN" secondAttribute="centerY" id="eui-vJ-Bp8"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="KtJ-tk-DlD" secondAttribute="bottom" id="iyQ-7h-MT3"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -241,8 +242,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Confirm Mark All as Read" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5tY-5k-v2g">
-                                                    <rect key="frame" x="20" y="11.5" width="193" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Confirm Mark All as Read" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5tY-5k-v2g">
+                                                    <rect key="frame" x="20" y="11" width="192.5" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -256,9 +257,10 @@
                                                 </switch>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="5tY-5k-v2g" firstAttribute="top" secondItem="BpI-Hz-KH2" secondAttribute="topMargin" id="K3n-tK-0tu"/>
                                                 <constraint firstItem="UOo-9z-IuL" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="5tY-5k-v2g" secondAttribute="trailing" constant="8" id="KeP-ft-0GH"/>
-                                                <constraint firstItem="5tY-5k-v2g" firstAttribute="centerY" secondItem="BpI-Hz-KH2" secondAttribute="centerY" id="Pna-0P-cno"/>
                                                 <constraint firstItem="UOo-9z-IuL" firstAttribute="centerY" secondItem="BpI-Hz-KH2" secondAttribute="centerY" id="V2L-l3-s1E"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="5tY-5k-v2g" secondAttribute="bottom" id="VeZ-P7-kQW"/>
                                                 <constraint firstAttribute="trailing" secondItem="UOo-9z-IuL" secondAttribute="trailing" constant="20" symbolic="YES" id="mNk-x8-oJx"/>
                                                 <constraint firstItem="5tY-5k-v2g" firstAttribute="leading" secondItem="BpI-Hz-KH2" secondAttribute="leadingMargin" id="v4X-Nd-cpC"/>
                                             </constraints>
@@ -271,26 +273,36 @@
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Enable Full Screen Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79e-5s-vd0">
-                                                    <rect key="frame" x="20" y="12" width="203.5" height="20.5"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="751" text="Enable Full Screen Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="79e-5s-vd0">
+                                                    <rect key="frame" x="20" y="11" width="203.5" height="15.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="2Md-2E-7Z4">
-                                                    <rect key="frame" x="305" y="6.5" width="51" height="31"/>
+                                                    <rect key="frame" x="305" y="3.5" width="51" height="31"/>
                                                     <color key="onTintColor" name="secondaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchFullscreenArticles:" destination="a0p-rk-skQ" eventType="valueChanged" id="5fa-Ad-e0j"/>
                                                     </connections>
                                                 </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Tap the article top bar to enter Full Screen.  Tap the top or bottom to exit." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a30-nc-ZS4">
+                                                    <rect key="frame" x="20" y="33" width="266.5" height="0.0"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="2Md-2E-7Z4" firstAttribute="centerY" secondItem="zX8-l2-bVH" secondAttribute="centerY" id="1ae-Z0-Rxf"/>
+                                                <constraint firstItem="2Md-2E-7Z4" firstAttribute="centerY" secondItem="79e-5s-vd0" secondAttribute="centerY" id="3KV-rT-Dfb"/>
+                                                <constraint firstItem="a30-nc-ZS4" firstAttribute="leading" secondItem="zX8-l2-bVH" secondAttribute="leadingMargin" id="52y-SY-gbp"/>
+                                                <constraint firstItem="79e-5s-vd0" firstAttribute="top" secondItem="zX8-l2-bVH" secondAttribute="topMargin" id="9bF-Q1-sYE"/>
+                                                <constraint firstItem="2Md-2E-7Z4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="a30-nc-ZS4" secondAttribute="trailing" constant="8" id="E9l-8S-WBL"/>
                                                 <constraint firstAttribute="trailing" secondItem="2Md-2E-7Z4" secondAttribute="trailing" constant="20" symbolic="YES" id="ELH-06-H2j"/>
-                                                <constraint firstItem="79e-5s-vd0" firstAttribute="centerY" secondItem="zX8-l2-bVH" secondAttribute="centerY" id="FoL-fO-aDw"/>
+                                                <constraint firstItem="a30-nc-ZS4" firstAttribute="bottom" secondItem="zX8-l2-bVH" secondAttribute="bottomMargin" id="b3g-at-rjh"/>
                                                 <constraint firstItem="2Md-2E-7Z4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="79e-5s-vd0" secondAttribute="trailing" constant="8" id="lUn-8D-X20"/>
                                                 <constraint firstItem="79e-5s-vd0" firstAttribute="leading" secondItem="zX8-l2-bVH" secondAttribute="leadingMargin" id="tdZ-30-ACC"/>
+                                                <constraint firstItem="a30-nc-ZS4" firstAttribute="top" secondItem="79e-5s-vd0" secondAttribute="bottom" constant="6.5" id="wuJ-LG-d6p"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
