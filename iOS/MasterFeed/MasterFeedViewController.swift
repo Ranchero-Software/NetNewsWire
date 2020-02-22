@@ -16,7 +16,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
-	private var addNewItemButton: UIBarButtonItem!
+	@IBOutlet weak var addNewItemButton: UIBarButtonItem!
 	
 	lazy var dataSource = makeDataSource()
 	var undoableCommands = [UndoableCommand]()
@@ -58,8 +58,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedMetadataDidChange(_:)), name: .WebFeedMetadataDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
@@ -107,8 +105,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		var node: Node? = nil
-		if let coordinator = representedObject as? SceneCoordinator, let fetcher = coordinator.timelineFeed {
-			node = coordinator.rootNode.descendantNodeRepresentingObject(fetcher as AnyObject)
+		if let coordinator = representedObject as? SceneCoordinator, let feed = coordinator.timelineFeed {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
 		} else {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
@@ -117,10 +115,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		// completing if called to soon after a selectRow where scrolling is necessary.  See discloseFeed.
 		if let node = node,
 			let indexPath = dataSource.indexPath(for: node),
-			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell,
-			let unreadCountProvider = node.representedObject as? UnreadCountProvider {
+			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
 			
-			if cell.unreadCount != unreadCountProvider.unreadCount {
+			if cell.unreadCount != coordinator.unreadCountFor(node) {
 				self.reloadNode(node)
 			}
 			
@@ -149,13 +146,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func webFeedMetadataDidChange(_ note: Notification) {
 		reloadAllVisibleCells()
-	}
-	
-	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
-			return
-		}
-		discloseFeed(webFeed, animated: true)
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -214,6 +204,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		headerView.gestureRecognizers?.removeAll()
 		let tap = UITapGestureRecognizer(target: self, action:#selector(self.toggleSectionHeader(_:)))
 		headerView.addGestureRecognizer(tap)
+		
+		// Without this the swipe gesture registers on the cell below
+		let gestureRecognizer = UIPanGestureRecognizer(target: nil, action: nil)
+		gestureRecognizer.delegate = self
+		headerView.addGestureRecognizer(gestureRecognizer)
 
 		headerView.interactions.removeAll()
 		if section != 0 {
@@ -281,6 +276,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 						alert.addAction(action)
 					}
 					
+					if let action = self.markAllAsReadAlertAction(indexPath: indexPath, completion: completion) {
+						alert.addAction(action)
+					}
+					
 					let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 					alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 						completion(true)
@@ -301,13 +300,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-		guard let node = dataSource.itemIdentifier(for: indexPath), !(node.representedObject is PseudoFeed) else {
+		guard let node = dataSource.itemIdentifier(for: indexPath) else {
 			return nil
 		}
 		if node.representedObject is WebFeed {
 			return makeFeedContextMenu(node: node, indexPath: indexPath, includeDeleteRename: true)
-		} else {
+		} else if node.representedObject is Folder {
 			return makeFolderContextMenu(node: node, indexPath: indexPath)
+		} else if node.representedObject is PseudoFeed  {
+			return makePseudoFeedContextMenu(node: node, indexPath: indexPath)
+		} else {
+			return nil
 		}
 	}
 	
@@ -324,7 +327,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectFeed(indexPath, animated: true)
+		coordinator.selectFeed(indexPath: indexPath, animations: [.navigation, .select, .scroll])
 	}
 
 	override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
@@ -398,10 +401,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@IBAction func toggleFilter(_ sender: Any) {
 		if coordinator.isReadFeedsFiltered {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 			coordinator.showAllFeeds()
 		} else {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 			coordinator.hideReadFeeds()
 		}
 	}
@@ -433,10 +436,15 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc func refreshAccounts(_ sender: Any) {
 		refreshControl?.endRefreshing()
+		
 		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self)) {
+				if AppDefaults.refreshClearsReadArticles {
+					self.coordinator.refreshTimeline(resetScroll: false)
+				}
+			}
 		}
 	}
 	
@@ -501,26 +509,35 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let indexPath = coordinator.masterFeedIndexPathForCurrentTimeline() {
 			if adjustScroll {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
 				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
 		}
 	}
 
-	func updateFeedSelection(animated: Bool) {
+	func updateFeedSelection(animations: Animations) {
 		if dataSource.snapshot().numberOfItems > 0 {
 			if let indexPath = coordinator.currentFeedIndexPath {
 				if tableView.indexPathForSelectedRow != indexPath {
-					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: animated)
+					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
 				}
 			} else {
-				tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+				if animations.contains(.select) {
+					// This nasty bit of duct tape is because there is something, somewhere
+					// interrupting the deselection animation, which will leave the row selected.
+					// This seems to get it far enough away the problem that it always works.
+					DispatchQueue.main.async {
+						self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+					}
+				} else {
+					self.tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
+				}
 			}
 		}
 	}
 
-	func reloadFeeds(initialLoad: Bool) {
+	func reloadFeeds(initialLoad: Bool, completion: (() -> Void)? = nil) {
 		updateUI()
 
 		// We have to reload all the visible cells because if we got here by doing a table cell move,
@@ -528,75 +545,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		// drops on a "folder" that should cause the dropped cell to disappear.
 		applyChanges(animated: !initialLoad) { [weak self] in
 			if !initialLoad {
-				self?.reloadAllVisibleCells()
+				self?.reloadAllVisibleCells(completion: completion)
+			} else {
+				completion?()
 			}
 		}
 	}
 	
-	func ensureSectionIsExpanded(_ sectionIndex: Int, completion: (() -> Void)? = nil) {
-		guard let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex) else {
-				return
-		}
-		
-		if !coordinator.isExpanded(sectionNode) {
-			coordinator.expand(sectionNode)
-			self.applyChanges(animated: true) {
-				completion?()
-			}
-		} else {
-			completion?()
-		}
-	}
-	
-	func discloseFeed(_ webFeed: WebFeed, animated: Bool, completion: (() -> Void)? = nil) {
-		
-		func discloseFeedInAccount() {
-			guard let node = coordinator.rootNode.descendantNodeRepresentingObject(webFeed as AnyObject) else {
-				completion?()
-				return
-			}
-			
-			if let indexPath = dataSource.indexPath(for: node) {
-				coordinator.selectFeed(indexPath, animated: animated) {
-					completion?()
-				}
-				return
-			}
-		
-			// It wasn't already visable, so expand its folder and try again
-			guard let parent = node.parent else {
-				completion?()
-				return
-			}
-			
-			coordinator.expand(parent)
-			reloadNode(parent)
-
-			applyChanges(animated: true, adjustScroll: true) { [weak self] in
-				if let indexPath = self?.dataSource.indexPath(for: node) {
-					self?.coordinator.selectFeed(indexPath, animated: animated) {
-						completion?()
-					}
-				}
-			}
-		}
-		
-		// If the account for the feed is collapsed, expand it
-		if let account = webFeed.account,
-			let accountNode = coordinator.rootNode.childNodeRepresentingObject(account as AnyObject),
-			!coordinator.isExpanded(accountNode) {
-			
-				coordinator.expand(accountNode)
-				applyChanges(animated: false) {
-					discloseFeedInAccount()
-				}
-			
-		} else {
-			discloseFeedInAccount()
-		}
-		
-	}
-
 	func focus() {
 		becomeFirstResponder()
 	}
@@ -618,7 +573,14 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { suggestedActions in
 			let accountInfoAction = self.getAccountInfoAction(account: account)
 			let deactivateAction = self.deactivateAccountAction(account: account)
-            return UIMenu(title: "", children: [accountInfoAction, deactivateAction])
+
+			var actions = [accountInfoAction, deactivateAction]
+
+			if let markAllAction = self.markAllAsReadAction(account: account) {
+				actions.insert(markAllAction, at: 1)
+			}
+
+            return UIMenu(title: "", children: actions)
         }
     }
 	
@@ -657,21 +619,28 @@ private extension MasterFeedViewController {
 		}
 
 		self.refreshProgressView = refreshProgressView
-
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		let spaceItemButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-		addNewItemButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add(_:)))
-		setToolbarItems([refreshProgressItemButton, spaceItemButton, addNewItemButton], animated: false)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
 	
 	func updateUI() {
 		if coordinator.isReadFeedsFiltered {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 		} else {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 		}
 		refreshProgressView?.updateRefreshLabel()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+	}
+	
+	func setFilterButtonToActive() {
+		filterButton?.image = AppAssets.filterActiveImage
+		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
+	}
+	
+	func setFilterButtonToInactive() {
+		filterButton?.image = AppAssets.filterInactiveImage
+		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 	
 	func reloadNode(_ node: Node) {
@@ -756,7 +725,7 @@ private extension MasterFeedViewController {
 				return feedIconImage
 			}
 			
-			if let faviconImage = appDelegate.faviconDownloader.favicon(for: webFeed) {
+			if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
 				return faviconImage
 			}
 			
@@ -797,16 +766,17 @@ private extension MasterFeedViewController {
 		}
 	}
 
-	private func reloadAllVisibleCells() {
+	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
 		let visibleNodes = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
-		reloadCells(visibleNodes)
+		reloadCells(visibleNodes, completion: completion)
 	}
 	
-	private func reloadCells(_ nodes: [Node]) {
+	private func reloadCells(_ nodes: [Node], completion: (() -> Void)? = nil) {
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(nodes)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
+			completion?()
 		}
 	}
 	
@@ -828,9 +798,7 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.expand(node)
-		applyChanges(animated: true) { [weak self] in
-			self?.reloadNode(node)
-		}
+		applyChanges(animated: true)
 	}
 
 	func collapse(_ cell: MasterFeedTableViewCell) {
@@ -838,9 +806,7 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.collapse(node)
-		applyChanges(animated: true) { [weak self] in
-			self?.reloadNode(node)
-		}
+		applyChanges(animated: true)
 	}
 
 	func makeFeedContextMenu(node: Node, indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
@@ -865,10 +831,14 @@ private extension MasterFeedViewController {
 			if let copyHomePageAction = self.copyHomePageAction(indexPath: indexPath) {
 				actions.append(copyHomePageAction)
 			}
+
+			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
+				actions.append(markAllAction)
+			}
 			
 			if includeDeleteRename {
-				actions.append(self.deleteAction(indexPath: indexPath))
 				actions.append(self.renameAction(indexPath: indexPath))
+				actions.append(self.deleteAction(indexPath: indexPath))
 			}
 			
 			return UIMenu(title: "", children: actions)
@@ -885,9 +855,23 @@ private extension MasterFeedViewController {
 			var actions = [UIAction]()
 			actions.append(self.deleteAction(indexPath: indexPath))
 			actions.append(self.renameAction(indexPath: indexPath))
+
+			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
+				actions.append(markAllAction)
+			}
 			
 			return UIMenu(title: "", children: actions)
 
+		})
+	}
+
+	func makePseudoFeedContextMenu(node: Node, indexPath: IndexPath) -> UIContextMenuConfiguration? {
+		guard let markAllAction = self.markAllAsReadAction(indexPath: indexPath) else {
+			return nil
+		}
+
+		return UIContextMenuConfiguration(identifier: node.uniqueID as NSCopying, previewProvider: nil, actionProvider: { suggestedActions in
+			return UIMenu(title: "", children: [markAllAction])
 		})
 	}
 
@@ -976,6 +960,29 @@ private extension MasterFeedViewController {
 		return action
 	}
 	
+	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath),
+			coordinator.unreadCountFor(node) > 0,
+			let feed = node.representedObject as? WebFeed,
+			let articles = try? feed.fetchArticles() else {
+				return nil
+		}
+		
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let cancel = {
+			completion(true)
+		}
+		
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markAllAsRead(Array(articles))
+				completion(true)
+			}
+		}
+		return action
+	}
+	
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
 		
@@ -1033,6 +1040,47 @@ private extension MasterFeedViewController {
 		}
 		return action
 	}
+
+	func markAllAsReadAction(indexPath: IndexPath) -> UIAction? {
+		guard let node = dataSource.itemIdentifier(for: indexPath),
+			coordinator.unreadCountFor(node) > 0 else {
+			return nil
+		}
+
+		guard let articleFetcher = node.representedObject as? Feed,
+			let fetchedArticles = try? articleFetcher.fetchArticles() else {
+			return nil
+		}
+
+		let articles = Array(fetchedArticles)
+		return markAllAsReadAction(articles: articles, nameForDisplay: articleFetcher.nameForDisplay)
+	}
+
+	func markAllAsReadAction(account: Account) -> UIAction? {
+		guard let fetchedArticles = try? account.fetchArticles(FetchType.unread) else {
+			return nil
+		}
+
+		let articles = Array(fetchedArticles)
+		return markAllAsReadAction(articles: articles, nameForDisplay: account.nameForDisplay)
+	}
+
+	func markAllAsReadAction(articles: [Article], nameForDisplay: String) -> UIAction? {
+		guard articles.canMarkAllAsRead() else {
+			return nil
+		}
+
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, nameForDisplay) as String
+
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markAllAsRead(articles)
+			}
+		}
+
+		return action
+	}
 	
 	func rename(indexPath: IndexPath) {
 		
@@ -1058,7 +1106,7 @@ private extension MasterFeedViewController {
 				feed.rename(to: name) { result in
 					switch result {
 					case .success:
-						self?.reloadNode(node)
+						break
 					case .failure(let error):
 						self?.presentError(error)
 					}
@@ -1067,7 +1115,7 @@ private extension MasterFeedViewController {
 				folder.rename(to: name) { result in
 					switch result {
 					case .success:
-						self?.reloadNode(node)
+						break
 					case .failure(let error):
 						self?.presentError(error)
 					}
@@ -1079,6 +1127,7 @@ private extension MasterFeedViewController {
 		alertController.addAction(renameAction)
 		
 		alertController.addTextField() { textField in
+			textField.text = name
 			textField.placeholder = NSLocalizedString("Name", comment: "Name")
 		}
 		
@@ -1106,9 +1155,19 @@ private extension MasterFeedViewController {
 		deleteCommand.perform()
 		
 		if indexPath == coordinator.currentFeedIndexPath {
-			coordinator.selectFeed(nil, animated: false)
+			coordinator.selectFeed(indexPath: nil)
 		}
 		
 	}
 	
+}
+
+extension MasterFeedViewController: UIGestureRecognizerDelegate {
+	func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+		guard let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer else {
+			return false
+		}
+		let velocity = gestureRecognizer.velocity(in: self.view)
+		return abs(velocity.x) > abs(velocity.y);
+	}
 }

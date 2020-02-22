@@ -7,15 +7,24 @@
 //
 
 import Intents
-import Account
+
+public enum AddWebFeedIntentHandlerError: LocalizedError {
+	
+	case communicationFailure
+	
+	public var errorDescription: String? {
+		switch self {
+		case .communicationFailure:
+			return NSLocalizedString("Unable to communicate with NetNewsWire.", comment: "Communication failure")
+		}
+	}
+	
+}
 
 public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 
 	override init() {
 		super.init()
-		DispatchQueue.main.sync {
-			AccountManager.shared = AccountManager()
-		}
 	}
 	
 	public func resolveUrl(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedUrlResolutionResult) -> Void) {
@@ -27,10 +36,13 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 	}
 	
 	public func provideAccountNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
-		DispatchQueue.main.async {
-			let accountNames = AccountManager.shared.activeAccounts.compactMap { $0.nameForDisplay }
-			completion(accountNames, nil)
+		guard let extensionContainers = ExtensionContainersFile.read() else {
+			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
+			return
 		}
+
+		let accountNames = extensionContainers.accounts.map { $0.name }
+		completion(accountNames, nil)
 	}
 	
 	public func resolveAccountName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedAccountNameResolutionResult) -> Void) {
@@ -38,25 +50,32 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 			completion(AddWebFeedAccountNameResolutionResult.notRequired())
 			return
 		}
-		DispatchQueue.main.async {
-			if AccountManager.shared.findActiveAccount(forDisplayName: accountName) == nil {
-				completion(.unsupported(forReason: .invalid))
-			} else {
-				completion(.success(with: accountName))
-			}
+
+		guard let extensionContainers = ExtensionContainersFile.read() else {
+			completion(.unsupported(forReason: .communication))
+			return
+		}
+
+		if extensionContainers.findAccount(forName: accountName) == nil {
+			completion(.unsupported(forReason: .invalid))
+		} else {
+			completion(.success(with: accountName))
 		}
 	}
 	
 	public func provideFolderNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
-		DispatchQueue.main.async {
-			guard let accountName = intent.accountName, let account = AccountManager.shared.findActiveAccount(forDisplayName: accountName) else {
-				completion([String](), nil)
-				return
-			}
-			
-			let folderNames = account.folders?.map { $0.nameForDisplay }
-			completion(folderNames, nil)
+		guard let extensionContainers = ExtensionContainersFile.read() else {
+			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
+			return
 		}
+
+		guard let accountName = intent.accountName, let account = extensionContainers.findAccount(forName: accountName) else {
+			completion([String](), nil)
+			return
+		}
+
+		let folderNames = account.folders.map { $0.name }
+		completion(folderNames, nil)
 	}
 	
 	public func resolveFolderName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedFolderNameResolutionResult) -> Void) {
@@ -65,73 +84,60 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 			return
 		}
 		
-		DispatchQueue.main.async {
-			guard let account = AccountManager.shared.findActiveAccount(forDisplayName: accountName) else {
-				completion(.unsupported(forReason: .invalid))
-				return
-			}
-			if account.findFolder(withDisplayName: folderName) == nil {
-				completion(.unsupported(forReason: .invalid))
-			} else {
-				completion(.success(with: folderName))
-			}
+		guard let extensionContainers = ExtensionContainersFile.read() else {
+			completion(.unsupported(forReason: .communication))
 			return
 		}
+
+		guard let account = extensionContainers.findAccount(forName: accountName) else {
+			completion(.unsupported(forReason: .invalid))
+			return
+		}
+		
+		if account.findFolder(forName: folderName) == nil {
+			completion(.unsupported(forReason: .invalid))
+		} else {
+			completion(.success(with: folderName))
+		}
+		return
+
 	}
 	
 	public func handle(intent: AddWebFeedIntent, completion: @escaping (AddWebFeedIntentResponse) -> Void) {
-		guard let url = intent.url else {
+		guard let url = intent.url, let extensionContainers = ExtensionContainersFile.read() else {
 			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
 			return
 		}
 		
-		DispatchQueue.main.async {
-			
-			let account: Account? = {
-				if let accountName = intent.accountName {
-					return AccountManager.shared.findActiveAccount(forDisplayName: accountName)
-				} else {
-					return AccountManager.shared.sortedActiveAccounts.first
-				}
-			}()
-			
-			guard let validAccount = account else {
-				completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
-				return
+		let account: ExtensionAccount? = {
+			if let accountName = intent.accountName {
+				return extensionContainers.findAccount(forName: accountName)
+			} else {
+				return extensionContainers.accounts.first
 			}
-			
-			let container: Container? = {
-				if let folderName = intent.folderName {
-					return validAccount.findFolder(withDisplayName: folderName)
-				} else {
-					return validAccount
-				}
-			}()
-			
-			guard let validContainer = container else {
-				completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
-				return
-			}
+		}()
 
-			validAccount.createWebFeed(url: url.absoluteString, name: nil, container: validContainer) { result in
-				switch result {
-				case .success:
-					AccountManager.shared.suspendNetworkAll()
-					AccountManager.shared.suspendDatabaseAll()
-					completion(AddWebFeedIntentResponse(code: .success, userActivity: nil))
-				case .failure(let error):
-					switch error {
-					case AccountError.createErrorNotFound:
-						completion(AddWebFeedIntentResponse(code: .feedNotFound, userActivity: nil))
-					case AccountError.createErrorAlreadySubscribed:
-						completion(AddWebFeedIntentResponse(code: .alreadySubscribed, userActivity: nil))
-					default:
-						completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
-					}
-				}
-			}
+		guard let validAccount = account else {
+			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
+			return
 		}
-		
+
+		let container: ExtensionContainer? = {
+			if let folderName = intent.folderName {
+				return validAccount.findFolder(forName: folderName)
+			} else {
+				return validAccount
+			}
+		}()
+
+		guard let validContainer = container, let containerID = validContainer.containerID else {
+			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
+			return
+		}
+
+		let request = ExtensionFeedAddRequest(name: nil, feedURL: url, destinationContainerID: containerID)
+		ExtensionFeedAddRequestFile.save(request)
+		completion(AddWebFeedIntentResponse(code: .success, userActivity: nil))
 	}
-	
+		
 }

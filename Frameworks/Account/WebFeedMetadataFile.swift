@@ -16,41 +16,26 @@ final class WebFeedMetadataFile {
 
 	private let fileURL: URL
 	private let account: Account
-	private lazy var managedFile = ManagedResourceFile(fileURL: fileURL, load: loadCallback, save: saveCallback)
-	
+
+	private var isDirty = false {
+		didSet {
+			queueSaveToDiskIfNeeded()
+		}
+	}
+	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
 	
 	func markAsDirty() {
-		managedFile.markAsDirty()
+		isDirty = true
 	}
 	
 	func load() {
-		managedFile.load()
-	}
-	
-	func save() {
-		managedFile.saveIfNecessary()
-	}
-	
-	func suspend() {
-		managedFile.suspend()
-	}
-	
-	func resume() {
-		managedFile.resume()
-	}
-	
-}
-
-private extension WebFeedMetadataFile {
-
-	func loadCallback() {
-
 		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
+		let fileCoordinator = NSFileCoordinator()
 		
 		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
 			if let fileData = try? Data(contentsOf: readURL) {
@@ -58,19 +43,14 @@ private extension WebFeedMetadataFile {
 				account.webFeedMetadata = (try? decoder.decode(Account.WebFeedMetadataDictionary.self, from: fileData)) ?? Account.WebFeedMetadataDictionary()
 			}
 			account.webFeedMetadata.values.forEach { $0.delegate = account }
-			if !account.startingUp {
-				account.resetWebFeedMetadataAndUnreadCounts()
-			}
 		})
 		
 		if let error = errorPointer?.pointee {
 			os_log(.error, log: log, "Read from disk coordination failed: %@.", error.localizedDescription)
 		}
-		
-
 	}
 	
-	func saveCallback() {
+	func save() {
 		guard !account.isDeleted else { return }
 		
 		let feedMetadata = metadataForOnlySubscribedToFeeds()
@@ -79,7 +59,7 @@ private extension WebFeedMetadataFile {
 		encoder.outputFormat = .binary
 
 		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
+		let fileCoordinator = NSFileCoordinator()
 		
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
 			do {
@@ -94,7 +74,22 @@ private extension WebFeedMetadataFile {
 			os_log(.error, log: log, "Save to disk coordination failed: %@.", error.localizedDescription)
 		}
 	}
-	
+		
+}
+
+private extension WebFeedMetadataFile {
+
+	func queueSaveToDiskIfNeeded() {
+		saveQueue.add(self, #selector(saveToDiskIfNeeded))
+	}
+
+	@objc func saveToDiskIfNeeded() {
+		if isDirty {
+			isDirty = false
+			save()
+		}
+	}
+
 	private func metadataForOnlySubscribedToFeeds() -> Account.WebFeedMetadataDictionary {
 		let webFeedIDs = account.idToWebFeedDictionary.keys
 		return account.webFeedMetadata.filter { (feedID: String, metadata: WebFeedMetadata) -> Bool in

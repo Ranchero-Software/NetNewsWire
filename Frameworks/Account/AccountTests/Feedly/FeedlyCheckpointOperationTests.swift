@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Account
+import RSCore
 
 class FeedlyCheckpointOperationTests: XCTestCase {
 	
@@ -28,11 +29,11 @@ class FeedlyCheckpointOperationTests: XCTestCase {
 		operation.checkpointDelegate = delegate
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		operation.completionBlock = {
+		operation.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(operation)
+		MainThreadOperationQueue.shared.add(operation)
 		
 		waitForExpectations(timeout: 2)
 	}
@@ -48,13 +49,13 @@ class FeedlyCheckpointOperationTests: XCTestCase {
 		operation.checkpointDelegate = delegate
 		
 		let didFinishExpectation = expectation(description: "Did Finish")
-		operation.completionBlock = {
+		operation.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(operation)
+		MainThreadOperationQueue.shared.add(operation)
 		
-		operation.cancel()
+		MainThreadOperationQueue.shared.cancelOperations([operation])
 		
 		waitForExpectations(timeout: 1)
 	}

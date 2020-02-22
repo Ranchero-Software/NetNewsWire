@@ -31,10 +31,11 @@ class FeedbinAccountViewController: UITableViewController {
 		
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .basic) {
 			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
+			actionButton.isEnabled = true
 			emailTextField.text = credentials.username
 			passwordTextField.text = credentials.secret
 		} else {
-			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Update Credentials"), for: .normal)
+			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Add Account"), for: .normal)
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: emailTextField)

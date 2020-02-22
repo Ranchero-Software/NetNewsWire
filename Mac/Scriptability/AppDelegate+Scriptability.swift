@@ -44,8 +44,8 @@ extension AppDelegate : AppDelegateAppleEvents {
             return
         }
 
-        let normalizedURLString = urlString.rs_normalizedURL()
-        if !normalizedURLString.rs_stringMayBeURL() {
+        let normalizedURLString = urlString.normalizedURL
+        if !normalizedURLString.mayBeURL {
             return
         }
 

@@ -14,25 +14,28 @@ import Foundation
     user interface as much as possible.  For example some sync services don't allow
     feeds to be in the root folder of the account.
 */
-public struct AccountBehaviors: OptionSet {
+public typealias AccountBehaviors = [AccountBehavior]
+
+public enum AccountBehavior: Equatable {
 	
 	/**
 	  Account doesn't support copies of a feed that are in a folder to be made to the root folder.
 	*/
-	public static let disallowFeedCopyInRootFolder = AccountBehaviors(rawValue: 1)
+	case disallowFeedCopyInRootFolder
 	
 	/**
 	 Account doesn't support feeds in the root folder.
 	*/
-	public static let disallowFeedInRootFolder = AccountBehaviors(rawValue: 2)
+	case disallowFeedInRootFolder
 	
 	/**
 	 Account doesn't support OPML imports
 	*/
-	public static let disallowOPMLImports = AccountBehaviors(rawValue: 3)
+	case disallowOPMLImports
 	
-	public let rawValue: Int
-	public init(rawValue: Int) {
-		self.rawValue = rawValue
-	}
+	/**
+	Account doesn't allow mark as read after a period of days
+	*/
+	case disallowMarkAsUnreadAfterPeriod(Int)
+
 }

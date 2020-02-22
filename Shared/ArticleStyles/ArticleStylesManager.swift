@@ -6,7 +6,12 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
+
 import RSCore
 
 let ArticleStyleNamesDidChangeNotification = "ArticleStyleNamesDidChangeNotification"
@@ -24,7 +29,7 @@ private let styleSuffixes = [styleSuffix, nnwStyleSuffix, cssStyleSuffix];
 final class ArticleStylesManager {
 
 	static let shared = ArticleStylesManager()
-	private let folderPath = RSDataSubfolder(nil, stylesFolderName)!
+	private let folderPath = Platform.dataSubfolder(forApplication: nil, folderName: stylesFolderName)!
 
 	var currentStyleName: String {
 		get {
@@ -133,8 +138,8 @@ final class ArticleStylesManager {
 
 private func allStylePaths(_ folder: String) -> [String] {
 
-	let filepaths = FileManager.default.rs_filepaths(inFolder: folder)
-	return filepaths.filter { fileAtPathIsStyle($0) }
+	let filepaths = FileManager.default.filePaths(inFolder: folder)
+	return filepaths?.filter { fileAtPathIsStyle($0) } ?? []
 }
 
 private func fileAtPathIsStyle(_ f: String) -> Bool {
@@ -154,7 +159,7 @@ private func filenameWithStyleSuffixRemoved(_ filename: String) -> String {
 
 	for oneSuffix in styleSuffixes {
 		if filename.hasSuffix(oneSuffix) {
-			return (filename as NSString).rs_string(byStrippingSuffix: oneSuffix, caseSensitive: false)
+			return filename.stripping(suffix: oneSuffix)
 		}
 	}
 
@@ -174,7 +179,6 @@ private func pathIsPathForStyleName(_ styleName: String, path: String) -> Bool {
 }
 
 private func pathForStyleName(_ styleName: String, folder: String) -> String? {
-
 	for onePath in allStylePaths(folder) {
 		if pathIsPathForStyleName(styleName, path: onePath) {
 			return onePath

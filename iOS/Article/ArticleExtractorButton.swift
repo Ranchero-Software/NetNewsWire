@@ -17,24 +17,44 @@ enum ArticleExtractorButtonState {
 
 class ArticleExtractorButton: UIButton {
 	
+	private var animatedLayer: CALayer?
+	
 	var buttonState: ArticleExtractorButtonState = .off {
 		didSet {
 			if buttonState != oldValue {
 				switch buttonState {
 				case .error:
-					stripSublayer()
+					stripAnimatedSublayer()
 					setImage(AppAssets.articleExtractorError, for: .normal)
 				case .animated:
 					setImage(nil, for: .normal)
 					setNeedsLayout()
 				case .on:
-					stripSublayer()
+					stripAnimatedSublayer()
 					setImage(AppAssets.articleExtractorOn, for: .normal)
 				case .off:
-					stripSublayer()
+					stripAnimatedSublayer()
 					setImage(AppAssets.articleExtractorOff, for: .normal)
 				}
 			}
+		}
+	}
+	
+	override var accessibilityLabel: String? {
+		get {
+			switch buttonState {
+			case .error:
+				return NSLocalizedString("Error - Reader View", comment: "Error - Reader View")
+			case .animated:
+				return NSLocalizedString("Processing - Reader View", comment: "Processing - Reader View")
+			case .on:
+				return NSLocalizedString("Selected - Reader View", comment: "Selected - Reader View")
+			case .off:
+				return NSLocalizedString("Reader View", comment: "Reader View")
+			}
+		}
+		set {
+			super.accessibilityLabel = newValue
 		}
 	}
 	
@@ -43,14 +63,12 @@ class ArticleExtractorButton: UIButton {
 		guard case .animated = buttonState else {
 			return
 		}
-		stripSublayer()
+		stripAnimatedSublayer()
 		addAnimatedSublayer(to: layer)
 	}
 	
-	private func stripSublayer() {
-		if layer.sublayers?.count ?? 0 > 1 {
-			layer.sublayers?.last?.removeFromSuperlayer()
-		}
+	private func stripAnimatedSublayer() {
+		animatedLayer?.removeFromSuperlayer()
 	}
 	
 	private func addAnimatedSublayer(to hostedLayer: CALayer) {
@@ -58,12 +76,12 @@ class ArticleExtractorButton: UIButton {
 		let image2 = AppAssets.articleExtractorOnTinted.cgImage!
 		let images = [image1, image2, image1]
 		
-		let imageLayer = CALayer()
+		animatedLayer = CALayer()
 		let imageSize = AppAssets.articleExtractorOff.size
-		imageLayer.bounds = CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height)
-		imageLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+		animatedLayer!.bounds = CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height)
+		animatedLayer!.position = CGPoint(x: bounds.midX, y: bounds.midY)
 		
-		hostedLayer.addSublayer(imageLayer)
+		hostedLayer.addSublayer(animatedLayer!)
 		
 		let animation = CAKeyframeAnimation(keyPath: "contents")
 		animation.calculationMode = CAAnimationCalculationMode.linear
@@ -72,7 +90,7 @@ class ArticleExtractorButton: UIButton {
 		animation.values = images as [Any]
 		animation.repeatCount = HUGE
 		
-		imageLayer.add(animation, forKey: "contents")
+		animatedLayer!.add(animation, forKey: "contents")
 	}
 	
 }

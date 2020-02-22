@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreServices
 import Articles
 import Account
 import RSCore
@@ -24,6 +25,7 @@ final class FaviconDownloader {
 	private let diskCache: BinaryDiskCache
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
+	private var currentHomePageHasOnlyFaviconICO = false
 
 	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
 	private var homePageToFaviconURLCachePath: String
@@ -58,6 +60,8 @@ final class FaviconDownloader {
 		self.homePageURLsWithNoFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
 		loadHomePageToFaviconURLCache()
 		loadHomePageURLsWithNoFaviconURLCache()
+
+		FaviconURLFinder.ignoredTypes = [kUTTypeScalableVectorGraphics as String]
 
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 	}
@@ -114,7 +118,7 @@ final class FaviconDownloader {
 
 	func favicon(withHomePageURL homePageURL: String) -> IconImage? {
 
-		let url = homePageURL.rs_normalizedURL()
+		let url = homePageURL.normalizedURL
 
 		if let url = URL(string: homePageURL) {
 			if url.host == "nnw.ranchero.com" {
@@ -131,19 +135,14 @@ final class FaviconDownloader {
 		}
 
 		findFaviconURLs(with: url) { (faviconURLs) in
-			var hasIcons = false
-
 			if let faviconURLs = faviconURLs {
+				// If the site explicitly specifies favicon.ico, it will appear twice.
+				self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
+
 				if let firstIconURL = faviconURLs.first {
-					hasIcons = true
 					let _ = self.favicon(with: firstIconURL, homePageURL: url)
 					self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
 				}
-			}
-
-			if (!hasIcons) {
-				self.homePageURLsWithNoFaviconURLCache.insert(url)
-				self.homePageURLsWithNoFaviconURLCacheDirty = true
 			}
 		}
 
@@ -167,6 +166,11 @@ final class FaviconDownloader {
 					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst();
 				} else {
 					remainingFaviconURLs[homePageURL] = nil
+
+					if currentHomePageHasOnlyFaviconICO {
+						self.homePageURLsWithNoFaviconURLCache.insert(homePageURL)
+						self.homePageURLsWithNoFaviconURLCacheDirty = true
+					}
 				}
 			}
 			return
@@ -174,11 +178,9 @@ final class FaviconDownloader {
 
 		remainingFaviconURLs[homePageURL] = nil
 
-		if let url = singleFaviconDownloader.homePageURL {
-			if self.homePageToFaviconURLCache[url] == nil {
-				self.homePageToFaviconURLCache[url] = singleFaviconDownloader.faviconURL
-				self.homePageToFaviconURLCacheDirty = true
-			}
+		if self.homePageToFaviconURLCache[homePageURL] == nil {
+			self.homePageToFaviconURLCache[homePageURL] = singleFaviconDownloader.faviconURL
+			self.homePageToFaviconURLCacheDirty = true
 		}
 
 		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
@@ -208,22 +210,23 @@ private extension FaviconDownloader {
 			return
 		}
 
-		FaviconURLFinder.findFaviconURLs(homePageURL) { (faviconURLs) in
+		FaviconURLFinder.findFaviconURLs(with: homePageURL) { (faviconURLs) in
+			guard var faviconURLs = faviconURLs else {
+				completion(nil)
+				return
+			}
+
 			var defaultFaviconURL: String? = nil
 
 			if let scheme = url.scheme, let host = url.host {
 				defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
 			}
 
-			if var faviconURLs = faviconURLs {
-				if let defaultFaviconURL = defaultFaviconURL {
-					faviconURLs.append(defaultFaviconURL)
-				}
-				completion(faviconURLs)
-				return
+			if let defaultFaviconURL = defaultFaviconURL {
+				faviconURLs.append(defaultFaviconURL)
 			}
 
-			completion(defaultFaviconURL != nil ? [defaultFaviconURL!] : nil)
+			completion(faviconURLs)
 		}
 	}
 

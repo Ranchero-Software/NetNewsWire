@@ -17,6 +17,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private var iconSize = IconSize.medium
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 	
+	private var refreshProgressView: RefreshProgressView?
+
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
@@ -26,7 +28,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
-	let scrollPositionQueue = CoalescingQueue(name: "Scroll Position", interval: 0.3, maxInterval: 1.0)
+	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
@@ -49,6 +51,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		// Setup the Search Controller
 		searchController.delegate = self
@@ -72,13 +75,18 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			navigationItem.titleView = titleView
 		}
-
-		resetUI(resetScroll: true)
-		applyChanges(animated: false)
 		
-		// Restore the scroll position if we have one stored
-		if let restoreIndexPath = coordinator.timelineMiddleIndexPath {
-			tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
+		refreshControl = UIRefreshControl()
+		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		
+		configureToolbar()
+		resetUI(resetScroll: true)
+		
+		// Load the table and then scroll to the saved position if available
+		applyChanges(animated: false) {
+			if let restoreIndexPath = self.coordinator.timelineMiddleIndexPath {
+				self.tableView.scrollToRow(at: restoreIndexPath, at: .middle, animated: false)
+			}
 		}
 		
 	}
@@ -104,29 +112,37 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	// MARK: Actions
 	@IBAction func toggleFilter(_ sender: Any) {
 		if coordinator.isReadArticlesFiltered {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 			coordinator.showAllArticles()
 		} else {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 			coordinator.hideReadArticles()
 		}
 	}
 	
 	@IBAction func markAllAsRead(_ sender: Any) {
-		if coordinator.displayUndoAvailableTip {
-			let alertController = UndoAvailableAlertController.alert { [weak self] _ in
-				self?.coordinator.displayUndoAvailableTip = false
-				self?.coordinator.markAllAsReadInTimeline()
-			}
-			
-			present(alertController, animated: true)
-		} else {
-			coordinator.markAllAsReadInTimeline()
+		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title) { [weak self] in
+			self?.coordinator.markAllAsReadInTimeline()
 		}
 	}
 	
 	@IBAction func firstUnread(_ sender: Any) {
 		coordinator.selectFirstUnread()
+	}
+	
+	@objc func refreshAccounts(_ sender: Any) {
+		refreshControl?.endRefreshing()
+
+		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self)) {
+				if AppDefaults.refreshClearsReadArticles {
+					self.coordinator.refreshTimeline(resetScroll: false)
+				}
+			}
+		}
 	}
 	
 	// MARK: Keyboard shortcuts
@@ -156,7 +172,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if adjustScroll {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: false)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
 				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
@@ -171,16 +187,20 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		applyChanges(animated: animated)
 	}
 	
-	func updateArticleSelection(animated: Bool) {
+	func updateArticleSelection(animations: Animations) {
 		if let article = coordinator.currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if tableView.indexPathForSelectedRow != indexPath {
-				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animated: true)
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
 			}
 		} else {
-			tableView.selectRow(at: nil, animated: animated, scrollPosition: .none)
+			tableView.selectRow(at: nil, animated: animations.contains(.select), scrollPosition: .none)
 		}
 		
 		updateUI()
+	}
+	
+	func hideSearch() {
+		navigationItem.searchController?.isActive = false
 	}
 
 	func showSearchAll() {
@@ -197,7 +217,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
-		
+		guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
+
 		// Set up the read action
 		let readTitle = article.status.read ?
 			NSLocalizedString("Unread", comment: "Unread") :
@@ -242,8 +263,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 					popoverController.sourceView = view
 					popoverController.sourceRect = CGRect(x: view.frame.size.width/2, y: view.frame.size.height/2, width: 1, height: 1)
 				}
-				
-				alert.addAction(self.markOlderAsReadAlertAction(article, completion: completion))
+
+				if let action = self.markAboveAsReadAlertAction(article, completion: completion) {
+					alert.addAction(action)
+				}
+
+				if let action = self.markBelowAsReadAlertAction(article, completion: completion) {
+					alert.addAction(action)
+				}
 				
 				if let action = self.discloseFeedAlertAction(article, completion: completion) {
 					alert.addAction(action)
@@ -288,9 +315,19 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			guard let self = self else { return nil }
 			
 			var actions = [UIAction]()
-			actions.append(self.toggleArticleReadStatusAction(article))
+			if let action = self.toggleArticleReadStatusAction(article) {
+				actions.append(action)
+			}
+			
 			actions.append(self.toggleArticleStarStatusAction(article))
-			actions.append(self.markOlderAsReadAction(article))
+
+			if let action = self.markAboveAsReadAction(article) {
+				actions.append(action)
+			}
+
+			if let action = self.markBelowAsReadAction(article) {
+				actions.append(action)
+			}
 			
 			if let action = self.discloseFeedAction(article) {
 				actions.append(action)
@@ -326,7 +363,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		becomeFirstResponder()
 		let article = dataSource.itemIdentifier(for: indexPath)
-		coordinator.selectArticle(article, animated: true)
+		coordinator.selectArticle(article, animations: [.scroll, .select, .navigation])
 	}
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -419,6 +456,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 	
+	@objc func willEnterForeground(_ note: Notification) {
+		updateUI()
+	}
+	
 	@objc func scrollPositionDidChange() {
 		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
 	}
@@ -450,7 +491,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
 		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
@@ -502,6 +543,22 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
+	func configureToolbar() {
+		
+		if coordinator.isThreePanelMode {
+			firstUnreadButton.isHidden = true
+			return
+		}
+		
+		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
+			return
+		}
+
+		self.refreshProgressView = refreshProgressView
+		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
+	}
+
 	func resetUI(resetScroll: Bool) {
 		
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
@@ -514,8 +571,10 @@ private extension MasterTimelineViewController {
 			if coordinator.timelineFeed is WebFeed {
 				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
 				titleView.addGestureRecognizer(feedTapGestureRecognizer)
+				titleView.accessibilityTraits = .button
 			} else {
 				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
+				titleView.accessibilityTraits.remove(.button)
 			}
 			
 			navigationItem.titleView = titleView
@@ -529,9 +588,9 @@ private extension MasterTimelineViewController {
 		}
 		
 		if coordinator.isReadArticlesFiltered {
-			filterButton.image = AppAssets.filterActiveImage
+			setFilterButtonToActive()
 		} else {
-			filterButton.image = AppAssets.filterInactiveImage
+			setFilterButtonToInactive()
 		}
 		
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
@@ -544,8 +603,19 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateUI() {
+		refreshProgressView?.updateRefreshLabel()
 		updateTitleUnreadCount()
 		updateToolbar()
+	}
+	
+	func setFilterButtonToActive() {
+		filterButton?.image = AppAssets.filterActiveImage
+		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
+	}
+	
+	func setFilterButtonToInactive() {
+		filterButton?.image = AppAssets.filterInactiveImage
+		filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 	}
 	
 	func updateToolbar() {
@@ -606,8 +676,9 @@ private extension MasterTimelineViewController {
 		return nil
 	}
 	
-	func toggleArticleReadStatusAction(_ article: Article) -> UIAction {
-
+	func toggleArticleReadStatusAction(_ article: Article) -> UIAction? {
+		guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
+		
 		let title = article.status.read ?
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")
@@ -633,41 +704,93 @@ private extension MasterTimelineViewController {
 		
 		return action
 	}
-	
-	func markOlderAsReadAction(_ article: Article) -> UIAction {
-		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
-		let image = coordinator.sortDirection == .orderedDescending ? AppAssets.markOlderAsReadDownImage : AppAssets.markOlderAsReadUpImage
+
+	func markAboveAsReadAction(_ article: Article) -> UIAction? {
+		guard coordinator.canMarkAboveAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+		let image = AppAssets.markAboveAsReadImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
-			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markAboveAsRead(article)
+			}
 		}
 		return action
 	}
 	
-	func markOlderAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction {
-		let title = NSLocalizedString("Mark Older as Read", comment: "Mark Older as Read")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.markAsReadOlderArticlesInTimeline(article)
+	func markBelowAsReadAction(_ article: Article) -> UIAction? {
+		guard coordinator.canMarkBelowAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		let image = AppAssets.markBelowAsReadImage
+		let action = UIAction(title: title, image: image) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markBelowAsRead(article)
+			}
+		}
+		return action
+	}
+	
+	func markAboveAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard coordinator.canMarkAboveAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+		let cancel = {
 			completion(true)
+		}
+
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markAboveAsRead(article)
+				completion(true)
+			}
+		}
+		return action
+	}
+
+	func markBelowAsReadAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard coordinator.canMarkBelowAsRead(for: article) else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		let cancel = {
+			completion(true)
+		}
+		
+		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markBelowAsRead(article)
+				completion(true)
+			}
 		}
 		return action
 	}
 	
 	func discloseFeedAction(_ article: Article) -> UIAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.webFeed,
+			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 		
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
-			self?.coordinator.discloseFeed(webFeed, animated: true)
+			self?.coordinator.discloseWebFeed(webFeed, animations: [.scroll, .navigation])
 		}
 		return action
 	}
 	
 	func discloseFeedAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let webFeed = article.webFeed else { return nil }
+		guard let webFeed = article.webFeed,
+			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.discloseFeed(webFeed, animated: true)
+			self?.coordinator.discloseWebFeed(webFeed, animations: [.scroll, .navigation])
 			completion(true)
 		}
 		return action
@@ -687,8 +810,10 @@ private extension MasterTimelineViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		
-		let action = UIAction(title: title, image: AppAssets.markAllInFeedAsReadImage) { [weak self] action in
-			self?.coordinator.markAllAsRead(articles)
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+				self?.coordinator.markAllAsRead(articles)
+			}
 		}
 		return action
 	}
@@ -706,10 +831,15 @@ private extension MasterTimelineViewController {
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let cancel = {
+			completion(true)
+		}
 		
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			self?.coordinator.markAllAsRead(articles)
-			completion(true)
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+				self?.coordinator.markAllAsRead(articles)
+				completion(true)
+			}
 		}
 		return action
 	}
@@ -738,8 +868,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func shareDialogForTableCell(indexPath: IndexPath, url: URL, title: String?) {
-		let itemSource = ArticleActivityItemSource(url: url, subject: title)
-		let activityViewController = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
+		let activityViewController = UIActivityViewController(url: url, title: title, applicationActivities: nil)
 		
 		guard let cell = tableView.cellForRow(at: indexPath) else { return }
 		let popoverController = activityViewController.popoverPresentationController

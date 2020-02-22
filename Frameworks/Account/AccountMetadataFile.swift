@@ -16,41 +16,26 @@ final class AccountMetadataFile {
 
 	private let fileURL: URL
 	private let account: Account
-	private lazy var managedFile = ManagedResourceFile(fileURL: fileURL, load: loadCallback, save: saveCallback)
 	
+	private var isDirty = false {
+		didSet {
+			queueSaveToDiskIfNeeded()
+		}
+	}
+	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
 	
 	func markAsDirty() {
-		managedFile.markAsDirty()
+		isDirty = true
 	}
 	
 	func load() {
-		managedFile.load()
-	}
-	
-	func save() {
-		managedFile.saveIfNecessary()
-	}
-	
-	func suspend() {
-		managedFile.suspend()
-	}
-	
-	func resume() {
-		managedFile.resume()
-	}
-	
-}
-
-private extension AccountMetadataFile {
-
-	func loadCallback() {
-
 		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
+		let fileCoordinator = NSFileCoordinator()
 		
 		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
 			if let fileData = try? Data(contentsOf: readURL) {
@@ -63,17 +48,16 @@ private extension AccountMetadataFile {
 		if let error = errorPointer?.pointee {
 			os_log(.error, log: log, "Read from disk coordination failed: %@.", error.localizedDescription)
 		}
-		
 	}
 	
-	func saveCallback() {
+	func save() {
 		guard !account.isDeleted else { return }
 		
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
 
 		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
+		let fileCoordinator = NSFileCoordinator()
 		
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
 			do {
@@ -89,4 +73,19 @@ private extension AccountMetadataFile {
 		}
 	}
 	
+}
+
+private extension AccountMetadataFile {
+
+	func queueSaveToDiskIfNeeded() {
+		saveQueue.add(self, #selector(saveToDiskIfNeeded))
+	}
+
+	@objc func saveToDiskIfNeeded() {
+		if isDirty {
+			isDirty = false
+			save()
+		}
+	}
+
 }

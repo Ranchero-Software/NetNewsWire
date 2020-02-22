@@ -9,7 +9,7 @@
 import Foundation
 
 struct FeedlyOrigin: Decodable {
-	var title: String?
-	var streamId: String
-	var htmlUrl: String
+	let title: String?
+	let streamId: String?
+	let htmlUrl: String?
 }

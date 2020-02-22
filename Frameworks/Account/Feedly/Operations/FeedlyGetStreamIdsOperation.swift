@@ -9,21 +9,15 @@
 import Foundation
 import os.log
 
-protocol FeedlyEntryIdenifierProviding: class {
-	var resource: FeedlyResourceId { get }
-	var entryIds: Set<String> { get }
-}
-
 protocol FeedlyGetStreamIdsOperationDelegate: class {
 	func feedlyGetStreamIdsOperation(_ operation: FeedlyGetStreamIdsOperation, didGet streamIds: FeedlyStreamIds)
 }
 
 /// Single responsibility is to get the stream ids from Feedly.
-final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdenifierProviding, FeedlyUnreadEntryIdProviding {
+final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 	
 	var entryIds: Set<String> {
 		guard let ids = streamIds?.ids else {
-			assert(isFinished, "This should only be called when the operation finishes without error.")
 			assertionFailure("Has this operation been addeded as a dependency on the caller?")
 			return []
 		}
@@ -39,7 +33,7 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdenifierPr
 	let unreadOnly: Bool?
 	let newerThan: Date?
 	let log: OSLog
-		
+
 	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?, log: OSLog) {
 		self.account = account
 		self.resource = resource
@@ -52,12 +46,7 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdenifierPr
 	
 	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			switch result {
 			case .success(let stream):
@@ -69,7 +58,7 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdenifierPr
 				
 			case .failure(let error):
 				os_log(.debug, log: self.log, "Unable to get stream ids: %{public}@.", error as NSError)
-				self.didFinish(error)
+				self.didFinish(with: error)
 			}
 		}
 	}

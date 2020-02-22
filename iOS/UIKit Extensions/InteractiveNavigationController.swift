@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol InteractiveNavigationControllerTappable {
-	func didTapNavigationBar()
-}
-
 class InteractiveNavigationController: UINavigationController {
 	
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
@@ -33,8 +29,6 @@ class InteractiveNavigationController: UINavigationController {
 		poppableDelegate.originalDelegate = interactivePopGestureRecognizer?.delegate
 		poppableDelegate.navigationController = self
 		interactivePopGestureRecognizer?.delegate = poppableDelegate
-		
-		navigationBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapNavigationBar)))
 	}
 	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -44,13 +38,7 @@ class InteractiveNavigationController: UINavigationController {
 		}
 	}
 		
-	@objc func didTapNavigationBar() {
-		if let tappable = topViewController as? InteractiveNavigationControllerTappable {
-			tappable.didTapNavigationBar()
-		}
 	}
-	
-}
 
 // MARK: Private
 
@@ -59,10 +47,15 @@ private extension InteractiveNavigationController {
 	func configure() {
 		isToolbarHidden = false
 		
-		let navigationAppearance = UINavigationBarAppearance()
-		navigationAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
-		navigationAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
-		navigationBar.standardAppearance = navigationAppearance
+		let navigationStandardAppearance = UINavigationBarAppearance()
+		navigationStandardAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+		navigationStandardAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
+		navigationBar.standardAppearance = navigationStandardAppearance
+		
+		let scrollEdgeStandardAppearance = UINavigationBarAppearance()
+		scrollEdgeStandardAppearance.backgroundColor = .systemBackground
+		navigationBar.scrollEdgeAppearance = scrollEdgeStandardAppearance
+		
 		navigationBar.tintColor = AppAssets.primaryAccentColor
 		
 		let toolbarAppearance = UIToolbarAppearance()

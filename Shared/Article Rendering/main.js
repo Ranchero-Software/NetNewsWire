@@ -8,22 +8,80 @@ function wrapFrames() {
 	});
 }
 
-// Strip out all styling so that we have better control over layout
-function stripStyles() {
-	document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
-	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
+// Strip out color and font styling
+
+function stripStylesFromElement(element, propertiesToStrip) {
+	for (name of propertiesToStrip) {
+		element.style.removeProperty(name);
+	}
 }
 
-// Convert all image locations to be absolute
+function stripStyles() {
+	document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
+	// Removing "background" and "font" will also remove properties that would be reflected in them, e.g., "background-color" and "font-family"
+	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font"]));
+}
+
+// Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute if not already
 function convertImgSrc() {
 	document.querySelectorAll("img").forEach(element => {
-		element.src = new URL(element.src, document.baseURI).href;
+		if (element.hasAttribute("data-canonical-src")) {
+			element.src = element.getAttribute("data-canonical-src")
+		} else if (!element.src.match(/^[a-z]+\:\/\//i)) {
+			element.src = new URL(element.src, document.baseURI).href;
+		}
 	});
 }
 
-function reloadArticleImage() {
+// Wrap tables in an overflow-x: auto; div
+function wrapTables() {
+	var tables = document.querySelector("div.articleBody").getElementsByTagName("table");
+
+	for (table of tables) {
+		var wrapper = document.createElement("div");
+		wrapper.className = "nnw-overflow";
+		table.parentNode.insertBefore(wrapper, table);
+		wrapper.appendChild(table);
+	}
+}
+
+// Remove some children (currently just spans) from pre elements to work around a strange clipping issue
+var ElementUnwrapper = {
+	unwrapSelector: "span",
+	unwrapElement: function (element) {
+		var parent = element.parentNode;
+		var children = Array.from(element.childNodes);
+
+		for (child of children) {
+			parent.insertBefore(child, element);
+		}
+
+		parent.removeChild(element);
+	},
+	// `elements` can be a selector string, an element, or a list of elements
+	unwrapAppropriateChildren: function (elements) {
+		if (typeof elements[Symbol.iterator] !== 'function')
+			elements = [elements];
+		else if (typeof elements === "string")
+			elements = document.querySelectorAll(elements);
+
+		for (element of elements) {
+			for (unwrap of element.querySelectorAll(this.unwrapSelector)) {
+				this.unwrapElement(unwrap);
+			}
+
+			element.normalize()
+		}
+	}
+};
+
+function flattenPreElements() {
+	ElementUnwrapper.unwrapAppropriateChildren("div.articleBody td > pre");
+}
+
+function reloadArticleImage(imageSrc) {
 	var image = document.getElementById("nnwImageIcon");
-	image.src = "nnwImageIcon://";
+	image.src = imageSrc;
 }
 
 function error() {
@@ -32,13 +90,22 @@ function error() {
 
 function render(data, scrollY) {
 	document.getElementsByTagName("style")[0].innerHTML = data.style;
+
+	let title = document.getElementsByTagName("title")[0];
+	title.textContent = data.title
+
+	let base = document.getElementsByTagName("base")[0];
+	base.href = data.baseURL
+
 	document.body.innerHTML = data.body;
 	
 	window.scrollTo(0, scrollY);
 	
 	wrapFrames()
+	wrapTables()
 	stripStyles()
 	convertImgSrc()
-	
+	flattenPreElements()
+
 	postRenderProcessing()
 }

@@ -45,11 +45,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 	
 	func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+		appDelegate.resumeDatabaseProcessingIfNecessary()
 		handleShortcutItem(shortcutItem)
 		completionHandler(true)
 	}
 	
 	func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+		appDelegate.resumeDatabaseProcessingIfNecessary()
 		coordinator.handle(userActivity)
 	}
 	
@@ -59,6 +61,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	}
 	
 	func sceneWillEnterForeground(_ scene: UIScene) {
+		appDelegate.resumeDatabaseProcessingIfNecessary()
 		appDelegate.prepareAccountsForForeground()
 		self.coordinator.configurePanelMode(for: window!.frame.size)
 	}
@@ -70,6 +73,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	// API
 	
 	func handle(_ response: UNNotificationResponse) {
+		appDelegate.resumeDatabaseProcessingIfNecessary()
 		coordinator.handle(response)
 	}
 

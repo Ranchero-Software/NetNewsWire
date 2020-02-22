@@ -9,20 +9,20 @@
 import Foundation
 import os.log
 import RSWeb
+import RSCore
 
 class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
-	private let operationQueue: OperationQueue
-	
+
+	private let operationQueue = MainThreadOperationQueue()
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
-	
+
 	init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, log: OSLog) throws {
 		
-		let validator = FeedlyFeedContainerValidator(container: container, userId: credentials.username)
+		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionId) = try validator.getValidContainer()
 		
-		self.operationQueue = OperationQueue()
-		self.operationQueue.isSuspended = true
-		
+		self.operationQueue.suspend()
+
 		super.init()
 		
 		self.downloadProgress = progress
@@ -30,31 +30,28 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: nil, collectionId: collectionId, service: service)
 		addRequest.delegate = self
 		addRequest.downloadProgress = progress
-		self.operationQueue.addOperation(addRequest)
+		self.operationQueue.add(addRequest)
 		
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest, log: log)
 		createFeeds.downloadProgress = progress
 		createFeeds.addDependency(addRequest)
-		self.operationQueue.addOperation(createFeeds)
+		self.operationQueue.add(createFeeds)
 		
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
 		finishOperation.downloadProgress = progress
 		finishOperation.addDependency(createFeeds)
-		self.operationQueue.addOperation(finishOperation)
+		self.operationQueue.add(finishOperation)
 	}
 	
-	override func cancel() {
+	override func run() {
+		operationQueue.resume()
+	}
+
+	override func didCancel() {
 		operationQueue.cancelAllOperations()
-		super.cancel()
-		didFinish()
-	}
-	
-	override func main() {
-		guard !isCancelled else {
-			return
-		}
-		operationQueue.isSuspended = false
+		addCompletionHandler = nil
+		super.didCancel()
 	}
 	
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
@@ -65,7 +62,7 @@ class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, 
 	}
 	
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			return
 		}
 		

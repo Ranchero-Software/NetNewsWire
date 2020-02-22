@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import os.log
+import RSCore
 
 class FeedlyGetCollectionsOperationTests: XCTestCase {
 		
@@ -20,11 +21,11 @@ class FeedlyGetCollectionsOperationTests: XCTestCase {
 		
 		let getCollections = FeedlyGetCollectionsOperation(service: caller, log: support.log)
 		let completionExpectation = expectation(description: "Did Finish")
-		getCollections.completionBlock = {
+		getCollections.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(getCollections)
+		MainThreadOperationQueue.shared.add(getCollections)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -78,11 +79,11 @@ class FeedlyGetCollectionsOperationTests: XCTestCase {
 		getCollections.delegate = delegate
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		getCollections.completionBlock = {
+		getCollections.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(getCollections)
+		MainThreadOperationQueue.shared.add(getCollections)
 		
 		waitForExpectations(timeout: 2)
 		

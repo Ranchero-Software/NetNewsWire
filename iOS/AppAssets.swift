@@ -49,7 +49,7 @@ struct AppAssets {
 
 	static var articleExtractorOffTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOff")!
-		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
+		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
 
 	static var articleExtractorOn: UIImage = {
@@ -62,7 +62,7 @@ struct AppAssets {
 
 	static var articleExtractorOnTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOn")!
-		return image.maskWithColor(color: AppAssets.primaryAccentColor.cgColor)!
+		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
 
 	static var iconBackgroundColor: UIColor = {
@@ -113,15 +113,15 @@ struct AppAssets {
 		UIImage(systemName: "info.circle")!
 	}()
 	
-	static var markAllInFeedAsReadImage: UIImage = {
-		return UIImage(systemName: "asterisk.circle")!
+	static var markAllAsReadImage: UIImage = {
+		return UIImage(named: "markAllAsRead")!
 	}()
 	
-	static var markOlderAsReadDownImage: UIImage = {
+	static var markBelowAsReadImage: UIImage = {
 		return UIImage(systemName: "arrowtriangle.down.circle")!
 	}()
 	
-	static var markOlderAsReadUpImage: UIImage = {
+	static var markAboveAsReadImage: UIImage = {
 		return UIImage(systemName: "arrowtriangle.up.circle")!
 	}()
 	

@@ -8,6 +8,7 @@
 
 import UIKit
 import Account
+import CoreServices
 import SafariServices
 
 class SettingsViewController: UITableViewController {
@@ -17,8 +18,11 @@ class SettingsViewController: UITableViewController {
 	
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
+	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
+	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	
+	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
 	
 	override func viewDidLoad() {
@@ -33,7 +37,7 @@ class SettingsViewController: UITableViewController {
 
 		tableView.register(UINib(nibName: "SettingsAccountTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsAccountTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
-
+		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -51,7 +55,19 @@ class SettingsViewController: UITableViewController {
 			groupByFeedSwitch.isOn = false
 		}
 
-		if AppDefaults.articleFullscreenEnabled {
+		if AppDefaults.refreshClearsReadArticles {
+			refreshClearsReadArticlesSwitch.isOn = true
+		} else {
+			refreshClearsReadArticlesSwitch.isOn = false
+		}
+
+		if AppDefaults.confirmMarkAllAsRead {
+			confirmMarkAllAsReadSwitch.isOn = true
+		} else {
+			confirmMarkAllAsReadSwitch.isOn = false
+		}
+
+		if AppDefaults.articleFullscreenAvailable {
 			showFullscreenArticlesSwitch.isOn = true
 		} else {
 			showFullscreenArticlesSwitch.isOn = false
@@ -74,54 +90,38 @@ class SettingsViewController: UITableViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+		
+		if scrollToArticlesSection {
+			tableView.scrollToRow(at: IndexPath(row: 0, section: 4), at: .top, animated: true)
+			scrollToArticlesSection = false
+		}
+
 	}
 	
 	// MARK: UITableView
 	
-	override func numberOfSections(in tableView: UITableView) -> Int {
-		var sections = super.numberOfSections(in: tableView)
-		if traitCollection.userInterfaceIdiom != .phone {
-			sections = sections - 1
-		}
-		return sections
-	}
-	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		var adjustedSection = section
-		if traitCollection.userInterfaceIdiom != .phone && section > 3 {
-			adjustedSection = adjustedSection + 1
-		}
 		
-		switch adjustedSection {
+		switch section {
 		case 1:
 			return AccountManager.shared.accounts.count + 1
 		case 2:
-			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: adjustedSection)
+			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
+		case 4:
+			return traitCollection.userInterfaceIdiom == .phone ? 2 : 1
 		default:
-			return super.tableView(tableView, numberOfRowsInSection: adjustedSection)
+			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
-	}
-	
-	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		var adjustedSection = section
-		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
-			adjustedSection = adjustedSection + 1
-		}
-		return super.tableView(tableView, titleForHeaderInSection: adjustedSection)
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		var adjustedSection = indexPath.section
-		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
-			adjustedSection = adjustedSection + 1
-		}
 
 		let cell: UITableViewCell
-		switch adjustedSection {
+		switch indexPath.section {
 		case 1:
 						
 			let sortedAccounts = AccountManager.shared.sortedAccounts
@@ -138,8 +138,7 @@ class SettingsViewController: UITableViewController {
 			}
 		
 		default:
-			let adjustedIndexPath = IndexPath(row: indexPath.row, section: adjustedSection)
-			cell = super.tableView(tableView, cellForRowAt: adjustedIndexPath)
+			cell = super.tableView(tableView, cellForRowAt: indexPath)
 			
 		}
 		
@@ -147,12 +146,8 @@ class SettingsViewController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		var adjustedSection = indexPath.section
-		if traitCollection.userInterfaceIdiom != .phone && adjustedSection > 3 {
-			adjustedSection = adjustedSection + 1
-		}
 
-		switch adjustedSection {
+		switch indexPath.section {
 		case 0:
 			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
 			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -188,7 +183,7 @@ class SettingsViewController: UITableViewController {
 			}
 		case 3:
 			switch indexPath.row {
-			case 2:
+			case 3:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
@@ -270,11 +265,27 @@ class SettingsViewController: UITableViewController {
 		}
 	}
 	
+	@IBAction func switchClearsReadArticles(_ sender: Any) {
+		if refreshClearsReadArticlesSwitch.isOn {
+			AppDefaults.refreshClearsReadArticles = true
+		} else {
+			AppDefaults.refreshClearsReadArticles = false
+		}
+	}
+	
+	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
+		if confirmMarkAllAsReadSwitch.isOn {
+			AppDefaults.confirmMarkAllAsRead = true
+		} else {
+			AppDefaults.confirmMarkAllAsRead = false
+		}
+	}
+	
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
 		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.articleFullscreenEnabled = true
+			AppDefaults.articleFullscreenAvailable = true
 		} else {
-			AppDefaults.articleFullscreenEnabled = false
+			AppDefaults.articleFullscreenAvailable = false
 		}
 	}
 	
@@ -308,9 +319,10 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 				switch result {
 				case .success:
 					break
-				case .failure(let error):
+				case .failure:
 					let title = NSLocalizedString("Import Failed", comment: "Import Failed")
-					self.presentError(title: title, message: error.localizedDescription)
+					let message = NSLocalizedString("We were unable to process the selected file.  Please ensure that it is a properly formatted OPML file.", comment: "Import Failed Message")
+					self.presentError(title: title, message: message)
 				}
 			}
 		}
@@ -372,7 +384,17 @@ private extension SettingsViewController {
 	}
 	
 	func importOPMLDocumentPicker() {
-		let docPicker = UIDocumentPickerViewController(documentTypes: ["public.xml", "org.opml.opml"], in: .import)
+		
+		let utiArray = UTTypeCreateAllIdentifiersForTag(kUTTagClassFilenameExtension, "opml" as NSString, nil)?.takeRetainedValue() as? [String] ?? [String]()
+
+		var opmlUTIs = utiArray
+			.compactMap({ UTTypeCopyDeclaration($0 as NSString)?.takeUnretainedValue() as? [String: Any] })
+			.reduce([String]()) { (result, dict) in
+				return result + dict.values.compactMap({ $0 as? String })
+			}
+		opmlUTIs.append("public.xml")
+		
+		let docPicker = UIDocumentPickerViewController(documentTypes: opmlUTIs, in: .import)
 		docPicker.delegate = self
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
@@ -380,6 +402,7 @@ private extension SettingsViewController {
 	
 	func exportOPML(sourceView: UIView, sourceRect: CGRect) {
 		if AccountManager.shared.accounts.count == 1 {
+			opmlAccount = AccountManager.shared.accounts.first!
 			exportOPMLDocumentPicker()
 		} else {
 			exportOPMLAccountPicker(sourceView: sourceView, sourceRect: sourceRect)

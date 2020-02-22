@@ -11,6 +11,7 @@ import os.log
 import RSWeb
 
 final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
+
 	let service: OAuthAccessTokenRefreshing
 	let oauthClient: OAuthAuthorizationClient
 	let account: Account
@@ -23,12 +24,7 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	override func main() {
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
-		
+	override func run() {
 		let refreshToken: Credentials
 		
 		do {
@@ -40,7 +36,7 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 			refreshToken = credentials
 			
 		} catch {
-			didFinish(error)
+			didFinish(with: error)
 			return
 		}
 		
@@ -70,11 +66,11 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 				
 				didFinish()
 			} catch {
-				didFinish(error)
+				didFinish(with: error)
 			}
 			
 		case .failure(let error):
-			didFinish(error)
+			didFinish(with: error)
 		}
 	}
 }

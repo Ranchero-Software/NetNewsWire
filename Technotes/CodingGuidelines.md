@@ -36,8 +36,6 @@ Functions should tend to be small. One-liners are a-okay, especially when the fu
 
 We mostly avoid Swift generics, since generics is an advanced feature that can be relatively hard to understand. We *do* use them, though, when appropriate.
 
-It’s totally okay to use the magic `error` variable when catching errors. In accessors, use of the magic `oldValue` and `newValue` is expected when you need the old or new value.
-
 We use assertions and preconditions (assertions are hit only when running a debug build; preconditions will crash a release build). We also allow force-unwrapping of optionals as a shorthand for a precondition failure, though these should be used sparingly.
 
 Extensions, including private extensions, are used — though we take care not to extend Foundation and AppKit objects too much, lest we end up with our own Cocoa dialect.
@@ -104,13 +102,15 @@ Don’t fight the built-in frameworks and don’t try to hide them. Let’s not 
 
 NetNewsWire is layered into frameworks. There’s an app level and a bunch of frameworks below that. Each framework has its own reason for being. Dependencies between frameworks should be as minimal as possible, but those dependencies do exist.
 
-Some frameworks are not permitted to add dependencies, and should be treated as at the bottom of the cake: RSCore, RSWeb, RSDatabase, RSParser, and RSTree. This simplifies things for us, and makes it easier for us and other people to use these frameworks in other apps.
+Some frameworks are not permitted to add dependencies, and should be treated as at the bottom of the cake: RSCore, RSWeb, RSDatabase, RSParser, RSTree, and DB5. This simplifies things for us, and makes it easier for us and other people to use these frameworks in other apps.
 
 ### User Interface
 
 Stick to stock elements, since this tends to eliminate bugs and future churn. This isn’t always possible, of course, but any custom work should be the minimum possible. We’re in this for the long haul.
 
 Storyboards are preferred to xibs — except when the problem is xib-sized.
+
+Use DB5 where parameters (sizes, colors, etc.) are needed.
 
 Auto layout is used everywhere except in table and outline view cells, where performance is critical.
 

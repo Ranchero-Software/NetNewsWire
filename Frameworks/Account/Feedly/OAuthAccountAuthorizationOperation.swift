@@ -8,14 +8,27 @@
 
 import Foundation
 import AuthenticationServices
+import RSCore
 
 public protocol OAuthAccountAuthorizationOperationDelegate: class {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
 }
 
-public final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthenticationPresentationContextProviding {
-	
+@objc public final class OAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
+
+	public var isCanceled: Bool = false {
+		didSet {
+			if isCanceled {
+				cancel()
+			}
+		}
+	}
+	public var id: Int?
+	public weak var operationDelegate: MainThreadOperationDelegate?
+	public var name: String?
+	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
+
 	public weak var presentationAnchor: ASPresentationAnchor?
 	public weak var delegate: OAuthAccountAuthorizationOperationDelegate?
 	
@@ -28,14 +41,8 @@ public final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthentic
 		self.oauthClient = Account.oauthAuthorizationClient(for: accountType)
 	}
 	
-	override public func main() {
-		assert(Thread.isMainThread)
+	public func run() {
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
-		
-		guard !isCancelled else {
-			didFinish()
-			return
-		}
 		
 		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType)
 		
@@ -63,13 +70,12 @@ public final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthentic
 		session.start()
 	}
 	
-	override public func cancel() {
+	public func cancel() {
 		session?.cancel()
-		super.cancel()
 	}
 	
 	private func didEndAuthentication(url: URL?, error: Error?) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}
@@ -102,7 +108,7 @@ public final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthentic
 	}
 	
 	private func didEndRequestingAccessToken(_ result: Result<OAuthAuthorizationGrant, Error>) {
-		guard !isCancelled else {
+		guard !isCanceled else {
 			didFinish()
 			return
 		}
@@ -140,48 +146,12 @@ public final class OAuthAccountAuthorizationOperation: Operation, ASWebAuthentic
 	
 	private func didFinish() {
 		assert(Thread.isMainThread)
-		assert(!isFinished, "Finished operation is attempting to finish again.")
-		self.isExecutingOperation = false
-		self.isFinishedOperation = true
+		operationDelegate?.operationDidComplete(self)
 	}
 	
 	private func didFinish(_ error: Error) {
 		assert(Thread.isMainThread)
-		assert(!isFinished, "Finished operation is attempting to finish again.")
 		delegate?.oauthAccountAuthorizationOperation(self, didFailWith: error)
 		didFinish()
-	}
-	
-	override public func start() {
-		isExecutingOperation = true
-		DispatchQueue.main.async {
-			self.main()
-		}
-	}
-	
-	override public var isExecuting: Bool {
-		return isExecutingOperation
-	}
-	
-	private var isExecutingOperation = false {
-		willSet {
-			willChangeValue(for: \.isExecuting)
-		}
-		didSet {
-			didChangeValue(for: \.isExecuting)
-		}
-	}
-	
-	override public var isFinished: Bool {
-		return isFinishedOperation
-	}
-	
-	private var isFinishedOperation = false {
-		willSet {
-			willChangeValue(for: \.isFinished)
-		}
-		didSet {
-			didChangeValue(for: \.isFinished)
-		}
 	}
 }

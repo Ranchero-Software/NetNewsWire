@@ -226,8 +226,7 @@ struct AppDefaults {
  		let showDebugMenu = false
  		#endif
 
-		let defaults: [String : Any] = [Key.lastImageCacheFlushDate: Date(),
-										Key.sidebarFontSize: FontSize.medium.rawValue,
+		let defaults: [String : Any] = [Key.sidebarFontSize: FontSize.medium.rawValue,
 										Key.timelineFontSize: FontSize.medium.rawValue,
 										Key.detailFontSize: FontSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,

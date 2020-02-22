@@ -90,14 +90,6 @@ public final class AccountManager: UnreadCountProvider {
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
 	
-	public convenience init() {
-		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
-		let accountsURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
-		let accountsFolder = accountsURL!.appendingPathComponent("Accounts").absoluteString
-		let accountsFolderPath = accountsFolder.suffix(from: accountsFolder.index(accountsFolder.startIndex, offsetBy: 7))
-		self.init(accountsFolder: String(accountsFolderPath))
-	}
-	
 	public init(accountsFolder: String) {
 		self.accountsFolder = accountsFolder
 		
@@ -272,6 +264,11 @@ public final class AccountManager: UnreadCountProvider {
 		var allFetchedArticles = Set<Article>()
 		let numberOfAccounts = activeAccounts.count
 		var accountsReporting = 0
+		
+		guard numberOfAccounts > 0 else {
+			completion(.success(allFetchedArticles))
+			return
+		}
 
 		for account in activeAccounts {
 			account.fetchArticlesAsync(fetchType) { (articleSetResult) in
@@ -389,7 +386,7 @@ private struct AccountSpecifier {
 
 
 	init?(folderPath: String) {
-		if !FileManager.default.rs_fileIsFolder(folderPath) {
+		if !FileManager.default.isFolder(atPath: folderPath) {
 			return nil
 		}
 		

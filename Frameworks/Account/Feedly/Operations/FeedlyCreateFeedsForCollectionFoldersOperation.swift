@@ -15,17 +15,17 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 	let account: Account
 	let feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding
 	let log: OSLog
-		
+
 	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding, log: OSLog) {
 		self.feedsAndFoldersProvider = feedsAndFoldersProvider
 		self.account = account
 		self.log = log
 	}
 	
-	override func main() {
-		defer { didFinish() }
-		
-		guard !isCancelled else { return }
+	override func run() {
+		defer {
+			didFinish()
+		}
 
 		let pairs = feedsAndFoldersProvider.feedsAndFolders
 		
@@ -68,9 +68,11 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 				}
 
 				// no exsiting feed, create a new one
-				let id = collectionFeed.id
-				let url = FeedlyFeedResourceId(id: id).url
-				let feed = account.createWebFeed(with: collectionFeed.title, url: url, webFeedID: id, homePageURL: collectionFeed.website)
+				let parser = FeedlyFeedParser(feed: collectionFeed)
+				let feed = account.createWebFeed(with: parser.title,
+												 url: parser.url,
+												 webFeedID: parser.webFeedID,
+												 homePageURL: parser.homePageURL)
 				
 				// So the same feed isn't created more than once.
 				feedsAdded.insert(feed)

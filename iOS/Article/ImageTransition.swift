@@ -10,15 +10,15 @@ import UIKit
 
 class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
-	private weak var articleController: ArticleViewController?
+	private weak var webViewController: WebViewController?
 	private let duration = 0.4
 	var presenting = true
 	var originFrame: CGRect!
 	var maskFrame: CGRect!
 	var originImage: UIImage!
 	
-	init(controller: ArticleViewController) {
-		self.articleController = controller
+	init(controller: WebViewController) {
+		self.webViewController = controller
 	}
 	
 	func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -44,7 +44,7 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 		transitionContext.containerView.backgroundColor = AppAssets.fullScreenBackgroundColor
 		transitionContext.containerView.addSubview(imageView)
 		
-		articleController?.hideClickedImage()
+		webViewController?.hideClickedImage()
 
 		UIView.animate(
 			withDuration: duration,
@@ -93,11 +93,16 @@ class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 			animations: {
 				imageView.frame = self.originFrame
 			}, completion: { _ in
-				self.articleController?.showClickedImage() {
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-						imageView.removeFromSuperview()
-						transitionContext.completeTransition(true)
+				if let controller = self.webViewController {
+					controller.showClickedImage() {
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+							imageView.removeFromSuperview()
+							transitionContext.completeTransition(true)
+						}
 					}
+				} else {
+					imageView.removeFromSuperview()
+					transitionContext.completeTransition(true)
 				}
 		})
 	}

@@ -17,62 +17,40 @@ final class OPMLFile {
 
 	private let fileURL: URL
 	private let account: Account
-	private lazy var managedFile = ManagedResourceFile(fileURL: fileURL, load: loadCallback, save: saveCallback)
-	
+
+	private var isDirty = false {
+		didSet {
+			queueSaveToDiskIfNeeded()
+		}
+	}
+	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
 	
 	func markAsDirty() {
-		managedFile.markAsDirty()
+		isDirty = true
 	}
 	
 	func load() {
-		managedFile.load()
-	}
-	
-	func save() {
-		managedFile.saveIfNecessary()
-	}
-	
-	func suspend() {
-		managedFile.suspend()
-	}
-	
-	func resume() {
-		managedFile.resume()
-	}
-	
-}
-
-private extension OPMLFile {
-
-	func loadCallback() {
-		guard let fileData = opmlFileData() else {
+		guard let fileData = opmlFileData(), let opmlItems = parsedOPMLItems(fileData: fileData) else {
 			return
 		}
-		
-		// Don't rebuild the account if the OPML hasn't changed since the last save
-		guard let opml = String(data: fileData, encoding: .utf8), opml != opmlDocument() else {
-			return
-		}
-		
-		guard let opmlItems = parsedOPMLItems(fileData: fileData) else { return }
 		
 		BatchUpdate.shared.perform {
-			account.topLevelWebFeeds.removeAll()
 			account.loadOPMLItems(opmlItems, parentFolder: nil)
 		}
 	}
 	
-	func saveCallback() {
+	func save() {
 		guard !account.isDeleted else { return }
 		
 		let opmlDocumentString = opmlDocument()
 		
 		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
+		let fileCoordinator = NSFileCoordinator()
 		
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
 			do {
@@ -85,12 +63,28 @@ private extension OPMLFile {
 		if let error = errorPointer?.pointee {
 			os_log(.error, log: log, "OPML save to disk coordination failed: %@.", error.localizedDescription)
 		}
+		
 	}
 	
+}
+
+private extension OPMLFile {
+
+	func queueSaveToDiskIfNeeded() {
+		saveQueue.add(self, #selector(saveToDiskIfNeeded))
+	}
+
+	@objc func saveToDiskIfNeeded() {
+		if isDirty {
+			isDirty = false
+			save()
+		}
+	}
+
 	func opmlFileData() -> Data? {
 		var fileData: Data? = nil
 		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator(filePresenter: managedFile)
+		let fileCoordinator = NSFileCoordinator()
 		
 		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
 			do {
@@ -125,7 +119,7 @@ private extension OPMLFile {
 	}
 	
 	func opmlDocument() -> String {
-		let escapedTitle = account.nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
+		let escapedTitle = account.nameForDisplay.escapingSpecialXMLCharacters
 		let openingText =
 		"""
 		<?xml version="1.0" encoding="UTF-8"?>
@@ -138,7 +132,7 @@ private extension OPMLFile {
 
 		"""
 
-		let middleText = account.OPMLString(indentLevel: 0, strictConformance: false)
+		let middleText = account.OPMLString(indentLevel: 0, allowCustomAttributes: true)
 
 		let closingText =
 		"""

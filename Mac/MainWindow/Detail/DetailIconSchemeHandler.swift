@@ -1,5 +1,5 @@
 //
-//  AccountViewControllerSchemeHandler.swift
+//  DetailIconSchemeHandler.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/7/19.
@@ -10,7 +10,7 @@ import Foundation
 import WebKit
 import Articles
 
-class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
+class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
 	
 	var currentArticle: Article?
 	

@@ -19,14 +19,14 @@ final class ArticlesTable: DatabaseTable {
 	private let queue: DatabaseQueue
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
-	private var databaseArticlesCache = [String: DatabaseArticle]()
+	private var articlesCache = [String: Article]()
 
 	private lazy var searchTable: SearchTable = {
 		return SearchTable(queue: queue, articlesTable: self)
 	}()
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
-	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 90)!
+	let articleCutoffDate = Date().bySubtracting(days: 90)
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
 
@@ -212,6 +212,9 @@ final class ArticlesTable: DatabaseTable {
 
 				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
 
+				self.addArticlesToCache(newArticles)
+				self.addArticlesToCache(updatedArticles)
+
 				// 8. Update search index.
 				if let newArticles = newArticles {
 					self.searchTable.indexNewArticles(newArticles, database)
@@ -234,31 +237,6 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Unread Counts
 	
-	func fetchUnreadCounts(_ webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		if webFeedIDs.isEmpty {
-			completion(.success(UnreadCountDictionary()))
-			return
-		}
-
-		fetchAllUnreadCounts { (unreadCountsResult) in
-
-			func createUnreadCountDictionary(_ unreadCountDictionary: UnreadCountDictionary) -> UnreadCountDictionary {
-				var d = UnreadCountDictionary()
-				for webFeedID in webFeedIDs {
-					d[webFeedID] = unreadCountDictionary[webFeedID] ?? 0
-				}
-				return d
-			}
-
-			switch unreadCountsResult {
-				case .success(let unreadCountDictionary):
-					completion(.success(createUnreadCountDictionary(unreadCountDictionary)))
-				case .failure(let databaseError):
-					completion(.failure(databaseError))
-			}
-		}
-	}
-
 	func fetchUnreadCount(_ webFeedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		// Get unread count for today, for instance.
 		if webFeedIDs.isEmpty {
@@ -281,46 +259,6 @@ final class ArticlesTable: DatabaseTable {
 
 				DispatchQueue.main.async {
 					completion(.success(unreadCount))
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
-			}
-		}
-	}
-
-	func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		// Returns only where unreadCount > 0.
-
-		let cutoffDate = articleCutoffDate
-		queue.runInDatabase { databaseResult in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or (datePublished > ? or (datePublished is null and dateArrived > ?))) group by feedID;"
-
-				guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate, cutoffDate]) else {
-					DispatchQueue.main.async {
-						completion(.success(UnreadCountDictionary()))
-					}
-					return
-				}
-
-				var d = UnreadCountDictionary()
-				while resultSet.next() {
-					let unreadCount = resultSet.long(forColumnIndex: 1)
-					if let webFeedID = resultSet.string(forColumnIndex: 0) {
-						d[webFeedID] = unreadCount
-					}
-				}
-
-				DispatchQueue.main.async {
-					completion(.success(d))
 				}
 			}
 
@@ -418,6 +356,22 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	func createStatusesIfNeeded(_ articleIDs: Set<String>, _ completion: @escaping DatabaseCompletionBlock) {
+		queue.runInTransaction { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				let _ = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
+				DispatchQueue.main.async {
+					completion(nil)
+				}
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(databaseError)
+				}
+			}
+		}
+	}
+
 	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
@@ -449,11 +403,29 @@ final class ArticlesTable: DatabaseTable {
 
 	func emptyCaches() {
 		queue.runInDatabase { _ in
-			self.databaseArticlesCache = [String: DatabaseArticle]()
+			self.articlesCache = [String: Article]()
 		}
 	}
 
 	// MARK: - Cleanup
+
+	/// Delete articles that we won’t show in the UI any longer
+	/// — their arrival date is before our 90-day recency window.
+	/// Keep all starred articles, no matter their age.
+	func deleteOldArticles() {
+		queue.runInTransaction { databaseResult in
+
+			func makeDatabaseCalls(_ database: FMDatabase) {
+				let sql = "delete from articles where articleID in (select articleID from articles natural join statuses where dateArrived<? and starred=0);"
+				let parameters = [self.articleCutoffDate] as [Any]
+				database.executeUpdate(sql, withArgumentsIn: parameters)
+			}
+
+			if let database = databaseResult.database {
+				makeDatabaseCalls(database)
+			}
+		}
+	}
 
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
 	/// This deletes from the articles and articleStatuses tables,
@@ -527,86 +499,55 @@ private extension ArticlesTable {
 	}
 
 	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
-		// 1. Create DatabaseArticles without related objects.
-		// 2. Then fetch the related objects, given the set of articleIDs.
-		// 3. Then create set of Articles with DatabaseArticles and related objects and return it.
+		var cachedArticles = Set<Article>()
+		var fetchedArticles = Set<Article>()
 
-		// 1. Create databaseArticles (intermediate representations).
+		while resultSet.next() {
 
-		let databaseArticles = makeDatabaseArticles(with: resultSet)
-		if databaseArticles.isEmpty {
-			return Set<Article>()
-		}
-		
-		let articleIDs = databaseArticles.articleIDs()
-
-		// 2. Fetch related objects.
-
-		let authorsMap = authorsLookupTable.fetchRelatedObjects(for: articleIDs, in: database)
-
-		// 3. Create articles with related objects.
-
-		let articles = databaseArticles.map { (databaseArticle) -> Article in
-			return articleWithDatabaseArticle(databaseArticle, authorsMap)
-		}
-
-		return Set(articles)
-	}
-
-	func articleWithDatabaseArticle(_ databaseArticle: DatabaseArticle, _ authorsMap: RelatedObjectsMap?) -> Article {
-
-		let articleID = databaseArticle.articleID
-		let authors = authorsMap?.authors(for: articleID)
-
-		return Article(databaseArticle: databaseArticle, accountID: accountID, authors: authors)
-	}
-
-	func makeDatabaseArticles(with resultSet: FMResultSet) -> Set<DatabaseArticle> {
-		let articles = resultSet.mapToSet { (row) -> DatabaseArticle? in
-
-			guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+			guard let articleID = resultSet.string(forColumn: DatabaseKey.articleID) else {
 				assertionFailure("Expected articleID.")
-				return nil
+				continue
 			}
 
-			// Articles are removed from the cache when they’re updated.
-			// See saveUpdatedArticles.
-			if let databaseArticle = databaseArticlesCache[articleID] {
-				return databaseArticle
+			if let article = articlesCache[articleID] {
+				cachedArticles.insert(article)
+				continue
 			}
 
 			// The resultSet is a result of a JOIN query with the statuses table,
 			// so we can get the statuses at the same time and avoid additional database lookups.
 			guard let status = statusesTable.statusWithRow(resultSet, articleID: articleID) else {
 				assertionFailure("Expected status.")
-				return nil
-			}
-			guard let webFeedID = row.string(forColumn: DatabaseKey.feedID) else {
-				assertionFailure("Expected feedID.")
-				return nil
-			}
-			guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
-				assertionFailure("Expected uniqueID.")
-				return nil
+				continue
 			}
 
-			let title = row.string(forColumn: DatabaseKey.title)
-			let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
-			let contentText = row.string(forColumn: DatabaseKey.contentText)
-			let url = row.string(forColumn: DatabaseKey.url)
-			let externalURL = row.string(forColumn: DatabaseKey.externalURL)
-			let summary = row.string(forColumn: DatabaseKey.summary)
-			let imageURL = row.string(forColumn: DatabaseKey.imageURL)
-			let bannerImageURL = row.string(forColumn: DatabaseKey.bannerImageURL)
-			let datePublished = row.date(forColumn: DatabaseKey.datePublished)
-			let dateModified = row.date(forColumn: DatabaseKey.dateModified)
+			guard let article = Article(accountID: accountID, row: resultSet, status: status) else {
+				continue
+			}
+			fetchedArticles.insert(article)
+		}
+		resultSet.close()
 
-			let databaseArticle = DatabaseArticle(articleID: articleID, webFeedID: webFeedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, status: status)
-			databaseArticlesCache[articleID] = databaseArticle
-			return databaseArticle
+		if fetchedArticles.isEmpty {
+			return cachedArticles
 		}
 
-		return articles
+		// Fetch authors for non-cached articles. (Articles from the cache already have authors.)
+		let fetchedArticleIDs = fetchedArticles.articleIDs()
+		let authorsMap = authorsLookupTable.fetchRelatedObjects(for: fetchedArticleIDs, in: database)
+		let articlesWithFetchedAuthors = fetchedArticles.map { (article) -> Article in
+			if let authors = authorsMap?.authors(for: article.articleID) {
+				return article.byAdding(authors)
+			}
+			return article
+		}
+
+		// Add fetchedArticles to cache, now that they have attached authors.
+		for article in articlesWithFetchedAuthors {
+			articlesCache[article.articleID] = article
+		}
+
+		return cachedArticles.union(articlesWithFetchedAuthors)
 	}
 
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject], withLimits: Bool) -> Set<Article> {
@@ -615,8 +556,8 @@ private extension ArticlesTable {
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 
 		if withLimits {
-			let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or (datePublished > ? or (datePublished is null and dateArrived > ?)));"
-			return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject] + [articleCutoffDate as AnyObject], database)
+			let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);"
+			return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
 		}
 		else {
 			let sql = "select * from articles natural join statuses where \(whereClause);"
@@ -624,15 +565,15 @@ private extension ArticlesTable {
 		}
 	}
 
-	func fetchUnreadCount(_ webFeedID: String, _ database: FMDatabase) -> Int {
-		// Count only the articles that would appear in the UI.
-		// * Must be unread.
-		// * Must not be deleted.
-		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
-
-		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or (datePublished > ? or (datePublished is null and dateArrived > ?)));"
-		return numberWithSQLAndParameters(sql, [webFeedID, articleCutoffDate, articleCutoffDate], in: database)
-	}
+//	func fetchUnreadCount(_ webFeedID: String, _ database: FMDatabase) -> Int {
+//		// Count only the articles that would appear in the UI.
+//		// * Must be unread.
+//		// * Must not be deleted.
+//		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
+//
+//		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
+//		return numberWithSQLAndParameters(sql, [webFeedID, articleCutoffDate], in: database)
+//	}
 	
 	func fetchArticlesMatching(_ searchString: String, _ database: FMDatabase) -> Set<Article> {
 		let sql = "select rowid from search where search match ?;"
@@ -872,7 +813,6 @@ private extension ArticlesTable {
 	
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-		removeArticlesFromDatabaseArticlesCache(updatedArticles)
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
 		
 		for updatedArticle in updatedArticles {
@@ -897,10 +837,12 @@ private extension ArticlesTable {
 		updateRowsWithDictionary(changesDictionary, whereKey: DatabaseKey.articleID, matches: updatedArticle.articleID, database: database)
 	}
 
-	func removeArticlesFromDatabaseArticlesCache(_ updatedArticles: Set<Article>) {
-		let articleIDs = updatedArticles.articleIDs()
-		for articleID in articleIDs {
-			databaseArticlesCache[articleID] = nil
+	func addArticlesToCache(_ articles: Set<Article>?) {
+		guard let articles = articles else {
+			return
+		}
+		for article in articles {
+			articlesCache[article.articleID] = article
 		}
 	}
 
@@ -911,9 +853,6 @@ private extension ArticlesTable {
 		}
 		if article.status.starred {
 			return false
-		}
-		if let datePublished = article.datePublished {
-			return datePublished < articleCutoffDate
 		}
 		return article.status.dateArrived < articleCutoffDate
 	}

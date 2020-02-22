@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import RSWeb
+import RSCore
 
 class FeedlyAddNewFeedOperationTests: XCTestCase {
 
@@ -42,17 +43,17 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		let getCollections = FeedlyGetCollectionsOperation(service: caller, log: support.log)
 		
 		let mirrorCollectionsAsFolders = FeedlyMirrorCollectionsAsFoldersOperation(account: account, collectionsProvider: getCollections, log: support.log)
-		mirrorCollectionsAsFolders.addDependency(getCollections)
-		
+		MainThreadOperationQueue.shared.make(mirrorCollectionsAsFolders, dependOn: getCollections)
+
 		let createFolders = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: mirrorCollectionsAsFolders, log: support.log)
-		createFolders.addDependency(mirrorCollectionsAsFolders)
+		MainThreadOperationQueue.shared.make(createFolders, dependOn: mirrorCollectionsAsFolders)
 		
 		let completionExpectation = expectation(description: "Did Finish")
-		createFolders.completionBlock = {
+		createFolders.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperations([getCollections, mirrorCollectionsAsFolders, createFolders], waitUntilFinished: false)
+		MainThreadOperationQueue.shared.addOperations([getCollections, mirrorCollectionsAsFolders, createFolders])
 		
 		waitForExpectations(timeout: 2)
 		
@@ -89,6 +90,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		}
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let container = support.makeTestDatabaseContainer()
 		let _ = expectationForCompletion(of: progress)
 		
 		let addNewFeed = try! FeedlyAddNewFeedOperation(account: account,
@@ -99,17 +101,18 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 														addToCollectionService: caller,
 														syncUnreadIdsService: caller,
 														getStreamContentsService: caller,
+														database: container.database,
 														container: folder,
 														progress: progress,
 														log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		addNewFeed.completionBlock = {
+		addNewFeed.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(addNewFeed)
+		MainThreadOperationQueue.shared.addOperation(addNewFeed)
 		
 		XCTAssert(progress.numberRemaining > 0)
 		
@@ -120,12 +123,13 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		XCTAssert(progress.isComplete)
 	}
 	
-	func testAddNewFeedSuccess() {
+	func testAddNewFeedSuccess() throws {
 		guard let folder = getFolderByLoadingInitialContent() else {
 			return
 		}
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let container = support.makeTestDatabaseContainer()
 		let _ = expectationForCompletion(of: progress)
 		
 		let subdirectory = "feedly-add-new-feed"
@@ -145,17 +149,18 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 														addToCollectionService: caller,
 														syncUnreadIdsService: caller,
 														getStreamContentsService: caller,
+														database: container.database,
 														container: folder,
 														progress: progress,
 														log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		addNewFeed.completionBlock = {
+		addNewFeed.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(addNewFeed)
+		MainThreadOperationQueue.shared.addOperation(addNewFeed)
 		
 		XCTAssert(progress.numberRemaining > 0)
 				
@@ -163,7 +168,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		
 		XCTAssert(progress.isComplete)
 		
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "feedStream", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "feedStream", subdirectory: subdirectory)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
 	}
 	
@@ -191,6 +196,7 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 		}
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
+		let container = support.makeTestDatabaseContainer()
 		let _ = expectationForCompletion(of: progress)
 		
 		let subdirectory = "feedly-add-new-feed"
@@ -220,17 +226,18 @@ class FeedlyAddNewFeedOperationTests: XCTestCase {
 														addToCollectionService: service,
 														syncUnreadIdsService: caller,
 														getStreamContentsService: caller,
+														database: container.database,
 														container: folder,
 														progress: progress,
 														log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		addNewFeed.completionBlock = {
+		addNewFeed.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(addNewFeed)
+		MainThreadOperationQueue.shared.addOperation(addNewFeed)
 		
 		XCTAssert(progress.numberRemaining > 0)
 				

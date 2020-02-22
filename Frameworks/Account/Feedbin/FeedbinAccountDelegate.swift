@@ -837,14 +837,7 @@ private extension FeedbinAccountDelegate {
 		os_log(.debug, log: log, "Syncing taggings with %ld taggings.", taggings.count)
 		
 		// Set up some structures to make syncing easier
-		let folderDict: [String: Folder] = {
-			if let folders = account.folders {
-				return Dictionary(uniqueKeysWithValues: folders.map { ($0.name ?? "", $0) } )
-			} else {
-				return [String: Folder]()
-			}
-		}()
-
+		let folderDict = nameToFolderDictionary(with: account.folders)
 		let taggingsDict = taggings.reduce([String: [FeedbinTagging]]()) { (dict, tagging) in
 			var taggedFeeds = dict
 			if var taggedFeed = taggedFeeds[tagging.name] {
@@ -897,7 +890,22 @@ private extension FeedbinAccountDelegate {
 			}
 		}
 	}
-	
+
+	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
+		guard let folders = folders else {
+			return [String: Folder]()
+		}
+
+		var d = [String: Folder]()
+		for folder in folders {
+			let name = folder.name ?? ""
+			if d[name] == nil {
+				d[name] = folder
+			}
+		}
+		return d
+	}
+
 	func sendArticleStatuses(_ statuses: [SyncStatus],
 							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
 							 completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -1225,7 +1233,7 @@ private extension FeedbinAccountDelegate {
 		
 		let parsedItems: [ParsedItem] = entries.map { entry in
 			let authors = Set([ParsedAuthor(name: entry.authorName, url: entry.jsonFeed?.jsonFeedAuthor?.url, avatarURL: entry.jsonFeed?.jsonFeedAuthor?.avatarURL, emailAddress: nil)])
-			return ParsedItem(syncServiceID: String(entry.articleID), uniqueID: String(entry.articleID), feedURL: String(entry.feedID), url: nil, externalURL: entry.url, title: entry.title, contentHTML: entry.contentHTML, contentText: nil, summary: entry.summary, imageURL: nil, bannerImageURL: nil, datePublished: entry.parsedDatePublished, dateModified: nil, authors: authors, tags: nil, attachments: nil)
+			return ParsedItem(syncServiceID: String(entry.articleID), uniqueID: String(entry.articleID), feedURL: String(entry.feedID), url: entry.url, externalURL: nil, title: entry.title, contentHTML: entry.contentHTML, contentText: nil, summary: entry.summary, imageURL: nil, bannerImageURL: nil, datePublished: entry.parsedDatePublished, dateModified: nil, authors: authors, tags: nil, attachments: nil)
 		}
 		
 		return Set(parsedItems)
@@ -1237,20 +1245,38 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
-		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-		account.fetchUnreadArticleIDs { articleIDsResult in
-			guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-				return
+		database.selectPendingReadStatusArticleIDs() { result in
+
+			func process(_ pendingArticleIDs: Set<String>) {
+				
+				let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+				let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
+				
+				account.fetchUnreadArticleIDs { articleIDsResult in
+					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
+						return
+					}
+
+					// Mark articles as unread
+					let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+					account.markAsUnread(deltaUnreadArticleIDs)
+
+					// Mark articles as read
+					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
+					account.markAsRead(deltaReadArticleIDs)
+				}
+
 			}
-
-			// Mark articles as unread
-			let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-			account.markAsUnread(deltaUnreadArticleIDs)
-
-			// Mark articles as read
-			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
-			account.markAsRead(deltaReadArticleIDs)
+			
+			switch result {
+			case .success(let pendingArticleIDs):
+				process(pendingArticleIDs)
+			case .failure(let error):
+				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
+			}
+			
 		}
+		
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
@@ -1258,20 +1284,38 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
-		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-		account.fetchStarredArticleIDs { articleIDsResult in
-			guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-				return
+		database.selectPendingStarredStatusArticleIDs() { result in
+
+			func process(_ pendingArticleIDs: Set<String>) {
+				
+				let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
+				let updatableFeedbinUnreadArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
+
+				account.fetchStarredArticleIDs { articleIDsResult in
+					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
+						return
+					}
+
+					// Mark articles as starred
+					let deltaStarredArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+					account.markAsStarred(deltaStarredArticleIDs)
+
+					// Mark articles as unstarred
+					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
+					account.markAsUnstarred(deltaUnstarredArticleIDs)
+				}
+								
+			}
+			
+			switch result {
+			case .success(let pendingArticleIDs):
+				process(pendingArticleIDs)
+			case .failure(let error):
+				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
 			}
 
-			// Mark articles as starred
-			let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-			account.markAsStarred(deltaStarredArticleIDs)
-
-			// Mark articles as unstarred
-			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
-			account.markAsUnstarred(deltaUnstarredArticleIDs)
 		}
+		
 	}
 
 	func deleteTagging(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {

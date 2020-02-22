@@ -8,6 +8,7 @@
 
 import UIKit
 import Account
+import SafariServices
 
 class WebFeedInspectorViewController: UITableViewController {
 	
@@ -25,10 +26,16 @@ class WebFeedInspectorViewController: UITableViewController {
 		if let feedIcon = appDelegate.webFeedIconDownloader.icon(for: webFeed) {
 			return feedIcon
 		}
-		if let favicon = appDelegate.faviconDownloader.favicon(for: webFeed) {
+		if let favicon = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
 			return favicon
 		}
 		return FaviconGenerator.favicon(webFeed)
+	}
+	
+	private let homePageIndexPath = IndexPath(row: 0, section: 1)
+	
+	private var shouldHideHomePageSection: Bool {
+		return webFeed.homePageURL == nil
 	}
 	
 	override func viewDidLoad() {
@@ -71,23 +78,71 @@ class WebFeedInspectorViewController: UITableViewController {
 		dismiss(animated: true)
 	}
 	
+	/// Returns a new indexPath, taking into consideration any
+	/// conditions that may require the tableView to be
+	/// displayed differently than what is setup in the storyboard.
+	private func shift(_ indexPath: IndexPath) -> IndexPath {
+		return IndexPath(row: indexPath.row, section: shift(indexPath.section))
+	}
+	
+	/// Returns a new section, taking into consideration any
+	/// conditions that may require the tableView to be
+	/// displayed differently than what is setup in the storyboard.
+	private func shift(_ section: Int) -> Int {
+		if section >= homePageIndexPath.section && shouldHideHomePageSection {
+			return section + 1
+		}
+		return section
+	}
+
+	
 }
 
 // MARK: Table View
 
 extension WebFeedInspectorViewController {
+
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		let numberOfSections = super.numberOfSections(in: tableView)
+		return shouldHideHomePageSection ? numberOfSections - 1 : numberOfSections
+	}
+	
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return super.tableView(tableView, numberOfRowsInSection: shift(section))
+	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
+		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: shift(section))
+	}
+	
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		super.tableView(tableView, cellForRowAt: shift(indexPath))
+	}
+	
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		super.tableView(tableView, titleForHeaderInSection: shift(section))
 	}
 	
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-		if section == 0 {
+		if shift(section) == 0 {
 			headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as? InspectorIconHeaderView
 			headerView?.iconView.iconImage = iconImage
 			return headerView
 		} else {
-			return super.tableView(tableView, viewForHeaderInSection: section)
+			return super.tableView(tableView, viewForHeaderInSection: shift(section))
+		}
+	}
+	
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		if shift(indexPath) == homePageIndexPath,
+			let homePageUrlString = webFeed.homePageURL,
+			let homePageUrl = URL(string: homePageUrlString) {
+			
+			let safari = SFSafariViewController(url: homePageUrl)
+			safari.modalPresentationStyle = .pageSheet
+			present(safari, animated: true) {
+				tableView.deselectRow(at: indexPath, animated: true)
+			}
 		}
 	}
 	

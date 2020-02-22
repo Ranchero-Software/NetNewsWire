@@ -25,7 +25,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
 	// See https://developer.feedly.com/v3/opml/
-	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder]
+	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(31)]
 	
 	let isOPMLImportSupported = false
 	
@@ -57,16 +57,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
 	private let database: SyncDatabase
 	
-	private weak var currentSyncAllOperation: FeedlySyncAllOperation?
-	private let operationQueue: OperationQueue
+	private weak var currentSyncAllOperation: MainThreadOperation?
+	private let operationQueue = MainThreadOperationQueue()
 	
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
-		self.operationQueue = OperationQueue()
 		// Many operations have their own operation queues, such as the sync all operation.
 		// Making this a serial queue at this higher level of abstraction means we can ensure,
 		// for example, a `FeedlyRefreshAccessTokenOperation` occurs before a `FeedlySyncAllOperation`,
 		// improving our ability to debug, reason about and predict the behaviour of the code.
-		self.operationQueue.maxConcurrentOperationCount = 1
 		
 		if let transport = transport {
 			self.caller = FeedlyAPICaller(transport: transport, api: api)
@@ -129,27 +127,24 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		currentSyncAllOperation = operation
 		
-		operationQueue.addOperation(operation)
+		operationQueue.add(operation)
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		// Ensure remote articles have the same status as they do locally.
 		let send = FeedlySendArticleStatusesOperation(database: database, service: caller, log: log)
-		send.completionBlock = {
+		send.completionBlock = { operation in
+			// TODO: not call with success if operation was canceled? Not sure.
 			DispatchQueue.main.async {
 				completion(.success(()))
 			}
 		}
-		operationQueue.addOperation(send)
+		operationQueue.add(send)
 	}
 	
 	/// Attempts to ensure local articles have the same status as they do remotely.
 	/// So if the user is using another client roughly simultaneously with this app,
 	/// this app does its part to ensure the articles have a consistent status between both.
-	///
-	/// Feedly has no API that allows the app to fetch the identifiers of unread articles only.
-	/// The only way to identify unread articles is to pull all of the article data,
-	/// which is effectively equivalent of a full refresh.
 	///
 	/// - Parameter account: The account whose articles have a remote status.
 	/// - Parameter completion: Call on the main queue.
@@ -160,18 +155,18 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let syncUnread = FeedlySyncUnreadStatusesOperation(account: account, credentials: credentials, service: caller, newerThan: nil, log: log)
+		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: caller, database: database, newerThan: nil, log: log)
 		
 		group.enter()
-		syncUnread.completionBlock = {
+		ingestUnread.completionBlock = { _ in
 			group.leave()
 			
 		}
 		
-		let syncStarred = FeedlySyncStarredArticlesOperation(account: account, credentials: credentials, service: caller, log: log)
+		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: caller, database: database, newerThan: nil, log: log)
 		
 		group.enter()
-		syncStarred.completionBlock = {
+		ingestStarred.completionBlock = { _ in
 			group.leave()
 		}
 		
@@ -179,7 +174,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			completion(.success(()))
 		}
 		
-		operationQueue.addOperations([syncUnread, syncStarred], waitUntilFinished: false)
+		operationQueue.addOperations([ingestUnread, ingestStarred])
 	}
 	
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -301,6 +296,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 														   addToCollectionService: caller,
 														   syncUnreadIdsService: caller,
 														   getStreamContentsService: caller,
+														   database: database,
 														   container: container,
 														   progress: refreshProgress,
 														   log: log)
@@ -309,7 +305,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				completion(result)
 			}
 			
-			operationQueue.addOperation(addNewFeed)
+			operationQueue.add(addNewFeed)
 			
 		} catch {
 			DispatchQueue.main.async {
@@ -366,7 +362,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				completion(result)
 			}
 			
-			operationQueue.addOperation(addExistingFeed)
+			operationQueue.add(addExistingFeed)
 			
 		} catch {
 			DispatchQueue.main.async {
@@ -498,13 +494,13 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		
 		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
-		operationQueue.addOperation(refreshAccessToken)
+		operationQueue.add(refreshAccessToken)
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
 		let logout = FeedlyLogoutOperation(account: account, service: caller, log: log)
-		// Dispatch on the main queue because the lifetime of the account delegate is uncertain.
-		OperationQueue.main.addOperation(logout)
+		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
+		MainThreadOperationQueue.shared.add(logout)
 	}
 	
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {

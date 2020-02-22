@@ -13,6 +13,9 @@ import RSDatabase
 public typealias SyncStatusesResult = Result<Array<SyncStatus>, DatabaseError>
 public typealias SyncStatusesCompletionBlock = (SyncStatusesResult) -> Void
 
+public typealias SyncStatusArticleIDsResult = Result<Set<String>, DatabaseError>
+public typealias SyncStatusArticleIDsCompletionBlock = (SyncStatusArticleIDsResult) -> Void
+
 public struct SyncDatabase {
 
 	private let syncStatusTable: SyncStatusTable
@@ -41,6 +44,14 @@ public struct SyncDatabase {
 		syncStatusTable.selectPendingCount(completion)
 	}
 
+    public func selectPendingReadStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
+        syncStatusTable.selectPendingReadStatusArticleIDs(completion: completion)
+    }
+    
+    public func selectPendingStarredStatusArticleIDs(completion: @escaping SyncStatusArticleIDsCompletionBlock) {
+        syncStatusTable.selectPendingStarredStatusArticleIDs(completion: completion)
+    }
+    
 	public func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.resetSelectedForProcessing(articleIDs, completion: completion)
 	}

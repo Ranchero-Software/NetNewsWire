@@ -124,7 +124,7 @@ private extension FeedFinder {
 	}
 
 	static func isHTML(_ data: Data) -> Bool {
-		return (data as NSData).rs_dataIsProbablyHTML()
+		return data.isProbablyHTML
 	}
 
 	static func downloadFeedSpecifiers(_ downloadFeedSpecifiers: Set<FeedSpecifier>, feedSpecifiers: [String: FeedSpecifier], completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {

@@ -60,10 +60,10 @@
 	<string>Grant permission to save images from the article.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>Restoration</string>
 		<string>AddWebFeedIntent</string>
 		<string>NextUnread</string>
 		<string>ReadArticle</string>
+		<string>Restoration</string>
 		<string>SelectFeed</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
@@ -121,6 +121,28 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.xml</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>OPML</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>org.opml.opml</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>opml</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
 			<key>UTTypeConformsTo</key>

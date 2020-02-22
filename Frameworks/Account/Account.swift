@@ -31,10 +31,9 @@ public extension Notification.Name {
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
-	static let WebFeedMetadataDidChange = Notification.Name(rawValue: "WebFeedMetadataDidChange")
 }
 
-public enum AccountType: Int {
+public enum AccountType: Int, Codable {
 	// Raw values should not change since they’re stored on disk.
 	case onMyMac = 1
 	case feedly = 16
@@ -199,8 +198,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	typealias WebFeedMetadataDictionary = [String: WebFeedMetadata]
 	var webFeedMetadata = WebFeedMetadataDictionary()
 
-	var startingUp = true
-
     public var unreadCount = 0 {
         didSet {
             if unreadCount != oldValue {
@@ -230,7 +227,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	var refreshProgress: DownloadProgress {
 		return delegate.refreshProgress
 	}
-	
+
 	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
@@ -287,7 +284,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 
 		self.delegate.accountDidInitialize(self)
-		startingUp = false
 	}
 	
 	// MARK: - API
@@ -414,11 +410,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func suspendDatabase() {
-		database.suspend()
+		database.cancelAndSuspend()
 		save()
-		metadataFile.suspend()
-		webFeedMetadataFile.suspend()
-		opmlFile.suspend()
 	}
 
 	/// Re-open the SQLite database and allow database calls.
@@ -430,12 +423,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	/// Reload OPML, etc.
 	public func resume() {
-		metadataFile.resume()
-		webFeedMetadataFile.resume()
-		opmlFile.resume()
-		metadataFile.load()
-		webFeedMetadataFile.load()
-		opmlFile.load()
+		fetchAllUnreadCounts()
 	}
 
 	public func save() {
@@ -447,7 +435,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func prepareForDeletion() {
 		delegate.accountWillBeDeleted(self)
 	}
-	
+
 	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
 		var feedsToAdd = Set<WebFeed>()
 
@@ -485,14 +473,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			}
 		}
 		
-	}
-	
-	public func resetWebFeedMetadataAndUnreadCounts() {
-		for feed in flattenedWebFeeds() {
-			feed.metadata = webFeedMetadata(feedURL: feed.url, webFeedID: feed.webFeedID)
-		}
-		fetchAllUnreadCounts()
-		NotificationCenter.default.post(name: .WebFeedMetadataDidChange, object: self, userInfo: nil)
 	}
 	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
@@ -605,22 +585,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func updateUnreadCounts(for webFeeds: Set<WebFeed>, completion: VoidCompletionBlock? = nil) {
-		if webFeeds.isEmpty {
-			completion?()
-			return
-		}
-		
-		database.fetchUnreadCounts(for: webFeeds.webFeedIDs()) { unreadCountDictionaryResult in
-			if let unreadCountDictionary = try? unreadCountDictionaryResult.get() {
-				for webFeed in webFeeds {
-					if let unreadCount = unreadCountDictionary[webFeed.webFeedID] {
-						webFeed.unreadCount = unreadCount
-					}
-				}
-			}
-
-			completion?()
-		}
+		fetchUnreadCounts(for: webFeeds, completion: completion)
 	}
 
 	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
@@ -689,7 +654,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.fetchStarredArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), completion: completion)
 	}
 
-	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (unread and newer than the article cutoff date).
+	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (newer than the article cutoff date).
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
@@ -705,9 +670,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func structureDidChange() {
 		// Feeds were added or deleted. Or folders added or deleted.
 		// Or feeds inside folders were added or deleted.
-		if !startingUp {
-			opmlFile.markAsDirty()
-		}
+		opmlFile.markAsDirty()
 		flattenedWebFeedsNeedUpdate = true
 		webFeedDictionaryNeedsUpdate = true
 	}
@@ -789,6 +752,24 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		noteStatusesForArticlesDidChange(updatedArticles)
 		return updatedArticles
+	}
+
+	/// Make sure statuses exist. Any existing statuses won’t be touched.
+	/// All created statuses will be marked as read and not starred.
+	/// Sends a .StatusesDidChange notification.
+	func createStatusesIfNeeded(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+		guard !articleIDs.isEmpty else {
+			completion?(nil)
+			return
+		}
+		database.createStatusesIfNeeded(articleIDs: articleIDs) { error in
+			if let error = error {
+				completion?(error)
+				return
+			}
+			self.noteStatusesForArticleIDsDidChange(articleIDs)
+			completion?(nil)
+		}
 	}
 
 	/// Mark articleIDs statuses based on statusKey and flag.
@@ -1206,26 +1187,69 @@ private extension Account {
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.articleIDs: articleIDs])
 	}
 
-	func fetchAllUnreadCounts() {
+	/// Fetch unread counts for zero or more feeds.
+	///
+	/// Uses the most efficient method based on how many feeds were passed in.
+	func fetchUnreadCounts(for feeds: Set<WebFeed>, completion: VoidCompletionBlock?) {
+		if feeds.isEmpty {
+			completion?()
+			return
+		}
+		if feeds.count == 1, let feed = feeds.first {
+			fetchUnreadCount(feed, completion)
+		}
+		else if feeds.count < 10 {
+			fetchUnreadCounts(feeds, completion)
+		}
+		else {
+			fetchAllUnreadCounts(completion)
+		}
+	}
+
+	func fetchUnreadCount(_ feed: WebFeed, _ completion: VoidCompletionBlock?) {
+		database.fetchUnreadCount(feed.webFeedID) { result in
+			if let unreadCount = try? result.get() {
+				feed.unreadCount = unreadCount
+			}
+			completion?()
+		}
+	}
+
+	func fetchUnreadCounts(_ feeds: Set<WebFeed>, _ completion: VoidCompletionBlock?) {
+		let webFeedIDs = Set(feeds.map { $0.webFeedID })
+		database.fetchUnreadCounts(for: webFeedIDs) { result in
+			if let unreadCountDictionary = try? result.get() {
+				self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
+			}
+			completion?()
+		}
+	}
+
+	func fetchAllUnreadCounts(_ completion: VoidCompletionBlock? = nil) {
 		fetchingAllUnreadCounts = true
+		database.fetchAllUnreadCounts { result in
+			guard let unreadCountDictionary = try? result.get() else {
+				completion?()
+				return
+			}
+			self.processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: self.flattenedWebFeeds())
 
-		database.fetchAllNonZeroUnreadCounts { (unreadCountDictionaryResult) in
-			if let unreadCountDictionary = try? unreadCountDictionaryResult.get() {
-				self.flattenedWebFeeds().forEach{ (feed) in
-					// When the unread count is zero, it won’t appear in unreadCountDictionary.
-					if let unreadCount = unreadCountDictionary[feed.webFeedID] {
-						feed.unreadCount = unreadCount
-					}
-					else {
-						feed.unreadCount = 0
-					}
-				}
+			self.fetchingAllUnreadCounts = false
+			self.updateUnreadCount()
 
-				self.fetchingAllUnreadCounts = false
-				self.updateUnreadCount()
+			if !self.isUnreadCountsInitialized {
 				self.isUnreadCountsInitialized = true
 				self.postUnreadCountDidInitializeNotification()
 			}
+			completion?()
+		}
+	}
+
+	func processUnreadCounts(unreadCountDictionary: UnreadCountDictionary, feeds: Set<WebFeed>) {
+		for feed in feeds {
+			// When the unread count is zero, it won’t appear in unreadCountDictionary.
+			let unreadCount = unreadCountDictionary[feed.webFeedID] ?? 0
+			feed.unreadCount = unreadCount
 		}
 	}
 }
@@ -1243,13 +1267,13 @@ extension Account {
 
 extension Account: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		var s = ""
-		for feed in topLevelWebFeeds.sorted(by: { $0.nameForDisplay < $1.nameForDisplay }) {
-			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
+		for feed in topLevelWebFeeds.sorted() {
+			s += feed.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 		}
-		for folder in folders!.sorted(by: { $0.nameForDisplay < $1.nameForDisplay }) {
-			s += folder.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
+		for folder in folders!.sorted() {
+			s += folder.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 		}
 		return s
 	}

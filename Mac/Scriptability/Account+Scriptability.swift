@@ -150,7 +150,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     @objc(opmlRepresentation)
     var opmlRepresentation:String  {
-        return self.account.OPMLString(indentLevel:0, strictConformance: true)
+        return self.account.OPMLString(indentLevel:0)
     }
 
     @objc(accountType)
@@ -170,6 +170,6 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 		case .freshRSS:
 				osType = "Frsh"
         }
-        return osType.fourCharCode()
+        return osType.fourCharCode
     }
 }

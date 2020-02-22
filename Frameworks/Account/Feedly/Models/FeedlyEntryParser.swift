@@ -11,16 +11,20 @@ import Articles
 import RSParser
 
 struct FeedlyEntryParser {
-	var entry: FeedlyEntry
+	let entry: FeedlyEntry
+	
+	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
 	
 	var id: String {
 		return entry.id
 	}
 	
-	var feedUrl: String {
+	/// When ingesting articles, the feedURL must match a feed's `webFeedID` for the article to be reachable between it and its matching feed. It reminds me of a foreign key.
+	var feedUrl: String? {
 		guard let id = entry.origin?.streamId else {
-			assertionFailure()
-			return ""
+			// At this point, check Feedly's API isn't glitching or the response has not changed structure.
+			assertionFailure("Entries need to be traceable to a feed or this entry will be dropped.")
+			return nil
 		}
 		return id
 	}
@@ -36,7 +40,7 @@ struct FeedlyEntryParser {
 	}
 	
 	var title: String? {
-		return entry.title
+		return rightToLeftTextSantizer.sanitize(entry.title)
 	}
 	
 	var contentHMTL: String? {
@@ -49,7 +53,7 @@ struct FeedlyEntryParser {
 	}
 	
 	var summary: String? {
-		return entry.summary?.content
+		return rightToLeftTextSantizer.sanitize(entry.summary?.content)
 	}
 	
 	var datePublished: Date {
@@ -67,6 +71,7 @@ struct FeedlyEntryParser {
 		return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
 	}
 	
+	/// While there is not yet a tagging interface, articles can still be searched for by tags.
 	var tags: Set<String>? {
 		guard let labels = entry.tags?.compactMap({ $0.label }), !labels.isEmpty else {
 			return nil
@@ -82,7 +87,11 @@ struct FeedlyEntryParser {
 		return attachments.isEmpty ? nil : Set(attachments)
 	}
 	
-	var parsedItemRepresentation: ParsedItem {
+	var parsedItemRepresentation: ParsedItem? {
+		guard let feedUrl = feedUrl else {
+			return nil
+		}
+		
 		return ParsedItem(syncServiceID: id,
 						  uniqueID: id, // This value seems to get ignored or replaced.
 						  feedURL: feedUrl,

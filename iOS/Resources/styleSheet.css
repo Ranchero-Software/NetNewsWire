@@ -1,13 +1,17 @@
+:root {
+	font: -apple-system-body;
+}
+
 body {
 	margin-top: 3px;
 	margin-bottom: 20px;
 	margin-left: 20px;
 	margin-right: 20px;
-	font: -apple-system-body;
 
 	word-wrap: break-word;
 	word-break: break-word;
 	-webkit-hyphens: auto;
+	-webkit-text-size-adjust: none;
 }
 
 a {
@@ -35,23 +39,27 @@ a:hover {
 	color-scheme: light dark;
 	--primary-accent-color: #086AEE;
 	--secondary-accent-color: #086AEE;
+	--block-quote-border-color: rgba(8, 106, 238, 0.75);
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
 	--header-color: rgba(0, 0, 0, 0.3);
 	--body-code-color: #666;
 	--system-message-color: #cbcbcb;
 	--feedlink-color: rgba(0, 0, 0, 0.6);
 	--article-title-color: #333;
+	--table-cell-border-color: lightgray;
 }
 
 @media(prefers-color-scheme: dark) {
 	:root {
 		--primary-accent-color: #2D80F1;
 		--secondary-accent-color: #5E9EF4;
-		--header-table-border-color: rgba(255, 255, 255, 0.1);
+		--block-quote-border-color: rgba(94, 158, 244, 0.75);
+		--header-table-border-color: rgba(255, 255, 255, 0.2);
 		--header-color: #d2d2d2;
 		--body-code-color: #b2b2b2;
 		--system-message-color: #5f5f5f;
 		--article-title-color: #e0e0e0;
+		--table-cell-border-color: dimgray;
 	}
 }
 
@@ -90,6 +98,7 @@ body > .systemMessage {
 }
 .avatar img {
 	border-radius: 4px;
+	max-width: none;
 }
 .feedIcon {
 	border-radius: 4px;
@@ -111,6 +120,10 @@ body > .systemMessage {
 	font-weight: bold;
 }
 
+.articleDateline a:link, .articleDateline a:visited {
+	color: var(--article-title-color);
+}
+
 .articleBody {
 	line-height: 1.6em;
 }
@@ -123,20 +136,60 @@ pre {
 	margin: 0;
 	overflow: auto;
 	overflow-y: hidden;
-	line-height: 20px;
+	line-height: 1.4286em;
 	border: 1px solid var(--secondary-accent-color);
 	padding: 5px;
 	word-wrap: normal;
 	word-break: normal;
-	-webkit-hyphens: none;
 }
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
-	font-size: 14px;
+	font-size: .8235rem;
+	-webkit-hyphens: none;
 }
-img, figure, video, iframe, div {
+
+.nnw-overflow {
+	overflow-x: auto;
+}
+/*
+ Instead of the last-child bits, border-collapse: collapse
+ could have been used. However, then the inter-cell borders
+ overlap the table border, which looks bad.
+ */
+.nnw-overflow table {
+	margin-bottom: 1px;
+	border-spacing: 0;
+	border: 1px solid var(--secondary-accent-color);
+	font-size: inherit;
+}
+.nnw-overflow td, .nnw-overflow th {
+	-webkit-hyphens: none;
+	word-break: normal;
+	border: 1px solid var(--table-cell-border-color);
+	border-top: none;
+	border-left: none;
+	padding: 5px;
+}
+.nnw-overflow tr td:last-child, .nnw-overflow tr th:last-child {
+	border-right: none;
+}
+.nnw-overflow tr:last-child td, .nnw-overflow tr:last-child th {
+	border-bottom: none;
+}
+.nnw-overflow td pre {
+	border: none;
+	padding: 0;
+}
+
+img, figure, iframe, div {
 	max-width: 100%;
 	height: auto !important;
+	margin: 0 auto;
+}
+
+video {
+    width: 100% !important;
+    height: auto !important;
 	margin: 0 auto;
 }
 
@@ -185,6 +238,24 @@ sub {
 	width: 100% !important;
 }
 
+blockquote {
+	margin-inline-start: 0;
+	margin-inline-end: 0;
+	padding-left: 15px;
+	border-left: 3px solid var(--block-quote-border-color);
+}
+
+/* Feed Specific */
+
+.feedbin--article-wrap {
+	border-top: 1px solid var(--header-table-border-color);
+}
+
+.wp-smiley {
+   height: 1em;
+   max-height: 1em;
+}
+
 /*Block ads and junk*/
 
 iframe[src*="feedads"],
@@ -220,16 +291,11 @@ img[src*="share-buttons"] {
 	display: none !important;
 }
 
-/* Site specific styles */
-.wp-smiley {
-	height: 1em;
-	max-height: 1em;
-}
-
 /* Newsfoot specific styles. Structural styles come first, theme styles second */
 .newsfoot-footnote-container {
 	position: relative;
 	display: inline-block;
+	z-index: 9999;
 }
 .newsfoot-footnote-popover {
 	position: absolute;

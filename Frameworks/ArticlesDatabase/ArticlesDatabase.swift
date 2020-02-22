@@ -45,6 +45,7 @@ public final class ArticlesDatabase {
 
 	private let articlesTable: ArticlesTable
 	private let queue: DatabaseQueue
+	private let operationQueue = MainThreadOperationQueue()
 
 	public init(databaseFilePath: String, accountID: String) {
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
@@ -136,13 +137,36 @@ public final class ArticlesDatabase {
 	}
 
 	// MARK: - Unread Counts
-	
-	public func fetchUnreadCounts(for webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		articlesTable.fetchUnreadCounts(webFeedIDs, completion)
+
+	/// Fetch all non-zero unread counts.
+	public func fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+		let operation = FetchAllUnreadCountsOperation(databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+		operationQueue.cancelOperations(named: operation.name!)
+		operation.completionBlock = { operation in
+			let fetchOperation = operation as! FetchAllUnreadCountsOperation
+			completion(fetchOperation.result)
+		}
+		operationQueue.add(operation)
 	}
 
-	public func fetchAllNonZeroUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
-		articlesTable.fetchAllUnreadCounts(completion)
+	/// Fetch unread count for a single feed.
+	public func fetchUnreadCount(_ webFeedID: String, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+		let operation = FetchFeedUnreadCountOperation(webFeedID: webFeedID, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+		operation.completionBlock = { operation in
+			let fetchOperation = operation as! FetchFeedUnreadCountOperation
+			completion(fetchOperation.result)
+		}
+		operationQueue.add(operation)
+	}
+
+	/// Fetch non-zero unread counts for given webFeedIDs.
+	public func fetchUnreadCounts(for webFeedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+		let operation = FetchUnreadCountsForFeedsOperation(webFeedIDs: webFeedIDs, databaseQueue: queue, cutoffDate: articlesTable.articleCutoffDate)
+		operation.completionBlock = { operation in
+			let fetchOperation = operation as! FetchUnreadCountsForFeedsOperation
+			completion(fetchOperation.result)
+		}
+		operationQueue.add(operation)
 	}
 
 	public func fetchUnreadCountForToday(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
@@ -176,7 +200,7 @@ public final class ArticlesDatabase {
 		articlesTable.fetchStarredArticleIDsAsync(webFeedIDs, completion)
 	}
 
-	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (unread and newer than the article cutoff date).
+	/// Fetch articleIDs for articles that we should have, but don’t. These articles are not userDeleted, and they are either (starred) or (newer than the article cutoff date).
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
 		articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
@@ -189,17 +213,31 @@ public final class ArticlesDatabase {
 		articlesTable.mark(articleIDs, statusKey, flag, completion)
 	}
 
+	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
+	/// For newly-created statuses, mark them as read and not-starred.
+	public func createStatusesIfNeeded(articleIDs: Set<String>, completion: @escaping DatabaseCompletionBlock) {
+		articlesTable.createStatusesIfNeeded(articleIDs, completion)
+	}
+
 	// MARK: - Suspend and Resume (for iOS)
+
+	/// Cancel current operations and close the database.
+	public func cancelAndSuspend() {
+		cancelOperations()
+		suspend()
+	}
 
 	/// Close the database and stop running database calls.
 	/// Any pending calls will complete first.
 	public func suspend() {
+		operationQueue.suspend()
 		queue.suspend()
 	}
 
 	/// Open the database and allow for running database calls again.
 	public func resume() {
 		queue.resume()
+		operationQueue.resume()
 	}
 
 	// MARK: - Caches
@@ -216,6 +254,7 @@ public final class ArticlesDatabase {
 
 	/// Calls the various clean-up functions.
 	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
+		articlesTable.deleteOldArticles()
 		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
 	}
 }
@@ -244,5 +283,11 @@ private extension ArticlesDatabase {
 	func todayCutoffDate() -> Date {
 		// 24 hours previous. This is used by the Today smart feed, which should not actually empty out at midnight.
 		return Date(timeIntervalSinceNow: -(60 * 60 * 24)) // This does not need to be more precise.
+	}
+
+	// MARK: - Operations
+
+	func cancelOperations() {
+		operationQueue.cancelAllOperations()
 	}
 }

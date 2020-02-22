@@ -12,7 +12,7 @@ public protocol ContainerIdentifiable {
 	var containerID: ContainerIdentifier? { get }
 }
 
-public enum ContainerIdentifier: Hashable {
+public enum ContainerIdentifier: Hashable, Equatable {
 	case smartFeedController
 	case account(String) // accountID
 	case folder(String, String) // accountID, folderName
@@ -53,5 +53,49 @@ public enum ContainerIdentifier: Hashable {
 			return nil
 		}
 	}
+	
+}
+
+extension ContainerIdentifier: Encodable {
+    enum CodingKeys: CodingKey {
+        case type
+        case accountID
+        case folderName
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .smartFeedController:
+			try container.encode("smartFeedController", forKey: .type)
+		case .account(let accountID):
+			try container.encode("account", forKey: .type)
+			try container.encode(accountID, forKey: .accountID)
+		case .folder(let accountID, let folderName):
+			try container.encode("folder", forKey: .type)
+			try container.encode(accountID, forKey: .accountID)
+			try container.encode(folderName, forKey: .folderName)
+        }
+    }
+}
+
+extension ContainerIdentifier: Decodable {
+	
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+		let type =  try container.decode(String.self, forKey: .type)
+		
+		switch type {
+		case "smartFeedController":
+			self = .smartFeedController
+		case "account":
+			let accountID =  try container.decode(String.self, forKey: .accountID)
+			self = .account(accountID)
+		default:
+			let accountID =  try container.decode(String.self, forKey: .accountID)
+			let folderName =  try container.decode(String.self, forKey: .folderName)
+			self = .folder(accountID, folderName)
+		}
+    }
 	
 }

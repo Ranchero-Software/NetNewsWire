@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import RSWeb
+import RSCore
 
 class FeedlySyncAllOperationTests: XCTestCase {
 	
@@ -57,29 +58,35 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		getGlobalStreamContents.getStreamContentsExpectation = expectation(description: "Get Contents of global.all")
 		getGlobalStreamContents.getStreamContentsExpectation?.isInverted = true
 		
-		let getStarredContents = TestGetStreamContentsService()
-		getStarredContents.getStreamContentsExpectation = expectation(description: "Get Contents of global.saved")
-		getStarredContents.getStreamContentsExpectation?.isInverted = true
+		let getStarredIds = TestGetStreamIdsService()
+		getStarredIds.getStreamIdsExpectation = expectation(description: "Get Ids of global.saved")
+		getStarredIds.getStreamIdsExpectation?.isInverted = true
+		
+		let getEntriesService = TestGetEntriesService()
+		getEntriesService.getEntriesExpectation = expectation(description: "Get Entries")
+		getEntriesService.getEntriesExpectation?.isInverted = true
 		
 		let progress = DownloadProgress(numberOfTasks: 0)
 		let _ = expectationForCompletion(of: progress)
 		
 		let container = support.makeTestDatabaseContainer()
 		let syncAll = FeedlySyncAllOperation(account: account,
-											 credentials: support.accessToken,
-											 lastSuccessfulFetchStartDate: nil,
-											 markArticlesService: markArticlesService,
-											 getUnreadService: getStreamIdsService,
-											 getCollectionsService: getCollectionsService,
-											 getStreamContentsService: getGlobalStreamContents,
-											 getStarredArticlesService: getStarredContents,
-											 database: container.database,
-											 downloadProgress: progress,
-											 log: support.log)
+										  credentials: support.accessToken,
+										  lastSuccessfulFetchStartDate: nil,
+										  markArticlesService: markArticlesService,
+										  getUnreadService: getStreamIdsService,
+										  getCollectionsService: getCollectionsService,
+										  getStreamContentsService: getGlobalStreamContents,
+										  getStarredService: getStarredIds,
+										  getStreamIdsService: getStreamIdsService,
+										  getEntriesService: getEntriesService,
+										  database: container.database,
+										  downloadProgress: progress,
+										  log: support.log)
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		syncAll.completionBlock = {
+		syncAll.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
@@ -96,7 +103,7 @@ class FeedlySyncAllOperationTests: XCTestCase {
 			syncCompletionExpectation.fulfill()
 		}
 		
-		OperationQueue.main.addOperation(syncAll)
+		MainThreadOperationQueue.shared.addOperation(syncAll)
 		
 		XCTAssertTrue(progress.numberOfTasks > 1)
 		
@@ -114,18 +121,18 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		return caller
 	}()
 	
-	func testSyncing() {
+	func testSyncing() throws {
 		performInitialSync()
-		verifyInitialSync()
+		try verifyInitialSync()
 		
 		performChangeStatuses()
-		verifyChangeStatuses()
+		try verifyChangeStatuses()
 		
 		performChangeStatusesAgain()
-		verifyChangeStatusesAgain()
+		try verifyChangeStatusesAgain()
 		
 		performAddFeedsAndFolders()
-		verifyAddFeedsAndFolders()
+		try verifyAddFeedsAndFolders()
 	}
 	
 	// MARK: 1 - Initial Sync
@@ -149,11 +156,11 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		syncAll.completionBlock = {
+		syncAll.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 				
-		OperationQueue.main.addOperation(syncAll)
+		MainThreadOperationQueue.shared.addOperation(syncAll)
 		
 		XCTAssertTrue(progress.numberOfTasks > 1)
 		
@@ -166,15 +173,15 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		loadMockData(inSubdirectoryNamed: "feedly-1-initial")
 	}
 	
-	func verifyInitialSync() {
+	func verifyInitialSync() throws {
 		let subdirectory = "feedly-1-initial"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all@MTZkOTdkZWQ1NzM6NTE2OjUzYjgyNmEy", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all@MTZkOTdkZWQ1NzM6NTE2OjUzYjgyNmEy", subdirectory: subdirectory)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTRhOTNhZTQ6MzExOjUzYjgyNmEy", subdirectory: subdirectory, testCase: self)
 		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
 	// MARK: 2 - Change Statuses
@@ -183,14 +190,14 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		loadMockData(inSubdirectoryNamed: "feedly-2-changestatuses")
 	}
 	
-	func verifyChangeStatuses() {
+	func verifyChangeStatuses() throws {
 		let subdirectory = "feedly-2-changestatuses"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTJkNjIwM2Q6MTEzYjpkNDUwNjA3MQ==", subdirectory: subdirectory, testCase: self)
 		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
 	// MARK: 3 - Change Statuses Again
@@ -199,14 +206,14 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		loadMockData(inSubdirectoryNamed: "feedly-3-changestatusesagain")
 	}
 	
-	func verifyChangeStatusesAgain() {
+	func verifyChangeStatusesAgain() throws {
 		let subdirectory = "feedly-3-changestatusesagain"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOGRlMjVmM2M6M2YyOmQ0NTA2MDcx", subdirectory: subdirectory, testCase: self)
 		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
 	// MARK: 4 - Add Feeds and Folders
@@ -215,14 +222,14 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		loadMockData(inSubdirectoryNamed: "feedly-4-addfeedsandfolders")
 	}
 	
-	func verifyAddFeedsAndFolders() {
+	func verifyAddFeedsAndFolders() throws {
 		let subdirectory = "feedly-4-addfeedsandfolders"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOTE3YTRlMzQ6YWZjOmQ0NTA2MDcx", subdirectory: subdirectory, testCase: self)
 		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
 	// MARK: 5 - Remove Feeds and Folders
@@ -231,14 +238,14 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		loadMockData(inSubdirectoryNamed: "feedly-5-removefeedsandfolders")
 	}
 	
-	func verifyRemoveFeedsAndFolders() {
+	func verifyRemoveFeedsAndFolders() throws {
 		let subdirectory = "feedly-5-removefeedsandfolders"
 		support.checkFoldersAndFeeds(in: account, againstCollectionsAndFeedsInJSONNamed: "collections", subdirectory: subdirectory)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "global.all", subdirectory: subdirectory)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds", subdirectory: subdirectory, testCase: self)
 		support.checkUnreadStatuses(in: account, againstIdsInStreamInJSONNamed: "unreadIds@MTZkOGRlMjVmM2M6M2YxOmQ0NTA2MDcx", subdirectory: subdirectory, testCase: self)
 		support.checkStarredStatuses(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory, testCase: self)
-		support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
+		try support.checkArticles(in: account, againstItemsInStreamInJSONNamed: "starred", subdirectory: subdirectory)
 	}
 	
 	// MARK: Downloading Test Data
@@ -260,13 +267,13 @@ class FeedlySyncAllOperationTests: XCTestCase {
 		
 		// If this expectation is not fulfilled, the operation is not calling `didFinish`.
 		let completionExpectation = expectation(description: "Did Finish")
-		syncAll.completionBlock = {
+		syncAll.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 		
 		lastSuccessfulFetchStartDate = Date()
 		
-		OperationQueue.main.addOperation(syncAll)
+		MainThreadOperationQueue.shared.addOperation(syncAll)
 		
 		XCTAssertTrue(progress.numberOfTasks > 1)
 		

@@ -173,36 +173,47 @@ private extension Folder {
 
 extension Folder: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		
 		let attrExternalID: String = {
-			if !strictConformance, let externalID = externalID {
-				return " nnw_externalID=\"\(externalID)\""
+			if allowCustomAttributes, let externalID = externalID {
+				return " nnw_externalID=\"\(externalID.escapingSpecialXMLCharacters)\""
 			} else {
 				return ""
 			}
 		}()
 		
-		let escapedTitle = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
+		let escapedTitle = nameForDisplay.escapingSpecialXMLCharacters
 		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)>\n"
-		s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
+		s = s.prepending(tabCount: indentLevel)
 
 		var hasAtLeastOneChild = false
 
-		for feed in topLevelWebFeeds.sorted(by: { $0.nameForDisplay < $1.nameForDisplay })  {
-			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
+		for feed in topLevelWebFeeds.sorted()  {
+			s += feed.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 			hasAtLeastOneChild = true
 		}
 
 		if !hasAtLeastOneChild {
 			s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)/>\n"
-			s = s.rs_string(byPrependingNumberOfTabs: indentLevel)
+			s = s.prepending(tabCount: indentLevel)
 			return s
 		}
 
-		s = s + NSString.rs_string(withNumberOfTabs: indentLevel) + "</outline>\n"
+		s = s + String(tabCount: indentLevel) + "</outline>\n"
 
 		return s
 	}
 }
 
+// MARK: Set
+
+extension Set where Element == Folder {
+	
+	func sorted() -> Array<Folder> {
+		return sorted(by: { (folder1, folder2) -> Bool in
+			return folder1.nameForDisplay.localizedStandardCompare(folder2.nameForDisplay) == .orderedAscending
+		})
+	}
+	
+}

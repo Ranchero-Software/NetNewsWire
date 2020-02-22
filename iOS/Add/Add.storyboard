@@ -68,13 +68,13 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Folder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RtT-rR-5LA">
-                                                    <rect key="frame" x="18.999999999999996" y="11.666666666666664" width="48.666666666666657" height="21"/>
+                                                    <rect key="frame" x="19.999999999999996" y="11.666666666666664" width="48.666666666666657" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="htg-Nn-3xi">
-                                                    <rect key="frame" x="282" y="11.666666666666664" width="42" height="21"/>
+                                                    <rect key="frame" x="281" y="11.666666666666664" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -83,8 +83,8 @@
                                             <constraints>
                                                 <constraint firstItem="htg-Nn-3xi" firstAttribute="centerY" secondItem="ZbC-Z6-dtq" secondAttribute="centerY" id="Z4n-Wi-s5H"/>
                                                 <constraint firstItem="htg-Nn-3xi" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="RtT-rR-5LA" secondAttribute="trailing" constant="8" symbolic="YES" id="grG-sv-OgE"/>
-                                                <constraint firstItem="htg-Nn-3xi" firstAttribute="trailing" secondItem="ZbC-Z6-dtq" secondAttribute="trailingMargin" constant="-4" id="izx-09-DWe"/>
-                                                <constraint firstItem="RtT-rR-5LA" firstAttribute="leading" secondItem="ZbC-Z6-dtq" secondAttribute="leadingMargin" constant="4" id="q2d-LR-YGh"/>
+                                                <constraint firstAttribute="trailing" secondItem="htg-Nn-3xi" secondAttribute="trailing" constant="20" symbolic="YES" id="izx-09-DWe"/>
+                                                <constraint firstItem="RtT-rR-5LA" firstAttribute="leading" secondItem="ZbC-Z6-dtq" secondAttribute="leading" constant="20" symbolic="YES" id="q2d-LR-YGh"/>
                                                 <constraint firstItem="RtT-rR-5LA" firstAttribute="centerY" secondItem="ZbC-Z6-dtq" secondAttribute="centerY" id="wHc-B0-lLE"/>
                                             </constraints>
                                         </tableViewCellContentView>

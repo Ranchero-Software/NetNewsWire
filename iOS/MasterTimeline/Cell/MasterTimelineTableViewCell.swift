@@ -34,6 +34,11 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		commonInit()
 	}
 	
+	override func prepareForReuse() {
+		unreadIndicatorView.isHidden = true
+		starView.isHidden = true
+	}
+	
 	override var frame: CGRect {
 		didSet {
 			setNeedsLayout()
@@ -178,12 +183,25 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateUnreadIndicator() {
-		showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
-		unreadIndicatorView.setNeedsDisplay()
+		if !unreadIndicatorView.isHidden && cellData.read && !cellData.starred {
+			UIView.animate(withDuration: 0.66, animations: { self.unreadIndicatorView.alpha = 0 }) { _ in
+				self.unreadIndicatorView.isHidden = true
+				self.unreadIndicatorView.alpha = 1
+			}
+		} else {
+			showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
+		}
 	}
 	
 	func updateStarView() {
-		showOrHideView(starView, !cellData.starred)
+		if !starView.isHidden &&  cellData.read && !cellData.starred {
+			UIView.animate(withDuration: 0.66, animations: { self.starView.alpha = 0 }) { _ in
+				self.starView.isHidden = true
+				self.starView.alpha = 1
+			}
+		} else {
+			showOrHideView(starView, !cellData.starred)
+		}
 	}
 	
 	func updateIconImage() {
@@ -198,6 +216,10 @@ private extension MasterTimelineTableViewCell {
 			iconView.iconImage = image
 			setNeedsLayout()
 		}
+	}
+	
+	func updateAccessiblityLabel() {
+		accessibilityLabel = "\(cellData.feedName), \(cellData.title), \(cellData.summary), \(cellData.dateString)"
 	}
 	
 	func makeIconEmpty() {
@@ -232,6 +254,7 @@ private extension MasterTimelineTableViewCell {
 		updateUnreadIndicator()
 		updateStarView()
 		updateIconImage()
+		updateAccessiblityLabel()
 	}
 	
 }

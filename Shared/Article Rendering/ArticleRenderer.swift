@@ -13,16 +13,15 @@ import Account
 
 struct ArticleRenderer {
 
-	typealias Rendering = (style: String, html: String)
-	typealias Page = (html: String, baseURL: URL)
+	typealias Rendering = (style: String, html: String, title: String, baseURL: String)
+	typealias Page = (url: URL, baseURL: URL)
 
 	static var imageIconScheme = "nnwImageIcon"
 	
 	static var page: Page = {
-		let pageURL = Bundle.main.url(forResource: "page", withExtension: "html")!
-		let html = try! String(contentsOf: pageURL)
-		let baseURL = pageURL.deletingLastPathComponent()
-		return Page(html: html, baseURL: baseURL)
+		let url = Bundle.main.url(forResource: "page", withExtension: "html")!
+		let baseURL = url.deletingLastPathComponent()
+		return Page(url: url, baseURL: baseURL)
 	}()
 	
 	private let article: Article?
@@ -48,29 +47,29 @@ struct ArticleRenderer {
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle, useImageIcon: Bool = false) -> Rendering {
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
-		return (renderer.styleString(), renderer.articleHTML)
+		return (renderer.styleString(), renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
 	static func multipleSelectionHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return (renderer.styleString(), renderer.multipleSelectionHTML)
+		return (renderer.styleString(), renderer.multipleSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
 	static func loadingHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return (renderer.styleString(), renderer.loadingHTML)
+		return (renderer.styleString(), renderer.loadingHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
 	static func noSelectionHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return (renderer.styleString(), renderer.noSelectionHTML)
+		return (renderer.styleString(), renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
 	
 	static func noContentHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return (renderer.styleString(), renderer.noContentHTML)
+		return (renderer.styleString(), renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
 	}
 }
 
@@ -79,27 +78,27 @@ struct ArticleRenderer {
 private extension ArticleRenderer {
 
 	private var articleHTML: String {
-		let body = RSMacroProcessor.renderedText(withTemplate: template(), substitutions: articleSubstitutions(), macroStart: "[[", macroEnd: "]]")
-		return renderHTML(withBody: body)
+		let body = try! MacroProcessor.renderedText(withTemplate: template(), substitutions: articleSubstitutions())
+		return body
 	}
 
 	private var multipleSelectionHTML: String {
 		let body = "<h3 class='systemMessage'>Multiple selection</h3>"
-		return renderHTML(withBody: body)
+		return body
 	}
 
 	private var loadingHTML: String {
 		let body = "<h3 class='systemMessage'>Loading...</h3>"
-		return renderHTML(withBody: body)
+		return body
 	}
 
 	private var noSelectionHTML: String {
 		let body = "<h3 class='systemMessage'>No selection</h3>"
-		return renderHTML(withBody: body)
+		return body
 	}
 
 	private var noContentHTML: String {
-		return renderHTML(withBody: "")
+		return ""
 	}
 
 	static var defaultStyleSheet: String = {
@@ -141,7 +140,16 @@ private extension ArticleRenderer {
 		d["title"] = title
 
 		d["body"] = body
-		d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(ArticleRenderer.imageIconScheme)://\" height=48 width=48 /></td>";
+
+		var components = URLComponents()
+		components.scheme = Self.imageIconScheme
+		components.path = article.articleID
+		if let imageIconURLString = components.string {
+			d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(imageIconURLString)\" height=48 width=48 /></td>"
+		}
+		else {
+			d["avatars"] = ""
+		}
 
 		var feedLink = ""
 		if let feedTitle = article.webFeed?.nameForDisplay {
@@ -157,7 +165,7 @@ private extension ArticleRenderer {
 		let mediumDate = dateString(datePublished, .medium, .short)
 		let shortDate = dateString(datePublished, .short, .short)
 
-		if dateShouldBeLink() || self.title == "", let permalink = article.url {
+		if let permalink = article.url {
 			d["date_long"] = longDate.htmlByAddingLink(permalink)
 			d["date_medium"] = mediumDate.htmlByAddingLink(permalink)
 			d["date_short"] = shortDate.htmlByAddingLink(permalink)
@@ -171,16 +179,6 @@ private extension ArticleRenderer {
 		d["byline"] = byline()
 
 		return d
-	}
-
-	func dateShouldBeLink() -> Bool {
-		guard let permalink = article?.url else {
-			return false
-		}
-		guard let preferredLink = article?.preferredLink else { // Title uses preferredLink
-			return false
-		}
-		return permalink != preferredLink // Make date a link if it’s a different link from the title’s link
 	}
 
 	func byline() -> String {
@@ -234,17 +232,6 @@ private extension ArticleRenderer {
 		dateFormatter.dateStyle = dateStyle
 		dateFormatter.timeStyle = timeStyle
 		return dateFormatter.string(from: date)
-	}
-
-	func renderHTML(withBody body: String) -> String {
-		var s = ""
-		if let baseURL = baseURL {
-			s += ("<base href=\"" + baseURL + "\"\n>")
-		}
-		s += title.htmlBySurroundingWithTag("title")
-		
-		s += body
-		return s
 	}
 
 }
