@@ -1738,7 +1738,9 @@ private extension SceneCoordinator {
 	}
 
 	@objc func fetchAndMergeArticlesAsync() {
-		fetchAndMergeArticlesAsync(animated: true, completion: nil)
+		fetchAndMergeArticlesAsync(animated: true) {
+			self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+		}
 	}
 	
 	func fetchAndMergeArticlesAsync(animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -2002,7 +2004,6 @@ private extension SceneCoordinator {
 		}
 
 		treeControllerDelegate.addFilterException(feedIdentifier)
-		masterFeedViewController.restoreSelection = true
 		
 		switch feedIdentifier {
 		
@@ -2087,8 +2088,6 @@ private extension SceneCoordinator {
 				return false
 		}
 
-		masterFeedViewController.restoreSelection = true
-		
 		switch feedIdentifier {
 
 		case .smartFeed:
