@@ -152,11 +152,11 @@
     document.addEventListener("click", (ev) =>
     {
 	    if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
-        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, footnotes .footnote-return")) return;
-		const hash = ev.target.hash;
-		if (!hash) return;
-		const fnref = document.getElementById(hash.substring(1));
-      
+        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, .footnotes .footnote-return")) return;
+		const id = idFromHash(ev.target);
+		if (!id) return;
+		const fnref = document.getElementById(id);
+
 		window.scrollTo({ top: fnref.getBoundingClientRect().top + window.scrollY });
 	    ev.preventDefault();
 	});
