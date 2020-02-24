@@ -88,6 +88,24 @@ function error() {
 	document.body.innerHTML = "error";
 }
 
+// Takes into account absoluting of URLs.
+function isLocalFootnote(target) {
+	return target.hash.startsWith("#fn") && target.href.indexOf(document.baseURI) === 0;
+}
+
+function styleLocalFootnotes() {
+	for (elem of document.querySelectorAll("sup > a[href*='#fn'], sup > div > a[href*='#fn']")) {
+		if (isLocalFootnote(elem)) {
+			if (elem.className.indexOf("footnote") === -1) {
+				if (elem.className.length === 0)
+					elem.className = "footnote";
+				else
+					elem.className = elem.className + " " + "footnote";
+			}
+		}
+	}
+}
+
 function render(data, scrollY) {
 	document.getElementsByTagName("style")[0].innerHTML = data.style;
 
@@ -106,6 +124,7 @@ function render(data, scrollY) {
 	stripStyles()
 	convertImgSrc()
 	flattenPreElements()
+	styleLocalFootnotes()
 
 	postRenderProcessing()
 }

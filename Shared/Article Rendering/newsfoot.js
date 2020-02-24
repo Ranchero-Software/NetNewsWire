@@ -124,13 +124,7 @@
 	const footnoteFormats = [
 		{ // Multimarkdown
 			fnref(target) {
-				if (!target.matches(".footnote")) return;	 
-				return idFromHash(target);			
-			}
-		},
-	    {// Daring Fireball
-			fnref(target) {
-				if (!target.matches("sup > a[href^='#fn'], sup > div > a[href^='#fn']")) return;
+				if (!target.matches(".footnote")) return;
 				return idFromHash(target);
 			}
 		}
