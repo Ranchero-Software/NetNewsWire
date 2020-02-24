@@ -35,7 +35,7 @@ function convertImgSrc() {
 
 // Wrap tables in an overflow-x: auto; div
 function wrapTables() {
-	var tables = document.querySelector("div.articleBody").getElementsByTagName("table");
+	var tables = document.querySelectorAll("div.articleBody table");
 
 	for (table of tables) {
 		var wrapper = document.createElement("div");
