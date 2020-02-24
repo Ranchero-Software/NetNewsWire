@@ -40,8 +40,17 @@ class UpdateSelectionOperation: MainThreadOperation {
 				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
 				CATransaction.commit()
 			} else {
-				tableView.selectRow(at: nil, animated: animations.contains(.select), scrollPosition: .none)
-				self.operationDelegate?.operationDidComplete(self)
+				if animations.contains(.select) {
+					CATransaction.begin()
+					CATransaction.setCompletionBlock {
+						self.operationDelegate?.operationDidComplete(self)
+					}
+					tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+					CATransaction.commit()
+				} else {
+					tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
+					self.operationDelegate?.operationDidComplete(self)
+				}
 			}
 		} else {
 			self.operationDelegate?.operationDidComplete(self)
