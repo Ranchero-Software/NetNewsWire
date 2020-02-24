@@ -1740,6 +1740,7 @@ private extension SceneCoordinator {
 	@objc func fetchAndMergeArticlesAsync() {
 		fetchAndMergeArticlesAsync(animated: true) {
 			self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+			self.masterTimelineViewController?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
 	
