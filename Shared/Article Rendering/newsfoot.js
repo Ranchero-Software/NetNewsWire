@@ -118,7 +118,7 @@
 			
 	function idFromHash(target) {
 		if (!target.hash) return;
-		return target.hash.substring(1);
+		return decodeURIComponent(target.hash.substring(1));
 	}
 	/** @type {{fnref(target:HTMLAnchorElement): string|undefined}[]} */
 	const footnoteFormats = [
