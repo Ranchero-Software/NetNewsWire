@@ -61,6 +61,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var wasRootSplitViewControllerCollapsed = false
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
+	private let rebuildBackingStoresWithMergeQueue = CoalescingQueue(name: "Rebuild The Backing Stores by Merging", interval: 0.5)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	
@@ -445,9 +446,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 
-		addShadowTableToFilterExceptions()
-		rebuildBackingStores()
-		treeControllerDelegate.resetFilterExceptions()
+		rebuildBackingStoresWithMergeQueue.add(self, #selector(rebuildBackingStoresWithMerge))
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
@@ -569,6 +568,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func suspend() {
 		fetchAndMergeArticlesQueue.performCallsImmediately()
+		rebuildBackingStoresWithMergeQueue.performCallsImmediately()
 		fetchRequestQueue.cancelAllRequests()
 	}
 	
@@ -1360,6 +1360,12 @@ private extension SceneCoordinator {
 			masterFeedViewController.reloadFeeds(initialLoad: initialLoad, completion: completion)
 			
 		}
+	}
+	
+	@objc func rebuildBackingStoresWithMerge() {
+		addShadowTableToFilterExceptions()
+		rebuildBackingStores()
+		treeControllerDelegate.resetFilterExceptions()
 	}
 	
 	func rebuildShadowTable() {
