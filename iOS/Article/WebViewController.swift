@@ -29,8 +29,8 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	private var webView: WKWebView? {
-		return view.subviews[0] as? WKWebView
+	private var webView: PreloadedWebView? {
+		return view.subviews[0] as? PreloadedWebView
 	}
 	
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
@@ -450,7 +450,7 @@ private extension WebViewController {
 		
 	}
 
-	func recycleWebView(_ webView: WKWebView?) {
+	func recycleWebView(_ webView: PreloadedWebView?) {
 		guard let webView = webView else { return }
 		
 		webView.removeFromSuperview()
@@ -467,7 +467,7 @@ private extension WebViewController {
 		coordinator.webViewProvider.enqueueWebView(webView)
 	}
 
-	func renderPage(_ webView: WKWebView?) {
+	func renderPage(_ webView: PreloadedWebView?) {
 		guard let webView = webView else { return }
 		 
 		let style = ArticleStylesManager.shared.currentStyle

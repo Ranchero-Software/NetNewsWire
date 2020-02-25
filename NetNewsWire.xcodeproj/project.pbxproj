@@ -246,6 +246,7 @@
 		51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D87EE02311D34700E63F03 /* ActivityType.swift */; };
 		51DC37072402153E0095D371 /* UpdateSelectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */; };
 		51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */; };
+		51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */; };
 		51E36E71239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */; };
 		51E36E8C239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */; };
 		51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB32229AB02C00645299 /* ErrorHandler.swift */; };
@@ -1383,6 +1384,7 @@
 		51D87EE02311D34700E63F03 /* ActivityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityType.swift; sourceTree = "<group>"; };
 		51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSelectionOperation.swift; sourceTree = "<group>"; };
 		51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedDataSourceOperation.swift; sourceTree = "<group>"; };
+		51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedWebView.swift; sourceTree = "<group>"; };
 		51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedSelectFolderTableViewCell.swift; sourceTree = "<group>"; };
 		51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddWebFeedSelectFolderTableViewCell.xib; sourceTree = "<group>"; };
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
@@ -2015,6 +2017,7 @@
 				518651D9235621840078E021 /* ImageTransition.swift */,
 				5142192923522B5500E07E2C /* ImageViewController.swift */,
 				512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */,
+				51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */,
 				51AB8AB223B7F4C6008F147D /* WebViewController.swift */,
 				517630222336657E00E15FFF /* WebViewProvider.swift */,
 				51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */,
@@ -4009,6 +4012,7 @@
 				51627A6923861DED007B3B4B /* MasterFeedViewController+Drop.swift in Sources */,
 				514219372352510100E07E2C /* ImageScrollView.swift in Sources */,
 				516AE9B32371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift in Sources */,
+				51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */,
 				C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */,
 				51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
