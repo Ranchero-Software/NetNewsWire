@@ -111,7 +111,10 @@ class ArticleViewController: UIViewController {
 			controller.windowScrollY = state.windowScrollY
 		}
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
-		pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+		
+		DispatchQueue.main.async {
+			self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+		}
 		
 		updateUI()
 	}
