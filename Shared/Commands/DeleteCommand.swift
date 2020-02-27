@@ -44,26 +44,21 @@ final class DeleteCommand: UndoableCommand {
 	}
 
 	func perform() {
-
-		BatchUpdate.shared.perform {
-			itemSpecifiers.forEach { $0.delete() {} }
-			treeController.rebuild()
-		}
-		registerUndo()
+		perform {}
 	}
 
 	func perform(completion: @escaping () -> Void) {
 		
 		let group = DispatchGroup()
-		group.enter()
 		itemSpecifiers.forEach {
+			group.enter()
 			$0.delete() {
 				group.leave()
 			}
 		}
-		treeController.rebuild()
 	
 		group.notify(queue: DispatchQueue.main) {
+			self.treeController.rebuild()
 			self.registerUndo()
 			completion()
 		}
