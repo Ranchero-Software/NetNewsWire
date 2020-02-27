@@ -73,7 +73,13 @@ class AddFeedWindowController : NSWindowController {
 			FolderTreeMenu.select(account: account, folder: initialFolder, in: folderPopupButton)
 		} else if let accountID = AppDefaults.addFeedAccountID {
 			if let account = AccountManager.shared.existingAccount(with: accountID) {
-				FolderTreeMenu.select(account: account, folder: nil, in: folderPopupButton)
+				let folder: Folder? = {
+					if let folderName = AppDefaults.addFeedFolderName {
+						return account.ensureFolder(with: folderName)
+					}
+					return nil
+				}()
+				FolderTreeMenu.select(account: account, folder: folder, in: folderPopupButton)
 			}
 		}
 		
@@ -102,8 +108,10 @@ class AddFeedWindowController : NSWindowController {
 		let container = selectedContainer()!
 		if let selectedAccount = container as? Account {
 			AppDefaults.addFeedAccountID = selectedAccount.accountID
+			AppDefaults.addFeedFolderName = nil
 		} else if let selectedFolder = container as? Folder, let selectedAccount = selectedFolder.account {
 			AppDefaults.addFeedAccountID = selectedAccount.accountID
+			AppDefaults.addFeedFolderName = selectedFolder.name
 		}
 
 		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
