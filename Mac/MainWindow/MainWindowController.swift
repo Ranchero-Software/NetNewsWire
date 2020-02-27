@@ -376,6 +376,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 }
 
+// MARK: NSWindowDelegate
+
+extension MainWindowController: NSWindowDelegate {
+	func windowWillClose(_ notification: Notification) {
+		detailViewController?.stopMediaPlayback()
+	}
+}
+
 // MARK: - SidebarDelegate
 
 extension MainWindowController: SidebarDelegate {

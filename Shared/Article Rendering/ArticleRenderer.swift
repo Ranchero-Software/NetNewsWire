@@ -358,6 +358,17 @@ private extension ArticleRenderer {
 			window.webkit.messageHandlers.mouseDidExit.postMessage(anchor.href);
 		}
 
+		function stopMediaPlayback() {
+			document.querySelectorAll("iframe").forEach(element => {
+				var iframeSrc = element.src;
+				element.src = iframeSrc;
+			});
+
+			document.querySelectorAll("video, audio").forEach(element => {
+				element.pause();
+			});
+		}
+		
 		</script>
 
 		"""
