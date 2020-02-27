@@ -114,18 +114,14 @@ class ArticleViewController: UIViewController {
 		
 		DispatchQueue.main.async {
 			self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+			if AppDefaults.articleFullscreenEnabled {
+				controller.hideBars()
+			}
 		}
 		
 		updateUI()
 	}
 
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		if AppDefaults.articleFullscreenEnabled {
-			currentWebViewController?.hideBars()
-		}
-	}
-	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isArticleViewControllerPending = false
