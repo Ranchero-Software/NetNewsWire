@@ -121,6 +121,10 @@ struct AppAssets {
 		return RSImage(named: "swipeMarkUnstarred")!
 	}()
 	
+	static var swipeMarkUnstarredColor: NSColor = {
+		return NSColor(named: NSColor.Name("swipeMarkUnstarredColor"))!
+	}()
+	
 	static func image(for accountType: AccountType) -> NSImage? {
 		switch accountType {
 		case .onMyMac:
