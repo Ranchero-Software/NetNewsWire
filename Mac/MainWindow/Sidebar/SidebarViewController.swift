@@ -179,14 +179,17 @@ protocol SidebarDelegate: class {
 
 	@IBAction func gotoToday(_ sender: Any?) {
 		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.todayFeed, treeController)
+		focus()
 	}
 
 	@IBAction func gotoAllUnread(_ sender: Any?) {
 		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.unreadFeed, treeController)
+		focus()
 	}
 
 	@IBAction func gotoStarred(_ sender: Any?) {
 		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.starredFeed, treeController)
+		focus()
 	}
 
 	@IBAction func copy(_ sender: Any?) {
