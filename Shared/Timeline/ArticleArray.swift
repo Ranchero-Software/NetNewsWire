@@ -14,7 +14,6 @@ typealias ArticleArray = [Article]
 extension Array where Element == Article {
 
 	func articleAtRow(_ row: Int) -> Article? {
-
 		if row < 0 || row == NSNotFound || row > count - 1 {
 			return nil
 		}
@@ -22,7 +21,6 @@ extension Array where Element == Article {
 	}
 
 	func rowOfNextUnreadArticle(_ selectedRow: Int) -> Int? {
-
 		if isEmpty {
 			return nil
 		}
@@ -44,7 +42,6 @@ extension Array where Element == Article {
 	}
 
 	func articlesForIndexes(_ indexes: IndexSet) -> Set<Article> {
-
 		return Set(indexes.compactMap{ (oneIndex) -> Article? in
 			return articleAtRow(oneIndex)
 		})
@@ -55,12 +52,10 @@ extension Array where Element == Article {
 	}
 	
 	func canMarkAllAsRead() -> Bool {
-
 		return anyArticleIsUnread()
 	}
 
 	func anyArticlePassesTest(_ test: ((Article) -> Bool)) -> Bool {
-
 		for article in self {
 			if test(article) {
 				return true
@@ -69,28 +64,23 @@ extension Array where Element == Article {
 		return false
 	}
 
-	func anyArticleIsRead() -> Bool {
-
-		return anyArticlePassesTest { $0.status.read }
+	func anyArticleIsReadAndCanMarkUnread() -> Bool {
+		return anyArticlePassesTest { $0.status.read && $0.isAvailableToMarkUnread }
 	}
 
 	func anyArticleIsUnread() -> Bool {
-
 		return anyArticlePassesTest { !$0.status.read }
 	}
 
 	func anyArticleIsStarred() -> Bool {
-
 		return anyArticlePassesTest { $0.status.starred }
 	}
 
 	func anyArticleIsUnstarred() -> Bool {
-
 		return anyArticlePassesTest { !$0.status.starred }
 	}
 
 	func unreadArticles() -> [Article]? {
-
 		let articles = self.filter{ !$0.status.read }
 		return articles.isEmpty ? nil : articles
 	}

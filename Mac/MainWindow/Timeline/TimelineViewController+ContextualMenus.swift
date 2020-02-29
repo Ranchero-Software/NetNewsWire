@@ -159,7 +159,7 @@ private extension TimelineViewController {
 		if articles.anyArticleIsUnread() {
 			menu.addItem(markReadMenuItem(articles))
 		}
-		if articles.anyArticleIsRead() {
+		if articles.anyArticleIsReadAndCanMarkUnread() {
 			menu.addItem(markUnreadMenuItem(articles))
 		}
 		if articles.anyArticleIsUnstarred() {

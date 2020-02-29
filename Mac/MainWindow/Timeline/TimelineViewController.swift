@@ -367,7 +367,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func markReadCommandStatus() -> MarkCommandValidationStatus {
-		return MarkCommandValidationStatus.statusFor(selectedArticles) { $0.anyArticleIsUnread() }
+		let articles = selectedArticles
+		
+		if articles.anyArticleIsUnread() {
+			return .canMark
+		}
+		
+		if articles.anyArticleIsReadAndCanMarkUnread() {
+			return .canUnmark
+		}
+
+		return .canDoNothing
 	}
 
 	func markOlderArticlesRead() {

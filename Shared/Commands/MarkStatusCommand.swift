@@ -23,7 +23,7 @@ final class MarkStatusCommand: UndoableCommand {
 
 	init?(initialArticles: [Article], statusKey: ArticleStatus.Key, flag: Bool, undoManager: UndoManager) {
         
-        // Filter out articles that already have the desired status.
+        // Filter out articles that already have the desired status or can't be marked.
 		let articlesToMark = MarkStatusCommand.filteredArticles(initialArticles, statusKey, flag)
 		if articlesToMark.isEmpty {
 			return nil
@@ -88,6 +88,12 @@ private extension MarkStatusCommand {
 
 	static func filteredArticles(_ articles: [Article], _ statusKey: ArticleStatus.Key, _ flag: Bool) -> [Article] {
 
-		return articles.filter{ $0.status.boolStatus(forKey: statusKey) != flag }
+		return articles.filter{ article in
+			guard article.status.boolStatus(forKey: statusKey) != flag else { return false }
+			guard statusKey == .read else { return true }
+			guard !article.status.read || article.isAvailableToMarkUnread else { return false }
+			return true
+		}
+		
 	}
 }
