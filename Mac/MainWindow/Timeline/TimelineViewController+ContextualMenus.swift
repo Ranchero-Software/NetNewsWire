@@ -73,16 +73,10 @@ extension TimelineViewController {
 	}
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
-		
-		guard let menuItem = sender as? NSMenuItem, let feed = menuItem.representedObject as? WebFeed else {
+		guard let menuItem = sender as? NSMenuItem, let webFeed = menuItem.representedObject as? WebFeed else {
 			return
 		}
-		
-		var userInfo = UserInfoDictionary()
-		userInfo[UserInfoKey.webFeed] = feed
-		
-		NotificationCenter.default.post(name: .UserDidRequestSidebarSelection, object: self, userInfo: userInfo)
-		
+		delegate?.timelineRequestedWebFeedSelection(self, webFeed: webFeed)
 	}
 	
 	@objc func markAllInFeedAsRead(_ sender: Any?) {

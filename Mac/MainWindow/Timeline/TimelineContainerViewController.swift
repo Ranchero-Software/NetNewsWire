@@ -7,10 +7,12 @@
 //
 
 import AppKit
+import Account
 import Articles
 
 protocol TimelineContainerViewControllerDelegate: class {
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
+	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed)
 }
 
 final class TimelineContainerViewController: NSViewController {
@@ -96,6 +98,11 @@ extension TimelineContainerViewController: TimelineDelegate {
 	func timelineSelectionDidChange(_ timelineViewController: TimelineViewController, selectedArticles: [Article]?) {
 		delegate?.timelineSelectionDidChange(self, articles: selectedArticles, mode: mode(for: timelineViewController))
 	}
+
+	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: WebFeed) {
+		delegate?.timelineRequestedWebFeedSelection(self, webFeed: webFeed)
+	}
+	
 }
 
 private extension TimelineContainerViewController {

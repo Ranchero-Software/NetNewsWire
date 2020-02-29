@@ -14,6 +14,7 @@ import os.log
 
 protocol TimelineDelegate: class  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
+	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: WebFeed)
 }
 
 final class TimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
@@ -58,7 +59,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	private weak var delegate: TimelineDelegate?
+	weak var delegate: TimelineDelegate?
 	var sharingServiceDelegate: NSSharingServiceDelegate?
 
 	var showsSearchResults = false

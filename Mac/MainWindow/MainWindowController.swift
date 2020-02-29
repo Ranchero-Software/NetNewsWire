@@ -514,6 +514,11 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 
 		detailViewController?.setState(detailState, mode: mode)
 	}
+
+	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed) {
+		sidebarViewController?.selectWebFeed(webFeed)
+	}
+	
 }
 
 // MARK: - NSSearchFieldDelegate

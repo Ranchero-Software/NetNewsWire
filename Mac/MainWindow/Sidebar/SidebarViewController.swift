@@ -65,7 +65,6 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDidRequestSidebarSelection(_:)), name: .UserDidRequestSidebarSelection, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadArticlesDidUpdateUnreadCounts(_:)), name: .DownloadArticlesDidUpdateUnreadCounts, object: nil)
 
 		outlineView.reloadData()
@@ -329,6 +328,10 @@ protocol SidebarDelegate: class {
 	}
 
 	// MARK: - API
+	
+	func selectWebFeed(_ webFeed: WebFeed) {
+		revealAndSelectRepresentedObject(webFeed as AnyObject)
+	}
 
 	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
 		guard let accountNode = findAccountNode(userInfo), let feedNode = findFeedNode(userInfo, beginningAt: accountNode) else {
