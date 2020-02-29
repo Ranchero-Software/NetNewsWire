@@ -23,6 +23,7 @@ protocol SidebarDelegate: class {
 
 	weak var delegate: SidebarDelegate?
 
+	private let rebuildTreeAndRestoreSelectionQueue = CoalescingQueue(name: "Rebuild Tree Queue", interval: 0.5)
 	let treeControllerDelegate = WebFeedTreeControllerDelegate()
 	lazy var treeController: TreeController = {
 		return TreeController(delegate: treeControllerDelegate)
@@ -89,11 +90,15 @@ protocol SidebarDelegate: class {
 		guard let representedObject = note.object else {
 			return
 		}
+		
 		if let timelineViewController = representedObject as? TimelineViewController {
 			configureUnreadCountForCellsForRepresentedObjects(timelineViewController.representedObjects)
-		}
-		else {
+		} else {
 			configureUnreadCountForCellsForRepresentedObjects([representedObject as AnyObject])
+		}
+
+		if let feed = representedObject as? Feed, treeControllerDelegate.isReadFiltered, feed.unreadCount > 0 {
+			queueRebuildTreeAndRestoreSelection()
 		}
 	}
 
@@ -321,7 +326,11 @@ protocol SidebarDelegate: class {
 
 	// MARK: - API
 
-	func rebuildTreeAndRestoreSelection() {
+	func queueRebuildTreeAndRestoreSelection() {
+		rebuildTreeAndRestoreSelectionQueue.add(self, #selector(rebuildTreeAndRestoreSelection))
+	}
+	
+	@objc func rebuildTreeAndRestoreSelection() {
 		let savedAccounts = accountNodes
 		let savedSelection = selectedNodes
 		
