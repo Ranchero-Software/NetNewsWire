@@ -329,15 +329,30 @@ protocol SidebarDelegate: class {
 
 	// MARK: - API
 	
-	func selectWebFeed(_ webFeed: WebFeed) {
-		revealAndSelectRepresentedObject(webFeed as AnyObject)
+	func selectFeed(_ feed: Feed) {
+		if isReadFiltered, let feedID = feed.feedID {
+			self.treeControllerDelegate.addFilterException(feedID)
+			
+			if let webFeed = feed as? WebFeed, let account = webFeed.account {
+				let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
+				if let parentFolderFeedID = parentFolder?.feedID {
+					self.treeControllerDelegate.addFilterException(parentFolderFeedID)
+				}
+			}
+			
+			rebuildTreeAndRestoreSelection()
+		}
+
+		revealAndSelectRepresentedObject(feed as AnyObject)
 	}
 
 	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
-		guard let accountNode = findAccountNode(userInfo), let feedNode = findFeedNode(userInfo, beginningAt: accountNode) else {
+		guard let accountNode = findAccountNode(userInfo),
+			let feedNode = findFeedNode(userInfo, beginningAt: accountNode),
+			let feed = feedNode.representedObject as? Feed else {
 			return
 		}
-		revealAndSelectRepresentedObject(feedNode.representedObject)
+		selectFeed(feed)
 	}
 
 	func toggleReadFilter() {

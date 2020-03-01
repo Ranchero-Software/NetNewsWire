@@ -516,7 +516,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 	}
 
 	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed) {
-		sidebarViewController?.selectWebFeed(webFeed)
+		sidebarViewController?.selectFeed(webFeed)
 	}
 	
 }
