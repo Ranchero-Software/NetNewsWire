@@ -183,20 +183,17 @@ protocol SidebarDelegate: class {
 	}
 
 	@IBAction func gotoToday(_ sender: Any?) {
-		ensureFeedIsAvailableToSelect(SmartFeedsController.shared.todayFeed)
-		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.todayFeed, treeController)
+		selectFeed(SmartFeedsController.shared.todayFeed)
 		focus()
 	}
 
 	@IBAction func gotoAllUnread(_ sender: Any?) {
-		ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed)
-		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.unreadFeed, treeController)
+		selectFeed(SmartFeedsController.shared.unreadFeed)
 		focus()
 	}
 
 	@IBAction func gotoStarred(_ sender: Any?) {
-		ensureFeedIsAvailableToSelect(SmartFeedsController.shared.starredFeed)
-		outlineView.revealAndSelectRepresentedObject(SmartFeedsController.shared.starredFeed, treeController)
+		selectFeed(SmartFeedsController.shared.starredFeed)
 		focus()
 	}
 
@@ -340,6 +337,7 @@ protocol SidebarDelegate: class {
 				}
 			}
 			
+			addTreeControllerToFilterExceptions()
 			rebuildTreeAndRestoreSelection()
 		}
 
@@ -411,13 +409,6 @@ private extension SidebarViewController {
 		return node.representedObject as? WebFeed
 	}
 	
-	func ensureFeedIsAvailableToSelect(_ feed: Feed) {
-		guard isReadFiltered else { return }
-		addToFilterExeptionsIfNecessary(feed)
-		addTreeControllerToFilterExceptions()
-		rebuildTreeAndRestoreSelection()
-	}
-
 	func addAllSelectedToFilterExceptions() {
 		selectedFeeds.forEach { addToFilterExeptionsIfNecessary($0) }
 	}
