@@ -1,11 +1,14 @@
 body {
 	margin-top: 20px;
 	margin-bottom: 64px;
-	margin-left: 64px;
-	margin-right: 64px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 64px;
+	padding-right: 64px;
 	font-family: -apple-system;
 	font-size: 18px;
 	word-wrap: break-word; /* break long words or URLs */
+	max-width: 44em;
 }
 
 a {
