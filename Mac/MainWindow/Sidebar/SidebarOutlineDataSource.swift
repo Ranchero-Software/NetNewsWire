@@ -47,12 +47,6 @@ import Account
 		return (node.representedObject as? PasteboardWriterOwner)?.pasteboardWriter
 	}
 
-	enum PersistentObjectKey {
-		static let smartFeeds = "SmartFeeds"
-		static let account = "account"
-		static let folder = "folder"
-	}
-
 	func outlineView(_ outlineView: NSOutlineView, persistentObjectForItem item: Any?) -> Any? {
 		guard let node = nodeForItem(item).representedObject as? ContainerIdentifiable else {
 			return nil
