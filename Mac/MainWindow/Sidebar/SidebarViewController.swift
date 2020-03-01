@@ -306,7 +306,7 @@ protocol SidebarDelegate: class {
 		selectionDidChange(selectedObjects.isEmpty ? nil : selectedObjects)
     }
 
-	func expandRelevantFoldersForAccount(_ account: Account) {
+	func expandAppropriateFoldersForAccount(_ account: Account) {
 		guard let folders = account.folders else { return }
 
 		guard let autosaveName = outlineView.autosaveName else { return }
@@ -333,7 +333,7 @@ protocol SidebarDelegate: class {
 		guard let item = notification.userInfo?["NSObject"] as? Node,
 			let account = nodeForItem(item).representedObject as? Account else { return }
 
-		expandRelevantFoldersForAccount(account)
+		expandAppropriateFoldersForAccount(account)
 	}
 
 	//MARK: - Node Manipulation
