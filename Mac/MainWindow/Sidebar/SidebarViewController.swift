@@ -17,7 +17,7 @@ protocol SidebarDelegate: class {
 	func unreadCount(for: AnyObject) -> Int
 }
 
-@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate, UndoableCommandRunner {
+@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
     
 	@IBOutlet var outlineView: SidebarOutlineView!
 
