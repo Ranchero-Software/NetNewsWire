@@ -104,6 +104,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var undoableCommands = [UndoableCommand]()
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
+	private var exceptionArticleFetcher: ArticleFetcher?
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	private var cellAppearance: TimelineCellAppearance!
 	private var cellAppearanceWithIcon: TimelineCellAppearance!
@@ -223,6 +224,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	func toggleReadFilter() {
 		guard let filterType = articleReadFilterType else { return }
+		
 		switch filterType {
 		case .alwaysRead:
 			break
@@ -231,7 +233,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		case .none:
 			articleReadFilterType = ReadFilterType.read
 		}
-		fetchAndReplaceArticlesAsync()
+		
+		if let article = oneSelectedArticle, let account = article.account {
+			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
+		}
+
+		performBlockAndRestoreSelection {
+			fetchAndReplaceArticlesSync()
+		}
 	}
 	
 	// MARK: - Actions
@@ -420,6 +429,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	func goToDeepLink(for userInfo: [AnyHashable : Any]) {
 		guard let articleID = userInfo[ArticlePathKey.articleID] as? String else { return }
+
+		if isReadFiltered ?? false {
+			if let accountName = userInfo[ArticlePathKey.accountName] as? String,
+				let account = AccountManager.shared.findActiveAccount(forDisplayName: accountName) {
+				exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
+				fetchAndReplaceArticlesSync()
+			}
+		}
+
 		guard let ix = articles.firstIndex(where: { $0.articleID == articleID }) else {	return }
 		
 		NSCursor.setHiddenUntilMouseMoves(true)
@@ -991,10 +1009,16 @@ private extension TimelineViewController {
 		// so that the entire display refreshes at once.
 		// It’s a better user experience this way.
 		cancelPendingAsyncFetches()
-		guard let representedObjects = representedObjects else {
+		guard var representedObjects = representedObjects else {
 			emptyTheTimeline()
 			return
 		}
+		
+		if exceptionArticleFetcher != nil {
+			representedObjects.append(exceptionArticleFetcher as AnyObject)
+			exceptionArticleFetcher = nil
+		}
+		
 		let fetchedArticles = fetchUnsortedArticlesSync(for: representedObjects)
 		replaceArticles(with: fetchedArticles)
 	}
@@ -1003,10 +1027,16 @@ private extension TimelineViewController {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
-		guard let representedObjects = representedObjects else {
+		guard var representedObjects = representedObjects else {
 			emptyTheTimeline()
 			return
 		}
+		
+		if exceptionArticleFetcher != nil {
+			representedObjects.append(exceptionArticleFetcher as AnyObject)
+			exceptionArticleFetcher = nil
+		}
+		
 		fetchUnsortedArticlesAsync(for: representedObjects) { [weak self] (articles) in
 			self?.replaceArticles(with: articles)
 		}
