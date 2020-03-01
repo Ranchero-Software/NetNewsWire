@@ -324,9 +324,18 @@ private extension ArticleRenderer {
 		s += """
 
 		<script type="text/javascript">
+		function stripStylesFromElement(element, propertiesToStrip) {
+			for (name of propertiesToStrip) {
+				element.style.removeProperty(name);
+			}
+		}
+
 		var init = {
 			wrapFrames: function () {
 				document.querySelectorAll("iframe").forEach(element => {
+					if (element.height > 0 || parseInt(element.style.height) > 0)
+						return;
+		
 					var wrapper = document.createElement("div");
 					wrapper.classList.add("iframeWrap");
 					element.parentNode.insertBefore(wrapper, element);
@@ -335,7 +344,7 @@ private extension ArticleRenderer {
 			},
 			stripStyles: function() {
 				document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
-				document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => element.removeAttribute("style"));
+				document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font"]));
 			},
 			linkHover: function() {
 				var anchors = document.getElementsByTagName("a");
