@@ -306,6 +306,36 @@ protocol SidebarDelegate: class {
 		selectionDidChange(selectedObjects.isEmpty ? nil : selectedObjects)
     }
 
+	func expandRelevantFoldersForAccount(_ account: Account) {
+		guard let folders = account.folders else { return }
+
+		guard let autosaveName = outlineView.autosaveName else { return }
+
+		let defaultsKey = "NSOutlineView Items \(autosaveName)"
+
+		guard let savedExpandedItems = UserDefaults.standard.array(forKey: defaultsKey) as? [[AnyHashable: AnyHashable]] else { return }
+
+		let expandedIdentifiers = savedExpandedItems.reduce(into: Set<ContainerIdentifier>()) { (result, dict) in
+			guard let identifier = ContainerIdentifier(userInfo: dict) else { return }
+			result.insert(identifier)
+		}
+
+		for folder in folders {
+			guard let folderID = folder.containerID else { continue }
+
+			if expandedIdentifiers.contains(folderID) {
+				outlineView.expandItem(treeController.nodeInTreeRepresentingObject(folder))
+			}
+		}
+	}
+
+	func outlineViewItemDidExpand(_ notification: Notification) {
+		guard let item = notification.userInfo?["NSObject"] as? Node,
+			let account = nodeForItem(item).representedObject as? Account else { return }
+
+		expandRelevantFoldersForAccount(account)
+	}
+
 	//MARK: - Node Manipulation
 	
 	func deleteNodes(_ nodes: [Node]) {
