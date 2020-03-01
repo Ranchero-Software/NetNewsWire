@@ -54,46 +54,36 @@ import Account
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, persistentObjectForItem item: Any?) -> Any? {
-		if let folder = nodeForItem(item).representedObject as? Folder {
-			return [PersistentObjectKey.folder: folder.name, PersistentObjectKey.account: folder.account?.accountID]
+		guard let node = nodeForItem(item).representedObject as? ContainerIdentifiable else {
+			return nil
+
 		}
 
-		if let _ = nodeForItem(item).representedObject as? SmartFeedsController {
-			return PersistentObjectKey.smartFeeds
+		return node.containerID?.userInfo
+	}
+
+	func node(for identifier: ContainerIdentifier) -> Node? {
+		let object: AnyObject?
+
+		switch identifier {
+			case .smartFeedController:
+				object = SmartFeedsController.shared
+			case .account(let accountID):
+				object = AccountManager.shared.existingAccount(with: accountID)
+			case let .folder(accountID, folderName):
+				object = AccountManager.shared.existingAccount(with: accountID)?.existingFolder(with: folderName)
 		}
 
-		if let account = nodeForItem(item).representedObject as? Account {
-			return [PersistentObjectKey.account: account.accountID]
-		}
-
-		return nil
+		return object != nil ? treeController.nodeInTreeRepresentingObject(object!) : nil
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, itemForPersistentObject object: Any) -> Any? {
-		if let dict = object as? [String: String] {
-			guard let accountName = dict[PersistentObjectKey.account] else {
+		guard let dict = object as? [AnyHashable: AnyHashable],
+			let identifier = ContainerIdentifier(userInfo: dict) else {
 				return nil
-			}
-
-			guard let account = AccountManager.shared.existingAccount(with: accountName) else {
-				return nil
-			}
-
-			if let name = dict[PersistentObjectKey.folder] {
-				guard let folder = account.existingFolder(with: name) else {
-					return nil
-				}
-				return treeController.nodeInTreeRepresentingObject(folder)
-			}
-
-			return treeController.nodeInTreeRepresentingObject(account)
-		} else if let identifier = object as? String {
-			if identifier == PersistentObjectKey.smartFeeds {
-				return treeController.nodeInTreeRepresentingObject(SmartFeedsController.shared)
-			}
 		}
 
-		return nil
+		return node(for: identifier)
 	}
 
 	// MARK: - Drag and Drop
