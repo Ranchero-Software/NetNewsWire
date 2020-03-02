@@ -31,7 +31,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 			usernameTextField.stringValue = credentials.username
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
 		} else {
-			actionButton.title = NSLocalizedString("Create", comment: "Create")
+			actionButton.title = NSLocalizedString("Add Account", comment: "Add Account")
 		}
 	}
 	

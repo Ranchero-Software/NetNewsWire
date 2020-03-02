@@ -145,17 +145,6 @@ function postRenderProcessing() {
 	inlineVideos();
 }
 
-function stopMediaPlayback() {
-	document.querySelectorAll("iframe").forEach(element => {
-		var iframeSrc = element.src;
-		element.src = iframeSrc;
-	});
-
-	document.querySelectorAll("video, audio").forEach(element => {
-		element.pause();
-	});
-}
-
 window.addEventListener('DOMContentLoaded', (event) => {
     window.webkit.messageHandlers.domContentLoaded.postMessage("");
 });

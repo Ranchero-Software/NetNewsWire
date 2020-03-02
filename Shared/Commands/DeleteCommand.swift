@@ -14,6 +14,7 @@ import Articles
 
 final class DeleteCommand: UndoableCommand {
 
+	let treeController: TreeController?
 	let undoManager: UndoManager
 	let undoActionName: String
 	var redoActionName: String {
@@ -23,7 +24,7 @@ final class DeleteCommand: UndoableCommand {
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
 
-	init?(nodesToDelete: [Node], undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
+	init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
 
 		guard DeleteCommand.canDelete(nodesToDelete) else {
 			return nil
@@ -32,6 +33,7 @@ final class DeleteCommand: UndoableCommand {
 			return nil
 		}
 
+		self.treeController = treeController
 		self.undoActionName = actionName
 		self.undoManager = undoManager
 		self.errorHandler = errorHandler
@@ -44,10 +46,22 @@ final class DeleteCommand: UndoableCommand {
 	}
 
 	func perform() {
-		itemSpecifiers.forEach { $0.delete() {} }
-		registerUndo()
+		
+		let group = DispatchGroup()
+		itemSpecifiers.forEach {
+			group.enter()
+			$0.delete() {
+				group.leave()
+			}
+		}
+	
+		group.notify(queue: DispatchQueue.main) {
+			self.treeController?.rebuild()
+			self.registerUndo()
+		}
+		
 	}
-
+	
 	func undo() {
 		itemSpecifiers.forEach { $0.restore() }
 		registerRedo()

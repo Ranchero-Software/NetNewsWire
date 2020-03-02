@@ -89,6 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
+		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
 		appDelegate = self
 	}
@@ -268,10 +269,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	func applicationDidBecomeActive(_ notification: Notification) {
-		// It’s possible there’s a refresh timer set to go off in the past.
-		// In that case, refresh now and update the timer.
-		refreshTimer?.fireOldTimer()
-		syncTimer?.fireOldTimer()
+		fireOldTimers()
 	}
 	
 	func applicationDidResignActive(_ notification: Notification) {
@@ -327,6 +325,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		updateGroupByFeedMenuItem()
 		refreshTimer?.update()
 		updateDockBadge()
+	}
+	
+	@objc func didWakeNotification(_ note: Notification) {
+		fireOldTimers()
 	}
 
 	// MARK: Main Window
@@ -624,6 +626,13 @@ extension AppDelegate {
 
 private extension AppDelegate {
 
+	func fireOldTimers() {
+		// It’s possible there’s a refresh timer set to go off in the past.
+		// In that case, refresh now and update the timer.
+		refreshTimer?.fireOldTimer()
+		syncTimer?.fireOldTimer()
+	}
+	
 	func createReaderWindow() -> MainWindowController {
 
 		return windowControllerWithName("MainWindow") as! MainWindowController

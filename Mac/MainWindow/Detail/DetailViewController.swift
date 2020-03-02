@@ -58,8 +58,12 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		currentWebViewController = webViewController(for: mode)
 	}
 
-	func canScrollDown(_ completion: @escaping (Bool) -> Void) {
-		currentWebViewController.canScrollDown(completion)
+	func stopMediaPlayback() {
+		currentWebViewController.stopMediaPlayback()
+	}
+	
+	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
+		currentWebViewController.canScrollDown(callback)
 	}
 
 	override func scrollPageDown(_ sender: Any?) {

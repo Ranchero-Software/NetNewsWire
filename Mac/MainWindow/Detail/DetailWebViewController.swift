@@ -136,6 +136,12 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		reloadArticleImage()
 	}
 	
+	// MARK: Media Functions
+	
+	func stopMediaPlayback() {
+		webView.evaluateJavaScript("stopMediaPlayback();")
+	}
+	
 	// MARK: Scrolling
 
 	func canScrollDown(_ completion: @escaping (Bool) -> Void) {
