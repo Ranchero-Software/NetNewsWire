@@ -264,6 +264,5 @@ private extension Article {
 		}
 		return url
 	}
-	
 }
 

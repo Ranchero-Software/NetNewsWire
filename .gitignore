@@ -69,13 +69,7 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 
-<<<<<<< HEAD
 
 
 /Shared/Secrets.swift
 *.py[cod]
-=======
-/Shared/Secrets.swift
-*.py[cod]
-
->>>>>>> mac-release
