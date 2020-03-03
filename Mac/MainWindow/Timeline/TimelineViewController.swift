@@ -246,11 +246,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	// MARK: State Restoration
 	
-	func encodeState(with coder: NSCoder) {
+	func saveState(to coder: NSCoder) {
 
 	}
 	
-	func decodeState(with coder: NSCoder) {
+	func restoreState(from coder: NSCoder) {
 
 	}
 	

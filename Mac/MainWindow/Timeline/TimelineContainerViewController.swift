@@ -95,12 +95,12 @@ final class TimelineContainerViewController: NSViewController {
 	
 	// MARK: State Restoration
 	
-	func encodeState(with coder: NSCoder) {
-		regularTimelineViewController.encodeState(with: coder)
+	func saveState(to coder: NSCoder) {
+		regularTimelineViewController.saveState(to: coder)
 	}
 	
-	func decodeState(with coder: NSCoder) {
-		regularTimelineViewController.decodeState(with: coder)
+	func restoreState(from coder: NSCoder) {
+		regularTimelineViewController.restoreState(from: coder)
 	}
 }
 

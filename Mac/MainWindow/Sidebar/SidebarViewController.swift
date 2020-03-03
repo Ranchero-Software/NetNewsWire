@@ -93,11 +93,11 @@ protocol SidebarDelegate: class {
 
 	// MARK: State Restoration
 	
-	func encodeState(with coder: NSCoder) {
+	func saveState(to coder: NSCoder) {
 		coder.encode(isReadFiltered, forKey: UserInfoKey.readFeedsFilterState)
 	}
 	
-	func decodeState(with coder: NSCoder) {
+	func restoreState(from coder: NSCoder) {
 		isReadFiltered = coder.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
 		rebuildTreeAndRestoreSelection()
 	}

@@ -427,12 +427,14 @@ extension MainWindowController: NSWindowDelegate {
 	
 	func window(_ window: NSWindow, willEncodeRestorableState coder: NSCoder) {
 		saveSplitViewState(to: coder)
-		sidebarViewController?.encodeState(with: coder)
+		sidebarViewController?.saveState(to: coder)
+		timelineContainerViewController?.saveState(to: coder)
 	}
 
 	func window(_ window: NSWindow, didDecodeRestorableState coder: NSCoder) {
 		restoreSplitViewState(from: coder)
-		sidebarViewController?.decodeState(with: coder)
+		sidebarViewController?.restoreState(from: coder)
+		timelineContainerViewController?.restoreState(from: coder)
 	}
 
 	func windowWillClose(_ notification: Notification) {
