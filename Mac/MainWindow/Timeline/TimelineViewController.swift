@@ -15,6 +15,7 @@ import os.log
 protocol TimelineDelegate: class  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: WebFeed)
+	func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
 final class TimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
@@ -241,6 +242,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		performBlockAndRestoreSelection {
 			fetchAndReplaceArticlesSync()
 		}
+	}
+	
+	// MARK: State Restoration
+	
+	func encodeState(with coder: NSCoder) {
+
+	}
+	
+	func decodeState(with coder: NSCoder) {
+
 	}
 	
 	// MARK: - Actions

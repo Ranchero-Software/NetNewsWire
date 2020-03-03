@@ -447,13 +447,15 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 extension MainWindowController: NSWindowDelegate {
 	
-	func window(_ window: NSWindow, willEncodeRestorableState state: NSCoder) {
+	func window(_ window: NSWindow, willEncodeRestorableState coder: NSCoder) {
+		sidebarViewController?.encodeState(with: coder)
 		
 //		saveSplitViewState(to: state)
 	}
 
-	func window(_ window: NSWindow, didDecodeRestorableState state: NSCoder) {
-
+	func window(_ window: NSWindow, didDecodeRestorableState coder: NSCoder) {
+		sidebarViewController?.decodeState(with: coder)
+		
 //		restoreSplitViewState(from: state)
 //
 //		// Make sure the timeline view is first responder if possible, to start out viewing
@@ -494,6 +496,10 @@ extension MainWindowController: SidebarDelegate {
 		return timelineViewController.unreadCount
 	}
 	
+	func sidebarInvalidatedRestorationState(_: SidebarViewController) {
+		invalidateRestorableState()
+	}
+	
 }
 
 // MARK: - TimelineContainerViewControllerDelegate
@@ -530,6 +536,10 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 
 	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed) {
 		sidebarViewController?.selectFeed(webFeed)
+	}
+	
+	func timelineInvalidatedRestorationState(_: TimelineContainerViewController) {
+		invalidateRestorableState()
 	}
 	
 }

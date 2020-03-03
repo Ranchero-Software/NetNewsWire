@@ -15,6 +15,7 @@ import RSCore
 protocol SidebarDelegate: class {
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?)
 	func unreadCount(for: AnyObject) -> Int
+	func sidebarInvalidatedRestorationState(_: SidebarViewController)
 }
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate, UndoableCommandRunner {
@@ -38,8 +39,7 @@ protocol SidebarDelegate: class {
 		}
 		set {
 			treeControllerDelegate.isReadFiltered = newValue
-			invalidateRestorableState()
-			rebuildTreeAndRestoreSelection()
+			delegate?.sidebarInvalidatedRestorationState(self)
 		}
 	}
 
@@ -93,12 +93,13 @@ protocol SidebarDelegate: class {
 
 	// MARK: State Restoration
 	
-	override func encodeRestorableState(with coder: NSCoder) {
+	func encodeState(with coder: NSCoder) {
 		coder.encode(isReadFiltered, forKey: UserInfoKey.readFeedsFilterState)
 	}
 	
-	override func restoreState(with coder: NSCoder) {
+	func decodeState(with coder: NSCoder) {
 		isReadFiltered = coder.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
+		rebuildTreeAndRestoreSelection()
 	}
 	
 	// MARK: - Notifications
@@ -377,6 +378,7 @@ protocol SidebarDelegate: class {
 		} else {
 			isReadFiltered = true
 		}
+		rebuildTreeAndRestoreSelection()
 	}
 
 }

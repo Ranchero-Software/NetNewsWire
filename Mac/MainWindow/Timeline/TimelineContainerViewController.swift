@@ -13,6 +13,8 @@ import Articles
 protocol TimelineContainerViewControllerDelegate: class {
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
 	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed)
+	func timelineInvalidatedRestorationState(_: TimelineContainerViewController)
+
 }
 
 final class TimelineContainerViewController: NSViewController {
@@ -91,6 +93,15 @@ final class TimelineContainerViewController: NSViewController {
 		regularTimelineViewController.toggleReadFilter()
 	}
 	
+	// MARK: State Restoration
+	
+	func encodeState(with coder: NSCoder) {
+		regularTimelineViewController.encodeState(with: coder)
+	}
+	
+	func decodeState(with coder: NSCoder) {
+		regularTimelineViewController.decodeState(with: coder)
+	}
 }
 
 extension TimelineContainerViewController: TimelineDelegate {
@@ -101,6 +112,10 @@ extension TimelineContainerViewController: TimelineDelegate {
 
 	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: WebFeed) {
 		delegate?.timelineRequestedWebFeedSelection(self, webFeed: webFeed)
+	}
+	
+	func timelineInvalidatedRestorationState(_: TimelineViewController) {
+		delegate?.timelineInvalidatedRestorationState(self)
 	}
 	
 }
