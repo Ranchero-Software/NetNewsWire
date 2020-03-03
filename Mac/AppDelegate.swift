@@ -383,6 +383,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 
+	func removeMainWindow(_ windowController: MainWindowController) {
+		if let index = mainWindowControllers.firstIndex(of: windowController) {
+			mainWindowControllers.remove(at: index)
+		}
+	}
+	
 	// MARK: NSUserInterfaceValidations
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		if shuttingDown {

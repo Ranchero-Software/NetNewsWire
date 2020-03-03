@@ -462,7 +462,9 @@ extension MainWindowController: NSWindowDelegate {
 	}
 
 	func windowWillClose(_ notification: Notification) {
+		// TODO: now that we are deallocating main window controllers, the media playback stop can probably be removed
 		detailViewController?.stopMediaPlayback()
+		appDelegate.removeMainWindow(self)
 	}
 	
 }
