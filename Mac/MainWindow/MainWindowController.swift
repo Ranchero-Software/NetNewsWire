@@ -449,18 +449,11 @@ extension MainWindowController: NSWindowDelegate {
 	
 	func window(_ window: NSWindow, willEncodeRestorableState state: NSCoder) {
 		
-		if let sidebarReadFiltered = sidebarViewController?.isReadFiltered {
-			state.encode(sidebarReadFiltered, forKey: UserInfoKey.readFeedsFilterState)
-		}
-		
 //		saveSplitViewState(to: state)
 	}
 
 	func window(_ window: NSWindow, didDecodeRestorableState state: NSCoder) {
 
-		let sidebarReadFiltered = state.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
-		sidebarViewController?.isReadFiltered = sidebarReadFiltered
-		
 //		restoreSplitViewState(from: state)
 //
 //		// Make sure the timeline view is first responder if possible, to start out viewing
@@ -499,10 +492,6 @@ extension MainWindowController: SidebarDelegate {
 		return timelineViewController.unreadCount
 	}
 	
-	func sidebarInvalidateRestorableState(_: SidebarViewController) {
-		invalidateRestorableState()
-	}
-
 }
 
 // MARK: - TimelineContainerViewControllerDelegate
