@@ -29,6 +29,10 @@ var appDelegate: AppDelegate!
 class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate
 {
 
+	private struct WindowRestorationIdentifiers {
+		static let mainWindow = "mainWindow"
+	}
+	
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
@@ -65,8 +69,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 
+	private var mainWindowController: MainWindowController? {
+		var bestController: MainWindowController?
+		for candidateController in mainWindowControllers {
+			if let bestWindow = bestController?.window, let candidateWindow = candidateController.window {
+				if bestWindow.orderedIndex > candidateWindow.orderedIndex {
+					bestController = candidateController
+				}
+			} else {
+				bestController = candidateController
+			}
+		}
+		return bestController
+	}
+	
+	private var mainWindowControllers = [MainWindowController]()
 	private var preferencesWindowController: NSWindowController?
-	private var mainWindowController: MainWindowController?
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var importOPMLController: ImportOPMLWindowController?
@@ -126,6 +144,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		installAppleEventHandlers()
+		
+		CacheCleaner.purgeIfNecessary()
+
+		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
+		let cacheFolder: String
+		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).path {
+			cacheFolder = userCacheFolder
+		}
+		else {
+			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
+			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
+		}
+
+		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
+		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
+		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
+		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
+
+		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
+		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
+		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
+		imageDownloader = ImageDownloader(folder: imagesFolder)
+
+		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
+		webFeedIconDownloader = WebFeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
+
 	}
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
@@ -162,34 +206,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		}
 
-		CacheCleaner.purgeIfNecessary()
-
-		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
-		let cacheFolder: String
-		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).path {
-			cacheFolder = userCacheFolder
-		}
-		else {
-			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
-			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
-		}
-
-		let faviconsFolder = (cacheFolder as NSString).appendingPathComponent("Favicons")
-		let faviconsFolderURL = URL(fileURLWithPath: faviconsFolder)
-		try! FileManager.default.createDirectory(at: faviconsFolderURL, withIntermediateDirectories: true, attributes: nil)
-		faviconDownloader = FaviconDownloader(folder: faviconsFolder)
-
-		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
-		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
-		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-		imageDownloader = ImageDownloader(folder: imagesFolder)
-
-		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
-		webFeedIconDownloader = WebFeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
-
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
-        createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
+
 		if isFirstRun {
 			mainWindowController?.window?.center()
 		}
@@ -332,19 +352,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	// MARK: Main Window
-	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
+	
+	func createMainWindowController() -> MainWindowController {
+		let controller = windowControllerWithName("MainWindow") as! MainWindowController
+		mainWindowControllers.append(controller)
+		return controller
+	}
 
+	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
 		let storyboard = NSStoryboard(name: NSStoryboard.Name(storyboardName), bundle: nil)
 		return storyboard.instantiateInitialController()! as! NSWindowController
 	}
 
-	func createAndShowMainWindow() {
-
-		if mainWindowController == nil {
-			mainWindowController = createReaderWindow()
+	@discardableResult
+	func createAndShowMainWindow() -> NSWindow? {
+		let controller = createMainWindowController()
+		controller.showWindow(self)
+		
+		if let window = controller.window {
+			window.restorationClass = Self.self
+			window.identifier = NSUserInterfaceItemIdentifier(rawValue: WindowRestorationIdentifiers.mainWindow)
 		}
+		
+		return controller.window
+	}
 
-		mainWindowController!.showWindow(self)
+	func createAndShowMainWindowIfNecessary() {
+		if mainWindowController == nil {
+			createAndShowMainWindow()
+		}
 	}
 
 	// MARK: NSUserInterfaceValidations
@@ -388,8 +424,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	// MARK: Add Feed
 	func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
-
-		createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
+		
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
@@ -405,7 +441,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	// MARK: - Actions
 	@IBAction func showPreferences(_ sender: Any?) {
-
 		if preferencesWindowController == nil {
 			preferencesWindowController = windowControllerWithName("Preferences")
 		}
@@ -413,30 +448,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		preferencesWindowController!.showWindow(self)
 	}
 
-	@IBAction func showMainWindow(_ sender: Any?) {
-
+	@IBAction func newMainWindow(_ sender: Any?) {
 		createAndShowMainWindow()
 	}
 
-	@IBAction func refreshAll(_ sender: Any?) {
+	@IBAction func showMainWindow(_ sender: Any?) {
+		createAndShowMainWindowIfNecessary()
+	}
 
+	@IBAction func refreshAll(_ sender: Any?) {
 		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {
-
 		addFeed(nil)
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
-
-		createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
 		showAddFolderSheetOnWindow(mainWindowController!.window!)
 	}
 
 	@IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
-
 		if keyboardShortcutsWindowController == nil {
+			
 			keyboardShortcutsWindowController = WebViewWindowController(title: NSLocalizedString("Keyboard Shortcuts", comment: "window title"))
 			let htmlFile = Bundle(for: type(of: self)).path(forResource: "KeyboardShortcuts", ofType: "html")!
 			keyboardShortcutsWindowController?.displayContents(of: htmlFile)
@@ -447,6 +482,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 				let minSize = NSSize(width: 400, height: 400)
 				window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 			}
+			
 		}
 
 		keyboardShortcutsWindowController!.showWindow(self)
@@ -467,7 +503,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func importOPMLFromFile(_ sender: Any?) {
-		createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
@@ -477,7 +513,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	@IBAction func importNNW3FromFile(_ sender: Any?) {
-		createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
@@ -485,7 +521,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	@IBAction func exportOPML(_ sender: Any?) {
-		createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
@@ -565,19 +601,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func gotoToday(_ sender: Any?) {
 
-		createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
 		mainWindowController!.gotoToday(sender)
 	}
 
 	@IBAction func gotoAllUnread(_ sender: Any?) {
 
-		createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
 		mainWindowController!.gotoAllUnread(sender)
 	}
 
 	@IBAction func gotoStarred(_ sender: Any?) {
 
-		createAndShowMainWindow()
+		createAndShowMainWindowIfNecessary()
 		mainWindowController!.gotoStarred(sender)
 	}
 
@@ -633,11 +669,6 @@ private extension AppDelegate {
 		syncTimer?.fireOldTimer()
 	}
 	
-	func createReaderWindow() -> MainWindowController {
-
-		return windowControllerWithName("MainWindow") as! MainWindowController
-	}
-
 	func objectsForInspector() -> [Any]? {
 
 		guard let window = NSApplication.shared.mainWindow, let windowController = window.windowController as? MainWindowController else {
@@ -685,4 +716,16 @@ extension AppDelegate : ScriptingAppDelegate {
     internal var  scriptingSelectedArticles: [Article] {
         return self.scriptingMainWindowController?.scriptingSelectedArticles ?? []
     }
+}
+
+extension AppDelegate: NSWindowRestoration {
+	
+	@objc static func restoreWindow(withIdentifier identifier: NSUserInterfaceItemIdentifier, state: NSCoder, completionHandler: @escaping (NSWindow?, Error?) -> Void) {
+		var mainWindow: NSWindow? = nil
+		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
+			mainWindow = appDelegate.createAndShowMainWindow()
+		}
+		completionHandler(mainWindow, nil)
+	}
+	
 }

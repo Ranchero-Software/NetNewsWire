@@ -15,6 +15,7 @@ import RSCore
 protocol SidebarDelegate: class {
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?)
 	func unreadCount(for: AnyObject) -> Int
+	func sidebarInvalidateRestorableState(_: SidebarViewController)
 }
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate, UndoableCommandRunner {
@@ -31,8 +32,16 @@ protocol SidebarDelegate: class {
 	lazy var dataSource: SidebarOutlineDataSource = {
 		return SidebarOutlineDataSource(treeController: treeController)
 	}()
+	
 	var isReadFiltered: Bool {
-		return treeControllerDelegate.isReadFiltered
+		get {
+			return treeControllerDelegate.isReadFiltered
+		}
+		set {
+			treeControllerDelegate.isReadFiltered = newValue
+			delegate?.sidebarInvalidateRestorableState(self)
+			rebuildTreeAndRestoreSelection()
+		}
 	}
 
     var undoableCommands = [UndoableCommand]()
@@ -355,11 +364,10 @@ protocol SidebarDelegate: class {
 
 	func toggleReadFilter() {
 		if treeControllerDelegate.isReadFiltered {
-			treeControllerDelegate.isReadFiltered = false
+			isReadFiltered = false
 		} else {
-			treeControllerDelegate.isReadFiltered = true
+			isReadFiltered = true
 		}
-		rebuildTreeAndRestoreSelection()
 	}
 
 }

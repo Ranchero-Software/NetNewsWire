@@ -131,20 +131,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	// MARK: - Notifications
 
-//	func window(_ window: NSWindow, willEncodeRestorableState state: NSCoder) {
-//
-//		saveSplitViewState(to: state)
-//	}
-//
-//	func window(_ window: NSWindow, didDecodeRestorableState state: NSCoder) {
-//
-//		restoreSplitViewState(from: state)
-//
-//		// Make sure the timeline view is first responder if possible, to start out viewing
-//		// whatever preserved selection might have been restored
-//		makeTimelineViewFirstResponder()
-//	}
-
 	@objc func applicationWillTerminate(_ note: Notification) {
 		saveState()
 		window?.saveFrame(usingName: windowAutosaveName)
@@ -460,9 +446,32 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 // MARK: NSWindowDelegate
 
 extension MainWindowController: NSWindowDelegate {
+	
+	func window(_ window: NSWindow, willEncodeRestorableState state: NSCoder) {
+		
+		if let sidebarReadFiltered = sidebarViewController?.isReadFiltered {
+			state.encode(sidebarReadFiltered, forKey: UserInfoKey.readFeedsFilterState)
+		}
+		
+//		saveSplitViewState(to: state)
+	}
+
+	func window(_ window: NSWindow, didDecodeRestorableState state: NSCoder) {
+
+		let sidebarReadFiltered = state.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
+		sidebarViewController?.isReadFiltered = sidebarReadFiltered
+		
+//		restoreSplitViewState(from: state)
+//
+//		// Make sure the timeline view is first responder if possible, to start out viewing
+//		// whatever preserved selection might have been restored
+//		makeTimelineViewFirstResponder()
+	}
+
 	func windowWillClose(_ notification: Notification) {
 		detailViewController?.stopMediaPlayback()
 	}
+	
 }
 
 // MARK: - SidebarDelegate
@@ -489,6 +498,11 @@ extension MainWindowController: SidebarDelegate {
 		}
 		return timelineViewController.unreadCount
 	}
+	
+	func sidebarInvalidateRestorableState(_: SidebarViewController) {
+		invalidateRestorableState()
+	}
+
 }
 
 // MARK: - TimelineContainerViewControllerDelegate
