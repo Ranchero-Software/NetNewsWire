@@ -25,7 +25,6 @@ struct AppDefaults {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
-		static let mainWindowWidths = "mainWindowWidths"
 		static let refreshInterval = "refreshInterval"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
@@ -198,15 +197,6 @@ struct AppDefaults {
 	
 	static var timelineShowsSeparators: Bool {
 		return bool(for: Key.timelineShowsSeparators)
-	}
-
-	static var mainWindowWidths: [Int]? {
-		get {
-			return UserDefaults.standard.object(forKey: Key.mainWindowWidths) as? [Int]
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.mainWindowWidths)
-		}
 	}
 
 	static var refreshInterval: RefreshInterval {

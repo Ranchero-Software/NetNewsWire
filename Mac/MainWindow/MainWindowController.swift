@@ -24,8 +24,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private var articleExtractor: ArticleExtractor? = nil
 	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
-	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
-	static var didPositionWindowOnFirstRun = false
+	private static let mainWindowWidthsStateKey = "mainWindowWidthsStateKey"
 
 	private var currentFeedOrFolder: AnyObject? {
 		// Nil for none or multiple selection.
@@ -57,7 +56,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	// MARK: - NSWindowController
 
 	override func windowDidLoad() {
-
 		super.windowDidLoad()
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
@@ -66,22 +64,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			window?.titleVisibility = .hidden
 		}
 
-		window?.setFrameUsingName(windowAutosaveName, force: true)
-		if AppDefaults.isFirstRun && !MainWindowController.didPositionWindowOnFirstRun {
-
-			if let window = window {
-				let point = NSPoint(x: 128, y: 64)
-				let size = NSSize(width: 1000, height: 700)
-				let minSize = NSSize(width: 600, height: 600)
-				window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
-				MainWindowController.didPositionWindowOnFirstRun = true
-			}
+		if let window = window {
+			let point = NSPoint(x: 128, y: 64)
+			let size = NSSize(width: 1000, height: 700)
+			let minSize = NSSize(width: 600, height: 600)
+			window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 		}
 
 		detailSplitViewItem?.minimumThickness = CGFloat(MainWindowController.detailViewMinimumThickness)
-		restoreSplitViewState()
-
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillTerminate(_:)), name: NSApplication.willTerminateNotification, object: nil)
 
 		sidebarViewController = splitViewController?.splitViewItems[0].viewController as? SidebarViewController
 		sidebarViewController!.delegate = self
@@ -105,13 +95,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	// MARK: - API
 
-	func saveState() {
-
-		saveSplitViewState()
-	}
-
 	func selectedObjectsInSidebar() -> [AnyObject]? {
-
 		return sidebarViewController?.selectedObjects
 	}
 
@@ -131,13 +115,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	// MARK: - Notifications
 
-	@objc func applicationWillTerminate(_ note: Notification) {
-		saveState()
-		window?.saveFrame(usingName: windowAutosaveName)
-	}
-
 	@objc func refreshProgressDidChange(_ note: Notification) {
-
 		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
 	}
 
@@ -448,19 +426,13 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 extension MainWindowController: NSWindowDelegate {
 	
 	func window(_ window: NSWindow, willEncodeRestorableState coder: NSCoder) {
+		saveSplitViewState(to: coder)
 		sidebarViewController?.encodeState(with: coder)
-		
-//		saveSplitViewState(to: state)
 	}
 
 	func window(_ window: NSWindow, didDecodeRestorableState coder: NSCoder) {
+		restoreSplitViewState(from: coder)
 		sidebarViewController?.decodeState(with: coder)
-		
-//		restoreSplitViewState(from: state)
-//
-//		// Make sure the timeline view is first responder if possible, to start out viewing
-//		// whatever preserved selection might have been restored
-//		makeTimelineViewFirstResponder()
 	}
 
 	func windowWillClose(_ notification: Notification) {
@@ -938,24 +910,23 @@ private extension MainWindowController {
 		}
 	}
 
-	func saveSplitViewState() {
-		// TODO: Update this for multiple windows.
-		// Also: use standard state restoration mechanism.
+	func saveSplitViewState(to coder: NSCoder) {
 		guard let splitView = splitViewController?.splitView else {
 			return
-			}
-		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
-		if AppDefaults.mainWindowWidths != widths {
-			AppDefaults.mainWindowWidths = widths
 		}
+
+		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
+		coder.encode(widths, forKey: MainWindowController.mainWindowWidthsStateKey)
 	}
 
-	func restoreSplitViewState() {
-		// TODO: Update this for multiple windows.
-		// Also: use standard state restoration mechanism.
-		guard let splitView = splitViewController?.splitView, let widths = AppDefaults.mainWindowWidths, widths.count == 3, let window = window else {
-			return
+	func restoreSplitViewState(from coder: NSCoder) {
+		guard let splitView = splitViewController?.splitView,
+			let widths = try? coder.decodeTopLevelObject(forKey: MainWindowController.mainWindowWidthsStateKey) as? [Int],
+			widths.count == 3,
+			let window = window else {
+				return
 		}
+
 		let windowWidth = Int(floor(window.frame.width))
 		let dividerThickness: Int = Int(splitView.dividerThickness)
 		let sidebarWidth: Int = widths[0]
@@ -969,50 +940,5 @@ private extension MainWindowController {
 		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
 		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
 	}
-
-//	func saveSplitViewState(to coder: NSCoder) {
-//
-//		// TODO: Update this for multiple windows.
-//
-//		guard let splitView = splitViewController?.splitView else {
-//			return
-//		}
-//
-//		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
-//		coder.encode(widths, forKey: MainWindowController.mainWindowWidthsStateKey)
-//
-//	}
-
-//	func arrayOfIntFromCoder(_ coder: NSCoder, withKey: String) -> [Int]? {
-//		let decodedFloats: [Int]?
-//		do {
-//			decodedFloats = try coder.decodeTopLevelObject(forKey: MainWindowController.mainWindowWidthsStateKey) as? [Int]? ?? nil
-//		}
-//		catch {
-//			decodedFloats = nil
-//		}
-//		return decodedFloats
-//	}
-
-//	func restoreSplitViewState(from coder: NSCoder) {
-//
-//		// TODO: Update this for multiple windows.
-//		guard let splitView = splitViewController?.splitView, let widths = arrayOfIntFromCoder(coder, withKey: MainWindowController.mainWindowWidthsStateKey), widths.count == 3, let window = window else {
-//			return
-//		}
-//
-//		let windowWidth = Int(floor(window.frame.width))
-//		let dividerThickness: Int = Int(splitView.dividerThickness)
-//		let sidebarWidth: Int = widths[0]
-//		let timelineWidth: Int = widths[1]
-//
-//		// Make sure the detail view has its mimimum thickness, at least.
-//		if windowWidth < sidebarWidth + dividerThickness + timelineWidth + dividerThickness + MainWindowController.detailViewMinimumThickness {
-//			return
-//		}
-//
-//		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
-//		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
-//	}
 }
 
