@@ -19,4 +19,6 @@ struct UserInfoKey {
 	static let containerExpandedWindowState = "containerExpandedWindowState"
 	static let readFeedsFilterState = "readFeedsFilterState"
 	static let readArticlesFilterState = "readArticlesFilterState"
+	static let selectedFeedsState = "selectedFeedsState"
+	
 }

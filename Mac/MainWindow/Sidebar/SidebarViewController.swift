@@ -63,6 +63,7 @@ protocol SidebarDelegate: class {
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
 		outlineView.registerForDraggedTypes([WebFeedPasteboardWriter.webFeedUTIInternalType, WebFeedPasteboardWriter.webFeedUTIType, .URL, .string])
 
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
@@ -92,20 +93,51 @@ protocol SidebarDelegate: class {
 	func saveState(to coder: NSCoder) {
 		coder.encode(isReadFiltered, forKey: UserInfoKey.readFeedsFilterState)
 		coder.encode(expandedTable.map( { $0.userInfo }), forKey: UserInfoKey.containerExpandedWindowState)
+		coder.encode(selectedFeeds.compactMap({ $0.feedID?.userInfo }), forKey: UserInfoKey.selectedFeedsState)
 	}
 	
 	func restoreState(from coder: NSCoder) {
-		isReadFiltered = coder.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
 		
 		if let containerExpandedWindowState = try? coder.decodeTopLevelObject(forKey: UserInfoKey.containerExpandedWindowState) as? [[AnyHashable: AnyHashable]] {
 			let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
 			expandedTable = Set(containerIdentifers)
 		}
 
-		rebuildTreeAndRestoreSelection()
+		guard let selectedFeedsState = try? coder.decodeTopLevelObject(forKey: UserInfoKey.selectedFeedsState) as? [[AnyHashable: AnyHashable]] else {
+			return
+		}
+
+		let selectedFeedIdentifers = Set(selectedFeedsState.compactMap( { FeedIdentifier(userInfo: $0) }))
+		selectedFeedIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
+		
+		rebuildTreeAndReloadDataIfNeeded()
+		
+		var selectIndexes = IndexSet()
+
+		func selectFeedsVisitor(node: Node) {
+			if let feedID = (node.representedObject as? FeedIdentifiable)?.feedID {
+				if selectedFeedIdentifers.contains(feedID) {
+					selectIndexes.insert(outlineView.row(forItem: node) )
+				}
+			}
+		}
+
+		treeController.visitNodes(selectFeedsVisitor(node:))
+		outlineView.selectRowIndexes(selectIndexes, byExtendingSelection: false)
+		
+		isReadFiltered = coder.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
 	}
 	
 	// MARK: - Notifications
+
+	@objc func unreadCountDidInitialize(_ notification: Notification) {
+		guard notification.object is AccountManager else {
+			return
+		}
+		if isReadFiltered {
+			rebuildTreeAndRestoreSelection()
+		}
+	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 		guard let representedObject = note.object else {
@@ -116,6 +148,10 @@ protocol SidebarDelegate: class {
 			configureUnreadCountForCellsForRepresentedObjects(timelineViewController.representedObjects)
 		} else {
 			configureUnreadCountForCellsForRepresentedObjects([representedObject as AnyObject])
+		}
+
+		guard AccountManager.shared.isUnreadCountsInitialized else {
+			return
 		}
 
 		if let feed = representedObject as? Feed, isReadFiltered, feed.unreadCount > 0 {
@@ -563,6 +599,7 @@ private extension SidebarViewController {
 
 	func selectionDidChange(_ selectedObjects: [AnyObject]?) {
 		delegate?.sidebarSelectionDidChange(self, selectedObjects: selectedObjects)
+		delegate?.sidebarInvalidatedRestorationState(self)
 	}
 
 	func updateUnreadCounts(for objects: [AnyObject]) {

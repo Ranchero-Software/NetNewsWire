@@ -170,6 +170,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		authorAvatarDownloader = AuthorAvatarDownloader(imageDownloader: imageDownloader)
 		webFeedIconDownloader = WebFeedIconDownloader(imageDownloader: imageDownloader, folder: cacheFolder)
 
+		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
 	}
 	
 	func applicationDidFinishLaunching(_ note: Notification) {
@@ -190,8 +191,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		#endif
 		
-		appName = (Bundle.main.infoDictionary!["CFBundleExecutable"]! as! String)
-
 		AppDefaults.registerDefaults()
 		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
