@@ -18,7 +18,7 @@ protocol SidebarDelegate: class {
 	func sidebarInvalidatedRestorationState(_: SidebarViewController)
 }
 
-@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate, UndoableCommandRunner {
+@objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
     
 	@IBOutlet var outlineView: SidebarOutlineView!
 
@@ -39,9 +39,9 @@ protocol SidebarDelegate: class {
 		}
 		set {
 			treeControllerDelegate.isReadFiltered = newValue
-			delegate?.sidebarInvalidatedRestorationState(self)
 		}
 	}
+	var expandedTable = Set<ContainerIdentifier>()
 
     var undoableCommands = [UndoableCommand]()
 	private var animatingChanges = false
@@ -77,28 +77,31 @@ protocol SidebarDelegate: class {
 
 		outlineView.reloadData()
 
-		// Always expand all group items on initial display.
-		var row = 0
-		while(true) {
-			guard let item = outlineView.item(atRow: row) else {
-				break
+		// Expand top level items by default.  If there is state to restore, overlay this.
+		for topLevelNode in treeController.rootNode.childNodes {
+			if let containerID = (topLevelNode.representedObject as? ContainerIdentifiable)?.containerID {
+				expandedTable.insert(containerID)
 			}
-			let node = item as! Node
-			if node.isGroupItem {
-				outlineView.expandItem(item)
-			}
-			row += 1
 		}
+		expandNodes()
+		
 	}
 
 	// MARK: State Restoration
 	
 	func saveState(to coder: NSCoder) {
 		coder.encode(isReadFiltered, forKey: UserInfoKey.readFeedsFilterState)
+		coder.encode(expandedTable.map( { $0.userInfo }), forKey: UserInfoKey.containerExpandedWindowState)
 	}
 	
 	func restoreState(from coder: NSCoder) {
 		isReadFiltered = coder.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
+		
+		if let containerExpandedWindowState = try? coder.decodeTopLevelObject(forKey: UserInfoKey.containerExpandedWindowState) as? [[AnyHashable: AnyHashable]] {
+			let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
+			expandedTable = Set(containerIdentifers)
+		}
+
 		rebuildTreeAndRestoreSelection()
 	}
 	
@@ -319,7 +322,29 @@ protocol SidebarDelegate: class {
     func outlineViewSelectionDidChange(_ notification: Notification) {
 		selectionDidChange(selectedObjects.isEmpty ? nil : selectedObjects)
     }
-
+	
+	func outlineViewItemDidExpand(_ notification: Notification) {
+ 		guard let node = notification.userInfo?["NSObject"] as? Node,
+			let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else {
+			return
+		}
+		if !expandedTable.contains(containerID) {
+			expandedTable.insert(containerID)
+			delegate?.sidebarInvalidatedRestorationState(self)
+		}
+ 	}
+	
+	func outlineViewItemDidCollapse(_ notification: Notification) {
+ 		guard let node = notification.userInfo?["NSObject"] as? Node,
+			let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else {
+			return
+		}
+		if expandedTable.contains(containerID) {
+			expandedTable.remove(containerID)
+			delegate?.sidebarInvalidatedRestorationState(self)
+		}
+	}
+	
 	//MARK: - Node Manipulation
 	
 	func deleteNodes(_ nodes: [Node]) {
@@ -378,6 +403,7 @@ protocol SidebarDelegate: class {
 		} else {
 			isReadFiltered = true
 		}
+		delegate?.sidebarInvalidatedRestorationState(self)
 		rebuildTreeAndRestoreSelection()
 	}
 
@@ -487,6 +513,21 @@ private extension SidebarViewController {
 			treeController.rebuild()
 			treeControllerDelegate.resetFilterExceptions()
 			outlineView.reloadData()
+			expandNodes()
+		}
+	}
+	
+	func expandNodes() {
+		treeController.visitNodes(expandNodesVisitor(node:))
+	}
+	
+	func expandNodesVisitor(node: Node) {
+		if let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID {
+			if expandedTable.contains(containerID) {
+				outlineView.expandItem(node)
+			} else {
+				outlineView.collapseItem(node)
+			}
 		}
 	}
 	
