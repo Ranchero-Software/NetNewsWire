@@ -849,7 +849,7 @@ private extension MainWindowController {
 			menuItem.title = isReadFiltered ? showCommand : hideCommand
 			return true
 		} else {
-			menuItem.title = hideCommand
+			menuItem.title = showCommand
 			return false
 		}
 	}

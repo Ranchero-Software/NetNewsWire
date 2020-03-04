@@ -22,10 +22,19 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	private var articleReadFilterType: ReadFilterType?
+	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
 	var isReadFiltered: Bool? {
-		guard let articleReadFilterType = articleReadFilterType, articleReadFilterType != .alwaysRead else { return nil}
-		return articleReadFilterType != .none
+		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed else {
+			return nil
+		}
+		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
+			return nil
+		}
+		if let feedID = timelineFeed.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+			return readFilterEnabled
+		} else {
+			return timelineFeed.defaultReadFilterType == .read
+		}
 	}
 	
 	var representedObjects: [AnyObject]? {
@@ -44,7 +53,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 					showFeedNames = false
 				}
 
-				determineReadFilterType()
 				selectionDidChange(nil)
 				if showsSearchResults {
 					fetchAndReplaceArticlesAsync()
@@ -224,16 +232,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func toggleReadFilter() {
-		guard let filterType = articleReadFilterType else { return }
-		
-		switch filterType {
-		case .alwaysRead:
-			break
-		case .read:
-			articleReadFilterType = ReadFilterType.none
-		case .none:
-			articleReadFilterType = ReadFilterType.read
-		}
+		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? Feed)?.feedID else { return }
+		readFilterEnabledTable[feedID] = !filter
+		delegate?.timelineInvalidatedRestorationState(self)
 		
 		if let article = oneSelectedArticle, let account = article.account {
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
@@ -247,11 +248,21 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: State Restoration
 	
 	func saveState(to coder: NSCoder) {
-
+		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
+		for key in readFilterEnabledTable.keys {
+			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
+		}
+		coder.encode(readArticlesFilterState, forKey: UserInfoKey.readArticlesFilterState)
 	}
 	
 	func restoreState(from coder: NSCoder) {
-
+		if let readArticlesFilterState = try? coder.decodeTopLevelObject(forKey: UserInfoKey.readArticlesFilterState) as? [[AnyHashable: AnyHashable]: Bool] {
+			for key in readArticlesFilterState.keys {
+				if let feedIdentifier = FeedIdentifier(userInfo: key) {
+					readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
+				}
+			}
+		}
 	}
 	
 	// MARK: - Actions
@@ -1006,14 +1017,6 @@ private extension TimelineViewController {
 
 	// MARK: - Fetching Articles
 	
-	func determineReadFilterType() {
-		if representedObjects?.count ?? 0 == 1, let feed = representedObjects?.first as? Feed {
-			articleReadFilterType = feed.defaultReadFilterType
-		} else {
-			articleReadFilterType = .read
-		}
-	}
-
 	func fetchAndReplaceArticlesSync() {
 		// To be called when the user has made a change of selection in the sidebar.
 		// It blocks the main thread, so that there’s no async delay,
@@ -1071,7 +1074,7 @@ private extension TimelineViewController {
 
 		var fetchedArticles = Set<Article>()
 		for articleFetcher in articleFetchers {
-			if articleReadFilterType != ReadFilterType.none {
+			if isReadFiltered ?? true {
 				if let articles = try? articleFetcher.fetchUnreadArticles() {
 					fetchedArticles.formUnion(articles)
 				}
@@ -1089,8 +1092,7 @@ private extension TimelineViewController {
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
-		let readFilter = articleReadFilterType != ReadFilterType.none
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: readFilter, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: isReadFiltered ?? true, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
