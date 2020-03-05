@@ -247,20 +247,20 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	// MARK: State Restoration
 	
-	func saveState(to coder: NSCoder) {
+	func saveState(to state: inout [AnyHashable : Any]) {
 		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
 		for key in readFilterEnabledTable.keys {
 			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
 		}
-		coder.encode(readArticlesFilterState, forKey: UserInfoKey.readArticlesFilterState)
+		state[UserInfoKey.readArticlesFilterState] = readArticlesFilterState
 		
 		if selectedArticles.count == 1 {
-			coder.encode(selectedArticles.first!.pathUserInfo, forKey: UserInfoKey.articlePath)
+			state[UserInfoKey.articlePath] = selectedArticles.first!.pathUserInfo
 		}
 	}
 	
-	func restoreState(from coder: NSCoder) {
-		if let readArticlesFilterState = try? coder.decodeTopLevelObject(forKey: UserInfoKey.readArticlesFilterState) as? [[AnyHashable: AnyHashable]: Bool] {
+	func restoreState(from state: [AnyHashable : Any]) {
+		if let readArticlesFilterState = state[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
 			for key in readArticlesFilterState.keys {
 				if let feedIdentifier = FeedIdentifier(userInfo: key) {
 					readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
@@ -268,7 +268,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 		}
 		
-		guard let articlePathUserInfo = try? coder.decodeTopLevelObject(forKey: UserInfoKey.articlePath) as? [AnyHashable : Any],
+		guard let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let account = AccountManager.shared.existingAccount(with: accountID),
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {

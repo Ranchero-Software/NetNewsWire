@@ -90,20 +90,20 @@ protocol SidebarDelegate: class {
 
 	// MARK: State Restoration
 	
-	func saveState(to coder: NSCoder) {
-		coder.encode(isReadFiltered, forKey: UserInfoKey.readFeedsFilterState)
-		coder.encode(expandedTable.map( { $0.userInfo }), forKey: UserInfoKey.containerExpandedWindowState)
-		coder.encode(selectedFeeds.compactMap({ $0.feedID?.userInfo }), forKey: UserInfoKey.selectedFeedsState)
+	func saveState(to state: inout [AnyHashable : Any]) {
+		state[UserInfoKey.readFeedsFilterState] = isReadFiltered
+		state[UserInfoKey.containerExpandedWindowState] = expandedTable.map { $0.userInfo }
+		state[UserInfoKey.selectedFeedsState] = selectedFeeds.compactMap { $0.feedID?.userInfo }
 	}
 	
-	func restoreState(from coder: NSCoder) {
+	func restoreState(from state: [AnyHashable : Any]) {
 		
-		if let containerExpandedWindowState = try? coder.decodeTopLevelObject(forKey: UserInfoKey.containerExpandedWindowState) as? [[AnyHashable: AnyHashable]] {
+		if let containerExpandedWindowState = state[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
 			let containerIdentifers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
 			expandedTable = Set(containerIdentifers)
 		}
 
-		guard let selectedFeedsState = try? coder.decodeTopLevelObject(forKey: UserInfoKey.selectedFeedsState) as? [[AnyHashable: AnyHashable]] else {
+		guard let selectedFeedsState = state[UserInfoKey.selectedFeedsState] as? [[AnyHashable: AnyHashable]] else {
 			return
 		}
 
@@ -126,7 +126,9 @@ protocol SidebarDelegate: class {
 		outlineView.selectRowIndexes(selectIndexes, byExtendingSelection: false)
 		focus()
 		
-		isReadFiltered = coder.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
+		if let readFeedsFilterState = state[UserInfoKey.readFeedsFilterState] as? Bool {
+			isReadFiltered = readFeedsFilterState
+		}
 	}
 	
 	// MARK: - Notifications

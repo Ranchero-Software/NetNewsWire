@@ -95,12 +95,12 @@ final class TimelineContainerViewController: NSViewController {
 	
 	// MARK: State Restoration
 	
-	func saveState(to coder: NSCoder) {
-		regularTimelineViewController.saveState(to: coder)
+	func saveState(to state: inout [AnyHashable : Any]) {
+		regularTimelineViewController.saveState(to: &state)
 	}
 	
-	func restoreState(from coder: NSCoder) {
-		regularTimelineViewController.restoreState(from: coder)
+	func restoreState(from state: [AnyHashable : Any]) {
+		regularTimelineViewController.restoreState(from: state)
 	}
 }
 

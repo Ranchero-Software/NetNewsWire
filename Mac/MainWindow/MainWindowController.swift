@@ -426,15 +426,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 extension MainWindowController: NSWindowDelegate {
 	
 	func window(_ window: NSWindow, willEncodeRestorableState coder: NSCoder) {
-		saveSplitViewState(to: coder)
-		sidebarViewController?.saveState(to: coder)
-		timelineContainerViewController?.saveState(to: coder)
+		coder.encode(savableState(), forKey: UserInfoKey.windowState)
 	}
 
 	func window(_ window: NSWindow, didDecodeRestorableState coder: NSCoder) {
-		restoreSplitViewState(from: coder)
-		sidebarViewController?.restoreState(from: coder)
-		timelineContainerViewController?.restoreState(from: coder)
+		guard let state = try? coder.decodeTopLevelObject(forKey: UserInfoKey.windowState) as? [AnyHashable : Any] else { return }
+		restoreState(from: state)
 	}
 
 	func windowWillClose(_ notification: Notification) {
@@ -704,6 +701,22 @@ private extension MainWindowController {
 		return oneSelectedArticle?.preferredLink
 	}
 
+	// MARK: - State Restoration
+	
+	func savableState() -> [AnyHashable : Any] {
+		var state = [AnyHashable : Any]()
+		saveSplitViewState(to: &state)
+		sidebarViewController?.saveState(to: &state)
+		timelineContainerViewController?.saveState(to: &state)
+		return state
+	}
+
+	func restoreState(from state: [AnyHashable : Any]) {
+		restoreSplitViewState(from: state)
+		sidebarViewController?.restoreState(from: state)
+		timelineContainerViewController?.restoreState(from: state)
+	}
+
 	// MARK: - Command Validation
 
 	func canGoToNextUnread() -> Bool {
@@ -912,18 +925,18 @@ private extension MainWindowController {
 		}
 	}
 
-	func saveSplitViewState(to coder: NSCoder) {
+	func saveSplitViewState(to state: inout [AnyHashable : Any]) {
 		guard let splitView = splitViewController?.splitView else {
 			return
 		}
 
 		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
-		coder.encode(widths, forKey: MainWindowController.mainWindowWidthsStateKey)
+		state[MainWindowController.mainWindowWidthsStateKey] = widths
 	}
 
-	func restoreSplitViewState(from coder: NSCoder) {
+	func restoreSplitViewState(from state: [AnyHashable : Any]) {
 		guard let splitView = splitViewController?.splitView,
-			let widths = try? coder.decodeTopLevelObject(forKey: MainWindowController.mainWindowWidthsStateKey) as? [Int],
+			let widths = state[MainWindowController.mainWindowWidthsStateKey] as? [Int],
 			widths.count == 3,
 			let window = window else {
 				return
