@@ -253,6 +253,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
 		}
 		coder.encode(readArticlesFilterState, forKey: UserInfoKey.readArticlesFilterState)
+		
+		if selectedArticles.count == 1 {
+			coder.encode(selectedArticles.first!.pathUserInfo, forKey: UserInfoKey.articlePath)
+		}
 	}
 	
 	func restoreState(from coder: NSCoder) {
@@ -263,6 +267,25 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				}
 			}
 		}
+		
+		guard let articlePathUserInfo = try? coder.decodeTopLevelObject(forKey: UserInfoKey.articlePath) as? [AnyHashable : Any],
+			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			let account = AccountManager.shared.existingAccount(with: accountID),
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+				return
+		}
+		
+		if isReadFiltered ?? true {
+			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
+			fetchAndReplaceArticlesSync()
+		}
+		
+		if let selectedIndex = articles.firstIndex(where: { $0.articleID == articleID }) {
+			tableView.selectRow(selectedIndex)
+			tableView.scrollTo(row: selectedIndex)
+			focus()
+		}
+
 	}
 	
 	// MARK: - Actions
@@ -783,6 +806,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func selectionDidChange(_ selectedArticles: ArticleArray?) {
 		delegate?.timelineSelectionDidChange(self, selectedArticles: selectedArticles)
+		delegate?.timelineInvalidatedRestorationState(self)
 	}
 
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {

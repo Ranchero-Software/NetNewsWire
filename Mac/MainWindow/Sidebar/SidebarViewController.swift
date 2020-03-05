@@ -124,6 +124,7 @@ protocol SidebarDelegate: class {
 
 		treeController.visitNodes(selectFeedsVisitor(node:))
 		outlineView.selectRowIndexes(selectIndexes, byExtendingSelection: false)
+		focus()
 		
 		isReadFiltered = coder.decodeBool(forKey: UserInfoKey.readFeedsFilterState)
 	}
