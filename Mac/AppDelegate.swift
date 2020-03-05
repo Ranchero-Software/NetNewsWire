@@ -459,6 +459,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func showMainWindow(_ sender: Any?) {
 		createAndShowMainWindowIfNecessary()
+		mainWindowController?.window?.makeKey()
 	}
 
 	@IBAction func refreshAll(_ sender: Any?) {
