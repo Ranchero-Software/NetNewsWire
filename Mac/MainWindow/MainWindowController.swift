@@ -24,6 +24,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private var articleExtractor: ArticleExtractor? = nil
 	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
+	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
 	private static let mainWindowWidthsStateKey = "mainWindowWidthsStateKey"
 
 	private var currentFeedOrFolder: AnyObject? {
@@ -63,7 +64,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		if !AppDefaults.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
 		}
-
+		
 		if let window = window {
 			let point = NSPoint(x: 128, y: 64)
 			let size = NSSize(width: 1000, height: 700)
@@ -113,6 +114,18 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
 
+	func saveStateToUserDefaults() {
+		AppDefaults.windowState = savableState()
+		window?.saveFrame(usingName: windowAutosaveName)
+	}
+	
+	func restoreStateFromUserDefaults() {
+		if let state = AppDefaults.windowState {
+			restoreState(from: state)
+			window?.setFrameUsingName(windowAutosaveName, force: true)
+		}
+	}
+	
 	// MARK: - Notifications
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
@@ -435,7 +448,6 @@ extension MainWindowController: NSWindowDelegate {
 	}
 
 	func windowWillClose(_ notification: Notification) {
-		// TODO: now that we are deallocating main window controllers, the media playback stop can probably be removed
 		detailViewController?.stopMediaPlayback()
 		appDelegate.removeMainWindow(self)
 	}

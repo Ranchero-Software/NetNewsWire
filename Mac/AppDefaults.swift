@@ -18,6 +18,7 @@ struct AppDefaults {
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
+		static let windowState = "windowState"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let sidebarFontSize = "sidebarFontSize"
 		static let timelineFontSize = "timelineFontSize"
@@ -54,6 +55,15 @@ struct AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
+	
+	static var windowState: [AnyHashable : Any]? {
+		get {
+			UserDefaults.standard.object(forKey: Key.windowState) as? [AnyHashable : Any]
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.windowState)
+		}
+	}
 	
 	static var lastImageCacheFlushDate: Date? {
 		get {

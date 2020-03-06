@@ -207,8 +207,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
-		createAndShowMainWindowIfNecessary()
-
+		
+		if mainWindowController == nil {
+			let mainWindowController = createAndShowMainWindow()
+			mainWindowController.restoreStateFromUserDefaults()
+		}
+		
 		if isFirstRun {
 			mainWindowController?.window?.center()
 		}
@@ -354,6 +358,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func createMainWindowController() -> MainWindowController {
 		let controller = windowControllerWithName("MainWindow") as! MainWindowController
+		if !(mainWindowController?.isOpen ?? false) {
+			mainWindowControllers.removeAll()
+		}
 		mainWindowControllers.append(controller)
 		return controller
 	}
@@ -364,7 +371,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@discardableResult
-	func createAndShowMainWindow() -> NSWindow? {
+	func createAndShowMainWindow() -> MainWindowController {
 		let controller = createMainWindowController()
 		controller.showWindow(self)
 		
@@ -373,16 +380,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			window.identifier = NSUserInterfaceItemIdentifier(rawValue: WindowRestorationIdentifiers.mainWindow)
 		}
 		
-		return controller.window
+		return controller
 	}
 
 	func createAndShowMainWindowIfNecessary() {
 		if mainWindowController == nil {
 			createAndShowMainWindow()
+		} else {
+			mainWindowController?.showWindow(self)
 		}
 	}
 
 	func removeMainWindow(_ windowController: MainWindowController) {
+		guard mainWindowControllers.count > 1 else { return }
 		if let index = mainWindowControllers.firstIndex(of: windowController) {
 			mainWindowControllers.remove(at: index)
 		}
@@ -684,6 +694,7 @@ private extension AppDelegate {
 	}
 
 	func saveState() {
+		mainWindowController?.saveStateToUserDefaults()
 		inspectorWindowController?.saveState()
 	}
 
@@ -727,7 +738,7 @@ extension AppDelegate: NSWindowRestoration {
 	@objc static func restoreWindow(withIdentifier identifier: NSUserInterfaceItemIdentifier, state: NSCoder, completionHandler: @escaping (NSWindow?, Error?) -> Void) {
 		var mainWindow: NSWindow? = nil
 		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
-			mainWindow = appDelegate.createAndShowMainWindow()
+			mainWindow = appDelegate.createAndShowMainWindow().window
 		}
 		completionHandler(mainWindow, nil)
 	}
