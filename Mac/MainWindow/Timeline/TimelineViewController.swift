@@ -435,35 +435,38 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		return .canDoNothing
 	}
 
-	func markOlderArticlesRead() {
-		markOlderArticlesRead(selectedArticles)
+	func markAboveArticlesRead() {
+		markAboveArticlesRead(selectedArticles)
 	}
 
-	func canMarkOlderArticlesAsRead() -> Bool {
-		return !selectedArticles.isEmpty
+	func markBelowArticlesRead() {
+		markBelowArticlesRead(selectedArticles)
 	}
 
-	func markOlderArticlesRead(_ selectedArticles: [Article]) {
-		// Mark articles older than the selectedArticles(s) as read.
+	func canMarkAboveArticlesAsRead() -> Bool {
+		guard let first = selectedArticles.first else { return false }
+		return articles.articlesAbove(article: first).canMarkAllAsRead()
+	}
 
-		var cutoffDate: Date? = nil
-		for article in selectedArticles {
-			if cutoffDate == nil {
-				cutoffDate = article.logicalDatePublished
-			}
-			else if cutoffDate! > article.logicalDatePublished {
-				cutoffDate = article.logicalDatePublished
-			}
-		}
-		if cutoffDate == nil {
+	func canMarkBelowArticlesAsRead() -> Bool {
+		guard let last = selectedArticles.last else { return false }
+		return articles.articlesBelow(article: last).canMarkAllAsRead()
+	}
+
+	func markAboveArticlesRead(_ selectedArticles: [Article]) {
+		guard let first = selectedArticles.first else { return }
+		let articlesToMark = articles.articlesAbove(article: first)
+		guard !articlesToMark.isEmpty else { return }
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
 			return
 		}
+		runCommand(markReadCommand)
+	}
 
-		let articlesToMark = articles.filter { $0.logicalDatePublished < cutoffDate! }
-		if articlesToMark.isEmpty {
-			return
-		}
-
+	func markBelowArticlesRead(_ selectedArticles: [Article]) {
+		guard let last = selectedArticles.last else { return }
+		let articlesToMark = articles.articlesBelow(article: last)
+		guard !articlesToMark.isEmpty else { return }
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
 			return
 		}

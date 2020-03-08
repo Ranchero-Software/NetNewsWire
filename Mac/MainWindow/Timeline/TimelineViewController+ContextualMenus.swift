@@ -33,39 +33,31 @@ extension TimelineViewController {
 extension TimelineViewController {
 
 	@objc func markArticlesReadFromContextualMenu(_ sender: Any?) {
-
-		guard let articles = articles(from: sender) else {
-			return
-		}
+		guard let articles = articles(from: sender) else { return }
 		markArticles(articles, read: true)
 	}
 
 	@objc func markArticlesUnreadFromContextualMenu(_ sender: Any?) {
-
-		guard let articles = articles(from: sender) else {
-			return
-		}
+		guard let articles = articles(from: sender) else { return }
 		markArticles(articles, read: false)
 	}
 
-	@objc func markOlderArticlesReadFromContextualMenu(_ sender: Any?) {
+	@objc func markAboveArticlesReadFromContextualMenu(_ sender: Any?) {
+		guard let articles = articles(from: sender) else { return }
+		markAboveArticlesRead(articles)
+	}
 
-		guard let articles = articles(from: sender) else {
-			return
-		}
-		markOlderArticlesRead(articles)
+	@objc func markBelowArticlesReadFromContextualMenu(_ sender: Any?) {
+		guard let articles = articles(from: sender) else { return }
+		markBelowArticlesRead(articles)
 	}
 
 	@objc func markArticlesStarredFromContextualMenu(_ sender: Any?) {
-
-		guard let articles = articles(from: sender) else {
-			return
-		}
+		guard let articles = articles(from: sender) else { return }
 		markArticles(articles, starred: true)
 	}
 
 	@objc func markArticlesUnstarredFromContextualMenu(_ sender: Any?) {
-
 		guard let articles = articles(from: sender) else {
 			return
 		}
@@ -111,17 +103,14 @@ extension TimelineViewController {
 private extension TimelineViewController {
 
 	func markArticles(_ articles: [Article], read: Bool) {
-
 		markArticles(articles, statusKey: .read, flag: read)
 	}
 
 	func markArticles(_ articles: [Article], starred: Bool) {
-
 		markArticles(articles, statusKey: .starred, flag: starred)
 	}
 
 	func markArticles(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
-
 		guard let undoManager = undoManager, let markStatusCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
 			return
 		}
@@ -130,24 +119,20 @@ private extension TimelineViewController {
 	}
 
 	func unreadArticles(from articles: [Article]) -> [Article]? {
-
 		let filteredArticles = articles.filter { !$0.status.read }
 		return filteredArticles.isEmpty ? nil : filteredArticles
 	}
 
 	func readArticles(from articles: [Article]) -> [Article]? {
-
 		let filteredArticles = articles.filter { $0.status.read }
 		return filteredArticles.isEmpty ? nil : filteredArticles
 	}
 
 	func articles(from sender: Any?) -> [Article]? {
-
 		return (sender as? NSMenuItem)?.representedObject as? [Article]
 	}
 
 	func menu(for articles: [Article]) -> NSMenu? {
-
 		let menu = NSMenu(title: "")
 
 		if articles.anyArticleIsUnread() {
@@ -162,8 +147,11 @@ private extension TimelineViewController {
 		if articles.anyArticleIsStarred() {
 			menu.addItem(markUnstarredMenuItem(articles))
 		}
-		if articles.count > 0 {
-			menu.addItem(markOlderReadMenuItem(articles))
+		if let first = articles.first, self.articles.articlesAbove(article: first).canMarkAllAsRead() {
+			menu.addItem(markAboveReadMenuItem(articles))
+		}
+		if let last = articles.last, self.articles.articlesBelow(article: last).canMarkAllAsRead() {
+			menu.addItem(markBelowReadMenuItem(articles))
 		}
 
 		menu.addSeparatorIfNeeded()
@@ -239,8 +227,12 @@ private extension TimelineViewController {
 		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles)
 	}
 
-	func markOlderReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Older as Read", comment: "Command"),  #selector(markOlderArticlesReadFromContextualMenu(_:)), articles)
+	func markAboveReadMenuItem(_ articles: [Article]) -> NSMenuItem {
+		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles)
+	}
+	
+	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
+		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles)
 	}
 
 	func selectFeedInSidebarMenuItem(_ feed: WebFeed) -> NSMenuItem {

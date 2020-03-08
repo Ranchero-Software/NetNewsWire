@@ -198,8 +198,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return validateToggleStarred(item)
 		}
 
-		if item.action == #selector(markOlderArticlesAsRead(_:)) {
-			return canMarkOlderArticlesAsRead()
+		if item.action == #selector(markAboveArticlesAsRead(_:)) {
+			return canMarkAboveArticlesAsRead()
+		}
+
+		if item.action == #selector(markBelowArticlesAsRead(_:)) {
+			return canMarkBelowArticlesAsRead()
 		}
 
 		if item.action == #selector(toggleArticleExtractor(_:)) {
@@ -360,8 +364,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		splitViewController!.toggleSidebar(sender)
 	}
 
-	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
-		currentTimelineViewController?.markOlderArticlesRead()
+	@IBAction func markAboveArticlesAsRead(_ sender: Any?) {
+		currentTimelineViewController?.markAboveArticlesRead()
+	}
+
+	@IBAction func markBelowArticlesAsRead(_ sender: Any?) {
+		currentTimelineViewController?.markBelowArticlesRead()
 	}
 
 	@IBAction func navigateToTimeline(_ sender: Any?) {
@@ -808,11 +816,14 @@ private extension MainWindowController {
 		return true
 	}
 
-	func canMarkOlderArticlesAsRead() -> Bool {
-
-		return currentTimelineViewController?.canMarkOlderArticlesAsRead() ?? false
+	func canMarkAboveArticlesAsRead() -> Bool {
+		return currentTimelineViewController?.canMarkAboveArticlesAsRead() ?? false
 	}
 
+	func canMarkBelowArticlesAsRead() -> Bool {
+		return currentTimelineViewController?.canMarkBelowArticlesAsRead() ?? false
+	}
+	
 	func canShowShareMenu() -> Bool {
 
 		guard let selectedArticles = selectedArticles else {
