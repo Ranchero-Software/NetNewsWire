@@ -166,7 +166,11 @@ class FeedbinAccountViewController: UITableViewController {
 extension FeedbinAccountViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
+		if textField == emailTextField {
+			passwordTextField.becomeFirstResponder()
+		} else {
+			textField.resignFirstResponder()
+		}
 		return true
 	}
 	

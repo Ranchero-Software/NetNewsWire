@@ -166,7 +166,11 @@ class FeedWranglerAccountViewController: UITableViewController {
 extension FeedWranglerAccountViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		textField.resignFirstResponder()
+		if textField == emailTextField {
+			passwordTextField.becomeFirstResponder()
+		} else {
+			textField.resignFirstResponder()
+		}
 		return true
 	}
 	
