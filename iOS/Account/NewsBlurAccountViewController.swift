@@ -14,7 +14,7 @@ class NewsBlurAccountViewController: UITableViewController {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var emailTextField: UITextField!
+	@IBOutlet weak var usernameTextField: UITextField!
 	@IBOutlet weak var passwordTextField: UITextField!
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
@@ -26,19 +26,19 @@ class NewsBlurAccountViewController: UITableViewController {
 		super.viewDidLoad()
 
 		activityIndicator.isHidden = true
-		emailTextField.delegate = self
+		usernameTextField.delegate = self
 		passwordTextField.delegate = self
 
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .basic) {
 			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
 			actionButton.isEnabled = true
-			emailTextField.text = credentials.username
+			usernameTextField.text = credentials.username
 			passwordTextField.text = credentials.secret
 		} else {
 			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Add Account"), for: .normal)
 		}
 
-		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: emailTextField)
+		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: usernameTextField)
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
@@ -75,17 +75,19 @@ class NewsBlurAccountViewController: UITableViewController {
 
 	@IBAction func action(_ sender: Any) {
 
-		guard let email = emailTextField.text, let password = passwordTextField.text else {
-			showError(NSLocalizedString("Username & password required.", comment: "Credentials Error"))
+		guard let username = usernameTextField.text else {
+			showError(NSLocalizedString("Username required.", comment: "Credentials Error"))
 			return
 		}
+
+		let password = passwordTextField.text ?? ""
 
 		startAnimatingActivityIndicator()
 		disableNavigation()
 
 		// When you fill in the email address via auto-complete it adds extra whitespace
-		let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials(type: .basic, username: trimmedEmail, secret: password)
+		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
+		let credentials = Credentials(type: .newsBlur, username: trimmedUsername, secret: password)
 		Account.validateCredentials(type: .newsBlur, credentials: credentials) { result in
 
 			self.stopAnimtatingActivityIndicator()
@@ -124,17 +126,17 @@ class NewsBlurAccountViewController: UITableViewController {
 						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
 					}
 				} else {
-					self.showError(NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error"))
+					self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
 				}
-			case .failure:
-				self.showError(NSLocalizedString("Network error. Try again later.", comment: "Credentials Error"))
+			case .failure(let error):
+				self.showError(error.localizedDescription)
 			}
 
 		}
 	}
 
 	@objc func textDidChange(_ note: Notification) {
-		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false)
+		actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false)
 	}
 
 	private func showError(_ message: String) {

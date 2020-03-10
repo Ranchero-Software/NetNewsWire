@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		179DB28CF49F73A945EBF5DB /* NewsBlurLoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB088236E3236010462E8 /* NewsBlurLoginResponse.swift */; };
 		3B3A33E7238D3D6800314204 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A33E6238D3D6800314204 /* Secrets.swift */; };
 		3B826DA72385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D9E2385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift */; };
 		3B826DA82385C81C00FC1ADB /* FeedWranglerFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D9F2385C81C00FC1ADB /* FeedWranglerFeedItem.swift */; };
@@ -63,6 +64,8 @@
 		552032FD229D5D5A009559E0 /* ReaderAPITagging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F2229D5D5A009559E0 /* ReaderAPITagging.swift */; };
 		552032FE229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F3229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift */; };
 		55203300229D5D5A009559E0 /* ReaderAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F5229D5D5A009559E0 /* ReaderAPICaller.swift */; };
+		769F295938E5A30D03DFF88F /* NewsBlurAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F2A8DF190549E24B5D110 /* NewsBlurAccountDelegate.swift */; };
+		769F2BA02EF5F329CDE45F5A /* NewsBlurAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F275FD5D942502C5B4716 /* NewsBlurAPICaller.swift */; };
 		841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973EF1F6DD19E006346C4 /* RSCore.framework */; };
 		841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973FA1F6DD1AC006346C4 /* RSParser.framework */; };
 		841974011F6DD1EC006346C4 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974001F6DD1EC006346C4 /* Folder.swift */; };
@@ -220,6 +223,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		179DB088236E3236010462E8 /* NewsBlurLoginResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurLoginResponse.swift; sourceTree = "<group>"; };
 		3B3A33E6238D3D6800314204 /* Secrets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = ../../Shared/Secrets.swift; sourceTree = "<group>"; };
 		3B826D9E2385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAuthorizationResult.swift; sourceTree = "<group>"; };
 		3B826D9F2385C81C00FC1ADB /* FeedWranglerFeedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerFeedItem.swift; sourceTree = "<group>"; };
@@ -278,6 +282,8 @@
 		552032F2229D5D5A009559E0 /* ReaderAPITagging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPITagging.swift; sourceTree = "<group>"; };
 		552032F3229D5D5A009559E0 /* ReaderAPIAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPIAccountDelegate.swift; sourceTree = "<group>"; };
 		552032F5229D5D5A009559E0 /* ReaderAPICaller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPICaller.swift; sourceTree = "<group>"; };
+		769F275FD5D942502C5B4716 /* NewsBlurAPICaller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurAPICaller.swift; sourceTree = "<group>"; };
+		769F2A8DF190549E24B5D110 /* NewsBlurAccountDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurAccountDelegate.swift; sourceTree = "<group>"; };
 		841973E81F6DD19E006346C4 /* RSCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSCore.xcodeproj; path = ../RSCore/RSCore.xcodeproj; sourceTree = "<group>"; };
 		841973F41F6DD1AC006346C4 /* RSParser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RSParser.xcodeproj; path = ../RSParser/RSParser.xcodeproj; sourceTree = "<group>"; };
 		841974001F6DD1EC006346C4 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
@@ -435,6 +441,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		179DBD810D353D9CED7C3BED /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				179DB088236E3236010462E8 /* NewsBlurLoginResponse.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		3B826D9D2385C81C00FC1ADB /* FeedWrangler */ = {
 			isa = PBXGroup;
 			children = (
@@ -521,6 +535,16 @@
 				552032F5229D5D5A009559E0 /* ReaderAPICaller.swift */,
 			);
 			path = ReaderAPI;
+			sourceTree = "<group>";
+		};
+		769F2630AF8DC873D4A73567 /* NewsBlur */ = {
+			isa = PBXGroup;
+			children = (
+				769F2A8DF190549E24B5D110 /* NewsBlurAccountDelegate.swift */,
+				769F275FD5D942502C5B4716 /* NewsBlurAPICaller.swift */,
+				179DBD810D353D9CED7C3BED /* Models */,
+			);
+			path = NewsBlur;
 			sourceTree = "<group>";
 		};
 		841973E91F6DD19E006346C4 /* Products */ = {
@@ -622,6 +646,7 @@
 				8469F80F1F6DC3C10084783E /* Frameworks */,
 				D511EEB4202422BB00712EC3 /* xcconfig */,
 				848934FA1F62484F00CEBD24 /* Info.plist */,
+				769F2630AF8DC873D4A73567 /* NewsBlur */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -1107,6 +1132,9 @@
 				9EF2602C23C91FFE006D160C /* FeedlyGetUpdatedArticleIdsOperation.swift in Sources */,
 				3B826DAA2385C81C00FC1ADB /* FeedWranglerSubscription.swift in Sources */,
 				3B826DAC2385C81C00FC1ADB /* FeedWranglerAccountDelegate.swift in Sources */,
+				769F295938E5A30D03DFF88F /* NewsBlurAccountDelegate.swift in Sources */,
+				769F2BA02EF5F329CDE45F5A /* NewsBlurAPICaller.swift in Sources */,
+				179DB28CF49F73A945EBF5DB /* NewsBlurLoginResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

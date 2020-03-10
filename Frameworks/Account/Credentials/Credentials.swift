@@ -17,6 +17,7 @@ public enum CredentialsType: String {
 	case basic = "password"
 	case feedWranglerBasic = "feedWranglerBasic"
 	case feedWranglerToken = "feedWranglerToken"
+	case newsBlur = "newsBlur"
 	case readerBasic = "readerBasic"
 	case readerAPIKey = "readerAPIKey"
 	case oauthAccessToken = "oauthAccessToken"
