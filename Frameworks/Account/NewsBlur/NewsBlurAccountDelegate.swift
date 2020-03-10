@@ -58,7 +58,15 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+		self.refreshProgress.addToNumberOfTasks(1)
+		refreshSubscriptions(for: account) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
@@ -142,5 +150,21 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 	func resume() {
 		database.resume()
+	}
+}
+
+extension NewsBlurAccountDelegate {
+	private func refreshSubscriptions(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		os_log(.debug, log: log, "Refreshing subscriptions...")
+		caller.retrieveSubscriptions { result in
+			switch result {
+			case .success(let subscriptions):
+				print(subscriptions)
+				self.refreshProgress.completeTask()
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 }

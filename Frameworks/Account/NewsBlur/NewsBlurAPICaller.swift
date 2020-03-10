@@ -83,4 +83,28 @@ final class NewsBlurAPICaller: NSObject {
 			}
 		}
 	}
+
+	func retrieveSubscriptions(completion: @escaping (Result<[NewsBlurSubscription]?, Error>) -> Void) {
+		let url = baseURL
+				.appendingPathComponent("reader/feeds")
+				.appendingQueryItems([
+					URLQueryItem(name: "flat", value: "true"),
+					URLQueryItem(name: "update_counts", value: "false"),
+				])
+
+		guard let callURL = url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+
+		let request = URLRequest(url: callURL, credentials: credentials)
+		transport.send(request: request, resultType: NewsBlurFeedsResponse.self) { result in
+			switch result {
+			case .success(let (response, payload)):
+				print(payload)
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
 }
