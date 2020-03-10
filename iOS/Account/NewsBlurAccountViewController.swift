@@ -87,7 +87,7 @@ class NewsBlurAccountViewController: UITableViewController {
 
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials(type: .newsBlur, username: trimmedUsername, secret: password)
+		let credentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
 		Account.validateCredentials(type: .newsBlur, credentials: credentials) { result in
 
 			self.stopAnimtatingActivityIndicator()

@@ -33,11 +33,14 @@ public extension URLRequest {
 			])
 		case .feedWranglerToken:
 			self.url = url.appendingQueryItem(URLQueryItem(name: "access_token", value: credentials.secret))
-		case .newsBlur:
+		case .newsBlurBasic:
 			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 			httpMethod = "POST"
 			let postData = "username=\(credentials.username)&password=\(credentials.secret)"
 			httpBody = postData.data(using: String.Encoding.utf8)
+		case .newsBlurSessionId:
+			setValue("\(NewsBlurAPICaller.SessionIdCookie)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
+			httpShouldHandleCookies = true
 		case .readerBasic:
             setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             httpMethod = "POST"

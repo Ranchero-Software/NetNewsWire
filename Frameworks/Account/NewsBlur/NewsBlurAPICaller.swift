@@ -21,6 +21,7 @@ enum NewsBlurError: LocalizedError {
 }
 
 final class NewsBlurAPICaller: NSObject {
+	static let SessionIdCookie = "newsblur_sessionid"
 
 	private let baseURL = URL(string: "https://www.newsblur.com/")!
 	private var transport: Transport!
@@ -39,8 +40,8 @@ final class NewsBlurAPICaller: NSObject {
 
 		transport.send(request: request, resultType: NewsBlurLoginResponse.self) { result in
 			switch result {
-			case .success(_, let payload):
-				guard payload?.code != -1 else {
+			case .success(let response, let payload):
+				guard let url = response.url, let headerFields = response.allHeaderFields as? [String: String], payload?.code != -1 else {
 					let error = payload?.errors?.username ?? payload?.errors?.others
 					if let message = error?.first {
 						completion(.failure(NewsBlurError.general(message: message)))
@@ -49,7 +50,20 @@ final class NewsBlurAPICaller: NSObject {
 					}
 					return
 				}
-				completion(.success(self.credentials))
+
+				guard let username = self.credentials?.username else {
+					completion(.failure(NewsBlurError.general(message: "Failed to log in")))
+					return
+				}
+
+				let cookies = HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
+				for cookie in cookies where cookie.name == Self.SessionIdCookie {
+					let credentials = Credentials(type: .newsBlurSessionId, username: username, secret: cookie.value)
+					completion(.success(credentials))
+					return
+				}
+
+				completion(.failure(NewsBlurError.general(message: "Failed to retrieve session")))
 			case .failure(let error):
 				completion(.failure(error))
 			}

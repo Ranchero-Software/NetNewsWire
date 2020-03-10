@@ -116,7 +116,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveCredentials(type: .newsBlur)
+		credentials = try? account.retrieveCredentials(type: .newsBlurSessionId)
 	}
 
 	func accountWillBeDeleted(_ account: Account) {
