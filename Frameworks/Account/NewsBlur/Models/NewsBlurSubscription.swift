@@ -42,7 +42,7 @@ extension NewsBlurFeedsResponse {
 
 		// Parse subscriptions
 		var subscriptions: [Subscription] = []
-		let subscriptionContainer = try container.nestedContainer(keyedBy: GenericCodingKeys.self, forKey: .feeds)
+		let subscriptionContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .feeds)
 		try subscriptionContainer.allKeys.forEach { key in
 			let subscription = try subscriptionContainer.decode(Subscription.self, forKey: key)
 			subscriptions.append(subscription)
@@ -50,7 +50,7 @@ extension NewsBlurFeedsResponse {
 
 		// Parse folders
 		var folders: [Folder] = []
-		let folderContainer = try container.nestedContainer(keyedBy: GenericCodingKeys.self, forKey: .folders)
+		let folderContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .folders)
 		try folderContainer.allKeys.forEach { key in
 			let subscriptionIds = try folderContainer.decode([Int].self, forKey: key)
 			let folder = Folder(name: key.stringValue, subscriptionIds: subscriptionIds)
@@ -70,21 +70,5 @@ extension NewsBlurFeedsResponse.Subscription {
 		case feedURL = "feed_address"
 		case siteURL = "feed_link"
 		case favicon = "favicon_url"
-	}
-}
-
-fileprivate struct GenericCodingKeys: CodingKey {
-	var stringValue: String
-
-	init?(stringValue: String) {
-		self.stringValue = stringValue
-	}
-
-	var intValue: Int? {
-		return nil
-	}
-
-	init?(intValue: Int) {
-		return nil
 	}
 }

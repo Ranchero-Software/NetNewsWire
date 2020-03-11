@@ -84,7 +84,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func retrieveSubscriptions(completion: @escaping (Result<[NewsBlurSubscription]?, Error>) -> Void) {
+	func retrieveSubscriptions(completion: @escaping (Result<[NewsBlurSubscription], Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/feeds")
 				.appendingQueryItems([
@@ -100,8 +100,35 @@ final class NewsBlurAPICaller: NSObject {
 		let request = URLRequest(url: callURL, credentials: credentials)
 		transport.send(request: request, resultType: NewsBlurFeedsResponse.self) { result in
 			switch result {
-			case .success(let (response, payload)):
-				print(payload)
+			case .success((_, let payload)):
+				completion(.success(payload?.subscriptions ?? []))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func retrieveUnreadArticleHashes(completion: @escaping (Result<[NewsBlurArticleHash], Error>) -> Void) {
+		let url = baseURL
+				.appendingPathComponent("reader/unread_story_hashes")
+				.appendingQueryItems([
+					URLQueryItem(name: "include_timestamps", value: "true"),
+				])
+
+		guard let callURL = url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+
+		let request = URLRequest(url: callURL, credentials: credentials)
+		transport.send(request: request, resultType: NewsBlurUnreadArticleHashesResponse.self, dateDecoding: .secondsSince1970) { result in
+			switch result {
+			case .success((_, let payload)):
+				guard let subscriptions = payload?.subscriptions else {
+					completion(.success([]))
+					return
+				}
+				completion(.success(subscriptions.values.flatMap { $0 }))
 			case .failure(let error):
 				completion(.failure(error))
 			}

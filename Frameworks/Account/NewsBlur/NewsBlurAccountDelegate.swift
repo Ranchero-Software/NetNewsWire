@@ -58,11 +58,57 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		self.refreshProgress.addToNumberOfTasks(1)
+		self.refreshProgress.addToNumberOfTasksAndRemaining(5)
+
 		refreshSubscriptions(for: account) { result in
+			self.refreshProgress.completeTask()
+
 			switch result {
 			case .success:
-				completion(.success(()))
+				self.sendArticleStatus(for: account) { result in
+					self.refreshProgress.completeTask()
+
+					switch result {
+					case .success:
+						self.refreshArticleStatus(for: account) { result in
+							self.refreshProgress.completeTask()
+
+							switch result {
+							case .success:
+								self.refreshArticles(for: account) { result in
+									self.refreshProgress.completeTask()
+
+									switch result {
+									case .success:
+										self.refreshMissingArticles(for: account) { result in
+											self.refreshProgress.completeTask()
+
+											switch result {
+											case .success:
+												DispatchQueue.main.async {
+													completion(.success(()))
+												}
+
+											case .failure(let error):
+												completion(.failure(error))
+											}
+										}
+
+									case .failure(let error):
+										completion(.failure(error))
+									}
+								}
+
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -74,6 +120,23 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
+		completion(.success(()))
+	}
+
+	func refreshArticles(for account: Account, completion: @escaping (Result<[NewsBlurArticleHash], Error>) -> Void) {
+		os_log(.debug, log: log, "Refreshing articles...")
+
+		caller.retrieveUnreadArticleHashes { result in
+			switch result {
+			case .success(let articleHashes):
+				print(articleHashes)
+			case .failure(let error):
+				break
+			}
+		}
+	}
+
+	func refreshMissingArticles(for account: Account, completion: @escaping (Result<Void, Error>)-> Void) {
 		completion(.success(()))
 	}
 
@@ -156,11 +219,11 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 extension NewsBlurAccountDelegate {
 	private func refreshSubscriptions(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		os_log(.debug, log: log, "Refreshing subscriptions...")
+
 		caller.retrieveSubscriptions { result in
 			switch result {
 			case .success(let subscriptions):
 				print(subscriptions)
-				self.refreshProgress.completeTask()
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
