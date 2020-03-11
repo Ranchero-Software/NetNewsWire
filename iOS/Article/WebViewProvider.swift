@@ -25,19 +25,8 @@ class WebViewProvider: NSObject {
 		viewController.view.insertSubview(queue, at: 0)
 		
 		replenishQueueIfNeeded()
-		
-		NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
 	}
 	
-	@objc func didEnterBackground() {
-		flushQueue()
-	}
-
-	@objc func willEnterForeground() {
-		replenishQueueIfNeeded()
-	}
-
 	func flushQueue() {
 		queue.subviews.forEach { $0.removeFromSuperview() }
 	}
