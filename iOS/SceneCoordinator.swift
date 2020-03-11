@@ -465,7 +465,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildBackingStores()
+		rebuildBackingStoresWithMerge()
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -1374,7 +1374,6 @@ private extension SceneCoordinator {
 	@objc func rebuildBackingStoresWithMerge() {
 		addShadowTableToFilterExceptions()
 		rebuildBackingStores()
-		treeControllerDelegate.resetFilterExceptions()
 	}
 	
 	func rebuildShadowTable() {
