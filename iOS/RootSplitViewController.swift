@@ -91,7 +91,7 @@ class RootSplitViewController: UISplitViewController {
 	}
 
 	@objc func refresh(_ sender: Any?) {
-		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self))
+		appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 	}
 	
 	@objc func goToToday(_ sender: Any?) {

@@ -134,6 +134,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	// MARK: - API
+	
+	func manualRefresh(errorHandler: @escaping (Error) -> ()) {
+		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
+			$0.refreshInterface()
+		}
+		AccountManager.shared.refreshAll(errorHandler: errorHandler)
+	}
+	
 	func resumeDatabaseProcessingIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()

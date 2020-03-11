@@ -61,7 +61,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var wasRootSplitViewControllerCollapsed = false
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
-	private let rebuildBackingStoresWithMergeQueue = CoalescingQueue(name: "Rebuild The Backing Stores by Merging", interval: 0.5)
+	private let rebuildBackingStoresWithMergeQueue = CoalescingQueue(name: "Rebuild The Backing Stores by Merging", interval: 1.0)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	
@@ -570,6 +570,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		fetchAndMergeArticlesQueue.performCallsImmediately()
 		rebuildBackingStoresWithMergeQueue.performCallsImmediately()
 		fetchRequestQueue.cancelAllRequests()
+	}
+	
+	func refreshInterface() {
+		if isReadFeedsFiltered {
+			rebuildBackingStores()
+		}
+		if isReadArticlesFiltered && AppDefaults.refreshClearsReadArticles {
+			refreshTimeline(resetScroll: false)
+		}
 	}
 	
 	func shadowNodesFor(section: Int) -> [Node] {

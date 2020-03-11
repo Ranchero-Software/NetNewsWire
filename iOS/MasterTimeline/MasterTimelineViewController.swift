@@ -137,11 +137,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self)) {
-				if AppDefaults.refreshClearsReadArticles {
-					self.coordinator.refreshTimeline(resetScroll: false)
-				}
-			}
+			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 		}
 	}
 	
