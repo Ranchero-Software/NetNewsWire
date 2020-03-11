@@ -163,6 +163,7 @@ extension FeedbinAccountViewController: UITextFieldDelegate {
 			passwordTextField.becomeFirstResponder()
 		} else {
 			textField.resignFirstResponder()
+			action(self)
 		}
 		return true
 	}
