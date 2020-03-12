@@ -375,8 +375,12 @@ extension WebViewController: UIScrollViewDelegate {
 	}
 	
 	@objc func scrollPositionDidChange() {
-		webView?.evaluateJavaScript("window.scrollY") { (scrollY, _) in
-			self.windowScrollY = scrollY as? Int ?? 0
+		webView?.evaluateJavaScript("window.scrollY") { (scrollY, error) in
+			guard error == nil else { return }
+			let javascriptScrollY = scrollY as? Int ?? 0
+			// I don't know why this value gets returned sometimes, but it is in error
+			guard javascriptScrollY != 33554432 else { return }
+			self.windowScrollY = javascriptScrollY
 		}
 	}
 	
@@ -498,8 +502,6 @@ private extension WebViewController {
 			render = "render(\(json), \(windowScrollY));"
 		}
 
-		windowScrollY = 0
-		
 		webView.evaluateJavaScript(render)
 		
 	}
