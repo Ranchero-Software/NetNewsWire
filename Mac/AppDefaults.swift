@@ -58,7 +58,7 @@ struct AppDefaults {
 	
 	static var windowState: [AnyHashable : Any]? {
 		get {
-			UserDefaults.standard.object(forKey: Key.windowState) as? [AnyHashable : Any]
+			return UserDefaults.standard.object(forKey: Key.windowState) as? [AnyHashable : Any]
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.windowState)

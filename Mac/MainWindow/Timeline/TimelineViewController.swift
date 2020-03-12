@@ -248,11 +248,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: State Restoration
 	
 	func saveState(to state: inout [AnyHashable : Any]) {
-		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
-		for key in readFilterEnabledTable.keys {
-			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
-		}
-		state[UserInfoKey.readArticlesFilterState] = readArticlesFilterState
+		state[UserInfoKey.readArticlesFilterStateKeys] = readFilterEnabledTable.keys.compactMap { $0.userInfo }
+		state[UserInfoKey.readArticlesFilterStateValues] = readFilterEnabledTable.values.compactMap( { $0 })
 		
 		if selectedArticles.count == 1 {
 			state[UserInfoKey.articlePath] = selectedArticles.first!.pathUserInfo
@@ -260,32 +257,37 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	func restoreState(from state: [AnyHashable : Any]) {
-		if let readArticlesFilterState = state[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
-			for key in readArticlesFilterState.keys {
-				if let feedIdentifier = FeedIdentifier(userInfo: key) {
-					readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
-				}
+		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[AnyHashable: AnyHashable]],
+			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
+			return
+		}
+
+		for i in 0..<readArticlesFilterStateKeys.count {
+			if let feedIdentifier = FeedIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
+				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
 			}
 		}
 		
-		guard let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable : Any],
+		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let account = AccountManager.shared.existingAccount(with: accountID),
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		
-		if isReadFiltered ?? true {
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String {
+			
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 			fetchAndReplaceArticlesSync()
+			
+			if let selectedIndex = articles.firstIndex(where: { $0.articleID == articleID }) {
+				tableView.selectRow(selectedIndex)
+				tableView.scrollTo(row: selectedIndex)
+				focus()
+			}
+
+		} else {
+			
+			fetchAndReplaceArticlesSync()
+
 		}
 		
-		if let selectedIndex = articles.firstIndex(where: { $0.articleID == articleID }) {
-			tableView.selectRow(selectedIndex)
-			tableView.scrollTo(row: selectedIndex)
-			focus()
-		}
-
 	}
 	
 	// MARK: - Actions
