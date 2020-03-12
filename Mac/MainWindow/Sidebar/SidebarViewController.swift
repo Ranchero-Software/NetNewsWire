@@ -176,6 +176,7 @@ protocol SidebarDelegate: class {
 	}
 
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
+		addTreeControllerToFilterExceptions()
 		rebuildTreeAndRestoreSelection()
 	}
 	
