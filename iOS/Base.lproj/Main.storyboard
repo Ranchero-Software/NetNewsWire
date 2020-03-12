@@ -265,14 +265,16 @@
                                     <action selector="share:" destination="vO9-a3-Dnu" eventType="touchUpInside" id="m8y-Gs-YF1"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXR-ll-xBx">
+                            <button opaque="NO" clipsSubviews="YES" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXR-ll-xBx">
                                 <rect key="frame" x="8" y="44" width="44" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="6kc-Gw-KbZ"/>
                                     <constraint firstAttribute="width" constant="44" id="cBq-gs-WzN"/>
                                 </constraints>
                                 <color key="tintColor" name="primaryAccentColor"/>
-                                <state key="normal" image="multiply.circle.fill" catalog="system"/>
+                                <state key="normal" image="multiply.circle.fill" catalog="system">
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
+                                </state>
                                 <connections>
                                     <action selector="done:" destination="vO9-a3-Dnu" eventType="touchUpInside" id="tgd-ov-4Ft"/>
                                 </connections>
@@ -300,6 +302,7 @@
                         <viewLayoutGuide key="safeArea" id="mbY-02-GFL"/>
                     </view>
                     <connections>
+                        <outlet property="closeButton" destination="cXR-ll-xBx" id="sDG-49-joi"/>
                         <outlet property="imageScrollView" destination="msG-pz-EKk" id="dGi-M6-dcO"/>
                         <outlet property="shareButton" destination="RmY-a3-hUg" id="Z54-ah-WAI"/>
                         <outlet property="titleBackground" destination="bHh-pW-oTS" id="o2K-cY-90c"/>
