@@ -62,9 +62,6 @@ class ImageViewController: UIViewController {
 	}
 	
 	@IBAction func done(_ sender: Any) {
-		if let button = sender as? UIButton {
-			print(button.frame.size)
-		}
 		dismiss(animated: true)
 	}
 	
