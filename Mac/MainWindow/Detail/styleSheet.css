@@ -3,8 +3,8 @@ body {
 	margin-bottom: 64px;
 	margin-left: auto;
 	margin-right: auto;
-	padding-left: 64px;
-	padding-right: 64px;
+	padding-left: 32px;
+	padding-right: 32px;
 	font-family: -apple-system;
 	font-size: 18px;
 	word-wrap: break-word; /* break long words or URLs */
