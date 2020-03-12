@@ -10,6 +10,8 @@ import UIKit
 
 class ImageViewController: UIViewController {
 
+	
+	@IBOutlet weak var closeButton: UIButton!
 	@IBOutlet weak var shareButton: UIButton!
 	@IBOutlet weak var imageScrollView: ImageScrollView!
 	@IBOutlet weak var titleLabel: UILabel!
@@ -25,6 +27,8 @@ class ImageViewController: UIViewController {
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
+		
+		closeButton.imageView?.contentMode = .scaleAspectFit
 		
         imageScrollView.setup()
         imageScrollView.imageScrollViewDelegate = self
@@ -58,6 +62,9 @@ class ImageViewController: UIViewController {
 	}
 	
 	@IBAction func done(_ sender: Any) {
+		if let button = sender as? UIButton {
+			print(button.frame.size)
+		}
 		dismiss(animated: true)
 	}
 	
