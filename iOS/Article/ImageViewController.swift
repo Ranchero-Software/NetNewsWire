@@ -13,6 +13,9 @@ class ImageViewController: UIViewController {
 	@IBOutlet weak var shareButton: UIButton!
 	@IBOutlet weak var imageScrollView: ImageScrollView!
 	@IBOutlet weak var titleLabel: UILabel!
+	@IBOutlet weak var titleBackground: UIVisualEffectView!
+	@IBOutlet weak var titleLeading: NSLayoutConstraint!
+	@IBOutlet weak var titleTrailing: NSLayoutConstraint!
 	
 	var image: UIImage!
 	var imageTitle: String?
@@ -30,6 +33,13 @@ class ImageViewController: UIViewController {
 		imageScrollView.display(image: image)
 		
 		titleLabel.text = imageTitle ?? ""
+		layoutTitleLabel()
+		
+		guard imageTitle != nil else {
+			titleBackground.removeFromSuperview()
+			return
+		}
+		titleBackground.layer.cornerRadius = 6
     }
 
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -51,6 +61,13 @@ class ImageViewController: UIViewController {
 		dismiss(animated: true)
 	}
 	
+	private func layoutTitleLabel(){
+		let width = view.frame.width
+		let multiplier = UIDevice.current.userInterfaceIdiom == .pad ? CGFloat(0.1) : CGFloat(0.04)
+		titleLeading.constant += width * multiplier
+		titleTrailing.constant -= width * multiplier
+		titleLabel.layoutIfNeeded()
+	}
 }
 
 // MARK: ImageScrollViewDelegate
