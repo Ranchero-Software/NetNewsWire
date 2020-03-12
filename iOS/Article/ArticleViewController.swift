@@ -112,13 +112,10 @@ class ArticleViewController: UIViewController {
 		}
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		
-		DispatchQueue.main.async {
-			self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
-			if AppDefaults.articleFullscreenEnabled {
-				controller.hideBars()
-			}
+		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+		if AppDefaults.articleFullscreenEnabled {
+			controller.hideBars()
 		}
-		
 		updateUI()
 	}
 
