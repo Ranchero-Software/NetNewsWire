@@ -118,19 +118,13 @@
 			
 	function idFromHash(target) {
 		if (!target.hash) return;
-		return target.hash.substring(1);
+		return decodeURIComponent(target.hash.substring(1));
 	}
 	/** @type {{fnref(target:HTMLAnchorElement): string|undefined}[]} */
 	const footnoteFormats = [
 		{ // Multimarkdown
 			fnref(target) {
-				if (!target.matches(".footnote")) return;	 
-				return idFromHash(target);			
-			}
-		},
-	    {// Daring Fireball
-			fnref(target) {
-				if (!target.matches("sup > a[href^='#fn'], sup > div > a[href^='#fn']")) return;
+				if (!target.matches(".footnote")) return;
 				return idFromHash(target);
 			}
 		}
@@ -158,11 +152,11 @@
     document.addEventListener("click", (ev) =>
     {
 	    if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
-        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, footnotes .footnote-return")) return;
-		const hash = ev.target.hash;
-		if (!hash) return;
-		const fnref = document.getElementById(hash.substring(1));
-      
+        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, .footnotes .footnote-return")) return;
+		const id = idFromHash(ev.target);
+		if (!id) return;
+		const fnref = document.getElementById(id);
+
 		window.scrollTo({ top: fnref.getBoundingClientRect().top + window.scrollY });
 	    ev.preventDefault();
 	});
