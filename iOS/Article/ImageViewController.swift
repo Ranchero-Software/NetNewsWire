@@ -35,7 +35,7 @@ class ImageViewController: UIViewController {
 		titleLabel.text = imageTitle ?? ""
 		layoutTitleLabel()
 		
-		guard imageTitle != nil else {
+		guard imageTitle != "" else {
 			titleBackground.removeFromSuperview()
 			return
 		}
