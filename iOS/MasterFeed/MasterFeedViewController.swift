@@ -101,16 +101,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		// Only do the reload of the node when absolutely necessary.  It can stop programatic scrolling from
-		// completing if called to soon after a selectRow where scrolling is necessary.  See discloseFeed.
-		if let node = node,
-			let indexPath = dataSource.indexPath(for: node),
-			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
-			
-			if cell.unreadCount != coordinator.unreadCountFor(node) {
-				self.reloadNode(node)
-			}
-			
+		if let node = node, dataSource.indexPath(for: node) != nil {
+			self.reloadNode(node)
 		}
 	}
 
