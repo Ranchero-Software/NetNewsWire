@@ -141,16 +141,17 @@ class ArticleViewController: UIViewController {
 			actionBarButtonItem.isEnabled = false
 			return
 		}
-		
+
 		nextUnreadBarButtonItem.isEnabled = coordinator.isAnyUnreadAvailable
 		prevArticleBarButtonItem.isEnabled = coordinator.isPrevArticleAvailable
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
-
-		articleExtractorButton.isEnabled = true
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
-		actionBarButtonItem.isEnabled = true
-
+		
+		let permalinkPresent = article.preferredLink != nil
+		articleExtractorButton.isEnabled = permalinkPresent
+		actionBarButtonItem.isEnabled = permalinkPresent
+		
 		if article.status.read {
 			readBarButtonItem.image = AppAssets.circleOpenImage
 			readBarButtonItem.isEnabled = article.isAvailableToMarkUnread
