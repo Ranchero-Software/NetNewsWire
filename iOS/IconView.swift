@@ -16,16 +16,11 @@ final class IconView: UIView {
 				imageView.image = iconImage?.image
 
 				if self.traitCollection.userInterfaceStyle == .dark {
-					if self.iconImage?.isDark ?? false {
-						self.isDisconcernable = false
-						self.setNeedsLayout()
-					} else {
-						self.isDisconcernable = true
-						self.setNeedsLayout()
-					}
+					self.isDisconcernable = !(self.iconImage?.isDark ?? true)
 				} else {
-					self.setNeedsLayout()
+					self.isDisconcernable = !(self.iconImage?.isBright ?? true)
 				}
+				self.setNeedsLayout()
 			}
 		}
 	}
