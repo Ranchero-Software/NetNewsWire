@@ -23,7 +23,7 @@ class HTMLFeedFinder {
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
 
 		for oneFeedLink in metadata.feedLinks {
-			if let oneURLString = oneFeedLink.urlString {
+			if let oneURLString = oneFeedLink.urlString?.normalizedURL {
 				let oneFeedSpecifier = FeedSpecifier(title: oneFeedLink.title, urlString: oneURLString, source: .HTMLHead)
 				addFeedSpecifier(oneFeedSpecifier)
 			}
