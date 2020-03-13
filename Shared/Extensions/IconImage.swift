@@ -39,7 +39,7 @@ final class IconImage {
 		}
 		
 		func isBright() -> Bool {
-			return self.cgImage(forProposedRect: nil, context: nil, hints: nil)?.Bright() ?? false
+			return self.cgImage(forProposedRect: nil, context: nil, hints: nil)?.isBright() ?? false
 		}
 	}
 #else
