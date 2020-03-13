@@ -1204,6 +1204,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 extension SceneCoordinator: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
+		masterTimelineViewController?.updateUI()
+		
 		guard !isThreePanelMode else {
 			return true
 		}
@@ -1218,6 +1220,8 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+		masterTimelineViewController?.updateUI()
+
 		guard !isThreePanelMode else {
 			return subSplitViewController
 		}

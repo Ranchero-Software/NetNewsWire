@@ -194,6 +194,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		updateUI()
 	}
+
+	func updateUI() {
+		refreshProgressView?.updateRefreshLabel()
+		updateTitleUnreadCount()
+		updateToolbar()
+	}
 	
 	func hideSearch() {
 		navigationItem.searchController?.isActive = false
@@ -541,8 +547,7 @@ private extension MasterTimelineViewController {
 
 	func configureToolbar() {
 		
-		if coordinator.isThreePanelMode {
-			firstUnreadButton.isHidden = true
+		guard !coordinator.isThreePanelMode else {
 			return
 		}
 		
@@ -598,12 +603,6 @@ private extension MasterTimelineViewController {
 
 	}
 	
-	func updateUI() {
-		refreshProgressView?.updateRefreshLabel()
-		updateTitleUnreadCount()
-		updateToolbar()
-	}
-	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
 		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
@@ -617,6 +616,11 @@ private extension MasterTimelineViewController {
 	func updateToolbar() {
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+		if coordinator.isRootSplitCollapsed {
+			firstUnreadButton.isHidden = false
+		} else {
+			firstUnreadButton.isHidden = true
+		}
 	}
 	
 	func updateTitleUnreadCount() {
