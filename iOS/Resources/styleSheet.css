@@ -1,6 +1,6 @@
 :root {
 	font: -apple-system-body;
-	font-size: [[font-size]]pt;
+	font-size: [[font-size]]px;
 }
 
 body {
@@ -77,7 +77,7 @@ body .headerTable {
 }
 body .header {
 	font: -apple-system-body;
-	font-size: [[font-size]]pt;
+	font-size: [[font-size]]px;
 	color: var(--header-color);
 }
 body .header a:link, body .header a:visited {

@@ -248,7 +248,8 @@ private extension ArticleRenderer {
 	#if os(iOS)
 	func styleSubstitutions() -> [String: String] {
 		var d = [String: String]()
-		d["font-size"] = String(describing: UIFontMetrics.default.scaledValue(for: UIFont.systemFontSize))
+		let bodyFont = UIFont.preferredFont(forTextStyle: .body)
+		d["font-size"] = String(describing: bodyFont.pointSize)
 		return d
 	}
 	#endif
