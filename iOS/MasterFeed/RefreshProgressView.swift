@@ -13,7 +13,6 @@ class RefreshProgressView: UIView {
 	
 	@IBOutlet weak var progressView: UIProgressView!
 	@IBOutlet weak var label: UILabel!
-	private lazy var progressWidthConstraint = progressView.widthAnchor.constraint(equalToConstant: 100.0)
 	
 	override func awakeFromNib() {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
@@ -24,7 +23,7 @@ class RefreshProgressView: UIView {
 		} else {
 			updateRefreshLabel()
 		}
-		
+
 		scheduleUpdateRefreshLabel()
 	}
 
@@ -34,26 +33,26 @@ class RefreshProgressView: UIView {
 
 	func updateRefreshLabel() {
 		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
-			
+
 			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(60) {
-				
+
 				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 				relativeDateTimeFormatter.dateTimeStyle = .named
 				let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
 				let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
 				let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
 				label.text = refreshText
-				
+
 			} else {
 				label.text = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
 			}
-			
+
 		} else {
 			label.text = ""
 		}
 
 	}
-	
+
 	@objc func progressDidChange(_ note: Notification) {
 		progressChanged()
 	}
@@ -80,27 +79,26 @@ private extension RefreshProgressView {
 		let isInViewHierarchy = self.superview != nil
 
 		let progress = AccountManager.shared.combinedRefreshProgress
-		
+
 		if progress.isComplete {
 			if isInViewHierarchy {
 				progressView.setProgress(1, animated: true)
 			}
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-				self.updateRefreshLabel()
-				self.label.isHidden = false
-				self.progressView.isHidden = true
-				self.progressWidthConstraint.isActive = false
-				if isInViewHierarchy {
-					self.progressView.setProgress(0, animated: true)
+				// Check that there are no pending downloads.
+				if (AccountManager.shared.combinedRefreshProgress.isComplete) {
+					self.updateRefreshLabel()
+					self.label.isHidden = false
+					self.progressView.isHidden = true
+					if self.superview != nil {
+						self.progressView.setProgress(0, animated: true)
+					}
 				}
 			}
 		} else {
 			label.isHidden = true
 			progressView.isHidden = false
-			progressWidthConstraint.isActive = true
 			if isInViewHierarchy {
-				progressView.setNeedsLayout()
-				progressView.layoutIfNeeded()
 				let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
 
 				// Don't let the progress bar go backwards unless we need to go back more than 25%
