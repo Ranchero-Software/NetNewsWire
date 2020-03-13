@@ -100,7 +100,7 @@ extension CGImage {
 		let avgLuminance = totalLuminance / Double(pixelCount)
 		if totalLuminance == 0 || avgLuminance < 40 {
 			return .dark
-		} else if avgLuminance > 70 {
+		} else if avgLuminance > 180 {
 			return .bright
 		} else {
 			return .regular
