@@ -18,7 +18,7 @@ struct NewsBlurFeedsResponse: Decodable {
 
 	struct Feed: Hashable, Codable {
 		let title: String
-		let feedId: Int
+		let feedID: Int
 		let feedURL: String
 		let siteURL: String?
 		let favicon: String?
@@ -26,7 +26,7 @@ struct NewsBlurFeedsResponse: Decodable {
 
 	struct Folder: Hashable, Codable {
 		let name: String
-		let feedIds: [Int]
+		let feedIDs: [Int]
 	}
 }
 
@@ -53,7 +53,7 @@ extension NewsBlurFeedsResponse {
 		let folderContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .folders)
 		try folderContainer.allKeys.forEach { key in
 			let subscriptionIds = try folderContainer.decode([Int].self, forKey: key)
-			let folder = Folder(name: key.stringValue, feedIds: subscriptionIds)
+			let folder = Folder(name: key.stringValue, feedIDs: subscriptionIds)
 
 			folders.append(folder)
 		}
@@ -66,7 +66,7 @@ extension NewsBlurFeedsResponse {
 extension NewsBlurFeedsResponse.Feed {
 	private enum CodingKeys: String, CodingKey {
 		case title = "feed_title"
-		case feedId = "id"
+		case feedID = "id"
 		case feedURL = "feed_address"
 		case siteURL = "feed_link"
 		case favicon = "favicon_url"

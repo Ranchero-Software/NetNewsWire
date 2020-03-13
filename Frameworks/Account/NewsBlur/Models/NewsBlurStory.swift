@@ -16,8 +16,8 @@ struct NewsBlurStoriesResponse: Decodable {
 	let stories: [Story]
 
 	struct Story: Decodable {
-		let storyId: String
-		let feedId: Int
+		let storyID: String
+		let feedID: Int
 		let title: String?
 		let url: String?
 		let authorName: String?
@@ -34,8 +34,8 @@ extension NewsBlurStoriesResponse {
 
 extension NewsBlurStoriesResponse.Story {
 	private enum CodingKeys: String, CodingKey {
-		case storyId = "story_hash"
-		case feedId = "story_feed_id"
+		case storyID = "story_hash"
+		case feedID = "story_feed_id"
 		case title = "story_title"
 		case url = "story_permalink"
 		case authorName = "story_authors"

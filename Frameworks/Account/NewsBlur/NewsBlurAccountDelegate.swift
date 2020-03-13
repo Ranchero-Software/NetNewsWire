@@ -139,38 +139,6 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func refreshUnreadStories(for account: Account, hashes: [NewsBlurStoryHash]?, updateFetchDate: Date?, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let hashes = hashes, !hashes.isEmpty else {
-			if let lastArticleFetch = updateFetchDate {
-				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
-				self.accountMetadata?.lastArticleFetchEndTime = Date()
-			}
-			completion(.success(()))
-			return
-		}
-
-		let numberOfStories = min(hashes.count, 100) // api limit
-		let hashesToFetch = Array(hashes[..<numberOfStories])
-
-		caller.retrieveStories(hashes: hashesToFetch) { result in
-			switch result {
-			case .success(let stories):
-				self.processStories(account: account, stories: stories) { error in
-					self.refreshProgress.completeTask()
-
-					if let error = error {
-						completion(.failure(error))
-						return
-					}
-
-					self.refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: updateFetchDate, completion: completion)
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-
 	func refreshMissingStories(for account: Account, completion: @escaping (Result<Void, Error>)-> Void) {
 		completion(.success(()))
 	}
@@ -179,19 +147,6 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		let parsedItems = mapStoriesToParsedItems(stories: stories)
 		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true, completion: completion)
-	}
-
-	func mapStoriesToParsedItems(stories: [NewsBlurStory]?) -> Set<ParsedItem> {
-		guard let stories = stories else {
-			return Set<ParsedItem>()
-		}
-
-		let parsedItems: [ParsedItem] = stories.map { story in
-			let author = Set([ParsedAuthor(name: story.authorName, url: nil, avatarURL: nil, emailAddress: nil)])
-			return ParsedItem(syncServiceID: story.storyId, uniqueID: String(story.storyId), feedURL: String(story.feedId), url: story.url, externalURL: nil, title: story.title, contentHTML: story.contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: story.datePublished, dateModified: nil, authors: author, tags: nil, attachments: nil)
-		}
-
-		return Set(parsedItems)
 	}
 
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> ()) {
@@ -277,11 +232,109 @@ extension NewsBlurAccountDelegate {
 		caller.retrieveFeeds { result in
 			switch result {
 			case .success(let feeds):
-				print(feeds)
+				self.refreshProgress.completeTask()
+
+				self.syncFeeds(account, feeds)
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
 			}
 		}
+	}
+
+	private func syncFeeds(_ account: Account, _ feeds: [NewsBlurFeed]?) {
+		guard let feeds = feeds else { return }
+
+		os_log(.debug, log: log, "Syncing feeds with %ld feeds.", feeds.count)
+
+		let subFeedIds = feeds.map { String($0.feedID) }
+
+		// Remove any feeds that are no longer in the subscriptions
+		if let folders = account.folders {
+			for folder in folders {
+				for feed in folder.topLevelWebFeeds {
+					if !subFeedIds.contains(feed.webFeedID) {
+						folder.removeWebFeed(feed)
+					}
+				}
+			}
+		}
+
+		for feed in account.topLevelWebFeeds {
+			if !subFeedIds.contains(feed.webFeedID) {
+				account.removeWebFeed(feed)
+			}
+		}
+
+		// Add any feeds we don't have and update any we do
+		var feedsToAdd = Set<NewsBlurFeed>()
+		feeds.forEach { feed in
+			let subFeedId = String(feed.feedID)
+
+			if let webFeed = account.existingWebFeed(withWebFeedID: subFeedId) {
+				webFeed.name = feed.title
+				// If the name has been changed on the server remove the locally edited name
+				webFeed.editedName = nil
+				webFeed.homePageURL = feed.siteURL
+				webFeed.subscriptionID = String(feed.feedID)
+				webFeed.faviconURL = feed.favicon
+				webFeed.iconURL = feed.favicon
+			}
+			else {
+				feedsToAdd.insert(feed)
+			}
+		}
+
+		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
+		feedsToAdd.forEach { feed in
+			let webFeed = account.createWebFeed(with: feed.title, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.siteURL)
+			webFeed.subscriptionID = String(feed.feedID)
+			account.addWebFeed(webFeed)
+		}
+	}
+
+	private func refreshUnreadStories(for account: Account, hashes: [NewsBlurStoryHash]?, updateFetchDate: Date?, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let hashes = hashes, !hashes.isEmpty else {
+			if let lastArticleFetch = updateFetchDate {
+				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
+				self.accountMetadata?.lastArticleFetchEndTime = Date()
+			}
+			completion(.success(()))
+			return
+		}
+
+		let numberOfStories = min(hashes.count, 100) // api limit
+		let hashesToFetch = Array(hashes[..<numberOfStories])
+
+		caller.retrieveStories(hashes: hashesToFetch) { result in
+			switch result {
+			case .success(let stories):
+				self.processStories(account: account, stories: stories) { error in
+					self.refreshProgress.completeTask()
+
+					if let error = error {
+						completion(.failure(error))
+						return
+					}
+
+					self.refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: updateFetchDate, completion: completion)
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	private func mapStoriesToParsedItems(stories: [NewsBlurStory]?) -> Set<ParsedItem> {
+		guard let stories = stories else {
+			return Set<ParsedItem>()
+		}
+
+		let parsedItems: [ParsedItem] = stories.map { story in
+			let author = Set([ParsedAuthor(name: story.authorName, url: nil, avatarURL: nil, emailAddress: nil)])
+			return ParsedItem(syncServiceID: story.storyID, uniqueID: String(story.storyID), feedURL: String(story.feedID), url: story.url, externalURL: nil, title: story.title, contentHTML: story.contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: story.datePublished, dateModified: nil, authors: author, tags: nil, attachments: nil)
+		}
+
+		return Set(parsedItems)
 	}
 }
