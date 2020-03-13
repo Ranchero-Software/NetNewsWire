@@ -1,5 +1,5 @@
 //
-//  NewsBlurArticle.swift
+//  NewsBlurStory.swift
 //  Account
 //
 //  Created by Anh Quang Do on 2020-03-10.
@@ -10,13 +10,13 @@ import Foundation
 import RSCore
 import RSParser
 
-typealias NewsBlurArticle = NewsBlurArticlesResponse.Article
+typealias NewsBlurStory = NewsBlurStoriesResponse.Story
 
-struct NewsBlurArticlesResponse: Decodable {
-	let articles: [Article]
+struct NewsBlurStoriesResponse: Decodable {
+	let stories: [Story]
 
-	struct Article: Decodable {
-		let articleId: String
+	struct Story: Decodable {
+		let storyId: String
 		let feedId: Int
 		let title: String?
 		let url: String?
@@ -26,15 +26,15 @@ struct NewsBlurArticlesResponse: Decodable {
 	}
 }
 
-extension NewsBlurArticlesResponse {
+extension NewsBlurStoriesResponse {
 	private enum CodingKeys: String, CodingKey {
-		case articles = "stories"
+		case stories = "stories"
 	}
 }
 
-extension NewsBlurArticlesResponse.Article {
+extension NewsBlurStoriesResponse.Story {
 	private enum CodingKeys: String, CodingKey {
-		case articleId = "story_hash"
+		case storyId = "story_hash"
 		case feedId = "story_feed_id"
 		case title = "story_title"
 		case url = "story_permalink"

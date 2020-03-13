@@ -1,5 +1,5 @@
 //
-//  NewsBlurSubscription.swift
+//  NewsBlurFeed.swift
 //  Account
 //
 //  Created by Anh Quang Do on 2020-03-09.
@@ -10,13 +10,13 @@ import Foundation
 import RSCore
 import RSParser
 
-typealias NewsBlurSubscription = NewsBlurFeedsResponse.Subscription
+typealias NewsBlurFeed = NewsBlurFeedsResponse.Feed
 
 struct NewsBlurFeedsResponse: Decodable {
-	let subscriptions: [Subscription]
+	let feeds: [Feed]
 	let folders: [Folder]
 
-	struct Subscription: Hashable, Codable {
+	struct Feed: Hashable, Codable {
 		let title: String
 		let feedId: Int
 		let feedURL: String
@@ -26,7 +26,7 @@ struct NewsBlurFeedsResponse: Decodable {
 
 	struct Folder: Hashable, Codable {
 		let name: String
-		let subscriptionIds: [Int]
+		let feedIds: [Int]
 	}
 }
 
@@ -40,12 +40,12 @@ extension NewsBlurFeedsResponse {
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
-		// Parse subscriptions
-		var subscriptions: [Subscription] = []
-		let subscriptionContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .feeds)
-		try subscriptionContainer.allKeys.forEach { key in
-			let subscription = try subscriptionContainer.decode(Subscription.self, forKey: key)
-			subscriptions.append(subscription)
+		// Parse feeds
+		var feeds: [Feed] = []
+		let feedContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .feeds)
+		try feedContainer.allKeys.forEach { key in
+			let subscription = try feedContainer.decode(Feed.self, forKey: key)
+			feeds.append(subscription)
 		}
 
 		// Parse folders
@@ -53,17 +53,17 @@ extension NewsBlurFeedsResponse {
 		let folderContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .folders)
 		try folderContainer.allKeys.forEach { key in
 			let subscriptionIds = try folderContainer.decode([Int].self, forKey: key)
-			let folder = Folder(name: key.stringValue, subscriptionIds: subscriptionIds)
+			let folder = Folder(name: key.stringValue, feedIds: subscriptionIds)
 
 			folders.append(folder)
 		}
 
-		self.subscriptions = subscriptions
+		self.feeds = feeds
 		self.folders = folders
 	}
 }
 
-extension NewsBlurFeedsResponse.Subscription {
+extension NewsBlurFeedsResponse.Feed {
 	private enum CodingKeys: String, CodingKey {
 		case title = "feed_title"
 		case feedId = "id"

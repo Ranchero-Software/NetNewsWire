@@ -60,7 +60,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 		self.refreshProgress.addToNumberOfTasksAndRemaining(5)
 
-		refreshSubscriptions(for: account) { result in
+		refreshFeeds(for: account) { result in
 			self.refreshProgress.completeTask()
 
 			switch result {
@@ -75,12 +75,12 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 							switch result {
 							case .success:
-								self.refreshArticles(for: account) { result in
+								self.refreshStories(for: account) { result in
 									self.refreshProgress.completeTask()
 
 									switch result {
 									case .success:
-										self.refreshMissingArticles(for: account) { result in
+										self.refreshMissingStories(for: account) { result in
 											self.refreshProgress.completeTask()
 
 											switch result {
@@ -123,23 +123,23 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func refreshArticles(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		os_log(.debug, log: log, "Refreshing articles...")
-		os_log(.debug, log: log, "Refreshing unread articles...")
+	func refreshStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		os_log(.debug, log: log, "Refreshing stories...")
+		os_log(.debug, log: log, "Refreshing unread stories...")
 
-		caller.retrieveUnreadArticleHashes { result in
+		caller.retrieveUnreadStoryHashes { result in
 			switch result {
-			case .success(let articleHashes):
+			case .success(let storyHashes):
 				self.refreshProgress.completeTask()
 
-				self.refreshUnreadArticles(for: account, hashes: articleHashes, updateFetchDate: nil, completion: completion)
+				self.refreshUnreadStories(for: account, hashes: storyHashes, updateFetchDate: nil, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
 			}
 		}
 	}
 
-	func refreshUnreadArticles(for account: Account, hashes: [NewsBlurArticleHash]?, updateFetchDate: Date?, completion: @escaping (Result<Void, Error>) -> Void) {
+	func refreshUnreadStories(for account: Account, hashes: [NewsBlurStoryHash]?, updateFetchDate: Date?, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let hashes = hashes, !hashes.isEmpty else {
 			if let lastArticleFetch = updateFetchDate {
 				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
@@ -149,13 +149,13 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			return
 		}
 
-		let numberOfArticles = min(hashes.count, 100) // api limit
-		let hashesToFetch = Array(hashes[..<numberOfArticles])
+		let numberOfStories = min(hashes.count, 100) // api limit
+		let hashesToFetch = Array(hashes[..<numberOfStories])
 
-		caller.retrieveArticles(hashes: hashesToFetch) { result in
+		caller.retrieveStories(hashes: hashesToFetch) { result in
 			switch result {
-			case .success(let articles):
-				self.processArticles(account: account, articles: articles) { error in
+			case .success(let stories):
+				self.processStories(account: account, stories: stories) { error in
 					self.refreshProgress.completeTask()
 
 					if let error = error {
@@ -163,7 +163,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 						return
 					}
 
-					self.refreshUnreadArticles(for: account, hashes: Array(hashes[numberOfArticles...]), updateFetchDate: updateFetchDate, completion: completion)
+					self.refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: updateFetchDate, completion: completion)
 				}
 			case .failure(let error):
 				completion(.failure(error))
@@ -171,24 +171,24 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func refreshMissingArticles(for account: Account, completion: @escaping (Result<Void, Error>)-> Void) {
+	func refreshMissingStories(for account: Account, completion: @escaping (Result<Void, Error>)-> Void) {
 		completion(.success(()))
 	}
 	
-	func processArticles(account: Account, articles: [NewsBlurArticle]?, completion: @escaping DatabaseCompletionBlock) {
-		let parsedItems = mapArticlesToParsedItems(articles: articles)
+	func processStories(account: Account, stories: [NewsBlurStory]?, completion: @escaping DatabaseCompletionBlock) {
+		let parsedItems = mapStoriesToParsedItems(stories: stories)
 		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true, completion: completion)
 	}
 
-	func mapArticlesToParsedItems(articles: [NewsBlurArticle]?) -> Set<ParsedItem> {
-		guard let articles = articles else {
+	func mapStoriesToParsedItems(stories: [NewsBlurStory]?) -> Set<ParsedItem> {
+		guard let stories = stories else {
 			return Set<ParsedItem>()
 		}
 
-		let parsedItems: [ParsedItem] = articles.map { article in
-			let author = Set([ParsedAuthor(name: article.authorName, url: nil, avatarURL: nil, emailAddress: nil)])
-			return ParsedItem(syncServiceID: article.articleId, uniqueID: String(article.articleId), feedURL: String(article.feedId), url: article.url, externalURL: nil, title: article.title, contentHTML: article.contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: article.datePublished, dateModified: nil, authors: author, tags: nil, attachments: nil)
+		let parsedItems: [ParsedItem] = stories.map { story in
+			let author = Set([ParsedAuthor(name: story.authorName, url: nil, avatarURL: nil, emailAddress: nil)])
+			return ParsedItem(syncServiceID: story.storyId, uniqueID: String(story.storyId), feedURL: String(story.feedId), url: story.url, externalURL: nil, title: story.title, contentHTML: story.contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: story.datePublished, dateModified: nil, authors: author, tags: nil, attachments: nil)
 		}
 
 		return Set(parsedItems)
@@ -271,13 +271,13 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 }
 
 extension NewsBlurAccountDelegate {
-	private func refreshSubscriptions(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		os_log(.debug, log: log, "Refreshing subscriptions...")
+	private func refreshFeeds(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		os_log(.debug, log: log, "Refreshing feeds...")
 
-		caller.retrieveSubscriptions { result in
+		caller.retrieveFeeds { result in
 			switch result {
-			case .success(let subscriptions):
-				print(subscriptions)
+			case .success(let feeds):
+				print(feeds)
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
