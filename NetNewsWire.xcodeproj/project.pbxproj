@@ -237,7 +237,6 @@
 		51C452B42265141B00C03939 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C452B32265141B00C03939 /* WebKit.framework */; };
 		51C452B82265178500C03939 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 51C452B72265178500C03939 /* styleSheet.css */; };
 		51C9DE5823EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */; };
-		51C9DE8623F09FAA003D5A6D /* AccountMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C9DE8523F09FAA003D5A6D /* AccountMigrator.swift */; };
 		51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51CE1C0823621EDA005548FC /* RefreshProgressView.xib */; };
 		51CE1C0B23622007005548FC /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CE1C0A23622006005548FC /* RefreshProgressView.swift */; };
 		51CE1C712367721A005548FC /* testURLsOfCurrentArticle.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADB213660A100CF2DE4 /* testURLsOfCurrentArticle.applescript */; };
@@ -1377,7 +1376,6 @@
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
 		51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperScriptMessageHandler.swift; sourceTree = "<group>"; };
-		51C9DE8523F09FAA003D5A6D /* AccountMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMigrator.swift; sourceTree = "<group>"; };
 		51CE1C0823621EDA005548FC /* RefreshProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RefreshProgressView.xib; sourceTree = "<group>"; };
 		51CE1C0A23622006005548FC /* RefreshProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
 		51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineDataSource.swift; sourceTree = "<group>"; };
@@ -2652,7 +2650,6 @@
 				51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */,
 				C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */,
 				51B62E67233186730085F949 /* IconView.swift */,
-				51C9DE8523F09FAA003D5A6D /* AccountMigrator.swift */,
 				51C4525D226508F600C03939 /* MasterFeed */,
 				51C4526D2265091600C03939 /* MasterTimeline */,
 				51C4527D2265092C00C03939 /* Article */,
@@ -4005,7 +4002,6 @@
 				51B5C8C023F3866C00032075 /* ExtensionFeedAddRequestFile.swift in Sources */,
 				51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */,
 				51934CCE2310792F006127BE /* ActivityManager.swift in Sources */,
-				51C9DE8623F09FAA003D5A6D /* AccountMigrator.swift in Sources */,
 				5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */,
 				518651DA235621840078E021 /* ImageTransition.swift in Sources */,
 				51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */,

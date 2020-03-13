@@ -60,8 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		super.init()
 		appDelegate = self
 
-		AccountMigrator.migrate()
-		
 		let documentAccountURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		let documentAccountsFolder = documentAccountURL.appendingPathComponent("Accounts").absoluteString
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
