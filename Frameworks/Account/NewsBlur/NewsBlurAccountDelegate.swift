@@ -123,21 +123,75 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func refreshArticles(for account: Account, completion: @escaping (Result<[NewsBlurArticleHash], Error>) -> Void) {
+	func refreshArticles(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		os_log(.debug, log: log, "Refreshing articles...")
+		os_log(.debug, log: log, "Refreshing unread articles...")
 
 		caller.retrieveUnreadArticleHashes { result in
 			switch result {
 			case .success(let articleHashes):
-				print(articleHashes)
+				self.refreshProgress.completeTask()
+
+				self.refreshUnreadArticles(for: account, hashes: articleHashes, updateFetchDate: nil, completion: completion)
 			case .failure(let error):
-				break
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func refreshUnreadArticles(for account: Account, hashes: [NewsBlurArticleHash]?, updateFetchDate: Date?, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let hashes = hashes, !hashes.isEmpty else {
+			if let lastArticleFetch = updateFetchDate {
+				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
+				self.accountMetadata?.lastArticleFetchEndTime = Date()
+			}
+			completion(.success(()))
+			return
+		}
+
+		let numberOfArticles = min(hashes.count, 100) // api limit
+		let hashesToFetch = Array(hashes[..<numberOfArticles])
+
+		caller.retrieveArticles(hashes: hashesToFetch) { result in
+			switch result {
+			case .success(let articles):
+				self.processArticles(account: account, articles: articles) { error in
+					self.refreshProgress.completeTask()
+
+					if let error = error {
+						completion(.failure(error))
+						return
+					}
+
+					self.refreshUnreadArticles(for: account, hashes: Array(hashes[numberOfArticles...]), updateFetchDate: updateFetchDate, completion: completion)
+				}
+			case .failure(let error):
+				completion(.failure(error))
 			}
 		}
 	}
 
 	func refreshMissingArticles(for account: Account, completion: @escaping (Result<Void, Error>)-> Void) {
 		completion(.success(()))
+	}
+	
+	func processArticles(account: Account, articles: [NewsBlurArticle]?, completion: @escaping DatabaseCompletionBlock) {
+		let parsedItems = mapArticlesToParsedItems(articles: articles)
+		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true, completion: completion)
+	}
+
+	func mapArticlesToParsedItems(articles: [NewsBlurArticle]?) -> Set<ParsedItem> {
+		guard let articles = articles else {
+			return Set<ParsedItem>()
+		}
+
+		let parsedItems: [ParsedItem] = articles.map { article in
+			let author = Set([ParsedAuthor(name: article.authorName, url: nil, avatarURL: nil, emailAddress: nil)])
+			return ParsedItem(syncServiceID: article.articleId, uniqueID: String(article.articleId), feedURL: String(article.feedId), url: article.url, externalURL: nil, title: article.title, contentHTML: article.contentHTML, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: article.datePublished, dateModified: nil, authors: author, tags: nil, attachments: nil)
+		}
+
+		return Set(parsedItems)
 	}
 
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> ()) {

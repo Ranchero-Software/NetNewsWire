@@ -10,41 +10,36 @@ import Foundation
 import RSCore
 import RSParser
 
-typealias NewsBlurArticleHash = NewsBlurUnreadArticleHashesResponse.ArticleHash
+typealias NewsBlurArticle = NewsBlurArticlesResponse.Article
 
-struct NewsBlurUnreadArticleHashesResponse: Decodable {
-	let subscriptions: [String: [ArticleHash]]
+struct NewsBlurArticlesResponse: Decodable {
+	let articles: [Article]
 
-	struct ArticleHash: Hashable, Codable {
-		var hash: String
-		var timestamp: Date
+	struct Article: Decodable {
+		let articleId: String
+		let feedId: Int
+		let title: String?
+		let url: String?
+		let authorName: String?
+		let contentHTML: String?
+		let datePublished: Date
 	}
 }
 
-extension NewsBlurUnreadArticleHashesResponse {
+extension NewsBlurArticlesResponse {
 	private enum CodingKeys: String, CodingKey {
-		case feeds = "unread_feed_story_hashes"
+		case articles = "stories"
 	}
+}
 
-	init(from decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-
-		// Parse subscriptions
-		var subscriptions: [String: [ArticleHash]] = [:]
-		let subscriptionContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .feeds)
-		try subscriptionContainer.allKeys.forEach { key in
-		subscriptions[key.stringValue] = []
-		var hashArrayContainer = try subscriptionContainer.nestedUnkeyedContainer(forKey: key)
-		while !hashArrayContainer.isAtEnd {
-			var hashContainer = try hashArrayContainer.nestedUnkeyedContainer()
-			let hash = try hashContainer.decode(String.self)
-			let timestamp = try hashContainer.decode(Date.self)
-			let articleHash = ArticleHash(hash: hash, timestamp: timestamp)
-
-			subscriptions[key.stringValue]?.append(articleHash)
-		}
-		}
-
-		self.subscriptions = subscriptions
+extension NewsBlurArticlesResponse.Article {
+	private enum CodingKeys: String, CodingKey {
+		case articleId = "story_hash"
+		case feedId = "story_feed_id"
+		case title = "story_title"
+		case url = "story_permalink"
+		case authorName = "story_authors"
+		case contentHTML = "story_content"
+		case datePublished = "story_date"
 	}
 }

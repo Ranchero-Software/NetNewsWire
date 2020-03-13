@@ -84,7 +84,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func retrieveSubscriptions(completion: @escaping (Result<[NewsBlurSubscription], Error>) -> Void) {
+	func retrieveSubscriptions(completion: @escaping (Result<[NewsBlurSubscription]?, Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/feeds")
 				.appendingQueryItems([
@@ -101,14 +101,14 @@ final class NewsBlurAPICaller: NSObject {
 		transport.send(request: request, resultType: NewsBlurFeedsResponse.self) { result in
 			switch result {
 			case .success((_, let payload)):
-				completion(.success(payload?.subscriptions ?? []))
+				completion(.success(payload?.subscriptions))
 			case .failure(let error):
 				completion(.failure(error))
 			}
 		}
 	}
 
-	func retrieveUnreadArticleHashes(completion: @escaping (Result<[NewsBlurArticleHash], Error>) -> Void) {
+	func retrieveUnreadArticleHashes(completion: @escaping (Result<[NewsBlurArticleHash]?, Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/unread_story_hashes")
 				.appendingQueryItems([
@@ -124,11 +124,29 @@ final class NewsBlurAPICaller: NSObject {
 		transport.send(request: request, resultType: NewsBlurUnreadArticleHashesResponse.self, dateDecoding: .secondsSince1970) { result in
 			switch result {
 			case .success((_, let payload)):
-				guard let subscriptions = payload?.subscriptions else {
-					completion(.success([]))
-					return
-				}
-				completion(.success(subscriptions.values.flatMap { $0 }))
+				completion(.success(payload?.subscriptions.values.flatMap { $0 }))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func retrieveArticles(hashes: [NewsBlurArticleHash], completion: @escaping (Result<[NewsBlurArticle]?, Error>) -> Void) {
+		let url = baseURL
+				.appendingPathComponent("reader/river_stories")
+				.appendingQueryItem(.init(name: "include_hidden", value: "true"))?
+				.appendingQueryItems(hashes.map { URLQueryItem(name: "h", value: $0.hash) })
+
+		guard let callURL = url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+
+		let request = URLRequest(url: callURL, credentials: credentials)
+		transport.send(request: request, resultType: NewsBlurArticlesResponse.self, dateDecoding: .formatted(NewsBlurDate.yyyyMMddHHmmss)) { result in
+			switch result {
+			case .success((_, let payload)):
+				completion(.success(payload?.articles))
 			case .failure(let error):
 				completion(.failure(error))
 			}
