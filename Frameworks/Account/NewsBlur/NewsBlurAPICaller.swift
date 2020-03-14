@@ -11,11 +11,14 @@ import RSWeb
 
 enum NewsBlurError: LocalizedError {
 	case general(message: String)
+	case unknown
 
 	var errorDescription: String? {
 		switch self {
 		case .general(let message):
 			return message
+		case .unknown:
+			return "An unknown error occurred"
 		}
 	}
 }
@@ -183,6 +186,42 @@ final class NewsBlurAPICaller: NSObject {
 			switch result {
 			case .success((_, let payload)):
 				completion(.success(payload?.stories))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func markAsUnread(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendStoryStatus(endpoint: "reader/mark_story_hash_as_unread", hashes: hashes, completion: completion)
+	}
+
+	func markAsRead(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendStoryStatus(endpoint: "reader/mark_story_hashes_as_read", hashes: hashes, completion: completion)
+	}
+
+	func star(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendStoryStatus(endpoint: "reader/mark_story_hash_as_starred", hashes: hashes, completion: completion)
+	}
+
+	func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendStoryStatus(endpoint: "reader/mark_story_hash_as_unstarred", hashes: hashes, completion: completion)
+	}
+	
+	private func sendStoryStatus(endpoint: String, hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = baseURL.appendingPathComponent(endpoint)
+
+		var request = URLRequest(url: callURL, credentials: credentials)
+		request.httpBody = NewsBlurStoryStatusChange(hashes: hashes).asData
+		transport.send(request: request, method: HTTPMethod.post) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
+			switch result {
+			case .success:
+				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
 			}

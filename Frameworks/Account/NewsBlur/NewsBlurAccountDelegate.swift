@@ -116,11 +116,74 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+		os_log(.debug, log: log, "Sending story statuses...")
+
+		database.selectForProcessing { result in
+
+			func processStatuses(_ syncStatuses: [SyncStatus]) {
+				let createUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == false }
+				let deleteUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == true }
+				let createStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == true }
+				let deleteStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == false }
+
+				let group = DispatchGroup()
+				var errorOccurred = false
+
+				group.enter()
+				self.sendStoryStatuses(createUnreadStatuses, throttle: true, apiCall: self.caller.markAsUnread) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+
+				group.enter()
+				self.sendStoryStatuses(deleteStarredStatuses, throttle: false, apiCall: self.caller.markAsRead) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+
+				group.enter()
+				self.sendStoryStatuses(createStarredStatuses, throttle: true, apiCall: self.caller.star) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+
+				group.enter()
+				self.sendStoryStatuses(deleteStarredStatuses, throttle: true, apiCall: self.caller.unstar) { result in
+					group.leave()
+					if case .failure = result {
+						errorOccurred = true
+					}
+				}
+
+				group.notify(queue: DispatchQueue.main) {
+					os_log(.debug, log: self.log, "Done sending article statuses.")
+					if errorOccurred {
+						completion(.failure(NewsBlurError.unknown))
+					} else {
+						completion(.success(()))
+					}
+				}
+			}
+
+			switch result {
+			case .success(let syncStatuses):
+				processStatuses(syncStatuses)
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
+			}
+		}
 	}
 
 	func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+		os_log(.debug, log: log, "Refreshing article statuses...")
+
+		// TODO: Fill this in
 	}
 
 	func refreshStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -192,7 +255,18 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		fatalError("markArticles(for:articles:statusKey:flag:) has not been implemented")
+		let syncStatuses = articles.map { article in
+			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+		}
+		database.insertStatuses(syncStatuses)
+
+		database.selectPendingCount { result in
+			if let count = try? result.get(), count > 100 {
+				self.sendArticleStatus(for: account) { _ in }
+			}
+		}
+
+		return try? account.update(articles, statusKey: statusKey, flag: flag)
 	}
 
 	func accountDidInitialize(_ account: Account) {
@@ -484,5 +558,44 @@ extension NewsBlurAccountDelegate {
 		}
 
 		return Set(parsedItems)
+	}
+
+	private func sendStoryStatuses(_ statuses: [SyncStatus],
+								   throttle: Bool,
+								   apiCall: ([String], @escaping (Result<Void, Error>) -> Void) -> Void,
+								   completion: @escaping (Result<Void, Error>) -> Void) {
+		guard !statuses.isEmpty else {
+			completion(.success(()))
+			return
+		}
+
+		let group = DispatchGroup()
+		var errorOccurred = false
+
+		let storyHashes = statuses.compactMap { $0.articleID }
+		let storyHashGroups = storyHashes.chunked(into: throttle ? 1 : 5) // api limit
+		for storyHashGroup in storyHashGroups {
+			group.enter()
+			apiCall(storyHashGroup) { result in
+				switch result {
+				case .success:
+					self.database.deleteSelectedForProcessing(storyHashGroup.map { String($0) } )
+					group.leave()
+				case .failure(let error):
+					errorOccurred = true
+					os_log(.error, log: self.log, "Story status sync call failed: %@.", error.localizedDescription)
+					self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
+					group.leave()
+				}
+			}
+		}
+
+		group.notify(queue: DispatchQueue.main) {
+			if errorOccurred {
+				completion(.failure(NewsBlurError.unknown))
+			} else {
+				completion(.success(()))
+			}
+		}
 	}
 }
