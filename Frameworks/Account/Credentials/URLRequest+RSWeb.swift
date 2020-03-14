@@ -36,8 +36,12 @@ public extension URLRequest {
         case .readerBasic:
             setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             httpMethod = "POST"
-			let postData = "Email=\(credentials.username)&Passwd=\(credentials.secret)"
-            httpBody = postData.data(using: String.Encoding.utf8)
+			var postData = URLComponents()
+			postData.queryItems = [
+				URLQueryItem(name: "Email", value: credentials.username),
+				URLQueryItem(name: "Passwd", value: credentials.secret)
+			]
+			httpBody = postData.percentEncodedQuery?.data(using: String.Encoding.utf8)
 		case .readerAPIKey:
             let auth = "GoogleLogin auth=\(credentials.secret)"
             setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
