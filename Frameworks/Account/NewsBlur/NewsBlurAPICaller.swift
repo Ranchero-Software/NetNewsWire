@@ -205,7 +205,7 @@ extension NewsBlurAPICaller {
 		}
 
 		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, resultType: NewsBlurUnreadStoryHashesResponse.self, dateDecoding: .secondsSince1970) { result in
+		transport.send(request: request, resultType: NewsBlurStoryHashesResponse.self, dateDecoding: .secondsSince1970) { result in
 			if self.suspended {
 				completion(.failure(TransportError.suspended))
 				return
@@ -213,7 +213,8 @@ extension NewsBlurAPICaller {
 
 			switch result {
 			case .success((_, let payload)):
-				completion(.success(payload?.feeds.values.flatMap { $0 }))
+				let hashes = payload?.unread ?? payload?.starred
+				completion(.success(hashes?.values.flatMap { $0 }))
 			case .failure(let error):
 				completion(.failure(error))
 			}
