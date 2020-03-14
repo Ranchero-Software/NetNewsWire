@@ -232,14 +232,13 @@ extension NewsBlurAccountDelegate {
 		caller.retrieveFeeds { result in
 			switch result {
 			case .success((let feeds, let folders)):
-				self.refreshProgress.completeTask()
-
 				BatchUpdate.shared.perform {
 					self.syncFolders(account, folders)
 					self.syncFeeds(account, feeds)
 					self.syncFeedFolderRelationship(account, folders)
 				}
 
+				self.refreshProgress.completeTask()
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
@@ -451,7 +450,15 @@ extension NewsBlurAccountDelegate {
 						return
 					}
 
-					self.refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: updateFetchDate, completion: completion)
+					self.refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: updateFetchDate) { result in
+						os_log(.debug, log: self.log, "Done refreshing stories.")
+						switch result {
+						case .success:
+							completion(.success(()))
+						case .failure(let error):
+							completion(.failure(error))
+						}
+					}
 				}
 			case .failure(let error):
 				completion(.failure(error))
