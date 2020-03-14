@@ -6,13 +6,17 @@
 body {
 	margin-top: 3px;
 	margin-bottom: 20px;
-	margin-left: 20px;
-	margin-right: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 20px;
+	padding-right: 20px;
 
 	word-wrap: break-word;
 	word-break: break-word;
 	-webkit-hyphens: auto;
 	-webkit-text-size-adjust: none;
+	
+	max-width: 44em;
 }
 
 a {
