@@ -90,7 +90,11 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 												}
 
 											case .failure(let error):
-												completion(.failure(error))
+												DispatchQueue.main.async {
+													self.refreshProgress.clear()
+													let wrappedError = AccountError.wrappedError(error: error, account: account)
+													completion(.failure(wrappedError))
+												}
 											}
 										}
 
@@ -231,6 +235,10 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			case .success(let storyHashes):
 				self.refreshProgress.completeTask()
 
+				if let count = storyHashes?.count, count > 0 {
+					self.refreshProgress.addToNumberOfTasksAndRemaining((count - 1) / 100 + 1)
+				}
+
 				self.refreshUnreadStories(for: account, hashes: storyHashes, updateFetchDate: nil, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
@@ -255,14 +263,12 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 						switch result {
 						case .success(let stories):
-
 							self.processStories(account: account, stories: stories) { error in
 								group.leave()
 								if error != nil {
 									errorOccurred = true
 								}
 							}
-
 						case .failure(let error):
 							errorOccurred = true
 							os_log(.error, log: self.log, "Refresh missing stories failed: %@.", error.localizedDescription)
