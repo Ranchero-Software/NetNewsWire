@@ -23,7 +23,7 @@ struct NewsBlurStoriesResponse: Decodable {
 		let authorName: String?
 		let contentHTML: String?
 		var imageURL: String? {
-			return imageURLs?.first
+			return imageURLs?.first?.value
 		}
 		var tags: [String]?
 		var datePublished: Date? {
@@ -31,7 +31,7 @@ struct NewsBlurStoriesResponse: Decodable {
 			return Date(timeIntervalSince1970: interval)
 		}
 
-		private var imageURLs: [String]?
+		private var imageURLs: [String: String]?
 		private var publishedTimestamp: String
 	}
 }
@@ -50,7 +50,7 @@ extension NewsBlurStoriesResponse.Story {
 		case url = "story_permalink"
 		case authorName = "story_authors"
 		case contentHTML = "story_content"
-		case imageURLs = "image_urls"
+		case imageURLs = "secure_image_urls"
 		case tags = "story_tags"
 		case publishedTimestamp = "story_timestamp"
 	}
