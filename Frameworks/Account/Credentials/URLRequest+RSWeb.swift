@@ -41,7 +41,7 @@ public extension URLRequest {
 				URLQueryItem(name: "Email", value: credentials.username),
 				URLQueryItem(name: "Passwd", value: credentials.secret)
 			]
-			httpBody = postData.percentEncodedQuery?.data(using: String.Encoding.utf8)
+			httpBody = postData.percentEncodedQuery?.data(using: .utf8)
 		case .readerAPIKey:
             let auth = "GoogleLogin auth=\(credentials.secret)"
             setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
