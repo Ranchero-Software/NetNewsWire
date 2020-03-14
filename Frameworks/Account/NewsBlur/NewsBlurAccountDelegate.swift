@@ -239,9 +239,59 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func refreshMissingStories(for account: Account, completion: @escaping (Result<Void, Error>)-> Void) {
-		completion(.success(()))
+		os_log(.debug, log: log, "Refreshing missing stories...")
+
+		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
+			func process(_ fetchedHashes: Set<String>) {
+				let group = DispatchGroup()
+				var errorOccurred = false
+
+				let storyHashes = Array(fetchedHashes).map { NewsBlurStoryHash(hash: $0, timestamp: Date()) }
+				let chunkedStoryHashes = storyHashes.chunked(into: 100)
+
+				for chunk in chunkedStoryHashes {
+					group.enter()
+					self.caller.retrieveStories(hashes: chunk) { result in
+
+						switch result {
+						case .success(let stories):
+
+							self.processStories(account: account, stories: stories) { error in
+								group.leave()
+								if error != nil {
+									errorOccurred = true
+								}
+							}
+
+						case .failure(let error):
+							errorOccurred = true
+							os_log(.error, log: self.log, "Refresh missing stories failed: %@.", error.localizedDescription)
+							group.leave()
+						}
+					}
+				}
+
+				group.notify(queue: DispatchQueue.main) {
+					self.refreshProgress.completeTask()
+					os_log(.debug, log: self.log, "Done refreshing missing stories.")
+					if errorOccurred {
+						completion(.failure(NewsBlurError.unknown))
+					} else {
+						completion(.success(()))
+					}
+				}
+			}
+
+			switch result {
+			case .success(let fetchedArticleIDs):
+				process(fetchedArticleIDs)
+			case .failure(let error):
+				self.refreshProgress.completeTask()
+				completion(.failure(error))
+			}
+		}
 	}
-	
+
 	func processStories(account: Account, stories: [NewsBlurStory]?, completion: @escaping DatabaseCompletionBlock) {
 		let parsedItems = mapStoriesToParsedItems(stories: stories)
 		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
