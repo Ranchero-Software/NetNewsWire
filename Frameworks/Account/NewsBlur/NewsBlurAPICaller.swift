@@ -84,7 +84,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func retrieveFeeds(completion: @escaping (Result<[NewsBlurFeed]?, Error>) -> Void) {
+	func retrieveFeeds(completion: @escaping (Result<([NewsBlurFeed]?, [NewsBlurFolder]?), Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/feeds")
 				.appendingQueryItems([
@@ -101,7 +101,7 @@ final class NewsBlurAPICaller: NSObject {
 		transport.send(request: request, resultType: NewsBlurFeedsResponse.self) { result in
 			switch result {
 			case .success((_, let payload)):
-				completion(.success(payload?.feeds))
+				completion(.success((payload?.feeds, payload?.folders)))
 			case .failure(let error):
 				completion(.failure(error))
 			}

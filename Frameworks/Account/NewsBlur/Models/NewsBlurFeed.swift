@@ -11,23 +11,29 @@ import RSCore
 import RSParser
 
 typealias NewsBlurFeed = NewsBlurFeedsResponse.Feed
+typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
 
 struct NewsBlurFeedsResponse: Decodable {
 	let feeds: [Feed]
 	let folders: [Folder]
 
 	struct Feed: Hashable, Codable {
-		let title: String
+		let name: String
 		let feedID: Int
 		let feedURL: String
-		let siteURL: String?
-		let favicon: String?
+		let homepageURL: String?
+		let faviconURL: String?
 	}
 
 	struct Folder: Hashable, Codable {
 		let name: String
 		let feedIDs: [Int]
 	}
+}
+
+struct NewsBlurFolderRelationship: Codable {
+	let folderName: String
+	let feedID: Int
 }
 
 extension NewsBlurFeedsResponse {
@@ -65,10 +71,16 @@ extension NewsBlurFeedsResponse {
 
 extension NewsBlurFeedsResponse.Feed {
 	private enum CodingKeys: String, CodingKey {
-		case title = "feed_title"
+		case name = "feed_title"
 		case feedID = "id"
 		case feedURL = "feed_address"
-		case siteURL = "feed_link"
-		case favicon = "favicon_url"
+		case homepageURL = "feed_link"
+		case faviconURL = "favicon_url"
+	}
+}
+
+extension NewsBlurFeedsResponse.Folder {
+	var asRelationships: [NewsBlurFolderRelationship] {
+		return feedIDs.map { NewsBlurFolderRelationship(folderName: name, feedID: $0) }
 	}
 }

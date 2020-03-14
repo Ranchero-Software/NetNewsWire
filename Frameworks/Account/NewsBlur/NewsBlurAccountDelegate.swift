@@ -231,10 +231,15 @@ extension NewsBlurAccountDelegate {
 
 		caller.retrieveFeeds { result in
 			switch result {
-			case .success(let feeds):
+			case .success((let feeds, let folders)):
 				self.refreshProgress.completeTask()
 
-				self.syncFeeds(account, feeds)
+				BatchUpdate.shared.perform {
+					self.syncFolders(account, folders)
+					self.syncFeeds(account, feeds)
+					self.syncFeedFolderRelationship(account, folders)
+				}
+
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
@@ -242,8 +247,46 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
+	private func syncFolders(_ account: Account, _ folders: [NewsBlurFolder]?) {
+		guard let folders = folders else { return }
+		assert(Thread.isMainThread)
+
+		os_log(.debug, log: log, "Syncing folders with %ld folders.", folders.count)
+
+		let folderNames = folders.map { $0.name }
+
+		// Delete any folders not at NewsBlur
+		if let folders = account.folders {
+			folders.forEach { folder in
+				if !folderNames.contains(folder.name ?? "") {
+					for feed in folder.topLevelWebFeeds {
+						account.addWebFeed(feed)
+						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+					}
+					account.removeFolder(folder)
+				}
+			}
+		}
+
+		let accountFolderNames: [String] =  {
+			if let folders = account.folders {
+				return folders.map { $0.name ?? "" }
+			} else {
+				return [String]()
+			}
+		}()
+
+		// Make any folders NewsBlur has, but we don't
+		folderNames.forEach { folderName in
+			if !accountFolderNames.contains(folderName) {
+				_ = account.ensureFolder(with: folderName)
+			}
+		}
+	}
+
 	private func syncFeeds(_ account: Account, _ feeds: [NewsBlurFeed]?) {
 		guard let feeds = feeds else { return }
+		assert(Thread.isMainThread)
 
 		os_log(.debug, log: log, "Syncing feeds with %ld feeds.", feeds.count)
 
@@ -272,13 +315,12 @@ extension NewsBlurAccountDelegate {
 			let subFeedId = String(feed.feedID)
 
 			if let webFeed = account.existingWebFeed(withWebFeedID: subFeedId) {
-				webFeed.name = feed.title
+				webFeed.name = feed.name
 				// If the name has been changed on the server remove the locally edited name
 				webFeed.editedName = nil
-				webFeed.homePageURL = feed.siteURL
+				webFeed.homePageURL = feed.homepageURL
 				webFeed.subscriptionID = String(feed.feedID)
-				webFeed.faviconURL = feed.favicon
-				webFeed.iconURL = feed.favicon
+				webFeed.faviconURL = feed.faviconURL
 			}
 			else {
 				feedsToAdd.insert(feed)
@@ -287,10 +329,102 @@ extension NewsBlurAccountDelegate {
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
 		feedsToAdd.forEach { feed in
-			let webFeed = account.createWebFeed(with: feed.title, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.siteURL)
+			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homepageURL)
 			webFeed.subscriptionID = String(feed.feedID)
 			account.addWebFeed(webFeed)
 		}
+	}
+
+	private func syncFeedFolderRelationship(_ account: Account, _ folders: [NewsBlurFolder]?) {
+		guard let folders = folders else { return }
+		assert(Thread.isMainThread)
+
+		os_log(.debug, log: log, "Syncing folders with %ld folders.", folders.count)
+
+		// Set up some structures to make syncing easier
+		let relationships = folders.map({ $0.asRelationships }).flatMap { $0 }
+		let folderDict = nameToFolderDictionary(with: account.folders)
+		let foldersDict = relationships.reduce([String: [NewsBlurFolderRelationship]]()) { (dict, relationship) in
+			var feedInFolders = dict
+			if var feedInFolder = feedInFolders[relationship.folderName] {
+				feedInFolder.append(relationship)
+				feedInFolders[relationship.folderName] = feedInFolder
+			} else {
+				feedInFolders[relationship.folderName] = [relationship]
+			}
+			return feedInFolders
+		}
+
+		// Sync the folders
+		for (folderName, folderRelationships) in foldersDict {
+			guard let folder = folderDict[folderName] else { return }
+
+			let folderFeedIDs = folderRelationships.map { String($0.feedID) }
+
+			// Move any feeds not in the folder to the account
+			for feed in folder.topLevelWebFeeds {
+				if !folderFeedIDs.contains(feed.webFeedID) {
+					folder.removeWebFeed(feed)
+					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+					account.addWebFeed(feed)
+				}
+			}
+
+			// Add any feeds not in the folder
+			let folderFeedIds = folder.topLevelWebFeeds.map { $0.webFeedID }
+
+			for relationship in folderRelationships {
+				let folderFeedID = String(relationship.feedID)
+				if !folderFeedIds.contains(folderFeedID) {
+					guard let feed = account.existingWebFeed(withWebFeedID: folderFeedID) else {
+						continue
+					}
+					saveFolderRelationship(for: feed, withFolderName: folderName, id: relationship.folderName)
+					folder.addWebFeed(feed)
+				}
+			}
+
+		}
+
+		let folderFeedIDs = Set(relationships.map { String($0.feedID) })
+
+		// Remove all feeds from the account container that have a tag
+		for feed in account.topLevelWebFeeds {
+			if folderFeedIDs.contains(feed.webFeedID) {
+				account.removeWebFeed(feed)
+			}
+		}
+	}
+
+	private func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
+		if var folderRelationship = feed.folderRelationship {
+			folderRelationship[folderName] = nil
+			feed.folderRelationship = folderRelationship
+		}
+	}
+
+	private func saveFolderRelationship(for feed: WebFeed, withFolderName folderName: String, id: String) {
+		if var folderRelationship = feed.folderRelationship {
+			folderRelationship[folderName] = id
+			feed.folderRelationship = folderRelationship
+		} else {
+			feed.folderRelationship = [folderName: id]
+		}
+	}
+
+	private func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
+		guard let folders = folders else {
+			return [String: Folder]()
+		}
+
+		var d = [String: Folder]()
+		for folder in folders {
+			let name = folder.name ?? ""
+			if d[name] == nil {
+				d[name] = folder
+			}
+		}
+		return d
 	}
 
 	private func refreshUnreadStories(for account: Account, hashes: [NewsBlurStoryHash]?, updateFetchDate: Date?, completion: @escaping (Result<Void, Error>) -> Void) {
