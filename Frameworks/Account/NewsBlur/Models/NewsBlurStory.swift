@@ -22,7 +22,12 @@ struct NewsBlurStoriesResponse: Decodable {
 		let url: String?
 		let authorName: String?
 		let contentHTML: String?
-		let datePublished: Date
+		var datePublished: Date? {
+			let interval = (publishedTimestamp as NSString).doubleValue
+			return Date(timeIntervalSince1970: interval)
+		}
+
+		private var publishedTimestamp: String
 	}
 }
 
@@ -40,6 +45,6 @@ extension NewsBlurStoriesResponse.Story {
 		case url = "story_permalink"
 		case authorName = "story_authors"
 		case contentHTML = "story_content"
-		case datePublished = "story_date"
+		case publishedTimestamp = "story_timestamp"
 	}
 }

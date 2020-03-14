@@ -143,7 +143,7 @@ final class NewsBlurAPICaller: NSObject {
 		}
 
 		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, resultType: NewsBlurStoriesResponse.self, dateDecoding: .formatted(NewsBlurDate.yyyyMMddHHmmss)) { result in
+		transport.send(request: request, resultType: NewsBlurStoriesResponse.self) { result in
 			switch result {
 			case .success((_, let payload)):
 				completion(.success(payload?.stories))
