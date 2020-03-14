@@ -25,6 +25,7 @@ final class NewsBlurAPICaller: NSObject {
 
 	private let baseURL = URL(string: "https://www.newsblur.com/")!
 	private var transport: Transport!
+	private var suspended = false
 
 	var credentials: Credentials?
 	weak var accountMetadata: AccountMetadata?
@@ -34,11 +35,26 @@ final class NewsBlurAPICaller: NSObject {
 		self.transport = transport
 	}
 
+	/// Cancels all pending requests rejects any that come in later
+	func suspend() {
+		transport.cancelAll()
+		suspended = true
+	}
+
+	func resume() {
+		suspended = false
+	}
+
 	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		let url = baseURL.appendingPathComponent("api/login")
 		let request = URLRequest(url: url, credentials: credentials)
 
 		transport.send(request: request, resultType: NewsBlurLoginResponse.self) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success(let response, let payload):
 				guard let url = response.url, let headerFields = response.allHeaderFields as? [String: String], payload?.code != -1 else {
@@ -75,6 +91,11 @@ final class NewsBlurAPICaller: NSObject {
 		let request = URLRequest(url: url, credentials: credentials)
 
 		transport.send(request: request) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -99,6 +120,11 @@ final class NewsBlurAPICaller: NSObject {
 
 		let request = URLRequest(url: callURL, credentials: credentials)
 		transport.send(request: request, resultType: NewsBlurFeedsResponse.self) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success((_, let payload)):
 				completion(.success((payload?.feeds, payload?.folders)))
@@ -122,6 +148,11 @@ final class NewsBlurAPICaller: NSObject {
 
 		let request = URLRequest(url: callURL, credentials: credentials)
 		transport.send(request: request, resultType: NewsBlurUnreadStoryHashesResponse.self, dateDecoding: .secondsSince1970) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success((_, let payload)):
 				completion(.success(payload?.feeds.values.flatMap { $0 }))
@@ -144,6 +175,11 @@ final class NewsBlurAPICaller: NSObject {
 
 		let request = URLRequest(url: callURL, credentials: credentials)
 		transport.send(request: request, resultType: NewsBlurStoriesResponse.self) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
 			switch result {
 			case .success((_, let payload)):
 				completion(.success(payload?.stories))

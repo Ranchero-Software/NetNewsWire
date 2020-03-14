@@ -213,14 +213,21 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
+	// MARK: Suspend and Resume (for iOS)
+
+	/// Suspend all network activity
 	func suspendNetwork() {
+		caller.suspend()
 	}
 
+	/// Suspend the SQLLite databases
 	func suspendDatabase() {
 		database.suspend()
 	}
 
+	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
+		caller.resume()
 		database.resume()
 	}
 }
