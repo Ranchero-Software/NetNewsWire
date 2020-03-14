@@ -57,7 +57,9 @@ extension NewsBlurFeedsResponse {
 		// Parse folders
 		var folders: [Folder] = []
 		let folderContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .folders)
-		try folderContainer.allKeys.forEach { key in
+
+		// Skip "everything" folder
+		for key in folderContainer.allKeys where key.stringValue != " " {
 			let subscriptionIds = try folderContainer.decode([Int].self, forKey: key)
 			let folder = Folder(name: key.stringValue, feedIDs: subscriptionIds)
 
