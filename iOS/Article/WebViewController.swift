@@ -57,18 +57,7 @@ class WebViewController: UIViewController {
 	weak var coordinator: SceneCoordinator!
 	weak var delegate: WebViewControllerDelegate?
 	
-	var article: Article? {
-		didSet {
-			stopArticleExtractor()
-			if article?.webFeed?.isArticleExtractorAlwaysOn ?? false {
-				startArticleExtractor()
-			}
-			if article != oldValue {
-				windowScrollY = 0
-				loadWebView()
-			}
-		}
-	}
+	private(set) var article: Article?
 	
 	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 1.0)
 	var windowScrollY = 0
@@ -114,6 +103,22 @@ class WebViewController: UIViewController {
 	
 	// MARK: API
 
+	func setArticle(_ article: Article?, updateView: Bool = true) {
+		stopArticleExtractor()
+		
+		if article != self.article {
+			self.article = article
+			if updateView {
+				if article?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+					startArticleExtractor()
+				}
+				windowScrollY = 0
+				loadWebView()
+			}
+		}
+		
+	}
+	
 	func focus() {
 		webView?.becomeFirstResponder()
 	}

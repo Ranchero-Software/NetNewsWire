@@ -44,7 +44,7 @@ class ArticleViewController: UIViewController {
 	var article: Article? {
 		didSet {
 			if let controller = currentWebViewController, controller.article != article {
-				controller.article = article
+				controller.setArticle(article)
 				DispatchQueue.main.async {
 					// You have to set the view controller to clear out the UIPageViewController child controller cache.
 					// You also have to do it in an async call or you will get a strange assertion error.
@@ -103,7 +103,7 @@ class ArticleViewController: UIViewController {
 			view.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor)
 		])
 				
-		let controller = createWebViewController(article)
+		let controller = createWebViewController(article, updateView: false)
 		if let state = restoreState {
 			controller.extractedArticle = state.extractedArticle
 			controller.isShowingExtractedArticle = state.isShowingExtractedArticle
@@ -329,11 +329,11 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 
 private extension ArticleViewController {
 	
-	func createWebViewController(_ article: Article?) -> WebViewController {
+	func createWebViewController(_ article: Article?, updateView: Bool = true) -> WebViewController {
 		let controller = WebViewController()
 		controller.coordinator = coordinator
 		controller.delegate = self
-		controller.article = article
+		controller.setArticle(article, updateView: updateView)
 		return controller
 	}
 	
