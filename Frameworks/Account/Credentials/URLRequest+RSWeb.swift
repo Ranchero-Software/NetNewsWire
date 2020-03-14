@@ -36,8 +36,12 @@ public extension URLRequest {
 		case .newsBlurBasic:
 			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 			httpMethod = "POST"
-			let postData = "username=\(credentials.username)&password=\(credentials.secret)"
-			httpBody = postData.data(using: String.Encoding.utf8)
+			var postData = URLComponents()
+			postData.queryItems = [
+				URLQueryItem(name: "username", value: credentials.username),
+				URLQueryItem(name: "password", value: credentials.secret),
+			]
+			httpBody = postData.percentEncodedQuery?.data(using: .utf8)
 		case .newsBlurSessionId:
 			setValue("\(NewsBlurAPICaller.SessionIdCookie)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
 			httpShouldHandleCookies = true
