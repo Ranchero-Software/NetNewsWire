@@ -14,12 +14,29 @@ final class IconView: NSView {
 		didSet {
 			if iconImage !== oldValue {
 				imageView.image = iconImage?.image
+
+				if NSApplication.shared.effectiveAppearance.isDarkMode {
+					if self.iconImage?.isDark ?? false {
+						self.isDisconcernable = false
+					} else {
+						self.isDisconcernable = true
+					}
+				} else {
+					if self.iconImage?.isBright ?? false {
+						self.isDisconcernable = false
+					} else {
+						self.isDisconcernable = true
+					}
+				}
+
 				needsDisplay = true
 				needsLayout = true
 			}
 		}
 	}
 
+	private var isDisconcernable = true
+	
 	override var isFlipped: Bool {
 		return true
 	}
@@ -67,7 +84,7 @@ final class IconView: NSView {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
-		guard hasExposedVerticalBackground else {
+		guard hasExposedVerticalBackground || !isDisconcernable else {
 			return
 		}
 
