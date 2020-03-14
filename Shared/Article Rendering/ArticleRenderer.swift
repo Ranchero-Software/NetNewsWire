@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if os(iOS)
+import UIKit
+#endif
 import RSCore
 import Articles
 import Account
@@ -49,27 +52,27 @@ struct ArticleRenderer {
 
 	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
-		return (renderer.styleString(), renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
 	static func multipleSelectionHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return (renderer.styleString(), renderer.multipleSelectionHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.multipleSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
 	static func loadingHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return (renderer.styleString(), renderer.loadingHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.loadingHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
 	static func noSelectionHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return (renderer.styleString(), renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
 	
 	static func noContentHTML(style: ArticleStyle) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
-		return (renderer.styleString(), renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
 	}
 }
 
@@ -78,8 +81,7 @@ struct ArticleRenderer {
 private extension ArticleRenderer {
 
 	private var articleHTML: String {
-		let body = try! MacroProcessor.renderedText(withTemplate: template(), substitutions: articleSubstitutions())
-		return body
+		return try! MacroProcessor.renderedText(withTemplate: template(), substitutions: articleSubstitutions())
 	}
 
 	private var multipleSelectionHTML: String {
@@ -99,6 +101,15 @@ private extension ArticleRenderer {
 
 	private var noContentHTML: String {
 		return ""
+	}
+	
+	private var articleCSS: String {
+		#if os(iOS)
+		let style = try! MacroProcessor.renderedText(withTemplate: styleString(), substitutions: styleSubstitutions())
+		return style
+		#else
+		return styleString()
+		#endif
 	}
 
 	static var defaultStyleSheet: String = {
@@ -233,6 +244,15 @@ private extension ArticleRenderer {
 		dateFormatter.timeStyle = timeStyle
 		return dateFormatter.string(from: date)
 	}
+	
+	#if os(iOS)
+	func styleSubstitutions() -> [String: String] {
+		var d = [String: String]()
+		let bodyFont = UIFont.preferredFont(forTextStyle: .body)
+		d["font-size"] = String(describing: bodyFont.pointSize)
+		return d
+	}
+	#endif
 
 }
 

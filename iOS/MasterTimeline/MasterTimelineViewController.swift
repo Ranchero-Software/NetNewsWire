@@ -137,11 +137,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self)) {
-				if AppDefaults.refreshClearsReadArticles {
-					self.coordinator.refreshTimeline(resetScroll: false)
-				}
-			}
+			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 		}
 	}
 	
@@ -197,6 +193,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 		
 		updateUI()
+	}
+
+	func updateUI() {
+		refreshProgressView?.updateRefreshLabel()
+		updateTitleUnreadCount()
+		updateToolbar()
 	}
 	
 	func hideSearch() {
@@ -545,8 +547,7 @@ private extension MasterTimelineViewController {
 
 	func configureToolbar() {
 		
-		if coordinator.isThreePanelMode {
-			firstUnreadButton.isHidden = true
+		guard !coordinator.isThreePanelMode else {
 			return
 		}
 		
@@ -602,12 +603,6 @@ private extension MasterTimelineViewController {
 
 	}
 	
-	func updateUI() {
-		refreshProgressView?.updateRefreshLabel()
-		updateTitleUnreadCount()
-		updateToolbar()
-	}
-	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
 		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
@@ -621,6 +616,11 @@ private extension MasterTimelineViewController {
 	func updateToolbar() {
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+		if coordinator.isRootSplitCollapsed {
+			firstUnreadButton.isHidden = false
+		} else {
+			firstUnreadButton.isHidden = true
+		}
 	}
 	
 	func updateTitleUnreadCount() {

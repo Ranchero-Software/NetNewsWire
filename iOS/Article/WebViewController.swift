@@ -29,8 +29,8 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	private var webView: WKWebView? {
-		return view.subviews[0] as? WKWebView
+	private var webView: PreloadedWebView? {
+		return view.subviews[0] as? PreloadedWebView
 	}
 	
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
@@ -57,18 +57,7 @@ class WebViewController: UIViewController {
 	weak var coordinator: SceneCoordinator!
 	weak var delegate: WebViewControllerDelegate?
 	
-	var article: Article? {
-		didSet {
-			stopArticleExtractor()
-			if article?.webFeed?.isArticleExtractorAlwaysOn ?? false {
-				startArticleExtractor()
-			}
-			if article != oldValue {
-				windowScrollY = 0
-				loadWebView()
-			}
-		}
-	}
+	private(set) var article: Article?
 	
 	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 1.0)
 	var windowScrollY = 0
@@ -114,6 +103,22 @@ class WebViewController: UIViewController {
 	
 	// MARK: API
 
+	func setArticle(_ article: Article?, updateView: Bool = true) {
+		stopArticleExtractor()
+		
+		if article != self.article {
+			self.article = article
+			if updateView {
+				if article?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+					startArticleExtractor()
+				}
+				windowScrollY = 0
+				loadWebView()
+			}
+		}
+		
+	}
+	
 	func focus() {
 		webView?.becomeFirstResponder()
 	}
@@ -375,8 +380,12 @@ extension WebViewController: UIScrollViewDelegate {
 	}
 	
 	@objc func scrollPositionDidChange() {
-		webView?.evaluateJavaScript("window.scrollY") { (scrollY, _) in
-			self.windowScrollY = scrollY as? Int ?? 0
+		webView?.evaluateJavaScript("window.scrollY") { (scrollY, error) in
+			guard error == nil else { return }
+			let javascriptScrollY = scrollY as? Int ?? 0
+			// I don't know why this value gets returned sometimes, but it is in error
+			guard javascriptScrollY != 33554432 else { return }
+			self.windowScrollY = javascriptScrollY
 		}
 	}
 	
@@ -450,7 +459,7 @@ private extension WebViewController {
 		
 	}
 
-	func recycleWebView(_ webView: WKWebView?) {
+	func recycleWebView(_ webView: PreloadedWebView?) {
 		guard let webView = webView else { return }
 		
 		webView.removeFromSuperview()
@@ -467,7 +476,7 @@ private extension WebViewController {
 		coordinator.webViewProvider.enqueueWebView(webView)
 	}
 
-	func renderPage(_ webView: WKWebView?) {
+	func renderPage(_ webView: PreloadedWebView?) {
 		guard let webView = webView else { return }
 		 
 		let style = ArticleStylesManager.shared.currentStyle
@@ -498,8 +507,6 @@ private extension WebViewController {
 			render = "render(\(json), \(windowScrollY));"
 		}
 
-		windowScrollY = 0
-		
 		webView.evaluateJavaScript(render)
 		
 	}

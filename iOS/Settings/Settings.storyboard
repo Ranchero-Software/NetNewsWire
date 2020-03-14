@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9cW-lu-HoC">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9cW-lu-HoC">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -40,7 +40,7 @@
                             <tableViewSection headerTitle="Accounts" id="0ac-Ze-Dh4">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="6sn-wY-hHH" style="IBUITableViewCellStyleDefault" id="XHc-rQ-7FK" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="155.5" width="374" height="44"/>
+                                        <rect key="frame" x="0.0" y="155.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XHc-rQ-7FK" id="nmL-EM-Bsi">
                                             <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
@@ -61,7 +61,7 @@
                             <tableViewSection headerTitle="Feeds" id="hAC-uA-RbS">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="4Hg-B3-zAE" style="IBUITableViewCellStyleDefault" id="glf-Pg-s3P" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="20" y="255.5" width="374" height="44"/>
+                                        <rect key="frame" x="0.0" y="255.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="glf-Pg-s3P" id="bPA-43-Oqh">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
@@ -129,7 +129,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Keq-Np-l9O">
-                                                    <rect key="frame" x="305" y="6.5" width="51" height="31"/>
+                                                    <rect key="frame" x="307" y="6.5" width="51" height="31"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchTimelineOrder:" destination="a0p-rk-skQ" eventType="valueChanged" id="ARp-jk-sAo"/>
@@ -137,12 +137,14 @@
                                                 </switch>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="Keq-Np-l9O" firstAttribute="top" relation="greaterThanOrEqual" secondItem="GhU-ib-Mz8" secondAttribute="top" constant="6" id="B0w-Jk-LsD"/>
                                                 <constraint firstItem="Keq-Np-l9O" firstAttribute="centerY" secondItem="GhU-ib-Mz8" secondAttribute="centerY" id="Fn1-4L-3Mu"/>
                                                 <constraint firstItem="c9W-IF-u6i" firstAttribute="top" secondItem="GhU-ib-Mz8" secondAttribute="topMargin" id="I6I-av-62X"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="c9W-IF-u6i" secondAttribute="bottom" id="RKN-iP-jvM"/>
-                                                <constraint firstAttribute="trailing" secondItem="Keq-Np-l9O" secondAttribute="trailing" constant="20" symbolic="YES" id="Ry8-Ww-bwT"/>
+                                                <constraint firstAttribute="trailing" secondItem="Keq-Np-l9O" secondAttribute="trailing" constant="18" id="Ry8-Ww-bwT"/>
                                                 <constraint firstItem="Keq-Np-l9O" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="c9W-IF-u6i" secondAttribute="trailing" constant="8" id="crw-aM-cVp"/>
                                                 <constraint firstItem="c9W-IF-u6i" firstAttribute="leading" secondItem="GhU-ib-Mz8" secondAttribute="leadingMargin" id="hcX-Ao-zHb"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Keq-Np-l9O" secondAttribute="bottom" constant="6" id="zNh-Vc-Ryn"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -160,7 +162,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="JNi-Wz-RbU">
-                                                    <rect key="frame" x="305" y="6.5" width="51" height="31"/>
+                                                    <rect key="frame" x="307" y="6.5" width="51" height="31"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchGroupByFeed:" destination="a0p-rk-skQ" eventType="valueChanged" id="Bxb-Jq-EEi"/>
@@ -168,7 +170,9 @@
                                                 </switch>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="JNi-Wz-RbU" secondAttribute="trailing" constant="20" symbolic="YES" id="99y-MA-Qbl"/>
+                                                <constraint firstAttribute="trailing" secondItem="JNi-Wz-RbU" secondAttribute="trailing" constant="18" id="99y-MA-Qbl"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="JNi-Wz-RbU" secondAttribute="bottom" constant="6" id="Jls-0y-9cd"/>
+                                                <constraint firstItem="JNi-Wz-RbU" firstAttribute="top" relation="greaterThanOrEqual" secondItem="KHC-cc-tOC" secondAttribute="top" constant="6" id="Qoi-uf-HDC"/>
                                                 <constraint firstItem="JNi-Wz-RbU" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cit-i1-0Hp" secondAttribute="trailing" constant="8" id="SaK-1e-1Mg"/>
                                                 <constraint firstItem="cit-i1-0Hp" firstAttribute="bottom" secondItem="KHC-cc-tOC" secondAttribute="bottomMargin" id="cHk-g1-Wsg"/>
                                                 <constraint firstItem="JNi-Wz-RbU" firstAttribute="centerY" secondItem="KHC-cc-tOC" secondAttribute="centerY" id="idT-LP-oPt"/>
@@ -191,7 +195,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="duV-CN-JmH">
-                                                    <rect key="frame" x="305" y="6.5" width="51" height="31"/>
+                                                    <rect key="frame" x="307" y="6.5" width="51" height="31"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchClearsReadArticles:" destination="a0p-rk-skQ" eventType="valueChanged" id="Nel-mq-9fP"/>
@@ -201,7 +205,9 @@
                                             <constraints>
                                                 <constraint firstItem="KtJ-tk-DlD" firstAttribute="top" secondItem="XAn-lK-LoN" secondAttribute="topMargin" id="3mX-9g-2Bp"/>
                                                 <constraint firstItem="KtJ-tk-DlD" firstAttribute="leading" secondItem="XAn-lK-LoN" secondAttribute="leadingMargin" id="AOT-A0-ak0"/>
-                                                <constraint firstAttribute="trailing" secondItem="duV-CN-JmH" secondAttribute="trailing" constant="20" symbolic="YES" id="Qkh-LF-zez"/>
+                                                <constraint firstItem="duV-CN-JmH" firstAttribute="top" relation="greaterThanOrEqual" secondItem="XAn-lK-LoN" secondAttribute="top" constant="6" id="FeD-Le-7bK"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="duV-CN-JmH" secondAttribute="bottom" constant="6" id="MJP-qB-ivU"/>
+                                                <constraint firstAttribute="trailing" secondItem="duV-CN-JmH" secondAttribute="trailing" constant="18" id="Qkh-LF-zez"/>
                                                 <constraint firstItem="duV-CN-JmH" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="KtJ-tk-DlD" secondAttribute="trailing" constant="8" id="cCz-fb-lta"/>
                                                 <constraint firstItem="duV-CN-JmH" firstAttribute="centerY" secondItem="XAn-lK-LoN" secondAttribute="centerY" id="eui-vJ-Bp8"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="KtJ-tk-DlD" secondAttribute="bottom" id="iyQ-7h-MT3"/>
@@ -249,7 +255,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UOo-9z-IuL">
-                                                    <rect key="frame" x="305" y="6.5" width="51" height="31"/>
+                                                    <rect key="frame" x="307" y="6.5" width="51" height="31"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchConfirmMarkAllAsRead:" destination="a0p-rk-skQ" eventType="valueChanged" id="7wW-hF-2OY"/>
@@ -259,9 +265,11 @@
                                             <constraints>
                                                 <constraint firstItem="5tY-5k-v2g" firstAttribute="top" secondItem="BpI-Hz-KH2" secondAttribute="topMargin" id="K3n-tK-0tu"/>
                                                 <constraint firstItem="UOo-9z-IuL" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="5tY-5k-v2g" secondAttribute="trailing" constant="8" id="KeP-ft-0GH"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="UOo-9z-IuL" secondAttribute="bottom" constant="6" id="RUM-9w-Q3y"/>
                                                 <constraint firstItem="UOo-9z-IuL" firstAttribute="centerY" secondItem="BpI-Hz-KH2" secondAttribute="centerY" id="V2L-l3-s1E"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="5tY-5k-v2g" secondAttribute="bottom" id="VeZ-P7-kQW"/>
-                                                <constraint firstAttribute="trailing" secondItem="UOo-9z-IuL" secondAttribute="trailing" constant="20" symbolic="YES" id="mNk-x8-oJx"/>
+                                                <constraint firstAttribute="trailing" secondItem="UOo-9z-IuL" secondAttribute="trailing" constant="18" id="mNk-x8-oJx"/>
+                                                <constraint firstItem="UOo-9z-IuL" firstAttribute="top" relation="greaterThanOrEqual" secondItem="BpI-Hz-KH2" secondAttribute="top" constant="6" id="tps-aV-CKA"/>
                                                 <constraint firstItem="5tY-5k-v2g" firstAttribute="leading" secondItem="BpI-Hz-KH2" secondAttribute="leadingMargin" id="v4X-Nd-cpC"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -280,14 +288,14 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="2Md-2E-7Z4">
-                                                    <rect key="frame" x="305" y="3.5" width="51" height="31"/>
-                                                    <color key="onTintColor" name="secondaryAccentColor"/>
+                                                    <rect key="frame" x="305" y="6" width="51" height="25.5"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchFullscreenArticles:" destination="a0p-rk-skQ" eventType="valueChanged" id="5fa-Ad-e0j"/>
                                                     </connections>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Tap the article top bar to enter Full Screen. Tap the top or bottom to exit." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a30-nc-ZS4">
-                                                    <rect key="frame" x="20" y="33" width="266.5" height="0.0"/>
+                                                    <rect key="frame" x="20" y="33" width="263" height="0.0"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -298,7 +306,8 @@
                                                 <constraint firstItem="a30-nc-ZS4" firstAttribute="leading" secondItem="zX8-l2-bVH" secondAttribute="leadingMargin" id="52y-SY-gbp"/>
                                                 <constraint firstItem="79e-5s-vd0" firstAttribute="top" secondItem="zX8-l2-bVH" secondAttribute="topMargin" id="9bF-Q1-sYE"/>
                                                 <constraint firstItem="2Md-2E-7Z4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="a30-nc-ZS4" secondAttribute="trailing" constant="8" id="E9l-8S-WBL"/>
-                                                <constraint firstAttribute="trailing" secondItem="2Md-2E-7Z4" secondAttribute="trailing" constant="20" symbolic="YES" id="ELH-06-H2j"/>
+                                                <constraint firstAttribute="trailing" secondItem="2Md-2E-7Z4" secondAttribute="trailing" constant="20" id="ELH-06-H2j"/>
+                                                <constraint firstItem="2Md-2E-7Z4" firstAttribute="top" relation="greaterThanOrEqual" secondItem="zX8-l2-bVH" secondAttribute="top" constant="6" id="aBe-aC-mva"/>
                                                 <constraint firstItem="a30-nc-ZS4" firstAttribute="bottom" secondItem="zX8-l2-bVH" secondAttribute="bottomMargin" id="b3g-at-rjh"/>
                                                 <constraint firstItem="2Md-2E-7Z4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="79e-5s-vd0" secondAttribute="trailing" constant="8" id="lUn-8D-X20"/>
                                                 <constraint firstItem="79e-5s-vd0" firstAttribute="leading" secondItem="zX8-l2-bVH" secondAttribute="leadingMargin" id="tdZ-30-ACC"/>
@@ -396,14 +405,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="dWz-1o-EpJ" style="IBUITableViewCellStyleDefault" id="2MG-qn-idJ" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1039.5" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="1039.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2MG-qn-idJ" id="gP9-ry-keC">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Technotes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="dWz-1o-EpJ">
-                                                    <rect key="frame" x="15" y="0.0" width="351" height="44"/>
+                                                    <rect key="frame" x="20" y="0.0" width="334" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
@@ -413,14 +422,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="2o6-8W-nyK" style="IBUITableViewCellStyleDefault" id="he9-Ql-yfa" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1083.5" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="1083.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="he9-Ql-yfa" id="q6L-C8-H9a">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="NetNewsWire Slack" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="2o6-8W-nyK">
-                                                    <rect key="frame" x="15" y="0.0" width="351" height="44"/>
+                                                    <rect key="frame" x="20" y="0.0" width="334" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
@@ -430,14 +439,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Uwu-af-31r" style="IBUITableViewCellStyleDefault" id="EvG-yE-gDF" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1127.5" width="374" height="44"/>
+                                        <rect key="frame" x="20" y="1127.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="EvG-yE-gDF" id="wBN-zJ-6pN">
-                                            <rect key="frame" x="0.0" y="0.0" width="355" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="About NetNewsWire" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="Uwu-af-31r">
-                                                    <rect key="frame" x="15" y="0.0" width="332" height="44"/>
+                                                    <rect key="frame" x="20" y="0.0" width="315" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>

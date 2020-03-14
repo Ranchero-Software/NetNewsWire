@@ -237,13 +237,15 @@
 		51C452B42265141B00C03939 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C452B32265141B00C03939 /* WebKit.framework */; };
 		51C452B82265178500C03939 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 51C452B72265178500C03939 /* styleSheet.css */; };
 		51C9DE5823EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */; };
-		51C9DE8623F09FAA003D5A6D /* AccountMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C9DE8523F09FAA003D5A6D /* AccountMigrator.swift */; };
 		51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51CE1C0823621EDA005548FC /* RefreshProgressView.xib */; };
 		51CE1C0B23622007005548FC /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CE1C0A23622006005548FC /* RefreshProgressView.swift */; };
 		51CE1C712367721A005548FC /* testURLsOfCurrentArticle.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADB213660A100CF2DE4 /* testURLsOfCurrentArticle.applescript */; };
 		51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */; };
 		51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D87EE02311D34700E63F03 /* ActivityType.swift */; };
+		51DC37072402153E0095D371 /* UpdateSelectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */; };
+		51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */; };
+		51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */; };
 		51E36E71239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */; };
 		51E36E8C239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */; };
 		51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB32229AB02C00645299 /* ErrorHandler.swift */; };
@@ -1374,11 +1376,13 @@
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
 		51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperScriptMessageHandler.swift; sourceTree = "<group>"; };
-		51C9DE8523F09FAA003D5A6D /* AccountMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMigrator.swift; sourceTree = "<group>"; };
 		51CE1C0823621EDA005548FC /* RefreshProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RefreshProgressView.xib; sourceTree = "<group>"; };
 		51CE1C0A23622006005548FC /* RefreshProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
 		51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineDataSource.swift; sourceTree = "<group>"; };
 		51D87EE02311D34700E63F03 /* ActivityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityType.swift; sourceTree = "<group>"; };
+		51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSelectionOperation.swift; sourceTree = "<group>"; };
+		51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedDataSourceOperation.swift; sourceTree = "<group>"; };
+		51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedWebView.swift; sourceTree = "<group>"; };
 		51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedSelectFolderTableViewCell.swift; sourceTree = "<group>"; };
 		51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddWebFeedSelectFolderTableViewCell.xib; sourceTree = "<group>"; };
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
@@ -1947,11 +1951,13 @@
 			isa = PBXGroup;
 			children = (
 				51C45264226508F600C03939 /* MasterFeedViewController.swift */,
-				51627A6A238629D8007B3B4B /* MasterFeedDataSource.swift */,
 				51627A6623861DA3007B3B4B /* MasterFeedViewController+Drag.swift */,
 				51627A6823861DED007B3B4B /* MasterFeedViewController+Drop.swift */,
+				51627A6A238629D8007B3B4B /* MasterFeedDataSource.swift */,
+				51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */,
 				51CE1C0A23622006005548FC /* RefreshProgressView.swift */,
 				51CE1C0823621EDA005548FC /* RefreshProgressView.xib */,
+				51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */,
 				51C45260226508F600C03939 /* Cell */,
 			);
 			path = MasterFeed;
@@ -2009,6 +2015,7 @@
 				518651D9235621840078E021 /* ImageTransition.swift */,
 				5142192923522B5500E07E2C /* ImageViewController.swift */,
 				512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */,
+				51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */,
 				51AB8AB223B7F4C6008F147D /* WebViewController.swift */,
 				517630222336657E00E15FFF /* WebViewProvider.swift */,
 				51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */,
@@ -2643,7 +2650,6 @@
 				51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */,
 				C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */,
 				51B62E67233186730085F949 /* IconView.swift */,
-				51C9DE8523F09FAA003D5A6D /* AccountMigrator.swift */,
 				51C4525D226508F600C03939 /* MasterFeed */,
 				51C4526D2265091600C03939 /* MasterTimeline */,
 				51C4527D2265092C00C03939 /* Article */,
@@ -3996,14 +4002,15 @@
 				51B5C8C023F3866C00032075 /* ExtensionFeedAddRequestFile.swift in Sources */,
 				51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */,
 				51934CCE2310792F006127BE /* ActivityManager.swift in Sources */,
-				51C9DE8623F09FAA003D5A6D /* AccountMigrator.swift in Sources */,
 				5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */,
 				518651DA235621840078E021 /* ImageTransition.swift in Sources */,
 				51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */,
 				51627A6923861DED007B3B4B /* MasterFeedViewController+Drop.swift in Sources */,
 				514219372352510100E07E2C /* ImageScrollView.swift in Sources */,
 				516AE9B32371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift in Sources */,
+				51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */,
 				C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */,
+				51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,
@@ -4016,6 +4023,7 @@
 				FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */,
 				51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */,
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
+				51DC37072402153E0095D371 /* UpdateSelectionOperation.swift in Sources */,
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,
 				5148F4552336DB7000F8CD8B /* MasterTimelineTitleView.swift in Sources */,
 				51627A6723861DA3007B3B4B /* MasterFeedViewController+Drag.swift in Sources */,

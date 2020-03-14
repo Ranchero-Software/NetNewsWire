@@ -20,6 +20,10 @@ final class IconImage {
 		return image.isDark()
 	}()
 	
+	lazy var isBright: Bool = {
+		return image.isBright()
+	}()
+	
 	let image: RSImage
 	
 	init(_ image: RSImage) {
@@ -33,22 +37,48 @@ final class IconImage {
 		func isDark() -> Bool {
 			return self.cgImage(forProposedRect: nil, context: nil, hints: nil)?.isDark() ?? false
 		}
+		
+		func isBright() -> Bool {
+			return self.cgImage(forProposedRect: nil, context: nil, hints: nil)?.isBright() ?? false
+		}
 	}
 #else
 	extension UIImage {
 		func isDark() -> Bool {
 			return self.cgImage?.isDark() ?? false
 		}
+		
+		func isBright() -> Bool {
+			return self.cgImage?.isBright() ?? false
+		}
 	}
 #endif
 
+fileprivate enum ImageLuminanceType {
+	case regular, bright, dark
+}
 extension CGImage {
 
+	func isBright() -> Bool {
+		guard let imageData = self.dataProvider?.data, let luminanceType = getLuminanceType(from: imageData) else {
+			return false
+		}
+		return luminanceType == .bright
+	}
+	
 	func isDark() -> Bool {
-		guard let imageData = self.dataProvider?.data else { return false }
-		guard let ptr = CFDataGetBytePtr(imageData) else { return false }
-		
-		let length = CFDataGetLength(imageData)
+		guard let imageData = self.dataProvider?.data, let luminanceType = getLuminanceType(from: imageData) else {
+			return false
+		}
+		return luminanceType == .dark
+	}
+	
+	fileprivate func getLuminanceType(from data: CFData) -> ImageLuminanceType? {
+		guard let ptr = CFDataGetBytePtr(data) else {
+			return nil
+		}
+
+		let length = CFDataGetLength(data)
 		var pixelCount = 0
 		var totalLuminance = 0.0
 		
@@ -68,10 +98,12 @@ extension CGImage {
 		}
 		
 		let avgLuminance = totalLuminance / Double(pixelCount)
-		if totalLuminance == 0 {
-			return true
+		if totalLuminance == 0 || avgLuminance < 40 {
+			return .dark
+		} else if avgLuminance > 180 {
+			return .bright
 		} else {
-			return avgLuminance < 40
+			return .regular
 		}
 	}
 	

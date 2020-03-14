@@ -61,6 +61,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var wasRootSplitViewControllerCollapsed = false
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
+	private let rebuildBackingStoresWithMergeQueue = CoalescingQueue(name: "Rebuild The Backing Stores by Merging", interval: 1.0)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	
@@ -445,9 +446,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 
-		addShadowTableToFilterExceptions()
-		rebuildBackingStores()
-		treeControllerDelegate.resetFilterExceptions()
+		rebuildBackingStoresWithMergeQueue.add(self, #selector(rebuildBackingStoresWithMerge))
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
@@ -466,7 +465,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildBackingStores()
+		rebuildBackingStoresWithMerge()
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -569,7 +568,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func suspend() {
 		fetchAndMergeArticlesQueue.performCallsImmediately()
+		rebuildBackingStoresWithMergeQueue.performCallsImmediately()
 		fetchRequestQueue.cancelAllRequests()
+	}
+	
+	func refreshInterface() {
+		if isReadFeedsFiltered {
+			rebuildBackingStores()
+		}
+		if isReadArticlesFiltered && AppDefaults.refreshClearsReadArticles {
+			refreshTimeline(resetScroll: false)
+		}
 	}
 	
 	func shadowNodesFor(section: Int) -> [Node] {
@@ -1195,6 +1204,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 extension SceneCoordinator: UISplitViewControllerDelegate {
 	
 	func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
+		masterTimelineViewController?.updateUI()
+		
 		guard !isThreePanelMode else {
 			return true
 		}
@@ -1209,6 +1220,8 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 	
 	func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+		masterTimelineViewController?.updateUI()
+
 		guard !isThreePanelMode else {
 			return subSplitViewController
 		}
@@ -1360,6 +1373,11 @@ private extension SceneCoordinator {
 			masterFeedViewController.reloadFeeds(initialLoad: initialLoad, completion: completion)
 			
 		}
+	}
+	
+	@objc func rebuildBackingStoresWithMerge() {
+		addShadowTableToFilterExceptions()
+		rebuildBackingStores()
 	}
 	
 	func rebuildShadowTable() {
@@ -1738,7 +1756,10 @@ private extension SceneCoordinator {
 	}
 
 	@objc func fetchAndMergeArticlesAsync() {
-		fetchAndMergeArticlesAsync(animated: true, completion: nil)
+		fetchAndMergeArticlesAsync(animated: true) {
+			self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
+			self.masterTimelineViewController?.restoreSelectionIfNecessary(adjustScroll: false)
+		}
 	}
 	
 	func fetchAndMergeArticlesAsync(animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -2002,7 +2023,6 @@ private extension SceneCoordinator {
 		}
 
 		treeControllerDelegate.addFilterException(feedIdentifier)
-		masterFeedViewController.restoreSelection = true
 		
 		switch feedIdentifier {
 		
@@ -2087,8 +2107,6 @@ private extension SceneCoordinator {
 				return false
 		}
 
-		masterFeedViewController.restoreSelection = true
-		
 		switch feedIdentifier {
 
 		case .smartFeed:

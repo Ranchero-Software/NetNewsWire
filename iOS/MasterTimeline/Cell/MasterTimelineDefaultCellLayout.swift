@@ -89,7 +89,14 @@ struct MasterTimelineDefaultCellLayout: MasterTimelineCellLayout {
 		}
 		self.summaryRect = MasterTimelineDefaultCellLayout.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
 		
-		currentPoint.y = [self.titleRect, self.summaryRect].maxY()
+		var y = [self.titleRect, self.summaryRect].maxY()
+		if y == 0 {
+			y = iconImageRect.origin.y + iconImageRect.height
+			// Necessary calculation of either feed name or date since we are working with dynamic font-sizes
+			let tmp = MasterTimelineDefaultCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)
+			y -= tmp.height
+		}
+		currentPoint.y = y
 		
 		// Feed Name and Pub Date
 		self.dateRect = MasterTimelineDefaultCellLayout.rectForDate(cellData, currentPoint, textAreaWidth)

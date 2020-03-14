@@ -24,8 +24,15 @@ final class IconView: UIView {
 						self.setNeedsLayout()
 					}
 				} else {
-					self.setNeedsLayout()
+					if self.iconImage?.isBright ?? false {
+						self.isDisconcernable = false
+						self.setNeedsLayout()
+					} else {
+						self.isDisconcernable = true
+						self.setNeedsLayout()
+					}
 				}
+				self.setNeedsLayout()
 			}
 		}
 	}

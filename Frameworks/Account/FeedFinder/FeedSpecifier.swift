@@ -72,6 +72,9 @@ private extension FeedSpecifier {
 		if urlString.caseInsensitiveContains("comments") {
 			score = score - 10
 		}
+		if urlString.caseInsensitiveContains("podcast") {
+			score = score - 10
+		}
 		if urlString.caseInsensitiveContains("rss") {
 			score = score + 5
 		}

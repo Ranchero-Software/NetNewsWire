@@ -46,24 +46,13 @@ final class OPMLFile {
 	
 	func save() {
 		guard !account.isDeleted else { return }
-		
 		let opmlDocumentString = opmlDocument()
 		
-		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator()
-		
-		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
-			do {
-				try opmlDocumentString.write(to: writeURL, atomically: true, encoding: .utf8)
-			} catch let error as NSError {
-				os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
-			}
-		})
-		
-		if let error = errorPointer?.pointee {
-			os_log(.error, log: log, "OPML save to disk coordination failed: %@.", error.localizedDescription)
+		do {
+			try opmlDocumentString.write(to: fileURL, atomically: true, encoding: .utf8)
+		} catch let error as NSError {
+			os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
 		}
-		
 	}
 	
 }
@@ -83,22 +72,11 @@ private extension OPMLFile {
 
 	func opmlFileData() -> Data? {
 		var fileData: Data? = nil
-		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator()
 		
-		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
-			do {
-				fileData = try Data(contentsOf: readURL)
-			} catch {
-				// Commented out because it’s not an error on first run.
-				// TODO: make it so we know if it’s first run or not.
-				//NSApplication.shared.presentError(error)
-				os_log(.error, log: log, "OPML read from disk failed: %@.", error.localizedDescription)
-			}
-		})
-		
-		if let error = errorPointer?.pointee {
-			os_log(.error, log: log, "OPML read from disk coordination failed: %@.", error.localizedDescription)
+		do {
+			fileData = try Data(contentsOf: fileURL)
+		} catch {
+			os_log(.error, log: log, "OPML read from disk failed: %@.", error.localizedDescription)
 		}
 
 		return fileData

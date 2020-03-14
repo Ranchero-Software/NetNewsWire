@@ -81,6 +81,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		coordinator.suspend()
 	}
 	
+	func refreshInterface() {
+		coordinator.refreshInterface()
+	}
+	
 }
 
 private extension SceneDelegate {

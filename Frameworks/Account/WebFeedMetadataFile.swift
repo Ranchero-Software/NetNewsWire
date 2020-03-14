@@ -34,20 +34,11 @@ final class WebFeedMetadataFile {
 	}
 	
 	func load() {
-		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator()
-		
-		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
-			if let fileData = try? Data(contentsOf: readURL) {
-				let decoder = PropertyListDecoder()
-				account.webFeedMetadata = (try? decoder.decode(Account.WebFeedMetadataDictionary.self, from: fileData)) ?? Account.WebFeedMetadataDictionary()
-			}
-			account.webFeedMetadata.values.forEach { $0.delegate = account }
-		})
-		
-		if let error = errorPointer?.pointee {
-			os_log(.error, log: log, "Read from disk coordination failed: %@.", error.localizedDescription)
+		if let fileData = try? Data(contentsOf: fileURL) {
+			let decoder = PropertyListDecoder()
+			account.webFeedMetadata = (try? decoder.decode(Account.WebFeedMetadataDictionary.self, from: fileData)) ?? Account.WebFeedMetadataDictionary()
 		}
+		account.webFeedMetadata.values.forEach { $0.delegate = account }
 	}
 	
 	func save() {
@@ -58,20 +49,11 @@ final class WebFeedMetadataFile {
 		let encoder = PropertyListEncoder()
 		encoder.outputFormat = .binary
 
-		let errorPointer: NSErrorPointer = nil
-		let fileCoordinator = NSFileCoordinator()
-		
-		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
-			do {
-				let data = try encoder.encode(feedMetadata)
-				try data.write(to: writeURL)
-			} catch let error as NSError {
-				os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
-			}
-		})
-		
-		if let error = errorPointer?.pointee {
-			os_log(.error, log: log, "Save to disk coordination failed: %@.", error.localizedDescription)
+		do {
+			let data = try encoder.encode(feedMetadata)
+			try data.write(to: fileURL)
+		} catch let error as NSError {
+			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
 		}
 	}
 		

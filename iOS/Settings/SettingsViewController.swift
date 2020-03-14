@@ -38,6 +38,8 @@ class SettingsViewController: UITableViewController {
 		tableView.register(UINib(nibName: "SettingsAccountTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsAccountTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
 		
+		tableView.rowHeight = UITableView.automaticDimension
+		tableView.estimatedRowHeight = 44
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -236,7 +238,7 @@ class SettingsViewController: UITableViewController {
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return super.tableView(tableView, heightForRowAt: IndexPath(row: 0, section: 1))
+		return UITableView.automaticDimension
 	}
 	
 	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {

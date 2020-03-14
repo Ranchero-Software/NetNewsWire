@@ -17,8 +17,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem!
-	
+
+	private let operationQueue = MainThreadOperationQueue()
 	lazy var dataSource = makeDataSource()
+	
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 	
@@ -27,7 +29,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		return keyboardManager.keyCommands
 	}
 	
-	var restoreSelection = false
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
@@ -73,17 +74,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		updateUI()
 		super.viewWillAppear(animated)
 	}
-
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
-		
-		// We have to delay the selection of the Feed until the subviews have been layed out
-		// so that the visible area is correct and we scroll correctly.
-		if restoreSelection {
-			restoreSelectionIfNecessary(adjustScroll: true)
-			restoreSelection = false
-		}
-	}
 	
 	// MARK: Notifications
 	
@@ -111,16 +101,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
 		}
 
-		// Only do the reload of the node when absolutely necessary.  It can stop programatic scrolling from
-		// completing if called to soon after a selectRow where scrolling is necessary.  See discloseFeed.
-		if let node = node,
-			let indexPath = dataSource.indexPath(for: node),
-			let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
-			
-			if cell.unreadCount != coordinator.unreadCountFor(node) {
-				self.reloadNode(node)
-			}
-			
+		if let node = node, dataSource.indexPath(for: node) != nil {
+			self.reloadNode(node)
 		}
 	}
 
@@ -142,10 +124,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
-	}
-	
-	@objc func webFeedMetadataDidChange(_ note: Notification) {
-		reloadAllVisibleCells()
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -440,11 +418,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present(self)) {
-				if AppDefaults.refreshClearsReadArticles {
-					self.coordinator.refreshTimeline(resetScroll: false)
-				}
-			}
+			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 		}
 	}
 	
@@ -517,24 +491,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	func updateFeedSelection(animations: Animations) {
-		if dataSource.snapshot().numberOfItems > 0 {
-			if let indexPath = coordinator.currentFeedIndexPath {
-				if tableView.indexPathForSelectedRow != indexPath {
-					tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
-				}
-			} else {
-				if animations.contains(.select) {
-					// This nasty bit of duct tape is because there is something, somewhere
-					// interrupting the deselection animation, which will leave the row selected.
-					// This seems to get it far enough away the problem that it always works.
-					DispatchQueue.main.async {
-						self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-					}
-				} else {
-					self.tableView.selectRow(at: nil, animated: false, scrollPosition: .none)
-				}
-			}
-		}
+		operationQueue.add(UpdateSelectionOperation(coordinator: coordinator, dataSource: dataSource, tableView: tableView, animations: animations))
 	}
 
 	func reloadFeeds(initialLoad: Bool, completion: (() -> Void)? = nil) {
@@ -646,7 +603,7 @@ private extension MasterFeedViewController {
 	func reloadNode(_ node: Node) {
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems([node])
-		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+		queueApply(snapshot: snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
@@ -661,13 +618,22 @@ private extension MasterFeedViewController {
 			snapshot.appendItems(shadowTableNodes, toSection: sectionNode)
 		}
         
-		dataSource.apply(snapshot, animatingDifferences: animated) { [weak self] in
+		queueApply(snapshot: snapshot, animatingDifferences: animated) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: adjustScroll)
 			completion?()
 		}
 	}
+	
+	func queueApply(snapshot: NSDiffableDataSourceSnapshot<Node, Node>, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
+		let operation = MasterFeedDataSourceOperation(dataSource: dataSource, snapshot: snapshot, animating: animatingDifferences)
+		operation.completionBlock = { _ in
+			completion?()
+		}
+		operationQueue.add(operation)
+	}
 
-    func makeDataSource() -> UITableViewDiffableDataSource<Node, Node> {
+
+    func makeDataSource() -> MasterFeedDataSource {
 		let dataSource = MasterFeedDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
 			let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
 			self?.configure(cell, node)
@@ -774,7 +740,7 @@ private extension MasterFeedViewController {
 	private func reloadCells(_ nodes: [Node], completion: (() -> Void)? = nil) {
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(nodes)
-		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+		queueApply(snapshot: snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 			completion?()
 		}

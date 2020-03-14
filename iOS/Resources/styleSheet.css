@@ -1,17 +1,22 @@
 :root {
 	font: -apple-system-body;
+	font-size: [[font-size]]px;
 }
 
 body {
 	margin-top: 3px;
 	margin-bottom: 20px;
-	margin-left: 20px;
-	margin-right: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 20px;
+	padding-right: 20px;
 
 	word-wrap: break-word;
 	word-break: break-word;
 	-webkit-hyphens: auto;
 	-webkit-text-size-adjust: none;
+
+	max-width: 44em;
 }
 
 a {
@@ -75,7 +80,8 @@ body .headerTable {
 	border-bottom: 1px solid var(--header-table-border-color);
 }
 body .header {
-	font: -apple-system-body; 
+	font: -apple-system-body;
+	font-size: [[font-size]]px;
 	color: var(--header-color);
 }
 body .header a:link, body .header a:visited {
@@ -185,6 +191,11 @@ img, figure, iframe, div {
 	max-width: 100%;
 	height: auto !important;
 	margin: 0 auto;
+}
+
+figure {
+	margin-bottom: 1em;
+	margin-top: 1em;
 }
 
 video {
@@ -345,9 +356,7 @@ sup[id^='fn'] {
 	vertical-align: baseline;
 }
 
-a.footnote,
-sup > a[href^='#fn'],
-sup > div > a[href^='#fn'] {
+a.footnote {
 	display: inline-block;
 	text-decoration: none;
 	padding: 0.05em 0.75em;
@@ -376,17 +385,13 @@ sup > div > a[href^='#fn'] {
 }
 body a.footnote,
 body a.footnote:visited,
-.newsfoot-footnote-popover + a.footnote:hover,
-sup > a[href^='#fn'],
-sup > div > a[href^='#fn'] {
+.newsfoot-footnote-popover + a.footnote:hover {
 	background: #aaa;
 	color: white;
 	transition: background-color 200ms ease-out;
 }
 a.footnote:hover,
-.newsfoot-footnote-popover + a.footnote,
-sup > a[href^='#fn']:hover,
-sup > div > a[href^='#fn']:hover {
+.newsfoot-footnote-popover + a.footnote {
 	background: #666;
 	transition: background-color 200ms ease-out;
 }
@@ -407,17 +412,13 @@ sup > div > a[href^='#fn']:hover {
 	}
 	body a.footnote,
 	body a.footnote:visited,
-	.newsfoot-footnote-popover + a.footnote:hover,
-	sup > a[href^='#fn'],
-	sup > div > a[href^='#fn'] {
+	.newsfoot-footnote-popover + a.footnote:hover {
 		background: #aaa;
 		color: white;
 		transition: background-color 200ms ease-out;
 	}
 	a.footnote:hover,
-	.newsfoot-footnote-popover + a.footnote,
-	sup > a[href^='#fn']:hover,
-	sup > div > a[href^='#fn']:hover {
+	.newsfoot-footnote-popover + a.footnote {
 		background: #666;
 		transition: background-color 200ms ease-out;
 	}
