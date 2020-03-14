@@ -138,38 +138,20 @@ final class NewsBlurAPICaller: NSObject {
 	}
 
 	func retrieveUnreadStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
-		let url = baseURL
-				.appendingPathComponent("reader/unread_story_hashes")
-				.appendingQueryItems([
-					URLQueryItem(name: "include_timestamps", value: "true"),
-				])
+		retrieveStoryHashes(endpoint: "reader/unread_story_hashes", completion: completion)
+	}
 
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-
-		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, resultType: NewsBlurUnreadStoryHashesResponse.self, dateDecoding: .secondsSince1970) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success((_, let payload)):
-				completion(.success(payload?.feeds.values.flatMap { $0 }))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+	func retrieveStarredStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
+		retrieveStoryHashes(endpoint: "reader/starred_story_hashes", completion: completion)
 	}
 
 	func retrieveStories(hashes: [NewsBlurStoryHash], completion: @escaping (Result<[NewsBlurStory]?, Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/river_stories")
 				.appendingQueryItem(.init(name: "include_hidden", value: "true"))?
-				.appendingQueryItems(hashes.map { URLQueryItem(name: "h", value: $0.hash) })
+				.appendingQueryItems(hashes.map {
+					URLQueryItem(name: "h", value: $0.hash)
+				})
 
 		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))
@@ -207,7 +189,37 @@ final class NewsBlurAPICaller: NSObject {
 	func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendStoryStatus(endpoint: "reader/mark_story_hash_as_unstarred", hashes: hashes, completion: completion)
 	}
-	
+}
+
+extension NewsBlurAPICaller {
+	private func retrieveStoryHashes(endpoint: String, completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
+		let url = baseURL
+				.appendingPathComponent(endpoint)
+				.appendingQueryItems([
+					URLQueryItem(name: "include_timestamps", value: "true"),
+				])
+
+		guard let callURL = url else {
+			completion(.failure(TransportError.noURL))
+			return
+		}
+
+		let request = URLRequest(url: callURL, credentials: credentials)
+		transport.send(request: request, resultType: NewsBlurUnreadStoryHashesResponse.self, dateDecoding: .secondsSince1970) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
+			switch result {
+			case .success((_, let payload)):
+				completion(.success(payload?.feeds.values.flatMap { $0 }))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
 	private func sendStoryStatus(endpoint: String, hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		let callURL = baseURL.appendingPathComponent(endpoint)
 

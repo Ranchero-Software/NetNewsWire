@@ -181,9 +181,45 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		os_log(.debug, log: log, "Refreshing article statuses...")
+		os_log(.debug, log: log, "Refreshing story statuses...")
 
-		// TODO: Fill this in
+		let group = DispatchGroup()
+		var errorOccurred = false
+
+		group.enter()
+		caller.retrieveUnreadStoryHashes { result in
+			switch result {
+			case .success(let storyHashes):
+				self.syncStoryReadState(account: account, hashes: storyHashes)
+				group.leave()
+			case .failure(let error):
+				errorOccurred = true
+				os_log(.info, log: self.log, "Retrieving unread stories failed: %@.", error.localizedDescription)
+				group.leave()
+			}
+		}
+
+		group.enter()
+		caller.retrieveStarredStoryHashes { result in
+			switch result {
+			case .success(let storyHashes):
+				self.syncStoryStarredState(account: account, hashes: storyHashes)
+				group.leave()
+			case .failure(let error):
+				errorOccurred = true
+				os_log(.info, log: self.log, "Retrieving starred stories failed: %@.", error.localizedDescription)
+				group.leave()
+			}
+		}
+
+		group.notify(queue: DispatchQueue.main) {
+			os_log(.debug, log: self.log, "Done refreshing article statuses.")
+			if errorOccurred {
+				completion(.failure(NewsBlurError.unknown))
+			} else {
+				completion(.success(()))
+			}
+		}
 	}
 
 	func refreshStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -548,9 +584,7 @@ extension NewsBlurAccountDelegate {
 	}
 
 	private func mapStoriesToParsedItems(stories: [NewsBlurStory]?) -> Set<ParsedItem> {
-		guard let stories = stories else {
-			return Set<ParsedItem>()
-		}
+		guard let stories = stories else { return Set<ParsedItem>() }
 
 		let parsedItems: [ParsedItem] = stories.map { story in
 			let author = Set([ParsedAuthor(name: story.authorName, url: nil, avatarURL: nil, emailAddress: nil)])
@@ -595,6 +629,72 @@ extension NewsBlurAccountDelegate {
 				completion(.failure(NewsBlurError.unknown))
 			} else {
 				completion(.success(()))
+			}
+		}
+	}
+
+	private func syncStoryReadState(account: Account, hashes: [NewsBlurStoryHash]?) {
+		guard let hashes = hashes else { return }
+
+		database.selectPendingReadStatusArticleIDs() { result in
+			func process(_ pendingStoryHashes: Set<String>) {
+
+				let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
+				let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
+
+				account.fetchUnreadArticleIDs { articleIDsResult in
+					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
+						return
+					}
+
+					// Mark articles as unread
+					let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
+					account.markAsUnread(deltaUnreadArticleIDs)
+
+					// Mark articles as read
+					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+					account.markAsRead(deltaReadArticleIDs)
+				}
+			}
+
+			switch result {
+			case .success(let pendingArticleIDs):
+				process(pendingArticleIDs)
+			case .failure(let error):
+				os_log(.error, log: self.log, "Sync Story Read Status failed: %@.", error.localizedDescription)
+			}
+		}
+	}
+
+	private func syncStoryStarredState(account: Account, hashes: [NewsBlurStoryHash]?) {
+		guard let hashes = hashes else { return }
+
+		database.selectPendingStarredStatusArticleIDs() { result in
+			func process(_ pendingStoryHashes: Set<String>) {
+
+				let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
+				let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
+
+				account.fetchStarredArticleIDs { articleIDsResult in
+					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
+						return
+					}
+
+					// Mark articles as starred
+					let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
+					account.markAsStarred(deltaStarredArticleIDs)
+
+					// Mark articles as unstarred
+					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+					account.markAsUnstarred(deltaUnstarredArticleIDs)
+				}
+			}
+
+			switch result {
+			case .success(let pendingArticleIDs):
+				process(pendingArticleIDs)
+			case .failure(let error):
+				os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
 			}
 		}
 	}
