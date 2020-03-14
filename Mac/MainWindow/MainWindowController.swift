@@ -226,7 +226,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return validateToggleReadArticles(item)
 		}
 
-		if item.action == #selector(toggleSidebar(_:)) {
+		if item.action == #selector(toggleTheSidebar(_:)) {
 			guard let splitViewItem = sidebarSplitViewItem else {
 				return false
 			}
@@ -360,8 +360,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		nextUnread(sender)
 	}
 
-	@IBAction func toggleSidebar(_ sender: Any?) {
+	@IBAction func toggleTheSidebar(_ sender: Any?) {
 		splitViewController!.toggleSidebar(sender)
+		guard let splitViewItem = sidebarSplitViewItem else { return }
+		if splitViewItem.isCollapsed {
+			currentTimelineViewController?.focus()
+		} else {
+			sidebarViewController?.focus()
+		}
 	}
 
 	@IBAction func markAboveArticlesAsRead(_ sender: Any?) {
