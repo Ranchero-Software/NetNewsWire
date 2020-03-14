@@ -138,7 +138,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 				}
 
 				group.enter()
-				self.sendStoryStatuses(deleteStarredStatuses, throttle: false, apiCall: self.caller.markAsRead) { result in
+				self.sendStoryStatuses(deleteUnreadStatuses, throttle: false, apiCall: self.caller.markAsRead) { result in
 					group.leave()
 					if case .failure = result {
 						errorOccurred = true
