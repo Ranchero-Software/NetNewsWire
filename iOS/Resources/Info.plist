@@ -164,5 +164,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>UserAgent</key>
+	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
 </dict>
 </plist>
