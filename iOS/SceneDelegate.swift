@@ -21,9 +21,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		window = UIWindow(windowScene: scene as! UIWindowScene)
 		window!.tintColor = AppAssets.primaryAccentColor
+		updateUserInterfaceStyle()
 		window!.rootViewController = coordinator.start(for: window!.frame.size)
 
 		coordinator.restoreWindowState(session.stateRestorationActivity)
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 		
 		if let shortcutItem = connectionOptions.shortcutItem {
 			window!.makeKeyAndVisible()
@@ -99,6 +102,21 @@ private extension SceneDelegate {
 			coordinator.showAdd(.feed)
 		default:
 			break
+		}
+	}
+	
+	@objc func userDefaultsDidChange() {
+		updateUserInterfaceStyle()
+	}
+	
+	func updateUserInterfaceStyle() {
+		switch AppDefaults.userInterfaceColorPalette {
+		case .automatic:
+			window!.overrideUserInterfaceStyle = .unspecified
+		case .light:
+			window!.overrideUserInterfaceStyle = .light
+		case .dark:
+			window!.overrideUserInterfaceStyle = .dark
 		}
 	}
 	

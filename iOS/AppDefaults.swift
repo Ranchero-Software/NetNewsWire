@@ -8,6 +8,24 @@
 
 import UIKit
 
+enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
+	case automatic = 0
+	case light = 1
+	case dark = 2
+
+	var description: String {
+		switch self {
+		case .automatic:
+			return NSLocalizedString("Automatic", comment: "Automatic")
+		case .light:
+			return NSLocalizedString("Light", comment: "Light")
+		case .dark:
+			return NSLocalizedString("Dark", comment: "Dark")
+		}
+	}
+	
+}
+
 struct AppDefaults {
 
 	static var shared: UserDefaults = {
@@ -17,6 +35,7 @@ struct AppDefaults {
 	}()
 	
 	struct Key {
+		static let userInterfaceColorPalette = "userInterfaceColorPalette"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
@@ -40,6 +59,18 @@ struct AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
+	
+	static var userInterfaceColorPalette: UserInterfaceColorPalette {
+		get {
+			if let result = UserInterfaceColorPalette(rawValue: int(for: Key.userInterfaceColorPalette)) {
+				return result
+			}
+			return .automatic
+		}
+		set {
+			setInt(for: Key.userInterfaceColorPalette, newValue.rawValue)
+		}
+	}
 
 	static var addWebFeedAccountID: String? {
 		get {
@@ -160,7 +191,8 @@ struct AppDefaults {
 	}
 	
 	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.timelineGroupByFeed: false,
+		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
+										Key.timelineGroupByFeed: false,
 										Key.refreshClearsReadArticles: false,
 										Key.timelineNumberOfLines: 2,
 										Key.timelineIconSize: IconSize.medium.rawValue,

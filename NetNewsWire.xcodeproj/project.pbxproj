@@ -95,6 +95,7 @@
 		515D4FC123257A3200EE1167 /* FolderTreeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97A11ED9F180007D329B /* FolderTreeControllerDelegate.swift */; };
 		515D4FCA23257CB500EE1167 /* Node-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97971ED9EFAA007D329B /* Node-Extensions.swift */; };
 		515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */ = {isa = PBXBuildFile; fileRef = 515D4FCB2325815A00EE1167 /* SafariExt.js */; };
+		516244E3241E19F000B61C47 /* ColorPaletteTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */; };
 		51627A6723861DA3007B3B4B /* MasterFeedViewController+Drag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51627A6623861DA3007B3B4B /* MasterFeedViewController+Drag.swift */; };
 		51627A6923861DED007B3B4B /* MasterFeedViewController+Drop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51627A6823861DED007B3B4B /* MasterFeedViewController+Drop.swift */; };
 		51627A6B238629D8007B3B4B /* MasterFeedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51627A6A238629D8007B3B4B /* MasterFeedDataSource.swift */; };
@@ -1303,6 +1304,7 @@
 		515D4FCB2325815A00EE1167 /* SafariExt.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SafariExt.js; sourceTree = "<group>"; };
 		515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_ShareExtension.entitlements; sourceTree = "<group>"; };
 		515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSshareextension_target.xcconfig; sourceTree = "<group>"; };
+		516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteTableViewController.swift; sourceTree = "<group>"; };
 		51627A6623861DA3007B3B4B /* MasterFeedViewController+Drag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MasterFeedViewController+Drag.swift"; sourceTree = "<group>"; };
 		51627A6823861DED007B3B4B /* MasterFeedViewController+Drop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MasterFeedViewController+Drop.swift"; sourceTree = "<group>"; };
 		51627A6A238629D8007B3B4B /* MasterFeedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterFeedDataSource.swift; sourceTree = "<group>"; };
@@ -1875,6 +1877,7 @@
 				51A16990235E10D600EB091F /* Settings.storyboard */,
 				51A16995235E10D600EB091F /* AboutViewController.swift */,
 				51A16992235E10D600EB091F /* AddAccountViewController.swift */,
+				516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */,
 				516A09382360A2AE00EAE89B /* SettingsAccountTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsAccountTableViewCell.xib */,
 				516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */,
@@ -3957,6 +3960,7 @@
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
 				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,
 				5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */,
+				516244E3241E19F000B61C47 /* ColorPaletteTableViewController.swift in Sources */,
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
 				51FA73A82332BE880090D516 /* ExtractedArticle.swift in Sources */,
 				51C4527C2265091600C03939 /* MasterTimelineDefaultCellLayout.swift in Sources */,

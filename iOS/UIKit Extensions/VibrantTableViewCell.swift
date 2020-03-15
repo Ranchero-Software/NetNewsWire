@@ -71,6 +71,7 @@ class VibrantTableViewCell: UITableViewCell {
 class VibrantBasicTableViewCell: VibrantTableViewCell {
 	
 	@IBOutlet private var label: UILabel!
+	@IBOutlet private var detail: UILabel!
 	@IBOutlet private var icon: UIImageView!
 	
 	@IBInspectable var imageNormal: UIImage?
@@ -88,6 +89,7 @@ class VibrantBasicTableViewCell: VibrantTableViewCell {
 		super.updateVibrancy(animated: animated)
 		updateIconVibrancy(icon, color: iconTint, image: iconImage, animated: animated)
 		updateLabelVibrancy(label, color: labelColor, animated: animated)
+		updateLabelVibrancy(detail, color: secondaryLabelColor, animated: animated)
 	}
 	
 	private func updateIconVibrancy(_ icon: UIImageView?, color: UIColor, image: UIImage?, animated: Bool) {
