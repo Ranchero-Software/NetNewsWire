@@ -358,9 +358,18 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			return
 		}
 
+		var feedIDs: [String] = []
+		for feed in folder.topLevelWebFeeds {
+			if feed.folderRelationship?.count ?? 0 > 1 {
+				clearFolderRelationship(for: feed, withFolderName: folderToRemove)
+			} else if let subscriptionID = feed.subscriptionID {
+				feedIDs.append(subscriptionID)
+			}
+		}
+
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
-		caller.removeFolder(named: folderToRemove) { result in
+		caller.removeFolder(named: folderToRemove, feedIDs: feedIDs) { result in
 			self.refreshProgress.completeTask()
 
 			switch result {

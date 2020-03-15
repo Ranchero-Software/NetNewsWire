@@ -11,7 +11,7 @@ import Foundation
 enum NewsBlurFolderChange {
 	case add(String)
 	case rename(String, String)
-	case delete(String)
+	case delete(String, [String])
 }
 
 extension NewsBlurFolderChange: NewsBlurDataConvertible {
@@ -27,11 +27,15 @@ extension NewsBlurFolderChange: NewsBlurDataConvertible {
 					URLQueryItem(name: "new_folder_name", value: to),
 					URLQueryItem(name: "in_folder", value: ""), // root folder
 				]
-			case .delete(let name):
-				return [
+			case .delete(let name, let feedIDs):
+				var queryItems = [
 					URLQueryItem(name: "folder_to_delete", value: name),
 					URLQueryItem(name: "in_folder", value: ""), // root folder
 				]
+				queryItems.append(contentsOf: feedIDs.map { id in
+					URLQueryItem(name: "feed_id", value: id)
+				})
+				return queryItems
 			}
 		}()
 

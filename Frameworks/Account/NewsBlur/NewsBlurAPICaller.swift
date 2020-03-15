@@ -205,8 +205,8 @@ final class NewsBlurAPICaller: NSObject {
 		sendUpdates(endpoint: "reader/rename_folder", payload: NewsBlurFolderChange.rename(folder, name), completion: completion)
 	}
 
-	func removeFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		sendUpdates(endpoint: "reader/delete_folder", payload: NewsBlurFolderChange.delete(name), completion: completion)
+	func removeFolder(named name: String, feedIDs: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(endpoint: "reader/delete_folder", payload: NewsBlurFolderChange.delete(name, feedIDs), completion: completion)
 	}
 }
 
