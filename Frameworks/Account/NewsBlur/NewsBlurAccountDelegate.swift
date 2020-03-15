@@ -309,6 +309,22 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
+		self.refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		caller.addFolder(named: name) { result in
+			self.refreshProgress.completeTask()
+
+			switch result {
+			case .success():
+				if let folder = account.ensureFolder(with: name) {
+					completion(.success(folder))
+				} else {
+					completion(.failure(NewsBlurError.invalidParameter))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {

@@ -11,12 +11,15 @@ import RSWeb
 
 enum NewsBlurError: LocalizedError {
 	case general(message: String)
+	case invalidParameter
 	case unknown
 
 	var errorDescription: String? {
 		switch self {
 		case .general(let message):
 			return message
+		case .invalidParameter:
+			return "There was an invalid parameter passed"
 		case .unknown:
 			return "An unknown error occurred"
 		}
@@ -65,13 +68,13 @@ final class NewsBlurAPICaller: NSObject {
 					if let message = error?.first {
 						completion(.failure(NewsBlurError.general(message: message)))
 					} else {
-						completion(.failure(NewsBlurError.general(message: "Failed to log in")))
+						completion(.failure(NewsBlurError.unknown))
 					}
 					return
 				}
 
 				guard let username = self.credentials?.username else {
-					completion(.failure(NewsBlurError.general(message: "Failed to log in")))
+					completion(.failure(NewsBlurError.unknown))
 					return
 				}
 
@@ -188,6 +191,26 @@ final class NewsBlurAPICaller: NSObject {
 
 	func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		sendStoryStatus(endpoint: "reader/mark_story_hash_as_unstarred", hashes: hashes, completion: completion)
+	}
+
+	func addFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		let callURL = baseURL.appendingPathComponent("reader/add_folder")
+
+		var request = URLRequest(url: callURL, credentials: credentials)
+		request.httpBody = NewsBlurFolderChange.add(name).asData
+		transport.send(request: request, method: HTTPMethod.post) { result in
+			if self.suspended {
+				completion(.failure(TransportError.suspended))
+				return
+			}
+
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 }
 
