@@ -12,7 +12,7 @@ struct NewsBlurStoryStatusChange {
 	let hashes: [String]
 }
 
-extension NewsBlurStoryStatusChange {
+extension NewsBlurStoryStatusChange: NewsBlurDataConvertible {
 	var asData: Data? {
 		var postData = URLComponents()
 		postData.queryItems = hashes.map { URLQueryItem(name: "story_hash", value: $0) }

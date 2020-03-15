@@ -9,6 +9,10 @@
 import Foundation
 import RSWeb
 
+protocol NewsBlurDataConvertible {
+	var asData: Data? { get }
+}
+
 enum NewsBlurError: LocalizedError {
 	case general(message: String)
 	case invalidParameter
@@ -178,39 +182,31 @@ final class NewsBlurAPICaller: NSObject {
 	}
 
 	func markAsUnread(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendStoryStatus(endpoint: "reader/mark_story_hash_as_unread", hashes: hashes, completion: completion)
+		sendUpdates(endpoint: "reader/mark_story_hash_as_unread", payload: NewsBlurStoryStatusChange(hashes: hashes), completion: completion)
 	}
 
 	func markAsRead(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendStoryStatus(endpoint: "reader/mark_story_hashes_as_read", hashes: hashes, completion: completion)
+		sendUpdates(endpoint: "reader/mark_story_hashes_as_read", payload: NewsBlurStoryStatusChange(hashes: hashes), completion: completion)
 	}
 
 	func star(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendStoryStatus(endpoint: "reader/mark_story_hash_as_starred", hashes: hashes, completion: completion)
+		sendUpdates(endpoint: "reader/mark_story_hash_as_starred", payload: NewsBlurStoryStatusChange(hashes: hashes), completion: completion)
 	}
 
 	func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendStoryStatus(endpoint: "reader/mark_story_hash_as_unstarred", hashes: hashes, completion: completion)
+		sendUpdates(endpoint: "reader/mark_story_hash_as_unstarred", payload: NewsBlurStoryStatusChange(hashes: hashes), completion: completion)
 	}
 
 	func addFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		let callURL = baseURL.appendingPathComponent("reader/add_folder")
+		sendUpdates(endpoint: "reader/add_folder", payload: NewsBlurFolderChange.add(name), completion: completion)
+	}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
-		request.httpBody = NewsBlurFolderChange.add(name).asData
-		transport.send(request: request, method: HTTPMethod.post) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
+	func renameFolder(with folder: String, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(endpoint: "reader/rename_folder", payload: NewsBlurFolderChange.rename(folder, name), completion: completion)
+	}
 
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+	func removeFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(endpoint: "reader/delete_folder", payload: NewsBlurFolderChange.delete(name), completion: completion)
 	}
 }
 
@@ -244,11 +240,11 @@ extension NewsBlurAPICaller {
 		}
 	}
 
-	private func sendStoryStatus(endpoint: String, hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+	private func sendUpdates(endpoint: String, payload: NewsBlurDataConvertible, completion: @escaping (Result<Void, Error>) -> Void) {
 		let callURL = baseURL.appendingPathComponent(endpoint)
 
 		var request = URLRequest(url: callURL, credentials: credentials)
-		request.httpBody = NewsBlurStoryStatusChange(hashes: hashes).asData
+		request.httpBody = payload.asData
 		transport.send(request: request, method: HTTPMethod.post) { result in
 			if self.suspended {
 				completion(.failure(TransportError.suspended))

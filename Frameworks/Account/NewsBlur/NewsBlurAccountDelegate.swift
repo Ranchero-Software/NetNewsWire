@@ -328,11 +328,49 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+		guard let folderToRename = folder.name else {
+			completion(.failure(NewsBlurError.invalidParameter))
+			return
+		}
+
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		let nameBefore = folder.name
+
+		caller.renameFolder(with: folderToRename, to: name) { result in
+			self.refreshProgress.completeTask()
+
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				folder.name = nameBefore
+				completion(.failure(error))
+			}
+		}
+
+		folder.name = name
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+		guard let folderToRemove = folder.name else {
+			completion(.failure(NewsBlurError.invalidParameter))
+			return
+		}
+
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		caller.removeFolder(named: folderToRemove) { result in
+			self.refreshProgress.completeTask()
+
+			switch result {
+			case .success:
+				account.removeFolder(folder)
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> ()) {
