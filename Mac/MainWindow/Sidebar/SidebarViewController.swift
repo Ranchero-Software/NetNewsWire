@@ -446,6 +446,10 @@ protocol SidebarDelegate: class {
 		delegate?.sidebarInvalidatedRestorationState(self)
 		rebuildTreeAndRestoreSelection()
 	}
+	
+	func cleanUp() {
+		rebuildTreeAndRestoreSelection()
+	}
 
 }
 

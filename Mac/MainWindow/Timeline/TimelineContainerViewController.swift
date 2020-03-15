@@ -89,6 +89,10 @@ final class TimelineContainerViewController: NSViewController {
 		return true
 	}
 	
+	func cleanUp() {
+		regularTimelineViewController.cleanUp()
+	}
+	
 	func toggleReadFilter() {
 		regularTimelineViewController.toggleReadFilter()
 	}

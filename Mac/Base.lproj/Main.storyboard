@@ -343,6 +343,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="HyV-fh-RgO">
                                     <items>
+                                        <menuItem title="Clean Up" keyEquivalent="H" id="J5h-uQ-57w">
+                                            <connections>
+                                                <action selector="cleanUp:" target="Ady-hI-5gd" id="eNB-UA-e3a"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="rcJ-r3-Y2U"/>
                                         <menuItem title="Hide Read Articles" id="b10-sA-Yzi">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

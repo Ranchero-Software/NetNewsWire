@@ -230,19 +230,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		return representedObjects.first! === object
 	}
+	
+	func cleanUp() {
+		fetchAndReplacePreservingSelection()
+	}
 
 	func toggleReadFilter() {
 		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? Feed)?.feedID else { return }
 		readFilterEnabledTable[feedID] = !filter
 		delegate?.timelineInvalidatedRestorationState(self)
-		
-		if let article = oneSelectedArticle, let account = article.account {
-			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
-		}
-
-		performBlockAndRestoreSelection {
-			fetchAndReplaceArticlesSync()
-		}
+		fetchAndReplacePreservingSelection()
 	}
 	
 	// MARK: State Restoration
@@ -916,6 +913,15 @@ private extension TimelineViewController {
 					cellView.timelineShowsSeparatorsDefaultDidChange()
 				}
 			}
+		}
+	}
+	
+	func fetchAndReplacePreservingSelection() {
+		if let article = oneSelectedArticle, let account = article.account {
+			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
+		}
+		performBlockAndRestoreSelection {
+			fetchAndReplaceArticlesSync()
 		}
 	}
 	

@@ -218,6 +218,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return currentSearchField != nil
 		}
 
+		if item.action == #selector(cleanUp(_:)) {
+			return validateCleanUp(item)
+		}
+
 		if item.action == #selector(toggleReadFeedsFilter(_:)) {
 			return validateToggleReadFeeds(item)
 		}
@@ -438,6 +442,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		window?.makeFirstResponder(searchField)
 	}
 
+	@IBAction func cleanUp(_ sender: Any?) {
+		sidebarViewController?.cleanUp()
+		timelineContainerViewController?.cleanUp()
+	}
+	
 	@IBAction func toggleReadFeedsFilter(_ sender: Any?) {
 		sidebarViewController?.toggleReadFilter()
 	}
@@ -872,6 +881,12 @@ private extension MainWindowController {
 		return result
 	}
 	
+	func validateCleanUp(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		let isSidebarFiltered = sidebarViewController?.isReadFiltered ?? false
+		let isTimelineFiltered = timelineContainerViewController?.isReadFiltered ?? false
+		return isSidebarFiltered || isTimelineFiltered
+	}
+
 	func validateToggleReadFeeds(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		guard let menuItem = item as? NSMenuItem else { return false }
 
