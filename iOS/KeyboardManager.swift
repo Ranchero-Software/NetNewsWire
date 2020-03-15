@@ -144,6 +144,9 @@ private extension KeyboardManager {
 		let markAllAsReadTitle = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
 		keys.append(KeyboardManager.createKeyCommand(title: markAllAsReadTitle, action: "markAllAsRead:", input: "k", modifiers: [.command]))
 
+		let cleanUp = NSLocalizedString("Clean Up", comment: "Clean Up")
+		keys.append(KeyboardManager.createKeyCommand(title: cleanUp, action: "cleanUp:", input: "h", modifiers: [.command, .shift]))
+
 		return keys
 	}
 	

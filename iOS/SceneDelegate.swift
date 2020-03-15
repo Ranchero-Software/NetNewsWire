@@ -84,8 +84,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		coordinator.suspend()
 	}
 	
-	func refreshInterface() {
-		coordinator.refreshInterface()
+	func cleanUp() {
+		coordinator.cleanUp()
 	}
 	
 }
