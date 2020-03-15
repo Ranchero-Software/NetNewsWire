@@ -17,13 +17,13 @@ extension UITableView {
 		selectRow(at: indexPath, animated: animations.contains(.select), scrollPosition: .none)
 
 		if let visibleIndexPaths = indexPathsForRows(in: safeAreaLayoutGuide.layoutFrame) {
-			if !(visibleIndexPaths.contains(indexPath) && cellCompletelyVisable(indexPath)) {
+			if !(visibleIndexPaths.contains(indexPath) && cellCompletelyVisible(indexPath)) {
 				scrollToRow(at: indexPath, at: .middle, animated: animations.contains(.scroll))
 			}
 		}
 	}
 	
-	func cellCompletelyVisable(_ indexPath: IndexPath) -> Bool {
+	func cellCompletelyVisible(_ indexPath: IndexPath) -> Bool {
 		let rect = rectForRow(at: indexPath)
 		return safeAreaLayoutGuide.layoutFrame.contains(rect)
 	}
