@@ -36,6 +36,7 @@ a:hover {
 	--body-color: #444;
 	--body-background-color: -apple-system-text-background;
 	--link-color: hsla(215, 99%, 43%, 1);
+	--block-quote-border-color: hsla(215, 99%, 43%, 0.75);
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
 	--header-color: rgba(0, 0, 0, 0.3);
 	--header-link-color: rgba(0, 0, 0, 0.3);
@@ -212,6 +213,24 @@ sub {
 	width: 100% !important;
 }
 
+blockquote {
+	margin-inline-start: 0;
+	margin-inline-end: 0;
+	padding-left: 15px;
+	border-left: 3px solid var(--block-quote-border-color);
+}
+
+/* Feed Specific */
+
+.feedbin--article-wrap {
+	border-top: 1px solid var(--header-table-border-color);
+}
+
+.wp-smiley {
+   height: 1em;
+   max-height: 1em;
+}
+
 /*Block ads and junk*/
 
 iframe[src*="feedads"],
@@ -367,10 +386,4 @@ a.footnote:hover,
 		transition: background-color 200ms ease-out;
 	}
 
-}
-
-/* Site specific styles */
-.wp-smiley {
-	height: 1em;
-	max-height: 1em;
 }
