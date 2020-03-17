@@ -572,7 +572,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		fetchRequestQueue.cancelAllRequests()
 	}
 	
-	func refreshInterface() {
+	func cleanUp() {
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}

@@ -90,6 +90,10 @@ class RootSplitViewController: UISplitViewController {
 		coordinator.showAdd(.folder)
 	}
 
+	@objc func cleanUp(_ sender: Any?) {
+		coordinator.cleanUp()
+	}
+	
 	@objc func refresh(_ sender: Any?) {
 		appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 	}

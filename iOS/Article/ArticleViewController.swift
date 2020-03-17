@@ -103,13 +103,17 @@ class ArticleViewController: UIViewController {
 			view.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor)
 		])
 				
-		let controller = createWebViewController(article, updateView: false)
+		let controller: WebViewController
 		if let state = restoreState {
+			controller = createWebViewController(article, updateView: false)
 			controller.extractedArticle = state.extractedArticle
 			controller.isShowingExtractedArticle = state.isShowingExtractedArticle
 			controller.articleExtractorButtonState = state.articleExtractorButtonState
 			controller.windowScrollY = state.windowScrollY
+		} else {
+			controller = createWebViewController(article, updateView: true)
 		}
+		
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)

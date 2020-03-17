@@ -21,6 +21,7 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
+	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
 	
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
@@ -33,7 +34,6 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsAccountTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsAccountTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -74,6 +74,8 @@ class SettingsViewController: UITableViewController {
 		} else {
 			showFullscreenArticlesSwitch.isOn = false
 		}
+		
+		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -192,6 +194,9 @@ class SettingsViewController: UITableViewController {
 				break
 			}
 		case 5:
+			let colorPalette = UIStoryboard.settings.instantiateController(ofType: ColorPaletteTableViewController.self)
+			self.navigationController?.pushViewController(colorPalette, animated: true)
+		case 6:
 			switch indexPath.row {
 			case 0:
 				openURL("https://ranchero.com/netnewswire/help/ios/5.0/en/")
@@ -302,10 +307,6 @@ class SettingsViewController: UITableViewController {
 	}
 
 	@objc func displayNameDidChange() {
-		tableView.reloadData()
-	}
-
-	@objc func userDefaultsDidChange() {
 		tableView.reloadData()
 	}
 	
