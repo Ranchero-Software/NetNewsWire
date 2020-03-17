@@ -51,6 +51,7 @@ a:hover {
 		--body-color: #d2d2d2;
 		--body-background-color: #2d2d2d;
 		--link-color: #4490e2;
+		--block-quote-border-color: rgba(68, 144, 226, 0.75);
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 		--header-color: #d2d2d2;
 		--header-link-color: #4490e2;
