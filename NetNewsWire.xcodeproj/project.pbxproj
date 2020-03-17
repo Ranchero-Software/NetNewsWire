@@ -14,6 +14,9 @@
 		3B826DCE2385C89600FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
 		49F40DF82335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		49F40DF92335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
+		5103A9982421643300410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9972421643300410853 /* blank.html */; };
+		5103A9992421643300410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9972421643300410853 /* blank.html */; };
+		5103A9B424216A4200410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9B324216A4200410853 /* blank.html */; };
 		5108F6B62375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */; };
@@ -1250,6 +1253,8 @@
 		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
 		3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
+		5103A9972421643300410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
+		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5108F6B52375E612001ABC45 /* CacheCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheCleaner.swift; sourceTree = "<group>"; };
 		5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerViewController.swift; sourceTree = "<group>"; };
 		5108F6D32375EEEF001ABC45 /* TimelinePreviewTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelinePreviewTableViewController.swift; sourceTree = "<group>"; };
@@ -2370,6 +2375,7 @@
 				84E8E0EA202F693600562D8F /* DetailWebView.swift */,
 				84D52E941FE588BB00D14F5B /* DetailStatusBarView.swift */,
 				5141E7552374A2890013FF27 /* DetailIconSchemeHandler.swift */,
+				5103A9972421643300410853 /* blank.html */,
 				B528F81D23333C7E00E735DD /* page.html */,
 				5142194A2353C1CF00E07E2C /* main_mac.js */,
 				848362FC2262A30800DA1D35 /* styleSheet.css */,
@@ -2677,6 +2683,7 @@
 				51F85BF02272524100C787DC /* Credits.rtf */,
 				51F85BEE2272520B00C787DC /* Thanks.rtf */,
 				51F85BF22272531500C787DC /* Dedication.rtf */,
+				5103A9B324216A4200410853 /* blank.html */,
 				51BB7C302335ACDE008E8144 /* page.html */,
 				514219572353C28900E07E2C /* main_ios.js */,
 				51C452B72265178500C03939 /* styleSheet.css */,
@@ -3475,6 +3482,7 @@
 				3B826DCD2385C89600FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				65ED4069235DEF6C0081F399 /* AccountsReaderAPI.xib in Resources */,
 				65ED406A235DEF6C0081F399 /* newsfoot.js in Resources */,
+				5103A9992421643300410853 /* blank.html in Resources */,
 				65ED406B235DEF6C0081F399 /* CrashReporterWindow.xib in Resources */,
 				65ED406C235DEF6C0081F399 /* Credits.rtf in Resources */,
 				65ED406D235DEF6C0081F399 /* Inspector.storyboard in Resources */,
@@ -3507,6 +3515,7 @@
 				516A093723609A3600EAE89B /* SettingsAccountTableViewCell.xib in Resources */,
 				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
 				516A09422361248000EAE89B /* Inspector.storyboard in Resources */,
+				5103A9B424216A4200410853 /* blank.html in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */,
 				51F85BEB22724CB600C787DC /* About.rtf in Resources */,
 				516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */,
@@ -3561,6 +3570,7 @@
 				3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
+				5103A9982421643300410853 /* blank.html in Resources */,
 				84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */,
 				84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */,
 				84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */,

@@ -325,7 +325,7 @@ extension WebViewController: WKNavigationDelegate {
 		}
 		
 	}
-
+	
 }
 
 // MARK: WKUIDelegate
@@ -393,13 +393,6 @@ extension WebViewController: UIScrollViewDelegate {
 
 // MARK: JSON
 
-private struct TemplateData: Codable {
-	let style: String
-	let body: String
-	let title: String
-	let baseURL: String
-}
-
 private struct ImageClickMessage: Codable {
 	let x: Float
 	let y: Float
@@ -416,11 +409,13 @@ private extension WebViewController {
 	func loadWebView() {
 		guard isViewLoaded else { return }
 		
+		if let webView = webView {
+			self.renderPage(webView)
+			return
+		}
+		
 		coordinator.webViewProvider.dequeueWebView() { webView in
 			
-			let webViewToRecycle = self.webView
-			self.renderPage(webViewToRecycle)
-
 			// Add the webview
 			webView.translatesAutoresizingMaskIntoConstraints = false
 			self.view.insertSubview(webView, at: 0)
@@ -451,9 +446,6 @@ private extension WebViewController {
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 
 			self.renderPage(webView)
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-				self.recycleWebView(webViewToRecycle)
-			}
 			
 		}
 		
@@ -498,16 +490,16 @@ private extension WebViewController {
 			rendering = ArticleRenderer.noSelectionHTML(style: style)
 		}
 		
-		let templateData = TemplateData(style: rendering.style, body: rendering.html, title: rendering.title, baseURL: rendering.baseURL)
-		
-		let encoder = JSONEncoder()
-		var render = "error();"
-		if let data = try? encoder.encode(templateData) {
-			let json = String(data: data, encoding: .utf8)!
-			render = "render(\(json), \(windowScrollY));"
-		}
+		let substitutions = [
+			"title": rendering.title,
+			"baseURL": rendering.baseURL,
+			"style": rendering.style,
+			"body": rendering.html,
+			"windowScrollY": String(windowScrollY)
+		]
 
-		webView.evaluateJavaScript(render)
+		let html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
+		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
 		
 	}
 	

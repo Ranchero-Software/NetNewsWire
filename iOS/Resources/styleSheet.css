@@ -1,4 +1,5 @@
 :root {
+	color-scheme: light dark;
 	font: -apple-system-body;
 	font-size: [[font-size]]px;
 }

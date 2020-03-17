@@ -106,25 +106,12 @@ function styleLocalFootnotes() {
 	}
 }
 
-function render(data, scrollY) {
-	document.getElementsByTagName("style")[0].innerHTML = data.style;
-
-	let title = document.getElementsByTagName("title")[0];
-	title.textContent = data.title
-
-	let base = document.getElementsByTagName("base")[0];
-	base.href = data.baseURL
-
-	document.body.innerHTML = data.body;
-	
-	window.scrollTo(0, scrollY);
-	
-	wrapFrames()
-	wrapTables()
-	stripStyles()
-	convertImgSrc()
-	flattenPreElements()
-	styleLocalFootnotes()
-
-	postRenderProcessing()
+function processPage() {
+	wrapFrames();
+	wrapTables();
+	stripStyles();
+	convertImgSrc();
+	flattenPreElements();
+	styleLocalFootnotes();
+	postRenderProcessing();
 }

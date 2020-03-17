@@ -11,10 +11,6 @@ import WebKit
 
 class PreloadedWebView: WKWebView {
 	
-	private struct MessageName {
-		static let domContentLoaded = "domContentLoaded"
-	}
-	
 	private var isReady: Bool = false
 	private var readyCompletion: ((PreloadedWebView) -> Void)?
 	
@@ -38,8 +34,8 @@ class PreloadedWebView: WKWebView {
 	}
 	
 	func preload() {
-		configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.domContentLoaded)
-		loadFileURL(ArticleRenderer.page.url, allowingReadAccessTo: ArticleRenderer.page.baseURL)
+		navigationDelegate = self
+		loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
 	
 	func ready(completion: @escaping (PreloadedWebView) -> Void) {
@@ -54,18 +50,16 @@ class PreloadedWebView: WKWebView {
 
 // MARK: WKScriptMessageHandler
 
-extension PreloadedWebView: WKScriptMessageHandler {
+extension PreloadedWebView: WKNavigationDelegate {
 
-	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-		if message.name == MessageName.domContentLoaded {
-			isReady = true
-			if let completion = readyCompletion {
-				completeRequest(completion: completion)
-				readyCompletion = nil
-			}
+	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		isReady = true
+		if let completion = readyCompletion {
+			completeRequest(completion: completion)
+			readyCompletion = nil
 		}
 	}
-	
+		
 }
 
 // MARK: Private
@@ -74,7 +68,7 @@ private extension PreloadedWebView {
 	
 	func completeRequest(completion: @escaping (PreloadedWebView) -> Void) {
 		isReady = false
-		configuration.userContentController.removeScriptMessageHandler(forName: MessageName.domContentLoaded)
+		navigationDelegate = nil
 		completion(self)
 	}
 	

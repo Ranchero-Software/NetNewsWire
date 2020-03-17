@@ -17,15 +17,23 @@ import Account
 struct ArticleRenderer {
 
 	typealias Rendering = (style: String, html: String, title: String, baseURL: String)
-	typealias Page = (url: URL, baseURL: URL)
+	
+	struct Page {
+		let url: URL
+		let baseURL: URL
+		let html: String
+		
+		init(name: String) {
+			url = Bundle.main.url(forResource: name, withExtension: "html")!
+			baseURL = url.deletingLastPathComponent()
+			html = try! NSString(contentsOfFile: url.path, encoding: String.Encoding.utf8.rawValue) as String
+		}
+	}
 
 	static var imageIconScheme = "nnwImageIcon"
 	
-	static var page: Page = {
-		let url = Bundle.main.url(forResource: "page", withExtension: "html")!
-		let baseURL = url.deletingLastPathComponent()
-		return Page(url: url, baseURL: baseURL)
-	}()
+	static var blank = Page(name: "blank")
+	static var page = Page(name: "page")
 	
 	private let article: Article?
 	private let extractedArticle: ExtractedArticle?
