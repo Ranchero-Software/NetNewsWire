@@ -35,7 +35,7 @@ a:hover {
 :root {
 	--body-color: #444;
 	--body-background-color: -apple-system-text-background;
-	--link-color: hsla(215, 99%, 43%, 1);
+	--accent-color: hsla(215, 99%, 43%, 1);
 	--block-quote-border-color: hsla(215, 99%, 43%, 0.75);
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
 	--header-color: rgba(0, 0, 0, 0.3);
@@ -50,7 +50,7 @@ a:hover {
 	:root {
 		--body-color: #d2d2d2;
 		--body-background-color: #2d2d2d;
-		--link-color: #4490e2;
+		--accent-color: #4490e2;
 		--block-quote-border-color: rgba(68, 144, 226, 0.75);
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 		--header-color: #d2d2d2;
@@ -67,7 +67,7 @@ body {
 }
 
 body a, body a:link, body a:visited {
-	color: var(--link-color);
+	color: var(--accent-color);
 }
 body .headerTable {
 	border-bottom: 1px solid var(--header-table-border-color);
@@ -128,15 +128,20 @@ pre {
 	overflow: auto;
 	overflow-y: hidden;
 	line-height: 20px;
-	border: 1px solid #777;
+	border: 1px solid var(--accent-color);
 	word-wrap: normal;
+	word-break: normal;
 	padding: 10px;
 }
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
 	font-size: 14px;
+	-webkit-hyphens: none;
 }
 
+.nnw-overflow {
+	overflow-x: auto;
+}
 /*
  Instead of the last-child bits, border-collapse: collapse
  could have been used. However, then the inter-cell borders
@@ -145,8 +150,10 @@ code, pre {
 .nnw-overflow table {
 	margin-bottom: 1px;
 	border-spacing: 0;
-	border: 1px solid #777;
+	border: 1px solid var(--accent-color);
+	font-size: inherit;
 }
+
 .nnw-overflow td, .nnw-overflow th {
 	-webkit-hyphens: none;
 	word-break: normal;
@@ -164,12 +171,6 @@ code, pre {
 .nnw-overflow td pre {
 	border: none;
 	padding: 0;
-}
-
-img, figure, div {
-	max-width: 100%;
-	height: auto !important;
-	margin: 0 auto;
 }
 
 video {
