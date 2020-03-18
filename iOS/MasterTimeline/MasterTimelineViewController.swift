@@ -630,10 +630,16 @@ private extension MasterTimelineViewController {
 	}
 	
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
+		if coordinator.articles.count == 0 {
+			tableView.rowHeight = tableView.estimatedRowHeight
+		} else {
+			tableView.rowHeight = UITableView.automaticDimension
+		}
+		
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(coordinator.articles, toSection: 0)
-        
+
 		dataSource.apply(snapshot, animatingDifferences: animated) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 			completion?()
