@@ -70,7 +70,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		tableView.dataSource = dataSource
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
 		iconSize = AppDefaults.timelineIconSize
-		tableView.rowHeight = calculateEstimatedRowHeight(forId: PrototypeFeedContent.feedId, withTitle: PrototypeFeedContent.longTitle, andFeed: PrototypeFeedContent.feedname)
+		resetEstimatedRowHeight()
 		
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			navigationItem.titleView = titleView
@@ -443,7 +443,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if numberOfTextLines != AppDefaults.timelineNumberOfLines || iconSize != AppDefaults.timelineIconSize {
 			numberOfTextLines = AppDefaults.timelineNumberOfLines
 			iconSize = AppDefaults.timelineIconSize
-			tableView.rowHeight = calculateEstimatedRowHeight(forId: PrototypeFeedContent.feedId, withTitle: PrototypeFeedContent.longTitle, andFeed: PrototypeFeedContent.feedname)
+			resetEstimatedRowHeight()
 			reloadAllVisibleCells()
 		}
 	}
@@ -487,21 +487,26 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	// MARK: Cell Configuring
 
-	private func calculateEstimatedRowHeight(forId prototypeID: String, withTitle title: String, andFeed feedName: String) -> CGFloat {
+	private func resetEstimatedRowHeight() {
 		
+		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
+		
+		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, userDeleted: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: title, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
-		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: feedName, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
-			return layout.height
+			tableView.estimatedRowHeight = layout.height
 		} else {
 			let layout = MasterTimelineDefaultCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
-			return layout.height
+			tableView.estimatedRowHeight = layout.height
 		}
+		
 	}
+	
 }
 
 // MARK: Searching
@@ -628,9 +633,7 @@ private extension MasterTimelineViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(coordinator.articles, toSection: 0)
-		if coordinator.articles.count == 0 {
-			tableView.rowHeight = calculateEstimatedRowHeight(forId: PrototypeFeedContent.feedId, withTitle: PrototypeFeedContent.longTitle, andFeed: PrototypeFeedContent.feedname)
-		}
+        
 		dataSource.apply(snapshot, animatingDifferences: animated) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 			completion?()
@@ -900,11 +903,4 @@ private extension MasterTimelineViewController {
 		return action
 	}
 	
-}
-
-fileprivate struct PrototypeFeedContent {
-	static let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
-	static let shortTitle = "prototype"
-	static let feedId = "feedId"
-	static let feedname = "prototype"
 }
