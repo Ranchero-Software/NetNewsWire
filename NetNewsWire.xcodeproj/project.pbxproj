@@ -17,6 +17,10 @@
 		5103A9982421643300410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9972421643300410853 /* blank.html */; };
 		5103A9992421643300410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9972421643300410853 /* blank.html */; };
 		5103A9B424216A4200410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9B324216A4200410853 /* blank.html */; };
+		5103A9F4242258C600410853 /* AccountsAddCloudKit.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */; };
+		5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */; };
+		5103A9F724225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */; };
+		5103A9F824225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */; };
 		5108F6B62375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */; };
@@ -1255,6 +1259,8 @@
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
 		5103A9972421643300410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
+		5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsAddCloudKit.xib; sourceTree = "<group>"; };
+		5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddCloudKitWindowController.swift; sourceTree = "<group>"; };
 		5108F6B52375E612001ABC45 /* CacheCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheCleaner.swift; sourceTree = "<group>"; };
 		5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerViewController.swift; sourceTree = "<group>"; };
 		5108F6D32375EEEF001ABC45 /* TimelinePreviewTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelinePreviewTableViewController.swift; sourceTree = "<group>"; };
@@ -2616,6 +2622,8 @@
 				55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */,
 				5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */,
 				5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */,
+				5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */,
+				5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -3468,6 +3476,7 @@
 				65ED405B235DEF6C0081F399 /* KeyboardShortcuts.html in Resources */,
 				65ED405C235DEF6C0081F399 /* ImportOPMLSheet.xib in Resources */,
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
+				5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
 				65ED405F235DEF6C0081F399 /* Preferences.storyboard in Resources */,
 				65ED4060235DEF6C0081F399 /* (null) in Resources */,
@@ -3556,6 +3565,7 @@
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
+				5103A9F4242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				849C78902362AAFC009A71E4 /* ExportOPMLSheet.xib in Resources */,
 				84C9FC8222629E4800D921D6 /* Preferences.storyboard in Resources */,
@@ -3778,6 +3788,7 @@
 				65ED3FD6235DEF6C0081F399 /* MarkStatusCommand.swift in Sources */,
 				65ED3FD7235DEF6C0081F399 /* NSApplication+Scriptability.swift in Sources */,
 				65ED3FD8235DEF6C0081F399 /* NSView-Extensions.swift in Sources */,
+				5103A9F824225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */,
 				65ED3FD9235DEF6C0081F399 /* SidebarCell.swift in Sources */,
 				65ED3FDA235DEF6C0081F399 /* ArticleStatusSyncTimer.swift in Sources */,
 				65ED3FDB235DEF6C0081F399 /* WebFeedTreeControllerDelegate.swift in Sources */,
@@ -4129,6 +4140,7 @@
 				55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */,
 				5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* PasteboardFolder.swift in Sources */,
+				5103A9F724225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */,
 				5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,

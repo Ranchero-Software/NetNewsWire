@@ -16,7 +16,11 @@ class AccountsAddViewController: NSViewController {
 	
 	private var accountsAddWindowController: NSWindowController?
 	
-	private let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS]
+	#if DEBUG
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .feedWrangler, .freshRSS]
+	#else
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
+	#endif
 	
 	init() {
 		super.init(nibName: "AccountsAdd", bundle: nil)
@@ -27,12 +31,10 @@ class AccountsAddViewController: NSViewController {
 	}
 	
 	override func viewDidLoad() {
-
 		super.viewDidLoad()
-
 		tableView.dataSource = self
 		tableView.delegate = self
-
+		removeCloudKitIfNecessary()
 	}
 	
 }
@@ -63,6 +65,9 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			case .onMyMac:
 				cell.accountNameLabel?.stringValue = Account.defaultLocalAccountName
 				cell.accountImageView?.image = AppAssets.accountLocal
+			case .cloudKit:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("iCloud", comment: "iCloud")
+				cell.accountImageView?.image = AppAssets.accountCloudKit
 			case .feedbin:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedbin", comment: "Feedbin")
 				cell.accountImageView?.image = AppAssets.accountFeedbin
@@ -95,6 +100,15 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsAddLocalWindowController
+		case .cloudKit:
+			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
+			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
+				if response == NSApplication.ModalResponse.OK {
+					self.removeCloudKitIfNecessary()
+					self.tableView.reloadData()
+				}
+			}
+			accountsAddWindowController = accountsAddCloudKitWindowController
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
@@ -140,5 +154,15 @@ extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate 
 	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
 		view.window?.presentError(error)
+	}
+}
+
+// MARK: Private
+
+private extension AccountsAddViewController {
+	func removeCloudKitIfNecessary() {
+		if let index = AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) {
+			addableAccountTypes.remove(at: index)
+		}
 	}
 }

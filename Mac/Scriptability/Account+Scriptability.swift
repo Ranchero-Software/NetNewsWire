@@ -159,6 +159,8 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         switch self.account.type {
         case .onMyMac:
                 osType = "Locl"
+		case .cloudKit:
+				osType = "Clkt"
         case .feedly:
                 osType = "Fdly"
         case .feedbin:

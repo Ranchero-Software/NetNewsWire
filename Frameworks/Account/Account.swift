@@ -36,6 +36,7 @@ public extension Notification.Name {
 public enum AccountType: Int, Codable {
 	// Raw values should not change since they’re stored on disk.
 	case onMyMac = 1
+	case cloudKit = 2
 	case feedly = 16
 	case feedbin = 17
 	case feedWrangler = 18
@@ -232,6 +233,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
+		case .cloudKit:
+			self.delegate = CloudKitAccountDelegate()
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .freshRSS:
@@ -256,6 +259,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch type {
 		case .onMyMac:
 			defaultName = Account.defaultLocalAccountName
+		case .cloudKit:
+			defaultName = "iCloud"
 		case .feedly:
 			defaultName = "Feedly"
 		case .feedbin:

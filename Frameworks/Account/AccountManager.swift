@@ -120,7 +120,7 @@ public final class AccountManager: UnreadCountProvider {
 	// MARK: - API
 	
 	public func createAccount(type: AccountType) -> Account {
-		let accountID = UUID().uuidString
+		let accountID = type == .cloudKit ? "iCloud" : UUID().uuidString
 		let accountFolder = (accountsFolder as NSString).appendingPathComponent("\(type.rawValue)_\(accountID)")
 
 		do {

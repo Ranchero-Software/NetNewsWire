@@ -21,6 +21,10 @@ struct AppAssets {
 		return RSImage(named: .timelineStar)
 	}()
 
+	static var accountCloudKit: RSImage! = {
+		return RSImage(named: "accountCloudKit")
+	}()
+
 	static var accountLocal: RSImage! = {
 		return RSImage(named: "accountLocal")
 	}()
@@ -129,6 +133,8 @@ struct AppAssets {
 		switch accountType {
 		case .onMyMac:
 			return AppAssets.accountLocal
+		case .cloudKit:
+			return AppAssets.accountCloudKit
 		case .feedbin:
 			return AppAssets.accountFeedbin
 		case .feedly:
