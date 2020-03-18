@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="AccountsAddLocalWindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="localAccountNameTextField" destination="80D-3X-rL2" id="B6t-AS-hDh"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="ENN-6Q-J5m"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="398" height="205"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="398" height="162"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <stackView distribution="fill" orientation="horizontal" alignment="bottom" spacing="19" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uDK-ji-zlT">
+                        <rect key="frame" x="127" y="108" width="144" height="38"/>
+                        <subviews>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ySx-qg-WbT">
+                                <rect key="frame" x="0.0" y="0.0" width="36" height="36"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="36" id="BKI-n8-fbR"/>
+                                    <constraint firstAttribute="height" constant="36" id="NLk-V3-hn9"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="accountCloudKit" id="9RZ-J3-ioX"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="80D-3X-rL2">
+                                <rect key="frame" x="53" y="0.0" width="93" height="38"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="iCloud" id="1d2-Mx-TKe">
+                                    <font key="font" metaFont="system" size="32"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <visibilityPriorities>
+                            <integer value="1000"/>
+                            <integer value="1000"/>
+                        </visibilityPriorities>
+                        <customSpacing>
+                            <real value="3.4028234663852886e+38"/>
+                            <real value="3.4028234663852886e+38"/>
+                        </customSpacing>
+                    </stackView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xqo-gP-MPl">
+                        <rect key="frame" x="303" y="13" width="81" height="32"/>
+                        <buttonCell key="cell" type="push" title="Create" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oih-6c-KbS">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="create:" target="-2" id="jgg-n6-VVy"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9eG-vV-s8c">
+                        <rect key="frame" x="222" y="13" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iVd-bO-4LN">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancel:" target="-2" id="uDi-hX-dXu"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Kj-Cl-FJQ">
+                        <rect key="frame" x="47" y="57" width="304" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="300" id="xiK-wa-r3v"/>
+                        </constraints>
+                        <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="This account syncs using your iCloud account." id="wfr-Dv-UIF">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="9eG-vV-s8c" firstAttribute="top" secondItem="3Kj-Cl-FJQ" secondAttribute="bottom" constant="16" id="BZP-Fw-AVu"/>
+                    <constraint firstItem="9eG-vV-s8c" firstAttribute="centerY" secondItem="xqo-gP-MPl" secondAttribute="centerY" id="DLC-C8-enC"/>
+                    <constraint firstAttribute="bottom" secondItem="xqo-gP-MPl" secondAttribute="bottom" constant="20" id="HgX-ud-184"/>
+                    <constraint firstItem="3Kj-Cl-FJQ" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="bfd-35-bLi"/>
+                    <constraint firstItem="3Kj-Cl-FJQ" firstAttribute="top" secondItem="80D-3X-rL2" secondAttribute="bottom" constant="35" id="gh3-I9-x4r"/>
+                    <constraint firstItem="80D-3X-rL2" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="16" id="h30-eN-6VF"/>
+                    <constraint firstItem="xqo-gP-MPl" firstAttribute="leading" secondItem="9eG-vV-s8c" secondAttribute="trailing" constant="11" id="p6M-6b-ybu"/>
+                    <constraint firstItem="uDK-ji-zlT" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="uXu-yF-PBG"/>
+                    <constraint firstAttribute="trailing" secondItem="xqo-gP-MPl" secondAttribute="trailing" constant="20" id="z4O-vd-ear"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="hpu-h7-p4Z"/>
+            </connections>
+            <point key="canvasLocation" x="99" y="114.5"/>
+        </window>
+    </objects>
+    <resources>
+        <image name="accountCloudKit" width="100" height="70"/>
+    </resources>
+</document>
