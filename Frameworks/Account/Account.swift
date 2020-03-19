@@ -8,6 +8,8 @@
 
 #if os(iOS)
 import UIKit
+#elseif os(macOS)
+import AppKit
 #endif
 
 import Foundation
@@ -530,7 +532,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func opmlDocument() -> String {
-		let escapedTitle = nameForDisplay.rs_stringByEscapingSpecialXMLCharacters()
+		let escapedTitle = nameForDisplay.escapingSpecialXMLCharacters
 		let openingText =
 		"""
 		<?xml version="1.0" encoding="UTF-8"?>
@@ -543,7 +545,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 		"""
 
-		let middleText = OPMLString(indentLevel: 0, strictConformance: false)
+		let middleText = OPMLString(indentLevel: 0, allowCustomAttributes: true)
 
 		let closingText =
 		"""
@@ -1177,13 +1179,13 @@ extension Account {
 
 extension Account: OPMLRepresentable {
 
-	public func OPMLString(indentLevel: Int, strictConformance: Bool) -> String {
+	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
 		var s = ""
 		for feed in topLevelFeeds {
-			s += feed.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
+			s += feed.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 		}
 		for folder in folders! {
-			s += folder.OPMLString(indentLevel: indentLevel + 1, strictConformance: strictConformance)
+			s += folder.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 		}
 		return s
 	}

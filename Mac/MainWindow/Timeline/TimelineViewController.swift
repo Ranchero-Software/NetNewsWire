@@ -256,7 +256,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			tableView.scrollTo(row: 0, extraHeight: 0)
 		}
 		
-		tableView.rs_selectRow(nextRowIndex)
+		tableView.selectRow(nextRowIndex)
 		
 		let followingRowIndex = nextRowIndex - 1
 		if followingRowIndex < 0 {
@@ -278,7 +278,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			tableView.scrollTo(row: tableMaxIndex, extraHeight: 0)
 		}
 		
-		tableView.rs_selectRow(nextRowIndex)
+		tableView.selectRow(nextRowIndex)
 		
 		let followingRowIndex = nextRowIndex + 1
 		if followingRowIndex > tableMaxIndex {
@@ -383,7 +383,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		NSCursor.setHiddenUntilMouseMoves(true)
-		tableView.rs_selectRow(ix)
+		tableView.selectRow(ix)
 		tableView.scrollTo(row: ix)
 	}
 	
@@ -405,7 +405,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(tableView)
 		if !hasAtLeastOneSelectedArticle && articles.count > 0 {
-			tableView.rs_selectRowAndScrollToVisible(0)
+			tableView.selectRowAndScrollToVisible(0)
 		}
 	}
 

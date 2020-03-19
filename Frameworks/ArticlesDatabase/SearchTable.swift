@@ -33,7 +33,7 @@ final class ArticleSearchInfo: Hashable {
 
 	lazy var bodyForIndex: String = {
 		let s = preferredText.rsparser_stringByDecodingHTMLEntities()
-		return s.rs_string(byStrippingHTML: 0).rs_stringWithCollapsedWhitespace()
+		return s.strippingHTML().collapsingWhitespace
 	}()
 
 	init(articleID: String, title: String?, contentHTML: String?, contentText: String?, summary: String?, searchRowID: Int?) {

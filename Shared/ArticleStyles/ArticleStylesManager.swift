@@ -24,7 +24,7 @@ private let styleSuffixes = [styleSuffix, nnwStyleSuffix, cssStyleSuffix];
 final class ArticleStylesManager {
 
 	static let shared = ArticleStylesManager()
-	private let folderPath = RSDataSubfolder(nil, stylesFolderName)!
+	private let folderPath = Platform.dataSubfolder(forApplication: nil, folderName: stylesFolderName)!
 
 	var currentStyleName: String {
 		get {
@@ -133,7 +133,7 @@ final class ArticleStylesManager {
 
 private func allStylePaths(_ folder: String) -> [String] {
 
-	let filepaths = FileManager.default.rs_filepaths(inFolder: folder)
+	let filepaths = FileManager.default.filePaths(inFolder: folder)!
 	return filepaths.filter { fileAtPathIsStyle($0) }
 }
 
@@ -154,7 +154,7 @@ private func filenameWithStyleSuffixRemoved(_ filename: String) -> String {
 
 	for oneSuffix in styleSuffixes {
 		if filename.hasSuffix(oneSuffix) {
-			return (filename as NSString).rs_string(byStrippingSuffix: oneSuffix, caseSensitive: false)
+			return filename.stripping(suffix: oneSuffix)
 		}
 	}
 

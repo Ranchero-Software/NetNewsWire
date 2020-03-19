@@ -21,7 +21,7 @@ public final class AccountManager: UnreadCountProvider {
 	public static let shared = AccountManager()
 	public let defaultAccount: Account
 
-	private let accountsFolder = RSDataSubfolder(nil, "Accounts")!
+	private let accountsFolder = Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!
     private var accountsDictionary = [String: Account]()
 
 	private let defaultAccountFolderName = "OnMyMac"
@@ -312,7 +312,7 @@ private struct AccountSpecifier {
 
 
 	init?(folderPath: String) {
-		if !FileManager.default.rs_fileIsFolder(folderPath) {
+		if !FileManager.default.isFolder(atPath: folderPath) {
 			return nil
 		}
 		

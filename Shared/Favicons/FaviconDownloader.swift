@@ -93,7 +93,7 @@ final class FaviconDownloader {
 
 	func favicon(withHomePageURL homePageURL: String) -> RSImage? {
 
-		let url = homePageURL.rs_normalizedURL()
+		let url = homePageURL.normalizedURL
 		if homePageURLsWithNoFaviconURL.contains(url) {
 			return nil
 		}

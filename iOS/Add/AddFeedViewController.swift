@@ -70,7 +70,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 	func add() {
 
 		let urlString = urlTextField.text ?? ""
-		let normalizedURLString = (urlString as NSString).rs_normalizedURL()
+		let normalizedURLString = (urlString as NSString).normalizedURL
 		
 		guard !normalizedURLString.isEmpty, let url = URL(string: normalizedURLString) else {
 			delegate?.processingDidCancel()
@@ -121,7 +121,7 @@ class AddFeedViewController: UITableViewController, AddContainerViewControllerCh
 	}
 	
 	@objc func textDidChange(_ note: Notification) {
-		delegate?.readyToAdd(state: urlTextField.text?.rs_stringMayBeURL() ?? false)
+		delegate?.readyToAdd(state: urlTextField.text?.mayBeURL ?? false)
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
