@@ -100,13 +100,7 @@ class AddFeedWindowController : NSWindowController {
 			cancelSheet()
 			return;
 		}
-		
-		guard let encodedString = normalizedURLString.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) else {
-			cancelSheet()
-			return;
-		}
-		
-		guard let url = URL(string: encodedString) else {
+		guard let url = URL(string: normalizedURLString) else {
 			cancelSheet()
 			return
 		}
