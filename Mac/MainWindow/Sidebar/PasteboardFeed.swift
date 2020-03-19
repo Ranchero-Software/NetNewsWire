@@ -37,9 +37,9 @@ struct PasteboardFeed: Hashable {
 	let isLocalFeed: Bool
 
 	init(url: String, feedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?, accountType: AccountType?) {
-		self.url = url.rs_normalizedURL()
+		self.url = url.normalizedURL
 		self.feedID = feedID
-		self.homePageURL = homePageURL?.rs_normalizedURL()
+		self.homePageURL = homePageURL?.normalizedURL
 		self.name = name
 		self.editedName = editedName
 		self.accountID = accountID
@@ -93,7 +93,7 @@ struct PasteboardFeed: Hashable {
 		}
 		if let foundType = pasteboardType {
 			if let possibleURLString = pasteboardItem.string(forType: foundType) {
-				if possibleURLString.rs_stringMayBeURL() {
+				if possibleURLString.mayBeURL {
 					self.init(url: possibleURLString, feedID: nil, homePageURL: nil, name: nil, editedName: nil, accountID: nil, accountType: nil)
 					return
 				}

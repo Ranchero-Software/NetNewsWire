@@ -150,7 +150,7 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     @objc(opmlRepresentation)
     var opmlRepresentation:String  {
-        return self.account.OPMLString(indentLevel:0, strictConformance: true)
+        return self.account.OPMLString(indentLevel:0, allowCustomAttributes: false)
     }
 
     @objc(accountType)
@@ -168,6 +168,6 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         case .newsBlur:
                 osType = "NBlr"
         }
-        return osType.fourCharCode()
+        return osType.fourCharCode
     }
 }

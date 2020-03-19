@@ -77,7 +77,7 @@ private extension ArticlePasteboardWriter {
 			s += "\(summary)\n\n"
 		}
 		else if let html = article.contentHTML {
-			let convertedHTML = html.rs_stringByConvertingToPlainText()
+			let convertedHTML = html.convertingToPlainText()
 			s += "\(convertedHTML)\n\n"
 		}
 

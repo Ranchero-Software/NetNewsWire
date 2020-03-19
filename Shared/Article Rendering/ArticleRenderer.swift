@@ -48,7 +48,7 @@ struct ArticleRenderer {
 private extension ArticleRenderer {
 
 	private var articleHTML: String {
-		let body = RSMacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions(), macroStart: "[[", macroEnd: "]]")
+		let body = try! MacroProcessor.renderedText(withTemplate: template(), substitutions: substitutions())
 		return renderHTML(withBody: body)
 	}
 

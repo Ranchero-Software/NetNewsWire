@@ -26,8 +26,8 @@ final class ArticlesTable: DatabaseTable {
 	}()
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
-	private var articleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 3 * 31)!
-	private var maximumArticleCutoffDate = NSDate.rs_dateWithNumberOfDays(inThePast: 4 * 31)!
+	private var articleCutoffDate = Date().bySubtracting(days: 3 * 31)
+	private var maximumArticleCutoffDate = Date().bySubtracting(days: 4 * 31)
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
 

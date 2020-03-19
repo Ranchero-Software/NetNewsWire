@@ -24,7 +24,7 @@ struct SidebarCellLayout {
 		var rFavicon = NSRect.zero
 		if shouldShowImage {
 			rFavicon = NSRect(x: 0.0, y: 0.0, width: appearance.imageSize.width, height: appearance.imageSize.height)
-			rFavicon = RSRectCenteredVerticallyInRect(rFavicon, bounds)
+			rFavicon = rFavicon.centeredVertically(in: bounds)
 		}
 		self.faviconRect = rFavicon
 
@@ -34,7 +34,7 @@ struct SidebarCellLayout {
 		if shouldShowImage {
 			rTextField.origin.x = NSMaxX(rFavicon) + appearance.imageMarginRight
 		}
-		rTextField = RSRectCenteredVerticallyInRect(rTextField, bounds)
+		rTextField = rTextField.centeredVertically(in: bounds)
 
 		let unreadCountSize = unreadCountView.intrinsicContentSize
 		let unreadCountIsHidden = unreadCountView.unreadCount < 1
@@ -43,7 +43,7 @@ struct SidebarCellLayout {
 		if !unreadCountIsHidden {
 			rUnread.size = unreadCountSize
 			rUnread.origin.x = NSMaxX(bounds) - unreadCountSize.width
-			rUnread = RSRectCenteredVerticallyInRect(rUnread, bounds)
+			rUnread = rUnread.centeredVertically(in: bounds)
 			let textFieldMaxX = NSMinX(rUnread) - appearance.unreadCountMarginLeft
 			if NSMaxX(rTextField) > textFieldMaxX {
 				rTextField.size.width = textFieldMaxX - NSMinX(rTextField)
