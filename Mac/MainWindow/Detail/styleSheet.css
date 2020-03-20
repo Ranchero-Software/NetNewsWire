@@ -35,9 +35,8 @@ a:hover {
 :root {
 	--body-color: #444;
 	--body-background-color: -apple-system-text-background;
-	--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], 1.0);
 	--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .75);
-	--block-quote-border-color: hsla(215, 99%, 43%, 0.75);
+	--block-quote-border-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .50);
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
 	--header-color: rgba(0, 0, 0, 0.3);
 	--body-code-color: #666;
@@ -51,8 +50,8 @@ a:hover {
 	:root {
 		--body-color: #d2d2d2;
 		--body-background-color: #2d2d2d;
-		--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], 1.0);
 		--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .75);
+		--block-quote-border-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .50);
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 		--header-color: #d2d2d2;
 		--body-code-color: #b2b2b2;
