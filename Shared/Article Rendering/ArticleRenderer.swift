@@ -261,9 +261,25 @@ private extension ArticleRenderer {
 		guard let linkColor = NSColor.controlAccentColor.usingColorSpace(.deviceRGB) else {
 			return d
 		}
-        let red = Int(round(linkColor.redComponent * 0xFF))
-        let green = Int(round(linkColor.greenComponent * 0xFF))
-        let blue = Int(round(linkColor.blueComponent * 0xFF))
+		
+		let red: Int
+		let green: Int
+		let blue: Int
+		
+		if NSApplication.shared.effectiveAppearance.isDarkMode {
+			let brighten = CGFloat(0.25)
+			let baseRed = linkColor.redComponent * 0xFF
+			red = Int(round(((255 - baseRed) * brighten)) + round(baseRed))
+			let baseGreen = linkColor.greenComponent * 0xFF
+			green = Int(round(((255 - baseGreen) * brighten)) + round(baseGreen))
+			let baseBlue = linkColor.blueComponent * 0xFF
+			blue = Int(round(((255 - baseBlue) * brighten)) + round(baseBlue))
+		} else {
+			let darken = CGFloat(0.75)
+			red = Int(round(linkColor.redComponent * 0xFF * darken))
+			green = Int(round(linkColor.greenComponent * 0xFF * darken))
+			blue = Int(round(linkColor.blueComponent * 0xFF * darken))
+		}
 
 		d["accent-r"] = String(red)
 		d["accent-g"] = String(green)
