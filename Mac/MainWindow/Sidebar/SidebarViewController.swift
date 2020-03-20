@@ -218,6 +218,7 @@ protocol SidebarDelegate: class {
 	}
 	
 	@objc func downloadArticlesDidUpdateUnreadCounts(_ note: Notification) {
+		addTreeControllerToFilterExceptions()
 		rebuildTreeAndRestoreSelection()
 	}
 	
