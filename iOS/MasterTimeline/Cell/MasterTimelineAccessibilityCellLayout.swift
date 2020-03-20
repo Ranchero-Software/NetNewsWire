@@ -19,7 +19,6 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 	let summaryRect: CGRect
 	let feedNameRect: CGRect
 	let dateRect: CGRect
-	let separatorInsets: UIEdgeInsets
 	
 	init(width: CGFloat, insets: UIEdgeInsets, cellData: MasterTimelineCellData) {
 		
@@ -33,9 +32,6 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 		
 		// Start the point at the beginning position of the main block
 		currentPoint.x += MasterTimelineDefaultCellLayout.unreadCircleDimension + MasterTimelineDefaultCellLayout.unreadCircleMarginRight
-		
-		// Separator Insets
-		self.separatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 		
 		// Icon Image
 		if cellData.showIcon {
