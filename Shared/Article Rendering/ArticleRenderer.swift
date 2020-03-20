@@ -112,12 +112,7 @@ private extension ArticleRenderer {
 	}
 	
 	private var articleCSS: String {
-		#if os(iOS)
-		let style = try! MacroProcessor.renderedText(withTemplate: styleString(), substitutions: styleSubstitutions())
-		return style
-		#else
-		return styleString()
-		#endif
+		return try! MacroProcessor.renderedText(withTemplate: styleString(), substitutions: styleSubstitutions())
 	}
 
 	static var defaultStyleSheet: String = {
@@ -258,6 +253,21 @@ private extension ArticleRenderer {
 		var d = [String: String]()
 		let bodyFont = UIFont.preferredFont(forTextStyle: .body)
 		d["font-size"] = String(describing: bodyFont.pointSize)
+		return d
+	}
+	#else
+	func styleSubstitutions() -> [String: String] {
+		var d = [String: String]()
+		guard let linkColor = NSColor.controlAccentColor.usingColorSpace(.deviceRGB) else {
+			return d
+		}
+        let red = Int(round(linkColor.redComponent * 0xFF))
+        let green = Int(round(linkColor.greenComponent * 0xFF))
+        let blue = Int(round(linkColor.blueComponent * 0xFF))
+
+		d["accent-r"] = String(red)
+		d["accent-g"] = String(green)
+		d["accent-b"] = String(blue)
 		return d
 	}
 	#endif
