@@ -541,7 +541,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func downloadArticlesDidUpdateUnreadCounts(_ note: Notification) {
-		rebuildBackingStores()
+		rebuildBackingStoresWithMerge()
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
