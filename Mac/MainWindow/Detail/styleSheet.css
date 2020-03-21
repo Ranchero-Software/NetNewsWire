@@ -153,7 +153,10 @@ code, pre {
 	border: 1px solid var(--accent-color);
 	font-size: inherit;
 }
-
+.nnw-overflow table table {
+	margin-bottom: 0;
+	border: none;
+}
 .nnw-overflow td, .nnw-overflow th {
 	-webkit-hyphens: none;
 	word-break: normal;
