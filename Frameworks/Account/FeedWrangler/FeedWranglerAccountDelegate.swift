@@ -493,7 +493,7 @@ private extension FeedWranglerAccountDelegate {
 				feed.name = subscription.title
 				feed.editedName = nil
 				feed.homePageURL = subscription.siteURL
-				feed.subscriptionID = nil // MARK: TODO What should this be?
+				feed.externalID = nil // MARK: TODO What should this be?
 			} else {
 				subscriptionsToAdd.insert(subscription)
 			}
@@ -502,7 +502,7 @@ private extension FeedWranglerAccountDelegate {
 		subscriptionsToAdd.forEach { subscription in
 			let feedId = String(subscription.feedID)
 			let feed = account.createWebFeed(with: subscription.title, url: subscription.feedURL, webFeedID: feedId, homePageURL: subscription.siteURL)
-			feed.subscriptionID = nil
+			feed.externalID = nil
 			account.addWebFeed(feed)
 		}
 	}

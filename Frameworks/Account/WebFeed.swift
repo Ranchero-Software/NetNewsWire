@@ -153,12 +153,12 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
 	
-	public var subscriptionID: String? {
+	public var externalID: String? {
 		get {
-			return metadata.subscriptionID
+			return metadata.externalID
 		}
 		set {
-			metadata.subscriptionID = newValue
+			metadata.externalID = newValue
 		}
 	}
 
