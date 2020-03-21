@@ -389,8 +389,8 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		for feed in folder.topLevelWebFeeds {
 			if (feed.folderRelationship?.count ?? 0) > 1 {
 				clearFolderRelationship(for: feed, withFolderName: folderToRemove)
-			} else if let subscriptionID = feed.subscriptionID {
-				feedIDs.append(subscriptionID)
+			} else if let feedID = feed.externalID {
+				feedIDs.append(feedID)
 			}
 		}
 
@@ -430,7 +430,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
 		// This error should never happen
-		guard let feedID = feed.subscriptionID else {
+		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
 		}

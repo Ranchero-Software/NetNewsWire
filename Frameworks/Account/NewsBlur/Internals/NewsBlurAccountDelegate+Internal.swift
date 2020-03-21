@@ -108,7 +108,7 @@ extension NewsBlurAccountDelegate {
 				// If the name has been changed on the server remove the locally edited name
 				webFeed.editedName = nil
 				webFeed.homePageURL = feed.homePageURL
-				webFeed.subscriptionID = String(feed.feedID)
+				webFeed.externalID = String(feed.feedID)
 				webFeed.faviconURL = feed.faviconURL
 			}
 			else {
@@ -119,7 +119,7 @@ extension NewsBlurAccountDelegate {
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
 		feedsToAdd.forEach { feed in
 			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			webFeed.subscriptionID = String(feed.feedID)
+			webFeed.externalID = String(feed.feedID)
 			account.addWebFeed(webFeed)
 		}
 	}
@@ -380,7 +380,7 @@ extension NewsBlurAccountDelegate {
 
 		DispatchQueue.main.async {
 			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			webFeed.subscriptionID = String(feed.feedID)
+			webFeed.externalID = String(feed.feedID)
 			webFeed.faviconURL = feed.faviconURL
 
 			account.addWebFeed(webFeed, to: container) { result in
@@ -474,7 +474,7 @@ extension NewsBlurAccountDelegate {
 
 	func deleteFeed(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		// This error should never happen
-		guard let feedID = feed.subscriptionID else {
+		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
 		}
