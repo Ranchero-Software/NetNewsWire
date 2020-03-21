@@ -34,7 +34,7 @@ public extension URLRequest {
 		case .feedWranglerToken:
 			self.url = url.appendingQueryItem(URLQueryItem(name: "access_token", value: credentials.secret))
 		case .newsBlurBasic:
-			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPRequestHeader.contentType)
 			httpMethod = "POST"
 			var postData = URLComponents()
 			postData.queryItems = [

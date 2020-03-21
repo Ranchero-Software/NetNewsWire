@@ -1,5 +1,5 @@
 //
-//  NewsBlurAccountDelegate+Private.swift
+//  NewsBlurAccountDelegate+Internal.swift
 //  Mostly adapted from FeedbinAccountDelegate.swift
 //  Account
 //
@@ -107,7 +107,7 @@ extension NewsBlurAccountDelegate {
 				webFeed.name = feed.name
 				// If the name has been changed on the server remove the locally edited name
 				webFeed.editedName = nil
-				webFeed.homePageURL = feed.homepageURL
+				webFeed.homePageURL = feed.homePageURL
 				webFeed.subscriptionID = String(feed.feedID)
 				webFeed.faviconURL = feed.faviconURL
 			}
@@ -118,7 +118,7 @@ extension NewsBlurAccountDelegate {
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
 		feedsToAdd.forEach { feed in
-			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homepageURL)
+			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
 			webFeed.subscriptionID = String(feed.feedID)
 			account.addWebFeed(webFeed)
 		}
@@ -232,10 +232,10 @@ extension NewsBlurAccountDelegate {
 		caller.retrieveStories(hashes: hashesToFetch) { result in
 			switch result {
 			case .success(let stories):
-				self.processStories(account: account, stories: stories) { error in
+				self.processStories(account: account, stories: stories) { result in
 					self.refreshProgress.completeTask()
 
-					if let error = error {
+					if case .failure(let error) = result {
 						completion(.failure(error))
 						return
 					}
@@ -368,6 +368,106 @@ extension NewsBlurAccountDelegate {
 				process(pendingArticleIDs)
 			case .failure(let error):
 				os_log(.error, log: self.log, "Sync Story Starred Status failed: %@.", error.localizedDescription)
+			}
+		}
+	}
+
+	func createFeed(account: Account, feed: NewsBlurFeed?, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		guard let feed = feed else {
+			completion(.failure(NewsBlurError.invalidParameter))
+			return
+		}
+
+		DispatchQueue.main.async {
+			let webFeed = account.createWebFeed(with: feed.name, url: feed.feedURL, webFeedID: String(feed.feedID), homePageURL: feed.homePageURL)
+			webFeed.subscriptionID = String(feed.feedID)
+			webFeed.faviconURL = feed.faviconURL
+
+			account.addWebFeed(webFeed, to: container) { result in
+				switch result {
+				case .success:
+					if let name = name {
+						account.renameWebFeed(webFeed, to: name) { result in
+							switch result {
+							case .success:
+								self.initialFeedDownload(account: account, feed: webFeed, completion: completion)
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+					} else {
+						self.initialFeedDownload(account: account, feed: webFeed, completion: completion)
+					}
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		}
+	}
+
+	func downloadFeed(account: Account, feed: WebFeed, page: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		caller.retrieveStories(feedID: feed.webFeedID, page: page) { result in
+			switch result {
+			case .success(let stories):
+				// No more stories
+				guard let stories = stories, stories.count > 0 else {
+					self.refreshProgress.completeTask()
+
+					completion(.success(()))
+					return
+				}
+
+				let since = Calendar.current.date(byAdding: .month, value: -3, to: Date())
+				self.processStories(account: account, stories: stories, since: since) { result in
+					self.refreshProgress.completeTask()
+
+					if case .failure(let error) = result {
+						completion(.failure(error))
+						return
+					}
+
+					// No more recent stories
+					if case .success(let hasStories) = result, !hasStories {
+						completion(.success(()))
+						return
+					}
+					
+					self.downloadFeed(account: account, feed: feed, page: page + 1, completion: completion)
+				}
+
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func initialFeedDownload(account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		// Download the initial articles
+		downloadFeed(account: account, feed: feed, page: 1) { result in
+			self.refreshArticleStatus(for: account) { result in
+				switch result {
+				case .success:
+					self.refreshMissingStories(for: account) { result in
+						switch result {
+						case .success:
+							self.refreshProgress.completeTask()
+
+							DispatchQueue.main.async {
+								completion(.success(feed))
+							}
+
+						case .failure(let error):
+							completion(.failure(error))
+						}
+					}
+
+				case .failure(let error):
+					completion(.failure(error))
+				}
 			}
 		}
 	}

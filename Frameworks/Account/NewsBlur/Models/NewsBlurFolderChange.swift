@@ -20,7 +20,10 @@ extension NewsBlurFolderChange: NewsBlurDataConvertible {
 		postData.queryItems = {
 			switch self {
 			case .add(let name):
-				return [URLQueryItem(name: "folder", value: name)]
+				return [
+					URLQueryItem(name: "folder", value: name),
+					URLQueryItem(name: "parent_folder", value: ""), // root folder
+				]
 			case .rename(let from, let to):
 				return [
 					URLQueryItem(name: "folder_to_rename", value: from),

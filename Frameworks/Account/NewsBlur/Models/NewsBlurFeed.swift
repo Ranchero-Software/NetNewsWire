@@ -10,20 +10,19 @@ import Foundation
 import RSCore
 import RSParser
 
-typealias NewsBlurFeed = NewsBlurFeedsResponse.Feed
 typealias NewsBlurFolder = NewsBlurFeedsResponse.Folder
 
-struct NewsBlurFeedsResponse: Decodable {
-	let feeds: [Feed]
-	let folders: [Folder]
+struct NewsBlurFeed: Hashable, Codable {
+	let name: String
+	let feedID: Int
+	let feedURL: String
+	let homePageURL: String?
+	let faviconURL: String?
+}
 
-	struct Feed: Hashable, Codable {
-		let name: String
-		let feedID: Int
-		let feedURL: String
-		let homepageURL: String?
-		let faviconURL: String?
-	}
+struct NewsBlurFeedsResponse: Decodable {
+	let feeds: [NewsBlurFeed]
+	let folders: [Folder]
 
 	struct Folder: Hashable, Codable {
 		let name: String
@@ -31,9 +30,23 @@ struct NewsBlurFeedsResponse: Decodable {
 	}
 }
 
+struct NewsBlurAddURLResponse: Decodable {
+	let feed: NewsBlurFeed?
+}
+
 struct NewsBlurFolderRelationship: Codable {
 	let folderName: String
 	let feedID: Int
+}
+
+extension NewsBlurFeed {
+	private enum CodingKeys: String, CodingKey {
+		case name = "feed_title"
+		case feedID = "id"
+		case feedURL = "feed_address"
+		case homePageURL = "feed_link"
+		case faviconURL = "favicon_url"
+	}
 }
 
 extension NewsBlurFeedsResponse {
@@ -47,10 +60,10 @@ extension NewsBlurFeedsResponse {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
 		// Parse feeds
-		var feeds: [Feed] = []
+		var feeds: [NewsBlurFeed] = []
 		let feedContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .feeds)
 		try feedContainer.allKeys.forEach { key in
-			let subscription = try feedContainer.decode(Feed.self, forKey: key)
+			let subscription = try feedContainer.decode(NewsBlurFeed.self, forKey: key)
 			feeds.append(subscription)
 		}
 
@@ -68,16 +81,6 @@ extension NewsBlurFeedsResponse {
 
 		self.feeds = feeds
 		self.folders = folders
-	}
-}
-
-extension NewsBlurFeedsResponse.Feed {
-	private enum CodingKeys: String, CodingKey {
-		case name = "feed_title"
-		case feedID = "id"
-		case feedURL = "feed_address"
-		case homepageURL = "feed_link"
-		case faviconURL = "favicon_url"
 	}
 }
 

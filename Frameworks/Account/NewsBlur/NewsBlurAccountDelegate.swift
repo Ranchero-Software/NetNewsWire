@@ -125,10 +125,18 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		database.selectForProcessing { result in
 
 			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == false }
-				let deleteUnreadStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.read && $0.flag == true }
-				let createStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == true }
-				let deleteStarredStatuses = syncStatuses.filter { $0.key == ArticleStatus.Key.starred && $0.flag == false }
+				let createUnreadStatuses = syncStatuses.filter {
+					$0.key == ArticleStatus.Key.read && $0.flag == false
+				}
+				let deleteUnreadStatuses = syncStatuses.filter {
+					$0.key == ArticleStatus.Key.read && $0.flag == true
+				}
+				let createStarredStatuses = syncStatuses.filter {
+					$0.key == ArticleStatus.Key.starred && $0.flag == true
+				}
+				let deleteStarredStatuses = syncStatuses.filter {
+					$0.key == ArticleStatus.Key.starred && $0.flag == false
+				}
 
 				let group = DispatchGroup()
 				var errorOccurred = false
@@ -246,15 +254,18 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func refreshMissingStories(for account: Account, completion: @escaping (Result<Void, Error>)-> Void) {
+	func refreshMissingStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		os_log(.debug, log: log, "Refreshing missing stories...")
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
+
 			func process(_ fetchedHashes: Set<String>) {
 				let group = DispatchGroup()
 				var errorOccurred = false
 
-				let storyHashes = Array(fetchedHashes).map { NewsBlurStoryHash(hash: $0, timestamp: Date()) }
+				let storyHashes = Array(fetchedHashes).map {
+					NewsBlurStoryHash(hash: $0, timestamp: Date())
+				}
 				let chunkedStoryHashes = storyHashes.chunked(into: 100)
 
 				for chunk in chunkedStoryHashes {
@@ -263,9 +274,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 						switch result {
 						case .success(let stories):
-							self.processStories(account: account, stories: stories) { error in
+							self.processStories(account: account, stories: stories) { result in
 								group.leave()
-								if error != nil {
+								if case .failure = result {
 									errorOccurred = true
 								}
 							}
@@ -298,10 +309,26 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func processStories(account: Account, stories: [NewsBlurStory]?, completion: @escaping DatabaseCompletionBlock) {
-		let parsedItems = mapStoriesToParsedItems(stories: stories)
-		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true, completion: completion)
+	func processStories(account: Account, stories: [NewsBlurStory]?, since: Date? = nil, completion: @escaping (Result<Bool, DatabaseError>) -> Void) {
+		let parsedItems = mapStoriesToParsedItems(stories: stories).filter {
+			guard let datePublished = $0.datePublished, let since = since else {
+				return true
+			}
+
+			return datePublished >= since
+		}
+		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues {
+			Set($0)
+		}
+
+		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { error in
+			if let error = error {
+				completion(.failure(error))
+				return
+			}
+
+			completion(.success(!webFeedIDsAndItems.isEmpty))
+		}
 	}
 
 	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> ()) {
@@ -383,13 +410,43 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> ()) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		caller.addURL(url) { result in
+			self.refreshProgress.completeTask()
+
+			switch result {
+			case .success(let feed):
+				self.createFeed(account: account, feed: feed, name: name, container: container, completion: completion)
+			case .failure(let error):
+				DispatchQueue.main.async {
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
+				}
+			}
+		}
 	}
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
 		completion(.success(()))
 	}
 
-	func addWebFeed(for account: Account, with: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+		guard let folder = container as? Folder else {
+			DispatchQueue.main.async {
+				if let account = container as? Account {
+					account.addFeedIfNotInAnyFolder(feed)
+				}
+				completion(.success(()))
+			}
+
+			return
+		}
+
+		let folderName = folder.name ?? ""
+		saveFolderRelationship(for: feed, withFolderName: folderName, id: folderName)
+		folder.addWebFeed(feed)
+
 		completion(.success(()))
 	}
 

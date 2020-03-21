@@ -9,33 +9,12 @@
 import Foundation
 import RSWeb
 
-protocol NewsBlurDataConvertible {
-	var asData: Data? { get }
-}
-
-enum NewsBlurError: LocalizedError {
-	case general(message: String)
-	case invalidParameter
-	case unknown
-
-	var errorDescription: String? {
-		switch self {
-		case .general(let message):
-			return message
-		case .invalidParameter:
-			return "There was an invalid parameter passed"
-		case .unknown:
-			return "An unknown error occurred"
-		}
-	}
-}
-
 final class NewsBlurAPICaller: NSObject {
 	static let SessionIdCookie = "newsblur_sessionid"
 
-	private let baseURL = URL(string: "https://www.newsblur.com/")!
-	private var transport: Transport!
-	private var suspended = false
+	let baseURL = URL(string: "https://www.newsblur.com/")!
+	var transport: Transport!
+	var suspended = false
 
 	var credentials: Credentials?
 	weak var accountMetadata: AccountMetadata?
@@ -56,15 +35,7 @@ final class NewsBlurAPICaller: NSObject {
 	}
 
 	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		let url = baseURL.appendingPathComponent("api/login")
-		let request = URLRequest(url: url, credentials: credentials)
-
-		transport.send(request: request, resultType: NewsBlurLoginResponse.self) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
+		requestData(endpoint: "api/login", resultType: NewsBlurLoginResponse.self) { result in
 			switch result {
 			case .success(let response, let payload):
 				guard let url = response.url, let headerFields = response.allHeaderFields as? [String: String], payload?.code != -1 else {
@@ -97,22 +68,7 @@ final class NewsBlurAPICaller: NSObject {
 	}
 
 	func logout(completion: @escaping (Result<Void, Error>) -> Void) {
-		let url = baseURL.appendingPathComponent("api/logout")
-		let request = URLRequest(url: url, credentials: credentials)
-
-		transport.send(request: request) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		requestData(endpoint: "api/logout", completion: completion)
 	}
 
 	func retrieveFeeds(completion: @escaping (Result<([NewsBlurFeed]?, [NewsBlurFolder]?), Error>) -> Void) {
@@ -123,18 +79,7 @@ final class NewsBlurAPICaller: NSObject {
 					URLQueryItem(name: "update_counts", value: "false"),
 				])
 
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-
-		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, resultType: NewsBlurFeedsResponse.self) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
+		requestData(callURL: url, resultType: NewsBlurFeedsResponse.self) { result in
 			switch result {
 			case .success((_, let payload)):
 				completion(.success((payload?.feeds, payload?.folders)))
@@ -144,92 +89,18 @@ final class NewsBlurAPICaller: NSObject {
 		}
 	}
 
-	func retrieveUnreadStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
-		retrieveStoryHashes(endpoint: "reader/unread_story_hashes", completion: completion)
-	}
-
-	func retrieveStarredStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
-		retrieveStoryHashes(endpoint: "reader/starred_story_hashes", completion: completion)
-	}
-
-	func retrieveStories(hashes: [NewsBlurStoryHash], completion: @escaping (Result<[NewsBlurStory]?, Error>) -> Void) {
-		let url = baseURL
-				.appendingPathComponent("reader/river_stories")
-				.appendingQueryItem(.init(name: "include_hidden", value: "true"))?
-				.appendingQueryItems(hashes.map {
-					URLQueryItem(name: "h", value: $0.hash)
-				})
-
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-
-		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, resultType: NewsBlurStoriesResponse.self) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
-			switch result {
-			case .success((_, let payload)):
-				completion(.success(payload?.stories))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-
-	func markAsUnread(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendUpdates(endpoint: "reader/mark_story_hash_as_unread", payload: NewsBlurStoryStatusChange(hashes: hashes), completion: completion)
-	}
-
-	func markAsRead(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendUpdates(endpoint: "reader/mark_story_hashes_as_read", payload: NewsBlurStoryStatusChange(hashes: hashes), completion: completion)
-	}
-
-	func star(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendUpdates(endpoint: "reader/mark_story_hash_as_starred", payload: NewsBlurStoryStatusChange(hashes: hashes), completion: completion)
-	}
-
-	func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendUpdates(endpoint: "reader/mark_story_hash_as_unstarred", payload: NewsBlurStoryStatusChange(hashes: hashes), completion: completion)
-	}
-
-	func addFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		sendUpdates(endpoint: "reader/add_folder", payload: NewsBlurFolderChange.add(name), completion: completion)
-	}
-
-	func renameFolder(with folder: String, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		sendUpdates(endpoint: "reader/rename_folder", payload: NewsBlurFolderChange.rename(folder, name), completion: completion)
-	}
-
-	func removeFolder(named name: String, feedIDs: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		sendUpdates(endpoint: "reader/delete_folder", payload: NewsBlurFolderChange.delete(name, feedIDs), completion: completion)
-	}
-}
-
-extension NewsBlurAPICaller {
-	private func retrieveStoryHashes(endpoint: String, completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
+	func retrieveStoryHashes(endpoint: String, completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent(endpoint)
 				.appendingQueryItems([
 					URLQueryItem(name: "include_timestamps", value: "true"),
 				])
 
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-
-		let request = URLRequest(url: callURL, credentials: credentials)
-		transport.send(request: request, resultType: NewsBlurStoryHashesResponse.self, dateDecoding: .secondsSince1970) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
-
+		requestData(
+				callURL: url,
+				resultType: NewsBlurStoryHashesResponse.self,
+				dateDecoding: .secondsSince1970
+		) { result in
 			switch result {
 			case .success((_, let payload)):
 				let hashes = payload?.unread ?? payload?.starred
@@ -240,20 +111,124 @@ extension NewsBlurAPICaller {
 		}
 	}
 
-	private func sendUpdates(endpoint: String, payload: NewsBlurDataConvertible, completion: @escaping (Result<Void, Error>) -> Void) {
-		let callURL = baseURL.appendingPathComponent(endpoint)
+	func retrieveUnreadStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
+		retrieveStoryHashes(
+				endpoint: "reader/unread_story_hashes", 
+				completion: completion
+		)
+	}
 
-		var request = URLRequest(url: callURL, credentials: credentials)
-		request.httpBody = payload.asData
-		transport.send(request: request, method: HTTPMethod.post) { result in
-			if self.suspended {
-				completion(.failure(TransportError.suspended))
-				return
-			}
+	func retrieveStarredStoryHashes(completion: @escaping (Result<[NewsBlurStoryHash]?, Error>) -> Void) {
+		retrieveStoryHashes(
+				endpoint: "reader/starred_story_hashes", 
+				completion: completion
+		)
+	}
 
+	func retrieveStories(feedID: String, page: Int, completion: @escaping (Result<[NewsBlurStory]?, Error>) -> Void) {
+		let url = baseURL
+				.appendingPathComponent("reader/feed/\(feedID)")
+				.appendingQueryItems([
+					URLQueryItem(name: "page", value: String(page)),
+					URLQueryItem(name: "order", value: "newest"),
+					URLQueryItem(name: "read_filter", value: "all"),
+					URLQueryItem(name: "include_hidden", value: "true"),
+					URLQueryItem(name: "include_story_content", value: "true"),
+				])
+
+		requestData(callURL: url, resultType: NewsBlurStoriesResponse.self) { result in
 			switch result {
-			case .success:
-				completion(.success(()))
+			case .success((_, let payload)):
+				completion(.success(payload?.stories))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func retrieveStories(hashes: [NewsBlurStoryHash], completion: @escaping (Result<[NewsBlurStory]?, Error>) -> Void) {
+		let url = baseURL
+				.appendingPathComponent("reader/river_stories")
+				.appendingQueryItem(.init(name: "include_hidden", value: "true"))?
+				.appendingQueryItems(hashes.map {
+					URLQueryItem(name: "h", value: $0.hash)
+				})
+
+		requestData(callURL: url, resultType: NewsBlurStoriesResponse.self) { result in
+			switch result {
+			case .success((_, let payload)):
+				completion(.success(payload?.stories))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func markAsUnread(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/mark_story_hash_as_unread", 
+				payload: NewsBlurStoryStatusChange(hashes: hashes),
+				completion: completion
+		)
+	}
+
+	func markAsRead(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/mark_story_hashes_as_read", 
+				payload: NewsBlurStoryStatusChange(hashes: hashes),
+				completion: completion
+		)
+	}
+
+	func star(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/mark_story_hash_as_starred", 
+				payload: NewsBlurStoryStatusChange(hashes: hashes),
+				completion: completion
+		)
+	}
+
+	func unstar(hashes: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/mark_story_hash_as_unstarred", 
+				payload: NewsBlurStoryStatusChange(hashes: hashes),
+				completion: completion
+		)
+	}
+
+	func addFolder(named name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/add_folder", 
+				payload: NewsBlurFolderChange.add(name),
+				completion: completion
+		)
+	}
+
+	func renameFolder(with folder: String, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/rename_folder", 
+				payload: NewsBlurFolderChange.rename(folder, name),
+				completion: completion
+		)
+	}
+
+	func removeFolder(named name: String, feedIDs: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/delete_folder", 
+				payload: NewsBlurFolderChange.delete(name, feedIDs),
+				completion: completion
+		)
+	}
+
+	func addURL(_ url: String, completion: @escaping (Result<NewsBlurFeed?, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/add_url", 
+				payload: NewsBlurFeedChange.add(url),
+				resultType: NewsBlurAddURLResponse.self
+		) { result in
+			switch result {
+			case .success(_, let payload):
+				completion(.success(payload?.feed))
 			case .failure(let error):
 				completion(.failure(error))
 			}
