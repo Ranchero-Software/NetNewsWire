@@ -220,15 +220,43 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func addURL(_ url: String, completion: @escaping (Result<NewsBlurFeed?, Error>) -> Void) {
+	func addURL(_ url: String, folder: String?, completion: @escaping (Result<NewsBlurFeed?, Error>) -> Void) {
 		sendUpdates(
 				endpoint: "reader/add_url", 
-				payload: NewsBlurFeedChange.add(url),
+				payload: NewsBlurFeedChange.add(url, folder),
 				resultType: NewsBlurAddURLResponse.self
 		) { result in
 			switch result {
 			case .success(_, let payload):
 				completion(.success(payload?.feed))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func renameFeed(feedID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/rename_feed", 
+				payload: NewsBlurFeedChange.rename(feedID, newName)
+		) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func deleteFeed(feedID: String, folder: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/delete_feed",
+				payload: NewsBlurFeedChange.delete(feedID, folder)
+		) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
 			}

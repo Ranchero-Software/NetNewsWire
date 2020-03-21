@@ -471,4 +471,39 @@ extension NewsBlurAccountDelegate {
 			}
 		}
 	}
+
+	func deleteFeed(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
+		// This error should never happen
+		guard let feedID = feed.subscriptionID else {
+			completion(.failure(NewsBlurError.invalidParameter))
+			return
+		}
+
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		let folderName = (container as? Folder)?.name
+		caller.deleteFeed(feedID: feedID, folder: folderName) { result in
+			self.refreshProgress.completeTask()
+
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					account.clearWebFeedMetadata(feed)
+					account.removeWebFeed(feed)
+					if let folders = account.folders {
+						for folder in folders where folderName != nil && folder.name == folderName {
+							folder.removeWebFeed(feed)
+						}
+					}
+					completion(.success(()))
+				}
+
+			case .failure(let error):
+				DispatchQueue.main.async {
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
+				}
+			}
+		}
+	}
 }

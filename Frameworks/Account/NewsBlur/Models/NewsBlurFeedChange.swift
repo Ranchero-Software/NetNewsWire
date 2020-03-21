@@ -9,7 +9,9 @@
 import Foundation
 
 enum NewsBlurFeedChange {
-	case add(String)
+	case add(String, String?)
+	case rename(String, String)
+	case delete(String, String?)
 }
 
 extension NewsBlurFeedChange: NewsBlurDataConvertible {
@@ -17,11 +19,21 @@ extension NewsBlurFeedChange: NewsBlurDataConvertible {
 		var postData = URLComponents()
 		postData.queryItems = {
 			switch self {
-			case .add(let url):
+			case .add(let url, let folder):
 				return [
 					URLQueryItem(name: "url", value: url),
-					URLQueryItem(name: "folder", value: ""), // root folder
+					folder != nil ? URLQueryItem(name: "folder", value: folder) : nil
+				].compactMap { $0 }
+			case .rename(let feedID, let newName):
+				return [
+					URLQueryItem(name: "feed_id", value: feedID),
+					URLQueryItem(name: "feed_title", value: newName),
 				]
+			case .delete(let feedID, let folder):
+				return [
+					URLQueryItem(name: "feed_id", value: feedID),
+					folder != nil ? URLQueryItem(name: "in_folder", value: folder) : nil,
+				].compactMap { $0 }
 			}
 		}()
 
