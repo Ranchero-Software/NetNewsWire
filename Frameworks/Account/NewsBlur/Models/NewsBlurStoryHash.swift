@@ -15,8 +15,8 @@ typealias NewsBlurStoryHash = NewsBlurStoryHashesResponse.StoryHash
 struct NewsBlurStoryHashesResponse: Decodable {
 	typealias StoryHashDictionary = [String: [StoryHash]]
 
-	var unread: StoryHashDictionary?
-	var starred: StoryHashDictionary?
+	var unread: [StoryHash]?
+	var starred: [StoryHash]?
 
 	struct StoryHash: Hashable, Codable {
 		var hash: String
@@ -35,12 +35,13 @@ extension NewsBlurStoryHashesResponse {
 
 		// Parse unread
 		if let unreadContainer = try? container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .unread) {
-			self.unread = try NewsBlurStoryHashesResponse.extractHashes(container: unreadContainer)
+			let storyHashes = try NewsBlurStoryHashesResponse.extractHashes(container: unreadContainer)
+			self.unread = storyHashes.values.flatMap { $0 }
 		}
 
 		// Parse starred
-		if let starredContainer = try? container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .starred) {
-			self.starred = try NewsBlurStoryHashesResponse.extractHashes(container: starredContainer)
+		if let starredContainer = try? container.nestedUnkeyedContainer(forKey: .starred) {
+			self.starred = try NewsBlurStoryHashesResponse.extractArray(container: starredContainer)
 		}
 	}
 
@@ -60,5 +61,20 @@ extension NewsBlurStoryHashesResponse {
 		}
 
 		return dict
+	}
+
+	static func extractArray(container: UnkeyedDecodingContainer) throws -> [StoryHash] {
+		var hashes: [StoryHash] = []
+		var hashArrayContainer = container
+		while !hashArrayContainer.isAtEnd {
+			var hashContainer = try hashArrayContainer.nestedUnkeyedContainer()
+			let hash = try hashContainer.decode(String.self)
+			let timestamp = try (hashContainer.decode(String.self) as NSString).doubleValue
+			let storyHash = StoryHash(hash: hash, timestamp: Date(timeIntervalSince1970: timestamp))
+
+			hashes.append(storyHash)
+		}
+
+		return hashes
 	}
 }

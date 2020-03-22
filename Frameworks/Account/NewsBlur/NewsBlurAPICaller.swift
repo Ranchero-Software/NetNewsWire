@@ -104,7 +104,7 @@ final class NewsBlurAPICaller: NSObject {
 			switch result {
 			case .success((_, let payload)):
 				let hashes = payload?.unread ?? payload?.starred
-				completion(.success(hashes?.values.flatMap { $0 }))
+				completion(.success(hashes))
 			case .failure(let error):
 				completion(.failure(error))
 			}
