@@ -222,7 +222,7 @@ extension NewsBlurAccountDelegate {
 
 		caller.retrieveStories(hashes: hashesToFetch) { result in
 			switch result {
-			case .success(let stories):
+			case .success((let stories, let date)):
 				self.processStories(account: account, stories: stories) { result in
 					self.refreshProgress.completeTask()
 
@@ -231,7 +231,7 @@ extension NewsBlurAccountDelegate {
 						return
 					}
 
-					self.refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: updateFetchDate) { result in
+					self.refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: date) { result in
 						os_log(.debug, log: self.log, "Done refreshing stories.")
 						switch result {
 						case .success:
@@ -401,7 +401,7 @@ extension NewsBlurAccountDelegate {
 
 		caller.retrieveStories(feedID: feed.webFeedID, page: page) { result in
 			switch result {
-			case .success(let stories):
+			case .success((let stories, _)):
 				// No more stories
 				guard let stories = stories, stories.count > 0 else {
 					self.refreshProgress.completeTask()
@@ -410,7 +410,14 @@ extension NewsBlurAccountDelegate {
 					return
 				}
 
-				let since = Calendar.current.date(byAdding: .month, value: -3, to: Date())
+				let since: Date? = {
+					if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
+						return lastArticleFetch
+					} else {
+						return Calendar.current.date(byAdding: .month, value: -3, to: Date())
+					}
+				}()
+
 				self.processStories(account: account, stories: stories, since: since) { result in
 					self.refreshProgress.completeTask()
 

@@ -125,7 +125,7 @@ final class NewsBlurAPICaller: NSObject {
 		)
 	}
 
-	func retrieveStories(feedID: String, page: Int, completion: @escaping (Result<[NewsBlurStory]?, Error>) -> Void) {
+	func retrieveStories(feedID: String, page: Int, completion: @escaping (Result<([NewsBlurStory]?, Date?), Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/feed/\(feedID)")
 				.appendingQueryItems([
@@ -138,15 +138,15 @@ final class NewsBlurAPICaller: NSObject {
 
 		requestData(callURL: url, resultType: NewsBlurStoriesResponse.self) { result in
 			switch result {
-			case .success((_, let payload)):
-				completion(.success(payload?.stories))
+			case .success(let (response, payload)):
+				completion(.success((payload?.stories, HTTPDateInfo(urlResponse: response)?.date)))
 			case .failure(let error):
 				completion(.failure(error))
 			}
 		}
 	}
 
-	func retrieveStories(hashes: [NewsBlurStoryHash], completion: @escaping (Result<[NewsBlurStory]?, Error>) -> Void) {
+	func retrieveStories(hashes: [NewsBlurStoryHash], completion: @escaping (Result<([NewsBlurStory]?, Date?), Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/river_stories")
 				.appendingQueryItem(.init(name: "include_hidden", value: "true"))?
@@ -156,8 +156,8 @@ final class NewsBlurAPICaller: NSObject {
 
 		requestData(callURL: url, resultType: NewsBlurStoriesResponse.self) { result in
 			switch result {
-			case .success((_, let payload)):
-				completion(.success(payload?.stories))
+			case .success(let (response, payload)):
+				completion(.success((payload?.stories, HTTPDateInfo(urlResponse: response)?.date)))
 			case .failure(let error):
 				completion(.failure(error))
 			}

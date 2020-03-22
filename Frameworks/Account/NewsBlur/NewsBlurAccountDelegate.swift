@@ -273,7 +273,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 					self.caller.retrieveStories(hashes: chunk) { result in
 
 						switch result {
-						case .success(let stories):
+						case .success((let stories, _)):
 							self.processStories(account: account, stories: stories) { result in
 								group.leave()
 								if case .failure = result {
