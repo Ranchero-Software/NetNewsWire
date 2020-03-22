@@ -479,13 +479,22 @@ extension NewsBlurAccountDelegate {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
-					account.clearWebFeedMetadata(feed)
-					account.removeWebFeed(feed)
+					let feedID = feed.webFeedID
+
+					if folderName == nil {
+						account.removeWebFeed(feed)
+					}
+
 					if let folders = account.folders {
 						for folder in folders where folderName != nil && folder.name == folderName {
 							folder.removeWebFeed(feed)
 						}
 					}
+
+					if account.flattenedWebFeeds().first(where: { $0.webFeedID == feedID }) == nil {
+						account.clearWebFeedMetadata(feed)
+					}
+
 					completion(.success(()))
 				}
 
