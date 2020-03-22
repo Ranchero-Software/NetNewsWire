@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import CloudKit
+import os.log
+import SyncDatabase
 import RSCore
 import RSParser
 import Articles
@@ -18,6 +21,19 @@ public enum CloudKitAccountDelegateError: String, Error {
 
 final class CloudKitAccountDelegate: AccountDelegate {
 
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+
+	private let database: SyncDatabase
+	
+	private let container: CKContainer = {
+		let orgID = Bundle.main.object(forInfoDictionaryKey: "OrganizationIdentifier") as! String
+		return CKContainer(identifier: "iCloud.\(orgID).NetNewsWire")
+	}()
+	
+	private let accountZone: CloudKitAccountZone
+	
+	private let refresher = LocalAccountRefresher()
+
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
 	
@@ -25,10 +41,22 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	private let refresher = LocalAccountRefresher()
-
 	var refreshProgress: DownloadProgress {
 		return refresher.progress
+	}
+	
+//	init() {
+//		accountZone.startUp() { result in
+//			if case .failure(let error) = result {
+//				os_log(.error, log: self.log, "Account zone startup error: %@.", error.localizedDescription)
+//			}
+//		}
+//	}
+	
+	init(dataFolder: String) {
+		accountZone = CloudKitAccountZone(container: container)
+		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
+		database = SyncDatabase(databaseFilePath: databaseFilePath)
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {

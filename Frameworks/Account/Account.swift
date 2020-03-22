@@ -234,7 +234,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
 		case .cloudKit:
-			self.delegate = CloudKitAccountDelegate()
+			self.delegate = CloudKitAccountDelegate(dataFolder: dataFolder)
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .freshRSS:
@@ -245,8 +245,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = FeedWranglerAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .newsBlur:
 			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
-		default:
-			return nil
 		}
 
 		self.delegate.accountMetadata = metadata

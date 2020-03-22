@@ -64,6 +64,12 @@
 		51E148EC234B8FFC0004F7A5 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */; };
 		51E3EB41229AF61B00645299 /* AccountError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB40229AF61B00645299 /* AccountError.swift */; };
 		51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E490352288C37100C791F0 /* FeedbinDate.swift */; };
+		51E4DB2C242632DC0091EB5B /* CloudKitErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB2B242632DC0091EB5B /* CloudKitErrorHandler.swift */; };
+		51E4DB2E242633ED0091EB5B /* CloudKitZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */; };
+		51E4DB302426353D0091EB5B /* CloudKitAccountZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */; };
+		51E4DB3224264B470091EB5B /* WebFeed+CloudKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB3124264B470091EB5B /* WebFeed+CloudKit.swift */; };
+		51E4DB3424264CD50091EB5B /* Folder+CloudKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB3324264CD50091EB5B /* Folder+CloudKit.swift */; };
+		51E4DB362426693F0091EB5B /* CloudKitRecordConvertable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB352426693F0091EB5B /* CloudKitRecordConvertable.swift */; };
 		51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */; };
 		51E5959B228C781500FCC42B /* FeedbinStarredEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E5959A228C781500FCC42B /* FeedbinStarredEntry.swift */; };
 		552032F8229D5D5A009559E0 /* ReaderAPIEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032ED229D5D5A009559E0 /* ReaderAPIEntry.swift */; };
@@ -291,6 +297,12 @@
 		51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SyncDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51E3EB40229AF61B00645299 /* AccountError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountError.swift; sourceTree = "<group>"; };
 		51E490352288C37100C791F0 /* FeedbinDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinDate.swift; sourceTree = "<group>"; };
+		51E4DB2B242632DC0091EB5B /* CloudKitErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitErrorHandler.swift; sourceTree = "<group>"; };
+		51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitZone.swift; sourceTree = "<group>"; };
+		51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountZone.swift; sourceTree = "<group>"; };
+		51E4DB3124264B470091EB5B /* WebFeed+CloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebFeed+CloudKit.swift"; sourceTree = "<group>"; };
+		51E4DB3324264CD50091EB5B /* Folder+CloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+CloudKit.swift"; sourceTree = "<group>"; };
+		51E4DB352426693F0091EB5B /* CloudKitRecordConvertable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitRecordConvertable.swift; sourceTree = "<group>"; };
 		51E59598228C77BC00FCC42B /* FeedbinUnreadEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinUnreadEntry.swift; sourceTree = "<group>"; };
 		51E5959A228C781500FCC42B /* FeedbinStarredEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinStarredEntry.swift; sourceTree = "<group>"; };
 		552032ED229D5D5A009559E0 /* ReaderAPIEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderAPIEntry.swift; sourceTree = "<group>"; };
@@ -504,6 +516,12 @@
 			isa = PBXGroup;
 			children = (
 				5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */,
+				51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */,
+				51E4DB2B242632DC0091EB5B /* CloudKitErrorHandler.swift */,
+				51E4DB352426693F0091EB5B /* CloudKitRecordConvertable.swift */,
+				51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */,
+				51E4DB3324264CD50091EB5B /* Folder+CloudKit.swift */,
+				51E4DB3124264B470091EB5B /* WebFeed+CloudKit.swift */,
 			);
 			path = CloudKit;
 			sourceTree = "<group>";
@@ -1052,6 +1070,7 @@
 			files = (
 				84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */,
 				552032F9229D5D5A009559E0 /* ReaderAPISubscription.swift in Sources */,
+				51E4DB2E242633ED0091EB5B /* CloudKitZone.swift in Sources */,
 				84C3654A1F899F3B001EC85C /* CombinedRefreshProgress.swift in Sources */,
 				9EC688EE232C58E800A8D0A2 /* OAuthAuthorizationCodeGranting.swift in Sources */,
 				9EEAE071235D019B00E3FEE4 /* FeedlyGetStreamContentsService.swift in Sources */,
@@ -1089,9 +1108,11 @@
 				51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */,
 				9EEAE06E235D002D00E3FEE4 /* FeedlyGetCollectionsService.swift in Sources */,
 				5165D72922835F7A00D9D53D /* FeedSpecifier.swift in Sources */,
+				51E4DB3424264CD50091EB5B /* Folder+CloudKit.swift in Sources */,
 				9E85C8ED2367020700D0F1F7 /* FeedlyGetEntriesService.swift in Sources */,
 				9E5EC15923E01D8A00A4E503 /* FeedlyCollectionParser.swift in Sources */,
 				9E84DC492359A73600D6E809 /* FeedlyCheckpointOperation.swift in Sources */,
+				51E4DB3224264B470091EB5B /* WebFeed+CloudKit.swift in Sources */,
 				9E85C8EB236700E600D0F1F7 /* FeedlyGetEntriesOperation.swift in Sources */,
 				9E1D154D233370D800F4944C /* FeedlySyncAllOperation.swift in Sources */,
 				9E44C90F23C6FF3600CCC286 /* FeedlyIngestStreamArticleIdsOperation.swift in Sources */,
@@ -1132,6 +1153,7 @@
 				51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */,
 				552032F8229D5D5A009559E0 /* ReaderAPIEntry.swift in Sources */,
 				552032FB229D5D5A009559E0 /* ReaderAPITag.swift in Sources */,
+				51E4DB362426693F0091EB5B /* CloudKitRecordConvertable.swift in Sources */,
 				5165D72822835F7800D9D53D /* FeedFinder.swift in Sources */,
 				9EBD49C023C67602005AD5CD /* FeedlyDownloadArticlesOperation.swift in Sources */,
 				51D58755227F53BE00900287 /* FeedbinTag.swift in Sources */,
@@ -1154,6 +1176,7 @@
 				5165D72A22835F7D00D9D53D /* HTMLFeedFinder.swift in Sources */,
 				841974011F6DD1EC006346C4 /* Folder.swift in Sources */,
 				510BD111232C3801002692E4 /* AccountMetadataFile.swift in Sources */,
+				51E4DB302426353D0091EB5B /* CloudKitAccountZone.swift in Sources */,
 				3B826DAD2385C81C00FC1ADB /* FeedWranglerFeedItemsRequest.swift in Sources */,
 				846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */,
 				515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */,
@@ -1162,6 +1185,7 @@
 				51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */,
 				9E1D1555233431A600F4944C /* FeedlyOperation.swift in Sources */,
 				84F1F06E2243524700DA0616 /* AccountMetadata.swift in Sources */,
+				51E4DB2C242632DC0091EB5B /* CloudKitErrorHandler.swift in Sources */,
 				9EF1B10723590D61000A486A /* FeedlyGetStreamIdsOperation.swift in Sources */,
 				84245C851FDDD8CB0074AFBB /* FeedbinSubscription.swift in Sources */,
 				9EF2602C23C91FFE006D160C /* FeedlyGetUpdatedArticleIdsOperation.swift in Sources */,

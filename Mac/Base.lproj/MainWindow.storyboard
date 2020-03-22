@@ -182,6 +182,19 @@
                                         <action selector="toggleArticleExtractor:" target="B8D-0N-5wS" id="ZKQ-SK-5YJ"/>
                                     </connections>
                                 </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="ACB5604B-4543-4985-BA1A-54ADA9DF5845" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="SsT-iS-pKE">
+                                    <button key="view" verticalHuggingPriority="750" id="9At-yP-WNY">
+                                        <rect key="frame" x="7" y="14" width="42" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="cleanUp" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Zwg-74-ZkZ">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <connections>
+                                        <action selector="cleanUp:" target="Oky-zY-oP4" id="UCH-DG-yk4"/>
+                                    </connections>
+                                </toolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
                                 <toolbarItem reference="Skp-5r-70Q"/>
@@ -607,6 +620,7 @@
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
+        <image name="cleanUp" width="149" height="113"/>
         <image name="filterInactive" width="100" height="101"/>
         <image name="markAllRead" width="22" height="19"/>
         <image name="markRead" width="19" height="19"/>
