@@ -66,8 +66,9 @@ extension NewsBlurAccountDelegate {
 		}()
 
 		// Make any folders NewsBlur has, but we don't
+		// Ignore account-level folder
 		folderNames.forEach { folderName in
-			if !accountFolderNames.contains(folderName) {
+			if !accountFolderNames.contains(folderName) && folderName != " " {
 				_ = account.ensureFolder(with: folderName)
 			}
 		}
@@ -133,7 +134,7 @@ extension NewsBlurAccountDelegate {
 		// Set up some structures to make syncing easier
 		let relationships = folders.map({ $0.asRelationships }).flatMap { $0 }
 		let folderDict = nameToFolderDictionary(with: account.folders)
-		let foldersDict = relationships.reduce([String: [NewsBlurFolderRelationship]]()) { (dict, relationship) in
+		let newsBlurFolderDict = relationships.reduce([String: [NewsBlurFolderRelationship]]()) { (dict, relationship) in
 			var feedInFolders = dict
 			if var feedInFolder = feedInFolders[relationship.folderName] {
 				feedInFolder.append(relationship)
@@ -145,14 +146,14 @@ extension NewsBlurAccountDelegate {
 		}
 
 		// Sync the folders
-		for (folderName, folderRelationships) in foldersDict {
+		for (folderName, folderRelationships) in newsBlurFolderDict {
 			guard let folder = folderDict[folderName] else { return }
 
-			let folderFeedIDs = folderRelationships.map { String($0.feedID) }
+			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
 
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelWebFeeds {
-				if !folderFeedIDs.contains(feed.webFeedID) {
+				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
 					folder.removeWebFeed(feed)
 					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					account.addWebFeed(feed)
@@ -171,16 +172,6 @@ extension NewsBlurAccountDelegate {
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: relationship.folderName)
 					folder.addWebFeed(feed)
 				}
-			}
-
-		}
-
-		let folderFeedIDs = Set(relationships.map { String($0.feedID) })
-
-		// Remove all feeds from the account container that have a tag
-		for feed in account.topLevelWebFeeds {
-			if folderFeedIDs.contains(feed.webFeedID) {
-				account.removeWebFeed(feed)
 			}
 		}
 	}

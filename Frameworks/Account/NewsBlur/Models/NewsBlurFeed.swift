@@ -34,7 +34,7 @@ struct NewsBlurAddURLResponse: Decodable {
 	let feed: NewsBlurFeed?
 }
 
-struct NewsBlurFolderRelationship: Codable {
+struct NewsBlurFolderRelationship {
 	let folderName: String
 	let feedID: Int
 }
@@ -71,8 +71,7 @@ extension NewsBlurFeedsResponse {
 		var folders: [Folder] = []
 		let folderContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .folders)
 
-		// Skip "everything" folder
-		for key in folderContainer.allKeys where key.stringValue != " " {
+		for key in folderContainer.allKeys {
 			let subscriptionIds = try folderContainer.decode([Int].self, forKey: key)
 			let folder = Folder(name: key.stringValue, feedIDs: subscriptionIds)
 
