@@ -65,5 +65,7 @@
 	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
 	<key>UserAgent</key>
 	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
+	<key>OrganizationIdentifier</key>
+	<string>$(ORGANIZATION_IDENTIFIER)</string>
 </dict>
 </plist>
