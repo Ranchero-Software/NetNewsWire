@@ -147,9 +147,18 @@ extension NewsBlurAccountDelegate {
 
 		// Sync the folders
 		for (folderName, folderRelationships) in newsBlurFolderDict {
-			guard let folder = folderDict[folderName] else { return }
-
 			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
+
+			// Handle account-level folder
+			if folderName == " " {
+				for feed in account.topLevelWebFeeds {
+					if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
+						account.removeWebFeed(feed)
+					}
+				}
+			}
+
+			guard let folder = folderDict[folderName] else { return }
 
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelWebFeeds {
