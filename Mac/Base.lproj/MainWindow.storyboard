@@ -182,7 +182,7 @@
                                         <action selector="toggleArticleExtractor:" target="B8D-0N-5wS" id="ZKQ-SK-5YJ"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="ACB5604B-4543-4985-BA1A-54ADA9DF5845" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="SsT-iS-pKE">
+                                <toolbarItem implicitItemIdentifier="ACB5604B-4543-4985-BA1A-54ADA9DF5845" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="SsT-iS-pKE" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="9At-yP-WNY">
                                         <rect key="frame" x="7" y="14" width="42" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
