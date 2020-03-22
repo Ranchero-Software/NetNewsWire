@@ -59,26 +59,31 @@ extension NewsBlurFeedsResponse {
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
-		// Parse feeds
-		var feeds: [NewsBlurFeed] = []
-		let feedContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .feeds)
-		try feedContainer.allKeys.forEach { key in
-			let subscription = try feedContainer.decode(NewsBlurFeed.self, forKey: key)
-			feeds.append(subscription)
-		}
+		// Tricky part: Some feeds listed in `feeds` don't exist in `folders` for some reason
+		// They don't show up on both mobile/web app, so let's filter them out
+		var visibleFeedIDs: [Int] = []
 
 		// Parse folders
 		var folders: [Folder] = []
 		let folderContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .folders)
 
 		for key in folderContainer.allKeys {
-			let subscriptionIds = try folderContainer.decode([Int].self, forKey: key)
-			let folder = Folder(name: key.stringValue, feedIDs: subscriptionIds)
+			let feedIDs = try folderContainer.decode([Int].self, forKey: key)
+			let folder = Folder(name: key.stringValue, feedIDs: feedIDs)
 
 			folders.append(folder)
+			visibleFeedIDs.append(contentsOf: feedIDs)
 		}
 
-		self.feeds = feeds
+		// Parse feeds
+		var feeds: [NewsBlurFeed] = []
+		let feedContainer = try container.nestedContainer(keyedBy: NewsBlurGenericCodingKeys.self, forKey: .feeds)
+		try feedContainer.allKeys.forEach { key in
+			let feed = try feedContainer.decode(NewsBlurFeed.self, forKey: key)
+			feeds.append(feed)
+		}
+
+		self.feeds = feeds.filter { visibleFeedIDs.contains($0.feedID) }
 		self.folders = folders
 	}
 }

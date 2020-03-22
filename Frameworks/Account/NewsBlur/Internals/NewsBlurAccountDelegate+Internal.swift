@@ -80,13 +80,13 @@ extension NewsBlurAccountDelegate {
 
 		os_log(.debug, log: log, "Syncing feeds with %ld feeds.", feeds.count)
 
-		let subFeedIds = feeds.map { String($0.feedID) }
+		let newsBlurFeedIds = feeds.map { String($0.feedID) }
 
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelWebFeeds {
-					if !subFeedIds.contains(feed.webFeedID) {
+					if !newsBlurFeedIds.contains(feed.webFeedID) {
 						folder.removeWebFeed(feed)
 					}
 				}
@@ -94,7 +94,7 @@ extension NewsBlurAccountDelegate {
 		}
 
 		for feed in account.topLevelWebFeeds {
-			if !subFeedIds.contains(feed.webFeedID) {
+			if !newsBlurFeedIds.contains(feed.webFeedID) {
 				account.removeWebFeed(feed)
 			}
 		}
@@ -491,7 +491,7 @@ extension NewsBlurAccountDelegate {
 						}
 					}
 
-					if account.flattenedWebFeeds().first(where: { $0.webFeedID == feedID }) == nil {
+					if account.existingWebFeed(withWebFeedID: feedID) != nil {
 						account.clearWebFeedMetadata(feed)
 					}
 
