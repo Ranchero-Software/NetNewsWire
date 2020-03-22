@@ -145,7 +145,7 @@ private extension KeyboardManager {
 		keys.append(KeyboardManager.createKeyCommand(title: markAllAsReadTitle, action: "markAllAsRead:", input: "k", modifiers: [.command]))
 
 		let cleanUp = NSLocalizedString("Clean Up", comment: "Clean Up")
-		keys.append(KeyboardManager.createKeyCommand(title: cleanUp, action: "cleanUp:", input: "`", modifiers: [.command]))
+		keys.append(KeyboardManager.createKeyCommand(title: cleanUp, action: "cleanUp:", input: "'", modifiers: [.command]))
 
 		let toggleReadFeedsFilter = NSLocalizedString("Toggle Read Feeds Filter", comment: "Toggle Read Feeds Filter")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleReadFeedsFilter, action: "toggleReadFeedsFilter:", input: "f", modifiers: [.command, .shift]))
