@@ -419,13 +419,7 @@ extension NewsBlurAccountDelegate {
 					return
 				}
 
-				let since: Date? = {
-					if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
-						return lastArticleFetch
-					} else {
-						return Calendar.current.date(byAdding: .month, value: -3, to: Date())
-					}
-				}()
+				let since: Date? = Calendar.current.date(byAdding: .month, value: -3, to: Date())
 
 				self.processStories(account: account, stories: stories, since: since) { result in
 					self.refreshProgress.completeTask()
