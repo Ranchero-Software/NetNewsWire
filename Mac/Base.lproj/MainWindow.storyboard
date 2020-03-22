@@ -432,12 +432,87 @@
         <scene sceneID="zUD-i8-QYC">
             <objects>
                 <viewController id="36G-bQ-b96" customClass="TimelineContainerViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="Dnl-L5-xFP" customClass="TimelineContainerView" customModule="NetNewsWire" customModuleProvider="target">
+                    <view key="view" id="Dnl-L5-xFP">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
+                                <rect key="frame" x="8" y="177" width="49" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="DoO-KI-ena"/>
+                                </constraints>
+                                <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" tag="1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="bl0-6I-cH2">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                    <font key="font" metaFont="menu" size="11"/>
+                                    <menu key="menu" id="dN0-S2-uqU">
+                                        <items>
+                                            <menuItem title="Sort" tag="1" hidden="YES" id="4BZ-ya-evy">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Newest To Oldest" state="on" tag="2" id="40c-kt-vhO">
+                                                <connections>
+                                                    <action selector="sortByNewestArticleOnTop:" target="Ebq-4s-EwK" id="vYg-MZ-zve"/>
+                                                </connections>
+                                            </menuItem>
+                                            <menuItem title="Oldest To Newest" tag="3" id="sOF-Ez-vIL">
+                                                <connections>
+                                                    <action selector="sortByOldestArticleOnTop:" target="Ebq-4s-EwK" id="KFG-M7-blB"/>
+                                                </connections>
+                                            </menuItem>
+                                            <menuItem isSeparatorItem="YES" id="xQP-gm-iO9"/>
+                                            <menuItem title="Group by Feed" tag="4" id="YSR-5C-Yjd">
+                                                <connections>
+                                                    <action selector="groupByFeedToggled:" target="Ebq-4s-EwK" id="4y9-5l-ToF"/>
+                                                </connections>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iA5-go-AO0">
+                                <rect key="frame" x="428" y="179" width="14" height="14"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="14" id="FbQ-4n-ThT"/>
+                                    <constraint firstAttribute="height" constant="14" id="dlW-82-T6N"/>
+                                </constraints>
+                                <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="filterInactive" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="j7d-36-DO5">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <color key="contentTintColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                <connections>
+                                    <action selector="toggleReadArticlesFilter:" target="Ebq-4s-EwK" id="tcC-72-Npk"/>
+                                </connections>
+                            </button>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="7p6-pA-iw6">
+                                <rect key="frame" x="0.0" y="171" width="450" height="5"/>
+                            </box>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Zpk-pq-9nW" customClass="TimelineContainerView" customModule="NetNewsWire" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="173"/>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Zpk-pq-9nW" secondAttribute="trailing" id="67d-pI-I9C"/>
+                            <constraint firstAttribute="trailing" secondItem="iA5-go-AO0" secondAttribute="trailing" constant="8" id="9Dl-n9-vRI"/>
+                            <constraint firstItem="lSU-OC-sEC" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" constant="8" id="Ceb-sA-ECJ"/>
+                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="7p6-pA-iw6" secondAttribute="bottom" id="KCa-8b-a6y"/>
+                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="XF2-31-E1x"/>
+                            <constraint firstAttribute="trailing" secondItem="7p6-pA-iw6" secondAttribute="trailing" id="fG3-fe-Stb"/>
+                            <constraint firstAttribute="bottom" secondItem="Zpk-pq-9nW" secondAttribute="bottom" id="fyv-EG-PC8"/>
+                            <constraint firstItem="iA5-go-AO0" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="5" id="nM9-iA-OzY"/>
+                            <constraint firstItem="7p6-pA-iw6" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="pZU-jW-B1h"/>
+                            <constraint firstItem="7p6-pA-iw6" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="24" id="tUm-nX-Jce"/>
+                            <constraint firstItem="iA5-go-AO0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lSU-OC-sEC" secondAttribute="trailing" constant="8" id="yCg-gc-exN"/>
+                            <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="4" id="zay-ZJ-od3"/>
+                        </constraints>
                     </view>
                     <connections>
-                        <outlet property="containerView" destination="Dnl-L5-xFP" id="kYD-K2-FOj"/>
+                        <outlet property="containerView" destination="Zpk-pq-9nW" id="Kye-yX-Wyn"/>
+                        <outlet property="groupByFeedMenuItem" destination="YSR-5C-Yjd" id="1aN-9S-nE1"/>
+                        <outlet property="newestToOldestMenuItem" destination="40c-kt-vhO" id="AGa-fX-EVy"/>
+                        <outlet property="oldestToNewestMenuItem" destination="sOF-Ez-vIL" id="qSg-ST-ww9"/>
+                        <outlet property="readFilteredButton" destination="iA5-go-AO0" id="kQg-2g-zNZ"/>
+                        <outlet property="viewOptionsPopUpButton" destination="lSU-OC-sEC" id="Z8V-rm-n2m"/>
                     </connections>
                 </viewController>
                 <customObject id="Ebq-4s-EwK" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -503,6 +578,7 @@
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSShareTemplate" width="11" height="16"/>
+        <image name="filterInactive" width="100" height="101"/>
         <image name="markAllRead" width="22" height="19"/>
         <image name="markRead" width="19" height="19"/>
         <image name="newFolder" width="19" height="19"/>

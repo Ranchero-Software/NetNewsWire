@@ -17,10 +17,6 @@ extension NSImage.Name {
 
 struct AppAssets {
 
-	static var timelineStar: RSImage! = {
-		return RSImage(named: .timelineStar)
-	}()
-
 	static var accountCloudKit: RSImage! = {
 		return RSImage(named: "accountCloudKit")
 	}()
@@ -81,6 +77,14 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 
+	static var filterActive: RSImage = {
+		return RSImage(named: "filterActive")!
+	}()
+
+	static var filterInactive: RSImage = {
+		return RSImage(named: "filterInactive")!
+	}()
+
 	static var iconLightBackgroundColor: NSColor = {
 		return NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
 	}()
@@ -99,6 +103,10 @@ struct AppAssets {
 
 	static var starredFeedImage: IconImage = {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
+	}()
+
+	static var timelineStar: RSImage! = {
+		return RSImage(named: .timelineStar)
 	}()
 
 	static var todayFeedImage: IconImage = {
