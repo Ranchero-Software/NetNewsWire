@@ -506,11 +506,66 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
+			account.addWebFeed(existingFeed, to: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		}
 	}
 
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+		guard let folderName = folder.name else {
+			completion(.failure(NewsBlurError.invalidParameter))
+			return
+		}
+
+		var feedsToRestore: [WebFeed] = []
+		for feed in folder.topLevelWebFeeds {
+			feedsToRestore.append(feed)
+			folder.topLevelWebFeeds.remove(feed)
+		}
+
+		let group = DispatchGroup()
+
+		group.enter()
+		addFolder(for: account, name: folderName) { result in
+			group.leave()
+			switch result {
+			case .success(let folder):
+				for feed in feedsToRestore {
+					group.enter()
+					self.restoreWebFeed(for: account, feed: feed, container: folder) { result in
+						group.leave()
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+						}
+					}
+				}
+			case .failure(let error):
+				os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+			}
+		}
+
+		group.notify(queue: DispatchQueue.main) {
+			completion(.success(()))
+		}
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
