@@ -429,7 +429,6 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
-		// This error should never happen
 		guard let feedID = feed.externalID else {
 			completion(.failure(NewsBlurError.invalidParameter))
 			return
@@ -480,7 +479,30 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
+		guard let feedID = feed.externalID else {
+			completion(.failure(NewsBlurError.invalidParameter))
+			return
+		}
+
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		caller.moveFeed(
+				feedID: feedID,
+				from: (from as? Folder)?.name,
+				to: (to as? Folder)?.name
+		) { result in
+			self.refreshProgress.completeTask()
+
+			switch result {
+			case .success:
+				from.removeWebFeed(feed)
+				to.addWebFeed(feed)
+				
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {

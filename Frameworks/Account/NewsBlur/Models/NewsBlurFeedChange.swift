@@ -12,6 +12,7 @@ enum NewsBlurFeedChange {
 	case add(String, String?)
 	case rename(String, String)
 	case delete(String, String?)
+	case move(String, String?, String?)
 }
 
 extension NewsBlurFeedChange: NewsBlurDataConvertible {
@@ -34,6 +35,12 @@ extension NewsBlurFeedChange: NewsBlurDataConvertible {
 					URLQueryItem(name: "feed_id", value: feedID),
 					folder != nil ? URLQueryItem(name: "in_folder", value: folder) : nil,
 				].compactMap { $0 }
+			case .move(let feedID, let from, let to):
+				return [
+					URLQueryItem(name: "feed_id", value: feedID),
+					URLQueryItem(name: "in_folder", value: from ?? ""),
+					URLQueryItem(name: "to_folder", value: to ?? ""),
+				]
 			}
 		}()
 

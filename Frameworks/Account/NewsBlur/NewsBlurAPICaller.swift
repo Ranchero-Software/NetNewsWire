@@ -262,4 +262,18 @@ final class NewsBlurAPICaller: NSObject {
 			}
 		}
 	}
+
+	func moveFeed(feedID: String, from: String?, to: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+		sendUpdates(
+				endpoint: "reader/move_feed_to_folder",
+				payload: NewsBlurFeedChange.move(feedID, from, to)
+		) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
 }
