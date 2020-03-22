@@ -378,13 +378,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@IBAction func toggleFilter(_ sender: Any) {
-		if coordinator.isReadFeedsFiltered {
-			setFilterButtonToInactive()
-			coordinator.showAllFeeds()
-		} else {
-			setFilterButtonToActive()
-			coordinator.hideReadFeeds()
-		}
+		coordinator.toggleReadFeedsFilter()
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
@@ -509,6 +503,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 	
+	func updateUI() {
+		if coordinator.isReadFeedsFiltered {
+			setFilterButtonToActive()
+		} else {
+			setFilterButtonToInactive()
+		}
+		refreshProgressView?.updateRefreshLabel()
+		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
+	}
+	
 	func focus() {
 		becomeFirstResponder()
 	}
@@ -578,16 +582,6 @@ private extension MasterFeedViewController {
 		self.refreshProgressView = refreshProgressView
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
 		toolbarItems?.insert(refreshProgressItemButton, at: 2)
-	}
-	
-	func updateUI() {
-		if coordinator.isReadFeedsFiltered {
-			setFilterButtonToActive()
-		} else {
-			setFilterButtonToInactive()
-		}
-		refreshProgressView?.updateRefreshLabel()
-		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 	
 	func setFilterButtonToActive() {
