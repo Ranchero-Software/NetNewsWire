@@ -35,6 +35,10 @@ struct AppAssets {
 		return UIImage(named: "accountFreshRSS")!
 	}()
 
+	static var accountNewsBlurImage: UIImage = {
+		return UIImage(named: "accountNewsBlur")!
+	}()
+
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
 	}()
@@ -238,6 +242,8 @@ struct AppAssets {
 			return AppAssets.accountFeedWranglerImage
 		case .freshRSS:
 			return AppAssets.accountFreshRSSImage
+		case .newsBlur:
+			return AppAssets.accountNewsBlurImage
 		default:
 			return nil
 		}

@@ -292,7 +292,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// This error should never happen
-		guard let subscriptionID = feed.subscriptionID else {
+		guard let subscriptionID = feed.externalID else {
 			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
 			return
 		}
@@ -340,12 +340,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		if let folder = container as? Folder, let feedName = feed.subscriptionID {
+		if let folder = container as? Folder, let feedName = feed.externalID {
 			caller.createTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
 				switch result {
 				case .success:
 					DispatchQueue.main.async {
-						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: feed.subscriptionID!)
+						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: feed.externalID!)
 						account.removeWebFeed(feed)
 						folder.addWebFeed(feed)
 						completion(.success(()))
@@ -582,7 +582,7 @@ private extension ReaderAPIAccountDelegate {
 			} else {
 				let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: subFeedId, homePageURL: subscription.homePageURL)
 				feed.iconURL = subscription.iconURL
-				feed.subscriptionID = String(subscription.feedID)
+				feed.externalID = String(subscription.feedID)
 				account.addWebFeed(feed)
 			}
 			
@@ -758,7 +758,7 @@ private extension ReaderAPIAccountDelegate {
 		DispatchQueue.main.async {
 			
 			let feed = account.createWebFeed(with: sub.name, url: sub.url, webFeedID: String(sub.feedID), homePageURL: sub.homePageURL)
-			feed.subscriptionID = String(sub.feedID)
+			feed.externalID = String(sub.feedID)
 			
 			account.addWebFeed(feed, to: container) { result in
 				switch result {
@@ -985,7 +985,7 @@ private extension ReaderAPIAccountDelegate {
 
 	func deleteTagging(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		if let folder = container as? Folder, let feedName = feed.subscriptionID {
+		if let folder = container as? Folder, let feedName = feed.externalID {
 			caller.deleteTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
 				switch result {
 				case .success:
@@ -1014,7 +1014,7 @@ private extension ReaderAPIAccountDelegate {
 	func deleteSubscription(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		// This error should never happen
-		guard let subscriptionID = feed.subscriptionID else {
+		guard let subscriptionID = feed.externalID else {
 			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
 			return
 		}

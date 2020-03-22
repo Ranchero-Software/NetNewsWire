@@ -260,6 +260,8 @@
 		51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB3C229AB08300645299 /* ErrorHandler.swift */; };
 		51E43962238037C400015C31 /* AddWebFeedFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */; };
 		51E4398023805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */; };
+		51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4DAEC2425F6940091EB5B /* CloudKit.framework */; };
+		51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4DB072425F9EB0091EB5B /* CloudKit.framework */; };
 		51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
 		51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */; };
@@ -464,7 +466,6 @@
 		65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */; };
 		65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */ = {isa = PBXBuildFile; fileRef = 84A3EE52223B667F00557320 /* DefaultFeeds.opml */; };
 		65ED405F235DEF6C0081F399 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84C9FC8022629E4800D921D6 /* Preferences.storyboard */; };
-		65ED4060235DEF6C0081F399 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		65ED4061235DEF6C0081F399 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 849C64671ED37A5D003D8FC0 /* Assets.xcassets */; };
 		65ED4062235DEF6C0081F399 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 848362FC2262A30800DA1D35 /* styleSheet.css */; };
 		65ED4063235DEF6C0081F399 /* RenameSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848363092262A3F000DA1D35 /* RenameSheet.xib */; };
@@ -503,6 +504,7 @@
 		65ED42DD235E74230081F399 /* org.sparkle-project.InstallerStatus.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 65ED42BA235E71B40081F399 /* org.sparkle-project.InstallerStatus.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		65ED42DE235E74230081F399 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65ED42B0235E71B40081F399 /* Sparkle.framework */; };
 		65ED42DF235E74230081F399 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 65ED42B0235E71B40081F399 /* Sparkle.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		769F2ED513DA03EE75B993A8 /* NewsBlurAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */; };
 		8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD892213E0E3008CE1BF /* DetailContainerView.swift */; };
 		8405DD9922153B6B008CE1BF /* TimelineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD9822153B6B008CE1BF /* TimelineContainerView.swift */; };
 		8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */; };
@@ -1402,6 +1404,8 @@
 		51E3EB3C229AB08300645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedFolderViewController.swift; sourceTree = "<group>"; };
 		51E4397F23805EBC00015C31 /* AddWebFeedFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedFolderTableViewCell.swift; sourceTree = "<group>"; };
+		51E4DAEC2425F6940091EB5B /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		51E4DB072425F9EB0091EB5B /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStatusSyncTimer.swift; sourceTree = "<group>"; };
 		51EAED95231363EF00A9EEE3 /* NonIntrinsicButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicButton.swift; sourceTree = "<group>"; };
 		51EC114B2149FE3300B296E3 /* FolderTreeMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderTreeMenu.swift; path = AddFeed/FolderTreeMenu.swift; sourceTree = "<group>"; };
@@ -1450,6 +1454,7 @@
 		65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_macapp_target_macappstore.xcconfig; sourceTree = "<group>"; };
 		65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_safariextension_target_macappstore.xcconfig; sourceTree = "<group>"; };
 		65ED4299235E71B40081F399 /* Sparkle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sparkle.xcodeproj; path = submodules/Sparkle/Sparkle.xcodeproj; sourceTree = SOURCE_ROOT; };
+		769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurAccountViewController.swift; sourceTree = "<group>"; };
 		8405DD892213E0E3008CE1BF /* DetailContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailContainerView.swift; sourceTree = "<group>"; };
 		8405DD9822153B6B008CE1BF /* TimelineContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContainerView.swift; sourceTree = "<group>"; };
 		8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView-Extensions.swift"; sourceTree = "<group>"; };
@@ -1725,6 +1730,7 @@
 				51C451F02264C83100C03939 /* ArticlesDatabase.framework in Frameworks */,
 				51C451F42264C83900C03939 /* Articles.framework in Frameworks */,
 				51C451E82264C81000C03939 /* RSDatabase.framework in Frameworks */,
+				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
 				51C451EC2264C81B00C03939 /* RSCore.framework in Frameworks */,
 				51554C30228B71A10055115A /* SyncDatabase.framework in Frameworks */,
 				51C451E42264C80600C03939 /* RSParser.framework in Frameworks */,
@@ -1744,6 +1750,7 @@
 				84C37FB520DD8DBB00CA8CF5 /* RSParser.framework in Frameworks */,
 				51C451BD226377D000C03939 /* Account.framework in Frameworks */,
 				51C451B9226377C900C03939 /* Articles.framework in Frameworks */,
+				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				84C37FA520DD8D8400CA8CF5 /* RSCore.framework in Frameworks */,
 				51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */,
 			);
@@ -1868,6 +1875,7 @@
 				51A1698F235E10D600EB091F /* LocalAccountViewController.swift */,
 				51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */,
 				3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */,
+				769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -2078,6 +2086,8 @@
 		51C452B22265141B00C03939 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				51E4DB072425F9EB0091EB5B /* CloudKit.framework */,
+				51E4DAEC2425F6940091EB5B /* CloudKit.framework */,
 				51C452B32265141B00C03939 /* WebKit.framework */,
 			);
 			name = Frameworks;
@@ -3479,7 +3489,6 @@
 				5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
 				65ED405F235DEF6C0081F399 /* Preferences.storyboard in Resources */,
-				65ED4060235DEF6C0081F399 /* (null) in Resources */,
 				65ED4061235DEF6C0081F399 /* Assets.xcassets in Resources */,
 				65ED4062235DEF6C0081F399 /* styleSheet.css in Resources */,
 				65ED4063235DEF6C0081F399 /* RenameSheet.xib in Resources */,
@@ -4061,6 +4070,7 @@
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* InteractiveNavigationController.swift in Sources */,
+				769F2ED513DA03EE75B993A8 /* NewsBlurAccountViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -56,6 +56,12 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			let addViewController = navController.topViewController as! FeedWranglerAccountViewController
 			addViewController.delegate = self
 			present(navController, animated: true)
+		case 4:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "NewsBlurAccountNavigationViewController") as! UINavigationController
+			navController.modalPresentationStyle = .currentContext
+			let addViewController = navController.topViewController as! NewsBlurAccountViewController
+			addViewController.delegate = self
+			present(navController, animated: true)
 		default:
 			break
 		}

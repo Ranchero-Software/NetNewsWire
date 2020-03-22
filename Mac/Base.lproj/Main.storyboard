@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -343,18 +343,6 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="HyV-fh-RgO">
                                     <items>
-                                        <menuItem title="Clean Up" keyEquivalent="H" id="J5h-uQ-57w">
-                                            <connections>
-                                                <action selector="cleanUp:" target="Ady-hI-5gd" id="eNB-UA-e3a"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="rcJ-r3-Y2U"/>
-                                        <menuItem title="Hide Read Articles" id="b10-sA-Yzi">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="toggleReadArticlesFilter:" target="Ady-hI-5gd" id="YhV-0F-jrM"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="Sort Articles By" id="nLP-fa-KUi">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Sort Articles By" id="OlJ-93-6OP">
@@ -381,12 +369,22 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
-                                        <menuItem title="Hide Read Feeds" id="E9K-zV-nLv">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Clean Up Articles" keyEquivalent="'" id="J5h-uQ-57w">
+                                            <connections>
+                                                <action selector="cleanUp:" target="Ady-hI-5gd" id="eNB-UA-e3a"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Hide Read Articles" keyEquivalent="H" id="b10-sA-Yzi">
+                                            <connections>
+                                                <action selector="toggleReadArticlesFilter:" target="Ady-hI-5gd" id="YhV-0F-jrM"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Hide Read Feeds" keyEquivalent="F" id="E9K-zV-nLv">
                                             <connections>
                                                 <action selector="toggleReadFeedsFilter:" target="Ady-hI-5gd" id="5pI-YT-xai"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Ocl-6H-m3k"/>
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
