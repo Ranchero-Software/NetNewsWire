@@ -243,6 +243,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
 		case .feedWrangler:
 			self.delegate = FeedWranglerAccountDelegate(dataFolder: dataFolder, transport: transport)
+		case .newsBlur:
+			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
 		default:
 			return nil
 		}
@@ -325,6 +327,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
 		case .feedWrangler:
 			FeedWranglerAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+		case .newsBlur:
+			NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		default:
 			break
 		}
