@@ -290,10 +290,10 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="977-L4-4ey">
-                                <rect key="frame" x="0.0" y="287" width="166" height="20"/>
+                                <rect key="frame" x="0.0" y="283" width="166" height="24"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eZS-8K-qiN">
-                                        <rect key="frame" x="140" y="1" width="14" height="14"/>
+                                        <rect key="frame" x="140" y="5" width="14" height="14"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="14" id="ELp-U5-6Vw"/>
                                             <constraint firstAttribute="width" constant="14" id="vyT-yU-oaI"/>
@@ -309,19 +309,19 @@
                                     </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="20" id="Ax2-oO-NTV"/>
+                                    <constraint firstAttribute="height" constant="24" id="Ax2-oO-NTV"/>
                                     <constraint firstAttribute="trailing" secondItem="eZS-8K-qiN" secondAttribute="trailing" constant="12" id="CFy-rz-Otf"/>
                                     <constraint firstItem="eZS-8K-qiN" firstAttribute="top" secondItem="977-L4-4ey" secondAttribute="top" constant="5" id="M0q-C7-z10"/>
                                 </constraints>
                             </visualEffectView>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
-                                <rect key="frame" x="0.0" y="0.0" width="166" height="287"/>
+                                <rect key="frame" x="0.0" y="0.0" width="166" height="283"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="2eU-Wz-F9g">
-                                    <rect key="frame" x="0.0" y="0.0" width="166" height="287"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="166" height="283"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="26" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="23" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="167" height="287"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="167" height="283"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
