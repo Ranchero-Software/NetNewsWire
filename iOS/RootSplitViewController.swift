@@ -94,6 +94,14 @@ class RootSplitViewController: UISplitViewController {
 		coordinator.cleanUp()
 	}
 	
+	@objc func toggleReadFeedsFilter(_ sender: Any?) {
+		coordinator.toggleReadFeedsFilter()
+	}
+	
+	@objc func toggleReadArticlesFilter(_ sender: Any?) {
+		coordinator.toggleReadArticlesFilter()
+	}
+	
 	@objc func refresh(_ sender: Any?) {
 		appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 	}
