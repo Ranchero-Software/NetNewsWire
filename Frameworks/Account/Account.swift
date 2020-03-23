@@ -688,56 +688,49 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			completion(nil)
 			return
 		}
-		
-		let group = DispatchGroup()
-		var possibleError: DatabaseError? = nil
-		var newArticles = Set<Article>()
-		var updatedArticles = Set<Article>()
-		
-		for (webFeedID, items) in webFeedIDsAndItems {
-			
-			group.enter()
-			database.update(webFeedID: webFeedID, items: items, defaultRead: defaultRead) { updateArticlesResult in
 
-				switch updateArticlesResult {
-				case .success(let newAndUpdatedArticles):
-					if let articles = newAndUpdatedArticles.newArticles {
-						newArticles.formUnion(articles)
-					}
-					if let articles = newAndUpdatedArticles.updatedArticles {
-						updatedArticles.formUnion(articles)
-					}
-				case .failure(let databaseError):
-					possibleError = databaseError
+		database.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
+			
+			func sendNotificationAbout(newArticles: Set<Article>?, updatedArticles: Set<Article>?) {
+				var webFeeds = Set<WebFeed>()
+
+				if let newArticles = newArticles {
+					webFeeds.formUnion(Set(newArticles.compactMap { $0.webFeed }))
 				}
-				
-				group.leave()
-			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			var userInfo = [String: Any]()
-			var webFeeds = Set(newArticles.compactMap { $0.webFeed })
-			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.webFeed }))
-			
-			if !newArticles.isEmpty {
-				self.updateUnreadCounts(for: webFeeds) {
-					NotificationCenter.default.post(name: .DownloadArticlesDidUpdateUnreadCounts, object: self, userInfo: nil)
+				if let updatedArticles = updatedArticles {
+					webFeeds.formUnion(Set(updatedArticles.compactMap { $0.webFeed }))
 				}
-				userInfo[UserInfoKey.newArticles] = newArticles
+
+				var shouldSendNotification = false
+				var userInfo = [String: Any]()
+
+				if let newArticles = newArticles, !newArticles.isEmpty {
+					shouldSendNotification = true
+					userInfo[UserInfoKey.newArticles] = newArticles
+					self.updateUnreadCounts(for: webFeeds) {
+						NotificationCenter.default.post(name: .DownloadArticlesDidUpdateUnreadCounts, object: self, userInfo: nil)
+					}
+				}
+
+				if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
+					shouldSendNotification = true
+					userInfo[UserInfoKey.updatedArticles] = updatedArticles
+				}
+
+				if shouldSendNotification {
+					userInfo[UserInfoKey.webFeeds] = webFeeds
+					NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
+				}
 			}
-			
-			if !updatedArticles.isEmpty {
-				userInfo[UserInfoKey.updatedArticles] = updatedArticles
+
+			switch updateArticlesResult {
+			case .success(let newAndUpdatedArticles):
+				sendNotificationAbout(newArticles: newAndUpdatedArticles.newArticles, updatedArticles: newAndUpdatedArticles.updatedArticles)
+				completion(nil)
+			case .failure(let databaseError):
+				completion(databaseError)
 			}
-			
-			userInfo[UserInfoKey.webFeeds] = webFeeds
-			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
-			
-			completion(possibleError)
 		}
-		
 	}
 
 	@discardableResult
