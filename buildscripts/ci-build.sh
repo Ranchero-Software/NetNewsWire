@@ -3,6 +3,12 @@ set -v
 set -e
 
 # Unencrypt our provisioning profiles, certificates, and private key
+# 
+# Encrypt the profiles, certs, and key using the following example command where 
+# "secret-key" is the key stored in the Github Secrets variable ENCRYPTION_SECRET
+#
+# openssl aes-256-cbc -k "secret-key" -in buildscripts/profile/NetNewsWire.provisionprofile -out buildscripts/profile/NetNewsWire.provisionprofile.enc -a
+#
 openssl aes-256-cbc -k "$ENCRYPTION_SECRET" -in buildscripts/profile/NetNewsWire.provisionprofile.enc -d -a -out buildscripts/profile/NetNewsWire.provisionprofile
 openssl aes-256-cbc -k "$ENCRYPTION_SECRET" -in buildscripts/profile/NetNewsWireiOS.mobileprovision.enc -d -a -out buildscripts/profile/NetNewsWireiOS.mobileprovision
 openssl aes-256-cbc -k "$ENCRYPTION_SECRET" -in buildscripts/certs/mac-dist.cer.enc -d -a -out buildscripts/certs/mac-dist.cer
