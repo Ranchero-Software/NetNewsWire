@@ -178,11 +178,6 @@ final class FaviconDownloader {
 
 		remainingFaviconURLs[homePageURL] = nil
 
-		if self.homePageToFaviconURLCache[homePageURL] == nil {
-			self.homePageToFaviconURLCache[homePageURL] = singleFaviconDownloader.faviconURL
-			self.homePageToFaviconURLCacheDirty = true
-		}
-
 		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
 	}
 	
@@ -232,8 +227,22 @@ private extension FaviconDownloader {
 
 	func faviconDownloader(withURL faviconURL: String, homePageURL: String?) -> SingleFaviconDownloader {
 
+		var firstTimeSeeingHomepageURL = false
+		
+		if let homePageURL = homePageURL, self.homePageToFaviconURLCache[homePageURL] == nil {
+			self.homePageToFaviconURLCache[homePageURL] = faviconURL
+			self.homePageToFaviconURLCacheDirty = true
+			firstTimeSeeingHomepageURL = true
+		}
+
 		if let downloader = singleFaviconDownloaderCache[faviconURL] {
-			downloader.downloadFaviconIfNeeded()
+			if firstTimeSeeingHomepageURL && !downloader.downloadFaviconIfNeeded() {
+				// This is to handle the scenario where we have different homepages, but the same favicon.
+				// This happens for Twitter and probably other sites like Blogger.  Because the favicon
+				// is cached, we wouldn't send out a notification that it is now available unless we send
+				// it here.
+				postFaviconDidBecomeAvailableNotification(faviconURL)
+			}
 			return downloader
 		}
 

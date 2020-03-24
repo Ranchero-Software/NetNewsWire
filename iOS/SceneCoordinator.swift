@@ -541,7 +541,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func downloadArticlesDidUpdateUnreadCounts(_ note: Notification) {
-		rebuildBackingStores()
+		rebuildBackingStoresWithMerge()
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
@@ -581,6 +581,30 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
+	func toggleReadFeedsFilter() {
+		if isReadFeedsFiltered {
+			treeControllerDelegate.isReadFiltered = false
+		} else {
+			treeControllerDelegate.isReadFiltered = true
+		}
+		rebuildBackingStores()
+		masterFeedViewController?.updateUI()
+	}
+	
+	func toggleReadArticlesFilter() {
+		guard let feedID = timelineFeed?.feedID else {
+			return
+		}
+
+		if isReadArticlesFiltered {
+			readFilterEnabledTable[feedID] = false
+		} else {
+			readFilterEnabledTable[feedID] = true
+		}
+		
+		refreshTimeline(resetScroll: false)
+	}
+	
 	func shadowNodesFor(section: Int) -> [Node] {
 		return shadowTable[section]
 	}
@@ -615,30 +639,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		fetchAndReplaceArticlesAsync(animated: true) {
 			self.masterTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
 		}
-	}
-	
-	func showAllFeeds() {
-		treeControllerDelegate.isReadFiltered = false
-		rebuildBackingStores()
-	}
-	
-	func hideReadFeeds() {
-		treeControllerDelegate.isReadFiltered = true
-		rebuildBackingStores()
-	}
-	
-	func showAllArticles() {
-		if let feedID = timelineFeed?.feedID {
-			readFilterEnabledTable[feedID] = false
-		}
-		refreshTimeline(resetScroll: false)
-	}
-	
-	func hideReadArticles() {
-		if let feedID = timelineFeed?.feedID {
-			readFilterEnabledTable[feedID] = true
-		}
-		refreshTimeline(resetScroll: false)
 	}
 	
 	func isExpanded(_ containerIdentifiable: ContainerIdentifiable) -> Bool {

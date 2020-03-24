@@ -184,8 +184,8 @@ public final class ArticlesDatabase {
 	// MARK: - Saving and Updating Articles
 
 	/// Update articles and save new ones.
-	public func update(webFeedID: String, items: Set<ParsedItem>, defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
-		articlesTable.update(webFeedID, items, defaultRead, completion)
+	public func update(webFeedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+		articlesTable.update(webFeedIDsAndItems, defaultRead, completion)
 	}
 
 	// MARK: - Status

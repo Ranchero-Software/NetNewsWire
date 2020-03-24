@@ -18,7 +18,6 @@ protocol MasterTimelineCellLayout {
 	var summaryRect: CGRect {get}
 	var feedNameRect: CGRect {get}
 	var dateRect: CGRect {get}
-	var separatorInsets: UIEdgeInsets {get}
 	
 }
 
