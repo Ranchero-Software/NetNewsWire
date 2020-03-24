@@ -84,8 +84,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		coordinator.suspend()
 	}
 	
-	func cleanUp() {
-		coordinator.cleanUp()
+	func cleanUp(conditional: Bool) {
+		coordinator.cleanUp(conditional: conditional)
 	}
 	
 }
