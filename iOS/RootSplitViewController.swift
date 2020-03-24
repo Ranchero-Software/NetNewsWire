@@ -91,7 +91,7 @@ class RootSplitViewController: UISplitViewController {
 	}
 
 	@objc func cleanUp(_ sender: Any?) {
-		coordinator.cleanUp()
+		coordinator.cleanUp(conditional: false)
 	}
 	
 	@objc func toggleReadFeedsFilter(_ sender: Any?) {

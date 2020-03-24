@@ -135,7 +135,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func manualRefresh(errorHandler: @escaping (Error) -> ()) {
 		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
-			$0.cleanUp()
+			$0.cleanUp(conditional: true)
 		}
 		AccountManager.shared.refreshAll(errorHandler: errorHandler)
 	}
