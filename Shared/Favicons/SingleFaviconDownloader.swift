@@ -48,21 +48,23 @@ final class SingleFaviconDownloader {
 		findFavicon()
 	}
 
-	func downloadFaviconIfNeeded() {
+	func downloadFaviconIfNeeded() -> Bool {
 
 		// If we don’t have an image, and lastDownloadAttemptDate is a while ago, try again.
 
 		if let _ = iconImage {
-			return
+			return false
 		}
 
 		let retryInterval: TimeInterval = 30 * 60 // 30 minutes
 		if Date().timeIntervalSince(lastDownloadAttemptDate) < retryInterval {
-			return
+			return false
 		}
 
 		lastDownloadAttemptDate = Date()
 		findFavicon()
+		
+		return true
 	}
 }
 
