@@ -79,7 +79,7 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
 		dateView.setFrameIfNotEqual(layout.dateRect)
 
-		separatorInset = layout.separatorInsets
+		separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 	}
 	
 	func setIconImage(_ image: IconImage) {
