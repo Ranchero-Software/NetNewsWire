@@ -12,7 +12,7 @@ import RSCore
 class TimelineTableCellView: NSTableCellView {
 
 	private let titleView = TimelineTableCellView.multiLineTextField()
-	private let summaryView = TimelineTableCellView.singleLineTextField()
+	private let summaryView = TimelineTableCellView.multiLineTextField()
 	private let textView = TimelineTableCellView.multiLineTextField()
 	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
 	private let dateView = TimelineTableCellView.singleLineTextField()
@@ -144,7 +144,7 @@ private extension TimelineTableCellView {
 
 		let textField = NSTextField(wrappingLabelWithString: "")
 		textField.usesSingleLineMode = false
-		textField.maximumNumberOfLines = 2
+		textField.maximumNumberOfLines = 0
 		textField.isEditable = false
 		textField.cell?.truncatesLastVisibleLine = true
 		textField.allowsDefaultTighteningForTruncation = false
@@ -180,7 +180,7 @@ private extension TimelineTableCellView {
 		titleView.textColor = NSColor.labelColor
 		feedNameView.textColor = NSColor.secondaryLabelColor
 		dateView.textColor = NSColor.secondaryLabelColor
-		summaryView.textColor = NSColor.secondaryLabelColor
+		summaryView.textColor = NSColor.labelColor
 		textView.textColor = NSColor.labelColor
 	}
 

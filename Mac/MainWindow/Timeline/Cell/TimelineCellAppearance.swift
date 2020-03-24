@@ -17,12 +17,11 @@ struct TimelineCellAppearance: Equatable {
 	let feedNameFont: NSFont
 
 	let dateFont: NSFont
-	let dateMarginLeft: CGFloat = 10.0
-	let dateMarginBottom: CGFloat = 1.0
+	let dateMarginLeft: CGFloat = 8.0
 
 	let titleFont: NSFont
 	let titleBottomMargin: CGFloat = 1.0
-	let titleNumberOfLines = 2
+	let titleNumberOfLines = 3
 	
 	let textFont: NSFont
 
@@ -46,12 +45,12 @@ struct TimelineCellAppearance: Equatable {
 	init(showIcon: Bool, fontSize: FontSize) {
 
 		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
-		let smallItemFontSize = actualFontSize //floor(actualFontSize * 0.95)
-		let largeItemFontSize = actualFontSize //floor(actualFontSize * 1.1)
+		let smallItemFontSize = floor(actualFontSize * 0.90)
+		let largeItemFontSize = actualFontSize
 
 		self.feedNameFont = NSFont.systemFont(ofSize: smallItemFontSize)
-		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize, weight: NSFont.Weight.bold)
-		self.titleFont = NSFont.systemFont(ofSize: largeItemFontSize, weight: NSFont.Weight.semibold)
+		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize)
+		self.titleFont = NSFont.systemFont(ofSize: largeItemFontSize, weight: NSFont.Weight.bold)
 		self.textFont = NSFont.systemFont(ofSize: largeItemFontSize)
 		self.textOnlyFont = NSFont.systemFont(ofSize: largeItemFontSize)
 

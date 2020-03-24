@@ -26,6 +26,8 @@ See the [Contributing](CONTRIBUTING.md) page for our process. It’s pretty stra
 
 #### Building
 
+You can build and test NetNewsWire without a paid developer account.
+
 ```bash
 git clone https://github.com/Ranchero-Software/NetNewsWire.git
 cd NetNewsWire
@@ -57,6 +59,7 @@ CODE_SIGN_IDENTITY = Mac Developer
 DEVELOPMENT_TEAM = <Your Team ID>
 CODE_SIGN_STYLE = Automatic
 ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
+DEVELOPER_ENTITLEMENTS = -dev
 PROVISIONING_PROFILE_SPECIFIER =
 ```
 

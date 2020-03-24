@@ -63,7 +63,7 @@ struct TimelineCellLayout {
 		if numberOfLinesForTitle == 0 {
 			lastTextRect = textRect
 		}
-		else if numberOfLinesForTitle == 1 {
+		else if numberOfLinesForTitle < appearance.titleNumberOfLines {
 			if summaryRect.height > 0.1 {
 				lastTextRect = summaryRect
 			}
@@ -124,16 +124,24 @@ private extension TimelineCellLayout {
 	}
 
 	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int,  _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
-
 		if titleNumberOfLines >= appearance.titleNumberOfLines || cellData.text.isEmpty {
 			return NSRect.zero
 		}
 
-		return rectOfLineBelow(titleRect, titleRect, 0, cellData.text, appearance.textFont)
+		var r = textBoxRect
+		r.origin.y = NSMaxY(titleRect)
+		let summaryNumberOfLines = appearance.titleNumberOfLines - titleNumberOfLines
+		
+		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.text, font: appearance.textOnlyFont, numberOfLines: summaryNumberOfLines, width: Int(textBoxRect.width))
+		r.size.height = sizeInfo.size.height
+		if sizeInfo.numberOfLinesUsed < 1 {
+			r.size.height = 0
+		}
+		return r
+
 	}
 
 	static func rectForText(_ textBoxRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
-
 		var r = textBoxRect
 
 		if cellData.text.isEmpty {
@@ -150,32 +158,30 @@ private extension TimelineCellLayout {
 	}
 
 	static func rectForDate(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
+		let textFieldSize = SingleLineTextFieldSizer.size(for: cellData.dateString, font: appearance.dateFont)
+		
+		var r = NSZeroRect
+		r.size = textFieldSize
+		r.origin.y = NSMaxY(rectAbove) + appearance.titleBottomMargin
+		r.size.width = textFieldSize.width
 
-		return rectOfLineBelow(textBoxRect, rectAbove, appearance.titleBottomMargin, cellData.dateString, appearance.dateFont)
+		r.origin.x = textBoxRect.maxX - textFieldSize.width
+
+		return r
 	}
 
 	static func rectForFeedName(_ textBoxRect: NSRect, _ dateRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
-
 		if !cellData.showFeedName {
 			return NSZeroRect
 		}
 
-		return rectOfLineBelow(textBoxRect, dateRect, appearance.dateMarginBottom, cellData.feedName, appearance.feedNameFont)
-	}
-
-	static func rectOfLineBelow(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ topMargin: CGFloat, _ value: String, _ font: NSFont) -> NSRect {
-
-		let textFieldSize = SingleLineTextFieldSizer.size(for: value, font: font)
+		let textFieldSize = SingleLineTextFieldSizer.size(for: cellData.feedName, font: appearance.feedNameFont)
 		var r = NSZeroRect
 		r.size = textFieldSize
-		r.origin.y = NSMaxY(rectAbove) + topMargin
+		r.origin.y = dateRect.minY
 		r.origin.x = textBoxRect.origin.x
-
-		var width = textFieldSize.width
-		width = min(width, textBoxRect.size.width)
-		width = max(width, 0.0)
-		r.size.width = width
-
+		r.size.width = (textBoxRect.maxX - (dateRect.size.width + appearance.dateMarginLeft)) - textBoxRect.origin.x
+		
 		return r
 	}
 

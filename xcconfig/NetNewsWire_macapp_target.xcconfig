@@ -3,6 +3,7 @@ DEVELOPMENT_TEAM = M8L2WTLA8W
 CODE_SIGN_STYLE = Manual
 ORGANIZATION_IDENTIFIER = com.ranchero
 PROVISIONING_PROFILE_SPECIFIER = NetNewsWire
+DEVELOPER_ENTITLEMENTS =
 
 // developers can locally override the Xcode settings for code signing
 // by creating a DeveloperSettings.xcconfig file locally at the appropriate path
@@ -19,6 +20,7 @@ PROVISIONING_PROFILE_SPECIFIER = NetNewsWire
 //    DEVELOPMENT_TEAM = <Your Team ID>
 //    ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
 //    CODE_SIGN_STYLE = Automatic
+//    DEVELOPER_ENTITLEMENTS = -dev
 //    PROVISIONING_PROFILE_SPECIFIER =
 //
 // And you should be able to build without code signing errors and without modifying
@@ -33,6 +35,6 @@ PROVISIONING_PROFILE_SPECIFIER = NetNewsWire
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 #include "./common/NetNewsWire_macapp_target_common.xcconfig"
 
-CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire.entitlements
+CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire$(DEVELOPER_ENTITLEMENTS).entitlements
 PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen
 
