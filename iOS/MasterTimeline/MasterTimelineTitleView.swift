@@ -40,17 +40,11 @@ extension MasterTimelineTitleView: UIPointerInteractionDelegate {
 	
 	@available(iOS 13.4, *)
 	func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
-		
-		let params = UIPreviewParameters()
-		var rect = self.bounds
+		var rect = self.frame
 		rect.origin.x = rect.origin.x - 10
 		rect.size.width = rect.width + 20
-		let path = UIBezierPath(roundedRect: rect, cornerRadius: 10.0)
-		params.visiblePath = path
-		
-		let preview = UITargetedPreview(view: self, parameters: params)
 
-		return UIPointerStyle(effect: .automatic(preview), shape: .path(path))
+		return UIPointerStyle(effect: .automatic(UITargetedPreview(view: self)), shape: .roundedRect(rect))
 	}
 	
 }
