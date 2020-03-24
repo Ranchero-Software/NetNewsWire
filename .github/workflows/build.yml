@@ -25,6 +25,9 @@ jobs:
       with: 
         submodules: recursive
 
+    - name: List Available Applications
+      run: ls /Applications
+
     - name: Switch to Xcode 11
       run: sudo xcode-select -s /Applications/Xcode_11.app
 
