@@ -158,6 +158,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! MasterFeedTableViewSectionHeader
+		headerView.delegate = self
 		headerView.name = nameProvider.nameForDisplay
 		
 		guard let sectionNode = coordinator.rootNode.childAtIndex(section) else {
@@ -386,24 +387,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
-		
-		guard let sectionIndex = sender.view?.tag,
-			let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex),
-			let headerView = sender.view as? MasterFeedTableViewSectionHeader
-				else {
-					return
+		guard let headerView = sender.view as? MasterFeedTableViewSectionHeader else {
+			return
 		}
-		
-		if coordinator.isExpanded(sectionNode) {
-			headerView.disclosureExpanded = false
-			coordinator.collapse(sectionNode)
-			self.applyChanges(animated: true)
-		} else {
-			headerView.disclosureExpanded = true
-			coordinator.expand(sectionNode)
-			self.applyChanges(animated: true)
-		}
-		
+		toggle(headerView)
 	}
 	
 	@objc func refreshAccounts(_ sender: Any) {
@@ -556,11 +543,21 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 	}
 }
 
+// MARK: MasterFeedTableViewSectionHeaderDelegate
+
+extension MasterFeedViewController: MasterFeedTableViewSectionHeaderDelegate {
+	
+	func masterFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MasterFeedTableViewSectionHeader) {
+		toggle(sender)
+	}
+	
+}
+
 // MARK: MasterTableViewCellDelegate
 
 extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 	
-	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool) {
+	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MasterFeedTableViewCell, expanding: Bool) {
 		if expanding {
 			expand(sender)
 		} else {
@@ -751,6 +748,22 @@ private extension MasterFeedViewController {
 			return feed.account
 		}
 		return nil
+	}
+
+	func toggle(_ headerView: MasterFeedTableViewSectionHeader) {
+		guard let sectionNode = coordinator.rootNode.childAtIndex(headerView.tag) else {
+			return
+		}
+		
+		if coordinator.isExpanded(sectionNode) {
+			headerView.disclosureExpanded = false
+			coordinator.collapse(sectionNode)
+			self.applyChanges(animated: true)
+		} else {
+			headerView.disclosureExpanded = true
+			coordinator.expand(sectionNode)
+			self.applyChanges(animated: true)
+		}
 	}
 
 	func expand(_ cell: MasterFeedTableViewCell) {

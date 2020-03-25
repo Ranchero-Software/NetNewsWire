@@ -8,7 +8,13 @@
 
 import UIKit
 
+protocol MasterFeedTableViewSectionHeaderDelegate {
+	func masterFeedTableViewSectionHeaderDisclosureDidToggle(_ sender: MasterFeedTableViewSectionHeader)
+}
+
 class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
+	
+	var delegate: MasterFeedTableViewSectionHeaderDelegate?
 	
 	override var accessibilityLabel: String? {
 		set {}
@@ -66,12 +72,16 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}()
 	
 	private let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
-	private var disclosureView: UIImageView = {
-		let iView = NonIntrinsicImageView()
-		iView.tintColor = UIColor.tertiaryLabel
-		iView.image = AppAssets.disclosureImage
-		iView.contentMode = .center
-		return iView
+	private lazy var disclosureButton: UIButton = {
+		let button = NonIntrinsicButton()
+		button.tintColor = UIColor.tertiaryLabel
+		button.setImage(AppAssets.disclosureImage, for: .normal)
+		button.contentMode = .center
+		if #available(iOS 13.4, *) {
+			button.isPointerInteractionEnabled = true
+		}
+		button.addTarget(self, action: #selector(toggleDisclosure), for: .touchUpInside)
+		return button
 	}()
 
 	private let topSeparatorView: UIView = {
@@ -115,10 +125,14 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
 private extension MasterFeedTableViewSectionHeader {
 	
+	@objc func toggleDisclosure() {
+		delegate?.masterFeedTableViewSectionHeaderDisclosureDidToggle(self)
+	}
+	
 	func commonInit() {
 		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
-		addSubviewAtInit(disclosureView)
+		addSubviewAtInit(disclosureButton)
 		updateExpandedState(animate: false)
 		addBackgroundView()
 		addSubviewAtInit(topSeparatorView)
@@ -136,9 +150,9 @@ private extension MasterFeedTableViewSectionHeader {
 			withDuration: duration,
 			animations: {
 				if self.disclosureExpanded {
-					self.disclosureView.transform = CGAffineTransform(rotationAngle: 1.570796)
+					self.disclosureButton.transform = CGAffineTransform(rotationAngle: 1.570796)
 				} else {
-					self.disclosureView.transform = CGAffineTransform(rotationAngle: 0)
+					self.disclosureButton.transform = CGAffineTransform(rotationAngle: 0)
 				}
 			}, completion: { _ in
 				if !self.isLastSection && !self.disclosureExpanded {
@@ -167,7 +181,7 @@ private extension MasterFeedTableViewSectionHeader {
 	func layoutWith(_ layout: MasterFeedTableViewSectionHeaderLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
 		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
-		disclosureView.setFrameIfNotEqual(layout.disclosureButtonRect)
+		disclosureButton.setFrameIfNotEqual(layout.disclosureButtonRect)
 		
 		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.33)
 		topSeparatorView.setFrameIfNotEqual(top)
