@@ -4,6 +4,8 @@
 <dict>
 	<key>OrganizationIdentifier</key>
 	<string>$(ORGANIZATION_IDENTIFIER)</string>
+	<key>DeveloperEntitlements</key>
+	<string>$(DEVELOPER_ENTITLEMENTS)</string>
 	<key>AppGroup</key>
 	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS</string>
 	<key>AppIdentifierPrefix</key>
