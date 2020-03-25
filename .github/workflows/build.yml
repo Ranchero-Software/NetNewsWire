@@ -17,7 +17,7 @@ jobs:
       matrix:
         run-config:
           - { scheme: 'NetNewsWire', destination: 'platform=macOS'}
-          - { scheme: 'NetNewsWire-iOS', destination: 'platform=iOS Simulator,OS=13.0,name=iPhone 11' }
+          - { scheme: 'NetNewsWire-iOS', destination: 'platform=iOS Simulator,OS=13.4,name=iPhone 11' }
     
     steps:
     - name: Checkout Project
