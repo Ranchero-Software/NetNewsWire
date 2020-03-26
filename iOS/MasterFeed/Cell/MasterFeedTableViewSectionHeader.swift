@@ -78,7 +78,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		button.setImage(AppAssets.disclosureImage, for: .normal)
 		button.contentMode = .center
 		if #available(iOS 13.4, *) {
-			button.isPointerInteractionEnabled = true
+			button.addInteraction(UIPointerInteraction())
 		}
 		button.addTarget(self, action: #selector(toggleDisclosure), for: .touchUpInside)
 		return button

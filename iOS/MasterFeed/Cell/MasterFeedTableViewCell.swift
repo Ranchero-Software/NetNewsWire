@@ -182,7 +182,7 @@ private extension MasterFeedTableViewCell {
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false
 		if #available(iOS 13.4, *) {
-			disclosureButton?.isPointerInteractionEnabled = true
+			disclosureButton?.addInteraction(UIPointerInteraction())
 		}
 		addSubviewAtInit(disclosureButton!)
 	}
