@@ -13,14 +13,13 @@ extension WebFeed: CloudKitRecordConvertible {
 	
     enum CloudKitKey: String {
         case url
-        case homePageURL
 		case editedName
     }
 	
 	static var cloudKitZoneID: CKRecordZone.ID {
 		return CloudKitAccountZone.zoneID
 	}
-	
+
 	var cloudKitPrimaryKey: String {
 		return externalID!
 	}
@@ -28,7 +27,6 @@ extension WebFeed: CloudKitRecordConvertible {
 	var cloudKitRecord: CKRecord {
 		let record = CKRecord(recordType: Self.cloudKitRecordType)
 		record[.url] = url
-		record[.homePageURL] = homePageURL
 		record[.editedName] = editedName
 		return record
 	}

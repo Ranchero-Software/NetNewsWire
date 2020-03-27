@@ -23,46 +23,17 @@ final class CloudKitAccountZone: CloudKitZone {
         self.database = container.privateCloudDatabase
     }
     
-
+	///  Persist a feed record to iCloud and return the external key
+	func createFeed(url: String, editedName: String?, completion: @escaping (Result<String, Error>) -> Void) {
+		let record = CKRecord(recordType: "Feed", recordID: generateRecordID())
+		record["url"] = url
+		if let editedName = editedName {
+			record["editedName"] = editedName
+		}
+		
+		save(record: record, completion: completion)
+	}
 	
-//    func fetchChangesInDatabase(_ callback: ((Error?) -> Void)?) {
-//        let changesOperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: databaseChangeToken)
-//
-//        /// Only update the changeToken when fetch process completes
-//        changesOperation.changeTokenUpdatedBlock = { [weak self] newToken in
-//            self?.databaseChangeToken = newToken
-//        }
-//
-//        changesOperation.fetchDatabaseChangesCompletionBlock = {
-//            [weak self]
-//            newToken, _, error in
-//            guard let self = self else { return }
-//            switch CloudKitErrorHandler.shared.resultType(with: error) {
-//            case .success:
-//                self.databaseChangeToken = newToken
-//                // Fetch the changes in zone level
-//                self.fetchChangesInZones(callback)
-//            case .retry(let timeToWait, _):
-//                CloudKitErrorHandler.shared.retryOperationIfPossible(retryAfter: timeToWait, block: {
-//                    self.fetchChangesInDatabase(callback)
-//                })
-//            case .recoverableError(let reason, _):
-//                switch reason {
-//                case .changeTokenExpired:
-//                    /// The previousServerChangeToken value is too old and the client must re-sync from scratch
-//                    self.databaseChangeToken = nil
-//                    self.fetchChangesInDatabase(callback)
-//                default:
-//                    return
-//                }
-//            default:
-//                return
-//            }
-//        }
-//
-//        database.add(changesOperation)
-//    }
-    
 //    private func fetchChangesInZones(_ callback: ((Error?) -> Void)? = nil) {
 //        let changesOp = CKFetchRecordZoneChangesOperation(recordZoneIDs: zoneIds, optionsByRecordZoneID: zoneIdOptions)
 //        changesOp.fetchAllChanges = true

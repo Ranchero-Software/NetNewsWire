@@ -56,6 +56,8 @@
 		51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7B83233531BC008E8144 /* AccountBehaviors.swift */; };
 		51BC8FCC237EC055004F8B56 /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC8FCB237EC055004F8B56 /* Feed.swift */; };
 		51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BFDECD238B508D00216323 /* ContainerIdentifier.swift */; };
+		51C034DF242D65D20014DC71 /* CloudKitResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C034DE242D65D20014DC71 /* CloudKitResult.swift */; };
+		51C034E1242D660D0014DC71 /* CKError+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C034E0242D660D0014DC71 /* CKError+Extensions.swift */; };
 		51D58755227F53BE00900287 /* FeedbinTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D58754227F53BE00900287 /* FeedbinTag.swift */; };
 		51D5875A227F630B00900287 /* tags_delete.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58757227F630B00900287 /* tags_delete.json */; };
 		51D5875B227F630B00900287 /* tags_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 51D58758227F630B00900287 /* tags_add.json */; };
@@ -64,7 +66,6 @@
 		51E148EC234B8FFC0004F7A5 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */; };
 		51E3EB41229AF61B00645299 /* AccountError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB40229AF61B00645299 /* AccountError.swift */; };
 		51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E490352288C37100C791F0 /* FeedbinDate.swift */; };
-		51E4DB2C242632DC0091EB5B /* CloudKitErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB2B242632DC0091EB5B /* CloudKitErrorHandler.swift */; };
 		51E4DB2E242633ED0091EB5B /* CloudKitZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */; };
 		51E4DB302426353D0091EB5B /* CloudKitAccountZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */; };
 		51E4DB3224264B470091EB5B /* WebFeed+CloudKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4DB3124264B470091EB5B /* WebFeed+CloudKit.swift */; };
@@ -289,6 +290,8 @@
 		51BB7B83233531BC008E8144 /* AccountBehaviors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBehaviors.swift; sourceTree = "<group>"; };
 		51BC8FCB237EC055004F8B56 /* Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
 		51BFDECD238B508D00216323 /* ContainerIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerIdentifier.swift; sourceTree = "<group>"; };
+		51C034DE242D65D20014DC71 /* CloudKitResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitResult.swift; sourceTree = "<group>"; };
+		51C034E0242D660D0014DC71 /* CKError+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKError+Extensions.swift"; sourceTree = "<group>"; };
 		51D58754227F53BE00900287 /* FeedbinTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinTag.swift; sourceTree = "<group>"; };
 		51D58757227F630B00900287 /* tags_delete.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_delete.json; sourceTree = "<group>"; };
 		51D58758227F630B00900287 /* tags_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tags_add.json; sourceTree = "<group>"; };
@@ -297,7 +300,6 @@
 		51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SyncDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51E3EB40229AF61B00645299 /* AccountError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountError.swift; sourceTree = "<group>"; };
 		51E490352288C37100C791F0 /* FeedbinDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinDate.swift; sourceTree = "<group>"; };
-		51E4DB2B242632DC0091EB5B /* CloudKitErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitErrorHandler.swift; sourceTree = "<group>"; };
 		51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitZone.swift; sourceTree = "<group>"; };
 		51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountZone.swift; sourceTree = "<group>"; };
 		51E4DB3124264B470091EB5B /* WebFeed+CloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebFeed+CloudKit.swift"; sourceTree = "<group>"; };
@@ -515,10 +517,11 @@
 		5103A9D7242253DC00410853 /* CloudKit */ = {
 			isa = PBXGroup;
 			children = (
+				51C034E0242D660D0014DC71 /* CKError+Extensions.swift */,
 				5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */,
 				51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */,
-				51E4DB2B242632DC0091EB5B /* CloudKitErrorHandler.swift */,
 				51E4DB352426693F0091EB5B /* CloudKitRecordConvertable.swift */,
+				51C034DE242D65D20014DC71 /* CloudKitResult.swift */,
 				51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */,
 				51E4DB3324264CD50091EB5B /* Folder+CloudKit.swift */,
 				51E4DB3124264B470091EB5B /* WebFeed+CloudKit.swift */,
@@ -1171,6 +1174,7 @@
 				9E964EB823754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift in Sources */,
 				3B3A33E7238D3D6800314204 /* Secrets.swift in Sources */,
 				9EF1B10923590E93000A486A /* FeedlyStreamIds.swift in Sources */,
+				51C034E1242D660D0014DC71 /* CKError+Extensions.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,
 				84CAD7161FDF2E22000F0755 /* FeedbinEntry.swift in Sources */,
 				5165D72A22835F7D00D9D53D /* HTMLFeedFinder.swift in Sources */,
@@ -1185,7 +1189,6 @@
 				51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */,
 				9E1D1555233431A600F4944C /* FeedlyOperation.swift in Sources */,
 				84F1F06E2243524700DA0616 /* AccountMetadata.swift in Sources */,
-				51E4DB2C242632DC0091EB5B /* CloudKitErrorHandler.swift in Sources */,
 				9EF1B10723590D61000A486A /* FeedlyGetStreamIdsOperation.swift in Sources */,
 				84245C851FDDD8CB0074AFBB /* FeedbinSubscription.swift in Sources */,
 				9EF2602C23C91FFE006D160C /* FeedlyGetUpdatedArticleIdsOperation.swift in Sources */,
@@ -1193,6 +1196,7 @@
 				3B826DAC2385C81C00FC1ADB /* FeedWranglerAccountDelegate.swift in Sources */,
 				769F295938E5A30D03DFF88F /* NewsBlurAccountDelegate.swift in Sources */,
 				769F2BA02EF5F329CDE45F5A /* NewsBlurAPICaller.swift in Sources */,
+				51C034DF242D65D20014DC71 /* CloudKitResult.swift in Sources */,
 				179DB28CF49F73A945EBF5DB /* NewsBlurLoginResponse.swift in Sources */,
 				179DBF4DE2562D4C532F6008 /* NewsBlurFeed.swift in Sources */,
 				179DB02FFBC17AC9798F0EBC /* NewsBlurStory.swift in Sources */,
