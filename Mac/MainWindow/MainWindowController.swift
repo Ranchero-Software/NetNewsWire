@@ -443,7 +443,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func cleanUp(_ sender: Any?) {
-		sidebarViewController?.cleanUp()
 		timelineContainerViewController?.cleanUp()
 	}
 	

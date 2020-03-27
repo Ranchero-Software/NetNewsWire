@@ -449,10 +449,6 @@ protocol SidebarDelegate: class {
 		updateReadFilterButton()
 	}
 	
-	func cleanUp() {
-		rebuildTreeAndRestoreSelection()
-	}
-
 }
 
 // MARK: - NSUserInterfaceValidations
