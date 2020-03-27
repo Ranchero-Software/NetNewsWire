@@ -24,7 +24,7 @@ struct ArticleStyle: Equatable {
 		self.path = nil;
 		self.emptyCSS = nil
 
-		self.info = ["CreatorHomePage": "http://ranchero.com/", "CreatorName": "Ranchero Software, LLC", "Version": "1.0"]
+		self.info = ["CreatorHomePage": "https://ranchero.com/", "CreatorName": "Ranchero Software, LLC", "Version": "1.0"]
 
 		let cssPath = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
 		css = stringAtPath(cssPath)

@@ -663,7 +663,7 @@ private extension ArticlesTable {
 	}
 
 	func fetchArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
-		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read=0
+		// select * from articles natural join statuses where feedID in ('https://ranchero.com/xml/rss.xml') and read=0
 		if webFeedIDs.isEmpty {
 			return Set<Article>()
 		}
@@ -674,7 +674,7 @@ private extension ArticlesTable {
 	}
 
 	func fetchUnreadArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
-		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read=0
+		// select * from articles natural join statuses where feedID in ('https://ranchero.com/xml/rss.xml') and read=0
 		if webFeedIDs.isEmpty {
 			return Set<Article>()
 		}
@@ -699,7 +699,7 @@ private extension ArticlesTable {
 	}
 
 	func fetchArticlesSince(_ webFeedIDs: Set<String>, _ cutoffDate: Date, _ database: FMDatabase) -> Set<Article> {
-		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and (datePublished > ? || (datePublished is null and dateArrived > ?)
+		// select * from articles natural join statuses where feedID in ('https://ranchero.com/xml/rss.xml') and (datePublished > ? || (datePublished is null and dateArrived > ?)
 		//
 		// datePublished may be nil, so we fall back to dateArrived.
 		if webFeedIDs.isEmpty {
@@ -712,7 +712,7 @@ private extension ArticlesTable {
 	}
 
 	func fetchStarredArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
-		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and starred = 1 and userDeleted = 0;
+		// select * from articles natural join statuses where feedID in ('https://ranchero.com/xml/rss.xml') and starred = 1 and userDeleted = 0;
 		if webFeedIDs.isEmpty {
 			return Set<Article>()
 		}

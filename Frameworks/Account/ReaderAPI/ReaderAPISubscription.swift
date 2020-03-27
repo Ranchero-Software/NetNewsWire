@@ -49,8 +49,8 @@ struct ReaderAPISubscriptionContainer: Codable {
 		"label": "Comics"
 	}
 	],
-	"url": "http://www.questionablecontent.net/QCRSS.xml",
-	"htmlUrl": "http://www.questionablecontent.net",
+	"url": "https://www.questionablecontent.net/QCRSS.xml",
+	"htmlUrl": "https://www.questionablecontent.net/",
 	"iconUrl": "https://rss.confusticate.com/f.php?24decabc"
 }
 

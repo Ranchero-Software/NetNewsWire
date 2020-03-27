@@ -6,7 +6,7 @@ _Brent Simmons, 27 May 2017_
 
 I considered doing a Help book that ships in the app bundle, which is the traditional and Apple-endorsed way to go.
 
-But instead the Help book will go on the web, at `http://ranchero.com/evergreen/help/[version_number]`.
+But instead the Help book will go on the web, at `https://ranchero.com/evergreen/help/[version_number]`.
 
 This gives me the ability to update the Help book whenever it needs it — to answer a frequently-asked question, for instance. It means that if someone asks me a question already answered in the Help, I can respond with a URL.
 
