@@ -130,19 +130,8 @@ function showClickedImage() {
 	window.webkit.messageHandlers.imageWasShown.postMessage("");
 }
 
-// Add the playsinline attribute to any HTML5 videos that don"t have it.
-// Without this attribute videos may autoplay and take over the whole screen
-// on an iphone when viewing an article.
-function inlineVideos() {
-	document.querySelectorAll("video").forEach(element => {
-		element.setAttribute("playsinline", true)
-		element.setAttribute("controls", true)
-	});
-}
-
 function postRenderProcessing() {
 	ImageViewer.init();
-	inlineVideos();
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
