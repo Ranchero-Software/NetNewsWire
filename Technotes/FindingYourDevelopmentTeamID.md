@@ -11,5 +11,3 @@
 ![DevelopmentTeamIDInfo](Images/DevelopmentTeamIDInfo.png)
 
 Your **Development Team ID** is the value next to **Organizational Unit**.
-
-/Users/pietrorea/Developer/github/Ranchero-Software/NetNewsWire/Technotes/FindingYourDevelopmentTeamID.md
