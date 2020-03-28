@@ -63,6 +63,9 @@ DEVELOPER_ENTITLEMENTS = -dev
 PROVISIONING_PROFILE_SPECIFIER =
 ```
 
+You can use Keychain Acceass to [find your development team ID](/Technotes/FindingYourDevelopmentTeamID.md).
+Note that `PROVISIONING_PROFILE_SPECIFIER` should not have a value associated with it. 
+
 Now you should be able to build without code signing errors and without modifying
 the NetNewsWire Xcode project.
 
