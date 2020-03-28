@@ -52,6 +52,13 @@ struct AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 	}
 
+	static let isDeveloperBuild: Bool = {
+		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
+			return true
+		}
+		return false
+	}()
+
 	static let isFirstRun: Bool = {
 		if let _ = AppDefaults.shared.object(forKey: Key.firstRunDate) as? Date {
 			return false

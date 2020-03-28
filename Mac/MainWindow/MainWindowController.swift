@@ -799,6 +799,10 @@ private extension MainWindowController {
 	}
 
 	func validateToggleArticleExtractor(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		guard !AppDefaults.isDeveloperBuild else {
+			return false
+		}
+		
 		guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? ArticleExtractorButton else {
 			if let menuItem = item as? NSMenuItem {
 				menuItem.state = isShowingExtractedArticle ? .on : .off
