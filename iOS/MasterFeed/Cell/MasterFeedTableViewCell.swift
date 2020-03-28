@@ -12,7 +12,7 @@ import Account
 import RSTree
 
 protocol MasterFeedTableViewCellDelegate: class {
-	func disclosureSelected(_ sender: MasterFeedTableViewCell, expanding: Bool)
+	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 
 class MasterFeedTableViewCell : VibrantTableViewCell {
@@ -149,7 +149,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	@objc func buttonPressed(_ sender: UIButton) {
 		if isDisclosureAvailable {
 			setDisclosure(isExpanded: !isDisclosureExpanded, animated: true)
-			delegate?.disclosureSelected(self, expanding: isDisclosureExpanded)
+			delegate?.masterFeedTableViewCellDisclosureDidToggle(self, expanding: isDisclosureExpanded)
 		}
 	}
 	
@@ -181,6 +181,9 @@ private extension MasterFeedTableViewCell {
 		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false
+		if #available(iOS 13.4, *) {
+			disclosureButton?.addInteraction(UIPointerInteraction())
+		}
 		addSubviewAtInit(disclosureButton!)
 	}
 	
