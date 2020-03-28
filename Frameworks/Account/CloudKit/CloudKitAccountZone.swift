@@ -18,6 +18,14 @@ final class CloudKitAccountZone: CloudKitZone {
     let container: CKContainer
     let database: CKDatabase
     
+	struct CloudKitWebFeed {
+		static let recordType = "WebFeed"
+		struct Fields {
+			static let url = "url"
+			static let editedName = "editedName"
+		}
+	}
+	
     init(container: CKContainer) {
         self.container = container
         self.database = container.privateCloudDatabase
@@ -25,20 +33,13 @@ final class CloudKitAccountZone: CloudKitZone {
     
 	///  Persist a feed record to iCloud and return the external key
 	func createFeed(url: String, editedName: String?, completion: @escaping (Result<String, Error>) -> Void) {
-		let record = CKRecord(recordType: "Feed", recordID: generateRecordID())
-		record["url"] = url
+		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: generateRecordID())
+		record[CloudKitWebFeed.Fields.url] = url
 		if let editedName = editedName {
-			record["editedName"] = editedName
+			record[CloudKitWebFeed.Fields.editedName] = editedName
 		}
 		
-		modify(recordsToStore: [record], recordIDsToDelete: []) { result in
-			switch result {
-			case .success:
-				completion(.success(record.recordID.recordName))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		save(recordToStore: record, completion: completion)
 	}
 	
 //    private func fetchChangesInZones(_ callback: ((Error?) -> Void)? = nil) {

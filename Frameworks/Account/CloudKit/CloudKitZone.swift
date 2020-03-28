@@ -113,6 +113,17 @@ extension CloudKitZone {
 	//        })
 	//    }
 	
+	public func save(recordToStore: CKRecord, completion: @escaping (Result<String, Error>) -> Void) {
+		modify(recordsToStore: [recordToStore], recordIDsToDelete: []) { result in
+			switch result {
+			case .success:
+				completion(.success(recordToStore.recordID.recordName))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
 	/// Sync local data to CloudKit
 	/// For more about the savePolicy: https://developer.apple.com/documentation/cloudkit/ckrecordsavepolicy
 	public func modify(recordsToStore: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
