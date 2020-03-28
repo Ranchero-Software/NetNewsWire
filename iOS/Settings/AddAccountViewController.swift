@@ -17,7 +17,7 @@ protocol AddAccountDismissDelegate: UIViewController {
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .newsBlur]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .feedWrangler, .newsBlur]
 	#else
 	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
 	#endif
@@ -46,6 +46,9 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		case .onMyMac:
 			cell.accountNameLabel?.text = Account.defaultLocalAccountName
 			cell.accountImage?.image = AppAssets.image(for: .onMyMac)
+		case .cloudKit:
+			cell.accountNameLabel?.text = NSLocalizedString("CloudKit", comment: "CloudKit")
+			cell.accountImage?.image = AppAssets.accountCloudKitImage
 		case .feedbin:
 			cell.accountNameLabel?.text = NSLocalizedString("Feedbin", comment: "Feedbin")
 			cell.accountImage?.image = AppAssets.accountFeedbinImage
@@ -68,9 +71,15 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch addableAccountTypes[indexPath.row] {
 		case .onMyMac:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "AddLocalAccountNavigationViewController") as! UINavigationController
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "LocalAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
 			let addViewController = navController.topViewController as! LocalAccountViewController
+			addViewController.delegate = self
+			present(navController, animated: true)
+		case .cloudKit:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "CloudKitAccountNavigationViewController") as! UINavigationController
+			navController.modalPresentationStyle = .currentContext
+			let addViewController = navController.topViewController as! CloudKitAccountViewController
 			addViewController.delegate = self
 			present(navController, animated: true)
 		case .feedbin:
