@@ -31,7 +31,14 @@ final class CloudKitAccountZone: CloudKitZone {
 			record["editedName"] = editedName
 		}
 		
-		save(record: record, completion: completion)
+		modify(recordsToStore: [record], recordIDsToDelete: []) { result in
+			switch result {
+			case .success:
+				completion(.success(record.recordID.recordName))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 //    private func fetchChangesInZones(_ callback: ((Error?) -> Void)? = nil) {
