@@ -8,13 +8,16 @@
 
 import CloudKit
 
+public enum CloudKitZoneError: Error {
+	case unknown
+}
+
 public protocol CloudKitZone: class {
 	
+	static var zoneID: CKRecordZone.ID { get }
+
 	var container: CKContainer { get }
 	var database: CKDatabase { get }
-	static var zoneID: CKRecordZone.ID { get }
-	
-	func startUp(completion: @escaping (Result<Void, Error>) -> Void)
 	
 	//    func prepare()
 	
@@ -33,12 +36,44 @@ public protocol CloudKitZone: class {
 
 extension CloudKitZone {
 	
-	func startUp(completion: @escaping (Result<Void, Error>) -> Void) {
+	var changeTokenKey: String {
+		return "cloudkit.server.token.\(Self.zoneID.zoneName)"
+	}
+
+    var changeToken: CKServerChangeToken? {
+        get {
+			guard let tokenData = UserDefaults.standard.object(forKey: changeTokenKey) as? Data else { return nil }
+			return try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: tokenData)
+        }
+        set {
+            guard let token = newValue, let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: false) else {
+                UserDefaults.standard.removeObject(forKey: changeTokenKey)
+                return
+            }
+            UserDefaults.standard.set(data, forKey: changeTokenKey)
+        }
+    }
+
+	var zoneConfiguration: CKFetchRecordZoneChangesOperation.ZoneConfiguration {
+		let config = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
+		config.previousServerChangeToken = changeToken
+		return config
+    }
+	
+	func generateRecordID() -> CKRecord.ID {
+		return CKRecord.ID(recordName: UUID().uuidString, zoneID: Self.zoneID)
+	}
+
+	func createZoneRecord(completion: @escaping (Result<Void, Error>) -> Void) {
 		database.save(CKRecordZone(zoneID: Self.zoneID)) { (recordZone, error) in
 			if let error = error {
-				completion(.failure(error))
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
 			} else {
-				completion(.success(()))
+				DispatchQueue.main.async {
+					completion(.success(()))
+				}
 			}
 		}
 	}
@@ -78,37 +113,62 @@ extension CloudKitZone {
 	//        })
 	//    }
 	
+	public func save(record: CKRecord, completion: @escaping (Result<String, Error>) -> Void) {
+		database.save(record) {(savedRecord, error) in
+			
+			switch CloudKitResult.resolve(error) {
+				
+			case .success:
+				DispatchQueue.main.async {
+					if let savedRecord = savedRecord {
+						completion(.success(savedRecord.recordID.recordName))
+					} else {
+						completion(.failure(CloudKitZoneError.unknown))
+					}
+				}
+				
+			case .retry(let timeToWait):
+				self.retryOperationIfPossible(retryAfter: timeToWait) {
+					self.save(record: record, completion: completion)
+				}
+				
+			default:
+				return
+			}
+			
+		}
+		
+	}
+	
 	/// Sync local data to CloudKit
 	/// For more about the savePolicy: https://developer.apple.com/documentation/cloudkit/ckrecordsavepolicy
-	public func syncRecordsToCloudKit(recordsToStore: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: ((Error?) -> ())? = nil) {
-		let modifyOpe = CKModifyRecordsOperation(recordsToSave: recordsToStore, recordIDsToDelete: recordIDsToDelete)
+	public func syncRecordsToCloudKit(recordsToStore: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+		let op = CKModifyRecordsOperation(recordsToSave: recordsToStore, recordIDsToDelete: recordIDsToDelete)
 		
 		let config = CKOperation.Configuration()
 		config.isLongLived = true
-		modifyOpe.configuration = config
+		op.configuration = config
 		
 		// We use .changedKeys savePolicy to do unlocked changes here cause my app is contentious and off-line first
 		// Apple suggests using .ifServerRecordUnchanged save policy
 		// For more, see Advanced CloudKit(https://developer.apple.com/videos/play/wwdc2014/231/)
-		modifyOpe.savePolicy = .changedKeys
+		op.savePolicy = .changedKeys
 		
 		// To avoid CKError.partialFailure, make the operation atomic (if one record fails to get modified, they all fail)
 		// If you want to handle partial failures, set .isAtomic to false and implement CKOperationResultType .fail(reason: .partialFailure) where appropriate
-		modifyOpe.isAtomic = true
+		op.isAtomic = true
 		
-		modifyOpe.modifyRecordsCompletionBlock = {
-			[weak self]
-			(_, _, error) in
+		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
 			
 			guard let self = self else { return }
 			
-			switch CloudKitErrorHandler.shared.resultType(with: error) {
+			switch CloudKitResult.resolve(error) {
 			case .success:
 				DispatchQueue.main.async {
-					completion?(nil)
+					completion(.success(()))
 				}
-			case .retry(let timeToWait, _):
-				CloudKitErrorHandler.shared.retryOperationIfPossible(retryAfter: timeToWait) {
+			case .retry(let timeToWait):
+				self.retryOperationIfPossible(retryAfter: timeToWait) {
 					self.syncRecordsToCloudKit(recordsToStore: recordsToStore, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
 			case .chunk:
@@ -123,7 +183,14 @@ extension CloudKitZone {
 			}
 		}
 		
-		database.add(modifyOpe)
+		database.add(op)
+	}
+	
+	func retryOperationIfPossible(retryAfter: Double, block: @escaping () -> ()) {
+		let delayTime = DispatchTime.now() + retryAfter
+		DispatchQueue.main.asyncAfter(deadline: delayTime, execute: {
+			block()
+		})
 	}
 	
 }

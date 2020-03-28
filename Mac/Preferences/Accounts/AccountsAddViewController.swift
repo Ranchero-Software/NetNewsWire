@@ -160,9 +160,23 @@ extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate 
 // MARK: Private
 
 private extension AccountsAddViewController {
+	
 	func removeCloudKitIfNecessary() {
-		if let index = AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) {
-			addableAccountTypes.remove(at: index)
+		func removeCloudKit() {
+			if let cloudKitIndex = addableAccountTypes.firstIndex(of: .cloudKit) {
+				addableAccountTypes.remove(at: cloudKitIndex)
+			}
+		}
+		
+		if AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
+			removeCloudKit()
+			return
+		}
+		
+		// We don't want developers without entitlements to be trying to add the CloudKit account
+		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
+			removeCloudKit()
 		}
 	}
+	
 }

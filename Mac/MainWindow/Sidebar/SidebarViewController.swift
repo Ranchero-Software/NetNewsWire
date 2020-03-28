@@ -160,8 +160,7 @@ protocol SidebarDelegate: class {
 			return
 		}
 
-		if let feed = representedObject as? Feed, isReadFiltered, feed.unreadCount > 0 {
-			addTreeControllerToFilterExceptions()
+		if isReadFiltered {
 			queueRebuildTreeAndRestoreSelection()
 		}
 	}
@@ -179,7 +178,6 @@ protocol SidebarDelegate: class {
 	}
 
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		addTreeControllerToFilterExceptions()
 		rebuildTreeAndRestoreSelection()
 	}
 	
@@ -221,7 +219,6 @@ protocol SidebarDelegate: class {
 	}
 	
 	@objc func downloadArticlesDidUpdateUnreadCounts(_ note: Notification) {
-		addTreeControllerToFilterExceptions()
 		rebuildTreeAndRestoreSelection()
 	}
 	
@@ -452,10 +449,6 @@ protocol SidebarDelegate: class {
 		updateReadFilterButton()
 	}
 	
-	func cleanUp() {
-		rebuildTreeAndRestoreSelection()
-	}
-
 }
 
 // MARK: - NSUserInterfaceValidations
