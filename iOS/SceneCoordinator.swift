@@ -441,7 +441,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return	
 		}
 		
-		rebuildBackingStoresQueue.add(self, #selector(rebuildBackingStoresWithDefaults))
+		queueRebuildBackingStores()
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
@@ -740,6 +740,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		} else {
 			
 			setTimelineFeed(nil, animated: false) {
+				if self.isReadFeedsFiltered {
+					self.queueRebuildBackingStores()
+				}
 				self.activityManager.invalidateSelecting()
 				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
 					self.navControllerForTimeline().popViewController(animated: animations.contains(.navigation))
@@ -1354,6 +1357,10 @@ private extension SceneCoordinator {
 				}
 			}
 		}
+	}
+	
+	func queueRebuildBackingStores() {
+		rebuildBackingStoresQueue.add(self, #selector(rebuildBackingStoresWithDefaults))
 	}
 
 	@objc func rebuildBackingStoresWithDefaults() {
