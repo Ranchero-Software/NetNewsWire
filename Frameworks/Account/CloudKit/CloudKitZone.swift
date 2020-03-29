@@ -10,6 +10,7 @@ import CloudKit
 
 public enum CloudKitZoneError: Error {
 	case userDeletedZone
+	case invalidParameter
 	case unknown
 }
 
@@ -114,21 +115,19 @@ extension CloudKitZone {
 	//        })
 	//    }
 	
-	public func save(recordToStore: CKRecord, completion: @escaping (Result<String, Error>) -> Void) {
-		modify(recordsToStore: [recordToStore], recordIDsToDelete: []) { result in
-			switch result {
-			case .success:
-				completion(.success(recordToStore.recordID.recordName))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+	public func save(record: CKRecord, completion: @escaping (Result<Void, Error>) -> Void) {
+		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
 	}
 	
+	public func delete(externalID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
+		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
+	}
+
 	/// Sync local data to CloudKit
 	/// For more about the savePolicy: https://developer.apple.com/documentation/cloudkit/ckrecordsavepolicy
-	public func modify(recordsToStore: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
-		let op = CKModifyRecordsOperation(recordsToSave: recordsToStore, recordIDsToDelete: recordIDsToDelete)
+	public func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
 		
 		let config = CKOperation.Configuration()
 		config.isLongLived = true
@@ -156,7 +155,7 @@ extension CloudKitZone {
 				self.createZoneRecord() { result in
 					switch result {
 					case .success:
-						self.modify(recordsToStore: recordsToStore, recordIDsToDelete: recordIDsToDelete, completion: completion)
+						self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 					case .failure(let error):
 						completion(.failure(error))
 					}
@@ -167,14 +166,14 @@ extension CloudKitZone {
 				}
 			case .retry(let timeToWait):
 				self.retryOperationIfPossible(retryAfter: timeToWait) {
-					self.modify(recordsToStore: recordsToStore, recordIDsToDelete: recordIDsToDelete, completion: completion)
+					self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
 			case .limitExceeded:
 				/// CloudKit says maximum number of items in a single request is 400.
 				/// So I think 300 should be fine by them.
-				let chunkedRecords = recordsToStore.chunked(into: 300)
+				let chunkedRecords = recordsToSave.chunked(into: 300)
 				for chunk in chunkedRecords {
-					self.modify(recordsToStore: chunk, recordIDsToDelete: recordIDsToDelete, completion: completion)
+					self.modify(recordsToSave: chunk, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
 			default:
 				DispatchQueue.main.async {

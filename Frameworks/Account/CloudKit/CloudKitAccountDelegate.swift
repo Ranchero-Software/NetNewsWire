@@ -176,8 +176,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.removeWebFeed(feed)
-		completion(.success(()))
+		accountZone.removeWebFeed(feed) { result in
+			switch result {
+			case .success:
+				container.removeWebFeed(feed)
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
