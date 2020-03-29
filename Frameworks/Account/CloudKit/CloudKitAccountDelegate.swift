@@ -45,14 +45,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
-//	init() {
-//		accountZone.startUp() { result in
-//			if case .failure(let error) = result {
-//				os_log(.error, log: self.log, "Account zone startup error: %@.", error.localizedDescription)
-//			}
-//		}
-//	}
-	
 	init(dataFolder: String) {
 		accountZone = CloudKitAccountZone(container: container)
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
@@ -140,22 +132,35 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					return
 				}
 				
-				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-				
-				InitialFeedDownloader.download(url) { parsedFeed in
-					self.refreshProgress.completeTask()
+				self.accountZone.createFeed(url: urlString, editedName: name) { result in
+					switch result {
+					case .success(let externalID):
+						
+						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+						
+						InitialFeedDownloader.download(url) { parsedFeed in
+							self.refreshProgress.completeTask()
 
-					if let parsedFeed = parsedFeed {
-						account.update(feed, with: parsedFeed, {_ in})
+							if let parsedFeed = parsedFeed {
+								account.update(feed, with: parsedFeed, {_ in
+									
+									feed.editedName = name
+									feed.externalID = externalID
+									
+									container.addWebFeed(feed)
+									completion(.success(feed))
+									
+								})
+							}
+							
+						}
+
+					case .failure(let error):
+						self.refreshProgress.completeTask()
+						completion(.failure(error))  // TODO: need to handle userDeletedZone
 					}
-					
-					feed.editedName = name
-					
-					container.addWebFeed(feed)
-					completion(.success(feed))
-					
 				}
-				
+								
 			case .failure:
 				self.refreshProgress.completeTask()
 				completion(.failure(AccountError.createErrorNotFound))

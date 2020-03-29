@@ -9,6 +9,7 @@
 import CloudKit
 
 public enum CloudKitZoneError: Error {
+	case userDeletedZone
 	case unknown
 }
 
@@ -146,14 +147,13 @@ extension CloudKitZone {
 			
 			guard let self = self else { return }
 			
-			switch CloudKitResult.resolve(error) {
+			switch CloudKitZoneResult.resolve(error) {
 			case .success:
 				DispatchQueue.main.async {
 					completion(.success(()))
 				}
-			case .noZone:
+			case .zoneNotFound:
 				self.createZoneRecord() { result in
-					// TODO: Need to rebuild (push) zone data here...
 					switch result {
 					case .success:
 						self.modify(recordsToStore: recordsToStore, recordIDsToDelete: recordIDsToDelete, completion: completion)
@@ -161,11 +161,15 @@ extension CloudKitZone {
 						completion(.failure(error))
 					}
 				}
+			case .userDeletedZone:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitZoneError.userDeletedZone))
+				}
 			case .retry(let timeToWait):
 				self.retryOperationIfPossible(retryAfter: timeToWait) {
 					self.modify(recordsToStore: recordsToStore, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
-			case .chunk:
+			case .limitExceeded:
 				/// CloudKit says maximum number of items in a single request is 400.
 				/// So I think 300 should be fine by them.
 				let chunkedRecords = recordsToStore.chunked(into: 300)
@@ -173,7 +177,9 @@ extension CloudKitZone {
 					self.modify(recordsToStore: chunk, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
 			default:
-				return
+				DispatchQueue.main.async {
+					completion(.failure(error!))
+				}
 			}
 		}
 		

@@ -16,7 +16,8 @@ enum CloudKitZoneResult {
 	case changeTokenExpired
 	case partialFailure(errors: [CKRecord.ID: CKError])
 	case serverRecordChanged
-	case noZone
+	case zoneNotFound
+	case userDeletedZone
 	case failure(error: Error)
 	
 	static func resolve(_ error: Error?) -> CloudKitZoneResult {
@@ -40,8 +41,8 @@ enum CloudKitZoneResult {
 			return .serverRecordChanged
 		case .partialFailure:
 			if let partialErrors = ckError.userInfo[CKPartialErrorsByItemIDKey] as? [CKRecord.ID: CKError] {
-				if anyZoneErrors(partialErrors) {
-					return .noZone
+				if let zoneResult = anyZoneErrors(partialErrors) {
+					return zoneResult
 				} else {
 					return .partialFailure(errors: partialErrors)
 				}
@@ -60,8 +61,14 @@ enum CloudKitZoneResult {
 
 private extension CloudKitZoneResult {
 	
-	static func anyZoneErrors(_ errors: [CKRecord.ID: CKError]) -> Bool {
-		return errors.values.contains(where: { $0.code == .zoneNotFound || $0.code == .userDeletedZone } )
+	static func anyZoneErrors(_ errors: [CKRecord.ID: CKError]) -> CloudKitZoneResult? {
+		if errors.values.contains(where: { $0.code == .zoneNotFound } ) {
+			return .zoneNotFound
+		}
+		if errors.values.contains(where: { $0.code == .userDeletedZone } ) {
+			return .userDeletedZone
+		}
+		return nil
 	}
 	
 }

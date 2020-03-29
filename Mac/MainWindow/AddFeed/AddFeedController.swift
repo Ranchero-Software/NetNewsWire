@@ -58,16 +58,12 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 			return
 		}
 
-		BatchUpdate.shared.start()
-		
 		account.createWebFeed(url: url.absoluteString, name: title, container: container) { result in
 			
 			DispatchQueue.main.async {
 				self.endShowingProgress()
 			}
 			
-			BatchUpdate.shared.end()
-
 			switch result {
 			case .success(let feed):
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])

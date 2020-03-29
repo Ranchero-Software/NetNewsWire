@@ -545,7 +545,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		let feed = WebFeed(account: self, url: url, metadata: metadata)
 		feed.name = name
 		feed.homePageURL = homePageURL
-		
 		return feed
 	}
 	
@@ -683,7 +682,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	func update(_ webFeed: WebFeed, with parsedFeed: ParsedFeed, _ completion: @escaping DatabaseCompletionBlock) {
-		// Used only by an On My Mac account.
+		// Used only by an On My Mac and iCloud accounts.
 		webFeed.takeSettings(from: parsedFeed)
 		let webFeedIDsAndItems = [webFeed.webFeedID: parsedFeed.items]
 		update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: false, completion: completion)
