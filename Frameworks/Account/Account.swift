@@ -143,13 +143,20 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return nil
 	}
 	
-	private var webFeedDictionaryNeedsUpdate = true
+	private var webFeedDictionariesNeedUpdate = true
 	private var _idToWebFeedDictionary = [String: WebFeed]()
 	var idToWebFeedDictionary: [String: WebFeed] {
-		if webFeedDictionaryNeedsUpdate {
+		if webFeedDictionariesNeedUpdate {
 			rebuildWebFeedDictionaries()
 		}
 		return _idToWebFeedDictionary
+	}
+	private var _externalIDToWebFeedDictionary = [String: WebFeed]()
+	var externalIDToWebFeedDictionary: [String: WebFeed] {
+		if webFeedDictionariesNeedUpdate {
+			rebuildWebFeedDictionaries()
+		}
+		return _externalIDToWebFeedDictionary
 	}
 
 	var username: String? {
@@ -520,6 +527,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return folders?.first(where: { $0.nameForDisplay == displayName })
 	}
 	
+	public func existingFolder(withExternalID externalID: String) -> Folder? {
+		return folders?.first(where: { $0.externalID == externalID })
+	}
+	
 	func newWebFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> WebFeed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let metadata = webFeedMetadata(feedURL: feedURL, webFeedID: feedURL)
@@ -532,6 +543,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return feed
 	}
 
+	public func existingWebFeed(withExternalID externalID: String) -> WebFeed? {
+		return externalIDToWebFeedDictionary[externalID]
+	}
+	
 	public func addWebFeed(_ feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.addWebFeed(for: self, with: feed, to: container, completion: completion)
 	}
@@ -678,7 +693,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		// Or feeds inside folders were added or deleted.
 		opmlFile.markAsDirty()
 		flattenedWebFeedsNeedUpdate = true
-		webFeedDictionaryNeedsUpdate = true
+		webFeedDictionariesNeedUpdate = true
 	}
 
 	func update(_ webFeed: WebFeed, with parsedFeed: ParsedFeed, _ completion: @escaping DatabaseCompletionBlock) {
@@ -1149,13 +1164,18 @@ private extension Account {
 
 	func rebuildWebFeedDictionaries() {
 		var idDictionary = [String: WebFeed]()
-
+		var externalIDDictionary = [String: WebFeed]()
+		
 		flattenedWebFeeds().forEach { (feed) in
 			idDictionary[feed.webFeedID] = feed
+			if let externalID = feed.externalID {
+				externalIDDictionary[externalID] = feed
+			}
 		}
 
 		_idToWebFeedDictionary = idDictionary
-		webFeedDictionaryNeedsUpdate = false
+		_externalIDToWebFeedDictionary = externalIDDictionary
+		webFeedDictionariesNeedUpdate = false
 	}
     
     func updateUnreadCount() {
