@@ -178,8 +178,16 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		feed.editedName = name
-		completion(.success(()))
+		let editedName = name.isEmpty ? nil : name
+		accountZone.renameWebFeed(feed, editedName: editedName) { result in
+			switch result {
+			case .success:
+				feed.editedName = name
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {

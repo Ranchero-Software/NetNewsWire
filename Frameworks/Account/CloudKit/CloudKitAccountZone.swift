@@ -55,6 +55,27 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
+	func renameWebFeed(_ webFeed: WebFeed, editedName: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let externalID = webFeed.externalID else {
+			completion(.failure(CloudKitZoneError.invalidParameter))
+			return
+		}
+
+		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
+		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: recordID)
+		record[CloudKitWebFeed.Fields.editedName] = editedName
+		
+		save(record: record) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	/// Deletes a web feed from iCloud
 	func removeWebFeed(_ webFeed: WebFeed, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let externalID = webFeed.externalID else {
 			completion(.failure(CloudKitZoneError.invalidParameter))
