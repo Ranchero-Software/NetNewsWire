@@ -49,12 +49,20 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		accountZone = CloudKitAccountZone(container: container)
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
+		accountZone.refreshProgress = refreshProgress
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		refresher.refreshFeeds(account.flattenedWebFeeds()) {
-			account.metadata.lastArticleFetchEndTime = Date()
-			completion(.success(()))
+		accountZone.fetchChangesInZone() { result in
+			switch result {
+			case .success:
+				self.refresher.refreshFeeds(account.flattenedWebFeeds()) {
+					account.metadata.lastArticleFetchEndTime = Date()
+					completion(.success(()))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
 		}
 	}
 
@@ -119,11 +127,10 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			
 			switch result {
 			case .success(let feedSpecifiers):
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-					let url = URL(string: bestFeedSpecifier.urlString) else {
-						self.refreshProgress.completeTask()
-						completion(.failure(AccountError.createErrorNotFound))
-						return
+				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
+					self.refreshProgress.completeTask()
+					completion(.failure(AccountError.createErrorNotFound))
+					return
 				}
 				
 				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
@@ -132,7 +139,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					return
 				}
 				
-				self.accountZone.createWebFeed(url: urlString, editedName: name) { result in
+				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: name) { result in
 					switch result {
 					case .success(let externalID):
 						
@@ -231,10 +238,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		accountZone.delegate = CloudKitAcountZoneDelegate(account: account)
+		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
+		accountZone.resumeLongLivedOperationIfPossible()
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
+		accountZone.resetChangeToken()
 	}
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {

@@ -7,6 +7,8 @@
 //
 
 import CloudKit
+import os.log
+import RSWeb
 
 enum CloudKitZoneError: Error {
 	case userDeletedZone
@@ -23,39 +25,33 @@ protocol CloudKitZone: class {
 	
 	static var zoneID: CKRecordZone.ID { get }
 
-	var container: CKContainer { get }
-	var database: CKDatabase { get }
+	var log: OSLog { get }
+
+	var container: CKContainer? { get }
+	var database: CKDatabase? { get }
+	var refreshProgress: DownloadProgress? { get set }
 	var delegate: CloudKitZoneDelegate? { get set }
-	
-	//    func prepare()
-	
-	//    func fetchChangesInDatabase(_ callback: ((Error?) -> Void)?)
-	
-	/// The CloudKit Best Practice is out of date, now use this:
-	/// https://developer.apple.com/documentation/cloudkit/ckoperation
-	/// Which problem does this func solve? E.g.:
-	/// 1.(Offline) You make a local change, involve a operation
-	/// 2. App exits or ejected by user
-	/// 3. Back to app again
-	/// The operation resumes! All works like a magic!
-	func resumeLongLivedOperationIfPossible()
-	
+
 }
 
 extension CloudKitZone {
+	
+	func resetChangeToken() {
+		changeToken = nil
+	}
 	
 	func generateRecordID() -> CKRecord.ID {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: Self.zoneID)
 	}
 
 	func resumeLongLivedOperationIfPossible() {
-		container.fetchAllLongLivedOperationIDs { [weak self]( opeIDs, error) in
-			guard let self = self, error == nil, let ids = opeIDs else { return }
-			for id in ids {
-				self.container.fetchLongLivedOperation(withID: id, completionHandler: { [weak self](ope, error) in
-					guard let self = self, error == nil else { return }
+		guard let container = container else { return }
+		container.fetchAllLongLivedOperationIDs { (opIDs, error) in
+			guard let opIDs = opIDs else { return }
+			for opID in opIDs {
+				container.fetchLongLivedOperation(withID: opID, completionHandler: { (ope, error) in
 					if let modifyOp = ope as? CKModifyRecordsOperation {
-						self.container.add(modifyOp)
+						container.add(modifyOp)
 					}
 				})
 			}
@@ -134,10 +130,13 @@ extension CloudKitZone {
 			}
 		}
 		
-		database.add(op)
+		database?.add(op)
 	}
 	
-    func fetchChangesInZones(completion: @escaping (Result<Void, Error>) -> Void) {
+    func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
+
+		refreshProgress?.addToNumberOfTasksAndRemaining(1)
+
 		let zoneConfig = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
 		zoneConfig.previousServerChangeToken = changeToken
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [Self.zoneID], configurationsByRecordZoneID: [Self.zoneID: zoneConfig])
@@ -145,43 +144,54 @@ extension CloudKitZone {
 
         op.recordZoneChangeTokensUpdatedBlock = { [weak self] zoneId, token, _ in
             guard let self = self else { return }
-			self.changeToken = token
+			DispatchQueue.main.async {
+				self.changeToken = token
+			}
         }
 
         op.recordChangedBlock = { [weak self] record in
             guard let self = self else { return }
-			self.delegate?.cloudKitDidChange(record: record)
+			DispatchQueue.main.async {
+				self.delegate?.cloudKitDidChange(record: record)
+			}
         }
 
         op.recordWithIDWasDeletedBlock = { [weak self] recordId, recordType in
             guard let self = self else { return }
-			self.delegate?.cloudKitDidDelete(recordType: recordType, recordID: recordId)
+			DispatchQueue.main.async {
+				self.delegate?.cloudKitDidDelete(recordType: recordType, recordID: recordId)
+			}
         }
 
-        op.recordZoneFetchCompletionBlock = { [weak self](zoneId ,token, _, _, error) in
+        op.recordZoneFetchCompletionBlock = { [weak self] zoneId ,token, _, _, error in
             guard let self = self else { return }
 
 			switch CloudKitZoneResult.resolve(error) {
             case .success:
-				self.changeToken = token
+				DispatchQueue.main.async {
+					self.changeToken = token
+				}
 			 case .retry(let timeToWait):
 				 self.retryOperationIfPossible(retryAfter: timeToWait) {
-					 self.fetchChangesInZones(completion: completion)
+					 self.fetchChangesInZone(completion: completion)
 				 }
 			 default:
-				return
-            }
-        }
-
-        op.fetchRecordZoneChangesCompletionBlock = { error in
-			if let error = error {
-				completion(.failure(error))
-			} else {
-				completion(.success(()))
+				os_log(.error, log: self.log, "%@ zone fetch changes error: %@.", zoneId.zoneName, error?.localizedDescription ?? "Unknown")
 			}
         }
 
-        database.add(op)
+        op.fetchRecordZoneChangesCompletionBlock = { [weak self] error in
+			DispatchQueue.main.async {
+				self?.refreshProgress?.completeTask()
+				if let error = error {
+					completion(.failure(error))
+				} else {
+					completion(.success(()))
+				}
+			}
+        }
+
+        database?.add(op)
     }
 	
 }
@@ -213,7 +223,7 @@ private extension CloudKitZone {
     }
 	
 	func createZoneRecord(completion: @escaping (Result<Void, Error>) -> Void) {
-		database.save(CKRecordZone(zoneID: Self.zoneID)) { (recordZone, error) in
+		database?.save(CKRecordZone(zoneID: Self.zoneID)) { (recordZone, error) in
 			if let error = error {
 				DispatchQueue.main.async {
 					completion(.failure(error))

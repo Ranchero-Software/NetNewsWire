@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import os.log
+import RSWeb
 import CloudKit
 
 final class CloudKitAccountZone: CloudKitZone {
@@ -15,8 +17,11 @@ final class CloudKitAccountZone: CloudKitZone {
 		return CKRecordZone.ID(zoneName: "Account", ownerName: CKCurrentUserDefaultName)
 	}
 	
-    let container: CKContainer
-    let database: CKDatabase
+	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+
+    weak var container: CKContainer?
+    weak var database: CKDatabase?
+	weak var refreshProgress: DownloadProgress?
 	var delegate: CloudKitZoneDelegate? = nil
     
 	struct CloudKitWebFeed {
@@ -27,7 +32,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-    init(container: CKContainer) {
+	init(container: CKContainer) {
         self.container = container
         self.database = container.privateCloudDatabase
     }
@@ -43,7 +48,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		save(record: record) { result in
 			switch result {
 			case .success:
-				completion(.success(record.recordID.externalID))
+				completion(.success(record.externalID))
 			case .failure(let error):
 				completion(.failure(error))
 			}

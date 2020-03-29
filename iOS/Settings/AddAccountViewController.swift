@@ -47,7 +47,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			cell.accountNameLabel?.text = Account.defaultLocalAccountName
 			cell.accountImage?.image = AppAssets.image(for: .onMyMac)
 		case .cloudKit:
-			cell.accountNameLabel?.text = NSLocalizedString("CloudKit", comment: "CloudKit")
+			cell.accountNameLabel?.text = NSLocalizedString("iCloud", comment: "iCloud")
 			cell.accountImage?.image = AppAssets.accountCloudKitImage
 		case .feedbin:
 			cell.accountNameLabel?.text = NSLocalizedString("Feedbin", comment: "Feedbin")
