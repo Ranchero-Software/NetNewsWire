@@ -516,7 +516,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return ensureFolder(with: folderName)
 	}
 
-	public func findFolder(withDisplayName displayName: String) -> Folder? {
+	public func existingFolder(withDisplayName displayName: String) -> Folder? {
 		return folders?.first(where: { $0.nameForDisplay == displayName })
 	}
 	

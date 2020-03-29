@@ -72,7 +72,7 @@ public final class AccountManager: UnreadCountProvider {
 		return lastArticleFetchEndTime
 	}
 
-	public func findActiveAccount(forDisplayName displayName: String) -> Account? {
+	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
 		return AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
 	}
 	
