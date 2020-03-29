@@ -132,7 +132,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					return
 				}
 				
-				self.accountZone.createFeed(url: urlString, editedName: name) { result in
+				self.accountZone.createWebFeed(url: urlString, editedName: name) { result in
 					switch result {
 					case .success(let externalID):
 						
@@ -231,6 +231,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
+		accountZone.delegate = CloudKitAcountZoneDelegate(account: account)
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {

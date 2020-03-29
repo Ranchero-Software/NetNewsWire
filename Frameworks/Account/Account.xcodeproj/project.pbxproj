@@ -34,6 +34,8 @@
 		510BD111232C3801002692E4 /* AccountMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD110232C3801002692E4 /* AccountMetadataFile.swift */; };
 		510BD113232C3E9D002692E4 /* WebFeedMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */; };
 		511B9804237CD4270028BCAA /* FeedIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9803237CD4270028BCAA /* FeedIdentifier.swift */; };
+		512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */; };
+		512DD4CD2431098700C17B1F /* CloudKitAccountZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */; };
 		513323082281070D00C30F19 /* AccountFeedbinSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */; };
 		5133230A2281082F00C30F19 /* subscriptions_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 513323092281082F00C30F19 /* subscriptions_initial.json */; };
 		5133230C2281088A00C30F19 /* subscriptions_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5133230B2281088A00C30F19 /* subscriptions_add.json */; };
@@ -264,6 +266,8 @@
 		510BD110232C3801002692E4 /* AccountMetadataFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMetadataFile.swift; sourceTree = "<group>"; };
 		510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedMetadataFile.swift; sourceTree = "<group>"; };
 		511B9803237CD4270028BCAA /* FeedIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIdentifier.swift; sourceTree = "<group>"; };
+		512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
+		512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountZoneDelegate.swift; sourceTree = "<group>"; };
 		513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinSyncTest.swift; sourceTree = "<group>"; };
 		513323092281082F00C30F19 /* subscriptions_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_initial.json; sourceTree = "<group>"; };
 		5133230B2281088A00C30F19 /* subscriptions_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_add.json; sourceTree = "<group>"; };
@@ -512,8 +516,10 @@
 			isa = PBXGroup;
 			children = (
 				51C034E0242D660D0014DC71 /* CKError+Extensions.swift */,
+				512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */,
 				5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */,
 				51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */,
+				512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */,
 				51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */,
 				51C034DE242D65D20014DC71 /* CloudKitZoneResult.swift */,
 			);
@@ -1076,6 +1082,7 @@
 				9EA643D5239306AC0018A28C /* FeedlyFeedsSearchResponse.swift in Sources */,
 				9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */,
 				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,
+				512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */,
 				3B826DAF2385C81C00FC1ADB /* FeedWranglerGenericResult.swift in Sources */,
 				9ECC9A85234DC16E009B5144 /* FeedlyAccountDelegateError.swift in Sources */,
 				9EA3133B231E368100268BA0 /* FeedlyAccountDelegate.swift in Sources */,
@@ -1174,6 +1181,7 @@
 				515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */,
 				844B297F210CE37E004020B3 /* UnreadCountProvider.swift in Sources */,
 				9E1773D5234570E30056A5A8 /* FeedlyEntryParser.swift in Sources */,
+				512DD4CD2431098700C17B1F /* CloudKitAccountZoneDelegate.swift in Sources */,
 				51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */,
 				9E1D1555233431A600F4944C /* FeedlyOperation.swift in Sources */,
 				84F1F06E2243524700DA0616 /* AccountMetadata.swift in Sources */,
