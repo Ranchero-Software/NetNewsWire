@@ -60,6 +60,10 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		caller.logout() { _ in }
 	}
 	
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		completion()
+	}
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		

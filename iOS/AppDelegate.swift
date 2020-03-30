@@ -91,15 +91,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
 		
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
-			if granted {
-				DispatchQueue.main.async {
-					UIApplication.shared.registerForRemoteNotifications()
-				}
-			}
-		}
-
 		UNUserNotificationCenter.current().delegate = self
+		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { _, _ in }
+		UIApplication.shared.registerForRemoteNotifications()
+
 		userNotificationManager = UserNotificationManager()
 
 		extensionContainersFile = ExtensionContainersFile()
@@ -114,6 +109,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		return true
 		
 	}
+	
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+		DispatchQueue.main.async {
+			AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
+				completionHandler(.newData)
+			}
+		}
+    }
 	
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true

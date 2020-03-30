@@ -58,14 +58,43 @@ extension CloudKitZone {
 		}
 	}
 	
-	//    func startObservingRemoteChanges() {
-	//        NotificationCenter.default.addObserver(forName: Notifications.cloudKitDataDidChangeRemotely.name, object: nil, queue: nil, using: { [weak self](_) in
-	//            guard let self = self else { return }
-	//            DispatchQueue.global(qos: .utility).async {
-	//                self.fetchChangesInDatabase(nil)
-	//            }
-	//        })
-	//    }
+    func subscribe() {
+		
+		let subscription = CKRecordZoneSubscription(zoneID: Self.zoneID)
+        
+		let info = CKSubscription.NotificationInfo()
+        info.shouldSendContentAvailable = true
+        subscription.notificationInfo = info
+        
+        database?.save(subscription) { _, error in
+			switch CloudKitZoneResult.resolve(error) {
+			case .success:
+				break
+			case .retry(let timeToWait):
+				self.retryOperationIfPossible(retryAfter: timeToWait) {
+					self.subscribe()
+				}
+			default:
+				os_log(.error, log: self.log, "%@ zone fetch changes error: %@.", Self.zoneID.zoneName, error?.localizedDescription ?? "Unknown")
+			}
+		}
+	
+    }
+	
+	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
+		guard note?.recordZoneID?.zoneName == Self.zoneID.zoneName else {
+			completion()
+			return
+		}
+		
+		fetchChangesInZone() { result in
+			if case .failure(let error) = result {
+				os_log(.error, log: self.log, "%@ zone remote notification fetch error: %@.", Self.zoneID.zoneName, error.localizedDescription)
+			}
+			completion()
+		}
+	}
 	
 	func save(record: CKRecord, completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
@@ -142,7 +171,7 @@ extension CloudKitZone {
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [Self.zoneID], configurationsByRecordZoneID: [Self.zoneID: zoneConfig])
         op.fetchAllChanges = true
 
-        op.recordZoneChangeTokensUpdatedBlock = { [weak self] zoneId, token, _ in
+        op.recordZoneChangeTokensUpdatedBlock = { [weak self] zoneID, token, _ in
             guard let self = self else { return }
 			DispatchQueue.main.async {
 				self.changeToken = token
@@ -156,14 +185,14 @@ extension CloudKitZone {
 			}
         }
 
-        op.recordWithIDWasDeletedBlock = { [weak self] recordId, recordType in
+        op.recordWithIDWasDeletedBlock = { [weak self] recordID, recordType in
             guard let self = self else { return }
 			DispatchQueue.main.async {
-				self.delegate?.cloudKitDidDelete(recordType: recordType, recordID: recordId)
+				self.delegate?.cloudKitDidDelete(recordType: recordType, recordID: recordID)
 			}
         }
 
-        op.recordZoneFetchCompletionBlock = { [weak self] zoneId ,token, _, _, error in
+        op.recordZoneFetchCompletionBlock = { [weak self] zoneID ,token, _, _, error in
             guard let self = self else { return }
 
 			switch CloudKitZoneResult.resolve(error) {
@@ -176,7 +205,7 @@ extension CloudKitZone {
 					 self.fetchChangesInZone(completion: completion)
 				 }
 			 default:
-				os_log(.error, log: self.log, "%@ zone fetch changes error: %@.", zoneId.zoneName, error?.localizedDescription ?? "Unknown")
+				os_log(.error, log: self.log, "%@ zone fetch changes error: %@.", zoneID.zoneName, error?.localizedDescription ?? "Unknown")
 			}
         }
 

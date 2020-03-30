@@ -57,6 +57,10 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		database = SyncDatabase(databaseFilePath: dataFolder.appending("/DB.sqlite3"))
 	}
 
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		completion()
+	}
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 		self.refreshProgress.addToNumberOfTasksAndRemaining(5)
 

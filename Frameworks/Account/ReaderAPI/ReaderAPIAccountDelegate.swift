@@ -47,6 +47,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
+	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+	
 	init(dataFolder: String, transport: Transport?) {
 		
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
@@ -77,7 +79,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 	
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		completion()
+	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		

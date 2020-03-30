@@ -22,6 +22,8 @@ protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void)
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void))
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void))

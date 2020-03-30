@@ -267,6 +267,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 				CrashReporter.check(appName: "NetNewsWire")
 			}
 		#endif
+		
+        NSApplication.shared.registerForRemoteNotifications()
 	}
 	
 	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
@@ -302,6 +304,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		saveState()
 	}
 
+	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+		AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
+	}
+	
 	func applicationWillTerminate(_ notification: Notification) {
 		shuttingDown = true
 		saveState()

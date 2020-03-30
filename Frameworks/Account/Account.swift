@@ -377,8 +377,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		grantingType.requestOAuthAccessToken(with: response, transport: transport, completion: completion)
 	}
 
+	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		delegate.receiveRemoteNotification(for: self, userInfo: userInfo, completion: completion)
+	}
+	
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
-		self.delegate.refreshAll(for: self, completion: completion)
+		delegate.refreshAll(for: self, completion: completion)
 	}
 
 	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {

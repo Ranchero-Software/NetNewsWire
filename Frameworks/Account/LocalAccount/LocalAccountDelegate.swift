@@ -31,6 +31,10 @@ final class LocalAccountDelegate: AccountDelegate {
 		return refresher.progress
 	}
 	
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		completion()
+	}
+	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		refresher.refreshFeeds(account.flattenedWebFeeds()) {
 			account.metadata.lastArticleFetchEndTime = Date()

@@ -41,6 +41,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			caller.accountMetadata = accountMetadata
 		}
 	}
+	
+	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	init(dataFolder: String, transport: Transport?) {
 		
@@ -71,9 +73,11 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 		
 	}
-	
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
-	
+		
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		completion()
+	}
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(5)

@@ -30,6 +30,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		return CKContainer(identifier: "iCloud.\(orgID).NetNewsWire")
 	}()
 	
+	private lazy var zones = [accountZone]
 	private let accountZone: CloudKitAccountZone
 	
 	private let refresher = LocalAccountRefresher()
@@ -50,6 +51,21 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
 		accountZone.refreshProgress = refreshProgress
+	}
+	
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		let group = DispatchGroup()
+		
+		zones.forEach { zone in
+			group.enter()
+			zone.receiveRemoteNotification(userInfo: userInfo) {
+				group.leave()
+			}
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion()
+		}
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -247,11 +263,16 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	func accountDidInitialize(_ account: Account) {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
-		accountZone.resumeLongLivedOperationIfPossible()
+		zones.forEach { zone in
+			zone.resumeLongLivedOperationIfPossible()
+			zone.subscribe()
+		}
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
-		accountZone.resetChangeToken()
+		zones.forEach { zone in
+			zone.resetChangeToken()
+		}
 	}
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {
