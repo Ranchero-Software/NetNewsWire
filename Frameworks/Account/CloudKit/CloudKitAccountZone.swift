@@ -137,7 +137,7 @@ private extension CloudKitAccountZone {
 	func createContainer(name: String, isAccount: Bool, completion: @escaping (Result<String, Error>) -> Void) {
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
 		record[CloudKitContainer.Fields.name] = name
-		record[CloudKitContainer.Fields.isAccount] = isAccount
+		record[CloudKitContainer.Fields.isAccount] = isAccount ? "true" : "false"
 
 		save(record: record) { result in
 			switch result {

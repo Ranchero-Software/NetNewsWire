@@ -68,12 +68,16 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	}
 	
 	func addOrUpdateContainer(_ record: CKRecord) {
-		guard let account = account, let name = record[CloudKitAccountZone.CloudKitContainer.Fields.name] as? String else { return }
+		guard let account = account,
+			let name = record[CloudKitAccountZone.CloudKitContainer.Fields.name] as? String,
+			let isAccount = record[CloudKitAccountZone.CloudKitContainer.Fields.isAccount] as? String,
+			isAccount != "true" else { return }
 		
 		if let folder = account.existingFolder(withExternalID: record.externalID) {
 			folder.name = name
 		} else {
-			account.ensureFolder(with: name)
+			let folder = account.ensureFolder(with: name)
+			folder?.externalID = record.externalID
 		}
 	}
 	
