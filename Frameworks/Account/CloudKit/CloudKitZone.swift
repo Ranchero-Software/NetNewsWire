@@ -100,11 +100,40 @@ extension CloudKitZone {
 		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
 	}
 	
-	func delete(externalID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let externalID = externalID else {
+			completion(.failure(CloudKitZoneError.invalidParameter))
+			return
+		}
+
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
 
+	func query(_ query: CKQuery, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
+		guard let database = database else {
+			completion(.failure(CloudKitZoneError.unknown))
+			return
+		}
+		
+		database.perform(query, inZoneWith: Self.zoneID) { records, error in
+			switch CloudKitZoneResult.resolve(error) {
+            case .success:
+				if let records = records {
+					completion(.success(records))
+				} else {
+					completion(.failure(CloudKitZoneError.unknown))
+				}
+			case .retry(let timeToWait):
+				self.retryOperationIfPossible(retryAfter: timeToWait) {
+					self.query(query, completion: completion)
+				}
+			default:
+				completion(.failure(error!))
+			}
+		}
+	}
+	
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
 		
@@ -252,7 +281,12 @@ private extension CloudKitZone {
     }
 	
 	func createZoneRecord(completion: @escaping (Result<Void, Error>) -> Void) {
-		database?.save(CKRecordZone(zoneID: Self.zoneID)) { (recordZone, error) in
+		guard let database = database else {
+			completion(.failure(CloudKitZoneError.unknown))
+			return
+		}
+
+		database.save(CKRecordZone(zoneID: Self.zoneID)) { (recordZone, error) in
 			if let error = error {
 				DispatchQueue.main.async {
 					completion(.failure(error))

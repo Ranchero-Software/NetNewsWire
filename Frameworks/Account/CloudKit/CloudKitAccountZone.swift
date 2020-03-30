@@ -32,6 +32,14 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
+	struct CloudKitContainer {
+		static let recordType = "Container"
+		struct Fields {
+			static let isAccount = "isAccount"
+			static let name = "name"
+		}
+	}
+	
 	init(container: CKContainer) {
         self.container = container
         self.database = container.privateCloudDatabase
@@ -77,11 +85,68 @@ final class CloudKitAccountZone: CloudKitZone {
 	
 	/// Deletes a web feed from iCloud
 	func removeWebFeed(_ webFeed: WebFeed, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let externalID = webFeed.externalID else {
+		delete(externalID: webFeed.externalID , completion: completion)
+	}
+	
+	func findOrCreateAccount(completion: @escaping (Result<String, Error>) -> Void) {
+		let predicate = NSPredicate(format: "isAccount = true")
+		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
+		
+		query(ckQuery) { result in
+			switch result {
+			case .success(let records):
+				completion(.success(records[0].externalID))
+			case .failure:
+				self.createContainer(name: "Account", isAccount: true, completion: completion)
+			}
+		}
+	}
+	
+	func createFolder(name: String, completion: @escaping (Result<String, Error>) -> Void) {
+		createContainer(name: name, isAccount: false, completion: completion)
+	}
+	
+	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let externalID = folder.externalID else {
 			completion(.failure(CloudKitZoneError.invalidParameter))
 			return
 		}
-		delete(externalID: externalID, completion: completion)
+
+		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
+		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: recordID)
+		record[CloudKitContainer.Fields.name] = name
+		
+		save(record: record) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		delete(externalID: folder.externalID, completion: completion)
+	}
+	
+}
+
+private extension CloudKitAccountZone {
+	
+	func createContainer(name: String, isAccount: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
+		record[CloudKitContainer.Fields.name] = name
+		record[CloudKitContainer.Fields.isAccount] = isAccount
+
+		save(record: record) { result in
+			switch result {
+			case .success:
+				completion(.success(record.externalID))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 }

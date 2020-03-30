@@ -21,7 +21,8 @@ public protocol Container: class, ContainerIdentifiable {
 	var account: Account? { get }
 	var topLevelWebFeeds: Set<WebFeed> { get set }
 	var folders: Set<Folder>? { get set }
-
+	var externalID: String? { get set }
+	
 	func hasAtLeastOneWebFeed() -> Bool
 	func objectIsChild(_ object: AnyObject) -> Bool
 

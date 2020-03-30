@@ -27,6 +27,8 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		switch record.recordType {
 		case CloudKitAccountZone.CloudKitWebFeed.recordType:
 			addOrUpdateWebFeed(record)
+		case CloudKitAccountZone.CloudKitContainer.recordType:
+			addOrUpdateContainer(record)
 		default:
 			assertionFailure("Unknown record type: \(record.recordType)")
 		}
@@ -36,6 +38,8 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		switch recordType {
 		case CloudKitAccountZone.CloudKitWebFeed.recordType:
 			removeWebFeed(recordID.externalID)
+		case CloudKitAccountZone.CloudKitContainer.recordType:
+			removeContainer(recordID.externalID)
 		default:
 			assertionFailure("Unknown record type: \(recordID.externalID)")
 		}
@@ -60,6 +64,22 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	func removeWebFeed(_ externalID: String) {
 		if let webFeed = account?.existingWebFeed(withExternalID: externalID) {
 			account?.removeWebFeed(webFeed)
+		}
+	}
+	
+	func addOrUpdateContainer(_ record: CKRecord) {
+		guard let account = account, let name = record[CloudKitAccountZone.CloudKitContainer.Fields.name] as? String else { return }
+		
+		if let folder = account.existingFolder(withExternalID: record.externalID) {
+			folder.name = name
+		} else {
+			account.ensureFolder(with: name)
+		}
+	}
+	
+	func removeContainer(_ externalID: String) {
+		if let folder = account?.existingFolder(withExternalID: externalID) {
+			account?.removeFolder(folder)
 		}
 	}
 	

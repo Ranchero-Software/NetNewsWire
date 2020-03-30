@@ -235,26 +235,60 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+		accountZone.createFolder(name: name) { result in
+			switch result {
+			case .success(let externalID):
+				if let folder = account.ensureFolder(with: name) {
+					folder.externalID = externalID
+					completion(.success(folder))
+				} else {
+					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
 		}
 	}
 	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		folder.name = name
-		completion(.success(()))
+		accountZone.renameFolder(folder, to: name) { result in
+			switch result {
+			case .success:
+				folder.name = name
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.removeFolder(folder)
-		completion(.success(()))
+		accountZone.removeFolder(folder) { result in
+			switch result {
+			case .success:
+				account.removeFolder(folder)
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.addFolder(folder)
-		completion(.success(()))
+		guard let name = folder.name else {
+			completion(.failure(LocalAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		accountZone.createFolder(name: name) { result in
+			switch result {
+			case .success(let externalID):
+				folder.externalID = externalID
+				account.addFolder(folder)
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
@@ -263,6 +297,18 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	func accountDidInitialize(_ account: Account) {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
+		
+		if account.externalID == nil {
+			accountZone.findOrCreateAccount() { result in
+				switch result {
+				case .success(let externalID):
+					account.externalID = externalID
+				case .failure(let error):
+					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
+				}
+			}
+		}
+		
 		zones.forEach { zone in
 			zone.resumeLongLivedOperationIfPossible()
 			zone.subscribe()

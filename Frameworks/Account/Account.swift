@@ -136,6 +136,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public var topLevelWebFeeds = Set<WebFeed>()
 	public var folders: Set<Folder>? = Set<Folder>()
 	
+	public var externalID: String? {
+		get {
+			return metadata.externalID
+		}
+		set {
+			metadata.externalID = newValue
+		}
+	}
+	
 	public var sortedFolders: [Folder]? {
 		if let folders = folders {
 			return Array(folders).sorted(by: { $0.nameForDisplay < $1.nameForDisplay })
