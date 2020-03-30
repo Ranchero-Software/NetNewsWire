@@ -17,7 +17,7 @@ class AccountsAddViewController: NSViewController {
 	private var accountsAddWindowController: NSWindowController?
 	
 	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .feedWrangler, .freshRSS]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .feedWrangler, .freshRSS, .newsBlur]
 	#else
 	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
 	#endif
@@ -80,6 +80,9 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			case .feedly:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedly", comment: "Feedly")
 				cell.accountImageView?.image = AppAssets.accountFeedly
+			case .newsBlur:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("NewsBlur", comment: "NewsBlur")
+				cell.accountImageView?.image = AppAssets.accountNewsBlur
 			default:
 				break
 			}
@@ -127,6 +130,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			MainThreadOperationQueue.shared.add(addAccount)
+		case .newsBlur:
+			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
+			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsNewsBlurWindowController
 		default:
 			break
 		}
