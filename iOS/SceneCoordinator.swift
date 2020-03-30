@@ -927,7 +927,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		if selectNextUnreadArticleInTimeline() {
-			activityManager.selectingNextUnread()
 			return
 		}
 
@@ -936,9 +935,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		selectNextUnreadFeed() {
-			if self.selectNextUnreadArticleInTimeline() {
-				self.activityManager.selectingNextUnread()
-			}
+			self.selectNextUnreadArticleInTimeline()
 		}
 
 	}
