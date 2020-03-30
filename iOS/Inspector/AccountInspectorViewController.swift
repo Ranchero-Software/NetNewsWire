@@ -107,8 +107,7 @@ extension AccountInspectorViewController {
 			return true
 		}
 		switch account.type {
-		case .onMyMac,
-			 .feedly:
+		case .onMyMac, .cloudKit, .feedly:
 			return true
 		default:
 			return false
