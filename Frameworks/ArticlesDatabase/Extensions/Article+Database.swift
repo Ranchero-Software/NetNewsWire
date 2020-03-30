@@ -112,8 +112,12 @@ extension Article {
 //		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
 //	}
 
+	private static func _maximumDateAllowed() -> Date {
+		return Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
+	}
+
 	static func articlesWithWebFeedIDsAndItems(_ webFeedIDsAndItems: [String: Set<ParsedItem>], _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
-		let maximumDateAllowed = Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
+		let maximumDateAllowed = _maximumDateAllowed()
 		var feedArticles = Set<Article>()
 		for (webFeedID, parsedItems) in webFeedIDsAndItems {
 			for parsedItem in parsedItems {
@@ -123,6 +127,11 @@ extension Article {
 			}
 		}
 		return feedArticles
+	}
+
+	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
+		let maximumDateAllowed = _maximumDateAllowed()
+		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, webFeedID: webFeedID, status: statusesDictionary[$0.articleID]!) })
 	}
 }
 

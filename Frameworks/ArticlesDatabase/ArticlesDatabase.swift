@@ -190,8 +190,9 @@ public final class ArticlesDatabase {
 	// MARK: - Saving and Updating Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
-	public func update(with feed: ParsedFeed, completion: @escaping UpdateArticlesCompletionBlock) {
+	public func update(with parsedItems: Set<ParsedItem>, webFeedID: String, completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .feedBased)
+		articlesTable.update(parsedItems, webFeedID, completion)
 	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
@@ -268,7 +269,9 @@ public final class ArticlesDatabase {
 
 	/// Calls the various clean-up functions.
 	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
-		articlesTable.deleteOldArticles()
+		if retentionStyle == .syncSystem {
+			articlesTable.deleteOldArticles()
+		}
 		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
 	}
 }
