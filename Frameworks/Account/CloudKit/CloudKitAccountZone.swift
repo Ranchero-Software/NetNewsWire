@@ -89,7 +89,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 	
 	func findOrCreateAccount(completion: @escaping (Result<String, Error>) -> Void) {
-		let predicate = NSPredicate(format: "isAccount = true")
+		let predicate = NSPredicate(format: "isAccount = \"true\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 		
 		query(ckQuery) { result in
