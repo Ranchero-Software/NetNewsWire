@@ -67,6 +67,10 @@ public final class WebFeedIconDownloader {
 			return cachedImage
 		}
 		
+		if let hpURLString = feed.homePageURL, let hpURL = URL(string: hpURLString), hpURL.host == "nnw.ranchero.com" {
+			return IconImage.appIcon
+		}
+
 		func checkHomePageURL() {
 			guard let homePageURL = feed.homePageURL else {
 				return
@@ -123,11 +127,6 @@ public final class WebFeedIconDownloader {
 private extension WebFeedIconDownloader {
 
 	func icon(forHomePageURL homePageURL: String, feed: WebFeed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
-
-		if let url = URL(string: homePageURL), url.host == "nnw.ranchero.com" {
-			imageResultBlock(RSImage.appIconImage)
-			return
-		}
 
 		if homePagesWithNoIconURLCache.contains(homePageURL) || homePagesWithUglyIcons.contains(homePageURL) {
 			imageResultBlock(nil)

@@ -261,7 +261,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.dataFolder = dataFolder
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
-		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
+		let retentionStyle: ArticlesDatabase.RetentionStyle = (type == .onMyMac || type == .cloudKit) ? .feedBased : .syncSystem
+		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID, retentionStyle: retentionStyle)
 
 		switch type {
 		case .onMyMac:
@@ -428,14 +429,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func suspendDatabase() {
+		#if os(iOS)
 		database.cancelAndSuspend()
+		#endif
 		save()
 	}
 
 	/// Re-open the SQLite database and allow database calls.
 	/// Call this *before* calling resume.
 	public func resumeDatabaseAndDelegate() {
+		#if os(iOS)
 		database.resume()
+		#endif
 		delegate.resume()
 	}
 
@@ -701,56 +706,41 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	func update(_ webFeed: WebFeed, with parsedFeed: ParsedFeed, _ completion: @escaping DatabaseCompletionBlock) {
-		// Used only by an On My Mac and iCloud accounts.
+		// Used only by an On My Mac or iCloud account.
+		precondition(Thread.isMainThread)
+		precondition(type == .onMyMac || type == .cloudKit)
+
 		webFeed.takeSettings(from: parsedFeed)
-		let webFeedIDsAndItems = [webFeed.webFeedID: parsedFeed.items]
-		update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: false, completion: completion)
+		let parsedItems = parsedFeed.items
+		guard !parsedItems.isEmpty else {
+			completion(nil)
+			return
+		}
+
+		database.update(with: parsedItems, webFeedID: webFeed.webFeedID) { updateArticlesResult in
+			switch updateArticlesResult {
+			case .success(let newAndUpdatedArticles):
+				self.sendNotificationAbout(newAndUpdatedArticles)
+				completion(nil)
+			case .failure(let databaseError):
+				completion(databaseError)
+			}
+		}
 	}
 
 	func update(webFeedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
+		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
+		precondition(type != .onMyMac) // TODO: also make sure type != iCloud
 		guard !webFeedIDsAndItems.isEmpty else {
 			completion(nil)
 			return
 		}
 
 		database.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: defaultRead) { updateArticlesResult in
-			
-			func sendNotificationAbout(newArticles: Set<Article>?, updatedArticles: Set<Article>?) {
-				var webFeeds = Set<WebFeed>()
-
-				if let newArticles = newArticles {
-					webFeeds.formUnion(Set(newArticles.compactMap { $0.webFeed }))
-				}
-				if let updatedArticles = updatedArticles {
-					webFeeds.formUnion(Set(updatedArticles.compactMap { $0.webFeed }))
-				}
-
-				var shouldSendNotification = false
-				var userInfo = [String: Any]()
-
-				if let newArticles = newArticles, !newArticles.isEmpty {
-					shouldSendNotification = true
-					userInfo[UserInfoKey.newArticles] = newArticles
-					self.updateUnreadCounts(for: webFeeds) {
-						NotificationCenter.default.post(name: .DownloadArticlesDidUpdateUnreadCounts, object: self, userInfo: nil)
-					}
-				}
-
-				if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
-					shouldSendNotification = true
-					userInfo[UserInfoKey.updatedArticles] = updatedArticles
-				}
-
-				if shouldSendNotification {
-					userInfo[UserInfoKey.webFeeds] = webFeeds
-					NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
-				}
-			}
-
 			switch updateArticlesResult {
 			case .success(let newAndUpdatedArticles):
-				sendNotificationAbout(newArticles: newAndUpdatedArticles.newArticles, updatedArticles: newAndUpdatedArticles.updatedArticles)
+				self.sendNotificationAbout(newAndUpdatedArticles)
 				completion(nil)
 			case .failure(let databaseError):
 				completion(databaseError)
@@ -1273,6 +1263,38 @@ private extension Account {
 			// When the unread count is zero, it won’t appear in unreadCountDictionary.
 			let unreadCount = unreadCountDictionary[feed.webFeedID] ?? 0
 			feed.unreadCount = unreadCount
+		}
+	}
+
+	func sendNotificationAbout(_ newAndUpdatedArticles: NewAndUpdatedArticles) {
+		var webFeeds = Set<WebFeed>()
+
+		if let newArticles = newAndUpdatedArticles.newArticles {
+			webFeeds.formUnion(Set(newArticles.compactMap { $0.webFeed }))
+		}
+		if let updatedArticles = newAndUpdatedArticles.updatedArticles {
+			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.webFeed }))
+		}
+
+		var shouldSendNotification = false
+		var userInfo = [String: Any]()
+
+		if let newArticles = newAndUpdatedArticles.newArticles, !newArticles.isEmpty {
+			shouldSendNotification = true
+			userInfo[UserInfoKey.newArticles] = newArticles
+			self.updateUnreadCounts(for: webFeeds) {
+				NotificationCenter.default.post(name: .DownloadArticlesDidUpdateUnreadCounts, object: self, userInfo: nil)
+			}
+		}
+
+		if let updatedArticles = newAndUpdatedArticles.updatedArticles, !updatedArticles.isEmpty {
+			shouldSendNotification = true
+			userInfo[UserInfoKey.updatedArticles] = updatedArticles
+		}
+
+		if shouldSendNotification {
+			userInfo[UserInfoKey.webFeeds] = webFeeds
+			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
 	}
 }
