@@ -40,6 +40,10 @@ struct AppAssets {
 	static var accountFreshRSS: RSImage! = {
 		return RSImage(named: "accountFreshRSS")
 	}()
+
+	static var accountNewsBlur: RSImage! = {
+		return RSImage(named: "accountNewsBlur")
+	}()
 	
 	static var articleExtractor: RSImage! = {
 		return RSImage(named: "articleExtractor")
@@ -151,6 +155,8 @@ struct AppAssets {
 			return AppAssets.accountFeedWrangler
 		case .freshRSS:
 			return AppAssets.accountFreshRSS
+		case .newsBlur:
+			return AppAssets.accountNewsBlur
 		default:
 			return nil
 		}
