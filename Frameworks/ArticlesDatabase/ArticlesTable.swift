@@ -19,6 +19,8 @@ final class ArticlesTable: DatabaseTable {
 	private let queue: DatabaseQueue
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
+	private let retentionStyle: ArticlesDatabase.RetentionStyle
+
 	private var articlesCache = [String: Article]()
 
 	private lazy var searchTable: SearchTable = {
@@ -30,13 +32,14 @@ final class ArticlesTable: DatabaseTable {
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
 
-	init(name: String, accountID: String, queue: DatabaseQueue) {
+	init(name: String, accountID: String, queue: DatabaseQueue, retentionStyle: ArticlesDatabase.RetentionStyle) {
 
 		self.name = name
 		self.accountID = accountID
 		self.queue = queue
 		self.statusesTable = StatusesTable(queue: queue)
-
+		self.retentionStyle = retentionStyle
+		
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 	}

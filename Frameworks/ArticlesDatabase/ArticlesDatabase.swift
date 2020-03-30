@@ -43,14 +43,21 @@ public typealias ArticleStatusesResultBlock = (ArticleStatusesResult) -> Void
 
 public final class ArticlesDatabase {
 
+	public enum RetentionStyle {
+		case feedBased // Local and iCloud: article retention is defined by contents of feed
+		case syncSystem // Feedbin, Feedly, etc.: article retention is defined by external system
+	}
+
 	private let articlesTable: ArticlesTable
 	private let queue: DatabaseQueue
 	private let operationQueue = MainThreadOperationQueue()
+	private let retentionStyle: RetentionStyle
 
-	public init(databaseFilePath: String, accountID: String) {
+	public init(databaseFilePath: String, accountID: String, retentionStyle: RetentionStyle) {
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
 		self.queue = queue
-		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue)
+		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue, retentionStyle: retentionStyle)
+		self.retentionStyle = retentionStyle
 
 		try! queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
 		queue.runInDatabase { databaseResult in
@@ -62,7 +69,6 @@ public final class ArticlesDatabase {
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
 		}
 
-//		queue.vacuumIfNeeded(daysBetweenVacuums: 9) // TODO: restore this after we do database cleanups.
 		DispatchQueue.main.async {
 			self.articlesTable.indexUnindexedArticles()
 		}
@@ -183,8 +189,14 @@ public final class ArticlesDatabase {
 
 	// MARK: - Saving and Updating Articles
 
-	/// Update articles and save new ones.
+	/// Update articles and save new ones — for feed-based systems (local and iCloud).
+	public func update(with feed: ParsedFeed, completion: @escaping UpdateArticlesCompletionBlock) {
+		precondition(retentionStyle == .feedBased)
+	}
+
+	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
 	public func update(webFeedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+		precondition(retentionStyle == .syncSystem)
 		articlesTable.update(webFeedIDsAndItems, defaultRead, completion)
 	}
 
@@ -219,6 +231,7 @@ public final class ArticlesDatabase {
 		articlesTable.createStatusesIfNeeded(articleIDs, completion)
 	}
 
+#if os(iOS)
 	// MARK: - Suspend and Resume (for iOS)
 
 	/// Cancel current operations and close the database.
@@ -239,7 +252,8 @@ public final class ArticlesDatabase {
 		queue.resume()
 		operationQueue.resume()
 	}
-
+#endif
+	
 	// MARK: - Caches
 
 	/// Call to free up some memory. Should be done when the app is backgrounded, for instance.

@@ -251,7 +251,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.dataFolder = dataFolder
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
-		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
+		let retentionStyle: ArticlesDatabase.RetentionStyle = type == .onMyMac ? .feedBased : .syncSystem
+		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID, retentionStyle: retentionStyle)
 
 		switch type {
 		case .onMyMac:
