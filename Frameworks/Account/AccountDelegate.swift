@@ -30,7 +30,7 @@ protocol AccountDelegate {
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void)
 	
-	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void)
+	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void)
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
 

@@ -283,7 +283,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		fatalError()
 	}
 	
-	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 		fatalError()
 	}
 	

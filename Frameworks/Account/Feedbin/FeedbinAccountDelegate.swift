@@ -269,7 +269,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 		if let folder = account.ensureFolder(with: name) {
 			completion(.success(folder))
 		} else {

@@ -589,7 +589,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func addFolder(_ name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		delegate.addFolder(for: self, name: name, completion: completion)
+		delegate.createFolder(for: self, name: name, completion: completion)
 	}
 	
 	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

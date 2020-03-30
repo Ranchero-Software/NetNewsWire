@@ -339,7 +339,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
+	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
 		self.refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		caller.addFolder(named: name) { result in
@@ -546,7 +546,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		let group = DispatchGroup()
 
 		group.enter()
-		addFolder(for: account, name: folderName) { result in
+		createFolder(for: account, name: folderName) { result in
 			group.leave()
 			switch result {
 			case .success(let folder):
