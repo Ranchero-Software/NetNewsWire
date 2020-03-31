@@ -69,14 +69,17 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		BatchUpdate.shared.start()
 		accountZone.fetchChangesInZone() { result in
 			switch result {
 			case .success:
 				self.refresher.refreshFeeds(account.flattenedWebFeeds()) {
+					BatchUpdate.shared.end()
 					account.metadata.lastArticleFetchEndTime = Date()
 					completion(.success(()))
 				}
 			case .failure(let error):
+				BatchUpdate.shared.end()
 				completion(.failure(error))
 			}
 		}
