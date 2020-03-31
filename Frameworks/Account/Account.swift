@@ -468,43 +468,25 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.accountWillBeDeleted(self)
 	}
 
-	func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: Folder?) {
-		var feedsToAdd = Set<WebFeed>()
-
-		items.forEach { (item) in
-
+	func addOPMLItems(_ items: [RSOPMLItem]) {
+		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
-				let feed = newWebFeed(with: feedSpecifier)
-				feedsToAdd.insert(feed)
-				return
-			}
-
-			guard let folderName = item.titleFromAttributes else {
-				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
-				if let itemChildren = item.children {
-					loadOPMLItems(itemChildren, parentFolder: parentFolder)
-				}
-				return
-			}
-
-			if let folder = ensureFolder(with: folderName) {
-				folder.externalID = item.attributes?["nnw_externalID"] as? String
-				if let itemChildren = item.children {
-					loadOPMLItems(itemChildren, parentFolder: folder)
+				addWebFeed(newWebFeed(with: feedSpecifier))
+			} else {
+				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
+					folder.externalID = item.attributes?["nnw_externalID"] as? String
+					item.children?.forEach { itemChild in
+						if let feedSpecifier = itemChild.feedSpecifier {
+							folder.addWebFeed(newWebFeed(with: feedSpecifier))
+						}
+					}
 				}
 			}
 		}
-
-		if let parentFolder = parentFolder {
-			for feed in feedsToAdd {
-				parentFolder.addWebFeed(feed)
-			}
-		} else {
-			for feed in feedsToAdd {
-				addWebFeed(feed)
-			}
-		}
-		
+	}
+	
+	func loadOPMLItems(_ items: [RSOPMLItem]) {
+		addOPMLItems(OPMLNormalizer.normalize(items))		
 	}
 	
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {

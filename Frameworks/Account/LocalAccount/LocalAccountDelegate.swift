@@ -85,7 +85,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 
 		BatchUpdate.shared.perform {
-			account.loadOPMLItems(children, parentFolder: nil)
+			account.loadOPMLItems(children)
 		}
 		
 		completion(.success(()))

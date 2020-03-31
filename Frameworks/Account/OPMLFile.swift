@@ -40,7 +40,7 @@ final class OPMLFile {
 		}
 		
 		BatchUpdate.shared.perform {
-			account.loadOPMLItems(opmlItems, parentFolder: nil)
+			account.loadOPMLItems(opmlItems)
 		}
 	}
 	
