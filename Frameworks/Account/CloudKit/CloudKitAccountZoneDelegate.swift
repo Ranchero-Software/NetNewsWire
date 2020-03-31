@@ -13,6 +13,9 @@ import CloudKit
 
 class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	
+	private typealias UnclaimedWebFeed = (url: URL, editedName: String?, webFeedExternalID: String)
+	private var unclaimedWebFeeds = [String: [UnclaimedWebFeed]]()
+	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
 	weak var account: Account?
@@ -49,7 +52,6 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		guard let account = account,
 			let urlString = record[CloudKitAccountZone.CloudKitWebFeed.Fields.url] as? String,
 			let containerExternalIDs = record[CloudKitAccountZone.CloudKitWebFeed.Fields.containerExternalIDs] as? [String],
-			let defaultContainerExternalID = containerExternalIDs.first,
 			let url = URL(string: urlString) else { return }
 		
 		let editedName = record[CloudKitAccountZone.CloudKitWebFeed.Fields.editedName] as? String
@@ -57,7 +59,17 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		if let webFeed = account.existingWebFeed(withExternalID: record.externalID) {
 			updateWebFeed(webFeed, editedName: editedName, containerExternalIDs: containerExternalIDs)
 		} else {
-			addWebFeed(url: url, editedName: editedName, webFeedExternalID: record.externalID, containerExternalID: defaultContainerExternalID)
+			var webFeed: WebFeed? = nil
+			for containerExternalID in containerExternalIDs {
+				if let container = account.existingContainer(withExternalID: containerExternalID) {
+					if webFeed == nil {
+						webFeed = createWebFeed(url: url, editedName: editedName, webFeedExternalID: record.externalID)
+					}
+					container.addWebFeed(webFeed!)
+				} else {
+					addUnclaimedWebFeed(url: url, editedName: editedName, webFeedExternalID: record.externalID, containerExternalID: containerExternalID)
+				}
+			}
 		}
 	}
 	
@@ -73,11 +85,25 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			let isAccount = record[CloudKitAccountZone.CloudKitContainer.Fields.isAccount] as? String,
 			isAccount != "true" else { return }
 		
-		if let folder = account.existingFolder(withExternalID: record.externalID) {
-			folder.name = name
-		} else {
-			let folder = account.ensureFolder(with: name)
+		var folder = account.existingFolder(withExternalID: record.externalID)
+		folder?.name = name
+		
+		if folder == nil {
+			folder = account.ensureFolder(with: name)
 			folder?.externalID = record.externalID
+		}
+		
+		if let folder = folder, let containerExternalID = folder.externalID, let unclaimedWebFeeds = unclaimedWebFeeds[containerExternalID] {
+			for unclaimedWebFeed in unclaimedWebFeeds {
+				var webFeed = account.existingWebFeed(withExternalID: unclaimedWebFeed.webFeedExternalID)
+				if webFeed == nil {
+					webFeed = createWebFeed(url: unclaimedWebFeed.url, editedName: unclaimedWebFeed.editedName, webFeedExternalID: unclaimedWebFeed.webFeedExternalID)
+				}
+				if let webFeed = webFeed {
+					folder.addWebFeed(webFeed)
+				}
+			}
+			self.unclaimedWebFeeds.removeValue(forKey: containerExternalID)
 		}
 	}
 	
@@ -114,13 +140,12 @@ private extension CloudKitAcountZoneDelegate {
 		}
 	}
 	
-	func addWebFeed(url: URL, editedName: String?, webFeedExternalID: String, containerExternalID: String) {
-		guard let account = account, let container = account.existingContainer(withExternalID: containerExternalID) else { return }
+	func createWebFeed(url: URL, editedName: String?, webFeedExternalID: String) -> WebFeed? {
+		guard let account = account else { return nil }
 		
 		let webFeed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 		webFeed.editedName = editedName
 		webFeed.externalID = webFeedExternalID
-		container.addWebFeed(webFeed)
 		
 		refreshProgress?.addToNumberOfTasksAndRemaining(1)
 		InitialFeedDownloader.download(url) { parsedFeed in
@@ -130,6 +155,19 @@ private extension CloudKitAcountZoneDelegate {
 			}
 		}
 
+		return webFeed
+	}
+	
+	
+	func addUnclaimedWebFeed(url: URL, editedName: String?, webFeedExternalID: String, containerExternalID: String) {
+		if var unclaimedWebFeeds = self.unclaimedWebFeeds[containerExternalID] {
+			unclaimedWebFeeds.append(UnclaimedWebFeed(url: url, editedName: editedName, webFeedExternalID: webFeedExternalID))
+			self.unclaimedWebFeeds[containerExternalID] = unclaimedWebFeeds
+		} else {
+			var unclaimedWebFeeds = [UnclaimedWebFeed]()
+			unclaimedWebFeeds.append(UnclaimedWebFeed(url: url, editedName: editedName, webFeedExternalID: webFeedExternalID))
+			self.unclaimedWebFeeds[containerExternalID] = unclaimedWebFeeds
+		}
 	}
 	
 }
