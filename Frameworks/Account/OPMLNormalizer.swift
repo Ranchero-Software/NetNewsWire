@@ -15,11 +15,11 @@ final class OPMLNormalizer {
 	
 	static func normalize(_ items: [RSOPMLItem]) -> [RSOPMLItem] {
 		let opmlNormalizer = OPMLNormalizer()
-		opmlNormalizer.loadOPMLItems(items)
+		opmlNormalizer.normalize(items)
 		return opmlNormalizer.normalizedOPMLItems
 	}
 	
-	private func loadOPMLItems(_ items: [RSOPMLItem], parentFolder: RSOPMLItem? = nil) {
+	private func normalize(_ items: [RSOPMLItem], parentFolder: RSOPMLItem? = nil) {
 		var feedsToAdd = [RSOPMLItem]()
 
 		items.forEach { (item) in
@@ -34,14 +34,14 @@ final class OPMLNormalizer {
 			guard let _ = item.titleFromAttributes else {
 				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
 				if let itemChildren = item.children {
-					loadOPMLItems(itemChildren, parentFolder: parentFolder)
+					normalize(itemChildren, parentFolder: parentFolder)
 				}
 				return
 			}
 
 			normalizedOPMLItems.append(item)
 			if let itemChildren = item.children {
-				loadOPMLItems(itemChildren, parentFolder: item)
+				normalize(itemChildren, parentFolder: item)
 			}
 		}
 
