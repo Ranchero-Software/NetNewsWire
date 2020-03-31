@@ -123,16 +123,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 
-		guard let children = loadDocument.children else {
+		guard let opmlItems = loadDocument.children, let rootExternalID = account.externalID else {
 			return
 		}
 
-		BatchUpdate.shared.perform {
-			account.loadOPMLItems(children)
-		}
+		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 		
-		completion(.success(()))
-
+		accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems, completion: completion)
 	}
 	
 	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
@@ -163,19 +160,16 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					case .success(let externalID):
 						
 						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-						
+						feed.editedName = name
+						feed.externalID = externalID
+						container.addWebFeed(feed)
+
 						InitialFeedDownloader.download(url) { parsedFeed in
 							self.refreshProgress.completeTask()
 
 							if let parsedFeed = parsedFeed {
 								account.update(feed, with: parsedFeed, {_ in
-									
-									feed.editedName = name
-									feed.externalID = externalID
-									
-									container.addWebFeed(feed)
 									completion(.success(feed))
-									
 								})
 							}
 							

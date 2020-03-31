@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import RSWeb
+import RSParser
 import CloudKit
 
 final class CloudKitAccountZone: CloudKitZone {
@@ -31,7 +32,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		struct Fields {
 			static let url = "url"
 			static let editedName = "editedName"
-			static let containerExternalIDs = "folderExternalIDs"
+			static let containerExternalIDs = "containerExternalIDs"
 		}
 	}
 	
@@ -47,6 +48,40 @@ final class CloudKitAccountZone: CloudKitZone {
         self.container = container
         self.database = container.privateCloudDatabase
     }
+	
+	func importOPML(rootExternalID: String, items: [RSOPMLItem], completion: @escaping (Result<Void, Error>) -> Void) {
+		var records = [CKRecord]()
+		var feedRecords = [String: CKRecord]()
+		
+		func processFeed(feedSpecifier: RSOPMLFeedSpecifier, containerExternalID: String) {
+			if let webFeedRecord = feedRecords[feedSpecifier.feedURL], var containerExternalIDs = webFeedRecord[CloudKitWebFeed.Fields.containerExternalIDs] as? [String] {
+				containerExternalIDs.append(containerExternalID)
+				webFeedRecord[CloudKitWebFeed.Fields.containerExternalIDs] = containerExternalIDs
+			} else {
+				let webFeedRecord = newWebFeedCKRecord(feedSpecifier: feedSpecifier, containerExternalID: containerExternalID)
+				records.append(webFeedRecord)
+				feedRecords[feedSpecifier.feedURL] = webFeedRecord
+			}
+		}
+		
+		for item in items {
+			if let feedSpecifier = item.feedSpecifier {
+				processFeed(feedSpecifier: feedSpecifier, containerExternalID: rootExternalID)
+			} else {
+				if let title = item.titleFromAttributes {
+					let containerRecord = newContainerCKRecord(name: title)
+					records.append(containerRecord)
+					item.children?.forEach { itemChild in
+						if let feedSpecifier = itemChild.feedSpecifier {
+							processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
+						}
+					}
+				}
+			}
+		}
+
+		modify(recordsToSave: records, recordIDsToDelete: [], completion: completion)
+	}
     
 	///  Persist a web feed record to iCloud and return the external key
 	func createWebFeed(url: String, editedName: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
@@ -207,6 +242,23 @@ final class CloudKitAccountZone: CloudKitZone {
 }
 
 private extension CloudKitAccountZone {
+	
+	func newWebFeedCKRecord(feedSpecifier: RSOPMLFeedSpecifier, containerExternalID: String) -> CKRecord {
+		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: generateRecordID())
+		record[CloudKitWebFeed.Fields.url] = feedSpecifier.feedURL
+		if let editedName = feedSpecifier.title {
+			record[CloudKitWebFeed.Fields.editedName] = editedName
+		}
+		record[CloudKitWebFeed.Fields.containerExternalIDs] = [containerExternalID]
+		return record
+	}
+	
+	func newContainerCKRecord(name: String) -> CKRecord {
+		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
+		record[CloudKitContainer.Fields.name] = name
+		record[CloudKitContainer.Fields.isAccount] = "false"
+		return record
+	}
 	
 	func createContainer(name: String, isAccount: Bool, completion: @escaping (Result<String, Error>) -> Void) {
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
