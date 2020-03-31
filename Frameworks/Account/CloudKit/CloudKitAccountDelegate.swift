@@ -207,7 +207,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		accountZone.removeWebFeed(feed) { result in
+		accountZone.removeWebFeed(feed, from: container) { result in
 			switch result {
 			case .success:
 				container.removeWebFeed(feed)
@@ -218,20 +218,33 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		from.removeWebFeed(feed)
-		to.addWebFeed(feed)
-		completion(.success(()))
+	func moveWebFeed(for account: Account, with feed: WebFeed, from fromContainer: Container, to toContainer: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		accountZone.moveWebFeed(feed, from: fromContainer, to: toContainer) { result in
+			switch result {
+			case .success:
+				fromContainer.removeWebFeed(feed)
+				toContainer.addWebFeed(feed)
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addWebFeed(feed)
-		completion(.success(()))
+		accountZone.addWebFeed(feed, to: container) { result in
+			switch result {
+			case .success:
+				container.addWebFeed(feed)
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		container.addWebFeed(feed)
-		completion(.success(()))
+		addWebFeed(for: account, with: feed, to: container, completion: completion)
 	}
 	
 	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {

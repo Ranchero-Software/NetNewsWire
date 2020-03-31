@@ -62,8 +62,8 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	}
 	
 	func removeWebFeed(_ externalID: String) {
-		if let webFeed = account?.existingWebFeed(withExternalID: externalID) {
-			account?.removeWebFeed(webFeed)
+		if let webFeed = account?.existingWebFeed(withExternalID: externalID), let containers = account?.existingContainers(withWebFeed: webFeed) {
+			containers.forEach { $0.removeWebFeed(webFeed) }
 		}
 	}
 	
@@ -107,7 +107,7 @@ private extension CloudKitAcountZoneDelegate {
 					container.removeWebFeed(webFeed)
 				}
 			case .insert(_, let externalID, _):
-				if let container = existingContainers.first(where: { $0.externalID == externalID }) {
+				if let container = account.existingContainer(withExternalID: externalID) {
 					container.addWebFeed(webFeed)
 				}
 			}

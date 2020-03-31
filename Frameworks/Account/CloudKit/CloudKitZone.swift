@@ -71,7 +71,7 @@ extension CloudKitZone {
 			case .success:
 				break
 			case .retry(let timeToWait):
-				self.retryOperationIfPossible(retryAfter: timeToWait) {
+				self.retryIfPossible(after: timeToWait) {
 					self.subscribe()
 				}
 			default:
@@ -96,20 +96,6 @@ extension CloudKitZone {
 		}
 	}
 	
-	func save(_ record: CKRecord, completion: @escaping (Result<Void, Error>) -> Void) {
-		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
-	}
-	
-	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let externalID = externalID else {
-			completion(.failure(CloudKitZoneError.invalidParameter))
-			return
-		}
-
-		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
-		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
-	}
-
 	func query(_ query: CKQuery, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		guard let database = database else {
 			completion(.failure(CloudKitZoneError.unknown))
@@ -125,13 +111,57 @@ extension CloudKitZone {
 					completion(.failure(CloudKitZoneError.unknown))
 				}
 			case .retry(let timeToWait):
-				self.retryOperationIfPossible(retryAfter: timeToWait) {
+				self.retryIfPossible(after: timeToWait) {
 					self.query(query, completion: completion)
 				}
 			default:
 				completion(.failure(error!))
 			}
 		}
+	}
+	
+	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
+		guard let externalID = externalID else {
+			completion(.failure(CloudKitZoneError.invalidParameter))
+			return
+		}
+
+		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
+		
+		database?.fetch(withRecordID: recordID) { record, error in
+			switch CloudKitZoneResult.resolve(error) {
+            case .success:
+				DispatchQueue.main.async {
+					if let record = record {
+						completion(.success(record))
+					} else {
+						completion(.failure(CloudKitZoneError.unknown))
+					}
+				}
+			case .retry(let timeToWait):
+				self.retryIfPossible(after: timeToWait) {
+					self.fetch(externalID: externalID, completion: completion)
+				}
+			default:
+				DispatchQueue.main.async {
+					completion(.failure(error!))
+				}
+			}
+		}
+	}
+	
+	func save(_ record: CKRecord, completion: @escaping (Result<Void, Error>) -> Void) {
+		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
+	}
+	
+	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let externalID = externalID else {
+			completion(.failure(CloudKitZoneError.invalidParameter))
+			return
+		}
+
+		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
+		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
 	
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
@@ -173,7 +203,7 @@ extension CloudKitZone {
 					completion(.failure(CloudKitZoneError.userDeletedZone))
 				}
 			case .retry(let timeToWait):
-				self.retryOperationIfPossible(retryAfter: timeToWait) {
+				self.retryIfPossible(after: timeToWait) {
 					self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
 			case .limitExceeded:
@@ -230,7 +260,7 @@ extension CloudKitZone {
 					self.changeToken = token
 				}
 			 case .retry(let timeToWait):
-				 self.retryOperationIfPossible(retryAfter: timeToWait) {
+				 self.retryIfPossible(after: timeToWait) {
 					 self.fetchChangesInZone(completion: completion)
 				 }
 			 default:
@@ -299,8 +329,8 @@ private extension CloudKitZone {
 		}
 	}
 
-	func retryOperationIfPossible(retryAfter: Double, block: @escaping () -> ()) {
-		let delayTime = DispatchTime.now() + retryAfter
+	func retryIfPossible(after: Double, block: @escaping () -> ()) {
+		let delayTime = DispatchTime.now() + after
 		DispatchQueue.main.asyncAfter(deadline: delayTime, execute: {
 			block()
 		})
