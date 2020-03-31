@@ -180,7 +180,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 					case .failure(let error):
 						self.refreshProgress.completeTask()
-						completion(.failure(error))  // TODO: need to handle userDeletedZone
+						completion(.failure(error))
 					}
 				}
 								
@@ -244,7 +244,16 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		addWebFeed(for: account, with: feed, to: container, completion: completion)
+		accountZone.createWebFeed(url: feed.url, editedName: feed.editedName, container: container) { result in
+			switch result {
+			case .success(let externalID):
+				feed.externalID = externalID
+				container.addWebFeed(feed)
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
@@ -298,6 +307,30 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			case .success(let externalID):
 				folder.externalID = externalID
 				account.addFolder(folder)
+				
+				let group = DispatchGroup()
+				for feed in folder.topLevelWebFeeds {
+					
+					folder.topLevelWebFeeds.remove(feed)
+
+					group.enter()
+					self.restoreWebFeed(for: account, feed: feed, container: folder) { result in
+						group.leave()
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+						}
+					}
+					
+				}
+				
+				group.notify(queue: DispatchQueue.main) {
+					account.addFolder(folder)
+					completion(.success(()))
+				}
+				
 			case .failure(let error):
 				completion(.failure(error))
 			}
