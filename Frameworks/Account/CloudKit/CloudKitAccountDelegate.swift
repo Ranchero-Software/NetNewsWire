@@ -157,7 +157,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				
 				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: name, container: container) { result in
 					switch result {
-					case .success(let containerWebFeed):
+					case .success(let externalID):
 						
 						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 						
@@ -168,8 +168,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 								account.update(feed, with: parsedFeed, {_ in
 									
 									feed.editedName = name
-									feed.externalID = containerWebFeed.webFeedExternalID
-									feed.folderRelationship?[containerWebFeed.containerWebFeedExternalID] = containerWebFeed.containerExternalID
+									feed.externalID = externalID
 									
 									container.addWebFeed(feed)
 									completion(.success(feed))

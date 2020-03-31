@@ -31,6 +31,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		struct Fields {
 			static let url = "url"
 			static let editedName = "editedName"
+			static let containerExternalIDs = "folderExternalIDs"
 		}
 	}
 	
@@ -42,44 +43,29 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-	struct CloudKitContainerWebFeed {
-		static let recordType = "ContainerWebFeed"
-		struct Fields {
-			static let container = "container"
-			static let webFeed = "webFeed"
-		}
-	}
-	
 	init(container: CKContainer) {
         self.container = container
         self.database = container.privateCloudDatabase
     }
     
 	///  Persist a web feed record to iCloud and return the external key
-	func createWebFeed(url: String, editedName: String?, container: Container, completion: @escaping (Result<ContainerWebFeed, Error>) -> Void) {
-		let webFeedRecord = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: generateRecordID())
-		webFeedRecord[CloudKitWebFeed.Fields.url] = url
+	func createWebFeed(url: String, editedName: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
+		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: generateRecordID())
+		record[CloudKitWebFeed.Fields.url] = url
 		if let editedName = editedName {
-			webFeedRecord[CloudKitWebFeed.Fields.editedName] = editedName
+			record[CloudKitWebFeed.Fields.editedName] = editedName
 		}
 		
 		guard let containerExternalID = container.externalID else {
 			completion(.failure(CloudKitZoneError.invalidParameter))
 			return
 		}
-		
-		let containerRecordID = CKRecord.ID(recordName: containerExternalID, zoneID: Self.zoneID)
-		let containerWebFeedRecord = CKRecord(recordType: CloudKitContainerWebFeed.recordType, recordID: generateRecordID())
-		containerWebFeedRecord[CloudKitContainerWebFeed.Fields.container] = CKRecord.Reference(recordID: containerRecordID, action: .deleteSelf)
-		containerWebFeedRecord[CloudKitContainerWebFeed.Fields.webFeed] = CKRecord.Reference(record: webFeedRecord, action: .deleteSelf)
+		record[CloudKitWebFeed.Fields.containerExternalIDs] = [containerExternalID]
 
-		save([webFeedRecord, containerWebFeedRecord]) { result in
+		save(record) { result in
 			switch result {
 			case .success:
-				let cwf = ContainerWebFeed(webFeedExternalID: webFeedRecord.externalID,
-										   containerWebFeedExternalID: containerWebFeedRecord.externalID,
-										   containerExternalID: containerExternalID)
-				completion(.success(cwf))
+				completion(.success(record.externalID))
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -97,7 +83,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: recordID)
 		record[CloudKitWebFeed.Fields.editedName] = editedName
 		
-		save([record]) { result in
+		save(record) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -140,7 +126,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: recordID)
 		record[CloudKitContainer.Fields.name] = name
 		
-		save([record]) { result in
+		save(record) { result in
 			switch result {
 			case .success:
 				completion(.success(()))
@@ -163,7 +149,7 @@ private extension CloudKitAccountZone {
 		record[CloudKitContainer.Fields.name] = name
 		record[CloudKitContainer.Fields.isAccount] = isAccount ? "true" : "false"
 
-		save([record]) { result in
+		save(record) { result in
 			switch result {
 			case .success:
 				completion(.success(record.externalID))

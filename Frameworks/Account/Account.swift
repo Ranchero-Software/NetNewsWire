@@ -518,6 +518,19 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return existingFolder(withExternalID: externalID)
 	}
 	
+	func existingContainers(withWebFeed webFeed: WebFeed) -> [Container] {
+		var containers = [Container]()
+		if topLevelWebFeeds.contains(webFeed) {
+			containers.append(self)
+		}
+		folders?.forEach { folder in
+			if folder.topLevelWebFeeds.contains(webFeed) {
+				containers.append(folder)
+			}
+		}
+		return containers
+	}
+	
 	@discardableResult
 	func ensureFolder(with name: String) -> Folder? {
 		// TODO: support subfolders, maybe, some day
