@@ -39,6 +39,7 @@ public protocol Container: class, ContainerIdentifiable {
 	func hasWebFeed(withURL url: String) -> Bool
 	func existingWebFeed(withWebFeedID: String) -> WebFeed?
 	func existingWebFeed(withURL url: String) -> WebFeed?
+	func existingWebFeed(withExternalID externalID: String) -> WebFeed?
 	func existingFolder(with name: String) -> Folder?
 	func existingFolder(withID: Int) -> Folder?
 
@@ -112,6 +113,15 @@ public extension Container {
 	func existingWebFeed(withURL url: String) -> WebFeed? {
 		for feed in flattenedWebFeeds() {
 			if feed.url == url {
+				return feed
+			}
+		}
+		return nil
+	}
+	
+	func existingWebFeed(withExternalID externalID: String) -> WebFeed? {
+		for feed in flattenedWebFeeds() {
+			if feed.externalID == externalID {
 				return feed
 			}
 		}

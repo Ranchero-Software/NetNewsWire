@@ -511,6 +511,13 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag)
 	}
 
+	func existingContainer(withExternalID externalID: String) -> Container? {
+		guard self.externalID != externalID else {
+			return self
+		}
+		return existingFolder(withExternalID: externalID)
+	}
+	
 	@discardableResult
 	func ensureFolder(with name: String) -> Folder? {
 		// TODO: support subfolders, maybe, some day
@@ -561,10 +568,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return feed
 	}
 
-	public func existingWebFeed(withExternalID externalID: String) -> WebFeed? {
-		return externalIDToWebFeedDictionary[externalID]
-	}
-	
 	public func addWebFeed(_ feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.addWebFeed(for: self, with: feed, to: container, completion: completion)
 	}
@@ -1315,6 +1318,11 @@ extension Account {
 	public func existingWebFeed(withWebFeedID webFeedID: String) -> WebFeed? {
 		return idToWebFeedDictionary[webFeedID]
 	}
+
+	public func existingWebFeed(withExternalID externalID: String) -> WebFeed? {
+		return externalIDToWebFeedDictionary[externalID]
+	}
+	
 }
 
 // MARK: - OPMLRepresentable
