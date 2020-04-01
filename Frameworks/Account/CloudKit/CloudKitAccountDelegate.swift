@@ -30,8 +30,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		return CKContainer(identifier: "iCloud.\(orgID).NetNewsWire")
 	}()
 	
-	private lazy var zones = [accountZone]
+	private lazy var zones: [CloudKitZone] = [accountZone, articlesZone]
 	private let accountZone: CloudKitAccountZone
+	private let articlesZone: CloudKitArticlesZone
 	
 	private let refresher = LocalAccountRefresher()
 
@@ -48,8 +49,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	init(dataFolder: String) {
 		accountZone = CloudKitAccountZone(container: container)
+		articlesZone = CloudKitArticlesZone(container: container)
+		
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
+		
 		accountZone.refreshProgress = refreshProgress
 	}
 	
@@ -75,10 +79,29 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		accountZone.fetchChangesInZone() { result in
 			switch result {
 			case .success:
-				self.refresher.refreshFeeds(account.flattenedWebFeeds()) {
-					BatchUpdate.shared.end()
-					account.metadata.lastArticleFetchEndTime = Date()
-					completion(.success(()))
+				
+				self.sendArticleStatus(for: account) { result in
+					switch result {
+					case .success:
+						
+						self.refreshArticleStatus(for: account) { result in
+							switch result {
+							case .success:
+
+								self.refresher.refreshFeeds(account.flattenedWebFeeds()) {
+									BatchUpdate.shared.end()
+									account.metadata.lastArticleFetchEndTime = Date()
+									completion(.success(()))
+								}
+
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+					case .failure(let error):
+						completion(.failure(error))
+					}
+
 				}
 			case .failure(let error):
 				BatchUpdate.shared.end()
@@ -88,11 +111,44 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		completion(.success(()))
+		os_log(.debug, log: log, "Sending article statuses...")
+
+		database.selectForProcessing { result in
+
+			func processStatuses(_ syncStatuses: [SyncStatus]) {
+				self.articlesZone.sendArticleStatus(syncStatuses) { result in
+					switch result {
+					case .success:
+						os_log(.debug, log: self.log, "Done sending article statuses.")
+						completion(.success(()))
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+			}
+
+			switch result {
+			case .success(let syncStatuses):
+				processStatuses(syncStatuses)
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
+			}
+		}
 	}
 	
+	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		completion(.success(()))
+		os_log(.debug, log: log, "Refreshing article statuses...")
+		
+		articlesZone.fetchChangesInZone() { result in
+			os_log(.debug, log: self.log, "Done refreshing article statuses.")
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -353,6 +409,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	func accountDidInitialize(_ account: Account) {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account)
 		
 		if account.externalID == nil {
 			accountZone.findOrCreateAccount() { result in

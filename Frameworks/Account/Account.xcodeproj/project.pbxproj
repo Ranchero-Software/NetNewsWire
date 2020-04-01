@@ -56,6 +56,8 @@
 		5165D73122837F3400D9D53D /* InitialFeedDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5165D73022837F3400D9D53D /* InitialFeedDownloader.swift */; };
 		5170743C232AEDB500A461A3 /* OPMLFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5170743B232AEDB500A461A3 /* OPMLFile.swift */; };
 		519E84A62433D49000D238B0 /* OPMLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A52433D49000D238B0 /* OPMLNormalizer.swift */; };
+		519E84A82434C5EF00D238B0 /* CloudKitArticlesZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */; };
+		519E84AA2434C60400D238B0 /* CloudKitArticlesZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A92434C60400D238B0 /* CloudKitArticlesZoneDelegate.swift */; };
 		51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7B83233531BC008E8144 /* AccountBehaviors.swift */; };
 		51BC8FCC237EC055004F8B56 /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC8FCB237EC055004F8B56 /* Feed.swift */; };
 		51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BFDECD238B508D00216323 /* ContainerIdentifier.swift */; };
@@ -290,6 +292,8 @@
 		5170743B232AEDB500A461A3 /* OPMLFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLFile.swift; sourceTree = "<group>"; };
 		518B2EA52351306200400001 /* Account_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_test.xcconfig; sourceTree = "<group>"; };
 		519E84A52433D49000D238B0 /* OPMLNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLNormalizer.swift; sourceTree = "<group>"; };
+		519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitArticlesZone.swift; sourceTree = "<group>"; };
+		519E84A92434C60400D238B0 /* CloudKitArticlesZoneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitArticlesZoneDelegate.swift; sourceTree = "<group>"; };
 		51BB7B83233531BC008E8144 /* AccountBehaviors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBehaviors.swift; sourceTree = "<group>"; };
 		51BC8FCB237EC055004F8B56 /* Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
 		51BFDECD238B508D00216323 /* ContainerIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerIdentifier.swift; sourceTree = "<group>"; };
@@ -522,6 +526,8 @@
 				5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */,
 				51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */,
 				512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */,
+				519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */,
+				519E84A92434C60400D238B0 /* CloudKitArticlesZoneDelegate.swift */,
 				51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */,
 				51C034DE242D65D20014DC71 /* CloudKitZoneResult.swift */,
 			);
@@ -1085,6 +1091,7 @@
 				9EA643D5239306AC0018A28C /* FeedlyFeedsSearchResponse.swift in Sources */,
 				9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */,
 				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,
+				519E84AA2434C60400D238B0 /* CloudKitArticlesZoneDelegate.swift in Sources */,
 				512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */,
 				3B826DAF2385C81C00FC1ADB /* FeedWranglerGenericResult.swift in Sources */,
 				9ECC9A85234DC16E009B5144 /* FeedlyAccountDelegateError.swift in Sources */,
@@ -1165,6 +1172,7 @@
 				51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */,
 				9E1773D923458D590056A5A8 /* FeedlyResourceId.swift in Sources */,
 				9EE4CCFA234F106600FBAE4B /* FeedlyFeedContainerValidator.swift in Sources */,
+				519E84A82434C5EF00D238B0 /* CloudKitArticlesZone.swift in Sources */,
 				552032FC229D5D5A009559E0 /* ReaderAPIUnreadEntry.swift in Sources */,
 				9EC688EA232B973C00A8D0A2 /* FeedlyAPICaller.swift in Sources */,
 				9E1773D32345700F0056A5A8 /* FeedlyLink.swift in Sources */,
