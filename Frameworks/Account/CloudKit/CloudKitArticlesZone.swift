@@ -14,7 +14,6 @@ import SyncDatabase
 
 final class CloudKitArticlesZone: CloudKitZone {
 	
-	
 	static var zoneID: CKRecordZone.ID {
 		return CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
 	}
