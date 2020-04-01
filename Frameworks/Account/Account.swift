@@ -738,7 +738,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	func update(webFeedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping DatabaseCompletionBlock) {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
-		precondition(type != .onMyMac) // TODO: also make sure type != iCloud
+		precondition(type != .onMyMac && type != .cloudKit)
 		guard !webFeedIDsAndItems.isEmpty else {
 			completion(nil)
 			return
