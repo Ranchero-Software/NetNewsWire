@@ -59,7 +59,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let group = DispatchGroup()
-		BatchUpdate.shared.start()
 		
 		zones.forEach { zone in
 			group.enter()
@@ -69,7 +68,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			BatchUpdate.shared.end()
 			completion()
 		}
 	}
@@ -77,9 +75,10 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		BatchUpdate.shared.start()
 		accountZone.fetchChangesInZone() { result in
+			BatchUpdate.shared.end()
 			switch result {
 			case .success:
-				
+
 				self.sendArticleStatus(for: account) { result in
 					switch result {
 					case .success:
@@ -89,7 +88,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 							case .success:
 
 								self.refresher.refreshFeeds(account.flattenedWebFeeds()) {
-									BatchUpdate.shared.end()
 									account.metadata.lastArticleFetchEndTime = Date()
 									completion(.success(()))
 								}
