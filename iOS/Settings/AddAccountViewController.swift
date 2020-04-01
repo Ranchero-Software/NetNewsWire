@@ -17,7 +17,7 @@ protocol AddAccountDismissDelegate: UIViewController {
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .feedWrangler, .newsBlur]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .cloudKit, .newsBlur]
 	#else
 	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
 	#endif
