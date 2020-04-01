@@ -227,10 +227,31 @@ extension CloudKitZone {
 					self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
 			case .limitExceeded:
+
 				let chunkedRecords = recordsToSave.chunked(into: 300)
+
+				let group = DispatchGroup()
+				var errorOccurred = false
+
 				for chunk in chunkedRecords {
-					self.modify(recordsToSave: chunk, recordIDsToDelete: recordIDsToDelete, completion: completion)
+					group.enter()
+					self.modify(recordsToSave: chunk, recordIDsToDelete: recordIDsToDelete) { result in
+						if case .failure(let error) = result {
+							os_log(.error, log: self.log, "%@ zone modify records error: %@.", Self.zoneID.zoneName, error.localizedDescription)
+							errorOccurred = true
+						}
+						group.leave()
+					}
 				}
+				
+				group.notify(queue: DispatchQueue.main) {
+					if errorOccurred {
+						completion(.failure(CloudKitZoneError.unknown))
+					} else {
+						completion(.success(()))
+					}
+				}
+				
 			default:
 				DispatchQueue.main.async {
 					self.refreshProgress?.completeTask()
