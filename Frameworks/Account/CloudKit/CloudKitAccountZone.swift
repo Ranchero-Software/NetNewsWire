@@ -14,8 +14,6 @@ import CloudKit
 
 final class CloudKitAccountZone: CloudKitZone {
 
-	typealias ContainerWebFeed = (webFeedExternalID: String, containerWebFeedExternalID: String, containerExternalID: String)
-	
 	static var zoneID: CKRecordZone.ID {
 		return CKRecordZone.ID(zoneName: "Account", ownerName: CKCurrentUserDefaultName)
 	}
@@ -25,7 +23,7 @@ final class CloudKitAccountZone: CloudKitZone {
     weak var container: CKContainer?
     weak var database: CKDatabase?
 	weak var refreshProgress: DownloadProgress?
-	var delegate: CloudKitZoneDelegate? = nil
+	var delegate: CloudKitZoneDelegate?
     
 	struct CloudKitWebFeed {
 		static let recordType = "WebFeed"
