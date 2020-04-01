@@ -337,6 +337,17 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
+		let syncStatuses = articles.map { article in
+			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+		}
+		database.insertStatuses(syncStatuses)
+
+		database.selectPendingCount { result in
+			if let count = try? result.get(), count > 100 {
+				self.sendArticleStatus(for: account) { _ in }
+			}
+		}
+
 		return try? account.update(articles, statusKey: statusKey, flag: flag)
 	}
 
@@ -377,10 +388,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func suspendDatabase() {
-		// Nothing to do
+		database.suspend()
 	}
 	
 	func resume() {
 		refresher.resume()
+		database.resume()
 	}
 }
