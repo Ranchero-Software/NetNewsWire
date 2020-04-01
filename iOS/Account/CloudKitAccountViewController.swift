@@ -25,8 +25,7 @@ class CloudKitAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func add(_ sender: Any) {
-		let account = AccountManager.shared.createAccount(type: .cloudKit)
-		account.refreshAll(completion: { _ in })
+		let _ = AccountManager.shared.createAccount(type: .cloudKit)
 		dismiss(animated: true, completion: nil)
 		delegate?.dismiss()
 	}

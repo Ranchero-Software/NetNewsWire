@@ -421,6 +421,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				switch result {
 				case .success(let externalID):
 					account.externalID = externalID
+					self.refreshAll(for: account) { result in
+						if case .failure(let error) = result {
+							os_log(.error, log: self.log, "Error while doing intial refresh: %@", error.localizedDescription)
+						}
+					}
 				case .failure(let error):
 					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
 				}
