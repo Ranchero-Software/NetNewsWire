@@ -83,7 +83,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		guard let account = account,
 			let name = record[CloudKitAccountZone.CloudKitContainer.Fields.name] as? String,
 			let isAccount = record[CloudKitAccountZone.CloudKitContainer.Fields.isAccount] as? String,
-			isAccount != "true" else { return }
+			isAccount != "1" else { return }
 		
 		var folder = account.existingFolder(withExternalID: record.externalID)
 		folder?.name = name
