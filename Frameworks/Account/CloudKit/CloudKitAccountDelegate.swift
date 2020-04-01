@@ -116,6 +116,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		database.selectForProcessing { result in
 
 			func processStatuses(_ syncStatuses: [SyncStatus]) {
+				guard syncStatuses.count > 0 else {
+					completion(.success(()))
+					return
+				}
+				
 				self.articlesZone.sendArticleStatus(syncStatuses) { result in
 					switch result {
 					case .success:
@@ -409,7 +414,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	func accountDidInitialize(_ account: Account) {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
-		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database)
 		
 		if account.externalID == nil {
 			accountZone.findOrCreateAccount() { result in
