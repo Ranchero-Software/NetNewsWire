@@ -11,7 +11,7 @@ import os.log
 import CloudKit
 
 class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
-	
+
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 	
 	weak var account: Account?
@@ -21,14 +21,18 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	}
 	
 	func cloudKitDidChange(record: CKRecord) {
-//		switch record.recordType {
-//		case CloudKitAccountZone.CloudKitWebFeed.recordType:
-//		default:
-//			assertionFailure("Unknown record type: \(record.recordType)")
-//		}
+		// Process everything in the batch method
 	}
 	
-	func cloudKitDidDelete(recordType: CKRecord.RecordType, recordID: CKRecord.ID) {
+	func cloudKitDidDelete(recordKey: CloudKitRecordKey) {
+		// Article downloads clean up old articles and statuses
+	}
+	
+	func cloudKitDidChange(records: [CKRecord]) {
+		// TODO
+	}
+	
+	func cloudKitDidDelete(recordKeys: [CloudKitRecordKey]) {
 		// Article downloads clean up old articles and statuses
 	}
 	

@@ -18,8 +18,12 @@ enum CloudKitZoneError: Error {
 
 protocol CloudKitZoneDelegate: class {
 	func cloudKitDidChange(record: CKRecord);
-	func cloudKitDidDelete(recordType: CKRecord.RecordType, recordID: CKRecord.ID)
+	func cloudKitDidDelete(recordKey: CloudKitRecordKey)
+	func cloudKitDidChange(records: [CKRecord]);
+	func cloudKitDidDelete(recordKeys: [CloudKitRecordKey])
 }
+
+typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
 
 protocol CloudKitZone: class {
 	
@@ -241,6 +245,9 @@ extension CloudKitZone {
 	
     func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
 
+		var changedRecords = [CKRecord]()
+		var deletedRecordKeys = [CloudKitRecordKey]()
+		
 		let zoneConfig = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
 		zoneConfig.previousServerChangeToken = changeToken
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [Self.zoneID], configurationsByRecordZoneID: [Self.zoneID: zoneConfig])
@@ -248,6 +255,7 @@ extension CloudKitZone {
 
         op.recordZoneChangeTokensUpdatedBlock = { [weak self] zoneID, token, _ in
             guard let self = self else { return }
+			
 			DispatchQueue.main.async {
 				self.changeToken = token
 			}
@@ -255,6 +263,8 @@ extension CloudKitZone {
 
         op.recordChangedBlock = { [weak self] record in
             guard let self = self else { return }
+			
+			changedRecords.append(record)
 			DispatchQueue.main.async {
 				self.delegate?.cloudKitDidChange(record: record)
 			}
@@ -262,8 +272,12 @@ extension CloudKitZone {
 
         op.recordWithIDWasDeletedBlock = { [weak self] recordID, recordType in
             guard let self = self else { return }
+			
+			let recordKey = CloudKitRecordKey(recordType: recordType, recordID: recordID)
+			deletedRecordKeys.append(recordKey)
+			
 			DispatchQueue.main.async {
-				self.delegate?.cloudKitDidDelete(recordType: recordType, recordID: recordID)
+				self.delegate?.cloudKitDidDelete(recordKey: recordKey)
 			}
         }
 
@@ -287,6 +301,10 @@ extension CloudKitZone {
         op.fetchRecordZoneChangesCompletionBlock = { [weak self] error in
 			DispatchQueue.main.async {
 				self?.refreshProgress?.completeTask()
+				
+				self?.delegate?.cloudKitDidChange(records: changedRecords)
+				self?.delegate?.cloudKitDidDelete(recordKeys: deletedRecordKeys)
+				
 				if let error = error {
 					completion(.failure(error))
 				} else {

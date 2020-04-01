@@ -37,15 +37,23 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 	
-	func cloudKitDidDelete(recordType: CKRecord.RecordType, recordID: CKRecord.ID) {
-		switch recordType {
+	func cloudKitDidDelete(recordKey: CloudKitRecordKey) {
+		switch recordKey.recordType {
 		case CloudKitAccountZone.CloudKitWebFeed.recordType:
-			removeWebFeed(recordID.externalID)
+			removeWebFeed(recordKey.recordID.externalID)
 		case CloudKitAccountZone.CloudKitContainer.recordType:
-			removeContainer(recordID.externalID)
+			removeContainer(recordKey.recordID.externalID)
 		default:
-			assertionFailure("Unknown record type: \(recordID.externalID)")
+			assertionFailure("Unknown record type: \(recordKey.recordType)")
 		}
+	}
+	
+	func cloudKitDidChange(records: [CKRecord]) {
+		// We don't batch process these records
+	}
+	
+	func cloudKitDidDelete(recordKeys: [CloudKitRecordKey]) {
+		// We don't batch process these records
 	}
 
 	func addOrUpdateWebFeed(_ record: CKRecord) {
