@@ -299,18 +299,49 @@ extension CloudKitZone {
         }
 
         op.fetchRecordZoneChangesCompletionBlock = { [weak self] error in
-			DispatchQueue.main.async {
-				self?.refreshProgress?.completeTask()
-				
-				self?.delegate?.cloudKitDidChange(records: changedRecords)
-				self?.delegate?.cloudKitDidDelete(recordKeys: deletedRecordKeys)
-				
-				if let error = error {
-					completion(.failure(error))
-				} else {
+            guard let self = self else { return }
+
+			switch CloudKitZoneResult.resolve(error) {
+			case .success:
+				DispatchQueue.main.async {
+					self.refreshProgress?.completeTask()
+					self.delegate?.cloudKitDidChange(records: changedRecords)
+					self.delegate?.cloudKitDidDelete(recordKeys: deletedRecordKeys)
 					completion(.success(()))
 				}
+			case .zoneNotFound:
+				self.createZoneRecord() { result in
+					switch result {
+					case .success:
+						self.fetchChangesInZone(completion: completion)
+					case .failure(let error):
+						DispatchQueue.main.async {
+							self.refreshProgress?.completeTask()
+							completion(.failure(error))
+						}
+					}
+				}
+			case .userDeletedZone:
+				DispatchQueue.main.async {
+					self.refreshProgress?.completeTask()
+					completion(.failure(CloudKitZoneError.userDeletedZone))
+				}
+			case .retry(let timeToWait):
+				self.retryIfPossible(after: timeToWait) {
+					self.fetchChangesInZone(completion: completion)
+				}
+			case .changeTokenExpired:
+				DispatchQueue.main.async {
+					self.changeToken = nil
+					self.fetchChangesInZone(completion: completion)
+				}
+			default:
+				DispatchQueue.main.async {
+					self.refreshProgress?.completeTask()
+					completion(.failure(error!))
+				}
 			}
+			
         }
 
 		refreshProgress?.addToNumberOfTasksAndRemaining(1)
