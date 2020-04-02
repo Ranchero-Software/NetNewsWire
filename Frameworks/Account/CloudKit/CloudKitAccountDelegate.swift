@@ -86,17 +86,34 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					return
 				}
 				
-				self.articlesZone.sendArticleStatus(syncStatuses) { result in
-					switch result {
-					case .success:
-						self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
-						os_log(.debug, log: self.log, "Done sending article statuses.")
-						completion(.success(()))
-					case .failure(let error):
-						self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
-						completion(.failure(error))
+				let starredArticleIDs = syncStatuses.filter({ $0.key == .starred && $0.flag == true }).map({ $0.articleID })
+				account.fetchArticlesAsync(.articleIDs(Set(starredArticleIDs))) { result in
+					
+					func processWithArticles(_ starredArticles: Set<Article>) {
+						
+						self.articlesZone.sendArticleStatus(syncStatuses, starredArticles: starredArticles) { result in
+							switch result {
+							case .success:
+								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
+								os_log(.debug, log: self.log, "Done sending article statuses.")
+								completion(.success(()))
+							case .failure(let error):
+								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
+								completion(.failure(error))
+							}
+						}
+						
 					}
+
+					switch result {
+					case .success(let starredArticles):
+						processWithArticles(starredArticles)
+					case .failure(let databaseError):
+						completion(.failure(databaseError))
+					}
+
 				}
+				
 			}
 
 			switch result {
