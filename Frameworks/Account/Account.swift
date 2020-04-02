@@ -27,7 +27,6 @@ public extension Notification.Name {
 	static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
 	static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
 	static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
-	static let DownloadArticlesDidUpdateUnreadCounts = Notification.Name(rawValue: "DownloadArticlesDidUpdateUnreadCounts")
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
@@ -1289,9 +1288,7 @@ private extension Account {
 		if let newArticles = newAndUpdatedArticles.newArticles, !newArticles.isEmpty {
 			shouldSendNotification = true
 			userInfo[UserInfoKey.newArticles] = newArticles
-			self.updateUnreadCounts(for: webFeeds) {
-				NotificationCenter.default.post(name: .DownloadArticlesDidUpdateUnreadCounts, object: self, userInfo: nil)
-			}
+			self.updateUnreadCounts(for: webFeeds)
 		}
 
 		if let updatedArticles = newAndUpdatedArticles.updatedArticles, !updatedArticles.isEmpty {

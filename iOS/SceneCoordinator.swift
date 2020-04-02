@@ -301,7 +301,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadArticlesDidUpdateUnreadCounts(_:)), name: .DownloadArticlesDidUpdateUnreadCounts, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
@@ -533,10 +532,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		self.sortDirection = AppDefaults.timelineSortDirection
 		self.groupByFeed = AppDefaults.timelineGroupByFeed
-	}
-	
-	@objc func downloadArticlesDidUpdateUnreadCounts(_ note: Notification) {
-		rebuildBackingStores()
 	}
 	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
