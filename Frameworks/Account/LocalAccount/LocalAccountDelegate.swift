@@ -18,6 +18,8 @@ public enum LocalAccountDelegateError: String, Error {
 
 final class LocalAccountDelegate: AccountDelegate {
 
+	private let refresher = LocalAccountRefresher()
+	
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
 	
@@ -25,18 +27,16 @@ final class LocalAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	private let refresher = LocalAccountRefresher()
-
-	var refreshProgress: DownloadProgress {
-		return refresher.progress
-	}
+	let refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		completion()
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		refresher.refreshFeeds(account.flattenedWebFeeds()) {
+		let webFeeds = account.flattenedWebFeeds()
+		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
+		refresher.refreshFeeds(webFeeds, feedCompletionBlock: { _ in self.refreshProgress.completeTask() }) {
 			account.metadata.lastArticleFetchEndTime = Date()
 			completion(.success(()))
 		}

@@ -43,9 +43,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	var refreshProgress: DownloadProgress {
-		return refresher.progress
-	}
+	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
 	init(dataFolder: String) {
 		accountZone = CloudKitAccountZone(container: container)
@@ -53,8 +51,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
-		
-		accountZone.refreshProgress = refreshProgress
 	}
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
@@ -76,39 +72,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		BatchUpdate.shared.start()
-		accountZone.fetchChangesInZone() { result in
-			BatchUpdate.shared.end()
-			switch result {
-			case .success:
-
-				self.sendArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						
-						self.refreshArticleStatus(for: account) { result in
-							switch result {
-							case .success:
-
-								self.refresher.refreshFeeds(account.flattenedWebFeeds()) {
-									account.metadata.lastArticleFetchEndTime = Date()
-									completion(.success(()))
-								}
-
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-					case .failure(let error):
-						completion(.failure(error))
-					}
-
-				}
-			case .failure(let error):
-				BatchUpdate.shared.end()
-				completion(.failure(error))
-			}
-		}
+		refreshAll(for: account, downloadFeeds: true, completion: completion)
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -204,9 +168,10 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addToNumberOfTasksAndRemaining(3)
 		FeedFinder.find(url: url) { result in
 			
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let feedSpecifiers):
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
@@ -222,6 +187,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				}
 				
 				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: name, container: container) { result in
+
+					self.refreshProgress.completeTask()
 					switch result {
 					case .success(let externalID):
 						
@@ -242,13 +209,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 						}
 
 					case .failure(let error):
-						self.refreshProgress.completeTask()
 						completion(.failure(error))
 					}
 				}
 								
 			case .failure:
-				self.refreshProgress.completeTask()
+				self.refreshProgress.clear()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
 			
@@ -258,7 +224,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		let editedName = name.isEmpty ? nil : name
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.renameWebFeed(feed, editedName: editedName) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				feed.editedName = name
@@ -270,7 +238,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.removeWebFeed(feed, from: container) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				container.removeWebFeed(feed)
@@ -282,7 +252,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func moveWebFeed(for account: Account, with feed: WebFeed, from fromContainer: Container, to toContainer: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.moveWebFeed(feed, from: fromContainer, to: toContainer) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				fromContainer.removeWebFeed(feed)
@@ -295,7 +267,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.addWebFeed(feed, to: container) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				container.addWebFeed(feed)
@@ -307,7 +281,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.createWebFeed(url: feed.url, editedName: feed.editedName, container: container) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let externalID):
 				feed.externalID = externalID
@@ -320,7 +296,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.createFolder(name: name) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let externalID):
 				if let folder = account.ensureFolder(with: name) {
@@ -336,7 +314,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.renameFolder(folder, to: name) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				folder.name = name
@@ -348,7 +328,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.removeFolder(folder) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				account.removeFolder(folder)
@@ -365,19 +347,24 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 		
+		let feedsToRestore = folder.topLevelWebFeeds
+		refreshProgress.addToNumberOfTasksAndRemaining(1 + feedsToRestore.count)
+		
 		accountZone.createFolder(name: name) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let externalID):
 				folder.externalID = externalID
 				account.addFolder(folder)
 				
 				let group = DispatchGroup()
-				for feed in folder.topLevelWebFeeds {
+				for feed in feedsToRestore {
 					
 					folder.topLevelWebFeeds.remove(feed)
 
 					group.enter()
 					self.restoreWebFeed(for: account, feed: feed, container: folder) { result in
+						self.refreshProgress.completeTask()
 						group.leave()
 						switch result {
 						case .success:
@@ -424,7 +411,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				switch result {
 				case .success(let externalID):
 					account.externalID = externalID
-					self.refreshAll(for: account) { result in
+					self.refreshAll(for: account, downloadFeeds: false) { result in
 						if case .failure(let error) = result {
 							os_log(.error, log: self.log, "Error while doing intial refresh: %@", error.localizedDescription)
 						}
@@ -465,4 +452,65 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		refresher.resume()
 		database.resume()
 	}
+}
+
+private extension CloudKitAccountDelegate {
+	
+	func refreshAll(for account: Account, downloadFeeds: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		let intialWebFeedsCount = downloadFeeds ? account.flattenedWebFeeds().count : 0
+		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialWebFeedsCount)
+
+		BatchUpdate.shared.start()
+		accountZone.fetchChangesInZone() { result in
+			BatchUpdate.shared.end()
+			switch result {
+			case .success:
+				
+				let webFeeds = account.flattenedWebFeeds()
+				if downloadFeeds {
+					self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count - intialWebFeedsCount)
+				}
+
+				self.refreshProgress.completeTask()
+				self.sendArticleStatus(for: account) { result in
+					switch result {
+					case .success:
+						
+						self.refreshProgress.completeTask()
+						self.refreshArticleStatus(for: account) { result in
+							switch result {
+							case .success:
+
+								self.refreshProgress.completeTask()
+
+								guard downloadFeeds else {
+									completion(.success(()))
+									return
+								}
+								
+								self.refresher.refreshFeeds(webFeeds, feedCompletionBlock: { _ in self.refreshProgress.completeTask() }) {
+									account.metadata.lastArticleFetchEndTime = Date()
+									completion(.success(()))
+								}
+
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+						
+					case .failure(let error):
+						completion(.failure(error))
+					}
+
+				}
+				
+			case .failure(let error):
+				self.refreshProgress.clear()
+				BatchUpdate.shared.end()
+				completion(.failure(error))
+			}
+		}
+	}
+	
 }

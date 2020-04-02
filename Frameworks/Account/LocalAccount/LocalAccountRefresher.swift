@@ -14,6 +14,7 @@ import Articles
 
 final class LocalAccountRefresher {
 	
+	private var feedCompletionBlock: ((WebFeed) -> Void)?
 	private var completion: (() -> Void)?
 	private var isSuspended = false
 	
@@ -21,11 +22,8 @@ final class LocalAccountRefresher {
 		return DownloadSession(delegate: self)
 	}()
 
-	var progress: DownloadProgress {
-		return downloadSession.progress
-	}
-
-	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: @escaping () -> Void) {
+	public func refreshFeeds(_ feeds: Set<WebFeed>, feedCompletionBlock: @escaping (WebFeed) -> Void, completion: @escaping () -> Void) {
+		self.feedCompletionBlock = feedCompletionBlock
 		self.completion = completion
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
@@ -62,28 +60,37 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidCompleteForRepresentedObject representedObject: AnyObject, response: URLResponse?, data: Data, error: NSError?, completion: @escaping () -> Void) {
-		guard let feed = representedObject as? WebFeed, !data.isEmpty, !isSuspended else {
+		let feed = representedObject as! WebFeed
+		
+		guard !data.isEmpty, !isSuspended else {
 			completion()
+			feedCompletionBlock?(feed)
 			return
 		}
 
 		if let error = error {
 			print("Error downloading \(feed.url) - \(error)")
 			completion()
+			feedCompletionBlock?(feed)
 			return
 		}
 
 		let dataHash = data.md5String
 		if dataHash == feed.contentHash {
 			completion()
+			feedCompletionBlock?(feed)
 			return
 		}
 
 		let parserData = ParserData(url: feed.url, data: data)
 		FeedParser.parse(parserData) { (parsedFeed, error) in
+			
 			guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
+				completion()
+				self.feedCompletionBlock?(feed)
 				return
 			}
+			
 			account.update(feed, with: parsedFeed) { error in
 				if error == nil {
 					if let httpResponse = response as? HTTPURLResponse {
@@ -93,7 +100,9 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 					feed.contentHash = dataHash
 				}
 				completion()
+				self.feedCompletionBlock?(feed)
 			}
+			
 		}
 	}
 	
@@ -122,6 +131,8 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
+		let feed = representedObject as! WebFeed
+		feedCompletionBlock?(feed)
 	}
 	
 	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession) {

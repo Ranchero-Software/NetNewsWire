@@ -22,7 +22,6 @@ final class CloudKitAccountZone: CloudKitZone {
 
     weak var container: CKContainer?
     weak var database: CKDatabase?
-	weak var refreshProgress: DownloadProgress?
 	var delegate: CloudKitZoneDelegate?
     
 	struct CloudKitWebFeed {

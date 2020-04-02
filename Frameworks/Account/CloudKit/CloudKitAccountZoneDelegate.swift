@@ -162,7 +162,6 @@ private extension CloudKitAcountZoneDelegate {
 		return webFeed
 	}
 	
-	
 	func addUnclaimedWebFeed(url: URL, editedName: String?, webFeedExternalID: String, containerExternalID: String) {
 		if var unclaimedWebFeeds = self.unclaimedWebFeeds[containerExternalID] {
 			unclaimedWebFeeds.append(UnclaimedWebFeed(url: url, editedName: editedName, webFeedExternalID: webFeedExternalID))

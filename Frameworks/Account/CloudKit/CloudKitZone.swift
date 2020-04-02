@@ -32,7 +32,6 @@ protocol CloudKitZone: class {
 
 	var container: CKContainer? { get }
 	var database: CKDatabase? { get }
-	var refreshProgress: DownloadProgress? { get set }
 	var delegate: CloudKitZoneDelegate? { get set }
 
 }
@@ -105,13 +104,10 @@ extension CloudKitZone {
 			return
 		}
 		
-		refreshProgress?.addToNumberOfTasksAndRemaining(1)
-		
 		database.perform(query, inZoneWith: Self.zoneID) { [weak self] records, error in
 			switch CloudKitZoneResult.resolve(error) {
             case .success:
 				DispatchQueue.main.async {
-					self?.refreshProgress?.completeTask()
 					if let records = records {
 						completion(.success(records))
 					} else {
@@ -124,7 +120,6 @@ extension CloudKitZone {
 				}
 			default:
 				DispatchQueue.main.async {
-					self?.refreshProgress?.completeTask()
 					completion(.failure(error!))
 				}
 			}
@@ -139,12 +134,10 @@ extension CloudKitZone {
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
 		
-		refreshProgress?.addToNumberOfTasksAndRemaining(1)
 		database?.fetch(withRecordID: recordID) { [weak self] record, error in
 			switch CloudKitZoneResult.resolve(error) {
             case .success:
 				DispatchQueue.main.async {
-					self?.refreshProgress?.completeTask()
 					if let record = record {
 						completion(.success(record))
 					} else {
@@ -157,7 +150,6 @@ extension CloudKitZone {
 				}
 			default:
 				DispatchQueue.main.async {
-					self?.refreshProgress?.completeTask()
 					completion(.failure(error!))
 				}
 			}
@@ -201,7 +193,6 @@ extension CloudKitZone {
 			switch CloudKitZoneResult.resolve(error) {
 			case .success:
 				DispatchQueue.main.async {
-					self.refreshProgress?.completeTask()
 					completion(.success(()))
 				}
 			case .zoneNotFound:
@@ -211,14 +202,12 @@ extension CloudKitZone {
 						self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 					case .failure(let error):
 						DispatchQueue.main.async {
-							self.refreshProgress?.completeTask()
 							completion(.failure(error))
 						}
 					}
 				}
 			case .userDeletedZone:
 				DispatchQueue.main.async {
-					self.refreshProgress?.completeTask()
 					completion(.failure(CloudKitZoneError.userDeletedZone))
 				}
 			case .retry(let timeToWait):
@@ -253,13 +242,11 @@ extension CloudKitZone {
 				
 			default:
 				DispatchQueue.main.async {
-					self.refreshProgress?.completeTask()
 					completion(.failure(error!))
 				}
 			}
 		}
 
-		refreshProgress?.addToNumberOfTasksAndRemaining(1)
 		database?.add(op)
 	}
 	
@@ -324,7 +311,6 @@ extension CloudKitZone {
 			switch CloudKitZoneResult.resolve(error) {
 			case .success:
 				DispatchQueue.main.async {
-					self.refreshProgress?.completeTask()
 					self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys, completion: completion)
 				}
 			case .zoneNotFound:
@@ -334,14 +320,12 @@ extension CloudKitZone {
 						self.fetchChangesInZone(completion: completion)
 					case .failure(let error):
 						DispatchQueue.main.async {
-							self.refreshProgress?.completeTask()
 							completion(.failure(error))
 						}
 					}
 				}
 			case .userDeletedZone:
 				DispatchQueue.main.async {
-					self.refreshProgress?.completeTask()
 					completion(.failure(CloudKitZoneError.userDeletedZone))
 				}
 			case .retry(let timeToWait):
@@ -355,14 +339,12 @@ extension CloudKitZone {
 				}
 			default:
 				DispatchQueue.main.async {
-					self.refreshProgress?.completeTask()
 					completion(.failure(error!))
 				}
 			}
 			
         }
 
-		refreshProgress?.addToNumberOfTasksAndRemaining(1)
         database?.add(op)
     }
 	
