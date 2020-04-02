@@ -116,18 +116,26 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 		
 		if data.isDefinitelyNotFeed() {
+			feedCompletionBlock?(feed)
 			return false
 		}
 		
 		if data.count > 4096 {
 			let parserData = ParserData(url: feed.url, data: data)
-			return FeedParser.mightBeAbleToParseBasedOnPartialData(parserData)
+			if FeedParser.mightBeAbleToParseBasedOnPartialData(parserData) {
+				return true
+			} else {
+				feedCompletionBlock?(feed)
+				return false
+			}
 		}
 		
 		return true		
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
+		let feed = representedObject as! WebFeed
+		feedCompletionBlock?(feed)
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
