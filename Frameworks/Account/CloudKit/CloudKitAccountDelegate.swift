@@ -423,7 +423,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 		
 		zones.forEach { zone in
-			zone.resumeLongLivedOperationIfPossible()
 			zone.subscribe()
 		}
 	}

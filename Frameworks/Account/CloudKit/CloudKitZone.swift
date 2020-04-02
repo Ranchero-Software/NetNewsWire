@@ -46,20 +46,6 @@ extension CloudKitZone {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: Self.zoneID)
 	}
 
-	func resumeLongLivedOperationIfPossible() {
-		guard let container = container else { return }
-		container.fetchAllLongLivedOperationIDs { (opIDs, error) in
-			guard let opIDs = opIDs else { return }
-			for opID in opIDs {
-				container.fetchLongLivedOperation(withID: opID, completionHandler: { (ope, error) in
-					if let modifyOp = ope as? CKModifyRecordsOperation {
-						container.add(modifyOp)
-					}
-				})
-			}
-		}
-	}
-	
     func subscribe() {
 		
 		let subscription = CKRecordZoneSubscription(zoneID: Self.zoneID)
@@ -172,10 +158,6 @@ extension CloudKitZone {
 	
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
-		
-		let config = CKOperation.Configuration()
-		config.isLongLived = true
-		op.configuration = config
 		
 		// We use .changedKeys savePolicy to do unlocked changes here cause my app is contentious and off-line first
 		// Apple suggests using .ifServerRecordUnchanged save policy
