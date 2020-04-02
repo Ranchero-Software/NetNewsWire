@@ -48,14 +48,10 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 	
-	func cloudKitDidChange(records: [CKRecord]) {
-		// We don't batch process these records
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+		completion(.success(()))
 	}
 	
-	func cloudKitDidDelete(recordKeys: [CloudKitRecordKey]) {
-		// We don't batch process these records
-	}
-
 	func addOrUpdateWebFeed(_ record: CKRecord) {
 		guard let account = account,
 			let urlString = record[CloudKitAccountZone.CloudKitWebFeed.Fields.url] as? String,

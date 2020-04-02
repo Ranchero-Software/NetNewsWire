@@ -19,8 +19,7 @@ enum CloudKitZoneError: Error {
 protocol CloudKitZoneDelegate: class {
 	func cloudKitDidChange(record: CKRecord);
 	func cloudKitDidDelete(recordKey: CloudKitRecordKey)
-	func cloudKitDidChange(records: [CKRecord]);
-	func cloudKitDidDelete(recordKeys: [CloudKitRecordKey])
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void);
 }
 
 typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
@@ -326,9 +325,7 @@ extension CloudKitZone {
 			case .success:
 				DispatchQueue.main.async {
 					self.refreshProgress?.completeTask()
-					self.delegate?.cloudKitDidChange(records: changedRecords)
-					self.delegate?.cloudKitDidDelete(recordKeys: deletedRecordKeys)
-					completion(.success(()))
+					self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys, completion: completion)
 				}
 			case .zoneNotFound:
 				self.createZoneRecord() { result in

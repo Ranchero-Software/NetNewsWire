@@ -58,6 +58,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		os_log(.debug, log: log, "Processing remote notification...")
+
 		let group = DispatchGroup()
 		
 		zones.forEach { zone in
@@ -68,6 +70,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
+			os_log(.debug, log: self.log, "Done processing remote notification...")
 			completion()
 		}
 	}

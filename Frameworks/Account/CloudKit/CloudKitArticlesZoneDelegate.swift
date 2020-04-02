@@ -31,7 +31,8 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		// Article downloads clean up old articles and statuses
 	}
 	
-	func cloudKitDidChange(records: [CKRecord]) {
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+		
 		database.selectPendingReadStatusArticleIDs() { result in
 			switch result {
 			case .success(let pendingReadStatusArticleIDs):
@@ -40,9 +41,10 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 					switch result {
 					case .success(let pendingStarredStatusArticleIDs):
 						
-						self.process(records: records,
+						self.process(records: changed,
 									 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-									 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
+									 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+									 completion: completion)
 						
 					case .failure(let error):
 						os_log(.error, log: self.log, "Error occurred geting pending starred records: %@", error.localizedDescription)
@@ -56,15 +58,11 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		
 	}
 	
-	func cloudKitDidDelete(recordKeys: [CloudKitRecordKey]) {
-		// Article downloads clean up old articles and statuses
-	}
-	
 }
 
 private extension CloudKitArticlesZoneDelegate {
 	
-	func process(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>) {
+	func process(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		let receivedUnreadArticleIDs = Set(records.filter( { $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ $0.externalID }))
 		let receivedReadArticleIDs =  Set(records.filter( { $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ $0.externalID }))
@@ -76,10 +74,31 @@ private extension CloudKitArticlesZoneDelegate {
 		let updateableUnstarredArticleIDs = receivedUnstarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 		let updateableStarredArticleIDs = receivedStarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 
-		account?.markAsUnread(updateableUnreadArticleIDs)
-		account?.markAsRead(updateableReadArticleIDs)
-		account?.markAsUnstarred(updateableUnstarredArticleIDs)
-		account?.markAsStarred(updateableStarredArticleIDs)
+		let group = DispatchGroup()
+		
+		group.enter()
+		account?.markAsUnread(updateableUnreadArticleIDs) { _ in
+			group.leave()
+		}
+		
+		group.enter()
+		account?.markAsRead(updateableReadArticleIDs) { _ in
+			group.leave()
+		}
+		
+		group.enter()
+		account?.markAsUnstarred(updateableUnstarredArticleIDs) { _ in
+			group.leave()
+		}
+		
+		group.enter()
+		account?.markAsStarred(updateableStarredArticleIDs) { _ in
+			group.leave()
+		}
+
+		group.notify(queue: DispatchQueue.main) {
+			completion(.success(()))
+		}
 		
 	}
 	
