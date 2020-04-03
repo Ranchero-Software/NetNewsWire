@@ -8,6 +8,7 @@
 
 import Foundation
 import os.log
+import RSParser
 import CloudKit
 import SyncDatabase
 
@@ -26,7 +27,7 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	}
 	
 	func cloudKitDidChange(record: CKRecord) {
-		// Process everything in the batch method
+
 	}
 	
 	func cloudKitDidDelete(recordKey: CloudKitRecordKey) {
@@ -65,12 +66,14 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 private extension CloudKitArticlesZoneDelegate {
 	
 	func process(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		let receivedUnreadArticleIDs = Set(records.filter( { $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ $0.externalID }))
-		let receivedReadArticleIDs =  Set(records.filter( { $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ $0.externalID }))
-		let receivedUnstarredArticleIDs =  Set(records.filter( { $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.starred] == "0" }).map({ $0.externalID }))
-		let receivedStarredArticleIDs =  Set(records.filter( { $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.starred] == "1" }).map({ $0.externalID }))
 
+		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ $0.externalID }))
+		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ $0.externalID }))
+		let receivedUnstarredArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.starred] == "0" }).map({ $0.externalID }))
+		let receivedStarredArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.starred] == "1" }).map({ $0.externalID }))
+
+		let receivedStarredArticles = records.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticle.recordType })
+		
 		let updateableUnreadArticleIDs = receivedUnreadArticleIDs.subtracting(pendingReadStatusArticleIDs)
 		let updateableReadArticleIDs = receivedReadArticleIDs.subtracting(pendingReadStatusArticleIDs)
 		let updateableUnstarredArticleIDs = receivedUnstarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
@@ -98,23 +101,15 @@ private extension CloudKitArticlesZoneDelegate {
 			group.leave()
 		}
 		
-		for updateableStarredArticleID in updateableStarredArticleIDs {
-			
-			group.enter()
-			articlesZone?.fetchArticle(articleID: updateableStarredArticleID) { result in
-				switch result {
-				case .success(let (webFeedID, parsedItem)):
-					self.account?.update(webFeedID, with: Set([parsedItem])) { databaseError in
-						group.leave()
-						if let databaseError = databaseError {
-							os_log(.error, log: self.log, "Error occurred while storing starred items: %@", databaseError.localizedDescription)
-						}
-					}
-				case .failure(let error):
+		for receivedStarredArticle in receivedStarredArticles {
+			if let parsedItem = makeParsedItem(receivedStarredArticle), let statusRef = receivedStarredArticle[CloudKitArticlesZone.CloudKitArticle.Fields.articleStatus] as? CKRecord.Reference {
+				group.enter()
+				self.account?.update(statusRef.recordID.externalID, with: Set([parsedItem])) { databaseError in
 					group.leave()
-					os_log(.error, log: self.log, "Error occurred while retrieving starred items: %@", error.localizedDescription)
+					if let databaseError = databaseError {
+						os_log(.error, log: self.log, "Error occurred while storing starred items: %@", databaseError.localizedDescription)
+					}
 				}
-
 			}
 		}
 
@@ -122,6 +117,45 @@ private extension CloudKitArticlesZoneDelegate {
 			completion(.success(()))
 		}
 		
+	}
+
+	
+	func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
+		var parsedAuthors = Set<ParsedAuthor>()
+		
+		let decoder = JSONDecoder()
+		
+		if let encodedParsedAuthors = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.parsedAuthors] as? [String] {
+			for encodedParsedAuthor in encodedParsedAuthors {
+				if let data = encodedParsedAuthor.data(using: .utf8), let parsedAuthor = try? decoder.decode(ParsedAuthor.self, from: data) {
+					parsedAuthors.insert(parsedAuthor)
+				}
+			}
+		}
+		
+		guard let uniqueID = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.uniqueID] as? String,
+			let feedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.webFeedID] as? String else {
+			return nil
+		}
+		
+		let parsedItem = ParsedItem(syncServiceID: nil,
+									uniqueID: uniqueID,
+									feedURL: feedURL,
+									url: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.url] as? String,
+									externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
+									title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,
+									contentHTML: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String,
+									contentText: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String,
+									summary: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.summary] as? String,
+									imageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
+									bannerImageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
+									datePublished: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.datePublished] as? Date,
+									dateModified: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.dateModified] as? Date,
+									authors: parsedAuthors,
+									tags: nil,
+									attachments: nil)
+		
+		return parsedItem
 	}
 	
 }
