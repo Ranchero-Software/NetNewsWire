@@ -421,7 +421,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	func accountDidInitialize(_ account: Account) {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
-		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
 		
 		if account.externalID == nil {
 			accountZone.findOrCreateAccount() { result in

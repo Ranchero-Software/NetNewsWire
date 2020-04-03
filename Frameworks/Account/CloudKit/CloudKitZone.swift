@@ -38,15 +38,18 @@ protocol CloudKitZone: class {
 
 extension CloudKitZone {
 	
+	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken() {
 		changeToken = nil
 	}
 	
+	/// Generates a new CKRecord.ID using a UUID for the record's name
 	func generateRecordID() -> CKRecord.ID {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: Self.zoneID)
 	}
 
-    func subscribe() {
+	/// Subscribe to all changes that happen in this zone
+	func subscribe() {
 		
 		let subscription = CKRecordZoneSubscription(zoneID: Self.zoneID)
         
@@ -69,6 +72,7 @@ extension CloudKitZone {
 	
     }
 	
+	/// Fetch and process any changes in the zone since the last time we checked when we get a remote notification.
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == Self.zoneID.zoneName else {
@@ -84,6 +88,37 @@ extension CloudKitZone {
 		}
 	}
 	
+	/// Checks to see if the record described in the query exists by retrieving only the testField parameter field.
+	func exists(_ query: CKQuery, completion: @escaping (Result<Bool, Error>) -> Void) {
+		var recordFound = false
+		let op = CKQueryOperation(query: query)
+		op.desiredKeys = ["creationDate"]
+
+		op.recordFetchedBlock = { record in
+			recordFound = true
+		}
+
+		op.queryCompletionBlock =  { [weak self] (_, error) in
+			switch CloudKitZoneResult.resolve(error) {
+            case .success:
+				DispatchQueue.main.async {
+					completion(.success(recordFound))
+				}
+			case .retry(let timeToWait):
+				self?.retryIfPossible(after: timeToWait) {
+					self?.exists(query, completion: completion)
+				}
+			default:
+				DispatchQueue.main.async {
+					completion(.failure(error!))
+				}
+			}
+		}
+
+		database?.add(op)
+	}
+		
+	/// Issue a CKQuery and return the resulting CKRecords.s
 	func query(_ query: CKQuery, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		guard let database = database else {
 			completion(.failure(CloudKitZoneError.unknown))
@@ -112,6 +147,7 @@ extension CloudKitZone {
 		}
 	}
 	
+	/// Fetch a CKRecord by using its externalID
 	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
 		guard let externalID = externalID else {
 			completion(.failure(CloudKitZoneError.invalidParameter))
@@ -142,10 +178,12 @@ extension CloudKitZone {
 		}
 	}
 	
+	/// Save the CKRecord
 	func save(_ record: CKRecord, completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
 	}
 	
+	/// Delete a CKRecord using its externalID
 	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let externalID = externalID else {
 			completion(.failure(CloudKitZoneError.invalidParameter))
@@ -156,6 +194,7 @@ extension CloudKitZone {
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
 	
+	/// Modify and delete the supplied CKRecords and CKRecord.IDs
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
 		
@@ -232,6 +271,7 @@ extension CloudKitZone {
 		database?.add(op)
 	}
 	
+	/// Fetch all the changes in the CKZone since the last time we checked
     func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
 
 		var changedRecords = [CKRecord]()

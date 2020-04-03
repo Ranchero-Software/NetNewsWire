@@ -17,10 +17,12 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	
 	weak var account: Account?
 	var database: SyncDatabase
+	weak var articlesZone: CloudKitArticlesZone?
 	
-	init(account: Account, database: SyncDatabase) {
+	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
 		self.account = account
 		self.database = database
+		self.articlesZone = articlesZone
 	}
 	
 	func cloudKitDidChange(record: CKRecord) {
@@ -94,6 +96,26 @@ private extension CloudKitArticlesZoneDelegate {
 		group.enter()
 		account?.markAsStarred(updateableStarredArticleIDs) { _ in
 			group.leave()
+		}
+		
+		for updateableStarredArticleID in updateableStarredArticleIDs {
+			
+			group.enter()
+			articlesZone?.fetchArticle(articleID: updateableStarredArticleID) { result in
+				switch result {
+				case .success(let (webFeedID, parsedItem)):
+					self.account?.update(webFeedID, with: Set([parsedItem])) { databaseError in
+						group.leave()
+						if let databaseError = databaseError {
+							os_log(.error, log: self.log, "Error occurred while storing starred items: %@", databaseError.localizedDescription)
+						}
+					}
+				case .failure(let error):
+					group.leave()
+					os_log(.error, log: self.log, "Error occurred while retrieving starred items: %@", error.localizedDescription)
+				}
+
+			}
 		}
 
 		group.notify(queue: DispatchQueue.main) {
