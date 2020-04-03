@@ -102,9 +102,9 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		for receivedStarredArticle in receivedStarredArticles {
-			if let parsedItem = makeParsedItem(receivedStarredArticle), let statusRef = receivedStarredArticle[CloudKitArticlesZone.CloudKitArticle.Fields.articleStatus] as? CKRecord.Reference {
+			if let parsedItem = makeParsedItem(receivedStarredArticle) {
 				group.enter()
-				self.account?.update(statusRef.recordID.externalID, with: Set([parsedItem])) { databaseError in
+				self.account?.update(parsedItem.feedURL, with: Set([parsedItem])) { databaseError in
 					group.leave()
 					if let databaseError = databaseError {
 						os_log(.error, log: self.log, "Error occurred while storing starred items: %@", databaseError.localizedDescription)
@@ -134,13 +134,13 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		guard let uniqueID = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.uniqueID] as? String,
-			let feedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.webFeedID] as? String else {
+			let webFeedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.webFeedURL] as? String else {
 			return nil
 		}
 		
 		let parsedItem = ParsedItem(syncServiceID: nil,
 									uniqueID: uniqueID,
-									feedURL: feedURL,
+									feedURL: webFeedURL,
 									url: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.url] as? String,
 									externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
 									title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,
