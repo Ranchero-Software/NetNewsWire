@@ -107,7 +107,9 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 	
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
-		guard !isSuspended, let feed = representedObject as? WebFeed else {
+		let feed = representedObject as! WebFeed
+		guard !isSuspended else {
+			feedCompletionBlock?(feed)
 			return false
 		}
 		

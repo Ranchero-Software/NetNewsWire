@@ -507,6 +507,7 @@ private extension CloudKitAccountDelegate {
 								
 								self.refresher.refreshFeeds(webFeeds, feedCompletionBlock: { _ in self.refreshProgress.completeTask() }) {
 									account.metadata.lastArticleFetchEndTime = Date()
+									self.refreshProgress.clear()
 									completion(.success(()))
 								}
 
