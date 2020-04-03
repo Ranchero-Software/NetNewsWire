@@ -144,6 +144,7 @@ private extension CloudKitArticlesZoneDelegate {
 									url: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.url] as? String,
 									externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
 									title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,
+									language: nil,
 									contentHTML: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String,
 									contentText: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String,
 									summary: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.summary] as? String,
