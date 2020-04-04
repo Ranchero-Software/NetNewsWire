@@ -157,8 +157,6 @@ struct AppAssets {
 			return AppAssets.accountFreshRSS
 		case .newsBlur:
 			return AppAssets.accountNewsBlur
-		default:
-			return nil
 		}
 	}
 	
