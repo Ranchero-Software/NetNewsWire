@@ -60,8 +60,9 @@ final class CloudKitPublicZone: CloudKitZone {
 	}
 	
 	/// Create a CloudKit subscription for the webfeed and any other supporting records that we need
-	func createSubscription(_ webFeed: WebFeed, completion: @escaping (Result<Void, Error>) -> Void) {
-
+	func createSubscription(_ webFeedURL: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		let webFeedURLMD5String = webFeedURL.md5String
+		
 		func createSubscription(_ webFeedRecordRef: CKRecord.Reference) {
 			let predicate = NSPredicate(format: "webFeed = %@", webFeedRecordRef)
 			let subscription = CKQuerySubscription(recordType: CloudKitWebFeed.recordType, predicate: predicate, options: [.firesOnRecordUpdate])
@@ -88,7 +89,7 @@ final class CloudKitPublicZone: CloudKitZone {
 			}
 		}
 		
-		fetch(externalID: webFeed.url.md5String) { result in
+		fetch(externalID: webFeedURLMD5String) { result in
 			switch result {
 			case .success(let record):
 				
@@ -97,10 +98,10 @@ final class CloudKitPublicZone: CloudKitZone {
 				
 			case .failure:
 				
-				let webFeedRecordID = CKRecord.ID(recordName: webFeed.url.md5String, zoneID: Self.zoneID)
+				let webFeedRecordID = CKRecord.ID(recordName: webFeedURLMD5String, zoneID: Self.zoneID)
 				let webFeedRecordRef = CKRecord.Reference(recordID: webFeedRecordID, action: .none)
 				let webFeedRecord = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: webFeedRecordID)
-				webFeedRecord[CloudKitWebFeed.Fields.url] = webFeed.url
+				webFeedRecord[CloudKitWebFeed.Fields.url] = webFeedURL
 				webFeedRecord[CloudKitWebFeed.Fields.httpLastModified] = ""
 				webFeedRecord[CloudKitWebFeed.Fields.httpEtag] = ""
 

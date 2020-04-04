@@ -72,7 +72,7 @@ extension CloudKitZone {
         
 		save(subscription) { result in
 			if case .failure(let error) = result {
-				os_log(.error, log: self.log, "%@ zone subscribe to changes error: %@.", Self.zoneID.zoneName, error.localizedDescription)
+				os_log(.error, log: self.log, "%@ zone subscribe to changes error: %@", Self.zoneID.zoneName, error.localizedDescription)
 			}
 		}
     }
@@ -86,7 +86,7 @@ extension CloudKitZone {
 		
 		fetchChangesInZone() { result in
 			if case .failure(let error) = result {
-				os_log(.error, log: self.log, "%@ zone remote notification fetch error: %@.", Self.zoneID.zoneName, error.localizedDescription)
+				os_log(.error, log: self.log, "%@ zone remote notification fetch error: %@", Self.zoneID.zoneName, error.localizedDescription)
 			}
 			completion()
 		}
@@ -319,7 +319,7 @@ extension CloudKitZone {
 					group.enter()
 					self.modify(recordsToSave: chunk, recordIDsToDelete: recordIDsToDelete) { result in
 						if case .failure(let error) = result {
-							os_log(.error, log: self.log, "%@ zone modify records error: %@.", Self.zoneID.zoneName, error.localizedDescription)
+							os_log(.error, log: self.log, "%@ zone modify records error: %@", Self.zoneID.zoneName, error.localizedDescription)
 							errorOccurred = true
 						}
 						group.leave()
@@ -396,7 +396,7 @@ extension CloudKitZone {
 					 self.fetchChangesInZone(completion: completion)
 				 }
 			 default:
-				os_log(.error, log: self.log, "%@ zone fetch changes error: %@.", zoneID.zoneName, error?.localizedDescription ?? "Unknown")
+				os_log(.error, log: self.log, "%@ zone fetch changes error: %@", zoneID.zoneName, error?.localizedDescription ?? "Unknown")
 			}
         }
 
