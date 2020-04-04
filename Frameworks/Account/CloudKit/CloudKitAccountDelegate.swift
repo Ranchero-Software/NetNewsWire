@@ -524,7 +524,6 @@ private extension CloudKitAccountDelegate {
 				
 			case .failure(let error):
 				self.refreshProgress.clear()
-				BatchUpdate.shared.end()
 				completion(.failure(error))
 			}
 		}
