@@ -139,6 +139,10 @@ extension CloudKitZone {
 				self?.retryIfPossible(after: timeToWait) {
 					self?.query(query, completion: completion)
 				}
+			case .userDeletedZone:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitZoneError.userDeletedZone))
+				}
 			default:
 				DispatchQueue.main.async {
 					completion(.failure(error!))
@@ -169,6 +173,10 @@ extension CloudKitZone {
 			case .retry(let timeToWait):
 				self?.retryIfPossible(after: timeToWait) {
 					self?.fetch(externalID: externalID, completion: completion)
+				}
+			case .userDeletedZone:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitZoneError.userDeletedZone))
 				}
 			default:
 				DispatchQueue.main.async {
