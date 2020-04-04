@@ -1,18 +1,29 @@
 //
-//  CKError+Extensions.swift
+//  CloudKitError.swift
 //  Account
 //
 //  Created by Maurice Parker on 3/26/20.
 //  Copyright © 2020 Ranchero Software, LLC. All rights reserved.
 //
+// Derived from https://github.com/caiyue1993/IceCream
 
 import Foundation
 import CloudKit
 
-extension CKError: LocalizedError {
+class CloudKitError: LocalizedError {
 
+	let error: Error
+	
+	init(_ error: Error) {
+		self.error = error
+	}
+	
 	public var errorDescription: String? {
-		switch code {
+		guard let ckError = error as? CKError else {
+			return error.localizedDescription
+		}
+		
+		switch ckError.code {
 		case .alreadyShared:
 			return NSLocalizedString("Already Shared: a record or share cannot be saved because doing so would cause the same hierarchy of records to exist in multiple shares.", comment: "Known iCloud Error")
 		case .assetFileModified:

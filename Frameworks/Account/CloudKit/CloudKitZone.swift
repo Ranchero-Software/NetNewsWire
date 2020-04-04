@@ -110,7 +110,7 @@ extension CloudKitZone {
 				}
 			default:
 				DispatchQueue.main.async {
-					completion(.failure(error!))
+					completion(.failure(CloudKitError(error!)))
 				}
 			}
 		}
@@ -145,7 +145,7 @@ extension CloudKitZone {
 				}
 			default:
 				DispatchQueue.main.async {
-					completion(.failure(error!))
+					completion(.failure(CloudKitError(error!)))
 				}
 			}
 		}
@@ -180,7 +180,7 @@ extension CloudKitZone {
 				}
 			default:
 				DispatchQueue.main.async {
-					completion(.failure(error!))
+					completion(.failure(CloudKitError(error!)))
 				}
 			}
 		}
@@ -271,7 +271,7 @@ extension CloudKitZone {
 				
 			default:
 				DispatchQueue.main.async {
-					completion(.failure(error!))
+					completion(.failure(CloudKitError(error!)))
 				}
 			}
 		}
@@ -369,7 +369,7 @@ extension CloudKitZone {
 				}
 			default:
 				DispatchQueue.main.async {
-					completion(.failure(error!))
+					completion(.failure(CloudKitError(error!)))
 				}
 			}
 			
@@ -415,7 +415,7 @@ private extension CloudKitZone {
 		database.save(CKRecordZone(zoneID: Self.zoneID)) { (recordZone, error) in
 			if let error = error {
 				DispatchQueue.main.async {
-					completion(.failure(error))
+					completion(.failure(CloudKitError(error)))
 				}
 			} else {
 				DispatchQueue.main.async {

@@ -33,7 +33,7 @@ enum CloudKitZoneResult {
 			if let retry = ckError.userInfo[CKErrorRetryAfterKey] as? Double {
 				return .retry(afterSeconds: retry)
 			} else {
-				return .failure(error: error!)
+				return .failure(error: CloudKitError(ckError))
 			}
 		case .zoneNotFound:
 			return .zoneNotFound
@@ -51,12 +51,12 @@ enum CloudKitZoneResult {
 					return .partialFailure(errors: partialErrors)
 				}
 			} else {
-				return .failure(error: error!)
+				return .failure(error: CloudKitError(ckError))
 			}
 		case .limitExceeded:
 			return .limitExceeded
 		default:
-			return .failure(error: error!)
+			return .failure(error: CloudKitError(ckError))
 		}
 
 	}
