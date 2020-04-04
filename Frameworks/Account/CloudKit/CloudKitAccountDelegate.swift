@@ -182,11 +182,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		let editedName = name == nil || name!.isEmpty ? nil : name
+
 		guard let url = URL(string: urlString) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
 		}
 		
+		BatchUpdate.shared.start()
 		refreshProgress.addToNumberOfTasksAndRemaining(4)
 		FeedFinder.find(url: url) { result in
 			
@@ -194,25 +197,27 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			switch result {
 			case .success(let feedSpecifiers):
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
-					self.refreshProgress.completeTask()
+					BatchUpdate.shared.end()
+					self.refreshProgress.clear()
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 				
 				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
-					self.refreshProgress.completeTask()
+					BatchUpdate.shared.end()
+					self.refreshProgress.clear()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
 				}
 				
-				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: name, container: container) { result in
+				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: editedName, container: container) { result in
 
 					self.refreshProgress.completeTask()
 					switch result {
 					case .success(let externalID):
 						
 						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-						feed.editedName = name
+						feed.editedName = editedName
 						feed.externalID = externalID
 						container.addWebFeed(feed)
 
@@ -228,6 +233,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 							if let parsedFeed = parsedFeed {
 								account.update(feed, with: parsedFeed, {_ in
+									BatchUpdate.shared.end()
 									completion(.success(feed))
 								})
 							}
@@ -235,11 +241,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 						}
 
 					case .failure(let error):
+						BatchUpdate.shared.end()
+						self.refreshProgress.clear()
 						completion(.failure(error))
 					}
 				}
 								
 			case .failure:
+				BatchUpdate.shared.end()
 				self.refreshProgress.clear()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
