@@ -41,7 +41,7 @@ protocol CloudKitZone: class {
 	func generateRecordID() -> CKRecord.ID
 	
 	/// Subscribe to changes at a zone level
-	func subscribe()
+	func subscribeToZoneChanges()
 	
 	/// Process a remove notification
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
@@ -59,27 +59,18 @@ extension CloudKitZone {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: Self.zoneID)
 	}
 
-	func subscribe() {
-		
+	func subscribeToZoneChanges() {
 		let subscription = CKRecordZoneSubscription(zoneID: Self.zoneID)
         
 		let info = CKSubscription.NotificationInfo()
         info.shouldSendContentAvailable = true
         subscription.notificationInfo = info
         
-        database?.save(subscription) { _, error in
-			switch CloudKitZoneResult.resolve(error) {
-			case .success:
-				break
-			case .retry(let timeToWait):
-				self.retryIfPossible(after: timeToWait) {
-					self.subscribe()
-				}
-			default:
-				os_log(.error, log: self.log, "%@ zone fetch changes error: %@.", Self.zoneID.zoneName, error?.localizedDescription ?? "Unknown")
+		save(subscription) { result in
+			if case .failure(let error) = result {
+				os_log(.error, log: self.log, "%@ zone subscribe to changes error: %@.", Self.zoneID.zoneName, error.localizedDescription)
 			}
 		}
-	
     }
 	
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
@@ -200,6 +191,27 @@ extension CloudKitZone {
 		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
 	}
 	
+	/// Save the CKSubscription
+	func save(_ subscription: CKSubscription, completion: @escaping (Result<CKSubscription, Error>) -> Void) {
+		database?.save(subscription) { savedSubscription, error in
+			switch CloudKitZoneResult.resolve(error) {
+			case .success:
+				completion(.success((savedSubscription!)))
+			case .retry(let timeToWait):
+				self.retryIfPossible(after: timeToWait) {
+					self.save(subscription, completion: completion)
+				}
+			default:
+				completion(.failure(CloudKitError(error!)))
+			}
+		}
+	}
+	
+	/// Delete a CKRecord using its recordID
+	func delete(recordID: CKRecord.ID, completion: @escaping (Result<Void, Error>) -> Void) {
+		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
+	}
+		
 	/// Delete a CKRecord using its externalID
 	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let externalID = externalID else {
@@ -209,6 +221,22 @@ extension CloudKitZone {
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
+	}
+	
+	/// Delete a CKSubscription
+	func delete(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		database?.delete(withSubscriptionID: subscriptionID) { _, error in
+			switch CloudKitZoneResult.resolve(error) {
+			case .success:
+				completion(.success(()))
+			case .retry(let timeToWait):
+				self.retryIfPossible(after: timeToWait) {
+					self.delete(subscriptionID: subscriptionID, completion: completion)
+				}
+			default:
+				completion(.failure(CloudKitError(error!)))
+			}
+		}
 	}
 	
 	/// Modify and delete the supplied CKRecords and CKRecord.IDs

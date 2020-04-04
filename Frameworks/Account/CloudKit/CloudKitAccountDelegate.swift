@@ -436,7 +436,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
 		
+		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
+			CloudKitContainer.fetchUserRecordID()
 			accountZone.findOrCreateAccount() { result in
 				switch result {
 				case .success(let externalID):
@@ -451,7 +453,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				}
 			}
 			zones.forEach { zone in
-				zone.subscribe()
+				zone.subscribeToZoneChanges()
 			}
 		}
 		
