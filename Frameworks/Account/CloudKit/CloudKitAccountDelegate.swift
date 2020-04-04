@@ -437,11 +437,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
 				}
 			}
+			zones.forEach { zone in
+				zone.subscribe()
+			}
 		}
 		
-		zones.forEach { zone in
-			zone.subscribe()
-		}
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
