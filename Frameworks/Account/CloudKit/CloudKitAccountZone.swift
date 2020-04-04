@@ -125,8 +125,8 @@ final class CloudKitAccountZone: CloudKitZone {
 		}
 	}
 	
-	/// Deletes a web feed from iCloud
-	func removeWebFeed(_ webFeed: WebFeed, from: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+	/// Removes a web feed from a container and optionally deletes it, calling the completion with true if deleted
+	func removeWebFeed(_ webFeed: WebFeed, from: Container, completion: @escaping (Result<Bool, Error>) -> Void) {
 		guard let fromContainerExternalID = from.externalID else {
 			completion(.failure(CloudKitZoneError.invalidParameter))
 			return
@@ -135,16 +135,36 @@ final class CloudKitAccountZone: CloudKitZone {
 		fetch(externalID: webFeed.externalID) { result in
 			switch result {
 			case .success(let record):
+				
 				if let containerExternalIDs = record[CloudKitWebFeed.Fields.containerExternalIDs] as? [String] {
 					var containerExternalIDSet = Set(containerExternalIDs)
 					containerExternalIDSet.remove(fromContainerExternalID)
+					
 					if containerExternalIDSet.isEmpty {
-						self.delete(externalID: webFeed.externalID , completion: completion)
+						self.delete(externalID: webFeed.externalID) { result in
+							switch result {
+							case .success:
+								completion(.success(true))
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+						
 					} else {
+						
 						record[CloudKitWebFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
-						self.save(record, completion: completion)
+						self.save(record) { result in
+							switch result {
+							case .success:
+								completion(.success(false))
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+						
 					}
 				}
+				
 			case .failure(let error):
 				completion(.failure(error))
 			}

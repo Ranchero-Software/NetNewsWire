@@ -30,9 +30,10 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		return CKContainer(identifier: "iCloud.\(orgID).NetNewsWire")
 	}()
 	
-	private lazy var zones: [CloudKitZone] = [accountZone, articlesZone]
+	private lazy var zones: [CloudKitZone] = [accountZone, articlesZone, publicZone]
 	private let accountZone: CloudKitAccountZone
 	private let articlesZone: CloudKitArticlesZone
+	private let publicZone: CloudKitPublicZone
 	
 	private let refresher = LocalAccountRefresher()
 
@@ -48,6 +49,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	init(dataFolder: String) {
 		accountZone = CloudKitAccountZone(container: container)
 		articlesZone = CloudKitArticlesZone(container: container)
+		publicZone = CloudKitPublicZone(container: container)
 		
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
@@ -259,9 +261,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		accountZone.removeWebFeed(feed, from: container) { result in
 			self.refreshProgress.completeTask()
 			switch result {
-			case .success:
+			case .success(let deleted):
 				container.removeWebFeed(feed)
-				completion(.success(()))
+				if deleted {
+					self.publicZone.removeSubscription(feed, completion: completion)
+				} else {
+					completion(.success(()))
+				}
 			case .failure(let error):
 				completion(.failure(error))
 			}

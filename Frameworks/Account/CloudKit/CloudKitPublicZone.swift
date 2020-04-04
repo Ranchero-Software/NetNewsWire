@@ -31,14 +31,6 @@ final class CloudKitPublicZone: CloudKitZone {
 		}
 	}
 	
-	struct CloudKitWebFeedCheck {
-		static let recordType = "UserSubscription"
-		struct Fields {
-			static let webFeed = "webFeed"
-			static let subscriptionID = "oldestPossibleCheckTime"
-		}
-	}
-	
 	struct CloudKitUserSubscription {
 		static let recordType = "UserSubscription"
 		struct Fields {
@@ -48,11 +40,19 @@ final class CloudKitPublicZone: CloudKitZone {
 		}
 	}
 	
+	init(container: CKContainer) {
+		self.container = container
+		self.database = container.publicCloudDatabase
+	}
+
 	func subscribe() {}
 	
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		
 	}
 	
-
+	func removeSubscription(_ webFeed: WebFeed, completion: @escaping (Result<Void, Error>) -> Void) {
+	
+	}
+	
 }
