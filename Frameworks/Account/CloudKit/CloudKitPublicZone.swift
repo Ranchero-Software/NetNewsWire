@@ -48,11 +48,15 @@ final class CloudKitPublicZone: CloudKitZone {
 	func subscribe() {}
 	
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		
+		completion()
+	}
+	
+	func createSubscription(_ webFeed: WebFeed, completion: @escaping (Result<Void, Error>) -> Void) {
+		completion(.success(()))
 	}
 	
 	func removeSubscription(_ webFeed: WebFeed, completion: @escaping (Result<Void, Error>) -> Void) {
-	
+		completion(.success(()))
 	}
 	
 }

@@ -187,7 +187,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(3)
+		refreshProgress.addToNumberOfTasksAndRemaining(4)
 		FeedFinder.find(url: url) { result in
 			
 			self.refreshProgress.completeTask()
@@ -216,6 +216,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 						feed.externalID = externalID
 						container.addWebFeed(feed)
 
+						self.publicZone.createSubscription(feed) { result in
+							self.refreshProgress.completeTask()
+							if case .failure(let error) = result {
+								os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+							}
+						}
+						
 						InitialFeedDownloader.download(url) { parsedFeed in
 							self.refreshProgress.completeTask()
 
