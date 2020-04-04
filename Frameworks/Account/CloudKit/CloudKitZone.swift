@@ -34,6 +34,18 @@ protocol CloudKitZone: class {
 	var database: CKDatabase? { get }
 	var delegate: CloudKitZoneDelegate? { get set }
 
+	/// Reset the change token used to determine what point in time we are doing changes fetches
+	func resetChangeToken()
+
+	/// Generates a new CKRecord.ID using a UUID for the record's name
+	func generateRecordID() -> CKRecord.ID
+	
+	/// Subscribe to changes at a zone level
+	func subscribe()
+	
+	/// Process a remove notification
+	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
+	
 }
 
 extension CloudKitZone {
@@ -43,12 +55,10 @@ extension CloudKitZone {
 		changeToken = nil
 	}
 	
-	/// Generates a new CKRecord.ID using a UUID for the record's name
 	func generateRecordID() -> CKRecord.ID {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: Self.zoneID)
 	}
 
-	/// Subscribe to all changes that happen in this zone
 	func subscribe() {
 		
 		let subscription = CKRecordZoneSubscription(zoneID: Self.zoneID)
@@ -72,7 +82,6 @@ extension CloudKitZone {
 	
     }
 	
-	/// Fetch and process any changes in the zone since the last time we checked when we get a remote notification.
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == Self.zoneID.zoneName else {
