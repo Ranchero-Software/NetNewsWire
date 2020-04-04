@@ -32,7 +32,9 @@ extension CKContainer {
 			guard let recordID = recordID, error == nil else {
 				return
 			}
-			self.userRecordID = recordID.recordName
+			DispatchQueue.main.async {
+				self.userRecordID = recordID.recordName
+			}
 		}
 	}
 	
