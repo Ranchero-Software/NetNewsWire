@@ -37,6 +37,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		let webFeeds = account.flattenedWebFeeds()
 		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
 		refresher.refreshFeeds(webFeeds, feedCompletionBlock: { _ in self.refreshProgress.completeTask() }) {
+			self.refreshProgress.clear()
 			account.metadata.lastArticleFetchEndTime = Date()
 			completion(.success(()))
 		}
