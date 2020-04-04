@@ -1,5 +1,5 @@
 //
-//  CloudKitContainer.swift
+//  CKContainer+Extensions.swift
 //  Account
 //
 //  Created by Maurice Parker on 4/4/20.
@@ -9,11 +9,11 @@
 import Foundation
 import CloudKit
 
-struct CloudKitContainer {
+extension CKContainer {
 
 	private static let userRecordIDKey = "cloudkit.server.userRecordID"
 	
-    static var userRecordID: String? {
+    var userRecordID: String? {
         get {
 			return UserDefaults.standard.string(forKey: Self.userRecordIDKey)
         }
@@ -26,13 +26,13 @@ struct CloudKitContainer {
         }
     }
 	
-	static func fetchUserRecordID() {
-		guard Self.userRecordID == nil else { return }
-		CKContainer.default().fetchUserRecordID { recordID, error in
+	func fetchUserRecordID() {
+		guard userRecordID == nil else { return }
+		fetchUserRecordID { recordID, error in
 			guard let recordID = recordID, error == nil else {
 				return
 			}
-			Self.userRecordID = recordID.recordName
+			self.userRecordID = recordID.recordName
 		}
 	}
 	

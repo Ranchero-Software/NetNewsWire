@@ -10,10 +10,14 @@ import CloudKit
 import os.log
 import RSWeb
 
-enum CloudKitZoneError: Error {
+enum CloudKitZoneError: LocalizedError {
 	case userDeletedZone
 	case invalidParameter
 	case unknown
+	
+	var errorDescription: String? {
+		return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
+	}
 }
 
 protocol CloudKitZoneDelegate: class {
@@ -191,18 +195,38 @@ extension CloudKitZone {
 		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
 	}
 	
+	/// Save the CKRecords
+	func save(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
+		modify(recordsToSave: records, recordIDsToDelete: [], completion: completion)
+	}
+	
 	/// Save the CKSubscription
 	func save(_ subscription: CKSubscription, completion: @escaping (Result<CKSubscription, Error>) -> Void) {
 		database?.save(subscription) { savedSubscription, error in
 			switch CloudKitZoneResult.resolve(error) {
 			case .success:
-				completion(.success((savedSubscription!)))
+				DispatchQueue.main.async {
+					completion(.success((savedSubscription!)))
+				}
+			case .zoneNotFound:
+				self.createZoneRecord() { result in
+					switch result {
+					case .success:
+						self.save(subscription, completion: completion)
+					case .failure(let error):
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
+					}
+				}
 			case .retry(let timeToWait):
 				self.retryIfPossible(after: timeToWait) {
 					self.save(subscription, completion: completion)
 				}
 			default:
-				completion(.failure(CloudKitError(error!)))
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitError(error!)))
+				}
 			}
 		}
 	}
@@ -228,13 +252,17 @@ extension CloudKitZone {
 		database?.delete(withSubscriptionID: subscriptionID) { _, error in
 			switch CloudKitZoneResult.resolve(error) {
 			case .success:
-				completion(.success(()))
+				DispatchQueue.main.async {
+					completion(.success(()))
+				}
 			case .retry(let timeToWait):
 				self.retryIfPossible(after: timeToWait) {
 					self.delete(subscriptionID: subscriptionID, completion: completion)
 				}
 			default:
-				completion(.failure(CloudKitError(error!)))
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitError(error!)))
+				}
 			}
 		}
 	}

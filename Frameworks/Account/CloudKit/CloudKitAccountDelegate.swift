@@ -219,7 +219,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 						self.publicZone.createSubscription(feed) { result in
 							self.refreshProgress.completeTask()
 							if case .failure(let error) = result {
-								os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+								os_log(.error, log: self.log, "An error occurred while creating the subscription: %@.", error.localizedDescription)
 							}
 						}
 						
@@ -438,7 +438,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
-			CloudKitContainer.fetchUserRecordID()
+			container.fetchUserRecordID()
 			accountZone.findOrCreateAccount() { result in
 				switch result {
 				case .success(let externalID):

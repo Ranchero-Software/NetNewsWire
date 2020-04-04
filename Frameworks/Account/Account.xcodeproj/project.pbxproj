@@ -60,7 +60,7 @@
 		519E84A62433D49000D238B0 /* OPMLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A52433D49000D238B0 /* OPMLNormalizer.swift */; };
 		519E84A82434C5EF00D238B0 /* CloudKitArticlesZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */; };
 		519E84AC2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84AB2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift */; };
-		51B544672438F410003F03BF /* CloudKitContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B544662438F410003F03BF /* CloudKitContainer.swift */; };
+		51B544672438F410003F03BF /* CKContainer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B544662438F410003F03BF /* CKContainer+Extensions.swift */; };
 		51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7B83233531BC008E8144 /* AccountBehaviors.swift */; };
 		51BC8FCC237EC055004F8B56 /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC8FCB237EC055004F8B56 /* Feed.swift */; };
 		51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BFDECD238B508D00216323 /* ContainerIdentifier.swift */; };
@@ -298,7 +298,7 @@
 		519E84A52433D49000D238B0 /* OPMLNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLNormalizer.swift; sourceTree = "<group>"; };
 		519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitArticlesZone.swift; sourceTree = "<group>"; };
 		519E84AB2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitArticlesZoneDelegate.swift; sourceTree = "<group>"; };
-		51B544662438F410003F03BF /* CloudKitContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitContainer.swift; sourceTree = "<group>"; };
+		51B544662438F410003F03BF /* CKContainer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKContainer+Extensions.swift"; sourceTree = "<group>"; };
 		51BB7B83233531BC008E8144 /* AccountBehaviors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBehaviors.swift; sourceTree = "<group>"; };
 		51BC8FCB237EC055004F8B56 /* Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
 		51BFDECD238B508D00216323 /* ContainerIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerIdentifier.swift; sourceTree = "<group>"; };
@@ -525,13 +525,13 @@
 		5103A9D7242253DC00410853 /* CloudKit */ = {
 			isa = PBXGroup;
 			children = (
+				51B544662438F410003F03BF /* CKContainer+Extensions.swift */,
 				512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */,
 				5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */,
 				51E4DB2F2426353D0091EB5B /* CloudKitAccountZone.swift */,
 				512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */,
 				519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */,
 				519E84AB2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift */,
-				51B544662438F410003F03BF /* CloudKitContainer.swift */,
 				5150FFFD243823B800C1A442 /* CloudKitError.swift */,
 				5150FFFF2438682300C1A442 /* CloudKitPublicZone.swift */,
 				51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */,
@@ -1159,7 +1159,7 @@
 				84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */,
 				51BC8FCC237EC055004F8B56 /* Feed.swift in Sources */,
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
-				51B544672438F410003F03BF /* CloudKitContainer.swift in Sources */,
+				51B544672438F410003F03BF /* CKContainer+Extensions.swift in Sources */,
 				9EA643CF2391D3560018A28C /* FeedlyAddExistingFeedOperation.swift in Sources */,
 				55203300229D5D5A009559E0 /* ReaderAPICaller.swift in Sources */,
 				9E1D154F233371DD00F4944C /* FeedlyGetCollectionsOperation.swift in Sources */,

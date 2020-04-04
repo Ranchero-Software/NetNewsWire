@@ -25,7 +25,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	var delegate: CloudKitZoneDelegate?
     
 	struct CloudKitWebFeed {
-		static let recordType = "WebFeed"
+		static let recordType = "AccountWebFeed"
 		struct Fields {
 			static let url = "url"
 			static let editedName = "editedName"
@@ -34,7 +34,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
 	
 	struct CloudKitContainer {
-		static let recordType = "Container"
+		static let recordType = "AccountContainer"
 		struct Fields {
 			static let isAccount = "isAccount"
 			static let name = "name"
@@ -77,7 +77,7 @@ final class CloudKitAccountZone: CloudKitZone {
 			}
 		}
 
-		modify(recordsToSave: records, recordIDsToDelete: [], completion: completion)
+		save(records, completion: completion)
 	}
     
 	///  Persist a web feed record to iCloud and return the external key
