@@ -195,15 +195,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			}
 		}
 		
-//		os_log(.error, log: self.log, "Error while subscribing to the feed: %@", error.localizedDescription)
-
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		publicZone.manageSubscriptions(webFeedURLs) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
-					self.refreshAll(for: account, completion: completion)
+					self.refreshAll(for: account, downloadFeeds: false, completion: completion)
 				}
 			case .failure(let error):
 				completion(.failure(error))
