@@ -302,14 +302,22 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		accountZone.removeWebFeed(feed, from: container) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let deleted):
 				container.removeWebFeed(feed)
 				if deleted {
-					self.publicZone.manageSubscriptions(account.flattenedWebFeedURLs, completion: completion)
+					self.publicZone.manageSubscriptions(account.flattenedWebFeedURLs) { result in
+						self.refreshProgress.completeTask()
+						switch result {
+						case .success:
+							completion(.success(()))
+						case .failure(let error):
+							completion(.failure(error))
+						}
+					}
 				} else {
 					completion(.success(()))
 				}
