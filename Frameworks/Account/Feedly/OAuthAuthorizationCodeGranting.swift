@@ -70,12 +70,12 @@ public extension OAuthAuthorizationResponse {
 		guard let queryItems = components.queryItems, !queryItems.isEmpty else {
 			throw URLError(.unsupportedURL)
 		}
-		let code = queryItems.firstElementPassingTest { $0.name.lowercased() == "code" }
+		let code = queryItems.first { $0.name.lowercased() == "code" }
 		guard let codeValue = code?.value, !codeValue.isEmpty else {
 			throw URLError(.unsupportedURL)
 		}
 		
-		let state = queryItems.firstElementPassingTest { $0.name.lowercased() == "state" }
+		let state = queryItems.first { $0.name.lowercased() == "state" }
 		let stateValue = state?.value
 		
 		self.init(code: codeValue, state: stateValue)
