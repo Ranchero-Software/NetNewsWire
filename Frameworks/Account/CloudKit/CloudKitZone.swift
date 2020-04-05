@@ -337,32 +337,6 @@ extension CloudKitZone {
 		}
 	}
 
-	/// Bulk add (or modify I suppose) and delete of subscriptions
-	func modify(subscriptionsToSave: [CKSubscription], subscriptionIDsToDelete: [CKSubscription.ID], completion: @escaping (Result<Void, Error>) -> Void) {
-		let op = CKModifySubscriptionsOperation(subscriptionsToSave: subscriptionsToSave, subscriptionIDsToDelete: subscriptionIDsToDelete)
-		
-		op.modifySubscriptionsCompletionBlock = { [weak self] (_, _, error) in
-			guard let self = self else { return }
-			
-			switch CloudKitZoneResult.resolve(error) {
-			case .success:
-				DispatchQueue.main.async {
-					completion(.success(()))
-				}
-			case .retry(let timeToWait):
-				self.retryIfPossible(after: timeToWait) {
-					self.modify(subscriptionsToSave: subscriptionsToSave, subscriptionIDsToDelete: subscriptionIDsToDelete, completion: completion)
-				}
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
-				}
-			}
-		}
-
-		database?.add(op)
-	}
-	
 	/// Modify and delete the supplied CKRecords and CKRecord.IDs
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
@@ -430,26 +404,6 @@ extension CloudKitZone {
 		}
 
 		database?.add(op)
-	}
-
-	/// Fetch all the subscriptions that a user has in the current database in all zones
-    func fetchAllUserSubscriptions(completion: @escaping (Result<[CKSubscription], Error>) -> Void) {
-		database?.fetchAllSubscriptions() { subscriptions, error in
-			switch CloudKitZoneResult.resolve(error) {
-			case .success:
-				DispatchQueue.main.async {
-					completion(.success((subscriptions!)))
-				}
-			case .retry(let timeToWait):
-				self.retryIfPossible(after: timeToWait) {
-					self.fetchAllUserSubscriptions(completion: completion)
-				}
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
-				}
-			}
-		}
 	}
 
 	/// Fetch all the changes in the CKZone since the last time we checked

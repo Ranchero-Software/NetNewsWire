@@ -30,10 +30,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		return CKContainer(identifier: "iCloud.\(orgID).NetNewsWire")
 	}()
 	
-	private lazy var zones: [CloudKitZone] = [accountZone, articlesZone, publicZone]
+	private lazy var zones: [CloudKitZone] = [accountZone, articlesZone]
 	private let accountZone: CloudKitAccountZone
 	private let articlesZone: CloudKitArticlesZone
-	private let publicZone: CloudKitPublicZone
 	
 	private let refresher = LocalAccountRefresher()
 
@@ -49,7 +48,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	init(dataFolder: String) {
 		accountZone = CloudKitAccountZone(container: container)
 		articlesZone = CloudKitArticlesZone(container: container)
-		publicZone = CloudKitPublicZone(container: container)
 		
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
@@ -195,17 +193,10 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			}
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		publicZone.manageSubscriptions(webFeedURLs) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
-					self.refreshAll(for: account, downloadFeeds: false, completion: completion)
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		// Add one task here to show we started immediately.  We don't need to complete is because refreshAll clears everything at the end.
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
+			self.refreshAll(for: account, downloadFeeds: false, completion: completion)
 		}
 		
 	}
@@ -219,7 +210,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 		
 		BatchUpdate.shared.start()
-		refreshProgress.addToNumberOfTasksAndRemaining(4)
+		refreshProgress.addToNumberOfTasksAndRemaining(3)
 		FeedFinder.find(url: url) { result in
 			
 			self.refreshProgress.completeTask()
@@ -249,13 +240,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 						feed.editedName = editedName
 						feed.externalID = externalID
 						container.addWebFeed(feed)
-
-						self.publicZone.manageSubscriptions(account.flattenedWebFeedURLs) { result in
-							self.refreshProgress.completeTask()
-							if case .failure(let error) = result {
-								os_log(.error, log: self.log, "An error occurred while creating the subscription: %@", error.localizedDescription)
-							}
-						}
 
 						InitialFeedDownloader.download(url) { parsedFeed in
 							self.refreshProgress.completeTask()
@@ -302,25 +286,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		accountZone.removeWebFeed(feed, from: container) { result in
 			self.refreshProgress.completeTask()
 			switch result {
-			case .success(let deleted):
+			case .success:
 				container.removeWebFeed(feed)
-				if deleted {
-					self.publicZone.manageSubscriptions(account.flattenedWebFeedURLs) { result in
-						self.refreshProgress.completeTask()
-						switch result {
-						case .success:
-							completion(.success(()))
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				} else {
-					completion(.success(()))
-				}
+				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -484,7 +456,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
-			container.fetchUserRecordID()
 			accountZone.findOrCreateAccount() { result in
 				switch result {
 				case .success(let externalID):
