@@ -178,7 +178,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 		
-		var webFeedURLs = Set<String>()
+		// Combine all existing web feed URLs with all the new ones
+		
+		var webFeedURLs = account.flattenedWebFeedURLs
 		for opmlItem in normalizedItems {
 			if let webFeedURL = opmlItem.feedSpecifier?.feedURL {
 				webFeedURLs.insert(webFeedURL)
@@ -193,37 +195,18 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			}
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(webFeedURLs.count + 1)
-		var errorOccurred = false
+//		os_log(.error, log: self.log, "Error while subscribing to the feed: %@", error.localizedDescription)
 
-		// You have to single thread these or CloudKit gets overwhelmed and freaks out
-		func takeOneAndPassItOn(_ webFeedURLs: [String], completion: @escaping () -> Void) {
-			var remainingWebFeedURLS = webFeedURLs
-			
-			if let webFeedURL = remainingWebFeedURLS.popLast() {
-				publicZone.createSubscription(webFeedURL) { result in
-					self.refreshProgress.completeTask()
-					if case .failure(let error) = result {
-						os_log(.error, log: self.log, "Error while subscribing to the feed: %@", error.localizedDescription)
-						errorOccurred = true
-					}
-					takeOneAndPassItOn(remainingWebFeedURLS, completion: completion)
-				}
-			} else {
-				completion()
-			}
-			
-		}
-		
-		takeOneAndPassItOn(Array(webFeedURLs)) {
-			if errorOccurred {
-				self.refreshProgress.completeTask()
-				completion(.failure(CloudKitZoneError.unknown))
-			} else {
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		publicZone.manageSubscriptions(webFeedURLs) { result in
+			self.refreshProgress.completeTask()
+			switch result {
+			case .success:
 				self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
-					self.refreshProgress.completeTask()
-					completion(.success(()))
+					self.refreshAll(for: account, completion: completion)
 				}
+			case .failure(let error):
+				completion(.failure(error))
 			}
 		}
 		
@@ -269,13 +252,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 						feed.externalID = externalID
 						container.addWebFeed(feed)
 
-						self.publicZone.createSubscription(feed.url) { result in
+						self.publicZone.manageSubscriptions(account.flattenedWebFeedURLs) { result in
 							self.refreshProgress.completeTask()
 							if case .failure(let error) = result {
 								os_log(.error, log: self.log, "An error occurred while creating the subscription: %@", error.localizedDescription)
 							}
 						}
-						
+
 						InitialFeedDownloader.download(url) { parsedFeed in
 							self.refreshProgress.completeTask()
 
@@ -328,7 +311,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			case .success(let deleted):
 				container.removeWebFeed(feed)
 				if deleted {
-					self.publicZone.removeSubscription(feed, completion: completion)
+					self.publicZone.manageSubscriptions(account.flattenedWebFeedURLs, completion: completion)
 				} else {
 					completion(.success(()))
 				}
@@ -490,7 +473,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, publicZone: publicZone, refreshProgress: refreshProgress)
+		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
 		
 		// Check to see if this is a new account and initialize anything we need

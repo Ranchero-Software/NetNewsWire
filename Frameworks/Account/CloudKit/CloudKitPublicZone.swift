@@ -59,106 +59,47 @@ final class CloudKitPublicZone: CloudKitZone {
 		completion()
 	}
 	
-	/// Create a CloudKit subscription for the webfeed and any other supporting records that we need
-	func createSubscription(_ webFeedURL: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		let webFeedURLMD5String = webFeedURL.md5String
+	/// Create any new subscriptions and delete any old ones
+	func manageSubscriptions(_ webFeedURLs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		func createSubscription(_ webFeedRecordRef: CKRecord.Reference) {
-			let predicate = NSPredicate(format: "webFeed = %@", webFeedRecordRef)
-			let subscription = CKQuerySubscription(recordType: CloudKitWebFeed.recordType, predicate: predicate, options: [.firesOnRecordUpdate])
-			
-			let info = CKSubscription.NotificationInfo()
-			info.shouldSendContentAvailable = true
-			info.desiredKeys = [CloudKitWebFeed.Fields.httpLastModified, CloudKitWebFeed.Fields.httpEtag]
-			subscription.notificationInfo = info
-			
-			self.save(subscription) { result in
-				switch result {
-				case .success(let subscription):
-					
-					let userSubscriptionRecord = CKRecord(recordType: CloudKitUserSubscription.recordType, recordID: self.generateRecordID())
-					userSubscriptionRecord[CloudKitUserSubscription.Fields.userRecordID] = self.container?.userRecordID
-					userSubscriptionRecord[CloudKitUserSubscription.Fields.webFeed] = webFeedRecordRef
-					userSubscriptionRecord[CloudKitUserSubscription.Fields.subscriptionID] = subscription.subscriptionID
+		var webFeedRecords = [CKRecord]()
+		for webFeedURL in webFeedURLs {
+			let webFeedRecordID = CKRecord.ID(recordName: webFeedURL.md5String, zoneID: Self.zoneID)
+			let webFeedRecord = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: webFeedRecordID)
+			webFeedRecord[CloudKitWebFeed.Fields.url] = webFeedURL
+			webFeedRecord[CloudKitWebFeed.Fields.httpLastModified] = ""
+			webFeedRecord[CloudKitWebFeed.Fields.httpEtag] = ""
+			webFeedRecords.append(webFeedRecord)
+		}
 
-					self.save(userSubscriptionRecord, completion: completion)
-					
+		self.saveIfNew(webFeedRecords) { _ in
+				
+			var subscriptions = [CKSubscription]()
+			let webFeedURLChunks = Array(webFeedURLs).chunked(into: 20)
+			for webFeedURLChunk in webFeedURLChunks {
+			
+				let predicate = NSPredicate(format: "url in %@", webFeedURLChunk)
+				let subscription = CKQuerySubscription(recordType: CloudKitWebFeed.recordType, predicate: predicate, options: [.firesOnRecordUpdate])
+				let info = CKSubscription.NotificationInfo()
+				info.shouldSendContentAvailable = true
+				info.desiredKeys = [CloudKitWebFeed.Fields.httpLastModified, CloudKitWebFeed.Fields.httpEtag]
+				subscription.notificationInfo = info
+				subscriptions.append(subscription)
+				
+			}
+			
+			self.fetchAllUserSubscriptions() { result in
+				switch result {
+				case .success(let subscriptionsToDelete):
+					let subscriptionToDeleteIDs = subscriptionsToDelete.map({ $0.subscriptionID })
+					self.modify(subscriptionsToSave: subscriptions, subscriptionIDsToDelete: subscriptionToDeleteIDs, completion: completion)
 				case .failure(let error):
 					completion(.failure(error))
 				}
 			}
+			
 		}
 		
-		fetch(externalID: webFeedURLMD5String) { result in
-			switch result {
-			case .success(let record):
-				
-				let webFeedRecordRef = CKRecord.Reference(record: record, action: .none)
-				createSubscription(webFeedRecordRef)
-				
-			case .failure:
-				
-				let webFeedRecordID = CKRecord.ID(recordName: webFeedURLMD5String, zoneID: Self.zoneID)
-				let webFeedRecordRef = CKRecord.Reference(recordID: webFeedRecordID, action: .none)
-				let webFeedRecord = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: webFeedRecordID)
-				webFeedRecord[CloudKitWebFeed.Fields.url] = webFeedURL
-				webFeedRecord[CloudKitWebFeed.Fields.httpLastModified] = ""
-				webFeedRecord[CloudKitWebFeed.Fields.httpEtag] = ""
-
-				let webFeedCheckRecord = CKRecord(recordType: CloudKitWebFeedCheck.recordType, recordID: self.generateRecordID())
-				webFeedRecord[CloudKitWebFeedCheck.Fields.webFeed] = webFeedRecordRef
-				webFeedRecord[CloudKitWebFeedCheck.Fields.lastCheck] = Date.distantPast
-
-				self.save([webFeedRecord, webFeedCheckRecord]) { result in
-					switch result {
-					case .success:
-						createSubscription(webFeedRecordRef)
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				}
-				
-			}
-		}
-		
-	}
-	
-	/// Remove the subscription for the given feed along with its supporting record
-	func removeSubscription(_ webFeed: WebFeed, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let userRecordID = self.container?.userRecordID else {
-			completion(.failure(CloudKitZoneError.invalidParameter))
-			return
-		}
-		
-		let webFeedRecordID = CKRecord.ID(recordName: webFeed.url.md5String, zoneID: Self.zoneID)
-		let webFeedRecordRef = CKRecord.Reference(recordID: webFeedRecordID, action: .none)
-		let predicate = NSPredicate(format: "userRecordID = %@ AND webFeed = %@", userRecordID, webFeedRecordRef)
-		let ckQuery = CKQuery(recordType: CloudKitUserSubscription.recordType, predicate: predicate)
-
-		query(ckQuery) { result in
-			switch result {
-			case .success(let records):
-				
-				if records.count > 0, let subscriptionID = records[0][CloudKitUserSubscription.Fields.subscriptionID] as? String {
-					self.delete(subscriptionID: subscriptionID) { result in
-						switch result {
-						case .success:
-							self.delete(recordID: records[0].recordID, completion: completion)
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-					
-				} else {
-					os_log(.error, log: self.log, "Remove subscription error. The subscription wasn't found.")
-					completion(.success(()))
-				}
-				
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-
 	}
 	
 }

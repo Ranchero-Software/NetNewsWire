@@ -166,6 +166,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 		return _externalIDToWebFeedDictionary
 	}
+	
+	var flattenedWebFeedURLs: Set<String> {
+		return Set(flattenedWebFeeds().map({ $0.url }))
+	}
 
 	var username: String? {
 		get {

@@ -200,6 +200,76 @@ extension CloudKitZone {
 		modify(recordsToSave: records, recordIDsToDelete: [], completion: completion)
 	}
 	
+	/// Saves or modifies the records as long as they are unchanged relative to the local version
+	func saveIfNew(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
+		let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: [CKRecord.ID]())
+		op.savePolicy = .ifServerRecordUnchanged
+		op.isAtomic = false
+		
+		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
+			
+			guard let self = self else { return }
+			
+			switch CloudKitZoneResult.resolve(error) {
+			case .success:
+				DispatchQueue.main.async {
+					completion(.success(()))
+				}
+			case .zoneNotFound:
+				self.createZoneRecord() { result in
+					switch result {
+					case .success:
+						self.saveIfNew(records, completion: completion)
+					case .failure(let error):
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
+					}
+				}
+			case .userDeletedZone:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitZoneError.userDeletedZone))
+				}
+			case .retry(let timeToWait):
+				self.retryIfPossible(after: timeToWait) {
+					self.saveIfNew(records, completion: completion)
+				}
+			case .limitExceeded:
+
+				let chunkedRecords = records.chunked(into: 300)
+
+				let group = DispatchGroup()
+				var errorOccurred = false
+
+				for chunk in chunkedRecords {
+					group.enter()
+					self.saveIfNew(chunk) { result in
+						if case .failure(let error) = result {
+							os_log(.error, log: self.log, "%@ zone modify records error: %@", Self.zoneID.zoneName, error.localizedDescription)
+							errorOccurred = true
+						}
+						group.leave()
+					}
+				}
+				
+				group.notify(queue: DispatchQueue.main) {
+					if errorOccurred {
+						completion(.failure(CloudKitZoneError.unknown))
+					} else {
+						completion(.success(()))
+					}
+				}
+				
+			default:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitError(error!)))
+				}
+			}
+		}
+
+		database?.add(op)
+	}
+
 	/// Save the CKSubscription
 	func save(_ subscription: CKSubscription, completion: @escaping (Result<CKSubscription, Error>) -> Void) {
 		database?.save(subscription) { savedSubscription, error in
@@ -266,18 +336,37 @@ extension CloudKitZone {
 			}
 		}
 	}
+
+	/// Bulk add (or modify I suppose) and delete of subscriptions
+	func modify(subscriptionsToSave: [CKSubscription], subscriptionIDsToDelete: [CKSubscription.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+		let op = CKModifySubscriptionsOperation(subscriptionsToSave: subscriptionsToSave, subscriptionIDsToDelete: subscriptionIDsToDelete)
+		
+		op.modifySubscriptionsCompletionBlock = { [weak self] (_, _, error) in
+			guard let self = self else { return }
+			
+			switch CloudKitZoneResult.resolve(error) {
+			case .success:
+				DispatchQueue.main.async {
+					completion(.success(()))
+				}
+			case .retry(let timeToWait):
+				self.retryIfPossible(after: timeToWait) {
+					self.modify(subscriptionsToSave: subscriptionsToSave, subscriptionIDsToDelete: subscriptionIDsToDelete, completion: completion)
+				}
+			default:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitError(error!)))
+				}
+			}
+		}
+
+		database?.add(op)
+	}
 	
 	/// Modify and delete the supplied CKRecords and CKRecord.IDs
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
-		
-		// We use .changedKeys savePolicy to do unlocked changes here cause my app is contentious and off-line first
-		// Apple suggests using .ifServerRecordUnchanged save policy
-		// For more, see Advanced CloudKit(https://developer.apple.com/videos/play/wwdc2014/231/)
 		op.savePolicy = .changedKeys
-		
-		// To avoid CKError.partialFailure, make the operation atomic (if one record fails to get modified, they all fail)
-		// If you want to handle partial failures, set .isAtomic to false and implement CKOperationResultType .fail(reason: .partialFailure) where appropriate
 		op.isAtomic = true
 		
 		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
@@ -309,7 +398,6 @@ extension CloudKitZone {
 					self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
 			case .limitExceeded:
-
 				let chunkedRecords = recordsToSave.chunked(into: 300)
 
 				let group = DispatchGroup()
@@ -343,7 +431,27 @@ extension CloudKitZone {
 
 		database?.add(op)
 	}
-	
+
+	/// Fetch all the subscriptions that a user has in the current database in all zones
+    func fetchAllUserSubscriptions(completion: @escaping (Result<[CKSubscription], Error>) -> Void) {
+		database?.fetchAllSubscriptions() { subscriptions, error in
+			switch CloudKitZoneResult.resolve(error) {
+			case .success:
+				DispatchQueue.main.async {
+					completion(.success((subscriptions!)))
+				}
+			case .retry(let timeToWait):
+				self.retryIfPossible(after: timeToWait) {
+					self.fetchAllUserSubscriptions(completion: completion)
+				}
+			default:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitError(error!)))
+				}
+			}
+		}
+	}
+
 	/// Fetch all the changes in the CKZone since the last time we checked
     func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
 
