@@ -72,6 +72,10 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard refreshProgress.isComplete else {
+			completion(.success(()))
+			return
+		}
 		refreshAll(for: account, downloadFeeds: true, completion: completion)
 	}
 
