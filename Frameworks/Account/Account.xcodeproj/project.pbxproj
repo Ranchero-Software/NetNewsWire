@@ -33,6 +33,7 @@
 		5107A09D227DE77700C7C3C5 /* TestTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09C227DE77700C7C3C5 /* TestTransport.swift */; };
 		510BD111232C3801002692E4 /* AccountMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD110232C3801002692E4 /* AccountMetadataFile.swift */; };
 		510BD113232C3E9D002692E4 /* WebFeedMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */; };
+		511076F5243BD96D00D97C8C /* FeedProvider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 511076F4243BD96D00D97C8C /* FeedProvider.framework */; };
 		511B9804237CD4270028BCAA /* FeedIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9803237CD4270028BCAA /* FeedIdentifier.swift */; };
 		512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */; };
 		512DD4CD2431098700C17B1F /* CloudKitAccountZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */; };
@@ -268,6 +269,8 @@
 		5107A09C227DE77700C7C3C5 /* TestTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTransport.swift; sourceTree = "<group>"; };
 		510BD110232C3801002692E4 /* AccountMetadataFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMetadataFile.swift; sourceTree = "<group>"; };
 		510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedMetadataFile.swift; sourceTree = "<group>"; };
+		511076A3243BD33100D97C8C /* .framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = .framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		511076F4243BD96D00D97C8C /* FeedProvider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FeedProvider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		511B9803237CD4270028BCAA /* FeedIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIdentifier.swift; sourceTree = "<group>"; };
 		512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
 		512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountZoneDelegate.swift; sourceTree = "<group>"; };
@@ -457,6 +460,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84EAC4822148CC6300F154AB /* RSDatabase.framework in Frameworks */,
+				511076F5243BD96D00D97C8C /* FeedProvider.framework in Frameworks */,
 				844B2981210CE3BF004020B3 /* RSWeb.framework in Frameworks */,
 				841D4D722106B40A00DD04E6 /* Articles.framework in Frameworks */,
 				841D4D702106B40400DD04E6 /* ArticlesDatabase.framework in Frameworks */,
@@ -657,6 +661,8 @@
 		8469F80F1F6DC3C10084783E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				511076F4243BD96D00D97C8C /* FeedProvider.framework */,
+				511076A3243BD33100D97C8C /* .framework */,
 				51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */,
 				84EAC4812148CC6300F154AB /* RSDatabase.framework */,
 				844B2980210CE3BF004020B3 /* RSWeb.framework */,
@@ -1068,7 +1074,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

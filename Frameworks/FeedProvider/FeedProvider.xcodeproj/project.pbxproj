@@ -1,0 +1,258 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5110769B243BCF3A00D97C8C /* FeedProvider_target.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */; };
+		5110769C243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51107697243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig */; };
+		5110769D243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51107698243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig */; };
+		5110769E243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51107699243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig */; };
+		5110769F243BCF3A00D97C8C /* FeedProvider_project.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5110769A243BCF3A00D97C8C /* FeedProvider_project.xcconfig */; };
+		511076EE243BD82A00D97C8C /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 511076ED243BD82A00D97C8C /* Articles.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5110765F243BCE0400D97C8C /* FeedProvider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FeedProvider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		51107663243BCE0400D97C8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedProvider_target.xcconfig; sourceTree = "<group>"; };
+		51107697243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedProvider_project_test.xcconfig; sourceTree = "<group>"; };
+		51107698243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedProvider_project_release.xcconfig; sourceTree = "<group>"; };
+		51107699243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedProvider_project_debug.xcconfig; sourceTree = "<group>"; };
+		5110769A243BCF3A00D97C8C /* FeedProvider_project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedProvider_project.xcconfig; sourceTree = "<group>"; };
+		511076ED243BD82A00D97C8C /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5110765C243BCE0400D97C8C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				511076EE243BD82A00D97C8C /* Articles.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		51107655243BCE0400D97C8C = {
+			isa = PBXGroup;
+			children = (
+				51107689243BCEB300D97C8C /* xcconfig */,
+				51107663243BCE0400D97C8C /* Info.plist */,
+				51107660243BCE0400D97C8C /* Products */,
+				511076EC243BD82A00D97C8C /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		51107660243BCE0400D97C8C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5110765F243BCE0400D97C8C /* FeedProvider.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		51107689243BCEB300D97C8C /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				51107699243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig */,
+				51107698243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig */,
+				51107697243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig */,
+				5110769A243BCF3A00D97C8C /* FeedProvider_project.xcconfig */,
+				51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */,
+			);
+			path = xcconfig;
+			sourceTree = "<group>";
+		};
+		511076EC243BD82A00D97C8C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				511076ED243BD82A00D97C8C /* Articles.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		5110765A243BCE0400D97C8C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		5110765E243BCE0400D97C8C /* FeedProvider */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51107667243BCE0400D97C8C /* Build configuration list for PBXNativeTarget "FeedProvider" */;
+			buildPhases = (
+				5110765A243BCE0400D97C8C /* Headers */,
+				5110765B243BCE0400D97C8C /* Sources */,
+				5110765C243BCE0400D97C8C /* Frameworks */,
+				5110765D243BCE0400D97C8C /* Resources */,
+				511076A2243BD2E600D97C8C /* Run Script: Verfiy No Build Settings */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FeedProvider;
+			productName = FeedProvider;
+			productReference = 5110765F243BCE0400D97C8C /* FeedProvider.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		51107656243BCE0400D97C8C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1140;
+				ORGANIZATIONNAME = "Vincode, Inc";
+				TargetAttributes = {
+					5110765E243BCE0400D97C8C = {
+						CreatedOnToolsVersion = 11.4;
+					};
+				};
+			};
+			buildConfigurationList = 51107659243BCE0400D97C8C /* Build configuration list for PBXProject "FeedProvider" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 51107655243BCE0400D97C8C;
+			productRefGroup = 51107660243BCE0400D97C8C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5110765E243BCE0400D97C8C /* FeedProvider */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5110765D243BCE0400D97C8C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5110769D243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig in Resources */,
+				5110769F243BCF3A00D97C8C /* FeedProvider_project.xcconfig in Resources */,
+				5110769E243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig in Resources */,
+				5110769B243BCF3A00D97C8C /* FeedProvider_target.xcconfig in Resources */,
+				5110769C243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		511076A2243BD2E600D97C8C /* Run Script: Verfiy No Build Settings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Verfiy No Build Settings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5110765B243BCE0400D97C8C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		51107665243BCE0400D97C8C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51107699243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		51107666243BCE0400D97C8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51107698243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		51107668243BCE0400D97C8C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		51107669243BCE0400D97C8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		511076A0243BD20A00D97C8C /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51107697243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+		511076A1243BD20A00D97C8C /* Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */;
+			buildSettings = {
+			};
+			name = Test;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		51107659243BCE0400D97C8C /* Build configuration list for PBXProject "FeedProvider" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				51107665243BCE0400D97C8C /* Debug */,
+				511076A0243BD20A00D97C8C /* Test */,
+				51107666243BCE0400D97C8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		51107667243BCE0400D97C8C /* Build configuration list for PBXNativeTarget "FeedProvider" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				51107668243BCE0400D97C8C /* Debug */,
+				511076A1243BD20A00D97C8C /* Test */,
+				51107669243BCE0400D97C8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 51107656243BCE0400D97C8C /* Project object */;
+}
