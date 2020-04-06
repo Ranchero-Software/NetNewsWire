@@ -292,9 +292,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	func applicationDidResignActive(_ notification: Notification) {
-
 		ArticleStringFormatter.emptyCaches()
-
 		saveState()
 	}
 
@@ -305,28 +303,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	func applicationWillTerminate(_ notification: Notification) {
 		shuttingDown = true
 		saveState()
-		
-		let group = DispatchGroup()
-		
-		group.enter()
-		AccountManager.shared.syncArticleStatusAll() {
-			group.leave()
-		}
-		
-		let timeout = DispatchTime.now() + .seconds(1)
-		_ = group.wait(timeout: timeout)
 	}
 
 	// MARK: Notifications
 	@objc func unreadCountDidChange(_ note: Notification) {
-
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
 		}
 	}
 
 	@objc func webFeedSettingDidChange(_ note: Notification) {
-
 		guard let feed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
 			return
 		}
@@ -336,7 +322,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@objc func inspectableObjectsDidChange(_ note: Notification) {
-
 		guard let inspectorWindowController = inspectorWindowController, inspectorWindowController.isOpen else {
 			return
 		}
