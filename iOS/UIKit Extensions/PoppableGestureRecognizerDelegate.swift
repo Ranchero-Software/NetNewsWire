@@ -5,36 +5,20 @@
 //  Created by Maurice Parker on 11/18/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
-// https://stackoverflow.com/a/38042863
+// https://stackoverflow.com/a/41248703
 
 import UIKit
 
 final class PoppableGestureRecognizerDelegate: NSObject, UIGestureRecognizerDelegate {
 	
     weak var navigationController: UINavigationController?
-    weak var originalDelegate: UIGestureRecognizerDelegate?
 
-    override func responds(to aSelector: Selector!) -> Bool {
-        if aSelector == #selector(gestureRecognizer(_:shouldReceive:)) {
-            return true
-        } else if let responds = originalDelegate?.responds(to: aSelector) {
-            return responds
-        } else {
-            return false
-        }
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return navigationController?.viewControllers.count ?? 0 > 1
     }
 
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        return originalDelegate
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if let nav = navigationController, nav.isNavigationBarHidden, nav.viewControllers.count > 1 {
-            return true
-        } else if let result = originalDelegate?.gestureRecognizer?(gestureRecognizer, shouldReceive: touch) {
-            return result
-        } else {
-            return false
-        }
-    }
+	
 }
