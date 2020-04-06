@@ -48,6 +48,13 @@ struct AppDefaults {
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
 	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
+	static let isDeveloperBuild: Bool = {
+		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
+			return true
+		}
+		return false
+	}()
+	
 	static let isFirstRun: Bool = {
 		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
 			return false

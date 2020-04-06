@@ -17,7 +17,7 @@ jobs:
       matrix:
         run-config:
           - { scheme: 'NetNewsWire', destination: 'platform=macOS'}
-          - { scheme: 'NetNewsWire-iOS', destination: 'platform=iOS Simulator,OS=13.0,name=iPhone 11' }
+          - { scheme: 'NetNewsWire-iOS', destination: 'platform=iOS Simulator,OS=13.4,name=iPhone 11' }
     
     steps:
     - name: Checkout Project
@@ -25,8 +25,11 @@ jobs:
       with: 
         submodules: recursive
 
+    - name: List Available Applications
+      run: ls /Applications
+
     - name: Switch to Xcode 11
-      run: sudo xcode-select -s /Applications/Xcode_11.app
+      run: sudo xcode-select -s /Applications/Xcode_11.4.app
 
     - name: Show Build Version
       run: xcodebuild -version

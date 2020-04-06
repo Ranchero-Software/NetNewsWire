@@ -98,6 +98,7 @@ struct FeedlyEntryParser {
 						  url: nil,
 						  externalURL: externalUrl,
 						  title: title,
+						  language: nil,
 						  contentHTML: contentHMTL,
 						  contentText: contentText,
 						  summary: summary,

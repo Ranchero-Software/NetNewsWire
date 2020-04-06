@@ -29,7 +29,7 @@ class NewsBlurAccountViewController: UITableViewController {
 		usernameTextField.delegate = self
 		passwordTextField.delegate = self
 
-		if let account = account, let credentials = try? account.retrieveCredentials(type: .basic) {
+		if let account = account, let credentials = try? account.retrieveCredentials(type: .newsBlurBasic) {
 			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
 			actionButton.isEnabled = true
 			usernameTextField.text = credentials.username
@@ -90,7 +90,7 @@ class NewsBlurAccountViewController: UITableViewController {
 		let credentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
 		Account.validateCredentials(type: .newsBlur, credentials: credentials) { result in
 
-			self.stopAnimtatingActivityIndicator()
+			self.stopAnimatingActivityIndicator()
 			self.enableNavigation()
 
 			switch result {
@@ -105,7 +105,7 @@ class NewsBlurAccountViewController: UITableViewController {
 					do {
 
 						do {
-							try self.account?.removeCredentials(type: .basic)
+							try self.account?.removeCredentials(type: .newsBlurBasic)
 						} catch {}
 						try self.account?.storeCredentials(credentials)
 
@@ -158,7 +158,7 @@ class NewsBlurAccountViewController: UITableViewController {
 		activityIndicator.startAnimating()
 	}
 
-	private func stopAnimtatingActivityIndicator() {
+	private func stopAnimatingActivityIndicator() {
 		self.activityIndicator.isHidden = true
 		self.activityIndicator.stopAnimating()
 	}

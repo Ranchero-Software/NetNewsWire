@@ -564,12 +564,11 @@ private extension MasterTimelineViewController {
 			updateTitleUnreadCount()
 
 			if coordinator.timelineFeed is WebFeed {
-				titleView.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
+				titleView.buttonize()
 				titleView.addGestureRecognizer(feedTapGestureRecognizer)
-				titleView.accessibilityTraits = .button
 			} else {
+				titleView.debuttonize()
 				titleView.removeGestureRecognizer(feedTapGestureRecognizer)
-				titleView.accessibilityTraits.remove(.button)
 			}
 			
 			navigationItem.titleView = titleView

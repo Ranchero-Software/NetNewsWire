@@ -41,6 +41,8 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			caller.accountMetadata = accountMetadata
 		}
 	}
+	
+	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	init(dataFolder: String, transport: Transport?) {
 		
@@ -71,9 +73,11 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		}
 		
 	}
-	
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
-	
+		
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
+		completion()
+	}
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
@@ -265,7 +269,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
+	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
 		if let folder = account.ensureFolder(with: name) {
 			completion(.success(folder))
 		} else {
@@ -1233,7 +1237,7 @@ private extension FeedbinAccountDelegate {
 		
 		let parsedItems: [ParsedItem] = entries.map { entry in
 			let authors = Set([ParsedAuthor(name: entry.authorName, url: entry.jsonFeed?.jsonFeedAuthor?.url, avatarURL: entry.jsonFeed?.jsonFeedAuthor?.avatarURL, emailAddress: nil)])
-			return ParsedItem(syncServiceID: String(entry.articleID), uniqueID: String(entry.articleID), feedURL: String(entry.feedID), url: entry.url, externalURL: nil, title: entry.title, contentHTML: entry.contentHTML, contentText: nil, summary: entry.summary, imageURL: nil, bannerImageURL: nil, datePublished: entry.parsedDatePublished, dateModified: nil, authors: authors, tags: nil, attachments: nil)
+			return ParsedItem(syncServiceID: String(entry.articleID), uniqueID: String(entry.articleID), feedURL: String(entry.feedID), url: entry.url, externalURL: nil, title: entry.title, language: nil, contentHTML: entry.contentHTML, contentText: nil, summary: entry.summary, imageURL: nil, bannerImageURL: nil, datePublished: entry.parsedDatePublished, dateModified: nil, authors: authors, tags: nil, attachments: nil)
 		}
 		
 		return Set(parsedItems)

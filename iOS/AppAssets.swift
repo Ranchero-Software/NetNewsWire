@@ -19,6 +19,10 @@ struct AppAssets {
 		return UIImage(named: "accountLocalPhone")!
 	}()
 
+	static var accountCloudKitImage: UIImage = {
+		return UIImage(named: "accountCloudKit")!
+	}()
+
 	static var accountFeedbinImage: UIImage = {
 		return UIImage(named: "accountFeedbin")!
 	}()
@@ -234,6 +238,8 @@ struct AppAssets {
 			} else {
 				return AppAssets.accountLocalPhoneImage
 			}
+		case .cloudKit:
+			return AppAssets.accountCloudKitImage
 		case .feedbin:
 			return AppAssets.accountFeedbinImage
 		case .feedly:
@@ -244,8 +250,6 @@ struct AppAssets {
 			return AppAssets.accountFreshRSSImage
 		case .newsBlur:
 			return AppAssets.accountNewsBlurImage
-		default:
-			return nil
 		}
 	}
 	

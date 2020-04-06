@@ -35,7 +35,7 @@ class AccountsAddCloudKitWindowController: NSWindowController {
 	}
 	
 	@IBAction func create(_ sender: Any) {
-		_ = AccountManager.shared.createAccount(type: .cloudKit)
+		let _ = AccountManager.shared.createAccount(type: .cloudKit)
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 	}
 	

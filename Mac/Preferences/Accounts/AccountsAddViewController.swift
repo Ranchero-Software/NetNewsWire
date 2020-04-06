@@ -17,7 +17,7 @@ class AccountsAddViewController: NSViewController {
 	private var accountsAddWindowController: NSWindowController?
 	
 	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .feedWrangler, .freshRSS]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
 	#else
 	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
 	#endif
@@ -34,7 +34,7 @@ class AccountsAddViewController: NSViewController {
 		super.viewDidLoad()
 		tableView.dataSource = self
 		tableView.delegate = self
-		removeCloudKitIfNecessary()
+		restrictAccounts()
 	}
 	
 }
@@ -80,8 +80,9 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			case .feedly:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("Feedly", comment: "Feedly")
 				cell.accountImageView?.image = AppAssets.accountFeedly
-			default:
-				break
+			case .newsBlur:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("NewsBlur", comment: "NewsBlur")
+				cell.accountImageView?.image = AppAssets.accountNewsBlur
 			}
 			return cell
 		}
@@ -104,7 +105,7 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
 			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
 				if response == NSApplication.ModalResponse.OK {
-					self.removeCloudKitIfNecessary()
+					self.restrictAccounts()
 					self.tableView.reloadData()
 				}
 			}
@@ -127,8 +128,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			MainThreadOperationQueue.shared.add(addAccount)
-		default:
-			break
+		case .newsBlur:
+			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
+			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsNewsBlurWindowController
 		}
 		
 		tableView.selectRowIndexes([], byExtendingSelection: false)
@@ -161,21 +164,22 @@ extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate 
 
 private extension AccountsAddViewController {
 	
-	func removeCloudKitIfNecessary() {
-		func removeCloudKit() {
-			if let cloudKitIndex = addableAccountTypes.firstIndex(of: .cloudKit) {
-				addableAccountTypes.remove(at: cloudKitIndex)
+	func restrictAccounts() {
+		func removeAccountType(_ accountType: AccountType) {
+			if let index = addableAccountTypes.firstIndex(of: accountType) {
+				addableAccountTypes.remove(at: index)
 			}
 		}
 		
-		if AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
-			removeCloudKit()
+		if AppDefaults.isDeveloperBuild {
+			removeAccountType(.cloudKit)
+			removeAccountType(.feedly)
+			removeAccountType(.feedWrangler)
 			return
 		}
-		
-		// We don't want developers without entitlements to be trying to add the CloudKit account
-		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
-			removeCloudKit()
+
+		if AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
+			removeAccountType(.cloudKit)
 		}
 	}
 	

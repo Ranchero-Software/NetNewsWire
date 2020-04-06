@@ -40,8 +40,9 @@ This allows for a pristine project with code signing set up with the appropriate
 developer ID and certificates, and for dev to be able to have local settings
 without needing to check in anything into source control.
 
-As an example, make a directory SharedXcodeSettings next to where you have this repository.
-An example of the structure is:
+Make a directory SharedXcodeSettings next to where you have this repository.
+
+The directory structure is:
 
 ```
 aDirectory/
@@ -50,6 +51,13 @@ aDirectory/
   NetNewsWire
     NetNewsWire.xcworkspace
 ```
+Example:
+
+If your NetNewsWire Xcode project file is at:
+`/Users/Shared/git/NetNewsWire/NetNewsWire.xcodeproj`
+
+Create your `DeveloperSettings.xcconfig` file at
+`/Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig`
 
 Then create a plain text file in it: `SharedXcodeSettings/DeveloperSettings.xcconfig` and
 give it the contents:
@@ -63,13 +71,17 @@ DEVELOPER_ENTITLEMENTS = -dev
 PROVISIONING_PROFILE_SPECIFIER =
 ```
 
+Set `DEVELOPMENT_TEAM` to your Apple supplied development team.  You can use Keychain 
+Acceass to [find your development team ID](/Technotes/FindingYourDevelopmentTeamID.md).
+Set `ORGANIZATION_IDENTIFIER` to a reversed domain name that you control or have made up.
+Note that `PROVISIONING_PROFILE_SPECIFIER` should not have a value associated with it. 
+
+You can now open the `NetNewsWire.xcworkspace` in Xcode.
+
 Now you should be able to build without code signing errors and without modifying
-the NetNewsWire Xcode project.
+the NetNewsWire Xcode project.  This is a special build of NetNewsWire with some
+functionality disabled.  This is because we have API keys that can't be stored in the
+repository or shared between developers.  Certain account types, like Feedly, aren't
+enabled and the Reader View isn't enabled because of this.
 
-Example:
-
-If your NetNewsWire Xcode project file is at:
-`/Users/Shared/git/NetNewsWire/NetNewsWire.xcodeproj`
-
-Create your `DeveloperSettings.xcconfig` file at
-`/Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig`
+If you have any problems, we will help you out in Slack (see above).

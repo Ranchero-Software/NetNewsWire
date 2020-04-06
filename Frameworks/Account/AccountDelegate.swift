@@ -22,13 +22,15 @@ protocol AccountDelegate {
 	
 	var refreshProgress: DownloadProgress { get }
 
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void)
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void)
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void))
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void))
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void)
 	
-	func addFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void)
+	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void)
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void)
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void)
 

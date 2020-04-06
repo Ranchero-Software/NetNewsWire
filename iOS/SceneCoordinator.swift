@@ -61,7 +61,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var wasRootSplitViewControllerCollapsed = false
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
-	private let rebuildBackingStoresWithMergeQueue = CoalescingQueue(name: "Rebuild The Backing Stores by Merging", interval: 1.0)
+	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 1.0)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	
@@ -301,7 +301,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadArticlesDidUpdateUnreadCounts(_:)), name: .DownloadArticlesDidUpdateUnreadCounts, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
@@ -441,12 +440,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return	
 		}
 		
-		// If we are filtering reads, the new unread count is greater than 1, and the feed isn't shown then continue
-		guard let feed = note.object as? Feed, isReadFeedsFiltered, feed.unreadCount > 0, !shadowTableContains(feed) else {
-			return
-		}
-
-		rebuildBackingStoresWithMergeQueue.add(self, #selector(rebuildBackingStoresWithMerge))
+		queueRebuildBackingStores()
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
@@ -465,7 +459,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildBackingStoresWithMerge()
+		rebuildBackingStores()
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -540,10 +534,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		self.groupByFeed = AppDefaults.timelineGroupByFeed
 	}
 	
-	@objc func downloadArticlesDidUpdateUnreadCounts(_ note: Notification) {
-		rebuildBackingStoresWithMerge()
-	}
-	
 	@objc func accountDidDownloadArticles(_ note: Notification) {
 		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
 			return
@@ -568,7 +558,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func suspend() {
 		fetchAndMergeArticlesQueue.performCallsImmediately()
-		rebuildBackingStoresWithMergeQueue.performCallsImmediately()
+		rebuildBackingStoresQueue.performCallsImmediately()
 		fetchRequestQueue.cancelAllRequests()
 	}
 	
@@ -745,6 +735,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		} else {
 			
 			setTimelineFeed(nil, animated: false) {
+				if self.isReadFeedsFiltered {
+					self.queueRebuildBackingStores()
+				}
 				self.activityManager.invalidateSelecting()
 				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
 					self.navControllerForTimeline().popViewController(animated: animations.contains(.navigation))
@@ -929,7 +922,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		if selectNextUnreadArticleInTimeline() {
-			activityManager.selectingNextUnread()
 			return
 		}
 
@@ -938,9 +930,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 
 		selectNextUnreadFeed() {
-			if self.selectNextUnreadArticleInTimeline() {
-				self.activityManager.selectingNextUnread()
-			}
+			self.selectNextUnreadArticleInTimeline()
 		}
 
 	}
@@ -1360,7 +1350,15 @@ private extension SceneCoordinator {
 			}
 		}
 	}
+	
+	func queueRebuildBackingStores() {
+		rebuildBackingStoresQueue.add(self, #selector(rebuildBackingStoresWithDefaults))
+	}
 
+	@objc func rebuildBackingStoresWithDefaults() {
+		rebuildBackingStores()
+	}
+	
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
 			
@@ -1373,11 +1371,6 @@ private extension SceneCoordinator {
 			masterFeedViewController.reloadFeeds(initialLoad: initialLoad, completion: completion)
 			
 		}
-	}
-	
-	@objc func rebuildBackingStoresWithMerge() {
-		addShadowTableToFilterExceptions()
-		rebuildBackingStores()
 	}
 	
 	func rebuildShadowTable() {

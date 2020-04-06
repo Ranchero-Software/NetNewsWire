@@ -72,7 +72,7 @@ public final class AccountManager: UnreadCountProvider {
 		return lastArticleFetchEndTime
 	}
 
-	public func findActiveAccount(forDisplayName displayName: String) -> Account? {
+	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
 		return AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
 	}
 	
@@ -184,7 +184,22 @@ public final class AccountManager: UnreadCountProvider {
 		accounts.forEach { $0.resume() }
 	}
 
-	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() ->Void)? = nil) {
+	public func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: (() -> Void)? = nil) {
+		let group = DispatchGroup()
+		
+		activeAccounts.forEach { account in
+			group.enter()
+			account.receiveRemoteNotification(userInfo: userInfo) { 
+				group.leave()
+			}
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion?()
+		}
+	}
+
+	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 		
 		activeAccounts.forEach { account in
@@ -203,7 +218,6 @@ public final class AccountManager: UnreadCountProvider {
 		group.notify(queue: DispatchQueue.main) {
 			completion?()
 		}
-		
 	}
 
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {

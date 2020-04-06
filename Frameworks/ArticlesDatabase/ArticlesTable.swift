@@ -19,6 +19,8 @@ final class ArticlesTable: DatabaseTable {
 	private let queue: DatabaseQueue
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
+	private let retentionStyle: ArticlesDatabase.RetentionStyle
+
 	private var articlesCache = [String: Article]()
 
 	private lazy var searchTable: SearchTable = {
@@ -30,13 +32,14 @@ final class ArticlesTable: DatabaseTable {
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
 
-	init(name: String, accountID: String, queue: DatabaseQueue) {
+	init(name: String, accountID: String, queue: DatabaseQueue, retentionStyle: ArticlesDatabase.RetentionStyle) {
 
 		self.name = name
 		self.accountID = accountID
 		self.queue = queue
 		self.statusesTable = StatusesTable(queue: queue)
-
+		self.retentionStyle = retentionStyle
+		
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 	}
@@ -169,7 +172,78 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Updating
 
+	func update(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ completion: @escaping UpdateArticlesCompletionBlock) {
+		precondition(retentionStyle == .feedBased)
+		if parsedItems.isEmpty {
+			callUpdateArticlesCompletionBlock(nil, nil, completion)
+			return
+		}
+
+		// 1. Ensure statuses for all the incoming articles.
+		// 2. Create incoming articles with parsedItems.
+		// 3. Ignore incoming articles that are userDeleted
+		// 4. Fetch all articles for the feed.
+		// 5. Create array of Articles not in database and save them.
+		// 6. Create array of updated Articles and save what’s changed.
+		// 7. Call back with new and updated Articles.
+		// 8. Delete Articles in database no longer present in the feed.
+		// 9. Update search index.
+
+		self.queue.runInTransaction { (databaseResult) in
+
+			func makeDatabaseCalls(_ database: FMDatabase) {
+				let articleIDs = parsedItems.articleIDs()
+
+				let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) //1
+				assert(statusesDictionary.count == articleIDs.count)
+
+				let allIncomingArticles = Article.articlesWithParsedItems(parsedItems, webFeedID, self.accountID, statusesDictionary) //2
+				let incomingArticles = Set(allIncomingArticles.filter { !($0.status.userDeleted) }) //3
+				if incomingArticles.isEmpty {
+					self.callUpdateArticlesCompletionBlock(nil, nil, completion)
+					return
+				}
+
+				let fetchedArticles = self.fetchArticlesForFeedID(webFeedID, withLimits: false, database) //4
+				let fetchedArticlesDictionary = fetchedArticles.dictionary()
+
+				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
+				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
+
+				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
+
+				self.addArticlesToCache(newArticles)
+				self.addArticlesToCache(updatedArticles)
+
+				// 8. Delete articles no longer in feed.
+				let articleIDsToDelete = fetchedArticles.articleIDs().filter { !(articleIDs.contains($0)) }
+				if !articleIDsToDelete.isEmpty {
+					self.removeArticles(articleIDsToDelete, database)
+					self.removeArticleIDsFromCache(articleIDsToDelete)
+				}
+
+				// 9. Update search index.
+				if let newArticles = newArticles {
+					self.searchTable.indexNewArticles(newArticles, database)
+				}
+				if let updatedArticles = updatedArticles {
+					self.searchTable.indexUpdatedArticles(updatedArticles, database)
+				}
+			}
+
+			switch databaseResult {
+			case .success(let database):
+				makeDatabaseCalls(database)
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(.failure(databaseError))
+				}
+			}
+		}
+	}
+
 	func update(_ webFeedIDsAndItems: [String: Set<ParsedItem>], _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
+		precondition(retentionStyle == .syncSystem)
 		if webFeedIDsAndItems.isEmpty {
 			callUpdateArticlesCompletionBlock(nil, nil, completion)
 			return
@@ -850,6 +924,12 @@ private extension ArticlesTable {
 		}
 	}
 
+	func removeArticleIDsFromCache(_ articleIDs: Set<String>) {
+		for articleID in articleIDs {
+			articlesCache[articleID] = nil
+		}
+	}
+
 	func articleIsIgnorable(_ article: Article) -> Bool {
 		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
 		if article.status.userDeleted {
@@ -863,6 +943,7 @@ private extension ArticlesTable {
 
 	func filterIncomingArticles(_ articles: Set<Article>) -> Set<Article> {
 		// Drop Articles that we can ignore.
+		precondition(retentionStyle == .syncSystem)
 		return Set(articles.filter{ !articleIsIgnorable($0) })
 	}
 

@@ -476,7 +476,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		if isReadFiltered ?? false {
 			if let accountName = userInfo[ArticlePathKey.accountName] as? String,
-				let account = AccountManager.shared.findActiveAccount(forDisplayName: accountName) {
+				let account = AccountManager.shared.existingActiveAccount(forDisplayName: accountName) {
 				exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 				fetchAndReplaceArticlesSync()
 			}

@@ -26,7 +26,6 @@ class InteractiveNavigationController: UINavigationController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		poppableDelegate.originalDelegate = interactivePopGestureRecognizer?.delegate
 		poppableDelegate.navigationController = self
 		interactivePopGestureRecognizer?.delegate = poppableDelegate
 	}
@@ -38,7 +37,7 @@ class InteractiveNavigationController: UINavigationController {
 		}
 	}
 		
-	}
+}
 
 // MARK: Private
 

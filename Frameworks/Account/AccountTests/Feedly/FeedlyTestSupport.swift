@@ -287,6 +287,7 @@ class FeedlyTestSupport {
 					url: "http://localhost/",
 					externalURL: "http://localhost/\(pair.0)/articles/\(index).html",
 					title: "Title\(index)",
+					language: nil,
 					contentHTML: "Content \(index) HTML.",
 					contentText: "Content \(index) Text",
 					summary: nil,
