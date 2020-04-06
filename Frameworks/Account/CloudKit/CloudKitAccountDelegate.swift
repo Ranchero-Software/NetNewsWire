@@ -198,8 +198,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			}
 		}
 		
-		// Add one task here to show we started immediately.  We don't need to complete is because refreshAll clears everything at the end.
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
 			self.refreshAll(for: account, downloadFeeds: false, completion: completion)
 		}
