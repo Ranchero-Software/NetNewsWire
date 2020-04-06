@@ -59,16 +59,60 @@ final class CloudKitArticlesZone: CloudKitZone {
 		self.database = container.privateCloudDatabase
 	}
 	
+	func refreshArticleStatus(completion: @escaping ((Result<Void, Error>) -> Void)) {
+		fetchChangesInZone() { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				if case CloudKitZoneError.userDeletedZone = error {
+					self.createZoneRecord() { result in
+						switch result {
+						case .success:
+							self.refreshArticleStatus(completion: completion)
+						case .failure(let error):
+							completion(.failure(error))
+						}
+					}
+				} else {
+					completion(.failure(error))
+				}
+			}
+		}
+	}
+	
 	func sendArticleStatus(_ syncStatuses: [SyncStatus], starredArticles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		var records = makeStatusRecords(syncStatuses)
 		makeArticleRecordsIfNecessary(starredArticles) { result in
 			switch result {
 			case .success(let articleRecords):
 				records.append(contentsOf: articleRecords)
-				self.modify(recordsToSave: records, recordIDsToDelete: [], completion: completion)
+				self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
+					switch result {
+					case .success:
+						completion(.success(()))
+					case .failure(let error):
+						self.handleSendArticleStatusError(error, syncStatuses: syncStatuses, starredArticles: starredArticles, completion: completion)
+					}
+				}
 			case .failure(let error):
-				completion(.failure(error))
+				self.handleSendArticleStatusError(error, syncStatuses: syncStatuses, starredArticles: starredArticles, completion: completion)
 			}
+		}
+	}
+	
+	func handleSendArticleStatusError(_ error: Error, syncStatuses: [SyncStatus], starredArticles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		if case CloudKitZoneError.userDeletedZone = error {
+			self.createZoneRecord() { result in
+				switch result {
+				case .success:
+					self.sendArticleStatus(syncStatuses, starredArticles: starredArticles, completion: completion)
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			completion(.failure(error))
 		}
 	}
 	

@@ -219,6 +219,40 @@ final class CloudKitAccountZone: CloudKitZone {
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 		
+		database?.perform(ckQuery, inZoneWith: Self.zoneID) { [weak self] records, error in
+			guard let self = self else { return }
+			
+			switch CloudKitZoneResult.resolve(error) {
+            case .success:
+				DispatchQueue.main.async {
+					if records!.count > 0 {
+						completion(.success(records![0].externalID))
+					} else {
+						self.createContainer(name: "Account", isAccount: true, completion: completion)
+					}
+				}
+			case .retry(let timeToWait):
+				self.retryIfPossible(after: timeToWait) {
+					self.findOrCreateAccount(completion: completion)
+				}
+			case .zoneNotFound, .userDeletedZone:
+				self.createZoneRecord() { result in
+					switch result {
+					case .success:
+						self.findOrCreateAccount(completion: completion)
+					case .failure(let error):
+						DispatchQueue.main.async {
+							completion(.failure(CloudKitError(error)))
+						}
+					}
+				}
+			default:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitError(error!)))
+				}
+			}
+		}
+		
 		query(ckQuery) { result in
 			switch result {
 			case .success(let records):

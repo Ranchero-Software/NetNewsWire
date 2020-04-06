@@ -16,7 +16,11 @@ enum CloudKitZoneError: LocalizedError {
 	case unknown
 	
 	var errorDescription: String? {
-		return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
+		if case .userDeletedZone = self {
+			return NSLocalizedString("The iCloud data was deleted.  Please delete the NetNewsWire iCloud account and add it again to continue using NetNewsWire's iCloud support.", comment: "User deleted zone.")
+		} else {
+			return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
+		}
 	}
 }
 
@@ -63,19 +67,12 @@ extension CloudKitZone {
 		return CKRecord.ID(recordName: UUID().uuidString, zoneID: Self.zoneID)
 	}
 
-	func subscribeToZoneChanges() {
-		let subscription = CKRecordZoneSubscription(zoneID: Self.zoneID)
-        
-		let info = CKSubscription.NotificationInfo()
-        info.shouldSendContentAvailable = true
-        subscription.notificationInfo = info
-        
-		save(subscription) { result in
-			if case .failure(let error) = result {
-				os_log(.error, log: self.log, "%@ zone subscribe to changes error: %@", Self.zoneID.zoneName, error.localizedDescription)
-			}
-		}
-    }
+	func retryIfPossible(after: Double, block: @escaping () -> ()) {
+		let delayTime = DispatchTime.now() + after
+		DispatchQueue.main.asyncAfter(deadline: delayTime, execute: {
+			block()
+		})
+	}
 	
 	func receiveRemoteNotification(userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
@@ -91,6 +88,39 @@ extension CloudKitZone {
 			completion()
 		}
 	}
+
+	func createZoneRecord(completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let database = database else {
+			completion(.failure(CloudKitZoneError.unknown))
+			return
+		}
+
+		database.save(CKRecordZone(zoneID: Self.zoneID)) { (recordZone, error) in
+			if let error = error {
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitError(error)))
+				}
+			} else {
+				DispatchQueue.main.async {
+					completion(.success(()))
+				}
+			}
+		}
+	}
+
+	func subscribeToZoneChanges() {
+		let subscription = CKRecordZoneSubscription(zoneID: Self.zoneID)
+        
+		let info = CKSubscription.NotificationInfo()
+        info.shouldSendContentAvailable = true
+        subscription.notificationInfo = info
+        
+		save(subscription) { result in
+			if case .failure(let error) = result {
+				os_log(.error, log: self.log, "%@ zone subscribe to changes error: %@", Self.zoneID.zoneName, error.localizedDescription)
+			}
+		}
+    }
 	
 	/// Checks to see if the record described in the query exists by retrieving only the testField parameter field.
 	func exists(_ query: CKQuery, completion: @escaping (Result<Bool, Error>) -> Void) {
@@ -108,9 +138,24 @@ extension CloudKitZone {
 				DispatchQueue.main.async {
 					completion(.success(recordFound))
 				}
+			case .zoneNotFound:
+				self?.createZoneRecord() { result in
+					switch result {
+					case .success:
+						self?.exists(query, completion: completion)
+					case .failure(let error):
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
+					}
+				}
 			case .retry(let timeToWait):
 				self?.retryIfPossible(after: timeToWait) {
 					self?.exists(query, completion: completion)
+				}
+			case .userDeletedZone:
+				DispatchQueue.main.async {
+					completion(.failure(CloudKitZoneError.userDeletedZone))
 				}
 			default:
 				DispatchQueue.main.async {
@@ -137,6 +182,17 @@ extension CloudKitZone {
 						completion(.success(records))
 					} else {
 						completion(.failure(CloudKitZoneError.unknown))
+					}
+				}
+			case .zoneNotFound:
+				self?.createZoneRecord() { result in
+					switch result {
+					case .success:
+						self?.query(query, completion: completion)
+					case .failure(let error):
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
 					}
 				}
 			case .retry(let timeToWait):
@@ -172,6 +228,17 @@ extension CloudKitZone {
 						completion(.success(record))
 					} else {
 						completion(.failure(CloudKitZoneError.unknown))
+					}
+				}
+			case .zoneNotFound:
+				self?.createZoneRecord() { result in
+					switch result {
+					case .success:
+						self?.fetch(externalID: externalID, completion: completion)
+					case .failure(let error):
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
 					}
 				}
 			case .retry(let timeToWait):
@@ -533,30 +600,4 @@ private extension CloudKitZone {
 		return config
     }
 	
-	func createZoneRecord(completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let database = database else {
-			completion(.failure(CloudKitZoneError.unknown))
-			return
-		}
-
-		database.save(CKRecordZone(zoneID: Self.zoneID)) { (recordZone, error) in
-			if let error = error {
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error)))
-				}
-			} else {
-				DispatchQueue.main.async {
-					completion(.success(()))
-				}
-			}
-		}
-	}
-
-	func retryIfPossible(after: Double, block: @escaping () -> ()) {
-		let delayTime = DispatchTime.now() + after
-		DispatchQueue.main.asyncAfter(deadline: delayTime, execute: {
-			block()
-		})
-	}
-
 }

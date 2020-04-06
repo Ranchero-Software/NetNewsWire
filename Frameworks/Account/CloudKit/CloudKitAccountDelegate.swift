@@ -103,6 +103,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 								completion(.success(()))
 							case .failure(let error):
 								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
+								self.processAccountError(account, error)
 								completion(.failure(error))
 							}
 						}
@@ -133,7 +134,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
-		articlesZone.fetchChangesInZone() { result in
+		articlesZone.refreshArticleStatus() { result in
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
 			switch result {
 			case .success:
@@ -284,6 +285,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				feed.editedName = name
 				completion(.success(()))
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -298,6 +300,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				container.removeWebFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -313,6 +316,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				toContainer.addWebFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -327,6 +331,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				container.addWebFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -342,6 +347,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				container.addWebFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -360,6 +366,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
 				}
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -374,6 +381,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				folder.name = name
 				completion(.success(()))
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -388,6 +396,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				account.removeFolder(folder)
 				completion(.success(()))
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -434,6 +443,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				}
 				
 			case .failure(let error):
+				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -548,19 +558,33 @@ private extension CloudKitAccountDelegate {
 								}
 
 							case .failure(let error):
+								self.processAccountError(account, error)
+								self.refreshProgress.clear()
 								completion(.failure(error))
 							}
 						}
 						
 					case .failure(let error):
+						self.processAccountError(account, error)
+						self.refreshProgress.clear()
 						completion(.failure(error))
 					}
 
 				}
 				
 			case .failure(let error):
+				self.processAccountError(account, error)
 				self.refreshProgress.clear()
 				completion(.failure(error))
+			}
+		}
+	}
+	
+	func processAccountError(_ account: Account, _ error: Error) {
+		if case CloudKitZoneError.userDeletedZone = error {
+			account.removeFeeds(account.topLevelWebFeeds)
+			for folder in account.folders ?? Set<Folder>() {
+				account.removeFolder(folder)
 			}
 		}
 	}
