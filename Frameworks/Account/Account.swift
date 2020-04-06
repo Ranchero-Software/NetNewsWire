@@ -411,14 +411,18 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func suspendDatabase() {
+		#if os(iOS)
 		database.cancelAndSuspend()
+		#endif
 		save()
 	}
 
 	/// Re-open the SQLite database and allow database calls.
 	/// Call this *before* calling resume.
 	public func resumeDatabaseAndDelegate() {
+		#if os(iOS)
 		database.resume()
+		#endif
 		delegate.resume()
 	}
 
