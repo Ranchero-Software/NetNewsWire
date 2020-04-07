@@ -86,7 +86,7 @@ struct ArticleStringFormatter {
 	static func attributedTruncatedTitle(_ article: Article) -> NSAttributedString {
 		let title = truncatedTitle(article, forHTML: true)
 		let data = title.data(using: .utf8)!
-		let attributed = NSAttributedString(html: data, documentAttributes: nil)!
+		let attributed = NSAttributedString(html: data, options: [.characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)!
 		return attributed
 	}
 
