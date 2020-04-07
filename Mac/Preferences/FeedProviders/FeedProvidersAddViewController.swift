@@ -16,7 +16,7 @@ class FeedProvidersAddViewController: NSViewController {
 	private var accountsAddWindowController: NSWindowController?
 	
 	#if DEBUG
-	private var addableFeedProviderTypes: [FeedProviderType] = [.twitter]
+	private var addableFeedProviderTypes: [FeedProviderType] = [.marsEdit, .microblog, .twitter]
 	#else
 	private var addableFeedProviderTypes: [FeedProviderType] = [.twitter]
 	#endif
@@ -60,9 +60,15 @@ extension FeedProvidersAddViewController: NSTableViewDelegate {
 		
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? FeedProvidersAddTableCellView {
 			switch addableFeedProviderTypes[row] {
+			case .marsEdit:
+				cell.feedProviderNameLabel?.stringValue = NSLocalizedString("MarsEdit", comment: "MarsEdit")
+				cell.feedProviderImageView?.image = AppAssets.adapterMarsEdit
+			case .microblog:
+				cell.feedProviderNameLabel?.stringValue = NSLocalizedString("Micro.blog", comment: "Micro.blog")
+				cell.feedProviderImageView?.image = AppAssets.adapterMicroblog
 			case .twitter:
 				cell.feedProviderNameLabel?.stringValue = NSLocalizedString("Twitter", comment: "Twitter")
-				cell.feedProviderImageView?.image = AppAssets.feedProviderTwitter
+				cell.feedProviderImageView?.image = AppAssets.adapterTwitter
 			}
 			return cell
 		}

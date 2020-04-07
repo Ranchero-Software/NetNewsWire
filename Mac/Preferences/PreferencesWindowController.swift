@@ -41,7 +41,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 											 name: NSLocalizedString("Accounts", comment: "Preferences"),
 											 image: NSImage(named: NSImage.userAccountsName))]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.FeedProvider,
-											 name: NSLocalizedString("Integrations", comment: "Preferences"),
+											 name: NSLocalizedString("Extensions", comment: "Preferences"),
 											 image: AppAssets.bookmarkImage)]
 
 		// Omit the Advanced Preferences for now because the Software Update related functionality is
