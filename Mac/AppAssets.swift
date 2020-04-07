@@ -77,6 +77,12 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorProgress4")
 	}()
 	
+	static var bookmarkImage: RSImage? = {
+		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/BookmarkIcon.icns"
+		let image = RSImage(contentsOfFile: path)
+		return image
+	}()
+	
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
