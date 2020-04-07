@@ -24,6 +24,7 @@ private struct PreferencesToolbarItemSpec {
 private struct ToolbarItemIdentifier {
 	static let General = "General"
 	static let Accounts = "Accounts"
+	static let FeedProvider = "FeedProvider"
 	static let Advanced = "Advanced"
 }
 
@@ -35,6 +36,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		var specs = [PreferencesToolbarItemSpec]()
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General, name: NSLocalizedString("General", comment: "Preferences"), imageName: NSImage.preferencesGeneralName)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts, name: NSLocalizedString("Accounts", comment: "Preferences"), imageName: NSImage.userAccountsName)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.FeedProvider, name: NSLocalizedString("Providers", comment: "Preferences"), imageName: "feedProviderToolbar")]
 
 		// Omit the Advanced Preferences for now because the Software Update related functionality is
 		// forbidden/non-applicable, and we can rely upon Apple to some extent for crash reports. We

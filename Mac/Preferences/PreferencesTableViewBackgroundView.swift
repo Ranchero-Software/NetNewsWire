@@ -1,5 +1,5 @@
 //
-//  AccountsTableViewBackgroundView.swift
+//  PreferencesTableViewBackgroundView.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 3/19/19.
@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class AccountsTableViewBackgroundView: NSView {
+final class PreferencesTableViewBackgroundView: NSView {
 
 	let lightBorderColor = NSColor(white: 0.71, alpha: 1.0)
 	let darkBorderColor = NSColor(red: 0.41, green: 0.43, blue: 0.44, alpha: 1.0)

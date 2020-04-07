@@ -13,7 +13,27 @@
 		5110769E243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51107699243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig */; };
 		5110769F243BCF3A00D97C8C /* FeedProvider_project.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5110769A243BCF3A00D97C8C /* FeedProvider_project.xcconfig */; };
 		511076EE243BD82A00D97C8C /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 511076ED243BD82A00D97C8C /* Articles.framework */; };
+		51107722243BE0DA00D97C8C /* FeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107721243BE0DA00D97C8C /* FeedProvider.swift */; };
+		51107724243BE11800D97C8C /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51107723243BE11800D97C8C /* RSParser.framework */; };
+		51107725243BE11800D97C8C /* RSParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51107723243BE11800D97C8C /* RSParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51107728243BE15D00D97C8C /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51107727243BE15D00D97C8C /* RSCore.framework */; };
+		51107729243BE15D00D97C8C /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51107727243BE15D00D97C8C /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		51107726243BE11800D97C8C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				51107729243BE15D00D97C8C /* RSCore.framework in Embed Frameworks */,
+				51107725243BE11800D97C8C /* RSParser.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5110765F243BCE0400D97C8C /* FeedProvider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FeedProvider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -24,6 +44,9 @@
 		51107699243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedProvider_project_debug.xcconfig; sourceTree = "<group>"; };
 		5110769A243BCF3A00D97C8C /* FeedProvider_project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedProvider_project.xcconfig; sourceTree = "<group>"; };
 		511076ED243BD82A00D97C8C /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		51107721243BE0DA00D97C8C /* FeedProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedProvider.swift; sourceTree = "<group>"; };
+		51107723243BE11800D97C8C /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		51107727243BE15D00D97C8C /* RSCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +54,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51107728243BE15D00D97C8C /* RSCore.framework in Frameworks */,
+				51107724243BE11800D97C8C /* RSParser.framework in Frameworks */,
 				511076EE243BD82A00D97C8C /* Articles.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -41,6 +66,7 @@
 		51107655243BCE0400D97C8C = {
 			isa = PBXGroup;
 			children = (
+				51107721243BE0DA00D97C8C /* FeedProvider.swift */,
 				51107689243BCEB300D97C8C /* xcconfig */,
 				51107663243BCE0400D97C8C /* Info.plist */,
 				51107660243BCE0400D97C8C /* Products */,
@@ -59,10 +85,10 @@
 		51107689243BCEB300D97C8C /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
+				5110769A243BCF3A00D97C8C /* FeedProvider_project.xcconfig */,
 				51107699243BCF3A00D97C8C /* FeedProvider_project_debug.xcconfig */,
 				51107698243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig */,
 				51107697243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig */,
-				5110769A243BCF3A00D97C8C /* FeedProvider_project.xcconfig */,
 				51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */,
 			);
 			path = xcconfig;
@@ -71,6 +97,8 @@
 		511076EC243BD82A00D97C8C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				51107727243BE15D00D97C8C /* RSCore.framework */,
+				51107723243BE11800D97C8C /* RSParser.framework */,
 				511076ED243BD82A00D97C8C /* Articles.framework */,
 			);
 			name = Frameworks;
@@ -98,6 +126,7 @@
 				5110765C243BCE0400D97C8C /* Frameworks */,
 				5110765D243BCE0400D97C8C /* Resources */,
 				511076A2243BD2E600D97C8C /* Run Script: Verfiy No Build Settings */,
+				51107726243BE11800D97C8C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -115,10 +144,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1140;
-				ORGANIZATIONNAME = "Vincode, Inc";
+				ORGANIZATIONNAME = "Ranchero Software, LLC";
 				TargetAttributes = {
 					5110765E243BCE0400D97C8C = {
 						CreatedOnToolsVersion = 11.4;
+						LastSwiftMigration = 1140;
 					};
 				};
 			};
@@ -181,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51107722243BE0DA00D97C8C /* FeedProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

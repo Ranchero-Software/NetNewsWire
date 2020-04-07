@@ -81,6 +81,10 @@ struct AppAssets {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
 
+	static var feedProviderTwitter: RSImage = {
+		return RSImage(named: "feedProviderTwitter")!
+	}()
+
 	static var filterActive: RSImage = {
 		return RSImage(named: "filterActive")!
 	}()

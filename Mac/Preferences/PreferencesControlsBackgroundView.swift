@@ -1,5 +1,5 @@
 //
-//  AccountsControlsBackgroundView.swift
+//  PreferencesControlsBackgroundView.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 3/18/19.
@@ -9,7 +9,7 @@
 import AppKit
 import RSCore
 
-final class AccountsControlsBackgroundView: NSView {
+final class PreferencesControlsBackgroundView: NSView {
 
 	private let lightModeFillColor = NSColor(white: 0.97, alpha: 1.0)
 	private let darkModeFillColor = NSColor(red: 0.32, green: 0.34, blue: 0.35, alpha: 1.0)
