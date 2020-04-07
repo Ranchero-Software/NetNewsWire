@@ -10,13 +10,15 @@ import AppKit
 import RSCore
 import Articles
 
-final class SendToMarsEditCommand: SendToCommand {
+final class SendToMarsEditCommand: ExtensionPoint, SendToCommand {
 
-	let title = "MarsEdit"
+	let title = NSLocalizedString("MarsEdit", comment: "MarsEdit")
+	let templateImage = AppAssets.extensionPointMarsEdit
 
 	var image: NSImage? {
 		return appToUse()?.icon ?? nil
 	}
+
 
 	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
 

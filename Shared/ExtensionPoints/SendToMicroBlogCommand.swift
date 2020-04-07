@@ -12,9 +12,10 @@ import RSCore
 
 // Not undoable.
 
-final class SendToMicroBlogCommand: SendToCommand {
+final class SendToMicroBlogCommand: ExtensionPoint, SendToCommand {
 
-	let title = "Micro.blog"
+	let title = NSLocalizedString("Micro.blog", comment: "Micro.blog")
+	let templateImage = AppAssets.extensionPointMicroblog
 
 	var image: NSImage? {
 		return microBlogApp.icon

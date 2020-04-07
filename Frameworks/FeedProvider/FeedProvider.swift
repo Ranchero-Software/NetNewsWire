@@ -9,14 +9,6 @@
 import Foundation
 import RSCore
 
-public enum FeedProviderType: Int, Codable {
-	// Raw values should not change since they’re stored.
-	case marsEdit = 1
-	case microblog = 2
-	case twitter = 3
-}
-
-
-protocol FeedProvider  {
+public protocol FeedProvider  {
 	
 }

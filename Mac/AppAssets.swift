@@ -45,18 +45,6 @@ struct AppAssets {
 		return RSImage(named: "accountNewsBlur")
 	}()
 	
-	static var adapterMarsEdit: RSImage = {
-		return RSImage(named: "adapterMarsEdit")!
-	}()
-	
-	static var adapterMicroblog: RSImage = {
-		return RSImage(named: "adapterMicroblog")!
-	}()
-	
-	static var adapterTwitter: RSImage = {
-		return RSImage(named: "adapterTwitter")!
-	}()
-	
 	static var articleExtractor: RSImage! = {
 		return RSImage(named: "articleExtractor")
 	}()
@@ -89,12 +77,22 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorProgress4")
 	}()
 	
-	static var bookmarkImage: RSImage? = {
-		let path = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/KEXT.icns"
-		let image = RSImage(contentsOfFile: path)
-		return image
+	static var extensionPointMarsEdit: RSImage = {
+		return RSImage(named: "extensionPointMarsEdit")!
 	}()
 	
+	static var extensionPointMicroblog: RSImage = {
+		return RSImage(named: "extensionPointMicroblog")!
+	}()
+	
+	static var extensionPointTwitter: RSImage = {
+		return RSImage(named: "extensionPointTwitter")!
+	}()
+	
+	static var extensionPreference: RSImage? = {
+		return RSImage(contentsOfFile: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/KEXT.icns")
+	}()
+		
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()

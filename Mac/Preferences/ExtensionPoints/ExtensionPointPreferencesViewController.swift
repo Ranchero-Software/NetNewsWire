@@ -1,5 +1,5 @@
 //
-//  FeedProvidersPreferencesViewController.swift
+//  ExtensionsPreferencesViewController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/6/20.
@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class FeedProvidersPreferencesViewController: NSViewController {
+final class ExtensionPointPreferencesViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var detailView: NSView!
@@ -22,7 +22,7 @@ final class FeedProvidersPreferencesViewController: NSViewController {
 		tableView.delegate = self
 		tableView.dataSource = self
 		
-		showController(FeedProvidersAddViewController())
+		showController(ExtensionPointAddViewController())
 
 		// Fix tableView frame — for some reason IB wants it 1pt wider than the clip view. This leads to unwanted horizontal scrolling.
 		var rTable = tableView.frame
@@ -34,7 +34,7 @@ final class FeedProvidersPreferencesViewController: NSViewController {
 
 // MARK: - NSTableViewDataSource
 
-extension FeedProvidersPreferencesViewController: NSTableViewDataSource {
+extension ExtensionPointPreferencesViewController: NSTableViewDataSource {
 
 	func numberOfRows(in tableView: NSTableView) -> Int {
 		return sortedAccounts.count
@@ -47,7 +47,7 @@ extension FeedProvidersPreferencesViewController: NSTableViewDataSource {
 
 // MARK: - NSTableViewDelegate
 
-extension FeedProvidersPreferencesViewController: NSTableViewDelegate {
+extension ExtensionPointPreferencesViewController: NSTableViewDelegate {
 
 	private static let cellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "AccountCell")
 
@@ -70,7 +70,7 @@ extension FeedProvidersPreferencesViewController: NSTableViewDelegate {
 
 // MARK: - Private
 
-private extension FeedProvidersPreferencesViewController {
+private extension ExtensionPointPreferencesViewController {
 	
 	func showController(_ controller: NSViewController) {
 		

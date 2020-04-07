@@ -1,5 +1,5 @@
 //
-//  FeedProvidersAddViewController.swift
+//  ExtensionPointAddViewController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/6/20.
@@ -9,20 +9,15 @@
 import AppKit
 import FeedProvider
 
-class FeedProvidersAddViewController: NSViewController {
+class ExtensionPointAddViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
 	
-	private var accountsAddWindowController: NSWindowController?
-	
-	#if DEBUG
-	private var addableFeedProviderTypes: [FeedProviderType] = [.marsEdit, .microblog, .twitter]
-	#else
-	private var addableFeedProviderTypes: [FeedProviderType] = [.twitter]
-	#endif
+	private var availableExtensionPoints = [ExtensionPoint]()
+	private var extensionPointAddWindowController: NSWindowController?
 
 	init() {
-		super.init(nibName: "FeedProvidersAdd", bundle: nil)
+		super.init(nibName: "ExtensionPointAdd", bundle: nil)
 	}
 	
 	public required init?(coder: NSCoder) {
@@ -33,16 +28,17 @@ class FeedProvidersAddViewController: NSViewController {
         super.viewDidLoad()
 		tableView.dataSource = self
 		tableView.delegate = self
+		availableExtensionPoints = ExtensionPointManager.shared.availableExtensionPoints
     }
     
 }
 
 // MARK: - NSTableViewDataSource
 
-extension FeedProvidersAddViewController: NSTableViewDataSource {
+extension ExtensionPointAddViewController: NSTableViewDataSource {
 	
 	func numberOfRows(in tableView: NSTableView) -> Int {
-		return addableFeedProviderTypes.count
+		return availableExtensionPoints.count
 	}
 	
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
@@ -52,24 +48,16 @@ extension FeedProvidersAddViewController: NSTableViewDataSource {
 
 // MARK: - NSTableViewDelegate
 
-extension FeedProvidersAddViewController: NSTableViewDelegate {
+extension ExtensionPointAddViewController: NSTableViewDelegate {
 	
 	private static let cellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "AccountCell")
 	
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		
-		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? FeedProvidersAddTableCellView {
-			switch addableFeedProviderTypes[row] {
-			case .marsEdit:
-				cell.feedProviderNameLabel?.stringValue = NSLocalizedString("MarsEdit", comment: "MarsEdit")
-				cell.feedProviderImageView?.image = AppAssets.adapterMarsEdit
-			case .microblog:
-				cell.feedProviderNameLabel?.stringValue = NSLocalizedString("Micro.blog", comment: "Micro.blog")
-				cell.feedProviderImageView?.image = AppAssets.adapterMicroblog
-			case .twitter:
-				cell.feedProviderNameLabel?.stringValue = NSLocalizedString("Twitter", comment: "Twitter")
-				cell.feedProviderImageView?.image = AppAssets.adapterTwitter
-			}
+		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? ExtensionPointAddTableCellView {
+			let extensionPoint = availableExtensionPoints[row]
+			cell.titleLabel?.stringValue = extensionPoint.title
+			cell.imageView?.image = extensionPoint.templateImage
 			return cell
 		}
 		return nil

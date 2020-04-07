@@ -5,7 +5,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="FeedProvidersAddViewController" customModule="NetNewsWire" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="ExtensionPointAddViewController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="tableView" destination="lyM-Zu-Let" id="JDz-05-OOg"/>
                 <outlet property="view" destination="c22-O7-iKe" id="Vfr-rK-EHC"/>
@@ -44,7 +44,7 @@
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
-                                            <tableCellView identifier="Cell" id="EGi-CQ-lPc" customClass="FeedProvidersAddTableCellView" customModule="NetNewsWire" customModuleProvider="target">
+                                            <tableCellView identifier="Cell" id="EGi-CQ-lPc" customClass="ExtensionPointAddTableCellView" customModule="NetNewsWire" customModuleProvider="target">
                                                 <rect key="frame" x="1" y="1" width="475" height="40"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -83,8 +83,8 @@
                                                     <constraint firstItem="iCD-Yx-4V5" firstAttribute="leading" secondItem="EGi-CQ-lPc" secondAttribute="leading" constant="20" id="IsY-WH-f93"/>
                                                 </constraints>
                                                 <connections>
-                                                    <outlet property="feedProviderImageView" destination="KmN-Zk-TBU" id="gAh-RE-QeJ"/>
-                                                    <outlet property="feedProviderNameLabel" destination="uyu-5W-IaW" id="QAe-Gk-Eeo"/>
+                                                    <outlet property="imageView" destination="KmN-Zk-TBU" id="Tfy-Eb-Isb"/>
+                                                    <outlet property="titleLabel" destination="uyu-5W-IaW" id="QAe-Gk-Eeo"/>
                                                 </connections>
                                             </tableCellView>
                                         </prototypeCellViews>
