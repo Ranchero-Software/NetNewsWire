@@ -39,7 +39,7 @@ enum ExtensionPointType {
 
 }
 
-enum ExtensionPointIdentifer {
+enum ExtensionPointIdentifer: Hashable {
 	case marsEdit
 	case microblog
 	case twitter(String)
@@ -55,6 +55,51 @@ enum ExtensionPointIdentifer {
 		}
 	}
 	
+	public var userInfo: [AnyHashable: AnyHashable] {
+		switch self {
+		case .marsEdit:
+			return [
+				"type": "marsEdit"
+			]
+		case .microblog:
+			return [
+				"type": "microblog"
+			]
+		case .twitter(let username):
+			return [
+				"type": "feed",
+				"username": username
+			]
+		}
+	}
+	
+	public init?(userInfo: [AnyHashable: AnyHashable]) {
+		guard let type = userInfo["type"] as? String else { return nil }
+		
+		switch type {
+		case "marsEdit":
+			self = ExtensionPointIdentifer.marsEdit
+		case "microblog":
+			self = ExtensionPointIdentifer.microblog
+		case "twitter":
+			guard let username = userInfo["username"] as? String else { return nil }
+			self = ExtensionPointIdentifer.twitter(username)
+		default:
+			return nil
+		}
+	}
+	
+	public func hash(into hasher: inout Hasher) {
+		switch self {
+		case .marsEdit:
+			hasher.combine("marsEdit")
+		case .microblog:
+			hasher.combine("microblog")
+		case .twitter(let username):
+			hasher.combine("twitter")
+			hasher.combine(username)
+		}
+	}
 }
 
 protocol ExtensionPoint {
