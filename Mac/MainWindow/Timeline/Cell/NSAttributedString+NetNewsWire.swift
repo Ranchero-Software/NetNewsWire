@@ -54,10 +54,14 @@ extension NSAttributedString {
 
 			if superscript != 0 {
 				let font = mutable.attribute(.font, at: range.location, effectiveRange: nil) as! NSFont
-				let size = font.pointSize * 0.6
 
-				let newFont = NSFont(descriptor: font.fontDescriptor, size: size)
+				let features: [NSFontDescriptor.FeatureKey: Any] = [.typeIdentifier: kVerticalPositionType, .selectorIdentifier: superscript > 0 ? kSuperiorsSelector : kInferiorsSelector]
+				let attributes: [NSFontDescriptor.AttributeName: Any] = [.featureSettings: [features]]
+				let descriptor = font.fontDescriptor.addingAttributes(attributes)
+
+				let newFont = NSFont(descriptor: descriptor, size: font.pointSize)
 				mutable.addAttribute(.font, value: newFont as Any, range: range)
+				mutable.addAttribute(.superscript, value: 0, range: range)
 			}
 
 		}
