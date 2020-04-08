@@ -20,25 +20,31 @@ extension NSAttributedString {
 
 		let size = baseFont.pointSize
 		let baseDescriptor = baseFont.fontDescriptor
-		let traits = baseDescriptor.symbolicTraits
+		let symbolicTraits = baseDescriptor.symbolicTraits
 
 		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
 			guard let font = font as? NSFont else { return }
 
-			var newTraits = traits
+			var newSymbolicTraits = symbolicTraits
 
 			if font.fontDescriptor.symbolicTraits.contains(.italic) {
-				newTraits.insert(.italic)
+				newSymbolicTraits.insert(.italic)
 			}
 
-			var descriptor = baseDescriptor.withSymbolicTraits(newTraits)
+			var descriptor = baseDescriptor.withSymbolicTraits(newSymbolicTraits)
 
 			if font.fontDescriptor.symbolicTraits.contains(.bold) {
-				// This currently assumes we're modifying the title field, which is
-				// already semibold.
-				let traits: [NSFontDescriptor.TraitKey: Any] = [.weight: NSFont.Weight.heavy]
-				let attributes: [NSFontDescriptor.AttributeName: Any] = [.traits: traits]
-				descriptor = descriptor.addingAttributes(attributes)
+				let baseTraits = baseDescriptor.object(forKey: .traits) as! [NSFontDescriptor.TraitKey: Any]
+				let baseWeight = baseTraits[.weight] as! NSFont.Weight
+
+				// If the base font is semibold (as timeline titles are), make the "bold"
+				// text heavy for better contrast.
+
+				if baseWeight == .semibold {
+					let traits: [NSFontDescriptor.TraitKey: Any] = [.weight: NSFont.Weight.heavy]
+					let attributes: [NSFontDescriptor.AttributeName: Any] = [.traits: traits]
+					descriptor = descriptor.addingAttributes(attributes)
+				}
 			}
 
 			let newFont = NSFont(descriptor: descriptor, size: size)
