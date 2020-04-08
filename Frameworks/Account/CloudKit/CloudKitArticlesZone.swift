@@ -147,7 +147,6 @@ private extension CloudKitArticlesZone {
 
 	func makeArticleRecordsIfNecessary(_ articles: Set<Article>, completion: @escaping ((Result<[CKRecord], Error>) -> Void)) {
 		let group = DispatchGroup()
-		var errorOccurred = false
 		var records = [CKRecord]()
 
 		for article in articles {
@@ -164,9 +163,8 @@ private extension CloudKitArticlesZone {
 					if !recordFound {
 						records.append(contentsOf:  self.makeArticleRecords(article))
 					}
-				case .failure(let error):
-					errorOccurred = true
-					os_log(.error, log: self.log, "Error occurred while checking for existing articles: %@", error.localizedDescription)
+				case .failure:
+					records.append(contentsOf:  self.makeArticleRecords(article))
 				}
 				group.leave()
 			}
@@ -174,11 +172,7 @@ private extension CloudKitArticlesZone {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			if errorOccurred {
-				completion(.failure(CloudKitZoneError.unknown))
-			} else {
-				completion(.success(records))
-			}
+			completion(.success(records))
 		}
 	}
 	
