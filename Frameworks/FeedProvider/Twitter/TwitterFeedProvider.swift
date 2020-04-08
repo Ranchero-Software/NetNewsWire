@@ -10,8 +10,10 @@ import Foundation
 
 public struct TwitterFeedProvider: FeedProvider {
 	
-	public init() {
-		
+	public var username: String
+	
+	public init(username: String) {
+		self.username = username
 	}
 	
 }

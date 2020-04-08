@@ -13,7 +13,7 @@ class ExtensionPointAddViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
 	
-	private var availableExtensionPoints = [ExtensionPoint]()
+	private var availableExtensionPointTypes = [ExtensionPointType]()
 	private var extensionPointAddWindowController: NSWindowController?
 
 	init() {
@@ -28,7 +28,7 @@ class ExtensionPointAddViewController: NSViewController {
         super.viewDidLoad()
 		tableView.dataSource = self
 		tableView.delegate = self
-		availableExtensionPoints = ExtensionPointManager.shared.availableExtensionPoints
+		availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes
     }
     
 }
@@ -38,7 +38,7 @@ class ExtensionPointAddViewController: NSViewController {
 extension ExtensionPointAddViewController: NSTableViewDataSource {
 	
 	func numberOfRows(in tableView: NSTableView) -> Int {
-		return availableExtensionPoints.count
+		return availableExtensionPointTypes.count
 	}
 	
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
@@ -55,9 +55,9 @@ extension ExtensionPointAddViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? ExtensionPointAddTableCellView {
-			let extensionPoint = availableExtensionPoints[row]
-			cell.titleLabel?.stringValue = extensionPoint.title
-			cell.imageView?.image = extensionPoint.templateImage
+			let extensionPointType = availableExtensionPointTypes[row]
+			cell.titleLabel?.stringValue = extensionPointType.title
+			cell.imageView?.image = extensionPointType.templateImage
 			return cell
 		}
 		return nil

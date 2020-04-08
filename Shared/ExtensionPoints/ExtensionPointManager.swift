@@ -14,34 +14,22 @@ struct ExtensionPointManager {
 	
 	static let shared = ExtensionPointManager()
 	
-	let marsEdit = SendToMarsEditCommand()
-	let microblog = SendToMicroBlogCommand()
-	let twitter = TwitterFeedProvider()
-	
-	let availableExtensionPoints: [ExtensionPoint]
-	let activeSendToCommands: [SendToCommand]
-	let activeFeedProviders: [FeedProvider]
+	let availableExtensionPointTypes: [ExtensionPointType]
+//	let activeSendToCommands: [SendToCommand]
+//	let activeFeedProviders: [FeedProvider]
 	
 	init() {
 		#if os(macOS)
 		#if DEBUG
-		availableExtensionPoints = [marsEdit, microblog, twitter]
-		activeSendToCommands = [marsEdit, microblog]
-		activeFeedProviders = [twitter]
+		availableExtensionPointTypes = [.marsEdit, .microblog, .twitter]
 		#else
-		availableExtensionPoints = [marsEdit, microblog, twitter]
-		activeSendToCommands = [marsEdit, microblog]
-		activeFeedProviders = [twitter]
+		availableExtensionPointTypes = [.marsEdit, .microblog, .twitter]
 		#endif
 		#else
 		#if DEBUG
-		availableExtensionPoints = [twitter]
-		activeSendToCommands = []()
-		activeFeedProviders = [twitter]
+		availableExtensionPoints = [.twitter]
 		#else
-		availableExtensionPoints = [twitter]
-		activeSendToCommands = []()
-		activeFeedProviders = [twitter]
+		availableExtensionPoints = [.twitter]
 		#endif
 		#endif
 	}

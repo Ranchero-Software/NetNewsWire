@@ -12,9 +12,9 @@ import Articles
 
 final class SendToMarsEditCommand: ExtensionPoint, SendToCommand {
 
-	let title = NSLocalizedString("MarsEdit", comment: "MarsEdit")
-	let templateImage = AppAssets.extensionPointMarsEdit
-
+	let extensionPointType = ExtensionPointType.marsEdit
+	let extensionPointID = ExtensionPointIdentifer.marsEdit
+	
 	var image: NSImage? {
 		return appToUse()?.icon ?? nil
 	}

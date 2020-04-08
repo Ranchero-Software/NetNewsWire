@@ -14,9 +14,9 @@ import RSCore
 
 final class SendToMicroBlogCommand: ExtensionPoint, SendToCommand {
 
-	let title = NSLocalizedString("Micro.blog", comment: "Micro.blog")
-	let templateImage = AppAssets.extensionPointMicroblog
-
+	let extensionPointType = ExtensionPointType.microblog
+	let extensionPointID = ExtensionPointIdentifer.microblog
+	
 	var image: NSImage? {
 		return microBlogApp.icon
 	}

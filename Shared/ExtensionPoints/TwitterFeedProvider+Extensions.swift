@@ -12,12 +12,13 @@ import RSCore
 
 extension TwitterFeedProvider: ExtensionPoint {
 	
-	var title: String {
-		return NSLocalizedString("Twitter", comment: "Twitter")
+	var extensionPointType: ExtensionPointType {
+		return ExtensionPointType.twitter
+	}
+	
+	var extensionPointID: ExtensionPointIdentifer {
+		return ExtensionPointIdentifer.twitter(username)
 	}
 
-	var templateImage: RSImage {
-		return AppAssets.extensionPointTwitter
-	}
 
 }
