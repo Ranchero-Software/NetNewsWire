@@ -22,6 +22,9 @@ extension NSAttributedString {
 		let baseDescriptor = baseFont.fontDescriptor
 		let symbolicTraits = baseDescriptor.symbolicTraits
 
+		let baseTraits = baseDescriptor.object(forKey: .traits) as! [NSFontDescriptor.TraitKey: Any]
+		let baseWeight = baseTraits[.weight] as! NSFont.Weight
+
 		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
 			guard let font = font as? NSFont else { return }
 
@@ -34,9 +37,6 @@ extension NSAttributedString {
 			var descriptor = baseDescriptor.withSymbolicTraits(newSymbolicTraits)
 
 			if font.fontDescriptor.symbolicTraits.contains(.bold) {
-				let baseTraits = baseDescriptor.object(forKey: .traits) as! [NSFontDescriptor.TraitKey: Any]
-				let baseWeight = baseTraits[.weight] as! NSFont.Weight
-
 				// If the base font is semibold (as timeline titles are), make the "bold"
 				// text heavy for better contrast.
 
