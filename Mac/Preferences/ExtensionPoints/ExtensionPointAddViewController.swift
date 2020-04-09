@@ -70,43 +70,16 @@ extension ExtensionPointAddViewController: NSTableViewDelegate {
 			return
 		}
 
-//		switch addableAccountTypes[selectedRow] {
-//		case .onMyMac:
-//			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
-//			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
-//			accountsAddWindowController = accountsAddLocalWindowController
-//		case .cloudKit:
-//			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
-//			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
-//				if response == NSApplication.ModalResponse.OK {
-//					self.restrictAccounts()
-//					self.tableView.reloadData()
-//				}
-//			}
-//			accountsAddWindowController = accountsAddCloudKitWindowController
-//		case .feedbin:
-//			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
-//			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
-//			accountsAddWindowController = accountsFeedbinWindowController
-//		case .feedWrangler:
-//			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
-//			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
-//			accountsAddWindowController = accountsFeedWranglerWindowController
-//		case .freshRSS:
-//			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-//			accountsReaderAPIWindowController.accountType = .freshRSS
-//			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-//			accountsAddWindowController = accountsReaderAPIWindowController
-//		case .feedly:
-//			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
-//			addAccount.delegate = self
-//			addAccount.presentationAnchor = self.view.window!
-//			MainThreadOperationQueue.shared.add(addAccount)
-//		case .newsBlur:
-//			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
-//			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
-//			accountsAddWindowController = accountsNewsBlurWindowController
-//		}
+		let extensionPointType = availableExtensionPointTypes[selectedRow]
+		switch extensionPointType {
+		case .marsEdit, .microblog:
+			let windowController = ExtensionPointEnableBasicWindowController()
+			windowController.extensionPointType = extensionPointType
+			windowController.runSheetOnWindow(self.view.window!)
+			extensionPointAddWindowController = windowController
+		default:
+			break
+		}
 		
 		tableView.selectRowIndexes([], byExtendingSelection: false)
 		

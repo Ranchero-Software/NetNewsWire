@@ -10,12 +10,32 @@ import Foundation
 import FeedProvider
 import RSCore
 
+public extension Notification.Name {
+	static let ActiveExtensionPointsDidChange = Notification.Name(rawValue: "ActiveExtensionPointsDidChange")
+}
+
 final class ExtensionPointManager {
 	
 	static let shared = ExtensionPointManager()
 
 	var activeExtensionPoints = [ExtensionPointIdentifer: ExtensionPoint]()
-	let availableExtensionPointTypes: [ExtensionPointType]
+	let possibleExtensionPointTypes: [ExtensionPointType]
+	var availableExtensionPointTypes: [ExtensionPointType] {
+		
+		let activeExtensionPointTypes = Set(activeExtensionPoints.keys.compactMap({ $0.type }))
+		var available = [ExtensionPointType]()
+		for possibleExtensionPointType in possibleExtensionPointTypes {
+			if possibleExtensionPointType.isSinglton {
+				if !activeExtensionPointTypes.contains(possibleExtensionPointType) {
+					available.append(possibleExtensionPointType)
+				}
+			} else {
+				available.append(possibleExtensionPointType)
+			}
+		}
+		
+		return available
+	}
 	
 	var activeSendToCommands: [SendToCommand] {
 		return activeExtensionPoints.values.compactMap({ return $0 as? SendToCommand })
@@ -28,18 +48,18 @@ final class ExtensionPointManager {
 	init() {
 		#if os(macOS)
 		#if DEBUG
-		availableExtensionPointTypes = [.marsEdit, .microblog, .twitter]
+		possibleExtensionPointTypes = [.marsEdit, .microblog, .twitter]
 		#else
-		availableExtensionPointTypes = [.marsEdit, .microblog, .twitter]
+		possibleExtensionPointTypes = [.marsEdit, .microblog, .twitter]
 		#endif
 		#else
 		#if DEBUG
-		availableExtensionPoints = [.twitter]
+		possibleExtensionPointTypes = [.twitter]
 		#else
-		availableExtensionPoints = [.twitter]
+		possibleExtensionPointTypes = [.twitter]
 		#endif
 		#endif
-		loadExtensionPointIDs()
+		loadExtensionPoints()
 	}
 	
 	func activateExtensionPoint(_ extensionPointID: ExtensionPointIdentifer) {
@@ -56,7 +76,7 @@ final class ExtensionPointManager {
 
 private extension ExtensionPointManager {
 	
-	func loadExtensionPointIDs() {
+	func loadExtensionPoints() {
 		if let extensionPointUserInfos = AppDefaults.activeExtensionPointIDs {
 			for extensionPointUserInfo in extensionPointUserInfos {
 				if let extensionPointID = ExtensionPointIdentifer(userInfo: extensionPointUserInfo) {
@@ -68,6 +88,7 @@ private extension ExtensionPointManager {
 	
 	func saveExtensionPointIDs() {
 		AppDefaults.activeExtensionPointIDs = activeExtensionPoints.keys.map({ $0.userInfo })
+		NotificationCenter.default.post(name: .ActiveExtensionPointsDidChange, object: nil, userInfo: nil)
 	}
 	
 	func extensionPoint(for extensionPointID: ExtensionPointIdentifer) -> ExtensionPoint {
