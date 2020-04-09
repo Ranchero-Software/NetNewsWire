@@ -20,7 +20,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <font key="font" metaFont="system"/>
             <tabViewItems>
-                <tabViewItem label="Extension Information" identifier="" id="k6A-mz-zOF">
+                <tabViewItem label="Extension" identifier="" id="k6A-mz-zOF">
                     <view key="view" id="jT6-Hh-gWM">
                         <rect key="frame" x="10" y="33" width="326" height="254"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
