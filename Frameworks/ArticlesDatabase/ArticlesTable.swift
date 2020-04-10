@@ -194,7 +194,7 @@ final class ArticlesTable: DatabaseTable {
 			func makeDatabaseCalls(_ database: FMDatabase) {
 				let articleIDs = parsedItems.articleIDs()
 
-				let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) //1
+				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) //1
 				assert(statusesDictionary.count == articleIDs.count)
 
 				let allIncomingArticles = Article.articlesWithParsedItems(parsedItems, webFeedID, self.accountID, statusesDictionary) //2
@@ -266,7 +266,7 @@ final class ArticlesTable: DatabaseTable {
 					articleIDs.formUnion(parsedItems.articleIDs())
 				}
 
-				let statusesDictionary = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
+				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
 				assert(statusesDictionary.count == articleIDs.count)
 
 				let allIncomingArticles = Article.articlesWithWebFeedIDsAndItems(webFeedIDsAndItems, self.accountID, statusesDictionary) //2
@@ -418,17 +418,17 @@ final class ArticlesTable: DatabaseTable {
 		return statuses
 	}
 
-	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping DatabaseCompletionBlock) {
+	func markAndFetchNew(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
 		queue.runInTransaction { databaseResult in
 			switch databaseResult {
 			case .success(let database):
-				self.statusesTable.mark(articleIDs, statusKey, flag, database)
+				let newStatusIDs = self.statusesTable.markAndFetchNew(articleIDs, statusKey, flag, database)
 				DispatchQueue.main.async {
-					completion(nil)
+					completion(.success(newStatusIDs))
 				}
 			case .failure(let databaseError):
 				DispatchQueue.main.async {
-					completion(databaseError)
+					completion(.failure(databaseError))
 				}
 			}
 		}

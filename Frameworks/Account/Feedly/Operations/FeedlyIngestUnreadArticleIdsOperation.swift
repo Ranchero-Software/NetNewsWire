@@ -124,15 +124,19 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 		let results = ReadStatusResults()
 		
 		group.enter()
-		account.markAsUnread(remoteUnreadArticleIDs) { error in
-			results.markAsUnreadError = error
+		account.markAsUnread(remoteUnreadArticleIDs) { result in
+			if case .failure(let error) = result {
+				results.markAsUnreadError = error
+			}
 			group.leave()
 		}
 
 		let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
 		group.enter()
-		account.markAsRead(articleIDsToMarkRead) { error in
-			results.markAsReadError = error
+		account.markAsRead(articleIDsToMarkRead) { result in
+			if case .failure(let error) = result {
+				results.markAsReadError = error
+			}
 			group.leave()
 		}
 
