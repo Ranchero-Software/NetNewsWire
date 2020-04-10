@@ -18,7 +18,13 @@ public enum LocalAccountDelegateError: String, Error {
 
 final class LocalAccountDelegate: AccountDelegate {
 
-	private let refresher = LocalAccountRefresher()
+	weak var account: Account?
+	
+	private lazy var refresher: LocalAccountRefresher? = {
+		let refresher = LocalAccountRefresher()
+		refresher.delegate = self
+		return refresher
+	}()
 	
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
@@ -28,19 +34,23 @@ final class LocalAccountDelegate: AccountDelegate {
 	var accountMetadata: AccountMetadata?
 
 	let refreshProgress = DownloadProgress(numberOfTasks: 0)
+	var refreshAllCompletion: ((Result<Void, Error>) -> Void)? = nil
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		completion()
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard refreshAllCompletion == nil else {
+			completion(.success(()))
+			return
+		}
+		
+		refreshAllCompletion = completion
+		
 		let webFeeds = account.flattenedWebFeeds()
 		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
-		refresher.refreshFeeds(webFeeds, feedCompletionBlock: { _ in self.refreshProgress.completeTask() }) {
-			self.refreshProgress.clear()
-			account.metadata.lastArticleFetchEndTime = Date()
-			completion(.success(()))
-		}
+		refresher?.refreshFeeds(webFeeds)
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -196,6 +206,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
+		self.account = account
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
@@ -208,7 +219,7 @@ final class LocalAccountDelegate: AccountDelegate {
 	// MARK: Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
-		refresher.suspend()
+		refresher?.suspend()
 	}
 
 	func suspendDatabase() {
@@ -216,6 +227,21 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func resume() {
-		refresher.resume()
+		refresher?.resume()
 	}
+}
+
+extension LocalAccountDelegate: LocalAccountRefresherDelegate {
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
+		refreshProgress.completeTask()
+	}
+	
+	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
+		self.refreshProgress.clear()
+		account?.metadata.lastArticleFetchEndTime = Date()
+		refreshAllCompletion?(.success(()))
+		refreshAllCompletion = nil
+	}
+	
 }

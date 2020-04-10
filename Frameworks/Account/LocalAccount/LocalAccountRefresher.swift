@@ -12,19 +12,21 @@ import RSParser
 import RSWeb
 import Articles
 
+protocol LocalAccountRefresherDelegate {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed)
+	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher)
+}
+
 final class LocalAccountRefresher {
 	
-	private var feedCompletionBlock: ((WebFeed) -> Void)?
-	private var completion: (() -> Void)?
 	private var isSuspended = false
+	var delegate: LocalAccountRefresherDelegate?
 	
 	private lazy var downloadSession: DownloadSession = {
 		return DownloadSession(delegate: self)
 	}()
 
-	public func refreshFeeds(_ feeds: Set<WebFeed>, feedCompletionBlock: @escaping (WebFeed) -> Void, completion: @escaping () -> Void) {
-		self.feedCompletionBlock = feedCompletionBlock
-		self.completion = completion
+	public func refreshFeeds(_ feeds: Set<WebFeed>) {
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
 	
@@ -64,21 +66,21 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		
 		guard !data.isEmpty, !isSuspended else {
 			completion()
-			feedCompletionBlock?(feed)
+			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			return
 		}
 
 		if let error = error {
 			print("Error downloading \(feed.url) - \(error)")
 			completion()
-			feedCompletionBlock?(feed)
+			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			return
 		}
 
 		let dataHash = data.md5String
 		if dataHash == feed.contentHash {
 			completion()
-			feedCompletionBlock?(feed)
+			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			return
 		}
 
@@ -87,7 +89,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			
 			guard let account = feed.account, let parsedFeed = parsedFeed, error == nil else {
 				completion()
-				self.feedCompletionBlock?(feed)
+				self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 				return
 			}
 			
@@ -100,7 +102,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 					feed.contentHash = dataHash
 				}
 				completion()
-				self.feedCompletionBlock?(feed)
+				self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			}
 			
 		}
@@ -109,7 +111,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, representedObject: AnyObject) -> Bool {
 		let feed = representedObject as! WebFeed
 		guard !isSuspended else {
-			feedCompletionBlock?(feed)
+			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			return false
 		}
 		
@@ -118,7 +120,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 		}
 		
 		if data.isDefinitelyNotFeed() {
-			feedCompletionBlock?(feed)
+			delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			return false
 		}
 		
@@ -127,7 +129,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			if FeedParser.mightBeAbleToParseBasedOnPartialData(parserData) {
 				return true
 			} else {
-				feedCompletionBlock?(feed)
+				delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 				return false
 			}
 		}
@@ -137,17 +139,21 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveUnexpectedResponse response: URLResponse, representedObject: AnyObject) {
 		let feed = representedObject as! WebFeed
-		feedCompletionBlock?(feed)
+		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didReceiveNotModifiedResponse: URLResponse, representedObject: AnyObject) {
 		let feed = representedObject as! WebFeed
-		feedCompletionBlock?(feed)
+		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 	}
 	
+	func downloadSession(_ downloadSession: DownloadSession, didDiscardDuplicateRepresentedObject representedObject: AnyObject) {
+		let feed = representedObject as! WebFeed
+		delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+	}
+
 	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession) {
-		completion?()
-		completion = nil
+		delegate?.localAccountRefresherDidFinish(self)
 	}
 
 }
