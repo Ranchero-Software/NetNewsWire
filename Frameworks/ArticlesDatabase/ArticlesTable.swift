@@ -418,7 +418,7 @@ final class ArticlesTable: DatabaseTable {
 		return statuses
 	}
 
-	func markAndFetchNew(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
+	func markAndFetchNew(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleIDsCompletionBlock) {
 		queue.runInTransaction { databaseResult in
 			switch databaseResult {
 			case .success(let database):

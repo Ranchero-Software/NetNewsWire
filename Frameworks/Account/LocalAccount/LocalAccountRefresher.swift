@@ -19,6 +19,7 @@ protocol LocalAccountRefresherDelegate {
 
 final class LocalAccountRefresher {
 	
+	private var completions = [() -> Void]()
 	private var isSuspended = false
 	var delegate: LocalAccountRefresherDelegate?
 	
@@ -26,7 +27,10 @@ final class LocalAccountRefresher {
 		return DownloadSession(delegate: self)
 	}()
 
-	public func refreshFeeds(_ feeds: Set<WebFeed>) {
+	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
+		if let completion = completion {
+			completions.append(completion)
+		}
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
 	
@@ -154,6 +158,8 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 
 	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession) {
 		delegate?.localAccountRefresherDidFinish(self)
+		completions.forEach({ $0() })
+		completions = [() -> Void]()
 	}
 
 }

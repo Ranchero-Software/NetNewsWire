@@ -222,7 +222,7 @@ public final class ArticlesDatabase {
 		return try articlesTable.mark(articles, statusKey, flag)
 	}
 
-	public func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
+	public func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
 		articlesTable.markAndFetchNew(articleIDs, statusKey, flag, completion)
 	}
 

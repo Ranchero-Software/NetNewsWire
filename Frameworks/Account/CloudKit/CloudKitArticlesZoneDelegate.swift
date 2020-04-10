@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import RSParser
+import RSWeb
 import CloudKit
 import SyncDatabase
 
@@ -19,11 +20,15 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	weak var account: Account?
 	var database: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
+	weak var  refresher: LocalAccountRefresher?
+	weak var refreshProgress: DownloadProgress?
 	
-	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
+	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, refresher: LocalAccountRefresher?, refreshProgress: DownloadProgress?) {
 		self.account = account
 		self.database = database
 		self.articlesZone = articlesZone
+		self.refresher = refresher
+		self.refreshProgress = refreshProgress
 	}
 	
 	func cloudKitDidChange(record: CKRecord) {
@@ -82,8 +87,37 @@ private extension CloudKitArticlesZoneDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { _ in
-			group.leave()
+		account?.markAsUnread(updateableUnreadArticleIDs) { result in
+			switch result {
+			case .success(let newArticleStatusIDs):
+				
+				if newArticleStatusIDs.isEmpty {
+					group.leave()
+				} else {
+					self.account?.fetchArticlesAsync(FetchType.articleIDs(newArticleStatusIDs)) { result in
+						switch result {
+						case .success(let articles):
+							
+							if articles.isEmpty {
+								group.leave()
+							} else {
+								let webFeeds = Set(articles.compactMap({ $0.webFeed }))
+								webFeeds.forEach { $0.dropConditionalGetInfo() }
+								self.refreshProgress?.addToNumberOfTasksAndRemaining(webFeeds.count)
+								self.refresher?.refreshFeeds(webFeeds) {
+									group.leave()
+								}
+							}
+							
+						case .failure:
+							group.leave()
+						}
+					}
+				}
+				
+			case .failure:
+				group.leave()
+			}
 		}
 		
 		group.enter()
@@ -119,7 +153,6 @@ private extension CloudKitArticlesZoneDelegate {
 		
 	}
 
-	
 	func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
 		var parsedAuthors = Set<ParsedAuthor>()
 		

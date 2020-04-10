@@ -481,7 +481,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		self.account = account
 		
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
-		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account,
+															 database: database,
+															 articlesZone: articlesZone,
+															 refresher: refresher,
+															 refreshProgress: refreshProgress)
 		
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {

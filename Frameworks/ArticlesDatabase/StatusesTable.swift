@@ -85,11 +85,11 @@ final class StatusesTable: DatabaseTable {
 		return updatedStatuses
 	}
 
-	func markAndFetchNew(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<ArticleStatus> {
+	func markAndFetchNew(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<String> {
 		let (statusesDictionary, newStatusIDs) = ensureStatusesForArticleIDs(articleIDs, flag, database)
 		let statuses = Set(statusesDictionary.values)
 		mark(statuses, statusKey, flag, database)
-		return Set(newStatusIDs.compactMap({ statusesDictionary[$0] }))
+		return newStatusIDs
 	}
 
 	// MARK: - Fetching
