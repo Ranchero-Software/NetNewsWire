@@ -75,12 +75,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		super.viewWillAppear(animated)
 	}
 	
-	// adding this because I'm now breaking out of selectFeed in SceneCoordinator before the updateFeedSelection function runs
-	// if I don't do it here, there's some weird cell selection issues
-	override func viewDidAppear(_ animated: Bool) {
-		updateFeedSelection(animations: Animations.select)
-	}
-	
 	// MARK: Notifications
 	
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -472,9 +466,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			if adjustScroll {
 				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
-				// commenting this out because it gets rid of the cell selecting issue
-				// this is probably not the right way to do this.
-				// tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+				tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 			}
 		}
 	}
