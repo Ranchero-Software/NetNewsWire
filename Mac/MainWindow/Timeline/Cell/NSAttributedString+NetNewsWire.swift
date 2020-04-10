@@ -81,4 +81,9 @@ extension NSAttributedString {
 		return mutable.copy() as! NSAttributedString
 	}
 
+	convenience init(html: String) {
+		let data = html.data(using: .utf8)!
+		self.init(html: data, options: [.characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)!
+	}
+
 }
