@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import RSParser
 import Articles
+import ArticlesDatabase
 import RSWeb
 
 public enum LocalAccountDelegateError: String, Error {
@@ -233,6 +234,9 @@ final class LocalAccountDelegate: AccountDelegate {
 
 extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess newAndUpdatedArticles: NewAndUpdatedArticles) {
+	}
+	
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
 		refreshProgress.completeTask()
 	}

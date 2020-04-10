@@ -138,9 +138,9 @@ private extension CloudKitArticlesZoneDelegate {
 		for receivedStarredArticle in receivedStarredArticles {
 			if let parsedItem = makeParsedItem(receivedStarredArticle) {
 				group.enter()
-				self.account?.update(parsedItem.feedURL, with: Set([parsedItem])) { databaseError in
+				self.account?.update(parsedItem.feedURL, with: Set([parsedItem])) { result in
 					group.leave()
-					if let databaseError = databaseError {
+					if case .failure(let databaseError) = result {
 						os_log(.error, log: self.log, "Error occurred while storing starred items: %@", databaseError.localizedDescription)
 					}
 				}

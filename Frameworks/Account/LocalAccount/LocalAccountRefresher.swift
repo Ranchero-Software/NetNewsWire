@@ -11,8 +11,10 @@ import RSCore
 import RSParser
 import RSWeb
 import Articles
+import ArticlesDatabase
 
 protocol LocalAccountRefresherDelegate {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess: NewAndUpdatedArticles)
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed)
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher)
 }
@@ -97,12 +99,12 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 				return
 			}
 			
-			account.update(feed, with: parsedFeed) { error in
-				if error == nil {
+			account.update(feed, with: parsedFeed) { result in
+				if case .success(let newAndUpdatedArticles) = result {
+					self.delegate?.localAccountRefresher(self, didProcess: newAndUpdatedArticles)
 					if let httpResponse = response as? HTTPURLResponse {
 						feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 					}
-
 					feed.contentHash = dataHash
 				}
 				completion()
@@ -157,9 +159,9 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 
 	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession) {
-		delegate?.localAccountRefresherDidFinish(self)
 		completions.forEach({ $0() })
 		completions = [() -> Void]()
+		delegate?.localAccountRefresherDidFinish(self)
 	}
 
 }

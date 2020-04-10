@@ -715,7 +715,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		webFeedDictionariesNeedUpdate = true
 	}
 
-	func update(_ webFeed: WebFeed, with parsedFeed: ParsedFeed, _ completion: @escaping DatabaseCompletionBlock) {
+	func update(_ webFeed: WebFeed, with parsedFeed: ParsedFeed, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
@@ -723,14 +723,14 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		webFeed.takeSettings(from: parsedFeed)
 		let parsedItems = parsedFeed.items
 		guard !parsedItems.isEmpty else {
-			completion(nil)
+			completion(.success(NewAndUpdatedArticles()))
 			return
 		}
 		
 		update(webFeed.webFeedID, with: parsedItems, completion: completion)
 	}
 	
-	func update(_ webFeedID: String, with parsedItems: Set<ParsedItem>, completion: @escaping DatabaseCompletionBlock) {
+	func update(_ webFeedID: String, with parsedItems: Set<ParsedItem>, completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
@@ -739,9 +739,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			switch updateArticlesResult {
 			case .success(let newAndUpdatedArticles):
 				self.sendNotificationAbout(newAndUpdatedArticles)
-				completion(nil)
+				completion(.success(newAndUpdatedArticles))
 			case .failure(let databaseError):
-				completion(databaseError)
+				completion(.failure(databaseError))
 			}
 		}
 	}

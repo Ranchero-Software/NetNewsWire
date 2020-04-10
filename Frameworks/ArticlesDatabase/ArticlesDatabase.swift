@@ -27,6 +27,16 @@ public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) ->
 public struct NewAndUpdatedArticles {
 	public let newArticles: Set<Article>?
 	public let updatedArticles: Set<Article>?
+	
+	public init() {
+		self.newArticles = Set<Article>()
+		self.updatedArticles = Set<Article>()
+	}
+	
+	public init(newArticles: Set<Article>?, updatedArticles: Set<Article>?) {
+		self.newArticles = newArticles
+		self.updatedArticles = updatedArticles
+	}
 }
 
 public typealias UpdateArticlesResult = Result<NewAndUpdatedArticles, DatabaseError>
