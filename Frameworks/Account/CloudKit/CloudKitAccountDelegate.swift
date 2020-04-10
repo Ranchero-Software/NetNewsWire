@@ -98,12 +98,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					return
 				}
 				
-				let starredArticleIDs = syncStatuses.filter({ $0.key == .starred && $0.flag == true }).map({ $0.articleID })
-				account.fetchArticlesAsync(.articleIDs(Set(starredArticleIDs))) { result in
+				let articleIDs = syncStatuses.map({ $0.articleID })
+				account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
 					
-					func processWithArticles(_ starredArticles: Set<Article>) {
+					func processWithArticles(_ articles: Set<Article>) {
 						
-						self.articlesZone.sendArticleStatus(syncStatuses, starredArticles: starredArticles) { result in
+						self.articlesZone.sendArticleStatus(syncStatuses, articles: articles) { result in
 							switch result {
 							case .success:
 								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
@@ -119,8 +119,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					}
 
 					switch result {
-					case .success(let starredArticles):
-						processWithArticles(starredArticles)
+					case .success(let articles):
+						processWithArticles(articles)
 					case .failure(let databaseError):
 						completion(.failure(databaseError))
 					}

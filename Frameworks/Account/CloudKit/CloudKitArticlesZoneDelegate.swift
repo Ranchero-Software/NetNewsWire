@@ -94,25 +94,28 @@ private extension CloudKitArticlesZoneDelegate {
 				if newArticleStatusIDs.isEmpty {
 					group.leave()
 				} else {
-					self.account?.fetchArticlesAsync(FetchType.articleIDs(newArticleStatusIDs)) { result in
-						switch result {
-						case .success(let articles):
-							
-							if articles.isEmpty {
-								group.leave()
-							} else {
-								let webFeeds = Set(articles.compactMap({ $0.webFeed }))
-								webFeeds.forEach { $0.dropConditionalGetInfo() }
-								self.refreshProgress?.addToNumberOfTasksAndRemaining(webFeeds.count)
-								self.refresher?.refreshFeeds(webFeeds) {
-									group.leave()
-								}
-							}
-							
-						case .failure:
-							group.leave()
+					
+					var webFeedExternalIDDict = [String: String]()
+					for record in records {
+						if let webFeedExternalID = record[CloudKitArticlesZone.CloudKitArticleStatus.Fields.webFeedExternalID] as? String {
+							webFeedExternalIDDict[record.externalID] = webFeedExternalID
 						}
 					}
+					
+					var webFeeds = Set<WebFeed>()
+					for newArticleStatusID in newArticleStatusIDs {
+						if let webFeedExternalID = webFeedExternalIDDict[newArticleStatusID],
+							let webFeed = self.account?.existingWebFeed(withExternalID: webFeedExternalID) {
+							webFeeds.insert(webFeed)
+						}
+					}
+					
+					webFeeds.forEach { $0.dropConditionalGetInfo() }
+					self.refreshProgress?.addToNumberOfTasksAndRemaining(webFeeds.count)
+					self.refresher?.refreshFeeds(webFeeds) {
+						group.leave()
+					}
+					
 				}
 				
 			case .failure:
