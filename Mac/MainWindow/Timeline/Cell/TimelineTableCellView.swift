@@ -221,7 +221,6 @@ private extension TimelineTableCellView {
 
 	func updateTitleView() {
 
-		updateTextFieldText(titleView, cellData?.title)
 		updateTextFieldAttributedText(titleView, cellData?.attributedTitle)
 	}
 
