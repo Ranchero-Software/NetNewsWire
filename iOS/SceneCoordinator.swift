@@ -723,7 +723,30 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		
 		currentFeedIndexPath = indexPath
-		masterFeedViewController.updateFeedSelection(animations: animations)
+		
+		// I know this is a bad pyramid of doom - would like to know how to best improve this
+		if let ip = currentFeedIndexPath, let node = nodeFor(ip) {
+			if let parentNode = node.parent {
+				if let containerIdentifiable = parentNode.representedObject as? ContainerIdentifiable {
+					if let selectedItem = containerIdentifiable.containerID {
+						if !expandedTable.contains(selectedItem) {
+							completion?()
+							return
+						}
+					}
+				}
+			}
+		} else {
+			completion?()
+			return
+			// since the following updateFeedSelection call takes a bit, I need to return before it's called
+			// returning here though means the updateFeedSelection function won't run
+			// so I call that on viewDidAppear in the MasterFeedViewController instead
+			// I've also commented out tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) in the restoreSelectionIfNecessary function in MasterFeedViewController
+			//// I think commenting that out is a bad idea, but I'm not sure what purpose it serves
+		}
+		
+		masterFeedViewController.updateFeedSelection(animations: animations) // this call is what slows down the section header collapse when returning from a selected feed back to the MasterFeed
 
 		if deselectArticle {
 			selectArticle(nil)
