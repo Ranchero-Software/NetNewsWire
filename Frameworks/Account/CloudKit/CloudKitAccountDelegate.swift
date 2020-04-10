@@ -14,6 +14,7 @@ import RSCore
 import RSParser
 import Articles
 import RSWeb
+import Secrets
 
 public enum CloudKitAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."

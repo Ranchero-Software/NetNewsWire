@@ -9,6 +9,7 @@
 import AppKit
 import Account
 import RSWeb
+import Secrets
 
 class AccountsNewsBlurWindowController: NSWindowController {
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!

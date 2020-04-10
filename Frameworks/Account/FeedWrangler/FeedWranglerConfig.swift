@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Secrets
 
 enum FeedWranglerConfig {
 	static let pageSize = 100

@@ -11,6 +11,7 @@ import os.log
 import RSParser
 import RSCore
 import RSWeb
+import Secrets
 
 final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyGetStreamContentsOperationDelegate, FeedlyCheckpointOperationDelegate {
 

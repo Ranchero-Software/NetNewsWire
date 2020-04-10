@@ -8,6 +8,7 @@
 
 import Foundation
 import RSWeb
+import Secrets
 
 /// Client-specific information for requesting an authorization code grant.
 /// Accounts are responsible for the scope.

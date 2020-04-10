@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5102FD7D244009CF00534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7C244009CF00534F17 /* Secrets.framework */; };
 		5110769B243BCF3A00D97C8C /* FeedProvider_target.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */; };
 		5110769C243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51107697243BCF3A00D97C8C /* FeedProvider_project_test.xcconfig */; };
 		5110769D243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51107698243BCF3A00D97C8C /* FeedProvider_project_release.xcconfig */; };
@@ -15,28 +16,12 @@
 		511076EE243BD82A00D97C8C /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 511076ED243BD82A00D97C8C /* Articles.framework */; };
 		51107722243BE0DA00D97C8C /* FeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107721243BE0DA00D97C8C /* FeedProvider.swift */; };
 		51107724243BE11800D97C8C /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51107723243BE11800D97C8C /* RSParser.framework */; };
-		51107725243BE11800D97C8C /* RSParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51107723243BE11800D97C8C /* RSParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51107728243BE15D00D97C8C /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51107727243BE15D00D97C8C /* RSCore.framework */; };
-		51107729243BE15D00D97C8C /* RSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51107727243BE15D00D97C8C /* RSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		515A5105243D0C6B0089E588 /* TwitterFeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5104243D0C6B0089E588 /* TwitterFeedProvider.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		51107726243BE11800D97C8C /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				51107729243BE15D00D97C8C /* RSCore.framework in Embed Frameworks */,
-				51107725243BE11800D97C8C /* RSParser.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		5102FD7C244009CF00534F17 /* Secrets.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Secrets.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5110765F243BCE0400D97C8C /* FeedProvider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FeedProvider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51107663243BCE0400D97C8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		51107696243BCF3A00D97C8C /* FeedProvider_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeedProvider_target.xcconfig; sourceTree = "<group>"; };
@@ -58,6 +43,7 @@
 			files = (
 				51107728243BE15D00D97C8C /* RSCore.framework in Frameworks */,
 				51107724243BE11800D97C8C /* RSParser.framework in Frameworks */,
+				5102FD7D244009CF00534F17 /* Secrets.framework in Frameworks */,
 				511076EE243BD82A00D97C8C /* Articles.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -100,6 +86,7 @@
 		511076EC243BD82A00D97C8C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5102FD7C244009CF00534F17 /* Secrets.framework */,
 				51107727243BE15D00D97C8C /* RSCore.framework */,
 				51107723243BE11800D97C8C /* RSParser.framework */,
 				511076ED243BD82A00D97C8C /* Articles.framework */,
@@ -137,7 +124,6 @@
 				5110765C243BCE0400D97C8C /* Frameworks */,
 				5110765D243BCE0400D97C8C /* Resources */,
 				511076A2243BD2E600D97C8C /* Run Script: Verfiy No Build Settings */,
-				51107726243BE11800D97C8C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

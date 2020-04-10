@@ -17,7 +17,6 @@
 		179DBE829FDF48E102F73244 /* NewsBlurAccountDelegate+Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB78C47256A122A281942 /* NewsBlurAccountDelegate+Internal.swift */; };
 		179DBED55C9B4D6A413486C1 /* NewsBlurStoryHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB818180A51098A9816B2 /* NewsBlurStoryHash.swift */; };
 		179DBF4DE2562D4C532F6008 /* NewsBlurFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB1B909672E0E807B5E8C /* NewsBlurFeed.swift */; };
-		3B3A33E7238D3D6800314204 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A33E6238D3D6800314204 /* Secrets.swift */; };
 		3B826DA72385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D9E2385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift */; };
 		3B826DA82385C81C00FC1ADB /* FeedWranglerFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D9F2385C81C00FC1ADB /* FeedWranglerFeedItem.swift */; };
 		3B826DA92385C81C00FC1ADB /* FeedWranglerAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DA02385C81C00FC1ADB /* FeedWranglerAPICaller.swift */; };
@@ -28,6 +27,7 @@
 		3B826DAE2385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DA52385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift */; };
 		3B826DAF2385C81C00FC1ADB /* FeedWranglerGenericResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DA62385C81C00FC1ADB /* FeedWranglerGenericResult.swift */; };
 		3BC23AB92385ECB100371CBA /* FeedWranglerSubscriptionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC23AB82385ECB100371CBA /* FeedWranglerSubscriptionResult.swift */; };
+		5102FD80244009E000534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7F244009E000534F17 /* Secrets.framework */; };
 		5103A9D92422546800410853 /* CloudKitAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */; };
 		5107A09B227DE49500C7C3C5 /* TestAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */; };
 		5107A09D227DE77700C7C3C5 /* TestTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09C227DE77700C7C3C5 /* TestTransport.swift */; };
@@ -45,9 +45,7 @@
 		514BF5202391B0DB00902FE8 /* SingleArticleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514BF51F2391B0DB00902FE8 /* SingleArticleFetcher.swift */; };
 		5150FFFE243823B800C1A442 /* CloudKitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5150FFFD243823B800C1A442 /* CloudKitError.swift */; };
 		5154367B228EEB28005E1CDF /* FeedbinImportResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5154367A228EEB28005E1CDF /* FeedbinImportResult.swift */; };
-		515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB22324FF8C0057B0E7 /* CredentialsManager.swift */; };
 		515E4EB62324FF8C0057B0E7 /* URLRequest+RSWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */; };
-		515E4EB72324FF8C0057B0E7 /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB42324FF8C0057B0E7 /* Credentials.swift */; };
 		5165D7122282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5165D7112282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift */; };
 		5165D71622821C2400D9D53D /* taggings_delete.json in Resources */ = {isa = PBXBuildFile; fileRef = 5165D71322821C2400D9D53D /* taggings_delete.json */; };
 		5165D71722821C2400D9D53D /* taggings_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5165D71422821C2400D9D53D /* taggings_add.json */; };
@@ -252,7 +250,6 @@
 		179DB818180A51098A9816B2 /* NewsBlurStoryHash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurStoryHash.swift; sourceTree = "<group>"; };
 		179DBBF346CF712AB2F0E9E6 /* NewsBlurAPICaller+Internal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NewsBlurAPICaller+Internal.swift"; sourceTree = "<group>"; };
 		179DBDDC00B68411AA28941F /* NewsBlurFolderChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurFolderChange.swift; sourceTree = "<group>"; };
-		3B3A33E6238D3D6800314204 /* Secrets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = ../../Shared/Secrets.swift; sourceTree = "<group>"; };
 		3B826D9E2385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAuthorizationResult.swift; sourceTree = "<group>"; };
 		3B826D9F2385C81C00FC1ADB /* FeedWranglerFeedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerFeedItem.swift; sourceTree = "<group>"; };
 		3B826DA02385C81C00FC1ADB /* FeedWranglerAPICaller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAPICaller.swift; sourceTree = "<group>"; };
@@ -263,6 +260,7 @@
 		3B826DA52385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerSubscriptionsRequest.swift; sourceTree = "<group>"; };
 		3B826DA62385C81C00FC1ADB /* FeedWranglerGenericResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerGenericResult.swift; sourceTree = "<group>"; };
 		3BC23AB82385ECB100371CBA /* FeedWranglerSubscriptionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedWranglerSubscriptionResult.swift; sourceTree = "<group>"; };
+		5102FD7F244009E000534F17 /* Secrets.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Secrets.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountDelegate.swift; sourceTree = "<group>"; };
 		5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCredentialsTest.swift; sourceTree = "<group>"; };
 		5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAccountManager.swift; sourceTree = "<group>"; };
@@ -282,9 +280,7 @@
 		514BF51F2391B0DB00902FE8 /* SingleArticleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleArticleFetcher.swift; sourceTree = "<group>"; };
 		5150FFFD243823B800C1A442 /* CloudKitError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitError.swift; sourceTree = "<group>"; };
 		5154367A228EEB28005E1CDF /* FeedbinImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinImportResult.swift; sourceTree = "<group>"; };
-		515E4EB22324FF8C0057B0E7 /* CredentialsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsManager.swift; sourceTree = "<group>"; };
 		515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLRequest+RSWeb.swift"; sourceTree = "<group>"; };
-		515E4EB42324FF8C0057B0E7 /* Credentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		5165D7112282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinFolderContentsSyncTest.swift; sourceTree = "<group>"; };
 		5165D71322821C2400D9D53D /* taggings_delete.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taggings_delete.json; sourceTree = "<group>"; };
 		5165D71422821C2400D9D53D /* taggings_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taggings_add.json; sourceTree = "<group>"; };
@@ -467,6 +463,7 @@
 				51E148EC234B8FFC0004F7A5 /* SyncDatabase.framework in Frameworks */,
 				841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */,
 				841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */,
+				5102FD80244009E000534F17 /* Secrets.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,16 +543,6 @@
 				51D5875D227F643C00900287 /* AccountFeedbinFolderSyncTest.swift */,
 			);
 			path = Feedbin;
-			sourceTree = "<group>";
-		};
-		515E4EB12324FF7D0057B0E7 /* Credentials */ = {
-			isa = PBXGroup;
-			children = (
-				515E4EB42324FF8C0057B0E7 /* Credentials.swift */,
-				515E4EB22324FF8C0057B0E7 /* CredentialsManager.swift */,
-				515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */,
-			);
-			path = Credentials;
 			sourceTree = "<group>";
 		};
 		5165D71F22835E9800D9D53D /* FeedFinder */ = {
@@ -661,6 +648,7 @@
 		8469F80F1F6DC3C10084783E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5102FD7F244009E000534F17 /* Secrets.framework */,
 				511076F4243BD96D00D97C8C /* FeedProvider.framework */,
 				511076A3243BD33100D97C8C /* .framework */,
 				51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */,
@@ -677,7 +665,6 @@
 		848934EC1F62484F00CEBD24 = {
 			isa = PBXGroup;
 			children = (
-				3B3A33E6238D3D6800314204 /* Secrets.swift */,
 				848935101F62486800CEBD24 /* Account.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				51BB7B83233531BC008E8144 /* AccountBehaviors.swift */,
@@ -698,11 +685,11 @@
 				511B9803237CD4270028BCAA /* FeedIdentifier.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
 				844B297E210CE37E004020B3 /* UnreadCountProvider.swift */,
+				515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */,
 				844B297C2106C7EC004020B3 /* WebFeed.swift */,
 				84B2D4CE2238C13D00498ADA /* WebFeedMetadata.swift */,
 				510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */,
 				5165D71F22835E9800D9D53D /* FeedFinder */,
-				515E4EB12324FF7D0057B0E7 /* Credentials */,
 				8419742B1F6DDE84006346C4 /* LocalAccount */,
 				84245C7D1FDDD2580074AFBB /* Feedbin */,
 				3B826D9D2385C81C00FC1ADB /* FeedWrangler */,
@@ -1123,7 +1110,6 @@
 				9EEEF71F23545CB4009E9D80 /* FeedlySendArticleStatusesOperation.swift in Sources */,
 				9EBD49C223C67784005AD5CD /* FeedlyEntryIdentifierProviding.swift in Sources */,
 				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
-				515E4EB72324FF8C0057B0E7 /* Credentials.swift in Sources */,
 				51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */,
 				9EEAE06E235D002D00E3FEE4 /* FeedlyGetCollectionsService.swift in Sources */,
 				5165D72922835F7A00D9D53D /* FeedSpecifier.swift in Sources */,
@@ -1186,7 +1172,6 @@
 				9EAEC62823331C350085D7C9 /* FeedlyCategory.swift in Sources */,
 				3B826DAE2385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift in Sources */,
 				9E964EB823754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift in Sources */,
-				3B3A33E7238D3D6800314204 /* Secrets.swift in Sources */,
 				9EF1B10923590E93000A486A /* FeedlyStreamIds.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,
 				84CAD7161FDF2E22000F0755 /* FeedbinEntry.swift in Sources */,
@@ -1196,7 +1181,6 @@
 				51E4DB302426353D0091EB5B /* CloudKitAccountZone.swift in Sources */,
 				3B826DAD2385C81C00FC1ADB /* FeedWranglerFeedItemsRequest.swift in Sources */,
 				846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */,
-				515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */,
 				844B297F210CE37E004020B3 /* UnreadCountProvider.swift in Sources */,
 				9E1773D5234570E30056A5A8 /* FeedlyEntryParser.swift in Sources */,
 				512DD4CD2431098700C17B1F /* CloudKitAccountZoneDelegate.swift in Sources */,

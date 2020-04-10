@@ -16,6 +16,14 @@
 		3B826DCE2385C89600FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
 		49F40DF82335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		49F40DF92335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
+		5102FD83244009F000534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
+		5102FD84244009F000534F17 /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5102FD9B244009FA00534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
+		5102FD9C244009FA00534F17 /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5102FD9D24400A0500534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
+		5102FD9E24400A0500534F17 /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5102FD9F24400A1400534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
+		5102FDA224400A2000534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
 		5103A9982421643300410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9972421643300410853 /* blank.html */; };
 		5103A9992421643300410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9972421643300410853 /* blank.html */; };
 		5103A9B424216A4200410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9B324216A4200410853 /* blank.html */; };
@@ -728,6 +736,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5102FD7A244008A700534F17 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5102FD72244008A700534F17 /* Secrets.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 514BB41A243FFA640023B621;
+			remoteInfo = Secrets;
+		};
 		51107671243BCE0500D97C8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5110766A243BCE0400D97C8C /* FeedProvider.xcodeproj */;
@@ -1212,6 +1227,7 @@
 				51C451E92264C81000C03939 /* RSDatabase.framework in Embed Frameworks */,
 				51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */,
 				51C451ED2264C81B00C03939 /* RSCore.framework in Embed Frameworks */,
+				5102FD9E24400A0500534F17 /* Secrets.framework in Embed Frameworks */,
 				51C451E52264C80600C03939 /* RSParser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1243,6 +1259,7 @@
 				65ED4078235DEF6C0081F399 /* RSParser.framework in Embed Frameworks */,
 				511076FA243BDA9600D97C8C /* FeedProvider.framework in Embed Frameworks */,
 				65ED4079235DEF6C0081F399 /* SyncDatabase.framework in Embed Frameworks */,
+				5102FD9C244009FA00534F17 /* Secrets.framework in Embed Frameworks */,
 				65ED407A235DEF6C0081F399 /* RSCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1281,6 +1298,7 @@
 			files = (
 				84C37FAA20DD8D9000CA8CF5 /* RSWeb.framework in Embed Frameworks */,
 				511076F8243BDA8200D97C8C /* FeedProvider.framework in Embed Frameworks */,
+				5102FD84244009F000534F17 /* Secrets.framework in Embed Frameworks */,
 				84C37FC620DD8E1D00CA8CF5 /* RSDatabase.framework in Embed Frameworks */,
 				84C37FAE20DD8D9900CA8CF5 /* RSTree.framework in Embed Frameworks */,
 				51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
@@ -1311,6 +1329,7 @@
 		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
 		3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
+		5102FD72244008A700534F17 /* Secrets.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Secrets.xcodeproj; path = Frameworks/Secrets/Secrets.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5103A9972421643300410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsAddCloudKit.xib; sourceTree = "<group>"; };
@@ -1732,6 +1751,7 @@
 				513146BA235A8FD000387FDC /* RSTree.framework in Frameworks */,
 				513146C5235A8FDB00387FDC /* SyncDatabase.framework in Frameworks */,
 				513146B4235A8FD000387FDC /* RSCore.framework in Frameworks */,
+				5102FDA224400A2000534F17 /* Secrets.framework in Frameworks */,
 				513146B8235A8FD000387FDC /* RSParser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1748,6 +1768,7 @@
 				513C5D06232574C0003D4054 /* RSDatabase.framework in Frameworks */,
 				513C5D0E232574E4003D4054 /* SyncDatabase.framework in Frameworks */,
 				513C5D04232574B9003D4054 /* RSCore.framework in Frameworks */,
+				5102FD9F24400A1400534F17 /* Secrets.framework in Frameworks */,
 				513C5D02232574B4003D4054 /* ArticlesDatabase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1779,6 +1800,7 @@
 				65ED4049235DEF6C0081F399 /* Articles.framework in Frameworks */,
 				511076F9243BDA9600D97C8C /* FeedProvider.framework in Frameworks */,
 				65ED404A235DEF6C0081F399 /* RSCore.framework in Frameworks */,
+				5102FD9B244009FA00534F17 /* Secrets.framework in Frameworks */,
 				65ED404B235DEF6C0081F399 /* SyncDatabase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1796,6 +1818,7 @@
 			files = (
 				51C452B42265141B00C03939 /* WebKit.framework in Frameworks */,
 				51C451D22264C7F200C03939 /* RSWeb.framework in Frameworks */,
+				5102FD9D24400A0500534F17 /* Secrets.framework in Frameworks */,
 				51C451E02264C7F900C03939 /* RSTree.framework in Frameworks */,
 				51C451F82264C83E00C03939 /* Account.framework in Frameworks */,
 				51C451F02264C83100C03939 /* ArticlesDatabase.framework in Frameworks */,
@@ -1824,6 +1847,7 @@
 				51C451B9226377C900C03939 /* Articles.framework in Frameworks */,
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				84C37FA520DD8D8400CA8CF5 /* RSCore.framework in Frameworks */,
+				5102FD83244009F000534F17 /* Secrets.framework in Frameworks */,
 				51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1838,6 +1862,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5102FD73244008A700534F17 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5102FD7B244008A700534F17 /* Secrets.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		510C43F5243D0325009F70C3 /* ExtensionPoints */ = {
 			isa = PBXGroup;
 			children = (
@@ -2659,6 +2691,7 @@
 			children = (
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
 				5110766A243BCE0400D97C8C /* FeedProvider.xcodeproj */,
+				5102FD72244008A700534F17 /* Secrets.xcodeproj */,
 				841D4D542106B3D500DD04E6 /* Articles.xcodeproj */,
 				841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */,
 				51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */,
@@ -3262,6 +3295,10 @@
 					ProjectRef = 84C37F9820DD8D0400CA8CF5 /* RSWeb.xcodeproj */;
 				},
 				{
+					ProductGroup = 5102FD73244008A700534F17 /* Products */;
+					ProjectRef = 5102FD72244008A700534F17 /* Secrets.xcodeproj */;
+				},
+				{
 					ProductGroup = 65ED429A235E71B40081F399 /* Products */;
 					ProjectRef = 65ED4299235E71B40081F399 /* Sparkle.xcodeproj */;
 				},
@@ -3286,6 +3323,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		5102FD7B244008A700534F17 /* Secrets.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Secrets.framework;
+			remoteRef = 5102FD7A244008A700534F17 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		51107672243BCE0500D97C8C /* FeedProvider.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;

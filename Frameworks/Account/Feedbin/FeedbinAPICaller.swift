@@ -12,6 +12,7 @@
 
 import Foundation
 import RSWeb
+import Secrets
 
 enum CreateSubscriptionResult {
 	case created(FeedbinSubscription)

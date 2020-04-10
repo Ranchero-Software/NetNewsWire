@@ -8,6 +8,7 @@
 
 import Foundation
 import RSWeb
+import Secrets
 
 final class NewsBlurAPICaller: NSObject {
 	static let SessionIdCookie = "newsblur_sessionid"

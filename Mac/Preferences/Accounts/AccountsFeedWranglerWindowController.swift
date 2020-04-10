@@ -9,6 +9,7 @@
 import AppKit
 import Account
 import RSWeb
+import Secrets
 
 class AccountsFeedWranglerWindowController: NSWindowController {
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!

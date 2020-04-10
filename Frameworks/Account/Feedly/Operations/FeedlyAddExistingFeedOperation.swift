@@ -10,6 +10,7 @@ import Foundation
 import os.log
 import RSWeb
 import RSCore
+import Secrets
 
 class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate {
 

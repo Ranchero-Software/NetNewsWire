@@ -8,6 +8,7 @@
 
 import Foundation
 import Account
+import Secrets
 
 public enum ArticleExtractorState {
     case ready

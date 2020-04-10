@@ -8,6 +8,7 @@
 
 import Foundation
 import RSWeb
+import Secrets
 
 enum CreateReaderAPISubscriptionResult {
 	case created(ReaderAPISubscription)
