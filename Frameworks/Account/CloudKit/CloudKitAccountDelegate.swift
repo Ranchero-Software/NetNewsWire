@@ -13,6 +13,7 @@ import SyncDatabase
 import RSCore
 import RSParser
 import Articles
+import ArticlesDatabase
 import RSWeb
 
 public enum CloudKitAccountDelegateError: String, Error {
@@ -34,7 +35,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	private let accountZone: CloudKitAccountZone
 	private let articlesZone: CloudKitArticlesZone
 	
-	private let refresher = LocalAccountRefresher()
+	weak var account: Account?
+	
+	private lazy var refresher: LocalAccountRefresher = {
+		let refresher = LocalAccountRefresher()
+		refresher.delegate = self
+		return refresher
+	}()
 
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
@@ -44,7 +51,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	var accountMetadata: AccountMetadata?
 
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
-	
+
 	init(dataFolder: String) {
 		accountZone = CloudKitAccountZone(container: container)
 		articlesZone = CloudKitArticlesZone(container: container)
@@ -76,6 +83,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			completion(.success(()))
 			return
 		}
+
 		refreshAll(for: account, downloadFeeds: true, completion: completion)
 	}
 
@@ -90,12 +98,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					return
 				}
 				
-				let starredArticleIDs = syncStatuses.filter({ $0.key == .starred && $0.flag == true }).map({ $0.articleID })
-				account.fetchArticlesAsync(.articleIDs(Set(starredArticleIDs))) { result in
+				let articleIDs = syncStatuses.map({ $0.articleID })
+				account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
 					
-					func processWithArticles(_ starredArticles: Set<Article>) {
+					func processWithArticles(_ articles: Set<Article>) {
 						
-						self.articlesZone.sendArticleStatus(syncStatuses, starredArticles: starredArticles) { result in
+						self.articlesZone.sendArticleStatus(syncStatuses, articles: articles) { result in
 							switch result {
 							case .success:
 								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
@@ -111,8 +119,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					}
 
 					switch result {
-					case .success(let starredArticles):
-						processWithArticles(starredArticles)
+					case .success(let articles):
+						processWithArticles(articles)
 					case .failure(let databaseError):
 						completion(.failure(databaseError))
 					}
@@ -146,6 +154,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard refreshProgress.isComplete else {
+			completion(.success(()))
+			return
+		}
+
 		var fileData: Data?
 		
 		do {
@@ -463,8 +476,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
+		self.account = account
+		
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
-		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account,
+															 database: database,
+															 articlesZone: articlesZone,
+															 refreshProgress: refreshProgress)
 		
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
@@ -472,11 +490,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				switch result {
 				case .success(let externalID):
 					account.externalID = externalID
-					self.refreshAll(for: account, downloadFeeds: false) { result in
-						if case .failure(let error) = result {
-							os_log(.error, log: self.log, "Error while doing intial refresh: %@", error.localizedDescription)
-						}
-					}
+					self.refreshAll(for: account, downloadFeeds: false) { _ in }
 				case .failure(let error):
 					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
 				}
@@ -521,6 +535,12 @@ private extension CloudKitAccountDelegate {
 		let intialWebFeedsCount = downloadFeeds ? account.flattenedWebFeeds().count : 0
 		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialWebFeedsCount)
 
+		func fail(_ error: Error) {
+			self.processAccountError(account, error)
+			self.refreshProgress.clear()
+			completion(.failure(error))
+		}
+		
 		BatchUpdate.shared.start()
 		accountZone.fetchChangesInZone() { result in
 			BatchUpdate.shared.end()
@@ -549,31 +569,34 @@ private extension CloudKitAccountDelegate {
 									return
 								}
 								
-								self.refresher.refreshFeeds(webFeeds, feedCompletionBlock: { _ in self.refreshProgress.completeTask() }) {
+								self.refresher.refreshFeeds(webFeeds) {
+
 									account.metadata.lastArticleFetchEndTime = Date()
-									self.refreshProgress.clear()
-									completion(.success(()))
+
+									self.sendArticleStatus(for: account) { result in
+										switch result {
+										case .success:
+											completion(.success(()))
+										case .failure(let error):
+											fail(error)
+										}
+									}
+
 								}
 
 							case .failure(let error):
-								self.processAccountError(account, error)
-								self.refreshProgress.clear()
-								completion(.failure(error))
+								fail(error)
 							}
 						}
 						
 					case .failure(let error):
-						self.processAccountError(account, error)
-						self.refreshProgress.clear()
-						completion(.failure(error))
+						fail(error)
 					}
 
 				}
 				
 			case .failure(let error):
-				self.processAccountError(account, error)
-				self.refreshProgress.clear()
-				completion(.failure(error))
+				fail(error)
 			}
 		}
 	}
@@ -585,6 +608,27 @@ private extension CloudKitAccountDelegate {
 				account.removeFolder(folder)
 			}
 		}
+	}
+	
+}
+
+extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
+	
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess newAndUpdatedArticles: NewAndUpdatedArticles) {
+		if let newArticles = newAndUpdatedArticles.newArticles {
+			let syncStatuses = newArticles.map { article in
+				return SyncStatus(articleID: article.articleID, key: .read, flag: false)
+			}
+			database.insertStatuses(syncStatuses)
+		}
+	}
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
+		refreshProgress.completeTask()
+	}
+	
+	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
+		refreshProgress.clear()
 	}
 	
 }

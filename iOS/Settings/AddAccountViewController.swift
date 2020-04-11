@@ -19,7 +19,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	#if DEBUG
 	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .cloudKit, .newsBlur]
 	#else
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .cloudKit, .newsBlur]
 	#endif
 
 	override func viewDidLoad() {

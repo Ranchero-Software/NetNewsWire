@@ -27,11 +27,11 @@ final class StatusesTable: DatabaseTable {
 
 	// MARK: - Creating/Updating
 
-	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ read: Bool, _ database: FMDatabase) -> [String: ArticleStatus] {
+	func ensureStatusesForArticleIDs(_ articleIDs: Set<String>, _ read: Bool, _ database: FMDatabase) -> ([String: ArticleStatus], Set<String>) {
 		// Check cache.
 		let articleIDsMissingCachedStatus = articleIDsWithNoCachedStatus(articleIDs)
 		if articleIDsMissingCachedStatus.isEmpty {
-			return statusesDictionary(articleIDs)
+			return (statusesDictionary(articleIDs), Set<String>())
 		}
 		
 		// Check database.
@@ -43,7 +43,7 @@ final class StatusesTable: DatabaseTable {
 			self.createAndSaveStatusesForArticleIDs(articleIDsNeedingStatus, read, database)
 		}
 			
-		return statusesDictionary(articleIDs)
+		return (statusesDictionary(articleIDs), articleIDsNeedingStatus)
 	}
 
 	func existingStatusesForArticleIDs(_ articleIDs: Set<String>, _ database: FMDatabase) -> [String: ArticleStatus] {
@@ -85,10 +85,11 @@ final class StatusesTable: DatabaseTable {
 		return updatedStatuses
 	}
 
-	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) {
-		let statusesDictionary = ensureStatusesForArticleIDs(articleIDs, flag, database)
+	func markAndFetchNew(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<String> {
+		let (statusesDictionary, newStatusIDs) = ensureStatusesForArticleIDs(articleIDs, flag, database)
 		let statuses = Set(statusesDictionary.values)
 		mark(statuses, statusKey, flag, database)
+		return newStatusIDs
 	}
 
 	// MARK: - Fetching

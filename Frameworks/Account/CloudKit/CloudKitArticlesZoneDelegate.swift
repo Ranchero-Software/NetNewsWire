@@ -9,8 +9,11 @@
 import Foundation
 import os.log
 import RSParser
+import RSWeb
 import CloudKit
 import SyncDatabase
+import Articles
+import ArticlesDatabase
 
 class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
@@ -19,11 +22,19 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	weak var account: Account?
 	var database: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
+	weak var refreshProgress: DownloadProgress?
+
+	private lazy var refresher: LocalAccountRefresher = {
+		let refresher = LocalAccountRefresher()
+		refresher.delegate = self
+		return refresher
+	}()
 	
-	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
+	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, refreshProgress: DownloadProgress?) {
 		self.account = account
 		self.database = database
 		self.articlesZone = articlesZone
+		self.refreshProgress = refreshProgress
 	}
 	
 	func cloudKitDidChange(record: CKRecord) {
@@ -82,8 +93,40 @@ private extension CloudKitArticlesZoneDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { _ in
-			group.leave()
+		account?.markAsUnread(updateableUnreadArticleIDs) { result in
+			switch result {
+			case .success(let newArticleStatusIDs):
+				
+				if newArticleStatusIDs.isEmpty {
+					group.leave()
+				} else {
+					
+					var webFeedExternalIDDict = [String: String]()
+					for record in records {
+						if let webFeedExternalID = record[CloudKitArticlesZone.CloudKitArticleStatus.Fields.webFeedExternalID] as? String {
+							webFeedExternalIDDict[record.externalID] = webFeedExternalID
+						}
+					}
+					
+					var webFeeds = Set<WebFeed>()
+					for newArticleStatusID in newArticleStatusIDs {
+						if let webFeedExternalID = webFeedExternalIDDict[newArticleStatusID],
+							let webFeed = self.account?.existingWebFeed(withExternalID: webFeedExternalID) {
+							webFeeds.insert(webFeed)
+						}
+					}
+					
+					webFeeds.forEach { $0.dropConditionalGetInfo() }
+					self.refreshProgress?.addToNumberOfTasksAndRemaining(webFeeds.count)
+					self.refresher.refreshFeeds(webFeeds) {
+						group.leave()
+					}
+					
+				}
+				
+			case .failure:
+				group.leave()
+			}
 		}
 		
 		group.enter()
@@ -104,9 +147,9 @@ private extension CloudKitArticlesZoneDelegate {
 		for receivedStarredArticle in receivedStarredArticles {
 			if let parsedItem = makeParsedItem(receivedStarredArticle) {
 				group.enter()
-				self.account?.update(parsedItem.feedURL, with: Set([parsedItem])) { databaseError in
+				self.account?.update(parsedItem.feedURL, with: Set([parsedItem])) { result in
 					group.leave()
-					if let databaseError = databaseError {
+					if case .failure(let databaseError) = result {
 						os_log(.error, log: self.log, "Error occurred while storing starred items: %@", databaseError.localizedDescription)
 					}
 				}
@@ -119,7 +162,6 @@ private extension CloudKitArticlesZoneDelegate {
 		
 	}
 
-	
 	func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
 		var parsedAuthors = Set<ParsedAuthor>()
 		
@@ -157,6 +199,20 @@ private extension CloudKitArticlesZoneDelegate {
 									attachments: nil)
 		
 		return parsedItem
+	}
+	
+}
+
+extension CloudKitArticlesZoneDelegate: LocalAccountRefresherDelegate {
+	
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess newAndUpdatedArticles: NewAndUpdatedArticles) {
+	}
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
+		refreshProgress?.completeTask()
+	}
+	
+	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
 	}
 	
 }

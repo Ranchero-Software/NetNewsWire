@@ -221,9 +221,9 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		self.metadata = metadata
 	}
 
-	// MARK: - Debug
-
-	public func debugDropConditionalGetInfo() {
+	// MARK: - API
+	
+	public func dropConditionalGetInfo() {
 		conditionalGetInfo = nil
 		contentHash = nil
 	}
