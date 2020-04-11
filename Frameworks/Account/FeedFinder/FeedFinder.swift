@@ -14,7 +14,7 @@ import RSCore
 class FeedFinder {
 	
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
-		downloadUsingCache(url) { (data, response, error) in
+		downloadAddingToCache(url) { (data, response, error) in
 			if response?.forcedStatusCode == 404 {
 				completion(.failure(AccountError.createErrorNotFound))
 				return
