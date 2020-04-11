@@ -37,7 +37,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	weak var account: Account?
 	
-	private lazy var refresher: LocalAccountRefresher? = {
+	private lazy var refresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()
 		refresher.delegate = self
 		return refresher
@@ -482,7 +482,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account,
 															 database: database,
 															 articlesZone: articlesZone,
-															 refresher: refresher,
 															 refreshProgress: refreshProgress)
 		
 		// Check to see if this is a new account and initialize anything we need
@@ -516,7 +515,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	// MARK: Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
-		refresher?.suspend()
+		refresher.suspend()
 	}
 
 	func suspendDatabase() {
@@ -524,7 +523,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func resume() {
-		refresher?.resume()
+		refresher.resume()
 		database.resume()
 	}
 }
@@ -570,7 +569,7 @@ private extension CloudKitAccountDelegate {
 									return
 								}
 								
-								self.refresher?.refreshFeeds(webFeeds) {
+								self.refresher.refreshFeeds(webFeeds) {
 
 									account.metadata.lastArticleFetchEndTime = Date()
 
@@ -629,7 +628,7 @@ extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	}
 	
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
-		self.refreshProgress.clear()
+		refreshProgress.clear()
 	}
 	
 }

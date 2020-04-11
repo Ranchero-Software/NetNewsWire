@@ -12,6 +12,8 @@ import RSParser
 import RSWeb
 import CloudKit
 import SyncDatabase
+import Articles
+import ArticlesDatabase
 
 class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
@@ -20,14 +22,18 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	weak var account: Account?
 	var database: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
-	weak var  refresher: LocalAccountRefresher?
 	weak var refreshProgress: DownloadProgress?
+
+	private lazy var refresher: LocalAccountRefresher = {
+		let refresher = LocalAccountRefresher()
+		refresher.delegate = self
+		return refresher
+	}()
 	
-	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, refresher: LocalAccountRefresher?, refreshProgress: DownloadProgress?) {
+	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, refreshProgress: DownloadProgress?) {
 		self.account = account
 		self.database = database
 		self.articlesZone = articlesZone
-		self.refresher = refresher
 		self.refreshProgress = refreshProgress
 	}
 	
@@ -112,7 +118,7 @@ private extension CloudKitArticlesZoneDelegate {
 					
 					webFeeds.forEach { $0.dropConditionalGetInfo() }
 					self.refreshProgress?.addToNumberOfTasksAndRemaining(webFeeds.count)
-					self.refresher?.refreshFeeds(webFeeds) {
+					self.refresher.refreshFeeds(webFeeds) {
 						group.leave()
 					}
 					
@@ -193,6 +199,20 @@ private extension CloudKitArticlesZoneDelegate {
 									attachments: nil)
 		
 		return parsedItem
+	}
+	
+}
+
+extension CloudKitArticlesZoneDelegate: LocalAccountRefresherDelegate {
+	
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess newAndUpdatedArticles: NewAndUpdatedArticles) {
+	}
+
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
+		refreshProgress?.completeTask()
+	}
+	
+	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
 	}
 	
 }
