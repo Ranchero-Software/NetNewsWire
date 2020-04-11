@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import SystemConfiguration
 import os.log
 import SyncDatabase
 import RSCore
@@ -84,6 +85,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 
+		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
+		var flags = SCNetworkReachabilityFlags()
+		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
+			completion(.success(()))
+			return
+		}
+			
 		refreshAll(for: account, downloadFeeds: true, completion: completion)
 	}
 
