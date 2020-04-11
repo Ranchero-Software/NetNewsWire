@@ -36,7 +36,7 @@ class ImageViewer {
 		var canvas = document.createElement("canvas");
 		canvas.width = this.img.naturalWidth;
 		canvas.height = this.img.naturalHeight;
-		canvas.getContext("2d").drawImage(this.img, 0, 0);
+		canvas.getContext("2d").drawImage(this.img, 0, 0, canvas.width, canvas.height);
 
 		const rect = this.img.getBoundingClientRect();
 		const message = {

@@ -27,6 +27,16 @@ public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) ->
 public struct NewAndUpdatedArticles {
 	public let newArticles: Set<Article>?
 	public let updatedArticles: Set<Article>?
+	
+	public init() {
+		self.newArticles = Set<Article>()
+		self.updatedArticles = Set<Article>()
+	}
+	
+	public init(newArticles: Set<Article>?, updatedArticles: Set<Article>?) {
+		self.newArticles = newArticles
+		self.updatedArticles = updatedArticles
+	}
 }
 
 public typealias UpdateArticlesResult = Result<NewAndUpdatedArticles, DatabaseError>
@@ -222,8 +232,8 @@ public final class ArticlesDatabase {
 		return try articlesTable.mark(articles, statusKey, flag)
 	}
 
-	public func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping DatabaseCompletionBlock) {
-		articlesTable.mark(articleIDs, statusKey, flag, completion)
+	public func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
+		articlesTable.markAndFetchNew(articleIDs, statusKey, flag, completion)
 	}
 
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
