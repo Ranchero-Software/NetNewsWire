@@ -26,33 +26,43 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		self.refreshProgress = refreshProgress
 	}
 	
-	func cloudKitDidChange(record: CKRecord) {
-		switch record.recordType {
-		case CloudKitAccountZone.CloudKitWebFeed.recordType:
-			addOrUpdateWebFeed(record)
-		case CloudKitAccountZone.CloudKitContainer.recordType:
-			addOrUpdateContainer(record)
-		default:
-			assertionFailure("Unknown record type: \(record.recordType)")
-		}
-	}
-	
-	func cloudKitDidDelete(recordKey: CloudKitRecordKey) {
-		switch recordKey.recordType {
-		case CloudKitAccountZone.CloudKitWebFeed.recordType:
-			removeWebFeed(recordKey.recordID.externalID)
-		case CloudKitAccountZone.CloudKitContainer.recordType:
-			removeContainer(recordKey.recordID.externalID)
-		default:
-			assertionFailure("Unknown record type: \(recordKey.recordType)")
-		}
-	}
-	
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
-		completion(.success(()))
+		let group = DispatchGroup()
+		
+		for changedRecord in changed {
+			switch changedRecord.recordType {
+			case CloudKitAccountZone.CloudKitWebFeed.recordType:
+				group.enter()
+				addOrUpdateWebFeed(changedRecord) {
+					group.leave()
+				}
+			case CloudKitAccountZone.CloudKitContainer.recordType:
+				group.enter()
+				addOrUpdateContainer(changedRecord) {
+					group.leave()
+				}
+			default:
+				assertionFailure("Unknown record type: \(changedRecord.recordType)")
+			}
+		}
+		
+		for deletedRecordKey in deleted {
+			switch deletedRecordKey.recordType {
+			case CloudKitAccountZone.CloudKitWebFeed.recordType:
+				removeWebFeed(deletedRecordKey.recordID.externalID)
+			case CloudKitAccountZone.CloudKitContainer.recordType:
+				removeContainer(deletedRecordKey.recordID.externalID)
+			default:
+				assertionFailure("Unknown record type: \(deletedRecordKey.recordType)")
+			}
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion(.success(()))
+		}
 	}
 	
-	func addOrUpdateWebFeed(_ record: CKRecord) {
+	func addOrUpdateWebFeed(_ record: CKRecord, completion: @escaping () -> Void) {
 		guard let account = account,
 			let urlString = record[CloudKitAccountZone.CloudKitWebFeed.Fields.url] as? String,
 			let containerExternalIDs = record[CloudKitAccountZone.CloudKitWebFeed.Fields.containerExternalIDs] as? [String],
@@ -61,19 +71,30 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		let editedName = record[CloudKitAccountZone.CloudKitWebFeed.Fields.editedName] as? String
 		
 		if let webFeed = account.existingWebFeed(withExternalID: record.externalID) {
+			
 			updateWebFeed(webFeed, editedName: editedName, containerExternalIDs: containerExternalIDs)
+			completion()
+			
 		} else {
-			var webFeed: WebFeed? = nil
+			
+			let group = DispatchGroup()
 			for containerExternalID in containerExternalIDs {
+				group.enter()
 				if let container = account.existingContainer(withExternalID: containerExternalID) {
-					if webFeed == nil {
-						webFeed = createWebFeed(url: url, editedName: editedName, webFeedExternalID: record.externalID)
+					createWebFeedIfNecessary(url: url, editedName: editedName, webFeedExternalID: record.externalID) { webFeed in
+						container.addWebFeed(webFeed)
+						group.leave()
 					}
-					container.addWebFeed(webFeed!)
 				} else {
 					addUnclaimedWebFeed(url: url, editedName: editedName, webFeedExternalID: record.externalID, containerExternalID: containerExternalID)
+					group.leave()
 				}
 			}
+			
+			group.notify(queue: DispatchQueue.main) {
+				completion()
+			}
+			
 		}
 	}
 	
@@ -83,7 +104,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 	}
 	
-	func addOrUpdateContainer(_ record: CKRecord) {
+	func addOrUpdateContainer(_ record: CKRecord, completion: @escaping () -> Void) {
 		guard let account = account,
 			let name = record[CloudKitAccountZone.CloudKitContainer.Fields.name] as? String,
 			let isAccount = record[CloudKitAccountZone.CloudKitContainer.Fields.isAccount] as? String,
@@ -98,16 +119,26 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 		
 		if let folder = folder, let containerExternalID = folder.externalID, let unclaimedWebFeeds = unclaimedWebFeeds[containerExternalID] {
+			
+			let group = DispatchGroup()
+			
 			for unclaimedWebFeed in unclaimedWebFeeds {
-				var webFeed = account.existingWebFeed(withExternalID: unclaimedWebFeed.webFeedExternalID)
-				if webFeed == nil {
-					webFeed = createWebFeed(url: unclaimedWebFeed.url, editedName: unclaimedWebFeed.editedName, webFeedExternalID: unclaimedWebFeed.webFeedExternalID)
-				}
-				if let webFeed = webFeed {
+				group.enter()
+				createWebFeedIfNecessary(url: unclaimedWebFeed.url, editedName: unclaimedWebFeed.editedName, webFeedExternalID: unclaimedWebFeed.webFeedExternalID) { webFeed in
 					folder.addWebFeed(webFeed)
+					group.leave()
 				}
 			}
-			self.unclaimedWebFeeds.removeValue(forKey: containerExternalID)
+
+			group.notify(queue: DispatchQueue.main) {
+				self.unclaimedWebFeeds.removeValue(forKey: containerExternalID)
+				completion()
+			}
+			
+		} else {
+			
+			completion()
+			
 		}
 	}
 	
@@ -144,8 +175,13 @@ private extension CloudKitAcountZoneDelegate {
 		}
 	}
 	
-	func createWebFeed(url: URL, editedName: String?, webFeedExternalID: String) -> WebFeed? {
-		guard let account = account else { return nil }
+	func createWebFeedIfNecessary(url: URL, editedName: String?, webFeedExternalID: String, completion: @escaping (WebFeed) -> Void) {
+		guard let account = account else { return }
+		
+		if let webFeed = account.existingWebFeed(withExternalID: webFeedExternalID) {
+			completion(webFeed)
+			return
+		}
 		
 		let webFeed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 		webFeed.editedName = editedName
@@ -155,11 +191,12 @@ private extension CloudKitAcountZoneDelegate {
 		InitialFeedDownloader.download(url) { parsedFeed in
 			self.refreshProgress?.completeTask()
 			if let parsedFeed = parsedFeed {
-				account.update(webFeed, with: parsedFeed, {_ in })
+				account.update(webFeed, with: parsedFeed, { _ in
+					completion(webFeed)
+				})
 			}
 		}
 
-		return webFeed
 	}
 	
 	func addUnclaimedWebFeed(url: URL, editedName: String?, webFeedExternalID: String, containerExternalID: String) {

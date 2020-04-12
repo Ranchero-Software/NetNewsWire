@@ -37,14 +37,6 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		self.refreshProgress = refreshProgress
 	}
 	
-	func cloudKitDidChange(record: CKRecord) {
-
-	}
-	
-	func cloudKitDidDelete(recordKey: CloudKitRecordKey) {
-		// Article downloads clean up old articles and statuses
-	}
-	
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		database.selectPendingReadStatusArticleIDs() { result in

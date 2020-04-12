@@ -549,9 +549,7 @@ private extension CloudKitAccountDelegate {
 			completion(.failure(error))
 		}
 		
-		BatchUpdate.shared.start()
 		accountZone.fetchChangesInZone() { result in
-			BatchUpdate.shared.end()
 			switch result {
 			case .success:
 				
