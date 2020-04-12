@@ -202,22 +202,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 		
-		// Combine all existing web feed URLs with all the new ones
-		
-		var webFeedURLs = account.flattenedWebFeedURLs
-		for opmlItem in normalizedItems {
-			if let webFeedURL = opmlItem.feedSpecifier?.feedURL {
-				webFeedURLs.insert(webFeedURL)
-			} else {
-				if let childItems = opmlItem.children {
-					for childItem in childItems {
-						if let webFeedURL = childItem.feedSpecifier?.feedURL {
-							webFeedURLs.insert(webFeedURL)
-						}
-					}
-				}
-			}
-		}
+		// TODO: remove duplicates created by import
 		
 		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
 			self.refreshAll(for: account, downloadFeeds: false, completion: completion)
