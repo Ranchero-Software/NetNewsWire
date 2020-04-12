@@ -72,7 +72,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 ```
 
 Set `DEVELOPMENT_TEAM` to your Apple supplied development team.  You can use Keychain 
-Acceass to [find your development team ID](/Technotes/FindingYourDevelopmentTeamID.md).
+Access to [find your development team ID](/Technotes/FindingYourDevelopmentTeamID.md).
 Set `ORGANIZATION_IDENTIFIER` to a reversed domain name that you control or have made up.
 Note that `PROVISIONING_PROFILE_SPECIFIER` should not have a value associated with it. 
 
