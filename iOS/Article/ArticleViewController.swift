@@ -92,8 +92,15 @@ class ArticleViewController: UIViewController {
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
+
+		// This code is to disallow paging if we scroll from the left edge.  If this code is removed
+		// PoppableGestureRecognizerDelegate will allow us to both navigate back and page back at the
+		// same time. That is really weird when it happens.
+		let panGestureRecognizer = UIPanGestureRecognizer()
+		panGestureRecognizer.delegate = self
+		pageViewController.scrollViewInsidePageControl?.addGestureRecognizer(panGestureRecognizer)
+
 		pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
-		
 		view.addSubview(pageViewController.view)
 		addChild(pageViewController!)
 		NSLayoutConstraint.activate([
@@ -326,6 +333,24 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 		
 		previousViewControllers.compactMap({ $0 as? WebViewController }).forEach({ $0.stopWebViewActivity() })
 	}
+	
+}
+
+// MARK: UIGestureRecognizerDelegate
+
+extension ArticleViewController: UIGestureRecognizerDelegate {
+	
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+		let point = gestureRecognizer.location(in: nil)
+		if point.x > 40 {
+			return true
+		}
+		return false
+    }
 	
 }
 
