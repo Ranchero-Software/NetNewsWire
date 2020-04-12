@@ -488,20 +488,41 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Cleanup
 
 	/// Delete articles that we won’t show in the UI any longer
-	/// — their arrival date is before our 90-day recency window.
-	/// Keep all starred articles, no matter their age.
+	/// — their arrival date is before our 90-day recency window;
+	/// they are read; they are not starred.
+	///
+	/// Because deleting articles might block the database for too long,
+	/// we do this in a careful way: delete articles older than a year,
+	/// check to see how much time has passed, then decide whether or not to continue.
+	/// Repeat for successively shorter time intervals.
 	func deleteOldArticles() {
-		queue.runInTransaction { databaseResult in
+		precondition(retentionStyle == .syncSystem)
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let sql = "delete from articles where articleID in (select articleID from articles natural join statuses where dateArrived<? and starred=0);"
-				let parameters = [self.articleCutoffDate] as [Any]
+		queue.runInTransaction { databaseResult in
+			guard let database = databaseResult.database else {
+				return
+			}
+
+			func deleteOldArticles(cutoffDate: Date) {
+				let sql = "delete from articles where articleID in (select articleID from articles natural join statuses where dateArrived<? and read=1 and starred=0);"
+				let parameters = [cutoffDate] as [Any]
 				database.executeUpdate(sql, withArgumentsIn: parameters)
 			}
 
-			if let database = databaseResult.database {
-				makeDatabaseCalls(database)
+			let startTime = Date()
+			func tooMuchTimeHasPassed() -> Bool {
+				let timeElapsed = Date().timeIntervalSince(startTime)
+				return timeElapsed > 2.0
 			}
+
+			let dayIntervals = [365, 300, 225, 150]
+			for dayInterval in dayIntervals {
+				deleteOldArticles(cutoffDate: startTime.bySubtracting(days: dayInterval))
+				if tooMuchTimeHasPassed() {
+					return
+				}
+			}
+			deleteOldArticles(cutoffDate: self.articleCutoffDate)
 		}
 	}
 
