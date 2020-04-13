@@ -25,7 +25,7 @@ final class OPMLNormalizer {
 		items.forEach { (item) in
 
 			if let _ = item.feedSpecifier {
-				if !feedsToAdd.contains(where: { $0.feedSpecifier?.feedURL == item.feedSpecifier?.feedURL } ) {
+				if !feedsToAdd.contains(where: { $0.feedSpecifier?.feedURL == item.feedSpecifier?.feedURL }) {
 					feedsToAdd.append(item)
 				}
 				return
@@ -39,15 +39,21 @@ final class OPMLNormalizer {
 				return
 			}
 
-			normalizedOPMLItems.append(item)
+			feedsToAdd.append(item)
 			if let itemChildren = item.children {
-				normalize(itemChildren, parentFolder: item)
+				if let parentFolder = parentFolder {
+					normalize(itemChildren, parentFolder: parentFolder)
+				} else {
+					normalize(itemChildren, parentFolder: item)
+				}
 			}
 		}
 
 		if let parentFolder = parentFolder {
 			for feed in feedsToAdd {
-				parentFolder.addChild(feed)
+				if !(parentFolder.children?.contains(where: { $0.feedSpecifier?.feedURL == feed.feedSpecifier?.feedURL}) ?? false) {
+					parentFolder.addChild(feed)
+				}
 			}
 		} else {
 			for feed in feedsToAdd {
