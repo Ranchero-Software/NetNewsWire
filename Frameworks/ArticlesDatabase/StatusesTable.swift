@@ -13,7 +13,7 @@ import Articles
 
 // Article->ArticleStatus is a to-one relationship.
 //
-// CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, userDeleted BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
+// CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 
 final class StatusesTable: DatabaseTable {
 
@@ -94,11 +94,11 @@ final class StatusesTable: DatabaseTable {
 	// MARK: - Fetching
 
 	func fetchUnreadArticleIDs() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses where read=0 and userDeleted=0;")
+		return try fetchArticleIDs("select articleID from statuses where read=0;")
 	}
 
 	func fetchStarredArticleIDs() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses where starred=1 and userDeleted=0;")
+		return try fetchArticleIDs("select articleID from statuses where starred=1;")
 	}
 	
 	func fetchArticleIDsForStatusesWithoutArticlesNewerThan(_ cutoffDate: Date, _ completion: @escaping ArticleIDsCompletionBlock) {
@@ -108,7 +108,7 @@ final class StatusesTable: DatabaseTable {
 			var articleIDs = Set<String>()
 			
 			func makeDatabaseCall(_ database: FMDatabase) {
-				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);"
+				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
 				if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
 					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
 				}

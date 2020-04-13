@@ -52,7 +52,7 @@ public final class FetchFeedUnreadCountOperation: MainThreadOperation {
 private extension FetchFeedUnreadCountOperation {
 
 	func fetchUnreadCount(_ database: FMDatabase) {
-		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
+		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and (starred=1 or dateArrived>?);"
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [webFeedID, cutoffDate]) else {
 			informOperationDelegateOfCompletion()

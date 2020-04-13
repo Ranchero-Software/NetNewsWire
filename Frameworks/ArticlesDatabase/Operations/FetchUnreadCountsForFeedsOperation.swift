@@ -53,7 +53,7 @@ private extension FetchUnreadCountsForFeedsOperation {
 
 	func fetchUnreadCounts(_ database: FMDatabase) {
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
-		let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
+		let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and (starred=1 or dateArrived>?) group by feedID;"
 
 		var parameters = [Any]()
 		parameters += Array(webFeedIDs) as [Any]

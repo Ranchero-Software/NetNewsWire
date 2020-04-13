@@ -19,7 +19,6 @@ public final class ArticleStatus: Hashable {
 	public enum Key: String {
 		case read = "read"
 		case starred = "starred"
-		case userDeleted = "userDeleted"
 	}
 	
 	public let articleID: String
@@ -27,18 +26,16 @@ public final class ArticleStatus: Hashable {
 
 	public var read = false
 	public var starred = false
-	public var userDeleted = false
-	
-	public init(articleID: String, read: Bool, starred: Bool, userDeleted: Bool, dateArrived: Date) {
+
+	public init(articleID: String, read: Bool, starred: Bool, dateArrived: Date) {
 		self.articleID = articleID
 		self.read = read
 		self.starred = starred
-		self.userDeleted = userDeleted
 		self.dateArrived = dateArrived
 	}
 
 	public convenience init(articleID: String, read: Bool, dateArrived: Date) {
-		self.init(articleID: articleID, read: read, starred: false, userDeleted: false, dateArrived: dateArrived)
+		self.init(articleID: articleID, read: read, starred: false, dateArrived: dateArrived)
 	}
 
 	public func boolStatus(forKey key: ArticleStatus.Key) -> Bool {
@@ -47,8 +44,6 @@ public final class ArticleStatus: Hashable {
 			return read
 		case .starred:
 			return starred
-		case .userDeleted:
-			return userDeleted
 		}
 	}
 	
@@ -58,8 +53,6 @@ public final class ArticleStatus: Hashable {
 			read = status
 		case .starred:
 			starred = status
-		case .userDeleted:
-			userDeleted = status
 		}
 	}
 
@@ -72,7 +65,7 @@ public final class ArticleStatus: Hashable {
 	// MARK: - Equatable
 
 	public static func ==(lhs: ArticleStatus, rhs: ArticleStatus) -> Bool {
-		return lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred && lhs.userDeleted == rhs.userDeleted
+		return lhs.articleID == rhs.articleID && lhs.dateArrived == rhs.dateArrived && lhs.read == rhs.read && lhs.starred == rhs.starred
 	}
 }
 
