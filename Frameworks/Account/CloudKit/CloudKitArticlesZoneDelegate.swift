@@ -110,8 +110,13 @@ private extension CloudKitArticlesZoneDelegate {
 					
 					webFeeds.forEach { $0.dropConditionalGetInfo() }
 					self.refreshProgress?.addToNumberOfTasksAndRemaining(webFeeds.count)
-					self.refresher.refreshFeeds(webFeeds) {
+					
+					if webFeeds.isEmpty {
 						group.leave()
+					} else {
+						self.refresher.refreshFeeds(webFeeds) {
+							group.leave()
+						}
 					}
 					
 				}

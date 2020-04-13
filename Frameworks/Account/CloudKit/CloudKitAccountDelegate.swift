@@ -92,7 +92,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			return
 		}
 			
-		refreshAll(for: account, downloadFeeds: true, completion: completion)
+		standardRefreshAll(for: account, completion: completion)
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -205,7 +205,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		// TODO: remove duplicates created by import
 		
 		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
-			self.refreshAll(for: account, downloadFeeds: false, completion: completion)
+			self.initialRefreshAll(for: account, completion: completion)
 		}
 		
 	}
@@ -483,7 +483,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				switch result {
 				case .success(let externalID):
 					account.externalID = externalID
-					self.refreshAll(for: account, downloadFeeds: false) { _ in }
+					self.initialRefreshAll(for: account) { _ in }
 				case .failure(let error):
 					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
 				}
@@ -523,9 +523,49 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 private extension CloudKitAccountDelegate {
 	
-	func refreshAll(for account: Account, downloadFeeds: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+	func initialRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		let intialWebFeedsCount = downloadFeeds ? account.flattenedWebFeeds().count : 0
+		func fail(_ error: Error) {
+			self.processAccountError(account, error)
+			self.refreshProgress.clear()
+			completion(.failure(error))
+		}
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(3)
+		refreshArticleStatus(for: account) { result in
+			switch result {
+			case .success:
+
+				self.refreshProgress.completeTask()
+				self.accountZone.fetchChangesInZone() { result in
+					switch result {
+					case .success:
+
+						self.refreshProgress.completeTask()
+						self.sendArticleStatus(for: account) { result in
+							switch result {
+							case .success:
+								self.refreshProgress.completeTask()
+								completion(.success(()))
+							case .failure(let error):
+								fail(error)
+							}
+						}
+
+					case .failure(let error):
+						fail(error)
+					}
+				}
+			case .failure(let error):
+				fail(error)
+			}
+		}
+
+	}
+
+	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		let intialWebFeedsCount = account.flattenedWebFeeds().count
 		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialWebFeedsCount)
 
 		func fail(_ error: Error) {
@@ -539,9 +579,7 @@ private extension CloudKitAccountDelegate {
 			case .success:
 				
 				let webFeeds = account.flattenedWebFeeds()
-				if downloadFeeds {
-					self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count - intialWebFeedsCount)
-				}
+				self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count - intialWebFeedsCount)
 
 				self.refreshProgress.completeTask()
 				self.sendArticleStatus(for: account) { result in
@@ -555,11 +593,6 @@ private extension CloudKitAccountDelegate {
 
 								self.refreshProgress.completeTask()
 
-								guard downloadFeeds else {
-									completion(.success(()))
-									return
-								}
-								
 								self.refresher.refreshFeeds(webFeeds) {
 
 									account.metadata.lastArticleFetchEndTime = Date()
