@@ -247,24 +247,10 @@ final class CloudKitAccountZone: CloudKitZone {
 					}
 				}
 			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
-				}
-			}
-		}
-		
-		query(ckQuery) { result in
-			switch result {
-			case .success(let records):
-				if records.count > 0 {
-					completion(.success(records[0].externalID))
-				} else {
-					self.createContainer(name: "Account", isAccount: true, completion: completion)
-				}
-			case .failure:
 				self.createContainer(name: "Account", isAccount: true, completion: completion)
 			}
 		}
+		
 	}
 	
 	func createFolder(name: String, completion: @escaping (Result<String, Error>) -> Void) {

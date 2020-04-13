@@ -25,8 +25,6 @@ enum CloudKitZoneError: LocalizedError {
 }
 
 protocol CloudKitZoneDelegate: class {
-	func cloudKitDidChange(record: CKRecord);
-	func cloudKitDidDelete(recordKey: CloudKitRecordKey)
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void);
 }
 
@@ -492,24 +490,13 @@ extension CloudKitZone {
 			}
         }
 
-        op.recordChangedBlock = { [weak self] record in
-            guard let self = self else { return }
-			
+        op.recordChangedBlock = { record in
 			changedRecords.append(record)
-			DispatchQueue.main.async {
-				self.delegate?.cloudKitDidChange(record: record)
-			}
         }
 
-        op.recordWithIDWasDeletedBlock = { [weak self] recordID, recordType in
-            guard let self = self else { return }
-			
+        op.recordWithIDWasDeletedBlock = { recordID, recordType in
 			let recordKey = CloudKitRecordKey(recordType: recordType, recordID: recordID)
 			deletedRecordKeys.append(recordKey)
-			
-			DispatchQueue.main.async {
-				self.delegate?.cloudKitDidDelete(recordKey: recordKey)
-			}
         }
 
         op.recordZoneFetchCompletionBlock = { [weak self] zoneID ,token, _, _, error in
