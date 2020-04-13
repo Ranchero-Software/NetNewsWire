@@ -84,8 +84,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			for containerExternalID in containerExternalIDs {
 				group.enter()
 				if let container = account.existingContainer(withExternalID: containerExternalID) {
-					createWebFeedIfNecessary(url: url, editedName: editedName, webFeedExternalID: record.externalID) { webFeed in
-						container.addWebFeed(webFeed)
+					createWebFeedIfNecessary(url: url, editedName: editedName, webFeedExternalID: record.externalID, container: container) { webFeed in
 						group.leave()
 					}
 				} else {
@@ -130,8 +129,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			
 			for unclaimedWebFeed in unclaimedWebFeeds {
 				group.enter()
-				createWebFeedIfNecessary(url: unclaimedWebFeed.url, editedName: unclaimedWebFeed.editedName, webFeedExternalID: unclaimedWebFeed.webFeedExternalID) { webFeed in
-					folder.addWebFeed(webFeed)
+				createWebFeedIfNecessary(url: unclaimedWebFeed.url, editedName: unclaimedWebFeed.editedName, webFeedExternalID: unclaimedWebFeed.webFeedExternalID, container: folder) { webFeed in
 					group.leave()
 				}
 			}
@@ -181,7 +179,7 @@ private extension CloudKitAcountZoneDelegate {
 		}
 	}
 	
-	func createWebFeedIfNecessary(url: URL, editedName: String?, webFeedExternalID: String, completion: @escaping (WebFeed) -> Void) {
+	func createWebFeedIfNecessary(url: URL, editedName: String?, webFeedExternalID: String, container: Container, completion: @escaping (WebFeed) -> Void) {
 		guard let account = account else { return }
 		
 		if let webFeed = account.existingWebFeed(withExternalID: webFeedExternalID) {
@@ -192,6 +190,7 @@ private extension CloudKitAcountZoneDelegate {
 		let webFeed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 		webFeed.editedName = editedName
 		webFeed.externalID = webFeedExternalID
+		container.addWebFeed(webFeed)
 		
 		refreshProgress?.addToNumberOfTasksAndRemaining(1)
 		InitialFeedDownloader.download(url) { parsedFeed in
