@@ -27,8 +27,19 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	}
 	
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
-		let group = DispatchGroup()
+		for deletedRecordKey in deleted {
+			switch deletedRecordKey.recordType {
+			case CloudKitAccountZone.CloudKitWebFeed.recordType:
+				removeWebFeed(deletedRecordKey.recordID.externalID)
+			case CloudKitAccountZone.CloudKitContainer.recordType:
+				removeContainer(deletedRecordKey.recordID.externalID)
+			default:
+				assertionFailure("Unknown record type: \(deletedRecordKey.recordType)")
+			}
+		}
 		
+		let group = DispatchGroup()
+
 		for changedRecord in changed {
 			switch changedRecord.recordType {
 			case CloudKitAccountZone.CloudKitWebFeed.recordType:
@@ -46,17 +57,6 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			}
 		}
 		
-		for deletedRecordKey in deleted {
-			switch deletedRecordKey.recordType {
-			case CloudKitAccountZone.CloudKitWebFeed.recordType:
-				removeWebFeed(deletedRecordKey.recordID.externalID)
-			case CloudKitAccountZone.CloudKitContainer.recordType:
-				removeContainer(deletedRecordKey.recordID.externalID)
-			default:
-				assertionFailure("Unknown record type: \(deletedRecordKey.recordType)")
-			}
-		}
-		
 		group.notify(queue: DispatchQueue.main) {
 			completion(.success(()))
 		}
@@ -66,7 +66,10 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		guard let account = account,
 			let urlString = record[CloudKitAccountZone.CloudKitWebFeed.Fields.url] as? String,
 			let containerExternalIDs = record[CloudKitAccountZone.CloudKitWebFeed.Fields.containerExternalIDs] as? [String],
-			let url = URL(string: urlString) else { return }
+			let url = URL(string: urlString) else {
+				completion()
+				return
+		}
 		
 		let editedName = record[CloudKitAccountZone.CloudKitWebFeed.Fields.editedName] as? String
 		
@@ -108,7 +111,10 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		guard let account = account,
 			let name = record[CloudKitAccountZone.CloudKitContainer.Fields.name] as? String,
 			let isAccount = record[CloudKitAccountZone.CloudKitContainer.Fields.isAccount] as? String,
-			isAccount != "1" else { return }
+			isAccount != "1" else {
+				completion()
+				return
+		}
 		
 		var folder = account.existingFolder(withExternalID: record.externalID)
 		folder?.name = name
@@ -194,6 +200,8 @@ private extension CloudKitAcountZoneDelegate {
 				account.update(webFeed, with: parsedFeed, { _ in
 					completion(webFeed)
 				})
+			} else {
+				completion(webFeed)
 			}
 		}
 
