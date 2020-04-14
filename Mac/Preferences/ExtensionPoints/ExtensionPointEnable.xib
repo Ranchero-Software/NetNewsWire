@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="ExtensionPointEnableWindowController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="descriptionLabel" destination="thC-ep-vXS" id="o9I-vp-z54"/>
+                <outlet property="enableButton" destination="sGb-z5-IdF" id="yNw-Nn-4Kq"/>
                 <outlet property="imageView" destination="LSA-B8-aGZ" id="AN5-t1-d52"/>
                 <outlet property="titleLabel" destination="iAC-tU-rvZ" id="vMx-2H-b44"/>
                 <outlet property="window" destination="HNe-Jr-kev" id="C8n-l1-WhI"/>

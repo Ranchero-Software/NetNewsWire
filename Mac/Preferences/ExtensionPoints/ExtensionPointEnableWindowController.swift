@@ -16,6 +16,7 @@ class ExtensionPointEnableWindowController: NSWindowController {
 	@IBOutlet weak var imageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!
 	@IBOutlet weak var descriptionLabel: NSTextField!
+	@IBOutlet weak var enableButton: NSButton!
 	
 	private weak var hostWindow: NSWindow?
 
@@ -53,6 +54,8 @@ class ExtensionPointEnableWindowController: NSWindowController {
 	@IBAction func enable(_ sender: Any) {
 		guard let extensionPointType = extensionPointType else { return }
 		
+		enableButton.isEnabled = false
+		
 		if let oauth1 = extensionPointType as? OAuth1SwiftProvider.Type {
 			enableOauth1(oauth1)
 		} else {
@@ -76,7 +79,11 @@ extension ExtensionPointEnableWindowController: OAuthSwiftURLHandlerType {
 
 			self.oauth?.cancel()
 			self.oauth = nil
-			
+
+			DispatchQueue.main.async {
+				self.hostWindow!.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+			}
+
 			if case ASWebAuthenticationSessionError.canceledLogin = error {
 				print("Login cancelled.")
 			} else {
