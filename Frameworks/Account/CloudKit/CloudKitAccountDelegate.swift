@@ -595,18 +595,7 @@ private extension CloudKitAccountDelegate {
 								self.refreshProgress.completeTask()
 
 								self.refresher.refreshFeeds(webFeeds) {
-
 									account.metadata.lastArticleFetchEndTime = Date()
-
-									self.sendArticleStatus(for: account) { result in
-										switch result {
-										case .success:
-											completion(.success(()))
-										case .failure(let error):
-											fail(error)
-										}
-									}
-
 								}
 
 							case .failure(let error):
@@ -639,12 +628,13 @@ private extension CloudKitAccountDelegate {
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess newAndUpdatedArticles: NewAndUpdatedArticles) {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess newAndUpdatedArticles: NewAndUpdatedArticles, completion: @escaping () -> Void) {
 		if let newArticles = newAndUpdatedArticles.newArticles {
-			let syncStatuses = newArticles.map { article in
-				return SyncStatus(articleID: article.articleID, key: .read, flag: false)
+			articlesZone.sendNewArticles(newArticles) { _ in
+				completion()
 			}
-			database.insertStatuses(syncStatuses)
+		} else {
+			completion()
 		}
 	}
 
