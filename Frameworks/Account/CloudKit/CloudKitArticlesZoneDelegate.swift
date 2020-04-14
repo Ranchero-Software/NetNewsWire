@@ -202,7 +202,8 @@ private extension CloudKitArticlesZoneDelegate {
 
 extension CloudKitArticlesZoneDelegate: LocalAccountRefresherDelegate {
 	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess newAndUpdatedArticles: NewAndUpdatedArticles) {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess newAndUpdatedArticles: NewAndUpdatedArticles, completion: @escaping () -> Void) {
+		completion()
 	}
 
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {

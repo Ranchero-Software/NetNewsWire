@@ -51,7 +51,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 			static let webFeedExternalID = "webFeedExternalID"
 			static let read = "read"
 			static let starred = "starred"
-			static let userDeleted = "userDeleted"
 		}
 	}
 	
@@ -80,6 +79,11 @@ final class CloudKitArticlesZone: CloudKitZone {
 				}
 			}
 		}
+	}
+	
+	func sendNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		let records = makeNewStatusRecords(articles)
+		saveIfNew(records, completion: completion)
 	}
 	
 	func sendArticleStatus(_ syncStatuses: [SyncStatus], articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -124,6 +128,23 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 private extension CloudKitArticlesZone {
 	
+	func makeNewStatusRecords(_ articles: Set<Article>) -> [CKRecord] {
+		
+		var records = [CKRecord]()
+		
+		for article in articles {
+			let recordID = CKRecord.ID(recordName: article.articleID, zoneID: Self.zoneID)
+			let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
+			if let webFeedExternalID = article.webFeed?.externalID {
+				record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
+			}
+			record[CloudKitArticleStatus.Fields.read] = "0"
+			records.append(record)
+		}
+		
+		return records
+	}
+
 	func makeStatusRecords(_ syncStatuses: [SyncStatus], _ articles: Set<Article>) -> [CKRecord] {
 		
 		var articleDict = [String: Article]()
@@ -151,8 +172,8 @@ private extension CloudKitArticlesZone {
 				record![CloudKitArticleStatus.Fields.read] = status.flag ? "1" : "0"
 			case .starred:
 				record![CloudKitArticleStatus.Fields.starred] = status.flag ? "1" : "0"
-			case .userDeleted:
-				record![CloudKitArticleStatus.Fields.userDeleted] = status.flag ? "1" : "0"
+			default:
+				break
 			}
 		}
 		
