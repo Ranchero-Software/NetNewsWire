@@ -7,13 +7,21 @@
 //
 
 import Foundation
+import Secrets
+import OAuthSwift
 
-public struct TwitterFeedProvider: FeedProvider {
+public struct TwitterFeedProvider {
 	
 	public var username: String
 	
 	public init(username: String) {
 		self.username = username
 	}
+	
+}
+
+// MARK: FeedProvider
+
+extension TwitterFeedProvider: FeedProvider {
 	
 }

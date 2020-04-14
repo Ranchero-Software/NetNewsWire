@@ -24,15 +24,12 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(activeExtensionPointsDidChange(_:)), name: .ActiveExtensionPointsDidChange, object: nil)
 
-		showController(ExtensionPointAddViewController())
-
 		// Fix tableView frame — for some reason IB wants it 1pt wider than the clip view. This leads to unwanted horizontal scrolling.
 		var rTable = tableView.frame
 		rTable.size.width = tableView.superview!.frame.size.width
 		tableView.frame = rTable
 		
-		activeExtensionPointIDs = Array(ExtensionPointManager.shared.activeExtensionPoints.keys)
-		tableView.reloadData()
+		showDefaultView()
 	}
 	
 	@IBAction func enableExtensionPoints(_ sender: Any) {
@@ -104,6 +101,10 @@ extension ExtensionPointPreferencesViewController: NSTableViewDelegate {
 private extension ExtensionPointPreferencesViewController {
 	
 	@objc func activeExtensionPointsDidChange(_ note: Notification) {
+		showDefaultView()
+	}
+	
+	func showDefaultView() {
 		activeExtensionPointIDs = Array(ExtensionPointManager.shared.activeExtensionPoints.keys).sorted(by: { $0.title < $1.title })
 		tableView.reloadData()
 		showController(ExtensionPointAddViewController())

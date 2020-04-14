@@ -7,7 +7,9 @@
 //
 
 import Foundation
+import FeedProvider
 import RSCore
+
 
 enum ExtensionPointIdentifer: Hashable {
 	case marsEdit
@@ -16,12 +18,10 @@ enum ExtensionPointIdentifer: Hashable {
 
 	var title: String {
 		switch self {
-		case .marsEdit:
-			return ExtensionPointType.marsEdit.title
-		case .microblog:
-			return ExtensionPointType.microblog.title
 		case .twitter(let username):
-			return "\(ExtensionPointType.microblog.title) (\(username))"
+			return "\(type.title) (\(username)"
+		default:
+			return type.title
 		}
 	}
 	
@@ -33,14 +33,14 @@ enum ExtensionPointIdentifer: Hashable {
 		return type.description
 	}
 	
-	var type: ExtensionPointType {
+	var type: ExtensionPoint.Type {
 		switch self {
 		case .marsEdit:
-			return ExtensionPointType.marsEdit
+			return SendToMarsEditCommand.self
 		case .microblog:
-			return ExtensionPointType.microblog
+			return SendToMicroBlogCommand.self
 		case .twitter:
-			return ExtensionPointType.twitter
+			return TwitterFeedProvider.self
 		}
 	}
 	

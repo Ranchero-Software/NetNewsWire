@@ -128,21 +128,18 @@
 		515A50E7243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
 		515A5107243D0CCD0089E588 /* TwitterFeedProvider+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider+Extensions.swift */; };
 		515A5108243D0CCD0089E588 /* TwitterFeedProvider+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider+Extensions.swift */; };
-		515A5148243E64BA0089E588 /* ExtensionPointEnableBasicWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableBasicWindowController.swift */; };
-		515A5149243E64BA0089E588 /* ExtensionPointEnableBasicWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableBasicWindowController.swift */; };
-		515A5168243E66910089E588 /* ExtensionPointEnableBasic.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A5167243E66910089E588 /* ExtensionPointEnableBasic.xib */; };
-		515A5169243E66910089E588 /* ExtensionPointEnableBasic.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A5167243E66910089E588 /* ExtensionPointEnableBasic.xib */; };
+		515A5148243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
+		515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */; };
+		515A5168243E66910089E588 /* ExtensionPointEnable.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A5167243E66910089E588 /* ExtensionPointEnable.xib */; };
+		515A5169243E66910089E588 /* ExtensionPointEnable.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A5167243E66910089E588 /* ExtensionPointEnable.xib */; };
 		515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A516D243E7F950089E588 /* ExtensionPointDetail.xib */; };
 		515A516F243E7F950089E588 /* ExtensionPointDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 515A516D243E7F950089E588 /* ExtensionPointDetail.xib */; };
 		515A5171243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */; };
 		515A5172243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */; };
-		515A5174243E8FEA0089E588 /* ExtensionPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5173243E8FEA0089E588 /* ExtensionPointType.swift */; };
-		515A5175243E8FEA0089E588 /* ExtensionPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5173243E8FEA0089E588 /* ExtensionPointType.swift */; };
 		515A5177243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */; };
 		515A517B243E90260089E588 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		515A517C243E90260089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
-		515A517D243E90260089E588 /* ExtensionPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5173243E8FEA0089E588 /* ExtensionPointType.swift */; };
 		515A517E243E90260089E588 /* SendToMarsEditCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */; };
 		515A517F243E90260089E588 /* SendToMicroBlogCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */; };
 		515A5180243E90260089E588 /* TwitterFeedProvider+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A5106243D0CCD0089E588 /* TwitterFeedProvider+Extensions.swift */; };
@@ -1453,11 +1450,10 @@
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
 		515A50E5243D07A90089E588 /* ExtensionPointManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointManager.swift; sourceTree = "<group>"; };
 		515A5106243D0CCD0089E588 /* TwitterFeedProvider+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TwitterFeedProvider+Extensions.swift"; sourceTree = "<group>"; };
-		515A5147243E64BA0089E588 /* ExtensionPointEnableBasicWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointEnableBasicWindowController.swift; sourceTree = "<group>"; };
-		515A5167243E66910089E588 /* ExtensionPointEnableBasic.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtensionPointEnableBasic.xib; sourceTree = "<group>"; };
+		515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointEnableWindowController.swift; sourceTree = "<group>"; };
+		515A5167243E66910089E588 /* ExtensionPointEnable.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtensionPointEnable.xib; sourceTree = "<group>"; };
 		515A516D243E7F950089E588 /* ExtensionPointDetail.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtensionPointDetail.xib; sourceTree = "<group>"; };
 		515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointDetailViewController.swift; sourceTree = "<group>"; };
-		515A5173243E8FEA0089E588 /* ExtensionPointType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointType.swift; sourceTree = "<group>"; };
 		515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointIdentifer.swift; sourceTree = "<group>"; };
 		515D4FCB2325815A00EE1167 /* SafariExt.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SafariExt.js; sourceTree = "<group>"; };
 		515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_ShareExtension.entitlements; sourceTree = "<group>"; };
@@ -1940,7 +1936,6 @@
 				510C43F6243D035C009F70C3 /* ExtensionPoint.swift */,
 				515A5176243E90200089E588 /* ExtensionPointIdentifer.swift */,
 				515A50E5243D07A90089E588 /* ExtensionPointManager.swift */,
-				515A5173243E8FEA0089E588 /* ExtensionPointType.swift */,
 				84A1500420048DDF0046AD9A /* SendToMarsEditCommand.swift */,
 				84A14FF220048CA70046AD9A /* SendToMicroBlogCommand.swift */,
 				515A5106243D0CCD0089E588 /* TwitterFeedProvider+Extensions.swift */,
@@ -1962,8 +1957,8 @@
 				510C43EC243C0973009F70C3 /* ExtensionPointAdd.xib */,
 				510C43F2243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift */,
 				510C43EF243C0A80009F70C3 /* ExtensionPointAddViewController.swift */,
-				515A5167243E66910089E588 /* ExtensionPointEnableBasic.xib */,
-				515A5147243E64BA0089E588 /* ExtensionPointEnableBasicWindowController.swift */,
+				515A5167243E66910089E588 /* ExtensionPointEnable.xib */,
+				515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */,
 				51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */,
 				515A516D243E7F950089E588 /* ExtensionPointDetail.xib */,
 				515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */,
@@ -3777,7 +3772,7 @@
 				65ED4057235DEF6C0081F399 /* AccountsDetail.xib in Resources */,
 				65ED4058235DEF6C0081F399 /* main.js in Resources */,
 				65ED40A1235DEFF00081F399 /* container-migration.plist in Resources */,
-				515A5169243E66910089E588 /* ExtensionPointEnableBasic.xib in Resources */,
+				515A5169243E66910089E588 /* ExtensionPointEnable.xib in Resources */,
 				65ED4059235DEF6C0081F399 /* AccountsAddLocal.xib in Resources */,
 				65ED405A235DEF6C0081F399 /* main_mac.js in Resources */,
 				65ED405B235DEF6C0081F399 /* KeyboardShortcuts.html in Resources */,
@@ -3871,7 +3866,7 @@
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
 				5142194B2353C1CF00E07E2C /* main_mac.js in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
-				515A5168243E66910089E588 /* ExtensionPointEnableBasic.xib in Resources */,
+				515A5168243E66910089E588 /* ExtensionPointEnable.xib in Resources */,
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				5103A9F4242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
@@ -4087,7 +4082,7 @@
 				65ED3FC7235DEF6C0081F399 /* Reachability.swift in Sources */,
 				65ED3FC8235DEF6C0081F399 /* SidebarCellLayout.swift in Sources */,
 				65ED3FC9235DEF6C0081F399 /* SmartFeedPasteboardWriter.swift in Sources */,
-				515A5149243E64BA0089E588 /* ExtensionPointEnableBasicWindowController.swift in Sources */,
+				515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */,
 				65ED3FCA235DEF6C0081F399 /* SmartFeedsController.swift in Sources */,
 				515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */,
 				65ED3FCB235DEF6C0081F399 /* SidebarViewController.swift in Sources */,
@@ -4139,7 +4134,6 @@
 				65ED3FF7235DEF6C0081F399 /* SearchFeedDelegate.swift in Sources */,
 				65ED3FF8235DEF6C0081F399 /* ErrorHandler.swift in Sources */,
 				65ED3FF9235DEF6C0081F399 /* ActivityManager.swift in Sources */,
-				515A5175243E8FEA0089E588 /* ExtensionPointType.swift in Sources */,
 				65ED3FFA235DEF6C0081F399 /* WebFeedInspectorViewController.swift in Sources */,
 				65ED3FFB235DEF6C0081F399 /* AccountsReaderAPIWindowController.swift in Sources */,
 				65ED3FFC235DEF6C0081F399 /* AccountsAddLocalWindowController.swift in Sources */,
@@ -4362,7 +4356,6 @@
 				514219372352510100E07E2C /* ImageScrollView.swift in Sources */,
 				516AE9B32371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift in Sources */,
 				51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */,
-				515A517D243E90260089E588 /* ExtensionPointType.swift in Sources */,
 				C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */,
 				51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */,
 				515A517E243E90260089E588 /* SendToMarsEditCommand.swift in Sources */,
@@ -4478,7 +4471,7 @@
 				55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */,
 				5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* PasteboardFolder.swift in Sources */,
-				515A5148243E64BA0089E588 /* ExtensionPointEnableBasicWindowController.swift in Sources */,
+				515A5148243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */,
 				5103A9F724225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */,
 				5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */,
 				84AD1EBC2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift in Sources */,
@@ -4526,7 +4519,6 @@
 				510C43F0243C0A80009F70C3 /* ExtensionPointAddViewController.swift in Sources */,
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
 				84E8E0EB202F693600562D8F /* DetailWebView.swift in Sources */,
-				515A5174243E8FEA0089E588 /* ExtensionPointType.swift in Sources */,
 				849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */,
 				849A977B1ED9EC04007D329B /* UnreadIndicatorView.swift in Sources */,
 				51FA73A72332BE880090D516 /* ExtractedArticle.swift in Sources */,

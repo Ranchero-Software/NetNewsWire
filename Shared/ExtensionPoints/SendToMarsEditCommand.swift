@@ -12,13 +12,24 @@ import Articles
 
 final class SendToMarsEditCommand: ExtensionPoint, SendToCommand {
 
-	let extensionPointType = ExtensionPointType.marsEdit
+	static var isSinglton = true
+	static var title = NSLocalizedString("MarsEdit", comment: "MarsEdit")
+	static var templateImage = AppAssets.extensionPointMarsEdit
+	static var description: NSAttributedString = {
+		let attrString = SendToMarsEditCommand.makeAttrString("This extension enables share menu functionality to send selected article text to MarsEdit.  You need the MarsEdit application for this to work.")
+		let range = NSRange(location: 81, length: 8)
+		attrString.beginEditing()
+		attrString.addAttribute(NSAttributedString.Key.link, value: "https://red-sweater.com/marsedit/", range: range)
+		attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: NSColor.systemBlue, range: range)
+		attrString.endEditing()
+		return attrString
+	}()
+	
 	let extensionPointID = ExtensionPointIdentifer.marsEdit
 	
 	var image: NSImage? {
 		return appToUse()?.icon ?? nil
 	}
-
 
 	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
 

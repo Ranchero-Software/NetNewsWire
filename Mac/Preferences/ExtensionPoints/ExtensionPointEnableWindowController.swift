@@ -1,5 +1,5 @@
 //
-//  ExtensionPointEnableBasicWindowController.swift
+//  ExtensionPointEnableWindowController.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 4/8/20.
@@ -25,7 +25,7 @@ class ExtensionPointEnableWindowController: NSWindowController {
 	var extensionPointType: ExtensionPoint.Type?
 
 	convenience init() {
-		self.init(windowNibName: NSNib.Name("ExtensionPointEnableBasic"))
+		self.init(windowNibName: NSNib.Name("ExtensionPointEnable"))
 	}
 	
 	override func windowDidLoad() {

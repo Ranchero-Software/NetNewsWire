@@ -19,14 +19,14 @@ final class ExtensionPointManager {
 	static let shared = ExtensionPointManager()
 
 	var activeExtensionPoints = [ExtensionPointIdentifer: ExtensionPoint]()
-	let possibleExtensionPointTypes: [ExtensionPointType]
-	var availableExtensionPointTypes: [ExtensionPointType] {
+	let possibleExtensionPointTypes: [ExtensionPoint.Type]
+	var availableExtensionPointTypes: [ExtensionPoint.Type] {
 		
-		let activeExtensionPointTypes = Set(activeExtensionPoints.keys.compactMap({ $0.type }))
-		var available = [ExtensionPointType]()
+		let activeExtensionPointTypes = activeExtensionPoints.keys.compactMap({ ObjectIdentifier($0.type) })
+		var available = [ExtensionPoint.Type]()
 		for possibleExtensionPointType in possibleExtensionPointTypes {
 			if possibleExtensionPointType.isSinglton {
-				if !activeExtensionPointTypes.contains(possibleExtensionPointType) {
+				if !activeExtensionPointTypes.contains(ObjectIdentifier(possibleExtensionPointType)) {
 					available.append(possibleExtensionPointType)
 				}
 			} else {
@@ -48,23 +48,25 @@ final class ExtensionPointManager {
 	init() {
 		#if os(macOS)
 		#if DEBUG
-		possibleExtensionPointTypes = [.marsEdit, .microblog, .twitter]
+		possibleExtensionPointTypes = [SendToMarsEditCommand.self, SendToMicroBlogCommand.self, TwitterFeedProvider.self]
 		#else
-		possibleExtensionPointTypes = [.marsEdit, .microblog, .twitter]
+		possibleExtensionPointTypes = [SendToMarsEditCommand.self, SendToMicroBlogCommand.self, TwitterFeedProvider.self]
 		#endif
 		#else
 		#if DEBUG
-		possibleExtensionPointTypes = [.twitter]
+		possibleExtensionPointTypes = [TwitterFeedProvider.self]
 		#else
-		possibleExtensionPointTypes = [.twitter]
+		possibleExtensionPointTypes = [TwitterFeedProvider.self]
 		#endif
 		#endif
 		loadExtensionPoints()
 	}
 	
-	func activateExtensionPoint(_ extensionPointID: ExtensionPointIdentifer) {
-		activeExtensionPoints[extensionPointID] = extensionPoint(for: extensionPointID)
-		saveExtensionPointIDs()
+	func activateExtensionPoint(_ extensionPointType: ExtensionPoint.Type) {
+		if let extensionPoint = self.extensionPoint(for: extensionPointType) {
+			activeExtensionPoints[extensionPoint.extensionPointID] = extensionPoint
+			saveExtensionPointIDs()
+		}
 	}
 	
 	func deactivateExtensionPoint(_ extensionPointID: ExtensionPointIdentifer) {
@@ -89,6 +91,20 @@ private extension ExtensionPointManager {
 	func saveExtensionPointIDs() {
 		AppDefaults.activeExtensionPointIDs = activeExtensionPoints.keys.map({ $0.userInfo })
 		NotificationCenter.default.post(name: .ActiveExtensionPointsDidChange, object: nil, userInfo: nil)
+	}
+	
+	func extensionPoint(for extensionPointType: ExtensionPoint.Type) -> ExtensionPoint? {
+		switch extensionPointType {
+		case is SendToMarsEditCommand.Type:
+			return SendToMarsEditCommand()
+		case is SendToMicroBlogCommand.Type:
+			return SendToMicroBlogCommand()
+//		case is TwitterFeedProvider.Type:
+//			return TwitterFeedProvider(username: username)
+		default:
+			assertionFailure("Unrecognized Extension Point Type.")
+		}
+		return nil
 	}
 	
 	func extensionPoint(for extensionPointID: ExtensionPointIdentifer) -> ExtensionPoint {
