@@ -20,5 +20,4 @@ extension TwitterFeedProvider: ExtensionPoint {
 		return ExtensionPointIdentifer.twitter(username)
 	}
 
-
 }

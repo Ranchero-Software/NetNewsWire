@@ -61,6 +61,9 @@ public extension URLRequest {
 		case .oauthAccessToken:
             let auth = "OAuth \(credentials.secret)"
             setValue(auth, forHTTPHeaderField: "Authorization")
+		case .oauthAccessTokenSecret:
+            assertionFailure("Token secrets are used by OAuth1. Did you mean to use `OAuthSwift` instead of a URLRequest?")
+            break
         case .oauthRefreshToken:
             // While both access and refresh tokens are credentials, it seems the `Credentials` cases
             // enumerates how the identity of the user can be proved rather than
