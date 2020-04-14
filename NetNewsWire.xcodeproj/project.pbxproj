@@ -168,6 +168,12 @@
 		517630052336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		517630232336657E00E15FFF /* WebViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517630222336657E00E15FFF /* WebViewProvider.swift */; };
 		517A745B2443665000B553B9 /* UIPageViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */; };
+		517A757724451BFC00B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; };
+		517A757824451BFC00B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		517A757924451C0700B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; };
+		517A757A24451C0700B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		517A757B24451C1500B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; };
+		517A757C24451C1500B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -772,6 +778,55 @@
 			remoteGlobalIDString = 51554BEA228B6E8F0055115A;
 			remoteInfo = SyncDatabase;
 		};
+		517A755224451BD500B553B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F435027A1A6791B200038A29;
+			remoteInfo = OAuthSwift;
+		};
+		517A755424451BD500B553B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C48B28021AFA598D00C7DEF6;
+			remoteInfo = OAuthSwiftMacOS;
+		};
+		517A755624451BD500B553B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C4B6EE1E1BF74CE300443596;
+			remoteInfo = OAuthSwiftTVOS;
+		};
+		517A755824451BD500B553B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C40890C01C11B37000E3146A;
+			remoteInfo = OAuthSwiftWatchOS;
+		};
+		517A755A24451BD500B553B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F451E3C5195B8CD80051434C;
+			remoteInfo = OAuthSwiftDemo;
+		};
+		517A755C24451BD500B553B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C49FD5241AFB5DF500791E1A;
+			remoteInfo = OAuthSwiftMacOSDemo;
+		};
+		517A755E24451BD500B553B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C4D50DF71BFB693F0053B624;
+			remoteInfo = OAuthSwiftTests;
+		};
 		518B2ED72351B3DD00400001 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
@@ -1224,6 +1279,7 @@
 				51C451E12264C7F900C03939 /* RSTree.framework in Embed Frameworks */,
 				51C451F92264C83E00C03939 /* Account.framework in Embed Frameworks */,
 				51C451F12264C83100C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
+				517A757C24451C1500B553B9 /* OAuthSwift.framework in Embed Frameworks */,
 				51C451F52264C83900C03939 /* Articles.framework in Embed Frameworks */,
 				51C451E92264C81000C03939 /* RSDatabase.framework in Embed Frameworks */,
 				51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */,
@@ -1253,6 +1309,7 @@
 			files = (
 				65ED4071235DEF6C0081F399 /* RSWeb.framework in Embed Frameworks */,
 				65ED4072235DEF6C0081F399 /* RSDatabase.framework in Embed Frameworks */,
+				517A757A24451C0700B553B9 /* OAuthSwift.framework in Embed Frameworks */,
 				65ED4073235DEF6C0081F399 /* RSTree.framework in Embed Frameworks */,
 				65ED4074235DEF6C0081F399 /* ArticlesDatabase.framework in Embed Frameworks */,
 				65ED4076235DEF6C0081F399 /* Account.framework in Embed Frameworks */,
@@ -1303,6 +1360,7 @@
 				84C37FC620DD8E1D00CA8CF5 /* RSDatabase.framework in Embed Frameworks */,
 				84C37FAE20DD8D9900CA8CF5 /* RSTree.framework in Embed Frameworks */,
 				51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
+				517A757824451BFC00B553B9 /* OAuthSwift.framework in Embed Frameworks */,
 				51C451BE226377D000C03939 /* Account.framework in Embed Frameworks */,
 				51C451BA226377C900C03939 /* Articles.framework in Embed Frameworks */,
 				84C37FB620DD8DBB00CA8CF5 /* RSParser.framework in Embed Frameworks */,
@@ -1420,6 +1478,7 @@
 		517630032336215100E15FFF /* main.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		517630222336657E00E15FFF /* WebViewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewProvider.swift; sourceTree = "<group>"; };
 		517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageViewController-Extensions.swift"; sourceTree = "<group>"; };
+		517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthSwift.xcodeproj; path = submodules/OAuthSwift/OAuthSwift.xcodeproj; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
@@ -1795,6 +1854,7 @@
 			files = (
 				65ED4043235DEF6C0081F399 /* RSWeb.framework in Frameworks */,
 				65ED4044235DEF6C0081F399 /* RSDatabase.framework in Frameworks */,
+				517A757924451C0700B553B9 /* OAuthSwift.framework in Frameworks */,
 				65ED4045235DEF6C0081F399 /* RSTree.framework in Frameworks */,
 				65ED4046235DEF6C0081F399 /* ArticlesDatabase.framework in Frameworks */,
 				65ED4047235DEF6C0081F399 /* RSParser.framework in Frameworks */,
@@ -1824,6 +1884,7 @@
 				51C451E02264C7F900C03939 /* RSTree.framework in Frameworks */,
 				51C451F82264C83E00C03939 /* Account.framework in Frameworks */,
 				51C451F02264C83100C03939 /* ArticlesDatabase.framework in Frameworks */,
+				517A757B24451C1500B553B9 /* OAuthSwift.framework in Frameworks */,
 				51C451F42264C83900C03939 /* Articles.framework in Frameworks */,
 				51C451E82264C81000C03939 /* RSDatabase.framework in Frameworks */,
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
@@ -1851,6 +1912,7 @@
 				84C37FA520DD8D8400CA8CF5 /* RSCore.framework in Frameworks */,
 				5102FD83244009F000534F17 /* Secrets.framework in Frameworks */,
 				51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */,
+				517A757724451BFC00B553B9 /* OAuthSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2022,6 +2084,20 @@
 				769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */,
 			);
 			path = Account;
+			sourceTree = "<group>";
+		};
+		517A754524451BD500B553B9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				517A755324451BD500B553B9 /* OAuthSwift.framework */,
+				517A755524451BD500B553B9 /* OAuthSwift.framework */,
+				517A755724451BD500B553B9 /* OAuthSwift.framework */,
+				517A755924451BD500B553B9 /* OAuthSwift.framework */,
+				517A755B24451BD500B553B9 /* OAuthSwiftDemo.app */,
+				517A755D24451BD500B553B9 /* OAuthSwiftMacOSDemo.app */,
+				517A755F24451BD500B553B9 /* OAuthSwiftTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		5183CCEA226F70350010922C /* Timer */ = {
@@ -2570,6 +2646,7 @@
 				84C9FCA52262A1E600D921D6 /* Tests */,
 				D5907CDA2002F084005947E5 /* xcconfig */,
 				849C64611ED37A5D003D8FC0 /* Products */,
+				517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */,
 				84C37F7A20DD8CF200CA8CF5 /* RSCore.xcodeproj */,
 				84C37FB920DD8E0C00CA8CF5 /* RSDatabase.xcodeproj */,
 				84C37F8620DD8CF800CA8CF5 /* RSParser.xcodeproj */,
@@ -3278,6 +3355,10 @@
 					ProjectRef = 5110766A243BCE0400D97C8C /* FeedProvider.xcodeproj */;
 				},
 				{
+					ProductGroup = 517A754524451BD500B553B9 /* Products */;
+					ProjectRef = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
+				},
+				{
 					ProductGroup = 84C37F7B20DD8CF200CA8CF5 /* Products */;
 					ProjectRef = 84C37F7A20DD8CF200CA8CF5 /* RSCore.xcodeproj */;
 				},
@@ -3345,6 +3426,55 @@
 			fileType = wrapper.framework;
 			path = SyncDatabase.framework;
 			remoteRef = 51554C00228B6EB50055115A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		517A755324451BD500B553B9 /* OAuthSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OAuthSwift.framework;
+			remoteRef = 517A755224451BD500B553B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		517A755524451BD500B553B9 /* OAuthSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OAuthSwift.framework;
+			remoteRef = 517A755424451BD500B553B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		517A755724451BD500B553B9 /* OAuthSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OAuthSwift.framework;
+			remoteRef = 517A755624451BD500B553B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		517A755924451BD500B553B9 /* OAuthSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OAuthSwift.framework;
+			remoteRef = 517A755824451BD500B553B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		517A755B24451BD500B553B9 /* OAuthSwiftDemo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = OAuthSwiftDemo.app;
+			remoteRef = 517A755A24451BD500B553B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		517A755D24451BD500B553B9 /* OAuthSwiftMacOSDemo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = OAuthSwiftMacOSDemo.app;
+			remoteRef = 517A755C24451BD500B553B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		517A755F24451BD500B553B9 /* OAuthSwiftTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OAuthSwiftTests.xctest;
+			remoteRef = 517A755E24451BD500B553B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		65ED42B0235E71B40081F399 /* Sparkle.framework */ = {
@@ -4769,6 +4899,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 			};
 			name = Test;
 		};
@@ -4783,6 +4914,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 			};
 			name = Test;
 		};
@@ -4819,6 +4951,7 @@
 			baseConfigurationReference = 65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Debug;
@@ -4828,6 +4961,7 @@
 			baseConfigurationReference = 65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Test;
@@ -4837,6 +4971,7 @@
 			baseConfigurationReference = 65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Apple Development";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = NetNewsWire;
 			};
 			name = Release;
@@ -4869,6 +5004,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 			};
 			name = Debug;
 		};
@@ -4876,6 +5012,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 			};
 			name = Release;
 		};
@@ -4897,6 +5034,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 			};
 			name = Debug;
 		};
@@ -4904,6 +5042,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 			};
 			name = Release;
 		};
