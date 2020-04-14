@@ -14,7 +14,7 @@ import Articles
 import ArticlesDatabase
 
 protocol LocalAccountRefresherDelegate {
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess: NewAndUpdatedArticles)
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess: NewAndUpdatedArticles, completion: @escaping () -> Void)
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed)
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher)
 }
@@ -101,14 +101,18 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			
 			account.update(feed, with: parsedFeed) { result in
 				if case .success(let newAndUpdatedArticles) = result {
-					self.delegate?.localAccountRefresher(self, didProcess: newAndUpdatedArticles)
-					if let httpResponse = response as? HTTPURLResponse {
-						feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+					self.delegate?.localAccountRefresher(self, didProcess: newAndUpdatedArticles) {
+						if let httpResponse = response as? HTTPURLResponse {
+							feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+						}
+						feed.contentHash = dataHash
+						completion()
+						self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 					}
-					feed.contentHash = dataHash
+				} else {
+					completion()
+					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 				}
-				completion()
-				self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 			}
 			
 		}
