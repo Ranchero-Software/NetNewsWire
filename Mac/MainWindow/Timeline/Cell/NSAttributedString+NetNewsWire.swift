@@ -82,8 +82,10 @@ extension NSAttributedString {
 
 		// make sup/sub smaller. `Key("NSSupeScript")` is used here because `.superscript`
 		// isn't defined in UIKit, for some reason.
+		let superscriptAttribute = Key("NSSuperScript")
+
 		mutable.enumerateAttributes(in: fullRange, options: []) { (attributes: [Key : Any], range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
-			guard let superscript = attributes[Key("NSSuperScript")] as? Int else {
+			guard let superscript = attributes[superscriptAttribute] as? Int else {
 				return
 			}
 
@@ -100,7 +102,7 @@ extension NSAttributedString {
 
 				let newFont = Font(descriptor: descriptor, size: font.pointSize)
 				mutable.addAttribute(.font, value: newFont as Any, range: range)
-				mutable.addAttribute(Key("NSSuperScript"), value: 0, range: range)
+				mutable.addAttribute(superscriptAttribute, value: 0, range: range)
 			}
 		}
 
