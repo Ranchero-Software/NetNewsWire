@@ -75,6 +75,13 @@ final class ExtensionPointManager {
 		saveExtensionPointIDs()
 	}
 	
+	func bestFeedProvider(for offered: URLComponents, with username: String?) -> FeedProvider? {
+		if let owner = feedProviderMatching(offered, forUsername: username, ability: .owner) {
+			return owner
+		}
+		return feedProviderMatching(offered, forUsername: username, ability: .available)
+	}
+	
 }
 
 private extension ExtensionPointManager {
@@ -123,4 +130,13 @@ private extension ExtensionPointManager {
 		}
 	}
 	
+	func feedProviderMatching(_ offered: URLComponents, forUsername username: String?, ability: FeedProviderAbility) -> FeedProvider? {
+		for extensionPoint in activeExtensionPoints.values {
+			if let feedProvider = extensionPoint as? FeedProvider, feedProvider.ability(offered, forUsername: username) == ability {
+				return feedProvider
+			}
+		}
+		return nil
+	}
+
 }

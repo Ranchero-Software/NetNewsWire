@@ -9,9 +9,10 @@
 import Foundation
 import Secrets
 import OAuthSwift
+import RSParser
 
-public struct TwitterFeedProvider {
-	
+public struct TwitterFeedProvider: FeedProvider {
+
 	private static let server = "api.twitter.com"
 	
 	public var userID: String
@@ -50,9 +51,34 @@ public struct TwitterFeedProvider {
 		self.oauthToken = tokenCredentials.secret
 		self.oauthTokenSecret = tokenSecretCredentials.secret
 	}
+
+	public func ability(_ urlComponents: URLComponents, forUsername username: String?) -> FeedProviderAbility {
+		guard urlComponents.host?.hasSuffix("twitter.com") ?? false else {
+			return .none
+		}
+		
+		if let username = username, username == userID {
+			return .owner
+		}
+		
+		return .available
+	}
+
+	public func iconURL(_ url: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
+		// TODO: Finish implementation
+	}
+
+	public func provide(_ url: URLComponents, completion: @escaping (Result<ParsedFeed, Error>) -> Void) {
+		// TODO: Finish implementation
+	}
 	
+	public func refresh(_ url: URLComponents, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
+		// TODO: Finish implementation
+	}
+
 }
 
+// MARK: OAuth1SwiftProvider
 
 extension TwitterFeedProvider: OAuth1SwiftProvider {
 	
@@ -65,11 +91,5 @@ extension TwitterFeedProvider: OAuth1SwiftProvider {
 			accessTokenUrl:  "https://api.twitter.com/oauth/access_token"
 		)
 	}
-	
-}
-
-// MARK: FeedProvider
-
-extension TwitterFeedProvider: FeedProvider {
 	
 }
