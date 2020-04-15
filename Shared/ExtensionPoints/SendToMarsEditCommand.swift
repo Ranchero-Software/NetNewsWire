@@ -27,6 +27,10 @@ final class SendToMarsEditCommand: ExtensionPoint, SendToCommand {
 	
 	let extensionPointID = ExtensionPointIdentifer.marsEdit
 	
+	var title: String {
+		return extensionPointID.type.title
+	}
+	
 	var image: NSImage? {
 		return appToUse()?.icon ?? nil
 	}

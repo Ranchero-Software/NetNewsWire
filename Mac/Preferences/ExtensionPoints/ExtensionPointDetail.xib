@@ -26,20 +26,20 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView distribution="fill" orientation="horizontal" alignment="bottom" spacing="19" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z8D-OO-XZd">
-                                <rect key="frame" x="69" y="200" width="189" height="38"/>
+                                <rect key="frame" x="85" y="208" width="157" height="30"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="I6P-Q2-DtA">
-                                        <rect key="frame" x="0.0" y="0.0" width="36" height="36"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="28" height="28"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="36" id="HqU-9L-bqb"/>
-                                            <constraint firstAttribute="height" constant="36" id="bpI-uD-bzZ"/>
+                                            <constraint firstAttribute="width" constant="28" id="HqU-9L-bqb"/>
+                                            <constraint firstAttribute="height" constant="28" id="bpI-uD-bzZ"/>
                                         </constraints>
                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSAdvanced" id="iCo-JD-zZy"/>
                                     </imageView>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d0R-Cs-axs">
-                                        <rect key="frame" x="53" y="0.0" width="138" height="38"/>
+                                        <rect key="frame" x="45" y="0.0" width="114" height="30"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Extension" id="CGj-bV-rXW">
-                                            <font key="font" metaFont="system" size="32"/>
+                                            <font key="font" metaFont="system" size="26"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -55,7 +55,7 @@
                                 </customSpacing>
                             </stackView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tK2-QL-hvM">
-                                <rect key="frame" x="31" y="168" width="264" height="16"/>
+                                <rect key="frame" x="31" y="176" width="264" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="260" id="GRp-qY-UP1"/>
                                 </constraints>
@@ -70,7 +70,9 @@
                             <constraint firstItem="tK2-QL-hvM" firstAttribute="top" secondItem="Z8D-OO-XZd" secondAttribute="bottom" constant="16" id="3Ww-vg-yg7"/>
                             <constraint firstItem="Z8D-OO-XZd" firstAttribute="top" secondItem="jT6-Hh-gWM" secondAttribute="top" constant="16" id="3hP-9H-3IX"/>
                             <constraint firstItem="tK2-QL-hvM" firstAttribute="centerX" secondItem="jT6-Hh-gWM" secondAttribute="centerX" id="7ik-M6-Wmx"/>
+                            <constraint firstItem="Z8D-OO-XZd" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="jT6-Hh-gWM" secondAttribute="leading" constant="8" id="U8D-q2-eyi"/>
                             <constraint firstItem="Z8D-OO-XZd" firstAttribute="centerX" secondItem="jT6-Hh-gWM" secondAttribute="centerX" id="XZC-Yp-uT5"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Z8D-OO-XZd" secondAttribute="trailing" constant="8" id="pok-cn-NFH"/>
                         </constraints>
                     </view>
                 </tabViewItem>

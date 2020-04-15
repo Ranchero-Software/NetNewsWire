@@ -12,10 +12,25 @@ import OAuthSwift
 
 public struct TwitterFeedProvider {
 	
-	public var username: String
+	public var userID: String
+	public var screenName: String
+
+	public init(tokenSuccess: OAuthSwift.TokenSuccess) {
+		// TODO: beef this up
+		userID = tokenSuccess.parameters["user_id"] as? String ?? ""
+		screenName = tokenSuccess.parameters["screen_name"] as? String ?? ""
+		
+		//				let token = tokenSuccess.credential.oauthToken
+		//				let secret = tokenSuccess.credential.oauthTokenSecret
+
+		// TODO: save credentials here
+	}
 	
 	public init(username: String) {
-		self.username = username
+		self.userID = username
+		self.screenName = "Stored Somewhere"
+		
+		// TODO: load credentials here
 	}
 	
 }

@@ -116,13 +116,12 @@ private extension ExtensionPointEnableWindowController {
 		oauth1.authorizeURLHandler = self
 		
 		oauth1.authorize(withCallbackURL: callbackURL) { [weak self] result in
-			guard let self = self else { return }
+			guard let self = self, let extensionPointType = self.extensionPointType else { return }
 
 			switch result {
 			case .success(let tokenSuccess):
 				
-				//				let token = tokenSuccess.credential.oauthToken
-				//				let secret = tokenSuccess.credential.oauthTokenSecret
+				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess)
 				let screenName = tokenSuccess.parameters["screen_name"] as? String ?? ""
 				print("******************* \(screenName)")
 				self.hostWindow!.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)

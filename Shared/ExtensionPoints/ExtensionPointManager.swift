@@ -9,6 +9,7 @@
 import Foundation
 import FeedProvider
 import RSCore
+import OAuthSwift
 
 public extension Notification.Name {
 	static let ActiveExtensionPointsDidChange = Notification.Name(rawValue: "ActiveExtensionPointsDidChange")
@@ -62,8 +63,8 @@ final class ExtensionPointManager {
 		loadExtensionPoints()
 	}
 	
-	func activateExtensionPoint(_ extensionPointType: ExtensionPoint.Type) {
-		if let extensionPoint = self.extensionPoint(for: extensionPointType) {
+	func activateExtensionPoint(_ extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess? = nil) {
+		if let extensionPoint = self.extensionPoint(for: extensionPointType, tokenSuccess: tokenSuccess) {
 			activeExtensionPoints[extensionPoint.extensionPointID] = extensionPoint
 			saveExtensionPointIDs()
 		}
@@ -93,14 +94,18 @@ private extension ExtensionPointManager {
 		NotificationCenter.default.post(name: .ActiveExtensionPointsDidChange, object: nil, userInfo: nil)
 	}
 	
-	func extensionPoint(for extensionPointType: ExtensionPoint.Type) -> ExtensionPoint? {
+	func extensionPoint(for extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess?) -> ExtensionPoint? {
 		switch extensionPointType {
 		case is SendToMarsEditCommand.Type:
 			return SendToMarsEditCommand()
 		case is SendToMicroBlogCommand.Type:
 			return SendToMicroBlogCommand()
-//		case is TwitterFeedProvider.Type:
-//			return TwitterFeedProvider(username: username)
+		case is TwitterFeedProvider.Type:
+			if let tokenSuccess = tokenSuccess {
+				return TwitterFeedProvider(tokenSuccess: tokenSuccess)
+			} else {
+				return nil
+			}
 		default:
 			assertionFailure("Unrecognized Extension Point Type.")
 		}

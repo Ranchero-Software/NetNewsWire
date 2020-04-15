@@ -28,7 +28,11 @@ extension TwitterFeedProvider: ExtensionPoint {
 	}()
 
 	var extensionPointID: ExtensionPointIdentifer {
-		return ExtensionPointIdentifer.twitter(username)
+		return ExtensionPointIdentifer.twitter(userID)
+	}
+
+	var title: String {
+		return "@\(screenName)"
 	}
 
 }

@@ -15,11 +15,11 @@ class ExtensionPointDetailViewController: NSViewController {
 	@IBOutlet weak var descriptionLabel: NSTextField!
 	
 	private var extensionPointWindowController: NSWindowController?
-	private var extensionPointID: ExtensionPointIdentifer?
+	private var extensionPoint: ExtensionPoint?
 
-	init(extensionPointID: ExtensionPointIdentifer) {
+	init(extensionPoint: ExtensionPoint) {
 		super.init(nibName: "ExtensionPointDetail", bundle: nil)
-		self.extensionPointID = extensionPointID
+		self.extensionPoint = extensionPoint
 	}
 
 	public required init?(coder: NSCoder) {
@@ -28,10 +28,10 @@ class ExtensionPointDetailViewController: NSViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		guard let extensionPointID = extensionPointID else { return }
-		imageView.image = extensionPointID.templateImage
-		titleLabel.stringValue = extensionPointID.title
-		descriptionLabel.attributedStringValue = extensionPointID.description
+		guard let extensionPoint = extensionPoint else { return }
+		imageView.image = extensionPoint.templateImage
+		titleLabel.stringValue = extensionPoint.title
+		descriptionLabel.attributedStringValue = extensionPoint.description
 	}
 	
 }

@@ -30,6 +30,10 @@ final class SendToMicroBlogCommand: ExtensionPoint, SendToCommand {
 
 	let extensionPointID = ExtensionPointIdentifer.microblog
 	
+	var title: String {
+		return extensionPointID.type.title
+	}
+	
 	var image: NSImage? {
 		return microBlogApp.icon
 	}

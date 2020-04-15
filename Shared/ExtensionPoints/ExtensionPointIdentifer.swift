@@ -15,23 +15,6 @@ enum ExtensionPointIdentifer: Hashable {
 	case marsEdit
 	case microblog
 	case twitter(String)
-
-	var title: String {
-		switch self {
-		case .twitter(let username):
-			return "\(type.title) (\(username)"
-		default:
-			return type.title
-		}
-	}
-	
-	var templateImage: RSImage {
-		return type.templateImage
-	}
-
-	var description: NSAttributedString {
-		return type.description
-	}
 	
 	var type: ExtensionPoint.Type {
 		switch self {

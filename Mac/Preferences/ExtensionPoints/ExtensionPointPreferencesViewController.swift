@@ -14,7 +14,7 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 	@IBOutlet weak var detailView: NSView!
 	@IBOutlet weak var deleteButton: NSButton!
 	
-	private var activeExtensionPointIDs = [ExtensionPointIdentifer]()
+	private var activeExtensionPoints = [ExtensionPoint]()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -42,8 +42,8 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 			return
 		}
 		
-		let extensionPointID = activeExtensionPointIDs[tableView.selectedRow]
-		ExtensionPointManager.shared.deactivateExtensionPoint(extensionPointID)
+		let extensionPoint = activeExtensionPoints[tableView.selectedRow]
+		ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint.extensionPointID)
 
 		showController(ExtensionPointAddViewController())
 	}
@@ -54,11 +54,11 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 extension ExtensionPointPreferencesViewController: NSTableViewDataSource {
 
 	func numberOfRows(in tableView: NSTableView) -> Int {
-		return activeExtensionPointIDs.count
+		return activeExtensionPoints.count
 	}
 
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		return activeExtensionPointIDs[row]
+		return activeExtensionPoints[row]
 	}
 }
 
@@ -70,9 +70,9 @@ extension ExtensionPointPreferencesViewController: NSTableViewDelegate {
 
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? NSTableCellView {
-			let extensionPointID = activeExtensionPointIDs[row]
-			cell.textField?.stringValue = extensionPointID.title
-			cell.imageView?.image = extensionPointID.templateImage
+			let extensionPoint = activeExtensionPoints[row]
+			cell.textField?.stringValue = extensionPoint.title
+			cell.imageView?.image = extensionPoint.templateImage
 			return cell
 		}
 		return nil
@@ -88,8 +88,8 @@ extension ExtensionPointPreferencesViewController: NSTableViewDelegate {
 			deleteButton.isEnabled = true
 		}
 
-		let extensionPointID = activeExtensionPointIDs[selectedRow]
-		let controller = ExtensionPointDetailViewController(extensionPointID: extensionPointID)
+		let extensionPoint = activeExtensionPoints[selectedRow]
+		let controller = ExtensionPointDetailViewController(extensionPoint: extensionPoint)
 		showController(controller)
 		
 	}
@@ -105,7 +105,7 @@ private extension ExtensionPointPreferencesViewController {
 	}
 	
 	func showDefaultView() {
-		activeExtensionPointIDs = Array(ExtensionPointManager.shared.activeExtensionPoints.keys).sorted(by: { $0.title < $1.title })
+		activeExtensionPoints = Array(ExtensionPointManager.shared.activeExtensionPoints.values).sorted(by: { $0.title < $1.title })
 		tableView.reloadData()
 		showController(ExtensionPointAddViewController())
 	}

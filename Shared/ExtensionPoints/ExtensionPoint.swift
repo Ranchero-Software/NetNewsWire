@@ -16,16 +16,21 @@ protocol ExtensionPoint {
 	static var templateImage: RSImage { get }
 	static var description: NSAttributedString { get }
 	
+	var title: String { get }
 	var extensionPointID: ExtensionPointIdentifer { get }
 	
 }
 
 extension ExtensionPoint {
 	
-	var title: String {
-		return extensionPointID.title
+	var templateImage: RSImage {
+		return extensionPointID.type.templateImage
 	}
 
+	var description: NSAttributedString {
+		return extensionPointID.type.description
+	}
+	
 	static func makeAttrString(_ text: String) -> NSMutableAttributedString {
 		let paragraphStyle = NSMutableParagraphStyle()
 		paragraphStyle.alignment = .center
