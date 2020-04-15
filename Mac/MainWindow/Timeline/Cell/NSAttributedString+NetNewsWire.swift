@@ -6,11 +6,29 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
+#if canImport(AppKit)
 import AppKit
+typealias Font = NSFont
+typealias FontDescriptor = NSFontDescriptor
+typealias Color = NSColor
+
+private let boldTrait = NSFontDescriptor.SymbolicTraits.bold
+private let italicTrait = NSFontDescriptor.SymbolicTraits.italic
+private let monoSpaceTrait = NSFontDescriptor.SymbolicTraits.monoSpace
+#else
+import UIKit
+typealias Font = UIFont
+typealias FontDescriptor = UIFontDescriptor
+typealias Color = UIColor
+
+private let boldTrait = UIFontDescriptor.SymbolicTraits.traitBold
+private let italicTrait = UIFontDescriptor.SymbolicTraits.traitItalic
+private let monoSpaceTrait = UIFontDescriptor.SymbolicTraits.traitMonoSpace
+#endif
 
 extension NSAttributedString {
 
-	func adding(font baseFont: NSFont, color: NSColor? = nil) -> NSAttributedString {
+	func adding(font baseFont: Font, color: Color? = nil) -> NSAttributedString {
 		let mutable = self.mutableCopy() as! NSMutableAttributedString
 		let fullRange = NSRange(location: 0, length: mutable.length)
 
@@ -22,60 +40,68 @@ extension NSAttributedString {
 		let baseDescriptor = baseFont.fontDescriptor
 		let baseSymbolicTraits = baseDescriptor.symbolicTraits
 
-		let baseTraits = baseDescriptor.object(forKey: .traits) as! [NSFontDescriptor.TraitKey: Any]
-		let baseWeight = baseTraits[.weight] as! NSFont.Weight
+		let baseTraits = baseDescriptor.object(forKey: .traits) as! [FontDescriptor.TraitKey: Any]
+		let baseWeight = baseTraits[.weight] as! Font.Weight
 
 		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
-			guard let font = font as? NSFont else { return }
+			guard let font = font as? Font else { return }
 
 			var newSymbolicTraits = baseSymbolicTraits
 
 			let symbolicTraits = font.fontDescriptor.symbolicTraits
 
-			if symbolicTraits.contains(.italic) {
-				newSymbolicTraits.insert(.italic)
+			if symbolicTraits.contains(italicTrait) {
+				newSymbolicTraits.insert(italicTrait)
 			}
 
-			if symbolicTraits.contains(.monoSpace) {
-				newSymbolicTraits.insert(.monoSpace)
+			if symbolicTraits.contains(monoSpaceTrait) {
+				newSymbolicTraits.insert(monoSpaceTrait)
 			}
 
+			#if canImport(AppKit)
 			var descriptor = baseDescriptor.withSymbolicTraits(newSymbolicTraits)
+			#else
+			var descriptor = baseDescriptor.withSymbolicTraits(newSymbolicTraits)!
+			#endif
 
-			if symbolicTraits.contains(.bold) {
+			if symbolicTraits.contains(boldTrait) {
 				// If the base font is semibold (as timeline titles are), make the "bold"
 				// text heavy for better contrast.
 
 				if baseWeight == .semibold {
-					let traits: [NSFontDescriptor.TraitKey: Any] = [.weight: NSFont.Weight.heavy]
-					let attributes: [NSFontDescriptor.AttributeName: Any] = [.traits: traits]
+					let traits: [FontDescriptor.TraitKey: Any] = [.weight: Font.Weight.heavy]
+					let attributes: [FontDescriptor.AttributeName: Any] = [.traits: traits]
 					descriptor = descriptor.addingAttributes(attributes)
 				}
 			}
 
-			let newFont = NSFont(descriptor: descriptor, size: size)
+			let newFont = Font(descriptor: descriptor, size: size)
 
 			mutable.addAttribute(.font, value: newFont as Any, range: range)
 		}
 
-		// make sup/sub smaller
+		// make sup/sub smaller. `Key("NSSupeScript")` is used here because `.superscript`
+		// isn't defined in UIKit, for some reason.
 		mutable.enumerateAttributes(in: fullRange, options: []) { (attributes: [Key : Any], range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
-			guard let superscript = attributes[.superscript] as? Int else {
+			guard let superscript = attributes[Key("NSSuperScript")] as? Int else {
 				return
 			}
 
 			if superscript != 0 {
-				let font = mutable.attribute(.font, at: range.location, effectiveRange: nil) as! NSFont
+				let font = mutable.attribute(.font, at: range.location, effectiveRange: nil) as! Font
 
-				let features: [NSFontDescriptor.FeatureKey: Any] = [.typeIdentifier: kVerticalPositionType, .selectorIdentifier: superscript > 0 ? kSuperiorsSelector : kInferiorsSelector]
-				let attributes: [NSFontDescriptor.AttributeName: Any] = [.featureSettings: [features]]
+				#if canImport(AppKit)
+				let features: [FontDescriptor.FeatureKey: Any] = [.typeIdentifier: kVerticalPositionType, .selectorIdentifier: superscript > 0 ? kSuperiorsSelector : kInferiorsSelector]
+				#else
+				let features: [FontDescriptor.FeatureKey: Any] = [.featureIdentifier: kVerticalPositionType, .typeIdentifier: superscript > 0 ? kSuperiorsSelector : kInferiorsSelector]
+				#endif
+				let attributes: [FontDescriptor.AttributeName: Any] = [.featureSettings: [features]]
 				let descriptor = font.fontDescriptor.addingAttributes(attributes)
 
-				let newFont = NSFont(descriptor: descriptor, size: font.pointSize)
+				let newFont = Font(descriptor: descriptor, size: font.pointSize)
 				mutable.addAttribute(.font, value: newFont as Any, range: range)
-				mutable.addAttribute(.superscript, value: 0, range: range)
+				mutable.addAttribute(Key("NSSuperScript"), value: 0, range: range)
 			}
-
 		}
 
 		return mutable.copy() as! NSAttributedString

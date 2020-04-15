@@ -731,6 +731,7 @@
 		B2B8075E239C49D300F191E0 /* RSImage-AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */; };
 		B2B80778239C4C7000F191E0 /* RSImage-AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */; };
 		B2B80779239C4C7300F191E0 /* RSImage-AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */; };
+		B2C0FDEA2447A69100ADC150 /* NSAttributedString+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26B9571243D176B0053EEF5 /* NSAttributedString+NetNewsWire.swift */; };
 		B528F81E23333C7E00E735DD /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = B528F81D23333C7E00E735DD /* page.html */; };
 		BDCB516724282C8A00102A80 /* AccountsNewsBlur.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */; };
 		BDCB516824282C8A00102A80 /* AccountsNewsBlur.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */; };
@@ -4307,6 +4308,7 @@
 				51F9F3F923DFB16300A314FD /* UITableView-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
+				B2C0FDEA2447A69100ADC150 /* NSAttributedString+NetNewsWire.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
