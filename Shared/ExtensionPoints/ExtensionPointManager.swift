@@ -23,7 +23,7 @@ final class ExtensionPointManager {
 	let possibleExtensionPointTypes: [ExtensionPoint.Type]
 	var availableExtensionPointTypes: [ExtensionPoint.Type] {
 		
-		let activeExtensionPointTypes = activeExtensionPoints.keys.compactMap({ ObjectIdentifier($0.type) })
+		let activeExtensionPointTypes = activeExtensionPoints.keys.compactMap({ ObjectIdentifier($0.extensionPointType) })
 		var available = [ExtensionPoint.Type]()
 		for possibleExtensionPointType in possibleExtensionPointTypes {
 			if possibleExtensionPointType.isSinglton {
@@ -118,8 +118,8 @@ private extension ExtensionPointManager {
 			return SendToMarsEditCommand()
 		case .microblog:
 			return SendToMicroBlogCommand()
-		case .twitter(let username):
-			return TwitterFeedProvider(username: username)
+		case .twitter(let userID, let screenName):
+			return TwitterFeedProvider(userID: userID, screenName: screenName)
 		}
 	}
 	

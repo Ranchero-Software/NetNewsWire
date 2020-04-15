@@ -26,9 +26,9 @@ public struct TwitterFeedProvider {
 		// TODO: save credentials here
 	}
 	
-	public init(username: String) {
-		self.userID = username
-		self.screenName = "Stored Somewhere"
+	public init(userID: String, screenName: String) {
+		self.userID = userID
+		self.screenName = screenName
 		
 		// TODO: load credentials here
 	}

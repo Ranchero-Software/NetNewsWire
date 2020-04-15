@@ -24,11 +24,11 @@ protocol ExtensionPoint {
 extension ExtensionPoint {
 	
 	var templateImage: RSImage {
-		return extensionPointID.type.templateImage
+		return extensionPointID.extensionPointType.templateImage
 	}
 
 	var description: NSAttributedString {
-		return extensionPointID.type.description
+		return extensionPointID.extensionPointType.description
 	}
 	
 	static func makeAttrString(_ text: String) -> NSMutableAttributedString {

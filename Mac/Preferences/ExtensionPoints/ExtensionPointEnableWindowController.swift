@@ -120,12 +120,8 @@ private extension ExtensionPointEnableWindowController {
 
 			switch result {
 			case .success(let tokenSuccess):
-				
 				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess)
-				let screenName = tokenSuccess.parameters["screen_name"] as? String ?? ""
-				print("******************* \(screenName)")
 				self.hostWindow!.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
-
 			case .failure(let oauthSwiftError):
 				NSApplication.shared.presentError(oauthSwiftError)
 			}
