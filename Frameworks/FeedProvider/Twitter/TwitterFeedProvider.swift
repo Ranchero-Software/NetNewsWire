@@ -53,6 +53,21 @@ public struct TwitterFeedProvider {
 	
 }
 
+
+extension TwitterFeedProvider: OAuth1SwiftProvider {
+	
+	public static var oauth1Swift: OAuth1Swift {
+		return OAuth1Swift(
+			consumerKey: Secrets.twitterConsumerKey,
+			consumerSecret: Secrets.twitterConsumerSecret,
+			requestTokenUrl: "https://api.twitter.com/oauth/request_token",
+			authorizeUrl:    "https://api.twitter.com/oauth/authorize",
+			accessTokenUrl:  "https://api.twitter.com/oauth/access_token"
+		)
+	}
+	
+}
+
 // MARK: FeedProvider
 
 extension TwitterFeedProvider: FeedProvider {
