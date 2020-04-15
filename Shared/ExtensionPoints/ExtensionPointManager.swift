@@ -112,7 +112,7 @@ private extension ExtensionPointManager {
 		return nil
 	}
 	
-	func extensionPoint(for extensionPointID: ExtensionPointIdentifer) -> ExtensionPoint {
+	func extensionPoint(for extensionPointID: ExtensionPointIdentifer) -> ExtensionPoint? {
 		switch extensionPointID {
 		case .marsEdit:
 			return SendToMarsEditCommand()
