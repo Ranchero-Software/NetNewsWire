@@ -83,7 +83,8 @@ extension NSAttributedString {
 
 	convenience init(html: String) {
 		let data = html.data(using: .utf8)!
-		self.init(html: data, options: [.characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)!
+		let options: [NSAttributedString.DocumentReadingOptionKey: Any] = [.characterEncoding: String.Encoding.utf8.rawValue, .documentType: NSAttributedString.DocumentType.html]
+		try! self.init(data: data, options: options, documentAttributes: nil)
 	}
 
 }
