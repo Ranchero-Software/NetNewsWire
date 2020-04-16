@@ -92,6 +92,8 @@ extension NSAttributedString {
 			if superscript != 0 {
 				let font = mutable.attribute(.font, at: range.location, effectiveRange: nil) as! Font
 
+				// There's some discrepancy here: The raw value of AppKit's .typeIdentifier is UIKit's .featureIdentifier,
+				// and AppKit's .selectorIdentifier is UIKit's .typeIdentifier
 				#if canImport(AppKit)
 				let features: [FontDescriptor.FeatureKey: Any] = [.typeIdentifier: kVerticalPositionType, .selectorIdentifier: superscript > 0 ? kSuperiorsSelector : kInferiorsSelector]
 				#else
