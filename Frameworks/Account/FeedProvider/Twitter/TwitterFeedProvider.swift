@@ -82,7 +82,6 @@ public struct TwitterFeedProvider: FeedProvider {
 		}
 		
 		let bestUserName = username != nil ? username : urlComponents.user
-		
 		if bestUserName == userID {
 			return .owner
 		}
@@ -92,14 +91,65 @@ public struct TwitterFeedProvider: FeedProvider {
 
 	public func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
 		if let screenName = deriveScreenName(urlComponents) {
-			fetchIconURL(screenName: screenName, completion: completion)
+			fetchUser(screenName: screenName) { result in
+				switch result {
+				case .success(let user):
+					if let avatarURL = user.avatarURL {
+						completion(.success(avatarURL))
+					} else {
+						completion(.failure(TwitterFeedProviderError.screenNameNotFound))
+					}
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
 		} else {
 			completion(.failure(TwitterFeedProviderError.screenNameNotFound))
 		}
 	}
 
-	public func provide(_ urlComponents: URLComponents, completion: @escaping (Result<ParsedFeed, Error>) -> Void) {
-		// TODO: Finish implementation
+	public func assignName(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
+		switch urlComponents.path {
+			
+		case "/", "/home":
+			let name = NSLocalizedString("Twitter Timeline", comment: "Twitter Timeline")
+			completion(.success(name))
+			
+		case "/notifications/mentions":
+			let name = NSLocalizedString("Twitter Mentions", comment: "Twitter Mentions")
+			completion(.success(name))
+			
+		case "/search":
+			if let query = urlComponents.queryItems?.first(where: { $0.name == "q" })?.value {
+				let localized = NSLocalizedString("Twitter Search: %@", comment: "Twitter Search")
+				let searchName = NSString.localizedStringWithFormat(localized as NSString, query) as String
+				completion(.success(searchName))
+			} else {
+				let name = NSLocalizedString("Twitter Search", comment: "Twitter Search")
+				completion(.success(name))
+			}
+			
+		default:
+			if let screenName = deriveScreenName(urlComponents) {
+				fetchUser(screenName: screenName) { result in
+					switch result {
+					case .success(let user):
+						if let userName = user.name {
+							let localized = NSLocalizedString("%@ on Twitter", comment: "Twitter Name")
+							let onName = NSString.localizedStringWithFormat(localized as NSString, userName) as String
+							completion(.success(onName))
+						} else {
+							completion(.failure(TwitterFeedProviderError.screenNameNotFound))
+						}
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+			} else {
+				completion(.failure(TwitterFeedProviderError.unknown))
+			}
+			
+		}
 	}
 	
 	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
@@ -139,17 +189,19 @@ private extension TwitterFeedProvider {
 		}
 	}
 	
-	func fetchIconURL(screenName: String, completion: @escaping (Result<String, Error>) -> Void) {
+	func fetchUser(screenName: String, completion: @escaping (Result<TwitterUser, Error>) -> Void) {
 		let url = "\(Self.apiBase)users/show.json"
 		let parameters = ["screen_name": screenName]
 		
 		client.get(url, parameters: parameters) { result in
 			switch result {
 			case .success(let response):
-				if let json = try? response.jsonObject() as? [String: Any], let url = json["profile_image_url_https"] as? String {
-					completion(.success(url))
-				} else {
-					completion(.failure(TwitterFeedProviderError.unknown))
+				let decoder = JSONDecoder()
+				do {
+					let user = try decoder.decode(TwitterUser.self, from: response.data)
+					completion(.success(user))
+				} catch {
+					completion(.failure(error))
 				}
 			case .failure(let error):
 				completion(.failure(error))

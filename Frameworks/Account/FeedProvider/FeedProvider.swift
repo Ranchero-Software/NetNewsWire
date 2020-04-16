@@ -24,8 +24,8 @@ public protocol FeedProvider  {
 	/// Provide the iconURL of the given URL
 	func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void)
 	
-	/// Construct a ParsedFeed that can be used to create and store a new Feed
-	func provide(_ urlComponents: URLComponents, completion: @escaping (Result<ParsedFeed, Error>) -> Void)
+	/// Construct a Name for the new feed
+	func assignName(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void)
 	
 	/// Refresh all the article entries (ParsedItems)
 	func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void)

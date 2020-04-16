@@ -115,15 +115,30 @@ final class LocalAccountDelegate: AccountDelegate {
 		// Username should be part of the URL on new feed adds
 		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents, with: nil) {
 
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			feedProvider.provide(urlComponents) { result in
+			refreshProgress.addToNumberOfTasksAndRemaining(2)
+			
+			feedProvider.assignName(urlComponents) { result in
 				self.refreshProgress.completeTask()
 				switch result {
-				case .success(let parsedFeed):
-					let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-					account.update(feed, with: parsedFeed, {_ in})
-				case .failure:
-					completion(.failure(AccountError.createErrorNotFound))
+					
+				case .success(let name):
+					let feed = account.createWebFeed(with: name, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+					feed.editedName = name
+					
+					feedProvider.refresh(feed) { result in
+						self.refreshProgress.completeTask()
+						switch result {
+						case .success(let parsedItems):
+							account.update(urlString, with: parsedItems) { _ in
+								container.addWebFeed(feed)
+							}
+						case .failure:
+							completion(.failure(AccountError.createErrorNotFound))
+						}
+					}
+					
+				case .failure(let error):
+					completion(.failure(error))
 				}
 			}
 			
