@@ -112,12 +112,7 @@ private extension ArticleRenderer {
 	}
 	
 	private var articleCSS: String {
-		#if os(iOS)
-		let style = try! MacroProcessor.renderedText(withTemplate: styleString(), substitutions: styleSubstitutions())
-		return style
-		#else
-		return styleString()
-		#endif
+		return try! MacroProcessor.renderedText(withTemplate: styleString(), substitutions: styleSubstitutions())
 	}
 
 	static var defaultStyleSheet: String = {
@@ -258,6 +253,37 @@ private extension ArticleRenderer {
 		var d = [String: String]()
 		let bodyFont = UIFont.preferredFont(forTextStyle: .body)
 		d["font-size"] = String(describing: bodyFont.pointSize)
+		return d
+	}
+	#else
+	func styleSubstitutions() -> [String: String] {
+		var d = [String: String]()
+		guard let linkColor = NSColor.controlAccentColor.usingColorSpace(.deviceRGB) else {
+			return d
+		}
+		
+		let red: Int
+		let green: Int
+		let blue: Int
+		
+		if NSApplication.shared.effectiveAppearance.isDarkMode {
+			let brighten = CGFloat(0.25)
+			let baseRed = linkColor.redComponent * 0xFF
+			red = Int(round(((255 - baseRed) * brighten)) + round(baseRed))
+			let baseGreen = linkColor.greenComponent * 0xFF
+			green = Int(round(((255 - baseGreen) * brighten)) + round(baseGreen))
+			let baseBlue = linkColor.blueComponent * 0xFF
+			blue = Int(round(((255 - baseBlue) * brighten)) + round(baseBlue))
+		} else {
+			let darken = CGFloat(0.75)
+			red = Int(round(linkColor.redComponent * 0xFF * darken))
+			green = Int(round(linkColor.greenComponent * 0xFF * darken))
+			blue = Int(round(linkColor.blueComponent * 0xFF * darken))
+		}
+
+		d["accent-r"] = String(red)
+		d["accent-g"] = String(green)
+		d["accent-b"] = String(blue)
 		return d
 	}
 	#endif
