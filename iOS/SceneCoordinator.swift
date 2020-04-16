@@ -1693,16 +1693,16 @@ private extension SceneCoordinator {
 					return 0
 				}
 			}()
-			
-			for j in startingRow..<shadowTable[indexPath.section].count {
-				
+
+			for j in startingRow..<shadowTable[i].count {
+
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
 					assertionFailure()
 					completion(false)
 					return
 				}
-				
+
 				if isExpanded(node) {
 					continue
 				}

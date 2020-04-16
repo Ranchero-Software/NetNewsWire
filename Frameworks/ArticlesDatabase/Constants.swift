@@ -42,7 +42,6 @@ struct DatabaseKey {
 	// ArticleStatus
 	static let read = "read"
 	static let starred = "starred"
-	static let userDeleted = "userDeleted"
 	static let dateArrived = "dateArrived"
 
 	// Tag
