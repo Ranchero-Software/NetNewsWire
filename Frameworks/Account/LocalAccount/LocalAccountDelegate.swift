@@ -106,11 +106,31 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		guard let url = URL(string: urlString) else {
+		guard let url = URL(string: urlString), let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
 		}
 		
+		// Use a Feed Provider to create the feed if one is available for it
+		// Username should be part of the URL on new feed adds
+		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents, with: nil) {
+
+			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			feedProvider.provide(urlComponents) { result in
+				self.refreshProgress.completeTask()
+				switch result {
+				case .success(let parsedFeed):
+					let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+					account.update(feed, with: parsedFeed, {_ in})
+				case .failure:
+					completion(.failure(AccountError.createErrorNotFound))
+				}
+			}
+			
+			return
+		}
+		
+		// Use the standard feed finder to download and process the RSS feed
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		FeedFinder.find(url: url) { result in
 			
