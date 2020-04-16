@@ -230,7 +230,7 @@ private extension ArticleRenderer {
 				byline += name.htmlByAddingLink(url)
 			}
 			else if let name = author.name, let emailAddress = author.emailAddress {
-				byline += "\(name) &lt;\(emailAddress)&lg;"
+				byline += "\(name) &lt;\(emailAddress)&gt;"
 			}
 			else if let name = author.name {
 				byline += name

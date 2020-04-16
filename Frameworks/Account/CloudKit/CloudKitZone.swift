@@ -474,6 +474,8 @@ extension CloudKitZone {
 	/// Fetch all the changes in the CKZone since the last time we checked
     func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
 
+		var savedChangeToken = changeToken
+		
 		var changedRecords = [CKRecord]()
 		var deletedRecordKeys = [CloudKitRecordKey]()
 		
@@ -482,12 +484,8 @@ extension CloudKitZone {
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [Self.zoneID], configurationsByRecordZoneID: [Self.zoneID: zoneConfig])
         op.fetchAllChanges = true
 
-        op.recordZoneChangeTokensUpdatedBlock = { [weak self] zoneID, token, _ in
-            guard let self = self else { return }
-			
-			DispatchQueue.main.async {
-				self.changeToken = token
-			}
+        op.recordZoneChangeTokensUpdatedBlock = { zoneID, token, _ in
+			savedChangeToken = token
         }
 
         op.recordChangedBlock = { record in
@@ -499,20 +497,9 @@ extension CloudKitZone {
 			deletedRecordKeys.append(recordKey)
         }
 
-        op.recordZoneFetchCompletionBlock = { [weak self] zoneID ,token, _, _, error in
-            guard let self = self else { return }
-
-			switch CloudKitZoneResult.resolve(error) {
-            case .success:
-				DispatchQueue.main.async {
-					self.changeToken = token
-				}
-			 case .retry(let timeToWait):
-				 self.retryIfPossible(after: timeToWait) {
-					 self.fetchChangesInZone(completion: completion)
-				 }
-			 default:
-				os_log(.error, log: self.log, "%@ zone fetch changes error: %@", zoneID.zoneName, error?.localizedDescription ?? "Unknown")
+        op.recordZoneFetchCompletionBlock = { zoneID ,token, _, _, error in
+			if case .success = CloudKitZoneResult.resolve(error) {
+				savedChangeToken = token
 			}
         }
 
@@ -522,7 +509,15 @@ extension CloudKitZone {
 			switch CloudKitZoneResult.resolve(error) {
 			case .success:
 				DispatchQueue.main.async {
-					self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys, completion: completion)
+					self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys) { result in
+						switch result {
+						case .success:
+							self.changeToken = savedChangeToken
+							completion(.success(()))
+						case .failure(let error):
+							completion(.failure(error))
+						}
+					}
 				}
 			case .zoneNotFound:
 				self.createZoneRecord() { result in

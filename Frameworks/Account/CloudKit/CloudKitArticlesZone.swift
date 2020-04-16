@@ -233,7 +233,7 @@ private extension CloudKitArticlesZone {
 		let encoder = JSONEncoder()
 		var parsedAuthors = [String]()
 		
-		if let authors = article.authors {
+		if let authors = article.authors, !authors.isEmpty {
 			for author in authors {
 				let parsedAuthor = ParsedAuthor(name: author.name,
 												url: author.url,
@@ -243,9 +243,8 @@ private extension CloudKitArticlesZone {
 					parsedAuthors.append(encodedParsedAuthor)
 				}
 			}
+			articleRecord[CloudKitArticle.Fields.parsedAuthors] = parsedAuthors
 		}
-		
-		articleRecord[CloudKitArticle.Fields.parsedAuthors] = parsedAuthors
 		
 		records.append(articleRecord)
 		return records
