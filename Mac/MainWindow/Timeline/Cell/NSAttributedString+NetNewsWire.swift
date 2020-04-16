@@ -101,8 +101,13 @@ extension NSAttributedString {
 				let descriptor = font.fontDescriptor.addingAttributes(attributes)
 
 				let newFont = Font(descriptor: descriptor, size: font.pointSize)
-				mutable.addAttribute(.font, value: newFont as Any, range: range)
-				mutable.addAttribute(superscriptAttribute, value: 0, range: range)
+
+				let newAttributes: [NSAttributedString.Key: Any] = [
+					.font: newFont as Any,
+					superscriptAttribute: 0,
+				]
+
+				mutable.addAttributes(newAttributes, range: range)
 			}
 		}
 
