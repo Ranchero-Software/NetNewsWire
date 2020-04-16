@@ -82,22 +82,38 @@ public final class WebFeedIconDownloader {
 				}
 			}
 		}
-
-		if let iconURL = feed.iconURL {
-			icon(forURL: iconURL, feed: feed) { (image) in
-				if let image = image {
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-					self.cache[feed] = IconImage(image)
+		
+		func checkFeedIconURL() {
+			if let iconURL = feed.iconURL {
+				icon(forURL: iconURL, feed: feed) { (image) in
+					if let image = image {
+						self.postFeedIconDidBecomeAvailableNotification(feed)
+						self.cache[feed] = IconImage(image)
+					} else {
+						checkHomePageURL()
+					}
 				}
-				else {
-					checkHomePageURL()
-				}
+			} else {
+				checkHomePageURL()
 			}
 		}
-		else {
-			checkHomePageURL()
-		}
 
+		if let components = URLComponents(string: feed.url), let feedProvider = ExtensionPointManager.shared.bestFeedProvider(for: components, with: nil) {
+			feedProvider.iconURL(components) { result in
+				if case .success(let url) = result {
+					self.icon(forURL: url, feed: feed) { (image) in
+						if let image = image {
+							self.postFeedIconDidBecomeAvailableNotification(feed)
+							self.cache[feed] = IconImage(image)
+						} else {
+							checkFeedIconURL()
+						}
+					}
+				}
+			}
+		} else {
+			checkFeedIconURL()
+		}
 
 		return nil
 	}

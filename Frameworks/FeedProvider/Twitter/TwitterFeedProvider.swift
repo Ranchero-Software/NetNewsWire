@@ -11,9 +11,15 @@ import Secrets
 import OAuthSwift
 import RSParser
 
+// TODO: Beef up error handling...
+public enum TwitterFeedProviderError: Error {
+	case unknown
+}
+
 public struct TwitterFeedProvider: FeedProvider {
 
 	private static let server = "api.twitter.com"
+	private static let apiBase = "https://api.twitter.com/1.1/"
 	
 	public var userID: String
 	public var screenName: String
@@ -21,6 +27,8 @@ public struct TwitterFeedProvider: FeedProvider {
 	private var oauthToken: String
 	private var oauthTokenSecret: String
 
+	private var client: OAuthSwiftClient
+	
 	public init?(tokenSuccess: OAuthSwift.TokenSuccess) {
 		guard let userID = tokenSuccess.parameters["user_id"] as? String,
 			let screenName = tokenSuccess.parameters["screen_name"] as? String else {
@@ -37,6 +45,12 @@ public struct TwitterFeedProvider: FeedProvider {
 		
 		let tokenSecretCredentials = Credentials(type: .oauthAccessTokenSecret, username: userID, secret: oauthTokenSecret)
 		try? CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
+		
+		client = OAuthSwiftClient(consumerKey: Secrets.twitterConsumerKey,
+								  consumerSecret: Secrets.twitterConsumerSecret,
+								  oauthToken: oauthToken,
+								  oauthTokenSecret: oauthTokenSecret,
+								  version: .oauth1)
 	}
 	
 	public init?(userID: String, screenName: String) {
@@ -50,6 +64,12 @@ public struct TwitterFeedProvider: FeedProvider {
 
 		self.oauthToken = tokenCredentials.secret
 		self.oauthTokenSecret = tokenSecretCredentials.secret
+		
+		client = OAuthSwiftClient(consumerKey: Secrets.twitterConsumerKey,
+								  consumerSecret: Secrets.twitterConsumerSecret,
+								  oauthToken: oauthToken,
+								  oauthTokenSecret: oauthTokenSecret,
+								  version: .oauth1)
 	}
 
 	public func ability(_ urlComponents: URLComponents, forUsername username: String?) -> FeedProviderAbility {
@@ -65,7 +85,8 @@ public struct TwitterFeedProvider: FeedProvider {
 	}
 
 	public func iconURL(_ url: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
-		// TODO: Finish implementation
+		let screenName = extractScreenName(url)
+		fetchIconURL(screenName: screenName, completion: completion)
 	}
 
 	public func provide(_ url: URLComponents, completion: @escaping (Result<ParsedFeed, Error>) -> Void) {
@@ -90,6 +111,42 @@ extension TwitterFeedProvider: OAuth1SwiftProvider {
 			authorizeUrl:    "https://api.twitter.com/oauth/authorize",
 			accessTokenUrl:  "https://api.twitter.com/oauth/access_token"
 		)
+	}
+	
+}
+
+// MARK: Private
+
+private extension TwitterFeedProvider {
+	
+	// TODO: Full parsing routine
+	func extractScreenName(_ urlComponents: URLComponents) -> String {
+		let path = urlComponents.path
+		if let index = path.firstIndex(of: "?") {
+			let range = path.index(path.startIndex, offsetBy: 1)...index
+			return String(path[range])
+		} else {
+			return String(path.suffix(from: path.index(path.startIndex, offsetBy: 1)))
+		}
+	}
+	
+	// TODO: Update to retrieve the full user
+	func fetchIconURL(screenName: String, completion: @escaping (Result<String, Error>) -> Void) {
+		let url = "\(Self.apiBase)users/show.json"
+		let parameters = ["screen_name": screenName]
+		
+		client.get(url, parameters: parameters) { result in
+			switch result {
+			case .success(let response):
+				if let json = try? response.jsonObject() as? [String: Any], let url = json["profile_image_url_https"] as? String {
+					completion(.success(url))
+				} else {
+					completion(.failure(TwitterFeedProviderError.unknown))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 	
 }
