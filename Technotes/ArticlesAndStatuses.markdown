@@ -6,7 +6,7 @@ In the database (see ArticlesDatabase), they’re stored in two separate tables:
 
 The articles table contains the columns you’d expect: `articleID`, `title`, `contentHTML`, and so on.
 
-The statuses table contains `articleID`, `read`, `starred`, `userDeleted`, and `dateArrived` columns.
+The statuses table contains `articleID`, `read`, `starred`, and `dateArrived` columns.
 
 This separation is deliberate. There are two main reasons: syncing, and strange behavior.
 

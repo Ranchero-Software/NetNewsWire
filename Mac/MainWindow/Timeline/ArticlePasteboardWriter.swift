@@ -120,7 +120,6 @@ private extension ArticlePasteboardWriter {
 		static let dateArrived = "dateArrived"
 		static let read = "read"
 		static let starred = "starred"
-		static let userDeleted = "userDeleted"
 		static let authors = "authors"
 
 		// Author

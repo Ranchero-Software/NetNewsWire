@@ -15,9 +15,8 @@ extension ArticleStatus {
 	convenience init(articleID: String, dateArrived: Date, row: FMResultSet) {
 		let read = row.bool(forColumn: DatabaseKey.read)
 		let starred = row.bool(forColumn: DatabaseKey.starred)
-		let userDeleted = row.bool(forColumn: DatabaseKey.userDeleted)
-		
-		self.init(articleID: articleID, read: read, starred: starred, userDeleted: userDeleted, dateArrived: dateArrived)
+
+		self.init(articleID: articleID, read: read, starred: starred, dateArrived: dateArrived)
 	}
 	
 }
@@ -29,7 +28,7 @@ extension ArticleStatus: DatabaseObject {
 	}
 
 	public func databaseDictionary() -> DatabaseDictionary? {
-		return [DatabaseKey.articleID: articleID, DatabaseKey.read: read, DatabaseKey.starred: starred, DatabaseKey.userDeleted: userDeleted, DatabaseKey.dateArrived: dateArrived]
+		return [DatabaseKey.articleID: articleID, DatabaseKey.read: read, DatabaseKey.starred: starred, DatabaseKey.dateArrived: dateArrived]
 	}
 }
 

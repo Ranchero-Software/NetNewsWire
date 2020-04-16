@@ -62,10 +62,6 @@ class WebViewController: UIViewController {
 	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 1.0)
 	var windowScrollY = 0
 	
-	deinit {
-		recycleWebView(webView)
-	}
-	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
@@ -449,23 +445,6 @@ private extension WebViewController {
 			
 		}
 		
-	}
-
-	func recycleWebView(_ webView: PreloadedWebView?) {
-		guard let webView = webView else { return }
-		
-		webView.removeFromSuperview()
-		stopMediaPlayback(webView)
-		cancelImageLoad(webView)
-
-		webView.navigationDelegate = nil
-		webView.uiDelegate = nil
-		webView.scrollView.delegate = nil
-		webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
-		webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
-		webView.interactions.removeAll()
-		
-		coordinator.webViewProvider.enqueueWebView(webView)
 	}
 
 	func renderPage(_ webView: PreloadedWebView?) {
