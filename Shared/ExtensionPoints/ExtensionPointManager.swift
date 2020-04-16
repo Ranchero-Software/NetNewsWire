@@ -15,7 +15,7 @@ public extension Notification.Name {
 	static let ActiveExtensionPointsDidChange = Notification.Name(rawValue: "ActiveExtensionPointsDidChange")
 }
 
-final class ExtensionPointManager {
+final class ExtensionPointManager: FeedProviderManagerDelegate {
 	
 	static let shared = ExtensionPointManager()
 
@@ -73,13 +73,6 @@ final class ExtensionPointManager {
 	func deactivateExtensionPoint(_ extensionPointID: ExtensionPointIdentifer) {
 		activeExtensionPoints[extensionPointID] = nil
 		saveExtensionPointIDs()
-	}
-	
-	func bestFeedProvider(for offered: URLComponents, with username: String?) -> FeedProvider? {
-		if let owner = feedProviderMatching(offered, forUsername: username, ability: .owner) {
-			return owner
-		}
-		return feedProviderMatching(offered, forUsername: username, ability: .available)
 	}
 	
 }
