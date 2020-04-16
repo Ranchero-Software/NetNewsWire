@@ -122,8 +122,18 @@ final class LocalAccountDelegate: AccountDelegate {
 				switch result {
 					
 				case .success(let name):
-					let feed = account.createWebFeed(with: name, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+
+					// Move the user to the WebFeed and out of the URL
+					var newURLComponents = urlComponents
+					newURLComponents.user = nil
+					guard let newURL = newURLComponents.url else {
+						completion(.failure(AccountError.createErrorNotFound))
+						return
+					}
+					
+					let feed = account.createWebFeed(with: name, url: newURL.absoluteString, webFeedID: newURL.absoluteString, homePageURL: nil)
 					feed.editedName = name
+					feed.username = urlComponents.user
 					
 					feedProvider.refresh(feed) { result in
 						self.refreshProgress.completeTask()

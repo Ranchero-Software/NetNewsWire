@@ -19,7 +19,7 @@ extension TwitterFeedProvider: ExtensionPoint {
 	}()
 
 	var extensionPointID: ExtensionPointIdentifer {
-		return ExtensionPointIdentifer.twitter(userID, screenName)
+		return ExtensionPointIdentifer.twitter(screenName)
 	}
 
 	var title: String {

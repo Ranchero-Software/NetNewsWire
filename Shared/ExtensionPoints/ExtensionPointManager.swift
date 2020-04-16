@@ -36,6 +36,7 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		}
 		
 		return available
+		
 	}
 	
 	var activeSendToCommands: [SendToCommand] {
@@ -122,8 +123,8 @@ private extension ExtensionPointManager {
 		case .microblog:
 			return SendToMicroBlogCommand()
 		#endif
-		case .twitter(let userID, let screenName):
-			return TwitterFeedProvider(userID: userID, screenName: screenName)
+		case .twitter(let screenName):
+			return TwitterFeedProvider(screenName: screenName)
 		}
 	}
 	

@@ -25,7 +25,6 @@ public struct TwitterFeedProvider: FeedProvider {
 	private static let userPaths = ["/home", "/notifications"]
 	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
 	
-	public var userID: String
 	public var screenName: String
 	
 	private var oauthToken: String
@@ -34,20 +33,18 @@ public struct TwitterFeedProvider: FeedProvider {
 	private var client: OAuthSwiftClient
 	
 	public init?(tokenSuccess: OAuthSwift.TokenSuccess) {
-		guard let userID = tokenSuccess.parameters["user_id"] as? String,
-			let screenName = tokenSuccess.parameters["screen_name"] as? String else {
+		guard let screenName = tokenSuccess.parameters["screen_name"] as? String else {
 				return nil
 		}
 		
-		self.userID = userID
 		self.screenName = screenName
 		self.oauthToken = tokenSuccess.credential.oauthToken
 		self.oauthTokenSecret = tokenSuccess.credential.oauthTokenSecret
 
-		let tokenCredentials = Credentials(type: .oauthAccessToken, username: userID, secret: oauthToken)
+		let tokenCredentials = Credentials(type: .oauthAccessToken, username: screenName, secret: oauthToken)
 		try? CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
 		
-		let tokenSecretCredentials = Credentials(type: .oauthAccessTokenSecret, username: userID, secret: oauthTokenSecret)
+		let tokenSecretCredentials = Credentials(type: .oauthAccessTokenSecret, username: screenName, secret: oauthTokenSecret)
 		try? CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
 		
 		client = OAuthSwiftClient(consumerKey: Secrets.twitterConsumerKey,
@@ -57,12 +54,11 @@ public struct TwitterFeedProvider: FeedProvider {
 								  version: .oauth1)
 	}
 	
-	public init?(userID: String, screenName: String) {
-		self.userID = userID
+	public init?(screenName: String) {
 		self.screenName = screenName
 		
-		guard let tokenCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthAccessToken, server: Self.server, username: userID),
-			let tokenSecretCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthAccessTokenSecret, server: Self.server, username: userID) else {
+		guard let tokenCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthAccessToken, server: Self.server, username: screenName),
+			let tokenSecretCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthAccessTokenSecret, server: Self.server, username: screenName) else {
 				return nil
 		}
 
@@ -82,7 +78,7 @@ public struct TwitterFeedProvider: FeedProvider {
 		}
 		
 		let bestUserName = username != nil ? username : urlComponents.user
-		if bestUserName == userID {
+		if bestUserName == screenName {
 			return .owner
 		}
 		
