@@ -84,16 +84,16 @@ public struct TwitterFeedProvider: FeedProvider {
 		return .available
 	}
 
-	public func iconURL(_ url: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
-		let screenName = extractScreenName(url)
+	public func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
+		let screenName = extractScreenName(urlComponents)
 		fetchIconURL(screenName: screenName, completion: completion)
 	}
 
-	public func provide(_ url: URLComponents, completion: @escaping (Result<ParsedFeed, Error>) -> Void) {
+	public func provide(_ urlComponents: URLComponents, completion: @escaping (Result<ParsedFeed, Error>) -> Void) {
 		// TODO: Finish implementation
 	}
 	
-	public func refresh(_ url: URLComponents, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
+	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
 		// TODO: Finish implementation
 	}
 
