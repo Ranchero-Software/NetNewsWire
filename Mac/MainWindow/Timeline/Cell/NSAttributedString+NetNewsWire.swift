@@ -81,7 +81,7 @@ extension NSAttributedString {
 		}
 
 		// make sup/sub smaller. `Key("NSSupeScript")` is used here because `.superscript`
-		// isn't defined in UIKit, for some reason.
+		// isn't defined in UIKit.
 		let superscriptAttribute = Key("NSSuperScript")
 
 		mutable.enumerateAttributes(in: fullRange, options: []) { (attributes: [Key : Any], range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
