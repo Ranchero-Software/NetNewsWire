@@ -28,6 +28,14 @@ private let monoSpaceTrait = UIFontDescriptor.SymbolicTraits.traitMonoSpace
 
 extension NSAttributedString {
 
+	/// Adds a font and color to an attributed string.
+	///
+	/// Additionally converts super-/subscript runs to super-/subscripted font variants
+	/// and converts bold text to heavy if the base font is semibold.
+	///
+	/// - Parameters:
+	///   - baseFont: The font to add.
+	///   - color: The color to add.
 	func adding(font baseFont: Font, color: Color? = nil) -> NSAttributedString {
 		let mutable = self.mutableCopy() as! NSMutableAttributedString
 		let fullRange = NSRange(location: 0, length: mutable.length)
@@ -116,6 +124,7 @@ extension NSAttributedString {
 		return mutable.copy() as! NSAttributedString
 	}
 
+	/// Creates an attributed string from HTML.
 	convenience init(html: String) {
 		let data = html.data(using: .utf8)!
 		let options: [NSAttributedString.DocumentReadingOptionKey: Any] = [.characterEncoding: String.Encoding.utf8.rawValue, .documentType: NSAttributedString.DocumentType.html]
