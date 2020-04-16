@@ -103,10 +103,12 @@ private extension ExtensionPointManager {
 	
 	func extensionPoint(for extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess?) -> ExtensionPoint? {
 		switch extensionPointType {
+		#if os(macOS)
 		case is SendToMarsEditCommand.Type:
 			return SendToMarsEditCommand()
 		case is SendToMicroBlogCommand.Type:
 			return SendToMicroBlogCommand()
+		#endif
 		case is TwitterFeedProvider.Type:
 			if let tokenSuccess = tokenSuccess {
 				return TwitterFeedProvider(tokenSuccess: tokenSuccess)
@@ -121,10 +123,12 @@ private extension ExtensionPointManager {
 	
 	func extensionPoint(for extensionPointID: ExtensionPointIdentifer) -> ExtensionPoint? {
 		switch extensionPointID {
+		#if os(macOS)
 		case .marsEdit:
 			return SendToMarsEditCommand()
 		case .microblog:
 			return SendToMicroBlogCommand()
+		#endif
 		case .twitter(let userID, let screenName):
 			return TwitterFeedProvider(userID: userID, screenName: screenName)
 		}

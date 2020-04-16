@@ -132,6 +132,11 @@ private extension TwitterFeedProvider {
 	
 	// TODO: Update to retrieve the full user
 	func fetchIconURL(screenName: String, completion: @escaping (Result<String, Error>) -> Void) {
+		guard screenName != "search" else {
+			completion(.failure(TwitterFeedProviderError.unknown))
+			return
+		}
+		
 		let url = "\(Self.apiBase)users/show.json"
 		let parameters = ["screen_name": screenName]
 		

@@ -8,6 +8,7 @@
 
 import UIKit
 import Account
+import Secrets
 import RSWeb
 
 class NewsBlurAccountViewController: UITableViewController {

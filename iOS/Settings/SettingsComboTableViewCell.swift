@@ -8,18 +8,18 @@
 
 import UIKit
 
-class SettingsAccountTableViewCell: VibrantTableViewCell {
+class SettingsComboTableViewCell: VibrantTableViewCell {
 
-	@IBOutlet weak var accountImage: UIImageView!
-	@IBOutlet weak var accountNameLabel: UILabel!
+	@IBOutlet weak var comboImage: UIImageView!
+	@IBOutlet weak var comboNameLabel: UILabel!
 
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
-		updateLabelVibrancy(accountNameLabel, color: labelColor, animated: animated)
+		updateLabelVibrancy(comboNameLabel, color: labelColor, animated: animated)
 		
 		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
 		UIView.animate(withDuration: duration(animated: animated)) {
-			self.accountImage?.tintColor = tintColor
+			self.comboImage?.tintColor = tintColor
 		}
 	}
 	

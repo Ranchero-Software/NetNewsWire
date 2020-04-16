@@ -6,7 +6,11 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 import RSCore
 
 protocol ExtensionPoint {
@@ -35,11 +39,19 @@ extension ExtensionPoint {
 		let paragraphStyle = NSMutableParagraphStyle()
 		paragraphStyle.alignment = .center
 
+		#if os(macOS)
 		let attrs = [
 			NSAttributedString.Key.paragraphStyle: paragraphStyle,
 			NSAttributedString.Key.font: NSFont.systemFont(ofSize: NSFont.systemFontSize),
 			NSAttributedString.Key.foregroundColor: NSColor.textColor
 		]
+		#else
+		let attrs = [
+			NSAttributedString.Key.paragraphStyle: paragraphStyle,
+			NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .body),
+			NSAttributedString.Key.foregroundColor: UIColor.label
+		]
+		#endif
 
 		return NSMutableAttributedString(string: text, attributes: attrs)
 	}

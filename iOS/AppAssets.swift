@@ -101,6 +101,10 @@ struct AppAssets {
 		UIImage(systemName: "square.and.pencil")!
 	}()
 	
+	static var extensionPointTwitter: UIImage = {
+		return UIImage(named: "extensionPointTwitter")!
+	}()
+
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()

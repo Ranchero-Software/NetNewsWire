@@ -18,13 +18,7 @@ extension TwitterFeedProvider: ExtensionPoint {
 	static var title = NSLocalizedString("Twitter", comment: "Twitter")
 	static var templateImage = AppAssets.extensionPointTwitter
 	static var description: NSAttributedString = {
-		let attrString = TwitterFeedProvider.makeAttrString("This extension enables you to subscribe to Twitter URL's as if they were RSS feeds.")
-		let range = NSRange(location: 43, length: 7)
-		attrString.beginEditing()
-		attrString.addAttribute(NSAttributedString.Key.link, value: "https://twitter.com", range: range)
-		attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: NSColor.systemBlue, range: range)
-		attrString.endEditing()
-		return attrString
+		return TwitterFeedProvider.makeAttrString("This extension enables you to subscribe to Twitter URL's as if they were RSS feeds.")
 	}()
 
 	var extensionPointID: ExtensionPointIdentifer {
