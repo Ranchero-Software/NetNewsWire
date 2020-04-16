@@ -13,6 +13,7 @@ import RSParser
 
 // TODO: Beef up error handling...
 public enum TwitterFeedProviderError: Error {
+	case screenNameNotFound
 	case unknown
 }
 
@@ -20,6 +21,9 @@ public struct TwitterFeedProvider: FeedProvider {
 
 	private static let server = "api.twitter.com"
 	private static let apiBase = "https://api.twitter.com/1.1/"
+	
+	private static let userPaths = ["/home", "/notifications"]
+	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
 	
 	public var userID: String
 	public var screenName: String
@@ -85,8 +89,11 @@ public struct TwitterFeedProvider: FeedProvider {
 	}
 
 	public func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
-		let screenName = extractScreenName(urlComponents)
-		fetchIconURL(screenName: screenName, completion: completion)
+		if let screenName = deriveScreenName(urlComponents) {
+			fetchIconURL(screenName: screenName, completion: completion)
+		} else {
+			completion(.failure(TwitterFeedProviderError.screenNameNotFound))
+		}
 	}
 
 	public func provide(_ urlComponents: URLComponents, completion: @escaping (Result<ParsedFeed, Error>) -> Void) {
@@ -119,24 +126,18 @@ extension TwitterFeedProvider: OAuth1SwiftProvider {
 
 private extension TwitterFeedProvider {
 	
-	// TODO: Full parsing routine
-	func extractScreenName(_ urlComponents: URLComponents) -> String {
+	func deriveScreenName(_ urlComponents: URLComponents) -> String? {
 		let path = urlComponents.path
-		if let index = path.firstIndex(of: "?") {
-			let range = path.index(path.startIndex, offsetBy: 1)...index
-			return String(path[range])
+		guard !Self.reservedPaths.contains(path) else { return nil }
+		
+		if path.isEmpty || Self.userPaths.contains(path) {
+			return screenName
 		} else {
 			return String(path.suffix(from: path.index(path.startIndex, offsetBy: 1)))
 		}
 	}
 	
-	// TODO: Update to retrieve the full user
 	func fetchIconURL(screenName: String, completion: @escaping (Result<String, Error>) -> Void) {
-		guard screenName != "search" else {
-			completion(.failure(TwitterFeedProviderError.unknown))
-			return
-		}
-		
 		let url = "\(Self.apiBase)users/show.json"
 		let parameters = ["screen_name": screenName]
 		
