@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import FeedProvider
+import Account
 import RSCore
 import OAuthSwift
 

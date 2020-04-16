@@ -33,10 +33,11 @@
 		5107A09D227DE77700C7C3C5 /* TestTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09C227DE77700C7C3C5 /* TestTransport.swift */; };
 		510BD111232C3801002692E4 /* AccountMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD110232C3801002692E4 /* AccountMetadataFile.swift */; };
 		510BD113232C3E9D002692E4 /* WebFeedMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */; };
-		511076F5243BD96D00D97C8C /* FeedProvider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 511076F4243BD96D00D97C8C /* FeedProvider.framework */; };
 		511B9804237CD4270028BCAA /* FeedIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9803237CD4270028BCAA /* FeedIdentifier.swift */; };
 		512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */; };
 		512DD4CD2431098700C17B1F /* CloudKitAccountZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */; };
+		5132AAC42448BAD90077840A /* FeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132AAC12448BAD90077840A /* FeedProvider.swift */; };
+		5132AAC52448BAD90077840A /* TwitterFeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */; };
 		513323082281070D00C30F19 /* AccountFeedbinSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */; };
 		5133230A2281082F00C30F19 /* subscriptions_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 513323092281082F00C30F19 /* subscriptions_initial.json */; };
 		5133230C2281088A00C30F19 /* subscriptions_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5133230B2281088A00C30F19 /* subscriptions_add.json */; };
@@ -272,6 +273,8 @@
 		511B9803237CD4270028BCAA /* FeedIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIdentifier.swift; sourceTree = "<group>"; };
 		512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
 		512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountZoneDelegate.swift; sourceTree = "<group>"; };
+		5132AAC12448BAD90077840A /* FeedProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedProvider.swift; sourceTree = "<group>"; };
+		5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterFeedProvider.swift; sourceTree = "<group>"; };
 		513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinSyncTest.swift; sourceTree = "<group>"; };
 		513323092281082F00C30F19 /* subscriptions_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_initial.json; sourceTree = "<group>"; };
 		5133230B2281088A00C30F19 /* subscriptions_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_add.json; sourceTree = "<group>"; };
@@ -456,7 +459,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84EAC4822148CC6300F154AB /* RSDatabase.framework in Frameworks */,
-				511076F5243BD96D00D97C8C /* FeedProvider.framework in Frameworks */,
 				844B2981210CE3BF004020B3 /* RSWeb.framework in Frameworks */,
 				841D4D722106B40A00DD04E6 /* Articles.framework in Frameworks */,
 				841D4D702106B40400DD04E6 /* ArticlesDatabase.framework in Frameworks */,
@@ -543,6 +545,23 @@
 				51D5875D227F643C00900287 /* AccountFeedbinFolderSyncTest.swift */,
 			);
 			path = Feedbin;
+			sourceTree = "<group>";
+		};
+		5132AABB2448BA5B0077840A /* FeedProvider */ = {
+			isa = PBXGroup;
+			children = (
+				5132AAC12448BAD90077840A /* FeedProvider.swift */,
+				5132AAC22448BAD90077840A /* Twitter */,
+			);
+			path = FeedProvider;
+			sourceTree = "<group>";
+		};
+		5132AAC22448BAD90077840A /* Twitter */ = {
+			isa = PBXGroup;
+			children = (
+				5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */,
+			);
+			path = Twitter;
 			sourceTree = "<group>";
 		};
 		5165D71F22835E9800D9D53D /* FeedFinder */ = {
@@ -690,18 +709,19 @@
 				84B2D4CE2238C13D00498ADA /* WebFeedMetadata.swift */,
 				510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */,
 				5165D71F22835E9800D9D53D /* FeedFinder */,
+				5132AABB2448BA5B0077840A /* FeedProvider */,
 				8419742B1F6DDE84006346C4 /* LocalAccount */,
-				84245C7D1FDDD2580074AFBB /* Feedbin */,
-				3B826D9D2385C81C00FC1ADB /* FeedWrangler */,
-				552032EA229D5D5A009559E0 /* ReaderAPI */,
-				9EA31339231E368100268BA0 /* Feedly */,
 				5103A9D7242253DC00410853 /* CloudKit */,
+				84245C7D1FDDD2580074AFBB /* Feedbin */,
+				9EA31339231E368100268BA0 /* Feedly */,
+				3B826D9D2385C81C00FC1ADB /* FeedWrangler */,
+				769F2630AF8DC873D4A73567 /* NewsBlur */,
+				552032EA229D5D5A009559E0 /* ReaderAPI */,
 				848935031F62484F00CEBD24 /* AccountTests */,
 				848934F71F62484F00CEBD24 /* Products */,
 				8469F80F1F6DC3C10084783E /* Frameworks */,
 				D511EEB4202422BB00712EC3 /* xcconfig */,
 				848934FA1F62484F00CEBD24 /* Info.plist */,
-				769F2630AF8DC873D4A73567 /* NewsBlur */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -1084,6 +1104,7 @@
 				9EA643D5239306AC0018A28C /* FeedlyFeedsSearchResponse.swift in Sources */,
 				9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */,
 				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,
+				5132AAC52448BAD90077840A /* TwitterFeedProvider.swift in Sources */,
 				519E84AC2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift in Sources */,
 				512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */,
 				3B826DAF2385C81C00FC1ADB /* FeedWranglerGenericResult.swift in Sources */,
@@ -1146,6 +1167,7 @@
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
 				9EA643CF2391D3560018A28C /* FeedlyAddExistingFeedOperation.swift in Sources */,
 				55203300229D5D5A009559E0 /* ReaderAPICaller.swift in Sources */,
+				5132AAC42448BAD90077840A /* FeedProvider.swift in Sources */,
 				9E1D154F233371DD00F4944C /* FeedlyGetCollectionsOperation.swift in Sources */,
 				9EAEC626233318400085D7C9 /* FeedlyStream.swift in Sources */,
 				9E5DE60E23C3F4B70064DA30 /* FeedlyFetchIdsForMissingArticlesOperation.swift in Sources */,

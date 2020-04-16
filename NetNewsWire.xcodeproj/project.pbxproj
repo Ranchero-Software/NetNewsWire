@@ -45,10 +45,6 @@
 		510C43F7243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		510C43F8243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */; };
-		511076F7243BDA8100D97C8C /* FeedProvider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51107672243BCE0500D97C8C /* FeedProvider.framework */; };
-		511076F8243BDA8200D97C8C /* FeedProvider.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51107672243BCE0500D97C8C /* FeedProvider.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		511076F9243BDA9600D97C8C /* FeedProvider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51107672243BCE0500D97C8C /* FeedProvider.framework */; };
-		511076FA243BDA9600D97C8C /* FeedProvider.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51107672243BCE0500D97C8C /* FeedProvider.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51107746243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
 		51107747243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
 		5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */; };
@@ -187,8 +183,6 @@
 		51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
-		519ED43F24482629007F8E94 /* FeedProvider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51107672243BCE0500D97C8C /* FeedProvider.framework */; };
-		519ED44024482629007F8E94 /* FeedProvider.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51107672243BCE0500D97C8C /* FeedProvider.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */; };
 		519ED47A24482AEB007F8E94 /* EnableExtensionPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */; };
 		519ED47C24488C6F007F8E94 /* ExtensionInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED47B24488C6F007F8E94 /* ExtensionInspectorViewController.swift */; };
@@ -750,13 +744,6 @@
 			remoteGlobalIDString = 514BB41A243FFA640023B621;
 			remoteInfo = Secrets;
 		};
-		51107671243BCE0500D97C8C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5110766A243BCE0400D97C8C /* FeedProvider.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5110765F243BCE0400D97C8C;
-			remoteInfo = FeedProvider;
-		};
 		5131463C235A7BBE00387FDC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
@@ -1280,7 +1267,6 @@
 				51C451F92264C83E00C03939 /* Account.framework in Embed Frameworks */,
 				51C451F12264C83100C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
 				517A757C24451C1500B553B9 /* OAuthSwift.framework in Embed Frameworks */,
-				519ED44024482629007F8E94 /* FeedProvider.framework in Embed Frameworks */,
 				51C451F52264C83900C03939 /* Articles.framework in Embed Frameworks */,
 				51C451E92264C81000C03939 /* RSDatabase.framework in Embed Frameworks */,
 				51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */,
@@ -1316,7 +1302,6 @@
 				65ED4076235DEF6C0081F399 /* Account.framework in Embed Frameworks */,
 				65ED4077235DEF6C0081F399 /* Articles.framework in Embed Frameworks */,
 				65ED4078235DEF6C0081F399 /* RSParser.framework in Embed Frameworks */,
-				511076FA243BDA9600D97C8C /* FeedProvider.framework in Embed Frameworks */,
 				65ED4079235DEF6C0081F399 /* SyncDatabase.framework in Embed Frameworks */,
 				5102FD9C244009FA00534F17 /* Secrets.framework in Embed Frameworks */,
 				65ED407A235DEF6C0081F399 /* RSCore.framework in Embed Frameworks */,
@@ -1356,7 +1341,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				84C37FAA20DD8D9000CA8CF5 /* RSWeb.framework in Embed Frameworks */,
-				511076F8243BDA8200D97C8C /* FeedProvider.framework in Embed Frameworks */,
 				5102FD84244009F000534F17 /* Secrets.framework in Embed Frameworks */,
 				84C37FC620DD8E1D00CA8CF5 /* RSDatabase.framework in Embed Frameworks */,
 				84C37FAE20DD8D9900CA8CF5 /* RSTree.framework in Embed Frameworks */,
@@ -1403,7 +1387,6 @@
 		510C43F2243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointAddTableCellView.swift; sourceTree = "<group>"; };
 		510C43F6243D035C009F70C3 /* ExtensionPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPoint.swift; sourceTree = "<group>"; };
 		51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
-		5110766A243BCE0400D97C8C /* FeedProvider.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FeedProvider.xcodeproj; path = Frameworks/FeedProvider/FeedProvider.xcodeproj; sourceTree = SOURCE_ROOT; };
 		51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointPreferencesViewController.swift; sourceTree = "<group>"; };
 		5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorIconHeaderView.swift; sourceTree = "<group>"; };
 		51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSapp_target.xcconfig; sourceTree = "<group>"; };
@@ -1863,7 +1846,6 @@
 				65ED4047235DEF6C0081F399 /* RSParser.framework in Frameworks */,
 				65ED4048235DEF6C0081F399 /* Account.framework in Frameworks */,
 				65ED4049235DEF6C0081F399 /* Articles.framework in Frameworks */,
-				511076F9243BDA9600D97C8C /* FeedProvider.framework in Frameworks */,
 				65ED404A235DEF6C0081F399 /* RSCore.framework in Frameworks */,
 				5102FD9B244009FA00534F17 /* Secrets.framework in Frameworks */,
 				65ED404B235DEF6C0081F399 /* SyncDatabase.framework in Frameworks */,
@@ -1892,7 +1874,6 @@
 				51C451E82264C81000C03939 /* RSDatabase.framework in Frameworks */,
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
 				51C451EC2264C81B00C03939 /* RSCore.framework in Frameworks */,
-				519ED43F24482629007F8E94 /* FeedProvider.framework in Frameworks */,
 				51554C30228B71A10055115A /* SyncDatabase.framework in Frameworks */,
 				51C451E42264C80600C03939 /* RSParser.framework in Frameworks */,
 			);
@@ -1904,7 +1885,6 @@
 			files = (
 				65ED42DE235E74230081F399 /* Sparkle.framework in Frameworks */,
 				65ED42D9235E740D0081F399 /* Sparkle.framework in Frameworks */,
-				511076F7243BDA8100D97C8C /* FeedProvider.framework in Frameworks */,
 				84C37FA920DD8D9000CA8CF5 /* RSWeb.framework in Frameworks */,
 				84C37FC520DD8E1D00CA8CF5 /* RSDatabase.framework in Frameworks */,
 				84C37FAD20DD8D9900CA8CF5 /* RSTree.framework in Frameworks */,
@@ -1949,14 +1929,6 @@
 				515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */,
 			);
 			path = ExtensionPoints;
-			sourceTree = "<group>";
-		};
-		5110766B243BCE0400D97C8C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				51107672243BCE0500D97C8C /* FeedProvider.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		51107744243BEDD300D97C8C /* ExtensionPoints */ = {
@@ -2776,7 +2748,6 @@
 			isa = PBXGroup;
 			children = (
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
-				5110766A243BCE0400D97C8C /* FeedProvider.xcodeproj */,
 				5102FD72244008A700534F17 /* Secrets.xcodeproj */,
 				841D4D542106B3D500DD04E6 /* Articles.xcodeproj */,
 				841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */,
@@ -3357,10 +3328,6 @@
 					ProjectRef = 841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */;
 				},
 				{
-					ProductGroup = 5110766B243BCE0400D97C8C /* Products */;
-					ProjectRef = 5110766A243BCE0400D97C8C /* FeedProvider.xcodeproj */;
-				},
-				{
 					ProductGroup = 517A754524451BD500B553B9 /* Products */;
 					ProjectRef = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
 				},
@@ -3418,13 +3385,6 @@
 			fileType = wrapper.framework;
 			path = Secrets.framework;
 			remoteRef = 5102FD7A244008A700534F17 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		51107672243BCE0500D97C8C /* FeedProvider.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = FeedProvider.framework;
-			remoteRef = 51107671243BCE0500D97C8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		51554C01228B6EB50055115A /* SyncDatabase.framework */ = {
