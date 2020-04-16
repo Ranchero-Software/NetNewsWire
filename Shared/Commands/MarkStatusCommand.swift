@@ -71,8 +71,6 @@ private extension MarkStatusCommand {
 	static private let markUnreadActionName = NSLocalizedString("Mark Unread", comment: "command")
 	static private let markStarredActionName = NSLocalizedString("Mark Starred", comment: "command")
 	static private let markUnstarredActionName = NSLocalizedString("Mark Unstarred", comment: "command")
-	static private let markDeletedActionName = NSLocalizedString("Delete", comment: "command")
-	static private let markUndeletedActionName = NSLocalizedString("Undelete", comment: "command")
 
 	static func actionName(_ statusKey: ArticleStatus.Key, _ flag: Bool) -> String {
 
@@ -81,8 +79,6 @@ private extension MarkStatusCommand {
 			return flag ? markReadActionName : markUnreadActionName
 		case .starred:
 			return flag ? markStarredActionName : markUnstarredActionName
-		case .userDeleted:
-			return flag ? markDeletedActionName : markUndeletedActionName
 		}
 	}
 

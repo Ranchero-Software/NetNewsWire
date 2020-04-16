@@ -181,7 +181,7 @@ final class ArticlesTable: DatabaseTable {
 
 		// 1. Ensure statuses for all the incoming articles.
 		// 2. Create incoming articles with parsedItems.
-		// 3. Ignore incoming articles that are userDeleted
+		// 3. [Deleted - no longer needed]
 		// 4. Fetch all articles for the feed.
 		// 5. Create array of Articles not in database and save them.
 		// 6. Create array of updated Articles and save what’s changed.
@@ -197,8 +197,7 @@ final class ArticlesTable: DatabaseTable {
 				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) //1
 				assert(statusesDictionary.count == articleIDs.count)
 
-				let allIncomingArticles = Article.articlesWithParsedItems(parsedItems, webFeedID, self.accountID, statusesDictionary) //2
-				let incomingArticles = Set(allIncomingArticles.filter { !($0.status.userDeleted) }) //3
+				let incomingArticles = Article.articlesWithParsedItems(parsedItems, webFeedID, self.accountID, statusesDictionary) //2
 				if incomingArticles.isEmpty {
 					self.callUpdateArticlesCompletionBlock(nil, nil, completion)
 					return
@@ -251,7 +250,7 @@ final class ArticlesTable: DatabaseTable {
 
 		// 1. Ensure statuses for all the incoming articles.
 		// 2. Create incoming articles with parsedItems.
-		// 3. Ignore incoming articles that are userDeleted || (!starred and really old)
+		// 3. Ignore incoming articles that are (!starred and read and really old)
 		// 4. Fetch all articles for the feed.
 		// 5. Create array of Articles not in database and save them.
 		// 6. Create array of updated Articles and save what’s changed.
@@ -326,7 +325,7 @@ final class ArticlesTable: DatabaseTable {
 
 			func makeDatabaseCalls(_ database: FMDatabase) {
 				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
-				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0 and userDeleted=0;"
+				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
 
 				var parameters = [Any]()
 				parameters += Array(webFeedIDs) as [Any]
@@ -361,7 +360,7 @@ final class ArticlesTable: DatabaseTable {
 
 			func makeDatabaseCalls(_ database: FMDatabase) {
 				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
-				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1 and userDeleted=0;"
+				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
 				let parameters = Array(webFeedIDs) as [Any]
 
 				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
@@ -488,20 +487,41 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Cleanup
 
 	/// Delete articles that we won’t show in the UI any longer
-	/// — their arrival date is before our 90-day recency window.
-	/// Keep all starred articles, no matter their age.
+	/// — their arrival date is before our 90-day recency window;
+	/// they are read; they are not starred.
+	///
+	/// Because deleting articles might block the database for too long,
+	/// we do this in a careful way: delete articles older than a year,
+	/// check to see how much time has passed, then decide whether or not to continue.
+	/// Repeat for successively shorter time intervals.
 	func deleteOldArticles() {
-		queue.runInTransaction { databaseResult in
+		precondition(retentionStyle == .syncSystem)
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let sql = "delete from articles where articleID in (select articleID from articles natural join statuses where dateArrived<? and starred=0);"
-				let parameters = [self.articleCutoffDate] as [Any]
+		queue.runInTransaction { databaseResult in
+			guard let database = databaseResult.database else {
+				return
+			}
+
+			func deleteOldArticles(cutoffDate: Date) {
+				let sql = "delete from articles where articleID in (select articleID from articles natural join statuses where dateArrived<? and read=1 and starred=0);"
+				let parameters = [cutoffDate] as [Any]
 				database.executeUpdate(sql, withArgumentsIn: parameters)
 			}
 
-			if let database = databaseResult.database {
-				makeDatabaseCalls(database)
+			let startTime = Date()
+			func tooMuchTimeHasPassed() -> Bool {
+				let timeElapsed = Date().timeIntervalSince(startTime)
+				return timeElapsed > 2.0
 			}
+
+			let dayIntervals = [365, 300, 225, 150]
+			for dayInterval in dayIntervals {
+				deleteOldArticles(cutoffDate: startTime.bySubtracting(days: dayInterval))
+				if tooMuchTimeHasPassed() {
+					return
+				}
+			}
+			deleteOldArticles(cutoffDate: self.articleCutoffDate)
 		}
 	}
 
@@ -634,7 +654,7 @@ private extension ArticlesTable {
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 
 		if withLimits {
-			let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);"
+			let sql = "select * from articles natural join statuses where \(whereClause) and (starred=1 or dateArrived>?);"
 			return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
 		}
 		else {
@@ -649,7 +669,7 @@ private extension ArticlesTable {
 //		// * Must not be deleted.
 //		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 //
-//		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
+//		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and (starred=1 or dateArrived>?);"
 //		return numberWithSQLAndParameters(sql, [webFeedID, articleCutoffDate], in: database)
 //	}
 	
@@ -705,9 +725,6 @@ private extension ArticlesTable {
 				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
 				var sql = "select articleID from articles natural join statuses where feedID in \(placeholders) and \(statusKey.rawValue)="
 				sql += value ? "1" : "0"
-				if statusKey != .userDeleted {
-					sql += " and userDeleted=0"
-				}
 				sql += ";"
 
 				let parameters = Array(webFeedIDs) as [Any]
@@ -781,18 +798,18 @@ private extension ArticlesTable {
 		}
 		let parameters = webFeedIDs.map { $0 as AnyObject } + [cutoffDate as AnyObject, cutoffDate as AnyObject]
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
-		let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and userDeleted = 0"
+		let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?))"
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 	}
 
 	func fetchStarredArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
-		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and starred = 1 and userDeleted = 0;
+		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and starred=1;
 		if webFeedIDs.isEmpty {
 			return Set<Article>()
 		}
 		let parameters = webFeedIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
-		let whereClause = "feedID in \(placeholders) and starred = 1 and userDeleted = 0"
+		let whereClause = "feedID in \(placeholders) and starred=1"
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 		}
 
@@ -931,11 +948,7 @@ private extension ArticlesTable {
 	}
 
 	func articleIsIgnorable(_ article: Article) -> Bool {
-		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
-		if article.status.userDeleted {
-			return true
-		}
-		if article.status.starred {
+		if article.status.starred || !article.status.read {
 			return false
 		}
 		return article.status.dateArrived < articleCutoffDate

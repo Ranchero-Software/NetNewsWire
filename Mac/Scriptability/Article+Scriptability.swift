@@ -127,7 +127,7 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     @objc(deleted)
     var deleted:Bool  {
-        return article.status.boolStatus(forKey:.userDeleted)
+        return false
     }
 
     @objc(imageURL)
