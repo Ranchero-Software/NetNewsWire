@@ -81,7 +81,9 @@ public struct TwitterFeedProvider: FeedProvider {
 			return .none
 		}
 		
-		if let username = username, username == userID {
+		let bestUserName = username != nil ? username : urlComponents.user
+		
+		if bestUserName == userID {
 			return .owner
 		}
 		
