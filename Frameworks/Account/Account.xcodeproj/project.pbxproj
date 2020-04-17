@@ -39,6 +39,7 @@
 		5132AAC42448BAD90077840A /* FeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132AAC12448BAD90077840A /* FeedProvider.swift */; };
 		5132AAC52448BAD90077840A /* TwitterFeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */; };
 		5132DE812449159100806ADE /* TwitterUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132DE802449159100806ADE /* TwitterUser.swift */; };
+		5132DE832449306F00806ADE /* Tweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132DE822449306F00806ADE /* Tweet.swift */; };
 		513323082281070D00C30F19 /* AccountFeedbinSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */; };
 		5133230A2281082F00C30F19 /* subscriptions_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 513323092281082F00C30F19 /* subscriptions_initial.json */; };
 		5133230C2281088A00C30F19 /* subscriptions_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5133230B2281088A00C30F19 /* subscriptions_add.json */; };
@@ -278,6 +279,7 @@
 		5132AAC12448BAD90077840A /* FeedProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedProvider.swift; sourceTree = "<group>"; };
 		5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterFeedProvider.swift; sourceTree = "<group>"; };
 		5132DE802449159100806ADE /* TwitterUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterUser.swift; sourceTree = "<group>"; };
+		5132DE822449306F00806ADE /* Tweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tweet.swift; sourceTree = "<group>"; };
 		513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinSyncTest.swift; sourceTree = "<group>"; };
 		513323092281082F00C30F19 /* subscriptions_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_initial.json; sourceTree = "<group>"; };
 		5133230B2281088A00C30F19 /* subscriptions_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_add.json; sourceTree = "<group>"; };
@@ -566,6 +568,7 @@
 			children = (
 				5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */,
 				5132DE802449159100806ADE /* TwitterUser.swift */,
+				5132DE822449306F00806ADE /* Tweet.swift */,
 			);
 			path = Twitter;
 			sourceTree = "<group>";
@@ -1127,6 +1130,7 @@
 				552032FD229D5D5A009559E0 /* ReaderAPITagging.swift in Sources */,
 				9EAEC62A23331EE70085D7C9 /* FeedlyOrigin.swift in Sources */,
 				9E5EC15B23E01DEF00A4E503 /* FeedlyRTLTextSanitizer.swift in Sources */,
+				5132DE832449306F00806ADE /* Tweet.swift in Sources */,
 				511B9804237CD4270028BCAA /* FeedIdentifier.swift in Sources */,
 				84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */,
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,

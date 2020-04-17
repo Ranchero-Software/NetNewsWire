@@ -87,7 +87,7 @@ public struct TwitterFeedProvider: FeedProvider {
 
 	public func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
 		if let screenName = deriveScreenName(urlComponents) {
-			fetchUser(screenName: screenName) { result in
+			retrieveUser(screenName: screenName) { result in
 				switch result {
 				case .success(let user):
 					if let avatarURL = user.avatarURL {
@@ -127,7 +127,7 @@ public struct TwitterFeedProvider: FeedProvider {
 			
 		default:
 			if let screenName = deriveScreenName(urlComponents) {
-				fetchUser(screenName: screenName) { result in
+				retrieveUser(screenName: screenName) { result in
 					switch result {
 					case .success(let user):
 						if let userName = user.name {
@@ -149,7 +149,41 @@ public struct TwitterFeedProvider: FeedProvider {
 	}
 	
 	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
-		// TODO: Finish implementation
+		let api = "statuses/user_timeline.json"
+
+		retrieveTweets(api: api) { result in
+			switch result {
+			case .success(let tweets):
+				
+				var parsedItems = Set<ParsedItem>()
+				for tweet in tweets {
+					guard let idStr = tweet.idStr, let userScreenName = tweet.user.screenName else { continue }
+					let parsedItem = ParsedItem(syncServiceID: idStr,
+									  uniqueID: idStr,
+									  feedURL: webFeed.url,
+									  url: "https://twitter.com/\(userScreenName)/status/\(idStr)",
+									  externalURL: nil,
+									  title: nil,
+									  language: nil,
+									  contentHTML: tweet.text,
+									  contentText: tweet.text,
+									  summary: tweet.text,
+									  imageURL: nil,
+									  bannerImageURL: nil,
+									  datePublished: tweet.createdAt,
+									  dateModified: nil,
+									  authors: nil,
+									  tags: nil,
+									  attachments: nil)
+					parsedItems.insert(parsedItem)
+				}
+				
+				completion(.success(parsedItems))
+					
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 }
@@ -185,7 +219,7 @@ private extension TwitterFeedProvider {
 		}
 	}
 	
-	func fetchUser(screenName: String, completion: @escaping (Result<TwitterUser, Error>) -> Void) {
+	func retrieveUser(screenName: String, completion: @escaping (Result<TwitterUser, Error>) -> Void) {
 		let url = "\(Self.apiBase)users/show.json"
 		let parameters = ["screen_name": screenName]
 		
@@ -196,6 +230,29 @@ private extension TwitterFeedProvider {
 				do {
 					let user = try decoder.decode(TwitterUser.self, from: response.data)
 					completion(.success(user))
+				} catch {
+					completion(.failure(error))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	func retrieveTweets(api: String, completion: @escaping (Result<[Tweet], Error>) -> Void) {
+		let url = "\(Self.apiBase)\(api)"
+		let parameters = [String: Any]()
+		
+		client.get(url, parameters: parameters) { result in
+			switch result {
+			case .success(let response):
+				let decoder = JSONDecoder()
+				let dateFormatter = DateFormatter()
+				dateFormatter.dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
+				decoder.dateDecodingStrategy = .formatted(dateFormatter)
+				do {
+					let tweets = try decoder.decode([Tweet].self, from: response.data)
+					completion(.success(tweets))
 				} catch {
 					completion(.failure(error))
 				}

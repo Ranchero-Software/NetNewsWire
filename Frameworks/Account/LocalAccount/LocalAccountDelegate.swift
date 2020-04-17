@@ -141,6 +141,7 @@ final class LocalAccountDelegate: AccountDelegate {
 						case .success(let parsedItems):
 							account.update(urlString, with: parsedItems) { _ in
 								container.addWebFeed(feed)
+								completion(.success(feed))
 							}
 						case .failure:
 							completion(.failure(AccountError.createErrorNotFound))

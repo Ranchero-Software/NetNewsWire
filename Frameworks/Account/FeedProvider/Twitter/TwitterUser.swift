@@ -11,10 +11,12 @@ import Foundation
 struct TwitterUser: Codable {
 
 	let name: String?
+	let screenName: String?
 	let avatarURL: String?
 
 	enum CodingKeys: String, CodingKey {
 		case name = "name"
+		case screenName = "screen_name"
 		case avatarURL = "profile_image_url_https"
 	}
 	
