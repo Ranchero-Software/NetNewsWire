@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 import RSCore
 import RSParser
 import Articles
@@ -19,6 +20,8 @@ public enum LocalAccountDelegateError: String, Error {
 }
 
 final class LocalAccountDelegate: AccountDelegate {
+
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccount")
 
 	weak var account: Account?
 	
@@ -36,23 +39,54 @@ final class LocalAccountDelegate: AccountDelegate {
 	var accountMetadata: AccountMetadata?
 
 	let refreshProgress = DownloadProgress(numberOfTasks: 0)
-	var refreshAllCompletion: ((Result<Void, Error>) -> Void)? = nil
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		completion()
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard refreshAllCompletion == nil else {
+		guard refreshProgress.isComplete else {
 			completion(.success(()))
 			return
 		}
-		
-		refreshAllCompletion = completion
-		
+
+		var refresherWebFeeds = Set<WebFeed>()
 		let webFeeds = account.flattenedWebFeeds()
-		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
-		refresher?.refreshFeeds(webFeeds)
+		
+		let group = DispatchGroup()
+		
+		for webFeed in webFeeds {
+			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components, with: webFeed.username) {
+				refreshProgress.addToNumberOfTasksAndRemaining(1)
+				group.enter()
+				feedProvider.refresh(webFeed) { result in
+					switch result {
+					case .success(let parsedItems):
+						account.update(webFeed.webFeedID, with: parsedItems) { _ in
+							self.refreshProgress.completeTask()
+							group.leave()
+						}
+					case .failure(let error):
+						os_log(.error, log: self.log, "Feed Provider refresh error: %@.", error.localizedDescription)
+						self.refreshProgress.completeTask()
+						group.leave()
+					}
+				}
+			} else {
+				refresherWebFeeds.insert(webFeed)
+			}
+		}
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(refresherWebFeeds.count)
+		group.enter()
+		refresher?.refreshFeeds(refresherWebFeeds) {
+			group.leave()
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion(.success(()))
+		}
+		
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -176,18 +210,19 @@ final class LocalAccountDelegate: AccountDelegate {
 				}
 				
 				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-				container.addWebFeed(feed)
+				feed.editedName = name
 
 				InitialFeedDownloader.download(url) { parsedFeed in
 					self.refreshProgress.completeTask()
 
 					if let parsedFeed = parsedFeed {
-						account.update(feed, with: parsedFeed, {_ in})
+						account.update(feed, with: parsedFeed, {_ in
+							container.addWebFeed(feed)
+							completion(.success(feed))
+						})
+					} else {
+						completion(.failure(AccountError.createErrorNotFound))
 					}
-					
-					feed.editedName = name
-					
-					completion(.success(feed))
 					
 				}
 				
@@ -292,8 +327,6 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
 		self.refreshProgress.clear()
 		account?.metadata.lastArticleFetchEndTime = Date()
-		refreshAllCompletion?(.success(()))
-		refreshAllCompletion = nil
 	}
 	
 }
