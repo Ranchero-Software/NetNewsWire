@@ -37,15 +37,19 @@ final class TwitterStatus: Codable {
 		return "\(userURL)/status/\(idStr)"
 	}
 	
-	func renderAsText() -> String? {
-		let statusToRender = retweetedStatus != nil ? retweetedStatus! : self
-		if let text = statusToRender.fullText, let displayRange = statusToRender.displayTextRange, displayRange.count > 1,
+	var displayText: String? {
+		if let text = fullText, let displayRange = displayTextRange, displayRange.count > 1,
 			let startIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex),
 			let endIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex) {
 				return String(text[startIndex..<endIndex])
 		} else {
 			return fullText
 		}
+	}
+	
+	func renderAsText() -> String? {
+		let statusToRender = retweetedStatus != nil ? retweetedStatus! : self
+		return statusToRender.displayText
 	}
 	
 	func renderAsHTML() -> String? {
