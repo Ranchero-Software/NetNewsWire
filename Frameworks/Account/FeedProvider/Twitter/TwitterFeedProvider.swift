@@ -214,7 +214,7 @@ private extension TwitterFeedProvider {
 		}
 	}
 	
-	func retrieveTweets(api: String, completion: @escaping (Result<[Tweet], Error>) -> Void) {
+	func retrieveTweets(api: String, completion: @escaping (Result<[TwitterStatus], Error>) -> Void) {
 		let url = "\(Self.apiBase)\(api)"
 		let parameters = ["tweet_mode": "extended"]
 		
@@ -232,7 +232,7 @@ private extension TwitterFeedProvider {
 				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
 
 				do {
-					let tweets = try decoder.decode([Tweet].self, from: response.data)
+					let tweets = try decoder.decode([TwitterStatus].self, from: response.data)
 					completion(.success(tweets))
 				} catch {
 					completion(.failure(error))
@@ -243,29 +243,27 @@ private extension TwitterFeedProvider {
 		}
 	}
 	
-	func makeParsedItems(_ webFeedURL: String, _ tweets: [Tweet]) -> Set<ParsedItem> {
+	func makeParsedItems(_ webFeedURL: String, _ statuses: [TwitterStatus]) -> Set<ParsedItem> {
 		var parsedItems = Set<ParsedItem>()
 		
-		for tweet in tweets {
-			guard let idStr = tweet.idStr, let userScreenName = tweet.user.screenName else { continue }
-			
-			let userURL = makeUserURL(userScreenName)
+		for status in statuses {
+			guard let idStr = status.idStr, let statusURL = status.url else { continue }
 			
 			let parsedItem = ParsedItem(syncServiceID: idStr,
 							  uniqueID: idStr,
 							  feedURL: webFeedURL,
-							  url: "\(userURL)/status/\(idStr)",
+							  url: statusURL,
 							  externalURL: nil,
 							  title: nil,
 							  language: nil,
-							  contentHTML: makeTweetHTML(tweet),
-							  contentText: makeTweetText(tweet),
+							  contentHTML: status.renderAsHTML(),
+							  contentText: status.renderAsText(),
 							  summary: nil,
 							  imageURL: nil,
 							  bannerImageURL: nil,
-							  datePublished: tweet.createdAt,
+							  datePublished: status.createdAt,
 							  dateModified: nil,
-							  authors: makeParsedAuthors(tweet.user),
+							  authors: makeParsedAuthors(status.user),
 							  tags: nil,
 							  attachments: nil)
 			parsedItems.insert(parsedItem)
@@ -278,23 +276,9 @@ private extension TwitterFeedProvider {
 		return "https://twitter.com/\(screenName)"
 	}
 	
-	func makeParsedAuthors(_ user: TwitterUser) -> Set<ParsedAuthor> {
-		return Set([ParsedAuthor(name: user.name, url: makeUserURL(user.screenName!), avatarURL: user.avatarURL, emailAddress: nil)])
-	}
-	
-	func makeTweetText(_ tweet: Tweet) -> String? {
-		let tweetToUse = tweet.retweetedStatus != nil ? tweet.retweetedStatus! : tweet
-		if let text = tweetToUse.fullText, let displayRange = tweetToUse.displayTextRange, displayRange.count > 1,
-			let startIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex),
-			let endIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex) {
-				return String(text[startIndex..<endIndex])
-		} else {
-			return tweet.fullText
-		}
-	}
-	
-	func makeTweetHTML(_ tweet: Tweet) -> String? {
-		return nil
+	func makeParsedAuthors(_ user: TwitterUser?) -> Set<ParsedAuthor>? {
+		guard let user = user else { return nil }
+		return Set([ParsedAuthor(name: user.name, url: user.url, avatarURL: user.avatarURL, emailAddress: nil)])
 	}
 	
 }

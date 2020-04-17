@@ -20,4 +20,8 @@ struct TwitterUser: Codable {
 		case avatarURL = "profile_image_url_https"
 	}
 	
+	var url: String {
+		return "https://twitter.com/\(screenName ?? "")"
+	}
+	
 }
