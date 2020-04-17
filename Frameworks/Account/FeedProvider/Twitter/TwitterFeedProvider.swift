@@ -216,7 +216,7 @@ private extension TwitterFeedProvider {
 	
 	func retrieveTweets(api: String, completion: @escaping (Result<[Tweet], Error>) -> Void) {
 		let url = "\(Self.apiBase)\(api)"
-		let parameters = [String: Any]()
+		let parameters = ["tweet_mode": "extended"]
 		
 		client.get(url, parameters: parameters) { result in
 			switch result {
@@ -225,6 +225,12 @@ private extension TwitterFeedProvider {
 				let dateFormatter = DateFormatter()
 				dateFormatter.dateFormat = Self.dateFormat
 				decoder.dateDecodingStrategy = .formatted(dateFormatter)
+				let jsonString = String(data: response.data, encoding: .utf8)
+
+				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("twitter.json")
+				print("******** writing to: \(url.path)")
+				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
+
 				do {
 					let tweets = try decoder.decode([Tweet].self, from: response.data)
 					completion(.success(tweets))
@@ -277,22 +283,12 @@ private extension TwitterFeedProvider {
 	}
 	
 	func makeTweetText(_ tweet: Tweet) -> String? {
-		if tweet.truncated, let extendedText = tweet.extendedTweet?.fullText {
-			if let displayRange = tweet.extendedTweet?.displayTextRange, displayRange.count > 1 {
-				let startIndex = extendedText.index(extendedText.startIndex, offsetBy: displayRange[0])
-				let endIndex = extendedText.index(extendedText.startIndex, offsetBy: displayRange[1])
-				return String(extendedText[startIndex...endIndex])
-			} else {
-				return extendedText
-			}
+		if let text = tweet.fullText, let displayRange = tweet.displayTextRange, displayRange.count > 1,
+			let startIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex),
+			let endIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex) {
+				return String(text[startIndex..<endIndex])
 		} else {
-			if let text = tweet.text, let displayRange = tweet.displayTextRange {
-				let startIndex = text.index(text.startIndex, offsetBy: displayRange[0])
-				let endIndex = text.index(text.startIndex, offsetBy: displayRange[1])
-				return String(text[startIndex...endIndex])
-			} else {
-				return tweet.text
-			}
+			return tweet.fullText
 		}
 	}
 	
