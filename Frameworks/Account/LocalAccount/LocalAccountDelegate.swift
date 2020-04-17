@@ -192,6 +192,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		
 		// Use the standard feed finder to download and process the RSS feed
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		BatchUpdate.shared.start()
 		FeedFinder.find(url: url) { result in
 			
 			switch result {
@@ -199,34 +200,39 @@ final class LocalAccountDelegate: AccountDelegate {
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
 					let url = URL(string: bestFeedSpecifier.urlString) else {
 						self.refreshProgress.completeTask()
+						BatchUpdate.shared.end()
 						completion(.failure(AccountError.createErrorNotFound))
 						return
 				}
 				
 				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
 					self.refreshProgress.completeTask()
+					BatchUpdate.shared.end()
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
 				}
 				
 				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 				feed.editedName = name
+				container.addWebFeed(feed)
 
 				InitialFeedDownloader.download(url) { parsedFeed in
 					self.refreshProgress.completeTask()
 
 					if let parsedFeed = parsedFeed {
 						account.update(feed, with: parsedFeed, {_ in
-							container.addWebFeed(feed)
+							BatchUpdate.shared.end()
 							completion(.success(feed))
 						})
 					} else {
+						BatchUpdate.shared.end()
 						completion(.failure(AccountError.createErrorNotFound))
 					}
 					
 				}
 				
 			case .failure:
+				BatchUpdate.shared.end()
 				self.refreshProgress.completeTask()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
