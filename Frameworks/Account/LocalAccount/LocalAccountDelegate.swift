@@ -292,9 +292,12 @@ private extension LocalAccountDelegate {
 	}
 	
 	func createRSSWebFeed(for account: Account, url: URL, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+
+		// We need to use a batch update here because we need to assign add the feed to the
+		// container before the name has been downloaded.  This will put it in the sidebar
+		// with an Untitled name if we don't delay it being added to the sidebar.
 		BatchUpdate.shared.start()
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		FeedFinder.find(url: url) { result in
 			
 			switch result {
