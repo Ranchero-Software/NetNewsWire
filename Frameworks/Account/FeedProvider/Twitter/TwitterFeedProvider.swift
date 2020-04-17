@@ -132,9 +132,7 @@ public struct TwitterFeedProvider: FeedProvider {
 					switch result {
 					case .success(let user):
 						if let userName = user.name {
-							let localized = NSLocalizedString("%@ on Twitter", comment: "Twitter Name")
-							let onName = NSString.localizedStringWithFormat(localized as NSString, userName) as String
-							completion(.success(onName))
+							completion(.success(userName))
 						} else {
 							completion(.failure(TwitterFeedProviderError.screenNameNotFound))
 						}
