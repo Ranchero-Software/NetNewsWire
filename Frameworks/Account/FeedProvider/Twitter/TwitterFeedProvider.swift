@@ -252,9 +252,9 @@ private extension TwitterFeedProvider {
 							  externalURL: nil,
 							  title: nil,
 							  language: nil,
-							  contentHTML: tweet.text,
-							  contentText: tweet.text,
-							  summary: tweet.text,
+							  contentHTML: makeTweetHTML(tweet),
+							  contentText: makeTweetText(tweet),
+							  summary: nil,
 							  imageURL: nil,
 							  bannerImageURL: nil,
 							  datePublished: tweet.createdAt,
@@ -274,6 +274,30 @@ private extension TwitterFeedProvider {
 	
 	func makeParsedAuthors(_ user: TwitterUser) -> Set<ParsedAuthor> {
 		return Set([ParsedAuthor(name: user.name, url: makeUserURL(user.screenName!), avatarURL: user.avatarURL, emailAddress: nil)])
+	}
+	
+	func makeTweetText(_ tweet: Tweet) -> String? {
+		if tweet.truncated, let extendedText = tweet.extendedTweet?.fullText {
+			if let displayRange = tweet.extendedTweet?.displayTextRange, displayRange.count > 1 {
+				let startIndex = extendedText.index(extendedText.startIndex, offsetBy: displayRange[0])
+				let endIndex = extendedText.index(extendedText.startIndex, offsetBy: displayRange[1])
+				return String(extendedText[startIndex...endIndex])
+			} else {
+				return extendedText
+			}
+		} else {
+			if let text = tweet.text, let displayRange = tweet.displayTextRange {
+				let startIndex = text.index(text.startIndex, offsetBy: displayRange[0])
+				let endIndex = text.index(text.startIndex, offsetBy: displayRange[1])
+				return String(text[startIndex...endIndex])
+			} else {
+				return tweet.text
+			}
+		}
+	}
+	
+	func makeTweetHTML(_ tweet: Tweet) -> String? {
+		return nil
 	}
 	
 }
