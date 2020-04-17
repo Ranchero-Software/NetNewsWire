@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Tweet: Codable {
+final class Tweet: Codable {
 
 	let createdAt: Date?
 	let idStr: String?
@@ -17,6 +17,7 @@ struct Tweet: Codable {
 	let user: TwitterUser
 	let truncated: Bool
 	let retweeted: Bool
+	let retweetedStatus: Tweet?
 
 	enum CodingKeys: String, CodingKey {
 		case createdAt = "created_at"
@@ -26,6 +27,7 @@ struct Tweet: Codable {
 		case user = "user"
 		case truncated = "truncated"
 		case retweeted = "retweeted"
+		case retweetedStatus = "retweeted_status"
 	}
 	
 }

@@ -283,7 +283,8 @@ private extension TwitterFeedProvider {
 	}
 	
 	func makeTweetText(_ tweet: Tweet) -> String? {
-		if let text = tweet.fullText, let displayRange = tweet.displayTextRange, displayRange.count > 1,
+		let tweetToUse = tweet.retweetedStatus != nil ? tweet.retweetedStatus! : tweet
+		if let text = tweetToUse.fullText, let displayRange = tweetToUse.displayTextRange, displayRange.count > 1,
 			let startIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex),
 			let endIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex) {
 				return String(text[startIndex..<endIndex])
