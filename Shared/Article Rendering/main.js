@@ -117,12 +117,7 @@ function isLocalFootnote(target) {
 function styleLocalFootnotes() {
 	for (elem of document.querySelectorAll("sup > a[href*='#fn'], sup > div > a[href*='#fn']")) {
 		if (isLocalFootnote(elem)) {
-			if (elem.className.indexOf("footnote") === -1) {
-				if (elem.className.length === 0)
-					elem.className = "footnote";
-				else
-					elem.className = elem.className + " " + "footnote";
-			}
+			elem.classList.add("footnote");
 		}
 	}
 }
