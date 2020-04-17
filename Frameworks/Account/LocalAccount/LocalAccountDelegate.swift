@@ -134,13 +134,13 @@ final class LocalAccountDelegate: AccountDelegate {
 					let feed = account.createWebFeed(with: name, url: newURL.absoluteString, webFeedID: newURL.absoluteString, homePageURL: nil)
 					feed.editedName = name
 					feed.username = urlComponents.user
-					
+					container.addWebFeed(feed)
+
 					feedProvider.refresh(feed) { result in
 						self.refreshProgress.completeTask()
 						switch result {
 						case .success(let parsedItems):
 							account.update(urlString, with: parsedItems) { _ in
-								container.addWebFeed(feed)
 								completion(.success(feed))
 							}
 						case .failure:
@@ -176,7 +176,8 @@ final class LocalAccountDelegate: AccountDelegate {
 				}
 				
 				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-				
+				container.addWebFeed(feed)
+
 				InitialFeedDownloader.download(url) { parsedFeed in
 					self.refreshProgress.completeTask()
 
@@ -186,7 +187,6 @@ final class LocalAccountDelegate: AccountDelegate {
 					
 					feed.editedName = name
 					
-					container.addWebFeed(feed)
 					completion(.success(feed))
 					
 				}
