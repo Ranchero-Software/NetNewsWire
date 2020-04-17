@@ -21,6 +21,7 @@ public struct TwitterFeedProvider: FeedProvider {
 
 	private static let server = "api.twitter.com"
 	private static let apiBase = "https://api.twitter.com/1.1/"
+	private static let dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
 	
 	private static let userPaths = ["/home", "/notifications"]
 	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
@@ -149,37 +150,13 @@ public struct TwitterFeedProvider: FeedProvider {
 	}
 	
 	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
-		let api = "statuses/user_timeline.json"
+		let api = "statuses/home_timeline.json"
 
 		retrieveTweets(api: api) { result in
 			switch result {
 			case .success(let tweets):
-				
-				var parsedItems = Set<ParsedItem>()
-				for tweet in tweets {
-					guard let idStr = tweet.idStr, let userScreenName = tweet.user.screenName else { continue }
-					let parsedItem = ParsedItem(syncServiceID: idStr,
-									  uniqueID: idStr,
-									  feedURL: webFeed.url,
-									  url: "https://twitter.com/\(userScreenName)/status/\(idStr)",
-									  externalURL: nil,
-									  title: nil,
-									  language: nil,
-									  contentHTML: tweet.text,
-									  contentText: tweet.text,
-									  summary: tweet.text,
-									  imageURL: nil,
-									  bannerImageURL: nil,
-									  datePublished: tweet.createdAt,
-									  dateModified: nil,
-									  authors: nil,
-									  tags: nil,
-									  attachments: nil)
-					parsedItems.insert(parsedItem)
-				}
-				
+				let parsedItems = self.makeParsedItems(webFeed.url, tweets)
 				completion(.success(parsedItems))
-					
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -248,7 +225,7 @@ private extension TwitterFeedProvider {
 			case .success(let response):
 				let decoder = JSONDecoder()
 				let dateFormatter = DateFormatter()
-				dateFormatter.dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
+				dateFormatter.dateFormat = Self.dateFormat
 				decoder.dateDecodingStrategy = .formatted(dateFormatter)
 				do {
 					let tweets = try decoder.decode([Tweet].self, from: response.data)
@@ -260,6 +237,45 @@ private extension TwitterFeedProvider {
 				completion(.failure(error))
 			}
 		}
+	}
+	
+	func makeParsedItems(_ webFeedURL: String, _ tweets: [Tweet]) -> Set<ParsedItem> {
+		var parsedItems = Set<ParsedItem>()
+		
+		for tweet in tweets {
+			guard let idStr = tweet.idStr, let userScreenName = tweet.user.screenName else { continue }
+			
+			let userURL = makeUserURL(userScreenName)
+			
+			let parsedItem = ParsedItem(syncServiceID: idStr,
+							  uniqueID: idStr,
+							  feedURL: webFeedURL,
+							  url: "\(userURL)/status/\(idStr)",
+							  externalURL: nil,
+							  title: nil,
+							  language: nil,
+							  contentHTML: tweet.text,
+							  contentText: tweet.text,
+							  summary: tweet.text,
+							  imageURL: nil,
+							  bannerImageURL: nil,
+							  datePublished: tweet.createdAt,
+							  dateModified: nil,
+							  authors: makeParsedAuthors(tweet.user),
+							  tags: nil,
+							  attachments: nil)
+			parsedItems.insert(parsedItem)
+		}
+		
+		return parsedItems
+	}
+	
+	func makeUserURL(_ screenName: String) -> String {
+		return "https://twitter.com/\(screenName)"
+	}
+	
+	func makeParsedAuthors(_ user: TwitterUser) -> Set<ParsedAuthor> {
+		return Set([ParsedAuthor(name: user.name, url: makeUserURL(user.screenName!), avatarURL: user.avatarURL, emailAddress: nil)])
 	}
 	
 }
