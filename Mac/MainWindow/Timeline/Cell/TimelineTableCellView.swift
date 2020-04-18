@@ -248,11 +248,14 @@ private extension TimelineTableCellView {
 	}
 
 	func updateFeedNameView() {
-		if cellData.showFeedName {
+		switch cellData.showFeedName {
+		case .byline:
+			showView(feedNameView)
+			updateTextFieldText(feedNameView, cellData.byline)
+		case .feed:
 			showView(feedNameView)
 			updateTextFieldText(feedNameView, cellData.feedName)
-		}
-		else {
+		case .none:
 			hideView(feedNameView)
 		}
 	}

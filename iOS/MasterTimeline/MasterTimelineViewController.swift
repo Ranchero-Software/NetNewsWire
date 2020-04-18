@@ -489,7 +489,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
-		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
@@ -649,7 +649,7 @@ private extension MasterTimelineViewController {
 		
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
 	}
 	

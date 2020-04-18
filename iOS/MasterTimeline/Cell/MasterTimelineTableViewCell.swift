@@ -172,12 +172,18 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateFeedNameView() {
-		if cellData.showFeedName {
+		switch cellData.showFeedName {
+		case .feed:
 			showView(feedNameView)
 			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
 			feedNameView.textColor = secondaryLabelColor
 			updateTextFieldText(feedNameView, cellData.feedName)
-		} else {
+		case .byline:
+			showView(feedNameView)
+			feedNameView.font = MasterTimelineDefaultCellLayout.feedNameFont
+			feedNameView.textColor = secondaryLabelColor
+			updateTextFieldText(feedNameView, cellData.byline)
+		case .none:
 			hideView(feedNameView)
 		}
 	}
