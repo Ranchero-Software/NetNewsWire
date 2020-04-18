@@ -29,8 +29,8 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 		self.log = log
 	}
 	
-	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
-		let all = FeedlyCategoryResourceId.Global.all(for: credentials.username)
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
+		let all = FeedlyCategoryResourceId.Global.all(for: userId)
 		self.init(account: account, resource: all, service: service, newerThan: newerThan, log: log)
 	}
 	

@@ -38,6 +38,7 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 		}()
 		
 		guard shouldRefresh else {
+			os_log(.debug, log: log, "Skipping access token renewal.")
 			didFinish()
 			return
 		}

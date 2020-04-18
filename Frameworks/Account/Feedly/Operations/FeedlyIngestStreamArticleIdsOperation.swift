@@ -28,8 +28,8 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 		self.log = log
 	}
 	
-	convenience init(account: Account, credentials: Credentials, service: FeedlyGetStreamIdsService, log: OSLog) {
-		let all = FeedlyCategoryResourceId.Global.all(for: credentials.username)
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, log: OSLog) {
+		let all = FeedlyCategoryResourceId.Global.all(for: userId)
 		self.init(account: account, resource: all, service: service, log: log)
 	}
 	
