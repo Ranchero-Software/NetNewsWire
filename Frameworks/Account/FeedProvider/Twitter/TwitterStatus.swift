@@ -56,51 +56,54 @@ final class TwitterStatus: Codable {
 		return statusToRender.displayText
 	}
 	
-	func renderAsHTML() -> String {
+	func renderAsHTML(topLevel: Bool = true) -> String {
 		if let retweetedStatus = retweetedStatus {
-			return renderAsRetweetHTML(retweetedStatus)
+			return renderAsRetweetHTML(retweetedStatus, topLevel: topLevel)
 		}
 		if let quotedStatus = quotedStatus {
-			return renderAsQuoteHTML(quotedStatus)
+			return renderAsQuoteHTML(quotedStatus, topLevel: topLevel)
 		}
-		return renderAsOriginalHTML()
+		return renderAsOriginalHTML(topLevel: topLevel)
 	}
 	
 	func renderAsTweetHTML(_ status: TwitterStatus) -> String {
-		var html = "<p>"
-		html += status.displayText ?? ""
-		html += "</p>"
-		return html
+		return status.displayText ?? ""
 	}
 	
-	func renderAsOriginalHTML() -> String {
+	func renderAsOriginalHTML(topLevel: Bool) -> String {
 		var html = renderAsTweetHTML(self)
-		html += extendedEntities?.renderAsHTML() ?? ""
+		if topLevel {
+			html += extendedEntities?.renderAsHTML() ?? ""
+		}
 		return html
 	}
 	
-	func renderAsRetweetHTML(_ status: TwitterStatus) -> String {
+	func renderAsRetweetHTML(_ status: TwitterStatus, topLevel: Bool) -> String {
 		var html = "<blockquote>"
 		if let userHTML = status.user?.renderAsHTML() {
 			html += userHTML
 		}
-		html += renderAsTweetHTML(status)
+		html += status.renderAsHTML(topLevel: false)
 		html += "</blockquote>"
-		html += status.extendedEntities?.renderAsHTML() ?? ""
+		if topLevel {
+			html += status.extendedEntities?.renderAsHTML() ?? ""
+		}
 		return html
 	}
 	
-	func renderAsQuoteHTML(_ quotedStatus: TwitterStatus) -> String {
+	func renderAsQuoteHTML(_ quotedStatus: TwitterStatus, topLevel: Bool) -> String {
 		var html = String()
 		html += renderAsTweetHTML(self)
 		html += "<blockquote>"
 		if let userHTML = quotedStatus.user?.renderAsHTML() {
 			html += userHTML
 		}
-		html += renderAsTweetHTML(quotedStatus)
+		html += quotedStatus.renderAsHTML(topLevel: false)
 		html += "</blockquote>"
 		html += self.extendedEntities?.renderAsHTML() ?? ""
-		html += quotedStatus.extendedEntities?.renderAsHTML() ?? ""
+		if topLevel {
+			html += quotedStatus.extendedEntities?.renderAsHTML() ?? ""
+		}
 		return html
 	}
 	
