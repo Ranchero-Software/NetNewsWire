@@ -148,9 +148,28 @@ public struct TwitterFeedProvider: FeedProvider {
 	}
 	
 	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
-		let api = "statuses/home_timeline.json"
+		guard let urlComponents = URLComponents(string: webFeed.url) else {
+			completion(.failure(TwitterFeedProviderError.unknown))
+			return
+		}
+		
+		let api: String
+		var parameters = [String: Any]()
+		
+		switch urlComponents.path {
+		case "/", "/home":
+			api = "statuses/home_timeline.json"
+		default:
+			api = "statuses/user_timeline.json"
+			if let screenName = deriveScreenName(urlComponents) {
+				parameters["screen_name"] = screenName
+			} else {
+				completion(.failure(TwitterFeedProviderError.unknown))
+				return
+			}
+		}
 
-		retrieveTweets(api: api) { result in
+		retrieveTweets(api: api, parameters: parameters) { result in
 			switch result {
 			case .success(let tweets):
 				let parsedItems = self.makeParsedItems(webFeed.url, tweets)
@@ -214,11 +233,12 @@ private extension TwitterFeedProvider {
 		}
 	}
 	
-	func retrieveTweets(api: String, completion: @escaping (Result<[TwitterStatus], Error>) -> Void) {
+	func retrieveTweets(api: String, parameters: [String: Any], completion: @escaping (Result<[TwitterStatus], Error>) -> Void) {
 		let url = "\(Self.apiBase)\(api)"
-		let parameters = ["tweet_mode": "extended"]
+		var expandedParameters = parameters
+		expandedParameters["tweet_mode"] = "extended"
 		
-		client.get(url, parameters: parameters) { result in
+		client.get(url, parameters: expandedParameters) { result in
 			switch result {
 			case .success(let response):
 				let decoder = JSONDecoder()
