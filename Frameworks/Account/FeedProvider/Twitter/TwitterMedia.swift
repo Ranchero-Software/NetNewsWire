@@ -42,7 +42,7 @@ struct TwitterMedia: Codable {
 			} else {
 				html += renderPhotoAsHTML()
 			}
-		case "video":
+		case "video", "animated_gif":
 			html += renderVideoAsHTML()
 		default:
 			break
