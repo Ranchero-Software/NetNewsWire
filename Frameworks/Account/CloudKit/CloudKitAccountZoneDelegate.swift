@@ -180,28 +180,61 @@ private extension CloudKitAcountZoneDelegate {
 	}
 	
 	func createWebFeedIfNecessary(url: URL, editedName: String?, webFeedExternalID: String, container: Container, completion: @escaping (WebFeed) -> Void) {
-		guard let account = account else { return }
+		guard let account = account, let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return }
 		
 		if let webFeed = account.existingWebFeed(withExternalID: webFeedExternalID) {
 			completion(webFeed)
 			return
 		}
 		
-		let webFeed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+		let webFeed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 		webFeed.editedName = editedName
 		webFeed.externalID = webFeedExternalID
-		container.addWebFeed(webFeed)
 		
-		refreshProgress?.addToNumberOfTasksAndRemaining(1)
-		InitialFeedDownloader.download(url) { parsedFeed in
-			self.refreshProgress?.completeTask()
-			if let parsedFeed = parsedFeed {
-				account.update(webFeed, with: parsedFeed, { _ in
+		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents, with: nil) {
+			
+			refreshProgress?.addToNumberOfTasksAndRemaining(2)
+			feedProvider.assignName(urlComponents) { result in
+				self.refreshProgress?.completeTask()
+				switch result {
+					case .success(let name):
+						
+						webFeed.name = name
+						container.addWebFeed(webFeed)
+						
+						feedProvider.refresh(webFeed) { result in
+							self.refreshProgress?.completeTask()
+							switch result {
+							case .success(let parsedItems):
+								account.update(url.absoluteString, with: parsedItems) { _ in
+									completion(webFeed)
+								}
+							case .failure:
+								completion(webFeed)
+							}
+						}
+					
+				case .failure:
 					completion(webFeed)
-				})
-			} else {
-				completion(webFeed)
+				}
 			}
+			
+		} else {
+			
+			container.addWebFeed(webFeed)
+			
+			refreshProgress?.addToNumberOfTasksAndRemaining(1)
+			InitialFeedDownloader.download(url) { parsedFeed in
+				self.refreshProgress?.completeTask()
+				if let parsedFeed = parsedFeed {
+					account.update(webFeed, with: parsedFeed, { _ in
+						completion(webFeed)
+					})
+				} else {
+					completion(webFeed)
+				}
+			}
+			
 		}
 
 	}

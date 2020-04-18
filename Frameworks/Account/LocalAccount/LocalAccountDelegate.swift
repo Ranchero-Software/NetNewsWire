@@ -84,6 +84,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
+			account.metadata.lastArticleFetchEndTime = Date()
 			completion(.success(()))
 		}
 		
@@ -147,9 +148,9 @@ final class LocalAccountDelegate: AccountDelegate {
 		
 		// Username should be part of the URL on new feed adds
 		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents, with: nil) {
-			createProviderWebFeed(for: account, urlComponents: urlComponents, name: name, container: container, feedProvider: feedProvider, completion: completion)
+			createProviderWebFeed(for: account, urlComponents: urlComponents, editedName: name, container: container, feedProvider: feedProvider, completion: completion)
 		} else {
-			createRSSWebFeed(for: account, url: url, name: name, container: container, completion: completion)
+			createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 		}
 	}
 
@@ -244,14 +245,13 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 	
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
 		self.refreshProgress.clear()
-		account?.metadata.lastArticleFetchEndTime = Date()
 	}
 	
 }
 
 private extension LocalAccountDelegate {
 	
-	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, name: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		feedProvider.assignName(urlComponents) { result in
@@ -269,7 +269,7 @@ private extension LocalAccountDelegate {
 				}
 
 				let feed = account.createWebFeed(with: name, url: newURLString, webFeedID: newURLString, homePageURL: nil)
-				feed.editedName = name
+				feed.editedName = editedName
 				feed.username = urlComponents.user
 				container.addWebFeed(feed)
 
@@ -291,7 +291,7 @@ private extension LocalAccountDelegate {
 		}
 	}
 	
-	func createRSSWebFeed(for account: Account, url: URL, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 
 		// We need to use a batch update here because we need to assign add the feed to the
 		// container before the name has been downloaded.  This will put it in the sidebar
@@ -318,7 +318,7 @@ private extension LocalAccountDelegate {
 				}
 				
 				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-				feed.editedName = name
+				feed.editedName = editedName
 				container.addWebFeed(feed)
 
 				InitialFeedDownloader.download(url) { parsedFeed in
