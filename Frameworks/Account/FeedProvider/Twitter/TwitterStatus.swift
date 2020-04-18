@@ -20,6 +20,7 @@ final class TwitterStatus: Codable {
 	let retweetedStatus: TwitterStatus?
 	let quotedStatus: TwitterStatus?
 	let entities: TwitterEntities?
+	let extendedEntities: TwitterExtendedEntities?
 	
 	enum CodingKeys: String, CodingKey {
 		case createdAt = "created_at"
@@ -32,6 +33,7 @@ final class TwitterStatus: Codable {
 		case retweetedStatus = "retweeted_status"
 		case quotedStatus = "quoted_status"
 		case entities = "entities"
+		case extendedEntities = "extended_entities"
 	}
 	
 	var url: String? {
@@ -54,40 +56,51 @@ final class TwitterStatus: Codable {
 		return statusToRender.displayText
 	}
 	
-	func renderAsHTML() -> String? {
+	func renderAsHTML() -> String {
 		if let retweetedStatus = retweetedStatus {
 			return renderAsRetweetHTML(retweetedStatus)
 		}
 		if let quotedStatus = quotedStatus {
 			return renderAsQuoteHTML(quotedStatus)
 		}
-		return renderAsTweetHTML(self)
+		return renderAsOriginalHTML()
 	}
 	
-	func renderAsTweetHTML(_ status: TwitterStatus) -> String? {
-		return status.displayText
+	func renderAsTweetHTML(_ status: TwitterStatus) -> String {
+		var html = "<p>"
+		html += status.displayText ?? ""
+		html += "</p>"
+		return html
+	}
+	
+	func renderAsOriginalHTML() -> String {
+		var html = renderAsTweetHTML(self)
+		html += extendedEntities?.renderAsHTML() ?? ""
+		return html
 	}
 	
 	func renderAsRetweetHTML(_ status: TwitterStatus) -> String {
-		var html = String()
-		html += "<blockquote>"
-		if let userHTML = status.user?.renderHTML() {
+		var html = "<blockquote>"
+		if let userHTML = status.user?.renderAsHTML() {
 			html += userHTML
 		}
-		html += renderAsTweetHTML(status) ?? ""
+		html += renderAsTweetHTML(status)
 		html += "</blockquote>"
+		html += status.extendedEntities?.renderAsHTML() ?? ""
 		return html
 	}
 	
 	func renderAsQuoteHTML(_ quotedStatus: TwitterStatus) -> String {
 		var html = String()
-		html += renderAsTweetHTML(self) ?? ""
+		html += renderAsTweetHTML(self)
 		html += "<blockquote>"
-		if let userHTML = quotedStatus.user?.renderHTML() {
+		if let userHTML = quotedStatus.user?.renderAsHTML() {
 			html += userHTML
 		}
-		html += renderAsTweetHTML(quotedStatus) ?? ""
+		html += renderAsTweetHTML(quotedStatus)
 		html += "</blockquote>"
+		html += self.extendedEntities?.renderAsHTML() ?? ""
+		html += quotedStatus.extendedEntities?.renderAsHTML() ?? ""
 		return html
 	}
 	
