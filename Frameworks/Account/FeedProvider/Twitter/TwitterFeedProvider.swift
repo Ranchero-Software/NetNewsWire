@@ -161,6 +161,7 @@ public struct TwitterFeedProvider: FeedProvider {
 			api = "statuses/home_timeline.json"
 		default:
 			api = "statuses/user_timeline.json"
+			parameters["exclude_replies"] = true
 			if let screenName = deriveScreenName(urlComponents) {
 				parameters["screen_name"] = screenName
 			} else {
