@@ -57,10 +57,10 @@ private extension TwitterMedia {
 
 	func renderPhotoAsHTML() -> String {
 		if let httpsMediaURL = httpsMediaURL {
-			return "<img src=\"\(httpsMediaURL)\">"
+			return "<figure><img src=\"\(httpsMediaURL)\"></figure>"
 		}
 		if let mediaURL = mediaURL {
-			return "<img src=\"\(mediaURL)\">"
+			return "<figure><img src=\"\(mediaURL)\"></figure>"
 		}
 		return ""
 	}
