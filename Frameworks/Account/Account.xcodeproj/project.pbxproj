@@ -69,6 +69,7 @@
 		51B3630D244B6428000DEF2A /* TwitterSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B3630C244B6428000DEF2A /* TwitterSymbol.swift */; };
 		51B3630F244B6CB9000DEF2A /* TwitterExtendedEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B3630E244B6CB9000DEF2A /* TwitterExtendedEntities.swift */; };
 		51B36311244B6CFB000DEF2A /* TwitterMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36310244B6CFA000DEF2A /* TwitterMedia.swift */; };
+		51B36313244B8B5E000DEF2A /* TwitterVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36312244B8B5E000DEF2A /* TwitterVideo.swift */; };
 		51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7B83233531BC008E8144 /* AccountBehaviors.swift */; };
 		51BC8FCC237EC055004F8B56 /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC8FCB237EC055004F8B56 /* Feed.swift */; };
 		51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BFDECD238B508D00216323 /* ContainerIdentifier.swift */; };
@@ -317,6 +318,7 @@
 		51B3630C244B6428000DEF2A /* TwitterSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSymbol.swift; sourceTree = "<group>"; };
 		51B3630E244B6CB9000DEF2A /* TwitterExtendedEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterExtendedEntities.swift; sourceTree = "<group>"; };
 		51B36310244B6CFA000DEF2A /* TwitterMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterMedia.swift; sourceTree = "<group>"; };
+		51B36312244B8B5E000DEF2A /* TwitterVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterVideo.swift; sourceTree = "<group>"; };
 		51BB7B83233531BC008E8144 /* AccountBehaviors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBehaviors.swift; sourceTree = "<group>"; };
 		51BC8FCB237EC055004F8B56 /* Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
 		51BFDECD238B508D00216323 /* ContainerIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerIdentifier.swift; sourceTree = "<group>"; };
@@ -590,6 +592,7 @@
 				51B3630C244B6428000DEF2A /* TwitterSymbol.swift */,
 				51B36308244B62A5000DEF2A /* TwitterURL.swift */,
 				5132DE802449159100806ADE /* TwitterUser.swift */,
+				51B36312244B8B5E000DEF2A /* TwitterVideo.swift */,
 			);
 			path = Twitter;
 			sourceTree = "<group>";
@@ -1215,6 +1218,7 @@
 				51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */,
 				552032F8229D5D5A009559E0 /* ReaderAPIEntry.swift in Sources */,
 				552032FB229D5D5A009559E0 /* ReaderAPITag.swift in Sources */,
+				51B36313244B8B5E000DEF2A /* TwitterVideo.swift in Sources */,
 				5165D72822835F7800D9D53D /* FeedFinder.swift in Sources */,
 				9EBD49C023C67602005AD5CD /* FeedlyDownloadArticlesOperation.swift in Sources */,
 				51D58755227F53BE00900287 /* FeedbinTag.swift in Sources */,
