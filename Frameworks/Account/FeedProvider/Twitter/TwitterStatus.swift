@@ -19,7 +19,8 @@ final class TwitterStatus: Codable {
 	let retweeted: Bool?
 	let retweetedStatus: TwitterStatus?
 	let quotedStatus: TwitterStatus?
-
+	let entities: TwitterEntities?
+	
 	enum CodingKeys: String, CodingKey {
 		case createdAt = "created_at"
 		case idStr = "id_str"
@@ -30,6 +31,7 @@ final class TwitterStatus: Codable {
 		case retweeted = "retweeted"
 		case retweetedStatus = "retweeted_status"
 		case quotedStatus = "quoted_status"
+		case entities = "entities"
 	}
 	
 	var url: String? {
