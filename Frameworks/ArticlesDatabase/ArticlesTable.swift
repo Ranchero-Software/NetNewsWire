@@ -493,7 +493,7 @@ final class ArticlesTable: DatabaseTable {
 	/// Because deleting articles might block the database for too long,
 	/// we do this in a careful way: delete articles older than a year,
 	/// check to see how much time has passed, then decide whether or not to continue.
-	/// Repeat for successively shorter time intervals.
+	/// Repeat for successively more-recent dates.
 	func deleteOldArticles() {
 		precondition(retentionStyle == .syncSystem)
 
@@ -522,6 +522,30 @@ final class ArticlesTable: DatabaseTable {
 				}
 			}
 			deleteOldArticles(cutoffDate: self.articleCutoffDate)
+		}
+	}
+
+	/// Delete old statuses.
+	func deleteOldStatuses() {
+		queue.runInTransaction { databaseResult in
+			guard let database = databaseResult.database else {
+				return
+			}
+
+			let sql: String
+			let cutoffDate: Date
+			
+			switch self.retentionStyle {
+			case .syncSystem:
+				sql = "select articleID from statuses where dateArrived<? and read=1 and starred=0 and articleID not in (select articleID from articles);"
+				cutoffDate = Date().bySubtracting(days: 180)
+			case .feedBased:
+				sql = "select articleID from statuses where dateArrived<? and starred=0 and articleID not in (select articleID from articles);"
+				cutoffDate = Date().bySubtracting(days: 30)
+			}
+
+			let parameters = [cutoffDate] as [Any]
+			database.executeUpdate(sql, withArgumentsIn: parameters)
 		}
 	}
 

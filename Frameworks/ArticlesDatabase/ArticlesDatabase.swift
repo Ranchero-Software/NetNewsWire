@@ -273,6 +273,7 @@ public final class ArticlesDatabase {
 			articlesTable.deleteOldArticles()
 		}
 		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
+		articlesTable.deleteOldStatuses()
 	}
 }
 
