@@ -53,7 +53,40 @@ final class TwitterStatus: Codable {
 	}
 	
 	func renderAsHTML() -> String? {
-		return nil
+		if let retweetedStatus = retweetedStatus {
+			return renderAsRetweetHTML(retweetedStatus)
+		}
+		if let quotedStatus = quotedStatus {
+			return renderAsQuoteHTML(quotedStatus)
+		}
+		return renderAsTweetHTML(self)
+	}
+	
+	func renderAsTweetHTML(_ status: TwitterStatus) -> String? {
+		return status.displayText
+	}
+	
+	func renderAsRetweetHTML(_ status: TwitterStatus) -> String {
+		var html = String()
+		html += "<blockquote>"
+		if let userHTML = status.user?.renderHTML() {
+			html += userHTML
+		}
+		html += renderAsTweetHTML(status) ?? ""
+		html += "</blockquote>"
+		return html
+	}
+	
+	func renderAsQuoteHTML(_ quotedStatus: TwitterStatus) -> String {
+		var html = String()
+		html += renderAsTweetHTML(self) ?? ""
+		html += "<blockquote>"
+		if let userHTML = quotedStatus.user?.renderHTML() {
+			html += userHTML
+		}
+		html += renderAsTweetHTML(quotedStatus) ?? ""
+		html += "</blockquote>"
+		return html
 	}
 	
 }

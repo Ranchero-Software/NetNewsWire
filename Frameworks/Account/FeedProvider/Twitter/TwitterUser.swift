@@ -24,4 +24,21 @@ struct TwitterUser: Codable {
 		return "https://twitter.com/\(screenName ?? "")"
 	}
 	
+	func renderHTML() -> String? {
+		var html = String()
+		html += "<div><a href=\"\(url)\">"
+		if let avatarURL = avatarURL {
+			html += "<img class=\"twitterAvatar\" src=\"\(avatarURL)\">"
+		}
+		html += "<span class=\"twitterUsername\">"
+		if let name = name {
+			html += " \(name)"
+		}
+		if let screenName = screenName {
+			html += " @\(screenName)"
+		}
+		html += "</span></a></div>"
+		return html
+	}
+	
 }
