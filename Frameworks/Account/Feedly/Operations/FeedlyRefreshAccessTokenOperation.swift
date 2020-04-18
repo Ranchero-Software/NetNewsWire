@@ -17,14 +17,32 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 	let account: Account
 	let log: OSLog
 	
-	init(account: Account, service: OAuthAccessTokenRefreshing, oauthClient: OAuthAuthorizationClient, log: OSLog) {
+	/// The moment the refresh is being requested. The token will refresh only if the account's `lastCredentialRenewTime` is not on the same day as this moment. When nil, the operation will always refresh the token.
+	let refreshDate: Date?
+	
+	init(account: Account, service: OAuthAccessTokenRefreshing, oauthClient: OAuthAuthorizationClient, refreshDate: Date?, log: OSLog) {
 		self.oauthClient = oauthClient
 		self.service = service
 		self.account = account
+		self.refreshDate = refreshDate
 		self.log = log
 	}
 	
 	override func run() {
+		// Only refresh the token if these dates are not on the same day.
+		let shouldRefresh: Bool = {
+			guard let date = refreshDate, let lastRenewDate = account.metadata.lastCredentialRenewTime else {
+				return true
+			}
+			return !Calendar.current.isDate(lastRenewDate, equalTo: date, toGranularity: .day)
+		}()
+		
+		guard shouldRefresh else {
+			os_log(.debug, log: log, "Skipping access token renewal.")
+			didFinish()
+			return
+		}
+		
 		let refreshToken: Credentials
 		
 		do {
@@ -63,6 +81,8 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 				os_log(.debug, log: log, "Storing access token.")
 				// Now store the access token because we want the account delegate to use it.
 				try account.storeCredentials(grant.accessToken)
+				
+				account.metadata.lastCredentialRenewTime = Date()
 				
 				didFinish()
 			} catch {

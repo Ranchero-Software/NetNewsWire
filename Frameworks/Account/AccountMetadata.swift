@@ -23,6 +23,7 @@ final class AccountMetadata: Codable {
 		case lastArticleFetchStartTime = "lastArticleFetch"
 		case lastArticleFetchEndTime
 		case endpointURL
+		case lastCredentialRenewTime = "lastCredentialRenewTime"
 	}
 
 	var name: String? {
@@ -77,6 +78,16 @@ final class AccountMetadata: Codable {
 		didSet {
 			if endpointURL != oldValue {
 				valueDidChange(.endpointURL)
+			}
+		}
+	}
+	
+	/// The last moment an account successfully renewed its credentials, or `nil` if no such moment exists.
+	/// An account delegate can use this value to decide when to next ask the service provider to renew credentials.
+	var lastCredentialRenewTime: Date? {
+		didSet {
+			if lastCredentialRenewTime != oldValue {
+				valueDidChange(.lastCredentialRenewTime)
 			}
 		}
 	}
