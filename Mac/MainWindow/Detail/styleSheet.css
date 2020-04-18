@@ -258,6 +258,10 @@ blockquote {
 	vertical-align: middle;
 }
 
+.twitterTimestamp {
+	font-size: 66%;
+}
+
 /*Block ads and junk*/
 
 iframe[src*="feedads"],

@@ -66,12 +66,21 @@ final class TwitterStatus: Codable {
 		return renderAsOriginalHTML(topLevel: topLevel)
 	}
 	
-	func renderAsTweetHTML(_ status: TwitterStatus) -> String {
-		return status.displayText ?? ""
+	func renderAsTweetHTML(_ status: TwitterStatus, topLevel: Bool) -> String {
+		var html = "<div>\(status.displayText ?? "")</div>"
+		
+		if !topLevel, let createdAt = status.createdAt {
+			let dateFormatter = DateFormatter()
+			dateFormatter.dateStyle = .medium
+			dateFormatter.timeStyle = .short
+			html += "<div class=\"twitterTimestamp\">\(dateFormatter.string(from: createdAt))</div>"
+		}
+		
+		return html
 	}
 	
 	func renderAsOriginalHTML(topLevel: Bool) -> String {
-		var html = renderAsTweetHTML(self)
+		var html = renderAsTweetHTML(self, topLevel: topLevel)
 		if topLevel {
 			html += extendedEntities?.renderAsHTML() ?? ""
 		}
@@ -93,7 +102,7 @@ final class TwitterStatus: Codable {
 	
 	func renderAsQuoteHTML(_ quotedStatus: TwitterStatus, topLevel: Bool) -> String {
 		var html = String()
-		html += renderAsTweetHTML(self)
+		html += renderAsTweetHTML(self, topLevel: topLevel)
 		html += "<blockquote>"
 		if let userHTML = quotedStatus.user?.renderAsHTML() {
 			html += userHTML
