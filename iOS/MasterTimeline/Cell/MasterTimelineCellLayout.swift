@@ -98,7 +98,8 @@ extension MasterTimelineCellLayout {
 		var r = CGRect.zero
 		r.origin = point
 		
-		let size = SingleLineUILabelSizer.size(for: cellData.feedName, font: MasterTimelineDefaultCellLayout.feedNameFont)
+		let feedName = cellData.showFeedName == .feed ? cellData.feedName : cellData.byline
+		let size = SingleLineUILabelSizer.size(for: feedName, font: MasterTimelineDefaultCellLayout.feedNameFont)
 		r.size = size
 		
 		if r.size.width > textAreaWidth {
