@@ -96,7 +96,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is WebFeed {
 				showFeedNames = {
 					for article in articles {
-						if article.authors?.contains(where: { $0.name != nil }) ?? false {
+						if !article.byline().isEmpty {
 							return .byline
 						}
 					}
@@ -955,11 +955,16 @@ private extension TimelineViewController {
 	}
 
 	func updateShowIcons() {
-		if showFeedNames != .none {
+		if showFeedNames == .feed {
 			self.showIcons = true
 			return
 		}
 
+		if showFeedNames == .none {
+			self.showIcons = false
+			return
+		}
+		
 		for article in articles {
 			if let authors = article.authors {
 				for author in authors {

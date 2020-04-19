@@ -1462,7 +1462,7 @@ private extension SceneCoordinator {
 		if timelineFeed is WebFeed {
 			showFeedNames = {
 				for article in articles {
-					if article.authors?.contains(where: { $0.name != nil }) ?? false {
+					if !article.byline().isEmpty {
 						return .byline
 					}
 				}
@@ -1474,6 +1474,11 @@ private extension SceneCoordinator {
 
 		if showFeedNames == .feed {
 			self.showIcons = true
+			return
+		}
+		
+		if showFeedNames == .none {
+			self.showIcons = false
 			return
 		}
 		
