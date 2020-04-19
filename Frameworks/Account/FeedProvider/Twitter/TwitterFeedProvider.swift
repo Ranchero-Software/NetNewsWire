@@ -287,7 +287,7 @@ private extension TwitterFeedProvider {
 		for status in statuses {
 			guard let idStr = status.idStr, let statusURL = status.url else { continue }
 			
-			let parsedItem = ParsedItem(syncServiceID: idStr,
+			let parsedItem = ParsedItem(syncServiceID: nil,
 							  uniqueID: idStr,
 							  feedURL: webFeedURL,
 							  url: statusURL,
