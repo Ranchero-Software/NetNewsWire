@@ -155,10 +155,17 @@ public struct TwitterFeedProvider: FeedProvider {
 		
 		let api: String
 		var parameters = [String: Any]()
+		var isSearch = false
 		
 		switch urlComponents.path {
 		case "/", "/home":
 			api = "statuses/home_timeline.json"
+		case "/search":
+			api = "search/tweets.json"
+			if let query = urlComponents.queryItems?.first(where: { $0.name == "q" })?.value {
+				parameters["q"] = query
+			}
+			isSearch = true
 		default:
 			api = "statuses/user_timeline.json"
 			parameters["exclude_replies"] = true
@@ -170,7 +177,7 @@ public struct TwitterFeedProvider: FeedProvider {
 			}
 		}
 
-		retrieveTweets(api: api, parameters: parameters) { result in
+		retrieveTweets(api: api, parameters: parameters, isSearch: isSearch) { result in
 			switch result {
 			case .success(let tweets):
 				let parsedItems = self.makeParsedItems(webFeed.url, tweets)
@@ -234,7 +241,7 @@ private extension TwitterFeedProvider {
 		}
 	}
 	
-	func retrieveTweets(api: String, parameters: [String: Any], completion: @escaping (Result<[TwitterStatus], Error>) -> Void) {
+	func retrieveTweets(api: String, parameters: [String: Any], isSearch: Bool, completion: @escaping (Result<[TwitterStatus], Error>) -> Void) {
 		let url = "\(Self.apiBase)\(api)"
 		var expandedParameters = parameters
 		expandedParameters["tweet_mode"] = "extended"
@@ -246,14 +253,24 @@ private extension TwitterFeedProvider {
 				let dateFormatter = DateFormatter()
 				dateFormatter.dateFormat = Self.dateFormat
 				decoder.dateDecodingStrategy = .formatted(dateFormatter)
-				let jsonString = String(data: response.data, encoding: .utf8)
-
-				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("twitter.json")
-				print("******** writing to: \(url.path)")
-				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
+				
+//				let jsonString = String(data: response.data, encoding: .utf8)
+//				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("twitter.json")
+//				print("******** writing to: \(url.path)")
+//				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
 
 				do {
-					let tweets = try decoder.decode([TwitterStatus].self, from: response.data)
+					let tweets: [TwitterStatus]
+					if isSearch {
+						let searchResult = try decoder.decode(TwitterSearchResult.self, from: response.data)
+						if let statuses = searchResult.statuses {
+							tweets = statuses
+						} else {
+							tweets = [TwitterStatus]()
+						}
+					} else {
+						tweets = try decoder.decode([TwitterStatus].self, from: response.data)
+					}
 					completion(.success(tweets))
 				} catch {
 					completion(.failure(error))
