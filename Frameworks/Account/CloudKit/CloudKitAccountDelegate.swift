@@ -569,7 +569,6 @@ private extension CloudKitAccountDelegate {
 		
 		for webFeed in webFeeds {
 			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components, with: webFeed.username) {
-				refreshProgress.addToNumberOfTasksAndRemaining(1)
 				group.enter()
 				feedProvider.refresh(webFeed) { result in
 					switch result {
@@ -589,7 +588,6 @@ private extension CloudKitAccountDelegate {
 			}
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(refresherWebFeeds.count)
 		group.enter()
 		refresher.refreshFeeds(refresherWebFeeds) {
 			group.leave()
