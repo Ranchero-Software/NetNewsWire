@@ -580,6 +580,22 @@ final class ArticlesTable: DatabaseTable {
 			}
 		}
 	}
+
+	/// Mark statuses beyond the 90-day window as read.
+	///
+	/// This is not intended for wide use: this is part of implementing
+	/// the April 2020 retention policy change for feed-based accounts.
+	func markOlderStatusesAsRead() {
+		queue.runInDatabase { databaseResult in
+			guard let database = databaseResult.database else {
+				return
+			}
+
+			let sql = "update statuses set read = true where dateArrived<?;"
+			let parameters = [self.articleCutoffDate] as [Any]
+			database.executeUpdate(sql, withArgumentsIn: parameters)
+		}
+	}
 }
 
 // MARK: - Private

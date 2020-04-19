@@ -24,6 +24,7 @@ final class AccountMetadata: Codable {
 		case lastArticleFetchEndTime
 		case endpointURL
 		case lastCredentialRenewTime = "lastCredentialRenewTime"
+		case performedApril2020RetentionPolicyChange
 	}
 
 	var name: String? {
@@ -88,6 +89,14 @@ final class AccountMetadata: Codable {
 		didSet {
 			if lastCredentialRenewTime != oldValue {
 				valueDidChange(.lastCredentialRenewTime)
+			}
+		}
+	}
+
+	var performedApril2020RetentionPolicyChange: Bool? {
+		didSet {
+			if performedApril2020RetentionPolicyChange != oldValue {
+				valueDidChange(.performedApril2020RetentionPolicyChange)
 			}
 		}
 	}
