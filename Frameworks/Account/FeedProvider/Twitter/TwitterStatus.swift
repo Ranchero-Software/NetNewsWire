@@ -117,9 +117,7 @@ private extension TwitterStatus {
 			let dateFormatter = DateFormatter()
 			dateFormatter.dateStyle = .medium
 			dateFormatter.timeStyle = .short
-			html += "<a href=\"\(url)\">"
-			html += "<div class=\"twitterTimestamp\">\(dateFormatter.string(from: createdAt))</div>"
-			html += "</a>"
+			html += "<a href=\"\(url)\" class=\"twitterTimestamp\">\(dateFormatter.string(from: createdAt))</a>"
 		}
 		
 		return html
