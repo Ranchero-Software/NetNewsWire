@@ -14,18 +14,19 @@ protocol TwitterEntity {
 }
 
 extension TwitterEntity {
-	var startIndex: Int? {
-		if indices?.count ?? 0 > 0 {
-			return indices?[0]
+
+	var startIndex: Int {
+		if let indices = indices, indices.count > 0 {
+			return indices[0]
 		}
-		return nil
+		return 0
 	}
 	
-	var endIndex: Int? {
-		if indices?.count ?? 0 > 1 {
-			return indices?[1]
+	var endIndex: Int {
+		if let indices = indices, indices.count > 1 {
+			return indices[1]
 		}
-		return nil
+		return 0
 	}
 	
 }
@@ -58,7 +59,7 @@ struct TwitterEntities: Codable {
 		if let symbols = symbols {
 			entities.append(contentsOf: symbols)
 		}
-		return entities
+		return entities.sorted(by: { $0.startIndex < $1.startIndex })
 	}
 	
 }
