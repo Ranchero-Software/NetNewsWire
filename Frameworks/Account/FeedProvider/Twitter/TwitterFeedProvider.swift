@@ -159,6 +159,7 @@ public struct TwitterFeedProvider: FeedProvider {
 		
 		switch urlComponents.path {
 		case "/", "/home":
+			parameters["count"] = 100
 			api = "statuses/home_timeline.json"
 		case "/notifications/mentions":
 			api = "statuses/mentions_timeline.json"
