@@ -86,9 +86,17 @@ private extension TwitterStatus {
 					if prevIndex < entityStartIndex {
 						html += String(text[prevIndex..<entityStartIndex])
 					}
-					html += entity.renderAsHTML()
-					prevIndex = entityEndIndex
 					
+					// We drop off any URL which is just pointing to the quoted status.  It is redundant.
+					if let twitterURL = entity as? TwitterURL, let expandedURL = twitterURL.expandedURL, let quotedURL = quotedStatus?.url {
+						if expandedURL.caseInsensitiveCompare(quotedURL) != .orderedSame {
+							html += entity.renderAsHTML()
+						}
+					} else {
+						html += entity.renderAsHTML()
+					}
+					
+					prevIndex = entityEndIndex
 				}
 			}
 			
