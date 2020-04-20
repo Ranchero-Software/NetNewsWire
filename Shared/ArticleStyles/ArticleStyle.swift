@@ -24,10 +24,16 @@ struct ArticleStyle: Equatable {
 		self.path = nil;
 		self.emptyCSS = nil
 
-		self.info = ["CreatorHomePage": "http://ranchero.com/", "CreatorName": "Ranchero Software, LLC", "Version": "1.0"]
+		self.info = ["CreatorHomePage": "https://ranchero.com/", "CreatorName": "Ranchero Software, LLC", "Version": "1.0"]
 
-		let cssPath = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
-		css = stringAtPath(cssPath)
+		let sharedCSSPath = Bundle.main.path(forResource: "shared", ofType: "css")!
+		let platformCSSPath = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
+
+		if let sharedCSS = stringAtPath(sharedCSSPath), let platformCSS = stringAtPath(platformCSSPath) {
+			css = sharedCSS + "\n" + platformCSS
+		} else {
+			css = nil
+		}
 
 		let templatePath = Bundle.main.path(forResource: "template", ofType: "html")!
 		template = stringAtPath(templatePath)
