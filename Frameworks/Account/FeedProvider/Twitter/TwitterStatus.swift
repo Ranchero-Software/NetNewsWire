@@ -171,7 +171,6 @@ private extension TwitterStatus {
 		}
 		html += quotedStatus.renderAsHTML(topLevel: false)
 		html += "</blockquote>"
-		html += self.extendedEntities?.renderAsHTML() ?? ""
 		if topLevel {
 			html += quotedStatus.extendedEntities?.renderAsHTML() ?? ""
 			html += quotedStatus.retweetedStatus?.extendedEntities?.renderAsHTML() ?? ""
