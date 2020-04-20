@@ -127,7 +127,9 @@ public struct TwitterFeedProvider: FeedProvider {
 			}
 			
 		default:
-			if let screenName = deriveScreenName(urlComponents) {
+			if let hashtag = deriveHashtag(urlComponents) {
+				completion(.success("#\(hashtag)"))
+			} else if let screenName = deriveScreenName(urlComponents) {
 				retrieveUser(screenName: screenName) { result in
 					switch result {
 					case .success(let user):
@@ -170,13 +172,19 @@ public struct TwitterFeedProvider: FeedProvider {
 			}
 			isSearch = true
 		default:
-			api = "statuses/user_timeline.json"
-			parameters["exclude_replies"] = true
-			if let screenName = deriveScreenName(urlComponents) {
-				parameters["screen_name"] = screenName
+			if let hashtag = deriveHashtag(urlComponents) {
+				api = "search/tweets.json"
+				parameters["q"] = "#\(hashtag)"
+				isSearch = true
 			} else {
-				completion(.failure(TwitterFeedProviderError.unknown))
-				return
+				api = "statuses/user_timeline.json"
+				parameters["exclude_replies"] = true
+				if let screenName = deriveScreenName(urlComponents) {
+					parameters["screen_name"] = screenName
+				} else {
+					completion(.failure(TwitterFeedProviderError.unknown))
+					return
+				}
 			}
 		}
 
@@ -212,6 +220,14 @@ extension TwitterFeedProvider: OAuth1SwiftProvider {
 // MARK: Private
 
 private extension TwitterFeedProvider {
+	
+	func deriveHashtag(_ urlComponents: URLComponents) -> String? {
+		let path = urlComponents.path
+		if path.starts(with: "/hashtag/"), let startIndex = path.index(path.startIndex, offsetBy: 9, limitedBy: path.endIndex), startIndex < path.endIndex {
+			return String(path[startIndex..<path.endIndex])
+		}
+		return nil
+	}
 	
 	func deriveScreenName(_ urlComponents: URLComponents) -> String? {
 		let path = urlComponents.path
