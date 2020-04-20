@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TwitterURL: Codable {
+struct TwitterURL: Codable, TwitterEntity {
 	
 	let url: String?
 	let indices: [Int]?
@@ -20,6 +20,10 @@ struct TwitterURL: Codable {
 		case indices = "indices"
 		case displayURL = "displayURL"
 		case expandedURL = "expandedURL"
+	}
+	
+	func renderAsHTML() -> String {
+		return ""
 	}
 	
 }

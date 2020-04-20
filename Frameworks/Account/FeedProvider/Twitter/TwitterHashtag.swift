@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TwitterHashtag: Codable {
+struct TwitterHashtag: Codable, TwitterEntity {
 	
 	let text: String?
 	let indices: [Int]?
@@ -18,4 +18,7 @@ struct TwitterHashtag: Codable {
 		case indices = "indices"
 	}
 	
+	func renderAsHTML() -> String {
+		return ""
+	}
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TwitterSymbol: Codable {
+struct TwitterSymbol: Codable, TwitterEntity {
 	
 	let name: String?
 	let indices: [Int]?
@@ -16,6 +16,10 @@ struct TwitterSymbol: Codable {
 	enum CodingKeys: String, CodingKey {
 		case name = "name"
 		case indices = "indices"
+	}
+	
+	func renderAsHTML() -> String {
+		return ""
 	}
 	
 }

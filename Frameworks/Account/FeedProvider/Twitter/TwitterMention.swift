@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TwitterMention: Codable {
+struct TwitterMention: Codable, TwitterEntity {
 	
 	let name: String?
 	let indices: [Int]?
@@ -22,6 +22,10 @@ struct TwitterMention: Codable {
 		case screenName = "screen_name"
 		case expandedURL = "expandedURL"
 		case idStr = "idStr"
+	}
+	
+	func renderAsHTML() -> String {
+		return ""
 	}
 	
 }
