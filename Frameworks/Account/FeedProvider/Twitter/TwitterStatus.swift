@@ -105,11 +105,13 @@ private extension TwitterStatus {
 	func renderAsTweetHTML(_ status: TwitterStatus, topLevel: Bool) -> String {
 		var html = "<div>\(status.displayHTML ?? "")</div>"
 		
-		if !topLevel, let createdAt = status.createdAt {
+		if !topLevel, let createdAt = status.createdAt, let url = status.url {
 			let dateFormatter = DateFormatter()
 			dateFormatter.dateStyle = .medium
 			dateFormatter.timeStyle = .short
+			html += "<a href=\"\(url)\">"
 			html += "<div class=\"twitterTimestamp\">\(dateFormatter.string(from: createdAt))</div>"
+			html += "</a>"
 		}
 		
 		return html
