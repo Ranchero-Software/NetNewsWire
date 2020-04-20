@@ -18,14 +18,11 @@ struct TwitterHashtag: Codable, TwitterEntity {
 		case indices = "indices"
 	}
 	
-	var startIndex: Int {
-		if let indices = indices, indices.count > 0 {
-			return indices[0] - 1
-		}
-		return 0
-	}
-	
 	func renderAsHTML() -> String {
-		return ""
+		var html = String()
+		if let text = text {
+			html += "<a href=\"https://twitter.com/search?q=%23\(text)\">#\(text)</a>"
+		}
+		return html
 	}
 }

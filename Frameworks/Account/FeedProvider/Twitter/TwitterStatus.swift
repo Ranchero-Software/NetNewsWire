@@ -41,16 +41,6 @@ final class TwitterStatus: Codable {
 		return "\(userURL)/status/\(idStr)"
 	}
 	
-	var displayText: String? {
-		if let text = fullText, let displayRange = displayTextRange, displayRange.count > 1,
-			let startIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex),
-			let endIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex) {
-				return String(text[startIndex..<endIndex])
-		} else {
-			return fullText
-		}
-	}
-	
 	func renderAsText() -> String? {
 		let statusToRender = retweetedStatus != nil ? retweetedStatus! : self
 		return statusToRender.displayText
@@ -66,8 +56,54 @@ final class TwitterStatus: Codable {
 		return renderAsOriginalHTML(topLevel: topLevel)
 	}
 	
+}
+
+private extension TwitterStatus {
+	
+	var displayText: String? {
+		if let text = fullText, let displayRange = displayTextRange, displayRange.count > 1,
+			let startIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex),
+			let endIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex) {
+				return String(text[startIndex..<endIndex])
+		} else {
+			return fullText
+		}
+	}
+	
+	var displayHTML: String? {
+		if let text = fullText, let displayRange = displayTextRange, displayRange.count > 1,
+			let displayStartIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex),
+			let displayEndIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex),
+			let entities = entities?.combineAndSort() {
+			
+			var html = String()
+			var prevIndex = displayStartIndex
+			
+			for entity in entities {
+				if let entityStartIndex = text.index(text.startIndex, offsetBy: entity.startIndex, limitedBy: text.endIndex),
+					let entityEndIndex = text.index(text.startIndex, offsetBy: entity.endIndex, limitedBy: text.endIndex) {
+					
+					if prevIndex < entityStartIndex {
+						html += String(text[prevIndex..<entityStartIndex])
+					}
+					html += entity.renderAsHTML()
+					prevIndex = entityEndIndex
+					
+				}
+			}
+			
+			if prevIndex < displayEndIndex {
+				html += String(text[prevIndex..<displayEndIndex])
+			}
+			
+			return html
+		} else {
+			return displayText
+		}
+	}
+	
 	func renderAsTweetHTML(_ status: TwitterStatus, topLevel: Bool) -> String {
-		var html = "<div>\(status.displayText ?? "")</div>"
+		var html = "<div>\(status.displayHTML ?? "")</div>"
 		
 		if !topLevel, let createdAt = status.createdAt {
 			let dateFormatter = DateFormatter()

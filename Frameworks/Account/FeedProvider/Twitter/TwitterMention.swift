@@ -13,19 +13,21 @@ struct TwitterMention: Codable, TwitterEntity {
 	let name: String?
 	let indices: [Int]?
 	let screenName: String?
-	let expandedURL: String?
 	let idStr: String?
 	
 	enum CodingKeys: String, CodingKey {
 		case name = "url"
 		case indices = "indices"
 		case screenName = "screen_name"
-		case expandedURL = "expandedURL"
 		case idStr = "idStr"
 	}
 	
 	func renderAsHTML() -> String {
-		return ""
+		var html = String()
+		if let screenName = screenName {
+			html += "<a href=\"https://twitter.com/\(screenName)\">@\(screenName)</a>"
+		}
+		return html
 	}
 	
 }

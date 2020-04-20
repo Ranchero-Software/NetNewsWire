@@ -18,12 +18,16 @@ struct TwitterURL: Codable, TwitterEntity {
 	enum CodingKeys: String, CodingKey {
 		case url = "url"
 		case indices = "indices"
-		case displayURL = "displayURL"
-		case expandedURL = "expandedURL"
+		case displayURL = "display_url"
+		case expandedURL = "expanded_url"
 	}
 	
 	func renderAsHTML() -> String {
-		return ""
+		var html = String()
+		if let expandedURL = expandedURL, let displayURL = displayURL {
+			html += "<a href=\"\(expandedURL)\">\(displayURL)</a>"
+		}
+		return html
 	}
 	
 }

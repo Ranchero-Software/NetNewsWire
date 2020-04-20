@@ -17,16 +17,13 @@ struct TwitterSymbol: Codable, TwitterEntity {
 		case name = "name"
 		case indices = "indices"
 	}
-	
-	var startIndex: Int {
-		if let indices = indices, indices.count > 0 {
-			return indices[0] - 1
-		}
-		return 0
-	}
-	
+
 	func renderAsHTML() -> String {
-		return ""
+		var html = String()
+		if let name = name {
+			html += "<a href=\"https://twitter.com/search?q=%24\(name)\">$\(name)</a>"
+		}
+		return html
 	}
 	
 }
