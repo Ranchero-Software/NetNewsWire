@@ -37,12 +37,14 @@ struct TwitterEntities: Codable {
 	let urls: [TwitterURL]?
 	let userMentions: [TwitterMention]?
 	let symbols: [TwitterSymbol]?
-
+	let media: [TwitterMedia]?
+	
 	enum CodingKeys: String, CodingKey {
 		case hashtags = "hashtags"
 		case urls = "urls"
 		case userMentions = "user_mentions"
 		case symbols = "symbols"
+		case media = "media"
 	}
 	
 	func combineAndSort() -> [TwitterEntity] {
@@ -58,6 +60,9 @@ struct TwitterEntities: Codable {
 		}
 		if let symbols = symbols {
 			entities.append(contentsOf: symbols)
+		}
+		if let media = media {
+			entities.append(contentsOf: media)
 		}
 		return entities.sorted(by: { $0.startIndex < $1.startIndex })
 	}

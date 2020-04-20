@@ -10,7 +10,7 @@ import Foundation
 
 struct TwitterExtendedEntities: Codable {
 	
-	let medias: [TwitterMedia]?
+	let medias: [TwitterExtendedMedia]?
 
 	enum CodingKeys: String, CodingKey {
 		case medias = "media"
