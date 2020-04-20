@@ -71,33 +71,47 @@ private extension TwitterStatus {
 	}
 	
 	var displayHTML: String? {
-		if let text = fullText, let displayRange = displayTextRange, displayRange.count > 1,
-			let displayStartIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex),
-			let displayEndIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex),
-			let entities = entities?.combineAndSort() {
+		if let text = fullText, let displayRange = displayTextRange, displayRange.count > 1, let entities = entities?.combineAndSort() {
 			
+			let displayStartIndex = text.index(text.startIndex, offsetBy: displayRange[0], limitedBy: text.endIndex) ?? text.startIndex
+			let displayEndIndex = text.index(text.startIndex, offsetBy: displayRange[1], limitedBy: text.endIndex) ?? text.endIndex
+
 			var html = String()
 			var prevIndex = displayStartIndex
 			
 			for entity in entities {
-				if let entityStartIndex = text.index(text.startIndex, offsetBy: entity.startIndex, limitedBy: text.endIndex),
-					let entityEndIndex = text.index(text.startIndex, offsetBy: entity.endIndex, limitedBy: text.endIndex) {
-					
-					if prevIndex < entityStartIndex {
-						html += String(text[prevIndex..<entityStartIndex])
+				
+				// The twitter indices are messed up by emoji with more than one scalar, we are trying to adjust for that here.
+				var offset = 0
+				let emojiEndIndex = text.index(text.startIndex, offsetBy: entity.endIndex, limitedBy: text.endIndex) ?? text.endIndex
+				if text.startIndex < prevIndex {
+					let emojis = String(text[text.startIndex..<emojiEndIndex]).emojis
+					for emoji in emojis {
+						offset += emoji.unicodeScalars.count - 1
 					}
+				}
+				
+				let offsetStartIndex = entity.startIndex - offset
+				let offsetEndIndex = entity.endIndex - offset
+				
+				let entityStartIndex = text.index(text.startIndex, offsetBy: offsetStartIndex, limitedBy: text.endIndex) ?? text.startIndex
+				let entityEndIndex = text.index(text.startIndex, offsetBy: offsetEndIndex, limitedBy: text.endIndex) ?? text.endIndex
 					
-					// We drop off any URL which is just pointing to the quoted status.  It is redundant.
-					if let twitterURL = entity as? TwitterURL, let expandedURL = twitterURL.expandedURL, let quotedURL = quotedStatus?.url {
-						if expandedURL.caseInsensitiveCompare(quotedURL) != .orderedSame {
-							html += entity.renderAsHTML()
-						}
-					} else {
+				if prevIndex < entityStartIndex {
+					html += String(text[prevIndex..<entityStartIndex]).replacingOccurrences(of: "\n", with: "<br>")
+				}
+				
+				// We drop off any URL which is just pointing to the quoted status.  It is redundant.
+				if let twitterURL = entity as? TwitterURL, let expandedURL = twitterURL.expandedURL, let quotedURL = quotedStatus?.url {
+					if expandedURL.caseInsensitiveCompare(quotedURL) != .orderedSame {
 						html += entity.renderAsHTML()
 					}
-					
-					prevIndex = entityEndIndex
+				} else {
+					html += entity.renderAsHTML()
 				}
+				
+				prevIndex = entityEndIndex
+
 			}
 			
 			if prevIndex < displayEndIndex {

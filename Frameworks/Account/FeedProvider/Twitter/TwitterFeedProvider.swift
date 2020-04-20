@@ -254,10 +254,10 @@ private extension TwitterFeedProvider {
 				dateFormatter.dateFormat = Self.dateFormat
 				decoder.dateDecodingStrategy = .formatted(dateFormatter)
 				
-//				let jsonString = String(data: response.data, encoding: .utf8)
-//				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("twitter.json")
-//				print("******** writing to: \(url.path)")
-//				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
+				let jsonString = String(data: response.data, encoding: .utf8)
+				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("twitter.json")
+				print("******** writing to: \(url.path)")
+				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
 
 				do {
 					let tweets: [TwitterStatus]
