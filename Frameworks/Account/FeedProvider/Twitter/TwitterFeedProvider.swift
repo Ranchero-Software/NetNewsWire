@@ -160,6 +160,8 @@ public struct TwitterFeedProvider: FeedProvider {
 		switch urlComponents.path {
 		case "/", "/home":
 			api = "statuses/home_timeline.json"
+		case "/notifications/mentions":
+			api = "statuses/mentions_timeline.json"
 		case "/search":
 			api = "search/tweets.json"
 			if let query = urlComponents.queryItems?.first(where: { $0.name == "q" })?.value {
