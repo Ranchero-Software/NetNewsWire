@@ -141,6 +141,8 @@ private extension TwitterStatus {
 		var html = renderAsTweetHTML(self, topLevel: topLevel)
 		if topLevel {
 			html += extendedEntities?.renderAsHTML() ?? ""
+			html += retweetedStatus?.extendedEntities?.renderAsHTML() ?? ""
+			html += quotedStatus?.extendedEntities?.renderAsHTML() ?? ""
 		}
 		return html
 	}
@@ -154,6 +156,8 @@ private extension TwitterStatus {
 		html += "</blockquote>"
 		if topLevel {
 			html += status.extendedEntities?.renderAsHTML() ?? ""
+			html += status.retweetedStatus?.extendedEntities?.renderAsHTML() ?? ""
+			html += status.quotedStatus?.extendedEntities?.renderAsHTML() ?? ""
 		}
 		return html
 	}
@@ -170,6 +174,8 @@ private extension TwitterStatus {
 		html += self.extendedEntities?.renderAsHTML() ?? ""
 		if topLevel {
 			html += quotedStatus.extendedEntities?.renderAsHTML() ?? ""
+			html += quotedStatus.retweetedStatus?.extendedEntities?.renderAsHTML() ?? ""
+			html += quotedStatus.quotedStatus?.extendedEntities?.renderAsHTML() ?? ""
 		}
 		return html
 	}
