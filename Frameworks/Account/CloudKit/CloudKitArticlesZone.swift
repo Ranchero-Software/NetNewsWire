@@ -172,8 +172,6 @@ private extension CloudKitArticlesZone {
 				record![CloudKitArticleStatus.Fields.read] = status.flag ? "1" : "0"
 			case .starred:
 				record![CloudKitArticleStatus.Fields.starred] = status.flag ? "1" : "0"
-			default:
-				break
 			}
 		}
 		
