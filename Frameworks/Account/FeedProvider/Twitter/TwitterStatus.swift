@@ -78,21 +78,21 @@ private extension TwitterStatus {
 
 			var html = String()
 			var prevIndex = displayStartIndex
+			var emojiOffset = 0
 			
 			for entity in entities {
 				
-				// The twitter indices are messed up by emoji with more than one scalar, we are trying to adjust for that here.
-				var offset = 0
+				// The twitter indices are messed up by emoji with more than one scalar, we are going to adjust for that here.
 				let emojiEndIndex = text.index(text.startIndex, offsetBy: entity.endIndex, limitedBy: text.endIndex) ?? text.endIndex
-				if text.startIndex < prevIndex {
-					let emojis = String(text[text.startIndex..<emojiEndIndex]).emojis
+				if prevIndex < emojiEndIndex {
+					let emojis = String(text[prevIndex..<emojiEndIndex]).emojis
 					for emoji in emojis {
-						offset += emoji.unicodeScalars.count - 1
+						emojiOffset += emoji.unicodeScalars.count - 1
 					}
 				}
 				
-				let offsetStartIndex = entity.startIndex - offset
-				let offsetEndIndex = entity.endIndex - offset
+				let offsetStartIndex = entity.startIndex - emojiOffset
+				let offsetEndIndex = entity.endIndex - emojiOffset
 				
 				let entityStartIndex = text.index(text.startIndex, offsetBy: offsetStartIndex, limitedBy: text.endIndex) ?? text.startIndex
 				let entityEndIndex = text.index(text.startIndex, offsetBy: offsetEndIndex, limitedBy: text.endIndex) ?? text.endIndex
