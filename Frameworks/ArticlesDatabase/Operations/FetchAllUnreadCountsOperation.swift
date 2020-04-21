@@ -22,11 +22,9 @@ public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	private let queue: DatabaseQueue
-	private let cutoffDate: Date
 
-	init(databaseQueue: DatabaseQueue, cutoffDate: Date) {
+	init(databaseQueue: DatabaseQueue) {
 		self.queue = databaseQueue
-		self.cutoffDate = cutoffDate
 	}
 	
 	public func run() {
@@ -49,9 +47,9 @@ public final class FetchAllUnreadCountsOperation: MainThreadOperation {
 private extension FetchAllUnreadCountsOperation {
 
 	func fetchUnreadCounts(_ database: FMDatabase) {
-		let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and (starred=1 or dateArrived>?) group by feedID;"
+		let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 group by feedID;"
 
-		guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 			informOperationDelegateOfCompletion()
 			return
 		}

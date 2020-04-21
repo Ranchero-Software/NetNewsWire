@@ -115,11 +115,20 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 		
 		let log = self.log
-		let operation = FeedlySyncAllOperation(account: account, credentials: credentials, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
 		
-		operation.downloadProgress = refreshProgress
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, refreshDate: Date(), log: log)
+		refreshAccessToken.downloadProgress = refreshProgress
+		operationQueue.add(refreshAccessToken)
+		
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
+		
+		syncAllOperation.downloadProgress = refreshProgress
+		
+		// Ensure the sync uses the latest credential.
+		syncAllOperation.addDependency(refreshAccessToken)
+		
 		let date = Date()
-		operation.syncCompletionHandler = { [weak self] result in
+		syncAllOperation.syncCompletionHandler = { [weak self] result in
 			if case .success = result {
 				self?.accountMetadata?.lastArticleFetchStartTime = date
 				self?.accountMetadata?.lastArticleFetchEndTime = Date()
@@ -129,9 +138,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			completion(result)
 		}
 		
-		currentSyncAllOperation = operation
+		currentSyncAllOperation = syncAllOperation
 		
-		operationQueue.add(operation)
+		operationQueue.add(syncAllOperation)
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -159,7 +168,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, credentials: credentials, service: caller, database: database, newerThan: nil, log: log)
+		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil, log: log)
 		
 		group.enter()
 		ingestUnread.completionBlock = { _ in
@@ -167,7 +176,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			
 		}
 		
-		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, credentials: credentials, service: caller, database: database, newerThan: nil, log: log)
+		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: database, newerThan: nil, log: log)
 		
 		group.enter()
 		ingestStarred.completionBlock = { _ in
@@ -496,9 +505,6 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
-		
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
-		operationQueue.add(refreshAccessToken)
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {

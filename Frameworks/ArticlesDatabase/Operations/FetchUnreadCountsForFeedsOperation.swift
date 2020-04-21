@@ -23,13 +23,11 @@ public final class FetchUnreadCountsForFeedsOperation: MainThreadOperation {
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
 	private let queue: DatabaseQueue
-	private let cutoffDate: Date
 	private let webFeedIDs: Set<String>
 
-	init(webFeedIDs: Set<String>, databaseQueue: DatabaseQueue, cutoffDate: Date) {
+	init(webFeedIDs: Set<String>, databaseQueue: DatabaseQueue) {
 		self.webFeedIDs = webFeedIDs
 		self.queue = databaseQueue
-		self.cutoffDate = cutoffDate
 	}
 
 	public func run() {
@@ -53,11 +51,9 @@ private extension FetchUnreadCountsForFeedsOperation {
 
 	func fetchUnreadCounts(_ database: FMDatabase) {
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
-		let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and (starred=1 or dateArrived>?) group by feedID;"
+		let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 group by feedID;"
 
-		var parameters = [Any]()
-		parameters += Array(webFeedIDs) as [Any]
-		parameters += [cutoffDate] as [Any]
+		let parameters = Array(webFeedIDs) as [Any]
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
 			informOperationDelegateOfCompletion()
