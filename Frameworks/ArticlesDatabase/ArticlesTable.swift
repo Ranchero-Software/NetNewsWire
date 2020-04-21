@@ -181,7 +181,7 @@ final class ArticlesTable: DatabaseTable {
 
 		// 1. Ensure statuses for all the incoming articles.
 		// 2. Create incoming articles with parsedItems.
-		// 3. [Deleted - no longer needed]
+		// 3. [Deleted - this step is no longer needed]
 		// 4. Fetch all articles for the feed.
 		// 5. Create array of Articles not in database and save them.
 		// 6. Create array of updated Articles and save what’s changed.
@@ -493,7 +493,9 @@ final class ArticlesTable: DatabaseTable {
 	/// Because deleting articles might block the database for too long,
 	/// we do this in a careful way: delete articles older than a year,
 	/// check to see how much time has passed, then decide whether or not to continue.
-	/// Repeat for successively shorter time intervals.
+	/// Repeat for successively more-recent dates.
+	///
+	/// Returns `true` if it deleted old articles all the way up to the 90 day cutoff date.
 	func deleteOldArticles() {
 		precondition(retentionStyle == .syncSystem)
 
@@ -525,6 +527,30 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	/// Delete old statuses.
+	func deleteOldStatuses() {
+		queue.runInTransaction { databaseResult in
+			guard let database = databaseResult.database else {
+				return
+			}
+
+			let sql: String
+			let cutoffDate: Date
+			
+			switch self.retentionStyle {
+			case .syncSystem:
+				sql = "delete from statuses where dateArrived<? and read=1 and starred=0 and articleID not in (select articleID from articles);"
+				cutoffDate = Date().bySubtracting(days: 180)
+			case .feedBased:
+				sql = "delete from statuses where dateArrived<? and starred=0 and articleID not in (select articleID from articles);"
+				cutoffDate = Date().bySubtracting(days: 30)
+			}
+
+			let parameters = [cutoffDate] as [Any]
+			database.executeUpdate(sql, withArgumentsIn: parameters)
+		}
+	}
+
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
 	/// This deletes from the articles and articleStatuses tables,
 	/// and, via a trigger, it also deletes from the search index.
@@ -552,6 +578,22 @@ final class ArticlesTable: DatabaseTable {
 			if let database = databaseResult.database {
 				makeDatabaseCalls(database)
 			}
+		}
+	}
+
+	/// Mark statuses beyond the 90-day window as read.
+	///
+	/// This is not intended for wide use: this is part of implementing
+	/// the April 2020 retention policy change for feed-based accounts.
+	func markOlderStatusesAsRead() {
+		queue.runInDatabase { databaseResult in
+			guard let database = databaseResult.database else {
+				return
+			}
+
+			let sql = "update statuses set read = true where dateArrived<?;"
+			let parameters = [self.articleCutoffDate] as [Any]
+			database.executeUpdate(sql, withArgumentsIn: parameters)
 		}
 	}
 }
@@ -648,31 +690,11 @@ private extension ArticlesTable {
 		return cachedArticles.union(articlesWithFetchedAuthors)
 	}
 
-	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject], withLimits: Bool) -> Set<Article> {
-		// Don’t fetch articles that shouldn’t appear in the UI. The rules:
-		// * Must not be deleted.
-		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
-
-		if withLimits {
-			let sql = "select * from articles natural join statuses where \(whereClause) and (starred=1 or dateArrived>?);"
-			return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
-		}
-		else {
-			let sql = "select * from articles natural join statuses where \(whereClause);"
-			return articlesWithSQL(sql, parameters, database)
-		}
+	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]) -> Set<Article> {
+		let sql = "select * from articles natural join statuses where \(whereClause);"
+		return articlesWithSQL(sql, parameters, database)
 	}
 
-//	func fetchUnreadCount(_ webFeedID: String, _ database: FMDatabase) -> Int {
-//		// Count only the articles that would appear in the UI.
-//		// * Must be unread.
-//		// * Must not be deleted.
-//		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
-//
-//		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and (starred=1 or dateArrived>?);"
-//		return numberWithSQLAndParameters(sql, [webFeedID, articleCutoffDate], in: database)
-//	}
-	
 	func fetchArticlesMatching(_ searchString: String, _ database: FMDatabase) -> Set<Article> {
 		let sql = "select rowid from search where search match ?;"
 		let sqlSearchString = sqliteSearchString(with: searchString)
@@ -688,7 +710,7 @@ private extension ArticlesTable {
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
 		let whereClause = "searchRowID in \(placeholders)"
 		let parameters: [AnyObject] = Array(searchRowIDs) as [AnyObject]
-		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
 	func sqliteSearchString(with searchString: String) -> String {
@@ -761,7 +783,7 @@ private extension ArticlesTable {
 		let parameters = webFeedIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
 		let whereClause = "feedID in \(placeholders)"
-		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
 	func fetchUnreadArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -772,11 +794,11 @@ private extension ArticlesTable {
 		let parameters = webFeedIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
 		let whereClause = "feedID in \(placeholders) and read=0"
-		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: true)
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
 	func fetchArticlesForFeedID(_ webFeedID: String, withLimits: Bool, _ database: FMDatabase) -> Set<Article> {
-		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [webFeedID as AnyObject], withLimits: withLimits)
+		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [webFeedID as AnyObject])
 	}
 
 	func fetchArticles(articleIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -786,7 +808,7 @@ private extension ArticlesTable {
 		let parameters = articleIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 		let whereClause = "articleID in \(placeholders)"
-		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
 	func fetchArticlesSince(_ webFeedIDs: Set<String>, _ cutoffDate: Date, _ database: FMDatabase) -> Set<Article> {
@@ -799,7 +821,7 @@ private extension ArticlesTable {
 		let parameters = webFeedIDs.map { $0 as AnyObject } + [cutoffDate as AnyObject, cutoffDate as AnyObject]
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
 		let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?))"
-		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
 	func fetchStarredArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -810,7 +832,7 @@ private extension ArticlesTable {
 		let parameters = webFeedIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
 		let whereClause = "feedID in \(placeholders) and starred=1"
-		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 		}
 
 	func fetchArticlesMatching(_ searchString: String, _ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
