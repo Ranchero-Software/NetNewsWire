@@ -37,7 +37,7 @@ final class NewsBlurAPICaller: NSObject {
 	func validateCredentials(completion: @escaping (Result<Credentials?, Error>) -> Void) {
 		requestData(endpoint: "api/login", resultType: NewsBlurLoginResponse.self) { result in
 			switch result {
-			case .success(let response, let payload):
+			case .success((let response, let payload)):
 				guard let url = response.url, let headerFields = response.allHeaderFields as? [String: String], payload?.code != -1 else {
 					let error = payload?.errors?.username ?? payload?.errors?.others
 					if let message = error?.first {
@@ -227,7 +227,7 @@ final class NewsBlurAPICaller: NSObject {
 				resultType: NewsBlurAddURLResponse.self
 		) { result in
 			switch result {
-			case .success(_, let payload):
+			case .success((_, let payload)):
 				completion(.success(payload?.feed))
 			case .failure(let error):
 				completion(.failure(error))
