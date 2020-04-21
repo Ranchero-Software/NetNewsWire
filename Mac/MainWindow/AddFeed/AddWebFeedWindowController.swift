@@ -12,15 +12,7 @@ import RSTree
 import Articles
 import Account
 
-protocol AddFeedWindowControllerDelegate: class {
-
-	// userEnteredURL will have already been validated and normalized.
-	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
-
-	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)
-}
-
-class AddFeedWindowController : NSWindowController {
+class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
     
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
@@ -46,7 +38,7 @@ class AddFeedWindowController : NSWindowController {
     var hostWindow: NSWindow!
 
 	convenience init(urlString: String?, name: String?, account: Account?, folder: Folder?, folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
-		self.init(windowNibName: NSNib.Name("AddFeedSheet"))
+		self.init(windowNibName: NSNib.Name("AddWebFeedSheet"))
 		self.urlString = urlString
 		self.initialName = name
 		self.initialAccount = account
@@ -127,7 +119,7 @@ class AddFeedWindowController : NSWindowController {
 	}
 }
 
-private extension AddFeedWindowController {
+private extension AddWebFeedWindowController {
 	
 	private func updateUI() {
 		addButton.isEnabled = urlTextField.stringValue.mayBeURL

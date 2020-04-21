@@ -38,13 +38,13 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
-		addFeedWindowController = AddFeedWindowController(urlString: urlString ?? urlStringFromPasteboard, name: name, account: account, folder: folder, folderTreeController: folderTreeController, delegate: self)
+		addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard, name: name, account: account, folder: folder, folderTreeController: folderTreeController, delegate: self)
 		addFeedWindowController!.runSheetOnWindow(hostWindow)
 	}
 
 	// MARK: AddFeedWindowControllerDelegate
 
-	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container) {
+	func addFeedWindowController(_: AddWebFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container) {
 
 		closeAddFeedSheet(NSApplication.ModalResponse.OK)
 
@@ -84,8 +84,7 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		
 	}
 
-	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController) {
-
+	func addFeedWindowControllerUserDidCancel(_: AddWebFeedWindowController) {
 		closeAddFeedSheet(NSApplication.ModalResponse.cancel)
 	}
 

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="AddFeedWindowController" customModule="NetNewsWire" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="AddWebFeedWindowController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="addButton" destination="dtI-Hu-rFb" id="D11-zR-dWH"/>
                 <outlet property="folderPopupButton" destination="6vt-DL-mVR" id="98M-xt-ZYU"/>
@@ -23,11 +22,11 @@
             <rect key="contentRect" x="196" y="240" width="480" height="217"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="217"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="216"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hVI-F6-nNT">
-                        <rect key="frame" x="33" y="180" width="35" height="17"/>
+                        <rect key="frame" x="33" y="180" width="35" height="16"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="URL:" id="8jE-9v-BT2">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -35,7 +34,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gbr-mI-Uzj" userLabel="URL Text Field">
-                        <rect key="frame" x="74" y="124" width="386" height="73"/>
+                        <rect key="frame" x="74" y="123" width="386" height="73"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="386" id="Wfx-Jk-wQ0"/>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="73" id="x84-xj-BzJ"/>
@@ -50,7 +49,7 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sM9-DX-M0c">
-                        <rect key="frame" x="22" y="95" width="46" height="17"/>
+                        <rect key="frame" x="22" y="95" width="46" height="16"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Name:" id="8ca-Qp-BkT">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -58,7 +57,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TzV-3k-fXd" userLabel="Name Text Field">
-                        <rect key="frame" x="74" y="92" width="386" height="22"/>
+                        <rect key="frame" x="74" y="92" width="386" height="21"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Optional" drawsBackground="YES" usesSingleLineMode="YES" id="pLP-pL-5R5">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -66,7 +65,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dNV-oD-vzR">
-                        <rect key="frame" x="18" y="63" width="50" height="17"/>
+                        <rect key="frame" x="18" y="64" width="50" height="16"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Folder:" id="Kwx-7B-CIu">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -77,7 +76,7 @@
                         <rect key="frame" x="72" y="58" width="391" height="25"/>
                         <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tLJ-zY-CcZ" id="0cM-5q-Snl">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
+                            <font key="font" metaFont="system"/>
                             <menu key="menu" id="OpL-Uf-woJ">
                                 <items>
                                     <menuItem title="Item 1" state="on" id="tLJ-zY-CcZ"/>
