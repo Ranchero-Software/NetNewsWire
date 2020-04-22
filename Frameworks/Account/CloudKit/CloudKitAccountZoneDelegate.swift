@@ -13,7 +13,7 @@ import CloudKit
 
 class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	
-	private typealias UnclaimedWebFeed = (url: URL, editedName: String?, webFeedExternalID: String)
+	private typealias UnclaimedWebFeed = (url: URL, editedName: String?, username: String?, webFeedExternalID: String)
 	private var unclaimedWebFeeds = [String: [UnclaimedWebFeed]]()
 	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
@@ -72,10 +72,11 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		}
 		
 		let editedName = record[CloudKitAccountZone.CloudKitWebFeed.Fields.editedName] as? String
-		
+		let username = record[CloudKitAccountZone.CloudKitWebFeed.Fields.username] as? String
+
 		if let webFeed = account.existingWebFeed(withExternalID: record.externalID) {
 			
-			updateWebFeed(webFeed, editedName: editedName, containerExternalIDs: containerExternalIDs)
+			updateWebFeed(webFeed, editedName: editedName, username: username, containerExternalIDs: containerExternalIDs)
 			completion()
 			
 		} else {
@@ -84,11 +85,11 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			for containerExternalID in containerExternalIDs {
 				group.enter()
 				if let container = account.existingContainer(withExternalID: containerExternalID) {
-					createWebFeedIfNecessary(url: url, editedName: editedName, webFeedExternalID: record.externalID, container: container) { webFeed in
+					createWebFeedIfNecessary(url: url, editedName: editedName, username: username, webFeedExternalID: record.externalID, container: container) { webFeed in
 						group.leave()
 					}
 				} else {
-					addUnclaimedWebFeed(url: url, editedName: editedName, webFeedExternalID: record.externalID, containerExternalID: containerExternalID)
+					addUnclaimedWebFeed(url: url, editedName: editedName, username: username, webFeedExternalID: record.externalID, containerExternalID: containerExternalID)
 					group.leave()
 				}
 			}
@@ -129,7 +130,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			
 			for unclaimedWebFeed in unclaimedWebFeeds {
 				group.enter()
-				createWebFeedIfNecessary(url: unclaimedWebFeed.url, editedName: unclaimedWebFeed.editedName, webFeedExternalID: unclaimedWebFeed.webFeedExternalID, container: folder) { webFeed in
+				createWebFeedIfNecessary(url: unclaimedWebFeed.url, editedName: unclaimedWebFeed.editedName, username: unclaimedWebFeed.username, webFeedExternalID: unclaimedWebFeed.webFeedExternalID, container: folder) { webFeed in
 					group.leave()
 				}
 			}
@@ -156,9 +157,10 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 private extension CloudKitAcountZoneDelegate {
 	
-	func updateWebFeed(_ webFeed: WebFeed, editedName: String?, containerExternalIDs: [String]) {
+	func updateWebFeed(_ webFeed: WebFeed, editedName: String?, username: String?, containerExternalIDs: [String]) {
 		guard let account = account else { return }
 		webFeed.editedName = editedName
+		webFeed.username = username
 		
 		let existingContainers = account.existingContainers(withWebFeed: webFeed)
 		let existingContainerExternalIds = existingContainers.compactMap { $0.externalID }
@@ -179,7 +181,7 @@ private extension CloudKitAcountZoneDelegate {
 		}
 	}
 	
-	func createWebFeedIfNecessary(url: URL, editedName: String?, webFeedExternalID: String, container: Container, completion: @escaping (WebFeed) -> Void) {
+	func createWebFeedIfNecessary(url: URL, editedName: String?, username: String?, webFeedExternalID: String, container: Container, completion: @escaping (WebFeed) -> Void) {
 		guard let account = account, let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return }
 		
 		if let webFeed = account.existingWebFeed(withExternalID: webFeedExternalID) {
@@ -189,9 +191,10 @@ private extension CloudKitAcountZoneDelegate {
 		
 		let webFeed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
 		webFeed.editedName = editedName
+		webFeed.username = username
 		webFeed.externalID = webFeedExternalID
 		
-		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents, with: nil) {
+		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents, with: username) {
 			
 			refreshProgress?.addToNumberOfTasksAndRemaining(2)
 			feedProvider.assignName(urlComponents) { result in
@@ -239,13 +242,13 @@ private extension CloudKitAcountZoneDelegate {
 
 	}
 	
-	func addUnclaimedWebFeed(url: URL, editedName: String?, webFeedExternalID: String, containerExternalID: String) {
+	func addUnclaimedWebFeed(url: URL, editedName: String?, username: String?, webFeedExternalID: String, containerExternalID: String) {
 		if var unclaimedWebFeeds = self.unclaimedWebFeeds[containerExternalID] {
-			unclaimedWebFeeds.append(UnclaimedWebFeed(url: url, editedName: editedName, webFeedExternalID: webFeedExternalID))
+			unclaimedWebFeeds.append(UnclaimedWebFeed(url: url, editedName: editedName, username: username, webFeedExternalID: webFeedExternalID))
 			self.unclaimedWebFeeds[containerExternalID] = unclaimedWebFeeds
 		} else {
 			var unclaimedWebFeeds = [UnclaimedWebFeed]()
-			unclaimedWebFeeds.append(UnclaimedWebFeed(url: url, editedName: editedName, webFeedExternalID: webFeedExternalID))
+			unclaimedWebFeeds.append(UnclaimedWebFeed(url: url, editedName: editedName, username: username, webFeedExternalID: webFeedExternalID))
 			self.unclaimedWebFeeds[containerExternalID] = unclaimedWebFeeds
 		}
 	}
