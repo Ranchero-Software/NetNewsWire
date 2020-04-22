@@ -163,13 +163,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func prepareAccountsForForeground() {
 		extensionFeedAddRequestFile.resume()
-		
+		syncTimer?.update()
+
 		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			} else {
 				AccountManager.shared.syncArticleStatusAll()
-				syncTimer?.update()
 			}
 		} else {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
