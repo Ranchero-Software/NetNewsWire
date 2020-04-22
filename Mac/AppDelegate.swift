@@ -135,10 +135,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
-
+	func showAddWebFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 		addFeedController = AddFeedController(hostWindow: window)
-		addFeedController?.showAddFeedSheet(urlString, name, account, folder)
+		addFeedController?.showAddFeedSheet(.webFeed, urlString, name, account, folder)
 	}
 	
 	// MARK: - NSApplicationDelegate
@@ -401,7 +400,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
 			return mainWindowController?.isOpen ?? false
 		}
-		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
+		if item.action == #selector(showAddWebFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		#if !MAC_APP_STORE
@@ -424,14 +423,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
     }
 	
 	// MARK: Add Feed
-	func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
+	func addWebFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
 		createAndShowMainWindowIfNecessary()
 		
 		if mainWindowController!.isDisplayingSheet {
 			return
 		}
 
-		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, account: account, folder: folder)
+		showAddWebFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, account: account, folder: folder)
 	}
 
 	// MARK: - Dock Badge
@@ -462,8 +461,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		AccountManager.shared.refreshAll(errorHandler: ErrorHandler.present)
 	}
 
-	@IBAction func showAddFeedWindow(_ sender: Any?) {
-		addFeed(nil)
+	@IBAction func showAddWebFeedWindow(_ sender: Any?) {
+		addWebFeed(nil)
+	}
+
+	@IBAction func showAddTwitterFeedWindow(_ sender: Any?) {
+		createAndShowMainWindowIfNecessary()
+		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
+		addFeedController?.showAddFeedSheet(.twitterFeed)
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
@@ -536,7 +541,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
 			return
 		}
-		addFeed(appNewsURLString, name: "NetNewsWire News")
+		addWebFeed(appNewsURLString, name: "NetNewsWire News")
 	}
 
 	@IBAction func openWebsite(_ sender: Any?) {

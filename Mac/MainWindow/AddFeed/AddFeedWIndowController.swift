@@ -9,11 +9,16 @@
 import Foundation
 import Account
 
+enum AddFeedWindowControllerType {
+	case webFeed
+	case twitterFeed
+}
+
 protocol AddFeedWindowControllerDelegate: class {
 
 	// userEnteredURL will have already been validated and normalized.
-	func addFeedWindowController(_: AddWebFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
-	func addFeedWindowControllerUserDidCancel(_: AddWebFeedWindowController)
+	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)
+	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)
 	
 }
 

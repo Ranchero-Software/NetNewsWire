@@ -51,7 +51,7 @@ extension AppDelegate : AppDelegateAppleEvents {
 
         DispatchQueue.main.async {
 
-            self.addFeed(normalizedURLString)
+            self.addWebFeed(normalizedURLString)
         }
     }
 }

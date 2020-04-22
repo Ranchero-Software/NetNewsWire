@@ -29,23 +29,32 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 	private var titleFromFeed: String?
 	
 	init(hostWindow: NSWindow) {
-		
 		self.hostWindow = hostWindow
 	}
 
-	func showAddFeedSheet(_ urlString: String?, _ name: String?, _ account: Account?, _ folder: Folder?) {
-
+	func showAddFeedSheet(_ type: AddFeedWindowControllerType, _ urlString: String? = nil, _ name: String? = nil, _ account: Account? = nil, _ folder: Folder? = nil) {
 		let folderTreeControllerDelegate = FolderTreeControllerDelegate()
 		let folderTreeController = TreeController(delegate: folderTreeControllerDelegate)
 
-		addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard, name: name, account: account, folder: folder, folderTreeController: folderTreeController, delegate: self)
+		switch type {
+		case .webFeed:
+			addFeedWindowController = AddWebFeedWindowController(urlString: urlString ?? urlStringFromPasteboard,
+																 name: name,
+																 account: account,
+																 folder: folder,
+																 folderTreeController: folderTreeController,
+																 delegate: self)
+		case .twitterFeed:
+			addFeedWindowController = AddTwitterFeedWindowController(folderTreeController: folderTreeController,
+																	 delegate: self)
+		}
+		
 		addFeedWindowController!.runSheetOnWindow(hostWindow)
 	}
 
 	// MARK: AddFeedWindowControllerDelegate
 
-	func addFeedWindowController(_: AddWebFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container) {
-
+	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container) {
 		closeAddFeedSheet(NSApplication.ModalResponse.OK)
 
 		guard let accountAndFolderSpecifier = accountAndFolderFromContainer(container) else {
@@ -81,10 +90,9 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 		}
 		
 		beginShowingProgress()
-		
 	}
 
-	func addFeedWindowControllerUserDidCancel(_: AddWebFeedWindowController) {
+	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController) {
 		closeAddFeedSheet(NSApplication.ModalResponse.cancel)
 	}
 
@@ -105,7 +113,6 @@ private extension AddFeedController {
 	}
 
 	func accountAndFolderFromContainer(_ container: Container) -> AccountAndFolderSpecifier? {
-
 		if let account = container as? Account {
 			return AccountAndFolderSpecifier(account: account, folder: nil)
 		}
@@ -116,7 +123,6 @@ private extension AddFeedController {
 	}
 
 	func closeAddFeedSheet(_ returnCode: NSApplication.ModalResponse) {
-
 		if let sheetWindow = addFeedWindowController?.window {
 			hostWindow.endSheet(sheetWindow, returnCode: returnCode)
 		}
@@ -125,17 +131,14 @@ private extension AddFeedController {
 	// MARK: Errors
 
 	func showAlreadySubscribedError(_ urlString: String) {
-
 		let alert = NSAlert()
 		alert.alertStyle = .informational
 		alert.messageText = NSLocalizedString("Already subscribed", comment: "Feed finder")
 		alert.informativeText = NSLocalizedString("Can’t add this feed because you’ve already subscribed to it.", comment: "Feed finder")
-
 		alert.beginSheetModal(for: hostWindow)
 	}
 
 	func showInitialDownloadError(_ error: Error) {
-
 		let alert = NSAlert()
 		alert.alertStyle = .informational
 		alert.messageText = NSLocalizedString("Download Error", comment: "Feed finder")
@@ -143,31 +146,27 @@ private extension AddFeedController {
 		let formatString = NSLocalizedString("Can’t add this feed because of a download error: “%@”", comment: "Feed finder")
 		let errorText = NSString.localizedStringWithFormat(formatString as NSString, error.localizedDescription)
 		alert.informativeText = errorText as String
-
 		alert.beginSheetModal(for: hostWindow)
 	}
 
 	func showNoFeedsErrorMessage() {
-
 		let alert = NSAlert()
 		alert.alertStyle = .informational
 		alert.messageText = NSLocalizedString("Feed not found", comment: "Feed finder")
 		alert.informativeText = NSLocalizedString("Can’t add a feed because no feed was found.", comment: "Feed finder")
-
 		alert.beginSheetModal(for: hostWindow)
 	}
 
 	// MARK: Progress
 
 	func beginShowingProgress() {
-		
 		runIndeterminateProgressWithMessage(NSLocalizedString("Finding feed…", comment:"Feed finder"))
 	}
 	
 	func endShowingProgress() {
-		
 		stopIndeterminateProgress()
 		hostWindow.makeKeyAndOrderFront(self)
 	}
+	
 }
 
