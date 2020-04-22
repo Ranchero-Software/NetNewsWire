@@ -13,7 +13,6 @@ import Articles
 import Account
 
 class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowController {
-    
 
 	@IBOutlet weak var typePopupButton: NSPopUpButton!
 	@IBOutlet weak var typeDescriptionLabel: NSTextField!
@@ -33,6 +32,15 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 	private weak var delegate: AddFeedWindowControllerDelegate?
 	private var folderTreeController: TreeController!
 
+	private var userEnteredScreenSearch: String? {
+		var s = screenSearchTextField.stringValue
+		s = s.collapsingWhitespace
+		if s.isEmpty {
+			return nil
+		}
+		return s
+	}
+	
 	private var userEnteredTitle: String? {
 		var s = nameTextField.stringValue
 		s = s.collapsingWhitespace
@@ -57,6 +65,16 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 
 	override func windowDidLoad() {
 
+		let accountMenu = NSMenu()
+		for feedProvider in ExtensionPointManager.shared.activeFeedProviders {
+			if let twitterFeedProvider = feedProvider as? TwitterFeedProvider {
+				let accountMenuItem = NSMenuItem()
+				accountMenuItem.title = "@\(twitterFeedProvider.screenName)"
+				accountMenu.addItem(accountMenuItem)
+			}
+		}
+		accountPopupButton.menu = accountMenu
+		
 		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController.rootNode)
 		
 		if let container = AddWebFeedDefaultContainer.defaultContainer {
@@ -84,9 +102,12 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
     }
     
     @IBAction func addFeed(_ sender: Any?) {
-
-		// TODO: Build the URL...
-		let url = URL(string: "https://twitter.com")!
+		guard let type = TwitterFeedType(rawValue: typePopupButton.selectedItem?.tag ?? 0),
+			let atUsername = accountPopupButton.selectedItem?.title else { return }
+		
+		let username = String(atUsername[atUsername.index(atUsername.startIndex, offsetBy: 1)..<atUsername.endIndex])
+		
+		guard let url = TwitterFeedProvider.buildURL(type, username: username, screenName: userEnteredScreenSearch, searchField: userEnteredScreenSearch) else { return }
 		
 		let container = selectedContainer()!
 		AddWebFeedDefaultContainer.saveDefaultContainer(container)

@@ -11,10 +11,25 @@ import Secrets
 import OAuthSwift
 import RSParser
 
-// TODO: Beef up error handling...
-public enum TwitterFeedProviderError: Error {
+public enum TwitterFeedProviderError: LocalizedError {
 	case screenNameNotFound
 	case unknown
+	
+	public var localizedDescription: String {
+		switch self {
+		case .screenNameNotFound:
+			return NSLocalizedString("Unable to determine screen name.", comment: "Screen name")
+		case .unknown:
+			return NSLocalizedString("An unknown Twitter Feed Provider error has occurred.", comment: "Screen name")
+		}
+	}
+}
+
+public enum TwitterFeedType: Int {
+	case homeTimeline = 0
+	case mentions = 1
+	case screenName = 2
+	case search = 3
 }
 
 public struct TwitterFeedProvider: FeedProvider {
@@ -108,7 +123,7 @@ public struct TwitterFeedProvider: FeedProvider {
 	public func assignName(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
 		switch urlComponents.path {
 			
-		case "/", "/home":
+		case "", "/", "/home":
 			let name = NSLocalizedString("Twitter Timeline", comment: "Twitter Timeline")
 			completion(.success(name))
 			
@@ -160,7 +175,7 @@ public struct TwitterFeedProvider: FeedProvider {
 		var isSearch = false
 		
 		switch urlComponents.path {
-		case "/", "/home":
+		case "", "/", "/home":
 			parameters["count"] = 100
 			api = "statuses/home_timeline.json"
 		case "/notifications/mentions":
@@ -199,6 +214,39 @@ public struct TwitterFeedProvider: FeedProvider {
 		}
 	}
 
+	public static func buildURL(_ type: TwitterFeedType, username: String?, screenName: String?, searchField: String?) -> URL? {
+		var components = URLComponents()
+		components.scheme = "https"
+		components.host = "twitter.com"
+
+		switch type {
+		case .homeTimeline:
+			guard let username = username else {
+				return nil
+			}
+			components.user = username
+		case .mentions:
+			guard let username = username else {
+				return nil
+			}
+			components.user = username
+			components.path = "/notifications/mentions"
+		case .screenName:
+			guard let screenName = screenName else {
+				return nil
+			}
+			components.path = "/\(screenName)"
+		case .search:
+			guard let searchField = searchField else {
+				return nil
+			}
+			components.path = "/search"
+			components.queryItems = [URLQueryItem(name: "q", value: searchField)]
+		}
+		
+		return components.url
+	}
+	
 }
 
 // MARK: OAuth1SwiftProvider
