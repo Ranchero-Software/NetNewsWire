@@ -158,7 +158,6 @@ private extension AddTwitterFeedWindowController {
 			
 		}
 		
-		addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
 	}
 
 	func cancelSheet() {
