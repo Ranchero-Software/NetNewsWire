@@ -26,12 +26,14 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		let activeExtensionPointTypes = activeExtensionPoints.keys.compactMap({ ObjectIdentifier($0.extensionPointType) })
 		var available = [ExtensionPoint.Type]()
 		for possibleExtensionPointType in possibleExtensionPointTypes {
-			if possibleExtensionPointType.isSinglton {
-				if !activeExtensionPointTypes.contains(ObjectIdentifier(possibleExtensionPointType)) {
+			if !(AppDefaults.isDeveloperBuild && possibleExtensionPointType.isDeveloperBuildRestricted) {
+				if possibleExtensionPointType.isSinglton {
+					if !activeExtensionPointTypes.contains(ObjectIdentifier(possibleExtensionPointType)) {
+						available.append(possibleExtensionPointType)
+					}
+				} else {
 					available.append(possibleExtensionPointType)
 				}
-			} else {
-				available.append(possibleExtensionPointType)
 			}
 		}
 		

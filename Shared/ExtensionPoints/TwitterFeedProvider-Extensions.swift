@@ -12,6 +12,7 @@ import Account
 extension TwitterFeedProvider: ExtensionPoint {
 	
 	static var isSinglton = false
+	static var isDeveloperBuildRestricted = true
 	static var title = NSLocalizedString("Twitter", comment: "Twitter")
 	static var templateImage = AppAssets.extensionPointTwitter
 	static var description: NSAttributedString = {

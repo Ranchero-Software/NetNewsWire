@@ -16,6 +16,7 @@ import RSCore
 protocol ExtensionPoint {
 
 	static var isSinglton: Bool { get }
+	static var isDeveloperBuildRestricted: Bool { get }
 	static var title: String { get }
 	static var templateImage: RSImage { get }
 	static var description: NSAttributedString { get }

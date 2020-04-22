@@ -13,6 +13,7 @@ import Articles
 final class SendToMarsEditCommand: ExtensionPoint, SendToCommand {
 
 	static var isSinglton = true
+	static var isDeveloperBuildRestricted = false
 	static var title = NSLocalizedString("MarsEdit", comment: "MarsEdit")
 	static var templateImage = AppAssets.extensionPointMarsEdit
 	static var description: NSAttributedString = {
