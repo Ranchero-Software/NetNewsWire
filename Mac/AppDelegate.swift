@@ -403,6 +403,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if item.action == #selector(showAddWebFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
+		if item.action == #selector(showAddTwitterFeedWindow(_:)) {
+			return ExtensionPointManager.shared.activeExtensionPoints.values.contains(where: { $0 is TwitterFeedProvider })
+		}
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.webInspectorEnabled ? .on : .off
