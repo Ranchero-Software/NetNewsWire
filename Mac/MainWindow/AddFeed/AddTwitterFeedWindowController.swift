@@ -15,10 +15,13 @@ import Account
 class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowController {
     
 
-	@IBOutlet weak var accountPopupButton: NSPopUpButton!
 	@IBOutlet weak var typePopupButton: NSPopUpButton!
 	@IBOutlet weak var typeDescriptionLabel: NSTextField!
+
+	@IBOutlet weak var accountLabel: NSTextField!
+	@IBOutlet weak var accountPopupButton: NSPopUpButton!
 	@IBOutlet weak var screenSearchTextField: NSTextField!
+
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
 	@IBOutlet var folderPopupButton: NSPopUpButton!
@@ -54,9 +57,6 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 
 	override func windowDidLoad() {
 
-		typeDescriptionLabel.stringValue = "Tweets from everyone you follow"
-		screenSearchTextField.isHidden = true
-		
 		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController.rootNode)
 		
 		if let container = AddWebFeedDefaultContainer.defaultContainer {
@@ -74,7 +74,12 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 
     // MARK: Actions
     
-    @IBAction func cancel(_ sender: Any?) {
+	@IBAction func selectedType(_ sender: Any) {
+		screenSearchTextField.stringValue = ""
+		updateUI()
+	}
+
+	@IBAction func cancel(_ sender: Any?) {
 		cancelSheet()
     }
     
@@ -88,13 +93,11 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
     }
 	
-	// MARK: NSTextFieldDelegate
+}
 
-	@objc func controlTextDidEndEditing(_ obj: Notification) {
-		updateUI()
-	}
+extension AddTwitterFeedWindowController: NSTextFieldDelegate {
 
-	@objc func controlTextDidChange(_ obj: Notification) {
+	func controlTextDidChange(_ obj: Notification) {
 		updateUI()
 	}
 	
@@ -103,7 +106,59 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 private extension AddTwitterFeedWindowController {
 	
 	private func updateUI() {
-//		addButton.isEnabled = urlTextField.stringValue.mayBeURL
+		
+		switch typePopupButton.selectedItem?.tag ?? 0 {
+		case 0:
+			
+			accountLabel.isHidden = false
+			accountPopupButton.isHidden = false
+			typeDescriptionLabel.stringValue = NSLocalizedString("Tweets from everyone you follow", comment: "Home Timeline")
+			screenSearchTextField.isHidden = true
+			addButton.isEnabled = true
+			
+		case 1:
+			
+			accountLabel.isHidden = false
+			accountPopupButton.isHidden = false
+			typeDescriptionLabel.stringValue = NSLocalizedString("Tweets mentioning you", comment: "Mentions")
+			screenSearchTextField.isHidden = true
+			addButton.isEnabled = true
+			
+		case 2:
+			
+			accountLabel.isHidden = true
+			accountPopupButton.isHidden = true
+			
+			var screenName = screenSearchTextField.stringValue
+			if !screenName.isEmpty && !screenName.starts(with: "@") {
+				screenName = "@\(screenName)"
+				typeDescriptionLabel.stringValue = NSLocalizedString("Tweets from \(screenName)", comment: "Home Timeline")
+			} else {
+				typeDescriptionLabel.stringValue = ""
+			}
+			
+			screenSearchTextField.placeholderString = NSLocalizedString("@name", comment: "@name")
+			screenSearchTextField.isHidden = false
+			addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
+			
+		default:
+			
+			accountLabel.isHidden = true
+			accountPopupButton.isHidden = true
+			
+			if !screenSearchTextField.stringValue.isEmpty {
+				typeDescriptionLabel.stringValue = NSLocalizedString("Tweets that contain \(screenSearchTextField.stringValue)", comment: "Home Timeline")
+			} else {
+				typeDescriptionLabel.stringValue = ""
+			}
+			
+			screenSearchTextField.placeholderString = nil
+			screenSearchTextField.isHidden = false
+			addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
+			
+		}
+		
+		addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
 	}
 
 	func cancelSheet() {
