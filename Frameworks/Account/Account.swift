@@ -735,7 +735,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		webFeed.takeSettings(from: parsedFeed)
 		let parsedItems = parsedFeed.items
 		guard !parsedItems.isEmpty else {
-			completion(.success(NewAndUpdatedArticles()))
+			completion(.success(ArticleChanges()))
 			return
 		}
 		
@@ -1302,28 +1302,37 @@ private extension Account {
 		}
 	}
 
-	func sendNotificationAbout(_ newAndUpdatedArticles: NewAndUpdatedArticles) {
+	func sendNotificationAbout(_ articleChanges: ArticleChanges) {
 		var webFeeds = Set<WebFeed>()
 
-		if let newArticles = newAndUpdatedArticles.newArticles {
+		if let newArticles = articleChanges.newArticles {
 			webFeeds.formUnion(Set(newArticles.compactMap { $0.webFeed }))
 		}
-		if let updatedArticles = newAndUpdatedArticles.updatedArticles {
+		if let updatedArticles = articleChanges.updatedArticles {
 			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.webFeed }))
 		}
 
 		var shouldSendNotification = false
+		var shouldUpdateUnreadCounts = false
 		var userInfo = [String: Any]()
 
-		if let newArticles = newAndUpdatedArticles.newArticles, !newArticles.isEmpty {
+		if let newArticles = articleChanges.newArticles, !newArticles.isEmpty {
 			shouldSendNotification = true
+			shouldUpdateUnreadCounts = true
 			userInfo[UserInfoKey.newArticles] = newArticles
-			self.updateUnreadCounts(for: webFeeds)
 		}
 
-		if let updatedArticles = newAndUpdatedArticles.updatedArticles, !updatedArticles.isEmpty {
+		if let updatedArticles = articleChanges.updatedArticles, !updatedArticles.isEmpty {
 			shouldSendNotification = true
 			userInfo[UserInfoKey.updatedArticles] = updatedArticles
+		}
+
+		if let deletedArticles = articleChanges.deletedArticles, !deletedArticles.isEmpty {
+			shouldUpdateUnreadCounts = true
+		}
+
+		if shouldUpdateUnreadCounts {
+			self.updateUnreadCounts(for: webFeeds)
 		}
 
 		if shouldSendNotification {
