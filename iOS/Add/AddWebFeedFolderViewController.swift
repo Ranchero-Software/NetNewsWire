@@ -1,5 +1,5 @@
 //
-//  AddWebFeedLocationViewController.swift
+//  AddWebFeedFolderViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/16/19.

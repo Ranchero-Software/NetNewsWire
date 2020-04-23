@@ -65,6 +65,12 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 
 	}
 	
+	@IBAction func showURLBuilder(_ sender: Any) {
+		let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "SelectURLBuilderNavViewController") as! UINavigationController
+		navController.modalPresentationStyle = .currentContext
+		present(navController, animated: true)
+	}
+	
 	func cancel() {
 		userCancelled = true
 		delegate?.processingDidCancel()
