@@ -1,5 +1,5 @@
 //
-//  AddWebFeedFolderTableViewCell.swift
+//  AddComboTableViewCell.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 11/16/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AddWebFeedFolderTableViewCell: VibrantTableViewCell {
+class AddComboTableViewCell: VibrantTableViewCell {
 
 	@IBOutlet weak var icon: UIImageView!
 	@IBOutlet weak var label: UILabel!

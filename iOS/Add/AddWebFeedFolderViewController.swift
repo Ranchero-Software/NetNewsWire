@@ -44,11 +44,11 @@ class AddWebFeedFolderViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let container = containers[indexPath.row]
-		let cell: AddWebFeedFolderTableViewCell = {
+		let cell: AddComboTableViewCell = {
 			if container is Account {
-				return tableView.dequeueReusableCell(withIdentifier: "AccountCell", for: indexPath) as! AddWebFeedFolderTableViewCell
+				return tableView.dequeueReusableCell(withIdentifier: "AccountCell", for: indexPath) as! AddComboTableViewCell
 			} else {
-				return tableView.dequeueReusableCell(withIdentifier: "FolderCell", for: indexPath) as! AddWebFeedFolderTableViewCell
+				return tableView.dequeueReusableCell(withIdentifier: "FolderCell", for: indexPath) as! AddComboTableViewCell
 			}
 		}()
 		
