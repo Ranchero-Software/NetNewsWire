@@ -34,20 +34,24 @@ class TwitterEnterDetailTableViewController: UITableViewController, SelectURLBui
 			detailTextField.placeholder = NSLocalizedString("Search Term", comment: "Search Term")
 		}
 
+		detailTextField.delegate = self
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: detailTextField)
 
 		updateUI()
     }
 
 	@objc func done() {
-		guard let twitterFeedType = twitterFeedType else { return }
+		guard let twitterFeedType = twitterFeedType, var text = detailTextField.text?.collapsingWhitespace else { return }
 		
 		if twitterFeedType == .screenName {
-			if let url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: detailTextField.text, searchField: nil) {
+			if text.starts(with: "@") {
+				text = String(text[text.index(text.startIndex, offsetBy: 1)..<text.endIndex])
+			}
+			if let url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: text, searchField: nil) {
 				delegate?.selectURLBuilderDidBuildURL(url)
 			}
 		} else {
-			if let url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: nil, searchField: detailTextField.text) {
+			if let url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: nil, searchField: text) {
 				delegate?.selectURLBuilderDidBuildURL(url)
 			}
 		}
@@ -59,6 +63,15 @@ class TwitterEnterDetailTableViewController: UITableViewController, SelectURLBui
 		updateUI()
 	}
 
+}
+
+extension TwitterEnterDetailTableViewController: UITextFieldDelegate {
+	
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return true
+	}
+	
 }
 
 private extension TwitterEnterDetailTableViewController {
