@@ -20,7 +20,7 @@ class ExtensionPointEnableWindowController: NSWindowController {
 	
 	private weak var hostWindow: NSWindow?
 
-	private let callbackURL = URL(string: "vincodennw://")!
+	private let callbackURL = URL(string: "netnewswire://")!
 	private var oauth: OAuthSwift?
 
 	var extensionPointType: ExtensionPoint.Type?

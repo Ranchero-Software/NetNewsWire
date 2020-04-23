@@ -16,7 +16,7 @@ class EnableExtensionPointViewController: UITableViewController {
 
 	@IBOutlet weak var extensionDescription: UILabel!
 	
-	private let callbackURL = URL(string: "vincodennw://")!
+	private let callbackURL = URL(string: "netnewswire://")!
 	private var oauth: OAuthSwift?
 
 	weak var delegate: AddExtensionPointDismissDelegate?
