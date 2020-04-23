@@ -21,6 +21,7 @@
 		510289D02451BA3A00426DDF /* TwitterAdd.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */; };
 		510289D22451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */; };
 		510289D42451BD7B00426DDF /* SelectURLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D32451BD7B00426DDF /* SelectURLBuilder.swift */; };
+		510289D62451DDD100426DDF /* TwitterSelectAccountTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */; };
 		5102FD83244009F000534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
 		5102FD84244009F000534F17 /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5102FD9B244009FA00534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
@@ -1392,6 +1393,7 @@
 		510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TwitterAdd.storyboard; sourceTree = "<group>"; };
 		510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectTypeTableViewController.swift; sourceTree = "<group>"; };
 		510289D32451BD7B00426DDF /* SelectURLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectURLBuilder.swift; sourceTree = "<group>"; };
+		510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectAccountTableViewController.swift; sourceTree = "<group>"; };
 		5102FD72244008A700534F17 /* Secrets.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Secrets.xcodeproj; path = Frameworks/Secrets/Secrets.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5103A9972421643300410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
@@ -1938,6 +1940,7 @@
 			children = (
 				510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */,
 				510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */,
+				510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */,
 			);
 			path = Twitter;
 			sourceTree = "<group>";
@@ -4395,6 +4398,7 @@
 				519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */,
 				FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */,
 				51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */,
+				510289D62451DDD100426DDF /* TwitterSelectAccountTableViewController.swift in Sources */,
 				51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */,
 				51DC37072402153E0095D371 /* UpdateSelectionOperation.swift in Sources */,
 				51C452782265091600C03939 /* MasterTimelineCellData.swift in Sources */,

@@ -11,16 +11,19 @@ import Account
 
 class TwitterSelectTypeTableViewController: UITableViewController, SelectURLBuilder {
 	
+	private var twitterFeedProviders = [TwitterFeedProvider]()
+
 	weak var delegate: SelectURLBuilderDelegate?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
+		twitterFeedProviders = ExtensionPointManager.shared.activeExtensionPoints.values.compactMap { $0 as? TwitterFeedProvider }
     }
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = super.tableView(tableView, cellForRowAt: indexPath)
 		if indexPath.row < 2 {
-			if findTwitterFeedProviders().count > 1 {
+			if twitterFeedProviders.count > 1 {
 				cell.accessoryType = .disclosureIndicator
 			}
 		}
@@ -30,7 +33,6 @@ class TwitterSelectTypeTableViewController: UITableViewController, SelectURLBuil
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch indexPath.row {
 		case 0:
-			let twitterFeedProviders = findTwitterFeedProviders()
 			if twitterFeedProviders.count == 1 {
 				let username = twitterFeedProviders.first!.screenName
 				if let url = TwitterFeedProvider.buildURL(.homeTimeline, username: username, screenName: nil, searchField: nil) {
@@ -38,10 +40,12 @@ class TwitterSelectTypeTableViewController: UITableViewController, SelectURLBuil
 				}
 				dismiss(animated: true)
 			} else {
-				// TODO: Create a controller for the next scene...
+				let selectAccount = UIStoryboard.twitterAdd.instantiateController(ofType: TwitterSelectAccountTableViewController.self)
+				selectAccount.twitterFeedType = .homeTimeline
+				selectAccount.delegate = delegate
+				navigationController?.pushViewController(selectAccount, animated: true)
 			}
 		case 1:
-			let twitterFeedProviders = findTwitterFeedProviders()
 			if twitterFeedProviders.count == 1 {
 				let username = twitterFeedProviders.first!.screenName
 				if let url = TwitterFeedProvider.buildURL(.mentions, username: username, screenName: nil, searchField: nil) {
@@ -49,18 +53,14 @@ class TwitterSelectTypeTableViewController: UITableViewController, SelectURLBuil
 				}
 				dismiss(animated: true)
 			} else {
-				// TODO: Create a controller for the next scene...
+				let selectAccount = UIStoryboard.twitterAdd.instantiateController(ofType: TwitterSelectAccountTableViewController.self)
+				selectAccount.twitterFeedType = .mentions
+				selectAccount.delegate = delegate
+				navigationController?.pushViewController(selectAccount, animated: true)
 			}
 		default:
 			fatalError()
 		}
 	}
 	
-}
-
-private extension TwitterSelectTypeTableViewController {
-	
-	func findTwitterFeedProviders() -> [TwitterFeedProvider] {
-		return ExtensionPointManager.shared.activeExtensionPoints.values.compactMap { $0 as? TwitterFeedProvider }
-	}
 }
