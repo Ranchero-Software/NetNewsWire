@@ -18,6 +18,9 @@
 		49F40DF92335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		510289AA2451967500426DDF /* SelectURLBuilderTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289A92451967500426DDF /* SelectURLBuilderTableViewController.swift */; };
 		510289CD24519A1D00426DDF /* SelectComboTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */; };
+		510289D02451BA3A00426DDF /* TwitterAdd.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */; };
+		510289D22451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */; };
+		510289D42451BD7B00426DDF /* SelectURLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289D32451BD7B00426DDF /* SelectURLBuilder.swift */; };
 		5102FD83244009F000534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
 		5102FD84244009F000534F17 /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5102FD9B244009FA00534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
@@ -1386,6 +1389,9 @@
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
 		510289A92451967500426DDF /* SelectURLBuilderTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectURLBuilderTableViewController.swift; sourceTree = "<group>"; };
 		510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectComboTableViewCell.swift; sourceTree = "<group>"; };
+		510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TwitterAdd.storyboard; sourceTree = "<group>"; };
+		510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectTypeTableViewController.swift; sourceTree = "<group>"; };
+		510289D32451BD7B00426DDF /* SelectURLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectURLBuilder.swift; sourceTree = "<group>"; };
 		5102FD72244008A700534F17 /* Secrets.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Secrets.xcodeproj; path = Frameworks/Secrets/Secrets.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5103A9972421643300410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
@@ -1927,6 +1933,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		510289CE2451BA1E00426DDF /* Twitter */ = {
+			isa = PBXGroup;
+			children = (
+				510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */,
+				510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */,
+			);
+			path = Twitter;
+			sourceTree = "<group>";
+		};
 		5102FD73244008A700534F17 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2271,10 +2286,12 @@
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
 				51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */,
 				51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */,
-				51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */,
 				51C452842265093600C03939 /* AddWebFeedViewController.swift */,
-				510289A92451967500426DDF /* SelectURLBuilderTableViewController.swift */,
 				510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */,
+				510289D32451BD7B00426DDF /* SelectURLBuilder.swift */,
+				510289A92451967500426DDF /* SelectURLBuilderTableViewController.swift */,
+				51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */,
+				510289CE2451BA1E00426DDF /* Twitter */,
 			);
 			path = Add;
 			sourceTree = "<group>";
@@ -3825,6 +3842,7 @@
 				516A09422361248000EAE89B /* Inspector.storyboard in Resources */,
 				5103A9B424216A4200410853 /* blank.html in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */,
+				510289D02451BA3A00426DDF /* TwitterAdd.storyboard in Resources */,
 				51F85BEB22724CB600C787DC /* About.rtf in Resources */,
 				516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */,
 				511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */,
@@ -4261,6 +4279,7 @@
 				513146B2235A81A400387FDC /* AddWebFeedIntentHandler.swift in Sources */,
 				51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */,
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
+				510289D22451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift in Sources */,
 				51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */,
 				51AB8AB323B7F4C6008F147D /* WebViewController.swift in Sources */,
 				516A09392360A2AE00EAE89B /* SettingsComboTableViewCell.swift in Sources */,
@@ -4319,6 +4338,7 @@
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
 				51EF0F802277A8330050506E /* MasterTimelineCellLayout.swift in Sources */,
 				51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */,
+				510289D42451BD7B00426DDF /* SelectURLBuilder.swift in Sources */,
 				51C452AF2265108300C03939 /* ArticleArray.swift in Sources */,
 				51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */,
 				51C9DE5823EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift in Sources */,

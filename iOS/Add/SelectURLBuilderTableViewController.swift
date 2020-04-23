@@ -8,7 +8,9 @@
 
 import UIKit
 
-class SelectURLBuilderTableViewController: UITableViewController {
+class SelectURLBuilderTableViewController: UITableViewController, SelectURLBuilder {
+
+	weak var delegate: SelectURLBuilderDelegate?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +34,9 @@ class SelectURLBuilderTableViewController: UITableViewController {
     }
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		dismiss(animated: true)
+		let twitterURLBuilder = UIStoryboard.twitterAdd.instantiateInitialViewController() as! TwitterSelectTypeTableViewController
+		twitterURLBuilder.delegate = delegate
+		navigationController?.pushViewController(twitterURLBuilder, animated: true)
 	}
 	
 	// MARK: Actions

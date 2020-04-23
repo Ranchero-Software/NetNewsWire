@@ -68,6 +68,8 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 	@IBAction func showURLBuilder(_ sender: Any) {
 		let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "SelectURLBuilderNavViewController") as! UINavigationController
 		navController.modalPresentationStyle = .currentContext
+		let selectURLBuilder = navController.topViewController as! SelectURLBuilderTableViewController
+		selectURLBuilder.delegate = self
 		present(navController, animated: true)
 	}
 	
@@ -124,7 +126,7 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 	}
 	
 	@objc func textDidChange(_ note: Notification) {
-		delegate?.readyToAdd(state: urlTextField.text?.mayBeURL ?? false)
+		updateUI()
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -160,6 +162,17 @@ extension AddWebFeedViewController: AddWebFeedFolderViewControllerDelegate {
 	}
 }
 
+// MARK: AddWebFeedFolderViewControllerDelegate
+
+extension AddWebFeedViewController: SelectURLBuilderDelegate {
+	
+	func selectURLBuilderDidBuildURL(_ url: URL) {
+		urlTextField.text = url.absoluteString
+		updateUI()
+	}
+	
+}
+
 // MARK: UITextFieldDelegate
 
 extension AddWebFeedViewController: UITextFieldDelegate {
@@ -174,6 +187,11 @@ extension AddWebFeedViewController: UITextFieldDelegate {
 // MARK: Private
 
 private extension AddWebFeedViewController {
+	
+	func updateUI() {
+		delegate?.readyToAdd(state: urlTextField.text?.mayBeURL ?? false)
+	}
+	
 	func updateFolderLabel() {
 		if let containerName = (container as? DisplayNameProvider)?.nameForDisplay {
 			if container is Folder {
