@@ -14,6 +14,13 @@ extension UITableView {
 	Selects a row and scrolls it to the middle if it is not visible
 	*/
 	public func selectRowAndScrollIfNotVisible(at indexPath: IndexPath, animations: Animations) {
+		guard let dataSource = dataSource,
+			let numberOfSections = dataSource.numberOfSections,
+			indexPath.section < numberOfSections(self),
+			indexPath.row < dataSource.tableView(self, numberOfRowsInSection: indexPath.section) else {
+				return
+		}
+		
 		selectRow(at: indexPath, animated: animations.contains(.select), scrollPosition: .none)
 
 		if let visibleIndexPaths = indexPathsForRows(in: safeAreaLayoutGuide.layoutFrame) {
