@@ -175,7 +175,7 @@ final class ArticlesTable: DatabaseTable {
 	func update(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .feedBased)
 		if parsedItems.isEmpty {
-			callUpdateArticlesCompletionBlock(nil, nil, completion)
+			callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
 			return
 		}
 
@@ -199,7 +199,7 @@ final class ArticlesTable: DatabaseTable {
 
 				let incomingArticles = Article.articlesWithParsedItems(parsedItems, webFeedID, self.accountID, statusesDictionary) //2
 				if incomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, completion)
+					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
 					return
 				}
 
@@ -209,13 +209,19 @@ final class ArticlesTable: DatabaseTable {
 				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
 				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
 
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
+				// Articles to delete are 1) no longer in feed and 2) older than 30 days.
+				let cutoffDate = Date().bySubtracting(days: 30)
+				let articlesToDelete = fetchedArticles.filter { (article) -> Bool in
+					return article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
+				}
+
+				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) //7
 
 				self.addArticlesToCache(newArticles)
 				self.addArticlesToCache(updatedArticles)
 
 				// 8. Delete articles no longer in feed.
-				let articleIDsToDelete = fetchedArticles.articleIDs().filter { !(articleIDs.contains($0)) }
+				let articleIDsToDelete = articlesToDelete.articleIDs()
 				if !articleIDsToDelete.isEmpty {
 					self.removeArticles(articleIDsToDelete, database)
 					self.removeArticleIDsFromCache(articleIDsToDelete)
@@ -244,7 +250,7 @@ final class ArticlesTable: DatabaseTable {
 	func update(_ webFeedIDsAndItems: [String: Set<ParsedItem>], _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .syncSystem)
 		if webFeedIDsAndItems.isEmpty {
-			callUpdateArticlesCompletionBlock(nil, nil, completion)
+			callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
 			return
 		}
 
@@ -270,13 +276,13 @@ final class ArticlesTable: DatabaseTable {
 
 				let allIncomingArticles = Article.articlesWithWebFeedIDsAndItems(webFeedIDsAndItems, self.accountID, statusesDictionary) //2
 				if allIncomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, completion)
+					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
 					return
 				}
 
 				let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
 				if incomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, completion)
+					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
 					return
 				}
 
@@ -287,7 +293,7 @@ final class ArticlesTable: DatabaseTable {
 				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
 				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
 
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, completion) //7
+				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, nil, completion) //7
 
 				self.addArticlesToCache(newArticles)
 				self.addArticlesToCache(updatedArticles)
@@ -849,10 +855,10 @@ private extension ArticlesTable {
 
 	// MARK: - Saving Parsed Items
 	
-	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
-		let newAndUpdatedArticles = NewAndUpdatedArticles(newArticles: newArticles, updatedArticles: updatedArticles)
+	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ deletedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
+		let articleChanges = ArticleChanges(newArticles: newArticles, updatedArticles: updatedArticles, deletedArticles: deletedArticles)
 		DispatchQueue.main.async {
-			completion(.success(newAndUpdatedArticles))
+			completion(.success(articleChanges))
 		}
 	}
 	

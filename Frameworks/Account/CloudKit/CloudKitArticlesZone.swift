@@ -82,8 +82,23 @@ final class CloudKitArticlesZone: CloudKitZone {
 	}
 	
 	func sendNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		guard !articles.isEmpty else {
+			completion(.success(()))
+			return
+		}
+		
 		let records = makeNewStatusRecords(articles)
 		saveIfNew(records, completion: completion)
+	}
+	
+	func deleteArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		guard !articles.isEmpty else {
+			completion(.success(()))
+			return
+		}
+		
+		let recordIDs = articles.map { CKRecord.ID(recordName: $0.articleID, zoneID: Self.zoneID) }
+		delete(recordIDs: recordIDs, completion: completion)
 	}
 	
 	func sendArticleStatus(_ syncStatuses: [SyncStatus], articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {

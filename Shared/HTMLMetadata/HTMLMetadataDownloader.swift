@@ -28,10 +28,6 @@ struct HTMLMetadataDownloader {
 				return
 			}
 
-			if let error = error {
-				appDelegate.logMessage("Error downloading metadata at \(url): \(error)", type: .warning)
-			}
-
 			completion(nil)
 		}
 	}

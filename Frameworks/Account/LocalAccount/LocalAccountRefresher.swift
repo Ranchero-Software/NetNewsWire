@@ -14,7 +14,7 @@ import Articles
 import ArticlesDatabase
 
 protocol LocalAccountRefresherDelegate {
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess: NewAndUpdatedArticles, completion: @escaping () -> Void)
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess: ArticleChanges, completion: @escaping () -> Void)
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed)
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher)
 }
