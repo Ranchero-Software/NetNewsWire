@@ -18,7 +18,14 @@ final class PoppableGestureRecognizerDelegate: NSObject, UIGestureRecognizerDele
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-		return navigationController?.viewControllers.count ?? 0 > 2
+		return true
     }
+	
+	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+		if otherGestureRecognizer is UIPanGestureRecognizer {
+			return true
+		}
+		return false
+	}
 	
 }
