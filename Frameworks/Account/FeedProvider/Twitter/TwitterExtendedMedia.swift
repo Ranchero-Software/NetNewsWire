@@ -35,13 +35,7 @@ struct TwitterExtendedMedia: Codable {
 		
 		switch type {
 		case "photo":
-			if let url = url {
-				html += "<a href=\"\(url)\">"
-				html += renderPhotoAsHTML()
-				html += "</a>"
-			} else {
-				html += renderPhotoAsHTML()
-			}
+			html += renderPhotoAsHTML()
 		case "video", "animated_gif":
 			html += renderVideoAsHTML()
 		default:
