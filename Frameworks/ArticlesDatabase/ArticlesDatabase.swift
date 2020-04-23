@@ -24,12 +24,13 @@ public typealias UnreadCountDictionaryCompletionBlock = (UnreadCountDictionaryCo
 public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
 public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) -> Void
 
-public struct NewAndUpdatedArticles {
+public struct ArticleChanges {
 	public let newArticles: Set<Article>?
 	public let updatedArticles: Set<Article>?
+	public let deletedArticles: Set<Article>?
 }
 
-public typealias UpdateArticlesResult = Result<NewAndUpdatedArticles, DatabaseError>
+public typealias UpdateArticlesResult = Result<ArticleChanges, DatabaseError>
 public typealias UpdateArticlesCompletionBlock = (UpdateArticlesResult) -> Void
 
 public typealias ArticleSetResult = Result<Set<Article>, DatabaseError>
