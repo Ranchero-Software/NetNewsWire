@@ -58,6 +58,16 @@ class TwitterSelectTypeTableViewController: UITableViewController, SelectURLBuil
 				selectAccount.delegate = delegate
 				navigationController?.pushViewController(selectAccount, animated: true)
 			}
+		case 2:
+			let enterDetail = UIStoryboard.twitterAdd.instantiateController(ofType: TwitterEnterDetailTableViewController.self)
+			enterDetail.twitterFeedType = .screenName
+			enterDetail.delegate = delegate
+			navigationController?.pushViewController(enterDetail, animated: true)
+		case 3:
+			let enterDetail = UIStoryboard.twitterAdd.instantiateController(ofType: TwitterEnterDetailTableViewController.self)
+			enterDetail.twitterFeedType = .search
+			enterDetail.delegate = delegate
+			navigationController?.pushViewController(enterDetail, animated: true)
 		default:
 			fatalError()
 		}

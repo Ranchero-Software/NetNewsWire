@@ -137,5 +137,53 @@
             </objects>
             <point key="canvasLocation" x="155" y="173"/>
         </scene>
+        <!--Enter Detail-->
+        <scene sceneID="lmR-Pm-7vI">
+            <objects>
+                <tableViewController storyboardIdentifier="TwitterEnterDetailTableViewController" title="Enter Detail" id="Eh0-p4-hVX" customClass="TwitterEnterDetailTableViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="76O-el-2DO">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <sections>
+                            <tableViewSection id="ZkR-cP-Kvy">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="bWA-Rs-IL9">
+                                        <rect key="frame" x="20" y="18" width="374" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bWA-Rs-IL9" id="azg-eE-bd4">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="IVd-Bz-j7J">
+                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="IVd-Bz-j7J" firstAttribute="centerY" secondItem="azg-eE-bd4" secondAttribute="centerY" id="ItM-Jv-j2G"/>
+                                                <constraint firstItem="IVd-Bz-j7J" firstAttribute="leading" secondItem="azg-eE-bd4" secondAttribute="leading" constant="20" symbolic="YES" id="ldz-j4-8kY"/>
+                                                <constraint firstAttribute="trailing" secondItem="IVd-Bz-j7J" secondAttribute="trailing" constant="20" symbolic="YES" id="un0-pU-AHV"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="Eh0-p4-hVX" id="eKE-xW-f3D"/>
+                            <outlet property="delegate" destination="Eh0-p4-hVX" id="e07-6Q-SQc"/>
+                        </connections>
+                    </tableView>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="detailTextField" destination="IVd-Bz-j7J" id="p1f-3d-6MR"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cp9-xU-RGq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="836" y="173"/>
+        </scene>
     </scenes>
 </document>
