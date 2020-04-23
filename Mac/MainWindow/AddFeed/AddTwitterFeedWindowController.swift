@@ -106,8 +106,13 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 			let atUsername = accountPopupButton.selectedItem?.title else { return }
 		
 		let username = String(atUsername[atUsername.index(atUsername.startIndex, offsetBy: 1)..<atUsername.endIndex])
-		
-		guard let url = TwitterFeedProvider.buildURL(type, username: username, screenName: userEnteredScreenSearch, searchField: userEnteredScreenSearch) else { return }
+
+		var screenSearch = userEnteredScreenSearch
+		if let screenName = screenSearch, type == .screenName && screenName.starts(with: "@") {
+			screenSearch = String(screenName[screenName.index(screenName.startIndex, offsetBy: 1)..<screenName.endIndex])
+		}
+
+		guard let url = TwitterFeedProvider.buildURL(type, username: username, screenName: screenSearch, searchField: screenSearch) else { return }
 		
 		let container = selectedContainer()!
 		AddWebFeedDefaultContainer.saveDefaultContainer(container)
@@ -150,10 +155,12 @@ private extension AddTwitterFeedWindowController {
 			accountLabel.isHidden = true
 			accountPopupButton.isHidden = true
 			
-			var screenName = screenSearchTextField.stringValue
-			if !screenName.isEmpty && !screenName.starts(with: "@") {
-				screenName = "@\(screenName)"
-				typeDescriptionLabel.stringValue = NSLocalizedString("Tweets from \(screenName)", comment: "Home Timeline")
+			var screenSearch = userEnteredScreenSearch
+			if screenSearch != nil {
+				if let screenName = screenSearch, screenName.starts(with: "@") {
+					screenSearch = String(screenName[screenName.index(screenName.startIndex, offsetBy: 1)..<screenName.endIndex])
+				}
+				typeDescriptionLabel.stringValue = NSLocalizedString("Tweets from @\(screenSearch!)", comment: "Home Timeline")
 			} else {
 				typeDescriptionLabel.stringValue = ""
 			}
