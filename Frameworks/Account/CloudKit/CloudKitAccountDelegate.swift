@@ -628,12 +628,13 @@ private extension CloudKitAccountDelegate {
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-		if let newArticles = articleChanges.newArticles {
-			articlesZone.sendNewArticles(newArticles) { _ in
+		let newArticles = articleChanges.newArticles ?? Set<Article>()
+		let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+
+		articlesZone.deleteArticles(deletedArticles) { _ in
+			self.articlesZone.sendNewArticles(newArticles) { _ in
 				completion()
 			}
-		} else {
-			completion()
 		}
 	}
 

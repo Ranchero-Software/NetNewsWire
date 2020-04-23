@@ -371,6 +371,10 @@ extension CloudKitZone {
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
 		
+	func delete(recordIDs: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+		modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
+	}
+		
 	/// Delete a CKRecord using its externalID
 	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let externalID = externalID else {
