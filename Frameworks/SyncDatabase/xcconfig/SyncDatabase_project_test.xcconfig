@@ -1,3 +1,0 @@
-#include "./SyncDatabase_project_debug.xcconfig"
-
-OTHER_SWIFT_FLAGS = -DTEST $(inherited)
