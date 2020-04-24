@@ -30,6 +30,10 @@ final class LocalAccountRefresher {
 	}()
 
 	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
+		guard !feeds.isEmpty else {
+			completion?()
+			return
+		}
 		if let completion = completion {
 			completions.append(completion)
 		}
@@ -100,8 +104,8 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			}
 			
 			account.update(feed, with: parsedFeed) { result in
-				if case .success(let newAndUpdatedArticles) = result {
-					self.delegate?.localAccountRefresher(self, didProcess: newAndUpdatedArticles) {
+				if case .success(let articleChanges) = result {
+					self.delegate?.localAccountRefresher(self, didProcess: articleChanges) {
 						if let httpResponse = response as? HTTPURLResponse {
 							feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 						}

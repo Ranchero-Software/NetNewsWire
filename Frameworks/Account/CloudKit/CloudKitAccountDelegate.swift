@@ -564,8 +564,14 @@ private extension CloudKitAccountDelegate {
 	}
 	
 	func refreshWebFeeds(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
+
+		var newArticles = Set<Article>()
+		var deletedArticles = Set<Article>()
+
 		var refresherWebFeeds = Set<WebFeed>()
 		let group = DispatchGroup()
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		for webFeed in webFeeds {
 			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components, with: webFeed.username) {
@@ -573,10 +579,25 @@ private extension CloudKitAccountDelegate {
 				feedProvider.refresh(webFeed) { result in
 					switch result {
 					case .success(let parsedItems):
-						account.update(webFeed.webFeedID, with: parsedItems) { _ in
-							self.refreshProgress.completeTask()
-							group.leave()
+						
+						account.update(webFeed.webFeedID, with: parsedItems) { result in
+							switch result {
+							case .success(let articleChanges):
+								
+								newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
+								deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
+
+								self.refreshProgress.completeTask()
+								group.leave()
+								
+							case .failure(let error):
+								os_log(.error, log: self.log, "Feed Provider refresh update error: %@.", error.localizedDescription)
+								self.refreshProgress.completeTask()
+								group.leave()
+							}
+							
 						}
+
 					case .failure(let error):
 						os_log(.error, log: self.log, "Feed Provider refresh error: %@.", error.localizedDescription)
 						self.refreshProgress.completeTask()
@@ -594,12 +615,21 @@ private extension CloudKitAccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			completion()
+			
+			self.articlesZone.deleteArticles(deletedArticles) { _ in
+				self.refreshProgress.completeTask()
+				self.articlesZone.sendNewArticles(newArticles) { _ in
+					self.refreshProgress.completeTask()
+					completion()
+				}
+			}
+			
 		}
+		
 	}
 
 	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(3)
+		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
 		feedProvider.assignName(urlComponents) { result in
 			self.refreshProgress.completeTask()
@@ -631,9 +661,28 @@ private extension CloudKitAccountDelegate {
 							self.refreshProgress.completeTask()
 							switch result {
 							case .success(let parsedItems):
-								account.update(newURLString, with: parsedItems) { _ in
-									completion(.success(feed))
+								
+								account.update(newURLString, with: parsedItems) { result in
+									switch result {
+									case .success(let articleChanges):
+										
+										let newArticles = articleChanges.newArticles ?? Set<Article>()
+										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+
+										self.articlesZone.deleteArticles(deletedArticles) { _ in
+											self.refreshProgress.completeTask()
+											self.articlesZone.sendNewArticles(newArticles) { _ in
+												self.refreshProgress.completeTask()
+												completion(.success(feed))
+											}
+										}
+										
+									case .failure(let error):
+										completion(.failure(error))
+									}
+									
 								}
+								
 							case .failure:
 								completion(.failure(AccountError.createErrorNotFound))
 							}
@@ -654,7 +703,7 @@ private extension CloudKitAccountDelegate {
 	
 	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		BatchUpdate.shared.start()
-		refreshProgress.addToNumberOfTasksAndRemaining(3)
+		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		FeedFinder.find(url: url) { result in
 			
 			self.refreshProgress.completeTask()
@@ -689,10 +738,29 @@ private extension CloudKitAccountDelegate {
 							self.refreshProgress.completeTask()
 
 							if let parsedFeed = parsedFeed {
-								account.update(feed, with: parsedFeed, {_ in
-									BatchUpdate.shared.end()
-									completion(.success(feed))
-								})
+								account.update(feed, with: parsedFeed) { result in
+									switch result {
+									case .success(let articleChanges):
+										
+										BatchUpdate.shared.end()
+										let newArticles = articleChanges.newArticles ?? Set<Article>()
+										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+
+										self.articlesZone.deleteArticles(deletedArticles) { _ in
+											self.refreshProgress.completeTask()
+											self.articlesZone.sendNewArticles(newArticles) { _ in
+												self.refreshProgress.completeTask()
+												completion(.success(feed))
+											}
+										}
+										
+									case .failure(let error):
+										completion(.failure(error))
+									}
+									
+								}
+							} else {
+								completion(.success(feed))
 							}
 							
 						}

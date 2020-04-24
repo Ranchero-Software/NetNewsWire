@@ -750,9 +750,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		database.update(with: parsedItems, webFeedID: webFeedID) { updateArticlesResult in
 			switch updateArticlesResult {
-			case .success(let newAndUpdatedArticles):
-				self.sendNotificationAbout(newAndUpdatedArticles)
-				completion(.success(newAndUpdatedArticles))
+			case .success(let articleChanges):
+				self.sendNotificationAbout(articleChanges)
+				completion(.success(articleChanges))
 			case .failure(let databaseError):
 				completion(.failure(databaseError))
 			}
