@@ -32,12 +32,8 @@ body .header a:link, body .header a:visited {
 }
 
 pre {
-	line-height: 20px;
 	border: 1px solid var(--accent-color);
 	padding: 10px;
-}
-code, pre {
-	font-size: 14px;
 }
 
 .nnw-overflow table {
