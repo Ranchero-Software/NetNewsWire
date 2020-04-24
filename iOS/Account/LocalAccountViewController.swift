@@ -12,8 +12,6 @@ import Account
 class LocalAccountViewController: UITableViewController {
 
 	@IBOutlet weak var nameTextField: UITextField!
-	
-	weak var delegate: AddAccountDismissDelegate?
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -25,14 +23,12 @@ class LocalAccountViewController: UITableViewController {
 
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
-		delegate?.dismiss()
 	}
 	
 	@IBAction func add(_ sender: Any) {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = nameTextField.text
 		dismiss(animated: true, completion: nil)
-		delegate?.dismiss()
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
