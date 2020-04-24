@@ -19,7 +19,7 @@ public enum FeedProviderAbility {
 public protocol FeedProvider  {
 	
 	/// Informs the caller of the ability for this feed provider to service the given URL
-	func ability(_ urlComponents: URLComponents, forUsername: String?) -> FeedProviderAbility
+	func ability(_ urlComponents: URLComponents) -> FeedProviderAbility
 	
 	/// Provide the iconURL of the given URL
 	func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void)

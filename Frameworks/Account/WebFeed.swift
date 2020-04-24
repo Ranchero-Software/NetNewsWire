@@ -77,15 +77,6 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
 
-	public var username: String? {
-		get {
-			return metadata.username
-		}
-		set {
-			metadata.username = newValue
-		}
-	}
-
 	public var name: String?
 
 	public var authors: Set<Author>? {

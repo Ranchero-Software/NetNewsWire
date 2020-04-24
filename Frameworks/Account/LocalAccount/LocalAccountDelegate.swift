@@ -56,7 +56,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		let group = DispatchGroup()
 		
 		for webFeed in webFeeds {
-			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components, with: webFeed.username) {
+			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
 				refreshProgress.addToNumberOfTasksAndRemaining(1)
 				group.enter()
 				feedProvider.refresh(webFeed) { result in
@@ -147,7 +147,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		}
 		
 		// Username should be part of the URL on new feed adds
-		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents, with: nil) {
+		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
 			createProviderWebFeed(for: account, urlComponents: urlComponents, editedName: name, container: container, feedProvider: feedProvider, completion: completion)
 		} else {
 			createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
@@ -260,24 +260,20 @@ private extension LocalAccountDelegate {
 				
 			case .success(let name):
 
-				// Move the user to the WebFeed and out of the URL
-				var newURLComponents = urlComponents
-				newURLComponents.user = nil
-				guard let newURLString = newURLComponents.url?.absoluteString else {
+				guard let urlString = urlComponents.url?.absoluteString else {
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 
-				let feed = account.createWebFeed(with: name, url: newURLString, webFeedID: newURLString, homePageURL: nil)
+				let feed = account.createWebFeed(with: name, url: urlString, webFeedID: urlString, homePageURL: nil)
 				feed.editedName = editedName
-				feed.username = urlComponents.user
 				container.addWebFeed(feed)
 
 				feedProvider.refresh(feed) { result in
 					self.refreshProgress.completeTask()
 					switch result {
 					case .success(let parsedItems):
-						account.update(newURLString, with: parsedItems) { _ in
+						account.update(urlString, with: parsedItems) { _ in
 							completion(.success(feed))
 						}
 					case .failure:

@@ -220,7 +220,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		let editedName = name == nil || name!.isEmpty ? nil : name
 
 		// Username should be part of the URL on new feed adds
-		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents, with: nil) {
+		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
 			createProviderWebFeed(for: account, urlComponents: urlComponents, editedName: editedName, container: container, feedProvider: feedProvider, completion: completion)
 		} else {
 			createRSSWebFeed(for: account, url: url, editedName: editedName, container: container, completion: completion)
@@ -292,7 +292,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.createWebFeed(url: feed.url, editedName: feed.editedName, username: feed.username, container: container) { result in
+		accountZone.createWebFeed(url: feed.url, editedName: feed.editedName, container: container) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let externalID):
@@ -494,7 +494,7 @@ private extension CloudKitAccountDelegate {
 						self.sendArticleStatus(for: account) { result in
 							switch result {
 							case .success:
-								self.refreshProgress.completeTask()
+								self.refreshProgress.clear()
 								completion(.success(()))
 							case .failure(let error):
 								fail(error)
@@ -543,6 +543,7 @@ private extension CloudKitAccountDelegate {
 								self.refreshProgress.completeTask()
 
 								self.refreshWebFeeds(account, webFeeds) {
+									self.refreshProgress.clear()
 									account.metadata.lastArticleFetchEndTime = Date()
 								}
 
@@ -574,7 +575,7 @@ private extension CloudKitAccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
 		for webFeed in webFeeds {
-			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components, with: webFeed.username) {
+			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
 				group.enter()
 				feedProvider.refresh(webFeed) { result in
 					switch result {
@@ -637,23 +638,19 @@ private extension CloudKitAccountDelegate {
 				
 			case .success(let name):
 
-				// Move the user to the WebFeed and out of the URL
-				var newURLComponents = urlComponents
-				newURLComponents.user = nil
-				guard let newURLString = newURLComponents.url?.absoluteString else {
+				guard let urlString = urlComponents.url?.absoluteString else {
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 				
-				self.accountZone.createWebFeed(url: newURLString, editedName: editedName, username: urlComponents.user, container: container) { result in
+				self.accountZone.createWebFeed(url: urlString, editedName: editedName, container: container) { result in
 
 					self.refreshProgress.completeTask()
 					switch result {
 					case .success(let externalID):
 
-						let feed = account.createWebFeed(with: name, url: newURLString, webFeedID: newURLString, homePageURL: nil)
+						let feed = account.createWebFeed(with: name, url: urlString, webFeedID: urlString, homePageURL: nil)
 						feed.editedName = editedName
-						feed.username = urlComponents.user
 						feed.externalID = externalID
 						container.addWebFeed(feed)
 
@@ -662,7 +659,7 @@ private extension CloudKitAccountDelegate {
 							switch result {
 							case .success(let parsedItems):
 								
-								account.update(newURLString, with: parsedItems) { result in
+								account.update(urlString, with: parsedItems) { result in
 									switch result {
 									case .success(let articleChanges):
 										
@@ -672,18 +669,20 @@ private extension CloudKitAccountDelegate {
 										self.articlesZone.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
 											self.articlesZone.sendNewArticles(newArticles) { _ in
-												self.refreshProgress.completeTask()
+												self.refreshProgress.clear()
 												completion(.success(feed))
 											}
 										}
 										
 									case .failure(let error):
+										self.refreshProgress.clear()
 										completion(.failure(error))
 									}
 									
 								}
 								
 							case .failure:
+								self.refreshProgress.clear()
 								completion(.failure(AccountError.createErrorNotFound))
 							}
 						}
@@ -723,7 +722,7 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 				
-				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: editedName, username: nil, container: container) { result in
+				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: editedName, container: container) { result in
 
 					self.refreshProgress.completeTask()
 					switch result {
@@ -749,17 +748,19 @@ private extension CloudKitAccountDelegate {
 										self.articlesZone.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
 											self.articlesZone.sendNewArticles(newArticles) { _ in
-												self.refreshProgress.completeTask()
+												self.refreshProgress.clear()
 												completion(.success(feed))
 											}
 										}
 										
 									case .failure(let error):
+										self.refreshProgress.clear()
 										completion(.failure(error))
 									}
 									
 								}
 							} else {
+								self.refreshProgress.clear()
 								completion(.success(feed))
 							}
 							
@@ -810,7 +811,6 @@ extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	}
 	
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
-		refreshProgress.clear()
 	}
 	
 }

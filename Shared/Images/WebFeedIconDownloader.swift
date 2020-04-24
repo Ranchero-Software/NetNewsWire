@@ -118,7 +118,7 @@ public final class WebFeedIconDownloader {
 			return nil
 		}
 		
-		if let components = URLComponents(string: feed.url), let feedProvider = FeedProviderManager.shared.best(for: components, with: nil) {
+		if let components = URLComponents(string: feed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
 			feedProvider.iconURL(components) { result in
 				switch result {
 				case .success(let feedProviderURL):

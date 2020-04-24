@@ -130,9 +130,9 @@ private extension ExtensionPointManager {
 		}
 	}
 	
-	func feedProviderMatching(_ offered: URLComponents, forUsername username: String?, ability: FeedProviderAbility) -> FeedProvider? {
+	func feedProviderMatching(_ offered: URLComponents, ability: FeedProviderAbility) -> FeedProvider? {
 		for extensionPoint in activeExtensionPoints.values {
-			if let feedProvider = extensionPoint as? FeedProvider, feedProvider.ability(offered, forUsername: username) == ability {
+			if let feedProvider = extensionPoint as? FeedProvider, feedProvider.ability(offered) == ability {
 				return feedProvider
 			}
 		}

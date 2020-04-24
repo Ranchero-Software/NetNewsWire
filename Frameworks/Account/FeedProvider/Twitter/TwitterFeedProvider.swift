@@ -88,21 +88,17 @@ public struct TwitterFeedProvider: FeedProvider {
 								  version: .oauth1)
 	}
 
-	public func ability(_ urlComponents: URLComponents, forUsername username: String?) -> FeedProviderAbility {
+	public func ability(_ urlComponents: URLComponents) -> FeedProviderAbility {
 		guard urlComponents.host?.hasSuffix("twitter.com") ?? false else {
 			return .none
 		}
 		
-		if let username = username {
+		if let username = urlComponents.user {
 			if username == screenName {
 				return .owner
 			} else {
 				return .none
 			}
-		}
-		
-		if let user = urlComponents.user, user == screenName {
-			return .owner
 		}
 		
 		return .available
