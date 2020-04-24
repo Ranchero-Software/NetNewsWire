@@ -55,7 +55,7 @@ struct MasterTimelineAccessibilityCellLayout: MasterTimelineCellLayout {
 		
 		currentPoint.y = [self.titleRect, self.summaryRect].maxY()
 		
-		if cellData.showFeedName {
+		if cellData.showFeedName != .none {
 			self.feedNameRect = MasterTimelineAccessibilityCellLayout.rectForFeedName(cellData, currentPoint, textAreaWidth)
 			currentPoint.y = self.feedNameRect.maxY
 		} else {

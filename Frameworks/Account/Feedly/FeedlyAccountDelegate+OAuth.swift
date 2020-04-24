@@ -8,6 +8,7 @@
 
 import Foundation
 import RSWeb
+import Secrets
 
 /// Models the access token response from Feedly.
 /// https://developer.feedly.com/v3/auth/#exchanging-an-auth-code-for-a-refresh-token-and-an-access-token

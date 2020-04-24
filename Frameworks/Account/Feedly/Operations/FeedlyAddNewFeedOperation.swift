@@ -11,6 +11,7 @@ import os.log
 import SyncDatabase
 import RSWeb
 import RSCore
+import Secrets
 
 class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
 

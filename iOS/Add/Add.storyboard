@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="bqE-WD-JXz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="bqE-WD-JXz">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -26,16 +26,25 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="URL" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="eRp-AP-WFq">
-                                                    <rect key="frame" x="20" y="4" width="303" height="36"/>
+                                                    <rect key="frame" x="20" y="4" width="269.66666666666669" height="36"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="URL"/>
                                                 </textField>
+                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f0N-Iy-ZFD">
+                                                    <rect key="frame" x="297.66666666666669" y="10.666666666666666" width="25.333333333333314" height="22.666666666666671"/>
+                                                    <state key="normal" image="hammer" catalog="system"/>
+                                                    <connections>
+                                                        <action selector="showURLBuilder:" destination="7aE-6a-iP7" eventType="touchUpInside" id="wVv-BU-ND8"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="eRp-AP-WFq" firstAttribute="top" secondItem="eNS-Rp-w0A" secondAttribute="top" constant="4" id="80p-a2-3NC"/>
+                                                <constraint firstItem="f0N-Iy-ZFD" firstAttribute="centerY" secondItem="eRp-AP-WFq" secondAttribute="centerY" id="Ci9-Fe-KrJ"/>
+                                                <constraint firstItem="f0N-Iy-ZFD" firstAttribute="leading" secondItem="eRp-AP-WFq" secondAttribute="trailing" constant="8" id="ZNi-6o-A6w"/>
+                                                <constraint firstAttribute="trailing" secondItem="f0N-Iy-ZFD" secondAttribute="trailing" constant="20" symbolic="YES" id="aHH-ef-7dH"/>
                                                 <constraint firstItem="eRp-AP-WFq" firstAttribute="leading" secondItem="eNS-Rp-w0A" secondAttribute="leading" constant="20" symbolic="YES" id="bHJ-7l-Pl3"/>
                                                 <constraint firstAttribute="bottom" secondItem="eRp-AP-WFq" secondAttribute="bottom" constant="4" id="fs0-iw-zTo"/>
-                                                <constraint firstAttribute="trailing" secondItem="eRp-AP-WFq" secondAttribute="trailing" constant="20" symbolic="YES" id="xWD-54-Kdm"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -140,7 +149,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AccountCell" id="bp5-2u-4S4" customClass="AddWebFeedFolderTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AccountCell" id="bp5-2u-4S4" customClass="AddComboTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bp5-2u-4S4" id="9HE-eR-YIp">
@@ -175,7 +184,7 @@
                                     <outlet property="label" destination="ZQp-94-vJz" id="Jm5-oU-BZR"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="FolderCell" id="S24-c1-0Ir" customClass="AddWebFeedFolderTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="FolderCell" id="S24-c1-0Ir" customClass="AddComboTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="71.666667938232422" width="375" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="S24-c1-0Ir" id="bA3-AB-H1n">
@@ -436,8 +445,90 @@
             </objects>
             <point key="canvasLocation" x="-961" y="89"/>
         </scene>
+        <!--Modal Navigation Controller-->
+        <scene sceneID="cdQ-dD-r6b">
+            <objects>
+                <navigationController storyboardIdentifier="SelectURLBuilderNavViewController" id="iBn-vt-JuI" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="5ft-mx-bH1">
+                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Wls-o6-7V8" kind="relationship" relationship="rootViewController" id="jlb-J3-50h"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tmd-jJ-oxP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2452" y="1416"/>
+        </scene>
+        <!--Select URL Builder-->
+        <scene sceneID="uAc-pe-d1U">
+            <objects>
+                <tableViewController storyboardIdentifier="SelectURLBuilderViewController" title="Select URL Builder" id="Wls-o6-7V8" customClass="SelectURLBuilderTableViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="SBu-NT-kQA">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="URLBuilderCell" rowHeight="55" id="7Qf-cp-hyD" customClass="SelectComboTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                <rect key="frame" x="16" y="55.333332061767578" width="343" height="55"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7Qf-cp-hyD" id="Rsw-xP-7HT">
+                                    <rect key="frame" x="0.0" y="0.0" width="317" height="55"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Jka-S1-56k">
+                                            <rect key="frame" x="20" y="15.666666666666664" width="130" height="24"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="hammer" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="lQk-5J-fON">
+                                                    <rect key="frame" x="0.0" y="-0.66666666666666785" width="24" height="26.333333333333336"/>
+                                                    <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="24" id="u9L-D0-kgu"/>
+                                                        <constraint firstAttribute="height" constant="24" id="wDw-bL-u3p"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="URL Builder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ys7-kv-kLW">
+                                                    <rect key="frame" x="40" y="0.0" width="90" height="24"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </stackView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="Jka-S1-56k" firstAttribute="leading" secondItem="Rsw-xP-7HT" secondAttribute="leading" constant="20" symbolic="YES" id="2Sh-PL-a9u"/>
+                                        <constraint firstItem="Jka-S1-56k" firstAttribute="centerY" secondItem="Rsw-xP-7HT" secondAttribute="centerY" id="k1d-3l-LGF"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <inset key="separatorInset" minX="45" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <connections>
+                                    <outlet property="icon" destination="lQk-5J-fON" id="uCm-OV-S80"/>
+                                    <outlet property="label" destination="Ys7-kv-kLW" id="v99-KU-U8q"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Wls-o6-7V8" id="3V5-PC-jlM"/>
+                            <outlet property="delegate" destination="Wls-o6-7V8" id="kWB-zE-rh5"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Select URL Builder" id="02z-m5-leN">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="xeT-hn-DyW">
+                            <connections>
+                                <action selector="cancel:" destination="Wls-o6-7V8" id="9rX-tp-GwL"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qFt-gM-HqV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1687" y="1416"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="hammer" catalog="system" width="128" height="115"/>
         <namedColor name="secondaryAccentColor">
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

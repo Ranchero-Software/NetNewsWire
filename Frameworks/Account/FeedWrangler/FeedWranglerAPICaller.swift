@@ -11,6 +11,7 @@ import Foundation
 import Foundation
 import SyncDatabase
 import RSWeb
+import Secrets
 
 enum FeedWranglerError : Error {
 	case general(message: String)

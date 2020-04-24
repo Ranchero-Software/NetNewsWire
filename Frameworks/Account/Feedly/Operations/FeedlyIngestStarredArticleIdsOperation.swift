@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import SyncDatabase
+import Secrets
 
 /// Clone locally the remote starred article state.
 ///

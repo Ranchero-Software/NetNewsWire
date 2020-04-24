@@ -171,7 +171,7 @@ private extension TimelineCellLayout {
 	}
 
 	static func rectForFeedName(_ textBoxRect: NSRect, _ dateRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
-		if !cellData.showFeedName {
+		if cellData.showFeedName == .none {
 			return NSZeroRect
 		}
 

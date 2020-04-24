@@ -17,7 +17,6 @@
 		179DBE829FDF48E102F73244 /* NewsBlurAccountDelegate+Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB78C47256A122A281942 /* NewsBlurAccountDelegate+Internal.swift */; };
 		179DBED55C9B4D6A413486C1 /* NewsBlurStoryHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB818180A51098A9816B2 /* NewsBlurStoryHash.swift */; };
 		179DBF4DE2562D4C532F6008 /* NewsBlurFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB1B909672E0E807B5E8C /* NewsBlurFeed.swift */; };
-		3B3A33E7238D3D6800314204 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A33E6238D3D6800314204 /* Secrets.swift */; };
 		3B826DA72385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D9E2385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift */; };
 		3B826DA82385C81C00FC1ADB /* FeedWranglerFeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826D9F2385C81C00FC1ADB /* FeedWranglerFeedItem.swift */; };
 		3B826DA92385C81C00FC1ADB /* FeedWranglerAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DA02385C81C00FC1ADB /* FeedWranglerAPICaller.swift */; };
@@ -28,14 +27,20 @@
 		3B826DAE2385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DA52385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift */; };
 		3B826DAF2385C81C00FC1ADB /* FeedWranglerGenericResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DA62385C81C00FC1ADB /* FeedWranglerGenericResult.swift */; };
 		3BC23AB92385ECB100371CBA /* FeedWranglerSubscriptionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC23AB82385ECB100371CBA /* FeedWranglerSubscriptionResult.swift */; };
+		5102FD80244009E000534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7F244009E000534F17 /* Secrets.framework */; };
 		5103A9D92422546800410853 /* CloudKitAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */; };
 		5107A09B227DE49500C7C3C5 /* TestAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */; };
 		5107A09D227DE77700C7C3C5 /* TestTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5107A09C227DE77700C7C3C5 /* TestTransport.swift */; };
 		510BD111232C3801002692E4 /* AccountMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD110232C3801002692E4 /* AccountMetadataFile.swift */; };
 		510BD113232C3E9D002692E4 /* WebFeedMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */; };
+		510E3317244E0CED00E7A6AF /* TwitterMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510E3316244E0CED00E7A6AF /* TwitterMedia.swift */; };
 		511B9804237CD4270028BCAA /* FeedIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9803237CD4270028BCAA /* FeedIdentifier.swift */; };
 		512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */; };
 		512DD4CD2431098700C17B1F /* CloudKitAccountZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */; };
+		5132AAC42448BAD90077840A /* FeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132AAC12448BAD90077840A /* FeedProvider.swift */; };
+		5132AAC52448BAD90077840A /* TwitterFeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */; };
+		5132DE812449159100806ADE /* TwitterUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132DE802449159100806ADE /* TwitterUser.swift */; };
+		5132DE832449306F00806ADE /* TwitterStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132DE822449306F00806ADE /* TwitterStatus.swift */; };
 		513323082281070D00C30F19 /* AccountFeedbinSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */; };
 		5133230A2281082F00C30F19 /* subscriptions_initial.json in Resources */ = {isa = PBXBuildFile; fileRef = 513323092281082F00C30F19 /* subscriptions_initial.json */; };
 		5133230C2281088A00C30F19 /* subscriptions_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5133230B2281088A00C30F19 /* subscriptions_add.json */; };
@@ -44,9 +49,7 @@
 		514BF5202391B0DB00902FE8 /* SingleArticleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514BF51F2391B0DB00902FE8 /* SingleArticleFetcher.swift */; };
 		5150FFFE243823B800C1A442 /* CloudKitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5150FFFD243823B800C1A442 /* CloudKitError.swift */; };
 		5154367B228EEB28005E1CDF /* FeedbinImportResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5154367A228EEB28005E1CDF /* FeedbinImportResult.swift */; };
-		515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB22324FF8C0057B0E7 /* CredentialsManager.swift */; };
 		515E4EB62324FF8C0057B0E7 /* URLRequest+RSWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */; };
-		515E4EB72324FF8C0057B0E7 /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515E4EB42324FF8C0057B0E7 /* Credentials.swift */; };
 		5165D7122282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5165D7112282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift */; };
 		5165D71622821C2400D9D53D /* taggings_delete.json in Resources */ = {isa = PBXBuildFile; fileRef = 5165D71322821C2400D9D53D /* taggings_delete.json */; };
 		5165D71722821C2400D9D53D /* taggings_add.json in Resources */ = {isa = PBXBuildFile; fileRef = 5165D71422821C2400D9D53D /* taggings_add.json */; };
@@ -55,10 +58,20 @@
 		5165D72922835F7A00D9D53D /* FeedSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5165D71D22835E9800D9D53D /* FeedSpecifier.swift */; };
 		5165D72A22835F7D00D9D53D /* HTMLFeedFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5165D71E22835E9800D9D53D /* HTMLFeedFinder.swift */; };
 		5165D73122837F3400D9D53D /* InitialFeedDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5165D73022837F3400D9D53D /* InitialFeedDownloader.swift */; };
+		516896352448EBEA00185AC5 /* FeedProviderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516896342448EBEA00185AC5 /* FeedProviderManager.swift */; };
 		5170743C232AEDB500A461A3 /* OPMLFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5170743B232AEDB500A461A3 /* OPMLFile.swift */; };
 		519E84A62433D49000D238B0 /* OPMLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A52433D49000D238B0 /* OPMLNormalizer.swift */; };
 		519E84A82434C5EF00D238B0 /* CloudKitArticlesZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */; };
 		519E84AC2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84AB2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift */; };
+		51B36305244B6135000DEF2A /* TwitterEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36304244B6135000DEF2A /* TwitterEntities.swift */; };
+		51B36307244B6234000DEF2A /* TwitterHashtag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36306244B6234000DEF2A /* TwitterHashtag.swift */; };
+		51B36309244B62A5000DEF2A /* TwitterURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36308244B62A5000DEF2A /* TwitterURL.swift */; };
+		51B3630B244B634A000DEF2A /* TwitterMention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B3630A244B634A000DEF2A /* TwitterMention.swift */; };
+		51B3630D244B6428000DEF2A /* TwitterSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B3630C244B6428000DEF2A /* TwitterSymbol.swift */; };
+		51B3630F244B6CB9000DEF2A /* TwitterExtendedEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B3630E244B6CB9000DEF2A /* TwitterExtendedEntities.swift */; };
+		51B36311244B6CFB000DEF2A /* TwitterExtendedMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36310244B6CFA000DEF2A /* TwitterExtendedMedia.swift */; };
+		51B36313244B8B5E000DEF2A /* TwitterVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36312244B8B5E000DEF2A /* TwitterVideo.swift */; };
+		51B36315244BCCA4000DEF2A /* TwitterSearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36314244BCCA4000DEF2A /* TwitterSearchResult.swift */; };
 		51BB7B84233531BC008E8144 /* AccountBehaviors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7B83233531BC008E8144 /* AccountBehaviors.swift */; };
 		51BC8FCC237EC055004F8B56 /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC8FCB237EC055004F8B56 /* Feed.swift */; };
 		51BFDECE238B508D00216323 /* ContainerIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BFDECD238B508D00216323 /* ContainerIdentifier.swift */; };
@@ -251,7 +264,6 @@
 		179DB818180A51098A9816B2 /* NewsBlurStoryHash.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurStoryHash.swift; sourceTree = "<group>"; };
 		179DBBF346CF712AB2F0E9E6 /* NewsBlurAPICaller+Internal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NewsBlurAPICaller+Internal.swift"; sourceTree = "<group>"; };
 		179DBDDC00B68411AA28941F /* NewsBlurFolderChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurFolderChange.swift; sourceTree = "<group>"; };
-		3B3A33E6238D3D6800314204 /* Secrets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = ../../Shared/Secrets.swift; sourceTree = "<group>"; };
 		3B826D9E2385C81C00FC1ADB /* FeedWranglerAuthorizationResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAuthorizationResult.swift; sourceTree = "<group>"; };
 		3B826D9F2385C81C00FC1ADB /* FeedWranglerFeedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerFeedItem.swift; sourceTree = "<group>"; };
 		3B826DA02385C81C00FC1ADB /* FeedWranglerAPICaller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAPICaller.swift; sourceTree = "<group>"; };
@@ -262,15 +274,23 @@
 		3B826DA52385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerSubscriptionsRequest.swift; sourceTree = "<group>"; };
 		3B826DA62385C81C00FC1ADB /* FeedWranglerGenericResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerGenericResult.swift; sourceTree = "<group>"; };
 		3BC23AB82385ECB100371CBA /* FeedWranglerSubscriptionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedWranglerSubscriptionResult.swift; sourceTree = "<group>"; };
+		5102FD7F244009E000534F17 /* Secrets.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Secrets.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5103A9D82422546800410853 /* CloudKitAccountDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountDelegate.swift; sourceTree = "<group>"; };
 		5107A098227DE42E00C7C3C5 /* AccountCredentialsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCredentialsTest.swift; sourceTree = "<group>"; };
 		5107A09A227DE49500C7C3C5 /* TestAccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAccountManager.swift; sourceTree = "<group>"; };
 		5107A09C227DE77700C7C3C5 /* TestTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTransport.swift; sourceTree = "<group>"; };
 		510BD110232C3801002692E4 /* AccountMetadataFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountMetadataFile.swift; sourceTree = "<group>"; };
 		510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedMetadataFile.swift; sourceTree = "<group>"; };
+		510E3316244E0CED00E7A6AF /* TwitterMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterMedia.swift; sourceTree = "<group>"; };
+		511076A3243BD33100D97C8C /* .framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = .framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		511076F4243BD96D00D97C8C /* FeedProvider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FeedProvider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		511B9803237CD4270028BCAA /* FeedIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIdentifier.swift; sourceTree = "<group>"; };
 		512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
 		512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountZoneDelegate.swift; sourceTree = "<group>"; };
+		5132AAC12448BAD90077840A /* FeedProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedProvider.swift; sourceTree = "<group>"; };
+		5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterFeedProvider.swift; sourceTree = "<group>"; };
+		5132DE802449159100806ADE /* TwitterUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterUser.swift; sourceTree = "<group>"; };
+		5132DE822449306F00806ADE /* TwitterStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterStatus.swift; sourceTree = "<group>"; };
 		513323072281070C00C30F19 /* AccountFeedbinSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinSyncTest.swift; sourceTree = "<group>"; };
 		513323092281082F00C30F19 /* subscriptions_initial.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_initial.json; sourceTree = "<group>"; };
 		5133230B2281088A00C30F19 /* subscriptions_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = subscriptions_add.json; sourceTree = "<group>"; };
@@ -279,9 +299,7 @@
 		514BF51F2391B0DB00902FE8 /* SingleArticleFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleArticleFetcher.swift; sourceTree = "<group>"; };
 		5150FFFD243823B800C1A442 /* CloudKitError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitError.swift; sourceTree = "<group>"; };
 		5154367A228EEB28005E1CDF /* FeedbinImportResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinImportResult.swift; sourceTree = "<group>"; };
-		515E4EB22324FF8C0057B0E7 /* CredentialsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsManager.swift; sourceTree = "<group>"; };
 		515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLRequest+RSWeb.swift"; sourceTree = "<group>"; };
-		515E4EB42324FF8C0057B0E7 /* Credentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
 		5165D7112282080C00D9D53D /* AccountFeedbinFolderContentsSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFeedbinFolderContentsSyncTest.swift; sourceTree = "<group>"; };
 		5165D71322821C2400D9D53D /* taggings_delete.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taggings_delete.json; sourceTree = "<group>"; };
 		5165D71422821C2400D9D53D /* taggings_add.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = taggings_add.json; sourceTree = "<group>"; };
@@ -290,11 +308,21 @@
 		5165D71D22835E9800D9D53D /* FeedSpecifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedSpecifier.swift; sourceTree = "<group>"; };
 		5165D71E22835E9800D9D53D /* HTMLFeedFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLFeedFinder.swift; sourceTree = "<group>"; };
 		5165D73022837F3400D9D53D /* InitialFeedDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialFeedDownloader.swift; sourceTree = "<group>"; };
+		516896342448EBEA00185AC5 /* FeedProviderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedProviderManager.swift; sourceTree = "<group>"; };
 		5170743B232AEDB500A461A3 /* OPMLFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLFile.swift; sourceTree = "<group>"; };
 		518B2EA52351306200400001 /* Account_project_test.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Account_project_test.xcconfig; sourceTree = "<group>"; };
 		519E84A52433D49000D238B0 /* OPMLNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLNormalizer.swift; sourceTree = "<group>"; };
 		519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitArticlesZone.swift; sourceTree = "<group>"; };
 		519E84AB2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitArticlesZoneDelegate.swift; sourceTree = "<group>"; };
+		51B36304244B6135000DEF2A /* TwitterEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterEntities.swift; sourceTree = "<group>"; };
+		51B36306244B6234000DEF2A /* TwitterHashtag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterHashtag.swift; sourceTree = "<group>"; };
+		51B36308244B62A5000DEF2A /* TwitterURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterURL.swift; sourceTree = "<group>"; };
+		51B3630A244B634A000DEF2A /* TwitterMention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterMention.swift; sourceTree = "<group>"; };
+		51B3630C244B6428000DEF2A /* TwitterSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSymbol.swift; sourceTree = "<group>"; };
+		51B3630E244B6CB9000DEF2A /* TwitterExtendedEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterExtendedEntities.swift; sourceTree = "<group>"; };
+		51B36310244B6CFA000DEF2A /* TwitterExtendedMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterExtendedMedia.swift; sourceTree = "<group>"; };
+		51B36312244B8B5E000DEF2A /* TwitterVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterVideo.swift; sourceTree = "<group>"; };
+		51B36314244BCCA4000DEF2A /* TwitterSearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSearchResult.swift; sourceTree = "<group>"; };
 		51BB7B83233531BC008E8144 /* AccountBehaviors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountBehaviors.swift; sourceTree = "<group>"; };
 		51BC8FCB237EC055004F8B56 /* Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
 		51BFDECD238B508D00216323 /* ContainerIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerIdentifier.swift; sourceTree = "<group>"; };
@@ -463,6 +491,7 @@
 				51E148EC234B8FFC0004F7A5 /* SyncDatabase.framework in Frameworks */,
 				841973FE1F6DD1BC006346C4 /* RSCore.framework in Frameworks */,
 				841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */,
+				5102FD80244009E000534F17 /* Secrets.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,14 +573,34 @@
 			path = Feedbin;
 			sourceTree = "<group>";
 		};
-		515E4EB12324FF7D0057B0E7 /* Credentials */ = {
+		5132AABB2448BA5B0077840A /* FeedProvider */ = {
 			isa = PBXGroup;
 			children = (
-				515E4EB42324FF8C0057B0E7 /* Credentials.swift */,
-				515E4EB22324FF8C0057B0E7 /* CredentialsManager.swift */,
-				515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */,
+				5132AAC12448BAD90077840A /* FeedProvider.swift */,
+				516896342448EBEA00185AC5 /* FeedProviderManager.swift */,
+				5132AAC22448BAD90077840A /* Twitter */,
 			);
-			path = Credentials;
+			path = FeedProvider;
+			sourceTree = "<group>";
+		};
+		5132AAC22448BAD90077840A /* Twitter */ = {
+			isa = PBXGroup;
+			children = (
+				51B36304244B6135000DEF2A /* TwitterEntities.swift */,
+				51B3630E244B6CB9000DEF2A /* TwitterExtendedEntities.swift */,
+				5132AAC32448BAD90077840A /* TwitterFeedProvider.swift */,
+				51B36306244B6234000DEF2A /* TwitterHashtag.swift */,
+				51B36310244B6CFA000DEF2A /* TwitterExtendedMedia.swift */,
+				51B3630A244B634A000DEF2A /* TwitterMention.swift */,
+				51B36314244BCCA4000DEF2A /* TwitterSearchResult.swift */,
+				5132DE822449306F00806ADE /* TwitterStatus.swift */,
+				51B3630C244B6428000DEF2A /* TwitterSymbol.swift */,
+				51B36308244B62A5000DEF2A /* TwitterURL.swift */,
+				5132DE802449159100806ADE /* TwitterUser.swift */,
+				51B36312244B8B5E000DEF2A /* TwitterVideo.swift */,
+				510E3316244E0CED00E7A6AF /* TwitterMedia.swift */,
+			);
+			path = Twitter;
 			sourceTree = "<group>";
 		};
 		5165D71F22835E9800D9D53D /* FeedFinder */ = {
@@ -657,6 +706,9 @@
 		8469F80F1F6DC3C10084783E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5102FD7F244009E000534F17 /* Secrets.framework */,
+				511076F4243BD96D00D97C8C /* FeedProvider.framework */,
+				511076A3243BD33100D97C8C /* .framework */,
 				51E148EB234B8FFC0004F7A5 /* SyncDatabase.framework */,
 				84EAC4812148CC6300F154AB /* RSDatabase.framework */,
 				844B2980210CE3BF004020B3 /* RSWeb.framework */,
@@ -671,7 +723,6 @@
 		848934EC1F62484F00CEBD24 = {
 			isa = PBXGroup;
 			children = (
-				3B3A33E6238D3D6800314204 /* Secrets.swift */,
 				848935101F62486800CEBD24 /* Account.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				51BB7B83233531BC008E8144 /* AccountBehaviors.swift */,
@@ -692,23 +743,24 @@
 				511B9803237CD4270028BCAA /* FeedIdentifier.swift */,
 				841974001F6DD1EC006346C4 /* Folder.swift */,
 				844B297E210CE37E004020B3 /* UnreadCountProvider.swift */,
+				515E4EB32324FF8C0057B0E7 /* URLRequest+RSWeb.swift */,
 				844B297C2106C7EC004020B3 /* WebFeed.swift */,
 				84B2D4CE2238C13D00498ADA /* WebFeedMetadata.swift */,
 				510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */,
 				5165D71F22835E9800D9D53D /* FeedFinder */,
-				515E4EB12324FF7D0057B0E7 /* Credentials */,
+				5132AABB2448BA5B0077840A /* FeedProvider */,
 				8419742B1F6DDE84006346C4 /* LocalAccount */,
-				84245C7D1FDDD2580074AFBB /* Feedbin */,
-				3B826D9D2385C81C00FC1ADB /* FeedWrangler */,
-				552032EA229D5D5A009559E0 /* ReaderAPI */,
-				9EA31339231E368100268BA0 /* Feedly */,
 				5103A9D7242253DC00410853 /* CloudKit */,
+				84245C7D1FDDD2580074AFBB /* Feedbin */,
+				9EA31339231E368100268BA0 /* Feedly */,
+				3B826D9D2385C81C00FC1ADB /* FeedWrangler */,
+				769F2630AF8DC873D4A73567 /* NewsBlur */,
+				552032EA229D5D5A009559E0 /* ReaderAPI */,
 				848935031F62484F00CEBD24 /* AccountTests */,
 				848934F71F62484F00CEBD24 /* Products */,
 				8469F80F1F6DC3C10084783E /* Frameworks */,
 				D511EEB4202422BB00712EC3 /* xcconfig */,
 				848934FA1F62484F00CEBD24 /* Info.plist */,
-				769F2630AF8DC873D4A73567 /* NewsBlur */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -1068,7 +1120,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n";
+			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  ../../buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1091,7 +1143,9 @@
 				9EA643D5239306AC0018A28C /* FeedlyFeedsSearchResponse.swift in Sources */,
 				9EAEC60E2332FEC20085D7C9 /* FeedlyFeed.swift in Sources */,
 				5144EA4E227B829A00D19003 /* FeedbinAccountDelegate.swift in Sources */,
+				5132AAC52448BAD90077840A /* TwitterFeedProvider.swift in Sources */,
 				519E84AC2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift in Sources */,
+				51B3630B244B634A000DEF2A /* TwitterMention.swift in Sources */,
 				512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */,
 				3B826DAF2385C81C00FC1ADB /* FeedWranglerGenericResult.swift in Sources */,
 				9ECC9A85234DC16E009B5144 /* FeedlyAccountDelegateError.swift in Sources */,
@@ -1100,16 +1154,20 @@
 				846E77451F6EF9B900A165E2 /* Container.swift in Sources */,
 				9EA643D3239305680018A28C /* FeedlySearchOperation.swift in Sources */,
 				5150FFFE243823B800C1A442 /* CloudKitError.swift in Sources */,
+				516896352448EBEA00185AC5 /* FeedProviderManager.swift in Sources */,
 				9E5EC15D23E0D58500A4E503 /* FeedlyFeedParser.swift in Sources */,
 				9E1D15532334304B00F4944C /* FeedlyGetStreamContentsOperation.swift in Sources */,
 				9E12B0202334696A00ADE5A0 /* FeedlyCreateFeedsForCollectionFoldersOperation.swift in Sources */,
 				552032FD229D5D5A009559E0 /* ReaderAPITagging.swift in Sources */,
 				9EAEC62A23331EE70085D7C9 /* FeedlyOrigin.swift in Sources */,
 				9E5EC15B23E01DEF00A4E503 /* FeedlyRTLTextSanitizer.swift in Sources */,
+				51B36305244B6135000DEF2A /* TwitterEntities.swift in Sources */,
+				5132DE832449306F00806ADE /* TwitterStatus.swift in Sources */,
 				511B9804237CD4270028BCAA /* FeedIdentifier.swift in Sources */,
 				84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */,
 				841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */,
 				510BD113232C3E9D002692E4 /* WebFeedMetadataFile.swift in Sources */,
+				51B36309244B62A5000DEF2A /* TwitterURL.swift in Sources */,
 				5103A9D92422546800410853 /* CloudKitAccountDelegate.swift in Sources */,
 				5165D73122837F3400D9D53D /* InitialFeedDownloader.swift in Sources */,
 				9E784EBE237E890600099B1B /* FeedlyLogoutOperation.swift in Sources */,
@@ -1117,7 +1175,6 @@
 				9EEEF71F23545CB4009E9D80 /* FeedlySendArticleStatusesOperation.swift in Sources */,
 				9EBD49C223C67784005AD5CD /* FeedlyEntryIdentifierProviding.swift in Sources */,
 				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
-				515E4EB72324FF8C0057B0E7 /* Credentials.swift in Sources */,
 				51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */,
 				9EEAE06E235D002D00E3FEE4 /* FeedlyGetCollectionsService.swift in Sources */,
 				5165D72922835F7A00D9D53D /* FeedSpecifier.swift in Sources */,
@@ -1135,6 +1192,7 @@
 				9E1773D7234575AB0056A5A8 /* FeedlyTag.swift in Sources */,
 				3B826DAB2385C81C00FC1ADB /* FeedWranglerConfig.swift in Sources */,
 				515E4EB62324FF8C0057B0E7 /* URLRequest+RSWeb.swift in Sources */,
+				51B36315244BCCA4000DEF2A /* TwitterSearchResult.swift in Sources */,
 				9EB1D576238E6A3900A753D7 /* FeedlyAddNewFeedOperation.swift in Sources */,
 				3B826DA82385C81C00FC1ADB /* FeedWranglerFeedItem.swift in Sources */,
 				9E672396236F7E68000BE141 /* OAuthAcessTokenRefreshing.swift in Sources */,
@@ -1149,21 +1207,25 @@
 				9EEEF7212355277F009E9D80 /* FeedlyIngestStarredArticleIdsOperation.swift in Sources */,
 				3BC23AB92385ECB100371CBA /* FeedWranglerSubscriptionResult.swift in Sources */,
 				5144EA49227B497600D19003 /* FeedbinAPICaller.swift in Sources */,
+				51B3630F244B6CB9000DEF2A /* TwitterExtendedEntities.swift in Sources */,
 				84B99C9F1FAE8D3200ECDEDB /* ContainerPath.swift in Sources */,
 				51BC8FCC237EC055004F8B56 /* Feed.swift in Sources */,
 				846E77501F6EF9C400A165E2 /* LocalAccountRefresher.swift in Sources */,
 				9EA643CF2391D3560018A28C /* FeedlyAddExistingFeedOperation.swift in Sources */,
 				55203300229D5D5A009559E0 /* ReaderAPICaller.swift in Sources */,
+				5132AAC42448BAD90077840A /* FeedProvider.swift in Sources */,
 				9E1D154F233371DD00F4944C /* FeedlyGetCollectionsOperation.swift in Sources */,
 				9EAEC626233318400085D7C9 /* FeedlyStream.swift in Sources */,
 				9E5DE60E23C3F4B70064DA30 /* FeedlyFetchIdsForMissingArticlesOperation.swift in Sources */,
 				3B826DA92385C81C00FC1ADB /* FeedWranglerAPICaller.swift in Sources */,
 				9EAEC60C2332FE830085D7C9 /* FeedlyCollection.swift in Sources */,
+				51B36307244B6234000DEF2A /* TwitterHashtag.swift in Sources */,
 				51E3EB41229AF61B00645299 /* AccountError.swift in Sources */,
 				9E1D155D233447F000F4944C /* FeedlyUpdateAccountFeedsWithItemsOperation.swift in Sources */,
 				51E59599228C77BC00FCC42B /* FeedbinUnreadEntry.swift in Sources */,
 				552032F8229D5D5A009559E0 /* ReaderAPIEntry.swift in Sources */,
 				552032FB229D5D5A009559E0 /* ReaderAPITag.swift in Sources */,
+				51B36313244B8B5E000DEF2A /* TwitterVideo.swift in Sources */,
 				5165D72822835F7800D9D53D /* FeedFinder.swift in Sources */,
 				9EBD49C023C67602005AD5CD /* FeedlyDownloadArticlesOperation.swift in Sources */,
 				51D58755227F53BE00900287 /* FeedbinTag.swift in Sources */,
@@ -1180,7 +1242,6 @@
 				9EAEC62823331C350085D7C9 /* FeedlyCategory.swift in Sources */,
 				3B826DAE2385C81C00FC1ADB /* FeedWranglerSubscriptionsRequest.swift in Sources */,
 				9E964EB823754AC400A7AF2E /* OAuthAuthorizationClient+Feedly.swift in Sources */,
-				3B3A33E7238D3D6800314204 /* Secrets.swift in Sources */,
 				9EF1B10923590E93000A486A /* FeedlyStreamIds.swift in Sources */,
 				84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */,
 				84CAD7161FDF2E22000F0755 /* FeedbinEntry.swift in Sources */,
@@ -1190,7 +1251,6 @@
 				51E4DB302426353D0091EB5B /* CloudKitAccountZone.swift in Sources */,
 				3B826DAD2385C81C00FC1ADB /* FeedWranglerFeedItemsRequest.swift in Sources */,
 				846E774F1F6EF9C000A165E2 /* LocalAccountDelegate.swift in Sources */,
-				515E4EB52324FF8C0057B0E7 /* CredentialsManager.swift in Sources */,
 				844B297F210CE37E004020B3 /* UnreadCountProvider.swift in Sources */,
 				9E1773D5234570E30056A5A8 /* FeedlyEntryParser.swift in Sources */,
 				512DD4CD2431098700C17B1F /* CloudKitAccountZoneDelegate.swift in Sources */,
@@ -1199,12 +1259,16 @@
 				84F1F06E2243524700DA0616 /* AccountMetadata.swift in Sources */,
 				9EF1B10723590D61000A486A /* FeedlyGetStreamIdsOperation.swift in Sources */,
 				84245C851FDDD8CB0074AFBB /* FeedbinSubscription.swift in Sources */,
+				510E3317244E0CED00E7A6AF /* TwitterMedia.swift in Sources */,
 				9EF2602C23C91FFE006D160C /* FeedlyGetUpdatedArticleIdsOperation.swift in Sources */,
 				3B826DAA2385C81C00FC1ADB /* FeedWranglerSubscription.swift in Sources */,
+				5132DE812449159100806ADE /* TwitterUser.swift in Sources */,
 				3B826DAC2385C81C00FC1ADB /* FeedWranglerAccountDelegate.swift in Sources */,
 				769F295938E5A30D03DFF88F /* NewsBlurAccountDelegate.swift in Sources */,
+				51B3630D244B6428000DEF2A /* TwitterSymbol.swift in Sources */,
 				769F2BA02EF5F329CDE45F5A /* NewsBlurAPICaller.swift in Sources */,
 				51C034DF242D65D20014DC71 /* CloudKitZoneResult.swift in Sources */,
+				51B36311244B6CFB000DEF2A /* TwitterExtendedMedia.swift in Sources */,
 				179DB28CF49F73A945EBF5DB /* NewsBlurLoginResponse.swift in Sources */,
 				179DBF4DE2562D4C532F6008 /* NewsBlurFeed.swift in Sources */,
 				179DB02FFBC17AC9798F0EBC /* NewsBlurStory.swift in Sources */,

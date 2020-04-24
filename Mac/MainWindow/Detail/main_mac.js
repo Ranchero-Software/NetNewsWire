@@ -1,13 +1,15 @@
 // Add the mouse listeners for the above functions
 function linkHover() {
 	window.onmouseover = function(event) {
-		if (event.target.matches('a')) {
-			window.webkit.messageHandlers.mouseDidEnter.postMessage(event.target.href);
+		var closestAnchor = event.target.closest('a')
+		if (closestAnchor) {
+			window.webkit.messageHandlers.mouseDidEnter.postMessage(closestAnchor.href);
 		}
 	}
 	window.onmouseout = function(event) {
-		if (event.target.matches('a')) {
-			window.webkit.messageHandlers.mouseDidExit.postMessage(event.target.href);
+		var closestAnchor = event.target.closest('a')
+		if (closestAnchor) {
+			window.webkit.messageHandlers.mouseDidExit.postMessage(closestAnchor.href);
 		}
 	}
 }

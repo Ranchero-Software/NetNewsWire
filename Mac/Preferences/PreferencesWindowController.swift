@@ -12,18 +12,19 @@ private struct PreferencesToolbarItemSpec {
 
 	let identifier: NSToolbarItem.Identifier
 	let name: String
-	let imageName: NSImage.Name
+	let image: NSImage?
 	
-	init(identifierRawValue: String, name: String, imageName: NSImage.Name) {
+	init(identifierRawValue: String, name: String, image: NSImage?) {
 		self.identifier = NSToolbarItem.Identifier(identifierRawValue)
 		self.name = name
-		self.imageName = imageName
+		self.image = image
 	}
 }
 
 private struct ToolbarItemIdentifier {
 	static let General = "General"
 	static let Accounts = "Accounts"
+	static let Extensions = "Extensions"
 	static let Advanced = "Advanced"
 }
 
@@ -33,15 +34,24 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 	private var viewControllers = [String: NSViewController]()
 	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
 		var specs = [PreferencesToolbarItemSpec]()
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General, name: NSLocalizedString("General", comment: "Preferences"), imageName: NSImage.preferencesGeneralName)]
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts, name: NSLocalizedString("Accounts", comment: "Preferences"), imageName: NSImage.userAccountsName)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General,
+											 name: NSLocalizedString("General", comment: "Preferences"),
+											 image: NSImage(named: NSImage.preferencesGeneralName))]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
+											 name: NSLocalizedString("Accounts", comment: "Preferences"),
+											 image: NSImage(named: NSImage.userAccountsName))]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Extensions,
+											 name: NSLocalizedString("Extensions", comment: "Preferences"),
+											 image: AppAssets.extensionPreference)]
 
 		// Omit the Advanced Preferences for now because the Software Update related functionality is
 		// forbidden/non-applicable, and we can rely upon Apple to some extent for crash reports. We
 		// can add back the Crash Reporter preferences when we're ready to dynamically shuffle the rest
 		// of the content in this tab.
 		#if !MAC_APP_STORE
-			specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced, name: NSLocalizedString("Advanced", comment: "Preferences"), imageName: NSImage.advancedName)]
+			specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
+												 name: NSLocalizedString("Advanced", comment: "Preferences"),
+												 image: NSImage(named: NSImage.advancedName))]
 		#endif
 		return specs
 	}()
@@ -84,7 +94,7 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		toolbarItem.target = self
 		toolbarItem.label = toolbarItemSpec.name
 		toolbarItem.paletteLabel = toolbarItem.label
-		toolbarItem.image = NSImage(named: toolbarItemSpec.imageName)
+		toolbarItem.image = toolbarItemSpec.image
 
 		return toolbarItem
 	}

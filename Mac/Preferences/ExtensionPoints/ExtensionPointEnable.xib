@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ExtensionPointEnableWindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="descriptionLabel" destination="thC-ep-vXS" id="o9I-vp-z54"/>
+                <outlet property="enableButton" destination="sGb-z5-IdF" id="yNw-Nn-4Kq"/>
+                <outlet property="imageView" destination="LSA-B8-aGZ" id="AN5-t1-d52"/>
+                <outlet property="titleLabel" destination="iAC-tU-rvZ" id="vMx-2H-b44"/>
+                <outlet property="window" destination="HNe-Jr-kev" id="C8n-l1-WhI"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="HNe-Jr-kev">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="407" height="156"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" wantsLayer="YES" id="qAd-AQ-5ue">
+                <rect key="frame" x="0.0" y="0.0" width="407" height="156"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <stackView distribution="fill" orientation="horizontal" alignment="bottom" spacing="19" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nLd-4a-dQg">
+                        <rect key="frame" x="109" y="89" width="189" height="51"/>
+                        <subviews>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LSA-B8-aGZ">
+                                <rect key="frame" x="0.0" y="0.0" width="36" height="36"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="36" id="SuU-du-YHk"/>
+                                    <constraint firstAttribute="height" constant="36" id="qxc-dc-d8U"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSAdvanced" id="5qe-pZ-t40"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iAC-tU-rvZ">
+                                <rect key="frame" x="53" y="13" width="138" height="38"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Extension" id="kuv-Xu-aIk">
+                                    <font key="font" metaFont="system" size="32"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <visibilityPriorities>
+                            <integer value="1000"/>
+                            <integer value="1000"/>
+                        </visibilityPriorities>
+                        <customSpacing>
+                            <real value="3.4028234663852886e+38"/>
+                            <real value="3.4028234663852886e+38"/>
+                        </customSpacing>
+                    </stackView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sGb-z5-IdF">
+                        <rect key="frame" x="312" y="13" width="81" height="32"/>
+                        <buttonCell key="cell" type="push" title="Enable" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Oh8-q3-Aup">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="enable:" target="-2" id="BN5-u0-DNe"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aKy-4s-WDM">
+                        <rect key="frame" x="231" y="13" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2nM-LA-6fh">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancel:" target="-2" id="WK9-uJ-mIw"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="thC-ep-vXS">
+                        <rect key="frame" x="52" y="57" width="304" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="300" id="igx-s6-xe9"/>
+                        </constraints>
+                        <textFieldCell key="cell" selectable="YES" allowsUndo="NO" alignment="left" allowsEditingTextAttributes="YES" id="aUU-dO-RNt">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="iAC-tU-rvZ" firstAttribute="top" secondItem="qAd-AQ-5ue" secondAttribute="top" constant="16" id="Cxn-GQ-jzh"/>
+                    <constraint firstAttribute="bottom" secondItem="sGb-z5-IdF" secondAttribute="bottom" constant="20" id="Moe-ce-JeY"/>
+                    <constraint firstAttribute="trailing" secondItem="sGb-z5-IdF" secondAttribute="trailing" constant="20" id="OdS-3p-qyB"/>
+                    <constraint firstItem="sGb-z5-IdF" firstAttribute="leading" secondItem="aKy-4s-WDM" secondAttribute="trailing" constant="11" id="QPh-zm-9uL"/>
+                    <constraint firstItem="thC-ep-vXS" firstAttribute="centerX" secondItem="qAd-AQ-5ue" secondAttribute="centerX" id="fC4-fE-SyO"/>
+                    <constraint firstItem="aKy-4s-WDM" firstAttribute="centerY" secondItem="sGb-z5-IdF" secondAttribute="centerY" id="naD-Tq-iwx"/>
+                    <constraint firstItem="thC-ep-vXS" firstAttribute="top" secondItem="nLd-4a-dQg" secondAttribute="bottom" constant="16" id="qRM-G0-del"/>
+                    <constraint firstItem="aKy-4s-WDM" firstAttribute="top" secondItem="thC-ep-vXS" secondAttribute="bottom" constant="16" id="vrt-3v-j4f"/>
+                    <constraint firstItem="nLd-4a-dQg" firstAttribute="centerX" secondItem="qAd-AQ-5ue" secondAttribute="centerX" id="xXl-e5-lnN"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="fo9-G5-zJh"/>
+            </connections>
+            <point key="canvasLocation" x="103.5" y="89.5"/>
+        </window>
+    </objects>
+    <resources>
+        <image name="NSAdvanced" width="32" height="32"/>
+    </resources>
+</document>

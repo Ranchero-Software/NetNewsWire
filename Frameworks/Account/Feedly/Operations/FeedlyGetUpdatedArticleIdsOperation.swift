@@ -8,6 +8,7 @@
 
 import Foundation
 import os.log
+import Secrets
 
 /// Single responsibility is to identify articles that have changed since a particular date.
 ///

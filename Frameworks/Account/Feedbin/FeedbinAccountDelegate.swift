@@ -13,6 +13,7 @@ import RSParser
 import RSWeb
 import SyncDatabase
 import os.log
+import Secrets
 
 public enum FeedbinAccountDelegateError: String, Error {
 	case invalidParameter = "There was an invalid parameter passed."

@@ -77,6 +77,22 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorProgress4")
 	}()
 	
+	static var extensionPointMarsEdit: RSImage = {
+		return RSImage(named: "extensionPointMarsEdit")!
+	}()
+	
+	static var extensionPointMicroblog: RSImage = {
+		return RSImage(named: "extensionPointMicroblog")!
+	}()
+	
+	static var extensionPointTwitter: RSImage = {
+		return RSImage(named: "extensionPointTwitter")!
+	}()
+	
+	static var extensionPreference: RSImage? = {
+		return RSImage(contentsOfFile: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/KEXT.icns")
+	}()
+		
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()

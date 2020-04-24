@@ -9,6 +9,7 @@
 import Foundation
 import os.log
 import RSWeb
+import Secrets
 
 final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 

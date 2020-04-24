@@ -70,6 +70,6 @@ fastlane/screenshots
 fastlane/test_output
 
 
-
 /Shared/Secrets.swift
+/Frameworks/Secrets/Secrets.swift
 *.py[cod]

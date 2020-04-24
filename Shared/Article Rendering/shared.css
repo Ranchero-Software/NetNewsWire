@@ -235,6 +235,25 @@ blockquote {
    max-height: 1em;
 }
 
+/* Twitter */
+
+.twitterAvatar {
+	vertical-align: middle;
+	border-radius: 4px;
+	height: 24px;
+	width: 24px;
+}
+
+.twitterUsername {
+	margin-left: 4px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.twitterTimestamp {
+	font-size: 66%;
+}
+
 /*Block ads and junk*/
 
 iframe[src*="feedads"],

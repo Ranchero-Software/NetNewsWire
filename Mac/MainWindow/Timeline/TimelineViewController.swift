@@ -18,6 +18,12 @@ protocol TimelineDelegate: class  {
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
+enum TimelineShowFeedName {
+	case none
+	case byline
+	case feed
+}
+
 final class TimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
 
 	@IBOutlet var tableView: TimelineTableView!
@@ -41,23 +47,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
 				unreadCount = 0
-				if let representedObjects = representedObjects {
-					if representedObjects.count == 1 && representedObjects.first is WebFeed {
-						showFeedNames = false
-					}
-					else {
-						showFeedNames = true
-					}
-				}
-				else {
-					showFeedNames = false
-				}
 
 				selectionDidChange(nil)
 				if showsSearchResults {
 					fetchAndReplaceArticlesAsync()
-				}
-				else {
+				} else {
 					fetchAndReplaceArticlesSync()
 					if articles.count > 0 {
 						tableView.scrollRowToVisible(0)
@@ -85,9 +79,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			defer {
 				updateUnreadCount()
 			}
+
 			if articles == oldValue {
 				return
 			}
+
 			if articles.representSameArticlesInSameOrder(as: oldValue) {
 				// When the array is the same — same articles, same order —
 				// but some data in some of the articles may have changed.
@@ -96,7 +92,20 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				reloadVisibleCells()
 				return
 			}
-			updateShowIcons()
+
+			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is WebFeed {
+				showFeedNames = {
+					for article in articles {
+						if !article.byline().isEmpty {
+							return .byline
+						}
+					}
+					return .none
+				}()
+			} else {
+				showFeedNames = .feed
+			}
+
 			articleRowMap = [String: Int]()
 			tableView.reloadData()
 		}
@@ -117,7 +126,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var articleRowMap = [String: Int]() // articleID: rowIndex
 	private var cellAppearance: TimelineCellAppearance!
 	private var cellAppearanceWithIcon: TimelineCellAppearance!
-	private var showFeedNames = false {
+	private var showFeedNames: TimelineShowFeedName = .none {
 		didSet {
 			if showFeedNames != oldValue {
 				updateShowIcons()
@@ -663,7 +672,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: true, feedName: "Prototype Feed Name", iconImage: nil, showIcon: false, featuredImage: nil)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
@@ -810,7 +819,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 		let iconImage = article.iconImage()
-		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
+		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, featuredImage: nil)
 	}
 
 	private func iconFor(_ article: Article) -> IconImage? {
@@ -946,19 +955,24 @@ private extension TimelineViewController {
 	}
 
 	func updateShowIcons() {
-		if showFeedNames {
+		if showFeedNames == .feed {
 			self.showIcons = true
 			return
 		}
 
+		if showFeedNames == .none {
+			self.showIcons = false
+			return
+		}
+		
 		for article in articles {
 			if let authors = article.authors {
-			for author in authors {
-				if author.avatarURL != nil {
-					self.showIcons = true
-					return
+				for author in authors {
+					if author.avatarURL != nil {
+						self.showIcons = true
+						return
+					}
 				}
-			}
 			}
 		}
 

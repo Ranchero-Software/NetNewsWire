@@ -40,27 +40,27 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsAccountTableViewCell
+		let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 		
 		switch addableAccountTypes[indexPath.row] {
 		case .onMyMac:
-			cell.accountNameLabel?.text = Account.defaultLocalAccountName
-			cell.accountImage?.image = AppAssets.image(for: .onMyMac)
+			cell.comboNameLabel?.text = Account.defaultLocalAccountName
+			cell.comboImage?.image = AppAssets.image(for: .onMyMac)
 		case .cloudKit:
-			cell.accountNameLabel?.text = NSLocalizedString("iCloud", comment: "iCloud")
-			cell.accountImage?.image = AppAssets.accountCloudKitImage
+			cell.comboNameLabel?.text = NSLocalizedString("iCloud", comment: "iCloud")
+			cell.comboImage?.image = AppAssets.accountCloudKitImage
 		case .feedbin:
-			cell.accountNameLabel?.text = NSLocalizedString("Feedbin", comment: "Feedbin")
-			cell.accountImage?.image = AppAssets.accountFeedbinImage
+			cell.comboNameLabel?.text = NSLocalizedString("Feedbin", comment: "Feedbin")
+			cell.comboImage?.image = AppAssets.accountFeedbinImage
 		case .feedWrangler:
-			cell.accountNameLabel?.text = NSLocalizedString("Feed Wrangler", comment: "Feed Wrangler")
-			cell.accountImage?.image = AppAssets.accountFeedWranglerImage
+			cell.comboNameLabel?.text = NSLocalizedString("Feed Wrangler", comment: "Feed Wrangler")
+			cell.comboImage?.image = AppAssets.accountFeedWranglerImage
 		case .feedly:
-			cell.accountNameLabel?.text = NSLocalizedString("Feedly", comment: "Feedly")
-			cell.accountImage?.image = AppAssets.accountFeedlyImage
+			cell.comboNameLabel?.text = NSLocalizedString("Feedly", comment: "Feedly")
+			cell.comboImage?.image = AppAssets.accountFeedlyImage
 		case .newsBlur:
-			cell.accountNameLabel?.text = NSLocalizedString("NewsBlur", comment: "NewsBlur")
-			cell.accountImage?.image = AppAssets.accountNewsBlurImage
+			cell.comboNameLabel?.text = NSLocalizedString("NewsBlur", comment: "NewsBlur")
+			cell.comboImage?.image = AppAssets.accountNewsBlurImage
 		default:
 			break
 		}

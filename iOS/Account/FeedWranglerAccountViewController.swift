@@ -9,6 +9,7 @@
 import UIKit
 import Account
 import RSWeb
+import Secrets
 
 class FeedWranglerAccountViewController: UITableViewController {
 

@@ -23,6 +23,12 @@ enum SearchScope: Int {
 	case global = 1
 }
 
+enum ShowFeedName {
+	case none
+	case byline
+	case feed
+}
+
 class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var undoableCommands = [UndoableCommand]()
@@ -159,7 +165,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var timelineMiddleIndexPath: IndexPath?
 	
-	private(set) var showFeedNames = false
+	private(set) var showFeedNames = ShowFeedName.none
 	private(set) var showIcons = false
 
 	var prevFeedIndexPath: IndexPath? {
@@ -1454,13 +1460,25 @@ private extension SceneCoordinator {
 	func updateShowNamesAndIcons() {
 		
 		if timelineFeed is WebFeed {
-			showFeedNames = false
+			showFeedNames = {
+				for article in articles {
+					if !article.byline().isEmpty {
+						return .byline
+					}
+				}
+				return .none
+			}()
 		} else {
-			showFeedNames = true
+			showFeedNames = .feed
 		}
 
-		if showFeedNames {
+		if showFeedNames == .feed {
 			self.showIcons = true
+			return
+		}
+		
+		if showFeedNames == .none {
+			self.showIcons = false
 			return
 		}
 		

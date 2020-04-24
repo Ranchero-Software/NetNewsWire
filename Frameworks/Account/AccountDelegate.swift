@@ -9,6 +9,7 @@
 import Foundation
 import Articles
 import RSWeb
+import Secrets
 
 protocol AccountDelegate {
 

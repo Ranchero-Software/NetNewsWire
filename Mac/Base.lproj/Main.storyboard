@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -70,7 +70,13 @@
                                     <items>
                                         <menuItem title="New Feed" keyEquivalent="n" id="Was-JA-tGl">
                                             <connections>
-                                                <action selector="showAddFeedWindow:" target="Ady-hI-5gd" id="LkT-kx-aCR"/>
+                                                <action selector="showAddWebFeedWindow:" target="Ady-hI-5gd" id="LkT-kx-aCR"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="New Twitter Feed" id="Wlk-34-AUR">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showAddTwitterFeedWindow:" target="Ady-hI-5gd" id="9gI-jL-Hmv"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="New Folder" keyEquivalent="N" id="wkh-LX-Xp1">

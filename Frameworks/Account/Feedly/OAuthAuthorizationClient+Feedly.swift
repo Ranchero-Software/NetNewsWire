@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Secrets
 
 extension OAuthAuthorizationClient {
 	

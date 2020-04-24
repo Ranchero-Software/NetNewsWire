@@ -16,6 +16,7 @@ import RSParser
 import Articles
 import ArticlesDatabase
 import RSWeb
+import Secrets
 
 public enum CloudKitAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."
@@ -211,72 +212,20 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		let editedName = name == nil || name!.isEmpty ? nil : name
-
-		guard let url = URL(string: urlString) else {
+		guard let url = URL(string: urlString), let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
 		}
 		
-		BatchUpdate.shared.start()
-		refreshProgress.addToNumberOfTasksAndRemaining(3)
-		FeedFinder.find(url: url) { result in
-			
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success(let feedSpecifiers):
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
-					BatchUpdate.shared.end()
-					self.refreshProgress.clear()
-					completion(.failure(AccountError.createErrorNotFound))
-					return
-				}
-				
-				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
-					BatchUpdate.shared.end()
-					self.refreshProgress.clear()
-					completion(.failure(AccountError.createErrorAlreadySubscribed))
-					return
-				}
-				
-				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: editedName, container: container) { result in
+		let editedName = name == nil || name!.isEmpty ? nil : name
 
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success(let externalID):
-						
-						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-						feed.editedName = editedName
-						feed.externalID = externalID
-						container.addWebFeed(feed)
-
-						InitialFeedDownloader.download(url) { parsedFeed in
-							self.refreshProgress.completeTask()
-
-							if let parsedFeed = parsedFeed {
-								account.update(feed, with: parsedFeed, {_ in
-									BatchUpdate.shared.end()
-									completion(.success(feed))
-								})
-							}
-							
-						}
-
-					case .failure(let error):
-						BatchUpdate.shared.end()
-						self.refreshProgress.clear()
-						completion(.failure(error))
-					}
-				}
-								
-			case .failure:
-				BatchUpdate.shared.end()
-				self.refreshProgress.clear()
-				completion(.failure(AccountError.createErrorNotFound))
-			}
-			
+		// Username should be part of the URL on new feed adds
+		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
+			createProviderWebFeed(for: account, urlComponents: urlComponents, editedName: editedName, container: container, feedProvider: feedProvider, completion: completion)
+		} else {
+			createRSSWebFeed(for: account, url: url, editedName: editedName, container: container, completion: completion)
 		}
-
+		
 	}
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -545,7 +494,7 @@ private extension CloudKitAccountDelegate {
 						self.sendArticleStatus(for: account) { result in
 							switch result {
 							case .success:
-								self.refreshProgress.completeTask()
+								self.refreshProgress.clear()
 								completion(.success(()))
 							case .failure(let error):
 								fail(error)
@@ -593,7 +542,8 @@ private extension CloudKitAccountDelegate {
 
 								self.refreshProgress.completeTask()
 
-								self.refresher.refreshFeeds(webFeeds) {
+								self.refreshWebFeeds(account, webFeeds) {
+									self.refreshProgress.clear()
 									account.metadata.lastArticleFetchEndTime = Date()
 								}
 
@@ -614,6 +564,224 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 	
+	func refreshWebFeeds(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
+
+		var newArticles = Set<Article>()
+		var deletedArticles = Set<Article>()
+
+		var refresherWebFeeds = Set<WebFeed>()
+		let group = DispatchGroup()
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		
+		for webFeed in webFeeds {
+			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
+				group.enter()
+				feedProvider.refresh(webFeed) { result in
+					switch result {
+					case .success(let parsedItems):
+						
+						account.update(webFeed.webFeedID, with: parsedItems) { result in
+							switch result {
+							case .success(let articleChanges):
+								
+								newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
+								deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
+
+								self.refreshProgress.completeTask()
+								group.leave()
+								
+							case .failure(let error):
+								os_log(.error, log: self.log, "Feed Provider refresh update error: %@.", error.localizedDescription)
+								self.refreshProgress.completeTask()
+								group.leave()
+							}
+							
+						}
+
+					case .failure(let error):
+						os_log(.error, log: self.log, "Feed Provider refresh error: %@.", error.localizedDescription)
+						self.refreshProgress.completeTask()
+						group.leave()
+					}
+				}
+			} else {
+				refresherWebFeeds.insert(webFeed)
+			}
+		}
+		
+		group.enter()
+		refresher.refreshFeeds(refresherWebFeeds) {
+			group.leave()
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			
+			self.articlesZone.deleteArticles(deletedArticles) { _ in
+				self.refreshProgress.completeTask()
+				self.articlesZone.sendNewArticles(newArticles) { _ in
+					self.refreshProgress.completeTask()
+					completion()
+				}
+			}
+			
+		}
+		
+	}
+
+	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		
+		feedProvider.assignName(urlComponents) { result in
+			self.refreshProgress.completeTask()
+			switch result {
+				
+			case .success(let name):
+
+				guard let urlString = urlComponents.url?.absoluteString else {
+					completion(.failure(AccountError.createErrorNotFound))
+					return
+				}
+				
+				self.accountZone.createWebFeed(url: urlString, editedName: editedName, container: container) { result in
+
+					self.refreshProgress.completeTask()
+					switch result {
+					case .success(let externalID):
+
+						let feed = account.createWebFeed(with: name, url: urlString, webFeedID: urlString, homePageURL: nil)
+						feed.editedName = editedName
+						feed.externalID = externalID
+						container.addWebFeed(feed)
+
+						feedProvider.refresh(feed) { result in
+							self.refreshProgress.completeTask()
+							switch result {
+							case .success(let parsedItems):
+								
+								account.update(urlString, with: parsedItems) { result in
+									switch result {
+									case .success(let articleChanges):
+										
+										let newArticles = articleChanges.newArticles ?? Set<Article>()
+										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+
+										self.articlesZone.deleteArticles(deletedArticles) { _ in
+											self.refreshProgress.completeTask()
+											self.articlesZone.sendNewArticles(newArticles) { _ in
+												self.refreshProgress.clear()
+												completion(.success(feed))
+											}
+										}
+										
+									case .failure(let error):
+										self.refreshProgress.clear()
+										completion(.failure(error))
+									}
+									
+								}
+								
+							case .failure:
+								self.refreshProgress.clear()
+								completion(.failure(AccountError.createErrorNotFound))
+							}
+						}
+						
+					case .failure(let error):
+						self.refreshProgress.clear()
+						completion(.failure(error))
+					}
+				}
+
+			case .failure(let error):
+				self.refreshProgress.clear()
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		BatchUpdate.shared.start()
+		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		FeedFinder.find(url: url) { result in
+			
+			self.refreshProgress.completeTask()
+			switch result {
+			case .success(let feedSpecifiers):
+				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
+					BatchUpdate.shared.end()
+					self.refreshProgress.clear()
+					completion(.failure(AccountError.createErrorNotFound))
+					return
+				}
+				
+				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
+					BatchUpdate.shared.end()
+					self.refreshProgress.clear()
+					completion(.failure(AccountError.createErrorAlreadySubscribed))
+					return
+				}
+				
+				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: editedName, container: container) { result in
+
+					self.refreshProgress.completeTask()
+					switch result {
+					case .success(let externalID):
+						
+						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+						feed.editedName = editedName
+						feed.externalID = externalID
+						container.addWebFeed(feed)
+
+						InitialFeedDownloader.download(url) { parsedFeed in
+							self.refreshProgress.completeTask()
+
+							if let parsedFeed = parsedFeed {
+								account.update(feed, with: parsedFeed) { result in
+									switch result {
+									case .success(let articleChanges):
+										
+										BatchUpdate.shared.end()
+										let newArticles = articleChanges.newArticles ?? Set<Article>()
+										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+
+										self.articlesZone.deleteArticles(deletedArticles) { _ in
+											self.refreshProgress.completeTask()
+											self.articlesZone.sendNewArticles(newArticles) { _ in
+												self.refreshProgress.clear()
+												completion(.success(feed))
+											}
+										}
+										
+									case .failure(let error):
+										self.refreshProgress.clear()
+										completion(.failure(error))
+									}
+									
+								}
+							} else {
+								self.refreshProgress.clear()
+								completion(.success(feed))
+							}
+							
+						}
+
+					case .failure(let error):
+						BatchUpdate.shared.end()
+						self.refreshProgress.clear()
+						completion(.failure(error))
+					}
+				}
+								
+			case .failure:
+				BatchUpdate.shared.end()
+				self.refreshProgress.clear()
+				completion(.failure(AccountError.createErrorNotFound))
+			}
+			
+		}
+	}
+
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeeds(account.topLevelWebFeeds)
@@ -643,7 +811,6 @@ extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	}
 	
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
-		refreshProgress.clear()
 	}
 	
 }

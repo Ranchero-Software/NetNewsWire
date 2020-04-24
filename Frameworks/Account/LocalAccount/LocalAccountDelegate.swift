@@ -7,17 +7,21 @@
 //
 
 import Foundation
+import os.log
 import RSCore
 import RSParser
 import Articles
 import ArticlesDatabase
 import RSWeb
+import Secrets
 
 public enum LocalAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."
 }
 
 final class LocalAccountDelegate: AccountDelegate {
+
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccount")
 
 	weak var account: Account?
 	
@@ -35,23 +39,55 @@ final class LocalAccountDelegate: AccountDelegate {
 	var accountMetadata: AccountMetadata?
 
 	let refreshProgress = DownloadProgress(numberOfTasks: 0)
-	var refreshAllCompletion: ((Result<Void, Error>) -> Void)? = nil
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
 		completion()
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard refreshAllCompletion == nil else {
+		guard refreshProgress.isComplete else {
 			completion(.success(()))
 			return
 		}
-		
-		refreshAllCompletion = completion
-		
+
+		var refresherWebFeeds = Set<WebFeed>()
 		let webFeeds = account.flattenedWebFeeds()
-		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
-		refresher?.refreshFeeds(webFeeds)
+		
+		let group = DispatchGroup()
+		
+		for webFeed in webFeeds {
+			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
+				refreshProgress.addToNumberOfTasksAndRemaining(1)
+				group.enter()
+				feedProvider.refresh(webFeed) { result in
+					switch result {
+					case .success(let parsedItems):
+						account.update(webFeed.webFeedID, with: parsedItems) { _ in
+							self.refreshProgress.completeTask()
+							group.leave()
+						}
+					case .failure(let error):
+						os_log(.error, log: self.log, "Feed Provider refresh error: %@.", error.localizedDescription)
+						self.refreshProgress.completeTask()
+						group.leave()
+					}
+				}
+			} else {
+				refresherWebFeeds.insert(webFeed)
+			}
+		}
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(refresherWebFeeds.count)
+		group.enter()
+		refresher?.refreshFeeds(refresherWebFeeds) {
+			group.leave()
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			account.metadata.lastArticleFetchEndTime = Date()
+			completion(.success(()))
+		}
+		
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -105,52 +141,17 @@ final class LocalAccountDelegate: AccountDelegate {
 	}
 	
 	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		guard let url = URL(string: urlString) else {
+		guard let url = URL(string: urlString), let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		FeedFinder.find(url: url) { result in
-			
-			switch result {
-			case .success(let feedSpecifiers):
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
-					let url = URL(string: bestFeedSpecifier.urlString) else {
-						self.refreshProgress.completeTask()
-						completion(.failure(AccountError.createErrorNotFound))
-						return
-				}
-				
-				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
-					self.refreshProgress.completeTask()
-					completion(.failure(AccountError.createErrorAlreadySubscribed))
-					return
-				}
-				
-				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-				
-				InitialFeedDownloader.download(url) { parsedFeed in
-					self.refreshProgress.completeTask()
-
-					if let parsedFeed = parsedFeed {
-						account.update(feed, with: parsedFeed, {_ in})
-					}
-					
-					feed.editedName = name
-					
-					container.addWebFeed(feed)
-					completion(.success(feed))
-					
-				}
-				
-			case .failure:
-				self.refreshProgress.completeTask()
-				completion(.failure(AccountError.createErrorNotFound))
-			}
-			
+		// Username should be part of the URL on new feed adds
+		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
+			createProviderWebFeed(for: account, urlComponents: urlComponents, editedName: name, container: container, feedProvider: feedProvider, completion: completion)
+		} else {
+			createRSSWebFeed(for: account, url: url, editedName: name, container: container, completion: completion)
 		}
-
 	}
 
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -244,9 +245,101 @@ extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 	
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
 		self.refreshProgress.clear()
-		account?.metadata.lastArticleFetchEndTime = Date()
-		refreshAllCompletion?(.success(()))
-		refreshAllCompletion = nil
+	}
+	
+}
+
+private extension LocalAccountDelegate {
+	
+	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		
+		feedProvider.assignName(urlComponents) { result in
+			self.refreshProgress.completeTask()
+			switch result {
+				
+			case .success(let name):
+
+				guard let urlString = urlComponents.url?.absoluteString else {
+					completion(.failure(AccountError.createErrorNotFound))
+					return
+				}
+
+				let feed = account.createWebFeed(with: name, url: urlString, webFeedID: urlString, homePageURL: nil)
+				feed.editedName = editedName
+				container.addWebFeed(feed)
+
+				feedProvider.refresh(feed) { result in
+					self.refreshProgress.completeTask()
+					switch result {
+					case .success(let parsedItems):
+						account.update(urlString, with: parsedItems) { _ in
+							completion(.success(feed))
+						}
+					case .failure:
+						completion(.failure(AccountError.createErrorNotFound))
+					}
+				}
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+
+		// We need to use a batch update here because we need to assign add the feed to the
+		// container before the name has been downloaded.  This will put it in the sidebar
+		// with an Untitled name if we don't delay it being added to the sidebar.
+		BatchUpdate.shared.start()
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		FeedFinder.find(url: url) { result in
+			
+			switch result {
+			case .success(let feedSpecifiers):
+				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+					let url = URL(string: bestFeedSpecifier.urlString) else {
+						self.refreshProgress.completeTask()
+						BatchUpdate.shared.end()
+						completion(.failure(AccountError.createErrorNotFound))
+						return
+				}
+				
+				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
+					self.refreshProgress.completeTask()
+					BatchUpdate.shared.end()
+					completion(.failure(AccountError.createErrorAlreadySubscribed))
+					return
+				}
+				
+				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+				feed.editedName = editedName
+				container.addWebFeed(feed)
+
+				InitialFeedDownloader.download(url) { parsedFeed in
+					self.refreshProgress.completeTask()
+
+					if let parsedFeed = parsedFeed {
+						account.update(feed, with: parsedFeed, {_ in
+							BatchUpdate.shared.end()
+							completion(.success(feed))
+						})
+					} else {
+						BatchUpdate.shared.end()
+						completion(.failure(AccountError.createErrorNotFound))
+					}
+					
+				}
+				
+			case .failure:
+				BatchUpdate.shared.end()
+				self.refreshProgress.completeTask()
+				completion(.failure(AccountError.createErrorNotFound))
+			}
+			
+		}
+		
 	}
 	
 }

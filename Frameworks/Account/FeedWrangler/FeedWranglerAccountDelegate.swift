@@ -12,6 +12,7 @@ import RSParser
 import RSWeb
 import SyncDatabase
 import os.log
+import Secrets
 
 final class FeedWranglerAccountDelegate: AccountDelegate {
 	
