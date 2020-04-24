@@ -224,13 +224,12 @@ private extension CloudKitAcountZoneDelegate {
 			
 		} else {
 			
-			container.addWebFeed(webFeed)
-			
 			refreshProgress?.addToNumberOfTasksAndRemaining(1)
 			InitialFeedDownloader.download(url) { parsedFeed in
 				self.refreshProgress?.completeTask()
 				if let parsedFeed = parsedFeed {
 					account.update(webFeed, with: parsedFeed, { _ in
+						container.addWebFeed(webFeed)
 						completion(webFeed)
 					})
 				} else {
