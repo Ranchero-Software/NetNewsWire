@@ -86,3 +86,38 @@ public extension Array where Element == Article {
 		return map { $0.articleID }
 	}
 }
+
+public extension Article {
+	static let allowedTags: Set = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em", "i", "ins", "kbd", "mark", "q", /* "rb", "rp", "rt", "rtc", "ruby", */ "s", "samp", "small", "strong", "sub", "sup", "time", "u", "var"]
+
+	func sanitizedTitle(forHTML: Bool = true) -> String? {
+		guard let title = title else { return nil }
+
+		let scanner = Scanner(string: title)
+		scanner.charactersToBeSkipped = nil
+		var result = ""
+		result.reserveCapacity(title.count)
+
+		while !scanner.isAtEnd {
+			if let text = scanner.scanUpToString("<") {
+				result.append(text)
+			}
+
+			if let _ = scanner.scanString("<") {
+				// All the allowed tags currently don't allow attributes
+				if let tag = scanner.scanUpToString(">") {
+					if Self.allowedTags.contains(tag.replacingOccurrences(of: "/", with: "")) {
+						forHTML ? result.append("<\(tag)>") : result.append("")
+					} else {
+						forHTML ? result.append("&lt;\(tag)&gt;") : result.append("<\(tag)>")
+					}
+
+					let _ = scanner.scanString(">")
+				}
+			}
+		}
+
+		return result
+	}
+
+}

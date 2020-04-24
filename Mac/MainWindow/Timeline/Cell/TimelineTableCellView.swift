@@ -221,7 +221,7 @@ private extension TimelineTableCellView {
 
 	func updateTitleView() {
 
-		updateTextFieldText(titleView, cellData?.title)
+		updateTextFieldAttributedText(titleView, cellData?.attributedTitle)
 	}
 
 	func updateSummaryView() {
@@ -243,6 +243,19 @@ private extension TimelineTableCellView {
 		let s = text ?? ""
 		if textField.stringValue != s {
 			textField.stringValue = s
+			needsLayout = true
+		}
+	}
+
+	func updateTextFieldAttributedText(_ textField: NSTextField, _ text: NSAttributedString?) {
+		var s = text ?? NSAttributedString(string: "")
+
+		if let fieldFont = textField.font, let color = textField.textColor {
+			s = s.adding(font: fieldFont, color: color)
+		}
+
+		if textField.attributedStringValue != s {
+			textField.attributedStringValue = s
 			needsLayout = true
 		}
 	}
