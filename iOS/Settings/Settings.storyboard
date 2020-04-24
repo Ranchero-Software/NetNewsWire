@@ -519,10 +519,10 @@
             </objects>
             <point key="canvasLocation" x="284" y="151"/>
         </scene>
-        <!--Add Account View Controller-->
+        <!--Add Account-->
         <scene sceneID="HbE-f2-Dbd">
             <objects>
-                <tableViewController storyboardIdentifier="AddAccountViewController" id="b00-4A-bV6" customClass="AddAccountViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="AddAccountViewController" title="Add Account" id="b00-4A-bV6" customClass="AddAccountViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="nw8-FO-Me5">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
