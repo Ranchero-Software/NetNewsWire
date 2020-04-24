@@ -43,12 +43,8 @@ body .header a:link, body .header a:visited {
 }
 
 pre {
-	line-height: 1.4286em;
 	border: 1px solid var(--secondary-accent-color);
 	padding: 5px;
-}
-code, pre {
-	font-size: .8235rem;
 }
 
 .nnw-overflow table {

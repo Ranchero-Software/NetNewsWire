@@ -121,9 +121,12 @@ pre {
 	word-break: normal;
 }
 
+pre {
+	line-height: 1.4286em;
+}
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
-	font-size: .8235rem;
+	font-size: .8235em;
 	-webkit-hyphens: none;
 }
 
@@ -153,10 +156,12 @@ code, pre {
 	border-left: none;
 	padding: 5px;
 }
-.nnw-overflow tr td:last-child, .nnw-overflow tr th:last-child {
+
+.nnw-overflow tr :matches(td, th):last-child {
 	border-right: none;
 }
-.nnw-overflow tr:last-child td, .nnw-overflow tr:last-child th {
+
+.nnw-overflow :matches(thead, tbody, tfoot):last-child > tr:last-child :matches(td, th) {
 	border-bottom: none;
 }
 .nnw-overflow td pre {
