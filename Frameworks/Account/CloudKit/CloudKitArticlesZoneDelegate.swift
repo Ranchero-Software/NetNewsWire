@@ -30,6 +30,10 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		return refresher
 	}()
 	
+	private lazy var cloudKitFeedRefresher: CloudKitFeedRefresher = {
+		return CloudKitFeedRefresher(refreshProgress: refreshProgress, refresher: refresher, articlesZone: articlesZone)
+	}()
+	
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, refreshProgress: DownloadProgress?) {
 		self.account = account
 		self.database = database
@@ -114,7 +118,11 @@ private extension CloudKitArticlesZoneDelegate {
 					if webFeeds.isEmpty {
 						group.leave()
 					} else {
-						self.refresher.refreshFeeds(webFeeds) {
+						if let account = self.account {
+							self.cloudKitFeedRefresher.refresh(account, webFeeds) {
+								group.leave()
+							}
+						} else {
 							group.leave()
 						}
 					}

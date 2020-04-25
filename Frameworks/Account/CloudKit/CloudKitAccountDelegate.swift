@@ -37,14 +37,18 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	private let accountZone: CloudKitAccountZone
 	private let articlesZone: CloudKitArticlesZone
 	
-	weak var account: Account?
-	
 	private lazy var refresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()
 		refresher.delegate = self
 		return refresher
 	}()
 
+	private lazy var cloudKitFeedRefresher: CloudKitFeedRefresher = {
+		return CloudKitFeedRefresher(refreshProgress: refreshProgress, refresher: refresher, articlesZone: articlesZone)
+	}()
+	
+	weak var account: Account?
+	
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
 	
@@ -542,7 +546,7 @@ private extension CloudKitAccountDelegate {
 
 								self.refreshProgress.completeTask()
 
-								self.refreshWebFeeds(account, webFeeds) {
+								self.cloudKitFeedRefresher.refresh(account, webFeeds) {
 									self.refreshProgress.clear()
 									account.metadata.lastArticleFetchEndTime = Date()
 								}
@@ -561,70 +565,6 @@ private extension CloudKitAccountDelegate {
 			case .failure(let error):
 				fail(error)
 			}
-		}
-	}
-	
-	func refreshWebFeeds(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
-
-		var newArticles = Set<Article>()
-		var deletedArticles = Set<Article>()
-
-		var refresherWebFeeds = Set<WebFeed>()
-		let group = DispatchGroup()
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		
-		for webFeed in webFeeds {
-			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
-				group.enter()
-				feedProvider.refresh(webFeed) { result in
-					switch result {
-					case .success(let parsedItems):
-						
-						account.update(webFeed.webFeedID, with: parsedItems) { result in
-							switch result {
-							case .success(let articleChanges):
-								
-								newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
-								deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
-
-								self.refreshProgress.completeTask()
-								group.leave()
-								
-							case .failure(let error):
-								os_log(.error, log: self.log, "Feed Provider refresh update error: %@.", error.localizedDescription)
-								self.refreshProgress.completeTask()
-								group.leave()
-							}
-							
-						}
-
-					case .failure(let error):
-						os_log(.error, log: self.log, "Feed Provider refresh error: %@.", error.localizedDescription)
-						self.refreshProgress.completeTask()
-						group.leave()
-					}
-				}
-			} else {
-				refresherWebFeeds.insert(webFeed)
-			}
-		}
-		
-		group.enter()
-		refresher.refreshFeeds(refresherWebFeeds) {
-			group.leave()
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			
-			self.articlesZone.deleteArticles(deletedArticles) { _ in
-				self.refreshProgress.completeTask()
-				self.articlesZone.sendNewArticles(newArticles) { _ in
-					self.refreshProgress.completeTask()
-					completion()
-				}
-			}
-			
 		}
 		
 	}

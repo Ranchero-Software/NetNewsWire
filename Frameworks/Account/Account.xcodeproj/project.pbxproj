@@ -35,6 +35,7 @@
 		510BD113232C3E9D002692E4 /* WebFeedMetadataFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510BD112232C3E9D002692E4 /* WebFeedMetadataFile.swift */; };
 		510E3317244E0CED00E7A6AF /* TwitterMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510E3316244E0CED00E7A6AF /* TwitterMedia.swift */; };
 		511B9804237CD4270028BCAA /* FeedIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9803237CD4270028BCAA /* FeedIdentifier.swift */; };
+		5124A1612454C91B00C1245B /* CloudKitFeedRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5124A1602454C91B00C1245B /* CloudKitFeedRefresher.swift */; };
 		512DD4CB2431000600C17B1F /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */; };
 		512DD4CD2431098700C17B1F /* CloudKitAccountZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */; };
 		5132AAC42448BAD90077840A /* FeedProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5132AAC12448BAD90077840A /* FeedProvider.swift */; };
@@ -285,6 +286,7 @@
 		511076A3243BD33100D97C8C /* .framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = .framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		511076F4243BD96D00D97C8C /* FeedProvider.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FeedProvider.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		511B9803237CD4270028BCAA /* FeedIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIdentifier.swift; sourceTree = "<group>"; };
+		5124A1602454C91B00C1245B /* CloudKitFeedRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitFeedRefresher.swift; sourceTree = "<group>"; };
 		512DD4CA2431000600C17B1F /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
 		512DD4CC2431098700C17B1F /* CloudKitAccountZoneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAccountZoneDelegate.swift; sourceTree = "<group>"; };
 		5132AAC12448BAD90077840A /* FeedProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedProvider.swift; sourceTree = "<group>"; };
@@ -556,6 +558,7 @@
 				519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */,
 				519E84AB2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift */,
 				5150FFFD243823B800C1A442 /* CloudKitError.swift */,
+				5124A1602454C91B00C1245B /* CloudKitFeedRefresher.swift */,
 				51E4DB2D242633ED0091EB5B /* CloudKitZone.swift */,
 				51C034DE242D65D20014DC71 /* CloudKitZoneResult.swift */,
 			);
@@ -1172,6 +1175,7 @@
 				519E84A62433D49000D238B0 /* OPMLNormalizer.swift in Sources */,
 				9EEEF71F23545CB4009E9D80 /* FeedlySendArticleStatusesOperation.swift in Sources */,
 				9EBD49C223C67784005AD5CD /* FeedlyEntryIdentifierProviding.swift in Sources */,
+				5124A1612454C91B00C1245B /* CloudKitFeedRefresher.swift in Sources */,
 				846E77541F6F00E300A165E2 /* AccountManager.swift in Sources */,
 				51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */,
 				9EEAE06E235D002D00E3FEE4 /* FeedlyGetCollectionsService.swift in Sources */,
