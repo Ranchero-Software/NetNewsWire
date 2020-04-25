@@ -31,7 +31,7 @@ class TwitterEnterDetailTableViewController: UITableViewController, SelectURLBui
 			detailTextField.placeholder = NSLocalizedString("Screen Name", comment: "Screen Name")
 		} else {
 			navigationItem.title = NSLocalizedString("Enter Search", comment: "Enter Search")
-			detailTextField.placeholder = NSLocalizedString("Search Term", comment: "Search Term")
+			detailTextField.placeholder = NSLocalizedString("Search Term or #hastag", comment: "Search Term")
 		}
 
 		detailTextField.delegate = self
