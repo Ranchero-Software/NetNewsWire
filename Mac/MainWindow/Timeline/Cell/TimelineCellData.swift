@@ -12,7 +12,6 @@ import Articles
 struct TimelineCellData {
 	
 	let title: String
-	let attributedTitle: NSAttributedString
 	let text: String
 	let dateString: String
 	let feedName: String
@@ -27,7 +26,6 @@ struct TimelineCellData {
 	init(article: Article, showFeedName: TimelineShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: NSImage?) {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
-		self.attributedTitle = ArticleStringFormatter.attributedTruncatedTitle(article)
 		self.text = ArticleStringFormatter.truncatedSummary(article)
 
 		self.dateString = ArticleStringFormatter.dateString(article.logicalDatePublished)
@@ -66,6 +64,5 @@ struct TimelineCellData {
 		self.featuredImage = nil
 		self.read = true
 		self.starred = false
-		self.attributedTitle = NSAttributedString()
 	}
 }
