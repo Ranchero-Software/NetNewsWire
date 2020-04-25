@@ -148,7 +148,7 @@ private extension MasterTimelineTableViewCell {
 	func updateTitleView() {
 		titleView.font = MasterTimelineDefaultCellLayout.titleFont
 		titleView.textColor = labelColor
-		updateTextFieldAttributedText(titleView, cellData?.attributedTitle)
+		updateTextFieldText(titleView, cellData?.title)
 	}
 	
 	func updateSummaryView() {
@@ -167,19 +167,6 @@ private extension MasterTimelineTableViewCell {
 		let s = text ?? ""
 		if label.text != s {
 			label.text = s
-			setNeedsLayout()
-		}
-	}
-
-	func updateTextFieldAttributedText(_ label: UILabel, _ text: NSAttributedString?) {
-		var s = text ?? NSAttributedString(string: "")
-
-		if let fieldFont = label.font, let color = label.textColor {
-			s = s.adding(font: fieldFont, color: color)
-		}
-
-		if label.attributedText != s {
-			label.attributedText = s
 			setNeedsLayout()
 		}
 	}

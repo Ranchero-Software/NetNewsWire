@@ -12,7 +12,6 @@ import Articles
 struct MasterTimelineCellData {
 	
 	let title: String
-	let attributedTitle: NSAttributedString
 	let summary: String
 	let dateString: String
 	let feedName: String
@@ -29,7 +28,6 @@ struct MasterTimelineCellData {
 	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: UIImage?, numberOfLines: Int, iconSize: IconSize) {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
-		self.attributedTitle = ArticleStringFormatter.attributedTruncatedTitle(article)
 		self.summary = ArticleStringFormatter.truncatedSummary(article)
 
 		self.dateString = ArticleStringFormatter.dateString(article.logicalDatePublished)
@@ -62,7 +60,6 @@ struct MasterTimelineCellData {
 
 	init() { //Empty
 		self.title = ""
-		self.attributedTitle = NSAttributedString()
 		self.summary = ""
 		self.dateString = ""
 		self.feedName = ""
