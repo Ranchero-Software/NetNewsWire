@@ -488,14 +488,21 @@ private extension CloudKitAccountDelegate {
 		accountZone.fetchChangesInZone() { result in
 			self.refreshProgress.completeTask()
 
+			let webFeeds = account.flattenedWebFeeds()
+			self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
+
 			switch result {
 			case .success:
 				self.refreshArticleStatus(for: account) { result in
 					self.refreshProgress.completeTask()
 					switch result {
 					case .success:
-						account.metadata.lastArticleFetchEndTime = Date()
-						completion(.success(()))
+						
+						self.combinedRefresh(account, webFeeds) {
+							self.refreshProgress.clear()
+							account.metadata.lastArticleFetchEndTime = Date()
+						}
+
 					case .failure(let error):
 						fail(error)
 					}
