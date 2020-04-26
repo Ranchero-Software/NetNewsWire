@@ -59,7 +59,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		self.database = container.privateCloudDatabase
 	}
 	
-	func refreshArticleStatus(completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func refreshArticlesAndStatuses(completion: @escaping ((Result<Void, Error>) -> Void)) {
 		fetchChangesInZone() { result in
 			switch result {
 			case .success:
@@ -69,7 +69,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 					self.createZoneRecord() { result in
 						switch result {
 						case .success:
-							self.refreshArticleStatus(completion: completion)
+							self.refreshArticlesAndStatuses(completion: completion)
 						case .failure(let error):
 							completion(.failure(error))
 						}
@@ -81,7 +81,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 	
-	func sendNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func saveNewArticlesAndStatuses(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard !articles.isEmpty else {
 			completion(.success(()))
 			return
@@ -95,37 +95,38 @@ final class CloudKitArticlesZone: CloudKitZone {
 		saveIfNew(records, completion: completion)
 	}
 	
-	func deleteArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func deleteArticlesAndStatuses(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard !articles.isEmpty else {
 			completion(.success(()))
 			return
 		}
 		
-		let recordIDs = articles.map { CKRecord.ID(recordName: $0.articleID, zoneID: Self.zoneID) }
+		let recordIDs = articles.map { CKRecord.ID(recordName: statusID($0.articleID), zoneID: Self.zoneID) }
 		delete(recordIDs: recordIDs, completion: completion)
 	}
 	
-	func sendArticleStatus(_ syncStatuses: [SyncStatus], articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func modifyArticlesAndStatuses(_ syncStatuses: [SyncStatus], articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		
 		var records = makeStatusRecords(syncStatuses, articles)
 		
-		let starredArticles = articles.filter({ $0.status.starred == true })
-		makeArticleRecordsIfNecessary(starredArticles) { result in
+		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
+		for saveArticle in saveArticles {
+			records.append(contentsOf: makeArticleRecords(saveArticle))
+		}
+
+		let deleteArticleIDs = articles.subtracting(saveArticles).map {
+			return CKRecord.ID(recordName: articleID($0.articleID), zoneID: Self.zoneID)
+		}
+		
+		self.modify(recordsToSave: records, recordIDsToDelete: deleteArticleIDs) { result in
 			switch result {
-			case .success(let articleRecords):
-				records.append(contentsOf: articleRecords)
-				self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
-					switch result {
-					case .success:
-						completion(.success(()))
-					case .failure(let error):
-						self.handleSendArticleStatusError(error, syncStatuses: syncStatuses, starredArticles: articles, completion: completion)
-					}
-				}
+			case .success:
+				completion(.success(()))
 			case .failure(let error):
 				self.handleSendArticleStatusError(error, syncStatuses: syncStatuses, starredArticles: articles, completion: completion)
 			}
 		}
+		
 	}
 	
 	func handleSendArticleStatusError(_ error: Error, syncStatuses: [SyncStatus], starredArticles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -133,7 +134,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			self.createZoneRecord() { result in
 				switch result {
 				case .success:
-					self.sendArticleStatus(syncStatuses, articles: starredArticles, completion: completion)
+					self.modifyArticlesAndStatuses(syncStatuses, articles: starredArticles, completion: completion)
 				case .failure(let error):
 					completion(.failure(error))
 				}
@@ -147,12 +148,19 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 private extension CloudKitArticlesZone {
 	
+	func statusID(_ id: String) -> String {
+		return "s|\(id)"
+	}
+	
+	func articleID(_ id: String) -> String {
+		return "a|\(id)"
+	}
+	
 	func makeNewStatusRecords(_ articles: Set<Article>) -> [CKRecord] {
-		
 		var records = [CKRecord]()
 		
 		for article in articles {
-			let recordID = CKRecord.ID(recordName: article.articleID, zoneID: Self.zoneID)
+			let recordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: Self.zoneID)
 			let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
 			if let webFeedExternalID = article.webFeed?.externalID {
 				record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
@@ -165,7 +173,6 @@ private extension CloudKitArticlesZone {
 	}
 
 	func makeStatusRecords(_ syncStatuses: [SyncStatus], _ articles: Set<Article>) -> [CKRecord] {
-		
 		var articleDict = [String: Article]()
 		for article in articles {
 			articleDict[article.articleID] = article
@@ -177,7 +184,7 @@ private extension CloudKitArticlesZone {
 			
 			var record = records[status.articleID]
 			if record == nil {
-				let recordID = CKRecord.ID(recordName: status.articleID, zoneID: Self.zoneID)
+				let recordID = CKRecord.ID(recordName: statusID(status.articleID), zoneID: Self.zoneID)
 				record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
 				records[status.articleID] = record
 			}
@@ -196,42 +203,12 @@ private extension CloudKitArticlesZone {
 		
 		return Array(records.values)
 	}
-
-	func makeArticleRecordsIfNecessary(_ articles: Set<Article>, completion: @escaping ((Result<[CKRecord], Error>) -> Void)) {
-		let group = DispatchGroup()
-		var records = [CKRecord]()
-
-		for article in articles {
-			
-			let statusRecordID = CKRecord.ID(recordName: article.articleID, zoneID: Self.zoneID)
-			let statusRecordRef = CKRecord.Reference(recordID: statusRecordID, action: .deleteSelf)
-			let predicate = NSPredicate(format: "articleStatus = %@", statusRecordRef)
-			let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
-
-			group.enter()
-			exists(ckQuery) { result in
-				switch result {
-				case .success(let recordFound):
-					if !recordFound {
-						records.append(contentsOf:  self.makeArticleRecords(article))
-					}
-				case .failure:
-					records.append(contentsOf:  self.makeArticleRecords(article))
-				}
-				group.leave()
-			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion(.success(records))
-		}
-	}
 	
 	func makeArticleRecords(_ article: Article) -> [CKRecord] {
 		var records = [CKRecord]()
 
-		let articleRecord = CKRecord(recordType: CloudKitArticle.recordType, recordID: generateRecordID())
+		let recordID = CKRecord.ID(recordName: articleID(article.articleID), zoneID: Self.zoneID)
+		let articleRecord = CKRecord(recordType: CloudKitArticle.recordType, recordID: recordID)
 
 		let articleStatusRecordID = CKRecord.ID(recordName: article.articleID, zoneID: Self.zoneID)
 		articleRecord[CloudKitArticle.Fields.articleStatus] = CKRecord.Reference(recordID: articleStatusRecordID, action: .deleteSelf)

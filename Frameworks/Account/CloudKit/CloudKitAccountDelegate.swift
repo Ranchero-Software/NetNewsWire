@@ -112,7 +112,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					
 					func processWithArticles(_ articles: Set<Article>) {
 						
-						self.articlesZone.sendArticleStatus(syncStatuses, articles: articles) { result in
+						self.articlesZone.modifyArticlesAndStatuses(syncStatuses, articles: articles) { result in
 							switch result {
 							case .success:
 								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
@@ -151,7 +151,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
-		articlesZone.refreshArticleStatus() { result in
+		articlesZone.refreshArticlesAndStatuses() { result in
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
 			switch result {
 			case .success:
@@ -616,9 +616,9 @@ private extension CloudKitAccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			
-			self.articlesZone.deleteArticles(deletedArticles) { _ in
+			self.articlesZone.deleteArticlesAndStatuses(deletedArticles) { _ in
 				self.refreshProgress.completeTask()
-				self.articlesZone.sendNewArticles(newArticles) { _ in
+				self.articlesZone.saveNewArticlesAndStatuses(newArticles) { _ in
 					self.refreshProgress.completeTask()
 					completion()
 				}
@@ -665,9 +665,9 @@ private extension CloudKitAccountDelegate {
 										let newArticles = articleChanges.newArticles ?? Set<Article>()
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
 
-										self.articlesZone.deleteArticles(deletedArticles) { _ in
+										self.articlesZone.deleteArticlesAndStatuses(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
-											self.articlesZone.sendNewArticles(newArticles) { _ in
+											self.articlesZone.saveNewArticlesAndStatuses(newArticles) { _ in
 												self.refreshProgress.clear()
 												completion(.success(feed))
 											}
@@ -744,9 +744,9 @@ private extension CloudKitAccountDelegate {
 										let newArticles = articleChanges.newArticles ?? Set<Article>()
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
 
-										self.articlesZone.deleteArticles(deletedArticles) { _ in
+										self.articlesZone.deleteArticlesAndStatuses(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
-											self.articlesZone.sendNewArticles(newArticles) { _ in
+											self.articlesZone.saveNewArticlesAndStatuses(newArticles) { _ in
 												self.refreshProgress.clear()
 												completion(.success(feed))
 											}
