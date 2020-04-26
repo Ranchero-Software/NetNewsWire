@@ -572,7 +572,7 @@ private extension CloudKitAccountDelegate {
 
 	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
 		
-		var newArticles = Set<Article>()
+		var newAndUpdatedArticles = Set<Article>()
 		var deletedArticles = Set<Article>()
 
 		var refresherWebFeeds = Set<WebFeed>()
@@ -591,7 +591,8 @@ private extension CloudKitAccountDelegate {
 							switch result {
 							case .success(let articleChanges):
 								
-								newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
+								newAndUpdatedArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
+								newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
 								deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
 
 								self.refreshProgress.completeTask()
@@ -618,7 +619,7 @@ private extension CloudKitAccountDelegate {
 		
 		group.enter()
 		refresher.refreshFeeds(refresherWebFeeds) { refresherNewArticles, refresherDeletedArticles in
-			newArticles.formUnion(refresherNewArticles)
+			newAndUpdatedArticles.formUnion(refresherNewArticles)
 			deletedArticles.formUnion(refresherDeletedArticles)
 			group.leave()
 		}
@@ -627,7 +628,7 @@ private extension CloudKitAccountDelegate {
 			
 			self.articlesZone.deleteArticles(deletedArticles) { _ in
 				self.refreshProgress.completeTask()
-				self.articlesZone.saveNewArticles(newArticles) { _ in
+				self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
 					self.refreshProgress.completeTask()
 					completion()
 				}
@@ -671,12 +672,13 @@ private extension CloudKitAccountDelegate {
 									switch result {
 									case .success(let articleChanges):
 										
-										let newArticles = articleChanges.newArticles ?? Set<Article>()
+										var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
+										newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
 
 										self.articlesZone.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
-											self.articlesZone.saveNewArticles(newArticles) { _ in
+											self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
 												self.refreshProgress.clear()
 												completion(.success(feed))
 											}
@@ -750,12 +752,13 @@ private extension CloudKitAccountDelegate {
 									case .success(let articleChanges):
 										
 										BatchUpdate.shared.end()
-										let newArticles = articleChanges.newArticles ?? Set<Article>()
+										var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
+										newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
 
 										self.articlesZone.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
-											self.articlesZone.saveNewArticles(newArticles) { _ in
+											self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
 												self.refreshProgress.clear()
 												completion(.success(feed))
 											}

@@ -214,9 +214,13 @@ private extension CloudKitAcountZoneDelegate {
 									switch result {
 									case .success(let articleChanges):
 										
-										self.articlesZone?.deleteArticles(articleChanges.deletedArticles ?? Set<Article>()) { _ in
+										var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
+										newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
+										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+
+										self.articlesZone?.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress?.completeTask()
-											self.articlesZone?.saveNewArticles(articleChanges.newArticles ?? Set<Article>()) { _ in
+											self.articlesZone?.saveNewArticles(newAndUpdatedArticles) { _ in
 												self.refreshProgress?.completeTask()
 												completion(webFeed)
 											}
@@ -251,9 +255,14 @@ private extension CloudKitAcountZoneDelegate {
 						BatchUpdate.shared.end()
 						switch result {
 						case .success(let articleChanges):
-							self.articlesZone?.deleteArticles(articleChanges.deletedArticles ?? Set<Article>()) { _ in
+
+							var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
+							newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
+							let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+
+							self.articlesZone?.deleteArticles(deletedArticles) { _ in
 								self.refreshProgress?.completeTask()
-								self.articlesZone?.saveNewArticles(articleChanges.newArticles ?? Set<Article>()) { _ in
+								self.articlesZone?.saveNewArticles(newAndUpdatedArticles) { _ in
 									self.refreshProgress?.completeTask()
 									completion(webFeed)
 								}
