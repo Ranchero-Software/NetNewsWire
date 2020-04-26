@@ -88,6 +88,21 @@ final class CloudKitArticlesZone: CloudKitZone {
 		saveIfNew(records, completion: completion)
 	}
 	
+	func deleteArticles(_ webFeedURL: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		let predicate = NSPredicate(format: "webFeedURL = %@", webFeedURL)
+		let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
+
+		query(ckQuery) { result in
+			switch result {
+			case .success(let records):
+				let recordIDs = records.map { $0.recordID }
+				self.delete(recordIDs: recordIDs, completion: completion)
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
 	func deleteArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard !articles.isEmpty else {
 			completion(.success(()))
@@ -207,6 +222,5 @@ private extension CloudKitArticlesZone {
 		records.append(articleRecord)
 		return records
 	}
-
 
 }

@@ -121,51 +121,6 @@ extension CloudKitZone {
 			}
 		}
     }
-	
-	/// Checks to see if the record described in the query exists by retrieving only the testField parameter field.
-	func exists(_ query: CKQuery, completion: @escaping (Result<Bool, Error>) -> Void) {
-		var recordFound = false
-		let op = CKQueryOperation(query: query)
-		op.desiredKeys = ["creationDate"]
-
-		op.recordFetchedBlock = { record in
-			recordFound = true
-		}
-
-		op.queryCompletionBlock =  { [weak self] (_, error) in
-			switch CloudKitZoneResult.resolve(error) {
-            case .success:
-				DispatchQueue.main.async {
-					completion(.success(recordFound))
-				}
-			case .zoneNotFound:
-				self?.createZoneRecord() { result in
-					switch result {
-					case .success:
-						self?.exists(query, completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(error))
-						}
-					}
-				}
-			case .retry(let timeToWait):
-				self?.retryIfPossible(after: timeToWait) {
-					self?.exists(query, completion: completion)
-				}
-			case .userDeletedZone:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitZoneError.userDeletedZone))
-				}
-			default:
-				DispatchQueue.main.async {
-					completion(.failure(CloudKitError(error!)))
-				}
-			}
-		}
-
-		database?.add(op)
-	}
 		
 	/// Issue a CKQuery and return the resulting CKRecords.s
 	func query(_ query: CKQuery, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
