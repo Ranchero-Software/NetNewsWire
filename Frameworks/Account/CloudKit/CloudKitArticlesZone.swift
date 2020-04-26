@@ -87,7 +87,11 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return
 		}
 		
-		let records = makeNewStatusRecords(articles)
+		var records = makeNewStatusRecords(articles)
+		for article in articles {
+			records.append(contentsOf: makeArticleRecords(article))
+		}
+		
 		saveIfNew(records, completion: completion)
 	}
 	

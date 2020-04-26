@@ -10,6 +10,8 @@ import Foundation
 import os.log
 import RSWeb
 import CloudKit
+import RSCore
+import Articles
 
 class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	
@@ -20,10 +22,12 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 	weak var account: Account?
 	weak var refreshProgress: DownloadProgress?
-	
-	init(account: Account, refreshProgress: DownloadProgress) {
+	weak var articlesZone: CloudKitArticlesZone?
+
+	init(account: Account, refreshProgress: DownloadProgress, articlesZone: CloudKitArticlesZone) {
 		self.account = account
 		self.refreshProgress = refreshProgress
+		self.articlesZone = articlesZone
 	}
 	
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
@@ -193,7 +197,7 @@ private extension CloudKitAcountZoneDelegate {
 		
 		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
 			
-			refreshProgress?.addToNumberOfTasksAndRemaining(2)
+			refreshProgress?.addToNumberOfTasksAndRemaining(4)
 			feedProvider.assignName(urlComponents) { result in
 				self.refreshProgress?.completeTask()
 				switch result {
@@ -206,8 +210,21 @@ private extension CloudKitAcountZoneDelegate {
 							self.refreshProgress?.completeTask()
 							switch result {
 							case .success(let parsedItems):
-								account.update(url.absoluteString, with: parsedItems) { _ in
-									completion(webFeed)
+								account.update(url.absoluteString, with: parsedItems) { result in
+									switch result {
+									case .success(let articleChanges):
+										
+										self.articlesZone?.deleteArticles(articleChanges.deletedArticles ?? Set<Article>()) { _ in
+											self.refreshProgress?.completeTask()
+											self.articlesZone?.sendNewArticles(articleChanges.newArticles ?? Set<Article>()) { _ in
+												self.refreshProgress?.completeTask()
+												completion(webFeed)
+											}
+										}
+										
+									case .failure:
+										completion(webFeed)
+									}
 								}
 							case .failure:
 								completion(webFeed)
@@ -221,17 +238,36 @@ private extension CloudKitAcountZoneDelegate {
 			
 		} else {
 			
-			refreshProgress?.addToNumberOfTasksAndRemaining(1)
+			refreshProgress?.addToNumberOfTasksAndRemaining(3)
+			
+			BatchUpdate.shared.start()
 			InitialFeedDownloader.download(url) { parsedFeed in
 				self.refreshProgress?.completeTask()
+				
 				if let parsedFeed = parsedFeed {
-					account.update(webFeed, with: parsedFeed, { _ in
-						container.addWebFeed(webFeed)
-						completion(webFeed)
+					container.addWebFeed(webFeed)
+					
+					account.update(webFeed, with: parsedFeed, { result in
+						BatchUpdate.shared.end()
+						switch result {
+						case .success(let articleChanges):
+							self.articlesZone?.deleteArticles(articleChanges.deletedArticles ?? Set<Article>()) { _ in
+								self.refreshProgress?.completeTask()
+								self.articlesZone?.sendNewArticles(articleChanges.newArticles ?? Set<Article>()) { _ in
+									self.refreshProgress?.completeTask()
+									completion(webFeed)
+								}
+							}
+						case .failure:
+							completion(webFeed)
+						}
 					})
+					
 				} else {
+					BatchUpdate.shared.end()
 					completion(webFeed)
 				}
+				
 			}
 			
 		}

@@ -43,10 +43,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		return refresher
 	}()
 
-	private lazy var cloudKitFeedRefresher: CloudKitFeedRefresher = {
-		return CloudKitFeedRefresher(refreshProgress: refreshProgress, refresher: refresher, articlesZone: articlesZone)
-	}()
-	
 	weak var account: Account?
 	
 	let behaviors: AccountBehaviors = []
@@ -206,8 +202,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		}
 
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
-		
-		// TODO: remove duplicates created by import
 		
 		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
 			self.initialRefreshAll(for: account, completion: completion)
@@ -424,11 +418,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	func accountDidInitialize(_ account: Account) {
 		self.account = account
 		
-		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress)
-		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account,
-															 database: database,
-															 articlesZone: articlesZone,
-															 refreshProgress: refreshProgress)
+		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress, articlesZone: articlesZone)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
 		
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
@@ -546,7 +537,7 @@ private extension CloudKitAccountDelegate {
 
 								self.refreshProgress.completeTask()
 
-								self.cloudKitFeedRefresher.refresh(account, webFeeds) {
+								self.combinedRefresh(account, webFeeds) {
 									self.refreshProgress.clear()
 									account.metadata.lastArticleFetchEndTime = Date()
 								}
@@ -567,6 +558,73 @@ private extension CloudKitAccountDelegate {
 			}
 		}
 		
+	}
+
+	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
+		
+		var newArticles = Set<Article>()
+		var deletedArticles = Set<Article>()
+
+		var refresherWebFeeds = Set<WebFeed>()
+		let group = DispatchGroup()
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		
+		for webFeed in webFeeds {
+			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
+				group.enter()
+				feedProvider.refresh(webFeed) { result in
+					switch result {
+					case .success(let parsedItems):
+						
+						account.update(webFeed.webFeedID, with: parsedItems) { result in
+							switch result {
+							case .success(let articleChanges):
+								
+								newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
+								deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
+
+								self.refreshProgress.completeTask()
+								group.leave()
+								
+							case .failure(let error):
+								os_log(.error, log: self.log, "CloudKit Feed refresh update error: %@.", error.localizedDescription)
+								self.refreshProgress.completeTask()
+								group.leave()
+							}
+							
+						}
+
+					case .failure(let error):
+						os_log(.error, log: self.log, "CloudKit Feed refresh error: %@.", error.localizedDescription)
+						self.refreshProgress.completeTask()
+						group.leave()
+					}
+				}
+			} else {
+				refresherWebFeeds.insert(webFeed)
+			}
+		}
+		
+		group.enter()
+		refresher.refreshFeeds(refresherWebFeeds) { refresherNewArticles, refresherDeletedArticles in
+			newArticles.formUnion(refresherNewArticles)
+			deletedArticles.formUnion(refresherDeletedArticles)
+			group.leave()
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			
+			self.articlesZone.deleteArticles(deletedArticles) { _ in
+				self.refreshProgress.completeTask()
+				self.articlesZone.sendNewArticles(newArticles) { _ in
+					self.refreshProgress.completeTask()
+					completion()
+				}
+			}
+			
+		}
+
 	}
 
 	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
@@ -736,14 +794,6 @@ private extension CloudKitAccountDelegate {
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-		let newArticles = articleChanges.newArticles ?? Set<Article>()
-		let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
-
-		articlesZone.deleteArticles(deletedArticles) { _ in
-			self.articlesZone.sendNewArticles(newArticles) { _ in
-				completion()
-			}
-		}
 	}
 
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {

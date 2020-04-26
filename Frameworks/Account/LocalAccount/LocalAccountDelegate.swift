@@ -79,7 +79,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(refresherWebFeeds.count)
 		group.enter()
-		refresher?.refreshFeeds(refresherWebFeeds) {
+		refresher?.refreshFeeds(refresherWebFeeds) { _, _ in
 			group.leave()
 		}
 		
@@ -235,10 +235,6 @@ final class LocalAccountDelegate: AccountDelegate {
 
 extension LocalAccountDelegate: LocalAccountRefresherDelegate {
 
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-		completion()
-	}
-	
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
 		refreshProgress.completeTask()
 	}

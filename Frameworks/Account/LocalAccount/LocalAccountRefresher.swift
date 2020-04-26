@@ -14,14 +14,15 @@ import Articles
 import ArticlesDatabase
 
 protocol LocalAccountRefresherDelegate {
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess: ArticleChanges, completion: @escaping () -> Void)
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed)
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher)
 }
 
 final class LocalAccountRefresher {
 	
-	private var completions = [() -> Void]()
+	var newArticles = Set<Article>()
+	var deletedArticles = Set<Article>()
+	private var completion: ((Set<Article>, Set<Article>) -> Void)?
 	private var isSuspended = false
 	var delegate: LocalAccountRefresherDelegate?
 	
@@ -29,14 +30,12 @@ final class LocalAccountRefresher {
 		return DownloadSession(delegate: self)
 	}()
 
-	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: (() -> Void)? = nil) {
+	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: ((Set<Article>, Set<Article>) -> Void)? = nil) {
 		guard !feeds.isEmpty else {
-			completion?()
+			completion?(Set<Article>(), Set<Article>())
 			return
 		}
-		if let completion = completion {
-			completions.append(completion)
-		}
+		self.completion = completion
 		downloadSession.downloadObjects(feeds as NSSet)
 	}
 	
@@ -105,14 +104,17 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			
 			account.update(feed, with: parsedFeed) { result in
 				if case .success(let articleChanges) = result {
-					self.delegate?.localAccountRefresher(self, didProcess: articleChanges) {
-						if let httpResponse = response as? HTTPURLResponse {
-							feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
-						}
-						feed.contentHash = dataHash
-						completion()
-						self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
+					
+					self.newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
+					self.deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
+					
+					if let httpResponse = response as? HTTPURLResponse {
+						feed.conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 					}
+					feed.contentHash = dataHash
+
+					completion()
+					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
 				} else {
 					completion()
 					self.delegate?.localAccountRefresher(self, requestCompletedFor: feed)
@@ -167,8 +169,10 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 
 	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession) {
-		completions.forEach({ $0() })
-		completions = [() -> Void]()
+		completion?(newArticles, deletedArticles)
+		completion = nil
+		newArticles = Set<Article>()
+		deletedArticles = Set<Article>()
 		delegate?.localAccountRefresherDidFinish(self)
 	}
 
