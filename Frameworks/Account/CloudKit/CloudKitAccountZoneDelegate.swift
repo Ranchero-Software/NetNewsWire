@@ -197,7 +197,7 @@ private extension CloudKitAcountZoneDelegate {
 		
 		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
 			
-			refreshProgress?.addToNumberOfTasksAndRemaining(4)
+			refreshProgress?.addToNumberOfTasksAndRemaining(5)
 			feedProvider.assignName(urlComponents) { result in
 				self.refreshProgress?.completeTask()
 				switch result {
@@ -222,6 +222,7 @@ private extension CloudKitAcountZoneDelegate {
 										self.articlesZone?.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress?.completeTask()
 											self.articlesZone?.saveNewArticles(newAndUpdatedArticles) { _ in
+												self.refreshProgress?.completeTask()
 												self.articlesZone?.fetchChangesInZone() { _ in
 													self.refreshProgress?.completeTask()
 													completion(webFeed)
@@ -245,7 +246,7 @@ private extension CloudKitAcountZoneDelegate {
 			
 		} else {
 			
-			refreshProgress?.addToNumberOfTasksAndRemaining(3)
+			refreshProgress?.addToNumberOfTasksAndRemaining(4)
 			
 			BatchUpdate.shared.start()
 			InitialFeedDownloader.download(url) { parsedFeed in
@@ -267,6 +268,7 @@ private extension CloudKitAcountZoneDelegate {
 							self.articlesZone?.deleteArticles(deletedArticles) { _ in
 								self.refreshProgress?.completeTask()
 								self.articlesZone?.saveNewArticles(newAndUpdatedArticles) { _ in
+									self.refreshProgress?.completeTask()
 									self.articlesZone?.fetchChangesInZone() { _ in
 										self.refreshProgress?.completeTask()
 										completion(webFeed)
