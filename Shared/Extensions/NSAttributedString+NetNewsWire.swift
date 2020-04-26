@@ -174,7 +174,7 @@ extension NSAttributedString {
 		let baseFont = font ?? Font.systemFont(ofSize: Font.systemFontSize)
 
 		var inTag: InTag = .none
-		var tagBuf = ""
+		var tag = ""
 		var tagStack = [String]()
 		var currentStyles = CountedSet<Style>()
 
@@ -186,7 +186,7 @@ extension NSAttributedString {
 
 		while let char = iterator.next() {
 			if char == "<" && inTag == .none {
-				tagBuf.removeAll()
+				tag.removeAll()
 
 				guard let first = iterator.next() else { break }
 
@@ -194,13 +194,13 @@ extension NSAttributedString {
 					inTag = .closing
 				} else {
 					inTag = .opening
-					tagBuf.append(first)
+					tag.append(first)
 				}
 			} else if char == ">" && inTag != .none {
 				if inTag == .opening {
-					tagStack.append(tagBuf)
+					tagStack.append(tag)
 
-					if tagBuf == "q" {
+					if tag == "q" {
 						result.mutableString.append(locale.quotationBeginDelimiter ?? "\"")
 					}
 
@@ -208,7 +208,7 @@ extension NSAttributedString {
 					let location = lastRange != nil ? lastRange!.location + lastRange!.length : 0
 					let range = NSRange(location: location, length: result.mutableString.length - location)
 
-					let style = Style(tag: tagBuf)
+					let style = Style(tag: tag)
 
 					attributeRanges.append( (range: range, styles: currentStyles) )
 
@@ -218,7 +218,7 @@ extension NSAttributedString {
 
 
 				} else {
-					if tagBuf == "q" {
+					if tag == "q" {
 						result.mutableString.append(locale.quotationEndDelimiter ?? "\"")
 					}
 
@@ -228,7 +228,7 @@ extension NSAttributedString {
 
 					attributeRanges.append( ( range: range, styles: currentStyles ))
 
-					if let style = Style(tag: tagBuf) {
+					if let style = Style(tag: tag) {
 						currentStyles.remove(style)
 					}
 
@@ -237,7 +237,7 @@ extension NSAttributedString {
 
 				inTag = .none
 			} else if inTag != .none {
-				tagBuf.append(char)
+				tag.append(char)
 			} else {
 				if char == "&" {
 					var entity = "&"
