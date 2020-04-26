@@ -293,7 +293,7 @@ extension NSAttributedString {
 }
 
 /// This is a very, very basic implementation that only covers our needs.
-struct CountedSet<Element> where Element: Hashable {
+private struct CountedSet<Element> where Element: Hashable {
 	private var _storage = [Element: Int]()
 
 	mutating func insert(_ element: Element) {
@@ -323,7 +323,7 @@ struct CountedSet<Element> where Element: Hashable {
 	}
 }
 
-extension String {
+private extension String {
 	var decodedEntity: String {
 		(self as NSString).rsparser_stringByDecodingHTMLEntities() as String
 	}
