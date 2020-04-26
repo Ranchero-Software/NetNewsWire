@@ -176,13 +176,13 @@ extension NSAttributedString {
 		var inTag: InTag = .none
 		var tagBuf = ""
 		var tagStack = [String]()
-		var currentStyles: Set<Style> = []
+		var currentStyles = CountedSet<Style>()
 
 		var iterator = html.makeIterator()
 
 		let result = NSMutableAttributedString()
 
-		var attributeRanges = [(range: NSRange, styles: Set<Style>)]()
+		var attributeRanges = [ (range: NSRange, styles: CountedSet<Style>) ]()
 
 		while let char = iterator.next() {
 			if char == "<" && inTag == .none {
@@ -328,4 +328,35 @@ extension NSAttributedString {
 		self.init(attributedString: result)
 	}
 
+}
+
+/// This is a very, very basic implementation that only covers our needs.
+struct CountedSet<Element> where Element: Hashable {
+	private var _storage = [Element: Int]()
+
+	mutating func insert(_ element: Element) {
+		_storage[element, default: 0] += 1
+	}
+
+	mutating func remove(_ element: Element) {
+		guard var count = _storage[element] else { return }
+
+		count -= 1
+
+		if count == 0 {
+			_storage.removeValue(forKey: element)
+		} else {
+			_storage[element] = count
+		}
+	}
+
+	func contains(_ element: Element) -> Bool {
+		return _storage[element] != nil
+	}
+
+	subscript(key: Element) -> Int? {
+		get {
+			return _storage[key]
+		}
+	}
 }
