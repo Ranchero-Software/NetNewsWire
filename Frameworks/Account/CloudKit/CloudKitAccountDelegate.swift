@@ -97,6 +97,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		guard refreshProgress.isComplete else {
+			completion(.success(()))
+			return
+		}
+
 		os_log(.debug, log: log, "Sending article statuses...")
 
 		database.selectForProcessing { result in
@@ -149,6 +154,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		guard refreshProgress.isComplete else {
+			completion(.success(()))
+			return
+		}
+
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
 		articlesZone.refreshArticles() { result in
