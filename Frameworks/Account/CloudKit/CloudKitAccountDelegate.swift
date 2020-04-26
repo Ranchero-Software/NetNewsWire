@@ -627,6 +627,8 @@ private extension CloudKitAccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			
+			newAndUpdatedArticles = newAndUpdatedArticles.subtracting(deletedArticles)
+			
 			self.articlesZone.deleteArticles(deletedArticles) { _ in
 				self.refreshProgress.completeTask()
 				self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
@@ -676,6 +678,8 @@ private extension CloudKitAccountDelegate {
 										var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
 										newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+
+										newAndUpdatedArticles = newAndUpdatedArticles.subtracting(deletedArticles)
 
 										self.articlesZone.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
@@ -756,6 +760,7 @@ private extension CloudKitAccountDelegate {
 										var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
 										newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+										newAndUpdatedArticles = newAndUpdatedArticles.subtracting(deletedArticles)
 
 										self.articlesZone.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
