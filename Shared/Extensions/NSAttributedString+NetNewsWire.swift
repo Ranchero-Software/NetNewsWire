@@ -6,6 +6,8 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
+import RSParser
+
 #if canImport(AppKit)
 import AppKit
 typealias Font = NSFont
@@ -124,46 +126,6 @@ extension NSAttributedString {
 		}
 	}
 
-	private static func decode(entity: String) -> String {
-		// TODO: Support all named entities
-
-		guard entity.hasPrefix("&"), entity.hasSuffix(";") else { return entity }
-
-		let name = entity.dropFirst().dropLast()
-
-		if name.hasPrefix("#") {
-			let value = name.dropFirst()
-			var number: Int? = nil
-
-			if value.hasPrefix("x") {
-				number = Int(value.dropFirst(), radix: 16)
-			} else {
-				number = Int(value)
-			}
-
-			if let number = number, let c = UnicodeScalar(number) {
-				return String(c)
-			}
-		} else {
-			switch name {
-				case "lt":
-					return "<"
-				case "gt":
-					return ">"
-				case "amp":
-					return "&"
-				case "quot":
-					return "\""
-				case "apos":
-					return "'"
-				default:
-					break
-			}
-		}
-
-		return entity
-	}
-
 	/// Returns an attributed string initialized from  HTML text containing basic inline stylistic tags.
 	///
 	/// - Parameters:
@@ -255,7 +217,7 @@ extension NSAttributedString {
 					}
 
 
-					result.mutableString.append(Self.decode(entity: entity))
+					result.mutableString.append(entity.decodedEntity)
 
 					if let lastchar = lastchar { result.mutableString.append(String(lastchar)) }
 				} else {
@@ -358,5 +320,11 @@ struct CountedSet<Element> where Element: Hashable {
 		get {
 			return _storage[key]
 		}
+	}
+}
+
+extension String {
+	var decodedEntity: String {
+		(self as NSString).rsparser_stringByDecodingHTMLEntities() as String
 	}
 }
