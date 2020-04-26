@@ -117,7 +117,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					
 					func processWithArticles(_ articles: Set<Article>) {
 						
-						self.articlesZone.modifyArticles(syncStatuses, articles: articles) { result in
+						self.articlesZone.modifyArticles(articles) { result in
 							switch result {
 							case .success:
 								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID }) )

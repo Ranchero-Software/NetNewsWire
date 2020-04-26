@@ -12,7 +12,6 @@ import RSParser
 import RSWeb
 import CloudKit
 import Articles
-import SyncDatabase
 
 final class CloudKitArticlesZone: CloudKitZone {
 	
@@ -80,10 +79,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return
 		}
 		
-		var records = [CKRecord]()
-		for article in articles {
-			records.append(contentsOf: makeArticleRecords(article))
-		}
+		let records = makeRecords(articles)
 		
 		saveIfNew(records, completion: completion)
 	}
@@ -113,7 +109,44 @@ final class CloudKitArticlesZone: CloudKitZone {
 		delete(recordIDs: recordIDs, completion: completion)
 	}
 	
-	func modifyArticles(_ syncStatuses: [SyncStatus], articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func modifyArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		guard !articles.isEmpty else {
+			completion(.success(()))
+			return
+		}
+		
+		let records = makeRecords(articles)
+		
+		self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				self.handleSendArticleStatusError(error, articles: articles, completion: completion)
+			}
+		}
+	}
+	
+}
+
+private extension CloudKitArticlesZone {
+
+	func handleSendArticleStatusError(_ error: Error, articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		if case CloudKitZoneError.userDeletedZone = error {
+			self.createZoneRecord() { result in
+				switch result {
+				case .success:
+					self.modifyArticles(articles, completion: completion)
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			completion(.failure(error))
+		}
+	}
+	
+	func makeRecords(_ articles: Set<Article>) -> [CKRecord] {
 		var records = [CKRecord]()
 
 		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
@@ -126,33 +159,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			records.append(contentsOf: makeHollowArticleRecords(hollowArticle))
 		}
 		
-		self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				self.handleSendArticleStatusError(error, syncStatuses: syncStatuses, starredArticles: articles, completion: completion)
-			}
-		}
-	}
-	
-}
-
-private extension CloudKitArticlesZone {
-
-	func handleSendArticleStatusError(_ error: Error, syncStatuses: [SyncStatus], starredArticles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		if case CloudKitZoneError.userDeletedZone = error {
-			self.createZoneRecord() { result in
-				switch result {
-				case .success:
-					self.modifyArticles(syncStatuses, articles: starredArticles, completion: completion)
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		} else {
-			completion(.failure(error))
-		}
+		return records
 	}
 	
 	func makeArticleRecords(_ article: Article) -> [CKRecord] {
