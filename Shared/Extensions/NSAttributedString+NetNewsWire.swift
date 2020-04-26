@@ -291,22 +291,23 @@ extension NSAttributedString {
 				descriptor = descriptor.withSymbolicTraits(symbolicTraits)
 			}
 
-			if styles.contains(.superscript) {
+			func verticalPositionFeature(forSuperscript: Bool) -> [FontDescriptor.FeatureKey: Any] {
 				#if canImport(AppKit)
-				let features: [FontDescriptor.FeatureKey: Any] = [.typeIdentifier: kVerticalPositionType, .selectorIdentifier: kSuperiorsSelector]
+				let features: [FontDescriptor.FeatureKey: Any] = [.typeIdentifier: kVerticalPositionType, .selectorIdentifier: forSuperscript ? kSuperiorsSelector : kInferiorsSelector]
 				#else
-				let features: [FontDescriptor.FeatureKey: Any] = [.featureIdentifier: kVerticalPositionType, .typeIdentifier: kSuperiorsSelector]
+				let features: [FontDescriptor.FeatureKey: Any] = [.featureIdentifier: kVerticalPositionType, .typeIdentifier: forSuperscript ? kSuperiorsSelector : kInferiorsSelector]
 				#endif
+				return features
+			}
+
+			if styles.contains(.superscript) {
+				let features = verticalPositionFeature(forSuperscript: true)
 				let descriptorAttributes: [FontDescriptor.AttributeName: Any] = [.featureSettings: [features]]
 				descriptor = descriptor.addingAttributes(descriptorAttributes)
 			}
 
 			if styles.contains(.subscript) {
-				#if canImport(AppKit)
-				let features: [FontDescriptor.FeatureKey: Any] = [.typeIdentifier: kVerticalPositionType, .selectorIdentifier: kInferiorsSelector]
-				#else
-				let features: [FontDescriptor.FeatureKey: Any] = [.featureIdentifier: kVerticalPositionType, .typeIdentifier: kInferiorsSelector]
-				#endif
+				let features = verticalPositionFeature(forSuperscript: false)
 				let descriptorAttributes: [FontDescriptor.AttributeName: Any] = [.featureSettings: [features]]
 				descriptor = currentDescriptor.addingAttributes(descriptorAttributes)
 			}
