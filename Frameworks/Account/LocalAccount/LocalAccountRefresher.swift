@@ -21,8 +21,9 @@ protocol LocalAccountRefresherDelegate {
 final class LocalAccountRefresher {
 	
 	var newArticles = Set<Article>()
+	var updatedArticles = Set<Article>()
 	var deletedArticles = Set<Article>()
-	private var completion: ((Set<Article>, Set<Article>) -> Void)?
+	private var completion: ((Set<Article>, Set<Article>, Set<Article>) -> Void)?
 	private var isSuspended = false
 	var delegate: LocalAccountRefresherDelegate?
 	
@@ -30,9 +31,9 @@ final class LocalAccountRefresher {
 		return DownloadSession(delegate: self)
 	}()
 
-	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: ((Set<Article>, Set<Article>) -> Void)? = nil) {
+	public func refreshFeeds(_ feeds: Set<WebFeed>, completion: ((Set<Article>, Set<Article>, Set<Article>) -> Void)? = nil) {
 		guard !feeds.isEmpty else {
-			completion?(Set<Article>(), Set<Article>())
+			completion?(Set<Article>(), Set<Article>(), Set<Article>())
 			return
 		}
 		self.completion = completion
@@ -106,6 +107,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 				if case .success(let articleChanges) = result {
 					
 					self.newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
+					self.updatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
 					self.deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
 					
 					if let httpResponse = response as? HTTPURLResponse {
@@ -169,7 +171,7 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 	}
 
 	func downloadSessionDidCompleteDownloadObjects(_ downloadSession: DownloadSession) {
-		completion?(newArticles, deletedArticles)
+		completion?(newArticles, updatedArticles, deletedArticles)
 		completion = nil
 		newArticles = Set<Article>()
 		deletedArticles = Set<Article>()

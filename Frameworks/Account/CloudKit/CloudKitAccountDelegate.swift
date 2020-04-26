@@ -618,8 +618,9 @@ private extension CloudKitAccountDelegate {
 		}
 		
 		group.enter()
-		refresher.refreshFeeds(refresherWebFeeds) { refresherNewArticles, refresherDeletedArticles in
+		refresher.refreshFeeds(refresherWebFeeds) { refresherNewArticles, refresherUpdatedArticles, refresherDeletedArticles in
 			newAndUpdatedArticles.formUnion(refresherNewArticles)
+			newAndUpdatedArticles.formUnion(refresherUpdatedArticles)
 			deletedArticles.formUnion(refresherDeletedArticles)
 			group.leave()
 		}

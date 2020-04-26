@@ -79,7 +79,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(refresherWebFeeds.count)
 		group.enter()
-		refresher?.refreshFeeds(refresherWebFeeds) { _, _ in
+		refresher?.refreshFeeds(refresherWebFeeds) { _, _, _ in
 			group.leave()
 		}
 		
