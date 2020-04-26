@@ -490,6 +490,7 @@ private extension CloudKitAccountDelegate {
 							switch result {
 							case .success:
 								self.refreshProgress.clear()
+								account.metadata.lastArticleFetchEndTime = Date()
 								completion(.success(()))
 							case .failure(let error):
 								fail(error)
