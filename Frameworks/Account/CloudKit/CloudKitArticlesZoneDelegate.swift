@@ -62,13 +62,11 @@ private extension CloudKitArticlesZoneDelegate {
 	
 	func process(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ $0.externalID }))
-		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ $0.externalID }))
-		let receivedUnstarredArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.starred] == "0" }).map({ $0.externalID }))
-		let receivedStarredArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.starred] == "1" }).map({ $0.externalID }))
+		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticle.Fields.read] == "0" }).map({ $0.externalID }))
+		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticle.Fields.read] == "1" }).map({ $0.externalID }))
+		let receivedUnstarredArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticle.Fields.starred] == "0" }).map({ $0.externalID }))
+		let receivedStarredArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticle.Fields.starred] == "1" }).map({ $0.externalID }))
 
-		let receivedArticles = records.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticle.recordType })
-		
 		let updateableUnreadArticleIDs = receivedUnreadArticleIDs.subtracting(pendingReadStatusArticleIDs)
 		let updateableReadArticleIDs = receivedReadArticleIDs.subtracting(pendingReadStatusArticleIDs)
 		let updateableUnstarredArticleIDs = receivedUnstarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
@@ -96,7 +94,7 @@ private extension CloudKitArticlesZoneDelegate {
 			group.leave()
 		}
 		
-		let parsedItems = receivedArticles.compactMap { makeParsedItem($0) }
+		let parsedItems = records.compactMap { makeParsedItem($0) }
 		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 		for (webFeedID, parsedItems) in webFeedIDsAndItems {
 			group.enter()
@@ -114,6 +112,10 @@ private extension CloudKitArticlesZoneDelegate {
 	}
 
 	func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
+		guard articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.hollow] as? String ?? "0" == "0" else {
+			return nil
+		}
+		
 		var parsedAuthors = Set<ParsedAuthor>()
 		
 		let decoder = JSONDecoder()

@@ -214,9 +214,9 @@ private extension CloudKitAcountZoneDelegate {
 									switch result {
 									case .success(let articleChanges):
 										
-										self.articlesZone?.deleteArticlesAndStatuses(articleChanges.deletedArticles ?? Set<Article>()) { _ in
+										self.articlesZone?.deleteArticles(articleChanges.deletedArticles ?? Set<Article>()) { _ in
 											self.refreshProgress?.completeTask()
-											self.articlesZone?.saveNewArticlesAndStatuses(articleChanges.newArticles ?? Set<Article>()) { _ in
+											self.articlesZone?.saveNewArticles(articleChanges.newArticles ?? Set<Article>()) { _ in
 												self.refreshProgress?.completeTask()
 												completion(webFeed)
 											}
@@ -251,9 +251,9 @@ private extension CloudKitAcountZoneDelegate {
 						BatchUpdate.shared.end()
 						switch result {
 						case .success(let articleChanges):
-							self.articlesZone?.deleteArticlesAndStatuses(articleChanges.deletedArticles ?? Set<Article>()) { _ in
+							self.articlesZone?.deleteArticles(articleChanges.deletedArticles ?? Set<Article>()) { _ in
 								self.refreshProgress?.completeTask()
-								self.articlesZone?.saveNewArticlesAndStatuses(articleChanges.newArticles ?? Set<Article>()) { _ in
+								self.articlesZone?.saveNewArticles(articleChanges.newArticles ?? Set<Article>()) { _ in
 									self.refreshProgress?.completeTask()
 									completion(webFeed)
 								}
