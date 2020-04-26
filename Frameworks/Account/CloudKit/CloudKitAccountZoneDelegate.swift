@@ -222,8 +222,10 @@ private extension CloudKitAcountZoneDelegate {
 										self.articlesZone?.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress?.completeTask()
 											self.articlesZone?.saveNewArticles(newAndUpdatedArticles) { _ in
-												self.refreshProgress?.completeTask()
-												completion(webFeed)
+												self.articlesZone?.fetchChangesInZone() { _ in
+													self.refreshProgress?.completeTask()
+													completion(webFeed)
+												}
 											}
 										}
 										
@@ -265,8 +267,10 @@ private extension CloudKitAcountZoneDelegate {
 							self.articlesZone?.deleteArticles(deletedArticles) { _ in
 								self.refreshProgress?.completeTask()
 								self.articlesZone?.saveNewArticles(newAndUpdatedArticles) { _ in
-									self.refreshProgress?.completeTask()
-									completion(webFeed)
+									self.articlesZone?.fetchChangesInZone() { _ in
+										self.refreshProgress?.completeTask()
+										completion(webFeed)
+									}
 								}
 							}
 						case .failure:

@@ -632,8 +632,10 @@ private extension CloudKitAccountDelegate {
 			self.articlesZone.deleteArticles(deletedArticles) { _ in
 				self.refreshProgress.completeTask()
 				self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
-					self.refreshProgress.completeTask()
-					completion()
+					self.articlesZone.fetchChangesInZone() { _ in
+						self.refreshProgress.completeTask()
+						completion()
+					}
 				}
 			}
 			
@@ -684,8 +686,10 @@ private extension CloudKitAccountDelegate {
 										self.articlesZone.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
 											self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
-												self.refreshProgress.clear()
-												completion(.success(feed))
+												self.articlesZone.fetchChangesInZone() { _ in
+													self.refreshProgress.clear()
+													completion(.success(feed))
+												}
 											}
 										}
 										
@@ -765,8 +769,10 @@ private extension CloudKitAccountDelegate {
 										self.articlesZone.deleteArticles(deletedArticles) { _ in
 											self.refreshProgress.completeTask()
 											self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
-												self.refreshProgress.clear()
-												completion(.success(feed))
+												self.articlesZone.fetchChangesInZone() { _ in
+													self.refreshProgress.clear()
+													completion(.success(feed))
+												}
 											}
 										}
 										
