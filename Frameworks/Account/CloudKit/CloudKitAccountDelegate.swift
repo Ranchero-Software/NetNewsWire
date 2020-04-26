@@ -628,16 +628,35 @@ private extension CloudKitAccountDelegate {
 			
 			self.articlesZone.deleteArticles(deletedArticles) { _ in
 				self.refreshProgress.completeTask()
-				self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
-					self.articlesZone.fetchChangesInZone() { _ in
-						self.refreshProgress.completeTask()
-						completion()
-					}
+				self.saveNewArticles(newAndUpdatedArticles) {
+					completion()
 				}
 			}
 			
 		}
 
+	}
+	
+	func saveNewArticles(_ articles: Set<Article>, completion: @escaping () -> Void) {
+		let group = DispatchGroup()
+		
+		let articleGroups = Array(articles).chunked(into: 300).map { Set($0) }
+		refreshProgress.addToNumberOfTasksAndRemaining(articleGroups.count)
+		
+		for articleGroup in articleGroups {
+			group.enter()
+			self.articlesZone.saveNewArticles(articleGroup) { _ in
+				self.refreshProgress.completeTask()
+				group.leave()
+			}
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			self.articlesZone.fetchChangesInZone() { _ in
+				self.refreshProgress.completeTask()
+				completion()
+			}
+		}
 	}
 
 	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
