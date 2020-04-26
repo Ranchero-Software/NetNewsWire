@@ -28,6 +28,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		static let recordType = "AccountWebFeed"
 		struct Fields {
 			static let url = "url"
+			static let name = "name"
 			static let editedName = "editedName"
 			static let containerExternalIDs = "containerExternalIDs"
 		}
@@ -81,10 +82,11 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
     
 	///  Persist a web feed record to iCloud and return the external key
-	func createWebFeed(url: String, editedName: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
+	func createWebFeed(url: String, name: String?, editedName: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: Self.zoneID)
 		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: recordID)
 		record[CloudKitWebFeed.Fields.url] = url
+		record[CloudKitWebFeed.Fields.name] = name
 		if let editedName = editedName {
 			record[CloudKitWebFeed.Fields.editedName] = editedName
 		}

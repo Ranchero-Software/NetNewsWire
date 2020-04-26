@@ -97,11 +97,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard refreshProgress.isComplete else {
-			completion(.success(()))
-			return
-		}
-
 		os_log(.debug, log: log, "Sending article statuses...")
 
 		database.selectForProcessing { result in
@@ -154,11 +149,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard refreshProgress.isComplete else {
-			completion(.success(()))
-			return
-		}
-
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
 		articlesZone.refreshArticles() { result in
@@ -214,7 +204,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 		
 		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
-			self.initialRefreshAll(for: account, completion: completion)
+			self.standardRefreshAll(for: account, completion: completion)
 		}
 		
 	}
@@ -309,7 +299,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.createWebFeed(url: feed.url, editedName: feed.editedName, container: container) { result in
+		accountZone.createWebFeed(url: feed.url, name: feed.name, editedName: feed.editedName, container: container) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let externalID):
@@ -494,28 +484,18 @@ private extension CloudKitAccountDelegate {
 			completion(.failure(error))
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(3)
-		refreshArticleStatus(for: account) { result in
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		accountZone.fetchChangesInZone() { result in
+			self.refreshProgress.completeTask()
+
 			switch result {
 			case .success:
-
-				self.refreshProgress.completeTask()
-				self.accountZone.fetchChangesInZone() { result in
+				self.refreshArticleStatus(for: account) { result in
+					self.refreshProgress.completeTask()
 					switch result {
 					case .success:
-
-						self.refreshProgress.completeTask()
-						self.sendArticleStatus(for: account) { result in
-							switch result {
-							case .success:
-								self.refreshProgress.clear()
-								account.metadata.lastArticleFetchEndTime = Date()
-								completion(.success(()))
-							case .failure(let error):
-								fail(error)
-							}
-						}
-
+						account.metadata.lastArticleFetchEndTime = Date()
+						completion(.success(()))
 					case .failure(let error):
 						fail(error)
 					}
@@ -667,7 +647,7 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 				
-				self.accountZone.createWebFeed(url: urlString, editedName: editedName, container: container) { result in
+				self.accountZone.createWebFeed(url: urlString, name: name, editedName: editedName, container: container) { result in
 
 					self.refreshProgress.completeTask()
 					switch result {
@@ -751,26 +731,27 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 				
-				self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, editedName: editedName, container: container) { result in
+				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+				feed.editedName = editedName
+				container.addWebFeed(feed)
 
+				InitialFeedDownloader.download(url) { parsedFeed in
 					self.refreshProgress.completeTask()
-					switch result {
-					case .success(let externalID):
-						
-						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-						feed.editedName = editedName
-						feed.externalID = externalID
-						container.addWebFeed(feed)
 
-						InitialFeedDownloader.download(url) { parsedFeed in
-							self.refreshProgress.completeTask()
+					if let parsedFeed = parsedFeed {
+						account.update(feed, with: parsedFeed) { result in
+							switch result {
+							case .success(let articleChanges):
+								BatchUpdate.shared.end()
+								
+								self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, name: parsedFeed.title, editedName: editedName, container: container) { result in
 
-							if let parsedFeed = parsedFeed {
-								account.update(feed, with: parsedFeed) { result in
+									self.refreshProgress.completeTask()
 									switch result {
-									case .success(let articleChanges):
+									case .success(let externalID):
 										
-										BatchUpdate.shared.end()
+										feed.externalID = externalID
+										
 										var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
 										newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
@@ -787,23 +768,24 @@ private extension CloudKitAccountDelegate {
 										}
 										
 									case .failure(let error):
+										BatchUpdate.shared.end()
 										self.refreshProgress.clear()
 										completion(.failure(error))
 									}
 									
 								}
-							} else {
+
+							case .failure(let error):
 								self.refreshProgress.clear()
-								completion(.success(feed))
+								completion(.failure(error))
 							}
 							
 						}
-
-					case .failure(let error):
-						BatchUpdate.shared.end()
+					} else {
 						self.refreshProgress.clear()
-						completion(.failure(error))
+						completion(.success(feed))
 					}
+						
 				}
 								
 			case .failure:
