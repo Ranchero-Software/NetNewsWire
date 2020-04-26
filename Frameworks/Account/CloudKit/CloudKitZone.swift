@@ -87,6 +87,7 @@ extension CloudKitZone {
 		}
 	}
 
+	/// Creates the zone record
 	func createZoneRecord(completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let database = database else {
 			completion(.failure(CloudKitZoneError.unknown))
@@ -106,6 +107,7 @@ extension CloudKitZone {
 		}
 	}
 
+	/// Subscribes to zone changes
 	func subscribeToZoneChanges() {
 		let subscription = CKRecordZoneSubscription(zoneID: Self.zoneID)
         
@@ -371,6 +373,7 @@ extension CloudKitZone {
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
 		
+	/// Delete CKRecords
 	func delete(recordIDs: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
 	}
