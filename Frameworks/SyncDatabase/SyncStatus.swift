@@ -12,12 +12,29 @@ import RSDatabase
 
 public struct SyncStatus: Hashable, Equatable {
 	
+	public enum Key: String {
+		case read = "read"
+		case starred = "starred"
+		case deleted = "deleted"
+		case new = "new"
+		
+		public init(_ articleStatusKey: ArticleStatus.Key) {
+			switch articleStatusKey {
+			case .read:
+				self = Self.read
+			case .starred:
+				self = Self.starred
+			}
+		}
+		
+	}
+
 	public let articleID: String
-	public let key: ArticleStatus.Key
+	public let key: SyncStatus.Key
 	public let flag: Bool
 	public let selected: Bool
 	
-	public init(articleID: String, key: ArticleStatus.Key, flag: Bool, selected: Bool = false) {
+	public init(articleID: String, key: SyncStatus.Key, flag: Bool, selected: Bool = false) {
 		self.articleID = articleID
 		self.key = key
 		self.flag = flag

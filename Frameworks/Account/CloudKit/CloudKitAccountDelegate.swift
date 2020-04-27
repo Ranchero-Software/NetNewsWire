@@ -112,7 +112,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					
 					func processWithArticles(_ articles: Set<Article>) {
 						
-						self.articlesZone.modifyArticles(articles) { result in
+						let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
+							result[article.articleID] = article
+						}
+						let statusedArticles = syncStatuses.map { ($0, articlesDict[$0.articleID]) }
+						
+						self.articlesZone.modifyArticles(statusedArticles) { result in
 							switch result {
 							case .success:
 								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
@@ -428,7 +433,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
 		let syncStatuses = articles.map { article in
-			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
 		database.insertStatuses(syncStatuses)
 
@@ -586,10 +591,6 @@ private extension CloudKitAccountDelegate {
 
 	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
 		
-		var newArticles = Set<Article>()
-		var updatedArticles = Set<Article>()
-		var deletedArticles = Set<Article>()
-
 		var refresherWebFeeds = Set<WebFeed>()
 		let group = DispatchGroup()
 
@@ -605,14 +606,10 @@ private extension CloudKitAccountDelegate {
 						account.update(webFeed.webFeedID, with: parsedItems) { result in
 							switch result {
 							case .success(let articleChanges):
-								
-								newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
-								updatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
-								deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
-
-								self.refreshProgress.completeTask()
-								group.leave()
-								
+								self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles) {
+									self.refreshProgress.completeTask()
+									group.leave()
+								}
 							case .failure(let error):
 								os_log(.error, log: self.log, "CloudKit Feed refresh update error: %@.", error.localizedDescription)
 								self.refreshProgress.completeTask()
@@ -634,14 +631,13 @@ private extension CloudKitAccountDelegate {
 		
 		group.enter()
 		refresher.refreshFeeds(refresherWebFeeds) { refresherNewArticles, refresherUpdatedArticles, refresherDeletedArticles in
-			newArticles.formUnion(refresherNewArticles)
-			updatedArticles.formUnion(refresherUpdatedArticles)
-			deletedArticles.formUnion(refresherDeletedArticles)
-			group.leave()
+			self.storeArticleChanges(new: refresherNewArticles, updated: refresherUpdatedArticles, deleted: refresherDeletedArticles) {
+				group.leave()
+			}
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			self.processRecords(new: newArticles, updated: updatedArticles, deleted: deletedArticles) {
+			self.refreshArticleStatus(for: account) { _ in
 				self.articlesZone.fetchChangesInZone() { _ in
 					self.refreshProgress.completeTask()
 					completion()
@@ -649,53 +645,6 @@ private extension CloudKitAccountDelegate {
 			}
 		}
 
-	}
-	
-	func processRecords(new: Set<Article>, updated: Set<Article>, deleted: Set<Article>, completion: @escaping () -> Void) {
-		
-		self.articlesZone.deleteArticles(deleted) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				self.articlesZone.modifyArticles(updated) { result in
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success:
-						self.saveNewArticles(new) {
-							completion()
-						}
-					case .failure(let error):
-						os_log(.error, log: self.log, "CloudKit modify articles error: %@.", error.localizedDescription)
-						completion()
-					}
-				}
-			case .failure(let error):
-				os_log(.error, log: self.log, "CloudKit delete articles error: %@.", error.localizedDescription)
-				completion()
-			}
-		}
-	}
-	
-	func saveNewArticles(_ articles: Set<Article>, completion: @escaping () -> Void) {
-		let group = DispatchGroup()
-		
-		let articleGroups = Array(articles).chunked(into: 300).map { Set($0) }
-		refreshProgress.addToNumberOfTasksAndRemaining(articleGroups.count)
-		
-		for articleGroup in articleGroups {
-			group.enter()
-			self.articlesZone.saveNewArticles(articleGroup) { result in
-				self.refreshProgress.completeTask()
-				group.leave()
-				if case .failure(let error) = result {
-					os_log(.error, log: self.log, "CloudKit new articles error: %@.", error.localizedDescription)
-				}
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion()
-		}
 	}
 
 	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
@@ -731,21 +680,7 @@ private extension CloudKitAccountDelegate {
 								account.update(urlString, with: parsedItems) { result in
 									switch result {
 									case .success:
-
-										account.fetchArticlesAsync(.webFeed(feed)) { result in
-											switch result {
-											case .success(let articles):
-												self.processRecords(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
-													self.articlesZone.fetchChangesInZone() { _ in
-														self.refreshProgress.clear()
-														completion(.success(feed))
-													}
-												}
-											case .failure(let error):
-												completion(.failure(error))
-											}
-										}
-										
+										self.sendNewArticlesToTheCloud(account, feed, completion: completion)
 									case .failure(let error):
 										self.refreshProgress.clear()
 										completion(.failure(error))
@@ -812,23 +747,8 @@ private extension CloudKitAccountDelegate {
 									self.refreshProgress.completeTask()
 									switch result {
 									case .success(let externalID):
-										
 										feed.externalID = externalID
-										
-										account.fetchArticlesAsync(.webFeed(feed)) { result in
-											switch result {
-											case .success(let articles):
-												self.processRecords(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
-													self.articlesZone.fetchChangesInZone() { _ in
-														self.refreshProgress.clear()
-														completion(.success(feed))
-													}
-												}
-											case .failure(let error):
-												completion(.failure(error))
-											}
-										}
-										
+										self.sendNewArticlesToTheCloud(account, feed, completion: completion)
 									case .failure(let error):
 										self.refreshProgress.clear()
 										completion(.failure(error))
@@ -859,6 +779,31 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
+	func sendNewArticlesToTheCloud(_ account: Account, _ feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		account.fetchArticlesAsync(.webFeed(feed)) { result in
+			switch result {
+			case .success(let articles):
+				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
+					self.refreshArticleStatus(for: account) { result in
+						switch result {
+						case .success:
+							self.articlesZone.fetchChangesInZone() { _ in
+								self.refreshProgress.clear()
+								completion(.success(feed))
+							}
+						case .failure(let error):
+							self.refreshProgress.clear()
+							completion(.failure(error))
+						}
+					}
+				}
+			case .failure(let error):
+				self.refreshProgress.clear()
+				completion(.failure(error))
+			}
+		}
+	}
+	
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			account.removeFeeds(account.topLevelWebFeeds)
@@ -868,6 +813,42 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 	
+	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?, completion: @escaping () -> Void) {
+		let group = DispatchGroup()
+		
+		group.enter()
+		insertSyncStatuses(articles: new, statusKey: .new, flag: true) {
+			group.leave()
+		}
+	
+		group.enter()
+		insertSyncStatuses(articles: updated, statusKey: .new, flag: false) {
+			group.leave()
+		}
+		
+		group.enter()
+		insertSyncStatuses(articles: deleted, statusKey: .deleted, flag: true) {
+			group.leave()
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			completion()
+		}
+	}
+	
+	func insertSyncStatuses(articles: Set<Article>?, statusKey: SyncStatus.Key, flag: Bool, completion: @escaping () -> Void) {
+		guard let articles = articles else {
+			completion()
+			return
+		}
+		let syncStatuses = articles.map { article in
+			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+		}
+		database.insertStatuses(syncStatuses) { _ in
+			completion()
+		}
+	}
+
 }
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {

@@ -489,7 +489,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
 		
 		let syncStatuses = articles.map { article in
-			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
 		
 		database.insertStatuses(syncStatuses)

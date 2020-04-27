@@ -436,7 +436,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 	}
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		let syncStatuses = articles.map { SyncStatus(articleID: $0.articleID, key: statusKey, flag: flag)}
+		let syncStatuses = articles.map { SyncStatus(articleID: $0.articleID, key: SyncStatus.Key(statusKey), flag: flag)}
 		database.insertStatuses(syncStatuses)
 		
 		database.selectPendingCount { result in

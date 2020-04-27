@@ -155,7 +155,7 @@ private extension SyncStatusTable {
 	func statusWithRow(_ row: FMResultSet) -> SyncStatus? {
 		guard let articleID = row.string(forColumn: DatabaseKey.articleID),
 			let rawKey = row.string(forColumn: DatabaseKey.key),
-			let key = ArticleStatus.Key(rawValue: rawKey) else {
+			let key = SyncStatus.Key(rawValue: rawKey) else {
 				return nil
 		}
 		

@@ -12,6 +12,7 @@ import RSParser
 import RSWeb
 import CloudKit
 import Articles
+import SyncDatabase
 
 final class CloudKitArticlesZone: CloudKitZone {
 	
@@ -95,40 +96,50 @@ final class CloudKitArticlesZone: CloudKitZone {
 		delete(ckQuery: ckQuery, completion: completion)
 	}
 	
-	func deleteArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard !articles.isEmpty else {
+	func modifyArticles(_ statusArticles: [(status: SyncStatus, article: Article?)], completion: @escaping ((Result<Void, Error>) -> Void)) {
+		guard !statusArticles.isEmpty else {
 			completion(.success(()))
 			return
 		}
 		
-		let recordIDs = articles.map { CKRecord.ID(recordName: $0.articleID, zoneID: Self.zoneID) }
-		delete(recordIDs: recordIDs, completion: completion)
-	}
-	
-	func modifyArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard !articles.isEmpty else {
-			completion(.success(()))
-			return
+		var newRecords = [CKRecord]()
+		var modifyRecords = [CKRecord]()
+		var deleteRecordIDs = [CKRecord.ID]()
+		
+		for statusArticle in statusArticles {
+			switch (statusArticle.status.key, statusArticle.status.flag) {
+			case (.new, true):
+				// create status
+				if let article = statusArticle.article {
+					newRecords.append(contentsOf: makeArticleRecords(article))
+				}
+			case (.starred, true), (.read, false):
+				// create status
+				if let article = statusArticle.article {
+					modifyRecords.append(contentsOf: makeArticleRecords(article))
+				}
+			case (.deleted, true):
+				deleteRecordIDs.append(CKRecord.ID(recordName: statusArticle.status.articleID, zoneID: Self.zoneID))
+			default:
+				print()
+				// create status
+				// delete article record
+			}
 		}
 		
-		var records = [CKRecord]()
-		
-		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
-		for saveArticle in saveArticles {
-			records.append(contentsOf: makeArticleRecords(saveArticle))
-		}
-
-		let hollowArticles = articles.subtracting(saveArticles)
-		for hollowArticle in hollowArticles {
-			records.append(contentsOf: makeHollowArticleRecords(hollowArticle))
-		}
-		
-		self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
+		saveIfNew(newRecords) { result in
 			switch result {
 			case .success:
-				completion(.success(()))
+				self.modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
+					switch result {
+					case .success:
+						completion(.success(()))
+					case .failure(let error):
+						self.handleSendArticleStatusError(error, statusArticles: statusArticles, completion: completion)
+					}
+				}
 			case .failure(let error):
-				self.handleSendArticleStatusError(error, articles: articles, completion: completion)
+				self.handleSendArticleStatusError(error, statusArticles: statusArticles, completion: completion)
 			}
 		}
 	}
@@ -137,12 +148,12 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 private extension CloudKitArticlesZone {
 
-	func handleSendArticleStatusError(_ error: Error, articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func handleSendArticleStatusError(_ error: Error, statusArticles: [(status: SyncStatus, article: Article?)], completion: @escaping ((Result<Void, Error>) -> Void)) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			self.createZoneRecord() { result in
 				switch result {
 				case .success:
-					self.modifyArticles(articles, completion: completion)
+					self.modifyArticles(statusArticles, completion: completion)
 				case .failure(let error):
 					completion(.failure(error))
 				}

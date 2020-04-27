@@ -261,9 +261,12 @@ final class FeedWranglerAPICaller: NSObject {
 			switch status.key {
 			case .read:
 				return URLQueryItem(name: "read", value: status.flag.description)
-				
 			case .starred:
 				return URLQueryItem(name: "starred", value: status.flag.description)
+			case .deleted:
+				return nil
+			case .new:
+				return nil
 			}
 		}
 		queryItems.append(URLQueryItem(name: "feed_item_id", value: articleID))

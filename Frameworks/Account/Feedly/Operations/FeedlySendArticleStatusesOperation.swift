@@ -47,7 +47,7 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 private extension FeedlySendArticleStatusesOperation {
 
 	func processStatuses(_ pending: [SyncStatus]) {
-		let statuses: [(status: ArticleStatus.Key, flag: Bool, action: FeedlyMarkAction)] = [
+		let statuses: [(status: SyncStatus.Key, flag: Bool, action: FeedlyMarkAction)] = [
 			(.read, false, .unread),
 			(.read, true, .read),
 			(.starred, true, .saved),
