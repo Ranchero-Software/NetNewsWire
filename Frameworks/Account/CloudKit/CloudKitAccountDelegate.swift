@@ -298,7 +298,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		accountZone.createWebFeed(url: feed.url, name: feed.name, editedName: feed.editedName, container: container) { result in
 			self.refreshProgress.completeTask()
 			switch result {
@@ -310,16 +310,19 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					switch result {
 					case .success(let articles):
 						self.articlesZone.saveNewArticles(articles) { result in
+							self.refreshProgress.completeTask()
 							if case .failure(let error) = result {
 								os_log(.error, log: self.log, "Restore articles error: %@.", error.localizedDescription)
 							}
 						}
 					case .failure(let error):
+						self.refreshProgress.clear()
 						completion(.failure(error))
 					}
 				}
 				
 			case .failure(let error):
+				self.refreshProgress.clear()
 				self.processAccountError(account, error)
 				completion(.failure(error))
 			}

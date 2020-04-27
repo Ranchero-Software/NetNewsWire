@@ -344,6 +344,70 @@ extension CloudKitZone {
 		}
 	}
 	
+	/// Delete CKRecords using a CKQuery
+	func delete(ckQuery: CKQuery, completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		var records = [CKRecord]()
+		
+		let op = CKQueryOperation(query: ckQuery)
+		op.recordFetchedBlock = { record in
+			records.append(record)
+		}
+		
+		op.queryCompletionBlock = { [weak self] (cursor, error) in
+			guard let self = self else {
+				completion(.failure(CloudKitZoneError.unknown))
+				return
+			}
+
+
+			if let cursor = cursor {
+				self.delete(cursor: cursor, carriedRecords: records, completion: completion)
+			} else {
+				guard !records.isEmpty else {
+					completion(.success(()))
+					return
+				}
+				
+				let recordIDs = records.map { $0.recordID }
+				self.modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
+			}
+			
+		}
+		
+		database?.add(op)
+	}
+	
+	/// Delete CKRecords using a CKQuery
+	func delete(cursor: CKQueryOperation.Cursor, carriedRecords: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
+		
+		var records = [CKRecord]()
+		
+		let op = CKQueryOperation(cursor: cursor)
+		op.recordFetchedBlock = { record in
+			records.append(record)
+		}
+		
+		op.queryCompletionBlock = { [weak self] (cursor, error) in
+			guard let self = self else {
+				completion(.failure(CloudKitZoneError.unknown))
+				return
+			}
+
+			records.append(contentsOf: carriedRecords)
+			
+			if let cursor = cursor {
+				self.delete(cursor: cursor, carriedRecords: records, completion: completion)
+			} else {
+				let recordIDs = records.map { $0.recordID }
+				self.modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
+			}
+			
+		}
+		
+		database?.add(op)
+	}
+	
 	/// Delete a CKRecord using its recordID
 	func delete(recordID: CKRecord.ID, completion: @escaping (Result<Void, Error>) -> Void) {
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
