@@ -309,7 +309,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				account.fetchArticlesAsync(.webFeed(feed)) { result in
 					switch result {
 					case .success(let articles):
-						self.articlesZone.saveNewArticles(articles, completion: completion)
+						self.articlesZone.saveNewArticles(articles) { result in
+							if case .failure(let error) = result {
+								os_log(.error, log: self.log, "Restore articles error: %@.", error.localizedDescription)
+							}
+						}
 					case .failure(let error):
 						completion(.failure(error))
 					}
