@@ -120,13 +120,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 						self.articlesZone.modifyArticles(statusedArticles) { result in
 							switch result {
 							case .success:
-								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
-								os_log(.debug, log: self.log, "Done sending article statuses.")
-								completion(.success(()))
+								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+									os_log(.debug, log: self.log, "Done sending article statuses.")
+									completion(.success(()))
+								}
 							case .failure(let error):
-								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID }) )
-								self.processAccountError(account, error)
-								completion(.failure(error))
+								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+									self.processAccountError(account, error)
+									completion(.failure(error))
+								}
 							}
 						}
 						
