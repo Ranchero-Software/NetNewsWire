@@ -314,6 +314,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 							if case .failure(let error) = result {
 								os_log(.error, log: self.log, "Restore articles error: %@.", error.localizedDescription)
 							}
+							completion(.success(()))
 						}
 					case .failure(let error):
 						self.refreshProgress.clear()
