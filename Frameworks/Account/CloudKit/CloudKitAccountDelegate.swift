@@ -722,19 +722,22 @@ private extension CloudKitAccountDelegate {
 								
 								account.update(urlString, with: parsedItems) { result in
 									switch result {
-									case .success(let articleChanges):
-										
-										let newArticles = articleChanges.newArticles ?? Set<Article>()
-										let updatedArticles = articleChanges.updatedArticles ?? Set<Article>()
-										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
+									case .success:
 
-										self.processRecords(new: newArticles, updated: updatedArticles, deleted: deletedArticles) {
-											self.articlesZone.fetchChangesInZone() { _ in
-												self.refreshProgress.clear()
-												completion(.success(feed))
+										account.fetchArticlesAsync(.webFeed(feed)) { result in
+											switch result {
+											case .success(let articles):
+												self.processRecords(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
+													self.articlesZone.fetchChangesInZone() { _ in
+														self.refreshProgress.clear()
+														completion(.success(feed))
+													}
+												}
+											case .failure(let error):
+												completion(.failure(error))
 											}
 										}
-																				
+										
 									case .failure(let error):
 										self.refreshProgress.clear()
 										completion(.failure(error))
@@ -793,7 +796,7 @@ private extension CloudKitAccountDelegate {
 					if let parsedFeed = parsedFeed {
 						account.update(feed, with: parsedFeed) { result in
 							switch result {
-							case .success(let articleChanges):
+							case .success:
 								BatchUpdate.shared.end()
 								
 								self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, name: parsedFeed.title, editedName: editedName, container: container) { result in
@@ -804,14 +807,17 @@ private extension CloudKitAccountDelegate {
 										
 										feed.externalID = externalID
 										
-										let newArticles = articleChanges.newArticles ?? Set<Article>()
-										let updatedArticles = articleChanges.updatedArticles ?? Set<Article>()
-										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
-
-										self.processRecords(new: newArticles, updated: updatedArticles, deleted: deletedArticles) {
-											self.articlesZone.fetchChangesInZone() { _ in
-												self.refreshProgress.clear()
-												completion(.success(feed))
+										account.fetchArticlesAsync(.webFeed(feed)) { result in
+											switch result {
+											case .success(let articles):
+												self.processRecords(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
+													self.articlesZone.fetchChangesInZone() { _ in
+														self.refreshProgress.clear()
+														completion(.success(feed))
+													}
+												}
+											case .failure(let error):
+												completion(.failure(error))
 											}
 										}
 										
