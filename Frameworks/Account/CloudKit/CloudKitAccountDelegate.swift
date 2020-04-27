@@ -305,7 +305,16 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			case .success(let externalID):
 				feed.externalID = externalID
 				container.addWebFeed(feed)
-				completion(.success(()))
+				
+				account.fetchArticlesAsync(.webFeed(feed)) { result in
+					switch result {
+					case .success(let articles):
+						self.articlesZone.saveNewArticles(articles, completion: completion)
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+				
 			case .failure(let error):
 				self.processAccountError(account, error)
 				completion(.failure(error))
