@@ -79,8 +79,13 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return
 		}
 		
-		let records = makeRecords(articles)
+		var records = [CKRecord]()
 		
+		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
+		for saveArticle in saveArticles {
+			records.append(contentsOf: makeArticleRecords(saveArticle))
+		}
+
 		saveIfNew(records, completion: completion)
 	}
 	
@@ -115,7 +120,17 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return
 		}
 		
-		let records = makeRecords(articles)
+		var records = [CKRecord]()
+		
+		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
+		for saveArticle in saveArticles {
+			records.append(contentsOf: makeArticleRecords(saveArticle))
+		}
+
+		let hollowArticles = articles.subtracting(saveArticles)
+		for hollowArticle in hollowArticles {
+			records.append(contentsOf: makeHollowArticleRecords(hollowArticle))
+		}
 		
 		self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
 			switch result {
@@ -144,22 +159,6 @@ private extension CloudKitArticlesZone {
 		} else {
 			completion(.failure(error))
 		}
-	}
-	
-	func makeRecords(_ articles: Set<Article>) -> [CKRecord] {
-		var records = [CKRecord]()
-
-		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
-		for saveArticle in saveArticles {
-			records.append(contentsOf: makeArticleRecords(saveArticle))
-		}
-
-		let hollowArticles = articles.subtracting(saveArticles)
-		for hollowArticle in hollowArticles {
-			records.append(contentsOf: makeHollowArticleRecords(hollowArticle))
-		}
-		
-		return records
 	}
 	
 	func makeArticleRecords(_ article: Article) -> [CKRecord] {

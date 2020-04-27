@@ -569,14 +569,15 @@ private extension CloudKitAccountDelegate {
 
 	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
 		
-		var newAndUpdatedArticles = Set<Article>()
+		var newArticles = Set<Article>()
+		var updatedArticles = Set<Article>()
 		var deletedArticles = Set<Article>()
 
 		var refresherWebFeeds = Set<WebFeed>()
 		let group = DispatchGroup()
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		
+
+		refreshProgress.addToNumberOfTasksAndRemaining(3)
+
 		for webFeed in webFeeds {
 			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
 				group.enter()
@@ -588,8 +589,8 @@ private extension CloudKitAccountDelegate {
 							switch result {
 							case .success(let articleChanges):
 								
-								newAndUpdatedArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
-								newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
+								newArticles.formUnion(articleChanges.newArticles ?? Set<Article>())
+								updatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
 								deletedArticles.formUnion(articleChanges.deletedArticles ?? Set<Article>())
 
 								self.refreshProgress.completeTask()
@@ -616,23 +617,46 @@ private extension CloudKitAccountDelegate {
 		
 		group.enter()
 		refresher.refreshFeeds(refresherWebFeeds) { refresherNewArticles, refresherUpdatedArticles, refresherDeletedArticles in
-			newAndUpdatedArticles.formUnion(refresherNewArticles)
-			newAndUpdatedArticles.formUnion(refresherUpdatedArticles)
+			newArticles.formUnion(refresherNewArticles)
+			updatedArticles.formUnion(refresherUpdatedArticles)
 			deletedArticles.formUnion(refresherDeletedArticles)
 			group.leave()
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			
-			self.articlesZone.deleteArticles(deletedArticles) { _ in
-				self.refreshProgress.completeTask()
-				self.saveNewArticles(newAndUpdatedArticles) {
+			self.processRecords(new: newArticles, updated: updatedArticles, deleted: deletedArticles) {
+				self.articlesZone.fetchChangesInZone() { _ in
+					self.refreshProgress.completeTask()
 					completion()
 				}
 			}
-			
 		}
 
+	}
+	
+	func processRecords(new: Set<Article>, updated: Set<Article>, deleted: Set<Article>, completion: @escaping () -> Void) {
+		
+		self.articlesZone.deleteArticles(deleted) { result in
+			self.refreshProgress.completeTask()
+			switch result {
+			case .success:
+				self.articlesZone.modifyArticles(updated) { result in
+					self.refreshProgress.completeTask()
+					switch result {
+					case .success:
+						self.saveNewArticles(new) {
+							completion()
+						}
+					case .failure(let error):
+						os_log(.error, log: self.log, "CloudKit modify articles error: %@.", error.localizedDescription)
+						completion()
+					}
+				}
+			case .failure(let error):
+				os_log(.error, log: self.log, "CloudKit delete articles error: %@.", error.localizedDescription)
+				completion()
+			}
+		}
 	}
 	
 	func saveNewArticles(_ articles: Set<Article>, completion: @escaping () -> Void) {
@@ -643,22 +667,22 @@ private extension CloudKitAccountDelegate {
 		
 		for articleGroup in articleGroups {
 			group.enter()
-			self.articlesZone.saveNewArticles(articleGroup) { _ in
+			self.articlesZone.saveNewArticles(articleGroup) { result in
 				self.refreshProgress.completeTask()
 				group.leave()
+				if case .failure(let error) = result {
+					os_log(.error, log: self.log, "CloudKit new articles error: %@.", error.localizedDescription)
+				}
 			}
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			self.articlesZone.fetchChangesInZone() { _ in
-				self.refreshProgress.completeTask()
-				completion()
-			}
+			completion()
 		}
 	}
 
 	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
 		feedProvider.assignName(urlComponents) { result in
 			self.refreshProgress.completeTask()
@@ -691,20 +715,17 @@ private extension CloudKitAccountDelegate {
 									switch result {
 									case .success(let articleChanges):
 										
-										var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
-										newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
+										let newArticles = articleChanges.newArticles ?? Set<Article>()
+										let updatedArticles = articleChanges.updatedArticles ?? Set<Article>()
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
 
-										self.articlesZone.deleteArticles(deletedArticles) { _ in
-											self.refreshProgress.completeTask()
-											self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
-												self.articlesZone.fetchChangesInZone() { _ in
-													self.refreshProgress.clear()
-													completion(.success(feed))
-												}
+										self.processRecords(new: newArticles, updated: updatedArticles, deleted: deletedArticles) {
+											self.articlesZone.fetchChangesInZone() { _ in
+												self.refreshProgress.clear()
+												completion(.success(feed))
 											}
 										}
-										
+																				
 									case .failure(let error):
 										self.refreshProgress.clear()
 										completion(.failure(error))
@@ -733,7 +754,7 @@ private extension CloudKitAccountDelegate {
 	
 	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		BatchUpdate.shared.start()
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
+		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		FeedFinder.find(url: url) { result in
 			
 			self.refreshProgress.completeTask()
@@ -774,22 +795,18 @@ private extension CloudKitAccountDelegate {
 										
 										feed.externalID = externalID
 										
-										var newAndUpdatedArticles = articleChanges.newArticles ?? Set<Article>()
-										newAndUpdatedArticles.formUnion(articleChanges.updatedArticles ?? Set<Article>())
+										let newArticles = articleChanges.newArticles ?? Set<Article>()
+										let updatedArticles = articleChanges.updatedArticles ?? Set<Article>()
 										let deletedArticles = articleChanges.deletedArticles ?? Set<Article>()
 
-										self.articlesZone.deleteArticles(deletedArticles) { _ in
-											self.refreshProgress.completeTask()
-											self.articlesZone.saveNewArticles(newAndUpdatedArticles) { _ in
-												self.articlesZone.fetchChangesInZone() { _ in
-													self.refreshProgress.clear()
-													completion(.success(feed))
-												}
+										self.processRecords(new: newArticles, updated: updatedArticles, deleted: deletedArticles) {
+											self.articlesZone.fetchChangesInZone() { _ in
+												self.refreshProgress.clear()
+												completion(.success(feed))
 											}
 										}
 										
 									case .failure(let error):
-										BatchUpdate.shared.end()
 										self.refreshProgress.clear()
 										completion(.failure(error))
 									}
@@ -797,6 +814,7 @@ private extension CloudKitAccountDelegate {
 								}
 
 							case .failure(let error):
+								BatchUpdate.shared.end()
 								self.refreshProgress.clear()
 								completion(.failure(error))
 							}
