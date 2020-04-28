@@ -130,10 +130,9 @@ extension NSAttributedString {
 	///
 	/// - Parameters:
 	///   - html: The HTML text.
-	///   - font: The font to use. Defaults to the system font.
 	///   - locale: The locale used for quotation marks when parsing `<q>` tags.
-	convenience init(html: String, font: Font? = nil, locale: Locale = Locale.current) {
-		let baseFont = font ?? Font.systemFont(ofSize: Font.systemFontSize)
+	convenience init(html: String, locale: Locale = Locale.current) {
+		let baseFont = Font.systemFont(ofSize: Font.systemFontSize)
 
 		var inTag: InTag = .none
 		var tag = ""
