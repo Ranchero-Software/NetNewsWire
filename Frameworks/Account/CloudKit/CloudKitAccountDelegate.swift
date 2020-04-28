@@ -794,7 +794,7 @@ private extension CloudKitAccountDelegate {
 			switch result {
 			case .success(let articles):
 				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
-					self.refreshArticleStatus(for: account) { result in
+					self.sendArticleStatus(for: account) { result in
 						switch result {
 						case .success:
 							self.articlesZone.fetchChangesInZone() { _ in
