@@ -59,7 +59,6 @@ class FeedWranglerAccountViewController: UITableViewController {
 
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
-		delegate?.dismiss()
 	}
 	
 	@IBAction func showHidePassword(_ sender: Any) {
