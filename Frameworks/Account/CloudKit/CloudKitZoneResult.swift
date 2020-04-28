@@ -30,8 +30,8 @@ enum CloudKitZoneResult {
 		
 		switch ckError.code {
 		case .serviceUnavailable, .requestRateLimited, .zoneBusy:
-			if let retry = ckError.userInfo[CKErrorRetryAfterKey] as? Double {
-				return .retry(afterSeconds: retry)
+			if let retry = ckError.userInfo[CKErrorRetryAfterKey] as? NSNumber {
+				return .retry(afterSeconds: retry.doubleValue)
 			} else {
 				return .failure(error: CloudKitError(ckError))
 			}
