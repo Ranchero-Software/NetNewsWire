@@ -172,12 +172,10 @@ extension NSAttributedString {
 					let location = lastRange != nil ? lastRange!.location + lastRange!.length : 0
 					let range = NSRange(location: location, length: result.mutableString.length - location)
 
-					let style = Style(tag: tag)
-
 					attributeRanges.append( (range: range, styles: currentStyles) )
 
-					if style != nil {
-						currentStyles.insert(style!)
+					if let style = Style(tag: tag) {
+						currentStyles.insert(style)
 					}
 				} else {
 					if tag == "q" {
