@@ -91,6 +91,24 @@ struct SyncStatusTable: DatabaseTable {
         selectPendingArticleIDsAsync(.starred, completion)
     }
     
+	func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
+		queue.runInTransaction { databaseResult in
+
+			func makeDatabaseCall(_ database: FMDatabase) {
+				let updateSQL = "update syncStatus set selected = false"
+				database.executeUpdate(updateSQL, withArgumentsIn: nil)
+			}
+
+			switch databaseResult {
+			case .success(let database):
+				makeDatabaseCall(database)
+				callCompletion(completion, nil)
+			case .failure(let databaseError):
+				callCompletion(completion, databaseError)
+			}
+		}
+	}
+
 	func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		queue.runInTransaction { databaseResult in
 

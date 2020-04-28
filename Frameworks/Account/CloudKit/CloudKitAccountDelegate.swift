@@ -460,6 +460,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress, articlesZone: articlesZone)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
 		
+		database.resetAllSelectedForProcessing()
+		
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
 			accountZone.findOrCreateAccount() { result in

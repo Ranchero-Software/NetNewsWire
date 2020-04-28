@@ -52,6 +52,10 @@ public struct SyncDatabase {
         syncStatusTable.selectPendingStarredStatusArticleIDs(completion: completion)
     }
     
+	public func resetAllSelectedForProcessing(completion: DatabaseCompletionBlock? = nil) {
+		syncStatusTable.resetAllSelectedForProcessing(completion: completion)
+	}
+
 	public func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
 		syncStatusTable.resetSelectedForProcessing(articleIDs, completion: completion)
 	}
