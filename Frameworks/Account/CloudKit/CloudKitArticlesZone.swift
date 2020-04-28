@@ -91,7 +91,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 		
 		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
 		for saveArticle in saveArticles {
-			records.append(contentsOf: makeArticleRecords(saveArticle))
+			records.append(makeStatusRecord(saveArticle))
+			records.append(makeArticleRecord(saveArticle))
 		}
 
 		saveIfNew(records, completion: completion)
@@ -118,12 +119,12 @@ final class CloudKitArticlesZone: CloudKitZone {
 			case (.new, true):
 				newRecords.append(makeStatusRecord(statusArticle))
 				if let article = statusArticle.article {
-					newRecords.append(contentsOf: makeArticleRecords(article))
+					newRecords.append(makeArticleRecord(article))
 				}
 			case (.starred, true), (.read, false):
 				modifyRecords.append(makeStatusRecord(statusArticle))
 				if let article = statusArticle.article {
-					modifyRecords.append(contentsOf: makeArticleRecords(article))
+					modifyRecords.append(makeArticleRecord(article))
 				}
 			case (.deleted, true):
 				deleteRecordIDs.append(CKRecord.ID(recordName: statusID(statusArticle.status.articleID), zoneID: Self.zoneID))
@@ -168,6 +169,17 @@ private extension CloudKitArticlesZone {
 		return "a|\(id)"
 	}
 	
+	func makeStatusRecord(_ article: Article) -> CKRecord {
+		let recordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: Self.zoneID)
+		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
+		if let webFeedExternalID = article.webFeed?.externalID {
+			record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
+		}
+		record[CloudKitArticleStatus.Fields.read] = article.status.read ? "1" : "0"
+		record[CloudKitArticleStatus.Fields.starred] = article.status.starred ? "1" : "0"
+		return record
+	}
+	
 	func makeStatusRecord(_ statusArticle: (status: SyncStatus, article: Article?)) -> CKRecord {
 		let status = statusArticle.status
 		let recordID = CKRecord.ID(recordName: statusID(status.articleID), zoneID: Self.zoneID)
@@ -194,25 +206,23 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 	
-	func makeArticleRecords(_ article: Article) -> [CKRecord] {
-		var records = [CKRecord]()
-
+	func makeArticleRecord(_ article: Article) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: articleID(article.articleID), zoneID: Self.zoneID)
-		let articleRecord = CKRecord(recordType: CloudKitArticle.recordType, recordID: recordID)
+		let record = CKRecord(recordType: CloudKitArticle.recordType, recordID: recordID)
 
 		let articleStatusRecordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: Self.zoneID)
-		articleRecord[CloudKitArticle.Fields.articleStatus] = CKRecord.Reference(recordID: articleStatusRecordID, action: .deleteSelf)
-		articleRecord[CloudKitArticle.Fields.webFeedURL] = article.webFeed?.url
-		articleRecord[CloudKitArticle.Fields.uniqueID] = article.uniqueID
-		articleRecord[CloudKitArticle.Fields.title] = article.title
-		articleRecord[CloudKitArticle.Fields.contentHTML] = article.contentHTML
-		articleRecord[CloudKitArticle.Fields.contentText] = article.contentText
-		articleRecord[CloudKitArticle.Fields.url] = article.url
-		articleRecord[CloudKitArticle.Fields.externalURL] = article.externalURL
-		articleRecord[CloudKitArticle.Fields.summary] = article.summary
-		articleRecord[CloudKitArticle.Fields.imageURL] = article.imageURL
-		articleRecord[CloudKitArticle.Fields.datePublished] = article.datePublished
-		articleRecord[CloudKitArticle.Fields.dateModified] = article.dateModified
+		record[CloudKitArticle.Fields.articleStatus] = CKRecord.Reference(recordID: articleStatusRecordID, action: .deleteSelf)
+		record[CloudKitArticle.Fields.webFeedURL] = article.webFeed?.url
+		record[CloudKitArticle.Fields.uniqueID] = article.uniqueID
+		record[CloudKitArticle.Fields.title] = article.title
+		record[CloudKitArticle.Fields.contentHTML] = article.contentHTML
+		record[CloudKitArticle.Fields.contentText] = article.contentText
+		record[CloudKitArticle.Fields.url] = article.url
+		record[CloudKitArticle.Fields.externalURL] = article.externalURL
+		record[CloudKitArticle.Fields.summary] = article.summary
+		record[CloudKitArticle.Fields.imageURL] = article.imageURL
+		record[CloudKitArticle.Fields.datePublished] = article.datePublished
+		record[CloudKitArticle.Fields.dateModified] = article.dateModified
 		
 		let encoder = JSONEncoder()
 		var parsedAuthors = [String]()
@@ -227,11 +237,10 @@ private extension CloudKitArticlesZone {
 					parsedAuthors.append(encodedParsedAuthor)
 				}
 			}
-			articleRecord[CloudKitArticle.Fields.parsedAuthors] = parsedAuthors
+			record[CloudKitArticle.Fields.parsedAuthors] = parsedAuthors
 		}
 		
-		records.append(articleRecord)
-		return records
+		return record
 	}
 
 

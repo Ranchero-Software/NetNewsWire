@@ -236,6 +236,11 @@ extension CloudKitZone {
 	
 	/// Saves or modifies the records as long as they are unchanged relative to the local version
 	func saveIfNew(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
+		guard !records.isEmpty else {
+			completion(.success(()))
+			return
+		}
+		
 		let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: [CKRecord.ID]())
 		op.savePolicy = .ifServerRecordUnchanged
 		op.isAtomic = false
@@ -459,6 +464,11 @@ extension CloudKitZone {
 
 	/// Modify and delete the supplied CKRecords and CKRecord.IDs
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+		guard !(recordsToSave.isEmpty && recordIDsToDelete.isEmpty) else {
+			completion(.success(()))
+			return
+		}
+
 		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
 		op.savePolicy = .changedKeys
 		op.isAtomic = true
