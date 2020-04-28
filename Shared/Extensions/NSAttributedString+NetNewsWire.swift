@@ -144,6 +144,7 @@ extension NSAttributedString {
 		let result = NSMutableAttributedString()
 
 		var attributeRanges = [ (range: NSRange, styles: CountedSet<Style>) ]()
+		var quoteDepth = 0
 
 		while let char = iterator.next() {
 			if char == "<" && inTag == .none {
@@ -162,7 +163,9 @@ extension NSAttributedString {
 					tagStack.append(tag)
 
 					if tag == "q" {
-						result.mutableString.append(locale.quotationBeginDelimiter ?? "\"")
+						quoteDepth += 1
+						let delimiter = quoteDepth % 2 == 1 ? locale.quotationBeginDelimiter : locale.alternateQuotationBeginDelimiter
+						result.mutableString.append(delimiter ?? "\"")
 					}
 
 					let lastRange = attributeRanges.last?.range
@@ -176,11 +179,11 @@ extension NSAttributedString {
 					if style != nil {
 						currentStyles.insert(style!)
 					}
-
-
 				} else {
 					if tag == "q" {
-						result.mutableString.append(locale.quotationEndDelimiter ?? "\"")
+						let delimiter = quoteDepth % 2 == 1 ? locale.quotationEndDelimiter : locale.alternateQuotationEndDelimiter
+						result.mutableString.append(delimiter ?? "\"")
+						quoteDepth -= 1
 					}
 
 					let lastRange = attributeRanges.last?.range
