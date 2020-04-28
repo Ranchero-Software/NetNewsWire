@@ -255,7 +255,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
-				self.articlesZone.deleteArticles(feed.url) { result in
+				guard let webFeedExternalID = feed.externalID else {
+					completion(.success(()))
+					return
+				}
+				
+				self.articlesZone.deleteArticles(webFeedExternalID) { result in
 					self.refreshProgress.completeTask()
 					switch result {
 					case .success:
@@ -267,6 +272,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					}
 				}
 			case .failure(let error):
+				self.refreshProgress.completeTask()
 				self.processAccountError(account, error)
 				completion(.failure(error))
 			}

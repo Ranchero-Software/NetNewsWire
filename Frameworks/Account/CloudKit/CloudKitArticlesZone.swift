@@ -97,9 +97,9 @@ final class CloudKitArticlesZone: CloudKitZone {
 		saveIfNew(records, completion: completion)
 	}
 	
-	func deleteArticles(_ webFeedURL: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		let predicate = NSPredicate(format: "webFeedURL = %@", webFeedURL)
-		let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
+	func deleteArticles(_ webFeedExternalID: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		let predicate = NSPredicate(format: "webFeedExternalID = %@", webFeedExternalID)
+		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)
 		delete(ckQuery: ckQuery, completion: completion)
 	}
 	
@@ -134,18 +134,24 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 		
 		saveIfNew(newRecords) { result in
-			switch result {
-			case .success:
+			if case .failure(let error) = result, case CloudKitZoneError.userDeletedZone = error {
+				self.createZoneRecord() { result in
+					switch result {
+					case .success:
+						self.modifyArticles(statusArticles, completion: completion)
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+			} else {
 				self.modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
 					switch result {
 					case .success:
 						completion(.success(()))
 					case .failure(let error):
-						self.handleSendArticleStatusError(error, statusArticles: statusArticles, completion: completion)
+						completion(.failure(error))
 					}
 				}
-			case .failure(let error):
-				self.handleSendArticleStatusError(error, statusArticles: statusArticles, completion: completion)
 			}
 		}
 	}
@@ -153,21 +159,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 }
 
 private extension CloudKitArticlesZone {
-
-	func handleSendArticleStatusError(_ error: Error, statusArticles: [(status: SyncStatus, article: Article?)], completion: @escaping ((Result<Void, Error>) -> Void)) {
-		if case CloudKitZoneError.userDeletedZone = error {
-			self.createZoneRecord() { result in
-				switch result {
-				case .success:
-					self.modifyArticles(statusArticles, completion: completion)
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		} else {
-			completion(.failure(error))
-		}
-	}
 		
 	func statusID(_ id: String) -> String {
 		return "s|\(id)"
