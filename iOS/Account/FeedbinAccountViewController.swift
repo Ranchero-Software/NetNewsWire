@@ -20,6 +20,7 @@ class FeedbinAccountViewController: UITableViewController {
 	@IBOutlet weak var actionButton: UIButton!
 	
 	weak var account: Account?
+	weak var delegate: AddAccountDismissDelegate?
 
 	override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +60,7 @@ class FeedbinAccountViewController: UITableViewController {
 
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
+		delegate?.dismiss()
 	}
 	
 	@IBAction func showHidePassword(_ sender: Any) {
@@ -116,6 +118,7 @@ class FeedbinAccountViewController: UITableViewController {
 						}
 						
 						self.dismiss(animated: true, completion: nil)
+						self.delegate?.dismiss()
 					} catch {
 						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
 					}

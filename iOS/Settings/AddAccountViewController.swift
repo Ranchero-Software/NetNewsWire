@@ -10,7 +10,11 @@ import Account
 import UIKit
 import RSCore
 
-class AddAccountViewController: UITableViewController {
+protocol AddAccountDismissDelegate: UIViewController {
+	func dismiss()
+}
+
+class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	@IBOutlet private weak var localAccountImageView: UIImageView!
 	@IBOutlet private weak var localAccountNameLabel: UILabel!
@@ -33,10 +37,14 @@ class AddAccountViewController: UITableViewController {
 		case 0:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "AddLocalAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
+			let addViewController = navController.topViewController as! LocalAccountViewController
+			addViewController.delegate = self
 			present(navController, animated: true)
 		case 1:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
+			let addViewController = navController.topViewController as! FeedbinAccountViewController
+			addViewController.delegate = self
 			present(navController, animated: true)
 		case 2:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
@@ -46,6 +54,8 @@ class AddAccountViewController: UITableViewController {
 		case 3:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedWranglerAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
+			let addViewController = navController.topViewController as! FeedWranglerAccountViewController
+			addViewController.delegate = self
 			present(navController, animated: true)
 		default:
 			break
