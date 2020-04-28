@@ -121,6 +121,13 @@ final class CloudKitArticlesZone: CloudKitZone {
 				if let article = statusArticle.article {
 					newRecords.append(makeArticleRecord(article))
 				}
+			case (.new, false):
+				newRecords.append(makeStatusRecord(statusArticle))
+				if let article = statusArticle.article {
+					if article.status.read == false || article.status.starred == true {
+						newRecords.append(makeArticleRecord(article))
+					}
+				}
 			case (.starred, true), (.read, false):
 				modifyRecords.append(makeStatusRecord(statusArticle))
 				if let article = statusArticle.article {
