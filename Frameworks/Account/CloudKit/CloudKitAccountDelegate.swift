@@ -647,7 +647,7 @@ private extension CloudKitAccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			self.refreshArticleStatus(for: account) { _ in
+			self.sendArticleStatus(for: account) { _ in
 				self.articlesZone.fetchChangesInZone() { _ in
 					self.refreshProgress.completeTask()
 					completion()
