@@ -156,7 +156,7 @@ extension CloudKitZone {
 					}
 				}
 			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone query retry in %@ seconds.", Self.zoneID.zoneName, timeToWait)
+				os_log(.error, log: self.log, "%@ zone query retry in %f seconds.", Self.zoneID.zoneName, timeToWait)
 				self.retryIfPossible(after: timeToWait) {
 					self.query(query, completion: completion)
 				}
@@ -208,7 +208,7 @@ extension CloudKitZone {
 					}
 				}
 			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone fetch retry in %@ seconds.", Self.zoneID.zoneName, timeToWait)
+				os_log(.error, log: self.log, "%@ zone fetch retry in %f seconds.", Self.zoneID.zoneName, timeToWait)
 				self.retryIfPossible(after: timeToWait) {
 					self.fetch(externalID: externalID, completion: completion)
 				}
@@ -272,7 +272,7 @@ extension CloudKitZone {
 					completion(.failure(CloudKitZoneError.userDeletedZone))
 				}
 			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone save if new retry in %@ seconds.", Self.zoneID.zoneName, timeToWait)
+				os_log(.error, log: self.log, "%@ zone save if new retry in %f seconds.", Self.zoneID.zoneName, timeToWait)
 				self.retryIfPossible(after: timeToWait) {
 					self.saveIfNew(records, completion: completion)
 				}
@@ -337,7 +337,7 @@ extension CloudKitZone {
 					}
 				}
 			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone save subscription retry in %@ seconds.", Self.zoneID.zoneName, timeToWait)
+				os_log(.error, log: self.log, "%@ zone save subscription retry in %f seconds.", Self.zoneID.zoneName, timeToWait)
 				self.retryIfPossible(after: timeToWait) {
 					self.save(subscription, completion: completion)
 				}
@@ -450,7 +450,7 @@ extension CloudKitZone {
 					completion(.success(()))
 				}
 			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone delete subscription retry in %@ seconds.", Self.zoneID.zoneName, timeToWait)
+				os_log(.error, log: self.log, "%@ zone delete subscription retry in %f seconds.", Self.zoneID.zoneName, timeToWait)
 				self.retryIfPossible(after: timeToWait) {
 					self.delete(subscriptionID: subscriptionID, completion: completion)
 				}
@@ -501,7 +501,7 @@ extension CloudKitZone {
 					completion(.failure(CloudKitZoneError.userDeletedZone))
 				}
 			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone modify retry in %@ seconds.", Self.zoneID.zoneName, timeToWait)
+				os_log(.error, log: self.log, "%@ zone modify retry in %f seconds.", Self.zoneID.zoneName, timeToWait)
 				self.retryIfPossible(after: timeToWait) {
 					self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 				}
@@ -607,7 +607,7 @@ extension CloudKitZone {
 					completion(.failure(CloudKitZoneError.userDeletedZone))
 				}
 			case .retry(let timeToWait):
-				os_log(.error, log: self.log, "%@ zone fetch changes retry in %@ seconds.", Self.zoneID.zoneName, timeToWait)
+				os_log(.error, log: self.log, "%@ zone fetch changes retry in %f seconds.", Self.zoneID.zoneName, timeToWait)
 				self.retryIfPossible(after: timeToWait) {
 					self.fetchChangesInZone(completion: completion)
 				}
