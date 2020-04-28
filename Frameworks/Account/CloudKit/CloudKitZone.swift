@@ -365,7 +365,9 @@ extension CloudKitZone {
 				self.delete(cursor: cursor, carriedRecords: records, completion: completion)
 			} else {
 				guard !records.isEmpty else {
-					completion(.success(()))
+					DispatchQueue.main.async {
+						completion(.success(()))
+					}
 					return
 				}
 				
