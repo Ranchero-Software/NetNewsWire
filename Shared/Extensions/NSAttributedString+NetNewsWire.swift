@@ -159,6 +159,12 @@ extension NSAttributedString {
 					tag.append(first)
 				}
 			} else if char == ">" && inTag != .none {
+				let lastRange = attributeRanges.last?.range
+				let location = lastRange != nil ? lastRange!.location + lastRange!.length : 0
+				let range = NSRange(location: location, length: result.mutableString.length - location)
+
+				attributeRanges.append( (range: range, styles: currentStyles) )
+
 				if inTag == .opening {
 					tagStack.append(tag)
 
@@ -167,12 +173,6 @@ extension NSAttributedString {
 						let delimiter = quoteDepth % 2 == 1 ? locale.quotationBeginDelimiter : locale.alternateQuotationBeginDelimiter
 						result.mutableString.append(delimiter ?? "\"")
 					}
-
-					let lastRange = attributeRanges.last?.range
-					let location = lastRange != nil ? lastRange!.location + lastRange!.length : 0
-					let range = NSRange(location: location, length: result.mutableString.length - location)
-
-					attributeRanges.append( (range: range, styles: currentStyles) )
 
 					if let style = Style(tag: tag) {
 						currentStyles.insert(style)
@@ -183,12 +183,6 @@ extension NSAttributedString {
 						result.mutableString.append(delimiter ?? "\"")
 						quoteDepth -= 1
 					}
-
-					let lastRange = attributeRanges.last?.range
-					let location = lastRange != nil ? lastRange!.location + lastRange!.length : 0
-					let range = NSRange(location: location, length: result.mutableString.length - location)
-
-					attributeRanges.append( ( range: range, styles: currentStyles ))
 
 					if let style = Style(tag: tag) {
 						currentStyles.remove(style)
