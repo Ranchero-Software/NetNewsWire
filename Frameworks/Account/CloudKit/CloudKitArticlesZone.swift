@@ -129,7 +129,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 				deleteRecordIDs.append(CKRecord.ID(recordName: statusID(statusArticle.status.articleID), zoneID: Self.zoneID))
 			default:
 				modifyRecords.append(makeStatusRecord(statusArticle))
-				deleteRecordIDs.append(CKRecord.ID(recordName: statusID(statusArticle.status.articleID), zoneID: Self.zoneID))
+				deleteRecordIDs.append(CKRecord.ID(recordName: articleID(statusArticle.status.articleID), zoneID: Self.zoneID))
 			}
 		}
 		
