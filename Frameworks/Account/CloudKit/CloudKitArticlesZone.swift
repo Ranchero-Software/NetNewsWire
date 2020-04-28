@@ -95,7 +95,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			records.append(makeArticleRecord(saveArticle))
 		}
 
-		saveIfNew(records, completion: completion)
+		save(records, completion: completion)
 	}
 	
 	func deleteArticles(_ webFeedExternalID: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -110,18 +110,12 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return
 		}
 		
-		var newRecords = [CKRecord]()
 		var modifyRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 		
 		for statusArticle in statusArticles {
 			switch (statusArticle.status.key, statusArticle.status.flag) {
-			case (.new, true):
-				newRecords.append(makeStatusRecord(statusArticle))
-				if let article = statusArticle.article {
-					newRecords.append(makeArticleRecord(article))
-				}
-			case (.new, false):
+			case (.new, _):
 				modifyRecords.append(makeStatusRecord(statusArticle))
 				if let article = statusArticle.article {
 					if article.status.read == false || article.status.starred == true {
@@ -141,25 +135,12 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 		
-		saveIfNew(newRecords) { result in
-			if case .failure(let error) = result, case CloudKitZoneError.userDeletedZone = error {
-				self.createZoneRecord() { result in
-					switch result {
-					case .success:
-						self.modifyArticles(statusArticles, completion: completion)
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				}
-			} else {
-				self.modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
-					switch result {
-					case .success:
-						completion(.success(()))
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				}
+		self.modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
+			switch result {
+			case .success:
+				completion(.success(()))
+			case .failure(let error):
+				self.handleModifyArticlesError(error, statusArticles: statusArticles, completion: completion)
 			}
 		}
 	}
@@ -167,7 +148,22 @@ final class CloudKitArticlesZone: CloudKitZone {
 }
 
 private extension CloudKitArticlesZone {
-		
+
+	func handleModifyArticlesError(_ error: Error, statusArticles: [(status: SyncStatus, article: Article?)], completion: @escaping ((Result<Void, Error>) -> Void)) {
+		if case CloudKitZoneError.userDeletedZone = error {
+			self.createZoneRecord() { result in
+				switch result {
+				case .success:
+					self.modifyArticles(statusArticles, completion: completion)
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			completion(.failure(error))
+		}
+	}
+	
 	func statusID(_ id: String) -> String {
 		return "s|\(id)"
 	}
