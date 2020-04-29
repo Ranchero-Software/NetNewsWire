@@ -22,6 +22,7 @@ class WebViewController: UIViewController {
 	private struct MessageName {
 		static let imageWasClicked = "imageWasClicked"
 		static let imageWasShown = "imageWasShown"
+		static let showFeedInspector = "showFeedInspector"
 	}
 
 	private var topShowBarsView: UIView!
@@ -345,6 +346,10 @@ extension WebViewController: WKScriptMessageHandler {
 			clickedImageCompletion?()
 		case MessageName.imageWasClicked:
 			imageWasClicked(body: message.body as? String)
+		case MessageName.showFeedInspector:
+			if let webFeed = article?.webFeed {
+				coordinator.showFeedInspector(for: webFeed)
+			}
 		default:
 			return
 		}
@@ -440,6 +445,7 @@ private extension WebViewController {
 
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
+			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
 
 			self.renderPage(webView)
 			
