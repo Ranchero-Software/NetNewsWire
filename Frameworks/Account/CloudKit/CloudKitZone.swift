@@ -456,11 +456,15 @@ extension CloudKitZone {
 					}
 				}
 				
-				group.notify(queue: DispatchQueue.main) {
+				group.notify(queue: DispatchQueue.global(qos: .background)) {
 					if errorOccurred {
-						completion(.failure(CloudKitZoneError.unknown))
+						DispatchQueue.main.async {
+							completion(.failure(CloudKitZoneError.unknown))
+						}
 					} else {
-						completion(.success(()))
+						DispatchQueue.main.async {
+							completion(.success(()))
+						}
 					}
 				}
 				
