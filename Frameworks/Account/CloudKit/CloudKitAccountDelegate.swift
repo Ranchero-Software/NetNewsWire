@@ -538,7 +538,7 @@ private extension CloudKitAccountDelegate {
 			completion(.failure(error))
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		refreshProgress.addToNumberOfTasksAndRemaining(3)
 		accountZone.fetchChangesInZone() { result in
 			self.refreshProgress.completeTask()
 
@@ -571,7 +571,7 @@ private extension CloudKitAccountDelegate {
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		let intialWebFeedsCount = account.flattenedWebFeeds().count
-		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialWebFeedsCount)
+		refreshProgress.addToNumberOfTasksAndRemaining(4 + intialWebFeedsCount)
 
 		func fail(_ error: Error) {
 			self.processAccountError(account, error)
@@ -626,8 +626,6 @@ private extension CloudKitAccountDelegate {
 		var refresherWebFeeds = Set<WebFeed>()
 		let group = DispatchGroup()
 
-		refreshProgress.addToNumberOfTasksAndRemaining(3)
-
 		for webFeed in webFeeds {
 			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
 				group.enter()
@@ -670,10 +668,8 @@ private extension CloudKitAccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			self.sendArticleStatus(for: account) { _ in
-				self.articlesZone.fetchChangesInZone() { _ in
-					self.refreshProgress.completeTask()
-					completion()
-				}
+				self.refreshProgress.completeTask()
+				completion()
 			}
 		}
 
