@@ -104,8 +104,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 		delete(ckQuery: ckQuery, completion: completion)
 	}
 	
-	func modifyArticles(_ statusArticles: [(status: SyncStatus, article: Article?)], completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard !statusArticles.isEmpty else {
+	func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+		guard !statusUpdates.isEmpty else {
 			completion(.success(()))
 			return
 		}
@@ -113,25 +113,16 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var modifyRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 		
-		for statusArticle in statusArticles {
-			switch (statusArticle.status.key, statusArticle.status.flag) {
-			case (.new, _):
-				modifyRecords.append(makeStatusRecord(statusArticle))
-				if let article = statusArticle.article {
-					if article.status.read == false || article.status.starred == true {
-						modifyRecords.append(makeArticleRecord(article))
-					}
-				}
-			case (.starred, true), (.read, false):
-				modifyRecords.append(makeStatusRecord(statusArticle))
-				if let article = statusArticle.article {
-					modifyRecords.append(makeArticleRecord(article))
-				}
-			case (.deleted, true):
-				deleteRecordIDs.append(CKRecord.ID(recordName: statusID(statusArticle.status.articleID), zoneID: Self.zoneID))
-			default:
-				modifyRecords.append(makeStatusRecord(statusArticle))
-				deleteRecordIDs.append(CKRecord.ID(recordName: articleID(statusArticle.status.articleID), zoneID: Self.zoneID))
+		for statusUpdate in statusUpdates {
+			switch statusUpdate.record {
+			case .all:
+				modifyRecords.append(makeStatusRecord(statusUpdate))
+				modifyRecords.append(makeArticleRecord(statusUpdate.article!))
+			case .delete:
+				deleteRecordIDs.append(CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: Self.zoneID))
+			case .statusOnly:
+				modifyRecords.append(makeStatusRecord(statusUpdate))
+				deleteRecordIDs.append(CKRecord.ID(recordName: articleID(statusUpdate.articleID), zoneID: Self.zoneID))
 			}
 		}
 		
@@ -140,7 +131,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			case .success:
 				completion(.success(()))
 			case .failure(let error):
-				self.handleModifyArticlesError(error, statusArticles: statusArticles, completion: completion)
+				self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
 			}
 		}
 	}
@@ -149,12 +140,12 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 private extension CloudKitArticlesZone {
 
-	func handleModifyArticlesError(_ error: Error, statusArticles: [(status: SyncStatus, article: Article?)], completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
 		if case CloudKitZoneError.userDeletedZone = error {
 			self.createZoneRecord() { result in
 				switch result {
 				case .success:
-					self.modifyArticles(statusArticles, completion: completion)
+					self.modifyArticles(statusUpdates, completion: completion)
 				case .failure(let error):
 					completion(.failure(error))
 				}
@@ -183,28 +174,16 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 	
-	func makeStatusRecord(_ statusArticle: (status: SyncStatus, article: Article?)) -> CKRecord {
-		let status = statusArticle.status
-		let recordID = CKRecord.ID(recordName: statusID(status.articleID), zoneID: Self.zoneID)
+	func makeStatusRecord(_ statusUpdate: CloudKitArticleStatusUpdate) -> CKRecord {
+		let recordID = CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: Self.zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
 		
-		if let webFeedExternalID = statusArticle.article?.webFeed?.externalID {
+		if let webFeedExternalID = statusUpdate.article?.webFeed?.externalID {
 			record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
 		}
 		
-		if let article = statusArticle.article {
-			record[CloudKitArticleStatus.Fields.read] = article.status.read ? "1" : "0"
-			record[CloudKitArticleStatus.Fields.starred] = article.status.starred ? "1" : "0"
-		} else {
-			switch status.key {
-			case .read:
-				record[CloudKitArticleStatus.Fields.read] = status.flag ? "1" : "0"
-			case .starred:
-				record[CloudKitArticleStatus.Fields.starred] = status.flag ? "1" : "0"
-			default:
-				break
-			}
-		}
+		record[CloudKitArticleStatus.Fields.read] = statusUpdate.isRead ? "1" : "0"
+		record[CloudKitArticleStatus.Fields.starred] = statusUpdate.isStarred ? "1" : "0"
 		
 		return record
 	}

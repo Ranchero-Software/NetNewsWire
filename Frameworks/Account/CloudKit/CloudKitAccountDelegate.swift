@@ -120,12 +120,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					
 					func processWithArticles(_ articles: Set<Article>) {
 						
+						let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
 						let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
 							result[article.articleID] = article
 						}
-						let statusedArticles = syncStatuses.map { ($0, articlesDict[$0.articleID]) }
+						let statusUpdates = syncStatusesDict.map { (key, value) in
+							return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
+						}
 						
-						self.articlesZone.modifyArticles(statusedArticles) { result in
+						self.articlesZone.modifyArticles(statusUpdates) { result in
 							switch result {
 							case .success:
 								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
