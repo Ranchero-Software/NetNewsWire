@@ -133,7 +133,3 @@ function showClickedImage() {
 function postRenderProcessing() {
 	ImageViewer.init();
 }
-
-window.addEventListener('DOMContentLoaded', (event) => {
-    window.webkit.messageHandlers.domContentLoaded.postMessage("");
-});
