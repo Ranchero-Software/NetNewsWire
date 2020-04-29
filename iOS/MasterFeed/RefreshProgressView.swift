@@ -19,7 +19,7 @@ class RefreshProgressView: UIView {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
 		if !AccountManager.shared.combinedRefreshProgress.isComplete {
-			progressChanged()
+			progressChanged(animated: false)
 		} else {
 			updateRefreshLabel()
 		}
@@ -28,7 +28,7 @@ class RefreshProgressView: UIView {
 	}
 
 	override func didMoveToSuperview() {
-		progressChanged()
+		progressChanged(animated: false)
 	}
 
 	func updateRefreshLabel() {
@@ -54,7 +54,7 @@ class RefreshProgressView: UIView {
 	}
 
 	@objc func progressDidChange(_ note: Notification) {
-		progressChanged()
+		progressChanged(animated: true)
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -73,7 +73,7 @@ class RefreshProgressView: UIView {
 
 private extension RefreshProgressView {
 
-	func progressChanged() {
+	func progressChanged(animated: Bool) {
 		// Layout may crash if not in the view hierarchy.
 		// https://github.com/Ranchero-Software/NetNewsWire/issues/1764
 		let isInViewHierarchy = self.superview != nil
@@ -82,7 +82,7 @@ private extension RefreshProgressView {
 
 		if progress.isComplete {
 			if isInViewHierarchy {
-				progressView.setProgress(1, animated: true)
+				progressView.setProgress(1, animated: animated)
 			}
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 				// Check that there are no pending downloads.
@@ -91,7 +91,7 @@ private extension RefreshProgressView {
 					self.label.isHidden = false
 					self.progressView.isHidden = true
 					if self.superview != nil {
-						self.progressView.setProgress(0, animated: true)
+						self.progressView.setProgress(0, animated: animated)
 					}
 				}
 			}
@@ -103,7 +103,7 @@ private extension RefreshProgressView {
 
 				// Don't let the progress bar go backwards unless we need to go back more than 25%
 				if percent > progressView.progress || progressView.progress - percent > 0.25 {
-					progressView.setProgress(percent, animated: true)
+					progressView.setProgress(percent, animated: animated)
 				}
 			}
 		}
