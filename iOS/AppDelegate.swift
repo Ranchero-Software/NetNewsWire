@@ -24,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	
 	var syncTimer: ArticleStatusSyncTimer?
+	private let remoteNotificationoperationQueue = MainThreadOperationQueue()
 	
 	var shuttingDown = false {
 		didSet {
@@ -111,14 +112,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		
 	}
 	
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-		DispatchQueue.main.async {
-			self.resumeDatabaseProcessingIfNecessary()
-			AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
-				self.suspendApplication()
-				completionHandler(.newData)
-			}
-		}
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completion: @escaping (UIBackgroundFetchResult) -> Void) {
+		let op = RemoteNotificationOperation(userInfo: userInfo, completion: completion)
+		remoteNotificationoperationQueue.add(op)
     }
 	
 	func applicationWillTerminate(_ application: UIApplication) {
@@ -391,6 +387,34 @@ private extension AppDelegate {
 			}
 			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
 			task?.setTaskCompleted(success: false)
+		}
+	}
+	
+}
+
+class RemoteNotificationOperation: MainThreadOperation {
+	
+	// MainThreadOperation
+	public var isCanceled = false
+	public var id: Int?
+	public weak var operationDelegate: MainThreadOperationDelegate?
+	public var name: String? = "RemoteNotificationOperation"
+	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
+
+	private var userInfo: [AnyHashable : Any]
+	private var completion: (UIBackgroundFetchResult) -> Void
+	
+	init(userInfo: [AnyHashable : Any], completion: @escaping (UIBackgroundFetchResult) -> Void) {
+		self.userInfo = userInfo
+		self.completion = completion
+	}
+	
+	func run() {
+		appDelegate.resumeDatabaseProcessingIfNecessary()
+		AccountManager.shared.receiveRemoteNotification(userInfo: userInfo) {
+			appDelegate.suspendApplication()
+			self.completion(.newData)
+			self.operationDelegate?.operationDidComplete(self)
 		}
 	}
 	
