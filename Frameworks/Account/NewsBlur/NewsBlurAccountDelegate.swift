@@ -577,7 +577,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		let syncStatuses = articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
-		database.insertStatuses(syncStatuses)
+		try? database.insertStatuses(syncStatuses)
 
 		database.selectPendingCount { result in
 			if let count = try? result.get(), count > 100 {

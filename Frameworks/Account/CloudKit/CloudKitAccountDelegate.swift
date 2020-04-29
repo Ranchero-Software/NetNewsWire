@@ -465,7 +465,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		let syncStatuses = articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
-		database.insertStatuses(syncStatuses)
+		
+		try? database.insertStatuses(syncStatuses)
+		let articles = try? account.update(articles, statusKey: statusKey, flag: flag)
 
 		database.selectPendingCount { result in
 			if let count = try? result.get(), count > 100 {
@@ -473,7 +475,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			}
 		}
 
-		return try? account.update(articles, statusKey: statusKey, flag: flag)
+		return articles
 	}
 
 	func accountDidInitialize(_ account: Account) {
@@ -636,10 +638,9 @@ private extension CloudKitAccountDelegate {
 						account.update(webFeed.webFeedID, with: parsedItems) { result in
 							switch result {
 							case .success(let articleChanges):
-								self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles) {
-									self.refreshProgress.completeTask()
-									group.leave()
-								}
+								self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles)
+								self.refreshProgress.completeTask()
+								group.leave()
 							case .failure(let error):
 								os_log(.error, log: self.log, "CloudKit Feed refresh update error: %@.", error.localizedDescription)
 								self.refreshProgress.completeTask()
@@ -661,9 +662,8 @@ private extension CloudKitAccountDelegate {
 		
 		group.enter()
 		refresher.refreshFeeds(refresherWebFeeds) { refresherNewArticles, refresherUpdatedArticles, refresherDeletedArticles in
-			self.storeArticleChanges(new: refresherNewArticles, updated: refresherUpdatedArticles, deleted: refresherDeletedArticles) {
-				group.leave()
-			}
+			self.storeArticleChanges(new: refresherNewArticles, updated: refresherUpdatedArticles, deleted: refresherDeletedArticles)
+			group.leave()
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
@@ -811,18 +811,17 @@ private extension CloudKitAccountDelegate {
 		account.fetchArticlesAsync(.webFeed(feed)) { result in
 			switch result {
 			case .success(let articles):
-				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
-					self.sendArticleStatus(for: account) { result in
-						switch result {
-						case .success:
-							self.articlesZone.fetchChangesInZone() { _ in
-								self.refreshProgress.clear()
-								completion(.success(feed))
-							}
-						case .failure(let error):
+				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
+				self.sendArticleStatus(for: account) { result in
+					switch result {
+					case .success:
+						self.articlesZone.fetchChangesInZone() { _ in
 							self.refreshProgress.clear()
-							completion(.failure(error))
+							completion(.success(feed))
 						}
+					case .failure(let error):
+						self.refreshProgress.clear()
+						completion(.failure(error))
 					}
 				}
 			case .failure(let error):
@@ -841,40 +840,20 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 	
-	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?, completion: @escaping () -> Void) {
-		let group = DispatchGroup()
-		
-		group.enter()
-		insertSyncStatuses(articles: new, statusKey: .new, flag: true) {
-			group.leave()
-		}
-	
-		group.enter()
-		insertSyncStatuses(articles: updated, statusKey: .new, flag: false) {
-			group.leave()
-		}
-		
-		group.enter()
-		insertSyncStatuses(articles: deleted, statusKey: .deleted, flag: true) {
-			group.leave()
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion()
-		}
+	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?) {
+		insertSyncStatuses(articles: new, statusKey: .new, flag: true)
+		insertSyncStatuses(articles: updated, statusKey: .new, flag: false)
+		insertSyncStatuses(articles: deleted, statusKey: .deleted, flag: true)
 	}
 	
-	func insertSyncStatuses(articles: Set<Article>?, statusKey: SyncStatus.Key, flag: Bool, completion: @escaping () -> Void) {
+	func insertSyncStatuses(articles: Set<Article>?, statusKey: SyncStatus.Key, flag: Bool) {
 		guard let articles = articles else {
-			completion()
 			return
 		}
 		let syncStatuses = articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
 		}
-		database.insertStatuses(syncStatuses) { _ in
-			completion()
-		}
+		try? database.insertStatuses(syncStatuses)
 	}
 
 }

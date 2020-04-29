@@ -492,7 +492,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		}
 		
-		database.insertStatuses(syncStatuses)
+		try? database.insertStatuses(syncStatuses)
 		os_log(.debug, log: log, "Marking %@ as %@.", articles.map { $0.title }, syncStatuses)
 
 		database.selectPendingCount { result in
