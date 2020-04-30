@@ -91,25 +91,42 @@ private extension CloudKitArticlesZoneDelegate {
 		let updateableUnstarredArticleIDs = receivedUnstarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 		let updateableStarredArticleIDs = receivedStarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 
+		var errorOccurred = false
 		let group = DispatchGroup()
 		
 		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { _ in
+		account?.markAsUnread(updateableUnreadArticleIDs) { result in
+			if case .failure(let databaseError) = result {
+				errorOccurred = true
+				os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", databaseError.localizedDescription)
+			}
 			group.leave()
 		}
 		
 		group.enter()
-		account?.markAsRead(updateableReadArticleIDs) { _ in
+		account?.markAsRead(updateableReadArticleIDs) { result in
+			if case .failure(let databaseError) = result {
+				errorOccurred = true
+				os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", databaseError.localizedDescription)
+			}
 			group.leave()
 		}
 		
 		group.enter()
-		account?.markAsUnstarred(updateableUnstarredArticleIDs) { _ in
+		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
+			if case .failure(let databaseError) = result {
+				errorOccurred = true
+				os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", databaseError.localizedDescription)
+			}
 			group.leave()
 		}
 		
 		group.enter()
-		account?.markAsStarred(updateableStarredArticleIDs) { _ in
+		account?.markAsStarred(updateableStarredArticleIDs) { result in
+			if case .failure(let databaseError) = result {
+				errorOccurred = true
+				os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", databaseError.localizedDescription)
+			}
 			group.leave()
 		}
 		
@@ -128,6 +145,7 @@ private extension CloudKitArticlesZoneDelegate {
 					try? self.database.insertStatuses(syncStatuses)
 					group.leave()
 				case .failure(let databaseError):
+					errorOccurred = true
 					os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
 					group.leave()
 				}
@@ -135,7 +153,11 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			completion(.success(()))
+			if errorOccurred {
+				completion(.failure(CloudKitZoneError.unknown))
+			} else {
+				completion(.success(()))
+			}
 		}
 	}
 	
