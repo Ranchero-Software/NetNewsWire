@@ -223,6 +223,9 @@ extension NSAttributedString {
 			var symbolicTraits = currentDescriptor.symbolicTraits
 
 			if styles.contains(.bold) {
+				let traits: [FontDescriptor.TraitKey: Any] = [.weight: Font.Weight.bold]
+				let attributes: [FontDescriptor.AttributeName: Any] = [.traits: traits]
+				descriptor = descriptor.addingAttributes(attributes)
 				symbolicTraits.insert(boldTrait)
 			}
 
