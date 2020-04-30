@@ -106,7 +106,7 @@ extension NSAttributedString {
 			switch forTag {
 				case "b", "strong":
 					self = .bold
-				case "i", "em", "cite":
+				case "i", "em", "cite", "var", "dfn":
 					self = .italic
 				case "sup":
 					self = .superscript
