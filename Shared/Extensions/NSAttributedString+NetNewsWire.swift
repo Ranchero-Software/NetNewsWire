@@ -227,23 +227,21 @@ extension NSAttributedString {
 
 			var attributes: [NSAttributedString.Key: Any] = [:]
 
+			var symbolicTraits = currentDescriptor.symbolicTraits
+
 			if styles.contains(.bold) {
-				let traits: [FontDescriptor.TraitKey: Any] = [.weight: Font.Weight.bold]
-				let descriptorAttributes: [FontDescriptor.AttributeName: Any] = [.traits: traits]
-				descriptor = descriptor.addingAttributes(descriptorAttributes)
+				symbolicTraits.insert(.bold)
 			}
 
 			if styles.contains(.italic) {
-				var symbolicTraits = currentDescriptor.symbolicTraits
 				symbolicTraits.insert(.italic)
-				descriptor = descriptor.withSymbolicTraits(symbolicTraits)
 			}
 
 			if styles.contains(.monospace) {
-				var symbolicTraits = currentDescriptor.symbolicTraits
 				symbolicTraits.insert(.monoSpace)
-				descriptor = descriptor.withSymbolicTraits(symbolicTraits)
 			}
+
+			descriptor = descriptor.withSymbolicTraits(symbolicTraits)
 
 			func verticalPositionFeature(forSuperscript: Bool) -> [FontDescriptor.FeatureKey: Any] {
 				#if canImport(AppKit)
@@ -254,16 +252,10 @@ extension NSAttributedString {
 				return features
 			}
 
-			if styles.contains(.superscript) {
-				let features = verticalPositionFeature(forSuperscript: true)
+			if styles.contains(.superscript) || styles.contains(.subscript) {
+				let features = verticalPositionFeature(forSuperscript: styles.contains(.superscript))
 				let descriptorAttributes: [FontDescriptor.AttributeName: Any] = [.featureSettings: [features]]
 				descriptor = descriptor.addingAttributes(descriptorAttributes)
-			}
-
-			if styles.contains(.subscript) {
-				let features = verticalPositionFeature(forSuperscript: false)
-				let descriptorAttributes: [FontDescriptor.AttributeName: Any] = [.featureSettings: [features]]
-				descriptor = currentDescriptor.addingAttributes(descriptorAttributes)
 			}
 
 			attributes[.font] = Font(descriptor: descriptor, size: baseFont.pointSize)
