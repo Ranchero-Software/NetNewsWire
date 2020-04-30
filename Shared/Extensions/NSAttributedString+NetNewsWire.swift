@@ -87,8 +87,6 @@ extension NSAttributedString {
 		return mutable.copy() as! NSAttributedString
 	}
 
-	/// Creates an attributed string from HTML.
-
 	private enum InTag {
 		case none
 		case opening
