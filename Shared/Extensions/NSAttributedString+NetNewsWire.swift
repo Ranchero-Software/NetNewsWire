@@ -300,9 +300,9 @@ private struct CountedSet<Element> where Element: Hashable {
 		return _storage[element] != nil
 	}
 
-	subscript(key: Element) -> Int? {
+	subscript(key: Element) -> Int {
 		get {
-			return _storage[key]
+			return _storage[key, default: 0]
 		}
 	}
 }
