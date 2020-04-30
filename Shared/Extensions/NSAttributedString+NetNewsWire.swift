@@ -134,7 +134,6 @@ extension NSAttributedString {
 
 		var inTag: InTag = .none
 		var tag = ""
-		var tagStack = [String]()
 		var currentStyles = CountedSet<Style>()
 
 		var iterator = html.makeIterator()
@@ -164,8 +163,6 @@ extension NSAttributedString {
 				attributeRanges.append( (range: range, styles: currentStyles) )
 
 				if inTag == .opening {
-					tagStack.append(tag)
-
 					if tag == "q" {
 						quoteDepth += 1
 						let delimiter = quoteDepth % 2 == 1 ? locale.quotationBeginDelimiter : locale.alternateQuotationBeginDelimiter
@@ -185,8 +182,6 @@ extension NSAttributedString {
 					if let style = Style(forTag: tag) {
 						currentStyles.remove(style)
 					}
-
-					let _ = tagStack.popLast() // TODO: Handle improperly-nested tags
 				}
 
 				inTag = .none
