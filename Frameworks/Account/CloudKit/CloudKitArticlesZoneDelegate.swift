@@ -38,11 +38,13 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 				self.database.selectPendingStarredStatusArticleIDs() { result in
 					switch result {
 					case .success(let pendingStarredStatusArticleIDs):
-						
-						self.process(records: changed,
-									 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-									 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-									 completion: completion)
+
+						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
+							self.update(records: changed,
+										 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+										 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+										 completion: completion)
+						}
 						
 					case .failure(let error):
 						os_log(.error, log: self.log, "Error occurred geting pending starred records: %@", error.localizedDescription)
@@ -59,8 +61,20 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 }
 
 private extension CloudKitArticlesZoneDelegate {
-	
-	func process(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping () -> Void) {
+		let receivedRecordIDs = recordKeys.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticleStatus.recordType }).map({ $0.recordID })
+		let receivedArticleIDs = Set(receivedRecordIDs.map({ stripPrefix($0.externalID) }))
+		let deletableArticleIDs = receivedArticleIDs.subtracting(pendingStarredStatusArticleIDs)
+		
+		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
+			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
+				completion()
+			}
+		}
+	}
+
+	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
 
 		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ stripPrefix($0.externalID) }))
 		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ stripPrefix($0.externalID) }))
@@ -75,7 +89,7 @@ private extension CloudKitArticlesZoneDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { result in
+		account?.markAsUnread(updateableUnreadArticleIDs) { _ in
 			group.leave()
 		}
 		

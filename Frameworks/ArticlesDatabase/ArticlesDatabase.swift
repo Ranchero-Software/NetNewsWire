@@ -201,7 +201,7 @@ public final class ArticlesDatabase {
 		articlesTable.fetchStarredAndUnreadCount(webFeedIDs, completion)
 	}
 
-	// MARK: - Saving and Updating Articles
+	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
 	public func update(with parsedItems: Set<ParsedItem>, webFeedID: String, completion: @escaping UpdateArticlesCompletionBlock) {
@@ -213,6 +213,11 @@ public final class ArticlesDatabase {
 	public func update(webFeedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .syncSystem)
 		articlesTable.update(webFeedIDsAndItems, defaultRead, completion)
+	}
+
+	/// Delete articles
+	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
+		articlesTable.delete(articleIDs: articleIDs, completion: completion)
 	}
 
 	// MARK: - Status

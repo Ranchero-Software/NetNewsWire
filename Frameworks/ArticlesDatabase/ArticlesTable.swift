@@ -170,7 +170,7 @@ final class ArticlesTable: DatabaseTable {
 		return nil
 	}
 
-	// MARK: - Updating
+	// MARK: - Updating and Deleting
 
 	func update(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .feedBased)
@@ -318,6 +318,29 @@ final class ArticlesTable: DatabaseTable {
 		}
 	}
 
+	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
+		self.queue.runInTransaction { (databaseResult) in
+
+			func makeDatabaseCalls(_ database: FMDatabase) {
+				self.removeArticles(articleIDs, database)
+				DispatchQueue.main.async {
+					completion?(nil)
+				}
+			}
+
+			switch databaseResult {
+			case .success(let database):
+				makeDatabaseCalls(database)
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion?(databaseError)
+				}
+			}
+			
+		}
+		
+	}
+	
 	// MARK: - Unread Counts
 	
 	func fetchUnreadCount(_ webFeedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {

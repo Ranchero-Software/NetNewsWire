@@ -854,6 +854,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .starred, flag: false, completion: completion)
 	}
 
+	// Delete the articles associated with the given set of articleIDs
+	func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
+		guard !articleIDs.isEmpty else {
+			completion?(nil)
+			return
+		}
+		database.delete(articleIDs: articleIDs, completion: completion)
+	}
+	
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
 	func emptyCaches() {
 		database.emptyCaches()
