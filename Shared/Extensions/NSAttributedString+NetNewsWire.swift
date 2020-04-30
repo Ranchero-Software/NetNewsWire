@@ -225,8 +225,6 @@ extension NSAttributedString {
 			let currentDescriptor = currentFont.fontDescriptor
 			var descriptor = currentDescriptor.copy() as! FontDescriptor
 
-			var attributes: [NSAttributedString.Key: Any] = [:]
-
 			var symbolicTraits = currentDescriptor.symbolicTraits
 
 			if styles.contains(.bold) {
@@ -261,6 +259,8 @@ extension NSAttributedString {
 				let descriptorAttributes: [FontDescriptor.AttributeName: Any] = [.featureSettings: [features]]
 				descriptor = descriptor.addingAttributes(descriptorAttributes)
 			}
+
+			var attributes = [NSAttributedString.Key: Any]()
 
 			attributes[.font] = Font(descriptor: descriptor, size: baseFont.pointSize)
 
