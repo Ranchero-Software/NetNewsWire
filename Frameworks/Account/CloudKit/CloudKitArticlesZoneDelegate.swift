@@ -67,6 +67,11 @@ private extension CloudKitArticlesZoneDelegate {
 		let receivedArticleIDs = Set(receivedRecordIDs.map({ stripPrefix($0.externalID) }))
 		let deletableArticleIDs = receivedArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 		
+		guard !deletableArticleIDs.isEmpty else {
+			completion()
+			return
+		}
+		
 		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
 			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
 				completion()
