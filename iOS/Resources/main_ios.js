@@ -34,8 +34,8 @@ class ImageViewer {
 		this.hideLoadingIndicator();
 
 		var canvas = document.createElement("canvas");
-		canvas.width = this.img.naturalWidth;
-		canvas.height = this.img.naturalHeight;
+		canvas.width = this.img.naturalWidth * window.devicePixelRatio;
+		canvas.height = this.img.naturalHeight * window.devicePixelRatio;
 		canvas.getContext("2d").drawImage(this.img, 0, 0, canvas.width, canvas.height);
 
 		const rect = this.img.getBoundingClientRect();
