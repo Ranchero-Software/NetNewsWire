@@ -46,7 +46,7 @@ struct ArticleRenderer {
 		self.article = article
 		self.extractedArticle = extractedArticle
 		self.articleStyle = style
-		self.title = article?.title ?? ""
+		self.title = article?.sanitizedTitle() ?? ""
 		if let content = extractedArticle?.content {
 			self.body = content
 			self.baseURL = extractedArticle?.url
