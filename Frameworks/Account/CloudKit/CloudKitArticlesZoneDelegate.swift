@@ -118,9 +118,18 @@ private extension CloudKitArticlesZoneDelegate {
 		for (webFeedID, parsedItems) in webFeedIDsAndItems {
 			group.enter()
 			self.account?.update(webFeedID, with: parsedItems) { result in
-				group.leave()
-				if case .failure(let databaseError) = result {
+				switch result {
+				case .success(let articleChanges):
+					guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
+						group.leave()
+						return
+					}
+					let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
+					try? self.database.insertStatuses(syncStatuses)
+					group.leave()
+				case .failure(let databaseError):
 					os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
+					group.leave()
 				}
 			}
 		}
