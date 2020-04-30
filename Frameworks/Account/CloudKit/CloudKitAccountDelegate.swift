@@ -53,7 +53,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	var accountMetadata: AccountMetadata?
 
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
-	var statusProcessRunning = false
 	
 	init(dataFolder: String) {
 		accountZone = CloudKitAccountZone(container: container)
@@ -98,19 +97,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard !statusProcessRunning else {
-			completion(.success(()))
-			return
-		}
-		
-		statusProcessRunning = true
 		os_log(.debug, log: log, "Sending article statuses...")
 
 		database.selectForProcessing { result in
 
 			func processStatuses(_ syncStatuses: [SyncStatus]) {
 				guard syncStatuses.count > 0 else {
-					self.statusProcessRunning = false
 					completion(.success(()))
 					return
 				}
@@ -133,13 +125,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 							case .success:
 								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
 									os_log(.debug, log: self.log, "Done sending article statuses.")
-									self.statusProcessRunning = false
 									completion(.success(()))
 								}
 							case .failure(let error):
 								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
 									self.processAccountError(account, error)
-									self.statusProcessRunning = false
 									completion(.failure(error))
 								}
 							}
@@ -151,7 +141,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					case .success(let articles):
 						processWithArticles(articles)
 					case .failure(let databaseError):
-						self.statusProcessRunning = false
 						completion(.failure(databaseError))
 					}
 
@@ -163,7 +152,6 @@ final class CloudKitAccountDelegate: AccountDelegate {
 			case .success(let syncStatuses):
 				processStatuses(syncStatuses)
 			case .failure(let databaseError):
-				self.statusProcessRunning = false
 				completion(.failure(databaseError))
 			}
 		}
@@ -171,16 +159,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard !statusProcessRunning else {
-			completion(.success(()))
-			return
-		}
-
-		statusProcessRunning = true
 		os_log(.debug, log: log, "Refreshing article statuses...")
 		
-		articlesZone.refreshArticles() { result in
-			self.statusProcessRunning = false
+ 		articlesZone.refreshArticles() { result in
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
 			switch result {
 			case .success:
