@@ -61,6 +61,12 @@ public struct Article: Hashable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(articleID)
 	}
+
+	// MARK: - Equatable
+
+	static public func ==(lhs: Article, rhs: Article) -> Bool {
+		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.webFeedID == rhs.webFeedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
+	}
 }
 
 public extension Set where Element == Article {
