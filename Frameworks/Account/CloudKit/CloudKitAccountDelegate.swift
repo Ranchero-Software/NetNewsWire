@@ -847,7 +847,7 @@ private extension CloudKitAccountDelegate {
 	}
 	
 	func insertSyncStatuses(articles: Set<Article>?, statusKey: SyncStatus.Key, flag: Bool) {
-		guard let articles = articles else {
+		guard let articles = articles, !articles.isEmpty else {
 			return
 		}
 		let syncStatuses = articles.map { article in
