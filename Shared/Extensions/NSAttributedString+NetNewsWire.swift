@@ -65,7 +65,7 @@ extension NSAttributedString {
 			#if canImport(AppKit)
 			descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)
 			#else
-			var descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)!
+			descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)!
 			#endif
 
 			if symbolicTraits.contains(boldTrait) {
@@ -230,18 +230,22 @@ extension NSAttributedString {
 			var symbolicTraits = currentDescriptor.symbolicTraits
 
 			if styles.contains(.bold) {
-				symbolicTraits.insert(.bold)
+				symbolicTraits.insert(boldTrait)
 			}
 
 			if styles.contains(.italic) {
-				symbolicTraits.insert(.italic)
+				symbolicTraits.insert(italicTrait)
 			}
 
 			if styles.contains(.monospace) {
-				symbolicTraits.insert(.monoSpace)
+				symbolicTraits.insert(monoSpaceTrait)
 			}
 
+			#if canImport(AppKit)
 			descriptor = descriptor.withSymbolicTraits(symbolicTraits)
+			#else
+			descriptor = descriptor.withSymbolicTraits(symbolicTraits)!
+			#endif
 
 			func verticalPositionFeature(forSuperscript: Bool) -> [FontDescriptor.FeatureKey: Any] {
 				#if canImport(AppKit)
