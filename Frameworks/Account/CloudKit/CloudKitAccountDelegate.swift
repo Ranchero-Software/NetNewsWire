@@ -103,6 +103,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 			func processStatuses(_ syncStatuses: [SyncStatus]) {
 				guard syncStatuses.count > 0 else {
+					os_log(.debug, log: self.log, "Done sending article statuses.")
 					completion(.success(()))
 					return
 				}
