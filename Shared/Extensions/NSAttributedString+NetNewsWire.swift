@@ -104,8 +104,8 @@ extension NSAttributedString {
 		case strikethrough
 		case monospace
 
-		init?(tag: String) {
-			switch tag {
+		init?(forTag: String) {
+			switch forTag {
 				case "b", "strong":
 					self = .bold
 				case "i", "em", "cite":
@@ -174,7 +174,7 @@ extension NSAttributedString {
 						result.mutableString.append(delimiter ?? "\"")
 					}
 
-					if let style = Style(tag: tag) {
+					if let style = Style(forTag: tag) {
 						currentStyles.insert(style)
 					}
 				} else {
@@ -184,7 +184,7 @@ extension NSAttributedString {
 						quoteDepth -= 1
 					}
 
-					if let style = Style(tag: tag) {
+					if let style = Style(forTag: tag) {
 						currentStyles.remove(style)
 					}
 
