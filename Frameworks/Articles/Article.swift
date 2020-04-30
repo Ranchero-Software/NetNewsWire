@@ -65,64 +65,7 @@ public struct Article: Hashable {
 	// MARK: - Equatable
 
 	static public func ==(lhs: Article, rhs: Article) -> Bool {
-		guard lhs.articleID == rhs.articleID else {
-			print("*********** miss matched articleID")
-			return false
-		}
-		guard lhs.accountID == rhs.accountID else {
-			print("*********** miss matched accountID")
-			return false
-		}
-		guard lhs.webFeedID == rhs.webFeedID else {
-			print("*********** miss matched webFeedID")
-			return false
-		}
-		guard lhs.uniqueID == rhs.uniqueID else {
-			print("*********** miss matched uniqueID")
-			return false
-		}
-		guard lhs.title == rhs.title else {
-			print("*********** miss matched title")
-			return false
-		}
-		guard lhs.contentHTML == rhs.contentHTML else {
-			print("*********** miss matched contentHTML")
-			return false
-		}
-		guard lhs.contentText == rhs.contentText else {
-			print("*********** miss matched contentText")
-			return false
-		}
-		guard lhs.url == rhs.url else {
-			print("*********** miss matched url")
-			return false
-		}
-		guard lhs.externalURL == rhs.externalURL else {
-			print("*********** miss matched externalURL")
-			return false
-		}
-		guard lhs.summary == rhs.summary else {
-			print("*********** miss matched summary")
-			return false
-		}
-		guard lhs.imageURL == rhs.imageURL else {
-			print("*********** miss matched imageURL")
-			return false
-		}
-		guard lhs.datePublished == rhs.datePublished else {
-			print("*********** miss matched datePublished")
-			return false
-		}
-		guard lhs.dateModified == rhs.dateModified else {
-			print("*********** miss matched dateModified")
-			return false
-		}
-		guard lhs.authors == rhs.authors else {
-			print("*********** miss matched authors")
-			return false
-		}
-		return true
-//		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.webFeedID == rhs.webFeedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
+		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.webFeedID == rhs.webFeedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
 	}
 }
 
