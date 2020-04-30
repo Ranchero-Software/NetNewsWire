@@ -809,7 +809,11 @@ private extension CloudKitAccountDelegate {
 	}
 	
 	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?) {
-		insertSyncStatuses(articles: new, statusKey: .new, flag: true)
+		// New records with a read status aren't really new, they just didn't have the read article stored
+		if let new = new {
+			let filteredNew = new.filter { $0.status.read == false }
+			insertSyncStatuses(articles: filteredNew, statusKey: .new, flag: true)
+		}
 		insertSyncStatuses(articles: updated, statusKey: .new, flag: false)
 		insertSyncStatuses(articles: deleted, statusKey: .deleted, flag: true)
 	}
