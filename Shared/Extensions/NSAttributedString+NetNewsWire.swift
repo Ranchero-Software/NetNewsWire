@@ -50,14 +50,18 @@ extension NSAttributedString {
 		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
 			guard let font = font as? Font else { return }
 
+			let currentDescriptor = font.fontDescriptor
 			let symbolicTraits = font.fontDescriptor.symbolicTraits
 			let newSymbolicTraits = baseSymbolicTraits.union(symbolicTraits)
 
+			var descriptor = baseDescriptor.addingAttributes(currentDescriptor.fontAttributes)
+
 			#if canImport(AppKit)
-			let descriptor = baseDescriptor.withSymbolicTraits(newSymbolicTraits)
+			descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)
 			#else
-			let descriptor = baseDescriptor.withSymbolicTraits(newSymbolicTraits)!
+			descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)!
 			#endif
+
 
 			let newFont = Font(descriptor: descriptor, size: size)
 
