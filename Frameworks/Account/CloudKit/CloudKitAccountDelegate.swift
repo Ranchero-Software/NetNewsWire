@@ -573,7 +573,7 @@ private extension CloudKitAccountDelegate {
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		let intialWebFeedsCount = account.flattenedWebFeeds().count
-		refreshProgress.addToNumberOfTasksAndRemaining(4 + intialWebFeedsCount)
+		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialWebFeedsCount)
 
 		func fail(_ error: Error) {
 			self.processAccountError(account, error)
@@ -585,37 +585,23 @@ private extension CloudKitAccountDelegate {
 			switch result {
 			case .success:
 				
+				self.refreshProgress.completeTask()
 				let webFeeds = account.flattenedWebFeeds()
 				self.refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count - intialWebFeedsCount)
-
-				self.refreshProgress.completeTask()
-				self.sendArticleStatus(for: account) { result in
+				
+				self.refreshArticleStatus(for: account) { result in
 					switch result {
 					case .success:
-						
 						self.refreshProgress.completeTask()
-						self.refreshArticleStatus(for: account) { result in
-							switch result {
-							case .success:
-
-								self.refreshProgress.completeTask()
-
-								self.combinedRefresh(account, webFeeds) {
-									self.refreshProgress.clear()
-									account.metadata.lastArticleFetchEndTime = Date()
-								}
-
-							case .failure(let error):
-								fail(error)
-							}
+						self.combinedRefresh(account, webFeeds) {
+							self.refreshProgress.clear()
+							account.metadata.lastArticleFetchEndTime = Date()
 						}
-						
 					case .failure(let error):
 						fail(error)
 					}
-
 				}
-				
+
 			case .failure(let error):
 				fail(error)
 			}
