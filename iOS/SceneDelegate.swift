@@ -66,7 +66,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	func sceneWillEnterForeground(_ scene: UIScene) {
 		appDelegate.resumeDatabaseProcessingIfNecessary()
 		appDelegate.prepareAccountsForForeground()
-		self.coordinator.configurePanelMode(for: window!.frame.size)
+		coordinator.configurePanelMode(for: window!.frame.size)
+		coordinator.resetFocus()
 	}
 	
     func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {

@@ -21,6 +21,10 @@ class RootSplitViewController: UISplitViewController {
 		return .slide
 	}
 	
+	override func viewDidAppear(_ animated: Bool) {
+		coordinator.resetFocus()
+	}
+	
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 		self.coordinator.configurePanelMode(for: size)
 		super.viewWillTransition(to: size, with: coordinator)

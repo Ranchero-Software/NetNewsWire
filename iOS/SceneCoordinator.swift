@@ -410,6 +410,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		wasRootSplitViewControllerCollapsed = rootSplitViewController.isCollapsed
 	}
 	
+	func resetFocus() {
+		if currentArticle != nil {
+			masterTimelineViewController?.focus()
+		} else {
+			masterFeedViewController?.focus()
+		}
+	}
+	
 	func selectFirstUnreadInAllUnread() {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {

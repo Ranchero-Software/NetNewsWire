@@ -25,7 +25,6 @@ class LocalAccountViewController: UITableViewController {
 
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
-		delegate?.dismiss()
 	}
 	
 	@IBAction func add(_ sender: Any) {

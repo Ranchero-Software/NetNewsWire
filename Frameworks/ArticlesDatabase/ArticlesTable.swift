@@ -209,10 +209,10 @@ final class ArticlesTable: DatabaseTable {
 				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
 				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
 
-				// Articles to delete are 1) no longer in feed and 2) older than 30 days.
+				// Articles to delete are 1) not starred and 2) older than 30 days and 3) no longer in feed.
 				let cutoffDate = Date().bySubtracting(days: 30)
 				let articlesToDelete = fetchedArticles.filter { (article) -> Bool in
-					return article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
+					return !article.status.starred && article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
 				}
 
 				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) //7
