@@ -36,7 +36,6 @@ extension NSAttributedString {
 	///   - baseFont: The font to add.
 	///   - color: The color to add.
 	func adding(font baseFont: Font, color: Color? = nil) -> NSAttributedString {
-
 		let mutable = self.mutableCopy() as! NSMutableAttributedString
 		let fullRange = NSRange(location: 0, length: mutable.length)
 
@@ -48,36 +47,17 @@ extension NSAttributedString {
 		let baseDescriptor = baseFont.fontDescriptor
 		let baseSymbolicTraits = baseDescriptor.symbolicTraits
 
-		let baseTraits = baseDescriptor.object(forKey: .traits) as! [FontDescriptor.TraitKey: Any]
-		let baseWeight = baseTraits[.weight] as! Font.Weight
-
 		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
 			guard let font = font as? Font else { return }
 
-			var newSymbolicTraits = baseSymbolicTraits
-
 			let symbolicTraits = font.fontDescriptor.symbolicTraits
-
-			newSymbolicTraits.insert(symbolicTraits)
-
-			var descriptor = baseDescriptor.addingAttributes(font.fontDescriptor.fontAttributes)
+			let newSymbolicTraits = baseSymbolicTraits.union(symbolicTraits)
 
 			#if canImport(AppKit)
-			descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)
+			let descriptor = baseDescriptor.withSymbolicTraits(newSymbolicTraits)
 			#else
-			descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)!
+			let descriptor = baseDescriptor.withSymbolicTraits(newSymbolicTraits)!
 			#endif
-
-			if symbolicTraits.contains(boldTrait) {
-				// If the base font is semibold (as timeline titles are), make the "bold"
-				// text heavy for better contrast.
-
-				if baseWeight == .semibold {
-					let traits: [FontDescriptor.TraitKey: Any] = [.weight: Font.Weight.heavy]
-					let attributes: [FontDescriptor.AttributeName: Any] = [.traits: traits]
-					descriptor = descriptor.addingAttributes(attributes)
-				}
-			}
 
 			let newFont = Font(descriptor: descriptor, size: size)
 
