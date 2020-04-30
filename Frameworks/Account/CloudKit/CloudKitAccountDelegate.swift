@@ -97,67 +97,8 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		os_log(.debug, log: log, "Sending article statuses...")
-
-		database.selectForProcessing { result in
-
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				guard syncStatuses.count > 0 else {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					completion(.success(()))
-					return
-				}
-				
-				let articleIDs = syncStatuses.map({ $0.articleID })
-				account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
-					
-					func processWithArticles(_ articles: Set<Article>) {
-						
-						let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
-						let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
-							result[article.articleID] = article
-						}
-						let statusUpdates = syncStatusesDict.map { (key, value) in
-							return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
-						}
-						
-						self.articlesZone.modifyArticles(statusUpdates) { result in
-							switch result {
-							case .success:
-								self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-									os_log(.debug, log: self.log, "Done sending article statuses.")
-									completion(.success(()))
-								}
-							case .failure(let error):
-								self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-									self.processAccountError(account, error)
-									completion(.failure(error))
-								}
-							}
-						}
-						
-					}
-
-					switch result {
-					case .success(let articles):
-						processWithArticles(articles)
-					case .failure(let databaseError):
-						completion(.failure(databaseError))
-					}
-
-				}
-				
-			}
-
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
-			}
-		}
+		sendArticleStatus(for: account, showProgress: false, completion: completion)
 	}
-	
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Refreshing article statuses...")
@@ -453,7 +394,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 		database.selectPendingCount { result in
 			if let count = try? result.get(), count > 100 {
-				self.sendArticleStatus(for: account) { _ in }
+				self.sendArticleStatus(for: account, showProgress: false) { _ in }
 			}
 		}
 
@@ -635,7 +576,7 @@ private extension CloudKitAccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			self.sendArticleStatus(for: account) { _ in
+			self.sendArticleStatus(for: account, showProgress: true) { _ in
 				self.refreshProgress.completeTask()
 				completion()
 			}
@@ -780,7 +721,7 @@ private extension CloudKitAccountDelegate {
 			switch result {
 			case .success(let articles):
 				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
-				self.sendArticleStatus(for: account) { result in
+				self.sendArticleStatus(for: account, showProgress: true) { result in
 					switch result {
 					case .success:
 						self.articlesZone.fetchChangesInZone() { _ in
@@ -828,6 +769,97 @@ private extension CloudKitAccountDelegate {
 		try? database.insertStatuses(syncStatuses)
 	}
 
+	func sendArticleStatus(for account: Account, showProgress: Bool, completion: @escaping ((Result<Void, Error>) -> Void)) {
+		os_log(.debug, log: log, "Sending article statuses...")
+
+		database.selectForProcessing { result in
+
+			func processStatuses(_ syncStatuses: [SyncStatus]) {
+				guard syncStatuses.count > 0 else {
+					os_log(.debug, log: self.log, "Done sending article statuses.")
+					completion(.success(()))
+					return
+				}
+
+				let group = DispatchGroup()
+				let syncStatusChunks = syncStatuses.chunked(into: 300)
+				
+				if showProgress {
+					self.refreshProgress.addToNumberOfTasksAndRemaining(syncStatusChunks.count)
+				}
+				
+				for syncStatusChunk in syncStatusChunks {
+					group.enter()
+					self.sendArticleStatusChunk(for: account, syncStatuses: syncStatusChunk, showProgress: showProgress) {
+						group.leave()
+					}
+				}
+				
+				group.notify(queue: DispatchQueue.main) {
+					os_log(.debug, log: self.log, "Done sending article statuses.")
+					completion(.success(()))
+				}
+				
+			}
+
+			switch result {
+			case .success(let syncStatuses):
+				processStatuses(syncStatuses)
+			case .failure(let databaseError):
+				completion(.failure(databaseError))
+			}
+		}
+	}
+	
+	func sendArticleStatusChunk(for account: Account, syncStatuses: [SyncStatus], showProgress: Bool, completion: @escaping () -> Void) {
+		
+		let articleIDs = syncStatuses.map({ $0.articleID })
+		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
+			
+			func processWithArticles(_ articles: Set<Article>) {
+				
+				let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
+				let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
+					result[article.articleID] = article
+				}
+				let statusUpdates = syncStatusesDict.map { (key, value) in
+					return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
+				}
+				
+				self.articlesZone.modifyArticles(statusUpdates) { result in
+					switch result {
+					case .success:
+						self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+							if showProgress {
+								self.refreshProgress.completeTask()
+							}
+							os_log(.debug, log: self.log, "Done sending article status block...")
+							completion()
+						}
+					case .failure(let error):
+						self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+							self.processAccountError(account, error)
+							os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
+							completion()
+						}
+					}
+				}
+				
+			}
+
+			switch result {
+			case .success(let articles):
+				processWithArticles(articles)
+			case .failure(let databaseError):
+				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+					os_log(.error, log: self.log, "Send article status fetch articles error: %@.", databaseError.localizedDescription)
+					completion()
+				}
+			}
+
+		}
+	}
+	
 }
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
