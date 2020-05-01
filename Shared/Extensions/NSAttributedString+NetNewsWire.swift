@@ -34,14 +34,9 @@ extension NSAttributedString {
 	///
 	/// - Parameters:
 	///   - baseFont: The font to add.
-	///   - color: The color to add.
-	func adding(font baseFont: Font, color: Color? = nil) -> NSAttributedString {
+	func adding(font baseFont: Font) -> NSAttributedString {
 		let mutable = self.mutableCopy() as! NSMutableAttributedString
 		let fullRange = NSRange(location: 0, length: mutable.length)
-
-		if let color = color {
-			mutable.addAttribute(.foregroundColor, value: color as Any, range: fullRange)
-		}
 
 		let size = baseFont.pointSize
 		let baseDescriptor = baseFont.fontDescriptor

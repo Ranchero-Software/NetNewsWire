@@ -251,8 +251,8 @@ private extension TimelineTableCellView {
 	func updateTextFieldAttributedText(_ textField: NSTextField, _ text: NSAttributedString?) {
 		var s = text ?? NSAttributedString(string: "")
 
-		if let fieldFont = textField.font, let color = textField.textColor {
-			s = s.adding(font: fieldFont, color: color)
+		if let fieldFont = textField.font {
+			s = s.adding(font: fieldFont)
 		}
 
 		if textField.attributedStringValue != s {
