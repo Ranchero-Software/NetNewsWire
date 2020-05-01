@@ -94,7 +94,7 @@ public extension Array where Element == Article {
 }
 
 public extension Article {
-	private static let allowedTags: Set = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em", "i", "ins", "kbd", "mark", "q", "s", "samp", "small", "strong", "sub", "sup", "u", "var"]
+	private static let allowedTags: Set = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em", "i", "ins", "kbd", "mark", "q", "s", "samp", "small", "strong", "sub", "sup", "time", "u", "var"]
 
 	func sanitizedTitle(forHTML: Bool = true) -> String? {
 		guard let title = title else { return nil }
