@@ -48,10 +48,12 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 						
 					case .failure(let error):
 						os_log(.error, log: self.log, "Error occurred geting pending starred records: %@", error.localizedDescription)
+						completion(.failure(CloudKitZoneError.unknown))
 					}
 				}
 			case .failure(let error):
 				os_log(.error, log: self.log, "Error occurred getting pending read status records: %@", error.localizedDescription)
+				completion(.failure(CloudKitZoneError.unknown))
 			}
 
 		}
