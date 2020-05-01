@@ -174,8 +174,8 @@ private extension MasterTimelineTableViewCell {
 	func updateTextFieldAttributedText(_ label: UILabel, _ text: NSAttributedString?) {
 		var s = text ?? NSAttributedString(string: "")
 
-		if let fieldFont = label.font, let color = label.textColor {
-			s = s.adding(font: fieldFont, color: color)
+		if let fieldFont = label.font {
+			s = s.adding(font: fieldFont)
 		}
 
 		if label.attributedText != s {
