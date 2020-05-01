@@ -52,8 +52,8 @@ struct ArticleStringFormatter {
 		return s
 	}
 
-	static func truncatedTitle(_ article: Article) -> String {
-		guard let title = article.title else {
+	static func truncatedTitle(_ article: Article, forHTML: Bool = false) -> String {
+		guard let title = article.sanitizedTitle(forHTML: forHTML) else {
 			return ""
 		}
 
@@ -64,7 +64,11 @@ struct ArticleStringFormatter {
 		var s = title.replacingOccurrences(of: "\n", with: "")
 		s = s.replacingOccurrences(of: "\r", with: "")
 		s = s.replacingOccurrences(of: "\t", with: "")
-		s = s.rsparser_stringByDecodingHTMLEntities()
+
+		if !forHTML {
+			s = s.rsparser_stringByDecodingHTMLEntities()
+		}
+
 		s = s.trimmingWhitespace
 		s = s.collapsingWhitespace
 
@@ -77,6 +81,12 @@ struct ArticleStringFormatter {
 		s = (s as NSString).substring(to: maxLength)
 		titleCache[title] = s
 		return s
+	}
+
+	static func attributedTruncatedTitle(_ article: Article) -> NSAttributedString {
+		let title = truncatedTitle(article, forHTML: true)
+		let attributed = NSAttributedString(html: title)
+		return attributed
 	}
 
 	static func truncatedSummary(_ article: Article) -> String {

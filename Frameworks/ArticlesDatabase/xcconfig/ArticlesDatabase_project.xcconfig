@@ -9,7 +9,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 #include? "../../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 
 SDKROOT = macosx
-MACOSX_DEPLOYMENT_TARGET = 10.14
+MACOSX_DEPLOYMENT_TARGET = 10.15
 IPHONEOS_DEPLOYMENT_TARGET = 13.0
 SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 

@@ -115,7 +115,8 @@ private extension TimelineCellLayout {
 			return (r, 0)
 		}
 		
-		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.title, font: appearance.titleFont, numberOfLines: appearance.titleNumberOfLines, width: Int(textBoxRect.width))
+		let attributedTitle = cellData.attributedTitle.adding(font: appearance.titleFont)
+		let sizeInfo = MultilineTextFieldSizer.size(for: attributedTitle, numberOfLines: appearance.titleNumberOfLines, width: Int(textBoxRect.width))
 		r.size.height = sizeInfo.size.height
 		if sizeInfo.numberOfLinesUsed < 1 {
 			r.size.height = 0
