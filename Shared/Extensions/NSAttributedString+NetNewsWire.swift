@@ -46,17 +46,15 @@ extension NSAttributedString {
 			guard let font = font as? Font else { return }
 
 			let currentDescriptor = font.fontDescriptor
-			let symbolicTraits = font.fontDescriptor.symbolicTraits
-			let newSymbolicTraits = baseSymbolicTraits.union(symbolicTraits)
+			let symbolicTraits = baseSymbolicTraits.union(currentDescriptor.symbolicTraits)
 
-			var descriptor = baseDescriptor.addingAttributes(currentDescriptor.fontAttributes)
+			var descriptor = currentDescriptor.addingAttributes(baseDescriptor.fontAttributes)
 
 			#if canImport(AppKit)
-			descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)
+			descriptor = descriptor.withSymbolicTraits(symbolicTraits)
 			#else
-			descriptor = descriptor.withSymbolicTraits(newSymbolicTraits)!
+			descriptor = descriptor.withSymbolicTraits(symbolicTraits)!
 			#endif
-
 
 			let newFont = Font(descriptor: descriptor, size: size)
 
