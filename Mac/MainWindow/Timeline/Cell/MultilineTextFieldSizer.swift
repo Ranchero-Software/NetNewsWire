@@ -34,6 +34,7 @@ final class MultilineTextFieldSizer {
 	private let singleLineHeightEstimate: Int
 	private let doubleLineHeightEstimate: Int
 	private var cache = [String: WidthHeightCache]() // Each string has a cache.
+	private var attributedCache = [NSAttributedString: WidthHeightCache]()
 	private static var sizers = [TextFieldSizerSpecifier: MultilineTextFieldSizer]()
 
 	private init(numberOfLines: Int, font: NSFont) {
@@ -49,6 +50,14 @@ final class MultilineTextFieldSizer {
 	static func size(for string: String, font: NSFont, numberOfLines: Int, width: Int) -> TextFieldSizeInfo {
 
 		return sizer(numberOfLines: numberOfLines, font: font).sizeInfo(for: string, width: width)
+	}
+
+	static func size(for attributedString: NSAttributedString, numberOfLines: Int, width: Int) -> TextFieldSizeInfo {
+
+		// Assumes the same font family/size for the whole string
+		let font = attributedString.attribute(.font, at: 0, effectiveRange: nil) as! NSFont
+
+		return sizer(numberOfLines: numberOfLines, font: font).sizeInfo(for: attributedString, width: width)
 	}
 
 	static func emptyCache() {
@@ -83,6 +92,16 @@ private extension MultilineTextFieldSizer {
 		return sizeInfo
 	}
 
+	func sizeInfo(for attributedString: NSAttributedString, width: Int) -> TextFieldSizeInfo {
+
+		let textFieldHeight = height(for: attributedString, width: width)
+		let numberOfLinesUsed = numberOfLines(for: textFieldHeight)
+
+		let size = NSSize(width: width, height: textFieldHeight)
+		let sizeInfo = TextFieldSizeInfo(size: size, numberOfLinesUsed: numberOfLinesUsed)
+		return sizeInfo
+	}
+
 	func height(for string: String, width: Int) -> Int {
 
 		if cache[string] == nil {
@@ -103,6 +122,26 @@ private extension MultilineTextFieldSizer {
 		return height
 	}
 
+	func height(for attribtuedString: NSAttributedString, width: Int) -> Int {
+
+		if attributedCache[attribtuedString] == nil {
+			attributedCache[attribtuedString] = WidthHeightCache()
+		}
+
+		if let height = attributedCache[attribtuedString]![width] {
+			return height
+		}
+
+		if let height = heightConsideringNeighbors(attributedCache[attribtuedString]!, width) {
+			return height
+		}
+
+		let height = calculateHeight(attribtuedString, width)
+		attributedCache[attribtuedString]![width] = height
+
+		return height
+	}
+
 	static func createTextField(_ numberOfLines: Int, _ font: NSFont) -> NSTextField {
 
 		let textField = NSTextField(wrappingLabelWithString: "")
@@ -118,6 +157,14 @@ private extension MultilineTextFieldSizer {
 	func calculateHeight(_ string: String, _ width: Int) -> Int {
 
 		return MultilineTextFieldSizer.calculateHeight(string, width, textField)
+	}
+
+	func calculateHeight(_ attributedString: NSAttributedString, _ width: Int) -> Int {
+
+		textField.attributedStringValue = attributedString
+		textField.preferredMaxLayoutWidth = CGFloat(width)
+		let size = textField.fittingSize
+		return Int(ceil(size.height))
 	}
 
 	static func calculateHeight(_ string: String, _ width: Int, _ textField: NSTextField) -> Int {
