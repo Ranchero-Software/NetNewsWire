@@ -180,7 +180,7 @@ private extension AddTwitterFeedWindowController {
 				typeDescriptionLabel.stringValue = ""
 			}
 			
-			screenSearchTextField.placeholderString = nil
+			screenSearchTextField.placeholderString = NSLocalizedString("Search Term or #hashtag", comment: "Search Term")
 			screenSearchTextField.isHidden = false
 			addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
 			
