@@ -150,7 +150,9 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
+			self.refreshProgress.completeTask()
 			self.standardRefreshAll(for: account, completion: completion)
 		}
 		
