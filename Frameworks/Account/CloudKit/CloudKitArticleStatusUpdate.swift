@@ -28,9 +28,6 @@ struct CloudKitArticleStatusUpdate {
 		}
 		
 		if let article = article {
-			if statuses.contains(where: { $0.key == .new }) {
-				return .all
-			}
 			if article.status.read == false || article.status.starred == true {
 				return .all
 			}
@@ -43,11 +40,6 @@ struct CloudKitArticleStatusUpdate {
 		if let article = article {
 			return article.status.read
 		}
-		
-		if let status = statuses.first(where: { $0.key == .read }) {
-			return status.flag
-		}
-		
 		return true
 	}
 	
@@ -55,11 +47,6 @@ struct CloudKitArticleStatusUpdate {
 		if let article = article {
 			return article.status.starred
 		}
-		
-		if let status = statuses.first(where: { $0.key == .starred }) {
-			return status.flag
-		}
-		
 		return false
 	}
 	
