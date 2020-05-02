@@ -497,7 +497,7 @@ private extension SidebarViewController {
 	
 	func addToFilterExeptionsIfNecessary(_ feed: Feed?) {
 		if isReadFiltered, let feedID = feed?.feedID {
-			if feed is SmartFeed {
+			if feed is PseudoFeed {
 				treeControllerDelegate.addFilterException(feedID)
 			} else if let folderFeed = feed as? Folder {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
