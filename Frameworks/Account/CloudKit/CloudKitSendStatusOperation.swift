@@ -64,9 +64,11 @@ class CloudKitSendStatusOperation: MainThreadOperation {
 					}
 				}
 				
-				group.notify(queue: DispatchQueue.main) {
+				group.notify(queue: DispatchQueue.global(qos: .background)) {
 					os_log(.debug, log: self.log, "Done sending article statuses.")
-					self.operationDelegate?.operationDidComplete(self)
+					DispatchQueue.main.async {
+						self.operationDelegate?.operationDidComplete(self)
+					}
 				}
 				
 			}
