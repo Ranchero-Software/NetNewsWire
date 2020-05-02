@@ -20,7 +20,7 @@ public enum TwitterFeedProviderError: LocalizedError {
 		case .screenNameNotFound:
 			return NSLocalizedString("Unable to determine screen name.", comment: "Screen name")
 		case .unknown:
-			return NSLocalizedString("An unknown Twitter Feed Provider error has occurred.", comment: "Screen name")
+			return NSLocalizedString("An unknown Twitter Feed Provider error has occurred.", comment: "Unknown error")
 		}
 	}
 }
