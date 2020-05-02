@@ -18,9 +18,15 @@ import ArticlesDatabase
 import RSWeb
 import Secrets
 
-public enum CloudKitAccountDelegateError: String, Error {
-	case invalidParameter = "An invalid parameter was used."
+enum CloudKitAccountDelegateError: LocalizedError {
+	case invalidParameter
+	case unknown
+	
+	var errorDescription: String? {
+		return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
+	}
 }
+
 
 final class CloudKitAccountDelegate: AccountDelegate {
 
@@ -33,10 +39,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		return CKContainer(identifier: "iCloud.\(orgID).NetNewsWire")
 	}()
 	
-	private lazy var zones: [CloudKitZone] = [accountZone, articlesZone]
 	private let accountZone: CloudKitAccountZone
 	private let articlesZone: CloudKitArticlesZone
 	
+	private let mainThreadOperationQueue = MainThreadOperationQueue()
+
 	private lazy var refresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()
 		refresher.delegate = self
@@ -63,21 +70,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		os_log(.debug, log: log, "Processing remote notification...")
-
-		let group = DispatchGroup()
-		
-		zones.forEach { zone in
-			group.enter()
-			zone.receiveRemoteNotification(userInfo: userInfo) {
-				group.leave()
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done processing remote notification...")
+		let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
+		op.completionBlock = { mainThreadOperaion in
 			completion()
 		}
+		mainThreadOperationQueue.add(op)
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -101,17 +98,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		os_log(.debug, log: log, "Refreshing article statuses...")
-		
- 		articlesZone.refreshArticles() { result in
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			switch result {
-			case .success:
+		let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
+		op.completionBlock = { mainThreadOperaion in
+			if mainThreadOperaion.isCanceled {
+				completion(.failure(CloudKitAccountDelegateError.unknown))
+			} else {
 				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
 			}
 		}
+		mainThreadOperationQueue.add(op)
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -420,17 +415,15 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
 				}
 			}
-			zones.forEach { zone in
-				zone.subscribeToZoneChanges()
-			}
+			accountZone.subscribeToZoneChanges()
+			articlesZone.subscribeToZoneChanges()
 		}
 		
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
-		zones.forEach { zone in
-			zone.resetChangeToken()
-		}
+		accountZone.resetChangeToken()
+		articlesZone.resetChangeToken()
 	}
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {
@@ -770,94 +763,19 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func sendArticleStatus(for account: Account, showProgress: Bool, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		os_log(.debug, log: log, "Sending article statuses...")
-
-		database.selectForProcessing { result in
-
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				guard syncStatuses.count > 0 else {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					completion(.success(()))
-					return
-				}
-
-				let group = DispatchGroup()
-				let syncStatusChunks = syncStatuses.chunked(into: 300)
-				
-				if showProgress {
-					self.refreshProgress.addToNumberOfTasksAndRemaining(syncStatusChunks.count)
-				}
-				
-				for syncStatusChunk in syncStatusChunks {
-					group.enter()
-					self.sendArticleStatusChunk(for: account, syncStatuses: syncStatusChunk, showProgress: showProgress) {
-						group.leave()
-					}
-				}
-				
-				group.notify(queue: DispatchQueue.main) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					completion(.success(()))
-				}
-				
-			}
-
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
+		let op = CloudKitSendStatusOperation(account: account,
+											 articlesZone: articlesZone,
+											 refreshProgress: refreshProgress,
+											 showProgress: showProgress,
+											 database: database)
+		op.completionBlock = { mainThreadOperaion in
+			if mainThreadOperaion.isCanceled {
+				completion(.failure(CloudKitAccountDelegateError.unknown))
+			} else {
+				completion(.success(()))
 			}
 		}
-	}
-	
-	func sendArticleStatusChunk(for account: Account, syncStatuses: [SyncStatus], showProgress: Bool, completion: @escaping () -> Void) {
-		
-		let articleIDs = syncStatuses.map({ $0.articleID })
-		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
-			
-			func processWithArticles(_ articles: Set<Article>) {
-				
-				let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
-				let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
-					result[article.articleID] = article
-				}
-				let statusUpdates = syncStatusesDict.map { (key, value) in
-					return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
-				}
-				
-				self.articlesZone.modifyArticles(statusUpdates) { result in
-					switch result {
-					case .success:
-						self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-							if showProgress {
-								self.refreshProgress.completeTask()
-							}
-							os_log(.debug, log: self.log, "Done sending article status block...")
-							completion()
-						}
-					case .failure(let error):
-						self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-							self.processAccountError(account, error)
-							os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
-							completion()
-						}
-					}
-				}
-				
-			}
-
-			switch result {
-			case .success(let articles):
-				processWithArticles(articles)
-			case .failure(let databaseError):
-				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-					os_log(.error, log: self.log, "Send article status fetch articles error: %@.", databaseError.localizedDescription)
-					completion()
-				}
-			}
-
-		}
+		mainThreadOperationQueue.add(op)
 	}
 	
 }
@@ -875,3 +793,4 @@ extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	}
 	
 }
+
