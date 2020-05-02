@@ -187,6 +187,11 @@ private extension TimelineContainerViewController {
 	}
 	
 	func updateReadFilterButton() {
+		guard currentTimelineViewController == regularTimelineViewController else {
+			readFilteredButton.isHidden = true
+			return
+		}
+		
 		guard let isReadFiltered = regularTimelineViewController.isReadFiltered else {
 			readFilteredButton.isHidden = true
 			return
