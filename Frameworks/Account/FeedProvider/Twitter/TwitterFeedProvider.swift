@@ -177,6 +177,10 @@ public struct TwitterFeedProvider: FeedProvider {
 		var parameters = [String: Any]()
 		var isSearch = false
 		
+		if let sinceToken = webFeed.sinceToken, let sinceID = Int(sinceToken) {
+			parameters["since_id"] = sinceID
+		}
+		
 		switch urlComponents.path {
 		case "", "/", "/home":
 			parameters["count"] = 100
@@ -208,8 +212,11 @@ public struct TwitterFeedProvider: FeedProvider {
 
 		retrieveTweets(api: api, parameters: parameters, isSearch: isSearch) { result in
 			switch result {
-			case .success(let tweets):
-				let parsedItems = self.makeParsedItems(webFeed.url, tweets)
+			case .success(let statuses):
+				if let sinceID = statuses.first?.idStr {
+					webFeed.sinceToken = sinceID
+				}
+				let parsedItems = self.makeParsedItems(webFeed.url, statuses)
 				completion(.success(parsedItems))
 			case .failure(let error):
 				completion(.failure(error))
