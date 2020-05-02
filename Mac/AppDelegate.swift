@@ -404,6 +404,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		if item.action == #selector(showAddTwitterFeedWindow(_:)) {
+			guard !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty else {
+				return false
+			}
 			return ExtensionPointManager.shared.activeExtensionPoints.values.contains(where: { $0 is TwitterFeedProvider })
 		}
 		#if !MAC_APP_STORE
