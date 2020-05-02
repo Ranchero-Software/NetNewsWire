@@ -407,7 +407,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			guard !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty else {
 				return false
 			}
-			return ExtensionPointManager.shared.activeExtensionPoints.values.contains(where: { $0 is TwitterFeedProvider })
+			return ExtensionPointManager.shared.isTwitterEnabled
 		}
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {

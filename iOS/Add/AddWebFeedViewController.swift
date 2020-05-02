@@ -15,6 +15,8 @@ import RSParser
 class AddWebFeedViewController: UITableViewController, AddContainerViewControllerChild {
 	
 	@IBOutlet private weak var urlTextField: UITextField!
+	@IBOutlet weak var urlTextFieldToSuperViewConstraint: NSLayoutConstraint!
+	@IBOutlet weak var urlBuilderButton: UIButton!
 	@IBOutlet private weak var nameTextField: UITextField!
 	
 	private var folderLabel = ""
@@ -40,6 +42,13 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		urlTextField.autocapitalizationType = .none
 		urlTextField.text = initialFeed
 		urlTextField.delegate = self
+		
+		if ExtensionPointManager.shared.isTwitterEnabled {
+			urlTextFieldToSuperViewConstraint.isActive = false
+			urlTextField.trailingAnchor.constraint(equalTo: urlBuilderButton.leadingAnchor, constant: -8).isActive = true
+		} else {
+			urlBuilderButton.isHidden = true
+		}
 		
 		if initialFeed != nil {
 			delegate?.readyToAdd(state: true)

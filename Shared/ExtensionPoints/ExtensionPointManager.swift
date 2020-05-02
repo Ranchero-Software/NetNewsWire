@@ -49,6 +49,10 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		return activeExtensionPoints.values.compactMap({ return $0 as? FeedProvider })
 	}
 	
+	var isTwitterEnabled: Bool {
+		return activeExtensionPoints.values.contains(where: { $0 is TwitterFeedProvider })
+	}
+	
 	init() {
 		#if os(macOS)
 		#if DEBUG

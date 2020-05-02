@@ -26,7 +26,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="URL" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="eRp-AP-WFq">
-                                                    <rect key="frame" x="20" y="4" width="269.66666666666669" height="36"/>
+                                                    <rect key="frame" x="20" y="4" width="323" height="36"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="URL"/>
                                                 </textField>
@@ -41,7 +41,7 @@
                                             <constraints>
                                                 <constraint firstItem="eRp-AP-WFq" firstAttribute="top" secondItem="eNS-Rp-w0A" secondAttribute="top" constant="4" id="80p-a2-3NC"/>
                                                 <constraint firstItem="f0N-Iy-ZFD" firstAttribute="centerY" secondItem="eRp-AP-WFq" secondAttribute="centerY" id="Ci9-Fe-KrJ"/>
-                                                <constraint firstItem="f0N-Iy-ZFD" firstAttribute="leading" secondItem="eRp-AP-WFq" secondAttribute="trailing" constant="8" id="ZNi-6o-A6w"/>
+                                                <constraint firstAttribute="trailing" secondItem="eRp-AP-WFq" secondAttribute="trailing" id="Xue-v3-aqR"/>
                                                 <constraint firstAttribute="trailing" secondItem="f0N-Iy-ZFD" secondAttribute="trailing" constant="20" symbolic="YES" id="aHH-ef-7dH"/>
                                                 <constraint firstItem="eRp-AP-WFq" firstAttribute="leading" secondItem="eNS-Rp-w0A" secondAttribute="leading" constant="20" symbolic="YES" id="bHJ-7l-Pl3"/>
                                                 <constraint firstAttribute="bottom" secondItem="eRp-AP-WFq" secondAttribute="bottom" constant="4" id="fs0-iw-zTo"/>
@@ -118,7 +118,9 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="nameTextField" destination="u7n-VL-Ho9" id="YQV-Xq-f9q"/>
+                        <outlet property="urlBuilderButton" destination="f0N-Iy-ZFD" id="HlB-Cu-Dak"/>
                         <outlet property="urlTextField" destination="eRp-AP-WFq" id="FG3-pH-2Fh"/>
+                        <outlet property="urlTextFieldToSuperViewConstraint" destination="Xue-v3-aqR" id="ZcO-5b-g08"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TO9-rb-MQ7" userLabel="First Responder" sceneMemberID="firstResponder"/>
