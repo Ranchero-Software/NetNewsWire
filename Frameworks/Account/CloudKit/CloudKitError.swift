@@ -57,7 +57,7 @@ class CloudKitError: LocalizedError {
 		case .networkFailure:
 			return NSLocalizedString("Network Failure: the internet connection appears to be offline.", comment: "Known iCloud Error")
 		case .notAuthenticated:
-			return NSLocalizedString("Not Authenticated: to use this app, you must enable iCloud syncing. Go to device Settings, sign in to iCloud, then in the app settings, be sure the iCloud feature is enabled.", comment: "Known iCloud Error")
+			return NSLocalizedString("Not Authenticated: to use the iCloud account, you must enable iCloud syncing. Go to device Settings, sign in to iCloud, then in the app settings, be sure the iCloud feature is enabled.", comment: "Known iCloud Error")
 		case .operationCancelled:
 			return NSLocalizedString("Operation Cancelled: the operation was explicitly canceled.", comment: "Known iCloud Error")
 		case .partialFailure:
