@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 	
 	var syncTimer: ArticleStatusSyncTimer?
-	private let remoteNotificationoperationQueue = MainThreadOperationQueue()
+	private let remoteNotificationOperationQueue = MainThreadOperationQueue()
 	
 	var shuttingDown = false {
 		didSet {
@@ -114,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completion: @escaping (UIBackgroundFetchResult) -> Void) {
 		let op = RemoteNotificationOperation(userInfo: userInfo, completion: completion)
-		remoteNotificationoperationQueue.add(op)
+		remoteNotificationOperationQueue.add(op)
     }
 	
 	func applicationWillTerminate(_ application: UIApplication) {
