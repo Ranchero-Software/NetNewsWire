@@ -263,6 +263,10 @@ public struct TwitterFeedProvider: FeedProvider {
 
 extension TwitterFeedProvider: OAuth1SwiftProvider {
 	
+	public static var callbackURL: URL {
+		return URL(string: "netnewswire://")!
+	}
+	
 	public static var oauth1Swift: OAuth1Swift {
 		return OAuth1Swift(
 			consumerKey: Secrets.twitterConsumerKey,

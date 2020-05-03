@@ -12,5 +12,6 @@ import OAuthSwift
 public protocol OAuth1SwiftProvider {
 	
 	static var oauth1Swift: OAuth1Swift { get }
+	static var callbackURL: URL { get }
 	
 }

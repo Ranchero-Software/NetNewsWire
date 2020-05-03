@@ -20,7 +20,7 @@ class ExtensionPointEnableWindowController: NSWindowController {
 	
 	private weak var hostWindow: NSWindow?
 
-	private let callbackURL = URL(string: "netnewswire://")!
+	private var callbackURL: URL? = nil
 	private var oauth: OAuthSwift?
 
 	var extensionPointType: ExtensionPoint.Type?
@@ -58,6 +58,8 @@ class ExtensionPointEnableWindowController: NSWindowController {
 		
 		if let oauth1 = extensionPointType as? OAuth1SwiftProvider.Type {
 			enableOauth1(oauth1)
+		} else if let oauth2 = extensionPointType as? OAuth2SwiftProvider.Type {
+			enableOauth2(oauth2)
 		} else {
 			ExtensionPointManager.shared.activateExtensionPoint(extensionPointType) { result in
 				if case .failure(let error) = result {
@@ -74,7 +76,7 @@ class ExtensionPointEnableWindowController: NSWindowController {
 extension ExtensionPointEnableWindowController: OAuthSwiftURLHandlerType {
 	
 	public func handle(_ url: URL) {
-		let session = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURL.scheme, completionHandler: { (url, error) in
+		let session = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURL!.scheme, completionHandler: { (url, error) in
 			if let callbackedURL = url {
 				OAuth1Swift.handle(url: callbackedURL)
 			}
@@ -114,12 +116,13 @@ extension ExtensionPointEnableWindowController: ASWebAuthenticationPresentationC
 private extension ExtensionPointEnableWindowController {
 	
 	func enableOauth1(_ provider: OAuth1SwiftProvider.Type) {
-		
+		callbackURL = provider.callbackURL
+
 		let oauth1 = provider.oauth1Swift
 		self.oauth = oauth1
 		oauth1.authorizeURLHandler = self
 		
-		oauth1.authorize(withCallbackURL: callbackURL) { [weak self] result in
+		oauth1.authorize(withCallbackURL: callbackURL!) { [weak self] result in
 			guard let self = self, let extensionPointType = self.extensionPointType else { return }
 
 			switch result {
@@ -131,7 +134,37 @@ private extension ExtensionPointEnableWindowController {
 					self.hostWindow!.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				}
 			case .failure(let oauthSwiftError):
-				NSApplication.shared.presentError(oauthSwiftError)
+				self.presentError(oauthSwiftError)
+			}
+			
+			self.oauth?.cancel()
+			self.oauth = nil
+		}
+		
+	}
+	
+	func enableOauth2(_ provider: OAuth2SwiftProvider.Type) {
+		callbackURL = provider.callbackURL
+
+		let oauth2 = provider.oauth2Swift
+		self.oauth = oauth2
+		oauth2.authorizeURLHandler = self
+		
+		let oauth2Vars = provider.oauth2Vars
+		
+		oauth2.authorize(withCallbackURL: callbackURL!, scope: oauth2Vars.scope, state: oauth2Vars.state, parameters: oauth2Vars.params) { [weak self] result in
+			guard let self = self, let extensionPointType = self.extensionPointType else { return }
+
+			switch result {
+			case .success(let tokenSuccess):
+				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess) { result in
+					if case .failure(let error) = result {
+						self.presentError(error)
+					}
+					self.hostWindow!.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+				}
+			case .failure(let oauthSwiftError):
+				self.presentError(oauthSwiftError)
 			}
 			
 			self.oauth?.cancel()

@@ -13,5 +13,7 @@ import OAuthSwift
 public protocol OAuth2SwiftProvider {
 	
 	static var oauth2Swift: OAuth2Swift { get }
+	static var callbackURL: URL { get }
+	static var oauth2Vars: (state: String, scope: String, params: [String: String]) { get }
 	
 }

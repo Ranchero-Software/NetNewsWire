@@ -24,9 +24,8 @@ public enum RedditFeedProviderError: LocalizedError {
 
 public struct RedditFeedProvider: FeedProvider {
 
-	private static let server = "api.twitter.com"
-	private static let apiBase = "https://api.twitter.com/1.1/"
-	private static let dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
+	private static let server = "www.reddit.com"
+	private static let apiBase = "https://oauth.reddit.com"
 	
 	private static let userPaths = ["/home", "/notifications"]
 	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
@@ -148,6 +147,24 @@ extension RedditFeedProvider: OAuth2SwiftProvider {
 								 responseType: "token")
 		oauth2.accessTokenBasicAuthentification = true
 		return oauth2
+	}
+	
+	public static var callbackURL: URL {
+		return URL(string: "netnewswire://success")!
+	}
+	
+	public static var oauth2Vars: (state: String, scope: String, params: [String : String]) {
+        let state = generateState(withLength: 20)
+		let scope = "identity mysubreddits"
+        let params = [
+			"client_id" : Secrets.redditConsumerKey,
+            "response_type" : "code",
+            "state" : state,
+            "redirect_uri" : "netnewswire://success",
+            "duration" : "permanent",
+			"scope" : scope
+        ]
+		return (state: state, scope: scope, params: params)
 	}
 	
 }
