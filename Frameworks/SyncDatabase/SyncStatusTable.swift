@@ -20,7 +20,7 @@ struct SyncStatusTable: DatabaseTable {
 		self.queue = queue
 	}
 
-	func selectForProcessing(_ completion: @escaping SyncStatusesCompletionBlock) {
+	func selectForProcessing(limit: Int?, completion: @escaping SyncStatusesCompletionBlock) {
 		queue.runInTransaction { databaseResult in
 			var statuses = Set<SyncStatus>()
 			var error: DatabaseError?
@@ -29,7 +29,10 @@ struct SyncStatusTable: DatabaseTable {
 				let updateSQL = "update syncStatus set selected = true"
 				database.executeUpdate(updateSQL, withArgumentsIn: nil)
 
-				let selectSQL = "select * from syncStatus where selected == true"
+				var selectSQL = "select * from syncStatus where selected == true"
+				if let limit = limit {
+					selectSQL = "\(selectSQL) limit \(limit)"
+				}
 				if let resultSet = database.executeQuery(selectSQL, withArgumentsIn: nil) {
 					statuses = resultSet.mapToSet(self.statusWithRow)
 				}
@@ -135,7 +138,7 @@ struct SyncStatusTable: DatabaseTable {
 			func makeDatabaseCall(_ database: FMDatabase) {
 				let parameters = articleIDs.map { $0 as AnyObject }
 				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-				let deleteSQL = "delete from syncStatus where articleID in \(placeholders)"
+				let deleteSQL = "delete from syncStatus where selected = true and articleID in \(placeholders)"
 				database.executeUpdate(deleteSQL, withArgumentsIn: parameters)
 			}
 

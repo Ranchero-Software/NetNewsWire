@@ -16,7 +16,8 @@ import SyncDatabase
 class CloudKitSendStatusOperation: MainThreadOperation {
 	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-
+	private let blockSize = 300
+	
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -40,51 +41,61 @@ class CloudKitSendStatusOperation: MainThreadOperation {
 	
 	func run() {
 		os_log(.debug, log: log, "Sending article statuses...")
-
-		database.selectForProcessing { result in
-
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				guard syncStatuses.count > 0 else {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					self.operationDelegate?.operationDidComplete(self)
-					return
+		
+		if showProgress {
+			
+			database.selectPendingCount() { result in
+				switch result {
+				case .success(let count):
+					let ticks = count / self.blockSize
+					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
+					self.selectForProcessing()
+				case .failure(let databaseError):
+					os_log(.error, log: self.log, "Send status count pending error: %@.", databaseError.localizedDescription)
+					self.operationDelegate?.cancelOperation(self)
 				}
-
-				let group = DispatchGroup()
-				let syncStatusChunks = syncStatuses.chunked(into: 300)
-				
-				if self.showProgress {
-					self.refreshProgress?.addToNumberOfTasksAndRemaining(syncStatusChunks.count)
-				}
-				
-				for syncStatusChunk in syncStatusChunks {
-					group.enter()
-					self.sendArticleStatusChunk(syncStatuses: syncStatusChunk) {
-						group.leave()
-					}
-				}
-				
-				group.notify(queue: DispatchQueue.global(qos: .background)) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					DispatchQueue.main.async {
-						self.operationDelegate?.operationDidComplete(self)
-					}
-				}
-				
 			}
-
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				os_log(.error, log: self.log, "Send status error: %@.", databaseError.localizedDescription)
-				self.operationDelegate?.cancelOperation(self)
-			}
+			
+		} else {
+			
+			selectForProcessing()
+			
 		}
 		
 	}
 	
-	func sendArticleStatusChunk(syncStatuses: [SyncStatus], completion: @escaping () -> Void) {
+}
+
+private extension CloudKitSendStatusOperation {
+	
+	func selectForProcessing() {
+		database.selectForProcessing(limit: blockSize) { result in
+			switch result {
+			case .success(let syncStatuses):
+				
+				guard syncStatuses.count > 0 else {
+					if self.showProgress {
+						self.refreshProgress?.completeTask()
+					}
+					os_log(.debug, log: self.log, "Done sending article statuses.")
+					self.operationDelegate?.operationDidComplete(self)
+					return
+				}
+				
+				self.processStatuses(syncStatuses) {
+					self.selectForProcessing()
+				}
+				
+			case .failure(let databaseError):
+				
+				os_log(.error, log: self.log, "Send status error: %@.", databaseError.localizedDescription)
+				self.operationDelegate?.cancelOperation(self)
+				
+			}
+		}
+	}
+	
+	func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping () -> Void) {
 		guard let account = account, let articlesZone = articlesZone else {
 			completion()
 			return
@@ -107,7 +118,8 @@ class CloudKitSendStatusOperation: MainThreadOperation {
 					switch result {
 					case .success:
 						self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-							if self.showProgress {
+							// Don't clear the last one since we might have had additional ticks added
+							if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 								self.refreshProgress?.completeTask()
 							}
 							os_log(.debug, log: self.log, "Done sending article status block...")
