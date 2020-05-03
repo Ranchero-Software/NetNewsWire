@@ -53,18 +53,22 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		return activeExtensionPoints.values.contains(where: { $0 is TwitterFeedProvider })
 	}
 	
+	var isRedditEnabled: Bool {
+		return activeExtensionPoints.values.contains(where: { $0 is RedditFeedProvider })
+	}
+
 	init() {
 		#if os(macOS)
 		#if DEBUG
-		possibleExtensionPointTypes = [SendToMarsEditCommand.self, SendToMicroBlogCommand.self, TwitterFeedProvider.self]
+		possibleExtensionPointTypes = [SendToMarsEditCommand.self, SendToMicroBlogCommand.self, TwitterFeedProvider.self, RedditFeedProvider.self]
 		#else
-		possibleExtensionPointTypes = [SendToMarsEditCommand.self, SendToMicroBlogCommand.self, TwitterFeedProvider.self]
+		possibleExtensionPointTypes = [SendToMarsEditCommand.self, SendToMicroBlogCommand.self, TwitterFeedProvider.self, RedditFeedProvider.self]
 		#endif
 		#else
 		#if DEBUG
-		possibleExtensionPointTypes = [TwitterFeedProvider.self]
+		possibleExtensionPointTypes = [TwitterFeedProvider.self, RedditFeedProvider.self]
 		#else
-		possibleExtensionPointTypes = [TwitterFeedProvider.self]
+		possibleExtensionPointTypes = [TwitterFeedProvider.self, RedditFeedProvider.self]
 		#endif
 		#endif
 		loadExtensionPoints()
@@ -115,6 +119,12 @@ private extension ExtensionPointManager {
 			} else {
 				return nil
 			}
+		case is RedditFeedProvider.Type:
+			if let tokenSuccess = tokenSuccess {
+				return RedditFeedProvider(tokenSuccess: tokenSuccess)
+			} else {
+				return nil
+			}
 		default:
 			assertionFailure("Unrecognized Extension Point Type.")
 		}
@@ -131,6 +141,8 @@ private extension ExtensionPointManager {
 		#endif
 		case .twitter(let screenName):
 			return TwitterFeedProvider(screenName: screenName)
+		case .reddit(let username):
+			return RedditFeedProvider(username: username)
 		}
 	}
 	

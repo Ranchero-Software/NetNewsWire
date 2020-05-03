@@ -85,6 +85,10 @@ struct AppAssets {
 		return RSImage(named: "extensionPointMicroblog")!
 	}()
 	
+	static var extensionPointReddit: RSImage = {
+		return RSImage(named: "extensionPointReddit")!
+	}()
+
 	static var extensionPointTwitter: RSImage = {
 		return RSImage(named: "extensionPointTwitter")!
 	}()

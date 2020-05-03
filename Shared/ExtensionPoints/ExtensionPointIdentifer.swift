@@ -16,7 +16,8 @@ enum ExtensionPointIdentifer: Hashable {
 	case microblog
 	#endif
 	case twitter(String)
-	
+	case reddit(String)
+
 	var extensionPointType: ExtensionPoint.Type {
 		switch self {
 		#if os(macOS)
@@ -27,6 +28,8 @@ enum ExtensionPointIdentifer: Hashable {
 		#endif
 		case .twitter:
 			return TwitterFeedProvider.self
+		case .reddit:
+			return RedditFeedProvider.self
 		}
 	}
 	
@@ -47,6 +50,11 @@ enum ExtensionPointIdentifer: Hashable {
 				"type": "twitter",
 				"screenName": screenName
 			]
+		case .reddit(let username):
+			return [
+				"type": "reddit",
+				"screenName": username
+			]
 		}
 	}
 	
@@ -63,6 +71,9 @@ enum ExtensionPointIdentifer: Hashable {
 		case "twitter":
 			guard let screenName = userInfo["screenName"] as? String else { return nil }
 			self = ExtensionPointIdentifer.twitter(screenName)
+		case "reddit":
+			guard let username = userInfo["username"] as? String else { return nil }
+			self = ExtensionPointIdentifer.twitter(username)
 		default:
 			return nil
 		}
@@ -79,6 +90,9 @@ enum ExtensionPointIdentifer: Hashable {
 		case .twitter(let screenName):
 			hasher.combine("twitter")
 			hasher.combine(screenName)
+		case .reddit(let username):
+			hasher.combine("reddit")
+			hasher.combine(username)
 		}
 	}
 	
