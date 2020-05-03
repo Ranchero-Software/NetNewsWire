@@ -14,4 +14,9 @@ extension URL {
 	var emailAddress: String? {
 		scheme == "mailto" ? URLComponents(url: self, resolvingAgainstBaseURL: false)?.path : nil
 	}
+	
+	/// Extracts telephone number from a `URL` with a `tel` scheme, otherwise `nil`.
+	var telNumber: String? {
+		scheme == "tel" ? URLComponents(url: self, resolvingAgainstBaseURL: false)?.path : nil
+	}
 }

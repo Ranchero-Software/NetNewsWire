@@ -314,7 +314,7 @@ extension WebViewController: WKNavigationDelegate {
 			} else if components?.scheme == "mailto" {
 				decisionHandler(.cancel)
 				
-				guard let emailAddress = components?.url?.emailAddress else {
+				guard let emailAddress = url.emailAddress else {
 					return
 				}
 				
@@ -328,6 +328,13 @@ extension WebViewController: WKNavigationDelegate {
 					alert.addAction(.init(title: "Dismiss", style: .cancel, handler: nil))
 					self.present(alert, animated: true, completion: nil)
 				}
+			} else if components?.scheme == "tel" {
+				decisionHandler(.cancel)
+				
+				if UIApplication.shared.canOpenURL(url) {
+					UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
+				}
+				
 			} else {
 				decisionHandler(.allow)
 			}
