@@ -53,7 +53,7 @@ enum ExtensionPointIdentifer: Hashable {
 		case .reddit(let username):
 			return [
 				"type": "reddit",
-				"screenName": username
+				"username": username
 			]
 		}
 	}
@@ -73,7 +73,7 @@ enum ExtensionPointIdentifer: Hashable {
 			self = ExtensionPointIdentifer.twitter(screenName)
 		case "reddit":
 			guard let username = userInfo["username"] as? String else { return nil }
-			self = ExtensionPointIdentifer.twitter(username)
+			self = ExtensionPointIdentifer.reddit(username)
 		default:
 			return nil
 		}
