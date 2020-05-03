@@ -10,6 +10,7 @@ import Foundation
 import Secrets
 import OAuthSwift
 import RSParser
+import RSWeb
 
 public enum TwitterFeedProviderError: LocalizedError {
 	case screenNameNotFound
@@ -36,6 +37,7 @@ public struct TwitterFeedProvider: FeedProvider {
 
 	private static let server = "api.twitter.com"
 	private static let apiBase = "https://api.twitter.com/1.1/"
+	private static let userAgentHeaders = UserAgent.headers() as! [String: String]
 	private static let dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
 	
 	private static let userPaths = ["/home", "/notifications"]
@@ -306,7 +308,7 @@ private extension TwitterFeedProvider {
 		let url = "\(Self.apiBase)users/show.json"
 		let parameters = ["screen_name": screenName]
 		
-		client.get(url, parameters: parameters) { result in
+		client.get(url, parameters: parameters, headers: Self.userAgentHeaders) { result in
 			switch result {
 			case .success(let response):
 				let decoder = JSONDecoder()
@@ -327,7 +329,7 @@ private extension TwitterFeedProvider {
 		var expandedParameters = parameters
 		expandedParameters["tweet_mode"] = "extended"
 		
-		client.get(url, parameters: expandedParameters) { result in
+		client.get(url, parameters: expandedParameters, headers: Self.userAgentHeaders) { result in
 			switch result {
 			case .success(let response):
 				

@@ -10,6 +10,7 @@ import Foundation
 import OAuthSwift
 import Secrets
 import RSParser
+import RSWeb
 
 public enum RedditFeedProviderError: LocalizedError {
 	case unknown
@@ -26,6 +27,7 @@ public struct RedditFeedProvider: FeedProvider {
 
 	private static let server = "www.reddit.com"
 	private static let apiBase = "https://oauth.reddit.com"
+	private static let userAgentHeaders = UserAgent.headers() as! [String: String]
 	
 	private static let userPaths = ["/home", "/notifications"]
 	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
@@ -177,7 +179,7 @@ private extension RedditFeedProvider {
 			return
 		}
 		
-		client.request(Self.apiBase + "/api/v1/me", method: .GET) { result in
+		client.request(Self.apiBase + "/api/v1/me", method: .GET, headers: Self.userAgentHeaders) { result in
 			switch result {
 			case .success(let response):
 				if let redditUser = try? JSONDecoder().decode(RedditUser.self, from: response.data), let username = redditUser.name {
