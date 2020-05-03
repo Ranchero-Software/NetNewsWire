@@ -320,8 +320,9 @@ extension WebViewController: WKNavigationDelegate {
 				}
 				
 				if MFMailComposeViewController.canSendMail() {
-					let mailComposeViewController = MFMailComposeViewController(rootViewController: self)
+					let mailComposeViewController = MFMailComposeViewController()
 					mailComposeViewController.setToRecipients([emailAddress])
+					mailComposeViewController.mailComposeDelegate = self
 					self.present(mailComposeViewController, animated: true, completion: {})
 				} else {
 					let alert = UIAlertController(title: "Error", message: "This device cannot send emails.", preferredStyle: .alert)
@@ -688,4 +689,12 @@ private extension WebViewController {
 		}
 	}
 	
+}
+
+// MARK: MFMailComposeViewControllerDelegate
+
+extension WebViewController: MFMailComposeViewControllerDelegate {
+	func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+		self.dismiss(animated: true, completion: nil)
+	}
 }
