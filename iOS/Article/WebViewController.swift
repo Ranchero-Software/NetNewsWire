@@ -12,6 +12,7 @@ import RSCore
 import Account
 import Articles
 import SafariServices
+import MessageUI
 
 protocol WebViewControllerDelegate: class {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
@@ -310,6 +311,22 @@ extension WebViewController: WKNavigationDelegate {
 					}
 					let vc = SFSafariViewController(url: url)
 					self.present(vc, animated: true)
+				}
+			} else if components?.scheme == "mailto" {
+				decisionHandler(.cancel)
+				
+				guard let emailAddress = components?.url?.emailAddress else {
+					return
+				}
+				
+				if MFMailComposeViewController.canSendMail() {
+					let mailComposeViewController = MFMailComposeViewController(rootViewController: self)
+					mailComposeViewController.setToRecipients([emailAddress])
+					self.present(mailComposeViewController, animated: true, completion: {})
+				} else {
+					let alert = UIAlertController(title: "Error", message: "This device cannot send emails.", preferredStyle: .alert)
+					alert.addAction(.init(title: "Dismiss", style: .cancel, handler: nil))
+					self.present(alert, animated: true, completion: nil)
 				}
 			} else {
 				decisionHandler(.allow)
