@@ -16,7 +16,7 @@ class EnableExtensionPointViewController: UITableViewController {
 
 	@IBOutlet weak var extensionDescription: UILabel!
 	
-	private let callbackURL = URL(string: "netnewswire://")!
+	private var callbackURL: URL? = nil
 	private var oauth: OAuthSwift?
 
 	weak var delegate: AddExtensionPointDismissDelegate?
@@ -39,10 +39,16 @@ class EnableExtensionPointViewController: UITableViewController {
 		
 		if let oauth1 = extensionPointType as? OAuth1SwiftProvider.Type {
 			enableOauth1(oauth1)
+		} else if let oauth2 = extensionPointType as? OAuth2SwiftProvider.Type {
+			enableOauth2(oauth2)
 		} else {
-			ExtensionPointManager.shared.activateExtensionPoint(extensionPointType)
-			dismiss(animated: true, completion: nil)
-			delegate?.dismiss()
+			ExtensionPointManager.shared.activateExtensionPoint(extensionPointType) { result in
+				if case .failure(let error) = result {
+					self.presentError(error)
+				}
+				self.dismiss(animated: true, completion: nil)
+				self.delegate?.dismiss()
+			}
 		}
 	}
 	
@@ -65,7 +71,7 @@ class EnableExtensionPointViewController: UITableViewController {
 extension EnableExtensionPointViewController: OAuthSwiftURLHandlerType {
 	
 	public func handle(_ url: URL) {
-		let session = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURL.scheme, completionHandler: { (url, error) in
+		let session = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURL!.scheme, completionHandler: { (url, error) in
 			if let callbackedURL = url {
 				OAuth1Swift.handle(url: callbackedURL)
 			}
@@ -106,19 +112,24 @@ extension EnableExtensionPointViewController: ASWebAuthenticationPresentationCon
 private extension EnableExtensionPointViewController {
 	
 	func enableOauth1(_ provider: OAuth1SwiftProvider.Type) {
-		
+		callbackURL = provider.callbackURL
+
 		let oauth1 = provider.oauth1Swift
 		self.oauth = oauth1
 		oauth1.authorizeURLHandler = self
 		
-		oauth1.authorize(withCallbackURL: callbackURL) { [weak self] result in
+		oauth1.authorize(withCallbackURL: callbackURL!) { [weak self] result in
 			guard let self = self, let extensionPointType = self.extensionPointType else { return }
 
 			switch result {
 			case .success(let tokenSuccess):
-				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess)
-				self.dismiss(animated: true, completion: nil)
-				self.delegate?.dismiss()
+				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess) { result in
+					if case .failure(let error) = result {
+						self.presentError(error)
+					}
+					self.dismiss(animated: true, completion: nil)
+					self.delegate?.dismiss()
+				}
 			case .failure(let oauthSwiftError):
 				self.presentError(oauthSwiftError)
 			}
@@ -126,7 +137,37 @@ private extension EnableExtensionPointViewController {
 			self.oauth?.cancel()
 			self.oauth = nil
 		}
+	}
+
+	func enableOauth2(_ provider: OAuth2SwiftProvider.Type) {
+		callbackURL = provider.callbackURL
+
+		let oauth2 = provider.oauth2Swift
+		self.oauth = oauth2
+		oauth2.authorizeURLHandler = self
 		
+		let oauth2Vars = provider.oauth2Vars
+		
+		oauth2.authorize(withCallbackURL: callbackURL!, scope: oauth2Vars.scope, state: oauth2Vars.state, parameters: oauth2Vars.params) { [weak self] result in
+			guard let self = self, let extensionPointType = self.extensionPointType else { return }
+
+			switch result {
+			case .success(let tokenSuccess):
+				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess) { result in
+					if case .failure(let error) = result {
+						self.presentError(error)
+					}
+					self.dismiss(animated: true, completion: nil)
+					self.delegate?.dismiss()
+				}
+			case .failure(let oauthSwiftError):
+				self.presentError(oauthSwiftError)
+			}
+			
+			self.oauth?.cancel()
+			self.oauth = nil
+		}
 	}
 	
+
 }
