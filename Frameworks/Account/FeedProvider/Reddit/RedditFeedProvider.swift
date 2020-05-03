@@ -31,51 +31,32 @@ public struct RedditFeedProvider: FeedProvider {
 	private static let userPaths = ["/home", "/notifications"]
 	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
 	
-	public var username: String
+	public var username: String?
 	
 	private var oauthToken: String
-	private var oauthTokenSecret: String
+	private var oauthRefreshToken: String
 
-	private var client: OAuthSwiftClient
-	
-	public init?(tokenSuccess: OAuthSwift.TokenSuccess) {
-		guard let username = tokenSuccess.parameters["screen_name"] as? String else {
-				return nil
-		}
-		
-		self.username = username
-		self.oauthToken = tokenSuccess.credential.oauthToken
-		self.oauthTokenSecret = tokenSuccess.credential.oauthTokenSecret
-
-		let tokenCredentials = Credentials(type: .oauthAccessToken, username: username, secret: oauthToken)
-		try? CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
-		
-		let tokenSecretCredentials = Credentials(type: .oauthAccessTokenSecret, username: username, secret: oauthTokenSecret)
-		try? CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
-		
-		client = OAuthSwiftClient(consumerKey: Secrets.twitterConsumerKey,
-								  consumerSecret: Secrets.twitterConsumerSecret,
-								  oauthToken: oauthToken,
-								  oauthTokenSecret: oauthTokenSecret,
-								  version: .oauth1)
+    private var oauthSwift: OAuth2Swift?
+	private var client: OAuthSwiftClient? {
+		return oauthSwift?.client
 	}
 	
 	public init?(username: String) {
-		self.username = username
-		
 		guard let tokenCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthAccessToken, server: Self.server, username: username),
-			let tokenSecretCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthAccessTokenSecret, server: Self.server, username: username) else {
+			let refreshTokenCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthRefreshToken, server: Self.server, username: username) else {
 				return nil
 		}
 
-		self.oauthToken = tokenCredentials.secret
-		self.oauthTokenSecret = tokenSecretCredentials.secret
-		
-		client = OAuthSwiftClient(consumerKey: Secrets.twitterConsumerKey,
-								  consumerSecret: Secrets.twitterConsumerSecret,
-								  oauthToken: oauthToken,
-								  oauthTokenSecret: oauthTokenSecret,
-								  version: .oauth1)
+		self.init(oauthToken: tokenCredentials.secret, oauthRefreshToken: refreshTokenCredentials.secret)
+		self.username = username
+	}
+
+	init(oauthToken: String, oauthRefreshToken: String) {
+		self.oauthToken = oauthToken
+		self.oauthRefreshToken = oauthRefreshToken
+		oauthSwift = Self.oauth2Swift
+		oauthSwift!.client.credential.oauthToken = oauthToken
+		oauthSwift!.client.credential.oauthRefreshToken = oauthRefreshToken
 	}
 
 	public func ability(_ urlComponents: URLComponents) -> FeedProviderAbility {
@@ -125,6 +106,34 @@ public struct RedditFeedProvider: FeedProvider {
 		completion(.success(Set<ParsedItem>()))
 	}
 	
+	public static func create(tokenSuccess: OAuthSwift.TokenSuccess, completion: @escaping (Result<RedditFeedProvider, Error>) -> Void) {
+		let oauthToken = tokenSuccess.credential.oauthToken
+		let oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
+		var redditFeedProvider = RedditFeedProvider(oauthToken: oauthToken, oauthRefreshToken: oauthRefreshToken)
+		
+		redditFeedProvider.retrieveUserName() { result in
+			switch result {
+			case .success(let username):
+
+				do {
+					let tokenCredentials = Credentials(type: .oauthAccessToken, username: username, secret: oauthToken)
+					try CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
+					let tokenSecretCredentials = Credentials(type: .oauthRefreshToken, username: username, secret: oauthRefreshToken)
+					try CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
+
+					redditFeedProvider.username = username
+					completion(.success(redditFeedProvider))
+				} catch {
+					completion(.failure(error))
+				}
+
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+
 }
 
 // MARK: OAuth1SwiftProvider
@@ -132,7 +141,37 @@ public struct RedditFeedProvider: FeedProvider {
 extension RedditFeedProvider: OAuth2SwiftProvider {
 	
 	public static var oauth2Swift: OAuth2Swift {
-		return OAuth2Swift(consumerKey: "", consumerSecret: "", authorizeUrl: "", accessTokenUrl: "", responseType: "")
+		let oauth2 = OAuth2Swift(consumerKey: Secrets.redditConsumerKey,
+								 consumerSecret: "",
+								 authorizeUrl: "https://www.reddit.com/api/v1/authorize.compact?",
+								 accessTokenUrl: "https://www.reddit.com/api/v1/access_token",
+								 responseType: "token")
+		oauth2.accessTokenBasicAuthentification = true
+		return oauth2
 	}
 	
+}
+
+private extension RedditFeedProvider {
+	
+	func retrieveUserName(completion: @escaping (Result<String, Error>) -> Void) {
+		guard let client = client else {
+			completion(.failure(RedditFeedProviderError.unknown))
+			return
+		}
+		
+		client.request(Self.apiBase + "/api/v1/me", method: .GET) { result in
+			switch result {
+			case .success(let response):
+				if let redditUser = try? JSONDecoder().decode(RedditUser.self, from: response.data), let username = redditUser.name {
+					completion(.success(username))
+				} else {
+					completion(.failure(RedditFeedProviderError.unknown))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+		
 }

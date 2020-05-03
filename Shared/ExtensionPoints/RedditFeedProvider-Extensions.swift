@@ -20,10 +20,16 @@ extension RedditFeedProvider: ExtensionPoint {
 	}()
 
 	var extensionPointID: ExtensionPointIdentifer {
+		guard let username = username else {
+			fatalError()
+		}
 		return ExtensionPointIdentifer.reddit(username)
 	}
 
 	var title: String {
+		guard let username = username else {
+			fatalError()
+		}
 		return "/u/\(username)"
 	}
 

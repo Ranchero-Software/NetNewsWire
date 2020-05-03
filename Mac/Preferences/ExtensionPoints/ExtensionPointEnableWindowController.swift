@@ -59,8 +59,12 @@ class ExtensionPointEnableWindowController: NSWindowController {
 		if let oauth1 = extensionPointType as? OAuth1SwiftProvider.Type {
 			enableOauth1(oauth1)
 		} else {
-			ExtensionPointManager.shared.activateExtensionPoint(extensionPointType)
-			hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
+			ExtensionPointManager.shared.activateExtensionPoint(extensionPointType) { result in
+				if case .failure(let error) = result {
+					self.presentError(error)
+				}
+				self.hostWindow!.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+			}
 		}
 		
 	}
@@ -120,8 +124,12 @@ private extension ExtensionPointEnableWindowController {
 
 			switch result {
 			case .success(let tokenSuccess):
-				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess)
-				self.hostWindow!.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess) { result in
+					if case .failure(let error) = result {
+						self.presentError(error)
+					}
+					self.hostWindow!.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+				}
 			case .failure(let oauthSwiftError):
 				NSApplication.shared.presentError(oauthSwiftError)
 			}

@@ -15,6 +15,18 @@ public extension Notification.Name {
 	static let ActiveExtensionPointsDidChange = Notification.Name(rawValue: "ActiveExtensionPointsDidChange")
 }
 
+public enum ExtensionPointManagerError: LocalizedError {
+	case unableToCreate
+	
+	public var localizedDescription: String {
+		switch self {
+		case .unableToCreate:
+			return NSLocalizedString("Unable to create extension.", comment: "Unable to create extension")
+		}
+	}
+}
+
+
 final class ExtensionPointManager: FeedProviderManagerDelegate {
 	
 	static let shared = ExtensionPointManager()
@@ -74,10 +86,16 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		loadExtensionPoints()
 	}
 	
-	func activateExtensionPoint(_ extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess? = nil) {
-		if let extensionPoint = self.extensionPoint(for: extensionPointType, tokenSuccess: tokenSuccess) {
-			activeExtensionPoints[extensionPoint.extensionPointID] = extensionPoint
-			saveExtensionPointIDs()
+	func activateExtensionPoint(_ extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
+		self.extensionPoint(for: extensionPointType, tokenSuccess: tokenSuccess) { result in
+			switch result {
+			case .success(let extensionPoint):
+				self.activeExtensionPoints[extensionPoint.extensionPointID] = extensionPoint
+				self.saveExtensionPointIDs()
+				completion(.success(()))
+			case .failure(let error):
+				completion(.failure(error))
+			}
 		}
 	}
 	
@@ -105,30 +123,36 @@ private extension ExtensionPointManager {
 		NotificationCenter.default.post(name: .ActiveExtensionPointsDidChange, object: nil, userInfo: nil)
 	}
 	
-	func extensionPoint(for extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess?) -> ExtensionPoint? {
+	func extensionPoint(for extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess?, completion: @escaping (Result<ExtensionPoint, Error>) -> Void) {
 		switch extensionPointType {
 		#if os(macOS)
 		case is SendToMarsEditCommand.Type:
-			return SendToMarsEditCommand()
+			completion(.success(SendToMarsEditCommand()))
 		case is SendToMicroBlogCommand.Type:
-			return SendToMicroBlogCommand()
+			completion(.success(SendToMicroBlogCommand()))
 		#endif
 		case is TwitterFeedProvider.Type:
-			if let tokenSuccess = tokenSuccess {
-				return TwitterFeedProvider(tokenSuccess: tokenSuccess)
+			if let tokenSuccess = tokenSuccess, let twitter = TwitterFeedProvider(tokenSuccess: tokenSuccess) {
+				completion(.success(twitter))
 			} else {
-				return nil
+				completion(.failure(ExtensionPointManagerError.unableToCreate))
 			}
 		case is RedditFeedProvider.Type:
 			if let tokenSuccess = tokenSuccess {
-				return RedditFeedProvider(tokenSuccess: tokenSuccess)
+				RedditFeedProvider.create(tokenSuccess: tokenSuccess) { result in
+					switch result {
+					case .success(let reddit):
+						completion(.success(reddit))
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
 			} else {
-				return nil
+				completion(.failure(ExtensionPointManagerError.unableToCreate))
 			}
 		default:
 			assertionFailure("Unrecognized Extension Point Type.")
 		}
-		return nil
 	}
 	
 	func extensionPoint(for extensionPointID: ExtensionPointIdentifer) -> ExtensionPoint? {
