@@ -324,8 +324,8 @@ extension WebViewController: WKNavigationDelegate {
 					mailComposeViewController.mailComposeDelegate = self
 					self.present(mailComposeViewController, animated: true, completion: {})
 				} else {
-					let alert = UIAlertController(title: "Error", message: "This device cannot send emails.", preferredStyle: .alert)
-					alert.addAction(.init(title: "Dismiss", style: .cancel, handler: nil))
+					let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
+					alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
 					self.present(alert, animated: true, completion: nil)
 				}
 			} else if components?.scheme == "tel" {
