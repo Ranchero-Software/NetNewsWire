@@ -80,6 +80,7 @@ public final class RedditFeedProvider: FeedProvider {
 	}
 
 	public func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
+		// TODO: call https://www.reddit.com/user/<USERNAME>/about.json to get the key "icon_img"
 		completion(.failure(RedditFeedProviderError.unknown))
 	}
 
@@ -107,7 +108,13 @@ public final class RedditFeedProvider: FeedProvider {
 		}
 		let api = urlComponents.path
 		retrieveListing(api: api, parameters: [:]) { result in
-			completion(.success(Set<ParsedItem>()))
+			switch result {
+			case .success(let linkListing):
+				let parsedItems = self.makeParsedItems(webFeed.url, linkListing)
+				completion(.success(parsedItems))
+			case .failure(let error):
+				completion(.failure(error))
+			}
 		}
 		
 	}
@@ -194,7 +201,7 @@ private extension RedditFeedProvider {
 		}
 	}
 	
-	func retrieveListing(api: String, parameters: [String: Any], completion: @escaping (Result<RedditListing, Error>) -> Void) {
+	func retrieveListing(api: String, parameters: [String: Any], completion: @escaping (Result<RedditLinkListing, Error>) -> Void) {
 		guard let client = client else {
 			completion(.failure(RedditFeedProviderError.unknown))
 			return
@@ -214,21 +221,15 @@ private extension RedditFeedProvider {
 				print("******** writing to: \(url.path)")
 				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
 
-//				let decoder = JSONDecoder()
-//				let dateFormatter = DateFormatter()
-//				dateFormatter.dateFormat = Self.dateFormat
-//				decoder.dateDecodingStrategy = .formatted(dateFormatter)
+				let decoder = JSONDecoder()
 				
-//				do {
-//					let listing = try decoder.decode(RedditListing.self, from: response.data)
-//					completion(.success(listing))
-//				} catch {
-//					completion(.failure(error))
-//				}
+				do {
+					let listing = try decoder.decode(RedditLinkListing.self, from: response.data)
+					completion(.success(listing))
+				} catch {
+					completion(.failure(error))
+				}
 			
-				let listing = RedditListing(name: "")
-				completion(.success(listing))
-				
 			case .failure(let oathError):
 				self.handleFailure(error: oathError) { error in
 					if let error = error {
@@ -241,43 +242,46 @@ private extension RedditFeedProvider {
 		}
 	}
 	
-//	func makeParsedItems(_ webFeedURL: String, _ statuses: [TwitterStatus]) -> Set<ParsedItem> {
-//		var parsedItems = Set<ParsedItem>()
-//
-//		for status in statuses {
-//			guard let idStr = status.idStr, let statusURL = status.url else { continue }
-//
-//			let parsedItem = ParsedItem(syncServiceID: nil,
-//							  uniqueID: idStr,
-//							  feedURL: webFeedURL,
-//							  url: statusURL,
-//							  externalURL: nil,
-//							  title: nil,
-//							  language: nil,
-//							  contentHTML: status.renderAsHTML(),
-//							  contentText: status.renderAsText(),
-//							  summary: nil,
-//							  imageURL: nil,
-//							  bannerImageURL: nil,
-//							  datePublished: status.createdAt,
-//							  dateModified: nil,
-//							  authors: makeParsedAuthors(status.user),
-//							  tags: nil,
-//							  attachments: nil)
-//			parsedItems.insert(parsedItem)
-//		}
-//
-//		return parsedItems
-//	}
-//
-//	func makeUserURL(_ screenName: String) -> String {
-//		return "https://twitter.com/\(screenName)"
-//	}
-//
-//	func makeParsedAuthors(_ user: TwitterUser?) -> Set<ParsedAuthor>? {
-//		guard let user = user else { return nil }
-//		return Set([ParsedAuthor(name: user.name, url: user.url, avatarURL: user.avatarURL, emailAddress: nil)])
-//	}
+	func makeParsedItems(_ webFeedURL: String, _ linkListing: RedditLinkListing) -> Set<ParsedItem> {
+		var parsedItems = Set<ParsedItem>()
+
+		guard let linkDatas = linkListing.data?.children?.compactMap({ $0.data }), !linkDatas.isEmpty else {
+			return parsedItems
+		}
+
+		for linkData in linkDatas {
+			guard let permalink = linkData.permalink else { continue }
+
+			let parsedItem = ParsedItem(syncServiceID: nil,
+							  uniqueID: permalink,
+							  feedURL: webFeedURL,
+							  url: "https://www.reddit.com\(permalink)",
+							  externalURL: linkData.url,
+							  title: linkData.title,
+							  language: nil,
+							  contentHTML: linkData.renderAsHTML(),
+							  contentText: linkData.selfText,
+							  summary: nil,
+							  imageURL: nil,
+							  bannerImageURL: nil,
+							  datePublished: linkData.createdDate,
+							  dateModified: nil,
+							  authors: makeParsedAuthors(linkData.author),
+							  tags: nil,
+							  attachments: nil)
+			parsedItems.insert(parsedItem)
+		}
+
+		return parsedItems
+	}
+	
+	func makeParsedAuthors(_ username: String?) -> Set<ParsedAuthor>? {
+		guard let username = username else { return nil }
+		var urlComponents = URLComponents(string: "https://www.reddit.com")
+		urlComponents?.path = "/u/\(username)"
+		let userURL = urlComponents?.url?.absoluteString
+		return Set([ParsedAuthor(name: "u/\(username)", url: userURL, avatarURL: userURL, emailAddress: nil)])
+	}
 	
     func handleFailure(error: OAuthSwiftError, completion: @escaping (Error?) -> Void) {
 		if case .tokenExpired = error {
