@@ -90,5 +90,4 @@ private extension TwitterExtendedMedia {
 		return best
 	}
 	
-//	<video poster="https://pbs.twimg.com/ext_tw_video_thumb/1251578276709109764/pu/img/fHFdxWFL3nQE9L0I.jpg:large" width="10" height="7" src="https://video.twimg.com/ext_tw_video/1251578276709109764/pu/vid/1028x720/lHpEeJekcIZAod2B.mp4?tag=10" playsinline="true" controls="true"></video>
 }
