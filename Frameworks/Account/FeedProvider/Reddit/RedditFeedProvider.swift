@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 import OAuthSwift
 import Secrets
 import RSParser
@@ -18,12 +19,14 @@ public enum RedditFeedProviderError: LocalizedError {
 	public var localizedDescription: String {
 		switch self {
 		case .unknown:
-			return NSLocalizedString("An Reddit Twitter Feed Provider error has occurred.", comment: "Unknown error")
+			return NSLocalizedString("A Reddit Feed Provider error has occurred.", comment: "Unknown error")
 		}
 	}
 }
 
-public struct RedditFeedProvider: FeedProvider {
+public final class RedditFeedProvider: FeedProvider {
+
+	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "RedditFeedProvider")
 
 	private static let server = "www.reddit.com"
 	private static let apiBase = "https://oauth.reddit.com"
@@ -42,7 +45,7 @@ public struct RedditFeedProvider: FeedProvider {
 		return oauthSwift?.client
 	}
 	
-	public init?(username: String) {
+	public convenience init?(username: String) {
 		guard let tokenCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthAccessToken, server: Self.server, username: username),
 			let refreshTokenCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthRefreshToken, server: Self.server, username: username) else {
 				return nil
@@ -77,25 +80,20 @@ public struct RedditFeedProvider: FeedProvider {
 	}
 
 	public func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
-		completion(.failure(TwitterFeedProviderError.screenNameNotFound))
+		completion(.failure(RedditFeedProviderError.unknown))
 	}
 
 	public func assignName(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
 		let path = urlComponents.path
-		
-		switch path {
-		case "", "/":
+
+		if path == "" || path == "/" {
 			let name = NSLocalizedString("Reddit Timeline", comment: "Reddit Timeline")
 			completion(.success(name))
-		case "/r", "/u":
-			let path = String(path.suffix(from: path.index(path.startIndex, offsetBy: 2)))
-			completion(.success(path))
-		case "/user":
-			let path = String(path.suffix(from: path.index(path.startIndex, offsetBy: 5)))
-			completion(.success(path))
-		default:
-			completion(.failure(TwitterFeedProviderError.unknown))
+			return
 		}
+
+		// TODO: call to get the Subreddit name
+		completion(.success(path))
 	}
 	
 	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
@@ -103,26 +101,25 @@ public struct RedditFeedProvider: FeedProvider {
 //			completion(.failure(TwitterFeedProviderError.unknown))
 //			return
 //		}
+		let api = "/r/sphynx/hot.json"
+		retrieveListing(api: api, parameters: [:]) { result in
+			completion(.success(Set<ParsedItem>()))
+		}
 		
-		completion(.success(Set<ParsedItem>()))
 	}
 	
 	public static func create(tokenSuccess: OAuthSwift.TokenSuccess, completion: @escaping (Result<RedditFeedProvider, Error>) -> Void) {
 		let oauthToken = tokenSuccess.credential.oauthToken
 		let oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
-		var redditFeedProvider = RedditFeedProvider(oauthToken: oauthToken, oauthRefreshToken: oauthRefreshToken)
+		let redditFeedProvider = RedditFeedProvider(oauthToken: oauthToken, oauthRefreshToken: oauthRefreshToken)
 		
 		redditFeedProvider.retrieveUserName() { result in
 			switch result {
 			case .success(let username):
 
 				do {
-					let tokenCredentials = Credentials(type: .oauthAccessToken, username: username, secret: oauthToken)
-					try CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
-					let tokenSecretCredentials = Credentials(type: .oauthRefreshToken, username: username, secret: oauthRefreshToken)
-					try CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
-
 					redditFeedProvider.username = username
+					try storeCredentials(username: username, oauthToken: oauthToken, oauthRefreshToken: oauthRefreshToken)
 					completion(.success(redditFeedProvider))
 				} catch {
 					completion(.failure(error))
@@ -157,7 +154,7 @@ extension RedditFeedProvider: OAuth2SwiftProvider {
 	
 	public static var oauth2Vars: (state: String, scope: String, params: [String : String]) {
         let state = generateState(withLength: 20)
-		let scope = "identity mysubreddits"
+		let scope = "identity mysubreddits read"
         let params = [
 			"client_id" : Secrets.redditConsumerKey,
             "response_type" : "code",
@@ -192,5 +189,125 @@ private extension RedditFeedProvider {
 			}
 		}
 	}
+	
+	func retrieveListing(api: String, parameters: [String: Any], completion: @escaping (Result<RedditListing, Error>) -> Void) {
+		guard let client = client else {
+			completion(.failure(RedditFeedProviderError.unknown))
+			return
+		}
 		
+		let url = "\(Self.apiBase)\(api)"
+
+		client.get(url, parameters: parameters, headers: Self.userAgentHeaders) { result in
+			switch result {
+			case .success(let response):
+				
+				let jsonString = String(data: response.data, encoding: .utf8)
+				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("reddit.json")
+				print("******** writing to: \(url.path)")
+				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
+
+//				let decoder = JSONDecoder()
+//				let dateFormatter = DateFormatter()
+//				dateFormatter.dateFormat = Self.dateFormat
+//				decoder.dateDecodingStrategy = .formatted(dateFormatter)
+				
+//				do {
+//					let listing = try decoder.decode(RedditListing.self, from: response.data)
+//					completion(.success(listing))
+//				} catch {
+//					completion(.failure(error))
+//				}
+			
+				let listing = RedditListing(name: "")
+				completion(.success(listing))
+				
+			case .failure(let oathError):
+				self.handleFailure(error: oathError) { error in
+					if let error = error {
+						completion(.failure(error))
+					} else {
+						self.retrieveListing(api: api, parameters: parameters, completion: completion)
+					}
+				}
+			}
+		}
+	}
+	
+//	func makeParsedItems(_ webFeedURL: String, _ statuses: [TwitterStatus]) -> Set<ParsedItem> {
+//		var parsedItems = Set<ParsedItem>()
+//
+//		for status in statuses {
+//			guard let idStr = status.idStr, let statusURL = status.url else { continue }
+//
+//			let parsedItem = ParsedItem(syncServiceID: nil,
+//							  uniqueID: idStr,
+//							  feedURL: webFeedURL,
+//							  url: statusURL,
+//							  externalURL: nil,
+//							  title: nil,
+//							  language: nil,
+//							  contentHTML: status.renderAsHTML(),
+//							  contentText: status.renderAsText(),
+//							  summary: nil,
+//							  imageURL: nil,
+//							  bannerImageURL: nil,
+//							  datePublished: status.createdAt,
+//							  dateModified: nil,
+//							  authors: makeParsedAuthors(status.user),
+//							  tags: nil,
+//							  attachments: nil)
+//			parsedItems.insert(parsedItem)
+//		}
+//
+//		return parsedItems
+//	}
+//
+//	func makeUserURL(_ screenName: String) -> String {
+//		return "https://twitter.com/\(screenName)"
+//	}
+//
+//	func makeParsedAuthors(_ user: TwitterUser?) -> Set<ParsedAuthor>? {
+//		guard let user = user else { return nil }
+//		return Set([ParsedAuthor(name: user.name, url: user.url, avatarURL: user.avatarURL, emailAddress: nil)])
+//	}
+	
+    func handleFailure(error: OAuthSwiftError, completion: @escaping (Error?) -> Void) {
+		if case .tokenExpired = error {
+			os_log(.debug, log: self.log, "Access token expired, attempting to renew...")
+
+			oauthSwift?.renewAccessToken(withRefreshToken: oauthRefreshToken) { [weak self] result in
+				guard let self = self, let username = self.username else {
+					completion(nil)
+					return
+				}
+				
+				switch result {
+				case .success(let tokenSuccess):
+					self.oauthToken = tokenSuccess.credential.oauthToken
+					self.oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
+					do {
+						try Self.storeCredentials(username: username, oauthToken: self.oauthToken, oauthRefreshToken: self.oauthRefreshToken)
+						os_log(.debug, log: self.log, "Access token renewed.")
+					} catch {
+						completion(error)
+						return
+					}
+					completion(nil)
+				case .failure(let oathError):
+					completion(oathError)
+				}
+			}
+			
+		} else {
+			completion(error)
+		}
+    }
+	
+	static func storeCredentials(username: String, oauthToken: String, oauthRefreshToken: String) throws {
+		let tokenCredentials = Credentials(type: .oauthAccessToken, username: username, secret: oauthToken)
+		try CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
+		let tokenSecretCredentials = Credentials(type: .oauthRefreshToken, username: username, secret: oauthRefreshToken)
+		try CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
+	}
 }
