@@ -124,10 +124,14 @@ public final class RedditFeedProvider: FeedProvider {
 		let oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
 		let redditFeedProvider = RedditFeedProvider(oauthToken: oauthToken, oauthRefreshToken: oauthRefreshToken)
 		
-		redditFeedProvider.retrieveUserName() { result in
+		redditFeedProvider.retrieveUser(api: "/api/v1/me") { result in
 			switch result {
-			case .success(let username):
-
+			case .success(let user):
+				guard let username = user.name else {
+					completion(.failure(RedditFeedProviderError.unknown))
+					return
+				}
+				
 				do {
 					redditFeedProvider.username = username
 					try storeCredentials(username: username, oauthToken: oauthToken, oauthRefreshToken: oauthRefreshToken)
@@ -181,17 +185,19 @@ extension RedditFeedProvider: OAuth2SwiftProvider {
 
 private extension RedditFeedProvider {
 	
-	func retrieveUserName(completion: @escaping (Result<String, Error>) -> Void) {
+	func retrieveUser(api: String, completion: @escaping (Result<RedditUser, Error>) -> Void) {
 		guard let client = client else {
 			completion(.failure(RedditFeedProviderError.unknown))
 			return
 		}
+
+		let url = "\(Self.apiBase)\(api)"
 		
-		client.request(Self.apiBase + "/api/v1/me", method: .GET, headers: Self.userAgentHeaders) { result in
+		client.request(url, method: .GET, headers: Self.userAgentHeaders) { result in
 			switch result {
 			case .success(let response):
-				if let redditUser = try? JSONDecoder().decode(RedditUser.self, from: response.data), let username = redditUser.name {
-					completion(.success(username))
+				if let redditUser = try? JSONDecoder().decode(RedditUser.self, from: response.data) {
+					completion(.success(redditUser))
 				} else {
 					completion(.failure(RedditFeedProviderError.unknown))
 				}
