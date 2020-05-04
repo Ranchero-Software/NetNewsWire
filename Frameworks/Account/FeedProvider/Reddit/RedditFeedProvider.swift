@@ -80,8 +80,25 @@ public final class RedditFeedProvider: FeedProvider {
 	}
 
 	public func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
-		// TODO: call https://www.reddit.com/user/<USERNAME>/about.json to get the key "icon_img"
-		completion(.failure(RedditFeedProviderError.unknown))
+		guard urlComponents.path.hasPrefix("/r/"), let secondElement = extractSecondElement(path: urlComponents.path) else {
+			completion(.failure(RedditFeedProviderError.unknown))
+			return
+		}
+		
+		let api = "/r/\(secondElement)/about.json"
+		
+		fetch(api: api, parameters: [:], resultType: RedditSubreddit.self) { result in
+			switch result {
+			case .success(let subreddit):
+				if let iconURL = subreddit.data?.iconURL, !iconURL.isEmpty {
+					completion(.success(iconURL))
+				} else {
+					completion(.failure(RedditFeedProviderError.unknown))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	public func assignName(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
@@ -106,7 +123,9 @@ public final class RedditFeedProvider: FeedProvider {
 			completion(.failure(TwitterFeedProviderError.unknown))
 			return
 		}
+		
 		let api = "\(urlComponents.path).json"
+		
 		fetch(api: api, parameters: [:], resultType: RedditLinkListing.self) { result in
 			switch result {
 			case .success(let linkListing):
@@ -116,7 +135,6 @@ public final class RedditFeedProvider: FeedProvider {
 				completion(.failure(error))
 			}
 		}
-		
 	}
 	
 	public static func create(tokenSuccess: OAuthSwift.TokenSuccess, completion: @escaping (Result<RedditFeedProvider, Error>) -> Void) {
@@ -124,7 +142,7 @@ public final class RedditFeedProvider: FeedProvider {
 		let oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
 		let redditFeedProvider = RedditFeedProvider(oauthToken: oauthToken, oauthRefreshToken: oauthRefreshToken)
 		
-		redditFeedProvider.fetch(api: "/api/v1/me", resultType: RedditUser.self) { result in
+		redditFeedProvider.fetch(api: "/api/v1/me", resultType: RedditMe.self) { result in
 			switch result {
 			case .success(let user):
 				guard let username = user.name else {
@@ -146,7 +164,6 @@ public final class RedditFeedProvider: FeedProvider {
 		}
 	}
 	
-
 }
 
 // MARK: OAuth1SwiftProvider
@@ -264,7 +281,7 @@ private extension RedditFeedProvider {
 		var urlComponents = URLComponents(string: "https://www.reddit.com")
 		urlComponents?.path = "/u/\(username)"
 		let userURL = urlComponents?.url?.absoluteString
-		return Set([ParsedAuthor(name: "u/\(username)", url: userURL, avatarURL: userURL, emailAddress: nil)])
+		return Set([ParsedAuthor(name: "u/\(username)", url: userURL, avatarURL: nil, emailAddress: nil)])
 	}
 	
     func handleFailure(error: OAuthSwiftError, completion: @escaping (Error?) -> Void) {
@@ -299,10 +316,22 @@ private extension RedditFeedProvider {
 		}
     }
 	
+	func extractSecondElement(path: String) -> String? {
+		let scanner = Scanner(string: path)
+		if let _ = scanner.scanString("/"),
+			let _ = scanner.scanUpToString("/"),
+			let _ = scanner.scanString("/"),
+			let secondElement = scanner.scanUpToString("/") {
+				return secondElement
+		}
+		return nil
+	}
+	
 	static func storeCredentials(username: String, oauthToken: String, oauthRefreshToken: String) throws {
 		let tokenCredentials = Credentials(type: .oauthAccessToken, username: username, secret: oauthToken)
 		try CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
 		let tokenSecretCredentials = Credentials(type: .oauthRefreshToken, username: username, secret: oauthRefreshToken)
 		try CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
 	}
+	
 }
