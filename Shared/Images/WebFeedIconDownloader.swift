@@ -119,7 +119,13 @@ public final class WebFeedIconDownloader {
 		}
 		
 		if let components = URLComponents(string: feed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
+			guard !urlsInProgress.contains(feed.url) else {
+				return nil
+			}
+			urlsInProgress.insert(feed.url)
+			
 			feedProvider.iconURL(components) { result in
+				self.urlsInProgress.remove(feed.url)
 				switch result {
 				case .success(let feedProviderURL):
 					self.feedURLToIconURLCache[feed.url] = feedProviderURL
