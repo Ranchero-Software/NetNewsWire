@@ -91,17 +91,21 @@ public final class RedditFeedProvider: FeedProvider {
 			completion(.success(name))
 			return
 		}
-
-		// TODO: call to get the Subreddit name
-		completion(.success(path))
+		
+		var name = String(path.suffix(from: path.index(after: path.startIndex)))
+		if name.last == "/" {
+			_ = name.popLast()
+		}
+		
+		completion(.success(name))
 	}
 	
 	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
-//		guard let urlComponents = URLComponents(string: webFeed.url) else {
-//			completion(.failure(TwitterFeedProviderError.unknown))
-//			return
-//		}
-		let api = "/r/sphynx/hot.json"
+		guard let urlComponents = URLComponents(string: webFeed.url) else {
+			completion(.failure(TwitterFeedProviderError.unknown))
+			return
+		}
+		let api = urlComponents.path
 		retrieveListing(api: api, parameters: [:]) { result in
 			completion(.success(Set<ParsedItem>()))
 		}
@@ -196,9 +200,12 @@ private extension RedditFeedProvider {
 			return
 		}
 		
-		let url = "\(Self.apiBase)\(api)"
+		let url = "\(Self.apiBase)\(api).json"
 
-		client.get(url, parameters: parameters, headers: Self.userAgentHeaders) { result in
+		var expandedParameters = parameters
+		expandedParameters["raw_json"] = "1"
+
+		client.get(url, parameters: expandedParameters, headers: Self.userAgentHeaders) { result in
 			switch result {
 			case .success(let response):
 				
