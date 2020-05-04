@@ -1,19 +1,19 @@
 //
-//  RedditUser.swift
+//  RedditSubreddit.swift
 //  Account
 //
-//  Created by Maurice Parker on 5/3/20.
+//  Created by Maurice Parker on 5/4/20.
 //  Copyright © 2020 Ranchero Software, LLC. All rights reserved.
 //
 
 import Foundation
 
-struct RedditUser: Codable {
+struct RedditSubreddit: Codable {
 
-	let name: String?
+	let iconImg: String?
 
 	enum CodingKeys: String, CodingKey {
-		case name = "name"
+		case iconImg = "iconImg"
 	}
 	
 }

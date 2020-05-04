@@ -106,8 +106,8 @@ public final class RedditFeedProvider: FeedProvider {
 			completion(.failure(TwitterFeedProviderError.unknown))
 			return
 		}
-		let api = urlComponents.path
-		retrieveListing(api: api, parameters: [:]) { result in
+		let api = "\(urlComponents.path).json"
+		fetch(api: api, parameters: [:], resultType: RedditLinkListing.self) { result in
 			switch result {
 			case .success(let linkListing):
 				let parsedItems = self.makeParsedItems(webFeed.url, linkListing)
@@ -124,7 +124,7 @@ public final class RedditFeedProvider: FeedProvider {
 		let oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
 		let redditFeedProvider = RedditFeedProvider(oauthToken: oauthToken, oauthRefreshToken: oauthRefreshToken)
 		
-		redditFeedProvider.retrieveUser(api: "/api/v1/me") { result in
+		redditFeedProvider.fetch(api: "/api/v1/me", resultType: RedditUser.self) { result in
 			switch result {
 			case .success(let user):
 				guard let username = user.name else {
@@ -185,35 +185,13 @@ extension RedditFeedProvider: OAuth2SwiftProvider {
 
 private extension RedditFeedProvider {
 	
-	func retrieveUser(api: String, completion: @escaping (Result<RedditUser, Error>) -> Void) {
+	func fetch<R: Decodable>(api: String, parameters: [String: Any] = [:], resultType: R.Type, completion: @escaping (Result<R, Error>) -> Void) {
 		guard let client = client else {
 			completion(.failure(RedditFeedProviderError.unknown))
 			return
 		}
-
+		
 		let url = "\(Self.apiBase)\(api)"
-		
-		client.request(url, method: .GET, headers: Self.userAgentHeaders) { result in
-			switch result {
-			case .success(let response):
-				if let redditUser = try? JSONDecoder().decode(RedditUser.self, from: response.data) {
-					completion(.success(redditUser))
-				} else {
-					completion(.failure(RedditFeedProviderError.unknown))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-	
-	func retrieveListing(api: String, parameters: [String: Any], completion: @escaping (Result<RedditLinkListing, Error>) -> Void) {
-		guard let client = client else {
-			completion(.failure(RedditFeedProviderError.unknown))
-			return
-		}
-		
-		let url = "\(Self.apiBase)\(api).json"
 
 		var expandedParameters = parameters
 		expandedParameters["raw_json"] = "1"
@@ -230,8 +208,8 @@ private extension RedditFeedProvider {
 				let decoder = JSONDecoder()
 				
 				do {
-					let listing = try decoder.decode(RedditLinkListing.self, from: response.data)
-					completion(.success(listing))
+					let result = try decoder.decode(resultType, from: response.data)
+					completion(.success(result))
 				} catch {
 					completion(.failure(error))
 				}
@@ -241,7 +219,7 @@ private extension RedditFeedProvider {
 					if let error = error {
 						completion(.failure(error))
 					} else {
-						self.retrieveListing(api: api, parameters: parameters, completion: completion)
+						self.fetch(api: api, parameters: parameters, resultType: resultType, completion: completion)
 					}
 				}
 			}
