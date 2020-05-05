@@ -250,18 +250,18 @@ private extension LocalAccountDelegate {
 	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
 		
-		feedProvider.assignName(urlComponents) { result in
+		feedProvider.metaData(urlComponents) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 				
-			case .success(let name):
+			case .success(let metaData):
 
 				guard let urlString = urlComponents.url?.absoluteString else {
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 
-				let feed = account.createWebFeed(with: name, url: urlString, webFeedID: urlString, homePageURL: nil)
+				let feed = account.createWebFeed(with: metaData.name, url: urlString, webFeedID: urlString, homePageURL: metaData.homePageURL)
 				feed.editedName = editedName
 				container.addWebFeed(feed)
 

@@ -35,6 +35,7 @@ public enum TwitterFeedType: Int {
 
 public struct TwitterFeedProvider: FeedProvider {
 
+	private static let homeURL = "https://www.twitter.com"
 	private static let server = "api.twitter.com"
 	private static let apiBase = "https://api.twitter.com/1.1/"
 	private static let userAgentHeaders = UserAgent.headers() as! [String: String]
@@ -125,36 +126,38 @@ public struct TwitterFeedProvider: FeedProvider {
 		}
 	}
 
-	public func assignName(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
+	public func metaData(_ urlComponents: URLComponents, completion: @escaping (Result<FeedProviderFeedMetaData, Error>) -> Void) {
 		switch urlComponents.path {
 			
 		case "", "/", "/home":
 			let name = NSLocalizedString("Twitter Timeline", comment: "Twitter Timeline")
-			completion(.success(name))
+			completion(.success(FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)))
 			
 		case "/notifications/mentions":
 			let name = NSLocalizedString("Twitter Mentions", comment: "Twitter Mentions")
-			completion(.success(name))
-			
+			completion(.success(FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)))
+
 		case "/search":
 			if let query = urlComponents.queryItems?.first(where: { $0.name == "q" })?.value {
 				let localized = NSLocalizedString("Twitter Search: %@", comment: "Twitter Search")
-				let searchName = NSString.localizedStringWithFormat(localized as NSString, query) as String
-				completion(.success(searchName))
+				let name = NSString.localizedStringWithFormat(localized as NSString, query) as String
+				completion(.success(FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)))
 			} else {
 				let name = NSLocalizedString("Twitter Search", comment: "Twitter Search")
-				completion(.success(name))
+				completion(.success(FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)))
 			}
 			
 		default:
 			if let hashtag = deriveHashtag(urlComponents) {
-				completion(.success("#\(hashtag)"))
+				completion(.success(FeedProviderFeedMetaData(name: "#\(hashtag)", homePageURL: Self.homeURL)))
 			} else if let screenName = deriveScreenName(urlComponents) {
 				retrieveUser(screenName: screenName) { result in
 					switch result {
 					case .success(let user):
 						if let userName = user.name {
-							completion(.success(userName))
+							var urlComponents = URLComponents(string: Self.homeURL)
+							urlComponents?.path = "/\(screenName)"
+							completion(.success(FeedProviderFeedMetaData(name: userName, homePageURL: urlComponents?.url?.absoluteString)))
 						} else {
 							completion(.failure(TwitterFeedProviderError.screenNameNotFound))
 						}

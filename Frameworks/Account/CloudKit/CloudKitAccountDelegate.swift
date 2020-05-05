@@ -582,24 +582,24 @@ private extension CloudKitAccountDelegate {
 	func createProviderWebFeed(for account: Account, urlComponents: URLComponents, editedName: String?, container: Container, feedProvider: FeedProvider, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
-		feedProvider.assignName(urlComponents) { result in
+		feedProvider.metaData(urlComponents) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 				
-			case .success(let name):
+			case .success(let metaData):
 
 				guard let urlString = urlComponents.url?.absoluteString else {
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 				
-				self.accountZone.createWebFeed(url: urlString, name: name, editedName: editedName, container: container) { result in
+				self.accountZone.createWebFeed(url: urlString, name: metaData.name, editedName: editedName, container: container) { result in
 
 					self.refreshProgress.completeTask()
 					switch result {
 					case .success(let externalID):
 
-						let feed = account.createWebFeed(with: name, url: urlString, webFeedID: urlString, homePageURL: nil)
+						let feed = account.createWebFeed(with: metaData.name, url: urlString, webFeedID: urlString, homePageURL: metaData.homePageURL)
 						feed.editedName = editedName
 						feed.externalID = externalID
 						container.addWebFeed(feed)

@@ -16,6 +16,11 @@ public enum FeedProviderAbility {
 	case none
 }
 
+public struct FeedProviderFeedMetaData {
+	let name: String
+	let homePageURL: String?
+}
+
 public protocol FeedProvider  {
 	
 	/// Informs the caller of the ability for this feed provider to service the given URL
@@ -25,7 +30,7 @@ public protocol FeedProvider  {
 	func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void)
 	
 	/// Construct a Name for the new feed
-	func assignName(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void)
+	func metaData(_ urlComponents: URLComponents, completion: @escaping (Result<FeedProviderFeedMetaData, Error>) -> Void)
 	
 	/// Refresh all the article entries (ParsedItems)
 	func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void)

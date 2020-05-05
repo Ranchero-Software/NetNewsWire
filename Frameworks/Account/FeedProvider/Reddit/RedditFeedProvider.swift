@@ -109,21 +109,26 @@ public final class RedditFeedProvider: FeedProvider {
 		}
 	}
 
-	public func assignName(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
+	public func metaData(_ urlComponents: URLComponents, completion: @escaping (Result<FeedProviderFeedMetaData, Error>) -> Void) {
 		let path = urlComponents.path
 
 		if path == "" || path == "/" {
 			let name = NSLocalizedString("Reddit Timeline", comment: "Reddit Timeline")
-			completion(.success(name))
+			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: "https://www.reddit.com")
+			completion(.success(metaData))
 			return
 		}
 		
-		var name = String(path.suffix(from: path.index(after: path.startIndex)))
-		if name.last == "/" {
-			_ = name.popLast()
+		let splitPath = path.split(separator: "/")
+		guard splitPath.count > 1 else {
+			completion(.failure(RedditFeedProviderError.unknown))
+			return
 		}
+
+		let name = "\(splitPath[0])/\(splitPath[1])"
+		let homePageURL = "https://www.reddit.com/\(name)"
 		
-		completion(.success(name))
+		completion(.success(FeedProviderFeedMetaData(name: name, homePageURL: homePageURL)))
 	}
 	
 	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
