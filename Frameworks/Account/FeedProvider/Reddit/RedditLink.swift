@@ -32,6 +32,7 @@ struct RedditLinkData: Codable {
 	let created: Double?
 	let isVideo: Bool?
 	let media: RedditMedia?
+	let mediaEmbed: RedditMediaEmbed?
     
     enum CodingKeys: String, CodingKey {
         case title = "title"
@@ -44,6 +45,7 @@ struct RedditLinkData: Codable {
 		case created = "created_utc"
 		case isVideo = "is_video"
 		case media = "media"
+		case mediaEmbed = "media_embed"
     }
 	
 	var createdDate: Date? {
@@ -65,6 +67,10 @@ struct RedditLinkData: Codable {
 	func renderURLAsHTML() -> String? {
 		guard let url = url else { return nil }
 		
+		if let mediaEmbedContent = mediaEmbed?.content {
+			return mediaEmbedContent
+		}
+		
 		if isVideo ?? false {
 			guard let fallbackURL = media?.video?.fallbackURL else {
 				return nil
@@ -75,7 +81,6 @@ struct RedditLinkData: Codable {
 		guard url.hasSuffix(".jpg") || url.hasSuffix(".jpeg") || url.hasSuffix(".png") || url.hasSuffix(".gif") else {
 			return nil
 		}
-		
 		return "<figure><img src=\"\(url)\"></figure>"
 	}
 	
