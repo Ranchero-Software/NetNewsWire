@@ -80,10 +80,18 @@ public final class RedditFeedProvider: FeedProvider {
 	}
 
 	public func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void) {
-		guard urlComponents.path.hasPrefix("/r/"), let secondElement = extractSecondElement(path: urlComponents.path) else {
+		guard urlComponents.path.hasPrefix("/r/") else {
 			completion(.failure(RedditFeedProviderError.unknown))
 			return
 		}
+		
+		let splitPath = urlComponents.path.split(separator: "/")
+		guard splitPath.count > 1 else {
+			completion(.failure(RedditFeedProviderError.unknown))
+			return
+		}
+		
+		let secondElement = String(splitPath[1])
 		
 		let api = "/r/\(secondElement)/about.json"
 		
@@ -315,18 +323,7 @@ private extension RedditFeedProvider {
 			completion(error)
 		}
     }
-	
-	func extractSecondElement(path: String) -> String? {
-		let scanner = Scanner(string: path)
-		if let _ = scanner.scanString("/"),
-			let _ = scanner.scanUpToString("/"),
-			let _ = scanner.scanString("/"),
-			let secondElement = scanner.scanUpToString("/") {
-				return secondElement
-		}
-		return nil
-	}
-	
+
 	static func storeCredentials(username: String, oauthToken: String, oauthRefreshToken: String) throws {
 		let tokenCredentials = Credentials(type: .oauthAccessToken, username: username, secret: oauthToken)
 		try CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
