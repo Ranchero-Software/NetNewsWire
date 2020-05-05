@@ -30,6 +30,8 @@ struct RedditLinkData: Codable {
 	let selfText: String?
 	let author: String?
 	let created: Double?
+	let isVideo: Bool?
+	let media: RedditMedia?
     
     enum CodingKeys: String, CodingKey {
         case title = "title"
@@ -40,6 +42,8 @@ struct RedditLinkData: Codable {
 		case selfText = "selftext"
 		case author = "author"
 		case created = "created_utc"
+		case isVideo = "is_video"
+		case media = "media"
     }
 	
 	var createdDate: Date? {
@@ -60,6 +64,13 @@ struct RedditLinkData: Codable {
 
 	func renderURLAsHTML() -> String? {
 		guard let url = url else { return nil }
+		
+		if isVideo ?? false {
+			guard let fallbackURL = media?.video?.fallbackURL else {
+				return nil
+			}
+			return "<video src=\"\(fallbackURL)\"></video>"
+		}
 		
 		guard url.hasSuffix(".jpg") || url.hasSuffix(".jpeg") || url.hasSuffix(".png") || url.hasSuffix(".gif") else {
 			return nil
