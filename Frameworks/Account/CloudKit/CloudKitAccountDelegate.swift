@@ -254,7 +254,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		accountZone.createWebFeed(url: feed.url, name: feed.name, editedName: feed.editedName, container: container) { result in
+		accountZone.createWebFeed(url: feed.url, name: feed.name, editedName: feed.editedName, homePageURL: feed.homePageURL, container: container) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let externalID):
@@ -593,7 +593,7 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 				
-				self.accountZone.createWebFeed(url: urlString, name: metaData.name, editedName: editedName, container: container) { result in
+				self.accountZone.createWebFeed(url: urlString, name: metaData.name, editedName: editedName, homePageURL: metaData.homePageURL, container: container) { result in
 
 					self.refreshProgress.completeTask()
 					switch result {
@@ -674,7 +674,11 @@ private extension CloudKitAccountDelegate {
 							case .success:
 								BatchUpdate.shared.end()
 								
-								self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString, name: parsedFeed.title, editedName: editedName, container: container) { result in
+								self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString,
+															   name: parsedFeed.title,
+															   editedName: editedName,
+															   homePageURL: parsedFeed.homePageURL,
+															   container: container) { result in
 
 									self.refreshProgress.completeTask()
 									switch result {

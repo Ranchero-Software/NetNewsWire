@@ -30,6 +30,7 @@ final class CloudKitAccountZone: CloudKitZone {
 			static let url = "url"
 			static let name = "name"
 			static let editedName = "editedName"
+			static let homePageURL = "homePageURL"
 			static let containerExternalIDs = "containerExternalIDs"
 		}
 	}
@@ -82,7 +83,7 @@ final class CloudKitAccountZone: CloudKitZone {
 	}
     
 	///  Persist a web feed record to iCloud and return the external key
-	func createWebFeed(url: String, name: String?, editedName: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
+	func createWebFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: Self.zoneID)
 		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: recordID)
 		record[CloudKitWebFeed.Fields.url] = url
@@ -90,7 +91,10 @@ final class CloudKitAccountZone: CloudKitZone {
 		if let editedName = editedName {
 			record[CloudKitWebFeed.Fields.editedName] = editedName
 		}
-		
+		if let homePageURL = homePageURL {
+			record[CloudKitWebFeed.Fields.homePageURL] = homePageURL
+		}
+
 		guard let containerExternalID = container.externalID else {
 			completion(.failure(CloudKitZoneError.invalidParameter))
 			return
@@ -292,6 +296,9 @@ private extension CloudKitAccountZone {
 		record[CloudKitWebFeed.Fields.url] = feedSpecifier.feedURL
 		if let editedName = feedSpecifier.title {
 			record[CloudKitWebFeed.Fields.editedName] = editedName
+		}
+		if let homePageURL = feedSpecifier.homePageURL {
+			record[CloudKitWebFeed.Fields.homePageURL] = homePageURL
 		}
 		record[CloudKitWebFeed.Fields.containerExternalIDs] = [containerExternalID]
 		return record
