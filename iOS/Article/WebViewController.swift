@@ -149,8 +149,7 @@ class WebViewController: UIViewController {
 	}
 	
 	func fullReload() {
-		view.subviews.first?.removeFromSuperview()
-		loadWebView()
+		loadWebView(replaceExistingWebView: true)
 	}
 
 	func showBars() {
@@ -291,6 +290,12 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 
 extension WebViewController: WKNavigationDelegate {
 	
+	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+		if view.subviews.count > 1 {
+			view.subviews.last?.removeFromSuperview()
+		}
+	}
+	
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 		
 		if navigationAction.navigationType == .linkActivated {
@@ -408,10 +413,10 @@ private struct ImageClickMessage: Codable {
 
 private extension WebViewController {
 
-	func loadWebView() {
+	func loadWebView(replaceExistingWebView: Bool = false) {
 		guard isViewLoaded else { return }
 		
-		if let webView = webView {
+		if !replaceExistingWebView, let webView = webView {
 			self.renderPage(webView)
 			return
 		}
