@@ -122,7 +122,11 @@ struct RedditLinkData: Codable {
 		guard !host.hasSuffix("reddit.com") && !host.hasSuffix("redd.it") else {
 			return ""
 		}
-		return "<div><a href=\"\(url)\">\(url)</a></div>"
+		var displayURL = "\(urlComponents.host ?? "")\(urlComponents.path)"
+		if displayURL.count > 30 {
+			displayURL = "\(displayURL.prefix(30))..."
+		}
+		return "<div><a href=\"\(url)\">\(displayURL)</a></div>"
 	}
 	
 }
