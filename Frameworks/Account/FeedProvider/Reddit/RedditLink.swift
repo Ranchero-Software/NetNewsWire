@@ -70,7 +70,7 @@ struct RedditLinkData: Codable {
 		guard let url = url else { return nil }
 		
 		if url.hasSuffix(".gif") {
-			return "<figure><img src=\"\(url)\"></figure>"
+			return "<img src=\"\(url)\">"
 		}
 		
 		if isVideo ?? false, let videoURL = media?.video?.fallbackURL {
@@ -103,11 +103,11 @@ struct RedditLinkData: Codable {
 		}
 		
 		if let imageSource = preview?.images?.first?.source, let imageURL = imageSource.url {
-			var html = "<figure><a href=\"\(url)\"><img src=\"\(imageURL)\" "
+			var html = "<a href=\"\(url)\"><img src=\"\(imageURL)\" "
 			if let width = imageSource.width, let height = imageSource.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "></a></figure>"
+			html += "></a>"
 			html += linkOutURL(url)
 			return html
 		}
