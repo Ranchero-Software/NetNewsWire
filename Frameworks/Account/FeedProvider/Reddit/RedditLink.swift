@@ -116,7 +116,10 @@ struct RedditLinkData: Codable {
 	}
 	
 	func linkOutURL(_ url: String) -> String {
-		guard let urlComponents = URLComponents(string: url), let host = urlComponents.host, !host.hasSuffix("reddit.com") else {
+		guard let urlComponents = URLComponents(string: url), let host = urlComponents.host else {
+			return ""
+		}
+		guard !host.hasSuffix("reddit.com") && !host.hasSuffix("redd.it") else {
 			return ""
 		}
 		return "<div><a href=\"\(url)\">\(url)</a></div>"
