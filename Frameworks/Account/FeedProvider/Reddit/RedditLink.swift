@@ -73,10 +73,11 @@ struct RedditLinkData: Codable {
 			return mediaEmbedContent
 		}
 		
-		if isVideo ?? false {
-			guard let fallbackURL = media?.video?.fallbackURL else {
-				return nil
-			}
+		if url.hasSuffix(".gif") {
+			return "<figure><img src=\"\(url)\"></figure>"
+		}
+		
+		if isVideo ?? false, let videoURL = media?.video?.fallbackURL {
 			var html = "<video "
 			if let previewImageURL = preview?.images?.first?.source?.url {
 				html += "poster=\"\(previewImageURL)\" "
@@ -84,7 +85,19 @@ struct RedditLinkData: Codable {
 			if let width = media?.video?.width, let height = media?.video?.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "src=\"\(fallbackURL)\"></video>"
+			html += "src=\"\(videoURL)\"></video>"
+			return html
+		}
+		
+		if let videoPreviewURL = preview?.videoPreview?.url {
+			var html = "<video "
+			if let previewImageURL = preview?.images?.first?.source?.url {
+				html += "poster=\"\(previewImageURL)\" "
+			}
+			if let width = preview?.videoPreview?.width, let height = preview?.videoPreview?.height {
+				html += "width=\"\(width)\" height=\"\(height)\" "
+			}
+			html += "src=\"\(videoPreviewURL)\"></video>"
 			return html
 		}
 		
