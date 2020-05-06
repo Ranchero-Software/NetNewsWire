@@ -202,12 +202,7 @@ class ArticleViewController: UIViewController {
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
-		coordinator.webViewProvider.flushQueue()
-		coordinator.webViewProvider.replenishQueueIfNeeded()
-		if let controller = currentWebViewController {
-			controller.fullReload()
-			self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
-		}
+		resetWebViewController()
 	}
 	
 	@objc func willEnterForeground(_ note: Notification) {
@@ -215,6 +210,7 @@ class ArticleViewController: UIViewController {
 		if AppDefaults.articleFullscreenEnabled {
 			currentWebViewController?.hideBars()
 		}
+		resetWebViewController()
 	}
 	
 	// MARK: Actions
@@ -272,10 +268,6 @@ class ArticleViewController: UIViewController {
 
 	func scrollPageDown() {
 		currentWebViewController?.scrollPageDown()
-	}
-	
-	func fullReload() {
-		currentWebViewController?.fullReload()
 	}
 	
 	func stopArticleExtractorIfProcessing() {
@@ -364,6 +356,15 @@ private extension ArticleViewController {
 		controller.delegate = self
 		controller.setArticle(article, updateView: updateView)
 		return controller
+	}
+	
+	func resetWebViewController() {
+		coordinator.webViewProvider.flushQueue()
+		coordinator.webViewProvider.replenishQueueIfNeeded()
+		if let controller = currentWebViewController {
+			controller.fullReload()
+			self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+		}
 	}
 	
 }
