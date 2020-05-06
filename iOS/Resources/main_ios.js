@@ -41,7 +41,7 @@ class ImageViewer {
 			pixelRatio--;
 		} while (pixelRatio > 0 && canvas.width * canvas.height > 16777216)
 		canvas.getContext("2d").drawImage(this.img, 0, 0, canvas.width, canvas.height);
-
+		
 		const rect = this.img.getBoundingClientRect();
 		const message = {
 			x: rect.x,

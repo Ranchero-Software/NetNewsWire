@@ -73,16 +73,13 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	
 	private let unreadCountView = MasterFeedUnreadCountView(frame: CGRect.zero)
 
-	@available(iOS 13.4, *)
-	private(set) lazy var disclosurePointerInteraction = UIPointerInteraction()
-	
 	private lazy var disclosureButton: UIButton = {
 		let button = NonIntrinsicButton()
 		button.tintColor = UIColor.tertiaryLabel
 		button.setImage(AppAssets.disclosureImage, for: .normal)
 		button.contentMode = .center
 		if #available(iOS 13.4, *) {
-			button.addInteraction(disclosurePointerInteraction)
+			button.addInteraction(UIPointerInteraction())
 		}
 		button.addTarget(self, action: #selector(toggleDisclosure), for: .touchUpInside)
 		return button

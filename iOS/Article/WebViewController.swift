@@ -149,7 +149,8 @@ class WebViewController: UIViewController {
 	}
 	
 	func fullReload() {
-		self.loadWebView()
+		view.subviews.first?.removeFromSuperview()
+		loadWebView()
 	}
 
 	func showBars() {
@@ -289,10 +290,10 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 // MARK: WKNavigationDelegate
 
 extension WebViewController: WKNavigationDelegate {
+	
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 		
 		if navigationAction.navigationType == .linkActivated {
-			
 			guard let url = navigationAction.request.url else {
 				decisionHandler(.allow)
 				return
@@ -314,13 +315,13 @@ extension WebViewController: WKNavigationDelegate {
 			} else {
 				decisionHandler(.allow)
 			}
-			
 		} else {
-			
 			decisionHandler(.allow)
-			
 		}
-		
+	}
+
+	func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+		fullReload()
 	}
 	
 }
