@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "reddit-logo.pdf",
+      "filename" : "reddit-light.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "reddit-dark.pdf",
       "idiom" : "universal"
     }
   ],
