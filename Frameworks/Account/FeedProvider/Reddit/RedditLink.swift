@@ -98,6 +98,7 @@ struct RedditLinkData: Codable {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
 			html += "src=\"\(videoPreviewURL)\"></video>"
+			html += linkOutURL(url)
 			return html
 		}
 		
@@ -107,10 +108,18 @@ struct RedditLinkData: Codable {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
 			html += "></a></figure>"
+			html += linkOutURL(url)
 			return html
 		}
 		
-		return nil
+		return linkOutURL(url)
+	}
+	
+	func linkOutURL(_ url: String) -> String {
+		guard let urlComponents = URLComponents(string: url), let host = urlComponents.host, !host.hasSuffix("reddit.com") else {
+			return ""
+		}
+		return "<div><a href=\"\(url)\">\(url)</a></div>"
 	}
 	
 }
