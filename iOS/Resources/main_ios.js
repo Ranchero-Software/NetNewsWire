@@ -35,10 +35,14 @@ class ImageViewer {
 		this.hideLoadingIndicator();
 
 		var canvas = document.createElement("canvas");
-		canvas.width = this.img.naturalWidth * window.devicePixelRatio;
-		canvas.height = this.img.naturalHeight * window.devicePixelRatio;
+		var pixelRatio = window.devicePixelRatio;
+		do {
+			canvas.width = this.img.naturalWidth * pixelRatio;
+			canvas.height = this.img.naturalHeight * pixelRatio;
+			pixelRatio--;
+		} while (pixelRatio > 0 && canvas.width * canvas.height > 16777216)
 		canvas.getContext("2d").drawImage(this.img, 0, 0, canvas.width, canvas.height);
-
+		
 		const rect = this.img.getBoundingClientRect();
 		const message = {
 			x: rect.x,
