@@ -69,10 +69,6 @@ struct RedditLinkData: Codable {
 	func renderURLAsHTML() -> String? {
 		guard let url = url else { return nil }
 		
-		if !url.hasPrefix("https://imgur.com"), let mediaEmbedContent = mediaEmbed?.content {
-			return mediaEmbedContent
-		}
-		
 		if url.hasSuffix(".gif") {
 			return "<figure><img src=\"\(url)\"></figure>"
 		}
@@ -100,6 +96,10 @@ struct RedditLinkData: Codable {
 			html += "src=\"\(videoPreviewURL)\"></video>"
 			html += linkOutURL(url)
 			return html
+		}
+		
+		if let mediaEmbedContent = mediaEmbed?.content {
+			return mediaEmbedContent
 		}
 		
 		if let imageSource = preview?.images?.first?.source, let imageURL = imageSource.url {
