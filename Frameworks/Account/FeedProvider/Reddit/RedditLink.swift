@@ -58,10 +58,10 @@ struct RedditLinkData: Codable {
 	func renderAsHTML() -> String? {
 		var html = String()
 		if let selfHTML = selfHTML {
-			html.append(selfHTML)
+			html += selfHTML
 		}
 		if let urlHTML = renderURLAsHTML() {
-			html.append(urlHTML)
+			html += urlHTML
 		}
 		return html
 	}
@@ -69,33 +69,35 @@ struct RedditLinkData: Codable {
 	func renderURLAsHTML() -> String? {
 		guard let url = url else { return nil }
 		
-		if let mediaEmbedContent = mediaEmbed?.content {
-			return mediaEmbedContent
-		}
-		
 		if isVideo ?? false {
 			guard let fallbackURL = media?.video?.fallbackURL else {
 				return nil
 			}
-
 			var html = "<video "
-
 			if let previewImageURL = preview?.images?.first?.source?.url {
 				html += "poster=\"\(previewImageURL)\" "
 			}
-			
 			if let width = media?.video?.width, let height = media?.video?.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			
 			html += "src=\"\(fallbackURL)\"></video>"
 			return html
 		}
 		
-		guard url.hasSuffix(".jpg") || url.hasSuffix(".jpeg") || url.hasSuffix(".png") || url.hasSuffix(".gif") else {
-			return nil
+		if let imageSource = preview?.images?.first?.source, let imageURL = imageSource.url {
+			var html = "<figure><a href=\"\(url)\"><img src=\"\(imageURL)\" "
+			if let width = imageSource.width, let height = imageSource.height {
+				html += "width=\"\(width)\" height=\"\(height)\" "
+			}
+			html += "></a></figure>"
+			return html
 		}
-		return "<figure><img src=\"\(url)\"></figure>"
+		
+		if let mediaEmbedContent = mediaEmbed?.content {
+			return mediaEmbedContent
+		}
+		
+		return nil
 	}
 	
 }
