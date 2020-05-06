@@ -98,7 +98,7 @@ struct RedditLinkData: Codable {
 			return html
 		}
 		
-		if let mediaEmbedContent = mediaEmbed?.content {
+		if !url.hasPrefix("https://imgur.com"), let mediaEmbedContent = mediaEmbed?.content {
 			return mediaEmbedContent
 		}
 		
