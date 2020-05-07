@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct RedditLink: Codable {
+final class RedditLink: Codable {
     
     let kind: String?
 	let data: RedditLinkData?
@@ -20,12 +20,13 @@ struct RedditLink: Codable {
 	
 }
 
-struct RedditLinkData: Codable {
+final class RedditLinkData: Codable {
     
     let title: String?
 	let permalink: String?
     let url: String?
     let id: String?
+	let subredditNamePrefixed: String?
 	let selfHTML: String?
 	let selfText: String?
 	let postHint: String?
@@ -35,12 +36,14 @@ struct RedditLinkData: Codable {
 	let media: RedditMedia?
 	let mediaEmbed: RedditMediaEmbed?
 	let preview: RedditPreview?
+	let crossPostParents: [RedditLinkData]?
     
     enum CodingKeys: String, CodingKey {
         case title = "title"
 		case permalink = "permalink"
         case url = "url"
         case id = "id"
+		case subredditNamePrefixed = "subreddit_name_prefixed"
 		case selfHTML = "selftext_html"
 		case selfText = "selftext"
 		case postHint = "post_hint"
@@ -50,6 +53,7 @@ struct RedditLinkData: Codable {
 		case media = "media"
 		case mediaEmbed = "media_embed"
 		case preview = "preview"
+		case crossPostParents = "crosspost_parent_list"
     }
 	
 	var createdDate: Date? {
@@ -70,6 +74,16 @@ struct RedditLinkData: Codable {
 
 	func renderURLAsHTML() -> String? {
 		guard let url = url else { return nil }
+		
+		if let parent = crossPostParents?.first {
+			var html = "<blockquote>"
+			if let subreddit = parent.subredditNamePrefixed {
+				html += "<p><a href=\"https://www.reddit.com/\(subreddit)\">\(subreddit)</a></p>"
+			}
+			html += parent.renderAsHTML() ?? ""
+			html += "</blockquote>"
+			return html
+		}
 		
 		if url.hasSuffix(".gif") {
 			return "<img src=\"\(url)\">"
