@@ -100,7 +100,7 @@ class ImageViewer {
 
 		// Add the click listener for images
 		window.onclick = function(event) {
-			if (event.target.matches("img")) {
+			if (event.target.matches("img") && !event.target.classList.contains("nnw-nozoom")) {
 				if (activeImageViewer && activeImageViewer.img === event.target) {
 					cancelImageLoad();
 				} else {

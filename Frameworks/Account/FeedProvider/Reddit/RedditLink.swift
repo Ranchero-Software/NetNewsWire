@@ -28,6 +28,7 @@ struct RedditLinkData: Codable {
     let id: String?
 	let selfHTML: String?
 	let selfText: String?
+	let postHint: String?
 	let author: String?
 	let created: Double?
 	let isVideo: Bool?
@@ -42,6 +43,7 @@ struct RedditLinkData: Codable {
         case id = "id"
 		case selfHTML = "selftext_html"
 		case selfText = "selftext"
+		case postHint = "post_hint"
 		case author = "author"
 		case created = "created_utc"
 		case isVideo = "is_video"
@@ -104,6 +106,9 @@ struct RedditLinkData: Codable {
 		
 		if let imageSource = preview?.images?.first?.source, let imageURL = imageSource.url {
 			var html = "<a href=\"\(url)\"><img src=\"\(imageURL)\" "
+			if postHint == "link" {
+				html += "class=\"nnw-nozoom\" "
+			}
 			if let width = imageSource.width, let height = imageSource.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
