@@ -253,13 +253,18 @@ private extension RedditFeedProvider {
 					self.rateLimitReset = Date(timeIntervalSinceNow: Double(reset) ?? 0)
 				}
 
-				let decoder = JSONDecoder()
-				
-				do {
-					let result = try decoder.decode(resultType, from: response.data)
-					completion(.success(result))
-				} catch {
-					completion(.failure(error))
+				DispatchQueue.global(qos: .background).async {
+					let decoder = JSONDecoder()
+					do {
+						let result = try decoder.decode(resultType, from: response.data)
+						DispatchQueue.main.async {
+							completion(.success(result))
+						}
+					} catch {
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
+					}
 				}
 			
 			case .failure(let oathError):

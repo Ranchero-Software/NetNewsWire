@@ -359,21 +359,27 @@ private extension TwitterFeedProvider {
 					self.rateLimitReset = Date(timeIntervalSince1970: Double(reset) ?? 0)
 				}
 
-				do {
-					let tweets: [TwitterStatus]
-					if isSearch {
-						let searchResult = try decoder.decode(TwitterSearchResult.self, from: response.data)
-						if let statuses = searchResult.statuses {
-							tweets = statuses
+				DispatchQueue.global(qos: .background).async {
+					do {
+						let tweets: [TwitterStatus]
+						if isSearch {
+							let searchResult = try decoder.decode(TwitterSearchResult.self, from: response.data)
+							if let statuses = searchResult.statuses {
+								tweets = statuses
+							} else {
+								tweets = [TwitterStatus]()
+							}
 						} else {
-							tweets = [TwitterStatus]()
+							tweets = try decoder.decode([TwitterStatus].self, from: response.data)
 						}
-					} else {
-						tweets = try decoder.decode([TwitterStatus].self, from: response.data)
+						DispatchQueue.main.async {
+							completion(.success(tweets))
+						}
+					} catch {
+						DispatchQueue.main.async {
+							completion(.failure(error))
+						}
 					}
-					completion(.success(tweets))
-				} catch {
-					completion(.failure(error))
 				}
 				
 			case .failure(let error):
