@@ -272,13 +272,15 @@ private extension LocalAccountDelegate {
 						account.update(urlString, with: parsedItems) { _ in
 							completion(.success(feed))
 						}
-					case .failure:
-						completion(.failure(AccountError.createErrorNotFound))
+					case .failure(let error):
+						self.refreshProgress.clear()
+						completion(.failure(error))
 					}
 				}
 				
-			case .failure(let error):
-				completion(.failure(error))
+			case .failure:
+				self.refreshProgress.clear()
+				completion(.failure(AccountError.createErrorNotFound))
 			}
 		}
 	}

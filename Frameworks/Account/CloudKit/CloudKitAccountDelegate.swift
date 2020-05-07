@@ -632,9 +632,9 @@ private extension CloudKitAccountDelegate {
 					}
 				}
 
-			case .failure(let error):
+			case .failure:
 				self.refreshProgress.clear()
-				completion(.failure(error))
+				completion(.failure(AccountError.createErrorNotFound))
 			}
 		}
 	}
