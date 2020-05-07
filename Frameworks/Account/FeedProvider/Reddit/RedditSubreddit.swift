@@ -22,10 +22,12 @@ struct RedditSubreddit: Codable {
 
 struct RedditSubredditData: Codable {
 	
+	let displayName: String?
 	let iconImg: String?
 	let communityIcon: String?
 
 	enum CodingKeys: String, CodingKey {
+		case displayName = "display_name_prefixed"
 		case iconImg = "icon_img"
 		case communityIcon = "community_icon"
 	}

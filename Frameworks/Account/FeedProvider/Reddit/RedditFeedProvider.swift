@@ -90,18 +90,8 @@ public final class RedditFeedProvider: FeedProvider {
 			completion(.failure(RedditFeedProviderError.unknown))
 			return
 		}
-		
-		let splitPath = urlComponents.path.split(separator: "/")
-		guard splitPath.count > 1 else {
-			completion(.failure(RedditFeedProviderError.unknown))
-			return
-		}
-		
-		let secondElement = String(splitPath[1])
-		
-		let api = "/r/\(secondElement)/about.json"
-		
-		fetch(api: api, parameters: [:], resultType: RedditSubreddit.self) { result in
+
+		subreddit(urlComponents) { result in
 			switch result {
 			case .success(let subreddit):
 				if let iconURL = subreddit.data?.iconURL, !iconURL.isEmpty {
@@ -134,7 +124,19 @@ public final class RedditFeedProvider: FeedProvider {
 		let name = "\(splitPath[0])/\(splitPath[1])"
 		let homePageURL = "https://www.reddit.com/\(name)"
 		
-		completion(.success(FeedProviderFeedMetaData(name: name, homePageURL: homePageURL)))
+		subreddit(urlComponents) { result in
+			switch result {
+			case .success(let subreddit):
+				if let displayName = subreddit.data?.displayName {
+					completion(.success(FeedProviderFeedMetaData(name: displayName, homePageURL: homePageURL)))
+				} else {
+					completion(.failure(RedditFeedProviderError.unknown))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+
 	}
 	
 	public func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void) {
@@ -221,6 +223,19 @@ extension RedditFeedProvider: OAuth2SwiftProvider {
 
 private extension RedditFeedProvider {
 	
+	func subreddit(_ urlComponents: URLComponents, completion: @escaping (Result<RedditSubreddit, Error>) -> Void) {
+		let splitPath = urlComponents.path.split(separator: "/")
+		guard splitPath.count > 1 else {
+			completion(.failure(RedditFeedProviderError.unknown))
+			return
+		}
+		
+		let secondElement = String(splitPath[1])
+		let api = "/r/\(secondElement)/about.json"
+		
+		fetch(api: api, parameters: [:], resultType: RedditSubreddit.self, completion: completion)
+	}
+
 	func fetch<R: Decodable>(api: String, parameters: [String: Any] = [:], resultType: R.Type, completion: @escaping (Result<R, Error>) -> Void) {
 		guard let client = client else {
 			completion(.failure(RedditFeedProviderError.unknown))
@@ -247,10 +262,15 @@ private extension RedditFeedProvider {
 //				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
 
 				if let remaining = response.response.value(forHTTPHeaderField: "X-Ratelimit-Remaining") {
-					self.rateLimitRemaining = Int(remaining) ?? 0
+					self.rateLimitRemaining = Int(remaining)
+				} else {
+					self.rateLimitRemaining = nil
 				}
+				
 				if let reset = response.response.value(forHTTPHeaderField: "X-Ratelimit-Reset") {
 					self.rateLimitReset = Date(timeIntervalSinceNow: Double(reset) ?? 0)
+				} else {
+					self.rateLimitReset = nil
 				}
 
 				DispatchQueue.global(qos: .background).async {
