@@ -42,7 +42,11 @@ class AddFolderWindowController : NSWindowController {
 		let menu = NSMenu()
 		accountPopupButton.menu = menu
 		
-		for oneAccount in AccountManager.shared.sortedActiveAccounts {
+		let accounts = AccountManager.shared
+			.sortedActiveAccounts
+			.filter { !$0.behaviors.contains(.disallowFolderManagement) }
+		
+		for oneAccount in accounts {
 			
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
