@@ -73,7 +73,7 @@ struct RedditLinkData: Codable {
 			return "<img src=\"\(url)\">"
 		}
 		
-		if isVideo ?? false, let videoURL = media?.video?.fallbackURL {
+		if isVideo ?? false, let videoURL = media?.video?.hlsURL {
 			var html = "<video "
 			if let previewImageURL = preview?.images?.first?.source?.url {
 				html += "poster=\"\(previewImageURL)\" "

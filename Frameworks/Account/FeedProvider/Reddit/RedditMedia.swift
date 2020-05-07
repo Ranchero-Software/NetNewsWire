@@ -21,11 +21,13 @@ struct RedditMedia: Codable {
 struct RedditVideo: Codable {
 	
 	let fallbackURL: String?
+	let hlsURL: String?
 	let height: Int?
 	let width: Int?
 	
 	enum CodingKeys: String, CodingKey {
 		case fallbackURL = "fallback_url"
+		case hlsURL = "hls_url"
 		case height = "height"
 		case width = "width"
 	}
