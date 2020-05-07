@@ -13,11 +13,14 @@ import RSParser
 import RSWeb
 
 public enum TwitterFeedProviderError: LocalizedError {
+	case rateLimitExceeded
 	case screenNameNotFound
 	case unknown
 	
 	public var localizedDescription: String {
 		switch self {
+		case .rateLimitExceeded:
+			return NSLocalizedString("Twitter API rate limit has been exceeded.  Please wait a short time and try again.", comment: "Rate Limit")
 		case .screenNameNotFound:
 			return NSLocalizedString("Unable to determine screen name.", comment: "Screen name")
 		case .unknown:
@@ -33,7 +36,7 @@ public enum TwitterFeedType: Int {
 	case search = 3
 }
 
-public struct TwitterFeedProvider: FeedProvider {
+public final class TwitterFeedProvider: FeedProvider {
 
 	private static let homeURL = "https://www.twitter.com"
 	private static let server = "api.twitter.com"
@@ -50,6 +53,9 @@ public struct TwitterFeedProvider: FeedProvider {
 	private var oauthTokenSecret: String
 
 	private var client: OAuthSwiftClient
+	
+	private var rateLimitRemaining: Int?
+	private var rateLimitReset: Date?
 	
 	public init?(tokenSuccess: OAuthSwift.TokenSuccess) {
 		guard let screenName = tokenSuccess.parameters["screen_name"] as? String else {
@@ -332,6 +338,11 @@ private extension TwitterFeedProvider {
 		var expandedParameters = parameters
 		expandedParameters["tweet_mode"] = "extended"
 		
+		if let remaining = rateLimitRemaining, let reset = rateLimitReset, remaining < 1 && reset > Date() {
+			completion(.failure(TwitterFeedProviderError.rateLimitExceeded))
+			return
+		}
+
 		client.get(url, parameters: expandedParameters, headers: Self.userAgentHeaders) { result in
 			switch result {
 			case .success(let response):
@@ -340,7 +351,14 @@ private extension TwitterFeedProvider {
 				let dateFormatter = DateFormatter()
 				dateFormatter.dateFormat = Self.dateFormat
 				decoder.dateDecodingStrategy = .formatted(dateFormatter)
-				
+
+				if let remaining = response.response.value(forHTTPHeaderField: "x-rate-limit-remaining") {
+					self.rateLimitRemaining = Int(remaining) ?? 0
+				}
+				if let reset = response.response.value(forHTTPHeaderField: "x-rate-limit-reset") {
+					self.rateLimitReset = Date(timeIntervalSince1970: Double(reset) ?? 0)
+				}
+
 				do {
 					let tweets: [TwitterStatus]
 					if isSearch {
