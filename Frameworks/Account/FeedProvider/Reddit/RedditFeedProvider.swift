@@ -14,10 +14,13 @@ import RSParser
 import RSWeb
 
 public enum RedditFeedProviderError: LocalizedError {
+	case rateLimitExceeded
 	case unknown
 	
 	public var localizedDescription: String {
 		switch self {
+		case .rateLimitExceeded:
+			return NSLocalizedString("Reddit API rate limit has been exceeded.  Please wait a short time and try again.", comment: "Rate Limit")
 		case .unknown:
 			return NSLocalizedString("A Reddit Feed Provider error has occurred.", comment: "Unknown error")
 		}
@@ -44,6 +47,9 @@ public final class RedditFeedProvider: FeedProvider {
 	private var client: OAuthSwiftClient? {
 		return oauthSwift?.client
 	}
+
+	private var rateLimitRemaining: Int?
+	private var rateLimitReset: Date?
 	
 	public convenience init?(username: String) {
 		guard let tokenCredentials = try? CredentialsManager.retrieveCredentials(type: .oauthAccessToken, server: Self.server, username: username),
@@ -221,6 +227,11 @@ private extension RedditFeedProvider {
 			return
 		}
 		
+		if let remaining = rateLimitRemaining, let reset = rateLimitReset, remaining < 1 && reset > Date() {
+			completion(.failure(RedditFeedProviderError.rateLimitExceeded))
+			return
+		}
+		
 		let url = "\(Self.apiBase)\(api)"
 
 		var expandedParameters = parameters
@@ -230,10 +241,17 @@ private extension RedditFeedProvider {
 			switch result {
 			case .success(let response):
 				
-				let jsonString = String(data: response.data, encoding: .utf8)
-				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("reddit.json")
-				print("******** writing to: \(url.path)")
-				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
+//				let jsonString = String(data: response.data, encoding: .utf8)
+//				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("reddit.json")
+//				print("******** writing to: \(url.path)")
+//				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
+
+				if let remaining = response.response.value(forHTTPHeaderField: "X-Ratelimit-Remaining") {
+					self.rateLimitRemaining = Int(remaining) ?? 0
+				}
+				if let reset = response.response.value(forHTTPHeaderField: "X-Ratelimit-Reset") {
+					self.rateLimitReset = Date(timeIntervalSinceNow: Double(reset) ?? 0)
+				}
 
 				let decoder = JSONDecoder()
 				
