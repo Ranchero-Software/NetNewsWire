@@ -29,6 +29,11 @@ public enum AccountBehavior: Equatable {
 	case disallowFeedInRootFolder
 	
 	/**
+	Account doesn't support folders
+	*/
+	case disallowFolderManagement
+	
+	/**
 	 Account doesn't support OPML imports
 	*/
 	case disallowOPMLImports
