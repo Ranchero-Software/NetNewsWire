@@ -52,12 +52,12 @@ final class LocalAccountDelegate: AccountDelegate {
 
 		var refresherWebFeeds = Set<WebFeed>()
 		let webFeeds = account.flattenedWebFeeds()
-		
+		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
+
 		let group = DispatchGroup()
 		
 		for webFeed in webFeeds {
 			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
-				refreshProgress.addToNumberOfTasksAndRemaining(1)
 				group.enter()
 				feedProvider.refresh(webFeed) { result in
 					switch result {
@@ -77,13 +77,13 @@ final class LocalAccountDelegate: AccountDelegate {
 			}
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(refresherWebFeeds.count)
 		group.enter()
-		refresher?.refreshFeeds(refresherWebFeeds) { _, _, _ in
+		refresher?.refreshFeeds(refresherWebFeeds) {
 			group.leave()
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
+			self.refreshProgress.clear()
 			account.metadata.lastArticleFetchEndTime = Date()
 			completion(.success(()))
 		}
@@ -234,13 +234,16 @@ final class LocalAccountDelegate: AccountDelegate {
 }
 
 extension LocalAccountDelegate: LocalAccountRefresherDelegate {
-
+	
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess: ArticleChanges, completion: @escaping () -> Void) {
+		completion()
+	}
+	
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
 		refreshProgress.completeTask()
 	}
 	
 	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
-		self.refreshProgress.clear()
 	}
 	
 }

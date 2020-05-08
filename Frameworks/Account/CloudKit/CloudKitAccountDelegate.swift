@@ -567,8 +567,7 @@ private extension CloudKitAccountDelegate {
 		}
 		
 		group.enter()
-		refresher.refreshFeeds(refresherWebFeeds) { refresherNewArticles, refresherUpdatedArticles, refresherDeletedArticles in
-			self.storeArticleChanges(new: refresherNewArticles, updated: refresherUpdatedArticles, deleted: refresherDeletedArticles)
+		refresher.refreshFeeds(refresherWebFeeds) {
 			group.leave()
 		}
 		
@@ -788,6 +787,7 @@ private extension CloudKitAccountDelegate {
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess articleChanges: ArticleChanges, completion: @escaping () -> Void) {
+		self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles)
 	}
 
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
