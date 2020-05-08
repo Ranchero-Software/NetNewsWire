@@ -268,10 +268,10 @@ private extension RedditFeedProvider {
 			switch result {
 			case .success(let response):
 				
-				let jsonString = String(data: response.data, encoding: .utf8)
-				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("reddit.json")
-				print("******** writing to: \(url.path)")
-				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
+//				let jsonString = String(data: response.data, encoding: .utf8)
+//				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("reddit.json")
+//				print("******** writing to: \(url.path)")
+//				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
 
 				if let remaining = response.response.value(forHTTPHeaderField: "X-Ratelimit-Remaining") {
 					self.rateLimitRemaining = Int(remaining)
