@@ -29,7 +29,7 @@ public protocol FeedProvider  {
 	/// Provide the iconURL of the given URL
 	func iconURL(_ urlComponents: URLComponents, completion: @escaping (Result<String, Error>) -> Void)
 	
-	/// Construct the associated metadata for the new feed
+	/// Construct the associated metadata for the new feed.  If the URL won't be recognized by this Feed Provider, it will error here.
 	func metaData(_ urlComponents: URLComponents, completion: @escaping (Result<FeedProviderFeedMetaData, Error>) -> Void)
 	
 	/// Refresh all the article entries (ParsedItems)

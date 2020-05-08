@@ -124,11 +124,16 @@ public final class RedditFeedProvider: FeedProvider {
 			return
 		}
 		
-		guard splitPath.count > 1 else {
+		guard splitPath.count > 1, splitPath.count < 4, splitPath[0] == "r" else {
 			completion(.failure(RedditFeedProviderError.unknown))
 			return
 		}
 
+		if splitPath.count == 3 && RedditSort(rawValue: String(splitPath[2])) == nil {
+			completion(.failure(RedditFeedProviderError.unknown))
+			return
+		}
+		
 		let homePageURL = "https://www.reddit.com/\(splitPath[0])/\(splitPath[1])"
 		
 		subreddit(urlComponents) { result in
