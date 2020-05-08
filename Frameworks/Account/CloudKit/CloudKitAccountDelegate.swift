@@ -786,15 +786,11 @@ private extension CloudKitAccountDelegate {
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, didProcess articleChanges: ArticleChanges, completion: @escaping () -> Void) {
-		self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles)
-	}
-
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed, articleChanges: ArticleChanges?) {
 		refreshProgress.completeTask()
-	}
-	
-	func localAccountRefresherDidFinish(_ refresher: LocalAccountRefresher) {
+		if let articleChanges = articleChanges {
+			self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles)
+		}
 	}
 	
 }
