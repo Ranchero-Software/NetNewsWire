@@ -31,6 +31,7 @@ public final class RedditFeedProvider: FeedProvider {
 
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "RedditFeedProvider")
 
+	private static let homeURL = "https://www.reddit.com"
 	private static let server = "www.reddit.com"
 	private static let apiBase = "https://oauth.reddit.com"
 	private static let userAgentHeaders = UserAgent.headers() as! [String: String]
@@ -109,20 +110,26 @@ public final class RedditFeedProvider: FeedProvider {
 		let path = urlComponents.path
 
 		if path == "" || path == "/" {
-			let name = NSLocalizedString("Reddit Timeline", comment: "Reddit Timeline")
-			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: "https://www.reddit.com")
+			let name = NSLocalizedString("Reddit Best", comment: "Reddit Best")
+			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)
 			completion(.success(metaData))
 			return
 		}
 		
 		let splitPath = path.split(separator: "/")
+		if splitPath.count == 1, let sort = RedditSort(rawValue: String(splitPath[0])) {
+			let name = "Reddit \(sort.displayName)"
+			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)
+			completion(.success(metaData))
+			return
+		}
+		
 		guard splitPath.count > 1 else {
 			completion(.failure(RedditFeedProviderError.unknown))
 			return
 		}
 
-		let name = "\(splitPath[0])/\(splitPath[1])"
-		let homePageURL = "https://www.reddit.com/\(name)"
+		let homePageURL = "https://www.reddit.com/\(splitPath[0])/\(splitPath[1])"
 		
 		subreddit(urlComponents) { result in
 			switch result {
@@ -145,7 +152,12 @@ public final class RedditFeedProvider: FeedProvider {
 			return
 		}
 		
-		let api = "\(urlComponents.path).json"
+		let api: String
+		if urlComponents.path == "" || urlComponents.path == "/" {
+			api = "/best.json"
+		} else {
+			api = "\(urlComponents.path).json"
+		}
 		
 		fetch(api: api, parameters: [:], resultType: RedditLinkListing.self) { result in
 			switch result {
