@@ -61,29 +61,32 @@ final class RedditLinkData: Codable {
 		return Date(timeIntervalSince1970: created)
 	}
 	
-	func renderAsHTML() -> String? {
-		var html = String()
-		if let selfHTML = selfHTML {
-			html += selfHTML
-		}
-		if let urlHTML = renderURLAsHTML() {
-			html += urlHTML
-		}
-		return html
-	}
-
-	func renderURLAsHTML() -> String? {
-		guard let url = url else { return nil }
-		
+	func renderAsHTML() -> String {
 		if let parent = crossPostParents?.first {
 			var html = "<blockquote>"
 			if let subreddit = parent.subredditNamePrefixed {
 				html += "<p><a href=\"https://www.reddit.com/\(subreddit)\">\(subreddit)</a></p>"
 			}
-			html += parent.renderAsHTML() ?? ""
+			let parentHTML = parent.renderAsHTML()
+			if parentHTML.isEmpty {
+				html += renderURLAsHTML()
+			} else {
+				html += parentHTML
+			}
 			html += "</blockquote>"
 			return html
 		}
+		
+		var html = String()
+		if let selfHTML = selfHTML {
+			html += selfHTML
+		}
+		html += renderURLAsHTML()
+		return html
+	}
+
+	func renderURLAsHTML() -> String {
+		guard let url = url else { return "" }
 		
 		if url.hasSuffix(".gif") {
 			return "<img src=\"\(url)\">"
