@@ -739,6 +739,7 @@ private extension MainWindowController {
 	
 	func savableState() -> [AnyHashable : Any] {
 		var state = [AnyHashable : Any]()
+		state[UserInfoKey.windowFullScreenState] = window?.styleMask.contains(.fullScreen) ?? false
 		saveSplitViewState(to: &state)
 		sidebarViewController?.saveState(to: &state)
 		timelineContainerViewController?.saveState(to: &state)
@@ -746,6 +747,9 @@ private extension MainWindowController {
 	}
 
 	func restoreState(from state: [AnyHashable : Any]) {
+		if let fullScreen = state[UserInfoKey.windowFullScreenState] as? Bool, fullScreen {
+			window?.toggleFullScreen(self)
+		}
 		restoreSplitViewState(from: state)
 		sidebarViewController?.restoreState(from: state)
 		timelineContainerViewController?.restoreState(from: state)

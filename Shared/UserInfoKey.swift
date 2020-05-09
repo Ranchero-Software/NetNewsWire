@@ -16,6 +16,7 @@ struct UserInfoKey {
 	static let feedIdentifier = "feedIdentifier"
 	
 	static let windowState = "windowState"
+	static let windowFullScreenState = "windowFullScreenState"
 	static let containerExpandedWindowState = "containerExpandedWindowState"
 	static let readFeedsFilterState = "readFeedsFilterState"
 	static let readArticlesFilterState = "readArticlesFilterState"
