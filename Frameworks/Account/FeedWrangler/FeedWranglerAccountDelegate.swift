@@ -16,7 +16,7 @@ import Secrets
 
 final class FeedWranglerAccountDelegate: AccountDelegate {
 	
-	var behaviors: AccountBehaviors = []
+	var behaviors: AccountBehaviors = [.disallowFolderManagement]
 	
 	var isOPMLImportInProgress = false
 	var server: String? = FeedWranglerConfig.clientPath

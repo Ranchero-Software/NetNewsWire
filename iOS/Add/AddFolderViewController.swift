@@ -43,7 +43,9 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 
 		super.viewDidLoad()
 		
-		accounts = AccountManager.shared.sortedActiveAccounts
+		accounts = AccountManager.shared
+			.sortedActiveAccounts
+			.filter { !$0.behaviors.contains(.disallowFolderManagement) }
 		
 		nameTextField.delegate = self
 		
