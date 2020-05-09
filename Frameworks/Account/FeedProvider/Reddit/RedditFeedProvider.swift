@@ -36,8 +36,10 @@ public final class RedditFeedProvider: FeedProvider {
 	private static let apiBase = "https://oauth.reddit.com"
 	private static let userAgentHeaders = UserAgent.headers() as! [String: String]
 	
-	private static let userPaths = ["/home", "/notifications"]
-	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
+	private static let pseudoSubreddits = [
+		"popular": NSLocalizedString("Popular", comment: "Popular"),
+		"all": NSLocalizedString("All", comment: "All")
+	]
 	
 	public var username: String?
 	
@@ -109,21 +111,16 @@ public final class RedditFeedProvider: FeedProvider {
 	public func metaData(_ urlComponents: URLComponents, completion: @escaping (Result<FeedProviderFeedMetaData, Error>) -> Void) {
 		let path = urlComponents.path
 
-		if path == "" || path == "/" {
-			let name = NSLocalizedString("Reddit Best", comment: "Reddit Best")
-			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)
-			completion(.success(metaData))
-			return
-		}
-		
+		// Reddit Home
 		let splitPath = path.split(separator: "/")
-		if splitPath.count == 1, let sort = RedditSort(rawValue: String(splitPath[0])) {
-			let name = "Reddit \(sort.displayName)"
+		if path == "" || path == "/" || (splitPath.count == 1 && RedditSort(rawValue: String(splitPath[0])) != nil) {
+			let name = NSLocalizedString("Reddit Home", comment: "Reddit Home")
 			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: Self.homeURL)
 			completion(.success(metaData))
 			return
 		}
 		
+		// Subreddits
 		guard splitPath.count > 1, splitPath.count < 4, splitPath[0] == "r" else {
 			completion(.failure(RedditFeedProviderError.unknown))
 			return
@@ -135,6 +132,15 @@ public final class RedditFeedProvider: FeedProvider {
 		}
 		
 		let homePageURL = "https://www.reddit.com/\(splitPath[0])/\(splitPath[1])"
+		
+		// Reddit Popular, Reddit All, etc...
+		if let subredditName = Self.pseudoSubreddits[String(splitPath[1])] {
+			let localized = NSLocalizedString("Reddit %@", comment: "Reddit")
+			let name = NSString.localizedStringWithFormat(localized as NSString, subredditName) as String
+			let metaData = FeedProviderFeedMetaData(name: name, homePageURL: homePageURL)
+			completion(.success(metaData))
+			return
+		}
 		
 		subreddit(urlComponents) { result in
 			switch result {
@@ -163,8 +169,18 @@ public final class RedditFeedProvider: FeedProvider {
 		} else {
 			api = "\(urlComponents.path).json"
 		}
-		
-		let identifySubreddit = !urlComponents.path.hasPrefix("/r/")
+
+		let splitPath = urlComponents.path.split(separator: "/")
+		let identifySubreddit: Bool
+		if splitPath.count > 1 {
+			if Self.pseudoSubreddits.keys.contains(String(splitPath[1])) {
+				identifySubreddit = true
+			} else {
+				identifySubreddit = !urlComponents.path.hasPrefix("/r/")
+			}
+		} else {
+			identifySubreddit = true
+		}
 		
 		fetch(api: api, parameters: [:], resultType: RedditLinkListing.self) { result in
 			switch result {
