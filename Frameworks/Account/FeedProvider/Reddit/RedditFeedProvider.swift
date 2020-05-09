@@ -164,10 +164,12 @@ public final class RedditFeedProvider: FeedProvider {
 			api = "\(urlComponents.path).json"
 		}
 		
+		let identifySubreddit = !urlComponents.path.hasPrefix("/r/")
+		
 		fetch(api: api, parameters: [:], resultType: RedditLinkListing.self) { result in
 			switch result {
 			case .success(let linkListing):
-				let parsedItems = self.makeParsedItems(webFeed.url, linkListing)
+				let parsedItems = self.makeParsedItems(webFeed.url, identifySubreddit, linkListing)
 				completion(.success(parsedItems))
 			case .failure(let error):
 				completion(.failure(error))
@@ -316,7 +318,7 @@ private extension RedditFeedProvider {
 		}
 	}
 	
-	func makeParsedItems(_ webFeedURL: String, _ linkListing: RedditLinkListing) -> Set<ParsedItem> {
+	func makeParsedItems(_ webFeedURL: String,_ identifySubreddit: Bool, _ linkListing: RedditLinkListing) -> Set<ParsedItem> {
 		var parsedItems = Set<ParsedItem>()
 
 		guard let linkDatas = linkListing.data?.children?.compactMap({ $0.data }), !linkDatas.isEmpty else {
@@ -333,7 +335,7 @@ private extension RedditFeedProvider {
 							  externalURL: linkData.url,
 							  title: linkData.title,
 							  language: nil,
-							  contentHTML: linkData.renderAsHTML(),
+							  contentHTML: linkData.renderAsHTML(identifySubreddit: identifySubreddit),
 							  contentText: linkData.selfText,
 							  summary: nil,
 							  imageURL: nil,

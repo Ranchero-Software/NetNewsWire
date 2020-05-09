@@ -61,13 +61,19 @@ final class RedditLinkData: Codable {
 		return Date(timeIntervalSince1970: created)
 	}
 	
-	func renderAsHTML() -> String {
+	func renderAsHTML(identifySubreddit: Bool) -> String {
+		var html = String()
+		
+		if identifySubreddit, let subredditNamePrefixed = subredditNamePrefixed {
+			html += "<h3><a href=\"https://www.reddit.com/\(subredditNamePrefixed)\">\(subredditNamePrefixed)</a></h3>"
+		}
+		
 		if let parent = crossPostParents?.first {
-			var html = "<blockquote>"
+			html += "<blockquote>"
 			if let subreddit = parent.subredditNamePrefixed {
 				html += "<p><a href=\"https://www.reddit.com/\(subreddit)\">\(subreddit)</a></p>"
 			}
-			let parentHTML = parent.renderAsHTML()
+			let parentHTML = parent.renderAsHTML(identifySubreddit: false)
 			if parentHTML.isEmpty {
 				html += renderURLAsHTML()
 			} else {
@@ -77,7 +83,6 @@ final class RedditLinkData: Codable {
 			return html
 		}
 		
-		var html = String()
 		if let selfHTML = selfHTML {
 			html += selfHTML
 		}
