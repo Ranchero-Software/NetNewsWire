@@ -163,12 +163,7 @@ public final class RedditFeedProvider: FeedProvider {
 			return
 		}
 		
-		let api: String
-		if urlComponents.path == "" || urlComponents.path == "/" {
-			api = "/best.json"
-		} else {
-			api = "\(urlComponents.path).json"
-		}
+		let api = "\(urlComponents.path).json"
 
 		let splitPath = urlComponents.path.split(separator: "/")
 		let identifySubreddit: Bool
