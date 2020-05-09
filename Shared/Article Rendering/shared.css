@@ -109,8 +109,6 @@ body > .systemMessage {
 h1 {
 	line-height: 1.15em;
 	font-weight: bold;
-	padding-bottom: 0;
-	margin-bottom: 5px;
 }
 
 pre {
