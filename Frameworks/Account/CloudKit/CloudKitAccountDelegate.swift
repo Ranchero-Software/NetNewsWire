@@ -191,30 +191,12 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		accountZone.removeWebFeed(feed, from: container) { result in
-			self.refreshProgress.completeTask()
+		removeWebFeedFromCloud(for: account, with: feed, from: container) { result in
 			switch result {
 			case .success:
-				guard let webFeedExternalID = feed.externalID else {
-					completion(.success(()))
-					return
-				}
-				
-				self.articlesZone.deleteArticles(webFeedExternalID) { result in
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success:
-						container.removeWebFeed(feed)
-						completion(.success(()))
-					case .failure(let error):
-						self.processAccountError(account, error)
-						completion(.failure(error))
-					}
-				}
+				container.removeWebFeed(feed)
+				completion(.success(()))
 			case .failure(let error):
-				self.refreshProgress.completeTask()
-				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -332,7 +314,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				
 				for webFeed in webFeeds {
 					group.enter()
-					self.removeWebFeed(for: account, with: webFeed, from: folder) { result in
+					self.removeWebFeedFromCloud(for: account, with: webFeed, from: folder) { result in
 						group.leave()
 						if case .failure(let error) = result {
 							os_log(.error, log: self.log, "Remove folder, remove webfeed error: %@.", error.localizedDescription)
@@ -816,6 +798,29 @@ private extension CloudKitAccountDelegate {
 			}
 		}
 		mainThreadOperationQueue.add(op)
+	}
+	
+
+	func removeWebFeedFromCloud(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		accountZone.removeWebFeed(feed, from: container) { result in
+			self.refreshProgress.completeTask()
+			switch result {
+			case .success:
+				guard let webFeedExternalID = feed.externalID else {
+					completion(.success(()))
+					return
+				}
+				self.articlesZone.deleteArticles(webFeedExternalID) { result in
+					self.refreshProgress.completeTask()
+					completion(result)
+				}
+			case .failure(let error):
+				self.refreshProgress.completeTask()
+				self.processAccountError(account, error)
+				completion(.failure(error))
+			}
+		}
 	}
 	
 }
