@@ -11,6 +11,7 @@ import Account
 
 enum AddFeedWindowControllerType {
 	case webFeed
+	case redditFeed
 	case twitterFeed
 }
 

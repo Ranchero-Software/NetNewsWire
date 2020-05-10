@@ -73,6 +73,12 @@
                                                 <action selector="showAddWebFeedWindow:" target="Ady-hI-5gd" id="LkT-kx-aCR"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="New Reddit Feed" id="36v-YK-HdM">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showAddRedditFeedWindow:" target="Ady-hI-5gd" id="pIf-cn-NHR"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="New Twitter Feed" id="Wlk-34-AUR">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

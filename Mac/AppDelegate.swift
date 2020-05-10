@@ -403,6 +403,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if item.action == #selector(showAddWebFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
+		if item.action == #selector(showAddRedditFeedWindow(_:)) {
+			guard !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty else {
+				return false
+			}
+			return ExtensionPointManager.shared.isRedditEnabled
+		}
 		if item.action == #selector(showAddTwitterFeedWindow(_:)) {
 			guard !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty else {
 				return false
@@ -469,6 +475,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func showAddWebFeedWindow(_ sender: Any?) {
 		addWebFeed(nil)
+	}
+
+	@IBAction func showAddRedditFeedWindow(_ sender: Any?) {
+		createAndShowMainWindowIfNecessary()
+		addFeedController = AddFeedController(hostWindow: mainWindowController!.window!)
+		addFeedController?.showAddFeedSheet(.redditFeed)
 	}
 
 	@IBAction func showAddTwitterFeedWindow(_ sender: Any?) {

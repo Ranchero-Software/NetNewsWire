@@ -30,7 +30,7 @@ extension RedditFeedProvider: ExtensionPoint {
 		guard let username = username else {
 			fatalError()
 		}
-		return "/u/\(username)"
+		return "u/\(username)"
 	}
 
 }

@@ -1,8 +1,8 @@
 //
-//  AddTwitterFeedWindowController.swift
+//  AddRedditFeedWindowController.swift
 //  NetNewsWire
 //
-//  Created by Maurice Parker on 4/21/20.
+//  Created by Maurice Parker on 5/10/20.
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
@@ -12,14 +12,14 @@ import RSTree
 import Articles
 import Account
 
-class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowController {
+class AddRedditFeedWindowController : NSWindowController, AddFeedWindowController {
 
 	@IBOutlet weak var typePopupButton: NSPopUpButton!
 	@IBOutlet weak var typeDescriptionLabel: NSTextField!
 
 	@IBOutlet weak var accountLabel: NSTextField!
 	@IBOutlet weak var accountPopupButton: NSPopUpButton!
-	@IBOutlet weak var screenSearchTextField: NSTextField!
+	@IBOutlet weak var subredditTextField: NSTextField!
 
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
@@ -28,8 +28,8 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 	private weak var delegate: AddFeedWindowControllerDelegate?
 	private var folderTreeController: TreeController!
 
-	private var userEnteredScreenSearch: String? {
-		var s = screenSearchTextField.stringValue
+	private var userEnteredSubreddit: String? {
+		var s = subredditTextField.stringValue
 		s = s.collapsingWhitespace
 		if s.isEmpty {
 			return nil
@@ -49,7 +49,7 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
     var hostWindow: NSWindow!
 
 	convenience init(folderTreeController: TreeController, delegate: AddFeedWindowControllerDelegate?) {
-		self.init(windowNibName: NSNib.Name("AddTwitterFeedSheet"))
+		self.init(windowNibName: NSNib.Name("AddRedditFeedSheet"))
 		self.folderTreeController = folderTreeController
 		self.delegate = delegate
 	}
@@ -63,9 +63,9 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 
 		let accountMenu = NSMenu()
 		for feedProvider in ExtensionPointManager.shared.activeFeedProviders {
-			if let twitterFeedProvider = feedProvider as? TwitterFeedProvider {
+			if let redditFeedProvider = feedProvider as? RedditFeedProvider {
 				let accountMenuItem = NSMenuItem()
-				accountMenuItem.title = "@\(twitterFeedProvider.screenName)"
+				accountMenuItem.title = redditFeedProvider.title
 				accountMenu.addItem(accountMenuItem)
 			}
 		}
@@ -89,7 +89,7 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
     // MARK: Actions
     
 	@IBAction func selectedType(_ sender: Any) {
-		screenSearchTextField.stringValue = ""
+		subredditTextField.stringValue = ""
 		updateUI()
 	}
 
@@ -98,17 +98,11 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
     }
     
     @IBAction func addFeed(_ sender: Any?) {
-		guard let type = TwitterFeedType(rawValue: typePopupButton.selectedItem?.tag ?? 0),
+		guard let type = RedditFeedType(rawValue: typePopupButton.selectedItem?.tag ?? 0),
 			let atUsername = accountPopupButton.selectedItem?.title else { return }
 		
-		let username = String(atUsername[atUsername.index(atUsername.startIndex, offsetBy: 1)..<atUsername.endIndex])
-
-		var screenSearch = userEnteredScreenSearch
-		if let screenName = screenSearch, type == .screenName && screenName.starts(with: "@") {
-			screenSearch = String(screenName[screenName.index(screenName.startIndex, offsetBy: 1)..<screenName.endIndex])
-		}
-
-		guard let url = TwitterFeedProvider.buildURL(type, username: username, screenName: screenSearch, searchField: screenSearch) else { return }
+		let username = String(atUsername[atUsername.index(atUsername.startIndex, offsetBy: 2)..<atUsername.endIndex])
+		guard let url = RedditFeedProvider.buildURL(type, username: username, subreddit: userEnteredSubreddit) else { return }
 		
 		let container = selectedContainer()!
 		AddWebFeedDefaultContainer.saveDefaultContainer(container)
@@ -117,7 +111,7 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 	
 }
 
-extension AddTwitterFeedWindowController: NSTextFieldDelegate {
+extension AddRedditFeedWindowController: NSTextFieldDelegate {
 
 	func controlTextDidChange(_ obj: Notification) {
 		updateUI()
@@ -125,7 +119,7 @@ extension AddTwitterFeedWindowController: NSTextFieldDelegate {
 	
 }
 
-private extension AddTwitterFeedWindowController {
+private extension AddRedditFeedWindowController {
 	
 	private func updateUI() {
 		
@@ -134,51 +128,40 @@ private extension AddTwitterFeedWindowController {
 			
 			accountLabel.isHidden = false
 			accountPopupButton.isHidden = false
-			typeDescriptionLabel.stringValue = NSLocalizedString("Tweets from everyone you follow", comment: "Home Timeline")
-			screenSearchTextField.isHidden = true
+			typeDescriptionLabel.stringValue = NSLocalizedString("Your personal Reddit frontpage", comment: "Home")
+			subredditTextField.isHidden = true
 			addButton.isEnabled = true
 			
 		case 1:
 			
 			accountLabel.isHidden = false
 			accountPopupButton.isHidden = false
-			typeDescriptionLabel.stringValue = NSLocalizedString("Tweets mentioning you", comment: "Mentions")
-			screenSearchTextField.isHidden = true
+			typeDescriptionLabel.stringValue = NSLocalizedString("Best posts on Reddit for you", comment: "Popular")
+			subredditTextField.isHidden = true
 			addButton.isEnabled = true
 			
 		case 2:
 			
-			accountLabel.isHidden = true
-			accountPopupButton.isHidden = true
-			
-			var screenSearch = userEnteredScreenSearch
-			if screenSearch != nil {
-				if let screenName = screenSearch, screenName.starts(with: "@") {
-					screenSearch = String(screenName[screenName.index(screenName.startIndex, offsetBy: 1)..<screenName.endIndex])
-				}
-				typeDescriptionLabel.stringValue = NSLocalizedString("Tweets from @\(screenSearch!)", comment: "Home Timeline")
-			} else {
-				typeDescriptionLabel.stringValue = ""
-			}
-			
-			screenSearchTextField.placeholderString = NSLocalizedString("@name", comment: "@name")
-			screenSearchTextField.isHidden = false
-			addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
+			accountLabel.isHidden = false
+			accountPopupButton.isHidden = false
+			typeDescriptionLabel.stringValue = NSLocalizedString("The most active posts", comment: "All")
+			subredditTextField.isHidden = true
+			addButton.isEnabled = true
 			
 		default:
 			
 			accountLabel.isHidden = true
 			accountPopupButton.isHidden = true
 			
-			if !screenSearchTextField.stringValue.isEmpty {
-				typeDescriptionLabel.stringValue = NSLocalizedString("Tweets that contain \(screenSearchTextField.stringValue)", comment: "Home Timeline")
+			if !subredditTextField.stringValue.isEmpty {
+				typeDescriptionLabel.stringValue = NSLocalizedString("Posts from r/\(subredditTextField.stringValue)", comment: "Subreddit")
 			} else {
 				typeDescriptionLabel.stringValue = ""
 			}
 			
-			screenSearchTextField.placeholderString = NSLocalizedString("Search Term or #hashtag", comment: "Search Term")
-			screenSearchTextField.isHidden = false
-			addButton.isEnabled = !screenSearchTextField.stringValue.isEmpty
+			subredditTextField.placeholderString = NSLocalizedString("Subreddit", comment: "Search Term")
+			subredditTextField.isHidden = false
+			addButton.isEnabled = !subredditTextField.stringValue.isEmpty
 			
 		}
 		

@@ -27,6 +27,13 @@ public enum RedditFeedProviderError: LocalizedError {
 	}
 }
 
+public enum RedditFeedType: Int {
+	case home = 0
+	case popular = 1
+	case all = 2
+	case subreddit = 3
+}
+
 public final class RedditFeedProvider: FeedProvider {
 
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "RedditFeedProvider")
@@ -163,7 +170,12 @@ public final class RedditFeedProvider: FeedProvider {
 			return
 		}
 		
-		let api = "\(urlComponents.path).json"
+		let api: String
+		if urlComponents.path.isEmpty {
+			api = "/.json"
+		} else {
+			api = "\(urlComponents.path).json"
+		}
 
 		let splitPath = urlComponents.path.split(separator: "/")
 		let identifySubreddit: Bool
@@ -215,6 +227,39 @@ public final class RedditFeedProvider: FeedProvider {
 		}
 	}
 	
+	public static func buildURL(_ type: RedditFeedType, username: String?, subreddit: String?) -> URL? {
+		var components = URLComponents()
+		components.scheme = "https"
+		components.host = "www.reddit.com"
+
+		switch type {
+		case .home:
+			guard let username = username else {
+				return nil
+			}
+			components.user = username
+		case .popular:
+			guard let username = username else {
+				return nil
+			}
+			components.user = username
+			components.path = "/r/popular"
+		case .all:
+			guard let username = username else {
+				return nil
+			}
+			components.user = username
+			components.path = "/r/all"
+		case .subreddit:
+			guard let subreddit = subreddit else {
+				return nil
+			}
+			components.path = "/r/\(subreddit)"
+		}
+		
+		return components.url
+	}
+
 }
 
 // MARK: OAuth1SwiftProvider
