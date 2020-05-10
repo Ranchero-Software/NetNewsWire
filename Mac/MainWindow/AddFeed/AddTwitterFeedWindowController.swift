@@ -26,9 +26,6 @@ class AddTwitterFeedWindowController : NSWindowController, AddFeedWindowControll
 	@IBOutlet var folderPopupButton: NSPopUpButton!
 
 	private var urlString: String?
-	private var initialName: String?
-	private weak var initialAccount: Account?
-	private var initialFolder: Folder?
 	private weak var delegate: AddFeedWindowControllerDelegate?
 	private var folderTreeController: TreeController!
 
