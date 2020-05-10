@@ -111,6 +111,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 		
 		var modifyRecords = [CKRecord]()
+		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 		
 		for statusUpdate in statusUpdates {
@@ -118,6 +119,9 @@ final class CloudKitArticlesZone: CloudKitZone {
 			case .all:
 				modifyRecords.append(makeStatusRecord(statusUpdate))
 				modifyRecords.append(makeArticleRecord(statusUpdate.article!))
+			case .new:
+				newRecords.append(makeStatusRecord(statusUpdate))
+				newRecords.append(makeArticleRecord(statusUpdate.article!))
 			case .delete:
 				deleteRecordIDs.append(CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: Self.zoneID))
 			case .statusOnly:
@@ -126,10 +130,17 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 		
-		self.modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
+		modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
 			switch result {
 			case .success:
-				completion(.success(()))
+				self.saveIfNew(newRecords) { result in
+					switch result {
+					case .success:
+						completion(.success(()))
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
 			case .failure(let error):
 				self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
 			}

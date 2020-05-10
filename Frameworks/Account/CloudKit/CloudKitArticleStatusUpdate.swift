@@ -14,6 +14,7 @@ struct CloudKitArticleStatusUpdate {
 	
 	enum Record {
 		case all
+		case new
 		case statusOnly
 		case delete
 	}
@@ -25,6 +26,10 @@ struct CloudKitArticleStatusUpdate {
 	var record: Record {
 		if statuses.contains(where: { $0.key == .deleted }) {
 			return .delete
+		}
+		
+		if statuses.count == 1, statuses.first!.key == .new {
+			return .new
 		}
 		
 		if let article = article {
