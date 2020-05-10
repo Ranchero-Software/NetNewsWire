@@ -23,7 +23,7 @@ class PreloadedWebView: WKWebView {
 		configuration.preferences = preferences
 		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 		configuration.allowsInlineMediaPlayback = true
-		configuration.mediaTypesRequiringUserActionForPlayback = .video
+		configuration.mediaTypesRequiringUserActionForPlayback = .audio
 		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		
 		super.init(frame: .zero, configuration: configuration)
