@@ -496,7 +496,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		} else {
 			setFilterButtonToInactive()
 		}
-		refreshProgressView?.updateRefreshLabel()
+		refreshProgressView?.update()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 	}
 	

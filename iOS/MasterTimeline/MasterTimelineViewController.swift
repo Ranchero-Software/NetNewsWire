@@ -190,7 +190,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	func updateUI() {
-		refreshProgressView?.updateRefreshLabel()
+		refreshProgressView?.update()
 		updateTitleUnreadCount()
 		updateToolbar()
 	}

@@ -17,40 +17,20 @@ class RefreshProgressView: UIView {
 	override func awakeFromNib() {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .AccountRefreshProgressDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-
+		update()
+		scheduleUpdateRefreshLabel()
+	}
+	
+	func update() {
 		if !AccountManager.shared.combinedRefreshProgress.isComplete {
 			progressChanged(animated: false)
 		} else {
 			updateRefreshLabel()
 		}
-
-		scheduleUpdateRefreshLabel()
 	}
 
 	override func didMoveToSuperview() {
 		progressChanged(animated: false)
-	}
-
-	func updateRefreshLabel() {
-		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
-
-			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(60) {
-
-				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
-				relativeDateTimeFormatter.dateTimeStyle = .named
-				let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
-				let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
-				let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
-				label.text = refreshText
-
-			} else {
-				label.text = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
-			}
-
-		} else {
-			label.text = ""
-		}
-
 	}
 
 	@objc func progressDidChange(_ note: Notification) {
@@ -109,6 +89,28 @@ private extension RefreshProgressView {
 		}
 	}
 	
+	func updateRefreshLabel() {
+		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
+
+			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(60) {
+
+				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
+				relativeDateTimeFormatter.dateTimeStyle = .named
+				let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
+				let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
+				let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
+				label.text = refreshText
+
+			} else {
+				label.text = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+			}
+
+		} else {
+			label.text = ""
+		}
+
+	}
+
 	func scheduleUpdateRefreshLabel() {
 		DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
 			self?.updateRefreshLabel()
