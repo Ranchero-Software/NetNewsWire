@@ -227,7 +227,7 @@ public final class RedditFeedProvider: FeedProvider {
 		}
 	}
 	
-	public static func buildURL(_ type: RedditFeedType, username: String?, subreddit: String?) -> URL? {
+	public static func buildURL(_ type: RedditFeedType, username: String?, subreddit: String?, sort: RedditSort) -> URL? {
 		var components = URLComponents()
 		components.scheme = "https"
 		components.host = "www.reddit.com"
@@ -238,23 +238,24 @@ public final class RedditFeedProvider: FeedProvider {
 				return nil
 			}
 			components.user = username
+			components.path = "/\(sort.rawValue)"
 		case .popular:
 			guard let username = username else {
 				return nil
 			}
 			components.user = username
-			components.path = "/r/popular"
+			components.path = "/r/popular/\(sort.rawValue)"
 		case .all:
 			guard let username = username else {
 				return nil
 			}
 			components.user = username
-			components.path = "/r/all"
+			components.path = "/r/all/\(sort.rawValue)"
 		case .subreddit:
 			guard let subreddit = subreddit else {
 				return nil
 			}
-			components.path = "/r/\(subreddit)"
+			components.path = "/r/\(subreddit)/\(sort.rawValue)"
 		}
 		
 		return components.url

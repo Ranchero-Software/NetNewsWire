@@ -21,6 +21,8 @@ class AddRedditFeedWindowController : NSWindowController, AddFeedWindowControlle
 	@IBOutlet weak var accountPopupButton: NSPopUpButton!
 	@IBOutlet weak var subredditTextField: NSTextField!
 
+	@IBOutlet weak var sortPopupButton: NSPopUpButton!
+	
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
 	@IBOutlet var folderPopupButton: NSPopUpButton!
@@ -28,6 +30,21 @@ class AddRedditFeedWindowController : NSWindowController, AddFeedWindowControlle
 	private weak var delegate: AddFeedWindowControllerDelegate?
 	private var folderTreeController: TreeController!
 
+	private var userSelectedSort: RedditSort {
+		switch sortPopupButton.selectedItem?.tag ?? 0 {
+		case 0:
+			return .best
+		case 1:
+			return .hot
+		case 2:
+			return .new
+		case 3:
+			return .top
+		default:
+			return .rising
+		}
+	}
+	
 	private var userEnteredSubreddit: String? {
 		var s = subredditTextField.stringValue
 		s = s.collapsingWhitespace
@@ -102,7 +119,7 @@ class AddRedditFeedWindowController : NSWindowController, AddFeedWindowControlle
 			let atUsername = accountPopupButton.selectedItem?.title else { return }
 		
 		let username = String(atUsername[atUsername.index(atUsername.startIndex, offsetBy: 2)..<atUsername.endIndex])
-		guard let url = RedditFeedProvider.buildURL(type, username: username, subreddit: userEnteredSubreddit) else { return }
+		guard let url = RedditFeedProvider.buildURL(type, username: username, subreddit: userEnteredSubreddit, sort: userSelectedSort) else { return }
 		
 		let container = selectedContainer()!
 		AddWebFeedDefaultContainer.saveDefaultContainer(container)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum RedditSort: String, CaseIterable {
+public enum RedditSort: String, CaseIterable {
 	case best
 	case rising
 	case hot
