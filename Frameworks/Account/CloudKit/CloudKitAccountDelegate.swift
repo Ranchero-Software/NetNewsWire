@@ -27,7 +27,6 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 }
 
-
 final class CloudKitAccountDelegate: AccountDelegate {
 
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
@@ -320,18 +319,55 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.removeFolder(folder) { result in
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		accountZone.findWebFeedExternalIDs(for: folder) { result in
 			self.refreshProgress.completeTask()
 			switch result {
-			case .success:
-				account.removeFolder(folder)
-				completion(.success(()))
+			case .success(let webFeedExternalIDs):
+
+				let webFeeds = webFeedExternalIDs.compactMap { account.existingWebFeed(withExternalID: $0) }
+				let group = DispatchGroup()
+				var errorOccurred = false
+				
+				for webFeed in webFeeds {
+					group.enter()
+					self.removeWebFeed(for: account, with: webFeed, from: folder) { result in
+						group.leave()
+						if case .failure(let error) = result {
+							os_log(.error, log: self.log, "Remove folder, remove webfeed error: %@.", error.localizedDescription)
+							errorOccurred = true
+						}
+					}
+				}
+				
+				group.notify(queue: DispatchQueue.global(qos: .background)) {
+					guard !errorOccurred else {
+						self.refreshProgress.completeTask()
+						completion(.failure(CloudKitAccountDelegateError.unknown))
+						return
+					}
+					
+					self.accountZone.removeFolder(folder) { result in
+						self.refreshProgress.completeTask()
+						switch result {
+						case .success:
+							account.removeFolder(folder)
+							completion(.success(()))
+						case .failure(let error):
+							completion(.failure(error))
+						}
+					}
+				}
+				
 			case .failure(let error):
+				self.refreshProgress.completeTask()
+				self.refreshProgress.completeTask()
 				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
+		
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {

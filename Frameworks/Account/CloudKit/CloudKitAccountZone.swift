@@ -12,6 +12,12 @@ import RSWeb
 import RSParser
 import CloudKit
 
+enum CloudKitAccountZoneError: LocalizedError {
+	case unknown
+	var errorDescription: String? {
+		return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
+	}
+}
 final class CloudKitAccountZone: CloudKitZone {
 
 	static var zoneID: CKRecordZone.ID {
@@ -215,6 +221,26 @@ final class CloudKitAccountZone: CloudKitZone {
 					record[CloudKitWebFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
 					self.save(record, completion: completion)
 				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	func findWebFeedExternalIDs(for folder: Folder, completion: @escaping (Result<[String], Error>) -> Void) {
+		guard let folderExternalID = folder.externalID else {
+			completion(.failure(CloudKitAccountZoneError.unknown))
+			return
+		}
+		
+		let predicate = NSPredicate(format: "containerExternalIDs CONTAINS %@", folderExternalID)
+		let ckQuery = CKQuery(recordType: CloudKitWebFeed.recordType, predicate: predicate)
+		
+		query(ckQuery) { result in
+			switch result {
+			case .success(let records):
+				let webFeedExternalIds = records.map { $0.externalID }
+				completion(.success(webFeedExternalIds))
 			case .failure(let error):
 				completion(.failure(error))
 			}
