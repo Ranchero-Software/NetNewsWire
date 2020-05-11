@@ -26,6 +26,9 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
 	
+	@IBOutlet private var searchBar: ArticleSearchBar!
+	private var defaultControls: [UIBarButtonItem]?
+	
 	private var pageViewController: UIPageViewController!
 	
 	private var currentWebViewController: WebViewController? {
@@ -127,12 +130,28 @@ class ArticleViewController: UIViewController {
 		if AppDefaults.articleFullscreenEnabled {
 			controller.hideBars()
 		}
+		
+		// Search bar
+		makeSearchBarConstraints()
+		NotificationCenter.default.addObserver(self, selector: #selector(beginFind(_:)), name: .FindInArticle, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(endFind(_:)), name: .EndFindInArticle, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: 		UIWindow.keyboardWillHideNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidChangeFrame(_:)), name: UIWindow.keyboardDidChangeFrameNotification, object: nil)
+		
+//		searchBar.translatesAutoresizingMaskIntoConstraints = false
+//		searchBar.delegate = self
+		view.bringSubviewToFront(searchBar)
+		
 		updateUI()
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isArticleViewControllerPending = false
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		searchBar.inputAccessoryView = nil
 	}
 	
 	override func viewSafeAreaInsetsDidChange() {
@@ -274,6 +293,83 @@ class ArticleViewController: UIViewController {
 		currentWebViewController?.stopArticleExtractorIfProcessing()
 	}
 	
+}
+
+// MARK: Find in Article
+public extension Notification.Name {
+	static let FindInArticle = Notification.Name("FindInArticle")
+	static let EndFindInArticle = Notification.Name("EndFindInArticle")
+}
+
+extension ArticleViewController: SearchBarDelegate {
+	
+	func searchBar(_ searchBar: ArticleSearchBar, textDidChange searchText: String) {
+		currentWebViewController?.searchText(searchText) {
+			found in
+			searchBar.resultsCount = found.count
+			
+			if let index = found.index {
+				searchBar.selectedResult = index + 1
+			}
+		}
+	}
+	
+	func doneWasPressed(_ searchBar: ArticleSearchBar) {
+		NotificationCenter.default.post(name: .EndFindInArticle, object: nil)
+	}
+	
+	func nextWasPressed(_ searchBar: ArticleSearchBar) {
+		if searchBar.selectedResult < searchBar.resultsCount {
+			currentWebViewController?.selectNextSearchResult()
+			searchBar.selectedResult += 1
+		}
+	}
+	
+	func previousWasPressed(_ searchBar: ArticleSearchBar) {
+		if searchBar.selectedResult > 1 {
+			currentWebViewController?.selectPreviousSearchResult()
+			searchBar.selectedResult -= 1
+		}
+	}
+}
+
+extension ArticleViewController {
+	
+	private func makeSearchBarConstraints() {
+		NSLayoutConstraint.activate([
+			searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+			searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+			searchBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+		])
+	}
+	
+	@objc func beginFind(_ notification: Notification) {
+		searchBar.isHidden = false
+		navigationController?.setToolbarHidden(true, animated: true)
+		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBar.frame.height
+		searchBar.delegate = self
+		searchBar.inputAccessoryView = searchBar
+		searchBar.becomeFirstResponder()
+	}
+	
+	@objc func endFind(_ notification: Notification) {
+		searchBar.resignFirstResponder()
+		searchBar.isHidden = true
+		navigationController?.setToolbarHidden(false, animated: true)
+		currentWebViewController?.additionalSafeAreaInsets.bottom = 0
+		currentWebViewController?.endSearch()
+	}
+	
+	@objc func keyboardWillHide(_ _: Notification) {
+		view.addSubview(searchBar)
+		makeSearchBarConstraints()
+	}
+	
+	@objc func keyboardDidChangeFrame(_ notification: Notification) {
+		if let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
+			currentWebViewController?.additionalSafeAreaInsets.bottom = frame.height
+		}
+	}
 }
 
 // MARK: WebViewControllerDelegate

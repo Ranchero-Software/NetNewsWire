@@ -144,3 +144,307 @@ function postRenderProcessing() {
 	ImageViewer.init();
 	showFeedInspectorSetup();
 }
+
+
+function makeHighlightRect({left, top, width, height}, offsetTop=0, offsetLeft=0) {
+	const overlay = document.createElement('a');
+
+	Object.assign(overlay.style, {
+		position: 'absolute',
+		left: `${Math.floor(left + offsetLeft)}px`,
+		top: `${Math.floor(top + offsetTop)}px`,
+		width: `${Math.ceil(width)}px`,
+		height: `${Math.ceil(height)}px`,
+		backgroundColor: 'rgba(200, 220, 10, 0.4)',
+	});
+
+	return overlay;
+}
+
+function clearHighlightRects(container=document.getElementById('nnw:highlightContainer')) {
+	while (container.firstChild) container.firstChild.remove();
+}
+
+function highlightRects(rects, clearOldRects=true, makeHighlightRect=makeHighlightRect) {
+	const article = document.querySelector('article');
+	let container = document.getElementById('nnw:highlightContainer');
+
+	article.style.position = 'relative';
+
+	if (container) {
+		if (clearOldRects)
+			clearHighlightRects(container);
+	} else {
+		container = document.createElement('div');
+		container.id = 'nnw:highlightContainer';
+		article.appendChild(container);
+	}
+
+	const {top, left} = article.getBoundingClientRect();
+	return Array.from(rects, rect => 
+		container.appendChild(makeHighlightRect(rect, -top, -left))
+	);
+}
+
+FinderResult = class {
+	constructor(result) {
+		Object.assign(this, result);
+	}
+
+	range() {
+		const range = document.createRange();
+		range.setStart(this.node, this.offset);
+		range.setEnd(this.node, this.offsetEnd);
+		return range;
+	}
+
+	bounds() {
+		return this.range().getBoundingClientRect();
+	}
+
+	rects() {
+		return this.range().getClientRects();
+	}
+
+	highlight({clearOldRects=true, fn=makeHighlightRect} = {}) {
+		highlightRects(this.rects(), clearOldRects, fn);
+	}
+
+	scrollTo() {
+		scrollToRect(this.bounds(), this.node);
+	}
+
+	toJSON() {
+		return {
+			rects: Array.from(this.rects()),
+			bounds: this.bounds(),
+			index: this.index,
+			matchGroups: this.match
+		};
+	}
+
+	toJSONString() {
+		return JSON.stringify(this.toJSON());
+	}
+}
+
+Finder = class {
+	constructor(pattern, options) {
+		if (!pattern.global) {
+			pattern = new RegExp(pattern, 'g');
+		}
+
+		this.pattern = pattern;
+		this.lastResult = null;
+		this._nodeMatches = [];
+		this.options = {
+			rootSelector: '.articleBody',
+			startNode: null,
+			startOffset: null,
+		}
+
+		this.resultIndex = -1
+
+		Object.assign(this.options, options);
+
+		this.walker = document.createTreeWalker(this.root, NodeFilter.SHOW_TEXT);
+	}
+
+	get root() {
+		return document.querySelector(this.options.rootSelector)
+	}
+
+	get count() {
+		const node = this.walker.currentNode;
+		const index = this.resultIndex;
+		this.reset();
+
+		let result, count = 0;
+		while ((result = this.next())) ++count;
+
+		this.resultIndex = index;
+		this.walker.currentNode = node;
+
+		return count;
+	}
+
+	reset() {
+		this.walker.currentNode = this.options.startNode || this.root;
+		this.resultIndex = -1;
+	}
+
+	[Symbol.iterator]() {
+		return this;
+	}
+
+	next({wrap = false} = {}) {
+		const { startNode } = this.options;
+		const { pattern, walker } = this;
+
+		let { node, matchIndex = -1 } = this.lastResult || { node: startNode };
+
+		while (true) {
+			if (!node)
+				node = walker.nextNode();
+
+			if (!node) {
+				if (!wrap || this.resultIndex < 0) break;
+
+				this.reset();
+
+				continue;
+			}
+
+			let nextIndex = matchIndex + 1;
+			let matches = this._nodeMatches;
+
+			if (!matches.length) {
+				matches = Array.from(node.textContent.matchAll(pattern));
+				nextIndex = 0;
+			}
+ 
+			if (matches[nextIndex]) {
+				this._nodeMatches = matches;
+				const m = matches[nextIndex];
+
+				this.lastResult = new FinderResult({
+					node,
+					offset: m.index,
+					offsetEnd: m.index + m[0].length,
+					text: m[0],
+					match: m,
+					matchIndex: nextIndex,
+					index: ++this.resultIndex,
+				});
+
+				return { value: this.lastResult, done: false };
+			}
+
+			this._nodeMatches = [];
+			node = null;
+		}
+
+		return { value: undefined, done: true };
+	}
+
+	/// TODO Call when the search text changes
+	retry() {
+		if (this.lastResult) {
+			this.lastResult.offsetEnd = this.lastResult.offset;
+		}
+		
+	}
+
+	toJSON() {
+		const results = Array.from(this);
+	}
+}
+
+function scrollParent(node) {
+	let elt = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+
+	while (elt) {
+		if (elt.scrollHeight > elt.clientHeight)
+			return elt;
+		elt = elt.parentElement;
+	}
+}
+
+function scrollToRect({top, height}, node, pad=0) {
+	const scrollToTop = top - pad;
+
+	let scrollBy = scrollToTop;
+
+	if (scrollToTop >= 0) {
+		const visible = window.visualViewport;
+		const scrollToBottom = top + height + pad - visible.height;
+		// The top of the rect is already in the viewport
+		if (scrollToBottom <= 0 || scrollToTop === 0)
+			// Don't need to scroll up--or can't
+			return;
+
+		scrollBy = Math.min(scrollToBottom, scrollBy);
+	} 
+
+	scrollParent(node).scrollBy({ top: scrollBy });
+}
+
+function findNext() {
+	const result = f.next();
+	const bounds = textBounds(f.node, f.offset, f.offsetEnd);
+	highlightRects(bounds)
+}
+
+function getFinderCount(finder) {
+	let count = 0;
+	while (finder.next())
+		++count;
+	finder.reset();
+	return count;
+}
+
+function withEncodedArg(fn) {
+	return function(encodedData, ...rest) {
+		const data = encodedData && JSON.parse(atob(encodedData));
+		return fn(data, ...rest);
+	}
+}
+
+class FindState {
+	constructor(options) {
+		const { text, caseSensitive } = options;
+		const finder = new Finder(new RegExp(text, caseSensitive ? 'g' : 'ig'));
+		this.results = Array.from(finder);
+		this.index = -1;
+		this.options = options;
+	}
+	
+	toJSON() {
+		return {
+			index: this.index > -1 ? this.index : null,
+			results: this.results,
+			count: this.results.length
+		};
+	}
+	
+	selectNext(step=1) {
+		const index = this.index + step;
+		const result = this.results[index];
+		if (result) {
+			this.index = index;
+			result.highlight();
+			result.scrollTo();
+		}
+		return result;
+	}
+	
+	selectPrevious() {
+		return this.selectNext(-1);
+	}
+}
+
+CurrentFindState = null;
+
+const ExcludeKeys = new Set(['top', 'right', 'bottom', 'left']);
+updateFind = withEncodedArg(options => {
+	// TODO Start at the current result position
+	// TODO Introduce slight delay, cap the number of results, and report results asynchronously
+	CurrentFindState = new FindState(options);
+	CurrentFindState.selectNext() || clearHighlightRects();
+	return btoa(JSON.stringify(CurrentFindState, (k, v) => (ExcludeKeys.has(k) ? undefined : v)));
+});
+
+selectNextResult = withEncodedArg(options => {
+	if (CurrentFindState)
+		CurrentFindState.selectNext();
+});
+
+selectPreviousResult = withEncodedArg(options => {
+	if (CurrentFindState)
+		CurrentFindState.selectPrevious();
+});
+
+function endFind() {
+	clearHighlightRects()
+	CurrentFindState = null;
+}
