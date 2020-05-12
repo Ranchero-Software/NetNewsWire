@@ -118,7 +118,7 @@ final class RedditLinkData: Codable {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
 			html += "src=\"\(videoPreviewURL)\" autoplay muted></video>"
-			html += linkOutURL(url)
+			html += linkURL(url)
 			return html
 		}
 		
@@ -135,18 +135,18 @@ final class RedditLinkData: Codable {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
 			html += ">"
-			html += linkOutURL(url)
+			html += linkURL(url, linkOutOnly: false)
 			return html
 		}
 		
-		return linkOutURL(url)
+		return linkURL(url)
 	}
 	
-	func linkOutURL(_ url: String) -> String {
+	func linkURL(_ url: String, linkOutOnly: Bool = true) -> String {
 		guard let urlComponents = URLComponents(string: url), let host = urlComponents.host else {
 			return ""
 		}
-		guard !host.hasSuffix("reddit.com") && !host.hasSuffix("redd.it") else {
+		guard !linkOutOnly || (!host.hasSuffix("reddit.com") && !host.hasSuffix("redd.it")) else {
 			return ""
 		}
 		var displayURL = "\(urlComponents.host ?? "")\(urlComponents.path)"
