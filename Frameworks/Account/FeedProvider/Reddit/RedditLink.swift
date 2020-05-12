@@ -127,14 +127,14 @@ final class RedditLinkData: Codable {
 		}
 		
 		if let imageSource = preview?.images?.first?.source, let imageURL = imageSource.url {
-			var html = "<a href=\"\(url)\"><img src=\"\(imageURL)\" "
+			var html = "<img src=\"\(imageURL)\" "
 			if postHint == "link" {
 				html += "class=\"nnw-nozoom\" "
 			}
 			if let width = imageSource.width, let height = imageSource.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "></a>"
+			html += ">"
 			html += linkOutURL(url)
 			return html
 		}
