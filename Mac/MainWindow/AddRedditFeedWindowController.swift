@@ -153,7 +153,7 @@ private extension AddRedditFeedWindowController {
 			
 			accountLabel.isHidden = false
 			accountPopupButton.isHidden = false
-			typeDescriptionLabel.stringValue = NSLocalizedString("Best posts on Reddit for you", comment: "Popular")
+			typeDescriptionLabel.stringValue = NSLocalizedString("The best posts on Reddit for you", comment: "Popular")
 			subredditTextField.isHidden = true
 			addButton.isEnabled = true
 			
