@@ -165,6 +165,11 @@
 		516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */; };
 		516A09402361240900EAE89B /* Account.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 516A093F2361240900EAE89B /* Account.storyboard */; };
 		516A09422361248000EAE89B /* Inspector.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 516A09412361248000EAE89B /* Inspector.storyboard */; };
+		516AE600246AF34200731738 /* RedditAdd.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 516AE5FF246AF34100731738 /* RedditAdd.storyboard */; };
+		516AE602246AF36100731738 /* RedditSelectTypeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE601246AF36100731738 /* RedditSelectTypeTableViewController.swift */; };
+		516AE604246AF37B00731738 /* RedditSelectAccountTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE603246AF37B00731738 /* RedditSelectAccountTableViewController.swift */; };
+		516AE606246AF3A900731738 /* RedditEnterDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE605246AF3A900731738 /* RedditEnterDetailTableViewController.swift */; };
+		516AE608246AFC9900731738 /* RedditSelectSortTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE607246AFC9900731738 /* RedditSelectSortTableViewController.swift */; };
 		516AE9B32371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9B22371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift */; };
 		516AE9DF2372269A007DEEAA /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
 		516AE9E02372269A007DEEAA /* IconImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516AE9DE2372269A007DEEAA /* IconImage.swift */; };
@@ -1491,6 +1496,11 @@
 		516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsTableViewCell.xib; sourceTree = "<group>"; };
 		516A093F2361240900EAE89B /* Account.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Account.storyboard; sourceTree = "<group>"; };
 		516A09412361248000EAE89B /* Inspector.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Inspector.storyboard; sourceTree = "<group>"; };
+		516AE5FF246AF34100731738 /* RedditAdd.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RedditAdd.storyboard; sourceTree = "<group>"; };
+		516AE601246AF36100731738 /* RedditSelectTypeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSelectTypeTableViewController.swift; sourceTree = "<group>"; };
+		516AE603246AF37B00731738 /* RedditSelectAccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSelectAccountTableViewController.swift; sourceTree = "<group>"; };
+		516AE605246AF3A900731738 /* RedditEnterDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditEnterDetailTableViewController.swift; sourceTree = "<group>"; };
+		516AE607246AFC9900731738 /* RedditSelectSortTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSelectSortTableViewController.swift; sourceTree = "<group>"; };
 		516AE9B22371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeaderLayout.swift; sourceTree = "<group>"; };
 		516AE9DE2372269A007DEEAA /* IconImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImage.swift; sourceTree = "<group>"; };
 		51707438232AA97100A461A3 /* ShareFolderPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerController.swift; sourceTree = "<group>"; };
@@ -2114,6 +2124,18 @@
 			path = Account;
 			sourceTree = "<group>";
 		};
+		516AE5DD246AF2DD00731738 /* Reddit */ = {
+			isa = PBXGroup;
+			children = (
+				516AE5FF246AF34100731738 /* RedditAdd.storyboard */,
+				516AE601246AF36100731738 /* RedditSelectTypeTableViewController.swift */,
+				516AE603246AF37B00731738 /* RedditSelectAccountTableViewController.swift */,
+				516AE605246AF3A900731738 /* RedditEnterDetailTableViewController.swift */,
+				516AE607246AFC9900731738 /* RedditSelectSortTableViewController.swift */,
+			);
+			path = Reddit;
+			sourceTree = "<group>";
+		};
 		517A754524451BD500B553B9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2311,6 +2333,7 @@
 				510289D32451BD7B00426DDF /* SelectURLBuilder.swift */,
 				510289A92451967500426DDF /* SelectURLBuilderTableViewController.swift */,
 				51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */,
+				516AE5DD246AF2DD00731738 /* Reddit */,
 				510289CE2451BA1E00426DDF /* Twitter */,
 			);
 			path = Add;
@@ -3868,6 +3891,7 @@
 				510289D02451BA3A00426DDF /* TwitterAdd.storyboard in Resources */,
 				51F85BEB22724CB600C787DC /* About.rtf in Resources */,
 				516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */,
+				516AE600246AF34200731738 /* RedditAdd.storyboard in Resources */,
 				511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */,
 				516A09402361240900EAE89B /* Account.storyboard in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
@@ -4286,15 +4310,18 @@
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,
 				B2B80778239C4C7000F191E0 /* RSImage-AppIcons.swift in Sources */,
 				518ED21D23D0F26000E0A862 /* UIViewController-Extensions.swift in Sources */,
+				516AE604246AF37B00731738 /* RedditSelectAccountTableViewController.swift in Sources */,
 				51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */,
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
+				516AE608246AFC9900731738 /* RedditSelectSortTableViewController.swift in Sources */,
 				5186A635235EF3A800C97195 /* VibrantLabel.swift in Sources */,
 				51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */,
 				51B62E68233186730085F949 /* IconView.swift in Sources */,
 				51C45296226509D300C03939 /* OPMLExporter.swift in Sources */,
 				51C45291226509C800C03939 /* SmartFeed.swift in Sources */,
 				51C452A722650A3D00C03939 /* RSImage-Extensions.swift in Sources */,
+				516AE606246AF3A900731738 /* RedditEnterDetailTableViewController.swift in Sources */,
 				511B9807237DCAC90028BCAA /* UserInfoKey.swift in Sources */,
 				51C45269226508F600C03939 /* MasterFeedTableViewCell.swift in Sources */,
 				51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */,
@@ -4380,6 +4407,7 @@
 				515A517B243E90260089E588 /* ExtensionPoint.swift in Sources */,
 				51C4529C22650A1000C03939 /* SingleFaviconDownloader.swift in Sources */,
 				51E595A6228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
+				516AE602246AF36100731738 /* RedditSelectTypeTableViewController.swift in Sources */,
 				51F9F3F723DF6DB200A314FD /* ArticleIconSchemeHandler.swift in Sources */,
 				512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */,
 				515A5181243E90260089E588 /* ExtensionPointIdentifer.swift in Sources */,

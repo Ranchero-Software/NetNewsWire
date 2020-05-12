@@ -240,16 +240,8 @@ public final class RedditFeedProvider: FeedProvider {
 			components.user = username
 			components.path = "/\(sort.rawValue)"
 		case .popular:
-			guard let username = username else {
-				return nil
-			}
-			components.user = username
 			components.path = "/r/popular/\(sort.rawValue)"
 		case .all:
-			guard let username = username else {
-				return nil
-			}
-			components.user = username
 			components.path = "/r/all/\(sort.rawValue)"
 		case .subreddit:
 			guard let subreddit = subreddit else {
