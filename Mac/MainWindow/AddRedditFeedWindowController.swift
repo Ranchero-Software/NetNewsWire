@@ -21,6 +21,8 @@ class AddRedditFeedWindowController : NSWindowController, AddFeedWindowControlle
 	@IBOutlet weak var accountPopupButton: NSPopUpButton!
 	@IBOutlet weak var subredditTextField: NSTextField!
 
+	@IBOutlet weak var typeToSortLayoutConstraint: NSLayoutConstraint!
+	
 	@IBOutlet weak var sortPopupButton: NSPopUpButton!
 	
 	@IBOutlet var nameTextField: NSTextField!
@@ -143,47 +145,63 @@ private extension AddRedditFeedWindowController {
 		switch typePopupButton.selectedItem?.tag ?? 0 {
 		case 0:
 			
-			accountLabel.isHidden = false
-			accountPopupButton.isHidden = false
-			typeDescriptionLabel.stringValue = NSLocalizedString("Your personal Reddit frontpage", comment: "Home")
-			subredditTextField.isHidden = true
-			addButton.isEnabled = true
+			animateShowHideFields(collapsed: false) {
+				self.accountLabel.isHidden = false
+				self.accountPopupButton.isHidden = false
+				self.typeDescriptionLabel.stringValue = NSLocalizedString("Your personal Reddit frontpage", comment: "Home")
+				self.subredditTextField.isHidden = true
+				self.addButton.isEnabled = true
+			}
 			
 		case 1:
 			
-			accountLabel.isHidden = false
-			accountPopupButton.isHidden = false
+			accountLabel.isHidden = true
+			accountPopupButton.isHidden = true
 			typeDescriptionLabel.stringValue = NSLocalizedString("The best posts on Reddit for you", comment: "Popular")
 			subredditTextField.isHidden = true
 			addButton.isEnabled = true
-			
+			animateShowHideFields(collapsed: true)
+
 		case 2:
-			
-			accountLabel.isHidden = false
-			accountPopupButton.isHidden = false
-			typeDescriptionLabel.stringValue = NSLocalizedString("The most active posts", comment: "All")
-			subredditTextField.isHidden = true
-			addButton.isEnabled = true
-			
-		default:
 			
 			accountLabel.isHidden = true
 			accountPopupButton.isHidden = true
+			typeDescriptionLabel.stringValue = NSLocalizedString("The most active posts", comment: "All")
+			subredditTextField.isHidden = true
+			addButton.isEnabled = true
+			animateShowHideFields(collapsed: true)
+
+		default:
 			
-			if !subredditTextField.stringValue.isEmpty {
-				typeDescriptionLabel.stringValue = NSLocalizedString("Posts from r/\(subredditTextField.stringValue)", comment: "Subreddit")
-			} else {
-				typeDescriptionLabel.stringValue = ""
+			animateShowHideFields(collapsed: false) {
+				self.accountLabel.isHidden = true
+				self.accountPopupButton.isHidden = true
+				
+				if !self.subredditTextField.stringValue.isEmpty {
+					self.typeDescriptionLabel.stringValue = NSLocalizedString("Posts from r/\(self.subredditTextField.stringValue)", comment: "Subreddit")
+				} else {
+					self.typeDescriptionLabel.stringValue = ""
+				}
+				
+				self.subredditTextField.placeholderString = NSLocalizedString("Subreddit", comment: "Search Term")
+				self.subredditTextField.isHidden = false
+				self.addButton.isEnabled = !self.subredditTextField.stringValue.isEmpty
 			}
-			
-			subredditTextField.placeholderString = NSLocalizedString("Subreddit", comment: "Search Term")
-			subredditTextField.isHidden = false
-			addButton.isEnabled = !subredditTextField.stringValue.isEmpty
 			
 		}
 		
 	}
-
+	
+	func animateShowHideFields(collapsed: Bool, completion: (() -> Void)? = nil) {
+		let constant: CGFloat = collapsed ? 8 : 39
+		
+		NSAnimationContext.beginGrouping()
+		NSAnimationContext.current.duration = 0.2
+		NSAnimationContext.current.completionHandler = completion
+		typeToSortLayoutConstraint.animator().constant = constant
+		NSAnimationContext.endGrouping()
+	}
+	
 	func cancelSheet() {
 		delegate?.addFeedWindowControllerUserDidCancel(self)
 	}

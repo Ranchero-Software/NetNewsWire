@@ -16,6 +16,7 @@
                 <outlet property="subredditTextField" destination="cEh-Wt-f5D" id="bnp-Zp-1fe"/>
                 <outlet property="typeDescriptionLabel" destination="f4Z-B8-HHm" id="jZ2-gz-Zr2"/>
                 <outlet property="typePopupButton" destination="j18-w8-wsH" id="KFC-K4-0tG"/>
+                <outlet property="typeToSortLayoutConstraint" destination="cWU-ae-ETO" id="wrj-j7-L7F"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="7rH-S2-LF4"/>
             </connections>
         </customObject>
@@ -132,7 +133,7 @@ DQ
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f4Z-B8-HHm">
                         <rect key="frame" x="85" y="118" width="203" height="14"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="5AA-um-oEb">
-                            <font key="font" metaFont="menu" size="11"/>
+                            <font key="font" metaFont="message" size="11"/>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -206,15 +207,16 @@ DQ
                     <constraint firstItem="6vt-DL-mVR" firstAttribute="top" secondItem="TzV-3k-fXd" secondAttribute="bottom" constant="10" id="Sjo-Bv-alZ"/>
                     <constraint firstAttribute="trailing" secondItem="TzV-3k-fXd" secondAttribute="trailing" constant="20" symbolic="YES" id="V1s-JA-hA8"/>
                     <constraint firstItem="6vt-DL-mVR" firstAttribute="leading" secondItem="dNV-oD-vzR" secondAttribute="trailing" constant="8" id="WNy-vn-p8M"/>
-                    <constraint firstItem="70f-O6-cwn" firstAttribute="top" secondItem="cEh-Wt-f5D" secondAttribute="bottom" constant="8" id="Z4e-I2-h5w"/>
                     <constraint firstAttribute="trailing" secondItem="cEh-Wt-f5D" secondAttribute="trailing" constant="20" id="ZSt-ga-a8N"/>
                     <constraint firstItem="dtI-Hu-rFb" firstAttribute="leading" secondItem="hXq-IS-19x" secondAttribute="trailing" constant="12" symbolic="YES" id="ahD-oU-iFu"/>
+                    <constraint firstItem="70f-O6-cwn" firstAttribute="top" secondItem="j18-w8-wsH" secondAttribute="bottom" constant="39" id="cWU-ae-ETO"/>
                     <constraint firstItem="Acr-Ig-NVG" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="dhv-D0-aPe"/>
                     <constraint firstAttribute="trailing" secondItem="j18-w8-wsH" secondAttribute="trailing" constant="20" id="eQ9-hw-PXg"/>
                     <constraint firstItem="j18-w8-wsH" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="fK6-IW-NhJ"/>
                     <constraint firstItem="j18-w8-wsH" firstAttribute="leading" secondItem="X1H-Vv-1CJ" secondAttribute="leading" id="gSv-gG-TLd"/>
                     <constraint firstItem="6vt-DL-mVR" firstAttribute="leading" secondItem="TzV-3k-fXd" secondAttribute="leading" id="hMP-wG-fsP"/>
                     <constraint firstItem="cEh-Wt-f5D" firstAttribute="top" secondItem="j18-w8-wsH" secondAttribute="bottom" constant="10" id="hxS-Z9-dWU"/>
+                    <constraint firstItem="dtI-Hu-rFb" firstAttribute="top" secondItem="6vt-DL-mVR" secondAttribute="bottom" constant="15" id="iRc-pH-8jE"/>
                     <constraint firstItem="j18-w8-wsH" firstAttribute="firstBaseline" secondItem="ddC-6D-Tvd" secondAttribute="firstBaseline" id="iz7-4p-NWj"/>
                     <constraint firstAttribute="trailing" secondItem="dtI-Hu-rFb" secondAttribute="trailing" constant="20" symbolic="YES" id="kEo-af-SUe"/>
                     <constraint firstItem="j18-w8-wsH" firstAttribute="leading" secondItem="ddC-6D-Tvd" secondAttribute="trailing" constant="8" id="n9D-4Y-HXk"/>
