@@ -67,17 +67,14 @@ struct MarkAsReadAlertController {
 		
 		if let barButtonItem = sourceType as? UIBarButtonItem {
 			alertController.popoverPresentationController?.barButtonItem = barButtonItem
-			return alertController
 		}
 		
 		if let rect = sourceType as? CGRect {
 			alertController.popoverPresentationController?.sourceRect = rect
-			return alertController
 		}
 		
 		if let view = sourceType as? UIView {
 			alertController.popoverPresentationController?.sourceView = view
-			return alertController
 		}
 
 		return alertController
