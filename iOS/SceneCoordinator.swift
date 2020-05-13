@@ -1199,7 +1199,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func navigateToDetail() {
 		articleViewController?.focus()
 	}
-	
+
+	func toggleSidebar() {
+		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .allVisible ? .primaryHidden : .allVisible
+	}
 }
 
 // MARK: UISplitViewControllerDelegate

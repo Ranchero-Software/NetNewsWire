@@ -161,7 +161,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	@objc func showFeedInspector(_ sender: UITapGestureRecognizer) {
 		coordinator.showFeedInspector()
 	}
-	
+
 	// MARK: API
 	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {

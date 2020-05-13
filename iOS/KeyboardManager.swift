@@ -138,6 +138,9 @@ private extension KeyboardManager {
 		let goToStarredTitle = NSLocalizedString("Go To Starred", comment: "Go To Starred")
 		keys.append(KeyboardManager.createKeyCommand(title: goToStarredTitle, action: "goToStarred:", input: "3", modifiers: [.command]))
 
+		let gotoSettings = NSLocalizedString("Go To Settings", comment: "Go To Settings")
+			keys.append(KeyboardManager.createKeyCommand(title: gotoSettings, action: "goToSettings:", input: ",", modifiers: [.command]))
+		
 		let articleSearchTitle = NSLocalizedString("Article Search", comment: "Article Search")
 		keys.append(KeyboardManager.createKeyCommand(title: articleSearchTitle, action: "articleSearch:", input: "f", modifiers: [.command, .alternate]))
 
@@ -185,6 +188,12 @@ private extension KeyboardManager {
 
 		let toggleStarredTitle = NSLocalizedString("Toggle Starred Status", comment: "Toggle Starred Status")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleStarredTitle, action: "toggleStarred:", input: "l", modifiers: [.command, .shift]))
+
+		let toggleSidebar = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
+		keys.append(KeyboardManager.createKeyCommand(title: toggleSidebar, action: "toggleSidebar:", input: "s", modifiers: [.command, .control]))
+
+		let toggleReaderView = NSLocalizedString("Toggle Reader View", comment: "Toggle Reader View")
+		keys.append(KeyboardManager.createKeyCommand(title: toggleReaderView, action: "toggleReaderView:", input: "r", modifiers: [.command, .shift]))
 
 		return keys
 	}
