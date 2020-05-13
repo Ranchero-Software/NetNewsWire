@@ -157,10 +157,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.showFeedInspector()
 	}
 
-	@objc func toggleSidebar(_ sender: Any?) {
-		coordinator.toggleSidebar()
-	}
-
 	// MARK: API
 	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {

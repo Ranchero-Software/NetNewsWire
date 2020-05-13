@@ -133,5 +133,8 @@ class RootSplitViewController: UISplitViewController {
 	@objc func toggleStarred(_ sender: Any?) {
 		coordinator.toggleStarredForCurrentArticle()
 	}
-	
+
+	@objc func toggleSidebar(_ sender: Any?) {
+		coordinator.toggleSidebar()
+	}
 }
