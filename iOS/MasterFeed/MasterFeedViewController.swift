@@ -937,7 +937,7 @@ private extension MasterFeedViewController {
 		guard let node = dataSource.itemIdentifier(for: indexPath),
 			coordinator.unreadCountFor(node) > 0,
 			let feed = node.representedObject as? WebFeed,
-			let articles = try? feed.fetchArticles() else {
+			let articles = try? feed.fetchArticles(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 				return nil
 		}
 		
@@ -947,8 +947,9 @@ private extension MasterFeedViewController {
 			completion(true)
 		}
 		
+
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, cancelCompletion: cancel) { [weak self] in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.coordinator.markAllAsRead(Array(articles))
 				completion(true)
 			}
@@ -1026,7 +1027,7 @@ private extension MasterFeedViewController {
 		}
 
 		let articles = Array(fetchedArticles)
-		return markAllAsReadAction(articles: articles, nameForDisplay: articleFetcher.nameForDisplay)
+		return markAllAsReadAction(articles: articles, nameForDisplay: articleFetcher.nameForDisplay, indexPath: indexPath)
 	}
 
 	func markAllAsReadAction(account: Account) -> UIAction? {
@@ -1038,16 +1039,16 @@ private extension MasterFeedViewController {
 		return markAllAsReadAction(articles: articles, nameForDisplay: account.nameForDisplay)
 	}
 
-	func markAllAsReadAction(articles: [Article], nameForDisplay: String) -> UIAction? {
-		guard articles.canMarkAllAsRead() else {
+	func markAllAsReadAction(articles: [Article], nameForDisplay: String, indexPath: IndexPath? = nil) -> UIAction? {
+		guard articles.canMarkAllAsRead(), let indexPath = indexPath, let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, nameForDisplay) as String
-
+		
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title) { [weak self] in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markAllAsRead(articles)
 			}
 		}
