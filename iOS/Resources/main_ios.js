@@ -156,6 +156,7 @@ function makeHighlightRect({left, top, width, height}, offsetTop=0, offsetLeft=0
 		width: `${Math.ceil(width)}px`,
 		height: `${Math.ceil(height)}px`,
 		backgroundColor: 'rgba(200, 220, 10, 0.4)',
+		pointerEvents: 'none'
 	});
 
 	return overlay;
