@@ -392,6 +392,10 @@ class FindState {
 		this.options = options;
 	}
 	
+	get selected() {
+		return this.index > -1 ? this.results[this.index] : null;
+	}
+	
 	toJSON() {
 		return {
 			index: this.index > -1 ? this.index : null,
@@ -423,13 +427,35 @@ updateFind = withEncodedArg(options => {
 	// TODO Start at the current result position
 	// TODO Introduce slight delay, cap the number of results, and report results asynchronously
 	
+	let newFindState;
 	try {
-		CurrentFindState = new FindState(options);
+		newFindState = new FindState(options);
 	} catch (err) {
 		clearHighlightRects();
 		throw err;
 	}
-	CurrentFindState.selectNext() || clearHighlightRects();
+	
+	if (newFindState.results.length) {
+		let selected = CurrentFindState && CurrentFindState.selected;
+		let selectIndex = 0;
+		if (selected) {
+			let {node: currentNode, offset: currentOffset} = selected;
+			selectIndex = newFindState.results.findIndex(r => {
+				if (r.node === currentNode) {
+					return r.offset >= currentOffset;
+				}
+				
+				let relation = currentNode.compareDocumentPosition(r.node);
+				return Boolean(relation & Node.DOCUMENT_POSITION_FOLLOWING);
+			});
+		}
+		
+		newFindState.selectNext(selectIndex+1);
+	} else {
+		clearHighlightRects();
+	}
+	
+	CurrentFindState = newFindState;
 	return btoa(JSON.stringify(CurrentFindState, (k, v) => (ExcludeKeys.has(k) ? undefined : v)));
 });
 
