@@ -684,6 +684,7 @@ private extension WebViewController {
 private struct FindInArticleOptions: Codable {
 	var text: String
 	var caseSensitive = false
+	var regex = false
 }
 
 

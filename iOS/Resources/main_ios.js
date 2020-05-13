@@ -161,8 +161,9 @@ function makeHighlightRect({left, top, width, height}, offsetTop=0, offsetLeft=0
 	return overlay;
 }
 
-function clearHighlightRects(container=document.getElementById('nnw:highlightContainer')) {
-	while (container.firstChild) container.firstChild.remove();
+function clearHighlightRects() {
+	let container = document.getElementById('nnw:highlightContainer')
+	if (container) container.remove();
 }
 
 function highlightRects(rects, clearOldRects=true, makeHighlightRect=makeHighlightRect) {
@@ -171,14 +172,12 @@ function highlightRects(rects, clearOldRects=true, makeHighlightRect=makeHighlig
 
 	article.style.position = 'relative';
 
-	if (container) {
-		if (clearOldRects)
-			clearHighlightRects(container);
-	} else {
-		container = document.createElement('div');
-		container.id = 'nnw:highlightContainer';
-		article.appendChild(container);
-	}
+	if (container && clearOldRects)
+		container.remove();
+
+	container = document.createElement('div');
+	container.id = 'nnw:highlightContainer';
+	article.appendChild(container);
 
 	const {top, left} = article.getBoundingClientRect();
 	return Array.from(rects, rect => 
@@ -369,20 +368,6 @@ function scrollToRect({top, height}, node, pad=0) {
 	scrollParent(node).scrollBy({ top: scrollBy });
 }
 
-function findNext() {
-	const result = f.next();
-	const bounds = textBounds(f.node, f.offset, f.offsetEnd);
-	highlightRects(bounds)
-}
-
-function getFinderCount(finder) {
-	let count = 0;
-	while (finder.next())
-		++count;
-	finder.reset();
-	return count;
-}
-
 function withEncodedArg(fn) {
 	return function(encodedData, ...rest) {
 		const data = encodedData && JSON.parse(atob(encodedData));
@@ -390,9 +375,17 @@ function withEncodedArg(fn) {
 	}
 }
 
+function escapeRegex(s) {
+	return s.replace(/[.?*+^$\\()[\]{}]/g, '\\$&');
+}
+
 class FindState {
 	constructor(options) {
-		const { text, caseSensitive } = options;
+		let { text, caseSensitive, regex } = options;
+		
+		if (!regex)
+			text = escapeRegex(text);
+		
 		const finder = new Finder(new RegExp(text, caseSensitive ? 'g' : 'ig'));
 		this.results = Array.from(finder);
 		this.index = -1;
@@ -429,7 +422,13 @@ const ExcludeKeys = new Set(['top', 'right', 'bottom', 'left']);
 updateFind = withEncodedArg(options => {
 	// TODO Start at the current result position
 	// TODO Introduce slight delay, cap the number of results, and report results asynchronously
-	CurrentFindState = new FindState(options);
+	
+	try {
+		CurrentFindState = new FindState(options);
+	} catch (err) {
+		clearHighlightRects();
+		throw err;
+	}
 	CurrentFindState.selectNext() || clearHighlightRects();
 	return btoa(JSON.stringify(CurrentFindState, (k, v) => (ExcludeKeys.has(k) ? undefined : v)));
 });
