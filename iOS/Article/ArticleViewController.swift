@@ -343,7 +343,7 @@ extension ArticleViewController {
 		])
 	}
 	
-	@objc func beginFind(_ notification: Notification) {
+	@objc func beginFind(_ _: Any? = nil) {
 		searchBar.isHidden = false
 		navigationController?.setToolbarHidden(true, animated: true)
 		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBar.frame.height
