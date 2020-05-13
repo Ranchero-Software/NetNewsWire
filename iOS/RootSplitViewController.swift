@@ -121,7 +121,11 @@ class RootSplitViewController: UISplitViewController {
 	@objc func goToStarred(_ sender: Any?) {
 		coordinator.selectStarredFeed()
 	}
-	
+
+	@objc func goToSettings(_ sender: Any?) {
+		coordinator.showSettings()
+	}
+
 	@objc func toggleRead(_ sender: Any?) {
 		coordinator.toggleReadForCurrentArticle()
 	}
