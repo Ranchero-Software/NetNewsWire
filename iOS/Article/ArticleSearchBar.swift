@@ -36,14 +36,11 @@ import UIKit
 	
 	weak var delegate: SearchBarDelegate?
 	
+	private var _inputAccessoryView: UIView?
 	override var inputAccessoryView: UIView? {
-		get {
-			searchField.inputAccessoryView
-		}
-		
-		set {
-			searchField.inputAccessoryView = newValue
-		}
+		get { _inputAccessoryView }
+		set { _inputAccessoryView = newValue }
+	}
 	}
 	
 	override init(frame: CGRect) {
