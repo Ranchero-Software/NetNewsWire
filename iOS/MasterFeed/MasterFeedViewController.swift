@@ -420,6 +420,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func openInBrowser(_ sender: Any?) {
 		coordinator.showBrowserForCurrentFeed()
 	}
+
+	@objc func openInSafari(_ sender: Any?) {
+		coordinator.showSafariForCurrentFeed()
+	}
 	
 	@objc override func delete(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath {
