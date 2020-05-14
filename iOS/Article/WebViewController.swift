@@ -709,6 +709,7 @@ internal struct FindInArticleState: Codable {
 }
 
 extension WebViewController {
+	
 	func searchText(_ searchText: String, completionHandler: @escaping (FindInArticleState) -> Void) {
 		guard let json = try? JSONEncoder().encode(FindInArticleOptions(text: searchText)) else {
 			return

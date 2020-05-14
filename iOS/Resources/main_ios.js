@@ -429,6 +429,11 @@ updateFind = withEncodedArg(options => {
 	// TODO Introduce slight delay, cap the number of results, and report results asynchronously
 	
 	let newFindState;
+	if (!options || !options.text) {
+		clearHighlightRects();
+		return
+	}
+	
 	try {
 		newFindState = new FindState(options);
 	} catch (err) {
