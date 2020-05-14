@@ -117,12 +117,20 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	@IBAction func markAllAsRead(_ sender: Any) {
 		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
 		
-		guard let barButtonItem = sender as? UIBarButtonItem else {
-			return
+		if let source = sender as? UIBarButtonItem {
+			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: source) { [weak self] in
+				self?.coordinator.markAllAsReadInTimeline()
+			}
 		}
 		
-		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: barButtonItem) { [weak self] in
-			self?.coordinator.markAllAsReadInTimeline()
+		if let _ = sender as? UIKeyCommand {
+			guard let indexPath = tableView.indexPathForSelectedRow, let contentView = tableView.cellForRow(at: indexPath)?.contentView else {
+				return
+			}
+			
+			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				self?.coordinator.markAllAsReadInTimeline()
+			}
 		}
 	}
 	
