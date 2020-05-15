@@ -12,6 +12,7 @@ import Account
 import Articles
 import RSCore
 import RSTree
+import SafariServices
 
 enum PanelMode {
 	case unset
@@ -1182,6 +1183,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		UIApplication.shared.open(url, options: [:])
+	}
+
+	func showInAppBrowserForCurrentArticle() {
+		articleViewController?.openInAppBrowser()
+	}
+
+	func showInAppBrowserForCurrentFeed() {
+		masterFeedViewController.openInAppBrowser()
 	}
 	
 	func navigateToFeeds() {
