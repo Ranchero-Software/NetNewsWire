@@ -604,26 +604,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		Browser.open("https://ranchero.com/netnewswire/privacypolicy", inBackground: false)
 	}
 
-	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
-		#if DEBUG
-			AccountManager.shared.activeAccounts.forEach{ $0.debugDropConditionalGetInfo() }
-		#endif
-	}
-
-	@IBAction func debugTestCrashReporterWindow(_ sender: Any?) {
-		#if DEBUG
-			crashReportWindowController = CrashReportWindowController(crashLogText: "This is a test crash log.")
-			crashReportWindowController!.testing = true
-			crashReportWindowController!.showWindow(self)
-		#endif
-	}
-
-	@IBAction func debugTestCrashReportSending(_ sender: Any?) {
-		#if DEBUG
-			CrashReporter.sendCrashLogText("This is a test. Hi, Brent.")
-		#endif
-	}
-
 	@IBAction func gotoToday(_ sender: Any?) {
 
 		createAndShowMainWindowIfNecessary()
@@ -671,6 +651,33 @@ extension AppDelegate {
 		AccountManager.shared.defaultAccount.debugRunSearch()
 	}
 
+	@IBAction func debugDropConditionalGetInfo(_ sender: Any?) {
+		#if DEBUG
+			AccountManager.shared.activeAccounts.forEach{ $0.debugDropConditionalGetInfo() }
+		#endif
+	}
+
+	@IBAction func debugTestCrashReporterWindow(_ sender: Any?) {
+		#if DEBUG
+			crashReportWindowController = CrashReportWindowController(crashLogText: "This is a test crash log.")
+			crashReportWindowController!.testing = true
+			crashReportWindowController!.showWindow(self)
+		#endif
+	}
+
+	@IBAction func debugTestCrashReportSending(_ sender: Any?) {
+		#if DEBUG
+			CrashReporter.sendCrashLogText("This is a test. Hi, Brent.")
+		#endif
+	}
+
+	@IBAction func openApplicationSupportFolder(_ sender: Any?) {
+		#if DEBUG
+			guard let appSupport = Platform.dataSubfolder(forApplication: nil, folderName: "") else { return }
+			NSWorkspace.shared.open(URL(fileURLWithPath: appSupport))
+		#endif
+	}
+
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
 		#if !MAC_APP_STORE
 			let newValue = !AppDefaults.webInspectorEnabled
@@ -683,6 +690,7 @@ extension AppDelegate {
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 		#endif
 	}
+
 }
 
 private extension AppDelegate {
