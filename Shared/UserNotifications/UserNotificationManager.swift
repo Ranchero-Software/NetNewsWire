@@ -53,15 +53,15 @@ private extension UserNotificationManager {
 		}
 		
 		content.body = ArticleStringFormatter.truncatedSummary(article)
-
-		content.sound = UNNotificationSound.default
-		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
+		
 		content.threadIdentifier = webFeed.webFeedID
 		content.summaryArgument = "\(webFeed.nameForDisplay)"
 		content.summaryArgumentCount = 1
-
-		let request = UNNotificationRequest.init(identifier: "articleID:\(article.articleID)", content: content, trigger: nil)
 		
+		content.sound = UNNotificationSound.default
+		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
+		
+		let request = UNNotificationRequest.init(identifier: "articleID:\(article.articleID)", content: content, trigger: nil)
 		UNUserNotificationCenter.current().add(request)
 	}
 	
