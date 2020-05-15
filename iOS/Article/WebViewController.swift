@@ -227,7 +227,15 @@ class WebViewController: UIViewController {
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
-	
+
+	func openInAppBrowser() {
+		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+
+		let vc = SFSafariViewController(url: url)
+		present(vc, animated: true)
+	}
 }
 
 // MARK: ArticleExtractorDelegate

@@ -11,6 +11,7 @@ import Account
 import Articles
 import RSCore
 import RSTree
+import SafariServices
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
@@ -458,7 +459,18 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			self.reloadAllVisibleCells()
 		}
 	}
-	
+
+	@objc func markAllAsRead(_ sender: Any) {
+		guard let indexPath = tableView.indexPathForSelectedRow, let contentView = tableView.cellForRow(at: indexPath)?.contentView else {
+			return
+		}
+
+		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+			self?.coordinator.markAllAsReadInTimeline()
+		}
+	}
+
 	// MARK: API
 	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
@@ -503,7 +515,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func focus() {
 		becomeFirstResponder()
 	}
-	
+
+	func openInAppBrowser() {
+		if let indexPath = coordinator.currentFeedIndexPath,
+			let url = coordinator.homePageURLForFeed(indexPath) {
+			let vc = SFSafariViewController(url: url)
+			present(vc, animated: true)
+		}
+	}
 }
 
 // MARK: UIContextMenuInteractionDelegate
