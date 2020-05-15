@@ -11,6 +11,7 @@ import Account
 import Articles
 import RSCore
 import RSTree
+import SafariServices
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
@@ -420,10 +421,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func openInBrowser(_ sender: Any?) {
 		coordinator.showBrowserForCurrentFeed()
 	}
-
-	@objc func openInSafari(_ sender: Any?) {
-		coordinator.showSafariForCurrentFeed()
-	}
 	
 	@objc override func delete(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath {
@@ -507,7 +504,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func focus() {
 		becomeFirstResponder()
 	}
-	
+
+	func openInAppBrowser() {
+		if let indexPath = coordinator.currentFeedIndexPath,
+			let url = coordinator.homePageURLForFeed(indexPath) {
+			let vc = SFSafariViewController(url: url)
+			present(vc, animated: true)
+		}
+	}
 }
 
 // MARK: UIContextMenuInteractionDelegate

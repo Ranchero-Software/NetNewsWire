@@ -177,8 +177,8 @@ private extension KeyboardManager {
 		let openInBrowserTitle = NSLocalizedString("Open In Browser", comment: "Open In Browser")
 		keys.append(KeyboardManager.createKeyCommand(title: openInBrowserTitle, action: "openInBrowser:", input: UIKeyCommand.inputRightArrow, modifiers: [.command]))
 
-		let openInSafariTitle = NSLocalizedString("Open In Safari", comment: "Open In Safari")
-		keys.append(KeyboardManager.createKeyCommand(title: openInSafariTitle, action: "openInSafari:", input: "\r", modifiers: []))
+		let openInAppBrowserTitle = NSLocalizedString("Open In App Browser", comment: "Open In App Browser")
+		keys.append(KeyboardManager.createKeyCommand(title: openInAppBrowserTitle, action: "openInAppBrowser:", input: "\r", modifiers: []))
 
 		let toggleReadTitle = NSLocalizedString("Toggle Read Status", comment: "Toggle Read Status")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleReadTitle, action: "toggleRead:", input: "u", modifiers: [.command, .shift]))

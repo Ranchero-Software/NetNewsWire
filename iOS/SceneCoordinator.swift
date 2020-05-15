@@ -1185,19 +1185,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		UIApplication.shared.open(url, options: [:])
 	}
 
-	func showSafariForCurrentFeed() {
-		if let ip = currentFeedIndexPath, let url = homePageURLForFeed(ip) {
-			let vc = SFSafariViewController(url: url)
-			rootSplitViewController.viewControllers.last?.present(vc, animated: true)
-		}
+	func showInAppBrowserForCurrentArticle() {
+		articleViewController?.openInAppBrowser()
 	}
 
-	func showSafariForCurrentArticle() {
-		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-		let vc = SFSafariViewController(url: url)
-		rootSplitViewController.viewControllers.last?.present(vc, animated: true)
+	func showInAppBrowserForCurrentFeed() {
+		masterFeedViewController.openInAppBrowser()
 	}
 	
 	func navigateToFeeds() {
