@@ -15,6 +15,7 @@ import UIKit
 	@objc optional func searchBar(_ searchBar: ArticleSearchBar, textDidChange: String)
 }
 
+
 @IBDesignable final class ArticleSearchBar: UIStackView {
 	var searchField: UISearchTextField!
 	var nextButton: UIButton!
@@ -36,11 +37,8 @@ import UIKit
 	
 	weak var delegate: SearchBarDelegate?
 	
-	private var _inputAccessoryView: UIView?
-	override var inputAccessoryView: UIView? {
-		get { _inputAccessoryView }
-		set { _inputAccessoryView = newValue }
-	}
+	override var keyCommands: [UIKeyCommand]? {
+		return [UIKeyCommand(title: "Exit Find", action: #selector(donePressed(_:)), input: UIKeyCommand.inputEscape)]
 	}
 	
 	override init(frame: CGRect) {
@@ -146,6 +144,7 @@ private extension ArticleSearchBar {
 }
 
 private extension ArticleSearchBar {
+	
 	@objc func textDidChange(_ notification: Notification) {
 		delegate?.searchBar?(self, textDidChange: searchField.text ?? "")
 		
@@ -164,7 +163,7 @@ private extension ArticleSearchBar {
 		delegate?.previousWasPressed?(self)
 	}
 	
-	@objc func donePressed() {
+	@objc func donePressed(_ _: Any? = nil) {
 		delegate?.doneWasPressed?(self)
 	}
 }
