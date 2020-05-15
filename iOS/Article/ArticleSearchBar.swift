@@ -73,13 +73,15 @@ import UIKit
 	}
 	
 	@discardableResult override func becomeFirstResponder() -> Bool {
-		super.becomeFirstResponder()
-		return searchField.becomeFirstResponder()
+		searchField.becomeFirstResponder()
 	}
 	
 	@discardableResult override func resignFirstResponder() -> Bool {
-		super.resignFirstResponder()
-		return searchField.resignFirstResponder()
+		searchField.resignFirstResponder()
+	}
+	
+	override var isFirstResponder: Bool {
+		searchField.isFirstResponder
 	}
 	
 	deinit {

@@ -349,15 +349,15 @@ function scrollParent(node) {
 		elt = elt.parentElement;
 	}
 }
-
-function scrollToRect({top, height}, node, pad=0) {
+ 
+function scrollToRect({top, height}, node, pad=20, padBottom=60) {
 	const scrollToTop = top - pad;
 
 	let scrollBy = scrollToTop;
 
 	if (scrollToTop >= 0) {
 		const visible = window.visualViewport;
-		const scrollToBottom = top + height + pad - visible.height;
+		const scrollToBottom = top + height + padBottom - visible.height;
 		// The top of the rect is already in the viewport
 		if (scrollToBottom <= 0 || scrollToTop === 0)
 			// Don't need to scroll up--or can't

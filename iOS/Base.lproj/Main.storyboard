@@ -16,19 +16,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="759" width="414" height="54"/>
+                            <view hidden="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="777" width="414" height="36"/>
                                 <color key="backgroundColor" name="barBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="54" id="FQw-KK-lT7"/>
-                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="h1Q-FS-jlg" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="2DV-em-ArG"/>
-                            <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="h1Q-FS-jlg" secondAttribute="trailing" id="5aF-IN-1ff"/>
-                            <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="h1Q-FS-jlg" secondAttribute="bottom" id="Kmv-Hg-0wL"/>
+                            <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="h1Q-FS-jlg" secondAttribute="trailing" id="2Nt-fa-LhC"/>
+                            <constraint firstItem="h1Q-FS-jlg" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="Vgz-hA-Zrp"/>
+                            <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="h1Q-FS-jlg" secondAttribute="bottom" id="XyH-A7-Trj"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                     </view>
@@ -103,6 +100,7 @@
                         <outlet property="prevArticleBarButtonItem" destination="v4j-fq-23N" id="Gny-Oh-cQa"/>
                         <outlet property="readBarButtonItem" destination="hy0-LS-MzE" id="BzM-x9-tuj"/>
                         <outlet property="searchBar" destination="h1Q-FS-jlg" id="IQA-Wt-BB8"/>
+                        <outlet property="searchBarBottomConstraint" destination="XyH-A7-Trj" id="5gH-az-8vg"/>
                         <outlet property="starBarButtonItem" destination="wU4-eH-wC9" id="Z8Q-Lt-dKk"/>
                     </connections>
                 </viewController>

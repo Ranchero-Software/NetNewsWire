@@ -27,6 +27,7 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
 	
 	@IBOutlet private var searchBar: ArticleSearchBar!
+	@IBOutlet private var searchBarBottomConstraint: NSLayoutConstraint!
 	private var defaultControls: [UIBarButtonItem]?
 	
 	private var pageViewController: UIPageViewController!
@@ -70,6 +71,10 @@ class ArticleViewController: UIViewController {
 	
 	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
+		if searchBar.isFirstResponder {
+			return nil
+		}
+		
 		return keyboardManager.keyCommands
 	}
 	
@@ -132,14 +137,11 @@ class ArticleViewController: UIViewController {
 		}
 		
 		// Search bar
-		makeSearchBarConstraints()
+		searchBar.translatesAutoresizingMaskIntoConstraints = false
 		NotificationCenter.default.addObserver(self, selector: #selector(beginFind(_:)), name: .FindInArticle, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(endFind(_:)), name: .EndFindInArticle, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: 		UIWindow.keyboardWillHideNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidChangeFrame(_:)), name: UIWindow.keyboardDidChangeFrameNotification, object: nil)
-		
-//		searchBar.translatesAutoresizingMaskIntoConstraints = false
-//		searchBar.delegate = self
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame(_:)), name: UIWindow.keyboardWillChangeFrameNotification, object: nil)
+		searchBar.delegate = self
 		view.bringSubviewToFront(searchBar)
 		
 		updateUI()
@@ -151,7 +153,9 @@ class ArticleViewController: UIViewController {
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
-		searchBar.inputAccessoryView = nil
+		if searchBar != nil && !searchBar.isHidden {
+			endFind()
+		}
 	}
 	
 	override func viewSafeAreaInsetsDidChange() {
@@ -335,24 +339,14 @@ extension ArticleViewController: SearchBarDelegate {
 
 extension ArticleViewController {
 	
-	private func makeSearchBarConstraints() {
-		NSLayoutConstraint.activate([
-			searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-			searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-			searchBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-		])
-	}
-	
 	@objc func beginFind(_ _: Any? = nil) {
 		searchBar.isHidden = false
 		navigationController?.setToolbarHidden(true, animated: true)
 		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBar.frame.height
-		searchBar.delegate = self
-		searchBar.inputAccessoryView = searchBar
 		searchBar.becomeFirstResponder()
 	}
 	
-	@objc func endFind(_ notification: Notification) {
+	@objc func endFind(_ _: Any? = nil) {
 		searchBar.resignFirstResponder()
 		searchBar.isHidden = true
 		navigationController?.setToolbarHidden(false, animated: true)
@@ -360,17 +354,24 @@ extension ArticleViewController {
 		currentWebViewController?.endSearch()
 	}
 	
-	@objc func keyboardWillHide(_ _: Notification) {
-		view.addSubview(searchBar)
-		makeSearchBarConstraints()
-	}
-	
-	@objc func keyboardDidChangeFrame(_ notification: Notification) {
-		if let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
-			currentWebViewController?.additionalSafeAreaInsets.bottom = frame.height
+	@objc func keyboardWillChangeFrame(_ notification: Notification) {
+		if !searchBar.isHidden,
+			let duration = notification.userInfo?[UIWindow.keyboardAnimationDurationUserInfoKey] as? Double,
+			let curveRaw = notification.userInfo?[UIWindow.keyboardAnimationCurveUserInfoKey] as? UInt,
+			let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
+			
+			let curve = UIView.AnimationOptions(rawValue: curveRaw)
+			let newHeight = view.safeAreaLayoutGuide.layoutFrame.maxY - frame.minY
+			currentWebViewController?.additionalSafeAreaInsets.bottom = newHeight + searchBar.frame.height + 10
+			self.searchBarBottomConstraint.constant = newHeight
+			UIView.animate(withDuration: duration, delay: 0, options: curve, animations: {
+				self.view.layoutIfNeeded()
+			})
 		}
 	}
+	
 }
+
 
 // MARK: WebViewControllerDelegate
 
