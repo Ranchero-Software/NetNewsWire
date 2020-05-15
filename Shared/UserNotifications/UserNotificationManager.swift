@@ -47,15 +47,21 @@ private extension UserNotificationManager {
 		let content = UNMutableNotificationContent()
 						
 		content.title = webFeed.nameForDisplay
-		content.body = ArticleStringFormatter.truncatedTitle(article)
-		if content.body.isEmpty {
-			content.body = ArticleStringFormatter.truncatedSummary(article)
+		
+		if !ArticleStringFormatter.truncatedTitle(article).isEmpty {
+			content.subtitle = ArticleStringFormatter.truncatedTitle(article)
 		}
+		
+		content.body = ArticleStringFormatter.truncatedSummary(article)
 
 		content.sound = UNNotificationSound.default
 		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
+		content.threadIdentifier = webFeed.webFeedID
+		content.summaryArgument = "\(webFeed.nameForDisplay)"
+		content.summaryArgumentCount = 1
 
 		let request = UNNotificationRequest.init(identifier: "articleID:\(article.articleID)", content: content, trigger: nil)
+		
 		UNUserNotificationCenter.current().add(request)
 	}
 	
