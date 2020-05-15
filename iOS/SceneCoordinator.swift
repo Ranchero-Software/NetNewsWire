@@ -750,7 +750,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			
 			setTimelineFeed(nil, animated: false) {
 				if self.isReadFeedsFiltered {
-					self.queueRebuildBackingStores()
+					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
 				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
