@@ -534,6 +534,12 @@
                                                 <action selector="toggleWebInspectorEnabled:" target="Voe-Tx-rLC" id="SNL-zh-XIE"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Open Application Support Folder" id="rg6-L6-JUr">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openApplicationSupportFolder:" target="Ady-hI-5gd" id="gT9-ry-evV"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
