@@ -60,7 +60,7 @@ class WebViewController: UIViewController {
 	
 	private(set) var article: Article?
 	
-	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 1.0)
+	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 0.3)
 	var windowScrollY = 0
 	
 	override func viewDidLoad() {
@@ -227,7 +227,15 @@ class WebViewController: UIViewController {
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
-	
+
+	func openInAppBrowser() {
+		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+
+		let vc = SFSafariViewController(url: url)
+		present(vc, animated: true)
+	}
 }
 
 // MARK: ArticleExtractorDelegate
@@ -291,7 +299,7 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 extension WebViewController: WKNavigationDelegate {
 	
 	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		if view.subviews.count > 1 {
+		while view.subviews.count > 1 {
 			view.subviews.last?.removeFromSuperview()
 		}
 	}

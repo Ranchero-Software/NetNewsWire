@@ -11,6 +11,7 @@ import Account
 import Articles
 import RSCore
 import RSTree
+import SafariServices
 
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
@@ -514,7 +515,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func focus() {
 		becomeFirstResponder()
 	}
-	
+
+	func openInAppBrowser() {
+		if let indexPath = coordinator.currentFeedIndexPath,
+			let url = coordinator.homePageURLForFeed(indexPath) {
+			let vc = SFSafariViewController(url: url)
+			present(vc, animated: true)
+		}
+	}
 }
 
 // MARK: UIContextMenuInteractionDelegate

@@ -256,6 +256,7 @@ class ArticleViewController: UIViewController {
 	}
 	
 	// MARK: Keyboard Shortcuts
+
 	@objc func navigateToTimeline(_ sender: Any?) {
 		coordinator.navigateToTimeline()
 	}
@@ -277,7 +278,10 @@ class ArticleViewController: UIViewController {
 	func stopArticleExtractorIfProcessing() {
 		currentWebViewController?.stopArticleExtractorIfProcessing()
 	}
-	
+
+	func openInAppBrowser() {
+		currentWebViewController?.openInAppBrowser()
+	}	
 }
 
 // MARK: WebViewControllerDelegate

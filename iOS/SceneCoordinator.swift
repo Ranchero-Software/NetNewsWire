@@ -12,6 +12,7 @@ import Account
 import Articles
 import RSCore
 import RSTree
+import SafariServices
 
 enum PanelMode {
 	case unset
@@ -749,7 +750,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			
 			setTimelineFeed(nil, animated: false) {
 				if self.isReadFeedsFiltered {
-					self.queueRebuildBackingStores()
+					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
 				if self.rootSplitViewController.isCollapsed && self.navControllerForTimeline().viewControllers.last is MasterTimelineViewController {
@@ -1182,6 +1183,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return
 		}
 		UIApplication.shared.open(url, options: [:])
+	}
+
+	func showInAppBrowserForCurrentArticle() {
+		articleViewController?.openInAppBrowser()
+	}
+
+	func showInAppBrowserForCurrentFeed() {
+		masterFeedViewController.openInAppBrowser()
 	}
 	
 	func navigateToFeeds() {
