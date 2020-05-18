@@ -749,6 +749,8 @@
 		BDCB516824282C8A00102A80 /* AccountsNewsBlur.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */; };
 		C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */; };
 		C5A6ED6D23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */; };
+		D3555BF524664566005E48C3 /* ArticleSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3555BF324664539005E48C3 /* ArticleSearchBar.swift */; };
+		D3A39865246505DF00F9A366 /* FindInArticleActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A398632465054F00F9A366 /* FindInArticleActivity.swift */; };
 		D553738B20186C20006D8857 /* Article+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D553737C20186C1F006D8857 /* Article+Scriptability.swift */; };
 		D57BE6E0204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */; };
 		D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5907D7E2004AC00005947E5 /* NSApplication+Scriptability.swift */; };
@@ -1812,6 +1814,8 @@
 		BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsNewsBlur.xib; sourceTree = "<group>"; };
 		C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleActivityItemSource.swift; sourceTree = "<group>"; };
 		C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController-Extensions.swift"; sourceTree = "<group>"; };
+		D3555BF324664539005E48C3 /* ArticleSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSearchBar.swift; sourceTree = "<group>"; };
+		D3A398632465054F00F9A366 /* FindInArticleActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindInArticleActivity.swift; sourceTree = "<group>"; };
 		D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_safariextension_target.xcconfig; sourceTree = "<group>"; };
 		D553737C20186C1F006D8857 /* Article+Scriptability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Article+Scriptability.swift"; sourceTree = "<group>"; };
 		D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScriptCommand+NetNewsWire.swift"; sourceTree = "<group>"; };
@@ -2314,6 +2318,8 @@
 				51AB8AB223B7F4C6008F147D /* WebViewController.swift */,
 				517630222336657E00E15FFF /* WebViewProvider.swift */,
 				51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */,
+				D3A398632465054F00F9A366 /* FindInArticleActivity.swift */,
+				D3555BF324664539005E48C3 /* ArticleSearchBar.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -4437,6 +4443,7 @@
 				514219372352510100E07E2C /* ImageScrollView.swift in Sources */,
 				516AE9B32371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift in Sources */,
 				51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */,
+				D3555BF524664566005E48C3 /* ArticleSearchBar.swift in Sources */,
 				B24E9ADE245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */,
 				C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */,
 				51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */,
@@ -4446,6 +4453,7 @@
 				516AE9E02372269A007DEEAA /* IconImage.swift in Sources */,
 				519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */,
 				51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */,
+				D3A39865246505DF00F9A366 /* FindInArticleActivity.swift in Sources */,
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,
 				51C4529F22650A1900C03939 /* AuthorAvatarDownloader.swift in Sources */,
 				5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */,

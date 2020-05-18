@@ -26,6 +26,10 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
 	
+	@IBOutlet private var searchBar: ArticleSearchBar!
+	@IBOutlet private var searchBarBottomConstraint: NSLayoutConstraint!
+	private var defaultControls: [UIBarButtonItem]?
+	
 	private var pageViewController: UIPageViewController!
 	
 	private var currentWebViewController: WebViewController? {
@@ -67,6 +71,10 @@ class ArticleViewController: UIViewController {
 	
 	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
+		if searchBar.isFirstResponder {
+			return nil
+		}
+		
 		return keyboardManager.keyCommands
 	}
 	
@@ -127,12 +135,27 @@ class ArticleViewController: UIViewController {
 		if AppDefaults.articleFullscreenEnabled {
 			controller.hideBars()
 		}
+		
+		// Search bar
+		searchBar.translatesAutoresizingMaskIntoConstraints = false
+		NotificationCenter.default.addObserver(self, selector: #selector(beginFind(_:)), name: .FindInArticle, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(endFind(_:)), name: .EndFindInArticle, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame(_:)), name: UIWindow.keyboardWillChangeFrameNotification, object: nil)
+		searchBar.delegate = self
+		view.bringSubviewToFront(searchBar)
+		
 		updateUI()
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
 		coordinator.isArticleViewControllerPending = false
+	}
+	
+	override func viewWillDisappear(_ animated: Bool) {
+		if searchBar != nil && !searchBar.isHidden {
+			endFind()
+		}
 	}
 	
 	override func viewSafeAreaInsetsDidChange() {
@@ -275,6 +298,80 @@ class ArticleViewController: UIViewController {
 	}
 	
 }
+
+// MARK: Find in Article
+public extension Notification.Name {
+	static let FindInArticle = Notification.Name("FindInArticle")
+	static let EndFindInArticle = Notification.Name("EndFindInArticle")
+}
+
+extension ArticleViewController: SearchBarDelegate {
+	
+	func searchBar(_ searchBar: ArticleSearchBar, textDidChange searchText: String) {
+		currentWebViewController?.searchText(searchText) {
+			found in
+			searchBar.resultsCount = found.count
+			
+			if let index = found.index {
+				searchBar.selectedResult = index + 1
+			}
+		}
+	}
+	
+	func doneWasPressed(_ searchBar: ArticleSearchBar) {
+		NotificationCenter.default.post(name: .EndFindInArticle, object: nil)
+	}
+	
+	func nextWasPressed(_ searchBar: ArticleSearchBar) {
+		if searchBar.selectedResult < searchBar.resultsCount {
+			currentWebViewController?.selectNextSearchResult()
+			searchBar.selectedResult += 1
+		}
+	}
+	
+	func previousWasPressed(_ searchBar: ArticleSearchBar) {
+		if searchBar.selectedResult > 1 {
+			currentWebViewController?.selectPreviousSearchResult()
+			searchBar.selectedResult -= 1
+		}
+	}
+}
+
+extension ArticleViewController {
+	
+	@objc func beginFind(_ _: Any? = nil) {
+		searchBar.isHidden = false
+		navigationController?.setToolbarHidden(true, animated: true)
+		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBar.frame.height
+		searchBar.becomeFirstResponder()
+	}
+	
+	@objc func endFind(_ _: Any? = nil) {
+		searchBar.resignFirstResponder()
+		searchBar.isHidden = true
+		navigationController?.setToolbarHidden(false, animated: true)
+		currentWebViewController?.additionalSafeAreaInsets.bottom = 0
+		currentWebViewController?.endSearch()
+	}
+	
+	@objc func keyboardWillChangeFrame(_ notification: Notification) {
+		if !searchBar.isHidden,
+			let duration = notification.userInfo?[UIWindow.keyboardAnimationDurationUserInfoKey] as? Double,
+			let curveRaw = notification.userInfo?[UIWindow.keyboardAnimationCurveUserInfoKey] as? UInt,
+			let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
+			
+			let curve = UIView.AnimationOptions(rawValue: curveRaw)
+			let newHeight = view.safeAreaLayoutGuide.layoutFrame.maxY - frame.minY
+			currentWebViewController?.additionalSafeAreaInsets.bottom = newHeight + searchBar.frame.height + 10
+			self.searchBarBottomConstraint.constant = newHeight
+			UIView.animate(withDuration: duration, delay: 0, options: curve, animations: {
+				self.view.layoutIfNeeded()
+			})
+		}
+	}
+	
+}
+
 
 // MARK: WebViewControllerDelegate
 
