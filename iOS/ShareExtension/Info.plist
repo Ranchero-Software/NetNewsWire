@@ -34,6 +34,8 @@
 			<dict>
 				<key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
 				<integer>1</integer>
+				<key>NSExtensionActivationSupportsText</key>
+				<string>1</string>
 			</dict>
 			<key>NSExtensionJavaScriptPreprocessingFile</key>
 			<string>SafariExt</string>

@@ -81,6 +81,14 @@ class RootSplitViewController: UISplitViewController {
 	@objc func openInBrowser(_ sender: Any?) {
 		coordinator.showBrowserForCurrentArticle()
 	}
+
+	@objc func openInAppBrowser(_ sender: Any?) {
+		coordinator.showInAppBrowserForCurrentArticle()
+	}
+
+	@objc func openFeedInAppBrowser(_ sender: Any?) {
+		coordinator.showInAppBrowserForCurrentFeed()
+	}
 	
 	@objc func articleSearch(_ sender: Any?) {
 		coordinator.showSearch()
@@ -121,7 +129,11 @@ class RootSplitViewController: UISplitViewController {
 	@objc func goToStarred(_ sender: Any?) {
 		coordinator.selectStarredFeed()
 	}
-	
+
+	@objc func goToSettings(_ sender: Any?) {
+		coordinator.showSettings()
+	}
+
 	@objc func toggleRead(_ sender: Any?) {
 		coordinator.toggleReadForCurrentArticle()
 	}
@@ -129,5 +141,8 @@ class RootSplitViewController: UISplitViewController {
 	@objc func toggleStarred(_ sender: Any?) {
 		coordinator.toggleStarredForCurrentArticle()
 	}
-	
+
+	@objc func toggleSidebar(_ sender: Any?) {
+		coordinator.toggleSidebar()
+	}
 }

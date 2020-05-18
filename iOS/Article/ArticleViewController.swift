@@ -273,8 +273,13 @@ class ArticleViewController: UIViewController {
 	@IBAction func showActivityDialog(_ sender: Any) {
 		currentWebViewController?.showActivityDialog(popOverBarButtonItem: actionBarButtonItem)
 	}
+
+	@objc func toggleReaderView(_ sender: Any?) {
+		currentWebViewController?.toggleArticleExtractor()
+	}
 	
 	// MARK: Keyboard Shortcuts
+
 	@objc func navigateToTimeline(_ sender: Any?) {
 		coordinator.navigateToTimeline()
 	}
@@ -296,7 +301,10 @@ class ArticleViewController: UIViewController {
 	func stopArticleExtractorIfProcessing() {
 		currentWebViewController?.stopArticleExtractorIfProcessing()
 	}
-	
+
+	func openInAppBrowser() {
+		currentWebViewController?.openInAppBrowser()
+	}	
 }
 
 // MARK: Find in Article

@@ -246,6 +246,9 @@
 		51B62E68233186730085F949 /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B62E67233186730085F949 /* IconView.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
+		51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
+		51BC4B00247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
+		51BC4B01247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
 		51BEB22D2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */; };
 		51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */; };
 		51C451A9226377C200C03939 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
@@ -1552,6 +1555,7 @@
 		51B62E67233186730085F949 /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
+		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
 		51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterEnterDetailTableViewController.swift; sourceTree = "<group>"; };
 		51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuPreviewViewController.swift; sourceTree = "<group>"; };
 		51C4524E226506F400C03939 /* UIStoryboard-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIStoryboard-Extensions.swift"; sourceTree = "<group>"; };
@@ -2612,17 +2616,18 @@
 		849A97561ED9EB0D007D329B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */,
 				51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */,
 				849A97731ED9EC04007D329B /* ArticleStringFormatter.swift */,
 				849A97581ED9EB0D007D329B /* ArticleUtilities.swift */,
 				5108F6B52375E612001ABC45 /* CacheCleaner.swift */,
 				516AE9DE2372269A007DEEAA /* IconImage.swift */,
 				849A97971ED9EFAA007D329B /* Node-Extensions.swift */,
+				B24E9ABA245AB88300DA5718 /* NSAttributedString+NetNewsWire.swift */,
 				8405DD9B22153BD7008CE1BF /* NSView-Extensions.swift */,
 				B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */,
 				51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */,
 				84411E701FE5FBFA004B527F /* SmallIconProvider.swift */,
+				51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -4157,6 +4162,7 @@
 				65ED3FCA235DEF6C0081F399 /* SmartFeedsController.swift in Sources */,
 				515A5178243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */,
 				65ED3FCB235DEF6C0081F399 /* SidebarViewController.swift in Sources */,
+				51BC4B00247277E0000A6ED8 /* URL-Extensions.swift in Sources */,
 				65ED3FCD235DEF6C0081F399 /* SidebarOutlineView.swift in Sources */,
 				65ED3FCE235DEF6C0081F399 /* DetailKeyboardDelegate.swift in Sources */,
 				65ED3FCF235DEF6C0081F399 /* TimelineContainerView.swift in Sources */,
@@ -4478,6 +4484,7 @@
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* InteractiveNavigationController.swift in Sources */,
 				769F2ED513DA03EE75B993A8 /* NewsBlurAccountViewController.swift in Sources */,
+				51BC4B01247277E0000A6ED8 /* URL-Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4548,6 +4555,7 @@
 				84A1500520048DDF0046AD9A /* SendToMarsEditCommand.swift in Sources */,
 				51FE10032345529D0056195D /* UserNotificationManager.swift in Sources */,
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
+				51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleStylesManager.swift in Sources */,
 				8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */,
 				51107746243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */,

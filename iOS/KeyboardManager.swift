@@ -138,6 +138,9 @@ private extension KeyboardManager {
 		let goToStarredTitle = NSLocalizedString("Go To Starred", comment: "Go To Starred")
 		keys.append(KeyboardManager.createKeyCommand(title: goToStarredTitle, action: "goToStarred:", input: "3", modifiers: [.command]))
 
+		let gotoSettings = NSLocalizedString("Go To Settings", comment: "Go To Settings")
+			keys.append(KeyboardManager.createKeyCommand(title: gotoSettings, action: "goToSettings:", input: ",", modifiers: [.command]))
+		
 		let articleSearchTitle = NSLocalizedString("Article Search", comment: "Article Search")
 		keys.append(KeyboardManager.createKeyCommand(title: articleSearchTitle, action: "articleSearch:", input: "f", modifiers: [.command, .alternate]))
 
@@ -174,6 +177,9 @@ private extension KeyboardManager {
 		let openInBrowserTitle = NSLocalizedString("Open In Browser", comment: "Open In Browser")
 		keys.append(KeyboardManager.createKeyCommand(title: openInBrowserTitle, action: "openInBrowser:", input: UIKeyCommand.inputRightArrow, modifiers: [.command]))
 
+		let openInAppBrowserTitle = NSLocalizedString("Open In App Browser", comment: "Open In App Browser")
+		keys.append(KeyboardManager.createKeyCommand(title: openInAppBrowserTitle, action: "openInAppBrowser:", input: "\r", modifiers: []))
+
 		let toggleReadTitle = NSLocalizedString("Toggle Read Status", comment: "Toggle Read Status")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleReadTitle, action: "toggleRead:", input: "u", modifiers: [.command, .shift]))
 
@@ -188,6 +194,12 @@ private extension KeyboardManager {
 		
 		let findInArticleTitle = NSLocalizedString("Find in Article", comment: "Find in Article")
 		keys.append(KeyboardManager.createKeyCommand(title: findInArticleTitle, action: "beginFind:", input: "f", modifiers: [.command]))
+
+		let toggleSidebar = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
+		keys.append(KeyboardManager.createKeyCommand(title: toggleSidebar, action: "toggleSidebar:", input: "s", modifiers: [.command, .control]))
+
+		let toggleReaderView = NSLocalizedString("Toggle Reader View", comment: "Toggle Reader View")
+		keys.append(KeyboardManager.createKeyCommand(title: toggleReaderView, action: "toggleReaderView:", input: "r", modifiers: [.command, .shift]))
 
 		return keys
 	}

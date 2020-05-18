@@ -91,11 +91,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
-		
-		UNUserNotificationCenter.current().delegate = self
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { _, _ in }
-		UIApplication.shared.registerForRemoteNotifications()
+				
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					UIApplication.shared.registerForRemoteNotifications()
+				}
+			}
+		}
 
+		UNUserNotificationCenter.current().delegate = self
 		userNotificationManager = UserNotificationManager()
 
 		extensionContainersFile = ExtensionContainersFile()

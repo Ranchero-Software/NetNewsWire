@@ -12,6 +12,7 @@ import RSCore
 import Account
 import Articles
 import SafariServices
+import MessageUI
 
 protocol WebViewControllerDelegate: class {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
@@ -60,7 +61,7 @@ class WebViewController: UIViewController {
 	
 	private(set) var article: Article?
 	
-	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 1.0)
+	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 0.3)
 	var windowScrollY = 0
 	
 	override func viewDidLoad() {
@@ -227,7 +228,15 @@ class WebViewController: UIViewController {
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
-	
+
+	func openInAppBrowser() {
+		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
+			return
+		}
+
+		let vc = SFSafariViewController(url: url)
+		present(vc, animated: true)
+	}
 }
 
 // MARK: ArticleExtractorDelegate
@@ -291,7 +300,7 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 extension WebViewController: WKNavigationDelegate {
 	
 	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		if view.subviews.count > 1 {
+		while view.subviews.count > 1 {
 			view.subviews.last?.removeFromSuperview()
 		}
 	}
@@ -317,6 +326,30 @@ extension WebViewController: WKNavigationDelegate {
 					let vc = SFSafariViewController(url: url)
 					self.present(vc, animated: true)
 				}
+			} else if components?.scheme == "mailto" {
+				decisionHandler(.cancel)
+				
+				guard let emailAddress = url.emailAddress else {
+					return
+				}
+				
+				if MFMailComposeViewController.canSendMail() {
+					let mailComposeViewController = MFMailComposeViewController()
+					mailComposeViewController.setToRecipients([emailAddress])
+					mailComposeViewController.mailComposeDelegate = self
+					self.present(mailComposeViewController, animated: true, completion: {})
+				} else {
+					let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
+					alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
+					self.present(alert, animated: true, completion: nil)
+				}
+			} else if components?.scheme == "tel" {
+				decisionHandler(.cancel)
+				
+				if UIApplication.shared.canOpenURL(url) {
+					UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
+				}
+				
 			} else {
 				decisionHandler(.allow)
 			}
@@ -394,6 +427,15 @@ extension WebViewController: UIScrollViewDelegate {
 			guard javascriptScrollY != 33554432 else { return }
 			self.windowScrollY = javascriptScrollY
 		}
+	}
+	
+}
+
+// MARK: MFMailComposeViewControllerDelegate
+extension WebViewController: MFMailComposeViewControllerDelegate {
+	
+	func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+		self.dismiss(animated: true, completion: nil)
 	}
 	
 }
@@ -687,7 +729,6 @@ private struct FindInArticleOptions: Codable {
 	var regex = false
 }
 
-
 internal struct FindInArticleState: Codable {
 	struct WebViewClientRect: Codable {
 		let x: Double
@@ -740,4 +781,5 @@ extension WebViewController {
 	func selectPreviousSearchResult() {
 		webView?.evaluateJavaScript("selectPreviousResult()")
 	}
+	
 }
