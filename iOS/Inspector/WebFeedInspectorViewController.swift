@@ -55,9 +55,8 @@ class WebFeedInspectorViewController: UITableViewController {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		
-		NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main, using: { _ in
-			self.updateNotificationSettings()
-		})
+		NotificationCenter.default.addObserver(self, selector: #selector(updateNotificationSettings), name: UIApplication.willEnterForegroundNotification, object: nil)
+		
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -197,6 +196,7 @@ extension WebFeedInspectorViewController: UITextFieldDelegate {
 
 extension WebFeedInspectorViewController {
 	
+	@objc
 	func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			DispatchQueue.main.async {
