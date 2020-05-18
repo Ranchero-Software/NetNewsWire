@@ -90,9 +90,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
-		
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
-			if granted {
+				
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
 					UIApplication.shared.registerForRemoteNotifications()
 				}
