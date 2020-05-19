@@ -33,6 +33,7 @@ struct AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let importOPMLAccountID = "importOPMLAccountID"
 		static let exportOPMLAccountID = "exportOPMLAccountID"
+		static let defaultBrowserID = "defaultBrowserID"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -169,6 +170,15 @@ struct AppDefaults {
 		}
 		set {
 			setString(for: Key.exportOPMLAccountID, newValue)
+		}
+	}
+
+	static var defaultBrowserID: String? {
+		get {
+			return string(for: Key.defaultBrowserID)
+		}
+		set {
+			setString(for: Key.defaultBrowserID, newValue)
 		}
 	}
 	

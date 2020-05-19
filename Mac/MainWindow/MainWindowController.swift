@@ -93,6 +93,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
 		}
+
+		defaultBrowserDidChange(nil)
 	}
 
 	// MARK: - API
@@ -166,6 +168,36 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			}
 		}
 		
+	}
+
+	@objc func defaultBrowserDidChange(_ note: Notification?) {
+		guard let item = self.window?.toolbar?.items.first(where: { $0.action == #selector(openArticleInBrowser(_:)) }) else {
+			return
+		}
+
+		guard let button = item.view as? NSButton else { return }
+
+		var browserName = NSLocalizedString("Browser", comment: "Browser")
+		var icon = NSImage(named: "openInBrowser")!
+
+		var currentBrowser: MacWebBrowser?
+
+		if let browserID = AppDefaults.defaultBrowserID {
+			currentBrowser = MacWebBrowser(bundleIdentifier: browserID)
+		} else {
+			currentBrowser = MacWebBrowser.default
+		}
+
+		if let currentBrowser = currentBrowser {
+			icon = currentBrowser.icon!
+			icon.size = NSSize(width: 16.0, height: 16.0)
+			browserName = currentBrowser.name!
+		}
+
+		button.image = icon
+
+		let format = NSLocalizedString("Open in $@", comment: "Open in Browser toolbar item tooltip format")
+		item.toolTip = String(format: format, browserName)
 	}
 	
 	// MARK: - Toolbar
