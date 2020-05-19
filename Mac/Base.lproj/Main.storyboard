@@ -659,6 +659,7 @@
                         <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                         <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
                         <outlet property="groupArticlesByFeedMenuItem" destination="Zxm-O6-NRE" id="gwn-VT-2YZ"/>
+                        <outlet property="openInBrowserMenuItem" destination="4iQ-1v-dTa" id="8fC-GY-YmU"/>
                         <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
                         <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
                     </connections>
