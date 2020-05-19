@@ -11,14 +11,26 @@ import RSWeb
 
 struct Browser {
 
-	static func open(_ urlString: String, invertPreference invert: Bool = false) {
+	static var defaultBrowser: MacWebBrowser? {
+		if let bundleID = AppDefaults.defaultBrowserID, let browser = MacWebBrowser(bundleIdentifier: bundleID) {
+			return browser
+		}
+
+		return nil
+	}
+
+	static func open(_ urlString: String) {
 		// Opens according to prefs.
 		open(urlString, inBackground: invert ? !AppDefaults.openInBrowserInBackground : AppDefaults.openInBrowserInBackground)
 	}
 
 	static func open(_ urlString: String, inBackground: Bool) {
 		if let url = URL(string: urlString) {
-			MacWebBrowser.openURL(url, inBackground: inBackground)
+			if let defaultBrowser = defaultBrowser {
+				defaultBrowser.openURL(url, inBackground: inBackground)
+			} else {
+				MacWebBrowser.openURL(url, inBackground: inBackground)
+			}
 		}
 	}
 }

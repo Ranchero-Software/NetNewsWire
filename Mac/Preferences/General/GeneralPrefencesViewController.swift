@@ -8,10 +8,12 @@
 
 import AppKit
 import RSCore
+import RSWeb
 
 final class GeneralPreferencesViewController: NSViewController {
 
 	@IBOutlet var defaultRSSReaderPopup: NSPopUpButton!
+	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
 	private var rssReaderInfo = RSSReaderInfo()
 
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
@@ -47,6 +49,16 @@ final class GeneralPreferencesViewController: NSViewController {
 		registerAppWithBundleID(bundleID)
 		updateUI()
 	}
+
+	@IBAction func browserPopUpDidChangeValue(_ sender: Any?) {
+		guard let menuItem = defaultBrowserPopup.selectedItem else {
+			return
+		}
+		let bundleID = menuItem.representedObject as? String
+		AppDefaults.defaultBrowserID = bundleID
+		NotificationCenter.default.post(name: .DefaultBrowserDidChange, object: nil)
+		updateUI()
+	}
 }
 
 // MARK: - Private
@@ -60,6 +72,7 @@ private extension GeneralPreferencesViewController {
 	func updateUI() {
 		rssReaderInfo = RSSReaderInfo()
 		updateRSSReaderPopup()
+		updateBrowserPopup()
 	}
 
 	func updateRSSReaderPopup() {
@@ -122,6 +135,37 @@ private extension GeneralPreferencesViewController {
 	func registerAppWithBundleID(_ bundleID: String) {
 		NSWorkspace.shared.setDefaultAppBundleID(forURLScheme: "feed", to: bundleID)
 		NSWorkspace.shared.setDefaultAppBundleID(forURLScheme: "feeds", to: bundleID)
+	}
+
+	func updateBrowserPopup() {
+		let menu = defaultBrowserPopup.menu!
+		let allBrowsers = MacWebBrowser.sortedBrowsers()
+
+		menu.removeAllItems()
+
+		let defaultBrowser = MacWebBrowser.default
+
+		let defaultBrowserFormat = NSLocalizedString("System Default (%@)", comment: "Default browser item title format")
+		let defaultBrowserTitle = String(format: defaultBrowserFormat, defaultBrowser.name!)
+		let item = NSMenuItem(title: defaultBrowserTitle, action: nil, keyEquivalent: "")
+		let icon = defaultBrowser.icon!
+		icon.size = NSSize(width: 16.0, height: 16.0)
+		item.image = icon
+
+		menu.addItem(item)
+		menu.addItem(NSMenuItem.separator())
+
+		for browser in allBrowsers {
+			let item = NSMenuItem(title: browser.name!, action: nil, keyEquivalent: "")
+			item.representedObject = browser.bundleIdentifier
+
+			let icon = browser.icon!
+			icon.size = NSSize(width: 16.0, height: 16.0)
+			item.image = browser.icon
+			menu.addItem(item)
+		}
+
+		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.defaultBrowserID))
 	}
 }
 

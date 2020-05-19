@@ -90,11 +90,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
+		NotificationCenter.default.addObserver(self, selector: #selector(defaultBrowserDidChange(_:)), name: .DefaultBrowserDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(defaultBrowserDidChange(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
+
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
+			self.updateOpenInBrowserToolbarItem()
 		}
 
-		defaultBrowserDidChange(nil)
 	}
 
 	// MARK: - API
@@ -170,7 +173,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 	}
 
-	@objc func defaultBrowserDidChange(_ note: Notification?) {
+	func updateOpenInBrowserToolbarItem() {
 		guard let item = self.window?.toolbar?.items.first(where: { $0.action == #selector(openArticleInBrowser(_:)) }) else {
 			return
 		}
@@ -196,8 +199,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		button.image = icon
 
-		let format = NSLocalizedString("Open in $@", comment: "Open in Browser toolbar item tooltip format")
+		let format = NSLocalizedString("Open in %@", comment: "Open in Browser toolbar item tooltip format")
 		item.toolTip = String(format: format, browserName)
+	}
+
+	@objc func defaultBrowserDidChange(_ note: Notification?) {
+		updateOpenInBrowserToolbarItem()
 	}
 	
 	// MARK: - Toolbar
