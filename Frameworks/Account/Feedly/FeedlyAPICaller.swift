@@ -281,14 +281,8 @@ final class FeedlyAPICaller {
 			}
 		}
 		
-		guard let encodedFeedId = encodeForURLPath(feedId) else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(feedId)))
-			}
-		}
-		
 		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/\(encodedFeedId)"
+		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/.mdelete"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -299,6 +293,19 @@ final class FeedlyAPICaller {
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+		
+		do {
+			struct RemovableFeed: Encodable {
+				let id: String
+			}
+			let encoder = JSONEncoder()
+			let data = try encoder.encode([RemovableFeed(id: feedId)])
+			request.httpBody = data
+		} catch {
+			return DispatchQueue.main.async {
+				completion(.failure(error))
+			}
+		}
 		
 		transport.send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
