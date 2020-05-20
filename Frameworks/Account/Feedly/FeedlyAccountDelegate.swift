@@ -37,12 +37,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	
 	var credentials: Credentials? {
 		didSet {
+			#if DEBUG
 			// https://developer.feedly.com/v3/developer/
 			if let devToken = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !devToken.isEmpty {
 				caller.credentials = Credentials(type: .oauthAccessToken, username: "Developer", secret: devToken)
-			} else {
-				caller.credentials = credentials
+				return
 			}
+			#endif
+			 caller.credentials = credentials
 		}
 	}
 	
@@ -51,6 +53,10 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	var accountMetadata: AccountMetadata?
 	
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+	
+	/// Set on `accountDidInitialize` for the purposes of refreshing OAuth tokens when they expire.
+	/// See the implementation for `FeedlyAPICallerDelegate`.
+	private weak var initializedAccount: Account?
 	
 	internal let caller: FeedlyAPICaller
 	
@@ -91,6 +97,8 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
 		self.oauthAuthorizationClient = api.oauthAuthorizationClient
+		
+		self.caller.delegate = self
 	}
 	
 	// MARK: Account API
@@ -112,16 +120,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		
 		let log = self.log
 		
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, refreshDate: Date(), log: log)
-		refreshAccessToken.downloadProgress = refreshProgress
-		operationQueue.add(refreshAccessToken)
-		
 		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: database, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress, log: log)
 		
 		syncAllOperation.downloadProgress = refreshProgress
-		
-		// Ensure the sync uses the latest credential.
-		syncAllOperation.addDependency(refreshAccessToken)
 		
 		let date = Date()
 		syncAllOperation.syncCompletionHandler = { [weak self] result in
@@ -500,6 +501,7 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	}
 	
 	func accountDidInitialize(_ account: Account) {
+		initializedAccount = account
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 	}
 	
@@ -531,5 +533,39 @@ final class FeedlyAccountDelegate: AccountDelegate {
 	func resume() {
 		database.resume()
 		caller.resume()
+	}
+}
+
+extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
+	
+	func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ()) {
+		guard let account = initializedAccount else {
+			completionHandler(false)
+			return
+		}
+		
+		/// Captures a failure to refresh a token, assuming that it was refreshed unless told otherwise.
+		final class RefreshAccessTokenOperationDelegate: FeedlyOperationDelegate {
+			
+			private(set) var didReauthorize = true
+			
+			func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
+				didReauthorize = false
+			}
+		}
+		
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, refreshDate: Date(), log: log)
+		refreshAccessToken.downloadProgress = refreshProgress
+		
+		/// This must be strongly referenced by the completionBlock of the `FeedlyRefreshAccessTokenOperation`.
+		let refreshAccessTokenDelegate = RefreshAccessTokenOperationDelegate()
+		refreshAccessToken.delegate = refreshAccessTokenDelegate
+		
+		refreshAccessToken.completionBlock = { operation in
+			assert(Thread.isMainThread)
+			completionHandler(refreshAccessTokenDelegate.didReauthorize && !operation.isCanceled)
+		}
+		
+		MainThreadOperationQueue.shared.add(refreshAccessToken)
 	}
 }
