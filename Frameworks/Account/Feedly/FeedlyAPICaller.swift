@@ -9,6 +9,12 @@
 import Foundation
 import RSWeb
 
+protocol FeedlyAPICallerDelegate: class {
+	/// Implemented by the `FeedlyAccountDelegate` reauthorize the client with a fresh OAuth token so the client can retry the unauthorized request.
+	/// Pass `true` to the completion handler if the failing request should be retried with a fresh token or `false` if the unauthorized request should complete with the original failure error.
+	func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ())
+}
+
 final class FeedlyAPICaller {
 	
 	enum API {
@@ -47,6 +53,8 @@ final class FeedlyAPICaller {
 		self.baseUrlComponents = api.baseUrlComponents
 	}
 	
+	weak var delegate: FeedlyAPICallerDelegate?
+	
 	var credentials: Credentials?
 	
 	var server: String? {
@@ -67,6 +75,54 @@ final class FeedlyAPICaller {
 	
 	func resume() {
 		isSuspended = false
+	}
+	
+	func send<R: Decodable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+		transport.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { [weak self] result in
+			assert(Thread.isMainThread)
+			
+			switch result {
+			case .success:
+				completion(result)
+			case .failure(let error):
+				switch error {
+				case TransportError.httpError(let statusCode) where statusCode == 401:
+					
+					assert(self == nil ? true : self?.delegate != nil, "Check the delegate is set to \(FeedlyAccountDelegate.self).")
+					
+					guard let self = self, let delegate = self.delegate else {
+						completion(result)
+						return
+					}
+					
+					/// Capture the credentials before the reauthorization to check for a change.
+					let credentialsBefore = self.credentials
+					
+					delegate.reauthorizeFeedlyAPICaller(self) { [weak self] isReauthorizedAndShouldRetry in
+						assert(Thread.isMainThread)
+						
+						guard isReauthorizedAndShouldRetry, let self = self else {
+							completion(result)
+							return
+						}
+						
+						// Check for a change. Not only would it help debugging, but it'll also catch an infinitely recursive attempt to refresh.
+						guard let accessToken = self.credentials?.secret, accessToken != credentialsBefore?.secret else {
+							assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: self.delegate)) set them on \(self)?")
+							completion(result)
+							return
+						}
+						
+						var reauthorizedRequest = request
+						reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+						
+						self.send(request: reauthorizedRequest, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding, completion: completion)
+					}
+				default:
+					completion(result)
+				}
+			}
+		}
 	}
 	
 	func importOpml(_ opmlData: Data, completion: @escaping (Result<Void, Error>) -> ()) {
@@ -95,7 +151,7 @@ final class FeedlyAPICaller {
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		request.httpBody = opmlData
 		
-		transport.send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (httpResponse, _)):
 				if httpResponse.statusCode == 200 {
@@ -147,7 +203,7 @@ final class FeedlyAPICaller {
 			}
 		}
 		
-		transport.send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (httpResponse, collections)):
 				if httpResponse.statusCode == 200, let collection = collections?.first {
@@ -200,7 +256,7 @@ final class FeedlyAPICaller {
 			}
 		}
 		
-		transport.send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (httpResponse, collections)):
 				if httpResponse.statusCode == 200, let collection = collections?.first {
@@ -248,7 +304,7 @@ final class FeedlyAPICaller {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		transport.send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (httpResponse, _)):
 				if httpResponse.statusCode == 200 {
@@ -281,14 +337,8 @@ final class FeedlyAPICaller {
 			}
 		}
 		
-		guard let encodedFeedId = encodeForURLPath(feedId) else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceId(feedId)))
-			}
-		}
-		
 		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/\(encodedFeedId)"
+		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/.mdelete"
 		
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -300,7 +350,20 @@ final class FeedlyAPICaller {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		transport.send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		do {
+			struct RemovableFeed: Encodable {
+				let id: String
+			}
+			let encoder = JSONEncoder()
+			let data = try encoder.encode([RemovableFeed(id: feedId)])
+			request.httpBody = data
+		} catch {
+			return DispatchQueue.main.async {
+				completion(.failure(error))
+			}
+		}
+		
+		send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success((let httpResponse, _)):
 				if httpResponse.statusCode == 200 {
@@ -362,7 +425,7 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 			}
 		}
 		
-		transport.send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success((_, let collectionFeeds)):
 				if let feeds = collectionFeeds {
@@ -428,7 +491,7 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 			return
 		}
 		
-		transport.send(request: request, resultType: AccessTokenResponse.self, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: AccessTokenResponse.self, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, tokenResponse)):
 				if let response = tokenResponse {
@@ -475,7 +538,7 @@ extension FeedlyAPICaller: OAuthAcessTokenRefreshRequesting {
 			return
 		}
 		
-		transport.send(request: request, resultType: AccessTokenResponse.self, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: AccessTokenResponse.self, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, tokenResponse)):
 				if let response = tokenResponse {
@@ -516,7 +579,7 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		transport.send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, collections)):
 				if let response = collections {
@@ -584,7 +647,7 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		transport.send(request: request, resultType: FeedlyStream.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: FeedlyStream.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, collections)):
 				if let response = collections {
@@ -652,7 +715,7 @@ extension FeedlyAPICaller: FeedlyGetStreamIdsService {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		transport.send(request: request, resultType: FeedlyStreamIds.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: FeedlyStreamIds.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, collections)):
 				if let response = collections {
@@ -707,7 +770,7 @@ extension FeedlyAPICaller: FeedlyGetEntriesService {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		transport.send(request: request, resultType: [FeedlyEntry].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: [FeedlyEntry].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, entries)):
 				if let response = entries {
@@ -766,7 +829,7 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 			}
 		}
 		
-		transport.send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (httpResponse, _)):
 				if httpResponse.statusCode == 200 {
@@ -810,7 +873,7 @@ extension FeedlyAPICaller: FeedlySearchService {
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		
-		transport.send(request: request, resultType: FeedlyFeedsSearchResponse.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: FeedlyFeedsSearchResponse.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (_, searchResponse)):
 				if let response = searchResponse {
@@ -852,7 +915,7 @@ extension FeedlyAPICaller: FeedlyLogoutService {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		transport.send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (httpResponse, _)):
 				if httpResponse.statusCode == 200 {

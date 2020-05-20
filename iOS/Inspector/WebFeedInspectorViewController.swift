@@ -9,6 +9,7 @@
 import UIKit
 import Account
 import SafariServices
+import UserNotifications
 
 class WebFeedInspectorViewController: UITableViewController {
 	
@@ -38,6 +39,8 @@ class WebFeedInspectorViewController: UITableViewController {
 		return webFeed.homePageURL == nil
 	}
 	
+	private var userNotificationSettings: UNNotificationSettings?
+	
 	override func viewDidLoad() {
 		tableView.register(InspectorIconHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		
@@ -51,6 +54,13 @@ class WebFeedInspectorViewController: UITableViewController {
 		feedURLLabel.text = webFeed.url
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(updateNotificationSettings), name: UIApplication.willEnterForegroundNotification, object: nil)
+		
+	}
+	
+	override func viewDidAppear(_ animated: Bool) {
+		updateNotificationSettings()
 	}
 	
 	override func viewDidDisappear(_ animated: Bool) {
@@ -67,7 +77,30 @@ class WebFeedInspectorViewController: UITableViewController {
 	}
 	
 	@IBAction func notifyAboutNewArticlesChanged(_ sender: Any) {
-		webFeed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
+		guard let settings = userNotificationSettings else {
+			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
+			return
+		}
+		if settings.authorizationStatus == .denied {
+			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
+			present(notificationUpdateErrorAlert(), animated: true, completion: nil)
+		} else if settings.authorizationStatus == .authorized {
+			webFeed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
+		} else {
+			UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
+				self.updateNotificationSettings()
+				if granted {
+					DispatchQueue.main.async {
+						self.webFeed.isNotifyAboutNewArticles = self.notifyAboutNewArticlesSwitch.isOn
+						UIApplication.shared.registerForRemoteNotifications()
+					}
+				} else {
+					DispatchQueue.main.async {
+						self.notifyAboutNewArticlesSwitch.isOn = !self.notifyAboutNewArticlesSwitch.isOn
+					}
+				}
+			}
+		}
 	}
 	
 	@IBAction func alwaysShowReaderViewChanged(_ sender: Any) {
@@ -155,6 +188,36 @@ extension WebFeedInspectorViewController: UITextFieldDelegate {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return true
+	}
+	
+}
+
+// MARK: UNUserNotificationCenter
+
+extension WebFeedInspectorViewController {
+	
+	@objc
+	func updateNotificationSettings() {
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			DispatchQueue.main.async {
+				self.userNotificationSettings = settings
+				if settings.authorizationStatus == .authorized {
+					UIApplication.shared.registerForRemoteNotifications()
+				}
+			}
+		}
+	}
+	
+	func notificationUpdateErrorAlert() -> UIAlertController {
+		let alert = UIAlertController(title: NSLocalizedString("Enable Notifications", comment: "Notifications"),
+									  message: NSLocalizedString("Notifications need to be enabled in the Settings app.", comment: "Notifications need to be enabled in the Settings app."), preferredStyle: .alert)
+		let openSettings = UIAlertAction(title: NSLocalizedString("Open Settings", comment: "Open Settings"), style: .default) { (action) in
+			UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
+		}
+		let dismiss = UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil)
+		alert.addAction(openSettings)
+		alert.addAction(dismiss)
+		return alert
 	}
 	
 }
