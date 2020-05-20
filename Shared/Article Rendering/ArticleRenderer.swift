@@ -344,7 +344,7 @@ private extension ArticleRenderer {
 			},
 			stripStyles: function() {
 				document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
-				document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font"]));
+				document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height"]));
 			},
 			linkHover: function() {
 				var anchors = document.getElementsByTagName("a");
