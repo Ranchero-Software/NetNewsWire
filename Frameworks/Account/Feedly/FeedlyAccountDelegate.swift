@@ -554,7 +554,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			}
 		}
 		
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, refreshDate: Date(), log: log)
+		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient, log: log)
 		refreshAccessToken.downloadProgress = refreshProgress
 		
 		/// This must be strongly referenced by the completionBlock of the `FeedlyRefreshAccessTokenOperation`.
