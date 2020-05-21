@@ -182,7 +182,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
 				item.title = Browser.titleForOpenInBrowserInverted
 			}
-			
+
 			return currentLink != nil
 		}
 		
@@ -264,8 +264,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
+		let invert = NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false
+
 		if let link = currentLink {
-			Browser.open(link)
+			Browser.open(link, invertPreference: invert)
 		}		
 	}
 

@@ -6,16 +6,14 @@
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import RSWeb
 
 struct Browser {
 
-	static func open(_ urlString: String) {
-		let shouldInvertPreference = NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false
-
+	static func open(_ urlString: String, invertPreference invert: Bool = false) {
 		// Opens according to prefs.
-		open(urlString, inBackground: shouldInvertPreference ? !AppDefaults.openInBrowserInBackground : AppDefaults.openInBrowserInBackground)
+		open(urlString, inBackground: invert ? !AppDefaults.openInBrowserInBackground : AppDefaults.openInBrowserInBackground)
 	}
 
 	static func open(_ urlString: String, inBackground: Bool) {
