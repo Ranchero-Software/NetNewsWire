@@ -264,10 +264,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
-		let invert = NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false
-
 		if let link = currentLink {
-			Browser.open(link, invertPreference: invert)
+			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 		}		
 	}
 

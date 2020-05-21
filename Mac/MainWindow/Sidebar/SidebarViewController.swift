@@ -237,7 +237,7 @@ protocol SidebarDelegate: class {
 		guard let feed = singleSelectedWebFeed, let homePageURL = feed.homePageURL else {
 			return
 		}
-		Browser.open(homePageURL)
+		Browser.open(homePageURL, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 
 	@IBAction func gotoToday(_ sender: Any?) {
