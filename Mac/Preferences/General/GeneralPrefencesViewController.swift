@@ -56,7 +56,6 @@ final class GeneralPreferencesViewController: NSViewController {
 		}
 		let bundleID = menuItem.representedObject as? String
 		AppDefaults.defaultBrowserID = bundleID
-		NotificationCenter.default.post(name: .DefaultBrowserDidChange, object: nil)
 		updateUI()
 	}
 }

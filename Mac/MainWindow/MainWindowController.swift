@@ -11,7 +11,6 @@ import UserNotifications
 import Articles
 import Account
 import RSCore
-import RSWeb
 
 enum TimelineSourceMode {
 	case regular, search
@@ -90,12 +89,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(defaultBrowserDidChange(_:)), name: .DefaultBrowserDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(defaultBrowserDidChange(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
-
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
-			self.updateOpenInBrowserToolbarItem()
 		}
 
 	}
@@ -173,40 +168,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 	}
 
-	func updateOpenInBrowserToolbarItem() {
-		guard let item = self.window?.toolbar?.items.first(where: { $0.action == #selector(openArticleInBrowser(_:)) }) else {
-			return
-		}
-
-		guard let button = item.view as? NSButton else { return }
-
-		var browserName = NSLocalizedString("Browser", comment: "Browser")
-		var icon = NSImage(named: "openInBrowser")!
-
-		var currentBrowser: MacWebBrowser?
-
-		if let browserID = AppDefaults.defaultBrowserID {
-			currentBrowser = MacWebBrowser(bundleIdentifier: browserID)
-		} else {
-			currentBrowser = MacWebBrowser.default
-		}
-
-		if let currentBrowser = currentBrowser {
-			icon = currentBrowser.icon!
-			icon.size = NSSize(width: 16.0, height: 16.0)
-			browserName = currentBrowser.name!
-		}
-
-		button.image = icon
-
-		let format = NSLocalizedString("Open in %@", comment: "Open in Browser toolbar item tooltip format")
-		item.toolTip = String(format: format, browserName)
-	}
-
-	@objc func defaultBrowserDidChange(_ note: Notification?) {
-		updateOpenInBrowserToolbarItem()
-	}
-	
 	// MARK: - Toolbar
 	
 	@objc func makeToolbarValidate() {
