@@ -269,6 +269,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		openArticleInBrowser(sender)
 	}
 
+	@IBAction func openInBrowserAlternate(_ sender: Any?) {
+		if let link = currentLink {
+			Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)
+		}
+	}
+
 	@IBAction func nextUnread(_ sender: Any?) {
 		guard let timelineViewController = currentTimelineViewController, let sidebarViewController = sidebarViewController else {
 			return
