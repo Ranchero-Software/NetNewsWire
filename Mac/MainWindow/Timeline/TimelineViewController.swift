@@ -725,6 +725,10 @@ extension TimelineViewController: NSUserInterfaceValidations {
 
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		if item.action == #selector(openArticleInBrowser(_:)) {
+			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
+				item.title = Browser.titleForOpenInBrowserInverted
+			}
+
 			let currentLink = oneSelectedArticle?.preferredLink
 			return currentLink != nil
 		}
