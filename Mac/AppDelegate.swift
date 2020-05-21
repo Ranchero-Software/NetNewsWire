@@ -59,7 +59,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var groupArticlesByFeedMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
-	@IBOutlet var openInBrowserMenuItem: NSMenuItem!
 
 	var unreadCount = 0 {
 		didSet {
@@ -110,9 +109,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
-
-		NotificationCenter.default.addObserver(self, selector: #selector(defaultBrowserDidChange(_:)), name: .DefaultBrowserDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(defaultBrowserDidChange(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
 
 		appDelegate = self
 	}
@@ -729,30 +725,6 @@ private extension AppDelegate {
 	func updateGroupByFeedMenuItem() {
 		let groupByFeedEnabled = AppDefaults.timelineGroupByFeed
 		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
-	}
-
-	func updateOpenInBrowserMenuItem() {
-		var browserName = NSLocalizedString("Browser", comment: "Browser")
-
-		var currentBrowser: MacWebBrowser?
-
-		if let browserID = AppDefaults.defaultBrowserID {
-			currentBrowser = MacWebBrowser(bundleIdentifier: browserID)
-		} else {
-			currentBrowser = MacWebBrowser.default
-		}
-
-		if let currentBrowser = currentBrowser {
-			browserName = currentBrowser.name!
-		}
-
-		let format = NSLocalizedString("Open in %@", comment: "Open in Browser menu item title format")
-		openInBrowserMenuItem.title = String(format: format, browserName)
-
-	}
-
-	@objc func defaultBrowserDidChange(_ note: Notification) {
-		updateOpenInBrowserMenuItem()
 	}
 }
 
