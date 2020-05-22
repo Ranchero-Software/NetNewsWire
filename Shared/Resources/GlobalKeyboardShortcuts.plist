@@ -146,7 +146,7 @@
 		<key>shiftModifier</key>
 		<true/>
 		<key>action</key>
-		<string>openInBrowserAlternate:</string>
+		<string>openInBrowserUsingOppositeOfSettings:</string>
 	</dict>
 	<dict>
 		<key>key</key>
@@ -154,7 +154,7 @@
 		<key>shiftModifier</key>
 		<true/>
 		<key>action</key>
-		<string>openInBrowserAlternate:</string>
+		<string>openInBrowserUsingOppositeOfSettings:</string>
 	</dict>
 	<dict>
 		<key>key</key>
@@ -162,7 +162,7 @@
 		<key>shiftModifier</key>
 		<true/>
 		<key>action</key>
-		<string>openInBrowserAlternate:</string>
+		<string>openInBrowserUsingOppositeOfSettings:</string>
 	</dict>
 </array>
 </plist>

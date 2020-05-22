@@ -269,7 +269,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		openArticleInBrowser(sender)
 	}
 
-	@IBAction func openInBrowserAlternate(_ sender: Any?) {
+	@IBAction func openInBrowserUsingOppositeOfSettings(_ sender: Any?) {
 		if let link = currentLink {
 			Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)
 		}
