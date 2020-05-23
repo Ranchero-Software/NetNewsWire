@@ -36,8 +36,8 @@ set totalFeeds to 0
 tell application "NetNewsWire"
 	set allAccounts to every account
 	repeat with nthAccount in allAccounts
-		set allFeeds to every webFeed of nthAccount
-		repeat with nthFeed in allFeeds
+		set userFeeds to allFeeds of nthAccount
+		repeat with nthFeed in userFeeds
 			set feedname to name of nthFeed
 			set articleCount to count (get every article of nthFeed)
 			set readCount to count (get every article of nthFeed where read is true)

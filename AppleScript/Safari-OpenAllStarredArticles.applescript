@@ -38,8 +38,8 @@ set safariWindow to missing value
 tell application "NetNewsWire"
 	set allAccounts to every account
 	repeat with nthAccount in allAccounts
-		set allFeeds to every webFeed of nthAccount
-		repeat with nthFeed in allFeeds
+		set userFeeds to allFeeds of nthAccount
+		repeat with nthFeed in userFeeds
 			set starredArticles to (get every article of nthFeed where starred is true)
 			repeat with nthArticle in starredArticles
 				my openTabInSafari(url of nthArticle)
