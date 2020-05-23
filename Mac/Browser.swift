@@ -11,9 +11,9 @@ import RSWeb
 
 struct Browser {
 
-	static func open(_ urlString: String) {
+	static func open(_ urlString: String, invertPreference invert: Bool = false) {
 		// Opens according to prefs.
-		open(urlString, inBackground: AppDefaults.openInBrowserInBackground)
+		open(urlString, inBackground: invert ? !AppDefaults.openInBrowserInBackground : AppDefaults.openInBrowserInBackground)
 	}
 
 	static func open(_ urlString: String, inBackground: Bool) {
@@ -23,3 +23,13 @@ struct Browser {
 	}
 }
 
+extension Browser {
+
+	static var titleForOpenInBrowserInverted: String {
+		let openInBackgroundPref = AppDefaults.openInBrowserInBackground
+
+		return openInBackgroundPref ?
+			NSLocalizedString("Open in Browser in Foreground", comment: "Open in Browser in Foreground menu item title") :
+			NSLocalizedString("Open in Browser in Background", comment: "Open in Browser in Background menu item title")
+	}
+}

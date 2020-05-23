@@ -179,6 +179,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
 		if item.action == #selector(openArticleInBrowser(_:)) {
+			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
+				item.title = Browser.titleForOpenInBrowserInverted
+			}
+
 			return currentLink != nil
 		}
 		
@@ -261,7 +265,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		if let link = currentLink {
-			Browser.open(link)
+			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 		}		
 	}
 

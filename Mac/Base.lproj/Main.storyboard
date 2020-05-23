@@ -496,6 +496,12 @@
                                                 <action selector="openArticleInBrowser:" target="Ady-hI-5gd" id="KeH-ES-fpo"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Open in Browser Inverted" alternate="YES" keyEquivalent="" id="EjD-X9-Pjf">
+                                            <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="openArticleInBrowser:" target="Ady-hI-5gd" id="Frq-Uo-DQs"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

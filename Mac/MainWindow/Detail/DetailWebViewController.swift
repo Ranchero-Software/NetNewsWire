@@ -193,7 +193,9 @@ extension DetailWebViewController: WKNavigationDelegate {
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 		if navigationAction.navigationType == .linkActivated {
 			if let url = navigationAction.request.url {
-				Browser.open(url.absoluteString)
+				let flags = navigationAction.modifierFlags
+				let invert = flags.contains(.shift) || flags.contains(.command)
+				Browser.open(url.absoluteString, invertPreference: invert)
 			}
 			decisionHandler(.cancel)
 			return

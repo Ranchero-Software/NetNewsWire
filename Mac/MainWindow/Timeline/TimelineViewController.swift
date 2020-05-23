@@ -297,7 +297,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
 		if let link = oneSelectedArticle?.preferredLink {
-			Browser.open(link)
+			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 		}
 	}
 	
@@ -725,6 +725,10 @@ extension TimelineViewController: NSUserInterfaceValidations {
 
 	func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		if item.action == #selector(openArticleInBrowser(_:)) {
+			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
+				item.title = Browser.titleForOpenInBrowserInverted
+			}
+
 			let currentLink = oneSelectedArticle?.preferredLink
 			return currentLink != nil
 		}
