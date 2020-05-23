@@ -140,5 +140,29 @@
 		<key>action</key>
 		<string>toggleStarred:</string>
 	</dict>
+	<dict>
+		<key>key</key>
+		<string>[enter]</string>
+		<key>shiftModifier</key>
+		<true/>
+		<key>action</key>
+		<string>openInBrowserUsingOppositeOfSettings:</string>
+	</dict>
+	<dict>
+		<key>key</key>
+		<string>[return]</string>
+		<key>shiftModifier</key>
+		<true/>
+		<key>action</key>
+		<string>openInBrowserUsingOppositeOfSettings:</string>
+	</dict>
+	<dict>
+		<key>key</key>
+		<string>B</string>
+		<key>shiftModifier</key>
+		<true/>
+		<key>action</key>
+		<string>openInBrowserUsingOppositeOfSettings:</string>
+	</dict>
 </array>
 </plist>
