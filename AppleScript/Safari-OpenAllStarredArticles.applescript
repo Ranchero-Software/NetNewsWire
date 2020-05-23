@@ -38,7 +38,7 @@ set safariWindow to missing value
 tell application "NetNewsWire"
 	set allAccounts to every account
 	repeat with nthAccount in allAccounts
-    set userFeeds to allFeeds of nthAccount
+		set userFeeds to allFeeds of nthAccount
 		repeat with nthFeed in userFeeds
 			set starredArticles to (get every article of nthFeed where starred is true)
 			repeat with nthArticle in starredArticles
