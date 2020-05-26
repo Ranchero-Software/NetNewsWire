@@ -66,7 +66,7 @@ private struct NNW3Folder {
 
 	private let title: String?
 	private let children: [OPMLRepresentable]?
-
+	
 	init(plist: [String: Any]) {
 		self.title = plist["name"] as? String
 		guard let childrenArray = plist["childrenArray"] as? [[String: Any]] else {
@@ -75,16 +75,20 @@ private struct NNW3Folder {
 		}
 		self.children = NNW3Folder.itemsWithPlist(plist: childrenArray)
 	}
-
+	
 	static func itemsWithPlist(plist: [[String: Any]]) -> [OPMLRepresentable]? {
 		// Also used by NNW3Document.
 		var items = [OPMLRepresentable]()
-		for child in plist {
+		plist.forEach { child in
 			if child["isContainer"] as? Bool ?? false {
 				items.append(NNW3Folder(plist: child))
-			} else {
-				items.append(NNW3Feed(plist: child))
+				return
 			}
+			if child["isScript"] as? Bool ?? false {
+				// Ignore script feeds.
+				return
+			}
+			items.append(NNW3Feed(plist: child))
 		}
 		return items.isEmpty ? nil : items
 	}
