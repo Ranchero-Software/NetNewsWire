@@ -19,7 +19,7 @@ struct Browser {
 		return nil
 	}
 
-	static func open(_ urlString: String) {
+	static func open(_ urlString: String, invertPreference invert: Bool = false) {
 		// Opens according to prefs.
 		open(urlString, inBackground: invert ? !AppDefaults.openInBrowserInBackground : AppDefaults.openInBrowserInBackground)
 	}
