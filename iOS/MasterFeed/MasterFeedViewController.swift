@@ -470,6 +470,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			self?.coordinator.markAllAsReadInTimeline()
 		}
 	}
+	
+	@objc func showFeedInspector(_ sender: Any?) {
+		coordinator.showFeedInspector()
+	}
 
 	// MARK: API
 	

@@ -174,7 +174,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.navigateToDetail()
 	}
 	
-	@objc func showFeedInspector(_ sender: UITapGestureRecognizer) {
+	@objc func showFeedInspector(_ sender: Any?) {
 		coordinator.showFeedInspector()
 	}
 
