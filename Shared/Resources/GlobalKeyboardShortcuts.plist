@@ -106,11 +106,11 @@
 	</dict>
 	<dict>
 		<key>title</key>
-		<string>Open in App Browser</string>
+		<string>Open in Browser</string>
 		<key>key</key>
 		<string>[return]</string>
 		<key>action</key>
-		<string>openFeedInAppBrowser:</string>
+		<string>openInBrowser:</string>
 	</dict>
 	<dict>
 		<key>key</key>
