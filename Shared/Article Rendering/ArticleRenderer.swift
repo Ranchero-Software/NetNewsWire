@@ -267,7 +267,7 @@ private extension ArticleRenderer {
 		let blue: Int
 		
 		if NSApplication.shared.effectiveAppearance.isDarkMode {
-			let brighten = CGFloat(0.25)
+			let brighten = CGFloat(0.50)
 			let baseRed = linkColor.redComponent * 0xFF
 			red = Int(round(((255 - baseRed) * brighten)) + round(baseRed))
 			let baseGreen = linkColor.greenComponent * 0xFF
