@@ -105,7 +105,7 @@ final class RedditLinkData: Codable {
 			if let width = media?.video?.width, let height = media?.video?.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "src=\"\(videoURL)\" autoplay muted></video>"
+			html += "src=\"\(videoURL)\" autoplay muted loop></video>"
 			return html
 		}
 		
@@ -117,7 +117,7 @@ final class RedditLinkData: Codable {
 			if let width = preview?.videoPreview?.width, let height = preview?.videoPreview?.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "src=\"\(videoPreviewURL)\" autoplay muted></video>"
+			html += "src=\"\(videoPreviewURL)\" autoplay muted loop></video>"
 			html += linkURL(url)
 			return html
 		}
