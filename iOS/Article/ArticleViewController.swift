@@ -403,7 +403,6 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 			let article = coordinator.findPrevArticle(currentArticle) else {
 			return nil
 		}
-		webViewController.stopWebViewActivity()
 		return createWebViewController(article)
 	}
 	
@@ -413,7 +412,6 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 			let article = coordinator.findNextArticle(currentArticle) else {
 			return nil
 		}
-		webViewController.stopWebViewActivity()
 		return createWebViewController(article)
 	}
 	
