@@ -11,6 +11,10 @@ import RSWeb
 
 struct Browser {
 
+	/// The user-specified default browser for opening web pages.
+	///
+	/// The user-assigned default browser, or `nil` if none was assigned
+	/// (i.e., the system default should be used).
 	static var defaultBrowser: MacWebBrowser? {
 		if let bundleID = AppDefaults.defaultBrowserID, let browser = MacWebBrowser(bundleIdentifier: bundleID) {
 			return browser
@@ -19,11 +23,25 @@ struct Browser {
 		return nil
 	}
 
+
+	/// Opens a URL in the default browser.
+	///
+	/// - Parameters:
+	///   - urlString: The URL to open.
+	///   - invert: Whether to invert the "open in background in browser" preference
 	static func open(_ urlString: String, invertPreference invert: Bool = false) {
 		// Opens according to prefs.
 		open(urlString, inBackground: invert ? !AppDefaults.openInBrowserInBackground : AppDefaults.openInBrowserInBackground)
 	}
 
+
+	/// Opens a URL in the default browser.
+	///
+	/// - Parameters:
+	///   - urlString: The URL to open.
+	///   - inBackground: Whether to open the URL in the background or not.
+	/// - Note: Some browsers (specifically Chromium-derived ones) will ignore the request
+	///   to open in the background.
 	static func open(_ urlString: String, inBackground: Bool) {
 		if let url = URL(string: urlString) {
 			if let defaultBrowser = defaultBrowser {
