@@ -53,7 +53,7 @@ final class SingleLineTextFieldSizer {
 		//    that members of such a dictionary were mutated after insertion.
 		// We use just an array of sizers now — which is totally fine,
 		// because there’s only going to be like three of them.
-		if let cachedSizer = sizers.firstElementPassingTest({ $0.font == font }) {
+		if let cachedSizer = sizers.first(where: { $0.font == font }) {
 			return cachedSizer
 		}
 
