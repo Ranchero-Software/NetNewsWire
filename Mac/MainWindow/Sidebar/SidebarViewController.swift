@@ -75,6 +75,10 @@ protocol SidebarDelegate: class {
 			}
 			row += 1
 		}
+
+		DispatchQueue.main.async {
+			self.outlineView.window?.makeFirstResponder(self.outlineView)
+		}
 	}
 
 	// MARK: - Notifications
