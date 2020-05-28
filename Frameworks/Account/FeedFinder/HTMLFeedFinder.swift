@@ -29,14 +29,14 @@ class HTMLFeedFinder {
 			}
 		}
 
-		if let bodyLinks = RSHTMLLinkParser.htmlLinks(with: parserData) {
-			for oneBodyLink in bodyLinks {
+		let bodyLinks = RSHTMLLinkParser.htmlLinks(with: parserData)
 
-				if linkMightBeFeed(oneBodyLink) {
-					let normalizedURL = oneBodyLink.urlString.normalizedURL
-					let oneFeedSpecifier = FeedSpecifier(title: oneBodyLink.text, urlString: normalizedURL, source: .HTMLLink)
-					addFeedSpecifier(oneFeedSpecifier)
-				}
+		for oneBodyLink in bodyLinks {
+
+			if linkMightBeFeed(oneBodyLink) {
+				guard let normalizedURL = oneBodyLink.urlString?.normalizedURL else { continue }
+				let oneFeedSpecifier = FeedSpecifier(title: oneBodyLink.text, urlString: normalizedURL, source: .HTMLLink)
+				addFeedSpecifier(oneFeedSpecifier)
 			}
 		}
 	}
