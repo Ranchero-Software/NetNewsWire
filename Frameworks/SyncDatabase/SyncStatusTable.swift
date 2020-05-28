@@ -168,6 +168,25 @@ struct SyncStatusTable: DatabaseTable {
 			throw error
 		}
 	}
+
+    func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
+		queue.runInTransaction { databaseResult in
+
+			func makeDatabaseCall(_ database: FMDatabase) {
+				let statusArray = statuses.map { $0.databaseDictionary() }
+				self.insertRows(statusArray, insertType: .orReplace, in: database)
+			}
+
+			switch databaseResult {
+			case .success(let database):
+				makeDatabaseCall(database)
+				completion(nil)
+			case .failure(let databaseError):
+				completion(databaseError)
+			}
+		}
+	}
+	
 }
 
 private extension SyncStatusTable {

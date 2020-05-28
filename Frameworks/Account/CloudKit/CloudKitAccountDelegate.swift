@@ -562,9 +562,10 @@ private extension CloudKitAccountDelegate {
 						account.update(webFeed.webFeedID, with: parsedItems) { result in
 							switch result {
 							case .success(let articleChanges):
-								self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles)
-								self.refreshProgress.completeTask()
-								group.leave()
+								self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles) {
+									self.refreshProgress.completeTask()
+									group.leave()
+								}
 							case .failure(let error):
 								os_log(.error, log: self.log, "CloudKit Feed refresh update error: %@.", error.localizedDescription)
 								self.refreshProgress.completeTask()
@@ -735,17 +736,18 @@ private extension CloudKitAccountDelegate {
 		account.fetchArticlesAsync(.webFeed(feed)) { result in
 			switch result {
 			case .success(let articles):
-				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
-				self.sendArticleStatus(for: account, showProgress: true) { result in
-					switch result {
-					case .success:
-						self.articlesZone.fetchChangesInZone() { _ in
+				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
+					self.sendArticleStatus(for: account, showProgress: true) { result in
+						switch result {
+						case .success:
+							self.articlesZone.fetchChangesInZone() { _ in
+								self.refreshProgress.clear()
+								completion(.success(feed))
+							}
+						case .failure(let error):
 							self.refreshProgress.clear()
-							completion(.success(feed))
+							completion(.failure(error))
 						}
-					case .failure(let error):
-						self.refreshProgress.clear()
-						completion(.failure(error))
 					}
 				}
 			case .failure(let error):
@@ -764,24 +766,45 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 	
-	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?) {
+	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?, completion: @escaping () -> Void) {
 		// New records with a read status aren't really new, they just didn't have the read article stored
+		let group = DispatchGroup()
 		if let new = new {
 			let filteredNew = new.filter { $0.status.read == false }
-			insertSyncStatuses(articles: filteredNew, statusKey: .new, flag: true)
+			group.enter()
+			insertSyncStatuses(articles: filteredNew, statusKey: .new, flag: true) {
+				group.leave()
+			}
 		}
-		insertSyncStatuses(articles: updated, statusKey: .new, flag: false)
-		insertSyncStatuses(articles: deleted, statusKey: .deleted, flag: true)
+
+		group.enter()
+		insertSyncStatuses(articles: updated, statusKey: .new, flag: false) {
+			group.leave()
+		}
+		
+		group.enter()
+		insertSyncStatuses(articles: deleted, statusKey: .deleted, flag: true) {
+			group.leave()
+		}
+		
+		group.notify(queue: DispatchQueue.global(qos: .userInitiated)) {
+			DispatchQueue.main.async {
+				completion()
+			}
+		}
 	}
 	
-	func insertSyncStatuses(articles: Set<Article>?, statusKey: SyncStatus.Key, flag: Bool) {
+	func insertSyncStatuses(articles: Set<Article>?, statusKey: SyncStatus.Key, flag: Bool, completion: @escaping () -> Void) {
 		guard let articles = articles, !articles.isEmpty else {
+			completion()
 			return
 		}
 		let syncStatuses = articles.map { article in
 			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
 		}
-		try? database.insertStatuses(syncStatuses)
+		database.insertStatuses(syncStatuses) { _ in
+			completion()
+		}
 	}
 
 	func sendArticleStatus(for account: Account, showProgress: Bool, completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -827,11 +850,15 @@ private extension CloudKitAccountDelegate {
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
-	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed, articleChanges: ArticleChanges?) {
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
 		refreshProgress.completeTask()
-		if let articleChanges = articleChanges {
-			self.storeArticleChanges(new: articleChanges.newArticles, updated: articleChanges.updatedArticles, deleted: articleChanges.deletedArticles)
-		}
+	}
+	
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
+		self.storeArticleChanges(new: articleChanges.newArticles,
+								 updated: articleChanges.updatedArticles,
+								 deleted: articleChanges.deletedArticles,
+								 completion: completion)
 	}
 	
 }

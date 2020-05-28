@@ -36,6 +36,10 @@ public struct SyncDatabase {
 		try syncStatusTable.insertStatuses(statuses)
 	}
 	
+	public func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
+		syncStatusTable.insertStatuses(statuses, completion: completion)
+	}
+	
 	public func selectForProcessing(limit: Int? = nil, completion: @escaping SyncStatusesCompletionBlock) {
 		return syncStatusTable.selectForProcessing(limit: limit, completion: completion)
 	}
