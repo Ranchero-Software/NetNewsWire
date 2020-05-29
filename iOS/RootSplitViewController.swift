@@ -83,11 +83,7 @@ class RootSplitViewController: UISplitViewController {
 	}
 
 	@objc func openInAppBrowser(_ sender: Any?) {
-		coordinator.showInAppBrowserForCurrentFeed()
-	}
-
-	@objc func openArticleInAppBrowser(_ sender: Any?) {
-		coordinator.showInAppBrowserForCurrentArticle()
+		coordinator.showInAppBrowser()
 	}
 	
 	@objc func articleSearch(_ sender: Any?) {

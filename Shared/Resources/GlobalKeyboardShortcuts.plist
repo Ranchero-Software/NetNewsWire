@@ -106,7 +106,7 @@
 	</dict>
 	<dict>
 		<key>title</key>
-		<string>Open in Browser</string>
+		<string>Open In App Browser</string>
 		<key>key</key>
 		<string>[return]</string>
 		<key>action</key>
