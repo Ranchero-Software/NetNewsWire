@@ -92,6 +92,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
 		}
+
 	}
 
 	// MARK: - API
@@ -166,7 +167,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 		
 	}
-	
+
 	// MARK: - Toolbar
 	
 	@objc func makeToolbarValidate() {
