@@ -273,7 +273,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		openArticleInBrowser(sender)
 	}
 
-	@objc func openFeedInAppBrowser(_ sender: Any?) {
+	@objc func openInAppBrowser(_ sender: Any?) {
 		// There is no In-App Browser for mac - so we use safari
 		openArticleInBrowser(sender)
 	}

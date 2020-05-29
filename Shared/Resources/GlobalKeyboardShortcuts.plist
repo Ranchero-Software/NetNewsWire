@@ -110,7 +110,7 @@
 		<key>key</key>
 		<string>[return]</string>
 		<key>action</key>
-		<string>openFeedInAppBrowser:</string>
+		<string>openInAppBrowser:</string>
 	</dict>
 	<dict>
 		<key>key</key>
