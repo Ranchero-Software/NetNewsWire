@@ -274,6 +274,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		openArticleInBrowser(sender)
 	}
 
+	@objc func openInAppBrowser(_ sender: Any?) {
+		// There is no In-App Browser for mac - so we use safari
+		openArticleInBrowser(sender)
+	}
+
 	@IBAction func openInBrowserUsingOppositeOfSettings(_ sender: Any?) {
 		if let link = currentLink {
 			Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)

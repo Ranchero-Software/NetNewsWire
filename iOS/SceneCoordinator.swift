@@ -1185,15 +1185,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		UIApplication.shared.open(url, options: [:])
 	}
-
-	func showInAppBrowserForCurrentArticle() {
-		articleViewController?.openInAppBrowser()
-	}
-
-	func showInAppBrowserForCurrentFeed() {
-		masterFeedViewController.openInAppBrowser()
-	}
 	
+	func showInAppBrowser() {
+		if currentArticle != nil {
+			articleViewController?.openInAppBrowser()
+		}
+		else {
+			masterFeedViewController.openInAppBrowser()
+		}
+	}
+
 	func navigateToFeeds() {
 		masterFeedViewController?.focus()
 		selectArticle(nil)

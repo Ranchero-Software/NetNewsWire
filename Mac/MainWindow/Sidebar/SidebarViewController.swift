@@ -240,6 +240,14 @@ protocol SidebarDelegate: class {
 		Browser.open(homePageURL, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 
+	@objc func openInAppBrowser(_ sender: Any?) {
+		// There is no In-App Browser for mac - so we use safari
+		guard let feed = singleSelectedWebFeed, let homePageURL = feed.homePageURL else {
+			return
+		}
+		Browser.open(homePageURL, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+	}
+
 	@IBAction func gotoToday(_ sender: Any?) {
 		selectFeed(SmartFeedsController.shared.todayFeed)
 		focus()
