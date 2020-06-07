@@ -640,12 +640,23 @@ private extension MasterFeedViewController {
 	
 	func queueApply(snapshot: NSDiffableDataSourceSnapshot<Node, Node>, animatingDifferences: Bool = true, completion: (() -> Void)? = nil) {
 		let operation = MasterFeedDataSourceOperation(dataSource: dataSource, snapshot: snapshot, animating: animatingDifferences)
-		operation.completionBlock = { _ in
+		operation.completionBlock = { [weak self] _ in
+			self?.enableTableViewSelection()
 			completion?()
 		}
+		disableTableViewSelectionIfNecessary()
 		operationQueue.add(operation)
 	}
 
+	private func disableTableViewSelectionIfNecessary() {
+		// We only need to disable tableView selection if the feeds are filtered by unread
+		guard coordinator.isReadFeedsFiltered else { return }
+		tableView.allowsSelection = false
+	}
+
+	private func enableTableViewSelection() {
+		tableView.allowsSelection = true
+	}
 
     func makeDataSource() -> MasterFeedDataSource {
 		let dataSource = MasterFeedDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, node in
