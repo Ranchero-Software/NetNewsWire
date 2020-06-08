@@ -141,4 +141,13 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         return articleAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
     }
 
+	@objc(feed)
+	var feed: ScriptableWebFeed? {
+		guard let parentFeed = self.article.webFeed,
+			let account = parentFeed.account
+			else { return nil }
+
+		return ScriptableWebFeed(parentFeed, container: ScriptableAccount(account))
+	}
+
 }

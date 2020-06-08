@@ -101,14 +101,13 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(valueInWebFeedsWithUniqueID:)
     func valueInWebFeeds(withUniqueID id:String) -> ScriptableWebFeed? {
-        let feeds = Array(account.topLevelWebFeeds)
-        guard let feed = feeds.first(where:{$0.webFeedID == id}) else { return nil }
+		guard let feed = account.existingWebFeed(withWebFeedID: id) else { return nil }
         return ScriptableWebFeed(feed, container:self)
     }
     
     @objc(valueInWebFeedsWithName:)
     func valueInWebFeeds(withName name:String) -> ScriptableWebFeed? {
-		let feeds = Array(account.topLevelWebFeeds)
+		let feeds = Array(account.flattenedWebFeeds())
         guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
         return ScriptableWebFeed(feed, container:self)
     }

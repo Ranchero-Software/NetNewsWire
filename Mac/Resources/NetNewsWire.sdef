@@ -216,7 +216,10 @@
             <property name="image url" code="IURL" type="text" access="r" description="an image url for the article">
                 <cocoa key="imageURL"/>
             </property>
-            <element type="author">
+            <property name="feed" code="Feed" type="webFeed" access="r" description="the containing feed">
+                <cocoa key="feed"/>
+            </property>
+			<element type="author">
                 <cocoa key="authors"/>
             </element>
         </class>
