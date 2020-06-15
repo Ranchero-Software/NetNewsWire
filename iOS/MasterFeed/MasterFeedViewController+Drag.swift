@@ -13,11 +13,11 @@ import Account
 extension MasterFeedViewController: UITableViewDragDelegate {
 	
 	func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-		guard let node = dataSource.itemIdentifier(for: indexPath), let webFeed = node.representedObject as? WebFeed else {
+		guard let identifier = dataSource.itemIdentifier(for: indexPath), identifier.isWebFeed, let url = identifier.url else {
 			return [UIDragItem]()
 		}
 		
-		let data = webFeed.url.data(using: .utf8)
+		let data = url.data(using: .utf8)
 		let itemProvider = NSItemProvider()
 		  
 		itemProvider.registerDataRepresentation(forTypeIdentifier: kUTTypeURL as String, visibility: .ownProcess) { completion in
@@ -26,7 +26,7 @@ extension MasterFeedViewController: UITableViewDragDelegate {
 		}
 		
 		let dragItem = UIDragItem(itemProvider: itemProvider)
-		dragItem.localObject = node
+		dragItem.localObject = identifier
 		return [dragItem]
 	}
 	

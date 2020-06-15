@@ -21,12 +21,12 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		guard let destIndexPath = destinationIndexPath,
 			destIndexPath.section > 0,
 			tableView.hasActiveDrag,
-			let destNode = dataSource.itemIdentifier(for: destIndexPath),
+			let destIdentifier = dataSource.itemIdentifier(for: destIndexPath),
 			let destCell = tableView.cellForRow(at: destIndexPath) else {
 				return UITableViewDropProposal(operation: .forbidden)
 		}
 		
-		if destNode.representedObject is Folder {
+		if destIdentifier.isFolder {
 			if session.location(in: destCell).y >= 0 {
 				return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
 			} else {
@@ -40,27 +40,28 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	
 	func tableView(_ tableView: UITableView, performDropWith dropCoordinator: UITableViewDropCoordinator) {
 		guard let dragItem = dropCoordinator.items.first?.dragItem,
-			let sourceNode = dragItem.localObject as? Node,
-			let webFeed = sourceNode.representedObject as? WebFeed,
+			let sourceIdentifier = dragItem.localObject as? MasterFeedTableViewIdentifier,
+			let sourceParentContainerID = sourceIdentifier.parentContainerID,
+			let source = AccountManager.shared.existingContainer(with: sourceParentContainerID),
 			let destIndexPath = dropCoordinator.destinationIndexPath else {
 				return
 		}
 		
 		let isFolderDrop: Bool = {
-			if let propDestNode = dataSource.itemIdentifier(for: destIndexPath), let propCell = tableView.cellForRow(at: destIndexPath) {
-				return propDestNode.representedObject is Folder && dropCoordinator.session.location(in: propCell).y >= 0
+			if let propDestIdentifier = dataSource.itemIdentifier(for: destIndexPath), let propCell = tableView.cellForRow(at: destIndexPath) {
+				return propDestIdentifier.isFolder && dropCoordinator.session.location(in: propCell).y >= 0
 			}
 			return false
 		}()
 		
 		// Based on the drop we have to determine a node to start looking for a parent container.
-		let destNode: Node? = {
+		let destIdentifier: MasterFeedTableViewIdentifier? = {
 			
 			if isFolderDrop {
 				return dataSource.itemIdentifier(for: destIndexPath)
 			} else {
 				if destIndexPath.row == 0 {
-					return coordinator.rootNode.childAtIndex(destIndexPath.section)!
+					return dataSource.itemIdentifier(for: IndexPath(row: 0, section: destIndexPath.section))
 				} else if destIndexPath.row > 0 {
 					return dataSource.itemIdentifier(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))
 				} else {
@@ -71,56 +72,25 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		}()
 
 		// Now we start looking for the parent container
-		let destParentNode: Node? = {
-			if destNode?.representedObject is Container {
-				return destNode
+		let destinationContainer: Container? = {
+			if let containerID = destIdentifier?.containerID ?? destIdentifier?.parentContainerID {
+				return AccountManager.shared.existingContainer(with: containerID)
 			} else {
-				if destNode?.parent?.representedObject is Container {
-					return destNode!.parent!
-				} else {
-					return nil
-				}
+				return nil
 			}
 		}()
 		
-		// Move the Web Feed
-		guard let source = sourceNode.parent?.representedObject as? Container, let destination = destParentNode?.representedObject as? Container else {
-			return
-		}
+		guard let destination = destinationContainer else { return }
+		guard case .webFeed(_, let webFeedID) = sourceIdentifier.feedID else { return }
+		guard let webFeed = source.existingWebFeed(withWebFeedID: webFeedID) else { return }
 		
-		if sameAccount(sourceNode, destParentNode!) {
+		if source.account == destination.account {
 			moveWebFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		} else {
 			moveWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		}
 
 
-	}
-
-	private func sameAccount(_ node: Node, _ parentNode: Node) -> Bool {
-		if let accountID = nodeAccountID(node), let parentAccountID = nodeAccountID(parentNode) {
-			if accountID == parentAccountID {
-				return true
-			}
-		}
-		return false
-	}
-	
-	private func nodeAccount(_ node: Node) -> Account? {
-		if let account = node.representedObject as? Account {
-			return account
-		} else if let folder = node.representedObject as? Folder {
-			return folder.account
-		} else if let webFeed = node.representedObject as? WebFeed {
-			return webFeed.account
-		} else {
-			return nil
-		}
-
-	}
-
-	private func nodeAccountID(_ node: Node) -> String? {
-		return nodeAccount(node)?.accountID
 	}
 
 	func moveWebFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {

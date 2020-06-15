@@ -10,10 +10,10 @@ import UIKit
 import RSTree
 import Account
 
-class MasterFeedDataSource: UITableViewDiffableDataSource<Node, Node> {
+class MasterFeedDataSource: UITableViewDiffableDataSource<Int, MasterFeedTableViewIdentifier> {
 
 	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		guard let node = itemIdentifier(for: indexPath), !(node.representedObject is PseudoFeed) else {
+		guard let identifier = itemIdentifier(for: indexPath), identifier.isEditable else {
 			return false
 		}
 		return true

@@ -19,11 +19,11 @@ class MasterFeedDataSourceOperation: MainThreadOperation {
 	public var name: String? = "MasterFeedDataSourceOperation"
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
-	private var dataSource: UITableViewDiffableDataSource<Node, Node>
-	private var snapshot: NSDiffableDataSourceSnapshot<Node, Node>
+	private var dataSource: UITableViewDiffableDataSource<Int, MasterFeedTableViewIdentifier>
+	private var snapshot: NSDiffableDataSourceSnapshot<Int, MasterFeedTableViewIdentifier>
 	private var animating: Bool
 	
-	init(dataSource: UITableViewDiffableDataSource<Node, Node>, snapshot: NSDiffableDataSourceSnapshot<Node, Node>, animating: Bool) {
+	init(dataSource: UITableViewDiffableDataSource<Int, MasterFeedTableViewIdentifier>, snapshot: NSDiffableDataSourceSnapshot<Int, MasterFeedTableViewIdentifier>, animating: Bool) {
 		self.dataSource = dataSource
 		self.snapshot = snapshot
 		self.animating = animating

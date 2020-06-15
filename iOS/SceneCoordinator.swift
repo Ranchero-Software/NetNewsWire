@@ -68,7 +68,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var wasRootSplitViewControllerCollapsed = false
 	
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
-	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 1.0)
+	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 0.5)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	
@@ -443,9 +443,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard notification.object is AccountManager else {
 			return
 		}
-		if isReadFeedsFiltered {
-			rebuildBackingStores()
-		}
+		rebuildBackingStores()
 		treeControllerDelegate.resetFilterExceptions()
 	}
 
@@ -614,6 +612,26 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return shadowTable[section]
 	}
 	
+	func nodeFor(containerID: ContainerIdentifier) -> Node? {
+		return treeController.rootNode.descendantNode(where: { node in
+			if let container = node.representedObject as? Container {
+				return container.containerID == containerID
+			} else {
+				return false
+			}
+		})
+	}
+
+	func nodeFor(feedID: FeedIdentifier) -> Node? {
+		return treeController.rootNode.descendantNode(where: { node in
+			if let feed = node.representedObject as? Feed {
+				return feed.feedID == feedID
+			} else {
+				return false
+			}
+		})
+	}
+	
 	func articleFor(_ articleID: String) -> Article? {
 		return idToAticleDictionary[articleID]
 	}
@@ -646,9 +664,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
+	func isExpanded(_ containerID: ContainerIdentifier) -> Bool {
+		return expandedTable.contains(containerID)
+	}
+		
 	func isExpanded(_ containerIdentifiable: ContainerIdentifiable) -> Bool {
 		if let containerID = containerIdentifiable.containerID {
-			return expandedTable.contains(containerID)
+			return isExpanded(containerID)
 		}
 		return false
 	}
@@ -660,15 +682,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		return false
 	}
 		
-	func expand(_ node: Node) {
-		guard let containerIdentifiable = node.representedObject as? ContainerIdentifiable else {
-			return
-		}
-
-		markExpanded(containerIdentifiable)
+	func expand(_ containerID: ContainerIdentifier) {
+		markExpanded(containerID)
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
+	}
+	
+	func expand(_ node: Node) {
+		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		expand(containerID)
 	}
 	
 	func expandAllSectionsAndFolders() {
@@ -685,12 +708,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		animatingChanges = false
 	}
 	
-	func collapse(_ node: Node) {
-		unmarkExpanded(node)
+	func collapse(_ containerID: ContainerIdentifier) {
+		unmarkExpanded(containerID)
 		animatingChanges = true
 		rebuildShadowTable()
 		animatingChanges = false
 		clearTimelineIfNoLongerAvailable()
+	}
+	
+	func collapse(_ node: Node) {
+		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		collapse(containerID)
 	}
 	
 	func collapseAllFolders() {
@@ -1519,9 +1547,13 @@ private extension SceneCoordinator {
 		self.showIcons = false
 	}
 	
+	func markExpanded(_ containerID: ContainerIdentifier) {
+		expandedTable.insert(containerID)
+	}
+
 	func markExpanded(_ containerIdentifiable: ContainerIdentifiable) {
 		if let containerID = containerIdentifiable.containerID {
-			expandedTable.insert(containerID)
+			markExpanded(containerID)
 		}
 	}
 	
@@ -1531,9 +1563,13 @@ private extension SceneCoordinator {
 		}
 	}
 	
+	func unmarkExpanded(_ containerID: ContainerIdentifier) {
+		expandedTable.remove(containerID)
+	}
+
 	func unmarkExpanded(_ containerIdentifiable: ContainerIdentifiable) {
 		if let containerID = containerIdentifiable.containerID {
-			expandedTable.remove(containerID)
+			unmarkExpanded(containerID)
 		}
 	}
 

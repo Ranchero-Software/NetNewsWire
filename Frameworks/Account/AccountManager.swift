@@ -169,6 +169,34 @@ public final class AccountManager: UnreadCountProvider {
 		return accountsDictionary[accountID]
 	}
 	
+	public func existingContainer(with containerID: ContainerIdentifier) -> Container? {
+		switch containerID {
+		case .account(let accountID):
+			return existingAccount(with: accountID)
+		case .folder(let accountID, let folderName):
+			return existingAccount(with: accountID)?.existingFolder(with: folderName)
+		default:
+			break
+		}
+		return nil
+	}
+	
+	public func existingFeed(with feedID: FeedIdentifier) -> Feed? {
+		switch feedID {
+		case .folder(let accountID, let folderName):
+			if let account = existingAccount(with: accountID) {
+				return account.existingFolder(with: folderName)
+			}
+		case .webFeed(let accountID, let webFeedID):
+			if let account = existingAccount(with: accountID) {
+				return account.existingWebFeed(withWebFeedID: webFeedID)
+			}
+		default:
+			break
+		}
+		return nil
+	}
+	
 	public func suspendNetworkAll() {
 		isSuspended = true
 		accounts.forEach { $0.suspendNetwork() }

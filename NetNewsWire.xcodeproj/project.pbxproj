@@ -109,6 +109,7 @@
 		513C5D0A232574D2003D4054 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FA320DD8D0500CA8CF5 /* RSWeb.framework */; };
 		513C5D0C232574DA003D4054 /* RSTree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9520DD8CFE00CA8CF5 /* RSTree.framework */; };
 		513C5D0E232574E4003D4054 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
+		513CCF2524880C1500C55709 /* MasterFeedTableViewIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513CCF08248808BA00C55709 /* MasterFeedTableViewIdentifier.swift */; };
 		5141E7392373C18B0013FF27 /* WebFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7382373C18B0013FF27 /* WebFeedInspectorViewController.swift */; };
 		5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5142192923522B5500E07E2C /* ImageViewController.swift */; };
 		514219372352510100E07E2C /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514219362352510100E07E2C /* ImageScrollView.swift */; };
@@ -1461,6 +1462,7 @@
 		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		513C5CEB232571C2003D4054 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		513C5CED232571C2003D4054 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		513CCF08248808BA00C55709 /* MasterFeedTableViewIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewIdentifier.swift; sourceTree = "<group>"; };
 		5141E7382373C18B0013FF27 /* WebFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedInspectorViewController.swift; sourceTree = "<group>"; };
 		5141E7552374A2890013FF27 /* DetailIconSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailIconSchemeHandler.swift; sourceTree = "<group>"; };
 		5142192923522B5500E07E2C /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
@@ -2269,10 +2271,11 @@
 		51C45260226508F600C03939 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */,
-				516AE9B22371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift */,
 				51C45262226508F600C03939 /* MasterFeedTableViewCell.swift */,
 				51C45263226508F600C03939 /* MasterFeedTableViewCellLayout.swift */,
+				513CCF08248808BA00C55709 /* MasterFeedTableViewIdentifier.swift */,
+				512E08F722688F7C00BDCFDD /* MasterFeedTableViewSectionHeader.swift */,
+				516AE9B22371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift */,
 				51C45261226508F600C03939 /* MasterFeedUnreadCountView.swift */,
 			);
 			path = Cell;
@@ -4481,6 +4484,7 @@
 				511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */,
 				51A1699D235E10D700EB091F /* SettingsViewController.swift in Sources */,
 				51C45293226509C800C03939 /* StarredFeedDelegate.swift in Sources */,
+				513CCF2524880C1500C55709 /* MasterFeedTableViewIdentifier.swift in Sources */,
 				51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */,
 				51934CCB230F599B006127BE /* InteractiveNavigationController.swift in Sources */,
 				769F2ED513DA03EE75B993A8 /* NewsBlurAccountViewController.swift in Sources */,
