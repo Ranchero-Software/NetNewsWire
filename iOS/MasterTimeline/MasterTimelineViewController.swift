@@ -89,6 +89,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			}
 		}
 		
+		// Disable swipe back on iPad Mice
+		if #available(iOS 13.4, *) {
+			guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
+				return
+			}
+			gesture.allowedScrollTypesMask = []
+		}
+		
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -166,7 +174,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		coordinator.navigateToDetail()
 	}
 	
-	@objc func showFeedInspector(_ sender: UITapGestureRecognizer) {
+	@objc func showFeedInspector(_ sender: Any?) {
 		coordinator.showFeedInspector()
 	}
 

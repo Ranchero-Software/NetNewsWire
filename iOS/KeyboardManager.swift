@@ -167,6 +167,9 @@ private extension KeyboardManager {
 
 		let nextDownTitle = NSLocalizedString("Select Next Down", comment: "Select Next Down")
 		keys.append(KeyboardManager.createKeyCommand(title: nextDownTitle, action: "selectNextDown:", input: UIKeyCommand.inputDownArrow, modifiers: []))
+		
+		let getFeedInfo = NSLocalizedString("Get Feed Info", comment: "Get Feed Info")
+		keys.append(KeyboardManager.createKeyCommand(title: getFeedInfo, action: "showFeedInspector:", input: "i", modifiers: .command))
 
 		return keys
 	}
@@ -191,6 +194,9 @@ private extension KeyboardManager {
 		
 		let findInArticleTitle = NSLocalizedString("Find in Article", comment: "Find in Article")
 		keys.append(KeyboardManager.createKeyCommand(title: findInArticleTitle, action: "beginFind:", input: "f", modifiers: [.command]))
+
+		let getFeedInfo = NSLocalizedString("Get Feed Info", comment: "Get Feed Info")
+		keys.append(KeyboardManager.createKeyCommand(title: getFeedInfo, action: "showFeedInspector:", input: "i", modifiers: .command))
 
 		let toggleSidebar = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleSidebar, action: "toggleSidebar:", input: "s", modifiers: [.command, .control]))

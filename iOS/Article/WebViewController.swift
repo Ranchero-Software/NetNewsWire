@@ -129,8 +129,9 @@ class WebViewController: UIViewController {
 	func scrollPageDown() {
 		guard let webView = webView else { return }
 		
+		let overlap = 2 * UIFont.systemFont(ofSize: UIFont.systemFontSize).lineHeight * UIScreen.main.scale
 		let scrollToY: CGFloat = {
-			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.layoutMarginsGuide.layoutFrame.height
+			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.layoutMarginsGuide.layoutFrame.height - overlap
 			let final = finalScrollPosition()
 			return fullScroll < final ? fullScroll : final
 		}()
