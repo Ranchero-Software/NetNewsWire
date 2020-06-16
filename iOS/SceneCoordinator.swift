@@ -626,7 +626,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func unreadCountFor(_ node: Node) -> Int {
 		// The coordinator supplies the unread count for the currently selected feed
-		if let feed = timelineFeed, let selectedNode = rootNode.descendantNodeRepresentingObject(feed as AnyObject), selectedNode == node {
+		if node.representedObject === timelineFeed as AnyObject {
 			return unreadCount
 		}
 		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
