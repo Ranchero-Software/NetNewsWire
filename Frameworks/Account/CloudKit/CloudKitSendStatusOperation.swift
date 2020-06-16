@@ -110,14 +110,14 @@ private extension CloudKitSendStatusOperation {
 				let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
 					result[article.articleID] = article
 				}
-				let statusUpdates = syncStatusesDict.map { (key, value) in
+				let statusUpdates = syncStatusesDict.compactMap { (key, value) in
 					return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
 				}
 				
 				articlesZone.modifyArticles(statusUpdates) { result in
 					switch result {
 					case .success:
-						self.database.deleteSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+						self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
 							// Don't clear the last one since we might have had additional ticks added
 							if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 								self.refreshProgress?.completeTask()

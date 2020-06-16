@@ -23,6 +23,18 @@ struct CloudKitArticleStatusUpdate {
 	var statuses: [SyncStatus]
 	var article: Article?
 	
+	init?(articleID: String, statuses: [SyncStatus], article: Article?) {
+		self.articleID = articleID
+		self.statuses = statuses
+		self.article = article
+
+		let rec = record
+		// This is an invalid status update.  The article is required for new and all
+		if article == nil && (rec == .all || rec == .new) {
+			return nil
+		}
+	}
+	
 	var record: Record {
 		if statuses.contains(where: { $0.key == .deleted }) {
 			return .delete
