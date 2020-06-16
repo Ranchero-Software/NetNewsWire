@@ -210,7 +210,6 @@ class ArticleViewController: UIViewController {
 		if AppDefaults.articleFullscreenEnabled {
 			currentWebViewController?.hideBars()
 		}
-		resetWebViewController()
 	}
 	
 	// MARK: Actions
