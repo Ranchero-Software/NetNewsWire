@@ -301,8 +301,10 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 extension WebViewController: WKNavigationDelegate {
 	
 	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		while view.subviews.count > 1 {
-			view.subviews.last?.removeFromSuperview()
+		for (index, view) in view.subviews.enumerated() {
+			if index != 0, let oldWebView = view as? PreloadedWebView {
+				oldWebView.removeFromSuperview()
+			}
 		}
 	}
 	
