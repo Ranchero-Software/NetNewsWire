@@ -743,12 +743,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		update(webFeed.webFeedID, with: parsedItems, completion: completion)
 	}
 	
-	func update(_ webFeedID: String, with parsedItems: Set<ParsedItem>, completion: @escaping UpdateArticlesCompletionBlock) {
+	func update(_ webFeedID: String, with parsedItems: Set<ParsedItem>, deleteOlder: Bool = true, completion: @escaping UpdateArticlesCompletionBlock) {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 		
-		database.update(with: parsedItems, webFeedID: webFeedID) { updateArticlesResult in
+		database.update(with: parsedItems, webFeedID: webFeedID, deleteOlder: deleteOlder) { updateArticlesResult in
 			switch updateArticlesResult {
 			case .success(let articleChanges):
 				self.sendNotificationAbout(articleChanges)

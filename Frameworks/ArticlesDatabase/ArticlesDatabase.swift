@@ -204,9 +204,9 @@ public final class ArticlesDatabase {
 	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
-	public func update(with parsedItems: Set<ParsedItem>, webFeedID: String, completion: @escaping UpdateArticlesCompletionBlock) {
+	public func update(with parsedItems: Set<ParsedItem>, webFeedID: String, deleteOlder: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .feedBased)
-		articlesTable.update(parsedItems, webFeedID, completion)
+		articlesTable.update(parsedItems, webFeedID, deleteOlder, completion)
 	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).

@@ -136,7 +136,7 @@ private extension CloudKitArticlesZoneDelegate {
 		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 		for (webFeedID, parsedItems) in webFeedIDsAndItems {
 			group.enter()
-			self.account?.update(webFeedID, with: parsedItems) { result in
+			self.account?.update(webFeedID, with: parsedItems, deleteOlder: false) { result in
 				switch result {
 				case .success(let articleChanges):
 					guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {

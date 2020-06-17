@@ -172,7 +172,7 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Updating and Deleting
 
-	func update(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ completion: @escaping UpdateArticlesCompletionBlock) {
+	func update(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ deleteOlder: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .feedBased)
 		if parsedItems.isEmpty {
 			callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
@@ -210,9 +210,14 @@ final class ArticlesTable: DatabaseTable {
 				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
 
 				// Articles to delete are 1) not starred and 2) older than 30 days and 3) no longer in feed.
-				let cutoffDate = Date().bySubtracting(days: 30)
-				let articlesToDelete = fetchedArticles.filter { (article) -> Bool in
-					return !article.status.starred && article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
+				let articlesToDelete: Set<Article>
+				if deleteOlder {
+					let cutoffDate = Date().bySubtracting(days: 30)
+					articlesToDelete = fetchedArticles.filter { (article) -> Bool in
+						return !article.status.starred && article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
+					}
+				} else {
+					articlesToDelete = Set<Article>()
 				}
 
 				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) //7
