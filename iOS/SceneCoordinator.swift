@@ -70,11 +70,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var expandedTable = Set<ContainerIdentifier>()
 	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
 	private var shadowTable = [[Node]]()
+	
+	private(set) var preSearchTimelineFeed: Feed?
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope? = nil
 	private var isSearching: Bool = false
 	private var savedSearchArticles: ArticleArray? = nil
 	private var savedSearchArticleIds: Set<String>? = nil
+	
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
 	
@@ -830,6 +833,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func beginSearching() {
 		isSearching = true
+		preSearchTimelineFeed = timelineFeed
 		savedSearchArticles = articles
 		savedSearchArticleIds = Set(articles.map { $0.articleID })
 		setTimelineFeed(nil, animated: true)
@@ -837,9 +841,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	func endSearching() {
-		if let ip = currentFeedIndexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
+		if let oldTimelineFeed = preSearchTimelineFeed {
 			emptyTheTimeline()
-			timelineFeed = feed
+			timelineFeed = oldTimelineFeed
 			masterTimelineViewController?.reinitializeArticles(resetScroll: true)
 			replaceArticles(with: savedSearchArticles!, animated: true)
 		} else {
@@ -848,6 +852,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		lastSearchString = ""
 		lastSearchScope = nil
+		preSearchTimelineFeed = nil
 		savedSearchArticleIds = nil
 		savedSearchArticles = nil
 		isSearching = false
