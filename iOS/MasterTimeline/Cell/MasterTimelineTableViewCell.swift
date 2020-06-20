@@ -237,7 +237,9 @@ private extension MasterTimelineTableViewCell {
 	}
 	
 	func updateAccessiblityLabel() {
-		accessibilityLabel = "\(cellData.feedName), \(cellData.title), \(cellData.summary), \(cellData.dateString)"
+		var label = cellData.read ? "" : "\(NSLocalizedString("Unread", comment: "Unread")), "
+		label += "\(cellData.feedName), \(cellData.title), \(cellData.summary), \(cellData.dateString)"
+		accessibilityLabel = label
 	}
 	
 	func makeIconEmpty() {
