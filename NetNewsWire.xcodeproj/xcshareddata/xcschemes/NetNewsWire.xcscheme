@@ -96,6 +96,16 @@
                ReferencedContainer = "container:Frameworks/ArticlesDatabase/ArticlesDatabase.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "849C64701ED37A5D003D8FC0"
+               BuildableName = "NetNewsWireTests.xctest"
+               BlueprintName = "NetNewsWireTests"
+               ReferencedContainer = "container:NetNewsWire.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
