@@ -9,9 +9,29 @@
 import SwiftUI
 
 struct SidebarView: View {
+	
+	@EnvironmentObject private var sceneModel: SceneModel
+	@StateObject private var sidebarModel = SidebarModel()
+	
     var body: some View {
-        Text("Sidebar View")
-    }
+        Text("Sidebar")
+			.onAppear {
+				sceneModel.sidebarModel = sidebarModel
+				sidebarModel.delegate = sceneModel
+			}
+
+//		List {
+//			ForEach(canvases) { canvas in
+//				Section(header: Text(canvas.name)) {
+//					OutlineGroup(canvas.graphics, children: \.children)
+//					{ graphic in
+//						GraphicRow(graphic)
+//					}
+//				}
+//			}
+//		}
+		
+	}
 }
 
 struct SidebarView_Previews: PreviewProvider {

@@ -34,6 +34,6 @@ struct SceneNavigationView: View {
 
 struct NavigationView_Previews: PreviewProvider {
     static var previews: some View {
-        SceneNavigationView()
+		SceneNavigationView()
     }
 }
