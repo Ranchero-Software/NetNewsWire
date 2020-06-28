@@ -611,7 +611,8 @@ private extension MasterTimelineViewController {
 		}
 
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
-		if resetScroll && dataSource.snapshot().itemIdentifiers(inSection: 0).count > 0 {
+		let dataSourceSnapshot = dataSource.snapshot()
+		if resetScroll && dataSourceSnapshot.indexOfSection(0) != nil && dataSourceSnapshot.itemIdentifiers(inSection: 0).count > 0 {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
 		}
 		
