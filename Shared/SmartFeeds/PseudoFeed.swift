@@ -17,16 +17,6 @@ protocol PseudoFeed: class, Feed, SmallIconProvider, PasteboardWriterOwner {
 
 }
 
-private var smartFeedIcon: RSImage = {
-	return RSImage(named: NSImage.smartBadgeTemplateName)!
-}()
-
-extension PseudoFeed {
-
-	var smallIcon: RSImage? {
-		return smartFeedIcon
-	}
-}
 #else
 
 import UIKit
@@ -38,14 +28,10 @@ protocol PseudoFeed: class, Feed, SmallIconProvider {
 	
 }
 
-private var smartFeedIcon: UIImage = {
-	return AppAssets.smartFeedImage
-}()
+#endif
 
 extension PseudoFeed {
-	var smallIcon: UIImage? {
-		return smartFeedIcon
+	var smallIcon: RSImage? {
+		return AppAssets.smartFeedImage
 	}
 }
-
-#endif

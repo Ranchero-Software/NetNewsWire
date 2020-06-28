@@ -125,6 +125,10 @@ struct AppAssets {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()
 
+	static var smartFeedImage: RSImage = {
+		return RSImage(named: NSImage.smartBadgeTemplateName)!
+	}()
+	
 	static var starredFeedImage: IconImage = {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()

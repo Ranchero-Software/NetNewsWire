@@ -24,5 +24,16 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2020 Ranchero Software. All rights reserved.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>UserAgent</key>
+	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
+	<key>OrganizationIdentifier</key>
+	<string>$(ORGANIZATION_IDENTIFIER)</string>
+	<key>DeveloperEntitlements</key>
+	<string>$(DEVELOPER_ENTITLEMENTS)</string>
 </dict>
 </plist>
