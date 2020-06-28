@@ -39,7 +39,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
 INFOPLIST_FILE = Multiplatform/iOS/Info.plist
 CODE_SIGN_ENTITLEMENTS = Multiplatform/iOS/iOS$(DEVELOPER_ENTITLEMENTS).entitlements
-PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.Multiplatform.iOS
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS
 PRODUCT_NAME = NetNewsWire
 
 // Override NetNewsWire_project.xcconfig until we are ready to only target 10.16

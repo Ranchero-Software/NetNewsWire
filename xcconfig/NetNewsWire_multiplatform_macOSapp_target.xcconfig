@@ -37,7 +37,7 @@ DEVELOPER_ENTITLEMENTS =
 
 INFOPLIST_FILE = Multiplatform/macOS/Info.plist
 CODE_SIGN_ENTITLEMENTS = Multiplatform/macOS/macOS$(DEVELOPER_ENTITLEMENTS).entitlements
-PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.Multiplatform.macOS
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen
 PRODUCT_NAME = NetNewsWire
 
 // Override NetNewsWire_project.xcconfig until we are ready to only target 10.16
