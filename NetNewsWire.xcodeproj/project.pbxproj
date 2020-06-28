@@ -253,8 +253,6 @@
 		51BEB22D2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */; };
 		51C0515E24A77DF800194D5E /* NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C0513624A77DF700194D5E /* NetNewsWire.swift */; };
 		51C0515F24A77DF800194D5E /* NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C0513624A77DF700194D5E /* NetNewsWire.swift */; };
-		51C0516024A77DF800194D5E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C0513724A77DF700194D5E /* ContentView.swift */; };
-		51C0516124A77DF800194D5E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C0513724A77DF700194D5E /* ContentView.swift */; };
 		51C0516224A77DF800194D5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51C0513824A77DF800194D5E /* Assets.xcassets */; };
 		51C0516324A77DF800194D5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51C0513824A77DF800194D5E /* Assets.xcassets */; };
 		51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */; };
@@ -527,6 +525,14 @@
 		51E4997524A8784400B667CB /* DefaultFeeds.opml in Resources */ = {isa = PBXBuildFile; fileRef = 84A3EE52223B667F00557320 /* DefaultFeeds.opml */; };
 		51E4997624A87FFC00B667CB /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65ED42B0235E71B40081F399 /* Sparkle.framework */; };
 		51E4997724A87FFC00B667CB /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 65ED42B0235E71B40081F399 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		51E499D824A912C200B667CB /* SceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E499D724A912C200B667CB /* SceneModel.swift */; };
+		51E499D924A912C200B667CB /* SceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E499D724A912C200B667CB /* SceneModel.swift */; };
+		51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E499FC24A9137600B667CB /* SidebarModel.swift */; };
+		51E499FE24A9137600B667CB /* SidebarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E499FC24A9137600B667CB /* SidebarModel.swift */; };
+		51E49A0024A91FC100B667CB /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E499FF24A91FC100B667CB /* SidebarView.swift */; };
+		51E49A0124A91FC100B667CB /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E499FF24A91FC100B667CB /* SidebarView.swift */; };
+		51E49A0324A91FF600B667CB /* SceneNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E49A0224A91FF600B667CB /* SceneNavigationView.swift */; };
+		51E49A0424A91FF600B667CB /* SceneNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E49A0224A91FF600B667CB /* SceneNavigationView.swift */; };
 		51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4DAEC2425F6940091EB5B /* CloudKit.framework */; };
 		51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4DB072425F9EB0091EB5B /* CloudKit.framework */; };
 		51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */; };
@@ -1806,7 +1812,6 @@
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
 		51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterEnterDetailTableViewController.swift; sourceTree = "<group>"; };
 		51C0513624A77DF700194D5E /* NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetNewsWire.swift; sourceTree = "<group>"; };
-		51C0513724A77DF700194D5E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		51C0513824A77DF800194D5E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		51C0513D24A77DF800194D5E /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		51C0513F24A77DF800194D5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1861,6 +1866,10 @@
 		51E4993924A8708800B667CB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		51E4993B24A8709900B667CB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		51E4995824A873F900B667CB /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
+		51E499D724A912C200B667CB /* SceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneModel.swift; sourceTree = "<group>"; };
+		51E499FC24A9137600B667CB /* SidebarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarModel.swift; sourceTree = "<group>"; };
+		51E499FF24A91FC100B667CB /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		51E49A0224A91FF600B667CB /* SceneNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigationView.swift; sourceTree = "<group>"; };
 		51E4DAEC2425F6940091EB5B /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		51E4DB072425F9EB0091EB5B /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		51E595A4228CC36500FCC42B /* ArticleStatusSyncTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleStatusSyncTimer.swift; sourceTree = "<group>"; };
@@ -2564,11 +2573,13 @@
 			isa = PBXGroup;
 			children = (
 				51C0513624A77DF700194D5E /* NetNewsWire.swift */,
-				51C0513724A77DF700194D5E /* ContentView.swift */,
+				51E499D724A912C200B667CB /* SceneModel.swift */,
+				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
 				51E4992524A80AAB00B667CB /* AppAssets.swift */,
 				51E4992824A866F000B667CB /* AppDefaults.swift */,
 				51E4995824A873F900B667CB /* ErrorHandler.swift */,
 				51C0513824A77DF800194D5E /* Assets.xcassets */,
+				51E499FB24A9135A00B667CB /* Sidebar */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2739,6 +2750,15 @@
 				51C452B32265141B00C03939 /* WebKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		51E499FB24A9135A00B667CB /* Sidebar */ = {
+			isa = PBXGroup;
+			children = (
+				51E499FC24A9137600B667CB /* SidebarModel.swift */,
+				51E499FF24A91FC100B667CB /* SidebarView.swift */,
+			);
+			path = Sidebar;
 			sourceTree = "<group>";
 		};
 		51FA739A2332BDE70090D516 /* Article Extractor */ = {
@@ -4578,6 +4598,7 @@
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
 				51E4990D24A808C500B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
+				51E49A0024A91FC100B667CB /* SidebarView.swift in Sources */,
 				51E4995C24A875F300B667CB /* ArticleRenderer.swift in Sources */,
 				51E4992324A8095700B667CB /* URL-Extensions.swift in Sources */,
 				51E4993624A867E800B667CB /* UserInfoKey.swift in Sources */,
@@ -4592,12 +4613,13 @@
 				51E4991724A8090400B667CB /* ArticleUtilities.swift in Sources */,
 				51E4991B24A8091000B667CB /* IconImage.swift in Sources */,
 				51E4995424A8734D00B667CB /* ExtensionPointIdentifer.swift in Sources */,
-				51C0516024A77DF800194D5E /* ContentView.swift in Sources */,
 				51E4996924A8760C00B667CB /* ArticleStylesManager.swift in Sources */,
 				51E498F324A8085D00B667CB /* PseudoFeed.swift in Sources */,
 				51E4996B24A8762D00B667CB /* ArticleExtractor.swift in Sources */,
+				51E49A0324A91FF600B667CB /* SceneNavigationView.swift in Sources */,
 				51E4990124A808BB00B667CB /* FaviconURLFinder.swift in Sources */,
 				51E4991D24A8092100B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
+				51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				51E4994224A8713C00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E498F624A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
@@ -4612,6 +4634,7 @@
 				51E4990024A808BB00B667CB /* FaviconGenerator.swift in Sources */,
 				51E4997124A8764C00B667CB /* ActivityType.swift in Sources */,
 				51E4991E24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
+				51E499D824A912C200B667CB /* SceneModel.swift in Sources */,
 				51E4991324A808FB00B667CB /* AddWebFeedDefaultContainer.swift in Sources */,
 				51E4993C24A8709900B667CB /* AppDelegate.swift in Sources */,
 				51E498F924A8085D00B667CB /* SmartFeed.swift in Sources */,
@@ -4660,17 +4683,19 @@
 				51E4991624A8090300B667CB /* ArticleUtilities.swift in Sources */,
 				51E4991A24A8090F00B667CB /* IconImage.swift in Sources */,
 				51E4992724A80AAB00B667CB /* AppAssets.swift in Sources */,
+				51E49A0124A91FC100B667CB /* SidebarView.swift in Sources */,
 				51E4995B24A875D500B667CB /* ArticlePasteboardWriter.swift in Sources */,
 				51E4993424A867E700B667CB /* UserInfoKey.swift in Sources */,
 				51E4994C24A8734C00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				51E4994124A8713B00B667CB /* RefreshInterval.swift in Sources */,
-				51C0516124A77DF800194D5E /* ContentView.swift in Sources */,
 				51E498C924A8085D00B667CB /* PseudoFeed.swift in Sources */,
 				51E498FC24A808BA00B667CB /* FaviconURLFinder.swift in Sources */,
 				51E4991C24A8092000B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
+				51E499D924A912C200B667CB /* SceneModel.swift in Sources */,
 				51E4994A24A8734C00B667CB /* ExtensionPointManager.swift in Sources */,
 				51E4996D24A8762D00B667CB /* ArticleExtractor.swift in Sources */,
 				51E4994024A8713B00B667CB /* AccountRefreshTimer.swift in Sources */,
+				51E49A0424A91FF600B667CB /* SceneNavigationView.swift in Sources */,
 				51E498CC24A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
 				51E498C824A8085D00B667CB /* SmartFeedsController.swift in Sources */,
 				51E4992C24A8676300B667CB /* ArticleSorter.swift in Sources */,
@@ -4688,6 +4713,7 @@
 				51E4990724A808C300B667CB /* AuthorAvatarDownloader.swift in Sources */,
 				51E4997424A8784400B667CB /* DefaultFeedsImporter.swift in Sources */,
 				51E4992024A8095000B667CB /* RSImage-Extensions.swift in Sources */,
+				51E499FE24A9137600B667CB /* SidebarModel.swift in Sources */,
 				51E498FE24A808BA00B667CB /* FaviconDownloader.swift in Sources */,
 				51E498FD24A808BA00B667CB /* ColorHash.swift in Sources */,
 				51E4992A24A866F000B667CB /* AppDefaults.swift in Sources */,

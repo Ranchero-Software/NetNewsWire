@@ -18,9 +18,21 @@ struct NetNewsWire: App {
 	@UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 	#endif
 	
+	@StateObject private var sceneModel = SceneModel()
+	
     var body: some Scene {
         WindowGroup {
-            ContentView()
+			#if os(macOS)
+			SceneNavigationView()
+				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
+				.environmentObject(sceneModel)
+			#endif
+			
+			#if os(iOS)
+			SceneNavigationView()
+				.environmentObject(sceneModel)
+			#endif
         }
     }
+	
 }
