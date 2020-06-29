@@ -30,6 +30,24 @@ class SidebarModel: ObservableObject {
 		}
 		items.append(smartFeedControllerItem)
 
+		for account in AccountManager.shared.sortedActiveAccounts {
+			var accountItem = SidebarItem(account)
+			
+			for webFeed in account.topLevelWebFeeds {
+				accountItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
+			}
+			
+			for folder in account.folders ?? Set<Folder>() {
+				var folderItem = SidebarItem(folder, unreadCount: delegate.unreadCount(for: folder))
+				for webFeed in folder.topLevelWebFeeds {
+					folderItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
+				}
+				accountItem.addChild(folderItem)
+			}
+
+			items.append(accountItem)
+		}
+		
 		sidebarItems = items
 	}
 	
