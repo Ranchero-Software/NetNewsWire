@@ -251,8 +251,8 @@
 		51BC4B00247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
 		51BC4B01247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
 		51BEB22D2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */; };
-		51C0515E24A77DF800194D5E /* NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C0513624A77DF700194D5E /* NetNewsWire.swift */; };
-		51C0515F24A77DF800194D5E /* NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C0513624A77DF700194D5E /* NetNewsWire.swift */; };
+		51C0515E24A77DF800194D5E /* MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C0513624A77DF700194D5E /* MainApp.swift */; };
+		51C0515F24A77DF800194D5E /* MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C0513624A77DF700194D5E /* MainApp.swift */; };
 		51C0516224A77DF800194D5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51C0513824A77DF800194D5E /* Assets.xcassets */; };
 		51C0516324A77DF800194D5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51C0513824A77DF800194D5E /* Assets.xcassets */; };
 		51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C266E9238C334800F53014 /* ContextMenuPreviewViewController.swift */; };
@@ -1811,7 +1811,7 @@
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
 		51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterEnterDetailTableViewController.swift; sourceTree = "<group>"; };
-		51C0513624A77DF700194D5E /* NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetNewsWire.swift; sourceTree = "<group>"; };
+		51C0513624A77DF700194D5E /* MainApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainApp.swift; sourceTree = "<group>"; };
 		51C0513824A77DF800194D5E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		51C0513D24A77DF800194D5E /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		51C0513F24A77DF800194D5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2572,7 +2572,7 @@
 		51C0519524A77E8B00194D5E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				51C0513624A77DF700194D5E /* NetNewsWire.swift */,
+				51C0513624A77DF700194D5E /* MainApp.swift */,
 				51E499D724A912C200B667CB /* SceneModel.swift */,
 				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
 				51E4992524A80AAB00B667CB /* AppAssets.swift */,
@@ -4646,7 +4646,7 @@
 				51E4991924A8090A00B667CB /* CacheCleaner.swift in Sources */,
 				51E498F724A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				51E4993524A867E800B667CB /* AppNotifications.swift in Sources */,
-				51C0515E24A77DF800194D5E /* NetNewsWire.swift in Sources */,
+				51C0515E24A77DF800194D5E /* MainApp.swift in Sources */,
 				51E4993D24A870F800B667CB /* UserNotificationManager.swift in Sources */,
 				51E4991524A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
 				51E4995724A8734D00B667CB /* ExtensionPoint.swift in Sources */,
@@ -4720,7 +4720,7 @@
 				51E4991824A8090A00B667CB /* CacheCleaner.swift in Sources */,
 				51E498CD24A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				51E4996124A875F400B667CB /* ArticleRenderer.swift in Sources */,
-				51C0515F24A77DF800194D5E /* NetNewsWire.swift in Sources */,
+				51C0515F24A77DF800194D5E /* MainApp.swift in Sources */,
 				51E4992D24A8676300B667CB /* FetchRequestOperation.swift in Sources */,
 				51E4992424A8098400B667CB /* SmartFeedPasteboardWriter.swift in Sources */,
 				51E4991424A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
@@ -5598,6 +5598,7 @@
 		};
 		51C0516524A77DF800194D5E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51C0519724A7808F00194D5E /* NetNewsWire_multiplatform_iOSapp_target.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -5611,6 +5612,7 @@
 		};
 		51C0516724A77DF800194D5E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51C0519824A7808F00194D5E /* NetNewsWire_multiplatform_macOSapp_target.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

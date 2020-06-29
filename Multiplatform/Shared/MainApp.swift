@@ -1,5 +1,5 @@
 //
-//  NetNewsWire.swift
+//  MainApp.swift
 //  Shared
 //
 //  Created by Maurice Parker on 6/27/20.
@@ -9,7 +9,7 @@
 import SwiftUI
 
 @main
-struct NetNewsWire: App {
+struct MainApp: App {
 	
 	#if os(macOS)
 	@NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate

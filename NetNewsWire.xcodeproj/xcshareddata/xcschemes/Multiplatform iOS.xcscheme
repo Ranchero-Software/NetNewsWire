@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "51C0513C24A77DF800194D5E"
-               BuildableName = ".app"
+               BuildableName = "NetNewsWire.app"
                BlueprintName = "Multiplatform iOS"
                ReferencedContainer = "container:NetNewsWire.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "51C0513C24A77DF800194D5E"
-            BuildableName = ".app"
+            BuildableName = "NetNewsWire.app"
             BlueprintName = "Multiplatform iOS"
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "51C0513C24A77DF800194D5E"
-            BuildableName = ".app"
+            BuildableName = "NetNewsWire.app"
             BlueprintName = "Multiplatform iOS"
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
