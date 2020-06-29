@@ -16,16 +16,13 @@ struct SidebarView: View {
     var body: some View {
 		List {
 			ForEach(sidebarModel.sidebarItems) { section in
-				Section(header: Text(section.nameForDisplay)) {
-					ForEach(section.children ?? [SidebarItem]()) { topItem in
-						OutlineGroup(topItem, children: \.children) { sidebarItem in
-							Text(sidebarItem.nameForDisplay)
-						}
-					}
+				OutlineGroup(sidebarModel.sidebarItems, children: \.children) { sidebarItem in
+					Text(sidebarItem.nameForDisplay)
 				}
 			}
 		}
 		.navigationTitle(Text("Feeds"))
+		.listStyle(SidebarListStyle())
 		.onAppear {
 			sceneModel.sidebarModel = sidebarModel
 			sidebarModel.delegate = sceneModel
