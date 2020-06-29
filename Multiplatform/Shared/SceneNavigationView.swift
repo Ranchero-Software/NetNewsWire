@@ -9,16 +9,41 @@
 import SwiftUI
 
 struct SceneNavigationView: View {
-    var body: some View {
+    
+	#if os(iOS)
+	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+	#endif
+	
+	@ViewBuilder var sidebar: some View {
+		#if os(iOS)
+		if horizontalSizeClass == .compact {
+			CompactNavigationView()
+		} else {
+			SidebarView()
+		}
+		#else
+			SidebarView()
+		#endif
+	}
+	
+	var body: some View {
 		NavigationView {
 			#if os(macOS)
-			SidebarView().frame(minWidth: 100, idealWidth: 150, maxWidth: 200, maxHeight: .infinity)
+			sidebar
+				.frame(minWidth: 100, idealWidth: 150, maxWidth: 200, maxHeight: .infinity)
 			#else
-			SidebarView()
+				sidebar
 			#endif
 
+			#if os(iOS)
+			if horizontalSizeClass != .compact {
+				Text("Timeline")
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
+			}
+			#else
 			Text("Timeline")
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
+			#endif
 
 			#if os(macOS)
 			Text("None Selected")

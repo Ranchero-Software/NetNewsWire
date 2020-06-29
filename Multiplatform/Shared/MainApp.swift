@@ -29,7 +29,6 @@ struct MainApp: App {
 				.environmentObject(sceneModel)
 				.toolbar {
 					
-					
 					ToolbarItem {
 						Button(action: {}, label: {
 							Image(systemName: "plus").foregroundColor(.secondary)
@@ -41,7 +40,6 @@ struct MainApp: App {
 							Image(systemName: "folder.fill.badge.plus").foregroundColor(.pink)
 						}).help("New Folder")
 					}
-					
 					
 					ToolbarItem {
 						Button(action: {}, label: {
