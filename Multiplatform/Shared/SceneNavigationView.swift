@@ -14,25 +14,17 @@ struct SceneNavigationView: View {
 	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
 	#endif
 	
-	@ViewBuilder var sidebar: some View {
-		#if os(iOS)
-		if horizontalSizeClass == .compact {
-			CompactNavigationView()
-		} else {
-			SidebarView()
-		}
-		#else
-			SidebarView()
-		#endif
-	}
-	
 	var body: some View {
 		NavigationView {
 			#if os(macOS)
-			sidebar
+			RegularSidebarContainerView()
 				.frame(minWidth: 100, idealWidth: 150, maxWidth: 200, maxHeight: .infinity)
 			#else
-				sidebar
+			if horizontalSizeClass == .compact {
+				CompactSidebarContainerView()
+			} else {
+				RegularSidebarContainerView()
+			}
 			#endif
 
 			#if os(iOS)
