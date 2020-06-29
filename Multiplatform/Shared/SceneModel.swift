@@ -23,4 +23,9 @@ extension SceneModel: SidebarModelDelegate {
 		print("**** sidebar selection changed ***")
 	}
 	
+	func unreadCount(for feed: Feed) -> Int {
+		// TODO: Get the count from the timeline if Feed is the current timeline
+		return feed.unreadCount
+	}
+	
 }

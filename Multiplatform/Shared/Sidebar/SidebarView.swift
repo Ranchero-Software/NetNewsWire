@@ -14,23 +14,24 @@ struct SidebarView: View {
 	@StateObject private var sidebarModel = SidebarModel()
 	
     var body: some View {
-        Text("Sidebar")
-			.onAppear {
-				sceneModel.sidebarModel = sidebarModel
-				sidebarModel.delegate = sceneModel
+		List {
+			ForEach(sidebarModel.sidebarItems) { section in
+				Section(header: Text(section.nameForDisplay)) {
+					ForEach(section.children ?? [SidebarItem]()) { topItem in
+						OutlineGroup(topItem, children: \.children) { sidebarItem in
+							Text(sidebarItem.nameForDisplay)
+						}
+					}
+				}
 			}
+		}
+		.navigationTitle(Text("Feeds"))
+		.onAppear {
+			sceneModel.sidebarModel = sidebarModel
+			sidebarModel.delegate = sceneModel
+			sidebarModel.rebuildSidebarItems()
+		}
 
-//		List {
-//			ForEach(canvases) { canvas in
-//				Section(header: Text(canvas.name)) {
-//					OutlineGroup(canvas.graphics, children: \.children)
-//					{ graphic in
-//						GraphicRow(graphic)
-//					}
-//				}
-//			}
-//		}
-		
 	}
 }
 

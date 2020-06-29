@@ -110,6 +110,8 @@
 		513C5D0C232574DA003D4054 /* RSTree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F9520DD8CFE00CA8CF5 /* RSTree.framework */; };
 		513C5D0E232574E4003D4054 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
 		513CCF2524880C1500C55709 /* MasterFeedTableViewIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513CCF08248808BA00C55709 /* MasterFeedTableViewIdentifier.swift */; };
+		51408B7E24A9EC6F0073CF4E /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */; };
+		51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */; };
 		5141E7392373C18B0013FF27 /* WebFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7382373C18B0013FF27 /* WebFeedInspectorViewController.swift */; };
 		5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5142192923522B5500E07E2C /* ImageViewController.swift */; };
 		514219372352510100E07E2C /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514219362352510100E07E2C /* ImageScrollView.swift */; };
@@ -1715,6 +1717,7 @@
 		513C5CEB232571C2003D4054 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		513C5CED232571C2003D4054 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		513CCF08248808BA00C55709 /* MasterFeedTableViewIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewIdentifier.swift; sourceTree = "<group>"; };
+		51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
 		5141E7382373C18B0013FF27 /* WebFeedInspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedInspectorViewController.swift; sourceTree = "<group>"; };
 		5141E7552374A2890013FF27 /* DetailIconSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailIconSchemeHandler.swift; sourceTree = "<group>"; };
 		5142192923522B5500E07E2C /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
@@ -2757,6 +2760,7 @@
 			children = (
 				51E499FC24A9137600B667CB /* SidebarModel.swift */,
 				51E499FF24A91FC100B667CB /* SidebarView.swift */,
+				51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -4607,6 +4611,7 @@
 				51E4990B24A808C500B667CB /* ImageDownloader.swift in Sources */,
 				51E498F424A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				51E4993024A8676400B667CB /* ArticleSorter.swift in Sources */,
+				51408B7E24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
 				51E4990A24A808C500B667CB /* FeaturedImageDownloader.swift in Sources */,
 				51E4993824A8680E00B667CB /* Reachability.swift in Sources */,
 				51E4993224A8676400B667CB /* FetchRequestQueue.swift in Sources */,
@@ -4703,6 +4708,7 @@
 				51E4990E24A808CC00B667CB /* HTMLMetadataDownloader.swift in Sources */,
 				51E498FB24A808BA00B667CB /* FaviconGenerator.swift in Sources */,
 				51E4996724A8760B00B667CB /* ArticleStylesManager.swift in Sources */,
+				51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
 				51E4996E24A8764C00B667CB /* ActivityManager.swift in Sources */,
 				51E4995A24A873F900B667CB /* ErrorHandler.swift in Sources */,
 				51E4991F24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
