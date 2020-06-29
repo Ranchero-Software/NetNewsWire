@@ -27,6 +27,66 @@ struct MainApp: App {
 			SceneNavigationView()
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
 				.environmentObject(sceneModel)
+				.toolbar {
+					
+					
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "plus").foregroundColor(.secondary)
+						}).help("New Feed")
+					}
+				
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "folder.fill.badge.plus").foregroundColor(.pink)
+						}).help("New Folder")
+					}
+					
+					
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "arrow.clockwise").foregroundColor(.secondary)
+						}).help("Refresh").padding(.trailing, 40)
+					}
+					
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "circle.dashed").foregroundColor(.orange)
+						}).help("Mark All as Read")
+					}
+					
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "arrow.triangle.turn.up.right.circle.fill").foregroundColor(.purple)
+						}).help("Go to Next Unread")
+					}
+					
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "star.fill").foregroundColor(.yellow)
+						}).help("Mark as Starred")
+					}
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
+						}).help("Mark as Unread")
+					}
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "safari").foregroundColor(.blue)
+						}).help("Open in Browser")
+					}
+					ToolbarItem {
+						Button(action: {}, label: {
+							Image(systemName: "square.and.arrow.up")
+						}).help("Share")
+					}
+					
+					ToolbarItem {
+						MacSearchField()
+							.frame(width: 300)
+					}
+				}
 		}
 		.commands {
 			CommandGroup(after: .newItem, addition: {
