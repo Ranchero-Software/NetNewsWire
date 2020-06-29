@@ -37,5 +37,6 @@ struct SidebarView: View {
 struct SidebarView_Previews: PreviewProvider {
     static var previews: some View {
         SidebarView()
+			.environmentObject(SceneModel())
     }
 }
