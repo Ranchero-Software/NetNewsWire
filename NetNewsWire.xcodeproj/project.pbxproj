@@ -208,6 +208,10 @@
 		518ED21D23D0F26000E0A862 /* UIViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518ED21C23D0F26000E0A862 /* UIViewController-Extensions.swift */; };
 		51919FA624AA64B000541E64 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FA524AA64B000541E64 /* SidebarView.swift */; };
 		51919FA724AA64B000541E64 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FA524AA64B000541E64 /* SidebarView.swift */; };
+		51919FAC24AA8CCA00541E64 /* UnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FAB24AA8CCA00541E64 /* UnreadCountView.swift */; };
+		51919FAD24AA8CCA00541E64 /* UnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FAB24AA8CCA00541E64 /* UnreadCountView.swift */; };
+		51919FAF24AA8EFA00541E64 /* SidebarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */; };
+		51919FB024AA8EFA00541E64 /* SidebarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */; };
 		51934CCB230F599B006127BE /* InteractiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CC1230F5963006127BE /* InteractiveNavigationController.swift */; };
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
@@ -1797,6 +1801,8 @@
 		518B2EE92351B4C200400001 /* NetNewsWire_iOSTests_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSTests_target.xcconfig; sourceTree = "<group>"; };
 		518ED21C23D0F26000E0A862 /* UIViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController-Extensions.swift"; sourceTree = "<group>"; };
 		51919FA524AA64B000541E64 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		51919FAB24AA8CCA00541E64 /* UnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCountView.swift; sourceTree = "<group>"; };
+		51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItemView.swift; sourceTree = "<group>"; };
 		51934CC1230F5963006127BE /* InteractiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveNavigationController.swift; sourceTree = "<group>"; };
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
@@ -2810,6 +2816,8 @@
 				51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */,
 				51E499FC24A9137600B667CB /* SidebarModel.swift */,
 				51919FA524AA64B000541E64 /* SidebarView.swift */,
+				51919FAB24AA8CCA00541E64 /* UnreadCountView.swift */,
+				51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -4650,6 +4658,7 @@
 				51E498F124A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
+				51919FAF24AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
 				51E4990D24A808C500B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
 				51E49A0024A91FC100B667CB /* RegularSidebarContainerView.swift in Sources */,
 				51E4995C24A875F300B667CB /* ArticleRenderer.swift in Sources */,
@@ -4699,6 +4708,7 @@
 				51E4992124A8095000B667CB /* RSImage-Extensions.swift in Sources */,
 				51E4990324A808BB00B667CB /* FaviconDownloader.swift in Sources */,
 				51E4990224A808BB00B667CB /* ColorHash.swift in Sources */,
+				51919FAC24AA8CCA00541E64 /* UnreadCountView.swift in Sources */,
 				51E4991924A8090A00B667CB /* CacheCleaner.swift in Sources */,
 				51E498F724A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				51E4993524A867E800B667CB /* AppNotifications.swift in Sources */,
@@ -4723,6 +4733,7 @@
 				51E4994B24A8734C00B667CB /* SendToMicroBlogCommand.swift in Sources */,
 				51E4996F24A8764C00B667CB /* ActivityType.swift in Sources */,
 				51E4994E24A8734C00B667CB /* SendToMarsEditCommand.swift in Sources */,
+				51919FB024AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
 				51E4996624A8760B00B667CB /* ArticleStyle.swift in Sources */,
 				51E4996C24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
 				51E4990824A808C300B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
@@ -4745,6 +4756,7 @@
 				1729529724AA1CD000D65E66 /* MacPreferencesView.swift in Sources */,
 				51E4994C24A8734C00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */,
+				51919FAD24AA8CCA00541E64 /* UnreadCountView.swift in Sources */,
 				51E4994124A8713B00B667CB /* RefreshInterval.swift in Sources */,
 				51E498C924A8085D00B667CB /* PseudoFeed.swift in Sources */,
 				51E498FC24A808BA00B667CB /* FaviconURLFinder.swift in Sources */,
