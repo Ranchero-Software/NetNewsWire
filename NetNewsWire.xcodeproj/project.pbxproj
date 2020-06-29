@@ -13,6 +13,7 @@
 		1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */; };
 		1729529724AA1CD000D65E66 /* MacPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529624AA1CD000D65E66 /* MacPreferencesView.swift */; };
 		1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529A24AA1FD200D65E66 /* MacSearchField.swift */; };
+		172952B024AA287100D65E66 /* CompactNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172952AF24AA287100D65E66 /* CompactNavigationView.swift */; };
 		179DB1DFBCF9177104B12E0F /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		179DB3CE822BFCC2D774D9F4 /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
@@ -1671,6 +1672,7 @@
 		1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesView.swift; sourceTree = "<group>"; };
 		1729529624AA1CD000D65E66 /* MacPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencesView.swift; sourceTree = "<group>"; };
 		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
+		172952AF24AA287100D65E66 /* CompactNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactNavigationView.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
 		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
 		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
@@ -2802,6 +2804,7 @@
 			children = (
 				51E499FC24A9137600B667CB /* SidebarModel.swift */,
 				51E499FF24A91FC100B667CB /* SidebarView.swift */,
+				172952AF24AA287100D65E66 /* CompactNavigationView.swift */,
 				51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */,
 			);
 			path = Sidebar;
@@ -4650,6 +4653,7 @@
 				51E4993624A867E800B667CB /* UserInfoKey.swift in Sources */,
 				51E4990924A808C500B667CB /* WebFeedIconDownloader.swift in Sources */,
 				51E498F524A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
+				172952B024AA287100D65E66 /* CompactNavigationView.swift in Sources */,
 				51E4990B24A808C500B667CB /* ImageDownloader.swift in Sources */,
 				51E498F424A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				51E4993024A8676400B667CB /* ArticleSorter.swift in Sources */,
