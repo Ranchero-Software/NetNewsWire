@@ -13,6 +13,7 @@ struct MainApp: App {
 	
 	#if os(macOS)
 	@NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
+	let preferences = MacPreferences()
 	#endif
 	#if os(iOS)
 	@UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
@@ -72,6 +73,17 @@ struct MainApp: App {
 			})
 		}
 		.windowToolbarStyle(UnifiedWindowToolbarStyle())
+		
+		// Mac Preferences
+		Settings {
+			MacPreferencesView()
+			.padding()
+			.frame(width: 500)
+			.navigationTitle("Preferences")
+			.environmentObject(preferences)
+		}
+		.windowToolbarStyle(UnifiedWindowToolbarStyle())
+		
 		#endif
 		
 		#if os(iOS)
