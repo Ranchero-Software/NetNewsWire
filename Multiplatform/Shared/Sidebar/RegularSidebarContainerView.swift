@@ -13,7 +13,9 @@ struct RegularSidebarContainerView: View {
 	@EnvironmentObject private var sceneModel: SceneModel
 	@StateObject private var sidebarModel = SidebarModel()
 	
-    var body: some View {
+	@State private var showSettings: Bool = false
+	
+    @ViewBuilder var body: some View {
 		SidebarView()
 			.environmentObject(sidebarModel)
 			.navigationTitle(Text("Feeds"))
@@ -23,7 +25,14 @@ struct RegularSidebarContainerView: View {
 				sidebarModel.delegate = sceneModel
 				sidebarModel.rebuildSidebarItems()
 			}
+			.overlay(Group {
+				#if os(iOS)
+				SidebarToolbar()
+				#endif
+			},alignment: .bottom)
+		
 	}
+	
 }
 
 struct RegularSidebarContainerView_Previews: PreviewProvider {
