@@ -29,7 +29,78 @@ struct SidebarItemView: View {
 			if let feed = sidebarItem.represented as? Feed {
 				feedImageLoader.loadImage(for: feed)
 			}
-		}
+		}.contextMenu(menuItems: {
+			if let _ = sidebarItem.represented as? PseudoFeed {
+				Button(action: {}) {
+					HStack {
+						Text("Mark All as Read")
+						Spacer()
+						Image("markAllAsRead")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+					}
+				}
+			} else if let _ = sidebarItem.represented as? Feed {
+				Button(action: {}) {
+					HStack {
+						Text("Mark All as Read")
+						Spacer()
+						Image("markAllAsRead")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+					}
+				}
+				Divider()
+				Button(action: {
+					
+				}) {
+					HStack {
+						Text("Open Home Page")
+						Spacer()
+						Image(systemName: "safari")
+					}
+				}
+				Divider()
+				Button(action: {}) {
+					HStack {
+						Text("Copy Feed URL")
+						Spacer()
+						Image(systemName: "doc.on.doc")
+					}
+				}
+				Button(action: {}) {
+					HStack {
+						Text("Copy Home Page URL")
+						Spacer()
+						Image(systemName: "doc.on.doc")
+					}
+				}
+				Divider()
+				Button(action: {}) {
+					HStack {
+						Text("Rename")
+						Spacer()
+						Image(systemName: "textformat")
+					}
+				}
+				Button(action: {}) {
+					HStack {
+						Text("Delete").foregroundColor(.red)
+						Spacer()
+						Image(systemName: "trash").foregroundColor(.red)
+					}
+				}
+			} else  {
+				Button(action: {}) {
+					HStack {
+						Text("Mark All As Read in \(sidebarItem.nameForDisplay)")
+						Spacer()
+						Image("markAllAsRead")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+					}
+				}
+			}
+		})
     }
-	
 }
