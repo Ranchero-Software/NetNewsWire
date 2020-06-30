@@ -14,7 +14,9 @@ struct UnreadCountView: View {
 	
     var body: some View {
 		Text(verbatim: String(count))
+			.font(.footnote)
 			.padding(.horizontal, 7)
+			.padding(.vertical, 1)
 			.background(SwiftUI.Color.gray.opacity(0.5))
 			.cornerRadius(8)
     }
