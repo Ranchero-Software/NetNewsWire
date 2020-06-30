@@ -72,11 +72,11 @@ struct SettingsView: View {
 			.listStyle(InsetGroupedListStyle())
 			.navigationBarTitle("Settings", displayMode: .inline)
 			.navigationBarItems(leading:
-									HStack {
-										Button("Done") {
-											presentationMode.wrappedValue.dismiss()
-										}
-									}
+				HStack {
+					Button("Done") {
+						presentationMode.wrappedValue.dismiss()
+					}
+				}
 			)
 		}
 		.sheet(isPresented: $viewModel.presentSheet, content: {
@@ -167,7 +167,7 @@ struct SettingsView: View {
 	}
 	
 	var help: some View {
-		Section(header: Text("Help"), content: {
+		Section(header: Text("Help"), footer: Text(appVersion()).font(.caption2), content: {
 			Button("NetNewsWire Help", action: {
 				viewModel.selectedWebsite = .netNewsWireHelp
 			}).foregroundColor(.primary)
@@ -193,6 +193,13 @@ struct SettingsView: View {
 				})
 		})
 		
+	}
+	
+	private func appVersion() -> String {
+		let dict = NSDictionary(contentsOf: Bundle.main.url(forResource: "Info", withExtension: "plist")!)
+		let version = dict?.object(forKey: "CFBundleShortVersionString") as? String ?? ""
+		let build = dict?.object(forKey: "CFBundleVersion") as? String ?? ""
+		return "NetNewsWire \(version) (Build \(build))"
 	}
 	
 }
