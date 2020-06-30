@@ -95,10 +95,6 @@ struct MainApp: App {
 				Button("Refresh", action: {})
 					.keyboardShortcut("R")
 			})
-			CommandGroup(before: .sidebar, addition: {
-				Button("Show Sidebar", action: {})
-					.keyboardShortcut("S", modifiers: [.control, .command])
-			})
 			CommandMenu("Subscriptions", content: {
 				Button("Import Subscriptions", action: {})
 					.keyboardShortcut("I", modifiers: [.shift, .command])
