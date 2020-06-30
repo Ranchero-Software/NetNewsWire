@@ -14,10 +14,8 @@ struct SidebarView: View {
 	
 	var body: some View {
 		List {
-			ForEach(sidebarModel.sidebarItems) { section in
-				OutlineGroup(sidebarModel.sidebarItems, children: \.children) { sidebarItem in
-					Text(sidebarItem.nameForDisplay)
-				}
+			OutlineGroup(sidebarModel.sidebarItems, children: \.children) { sidebarItem in
+				SidebarItemView(sidebarItem: sidebarItem)
 			}
 		}
 	}

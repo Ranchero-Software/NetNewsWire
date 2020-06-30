@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import Account
 
 protocol SidebarModelDelegate: class {
@@ -20,6 +21,12 @@ class SidebarModel: ObservableObject {
 	
 	@Published var sidebarItems = [SidebarItem]()
 	
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
+	}
+	
+	// MARK: API
+	
 	func rebuildSidebarItems() {
 		guard let delegate = delegate else { return }
 		var items = [SidebarItem]()
@@ -30,7 +37,45 @@ class SidebarModel: ObservableObject {
 		}
 		items.append(smartFeedControllerItem)
 
+		for account in AccountManager.shared.sortedActiveAccounts {
+			var accountItem = SidebarItem(account)
+			
+			for webFeed in sort(account.topLevelWebFeeds) {
+				accountItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
+			}
+			
+			for folder in sort(account.folders ?? Set<Folder>()) {
+				var folderItem = SidebarItem(folder, unreadCount: delegate.unreadCount(for: folder))
+				for webFeed in sort(folder.topLevelWebFeeds) {
+					folderItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
+				}
+				accountItem.addChild(folderItem)
+			}
+
+			items.append(accountItem)
+		}
+		
 		sidebarItems = items
+	}
+	
+}
+
+// MARK: Private
+private extension SidebarModel {
+	
+	@objc func unreadCountDidInitialize(_ notification: Notification) {
+		guard notification.object is AccountManager else {
+			return
+		}
+		rebuildSidebarItems()
+	}
+	
+	func sort(_ folders: Set<Folder>) -> [Folder] {
+		return folders.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
+	}
+
+	func sort(_ feeds: Set<WebFeed>) -> [Feed] {
+		return feeds.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
 	}
 	
 }

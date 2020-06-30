@@ -47,6 +47,9 @@ struct SidebarItem: Identifiable {
 		self.id = .feed(feed.feedID!)
 		self.represented = feed
 		self.unreadCount = unreadCount
+		if let container = feed as? Container, container.hasAtLeastOneWebFeed() {
+			self.children = [SidebarItem]()
+		}
 	}
 
 	mutating func addChild(_ sidebarItem: SidebarItem) {

@@ -18,7 +18,7 @@ struct SceneNavigationView: View {
 		NavigationView {
 			#if os(macOS)
 			RegularSidebarContainerView()
-				.frame(minWidth: 100, idealWidth: 150, maxWidth: 200, maxHeight: .infinity)
+				.frame(minWidth: 100, idealWidth: 150, maxHeight: .infinity)
 			#else
 			if horizontalSizeClass == .compact {
 				CompactSidebarContainerView()
