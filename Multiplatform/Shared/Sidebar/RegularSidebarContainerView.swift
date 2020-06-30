@@ -1,5 +1,5 @@
 //
-//  SidebarView.swift
+//  RegularSidebarContainerView.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 6/28/20.

@@ -220,6 +220,14 @@
 		51919FB424AAB97900541E64 /* FeedImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB224AAB97900541E64 /* FeedImageLoader.swift */; };
 		51919FB624AABCA100541E64 /* IconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB524AABCA100541E64 /* IconImageView.swift */; };
 		51919FB724AABCA100541E64 /* IconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB524AABCA100541E64 /* IconImageView.swift */; };
+		51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FED24AB85E400541E64 /* TimelineContainerView.swift */; };
+		51919FEF24AB85E400541E64 /* TimelineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FED24AB85E400541E64 /* TimelineContainerView.swift */; };
+		51919FF124AB864A00541E64 /* TimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FF024AB864A00541E64 /* TimelineModel.swift */; };
+		51919FF224AB864A00541E64 /* TimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FF024AB864A00541E64 /* TimelineModel.swift */; };
+		51919FF424AB869C00541E64 /* TimelineItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FF324AB869C00541E64 /* TimelineItem.swift */; };
+		51919FF524AB869C00541E64 /* TimelineItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FF324AB869C00541E64 /* TimelineItem.swift */; };
+		51919FF724AB8B7700541E64 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FF624AB8B7700541E64 /* TimelineView.swift */; };
+		51919FF824AB8B7700541E64 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FF624AB8B7700541E64 /* TimelineView.swift */; };
 		51934CCB230F599B006127BE /* InteractiveNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CC1230F5963006127BE /* InteractiveNavigationController.swift */; };
 		51934CCE2310792F006127BE /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51934CCD2310792F006127BE /* ActivityManager.swift */; };
 		51938DF2231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */; };
@@ -1817,6 +1825,10 @@
 		51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItemView.swift; sourceTree = "<group>"; };
 		51919FB224AAB97900541E64 /* FeedImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageLoader.swift; sourceTree = "<group>"; };
 		51919FB524AABCA100541E64 /* IconImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImageView.swift; sourceTree = "<group>"; };
+		51919FED24AB85E400541E64 /* TimelineContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContainerView.swift; sourceTree = "<group>"; };
+		51919FF024AB864A00541E64 /* TimelineModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineModel.swift; sourceTree = "<group>"; };
+		51919FF324AB869C00541E64 /* TimelineItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineItem.swift; sourceTree = "<group>"; };
+		51919FF624AB8B7700541E64 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		51934CC1230F5963006127BE /* InteractiveNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveNavigationController.swift; sourceTree = "<group>"; };
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
@@ -2602,6 +2614,17 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
+		51919FCB24AB855000541E64 /* Timeline */ = {
+			isa = PBXGroup;
+			children = (
+				51919FED24AB85E400541E64 /* TimelineContainerView.swift */,
+				51919FF324AB869C00541E64 /* TimelineItem.swift */,
+				51919FF024AB864A00541E64 /* TimelineModel.swift */,
+				51919FF624AB8B7700541E64 /* TimelineView.swift */,
+			);
+			path = Timeline;
+			sourceTree = "<group>";
+		};
 		51934CCC231078DC006127BE /* Activity */ = {
 			isa = PBXGroup;
 			children = (
@@ -2635,13 +2658,13 @@
 		51C0519324A77E6600194D5E /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				51C0513F24A77DF800194D5E /* Info.plist */,
-				51C051CE24A7A72100194D5E /* iOS.entitlements */,
 				51C051CF24A7A72100194D5E /* iOS-dev.entitlements */,
+				51C051CE24A7A72100194D5E /* iOS.entitlements */,
+				51C0513F24A77DF800194D5E /* Info.plist */,
 				51E4993B24A8709900B667CB /* AppDelegate.swift */,
-				172199EB24AB228E00A31D04 /* Settings */,
 				172199EC24AB2E0100A31D04 /* SafariView.swift */,
 				172199EE24AB372D00A31D04 /* VisualEffectBlur.swift */,
+				172199EB24AB228E00A31D04 /* Settings */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -2649,12 +2672,12 @@
 		51C0519424A77E6D00194D5E /* macOS */ = {
 			isa = PBXGroup;
 			children = (
-				1729528F24AA1A4F00D65E66 /* Preferences */,
-				51C0514624A77DF800194D5E /* Info.plist */,
-				51C0514724A77DF800194D5E /* macOS.entitlements */,
 				51C051CD24A7A6DB00194D5E /* macOS-dev.entitlements */,
+				51C0514724A77DF800194D5E /* macOS.entitlements */,
+				51C0514624A77DF800194D5E /* Info.plist */,
 				51E4993924A8708800B667CB /* AppDelegate.swift */,
 				1729529A24AA1FD200D65E66 /* MacSearchField.swift */,
+				1729528F24AA1A4F00D65E66 /* Preferences */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -2662,15 +2685,16 @@
 		51C0519524A77E8B00194D5E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				51C0513624A77DF700194D5E /* MainApp.swift */,
-				51E499D724A912C200B667CB /* SceneModel.swift */,
-				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
 				51E4992524A80AAB00B667CB /* AppAssets.swift */,
 				51E4992824A866F000B667CB /* AppDefaults.swift */,
 				51E4995824A873F900B667CB /* ErrorHandler.swift */,
+				51C0513624A77DF700194D5E /* MainApp.swift */,
+				51E499D724A912C200B667CB /* SceneModel.swift */,
+				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
 				51C0513824A77DF800194D5E /* Assets.xcassets */,
 				51919FB124AAB95300541E64 /* Images */,
 				51E499FB24A9135A00B667CB /* Sidebar */,
+				51919FCB24AB855000541E64 /* Timeline */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -3861,46 +3885,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -3910,7 +3934,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -3920,7 +3944,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -4691,11 +4715,13 @@
 				51E4994424A8713C00B667CB /* RefreshInterval.swift in Sources */,
 				51E498F824A8085D00B667CB /* UnreadFeed.swift in Sources */,
 				51E4996A24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
+				51919FF124AB864A00541E64 /* TimelineModel.swift in Sources */,
 				51E498F124A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
 				51919FAF24AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
 				51E4990D24A808C500B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
+				51919FF424AB869C00541E64 /* TimelineItem.swift in Sources */,
 				51E49A0024A91FC100B667CB /* RegularSidebarContainerView.swift in Sources */,
 				51E4995C24A875F300B667CB /* ArticleRenderer.swift in Sources */,
 				51E4992324A8095700B667CB /* URL-Extensions.swift in Sources */,
@@ -4755,8 +4781,10 @@
 				51E498F724A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				51E4993524A867E800B667CB /* AppNotifications.swift in Sources */,
 				51C0515E24A77DF800194D5E /* MainApp.swift in Sources */,
+				51919FF724AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4993D24A870F800B667CB /* UserNotificationManager.swift in Sources */,
 				51E4991524A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
+				51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				51E4995724A8734D00B667CB /* ExtensionPoint.swift in Sources */,
 				51E4991124A808DE00B667CB /* SmallIconProvider.swift in Sources */,
 			);
@@ -4777,9 +4805,11 @@
 				51E4996F24A8764C00B667CB /* ActivityType.swift in Sources */,
 				51E4994E24A8734C00B667CB /* SendToMarsEditCommand.swift in Sources */,
 				51919FB024AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
+				51919FEF24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				51E4996624A8760B00B667CB /* ArticleStyle.swift in Sources */,
 				51E4996C24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
 				51E4990824A808C300B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
+				51919FF824AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4992B24A8676300B667CB /* ArticleArray.swift in Sources */,
 				51E4994D24A8734C00B667CB /* ExtensionPointIdentifer.swift in Sources */,
 				51E4992224A8095600B667CB /* URL-Extensions.swift in Sources */,
@@ -4791,6 +4821,7 @@
 				51E498CA24A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				51E4990524A808C300B667CB /* FeaturedImageDownloader.swift in Sources */,
 				51E4991624A8090300B667CB /* ArticleUtilities.swift in Sources */,
+				51919FF224AB864A00541E64 /* TimelineModel.swift in Sources */,
 				51E4991A24A8090F00B667CB /* IconImage.swift in Sources */,
 				51E4992724A80AAB00B667CB /* AppAssets.swift in Sources */,
 				51E49A0124A91FC100B667CB /* RegularSidebarContainerView.swift in Sources */,
@@ -4829,6 +4860,7 @@
 				51E498CF24A8085D00B667CB /* SmartFeed.swift in Sources */,
 				51E4990724A808C300B667CB /* AuthorAvatarDownloader.swift in Sources */,
 				51E4997424A8784400B667CB /* DefaultFeedsImporter.swift in Sources */,
+				51919FF524AB869C00541E64 /* TimelineItem.swift in Sources */,
 				51E4992024A8095000B667CB /* RSImage-Extensions.swift in Sources */,
 				51E499FE24A9137600B667CB /* SidebarModel.swift in Sources */,
 				51E498FE24A808BA00B667CB /* FaviconDownloader.swift in Sources */,

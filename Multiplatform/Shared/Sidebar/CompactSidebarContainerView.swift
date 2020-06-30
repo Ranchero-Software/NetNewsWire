@@ -1,5 +1,5 @@
 //
-//  CompactNavigationView.swift
+//  CompactSidebarContainerView.swift
 //  Multiplatform iOS
 //
 //  Created by Stuart Breckenridge on 29/6/20.

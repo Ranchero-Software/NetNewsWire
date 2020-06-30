@@ -12,6 +12,7 @@ import Account
 final class SceneModel: ObservableObject {
 	
 	var sidebarModel: SidebarModel?
+	var timelineModel: TimelineModel?
 	
 }
 
@@ -26,6 +27,15 @@ extension SceneModel: SidebarModelDelegate {
 	func unreadCount(for feed: Feed) -> Int {
 		// TODO: Get the count from the timeline if Feed is the current timeline
 		return feed.unreadCount
+	}
+	
+}
+
+// MARK: TimelineModelDelegate
+
+extension SceneModel: TimelineModelDelegate {
+
+	func timelineRequestedWebFeedSelection(_: TimelineModel, webFeed: WebFeed) {
 	}
 	
 }
