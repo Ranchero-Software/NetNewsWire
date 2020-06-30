@@ -16,6 +16,10 @@ public enum SidebarItemIdentifier: Hashable, Equatable {
 	case feed(FeedIdentifier)
 }
 
+public enum RepresentedType {
+	case feed, pseudoFeed, account, unknown
+}
+
 struct SidebarItem: Identifiable {
 	
 	var id: SidebarItemIdentifier
@@ -27,6 +31,25 @@ struct SidebarItem: Identifiable {
 	var nameForDisplay: String {
 		guard let displayNameProvider = represented as? DisplayNameProvider else { return "" }
 		return displayNameProvider.nameForDisplay
+	}
+	
+	var feed: Feed? {
+		represented as? Feed
+	}
+	
+	var representedType: RepresentedType {
+		switch type(of: represented) {
+		case is SmartFeed.Type:
+			return .pseudoFeed
+		case is UnreadFeed.Type:
+			return .pseudoFeed
+		case is WebFeed.Type:
+			return .feed
+		case is Account.Type:
+			return .account
+		default:
+			return .unknown
+		}
 	}
 	
 	init(_ smartFeedsController: SmartFeedsController) {

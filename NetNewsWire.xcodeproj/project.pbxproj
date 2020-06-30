@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		172199C924AB228900A31D04 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199C824AB228900A31D04 /* SettingsView.swift */; };
+		172199ED24AB2E0100A31D04 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199EC24AB2E0100A31D04 /* SafariView.swift */; };
+		172199EF24AB372D00A31D04 /* VisualEffectBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199EE24AB372D00A31D04 /* VisualEffectBlur.swift */; };
+		172199F124AB716900A31D04 /* SidebarToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbar.swift */; };
 		1729528E24AA1A4900D65E66 /* MacPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729526C24AA1A4900D65E66 /* MacPreferences.swift */; };
 		1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */; };
 		1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */; };
@@ -1676,6 +1680,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		172199C824AB228900A31D04 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		172199EC24AB2E0100A31D04 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
+		172199EE24AB372D00A31D04 /* VisualEffectBlur.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisualEffectBlur.swift; sourceTree = "<group>"; };
+		172199F024AB716900A31D04 /* SidebarToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbar.swift; sourceTree = "<group>"; };
 		1729526C24AA1A4900D65E66 /* MacPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferences.swift; sourceTree = "<group>"; };
 		1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesView.swift; sourceTree = "<group>"; };
 		1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesView.swift; sourceTree = "<group>"; };
@@ -2319,6 +2327,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		172199EB24AB228E00A31D04 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				172199C824AB228900A31D04 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		1729528F24AA1A4F00D65E66 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -2623,6 +2639,9 @@
 				51C051CE24A7A72100194D5E /* iOS.entitlements */,
 				51C051CF24A7A72100194D5E /* iOS-dev.entitlements */,
 				51E4993B24A8709900B667CB /* AppDelegate.swift */,
+				172199EB24AB228E00A31D04 /* Settings */,
+				172199EC24AB2E0100A31D04 /* SafariView.swift */,
+				172199EE24AB372D00A31D04 /* VisualEffectBlur.swift */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -2829,6 +2848,7 @@
 			children = (
 				172952AF24AA287100D65E66 /* CompactSidebarContainerView.swift */,
 				51E499FF24A91FC100B667CB /* RegularSidebarContainerView.swift */,
+				172199F024AB716900A31D04 /* SidebarToolbar.swift */,
 				51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */,
 				51E499FC24A9137600B667CB /* SidebarModel.swift */,
 				51919FA524AA64B000541E64 /* SidebarView.swift */,
@@ -3841,46 +3861,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -3890,7 +3910,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -3900,7 +3920,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -4681,8 +4701,10 @@
 				51E4992324A8095700B667CB /* URL-Extensions.swift in Sources */,
 				51E4993624A867E800B667CB /* UserInfoKey.swift in Sources */,
 				51E4990924A808C500B667CB /* WebFeedIconDownloader.swift in Sources */,
+				172199EF24AB372D00A31D04 /* VisualEffectBlur.swift in Sources */,
 				51E498F524A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
 				172952B024AA287100D65E66 /* CompactSidebarContainerView.swift in Sources */,
+				172199F124AB716900A31D04 /* SidebarToolbar.swift in Sources */,
 				51E4990B24A808C500B667CB /* ImageDownloader.swift in Sources */,
 				51E498F424A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				51E4993024A8676400B667CB /* ArticleSorter.swift in Sources */,
@@ -4701,6 +4723,7 @@
 				51E4991D24A8092100B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
 				51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
+				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
 				51E4994224A8713C00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E498F624A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
 				51E498F224A8085D00B667CB /* SmartFeedsController.swift in Sources */,
@@ -4725,6 +4748,7 @@
 				51E4990C24A808C500B667CB /* AuthorAvatarDownloader.swift in Sources */,
 				51E4992124A8095000B667CB /* RSImage-Extensions.swift in Sources */,
 				51E4990324A808BB00B667CB /* FaviconDownloader.swift in Sources */,
+				172199ED24AB2E0100A31D04 /* SafariView.swift in Sources */,
 				51E4990224A808BB00B667CB /* ColorHash.swift in Sources */,
 				51919FAC24AA8CCA00541E64 /* UnreadCountView.swift in Sources */,
 				51E4991924A8090A00B667CB /* CacheCleaner.swift in Sources */,
