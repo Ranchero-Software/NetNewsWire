@@ -56,7 +56,7 @@ struct SettingsView: View {
 	let sortedAccounts = AccountManager.shared.sortedAccounts
 	@Environment(\.presentationMode) var presentationMode
 	
-	@ObservedObject private var viewModel = SettingsViewModel()
+	@StateObject private var viewModel = SettingsViewModel()
 	
 	var body: some View {
 		NavigationView {
