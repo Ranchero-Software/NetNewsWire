@@ -50,9 +50,9 @@ Neither ranchero.com nor inessential.com use any cookies or JavaScript, and they
 
 ### Related sites
 
-The [NetNewsWire GitHub repository](https://github.com/brentsimmons/NetNewsWire) does use cookies and JavaScript, because that’s how GitHub works. The repository, including the issue tracker and anything you post there, is public. See [GitHub’s privacy policy](link_tbd) for more information.
+The [NetNewsWire GitHub repository](https://github.com/brentsimmons/NetNewsWire) does use cookies and JavaScript, because that’s how GitHub works. The repository, including the issue tracker and anything you post there, is public. See [GitHub’s privacy policy](https://help.github.com/en/github/site-policy/github-privacy-statement) for more information.
 
-The NetNewsWire Slack group also uses cookies and JavaScript, because that’s how Slack works. The group is public: anyone may join. See [Slack’s privacy policy](link_tbd) for more info.
+The NetNewsWire Slack group also uses cookies and JavaScript, because that’s how Slack works. The group is public: anyone may join. See [Slack’s privacy policy](https://slack.com/privacy-policy) for more info.
 
 Posting to the GitHub repository and joining the Slack group are optional, opt-in activities.
 
