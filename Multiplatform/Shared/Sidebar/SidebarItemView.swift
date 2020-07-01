@@ -18,6 +18,7 @@ struct SidebarItemView: View {
 		HStack {
 			if let image = feedIconImageLoader.image {
 				IconImageView(iconImage: image)
+					.frame(width: 20, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
 			}
 			Text(verbatim: sidebarItem.nameForDisplay)
 			Spacer()

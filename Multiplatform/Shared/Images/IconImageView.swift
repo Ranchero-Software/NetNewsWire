@@ -16,7 +16,6 @@ struct IconImageView: View {
 		return Image(rsImage: iconImage.image)
 			.resizable()
 			.scaledToFit()
-			.frame(width: 20, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
 			.cornerRadius(4)
     }
 }

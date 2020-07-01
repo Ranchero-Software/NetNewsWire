@@ -26,8 +26,11 @@ struct TimelineItemStatusView: View {
 				.frame(width: 10, height: 10, alignment: .center)
 				.foregroundColor(.yellow)
 		case .showNone:
-			Spacer()
-				.frame(width: 10, height: 10, alignment: .center)
+			AppAssets.timelineUnread
+				.resizable()
+				.frame(width: 8, height: 8, alignment: .center)
+				.padding(.all, 2)
+				.opacity(0)
 		}
 	}
 	

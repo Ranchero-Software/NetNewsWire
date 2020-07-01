@@ -153,6 +153,8 @@
 		514E6C0324AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */; };
 		514E6C0624AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514E6C0524AD2B5F00AC6F6E /* Image-Extensions.swift */; };
 		514E6C0724AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514E6C0524AD2B5F00AC6F6E /* Image-Extensions.swift */; };
+		514E6C0924AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514E6C0824AD39AD00AC6F6E /* ArticleIconImageLoader.swift */; };
+		514E6C0A24AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514E6C0824AD39AD00AC6F6E /* ArticleIconImageLoader.swift */; };
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; };
 		51554C25228B71910055115A /* SyncDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C01228B6EB50055115A /* SyncDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1792,6 +1794,7 @@
 		514E6BFE24AD255D00AC6F6E /* PreviewArticles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewArticles.swift; sourceTree = "<group>"; };
 		514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineItemStatusView.swift; sourceTree = "<group>"; };
 		514E6C0524AD2B5F00AC6F6E /* Image-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image-Extensions.swift"; sourceTree = "<group>"; };
+		514E6C0824AD39AD00AC6F6E /* ArticleIconImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleIconImageLoader.swift; sourceTree = "<group>"; };
 		51554BFC228B6EB50055115A /* SyncDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SyncDatabase.xcodeproj; path = Frameworks/SyncDatabase/SyncDatabase.xcodeproj; sourceTree = SOURCE_ROOT; };
 		515A50E5243D07A90089E588 /* ExtensionPointManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointManager.swift; sourceTree = "<group>"; };
 		515A5106243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TwitterFeedProvider-Extensions.swift"; sourceTree = "<group>"; };
@@ -2639,6 +2642,7 @@
 		51919FB124AAB95300541E64 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				514E6C0824AD39AD00AC6F6E /* ArticleIconImageLoader.swift */,
 				51919FB224AAB97900541E64 /* FeedIconImageLoader.swift */,
 				51919FB524AABCA100541E64 /* IconImageView.swift */,
 			);
@@ -4756,6 +4760,7 @@
 				51E498F124A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
+				514E6C0924AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */,
 				51919FAF24AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
 				514E6BDA24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				51E4990D24A808C500B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
@@ -4887,6 +4892,7 @@
 				51E498CC24A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
 				51E498C824A8085D00B667CB /* SmartFeedsController.swift in Sources */,
 				51E4992C24A8676300B667CB /* ArticleSorter.swift in Sources */,
+				514E6C0A24AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */,
 				51E4995024A8734C00B667CB /* ExtensionPoint.swift in Sources */,
 				51E4990E24A808CC00B667CB /* HTMLMetadataDownloader.swift in Sources */,
 				51E498FB24A808BA00B667CB /* FaviconGenerator.swift in Sources */,
