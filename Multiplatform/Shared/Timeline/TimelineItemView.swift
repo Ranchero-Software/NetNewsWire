@@ -14,15 +14,25 @@ struct TimelineItemView: View {
 	
     var body: some View {
 		VStack {
-			Text(verbatim: timelineItem.article.title ?? "N/A")
-				.frame(maxWidth: .infinity, alignment: .leading)
+			HStack(alignment: .top) {
+				TimelineItemStatusView(status: timelineItem.status)
+				Text(verbatim: timelineItem.article.title ?? "N/A")
+					.frame(maxWidth: .infinity, alignment: .leading)
+			}
 			Divider()
 		}
     }
 }
 
-//struct TimelineItemView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        TimelineItemView()
-//    }
-//}
+struct TimelineItemView_Previews: PreviewProvider {
+    static var previews: some View {
+		Group {
+			TimelineItemView(timelineItem: TimelineItem(article: PreviewArticles.basicRead))
+				.frame(maxWidth: 250)
+			TimelineItemView(timelineItem: TimelineItem(article: PreviewArticles.basicUnread))
+				.frame(maxWidth: 250)
+			TimelineItemView(timelineItem: TimelineItem(article: PreviewArticles.basicStarred))
+				.frame(maxWidth: 250)
+		}
+    }
+}
