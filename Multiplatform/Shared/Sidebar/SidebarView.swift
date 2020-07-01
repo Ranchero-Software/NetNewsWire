@@ -11,7 +11,8 @@ import Account
 
 struct SidebarView: View {
 	
-	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
+	// I had to comment out SceneStorage because it blows up if used on macOS
+//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
 	@StateObject private var expandedContainers = SidebarExpandedContainers()
 	@EnvironmentObject private var sidebarModel: SidebarModel
 	
@@ -41,11 +42,11 @@ struct SidebarView: View {
 				}
 			}
 		}
-		.onAppear {
-			expandedContainers.data = expandedContainerData
-		}
-		.onReceive(expandedContainers.objectDidChange) {
-			expandedContainerData = expandedContainers.data
-		}
+//		.onAppear {
+//			expandedContainers.data = expandedContainerData
+//		}
+//		.onReceive(expandedContainers.objectDidChange) {
+//			expandedContainerData = expandedContainers.data
+//		}
 	}
 }
