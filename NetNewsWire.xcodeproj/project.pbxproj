@@ -226,8 +226,8 @@
 		51919FAD24AA8CCA00541E64 /* UnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FAB24AA8CCA00541E64 /* UnreadCountView.swift */; };
 		51919FAF24AA8EFA00541E64 /* SidebarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */; };
 		51919FB024AA8EFA00541E64 /* SidebarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */; };
-		51919FB324AAB97900541E64 /* FeedImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB224AAB97900541E64 /* FeedImageLoader.swift */; };
-		51919FB424AAB97900541E64 /* FeedImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB224AAB97900541E64 /* FeedImageLoader.swift */; };
+		51919FB324AAB97900541E64 /* FeedIconImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB224AAB97900541E64 /* FeedIconImageLoader.swift */; };
+		51919FB424AAB97900541E64 /* FeedIconImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB224AAB97900541E64 /* FeedIconImageLoader.swift */; };
 		51919FB624AABCA100541E64 /* IconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB524AABCA100541E64 /* IconImageView.swift */; };
 		51919FB724AABCA100541E64 /* IconImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FB524AABCA100541E64 /* IconImageView.swift */; };
 		51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51919FED24AB85E400541E64 /* TimelineContainerView.swift */; };
@@ -1838,7 +1838,7 @@
 		51919FA524AA64B000541E64 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		51919FAB24AA8CCA00541E64 /* UnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCountView.swift; sourceTree = "<group>"; };
 		51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItemView.swift; sourceTree = "<group>"; };
-		51919FB224AAB97900541E64 /* FeedImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageLoader.swift; sourceTree = "<group>"; };
+		51919FB224AAB97900541E64 /* FeedIconImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedIconImageLoader.swift; sourceTree = "<group>"; };
 		51919FB524AABCA100541E64 /* IconImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImageView.swift; sourceTree = "<group>"; };
 		51919FED24AB85E400541E64 /* TimelineContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContainerView.swift; sourceTree = "<group>"; };
 		51919FF024AB864A00541E64 /* TimelineModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineModel.swift; sourceTree = "<group>"; };
@@ -2639,7 +2639,7 @@
 		51919FB124AAB95300541E64 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				51919FB224AAB97900541E64 /* FeedImageLoader.swift */,
+				51919FB224AAB97900541E64 /* FeedIconImageLoader.swift */,
 				51919FB524AABCA100541E64 /* IconImageView.swift */,
 			);
 			path = Images;
@@ -4807,7 +4807,7 @@
 				51E4997124A8764C00B667CB /* ActivityType.swift in Sources */,
 				51E4991E24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
 				51E499D824A912C200B667CB /* SceneModel.swift in Sources */,
-				51919FB324AAB97900541E64 /* FeedImageLoader.swift in Sources */,
+				51919FB324AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
 				51E4991324A808FB00B667CB /* AddWebFeedDefaultContainer.swift in Sources */,
 				51E4993C24A8709900B667CB /* AppDelegate.swift in Sources */,
 				51E498F924A8085D00B667CB /* SmartFeed.swift in Sources */,
@@ -4878,7 +4878,7 @@
 				51E498FC24A808BA00B667CB /* FaviconURLFinder.swift in Sources */,
 				51E4991C24A8092000B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
 				51E499D924A912C200B667CB /* SceneModel.swift in Sources */,
-				51919FB424AAB97900541E64 /* FeedImageLoader.swift in Sources */,
+				51919FB424AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
 				51E4994A24A8734C00B667CB /* ExtensionPointManager.swift in Sources */,
 				514E6C0324AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */,
 				51E4996D24A8762D00B667CB /* ArticleExtractor.swift in Sources */,

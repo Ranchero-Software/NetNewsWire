@@ -11,12 +11,12 @@ import Account
 
 struct SidebarItemView: View {
 	
-	@StateObject var feedImageLoader = FeedImageLoader()
+	@StateObject var feedIconImageLoader = FeedIconImageLoader()
 	var sidebarItem: SidebarItem
 	
     var body: some View {
 		HStack {
-			if let image = feedImageLoader.image {
+			if let image = feedIconImageLoader.image {
 				IconImageView(iconImage: image)
 			}
 			Text(verbatim: sidebarItem.nameForDisplay)
@@ -27,7 +27,7 @@ struct SidebarItemView: View {
 		}
 		.onAppear {
 			if let feed = sidebarItem.feed {
-				feedImageLoader.loadImage(for: feed)
+				feedIconImageLoader.loadImage(for: feed)
 			}
 		}.contextMenu(menuItems: {
 			menuItems

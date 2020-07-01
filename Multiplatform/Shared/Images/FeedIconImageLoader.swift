@@ -1,5 +1,5 @@
 //
-//  FeedImageLoader.swift
+//  FeedIconImageLoader.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 6/29/20.
@@ -9,7 +9,7 @@
 import SwiftUI
 import Account
 
-final class FeedImageLoader: ObservableObject {
+final class FeedIconImageLoader: ObservableObject {
 	
 	private var feed: Feed?
 	
@@ -41,7 +41,7 @@ final class FeedImageLoader: ObservableObject {
 	
 }
 
-private extension FeedImageLoader {
+private extension FeedIconImageLoader {
 	
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		guard let feed = feed else { return }
