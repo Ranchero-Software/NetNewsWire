@@ -26,6 +26,13 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	}
 }
 
+enum FontSize: Int {
+	case small = 0
+	case medium = 1
+	case large = 2
+	case veryLarge = 3
+}
+
 final class AppSettings: ObservableObject {
 	
 	#if os(macOS)
@@ -44,25 +51,53 @@ final class AppSettings: ObservableObject {
 	private init() {}
 	
 	struct Key {
+		
+		// Shared Defaults
 		static let refreshInterval = "refreshInterval"
 		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
-		static let userInterfaceColorPalette = "userInterfaceColorPalette"
 		static let activeExtensionPointIDs = "activeExtensionPointIDs"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
-		static let timelineGroupByFeed = "timelineGroupByFeed"
-		static let refreshClearsReadArticles = "refreshClearsReadArticles"
-		static let timelineNumberOfLines = "timelineNumberOfLines"
-		static let timelineIconSize = "timelineIconSize"
-		static let timelineSortDirection = "timelineSortDirection"
-		static let articleFullscreenAvailable = "articleFullscreenAvailable"
-		static let articleFullscreenEnabled = "articleFullscreenEnabled"
-		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
+		static let timelineSortDirection = "timelineSortDirection"
+		
+		// iOS Defaults
+		static let userInterfaceColorPalette = "userInterfaceColorPalette"
+		static let timelineGroupByFeed = "timelineGroupByFeed"
+		static let refreshClearsReadArticles = "refreshClearsReadArticles" 
+		static let timelineNumberOfLines = "timelineNumberOfLines" 
+		static let timelineIconSize = "timelineIconSize"
+		static let articleFullscreenAvailable = "articleFullscreenAvailable" 
+		static let articleFullscreenEnabled = "articleFullscreenEnabled" 
+		static let confirmMarkAllAsRead = "confirmMarkAllAsRead" 
+		
+		// macOS Defaults
+		static let windowState = "windowState"
+		static let sidebarFontSize = "sidebarFontSize"
+		static let timelineFontSize = "timelineFontSize"
+		static let detailFontSize = "detailFontSize"
+		static let openInBrowserInBackground = "openInBrowserInBackground"
+		static let importOPMLAccountID = "importOPMLAccountID"
+		static let exportOPMLAccountID = "exportOPMLAccountID"
+		static let defaultBrowserID = "defaultBrowserID"
+		
+		// Hidden macOS Defaults
+		static let showDebugMenu = "ShowDebugMenu"
+		static let timelineShowsSeparators = "CorreiaSeparators"
+		static let showTitleOnMainWindow = "KafasisTitleMode"
+		
+		#if !MAC_APP_STORE
+			static let webInspectorEnabled = "WebInspectorEnabled"
+			static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
+		#endif
+		
 	}
+	
+	private static let smallestFontSizeRawValue = FontSize.small.rawValue
+	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 	
 	// MARK:  Development Builds
 	let isDeveloperBuild: Bool = {
@@ -73,14 +108,6 @@ final class AppSettings: ObservableObject {
 	}()
 	
 	// MARK: First Run Details
-	func isFirstRun() -> Bool {
-		if let _ = AppSettings.store.object(forKey: Key.firstRunDate) as? Date {
-			return false
-		}
-		firstRunDate = Date()
-		return true
-	}
-	
 	var firstRunDate: Date? {
 		set {
 			AppSettings.store.setValue(newValue, forKey: Key.firstRunDate)
@@ -177,4 +204,118 @@ final class AppSettings: ObservableObject {
 		}
 	}
 	
+	// MARK: Window State
+	var windowState: [AnyHashable : Any]? {
+		get {
+			return AppSettings.store.object(forKey: Key.windowState) as? [AnyHashable : Any]
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.windowState)
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: false, Key.openInBrowserInBackground, store: store) var openInBrowserInBackground: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	var sidebarFontSize: FontSize {
+		get {
+			return fontSize(for: Key.sidebarFontSize)
+		}
+		set {
+			AppSettings.store.set(newValue.rawValue, forKey: Key.sidebarFontSize)
+			objectWillChange.send()
+		}
+	}
+	
+	var timelineFontSize: FontSize {
+		get {
+			return fontSize(for: Key.timelineFontSize)
+		}
+		set {
+			AppSettings.store.set(newValue.rawValue, forKey: Key.timelineFontSize)
+			objectWillChange.send()
+		}
+	}
+	
+	var detailFontSize: FontSize {
+		get {
+			return fontSize(for: Key.detailFontSize)
+		}
+		set {
+			AppSettings.store.set(newValue.rawValue, forKey: Key.detailFontSize)
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(Key.importOPMLAccountID, store: store) var importOPMLAccountID: String? {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(Key.exportOPMLAccountID, store: store) var exportOPMLAccountID: String? {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(Key.defaultBrowserID, store: store) var defaultBrowserID: String? {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(Key.showTitleOnMainWindow, store: store) var showTitleOnMainWindow: Bool? {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: false, Key.showDebugMenu, store: store) var showDebugMenu: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: false, Key.timelineShowsSeparators, store: store) var timelineShowsSeparators: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	#if !MAC_APP_STORE
+	@AppStorage(wrappedValue: false, Key.webInspectorEnabled, store: store) var webInspectorEnabled: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: false, Key.webInspectorStartsAttached, store: store) var webInspectorStartsAttached: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	#endif
+	
+	
+}
+
+extension AppSettings {
+	
+	func isFirstRun() -> Bool {
+		if let _ = AppSettings.store.object(forKey: Key.firstRunDate) as? Date {
+			return false
+		}
+		firstRunDate = Date()
+		return true
+	}
+	
+	func fontSize(for key: String) -> FontSize {
+		// Punted till after 1.0.
+		return .medium
+	}
 }
