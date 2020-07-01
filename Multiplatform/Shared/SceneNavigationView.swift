@@ -22,6 +22,7 @@ struct SceneNavigationView: View {
 			#else
 			if horizontalSizeClass == .compact {
 				CompactSidebarContainerView()
+				
 			} else {
 				RegularSidebarContainerView()
 			}
@@ -46,6 +47,7 @@ struct SceneNavigationView: View {
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
 			#endif
 		}
+		
 	}
 }
 
