@@ -7,17 +7,45 @@
 //
 
 import SwiftUI
+import Account
 
 struct SidebarView: View {
 	
+	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
+	@StateObject private var expandedContainers = SidebarExpandedContainers()
 	@EnvironmentObject private var sidebarModel: SidebarModel
 	
+//	@State private var selected = Set<FeedIdentifier>()
+
 	var body: some View {
-		List {
-			OutlineGroup(sidebarModel.sidebarItems, children: \.children) { sidebarItem in
-				SidebarItemView(sidebarItem: sidebarItem)
+		List() {
+			ForEach(sidebarModel.sidebarItems) { sidebarItem in
+				if let containerID = sidebarItem.containerID {
+					DisclosureGroup(isExpanded: $expandedContainers[containerID]) {
+						ForEach(sidebarItem.children) { sidebarItem in
+							if let containerID = sidebarItem.containerID {
+								DisclosureGroup(isExpanded: $expandedContainers[containerID]) {
+									ForEach(sidebarItem.children) { sidebarItem in
+										SidebarItemView(sidebarItem: sidebarItem)
+									}
+								} label: {
+									SidebarItemView(sidebarItem: sidebarItem)
+								}
+							} else {
+								SidebarItemView(sidebarItem: sidebarItem)
+							}
+						}
+					} label: {
+						SidebarItemView(sidebarItem: sidebarItem)
+					}
+				}
 			}
 		}
+		.onAppear {
+			expandedContainers.data = expandedContainerData
+		}
+		.onReceive(expandedContainers.objectDidChange) {
+			expandedContainerData = expandedContainers.data
+		}
 	}
-	
 }

@@ -108,6 +108,8 @@
 		51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
 		51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
 		51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
+		51392D1B24AC19A000BE0D35 /* SidebarExpandedContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */; };
+		51392D1C24AC19A000BE0D35 /* SidebarExpandedContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */; };
 		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
 		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
 		513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1752,6 +1754,7 @@
 		513228F2233037620033D4ED /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRedditFeedWindowController.swift; sourceTree = "<group>"; };
 		51333D3A2468615D00EB5C91 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddRedditFeedSheet.xib; sourceTree = SOURCE_ROOT; };
+		51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarExpandedContainers.swift; sourceTree = "<group>"; };
 		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		513C5CEB232571C2003D4054 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
@@ -2872,12 +2875,13 @@
 			children = (
 				172952AF24AA287100D65E66 /* CompactSidebarContainerView.swift */,
 				51E499FF24A91FC100B667CB /* RegularSidebarContainerView.swift */,
-				172199F024AB716900A31D04 /* SidebarToolbar.swift */,
+				51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */,
 				51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */,
+				51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */,
 				51E499FC24A9137600B667CB /* SidebarModel.swift */,
+				172199F024AB716900A31D04 /* SidebarToolbar.swift */,
 				51919FA524AA64B000541E64 /* SidebarView.swift */,
 				51919FAB24AA8CCA00541E64 /* UnreadCountView.swift */,
-				51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -4711,6 +4715,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				51E4995924A873F900B667CB /* ErrorHandler.swift in Sources */,
+				51392D1B24AC19A000BE0D35 /* SidebarExpandedContainers.swift in Sources */,
 				51E4992F24A8676400B667CB /* ArticleArray.swift in Sources */,
 				51E4994424A8713C00B667CB /* RefreshInterval.swift in Sources */,
 				51E498F824A8085D00B667CB /* UnreadFeed.swift in Sources */,
@@ -4870,6 +4875,7 @@
 				51E4991824A8090A00B667CB /* CacheCleaner.swift in Sources */,
 				51E498CD24A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				51E4996124A875F400B667CB /* ArticleRenderer.swift in Sources */,
+				51392D1C24AC19A000BE0D35 /* SidebarExpandedContainers.swift in Sources */,
 				51C0515F24A77DF800194D5E /* MainApp.swift in Sources */,
 				1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */,
 				1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */,

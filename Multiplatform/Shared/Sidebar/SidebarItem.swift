@@ -24,7 +24,7 @@ struct SidebarItem: Identifiable {
 	
 	var id: SidebarItemIdentifier
 	var represented: Any
-	var children: [SidebarItem]?
+	var children: [SidebarItem] = [SidebarItem]()
 	
 	var unreadCount: Int
 	
@@ -35,6 +35,10 @@ struct SidebarItem: Identifiable {
 	
 	var feed: Feed? {
 		represented as? Feed
+	}
+	
+	var containerID: ContainerIdentifier? {
+		return (represented as? ContainerIdentifiable)?.containerID
 	}
 	
 	var representedType: RepresentedType {
@@ -55,14 +59,12 @@ struct SidebarItem: Identifiable {
 	init(_ smartFeedsController: SmartFeedsController) {
 		self.id = .smartFeedController
 		self.represented = smartFeedsController
-		self.children = [SidebarItem]()
 		self.unreadCount = 0
 	}
 
 	init(_ account: Account) {
 		self.id = .account(account.accountID)
 		self.represented = account
-		self.children = [SidebarItem]()
 		self.unreadCount = account.unreadCount
 	}
 
@@ -70,13 +72,10 @@ struct SidebarItem: Identifiable {
 		self.id = .feed(feed.feedID!)
 		self.represented = feed
 		self.unreadCount = unreadCount
-		if let container = feed as? Container, container.hasAtLeastOneWebFeed() {
-			self.children = [SidebarItem]()
-		}
 	}
 
 	mutating func addChild(_ sidebarItem: SidebarItem) {
-		children?.append(sidebarItem)
+		children.append(sidebarItem)
 	}
 	
 }
