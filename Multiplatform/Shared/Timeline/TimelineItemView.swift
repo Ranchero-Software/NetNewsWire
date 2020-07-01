@@ -23,16 +23,20 @@ struct TimelineItemView: View {
 				}
 				VStack {
 					Text(verbatim: timelineItem.article.title ?? "N/A")
+						.fontWeight(.semibold)
 						.lineLimit(3)
 						.frame(maxWidth: .infinity, alignment: .leading)
 						.padding(.trailing, 4)
 					Spacer()
 					HStack {
 						Text(verbatim: timelineItem.byline)
+							.lineLimit(1)
+							.truncationMode(.tail)
 							.font(.footnote)
 							.foregroundColor(.secondary)
 						Spacer()
 						Text(verbatim: timelineItem.dateTimeString)
+							.lineLimit(1)
 							.font(.footnote)
 							.foregroundColor(.secondary)
 							.padding(.trailing, 4)
