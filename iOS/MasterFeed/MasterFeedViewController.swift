@@ -547,7 +547,7 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 
 			var actions = [accountInfoAction, deactivateAction]
 
-			if let markAllAction = self.markAllAsReadAction(account: account) {
+			if let markAllAction = self.markAllAsReadAction(account: account, contentView: interaction.view) {
 				actions.insert(markAllAction, at: 1)
 			}
 
@@ -1064,23 +1064,31 @@ private extension MasterFeedViewController {
 		return markAllAsReadAction(articles: articles, nameForDisplay: articleFetcher.nameForDisplay, indexPath: indexPath)
 	}
 
-	func markAllAsReadAction(account: Account) -> UIAction? {
+	func markAllAsReadAction(account: Account, contentView: UIView?) -> UIAction? {
 		guard let fetchedArticles = try? account.fetchArticles(FetchType.unread) else {
 			return nil
 		}
 
 		let articles = Array(fetchedArticles)
-		return markAllAsReadAction(articles: articles, nameForDisplay: account.nameForDisplay)
+		return markAllAsReadAction(articles: articles, nameForDisplay: account.nameForDisplay, contentView: contentView)
 	}
 
 	func markAllAsReadAction(articles: [Article], nameForDisplay: String, indexPath: IndexPath? = nil) -> UIAction? {
-		guard articles.canMarkAllAsRead(), let indexPath = indexPath, let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+		guard let indexPath = indexPath,
+			let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
+				return nil
+		}
+
+		return markAllAsReadAction(articles: articles, nameForDisplay: nameForDisplay, contentView: contentView)
+	}
+
+	func markAllAsReadAction(articles: [Article], nameForDisplay: String, contentView: UIView?) -> UIAction? {
+		guard articles.canMarkAllAsRead(), let contentView = contentView else {
 			return nil
 		}
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, nameForDisplay) as String
-		
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator.markAllAsRead(articles)
