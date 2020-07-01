@@ -20,10 +20,6 @@ final class SceneModel: ObservableObject {
 
 extension SceneModel: SidebarModelDelegate {
 	
-	func sidebarSelectionDidChange(_: SidebarModel, feeds: [Feed]?) {
-		print("**** sidebar selection changed ***")
-	}
-	
 	func unreadCount(for feed: Feed) -> Int {
 		// TODO: Get the count from the timeline if Feed is the current timeline
 		return feed.unreadCount

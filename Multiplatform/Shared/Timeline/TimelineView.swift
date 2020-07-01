@@ -13,12 +13,19 @@ struct TimelineView: View {
 	@EnvironmentObject private var timelineModel: TimelineModel
 
 	var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+		ScrollView {
+			LazyVStack() {
+				ForEach(timelineModel.timelineItems) { timelineItem in
+					TimelineItemView(timelineItem: timelineItem)
+				}
+			}
+		}
     }
-}
-
-struct TimelineView_Previews: PreviewProvider {
-    static var previews: some View {
-        TimelineView()
-    }
+	
+//	var body: some View {
+//		List(timelineModel.timelineItems) { timelineItem in
+//			TimelineItemView(timelineItem: timelineItem)
+//		}
+//	}
+	
 }

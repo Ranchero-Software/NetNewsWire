@@ -13,7 +13,11 @@ struct TimelineItemView: View {
 	var timelineItem: TimelineItem
 	
     var body: some View {
-		Text(verbatim: timelineItem.article.title ?? "N/A")
+		VStack {
+			Text(verbatim: timelineItem.article.title ?? "N/A")
+				.frame(maxWidth: .infinity, alignment: .leading)
+			Divider()
+		}
     }
 }
 

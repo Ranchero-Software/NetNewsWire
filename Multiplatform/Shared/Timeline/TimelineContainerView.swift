@@ -30,10 +30,3 @@ struct TimelineContainerView: View {
 	}
 	
 }
-
-struct TimelineContainerView_Previews: PreviewProvider {
-	static var previews: some View {
-		TimelineContainerView()
-			.environmentObject(SceneModel())
-	}
-}
