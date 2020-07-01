@@ -34,7 +34,7 @@ struct TimelineItem: Identifiable {
 	}
 	
 	var byline: String {
-		return article.byline()
+		return article.webFeed?.nameForDisplay ?? ""
 	}
 	
 	var dateTimeString: String {
