@@ -7,21 +7,26 @@
 //
 
 import SwiftUI
+import Account
 
 struct TimelineContainerView: View {
 	
 	@EnvironmentObject private var sceneModel: SceneModel
 	@StateObject private var timelineModel = TimelineModel()
+	var feed: Feed? = nil
 	
 	@ViewBuilder var body: some View {
-		TimelineView()
-			.environmentObject(timelineModel)
-			.listStyle(SidebarListStyle())
-			.onAppear {
-				sceneModel.timelineModel = timelineModel
-				timelineModel.delegate = sceneModel
-				timelineModel.rebuildTimelineItems()
-			}		
+		if let feed = feed {
+			TimelineView()
+				.environmentObject(timelineModel)
+				.onAppear {
+					sceneModel.timelineModel = timelineModel
+					timelineModel.delegate = sceneModel
+					timelineModel.rebuildTimelineItems(feed)
+				}
+		} else {
+			EmptyView()
+		}
 	}
 	
 }

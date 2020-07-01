@@ -11,7 +11,10 @@ import Articles
 
 struct TimelineItem: Identifiable {
 	
-	var id: String
+	var article: Article
 	
+	var id: String {
+		return article.articleID
+	}
 	
 }

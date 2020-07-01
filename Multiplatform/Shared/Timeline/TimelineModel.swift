@@ -20,13 +20,15 @@ class TimelineModel: ObservableObject {
 	
 	@Published var timelineItems = [TimelineItem]()
 	
+	private var feeds = [Feed]()
+	
 	init() {
 	}
 	
 	// MARK: API
 	
-	func rebuildTimelineItems() {
-		
+	func rebuildTimelineItems(_ feed: Feed) {
+		feeds = [feed]
 	}
 	
 }
