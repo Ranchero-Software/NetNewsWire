@@ -29,11 +29,7 @@ final class SidebarExpandedContainers: ObservableObject {
 	
 	subscript(_ containerID: ContainerIdentifier) -> Bool {
 		get {
-			if expandedTable.contains(containerID) {
-				return true
-			} else {
-				return false
-			}
+			return expandedTable.contains(containerID)
 		}
 		set(newValue) {
 			if newValue {
