@@ -21,8 +21,23 @@ struct TimelineItemView: View {
 					IconImageView(iconImage: image)
 						.frame(width: AppDefaults.timelineIconSize.size.width, height: AppDefaults.timelineIconSize.size.height, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
 				}
-				Text(verbatim: timelineItem.article.title ?? "N/A")
-					.frame(maxWidth: .infinity, alignment: .leading)
+				VStack {
+					Text(verbatim: timelineItem.article.title ?? "N/A")
+						.lineLimit(3)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding(.trailing, 4)
+					Spacer()
+					HStack {
+						Text(verbatim: timelineItem.byline)
+							.font(.footnote)
+							.foregroundColor(.secondary)
+						Spacer()
+						Text(verbatim: timelineItem.dateTimeString)
+							.font(.footnote)
+							.foregroundColor(.secondary)
+							.padding(.trailing, 4)
+					}
+				}
 			}
 			Divider()
 		}

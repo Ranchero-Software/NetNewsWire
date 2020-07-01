@@ -33,4 +33,12 @@ struct TimelineItem: Identifiable {
 		return .showNone
 	}
 	
+	var byline: String {
+		return article.byline()
+	}
+	
+	var dateTimeString: String {
+		return ArticleStringFormatter.dateString(article.logicalDatePublished)
+	}
+	
 }
