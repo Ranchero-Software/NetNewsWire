@@ -14,7 +14,7 @@ enum FontSize: Int {
 	case veryLarge = 3
 }
 
-struct AppDefaults {
+final class AppDefaults {
 	
 	static var shared = AppDefaults()
 	private init() {}
