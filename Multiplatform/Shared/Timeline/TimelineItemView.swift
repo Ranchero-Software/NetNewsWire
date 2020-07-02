@@ -45,7 +45,6 @@ struct TimelineItemView: View {
 					}
 				}
 			}
-			Divider()
 		}
 		.onAppear {
 			articleIconImageLoader.loadImage(for: timelineItem.article)

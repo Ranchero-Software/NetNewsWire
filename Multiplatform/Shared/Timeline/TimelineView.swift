@@ -13,12 +13,11 @@ struct TimelineView: View {
 	@EnvironmentObject private var timelineModel: TimelineModel
 
 	var body: some View {
-		ScrollView {
-			LazyVStack() {
-				ForEach(timelineModel.timelineItems) { timelineItem in
-					TimelineItemView(timelineItem: timelineItem)
+		List(timelineModel.timelineItems) { timelineItem in
+			TimelineItemView(timelineItem: timelineItem)
+				.onAppear {
+					timelineModel.loadMoreTimelineItemsIfNecessary(timelineItem)
 				}
-			}
 		}
     }
 	

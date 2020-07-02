@@ -30,38 +30,6 @@ struct CompactSidebarContainerView: View {
 			},alignment: .bottom)
 	}
 	
-	
-	var compactToolBar: some View {
-		VStack {
-			Divider()
-			HStack(alignment: .center) {
-				Button(action: {
-					showSettings = true
-				}, label: {
-					Image(systemName: "gear")
-						.font(.title3)
-						.foregroundColor(.accentColor)
-				}).help("Settings")
-				Spacer()
-				Text("Last updated")
-					.font(.caption)
-					.foregroundColor(.secondary)
-				Spacer()
-				Button(action: {}, label: {
-					Image(systemName: "plus")
-						.font(.title3)
-						.foregroundColor(.accentColor)
-				}).help("Add")
-			}
-			.padding(.horizontal, 16)
-			.padding(.bottom, 12)
-			.padding(.top, 4)
-		}
-		.background(VisualEffectBlur(blurStyle: .systemChromeMaterial).edgesIgnoringSafeArea(.bottom))
-		
-	}
-	
-	
 }
 
 struct CompactSidebarContainerView_Previews: PreviewProvider {
