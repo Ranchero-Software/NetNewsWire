@@ -44,7 +44,7 @@ struct TimelineCellAppearance: Equatable {
 
 	init(showIcon: Bool, fontSize: FontSize) {
 
-		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
+		let actualFontSize = AppDefaults.shared.actualFontSize(for: fontSize)
 		let smallItemFontSize = floor(actualFontSize * 0.90)
 		let largeItemFontSize = actualFontSize
 

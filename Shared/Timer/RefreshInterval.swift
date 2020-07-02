@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum RefreshInterval: Int, CaseIterable {
+enum RefreshInterval: Int, CaseIterable, Identifiable {
 	case manually = 1
 	case every10Minutes = 2
 	case every30Minutes = 3
@@ -35,6 +35,8 @@ enum RefreshInterval: Int, CaseIterable {
 			return 8 * 60 * 60
 		}
 	}
+	
+	var id: String { description() }
 	
 	func description() -> String {
 		switch self {

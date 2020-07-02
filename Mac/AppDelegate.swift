@@ -191,8 +191,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			}
 		#endif
 		
-		AppDefaults.registerDefaults()
-		let isFirstRun = AppDefaults.isFirstRun
+		AppDefaults.shared.registerDefaults()
+		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
 			logDebugMessage("Is first run.")
 		}
@@ -237,7 +237,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		UNUserNotificationCenter.current().delegate = self
 		userNotificationManager = UserNotificationManager()
 
-		if AppDefaults.showDebugMenu {
+		if AppDefaults.shared.showDebugMenu {
  			refreshTimer!.update()
  			syncTimer!.update()
 
@@ -417,7 +417,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
-			(item as! NSMenuItem).state = AppDefaults.webInspectorEnabled ? .on : .off
+			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
 		}
 		#endif
 		return true
@@ -447,7 +447,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	// MARK: - Dock Badge
 	@objc func updateDockBadge() {
-		let label = unreadCount > 0 && !AppDefaults.hideDockUnreadCount ? "\(unreadCount)" : ""
+		let label = unreadCount > 0 && !AppDefaults.shared.hideDockUnreadCount ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}
 
@@ -624,16 +624,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
 
-		AppDefaults.timelineSortDirection = .orderedAscending
+		AppDefaults.shared.timelineSortDirection = .orderedAscending
 	}
 
 	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
 
-		AppDefaults.timelineSortDirection = .orderedDescending
+		AppDefaults.shared.timelineSortDirection = .orderedDescending
 	}
 	
 	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {		
-		AppDefaults.timelineGroupByFeed.toggle()
+		AppDefaults.shared.timelineGroupByFeed.toggle()
 	}
 
 	@IBAction func checkForUpdates(_ sender: Any?) {
@@ -680,13 +680,13 @@ extension AppDelegate {
 
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
 		#if !MAC_APP_STORE
-			let newValue = !AppDefaults.webInspectorEnabled
-			AppDefaults.webInspectorEnabled = newValue
+		let newValue = !AppDefaults.shared.webInspectorEnabled
+		AppDefaults.shared.webInspectorEnabled = newValue
 
 			// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
 			// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
 			// accidentally reattached.
-			AppDefaults.webInspectorStartsAttached = false
+		AppDefaults.shared.webInspectorStartsAttached = false
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 		#endif
 	}
@@ -717,13 +717,13 @@ private extension AppDelegate {
 
 	func updateSortMenuItems() {
 
-		let sortByNewestOnTop = AppDefaults.timelineSortDirection == .orderedDescending
+		let sortByNewestOnTop = AppDefaults.shared.timelineSortDirection == .orderedDescending
 		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
 		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
 	}
 	
 	func updateGroupByFeedMenuItem() {
-		let groupByFeedEnabled = AppDefaults.timelineGroupByFeed
+		let groupByFeedEnabled = AppDefaults.shared.timelineGroupByFeed
 		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
 	}
 }

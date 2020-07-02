@@ -55,7 +55,7 @@ final class GeneralPreferencesViewController: NSViewController {
 			return
 		}
 		let bundleID = menuItem.representedObject as? String
-		AppDefaults.defaultBrowserID = bundleID
+		AppDefaults.shared.defaultBrowserID = bundleID
 		updateUI()
 	}
 }
@@ -164,7 +164,7 @@ private extension GeneralPreferencesViewController {
 			menu.addItem(item)
 		}
 
-		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.defaultBrowserID))
+		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.shared.defaultBrowserID))
 	}
 }
 

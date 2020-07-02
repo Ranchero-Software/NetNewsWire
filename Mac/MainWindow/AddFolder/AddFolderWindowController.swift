@@ -36,7 +36,7 @@ class AddFolderWindowController : NSWindowController {
 	// MARK: - NSViewController
 	
 	override func windowDidLoad() {
-		let preferredAccountID = AppDefaults.addFolderAccountID
+		let preferredAccountID = AppDefaults.shared.addFolderAccountID
 		accountPopupButton.removeAllItems()
 		
 		let menu = NSMenu()
@@ -93,7 +93,7 @@ private extension AddFolderWindowController {
 		}
 
 		let account = menuItem.representedObject as! Account
-		AppDefaults.addFolderAccountID = account.accountID
+		AppDefaults.shared.addFolderAccountID = account.accountID
 
 		let folderName = self.folderNameTextField.stringValue
 		if folderName.isEmpty {

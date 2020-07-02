@@ -27,7 +27,7 @@ class TimelineTableCellView: NSTableCellView {
 		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
 	}()
 
-	private var showsSeparator: Bool = AppDefaults.timelineShowsSeparators {
+	private var showsSeparator: Bool = AppDefaults.shared.timelineShowsSeparators {
 		didSet {
 			separatorView.isHidden = !showsSeparator
 		}
@@ -85,7 +85,7 @@ class TimelineTableCellView: NSTableCellView {
 	}
 	
 	func timelineShowsSeparatorsDefaultDidChange() {
-		showsSeparator = AppDefaults.timelineShowsSeparators
+		showsSeparator = AppDefaults.shared.timelineShowsSeparators
 	}
 
 	override func setFrameSize(_ newSize: NSSize) {
@@ -209,7 +209,7 @@ private extension TimelineTableCellView {
 		addSubviewAtInit(feedNameView, hidden: true)
 		addSubviewAtInit(iconView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
-		addSubviewAtInit(separatorView, hidden: !AppDefaults.timelineShowsSeparators)
+		addSubviewAtInit(separatorView, hidden: !AppDefaults.shared.timelineShowsSeparators)
 
 		makeTextFieldColorsNormal()
 	}

@@ -26,9 +26,12 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	
 }
 
-struct AppDefaults {
+class AppDefaults {
 
-	static var shared: UserDefaults = {
+	static let shared = AppDefaults()
+	private init() {}
+	
+	static var store: UserDefaults = {
 		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
 		let suiteName = "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
 		return UserDefaults.init(suiteName: suiteName)!
@@ -53,15 +56,15 @@ struct AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 	}
 
-	static let isDeveloperBuild: Bool = {
+	let isDeveloperBuild: Bool = {
 		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
 			return true
 		}
 		return false
 	}()
 
-	static let isFirstRun: Bool = {
-		if let _ = AppDefaults.shared.object(forKey: Key.firstRunDate) as? Date {
+	let isFirstRun: Bool = {
+		if let _ = AppDefaults.store.object(forKey: Key.firstRunDate) as? Date {
 			return false
 		}
 		firstRunDate = Date()
@@ -80,34 +83,34 @@ struct AppDefaults {
 		}
 	}
 
-	static var addWebFeedAccountID: String? {
+	var addWebFeedAccountID: String? {
 		get {
-			return string(for: Key.addWebFeedAccountID)
+			return AppDefaults.string(for: Key.addWebFeedAccountID)
 		}
 		set {
-			setString(for: Key.addWebFeedAccountID, newValue)
+			AppDefaults.setString(for: Key.addWebFeedAccountID, newValue)
 		}
 	}
 	
-	static var addWebFeedFolderName: String? {
+	var addWebFeedFolderName: String? {
 		get {
-			return string(for: Key.addWebFeedFolderName)
+			return AppDefaults.string(for: Key.addWebFeedFolderName)
 		}
 		set {
-			setString(for: Key.addWebFeedFolderName, newValue)
+			AppDefaults.setString(for: Key.addWebFeedFolderName, newValue)
 		}
 	}
 	
-	static var addFolderAccountID: String? {
+	var addFolderAccountID: String? {
 		get {
-			return string(for: Key.addFolderAccountID)
+			return AppDefaults.string(for: Key.addFolderAccountID)
 		}
 		set {
-			setString(for: Key.addFolderAccountID, newValue)
+			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
 		}
 	}
 	
-	static var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
+	var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
 		get {
 			return UserDefaults.standard.object(forKey: Key.activeExtensionPointIDs) as? [[AnyHashable : AnyHashable]]
 		}
@@ -116,94 +119,94 @@ struct AppDefaults {
 		}
 	}
 	
-	static var lastImageCacheFlushDate: Date? {
+	var lastImageCacheFlushDate: Date? {
 		get {
-			return date(for: Key.lastImageCacheFlushDate)
+			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
 		}
 		set {
-			setDate(for: Key.lastImageCacheFlushDate, newValue)
+			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
 		}
 	}
 
-	static var timelineGroupByFeed: Bool {
+	var timelineGroupByFeed: Bool {
 		get {
-			return bool(for: Key.timelineGroupByFeed)
+			return AppDefaults.bool(for: Key.timelineGroupByFeed)
 		}
 		set {
-			setBool(for: Key.timelineGroupByFeed, newValue)
+			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
 		}
 	}
 
-	static var refreshClearsReadArticles: Bool {
+	var refreshClearsReadArticles: Bool {
 		get {
-			return bool(for: Key.refreshClearsReadArticles)
+			return AppDefaults.bool(for: Key.refreshClearsReadArticles)
 		}
 		set {
-			setBool(for: Key.refreshClearsReadArticles, newValue)
+			AppDefaults.setBool(for: Key.refreshClearsReadArticles, newValue)
 		}
 	}
 
-	static var timelineSortDirection: ComparisonResult {
+	var timelineSortDirection: ComparisonResult {
 		get {
-			return sortDirection(for: Key.timelineSortDirection)
+			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
 		}
 		set {
-			setSortDirection(for: Key.timelineSortDirection, newValue)
+			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
 		}
 	}
 
-	static var articleFullscreenAvailable: Bool {
+	var articleFullscreenAvailable: Bool {
 		get {
-			return bool(for: Key.articleFullscreenAvailable)
+			return AppDefaults.bool(for: Key.articleFullscreenAvailable)
 		}
 		set {
-			setBool(for: Key.articleFullscreenAvailable, newValue)
+			AppDefaults.setBool(for: Key.articleFullscreenAvailable, newValue)
 		}
 	}
 
-	static var articleFullscreenEnabled: Bool {
+	var articleFullscreenEnabled: Bool {
 		get {
-			return bool(for: Key.articleFullscreenEnabled)
+			return AppDefaults.bool(for: Key.articleFullscreenEnabled)
 		}
 		set {
-			setBool(for: Key.articleFullscreenEnabled, newValue)
+			AppDefaults.setBool(for: Key.articleFullscreenEnabled, newValue)
 		}
 	}
 
-	static var confirmMarkAllAsRead: Bool {
+	var confirmMarkAllAsRead: Bool {
 		get {
-			return bool(for: Key.confirmMarkAllAsRead)
+			return AppDefaults.bool(for: Key.confirmMarkAllAsRead)
 		}
 		set {
-			setBool(for: Key.confirmMarkAllAsRead, newValue)
+			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
 		}
 	}
 	
-	static var lastRefresh: Date? {
+	var lastRefresh: Date? {
 		get {
-			return date(for: Key.lastRefresh)
+			return AppDefaults.date(for: Key.lastRefresh)
 		}
 		set {
-			setDate(for: Key.lastRefresh, newValue)
+			AppDefaults.setDate(for: Key.lastRefresh, newValue)
 		}
 	}
 	
-	static var timelineNumberOfLines: Int {
+	var timelineNumberOfLines: Int {
 		get {
-			return int(for: Key.timelineNumberOfLines)
+			return AppDefaults.int(for: Key.timelineNumberOfLines)
 		}
 		set {
-			setInt(for: Key.timelineNumberOfLines, newValue)
+			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)
 		}
 	}
 	
-	static var timelineIconSize: IconSize {
+	var timelineIconSize: IconSize {
 		get {
-			let rawValue = AppDefaults.shared.integer(forKey: Key.timelineIconSize)
+			let rawValue = AppDefaults.store.integer(forKey: Key.timelineIconSize)
 			return IconSize(rawValue: rawValue) ?? IconSize.medium
 		}
 		set {
-			AppDefaults.shared.set(newValue.rawValue, forKey: Key.timelineIconSize)
+			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconSize)
 		}
 	}
 	
@@ -217,7 +220,7 @@ struct AppDefaults {
 										Key.articleFullscreenAvailable: false,
 										Key.articleFullscreenEnabled: false,
 										Key.confirmMarkAllAsRead: true]
-		AppDefaults.shared.register(defaults: defaults)
+		AppDefaults.store.register(defaults: defaults)
 	}
 
 }
@@ -242,27 +245,27 @@ private extension AppDefaults {
 	}
 
 	static func bool(for key: String) -> Bool {
-		return AppDefaults.shared.bool(forKey: key)
+		return AppDefaults.store.bool(forKey: key)
 	}
 
 	static func setBool(for key: String, _ flag: Bool) {
-		AppDefaults.shared.set(flag, forKey: key)
+		AppDefaults.store.set(flag, forKey: key)
 	}
 
 	static func int(for key: String) -> Int {
-		return AppDefaults.shared.integer(forKey: key)
+		return AppDefaults.store.integer(forKey: key)
 	}
 	
 	static func setInt(for key: String, _ x: Int) {
-		AppDefaults.shared.set(x, forKey: key)
+		AppDefaults.store.set(x, forKey: key)
 	}
 	
 	static func date(for key: String) -> Date? {
-		return AppDefaults.shared.object(forKey: key) as? Date
+		return AppDefaults.store.object(forKey: key) as? Date
 	}
 
 	static func setDate(for key: String, _ date: Date?) {
-		AppDefaults.shared.set(date, forKey: key)
+		AppDefaults.store.set(date, forKey: key)
 	}
 
 	static func sortDirection(for key:String) -> ComparisonResult {

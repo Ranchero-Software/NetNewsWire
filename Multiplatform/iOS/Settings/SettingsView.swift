@@ -56,7 +56,8 @@ struct SettingsView: View {
 	let sortedAccounts = AccountManager.shared.sortedAccounts
 	@Environment(\.presentationMode) var presentationMode
 	
-	@ObservedObject private var viewModel = SettingsViewModel()
+	@StateObject private var viewModel = SettingsViewModel()
+	@StateObject private var settings = AppDefaults.shared
 	
 	var body: some View {
 		NavigationView {
@@ -128,11 +129,11 @@ struct SettingsView: View {
 	
 	var timeline: some View {
 		Section(header: Text("Timeline"), content: {
-			Toggle("Sort Oldest to Newest", isOn: .constant(true))
-			Toggle("Group by Feed", isOn: .constant(true))
-			Toggle("Refresh to Clear Read Articles", isOn: .constant(true))
+			Toggle("Sort Oldest to Newest", isOn: $settings.timelineSortDirection)
+			Toggle("Group by Feed", isOn: $settings.timelineGroupByFeed)
+			Toggle("Refresh to Clear Read Articles", isOn: $settings.refreshClearsReadArticles)
 			NavigationLink(
-				destination: EmptyView(),
+				destination: TimelineLayoutView().environmentObject(settings),
 				label: {
 					Text("Timeline Layout")
 				})

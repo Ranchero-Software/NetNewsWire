@@ -38,7 +38,7 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		let activeExtensionPointTypes = activeExtensionPoints.keys.compactMap({ ObjectIdentifier($0.extensionPointType) })
 		var available = [ExtensionPoint.Type]()
 		for possibleExtensionPointType in possibleExtensionPointTypes {
-			if !(AppDefaults.isDeveloperBuild && possibleExtensionPointType.isDeveloperBuildRestricted) {
+			if !(AppDefaults.shared.isDeveloperBuild && possibleExtensionPointType.isDeveloperBuildRestricted) {
 				if possibleExtensionPointType.isSinglton {
 					if !activeExtensionPointTypes.contains(ObjectIdentifier(possibleExtensionPointType)) {
 						available.append(possibleExtensionPointType)
@@ -109,7 +109,7 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 private extension ExtensionPointManager {
 	
 	func loadExtensionPoints() {
-		if let extensionPointUserInfos = AppDefaults.activeExtensionPointIDs {
+		if let extensionPointUserInfos = AppDefaults.shared.activeExtensionPointIDs {
 			for extensionPointUserInfo in extensionPointUserInfos {
 				if let extensionPointID = ExtensionPointIdentifer(userInfo: extensionPointUserInfo) {
 					activeExtensionPoints[extensionPointID] = extensionPoint(for: extensionPointID)
@@ -119,7 +119,7 @@ private extension ExtensionPointManager {
 	}
 	
 	func saveExtensionPointIDs() {
-		AppDefaults.activeExtensionPointIDs = activeExtensionPoints.keys.map({ $0.userInfo })
+		AppDefaults.shared.activeExtensionPointIDs = activeExtensionPoints.keys.map({ $0.userInfo })
 		NotificationCenter.default.post(name: .ActiveExtensionPointsDidChange, object: nil, userInfo: nil)
 	}
 	
