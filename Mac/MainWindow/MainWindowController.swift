@@ -61,7 +61,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
-		if !AppDefaults.showTitleOnMainWindow {
+		if !AppDefaults.shared.showTitleOnMainWindow {
 			window?.titleVisibility = .hidden
 		}
 		
@@ -116,12 +116,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	func saveStateToUserDefaults() {
-		AppDefaults.windowState = savableState()
+		AppDefaults.shared.windowState = savableState()
 		window?.saveFrame(usingName: windowAutosaveName)
 	}
 	
 	func restoreStateFromUserDefaults() {
-		if let state = AppDefaults.windowState {
+		if let state = AppDefaults.shared.windowState {
 			restoreState(from: state)
 			window?.setFrameUsingName(windowAutosaveName, force: true)
 		}
@@ -281,7 +281,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func openInBrowserUsingOppositeOfSettings(_ sender: Any?) {
 		if let link = currentLink {
-			Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)
+			Browser.open(link, inBackground: !AppDefaults.shared.openInBrowserInBackground)
 		}
 	}
 
@@ -819,7 +819,7 @@ private extension MainWindowController {
 	}
 
 	func validateToggleArticleExtractor(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		guard !AppDefaults.isDeveloperBuild else {
+		guard !AppDefaults.shared.isDeveloperBuild else {
 			return false
 		}
 		

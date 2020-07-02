@@ -171,7 +171,7 @@ private extension AccountsAddViewController {
 			}
 		}
 		
-		if AppDefaults.isDeveloperBuild {
+		if AppDefaults.shared.isDeveloperBuild {
 			removeAccountType(.cloudKit)
 			removeAccountType(.feedly)
 			removeAccountType(.feedWrangler)

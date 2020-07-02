@@ -167,7 +167,7 @@ private extension TimelineContainerViewController {
 	func updateViewOptionsPopUpButton() {
 		let localizedTitle = NSLocalizedString("Sort %@", comment: "Sort")
 		
-		if AppDefaults.timelineSortDirection == .orderedAscending {
+		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
 			newestToOldestMenuItem.state = .off
 			oldestToNewestMenuItem.state = .on
 			let title = NSString.localizedStringWithFormat(localizedTitle as NSString, oldestToNewestMenuItem.title) as String
@@ -179,7 +179,7 @@ private extension TimelineContainerViewController {
 			viewOptionsPopUpButton.setTitle(title)
 		}
 		
-		if AppDefaults.timelineGroupByFeed == true {
+		if AppDefaults.shared.timelineGroupByFeed == true {
 			groupByFeedMenuItem.state = .on
 		} else {
 			groupByFeedMenuItem.state = .off

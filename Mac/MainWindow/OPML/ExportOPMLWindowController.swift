@@ -31,7 +31,7 @@ class ExportOPMLWindowController: NSWindowController {
 			oneMenuItem.representedObject = oneAccount
 			menu.addItem(oneMenuItem)
 			
-			if oneAccount.accountID == AppDefaults.exportOPMLAccountID {
+			if oneAccount.accountID == AppDefaults.shared.exportOPMLAccountID {
 				accountPopUpButton.select(oneMenuItem)
 			}
 
@@ -66,7 +66,7 @@ class ExportOPMLWindowController: NSWindowController {
 		}
 
 		let account = menuItem.representedObject as! Account
-		AppDefaults.exportOPMLAccountID = account.accountID
+		AppDefaults.shared.exportOPMLAccountID = account.accountID
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 		exportOPML(account: account)
 		
