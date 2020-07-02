@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TimelineLayoutView: View {
     
-	@EnvironmentObject private var appSettings: AppSettings
+	@EnvironmentObject private var appSettings: AppDefaults
 	
 	private let sampleTitle = "Lorem dolor sed viverra ipsum. Gravida rutrum quisque non tellus. Rutrum tellus pellentesque eu tincidunt tortor. Sed blandit libero volutpat sed cras ornare. Et netus et malesuada fames ac. Ultrices eros in cursus turpis massa tincidunt dui ut ornare. Lacus sed viverra tellus in. Sollicitudin ac orci phasellus egestas. Purus in mollis nunc sed. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque. Interdum consectetur libero id faucibus nisl tincidunt eget."
 	
@@ -33,7 +33,7 @@ struct TimelineLayoutView: View {
     }
 	
 	var iconSize: some View {
-		Slider(value: $appSettings.timelineIconSize, in: 20...60, minimumValueLabel: Text("Small"), maximumValueLabel: Text("Large"), label: {
+		Slider(value: $appSettings.timelineIconSize, in: 20...60, step: 10, minimumValueLabel: Text("Small"), maximumValueLabel: Text("Large"), label: {
 			Text(String(appSettings.timelineIconSize))
 		})
 	}

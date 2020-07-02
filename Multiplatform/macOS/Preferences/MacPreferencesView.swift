@@ -32,19 +32,19 @@ struct MacPreferenceViewModel {
 
 struct MacPreferencesView: View {
     
-    @EnvironmentObject var preferences: MacPreferences
+    @EnvironmentObject var defaults: AppDefaults
     @State private var viewModel = MacPreferenceViewModel()
     
     var body: some View {
         VStack {
             if viewModel.currentPreferencePane == .general {
-                AnyView(GeneralPreferencesView())
+				AnyView(GeneralPreferencesView().environmentObject(defaults))
             }
             else if viewModel.currentPreferencePane == .accounts {
-                AnyView(AccountsPreferencesView())
+				AnyView(AccountsPreferencesView().environmentObject(defaults))
             }
             else {
-                AnyView(AdvancedPreferencesView(preferences: preferences))
+				AnyView(AdvancedPreferencesView().environmentObject(defaults))
             }
         }
         .toolbar {

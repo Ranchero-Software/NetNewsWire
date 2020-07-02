@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AdvancedPreferencesView: View {
     
-    @StateObject var preferences: MacPreferences
+	@EnvironmentObject private var preferences: AppDefaults
     
     var body: some View {
         VStack {

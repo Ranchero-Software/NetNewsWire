@@ -13,13 +13,13 @@ struct MainApp: App {
 	
 	#if os(macOS)
 	@NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
-	let preferences = MacPreferences()
 	#endif
 	#if os(iOS)
 	@UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 	#endif
 	
 	@StateObject private var sceneModel = SceneModel()
+	@StateObject private var defaults = AppDefaults.shared
 	
 	@SceneBuilder var body: some Scene {
 		#if os(macOS)
@@ -134,7 +134,7 @@ struct MainApp: App {
 			.padding()
 			.frame(width: 500)
 			.navigationTitle("Preferences")
-			.environmentObject(preferences)
+			.environmentObject(defaults)
 		}
 		.windowToolbarStyle(UnifiedWindowToolbarStyle())
 		
