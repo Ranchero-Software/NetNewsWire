@@ -55,6 +55,14 @@ class TimelineModel: ObservableObject {
 		fetchAndReplaceArticlesAsync()
 	}
 	
+	// TODO: Replace this with ScrollViewReader if we have to keep it
+	func loadMoreTimelineItemsIfNecessary(_ timelineItem: TimelineItem) {
+		let thresholdIndex = timelineItems.index(timelineItems.endIndex, offsetBy: -10)
+		if timelineItems.firstIndex(where: { $0.id == timelineItem.id }) == thresholdIndex {
+			nextBatch()
+		}
+	}
+	
 }
 
 // MARK: Private
@@ -112,12 +120,19 @@ private extension TimelineModel {
 	
 	func replaceArticles(with unsortedArticles: Set<Article>) {
 		articles = Array(unsortedArticles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
-		timelineItems = articles.map { TimelineItem(article: $0) }
-		
+		timelineItems = [TimelineItem]()
+		nextBatch()
 		// TODO: Update unread counts and other item done in didSet on AppKit
 	}
 
-
+	func nextBatch() {
+		let rangeEndIndex = timelineItems.endIndex + 50 > articles.endIndex ? articles.endIndex : timelineItems.endIndex + 50
+		let range = timelineItems.endIndex..<rangeEndIndex
+		for i in range {
+			timelineItems.append(TimelineItem(article: articles[i]))
+		}
+	}
+	
 	// MARK: - Notifications
 
 }
