@@ -24,7 +24,7 @@ struct TimelineItemView: View {
 				VStack {
 					Text(verbatim: timelineItem.article.title ?? "N/A")
 						.fontWeight(.semibold)
-						.lineLimit(3)
+						.lineLimit(AppDefaults.timelineNumberOfLines)
 						.frame(maxWidth: .infinity, alignment: .leading)
 						.padding(.trailing, 4)
 					Spacer()

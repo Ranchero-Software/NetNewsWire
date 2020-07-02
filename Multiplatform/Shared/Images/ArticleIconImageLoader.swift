@@ -23,6 +23,7 @@ final class ArticleIconImageLoader: ObservableObject {
 	}
 	
 	func loadImage(for article: Article) {
+		guard image == nil else { return }
 		self.article = article
 		image = article.iconImage()
 	}
@@ -50,7 +51,7 @@ private extension ArticleIconImageLoader {
 
 		for author in authors {
 			if author.avatarURL == avatarURL {
-				
+				image = article.iconImage()
 				return
 			}
 		}
