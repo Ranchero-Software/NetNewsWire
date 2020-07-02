@@ -29,7 +29,7 @@ class TimelineModel: ObservableObject {
 	
 	private var articles = [Article]()
 	
-	private var sortDirection = AppDefaults.timelineSortDirection {
+	private var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
 				sortParametersDidChange()
@@ -37,7 +37,7 @@ class TimelineModel: ObservableObject {
 		}
 	}
 	
-	private var groupByFeed = AppDefaults.timelineGroupByFeed {
+	private var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
 		didSet {
 			if groupByFeed != oldValue {
 				sortParametersDidChange()
@@ -111,7 +111,7 @@ private extension TimelineModel {
 	}
 	
 	func replaceArticles(with unsortedArticles: Set<Article>) {
-		articles = Array(unsortedArticles).sortedByDate(sortDirection, groupByFeed: groupByFeed)
+		articles = Array(unsortedArticles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
 		timelineItems = articles.map { TimelineItem(article: $0) }
 		
 		// TODO: Update unread counts and other item done in didSet on AppKit

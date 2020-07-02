@@ -27,6 +27,7 @@ struct MainApp: App {
 			SceneNavigationView()
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
 				.environmentObject(sceneModel)
+				.environmentObject(defaults)
 				.toolbar {
 					
 					ToolbarItem {
@@ -144,6 +145,7 @@ struct MainApp: App {
 		WindowGroup {
 			SceneNavigationView()
 				.environmentObject(sceneModel)
+				.environmentObject(defaults)
 		}.commands {
 			CommandGroup(after: .newItem, addition: {
 				Button("New Feed", action: {})
