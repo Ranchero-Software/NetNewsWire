@@ -9,13 +9,23 @@
 import SwiftUI
 
 struct TimelineView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+	
+	@EnvironmentObject private var timelineModel: TimelineModel
 
-struct TimelineView_Previews: PreviewProvider {
-    static var previews: some View {
-        TimelineView()
+	var body: some View {
+		ScrollView {
+			LazyVStack() {
+				ForEach(timelineModel.timelineItems) { timelineItem in
+					TimelineItemView(timelineItem: timelineItem)
+				}
+			}
+		}
     }
+	
+//	var body: some View {
+//		List(timelineModel.timelineItems) { timelineItem in
+//			TimelineItemView(timelineItem: timelineItem)
+//		}
+//	}
+	
 }

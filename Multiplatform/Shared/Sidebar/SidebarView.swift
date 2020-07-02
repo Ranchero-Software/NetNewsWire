@@ -16,8 +16,6 @@ struct SidebarView: View {
 	@StateObject private var expandedContainers = SidebarExpandedContainers()
 	@EnvironmentObject private var sidebarModel: SidebarModel
 	
-//	@State private var selected = Set<FeedIdentifier>()
-
 	var body: some View {
 		List() {
 			ForEach(sidebarModel.sidebarItems) { sidebarItem in
@@ -27,13 +25,19 @@ struct SidebarView: View {
 							if let containerID = sidebarItem.containerID {
 								DisclosureGroup(isExpanded: $expandedContainers[containerID]) {
 									ForEach(sidebarItem.children) { sidebarItem in
-										SidebarItemView(sidebarItem: sidebarItem)
+										NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+											SidebarItemView(sidebarItem: sidebarItem)
+										}
 									}
 								} label: {
-									SidebarItemView(sidebarItem: sidebarItem)
+									NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+										SidebarItemView(sidebarItem: sidebarItem)
+									}
 								}
 							} else {
-								SidebarItemView(sidebarItem: sidebarItem)
+								NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+									SidebarItemView(sidebarItem: sidebarItem)
+								}
 							}
 						}
 					} label: {

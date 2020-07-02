@@ -1,5 +1,5 @@
 //
-//  FeedImageLoader.swift
+//  FeedIconImageLoader.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 6/29/20.
@@ -9,7 +9,7 @@
 import SwiftUI
 import Account
 
-final class FeedImageLoader: ObservableObject {
+final class FeedIconImageLoader: ObservableObject {
 	
 	private var feed: Feed?
 	
@@ -21,8 +21,27 @@ final class FeedImageLoader: ObservableObject {
 	}
 	
 	func loadImage(for feed: Feed) {
+		guard image == nil else { return }
 		self.feed = feed
-		
+		fetchImage()
+	}
+	
+}
+
+private extension FeedIconImageLoader {
+	
+	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+		fetchImage()
+	}
+
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		guard let feed = feed as? WebFeed, let noteFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, feed == noteFeed else {
+			return
+		}
+		fetchImage()
+	}
+	
+	func fetchImage() {
 		if let webFeed = feed as? WebFeed {
 			if let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: webFeed) {
 				image = feedIconImage
@@ -37,22 +56,6 @@ final class FeedImageLoader: ObservableObject {
 		if let smallIconProvider = feed as? SmallIconProvider {
 			image = smallIconProvider.smallIcon
 		}
-	}
-	
-}
-
-private extension FeedImageLoader {
-	
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = feed else { return }
-		loadImage(for: feed)
-	}
-
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = feed as? WebFeed, let noteFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, feed == noteFeed else {
-			return
-		}
-		loadImage(for: feed)
 	}
 	
 }

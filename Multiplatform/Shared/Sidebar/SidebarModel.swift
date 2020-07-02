@@ -11,7 +11,6 @@ import RSCore
 import Account
 
 protocol SidebarModelDelegate: class {
-	func sidebarSelectionDidChange(_: SidebarModel, feeds: [Feed]?)
 	func unreadCount(for: Feed) -> Int
 }
 

@@ -104,6 +104,16 @@ struct AppAssets {
 		#endif
 	}()
 	
+	static var timelineStarred: Image = {
+		return Image(systemName: "star.fill")
+
+	}()
+
+	static var timelineUnread: Image = {
+		return Image(systemName: "circle.fill")
+
+	}()
+	
 	static var todayFeedImage: IconImage = {
 		#if os(macOS)
 		return IconImage(NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!)
