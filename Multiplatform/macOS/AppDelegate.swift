@@ -133,8 +133,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 			}
 		#endif
 		
-		AppDefaults.registerDefaults()
-		let isFirstRun = AppDefaults.isFirstRun
+		//AppDefaults.registerDefaults()
+		let isFirstRun = AppDefaults.shared.isFirstRun()
 		if isFirstRun {
 			os_log(.debug, log: log, "Is first run.")
 		}
@@ -245,7 +245,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 	
 	// MARK: - Dock Badge
 	@objc func updateDockBadge() {
-		let label = unreadCount > 0 && !AppDefaults.hideDockUnreadCount ? "\(unreadCount)" : ""
+		let label = unreadCount > 0 && !AppDefaults.shared.hideDockUnreadCount ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}
 

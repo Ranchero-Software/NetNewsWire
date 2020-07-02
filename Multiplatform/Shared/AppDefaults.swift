@@ -2,290 +2,352 @@
 //  AppDefaults.swift
 //  NetNewsWire
 //
-//  Created by Maurice Parker on 6/28/20.
+//  Created by Stuart Breckenridge on 1/7/20.
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
 import Foundation
+import SwiftUI
 
+enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
+	case automatic = 0
+	case light = 1
+	case dark = 2
 
+	var description: String {
+		switch self {
+		case .automatic:
+			return NSLocalizedString("Automatic", comment: "Automatic")
+		case .light:
+			return NSLocalizedString("Light", comment: "Light")
+		case .dark:
+			return NSLocalizedString("Dark", comment: "Dark")
+		}
+	}
+}
 
-struct AppDefaults {
+enum FontSize: Int {
+	case small = 0
+	case medium = 1
+	case large = 2
+	case veryLarge = 3
+}
 
+final class AppDefaults: ObservableObject {
+	
 	#if os(macOS)
-	static var shared: UserDefaults = UserDefaults.standard
+	static let store: UserDefaults = UserDefaults.standard
 	#endif
 	
 	#if os(iOS)
-	static var shared: UserDefaults = {
+	static let store: UserDefaults = {
 		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
 		let suiteName = "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
 		return UserDefaults.init(suiteName: suiteName)!
 	}()
 	#endif
 	
+	public static let shared = AppDefaults()
+	private init() {}
+	
 	struct Key {
+		
+		// Shared Defaults
 		static let refreshInterval = "refreshInterval"
 		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
-		static let userInterfaceColorPalette = "userInterfaceColorPalette"
 		static let activeExtensionPointIDs = "activeExtensionPointIDs"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let firstRunDate = "firstRunDate"
-		static let timelineGroupByFeed = "timelineGroupByFeed"
-		static let refreshClearsReadArticles = "refreshClearsReadArticles"
-		static let timelineNumberOfLines = "timelineNumberOfLines"
-		static let timelineIconSize = "timelineIconSize"
-		static let timelineSortDirection = "timelineSortDirection"
-		static let articleFullscreenAvailable = "articleFullscreenAvailable"
-		static let articleFullscreenEnabled = "articleFullscreenEnabled"
-		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
+		static let timelineSortDirection = "timelineSortDirection"
+		
+		// iOS Defaults
+		static let userInterfaceColorPalette = "userInterfaceColorPalette"
+		static let timelineGroupByFeed = "timelineGroupByFeed"
+		static let refreshClearsReadArticles = "refreshClearsReadArticles" 
+		static let timelineNumberOfLines = "timelineNumberOfLines" 
+		static let timelineIconSize = "timelineIconSize"
+		static let articleFullscreenAvailable = "articleFullscreenAvailable" 
+		static let articleFullscreenEnabled = "articleFullscreenEnabled" 
+		static let confirmMarkAllAsRead = "confirmMarkAllAsRead" 
+		
+		// macOS Defaults
+		static let windowState = "windowState"
+		static let sidebarFontSize = "sidebarFontSize"
+		static let timelineFontSize = "timelineFontSize"
+		static let detailFontSize = "detailFontSize"
+		static let openInBrowserInBackground = "openInBrowserInBackground"
+		static let importOPMLAccountID = "importOPMLAccountID"
+		static let exportOPMLAccountID = "exportOPMLAccountID"
+		static let defaultBrowserID = "defaultBrowserID"
+		static let checkForUpdatesAutomatically = "checkForUpdatesAutomatically"
+		static let downloadTestBuilds = "downloadTestBuild"
+		static let sendCrashLogs = "sendCrashLogs"
+		
+		// Hidden macOS Defaults
+		static let showDebugMenu = "ShowDebugMenu"
+		static let timelineShowsSeparators = "CorreiaSeparators"
+		static let showTitleOnMainWindow = "KafasisTitleMode"
+		
+		#if !MAC_APP_STORE
+			static let webInspectorEnabled = "WebInspectorEnabled"
+			static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
+		#endif
+		
 	}
-
-	static let isDeveloperBuild: Bool = {
+	
+	private static let smallestFontSizeRawValue = FontSize.small.rawValue
+	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
+	
+	// MARK:  Development Builds
+	let isDeveloperBuild: Bool = {
 		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
 			return true
 		}
 		return false
 	}()
-
-	static let isFirstRun: Bool = {
-		if let _ = AppDefaults.shared.object(forKey: Key.firstRunDate) as? Date {
-			return false
-		}
-		firstRunDate = Date()
-		return true
-	}()
 	
-	static var refreshInterval: RefreshInterval {
-		get {
-			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
-			return RefreshInterval(rawValue: rawValue) ?? RefreshInterval.everyHour
-		}
+	// MARK: First Run Details
+	var firstRunDate: Date? {
 		set {
-			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
+			AppDefaults.store.setValue(newValue, forKey: Key.firstRunDate)
+			objectWillChange.send()
+		}
+		get {
+			AppDefaults.store.object(forKey: Key.firstRunDate) as? Date
 		}
 	}
-
-	static var hideDockUnreadCount: Bool {
-		return bool(for: Key.hideDockUnreadCount)
+	
+	// MARK: Refresh Interval
+	@AppStorage(wrappedValue: 4, Key.refreshInterval, store: store) var interval: Int {
+		didSet {
+			objectWillChange.send()
+		}
 	}
-
-	static var userInterfaceColorPalette: UserInterfaceColorPalette {
+	
+	var refreshInterval: RefreshInterval {
+		RefreshInterval(rawValue: interval) ?? RefreshInterval.everyHour
+	}
+	
+	// MARK: Dock Badge
+	@AppStorage(wrappedValue: false, Key.hideDockUnreadCount, store: store) var hideDockUnreadCount {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	// MARK: Color Palette
+	var userInterfaceColorPalette: UserInterfaceColorPalette {
 		get {
-			if let result = UserInterfaceColorPalette(rawValue: int(for: Key.userInterfaceColorPalette)) {
-				return result
+			if let palette = UserInterfaceColorPalette(rawValue: AppDefaults.store.integer(forKey: Key.userInterfaceColorPalette)) {
+				return palette
 			}
 			return .automatic
 		}
 		set {
-			setInt(for: Key.userInterfaceColorPalette, newValue.rawValue)
-		}
-	}
-
-	static var addWebFeedAccountID: String? {
-		get {
-			return string(for: Key.addWebFeedAccountID)
-		}
-		set {
-			setString(for: Key.addWebFeedAccountID, newValue)
+			AppDefaults.store.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
+			objectWillChange.send()
 		}
 	}
 	
-	static var addWebFeedFolderName: String? {
-		get {
-			return string(for: Key.addWebFeedFolderName)
-		}
-		set {
-			setString(for: Key.addWebFeedFolderName, newValue)
-		}
-	}
+	// MARK: Feeds & Folders
+	@AppStorage(Key.addWebFeedAccountID, store: store) var addWebFeedAccountID: String?
 	
-	static var addFolderAccountID: String? {
-		get {
-			return string(for: Key.addFolderAccountID)
-		}
-		set {
-			setString(for: Key.addFolderAccountID, newValue)
-		}
-	}
+	@AppStorage(Key.addWebFeedFolderName, store: store) var addWebFeedFolderName: String? 
 	
-	static var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
+	@AppStorage(Key.addFolderAccountID, store: store) var addFolderAccountID: String?
+	
+	@AppStorage(wrappedValue: false, Key.confirmMarkAllAsRead, store: store) var confirmMarkAllAsRead: Bool
+	
+	// MARK: Extension Points
+	var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
 		get {
-			return UserDefaults.standard.object(forKey: Key.activeExtensionPointIDs) as? [[AnyHashable : AnyHashable]]
+			return AppDefaults.store.object(forKey: Key.activeExtensionPointIDs) as? [[AnyHashable : AnyHashable]]
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.activeExtensionPointIDs)
+			objectWillChange.send()
 		}
 	}
 	
-	static var lastImageCacheFlushDate: Date? {
-		get {
-			return date(for: Key.lastImageCacheFlushDate)
-		}
+	// MARK: Image Cache
+	var lastImageCacheFlushDate: Date? {
 		set {
-			setDate(for: Key.lastImageCacheFlushDate, newValue)
+			AppDefaults.store.setValue(newValue, forKey: Key.lastImageCacheFlushDate)
+			objectWillChange.send()
 		}
-	}
-
-	static var timelineGroupByFeed: Bool {
 		get {
-			return bool(for: Key.timelineGroupByFeed)
-		}
-		set {
-			setBool(for: Key.timelineGroupByFeed, newValue)
-		}
-	}
-
-	static var refreshClearsReadArticles: Bool {
-		get {
-			return bool(for: Key.refreshClearsReadArticles)
-		}
-		set {
-			setBool(for: Key.refreshClearsReadArticles, newValue)
-		}
-	}
-
-	static var timelineSortDirection: ComparisonResult {
-		get {
-			return sortDirection(for: Key.timelineSortDirection)
-		}
-		set {
-			setSortDirection(for: Key.timelineSortDirection, newValue)
-		}
-	}
-
-	static var articleFullscreenAvailable: Bool {
-		get {
-			return bool(for: Key.articleFullscreenAvailable)
-		}
-		set {
-			setBool(for: Key.articleFullscreenAvailable, newValue)
-		}
-	}
-
-	static var articleFullscreenEnabled: Bool {
-		get {
-			return bool(for: Key.articleFullscreenEnabled)
-		}
-		set {
-			setBool(for: Key.articleFullscreenEnabled, newValue)
-		}
-	}
-
-	static var confirmMarkAllAsRead: Bool {
-		get {
-			return bool(for: Key.confirmMarkAllAsRead)
-		}
-		set {
-			setBool(for: Key.confirmMarkAllAsRead, newValue)
+			AppDefaults.store.object(forKey: Key.lastImageCacheFlushDate) as? Date
 		}
 	}
 	
-	static var lastRefresh: Date? {
-		get {
-			return date(for: Key.lastRefresh)
-		}
-		set {
-			setDate(for: Key.lastRefresh, newValue)
+	// MARK: Timeline
+	@AppStorage(wrappedValue: false, Key.timelineGroupByFeed, store: store) var timelineGroupByFeed: Bool
+	
+	@AppStorage(wrappedValue: 3, Key.timelineNumberOfLines, store: store) var timelineNumberOfLines: Int {
+		didSet {
+			objectWillChange.send()
 		}
 	}
 	
-	static var timelineNumberOfLines: Int {
-		get {
-			return int(for: Key.timelineNumberOfLines)
-		}
-		set {
-			setInt(for: Key.timelineNumberOfLines, newValue)
+	@AppStorage(wrappedValue: 40.0, Key.timelineIconSize, store: store) var timelineIconSize: Double {
+		didSet {
+			objectWillChange.send()
 		}
 	}
 	
-	static var timelineIconSize: IconSize {
-		get {
-			let rawValue = AppDefaults.shared.integer(forKey: Key.timelineIconSize)
-			return IconSize(rawValue: rawValue) ?? IconSize.medium
-		}
+	/// Set to `true` to sort oldest to newest, `false` for newest to oldest. Default is `false`.
+	@AppStorage(wrappedValue: false, Key.timelineSortDirection, store: store) var timelineSortDirection: Bool
+	
+	// MARK: Refresh
+	@AppStorage(wrappedValue: false, Key.refreshClearsReadArticles, store: store) var refreshClearsReadArticles: Bool
+	
+	// MARK: Articles
+	@AppStorage(wrappedValue: false, Key.articleFullscreenAvailable, store: store) var articleFullscreenAvailable: Bool
+	
+	// MARK: Refresh
+	var lastRefresh: Date? {
 		set {
-			AppDefaults.shared.set(newValue.rawValue, forKey: Key.timelineIconSize)
+			AppDefaults.store.setValue(newValue, forKey: Key.lastRefresh)
+			objectWillChange.send()
+		}
+		get {
+			AppDefaults.store.object(forKey: Key.lastRefresh) as? Date
 		}
 	}
 	
-	static func registerDefaults() {
-		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
-										Key.timelineGroupByFeed: false,
-										Key.refreshClearsReadArticles: false,
-										Key.timelineNumberOfLines: 2,
-										Key.timelineIconSize: IconSize.medium.rawValue,
-										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-										Key.articleFullscreenAvailable: false,
-										Key.articleFullscreenEnabled: false,
-										Key.confirmMarkAllAsRead: true]
-		AppDefaults.shared.register(defaults: defaults)
+	// MARK: Window State
+	var windowState: [AnyHashable : Any]? {
+		get {
+			return AppDefaults.store.object(forKey: Key.windowState) as? [AnyHashable : Any]
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.windowState)
+			objectWillChange.send()
+		}
 	}
-
+	
+	@AppStorage(wrappedValue: false, Key.openInBrowserInBackground, store: store) var openInBrowserInBackground: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	var sidebarFontSize: FontSize {
+		get {
+			return fontSize(for: Key.sidebarFontSize)
+		}
+		set {
+			AppDefaults.store.set(newValue.rawValue, forKey: Key.sidebarFontSize)
+			objectWillChange.send()
+		}
+	}
+	
+	var timelineFontSize: FontSize {
+		get {
+			return fontSize(for: Key.timelineFontSize)
+		}
+		set {
+			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineFontSize)
+			objectWillChange.send()
+		}
+	}
+	
+	var detailFontSize: FontSize {
+		get {
+			return fontSize(for: Key.detailFontSize)
+		}
+		set {
+			AppDefaults.store.set(newValue.rawValue, forKey: Key.detailFontSize)
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(Key.importOPMLAccountID, store: store) var importOPMLAccountID: String? {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(Key.exportOPMLAccountID, store: store) var exportOPMLAccountID: String? {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(Key.defaultBrowserID, store: store) var defaultBrowserID: String? {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(Key.showTitleOnMainWindow, store: store) var showTitleOnMainWindow: Bool? {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: false, Key.showDebugMenu, store: store) var showDebugMenu: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: false, Key.timelineShowsSeparators, store: store) var timelineShowsSeparators: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	#if !MAC_APP_STORE
+	@AppStorage(wrappedValue: false, Key.webInspectorEnabled, store: store) var webInspectorEnabled: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: false, Key.webInspectorStartsAttached, store: store) var webInspectorStartsAttached: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	#endif
+	
+	@AppStorage(wrappedValue: true, Key.checkForUpdatesAutomatically, store: store) var checkForUpdatesAutomatically: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: false, Key.downloadTestBuilds, store: store) var downloadTestBuilds: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	@AppStorage(wrappedValue: true, Key.sendCrashLogs, store: store) var sendCrashLogs: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
 }
 
-private extension AppDefaults {
-
-	static var firstRunDate: Date? {
-		get {
-			return date(for: Key.firstRunDate)
+extension AppDefaults {
+	
+	func isFirstRun() -> Bool {
+		if let _ = AppDefaults.store.object(forKey: Key.firstRunDate) as? Date {
+			return false
 		}
-		set {
-			setDate(for: Key.firstRunDate, newValue)
-		}
-	}
-
-	static func string(for key: String) -> String? {
-		return AppDefaults.shared.string(forKey: key)
+		firstRunDate = Date()
+		return true
 	}
 	
-	static func setString(for key: String, _ value: String?) {
-		AppDefaults.shared.set(value, forKey: key)
+	func fontSize(for key: String) -> FontSize {
+		// Punted till after 1.0.
+		return .medium
 	}
-
-	static func bool(for key: String) -> Bool {
-		return AppDefaults.shared.bool(forKey: key)
-	}
-
-	static func setBool(for key: String, _ flag: Bool) {
-		AppDefaults.shared.set(flag, forKey: key)
-	}
-
-	static func int(for key: String) -> Int {
-		return AppDefaults.shared.integer(forKey: key)
-	}
-	
-	static func setInt(for key: String, _ x: Int) {
-		AppDefaults.shared.set(x, forKey: key)
-	}
-	
-	static func date(for key: String) -> Date? {
-		return AppDefaults.shared.object(forKey: key) as? Date
-	}
-
-	static func setDate(for key: String, _ date: Date?) {
-		AppDefaults.shared.set(date, forKey: key)
-	}
-
-	static func sortDirection(for key:String) -> ComparisonResult {
-		let rawInt = int(for: key)
-		if rawInt == ComparisonResult.orderedAscending.rawValue {
-			return .orderedAscending
-		}
-		return .orderedDescending
-	}
-
-	static func setSortDirection(for key: String, _ value: ComparisonResult) {
-		if value == .orderedAscending {
-			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
-		}
-		else {
-			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
-		}
-	}
-	
 }

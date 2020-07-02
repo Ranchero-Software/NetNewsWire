@@ -57,7 +57,7 @@ struct SettingsView: View {
 	@Environment(\.presentationMode) var presentationMode
 	
 	@StateObject private var viewModel = SettingsViewModel()
-	@StateObject private var settings = AppSettings.shared
+	@StateObject private var settings = AppDefaults.shared
 	
 	var body: some View {
 		NavigationView {
