@@ -46,31 +46,31 @@ class SettingsViewController: UITableViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		if AppDefaults.timelineSortDirection == .orderedAscending {
+		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
 			timelineSortOrderSwitch.isOn = true
 		} else {
 			timelineSortOrderSwitch.isOn = false
 		}
 
-		if AppDefaults.timelineGroupByFeed {
+		if AppDefaults.shared.timelineGroupByFeed {
 			groupByFeedSwitch.isOn = true
 		} else {
 			groupByFeedSwitch.isOn = false
 		}
 
-		if AppDefaults.refreshClearsReadArticles {
+		if AppDefaults.shared.refreshClearsReadArticles {
 			refreshClearsReadArticlesSwitch.isOn = true
 		} else {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
-		if AppDefaults.confirmMarkAllAsRead {
+		if AppDefaults.shared.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
 		} else {
 			confirmMarkAllAsReadSwitch.isOn = false
 		}
 
-		if AppDefaults.articleFullscreenAvailable {
+		if AppDefaults.shared.articleFullscreenAvailable {
 			showFullscreenArticlesSwitch.isOn = true
 		} else {
 			showFullscreenArticlesSwitch.isOn = false
@@ -286,41 +286,41 @@ class SettingsViewController: UITableViewController {
 	
 	@IBAction func switchTimelineOrder(_ sender: Any) {
 		if timelineSortOrderSwitch.isOn {
-			AppDefaults.timelineSortDirection = .orderedAscending
+			AppDefaults.shared.timelineSortDirection = .orderedAscending
 		} else {
-			AppDefaults.timelineSortDirection = .orderedDescending
+			AppDefaults.shared.timelineSortDirection = .orderedDescending
 		}
 	}
 	
 	@IBAction func switchGroupByFeed(_ sender: Any) {
 		if groupByFeedSwitch.isOn {
-			AppDefaults.timelineGroupByFeed = true
+			AppDefaults.shared.timelineGroupByFeed = true
 		} else {
-			AppDefaults.timelineGroupByFeed = false
+			AppDefaults.shared.timelineGroupByFeed = false
 		}
 	}
 	
 	@IBAction func switchClearsReadArticles(_ sender: Any) {
 		if refreshClearsReadArticlesSwitch.isOn {
-			AppDefaults.refreshClearsReadArticles = true
+			AppDefaults.shared.refreshClearsReadArticles = true
 		} else {
-			AppDefaults.refreshClearsReadArticles = false
+			AppDefaults.shared.refreshClearsReadArticles = false
 		}
 	}
 	
 	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
 		if confirmMarkAllAsReadSwitch.isOn {
-			AppDefaults.confirmMarkAllAsRead = true
+			AppDefaults.shared.confirmMarkAllAsRead = true
 		} else {
-			AppDefaults.confirmMarkAllAsRead = false
+			AppDefaults.shared.confirmMarkAllAsRead = false
 		}
 	}
 	
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
 		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.articleFullscreenAvailable = true
+			AppDefaults.shared.articleFullscreenAvailable = true
 		} else {
-			AppDefaults.articleFullscreenAvailable = false
+			AppDefaults.shared.articleFullscreenAvailable = false
 		}
 	}
 	
