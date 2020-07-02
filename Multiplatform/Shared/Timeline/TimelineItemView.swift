@@ -10,7 +10,9 @@ import SwiftUI
 
 struct TimelineItemView: View {
 	
+	@EnvironmentObject var defaults: AppDefaults
 	@StateObject var articleIconImageLoader = ArticleIconImageLoader()
+	
 	var timelineItem: TimelineItem
 	
     var body: some View {
@@ -19,12 +21,12 @@ struct TimelineItemView: View {
 				TimelineItemStatusView(status: timelineItem.status)
 				if let image = articleIconImageLoader.image {
 					IconImageView(iconImage: image)
-						.frame(width: AppDefaults.timelineIconSize.size.width, height: AppDefaults.timelineIconSize.size.height, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+						.frame(width: CGFloat(defaults.timelineIconSize), height: CGFloat(defaults.timelineIconSize), alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
 				}
 				VStack {
 					Text(verbatim: timelineItem.article.title ?? "N/A")
 						.fontWeight(.semibold)
-						.lineLimit(AppDefaults.timelineNumberOfLines)
+						.lineLimit(defaults.timelineNumberOfLines)
 						.frame(maxWidth: .infinity, alignment: .leading)
 						.padding(.trailing, 4)
 					Spacer()
