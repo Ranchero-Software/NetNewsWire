@@ -23,7 +23,6 @@
 		1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		179DB1DFBCF9177104B12E0F /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		179DB3CE822BFCC2D774D9F4 /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
-		17B223DC24AC24D2001E4592 /* TimelineLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
 		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
 		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
@@ -80,6 +79,7 @@
 		511D43EF231FBDE900FB1562 /* LaunchScreenPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 511D43ED231FBDE800FB1562 /* LaunchScreenPad.storyboard */; };
 		511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511D4410231FC02D00FB1562 /* KeyboardManager.swift */; };
 		51236339236915B100951F16 /* RoundedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512363372369155100951F16 /* RoundedProgressView.swift */; };
+		5125E6CA24AE461D002A7562 /* TimelineLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */; };
 		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
@@ -3925,46 +3925,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -3974,7 +3974,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -3984,7 +3984,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -4805,12 +4805,13 @@
 				51E4992624A80AAB00B667CB /* AppAssets.swift in Sources */,
 				514E6C0624AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */,
 				51E4995624A8734D00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
+				5125E6CA24AE461D002A7562 /* TimelineLayoutView.swift in Sources */,
 				51E4996824A8760C00B667CB /* ArticleStyle.swift in Sources */,
 				51E4990024A808BB00B667CB /* FaviconGenerator.swift in Sources */,
 				51E4997124A8764C00B667CB /* ActivityType.swift in Sources */,
 				51E4991E24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
 				51E499D824A912C200B667CB /* SceneModel.swift in Sources */,
-				51919FB324AAB97900541E64 /* FeedImageLoader.swift in Sources */,
+				51919FB324AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
 				51919FB324AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
 				51E4991324A808FB00B667CB /* AddWebFeedDefaultContainer.swift in Sources */,
 				51E4993C24A8709900B667CB /* AppDelegate.swift in Sources */,
