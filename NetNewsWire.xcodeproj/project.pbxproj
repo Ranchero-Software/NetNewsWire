@@ -214,6 +214,8 @@
 		517A757A24451C0700B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		517A757B24451C1500B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; };
 		517A757C24451C1500B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5181C5AD24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */; };
+		5181C5AE24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -627,7 +629,6 @@
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
 		6581C74020CED60100F4AD34 /* netnewswire-subscribe-to-feed.js in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */; };
 		6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
-		65CBAD3624AE02D50006DD91 /* TimelineLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */; };
 		65CBAD5A24AE03C20006DD91 /* ColorPaletteContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */; };
 		65ED3FB7235DEF6C0081F399 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		65ED3FB8235DEF6C0081F399 /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
@@ -1837,6 +1838,7 @@
 		517630222336657E00E15FFF /* WebViewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewProvider.swift; sourceTree = "<group>"; };
 		517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageViewController-Extensions.swift"; sourceTree = "<group>"; };
 		517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthSwift.xcodeproj; path = submodules/OAuthSwift/OAuthSwift.xcodeproj; sourceTree = "<group>"; };
+		5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredColorSchemeModifier.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
@@ -2561,6 +2563,7 @@
 			isa = PBXGroup;
 			children = (
 				514E6C0524AD2B5F00AC6F6E /* Image-Extensions.swift */,
+				5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */,
 			);
 			path = "SwiftUI Extensions";
 			sourceTree = "<group>";
@@ -4813,6 +4816,7 @@
 				51E4996924A8760C00B667CB /* ArticleStylesManager.swift in Sources */,
 				51E498F324A8085D00B667CB /* PseudoFeed.swift in Sources */,
 				51A5769624AE617200078888 /* ArticleContainerView.swift in Sources */,
+				5181C5AD24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */,
 				51E4996B24A8762D00B667CB /* ArticleExtractor.swift in Sources */,
 				51E49A0324A91FF600B667CB /* SceneNavigationView.swift in Sources */,
 				51E4990124A808BB00B667CB /* FaviconURLFinder.swift in Sources */,
@@ -4897,6 +4901,7 @@
 				51E4994F24A8734C00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
 				51E498CA24A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				51E4990524A808C300B667CB /* FeaturedImageDownloader.swift in Sources */,
+				5181C5AE24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */,
 				51E4991624A8090300B667CB /* ArticleUtilities.swift in Sources */,
 				51919FF224AB864A00541E64 /* TimelineModel.swift in Sources */,
 				51E4991A24A8090F00B667CB /* IconImage.swift in Sources */,
