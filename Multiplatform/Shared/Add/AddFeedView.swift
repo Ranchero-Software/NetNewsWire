@@ -76,7 +76,7 @@ struct AddFeedView: View {
 	
 	#if os(macOS)
 	var macForm: some View {
-		VStack(alignment: .leading) {
+		Form {
 			HStack {
 				Spacer()
 				Image(systemName: "globe").foregroundColor(.accentColor).font(.title)
@@ -124,7 +124,7 @@ struct AddFeedView: View {
 	}
 	
 	var folderPicker: some View {
-		Picker("Folder:", selection: $viewModel.selectedFolderIndex, content: {
+		Picker(" ", selection: $viewModel.selectedFolderIndex, content: {
 			ForEach(0..<viewModel.containers.count, id: \.self, content: { index in
 				if let containerName = (viewModel.containers[index] as? DisplayNameProvider)?.nameForDisplay {
 					if viewModel.containers[index] is Folder {
