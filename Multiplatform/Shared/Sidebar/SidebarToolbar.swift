@@ -10,8 +10,17 @@ import SwiftUI
 
 struct SidebarToolbar: View {
     
-	@State private var showSettings: Bool = false
-	@State private var showAddSheet: Bool = false
+	enum ToolbarSheets {
+		case none, web, twitter, reddit, folder, settings
+	}
+	
+	@State private var showSheet: Bool = false
+	@State private var sheetToShow: ToolbarSheets = .none {
+		didSet {
+			sheetToShow != .none ? (showSheet = true) : (showSheet = false)
+		}
+	}
+	@State private var showActionSheet: Bool = false
 
 	var addActionSheetButtons = [
 		Button(action: {}, label: { Text("Add Feed") })
@@ -22,7 +31,7 @@ struct SidebarToolbar: View {
 			Divider()
 			HStack(alignment: .center) {
 				Button(action: {
-					showSettings = true
+					sheetToShow = .settings
 				}, label: {
 					Image(systemName: "gear")
 						.font(.title3)
@@ -34,30 +43,36 @@ struct SidebarToolbar: View {
 					.foregroundColor(.secondary)
 				Spacer()
 				Button(action: {
-					showAddSheet = true
+					showActionSheet = true
 				}, label: {
 					Image(systemName: "plus")
 						.font(.title3)
 						.foregroundColor(.accentColor)
 				})
 				.help("Add")
-				.actionSheet(isPresented: $showAddSheet) {
+				.actionSheet(isPresented: $showActionSheet) {
 					ActionSheet(title: Text("Add"), buttons: [
 						.cancel(),
-						.default(Text("Add Web Feed")),
+						.default(Text("Add Web Feed"), action: { sheetToShow = .web }),
 						.default(Text("Add Twitter Feed")),
 						.default(Text("Add Reddit Feed")),
 						.default(Text("Add Folder"))
 					])
 				}
+				
 			}
 			.padding(.horizontal, 16)
 			.padding(.bottom, 12)
 			.padding(.top, 4)
 		}
 		.background(VisualEffectBlur(blurStyle: .systemChromeMaterial).edgesIgnoringSafeArea(.bottom))
-		.sheet(isPresented: $showSettings, onDismiss: { showSettings = false }) {
-			SettingsView()
+		.sheet(isPresented: $showSheet, onDismiss: { sheetToShow = .none }) {
+			switch sheetToShow {
+			case .web:
+				AddWebFeedView()
+			default:
+				EmptyView()
+			}
 		}
 	
     }

@@ -1,5 +1,5 @@
 //
-//  AddFeedView.swift
+//  AddWebFeedView.swift
 //  NetNewsWire
 //
 //  Created by Stuart Breckenridge on 3/7/20.
@@ -10,7 +10,7 @@ import SwiftUI
 import Account
 import RSCore
 
-fileprivate enum AddFeedError: LocalizedError {
+fileprivate enum AddWebFeedError: LocalizedError {
 	
 	case none, alreadySubscribed, initialDownload, noFeeds
 	
@@ -29,12 +29,12 @@ fileprivate enum AddFeedError: LocalizedError {
 	
 }
 
-fileprivate class AddFeedViewModel: ObservableObject {
+fileprivate class AddWebFeedViewModel: ObservableObject {
 	
 	@Published var providedURL: String = ""
 	@Published var providedName: String = ""
 	@Published var selectedFolderIndex: Int = 0
-	@Published var addFeedError: AddFeedError? {
+	@Published var addFeedError: AddWebFeedError? {
 		didSet {
 			addFeedError != .none ? (showError = true) : (showError = false)
 		}
@@ -54,10 +54,10 @@ fileprivate class AddFeedViewModel: ObservableObject {
 	
 }
 
-struct AddFeedView: View {
+struct AddWebFeedView: View {
 	
 	@Environment(\.presentationMode) private var presentationMode
-	@ObservedObject private var viewModel = AddFeedViewModel()
+	@ObservedObject private var viewModel = AddWebFeedViewModel()
 	
     @ViewBuilder var body: some View {
 		#if os(iOS)
@@ -100,31 +100,48 @@ struct AddFeedView: View {
 	#endif
 	
 	#if os(iOS)
-	var iosForm: some View {
-		NavigationLink {
-			List {
-				Text("PLACEHOLDER")
-			}.listStyle(InsetGroupedListStyle())
+	@ViewBuilder var iosForm: some View {
+		NavigationView {
+			Form {
+				urlTextField
+				providedNameTextField
+				folderPicker
+			}
+			.listStyle(InsetGroupedListStyle())
+			.navigationTitle("Add Web Feed")
+			.navigationBarTitleDisplayMode(.inline)
+			.navigationBarItems(leading:
+				Button("Cancel", action: {
+					presentationMode.wrappedValue.dismiss()
+				})
+				.help("Cancel Add Feed")
+				, trailing:
+					Button("Add", action: {
+						addWebFeed()
+					})
+					.disabled(!viewModel.providedURL.isValidURL)
+					.help("Add Feed")
+				)
 		}
 	}
 	#endif
 	
 	var urlTextField: some View {
 		HStack {
-			Text("Feed:  ").font(.system(.body, design: .monospaced))
+			Text("Feed:")
 			TextField("URL", text: $viewModel.providedURL)
 		}
 	}
 	
 	var providedNameTextField: some View {
 		HStack(alignment: .lastTextBaseline) {
-			Text("Name:  ").font(.system(.body, design: .monospaced))
+			Text("Name:")
 			TextField("Optional", text: $viewModel.providedName)
 		}
 	}
 	
 	var folderPicker: some View {
-		Picker(" ", selection: $viewModel.selectedFolderIndex, content: {
+		Picker("Folder:", selection: $viewModel.selectedFolderIndex, content: {
 			ForEach(0..<viewModel.containers.count, id: \.self, content: { index in
 				if let containerName = (viewModel.containers[index] as? DisplayNameProvider)?.nameForDisplay {
 					if viewModel.containers[index] is Folder {
@@ -134,7 +151,7 @@ struct AddFeedView: View {
 					}
 				}
 			})
-		}).font(.system(.body, design: .monospaced))
+		})
 	}
 	
 	var buttonStack: some View {
@@ -169,14 +186,23 @@ struct AddFeedView: View {
 	
 }
 
-private extension AddFeedView {
+private extension AddWebFeedView {
 
+	#if os(macOS)
 	var urlStringFromPasteboard: String? {
 		if let urlString = NSPasteboard.urlString(from: NSPasteboard.general) {
 			return urlString.normalizedURL
 		}
 		return nil
 	}
+	#else
+	var urlStringFromPasteboard: String? {
+		if let urlString = UIPasteboard.general.url?.absoluteString {
+			return urlString.normalizedURL
+		}
+		return nil
+	}
+	#endif
 	
 	struct AccountAndFolderSpecifier {
 		let account: Account
@@ -232,6 +258,6 @@ private extension AddFeedView {
 
 struct AddFeedView_Previews: PreviewProvider {
     static var previews: some View {
-        AddFeedView()
+        AddWebFeedView()
     }
 }

@@ -30,7 +30,7 @@ struct MainApp: App {
 				.environmentObject(sceneModel)
 				.environmentObject(defaults)
 				.sheet(isPresented: $showSheet, onDismiss: { showSheet = false }) {
-					AddFeedView()
+					AddWebFeedView()
 				}
 				.toolbar {
 					
