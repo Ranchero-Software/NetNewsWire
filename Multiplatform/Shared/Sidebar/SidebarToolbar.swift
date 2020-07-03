@@ -12,6 +12,11 @@ struct SidebarToolbar: View {
 
 	@EnvironmentObject private var appSettings: AppDefaults
 	@State private var showSettings: Bool = false
+	@State private var showAddSheet: Bool = false
+
+	var addActionSheetButtons = [
+		Button(action: {}, label: { Text("Add Feed") })
+	]
 	
 	var body: some View {
 		VStack {
@@ -29,11 +34,23 @@ struct SidebarToolbar: View {
 					.font(.caption)
 					.foregroundColor(.secondary)
 				Spacer()
-				Button(action: {}, label: {
+				Button(action: {
+					showAddSheet = true
+				}, label: {
 					Image(systemName: "plus")
 						.font(.title3)
 						.foregroundColor(.accentColor)
-				}).help("Add")
+				})
+				.help("Add")
+				.actionSheet(isPresented: $showAddSheet) {
+					ActionSheet(title: Text("Add"), buttons: [
+						.cancel(),
+						.default(Text("Add Web Feed")),
+						.default(Text("Add Twitter Feed")),
+						.default(Text("Add Reddit Feed")),
+						.default(Text("Add Folder"))
+					])
+				}
 			}
 			.padding(.horizontal, 16)
 			.padding(.bottom, 12)

@@ -133,7 +133,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 			}
 		#endif
 		
-		//AppDefaults.registerDefaults()
+		AppDefaults.registerDefaults()
 		let isFirstRun = AppDefaults.shared.isFirstRun()
 		if isFirstRun {
 			os_log(.debug, log: log, "Is first run.")

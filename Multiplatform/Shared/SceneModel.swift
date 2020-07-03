@@ -13,6 +13,7 @@ final class SceneModel: ObservableObject {
 	
 	var sidebarModel: SidebarModel?
 	var timelineModel: TimelineModel?
+	var articleModel: ArticleModel?
 	
 }
 
@@ -33,5 +34,12 @@ extension SceneModel: TimelineModelDelegate {
 
 	func timelineRequestedWebFeedSelection(_: TimelineModel, webFeed: WebFeed) {
 	}
+	
+}
+
+// MARK: ArticleModelDelegate
+
+extension SceneModel: ArticleModelDelegate {
+
 	
 }

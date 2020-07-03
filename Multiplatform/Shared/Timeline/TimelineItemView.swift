@@ -21,7 +21,7 @@ struct TimelineItemView: View {
 				TimelineItemStatusView(status: timelineItem.status)
 				if let image = articleIconImageLoader.image {
 					IconImageView(iconImage: image)
-						.frame(width: CGFloat(defaults.timelineIconSize), height: CGFloat(defaults.timelineIconSize), alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+						.frame(width: CGFloat(defaults.timelineIconDimensions), height: CGFloat(defaults.timelineIconDimensions), alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
 				}
 				VStack {
 					Text(verbatim: timelineItem.article.title ?? "N/A")
@@ -45,7 +45,6 @@ struct TimelineItemView: View {
 					}
 				}
 			}
-			Divider()
 		}
 		.onAppear {
 			articleIconImageLoader.loadImage(for: timelineItem.article)
