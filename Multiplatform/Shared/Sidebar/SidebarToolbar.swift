@@ -8,26 +8,28 @@
 
 import SwiftUI
 
-struct SidebarToolbar: View {
-<<<<<<< HEAD
-    
-	enum ToolbarSheets {
-		case none, web, twitter, reddit, folder, settings
-	}
+fileprivate enum ToolbarSheets {
+	case none, web, twitter, reddit, folder, settings
+}
+
+fileprivate class SidebarViewModel: ObservableObject {
 	
-	@State private var showSheet: Bool = false
-	@State private var sheetToShow: ToolbarSheets = .none {
+	@Published var showSheet: Bool = false
+	@Published var sheetToShow: ToolbarSheets = .none {
 		didSet {
 			sheetToShow != .none ? (showSheet = true) : (showSheet = false)
 		}
 	}
-	@State private var showActionSheet: Bool = false
-=======
+	@Published var showActionSheet: Bool = false
+	@Published var showAddSheet: Bool = false
+}
 
+
+struct SidebarToolbar: View {
+    
 	@EnvironmentObject private var appSettings: AppDefaults
-	@State private var showSettings: Bool = false
-	@State private var showAddSheet: Bool = false
->>>>>>> pr/7
+	@StateObject private var viewModel = SidebarViewModel()
+
 
 	var addActionSheetButtons = [
 		Button(action: {}, label: { Text("Add Feed") })
@@ -38,53 +40,51 @@ struct SidebarToolbar: View {
 			Divider()
 			HStack(alignment: .center) {
 				Button(action: {
-					sheetToShow = .settings
+					viewModel.sheetToShow = .settings
 				}, label: {
 					Image(systemName: "gear")
 						.font(.title3)
 						.foregroundColor(.accentColor)
 				}).help("Settings")
+				
 				Spacer()
+				
 				Text("Last updated")
 					.font(.caption)
 					.foregroundColor(.secondary)
+				
 				Spacer()
+				
 				Button(action: {
-					showActionSheet = true
+					viewModel.showActionSheet = true
 				}, label: {
 					Image(systemName: "plus")
 						.font(.title3)
 						.foregroundColor(.accentColor)
 				})
 				.help("Add")
-				.actionSheet(isPresented: $showActionSheet) {
+				.actionSheet(isPresented: $viewModel.showActionSheet) {
 					ActionSheet(title: Text("Add"), buttons: [
 						.cancel(),
-						.default(Text("Add Web Feed"), action: { sheetToShow = .web }),
+						.default(Text("Add Web Feed"), action: { viewModel.sheetToShow = .web }),
 						.default(Text("Add Twitter Feed")),
 						.default(Text("Add Reddit Feed")),
 						.default(Text("Add Folder"))
 					])
 				}
-				
 			}
 			.padding(.horizontal, 16)
 			.padding(.bottom, 12)
 			.padding(.top, 4)
 		}
 		.background(VisualEffectBlur(blurStyle: .systemChromeMaterial).edgesIgnoringSafeArea(.bottom))
-<<<<<<< HEAD
-		.sheet(isPresented: $showSheet, onDismiss: { sheetToShow = .none }) {
-			switch sheetToShow {
-			case .web:
+		.sheet(isPresented: $viewModel.showSheet, onDismiss: { viewModel.sheetToShow = .none }) {
+			if viewModel.sheetToShow == .web {
 				AddWebFeedView()
-			default:
-				EmptyView()
 			}
-=======
-		.sheet(isPresented: $showSettings, onDismiss: { showSettings = false }) {
-			SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: appSettings.userInterfaceColorPalette))
->>>>>>> pr/7
+			if viewModel.sheetToShow == .settings {
+				SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: appSettings.userInterfaceColorPalette))
+			}
 		}
 	
     }
