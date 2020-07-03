@@ -71,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	}
 	
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-		//AppDefaults.registerDefaults()
+		AppDefaults.registerDefaults()
 
 		let isFirstRun = AppDefaults.shared.isFirstRun()
 		if isFirstRun {
@@ -102,6 +102,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 		UNUserNotificationCenter.current().delegate = self
 		userNotificationManager = UserNotificationManager()
+
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
+
 
 //		extensionContainersFile = ExtensionContainersFile()
 //		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
@@ -387,4 +390,30 @@ private extension AppDelegate {
 		}
 	}
 	
+}
+
+private extension AppDelegate {
+	@objc func userDefaultsDidChange() {
+		updateUserInterfaceStyle()
+	}
+
+	var window: UIWindow? {
+		guard let scene = UIApplication.shared.connectedScenes.first,
+			  let windowSceneDelegate = scene.delegate as? UIWindowSceneDelegate,
+			  let window = windowSceneDelegate.window else {
+			return nil
+		}
+		return window
+	}
+
+	func updateUserInterfaceStyle() {
+//		switch AppDefaults.shared.userInterfaceColorPalette {
+//		case .automatic:
+//			window?.overrideUserInterfaceStyle = .unspecified
+//		case .light:
+//			window?.overrideUserInterfaceStyle = .light
+//		case .dark:
+//			window?.overrideUserInterfaceStyle = .dark
+//		}
+	}
 }

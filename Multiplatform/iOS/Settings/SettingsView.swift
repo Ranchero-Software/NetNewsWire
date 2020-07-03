@@ -155,12 +155,12 @@ struct SettingsView: View {
 	var appearance: some View {
 		Section(header: Text("Appearance"), content: {
 			NavigationLink(
-				destination: EmptyView(),
+				destination: ColorPaletteContainerView().environmentObject(settings),
 				label: {
 					HStack {
-						Text("Color Pallete")
+						Text("Color Palette")
 						Spacer()
-						Text("Automatic")
+						Text(settings.userInterfaceColorPalette.description)
 							.foregroundColor(.secondary)
 					}
 				})

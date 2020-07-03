@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct SidebarToolbar: View {
+<<<<<<< HEAD
     
 	enum ToolbarSheets {
 		case none, web, twitter, reddit, folder, settings
@@ -21,6 +22,12 @@ struct SidebarToolbar: View {
 		}
 	}
 	@State private var showActionSheet: Bool = false
+=======
+
+	@EnvironmentObject private var appSettings: AppDefaults
+	@State private var showSettings: Bool = false
+	@State private var showAddSheet: Bool = false
+>>>>>>> pr/7
 
 	var addActionSheetButtons = [
 		Button(action: {}, label: { Text("Add Feed") })
@@ -66,6 +73,7 @@ struct SidebarToolbar: View {
 			.padding(.top, 4)
 		}
 		.background(VisualEffectBlur(blurStyle: .systemChromeMaterial).edgesIgnoringSafeArea(.bottom))
+<<<<<<< HEAD
 		.sheet(isPresented: $showSheet, onDismiss: { sheetToShow = .none }) {
 			switch sheetToShow {
 			case .web:
@@ -73,6 +81,10 @@ struct SidebarToolbar: View {
 			default:
 				EmptyView()
 			}
+=======
+		.sheet(isPresented: $showSettings, onDismiss: { showSettings = false }) {
+			SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: appSettings.userInterfaceColorPalette))
+>>>>>>> pr/7
 		}
 	
     }
