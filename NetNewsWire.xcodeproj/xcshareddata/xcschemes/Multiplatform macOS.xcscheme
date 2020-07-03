@@ -14,9 +14,9 @@
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
-                     BlueprintIdentifier = "51C0513C24A77DF800194D5E"
+                     BlueprintIdentifier = "51C0514324A77DF800194D5E"
                      BuildableName = "NetNewsWire.app"
-                     BlueprintName = "Multiplatform iOS"
+                     BlueprintName = "Multiplatform macOS"
                      ReferencedContainer = "container:NetNewsWire.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
@@ -32,9 +32,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "51C0513C24A77DF800194D5E"
+               BlueprintIdentifier = "51C0514324A77DF800194D5E"
                BuildableName = "NetNewsWire.app"
-               BlueprintName = "Multiplatform iOS"
+               BlueprintName = "Multiplatform macOS"
                ReferencedContainer = "container:NetNewsWire.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -62,9 +62,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "51C0513C24A77DF800194D5E"
+            BlueprintIdentifier = "51C0514324A77DF800194D5E"
             BuildableName = "NetNewsWire.app"
-            BlueprintName = "Multiplatform iOS"
+            BlueprintName = "Multiplatform macOS"
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -79,9 +79,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "51C0513C24A77DF800194D5E"
+            BlueprintIdentifier = "51C0514324A77DF800194D5E"
             BuildableName = "NetNewsWire.app"
-            BlueprintName = "Multiplatform iOS"
+            BlueprintName = "Multiplatform macOS"
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
