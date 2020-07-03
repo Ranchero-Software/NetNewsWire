@@ -77,15 +77,25 @@ struct AddFeedView: View {
 	#if os(macOS)
 	var macForm: some View {
 		VStack(alignment: .leading) {
+			HStack {
+				Spacer()
+				Image(systemName: "globe").foregroundColor(.accentColor).font(.title)
+				Text("Add a Web Feed")
+					.font(.title)
+				Spacer()
+			}
 			urlTextField
 				.textFieldStyle(RoundedBorderTextFieldStyle())
+				.help("The URL of the feed you want to add.")
 			providedNameTextField
 				.textFieldStyle(RoundedBorderTextFieldStyle())
+				.help("The name of the feed. (Optional.)")
 			folderPicker
+				.help("Pick the folder you want to add the feed to.")
 			buttonStack
 		}
 		.padding()
-		.frame(minWidth: 400)
+		.frame(minWidth: 450)
 	}
 	#endif
 	
@@ -101,20 +111,20 @@ struct AddFeedView: View {
 	
 	var urlTextField: some View {
 		HStack {
-			Text("Feed URL:")
+			Text("Feed:  ").font(.system(.body, design: .monospaced))
 			TextField("URL", text: $viewModel.providedURL)
 		}
 	}
 	
 	var providedNameTextField: some View {
 		HStack(alignment: .lastTextBaseline) {
-			Text("Name:")
+			Text("Name:  ").font(.system(.body, design: .monospaced))
 			TextField("Optional", text: $viewModel.providedName)
 		}
 	}
 	
 	var folderPicker: some View {
-		Picker("Folder", selection: $viewModel.selectedFolderIndex, content: {
+		Picker("Folder:", selection: $viewModel.selectedFolderIndex, content: {
 			ForEach(0..<viewModel.containers.count, id: \.self, content: { index in
 				if let containerName = (viewModel.containers[index] as? DisplayNameProvider)?.nameForDisplay {
 					if viewModel.containers[index] is Folder {
@@ -124,7 +134,7 @@ struct AddFeedView: View {
 					}
 				}
 			})
-		})
+		}).font(.system(.body, design: .monospaced))
 	}
 	
 	var buttonStack: some View {
@@ -132,14 +142,19 @@ struct AddFeedView: View {
 			if viewModel.showProgressIndicator == true {
 				ProgressView()
 					.frame(width: 25, height: 25)
+					.help("Adding Feed")
 			}
 			Spacer()
 			Button("Cancel", action: {
 				presentationMode.wrappedValue.dismiss()
 			})
+			.help("Cancel Add Feed")
+			
 			Button("Add", action: {
 				addWebFeed()
-			}).disabled(!viewModel.providedURL.isValidURL)
+			})
+			.disabled(!viewModel.providedURL.isValidURL)
+			.help("Add Feed")
 		}
 	}
 	
