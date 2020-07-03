@@ -158,7 +158,7 @@ struct SettingsView: View {
 				destination: EmptyView(),
 				label: {
 					HStack {
-						Text("Color Pallete")
+						Text("Color Palette")
 						Spacer()
 						Text("Automatic")
 							.foregroundColor(.secondary)
