@@ -204,7 +204,7 @@ struct PreferredColorSchemeModifier: ViewModifier {
 	func body(content: Content) -> some View {
 		switch preferredColorScheme {
 		case .automatic:
-			content
+			content.preferredColorScheme(nil)
 		case .dark:
 			content.preferredColorScheme(.dark)
 		case .light:
