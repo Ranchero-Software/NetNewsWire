@@ -45,7 +45,7 @@ final class AppDefaults {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let refreshClearsReadArticles = "refreshClearsReadArticles"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
-		static let timelineIconSize = "timelineIconSize"
+		static let timelineIconDimension = "timelineIconSize"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let articleFullscreenAvailable = "articleFullscreenAvailable"
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
@@ -202,11 +202,11 @@ final class AppDefaults {
 	
 	var timelineIconSize: IconSize {
 		get {
-			let rawValue = AppDefaults.store.integer(forKey: Key.timelineIconSize)
+			let rawValue = AppDefaults.store.integer(forKey: Key.timelineIconDimension)
 			return IconSize(rawValue: rawValue) ?? IconSize.medium
 		}
 		set {
-			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconSize)
+			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconDimension)
 		}
 	}
 	
@@ -215,7 +215,7 @@ final class AppDefaults {
 										Key.timelineGroupByFeed: false,
 										Key.refreshClearsReadArticles: false,
 										Key.timelineNumberOfLines: 2,
-										Key.timelineIconSize: IconSize.medium.rawValue,
+										Key.timelineIconDimension: IconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.articleFullscreenAvailable: false,
 										Key.articleFullscreenEnabled: false,

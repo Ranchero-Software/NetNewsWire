@@ -55,11 +55,11 @@ final class AppDefaults: ObservableObject {
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
-		static let timelineSortDirection = "timelineSortDirection"
-		
+				
 		static let userInterfaceColorPalette = "userInterfaceColorPalette"
+		static let timelineSortDirection = "timelineSortDirection"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
-		static let timelineIconSize = "timelineIconSize"
+		static let timelineIconDimensions = "timelineIconDimensions"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 
 		// iOS Defaults
@@ -178,7 +178,7 @@ final class AppDefaults: ObservableObject {
 		}
 	}
 	
-	@AppStorage(wrappedValue: 40.0, Key.timelineIconSize, store: store) var timelineIconSize: Double {
+	@AppStorage(wrappedValue: 40.0, Key.timelineIconDimensions, store: store) var timelineIconDimensions: Double {
 		didSet {
 			objectWillChange.send()
 		}
@@ -265,6 +265,21 @@ final class AppDefaults: ObservableObject {
 		didSet {
 			objectWillChange.send()
 		}
+	}
+
+	static func registerDefaults() {
+		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
+										Key.timelineGroupByFeed: false,
+										Key.refreshClearsReadArticles: false,
+										Key.timelineNumberOfLines: 2,
+										Key.timelineIconDimensions: 40,
+										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+										Key.articleFullscreenAvailable: false,
+										Key.articleFullscreenEnabled: false,
+										Key.confirmMarkAllAsRead: true,
+										"NSScrollViewShouldScrollUnderTitlebar": false,
+										Key.refreshInterval: RefreshInterval.everyHour.rawValue]
+		AppDefaults.store.register(defaults: defaults)
 	}
 	
 }

@@ -33,8 +33,8 @@ struct TimelineLayoutView: View {
     }
 	
 	var iconSize: some View {
-		Slider(value: $appSettings.timelineIconSize, in: 20...60, step: 10, minimumValueLabel: Text("Small"), maximumValueLabel: Text("Large"), label: {
-			Text(String(appSettings.timelineIconSize))
+		Slider(value: $appSettings.timelineIconDimensions, in: 20...60, step: 10, minimumValueLabel: Text("Small"), maximumValueLabel: Text("Large"), label: {
+			Text(String(appSettings.timelineIconDimensions))
 		})
 	}
 	
@@ -54,7 +54,7 @@ struct TimelineLayoutView: View {
 			
 			Image(systemName: "paperplane.circle")
 				.resizable()
-				.frame(width: CGFloat(appSettings.timelineIconSize), height: CGFloat(appSettings.timelineIconSize), alignment: .top)
+				.frame(width: CGFloat(appSettings.timelineIconDimensions), height: CGFloat(appSettings.timelineIconDimensions), alignment: .top)
 				.foregroundColor(.accentColor)
 			
 			VStack(alignment: .leading, spacing: 4) {
