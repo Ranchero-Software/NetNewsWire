@@ -21,6 +21,10 @@
 		175942AB24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
+		17925E1724AF41D000D3A4F6 /* String+URLChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17925E1624AF41D000D3A4F6 /* String+URLChecker.swift */; };
+		17925E1824AF41D000D3A4F6 /* String+URLChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17925E1624AF41D000D3A4F6 /* String+URLChecker.swift */; };
+		17930ED424AF10EE00A9BA52 /* AddFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17930ED324AF10EE00A9BA52 /* AddFeedView.swift */; };
+		17930ED524AF10EE00A9BA52 /* AddFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17930ED324AF10EE00A9BA52 /* AddFeedView.swift */; };
 		179DB1DFBCF9177104B12E0F /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		179DB3CE822BFCC2D774D9F4 /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
@@ -1717,6 +1721,8 @@
 		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
 		172952AF24AA287100D65E66 /* CompactSidebarContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactSidebarContainerView.swift; sourceTree = "<group>"; };
 		1776E88D24AC5F8A00E78166 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
+		17925E1624AF41D000D3A4F6 /* String+URLChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+URLChecker.swift"; sourceTree = "<group>"; };
+		17930ED324AF10EE00A9BA52 /* AddFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedView.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
 		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
@@ -2394,6 +2400,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		17930ED224AF10CD00A9BA52 /* Add */ = {
+			isa = PBXGroup;
+			children = (
+				17930ED324AF10EE00A9BA52 /* AddFeedView.swift */,
+			);
+			path = Add;
+			sourceTree = "<group>";
+		};
 		17B223B924AC24A8001E4592 /* Submenus */ = {
 			isa = PBXGroup;
 			children = (
@@ -2748,12 +2762,14 @@
 				51E499D724A912C200B667CB /* SceneModel.swift */,
 				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
 				51C0513824A77DF800194D5E /* Assets.xcassets */,
+				17930ED224AF10CD00A9BA52 /* Add */,
 				51A576B924AE617B00078888 /* Article */,
 				51919FB124AAB95300541E64 /* Images */,
 				514E6BFD24AD252400AC6F6E /* Previews */,
 				51E499FB24A9135A00B667CB /* Sidebar */,
 				514E6C0424AD2B0400AC6F6E /* SwiftUI Extensions */,
 				51919FCB24AB855000541E64 /* Timeline */,
+				17925E1624AF41D000D3A4F6 /* String+URLChecker.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -3945,46 +3961,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -3994,7 +4010,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -4004,7 +4020,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -4828,6 +4844,7 @@
 				514E6C0624AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */,
 				51E4995624A8734D00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
 				5125E6CA24AE461D002A7562 /* TimelineLayoutView.swift in Sources */,
+				17925E1724AF41D000D3A4F6 /* String+URLChecker.swift in Sources */,
 				51E4996824A8760C00B667CB /* ArticleStyle.swift in Sources */,
 				51E4990024A808BB00B667CB /* FaviconGenerator.swift in Sources */,
 				51E4997124A8764C00B667CB /* ActivityType.swift in Sources */,
@@ -4839,6 +4856,7 @@
 				51E4993C24A8709900B667CB /* AppDelegate.swift in Sources */,
 				51E498F924A8085D00B667CB /* SmartFeed.swift in Sources */,
 				51A576BB24AE621800078888 /* ArticleModel.swift in Sources */,
+				17930ED424AF10EE00A9BA52 /* AddFeedView.swift in Sources */,
 				51E4995124A8734D00B667CB /* ExtensionPointManager.swift in Sources */,
 				51E4990C24A808C500B667CB /* AuthorAvatarDownloader.swift in Sources */,
 				51E4992124A8095000B667CB /* RSImage-Extensions.swift in Sources */,
@@ -4865,6 +4883,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17930ED524AF10EE00A9BA52 /* AddFeedView.swift in Sources */,
 				51E4993A24A8708800B667CB /* AppDelegate.swift in Sources */,
 				51E498CE24A8085D00B667CB /* UnreadFeed.swift in Sources */,
 				51E498C724A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
@@ -4901,6 +4920,7 @@
 				51E4993424A867E700B667CB /* UserInfoKey.swift in Sources */,
 				1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */,
 				1729529724AA1CD000D65E66 /* MacPreferencesView.swift in Sources */,
+				17925E1824AF41D000D3A4F6 /* String+URLChecker.swift in Sources */,
 				51E4994C24A8734C00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */,
 				51919FAD24AA8CCA00541E64 /* UnreadCountView.swift in Sources */,

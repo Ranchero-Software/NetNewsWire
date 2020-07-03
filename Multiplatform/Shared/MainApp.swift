@@ -20,6 +20,7 @@ struct MainApp: App {
 	
 	@StateObject private var sceneModel = SceneModel()
 	@StateObject private var defaults = AppDefaults.shared
+	@State private var showSheet = false
 	
 	@SceneBuilder var body: some Scene {
 		#if os(macOS)
@@ -28,12 +29,15 @@ struct MainApp: App {
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
 				.environmentObject(sceneModel)
 				.environmentObject(defaults)
+				.sheet(isPresented: $showSheet, onDismiss: { showSheet = false }) {
+					AddFeedView()
+				}
 				.toolbar {
 					
 					ToolbarItem {
-						Button(action: {}, label: {
+						Button(action: { showSheet = true }, label: {
 							Image(systemName: "plus").foregroundColor(.secondary)
-						}).help("New Feed")
+						}).help("Add Feed")
 					}
 				
 					ToolbarItem {
