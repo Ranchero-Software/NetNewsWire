@@ -407,13 +407,13 @@ private extension AppDelegate {
 	}
 
 	func updateUserInterfaceStyle() {
-		switch AppDefaults.shared.userInterfaceColorPalette {
-		case .automatic:
-			window?.overrideUserInterfaceStyle = .unspecified
-		case .light:
-			window?.overrideUserInterfaceStyle = .light
-		case .dark:
-			window?.overrideUserInterfaceStyle = .dark
-		}
+//		switch AppDefaults.shared.userInterfaceColorPalette {
+//		case .automatic:
+//			window?.overrideUserInterfaceStyle = .unspecified
+//		case .light:
+//			window?.overrideUserInterfaceStyle = .light
+//		case .dark:
+//			window?.overrideUserInterfaceStyle = .dark
+//		}
 	}
 }

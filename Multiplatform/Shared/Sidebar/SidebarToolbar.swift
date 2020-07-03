@@ -9,7 +9,8 @@
 import SwiftUI
 
 struct SidebarToolbar: View {
-    
+
+	@EnvironmentObject private var appSettings: AppDefaults
 	@State private var showSettings: Bool = false
 	
 	var body: some View {
@@ -40,7 +41,7 @@ struct SidebarToolbar: View {
 		}
 		.background(VisualEffectBlur(blurStyle: .systemChromeMaterial).edgesIgnoringSafeArea(.bottom))
 		.sheet(isPresented: $showSettings, onDismiss: { showSettings = false }) {
-			SettingsView()
+			SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: appSettings.userInterfaceColorPalette))
 		}
 	
     }

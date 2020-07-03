@@ -146,7 +146,9 @@ struct MainApp: App {
 			SceneNavigationView()
 				.environmentObject(sceneModel)
 				.environmentObject(defaults)
-		}.commands {
+				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
+		}
+		.commands {
 			CommandGroup(after: .newItem, addition: {
 				Button("New Feed", action: {})
 					.keyboardShortcut("N")
@@ -191,5 +193,22 @@ struct MainApp: App {
 			})
 		}
 		#endif
+	}
+}
+
+struct PreferredColorSchemeModifier: ViewModifier {
+
+	var preferredColorScheme: UserInterfaceColorPalette
+
+	@ViewBuilder
+	func body(content: Content) -> some View {
+		switch preferredColorScheme {
+		case .automatic:
+			content
+		case .dark:
+			content.preferredColorScheme(.dark)
+		case .light:
+			content.preferredColorScheme(.light)
+		}
 	}
 }

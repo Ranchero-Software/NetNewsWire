@@ -31,7 +31,7 @@ struct ColorPaletteContainerView: View {
 		if let colorPalette = UserInterfaceColorPalette(rawValue: index) {
 			appSettings.userInterfaceColorPalette = colorPalette
 		}
-		presentationMode.wrappedValue.dismiss()
+		self.presentationMode.wrappedValue.dismiss()
 	}
 }
 
