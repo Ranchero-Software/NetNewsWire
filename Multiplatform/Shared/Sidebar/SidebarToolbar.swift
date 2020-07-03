@@ -12,7 +12,7 @@ fileprivate enum ToolbarSheets {
 	case none, web, twitter, reddit, folder, settings
 }
 
-fileprivate class SidebarViewModel: ObservableObject {
+fileprivate class SidebarToolbarViewModel: ObservableObject {
 	
 	@Published var showSheet: Bool = false
 	@Published var sheetToShow: ToolbarSheets = .none {
@@ -28,7 +28,7 @@ fileprivate class SidebarViewModel: ObservableObject {
 struct SidebarToolbar: View {
     
 	@EnvironmentObject private var appSettings: AppDefaults
-	@StateObject private var viewModel = SidebarViewModel()
+	@StateObject private var viewModel = SidebarToolbarViewModel()
 
 
 	var addActionSheetButtons = [
