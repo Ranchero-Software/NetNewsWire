@@ -24,19 +24,25 @@ struct SidebarToolbar: ViewModifier {
 						AppAssets.settingsImage
 							.font(.title3)
 							.foregroundColor(.accentColor)
-						Spacer()
 					}).help("Settings")
 				}
 				
-				ToolbarItem(placement: .automatic, content: {
+				ToolbarItem {
+					Spacer()
+				}
+				
+				ToolbarItem(placement: .automatic) {
 					RefreshProgressView()
-				})
+				}
+				
+				ToolbarItem {
+					Spacer()
+				}
 				
 				ToolbarItem(placement: .automatic, content: {
 					Button(action: {
 						viewModel.showActionSheet = true
 					}, label: {
-						Spacer()
 						AppAssets.addMenuImage
 							.font(.title3)
 							.foregroundColor(.accentColor)
