@@ -38,6 +38,10 @@ struct SidebarItemView: View {
 	@ViewBuilder var menuItems: some View {
 		if sidebarItem.representedType == .account {
 			Button(action: {}) {
+				Text("Get Info")
+				AppAssets.getInfoImage
+			}
+			Button(action: {}) {
 				Text("Mark All As Read")
 				AppAssets.markAllAsReadImage
 			}
@@ -52,17 +56,18 @@ struct SidebarItemView: View {
 		
 		if sidebarItem.representedType == .webFeed {
 			Button(action: {}) {
+				Text("Get Info")
+				AppAssets.getInfoImage
+			}
+			Button(action: {}) {
 				Text("Mark All As Read")
 				AppAssets.markAllAsReadImage
 			}
 			Divider()
-			Button(action: {
-				
-			}) {
+			Button(action: {}) {
 				Text("Open Home Page")
 				AppAssets.openInBrowserImage
 			}
-			Divider()
 			Button(action: {}) {
 				Text("Copy Feed URL")
 				AppAssets.copyImage

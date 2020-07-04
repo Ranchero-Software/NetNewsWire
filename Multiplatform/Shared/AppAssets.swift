@@ -80,6 +80,10 @@ struct AppAssets {
 		return RSImage(named: "FaviconTemplateImage")!
 	}()
 	
+	static var getInfoImage: Image = {
+		return Image(systemName: "info.circle")
+	}()
+
 	static var renameImage: Image = {
 		return Image(systemName: "textformat")
 	}()
