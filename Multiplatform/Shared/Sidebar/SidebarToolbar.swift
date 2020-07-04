@@ -53,7 +53,7 @@ struct SidebarToolbar: ViewModifier {
 							.default(Text("Add Web Feed"), action: { viewModel.sheetToShow = .web }),
 							.default(Text("Add Twitter Feed")),
 							.default(Text("Add Reddit Feed")),
-							.default(Text("Add Folder"))
+							.default(Text("Add Folder"), action: { viewModel.sheetToShow = .folder })
 						])
 					}
 				})
@@ -62,6 +62,9 @@ struct SidebarToolbar: ViewModifier {
 			.sheet(isPresented: $viewModel.showSheet, onDismiss: { viewModel.sheetToShow = .none }) {
 				if viewModel.sheetToShow == .web {
 					AddWebFeedView()
+				}
+				if viewModel.sheetToShow == .folder {
+					AddFolderView()
 				}
 				if viewModel.sheetToShow == .settings {
 					SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: appSettings.userInterfaceColorPalette))
