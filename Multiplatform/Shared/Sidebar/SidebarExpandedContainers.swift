@@ -41,6 +41,7 @@ final class SidebarExpandedContainers: ObservableObject {
 		}
 		set(newValue) {
 			expandedTable[containerID] = newValue
+			objectDidChange.send()
 		}
 	}
 	
