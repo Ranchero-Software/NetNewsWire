@@ -55,7 +55,7 @@ class AddWebFeedModel: ObservableObject {
 	}
 
 	func pasteUrlFromPasteboard() {
-		guard let stringFromPasteboard = urlStringFromPasteboard, stringFromPasteboard.isValidURL else {
+		guard let stringFromPasteboard = urlStringFromPasteboard, stringFromPasteboard.mayBeURL else {
 			return
 		}
 		providedURL = stringFromPasteboard
@@ -97,15 +97,22 @@ class AddWebFeedModel: ObservableObject {
 			
 			showProgressIndicator = true
 			
+			let normalizedURLString = providedURL.normalizedURL
+			
+			guard !normalizedURLString.isEmpty, let url = URL(string: normalizedURLString) else {
+				showProgressIndicator = false
+				return
+			}
+			
 			let container = containers[selectedFolderIndex]
 			
-			if account.hasWebFeed(withURL: providedURL) {
+			if account.hasWebFeed(withURL: normalizedURLString) {
 				addFeedError = .alreadySubscribed
 				showProgressIndicator = false
 				return
 			}
 			
-			account.createWebFeed(url: providedURL, name: providedName, container: container, completion: { [weak self] result in
+			account.createWebFeed(url: url.absoluteString, name: providedName, container: container, completion: { [weak self] result in
 				self?.showProgressIndicator = false
 				switch result {
 				case .success(let feed):
