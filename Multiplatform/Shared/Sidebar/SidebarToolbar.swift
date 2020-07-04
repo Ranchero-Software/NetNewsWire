@@ -8,7 +8,6 @@
 
 import SwiftUI
 
-
 struct SidebarToolbar: ViewModifier {
     
 	@EnvironmentObject private var appSettings: AppDefaults
@@ -30,11 +29,7 @@ struct SidebarToolbar: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .automatic, content: {
-					Spacer()
-					Text("Last updated")
-						.font(.caption)
-						.foregroundColor(.secondary)
-					Spacer()
+					RefreshProgressView()
 				})
 				
 				ToolbarItem(placement: .automatic, content: {
