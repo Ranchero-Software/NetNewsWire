@@ -49,23 +49,34 @@ struct AddWebFeedView: View {
 		Form {
 			HStack {
 				Spacer()
-				Image(systemName: "globe").foregroundColor(.accentColor).font(.title)
+				Image("FaviconTemplateImage")
+					.resizable()
+					.renderingMode(.template)
+					.frame(width: 30, height: 30)
+					.foregroundColor(.accentColor).font(.title)
 				Text("Add a Web Feed")
 					.font(.title)
 				Spacer()
 			}
-			urlTextField
-				.textFieldStyle(RoundedBorderTextFieldStyle())
-				.help("The URL of the feed you want to add.")
-			providedNameTextField
-				.textFieldStyle(RoundedBorderTextFieldStyle())
-				.help("The name of the feed. (Optional.)")
-			folderPicker
-				.help("Pick the folder you want to add the feed to.")
+			
+			LazyVGrid(columns: [GridItem(.fixed(75), spacing: 10, alignment: .trailing),GridItem(.fixed(400), spacing: 0, alignment: .leading) ], alignment: .leading, spacing: 10, pinnedViews: [], content:{
+			
+				Text("URL:").bold()
+				urlTextField
+					.textFieldStyle(RoundedBorderTextFieldStyle())
+					.help("The URL of the feed you want to add.")
+				Text("Name:").bold()
+				providedNameTextField
+					.textFieldStyle(RoundedBorderTextFieldStyle())
+					.help("The name of the feed. (Optional.)")
+				Text("Folder:").bold()
+				folderPicker
+					.help("Pick the folder you want to add the feed to.")
+			})
 			buttonStack
 		}
-		.padding()
-		.frame(minWidth: 450)
+		.frame(maxWidth: 485)
+		.padding(12)
 	}
 	#endif
 	
@@ -98,8 +109,8 @@ struct AddWebFeedView: View {
 	
 	var urlTextField: some View {
 		HStack {
-			Text("Feed:")
 			#if os(iOS)
+			Text("Feed:")
 			TextField("URL", text: $viewModel.providedURL)
 				.disableAutocorrection(true)
 				.autocapitalization(UITextAutocapitalizationType.none)
@@ -112,12 +123,15 @@ struct AddWebFeedView: View {
 	
 	var providedNameTextField: some View {
 		HStack(alignment: .lastTextBaseline) {
+			#if os(iOS)
 			Text("Name:")
+			#endif
 			TextField("Optional", text: $viewModel.providedName)
 		}
 	}
 	
-	var folderPicker: some View {
+	@ViewBuilder var folderPicker: some View {
+		#if os(iOS)
 		Picker("Folder:", selection: $viewModel.selectedFolderIndex, content: {
 			ForEach(0..<viewModel.containers.count, id: \.self, content: { index in
 				if let containerName = (viewModel.containers[index] as? DisplayNameProvider)?.nameForDisplay {
@@ -129,6 +143,20 @@ struct AddWebFeedView: View {
 				}
 			})
 		})
+		#else
+		Picker("", selection: $viewModel.selectedFolderIndex, content: {
+			ForEach(0..<viewModel.containers.count, id: \.self, content: { index in
+				if let containerName = (viewModel.containers[index] as? DisplayNameProvider)?.nameForDisplay {
+					if viewModel.containers[index] is Folder {
+						Text("\(viewModel.containers[index].account?.nameForDisplay ?? "") / \(containerName)").padding(.leading, 2).tag(index)
+					} else {
+						Text(containerName).padding(.leading, 2).tag(index)
+					}
+				}
+			})
+		}).padding(.leading, -8)
+		#endif
+		
 	}
 	
 	var buttonStack: some View {
@@ -149,7 +177,7 @@ struct AddWebFeedView: View {
 			})
 			.disabled(!viewModel.providedURL.isValidURL)
 			.help("Add Feed")
-		}
+		}.padding(.trailing, 2)
 	}
 	
 	
