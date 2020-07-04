@@ -2688,10 +2688,10 @@
 			children = (
 				51919FED24AB85E400541E64 /* TimelineContainerView.swift */,
 				51919FF324AB869C00541E64 /* TimelineItem.swift */,
+				514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */,
 				514E6BD924ACEA0400AC6F6E /* TimelineItemView.swift */,
 				51919FF024AB864A00541E64 /* TimelineModel.swift */,
 				51919FF624AB8B7700541E64 /* TimelineView.swift */,
-				514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */,
 			);
 			path = Timeline;
 			sourceTree = "<group>";

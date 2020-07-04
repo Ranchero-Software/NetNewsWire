@@ -13,19 +13,15 @@ struct ArticleContainerView: View {
 	
 	@EnvironmentObject private var sceneModel: SceneModel
 	@StateObject private var articleModel = ArticleModel()
-	var article: Article? = nil
+	var article: Article
 	
 	@ViewBuilder var body: some View {
-		if let article = article {
-			ArticleView()
-				.environmentObject(articleModel)
-				.onAppear {
-					sceneModel.articleModel = articleModel
-					articleModel.delegate = sceneModel
-				}
-		} else {
-			EmptyView()
-		}
+		ArticleView()
+			.environmentObject(articleModel)
+			.onAppear {
+				sceneModel.articleModel = articleModel
+				articleModel.delegate = sceneModel
+			}
 	}
 	
 }
