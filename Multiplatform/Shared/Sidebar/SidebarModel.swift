@@ -22,6 +22,12 @@ class SidebarModel: ObservableObject {
 	
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 	}
 	
 	// MARK: API
@@ -60,7 +66,18 @@ class SidebarModel: ObservableObject {
 }
 
 // MARK: Private
+
 private extension SidebarModel {
+	
+	func sort(_ folders: Set<Folder>) -> [Folder] {
+		return folders.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
+	}
+
+	func sort(_ feeds: Set<WebFeed>) -> [Feed] {
+		return feeds.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
+	}
+	
+	// MARK: Notifications
 	
 	@objc func unreadCountDidInitialize(_ notification: Notification) {
 		guard notification.object is AccountManager else {
@@ -69,12 +86,28 @@ private extension SidebarModel {
 		rebuildSidebarItems()
 	}
 	
-	func sort(_ folders: Set<Folder>) -> [Folder] {
-		return folders.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
+	@objc func containerChildrenDidChange(_ notification: Notification) {
+		rebuildSidebarItems()
 	}
-
-	func sort(_ feeds: Set<WebFeed>) -> [Feed] {
-		return feeds.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
+	
+	@objc func batchUpdateDidPerform(_ notification: Notification) {
+		rebuildSidebarItems()
+	}
+	
+	@objc func displayNameDidChange(_ note: Notification) {
+		rebuildSidebarItems()
+	}
+	
+	@objc func accountStateDidChange(_ note: Notification) {
+		rebuildSidebarItems()
+	}
+	
+	@objc func userDidAddAccount(_ note: Notification) {
+		rebuildSidebarItems()
+	}
+	
+	@objc func userDidDeleteAccount(_ note: Notification) {
+		rebuildSidebarItems()
 	}
 	
 }
