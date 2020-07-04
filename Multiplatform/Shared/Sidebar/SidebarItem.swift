@@ -17,7 +17,7 @@ public enum SidebarItemIdentifier: Hashable, Equatable {
 }
 
 public enum RepresentedType {
-	case feed, pseudoFeed, account, unknown
+	case webFeed, folder, pseudoFeed, account, unknown
 }
 
 struct SidebarItem: Identifiable {
@@ -48,7 +48,9 @@ struct SidebarItem: Identifiable {
 		case is UnreadFeed.Type:
 			return .pseudoFeed
 		case is WebFeed.Type:
-			return .feed
+			return .webFeed
+		case is Folder.Type:
+			return .folder
 		case is Account.Type:
 			return .account
 		default:

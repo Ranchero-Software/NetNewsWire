@@ -38,75 +38,63 @@ struct SidebarItemView: View {
 	@ViewBuilder var menuItems: some View {
 		if sidebarItem.representedType == .account {
 			Button(action: {}) {
-				HStack {
-					Text("Mark All As Read in \(sidebarItem.nameForDisplay)")
-					Spacer()
-					AppAssets.markAllAsReadImage
-						.resizable()
-						.aspectRatio(contentMode: .fit)
-				}
+				Text("Mark All As Read")
+				AppAssets.markAllAsReadImage
 			}
 		}
-		if sidebarItem.representedType == .feed {
+		
+		if sidebarItem.representedType == .pseudoFeed {
 			Button(action: {}) {
-				HStack {
-					Text("Mark All as Read")
-					Spacer()
-					AppAssets.markAllAsReadImage
-						.resizable()
-						.aspectRatio(contentMode: .fit)
-				}
+				Text("Mark All As Read")
+				AppAssets.markAllAsReadImage
+			}
+		}
+		
+		if sidebarItem.representedType == .webFeed {
+			Button(action: {}) {
+				Text("Mark All As Read")
+				AppAssets.markAllAsReadImage
 			}
 			Divider()
 			Button(action: {
 				
 			}) {
-				HStack {
-					Text("Open Home Page")
-					Spacer()
-					AppAssets.openInBrowserImage
-				}
+				Text("Open Home Page")
+				AppAssets.openInBrowserImage
 			}
 			Divider()
 			Button(action: {}) {
-				HStack {
-					Text("Copy Feed URL")
-					Spacer()
-					AppAssets.copyImage
-				}
+				Text("Copy Feed URL")
+				AppAssets.copyImage
 			}
 			Button(action: {}) {
-				HStack {
-					Text("Copy Home Page URL")
-					Spacer()
-					AppAssets.copyImage
-				}
+				Text("Copy Home Page URL")
+				AppAssets.copyImage
 			}
 			Divider()
 			Button(action: {}) {
-				HStack {
-					Text("Rename")
-					Spacer()
-					AppAssets.renameImage
-				}
+				Text("Rename")
+				AppAssets.renameImage
 			}
 			Button(action: {}) {
-				HStack {
-					Text("Delete").foregroundColor(.red)
-					Spacer()
-					AppAssets.deleteImage.foregroundColor(.red)
-				}
+				Text("Delete")
+				AppAssets.deleteImage
 			}
 		}
-		if sidebarItem.representedType == .pseudoFeed {
+		
+		if sidebarItem.representedType == .folder {
 			Button(action: {}) {
-				HStack {
-					Text("Mark All as Read")
-					Spacer()
-					AppAssets.markAllAsReadImage
-						.resizable()
-						.aspectRatio(contentMode: .fit)
-				}
+				Text("Mark All As Read")
+				AppAssets.markAllAsReadImage
+			}
+			Divider()
+			Button(action: {}) {
+				Text("Rename")
+				AppAssets.renameImage
+			}
+			Button(action: {}) {
+				Text("Delete")
+				AppAssets.deleteImage
 			}
 		}
 	}
