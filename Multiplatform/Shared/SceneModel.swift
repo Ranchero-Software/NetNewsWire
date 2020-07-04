@@ -11,9 +11,18 @@ import Account
 
 final class SceneModel: ObservableObject {
 	
+	@Published var refreshProgressState = RefreshProgressModel.State.none
+	
 	var sidebarModel: SidebarModel?
 	var timelineModel: TimelineModel?
 	var articleModel: ArticleModel?
+	
+	private let refreshProgressModel: RefreshProgressModel
+	
+	init(refreshProgressModel: RefreshProgressModel = RefreshProgressModel()) {
+		self.refreshProgressModel = refreshProgressModel
+		self.refreshProgressModel.$state.assign(to: self.$refreshProgressState)
+	}
 	
 }
 
