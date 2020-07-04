@@ -20,6 +20,7 @@ struct MainApp: App {
 	
 	@StateObject private var sceneModel = SceneModel()
 	@StateObject private var defaults = AppDefaults.shared
+	@State private var showSheet = false
 	
 	@SceneBuilder var body: some Scene {
 		#if os(macOS)
@@ -28,63 +29,70 @@ struct MainApp: App {
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
 				.environmentObject(sceneModel)
 				.environmentObject(defaults)
+				.sheet(isPresented: $showSheet, onDismiss: { showSheet = false }) {
+					AddWebFeedView()
+				}
 				.toolbar {
 					
-					ToolbarItem {
-						Button(action: {}, label: {
-							Image(systemName: "plus").foregroundColor(.secondary)
-						}).help("New Feed")
+					ToolbarItem() {
+						Menu {
+							Button("Add Web Feed", action:  { showSheet = true })
+							Button("Add Reddit Feed", action:  { })
+							Button("Add Twitter Feed", action:  { })
+							Button("Add Folder", action:  { })
+						} label : {
+							AppAssets.addMenuImage
+						}
 					}
 				
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "folder.fill.badge.plus").foregroundColor(.pink)
-						}).help("New Folder")
-					}
-					
-					ToolbarItem {
-						Button(action: {}, label: {
-							Image(systemName: "arrow.clockwise").foregroundColor(.secondary)
+							AppAssets.refreshImage
 						}).help("Refresh").padding(.trailing, 40)
 					}
-					
+
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "circle.dashed").foregroundColor(.orange)
+							AppAssets.markAllAsReadImagePDF
+								.resizable()
+								.scaledToFit()
+								.frame(width: 20, height: 20, alignment: .center)
 						}).help("Mark All as Read")
 					}
 					
 					ToolbarItem {
-						Button(action: {}, label: {
-							Image(systemName: "arrow.triangle.turn.up.right.circle.fill").foregroundColor(.purple)
-						}).help("Go to Next Unread")
+						MacSearchField()
+							.frame(width: 200)
 					}
-					
+
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "star.fill").foregroundColor(.yellow)
+							AppAssets.nextUnreadArticleImage
+						}).help("Go to Next Unread").padding(.trailing, 40)
+					}
+
+					ToolbarItem {
+						Button(action: {}, label: {
+							AppAssets.toggleStarred
 						}).help("Mark as Starred")
 					}
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
+							AppAssets.toggleRead
 						}).help("Mark as Unread")
 					}
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "safari").foregroundColor(.blue)
+							AppAssets.openInBrowserImage
 						}).help("Open in Browser")
 					}
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "square.and.arrow.up")
+							AppAssets.shareImage
 						}).help("Share")
 					}
 					
-					ToolbarItem {
-						MacSearchField()
-							.frame(width: 300)
-					}
+
 				}
 		}
 		.commands {
@@ -146,7 +154,9 @@ struct MainApp: App {
 			SceneNavigationView()
 				.environmentObject(sceneModel)
 				.environmentObject(defaults)
-		}.commands {
+				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
+		}
+		.commands {
 			CommandGroup(after: .newItem, addition: {
 				Button("New Feed", action: {})
 					.keyboardShortcut("N")

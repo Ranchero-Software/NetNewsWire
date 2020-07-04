@@ -19,12 +19,10 @@ struct TimelineItemStatusView: View {
 				.resizable()
 				.frame(width: 8, height: 8, alignment: .center)
 				.padding(.all, 2)
-				.foregroundColor(.accentColor)
 		case .showStar:
 			AppAssets.timelineStarred
 				.resizable()
 				.frame(width: 10, height: 10, alignment: .center)
-				.foregroundColor(.yellow)
 		case .showNone:
 			AppAssets.timelineUnread
 				.resizable()
