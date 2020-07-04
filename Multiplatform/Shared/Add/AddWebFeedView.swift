@@ -10,49 +10,6 @@ import SwiftUI
 import Account
 import RSCore
 
-fileprivate enum AddWebFeedError: LocalizedError {
-	
-	case none, alreadySubscribed, initialDownload, noFeeds
-	
-	var errorDescription: String? {
-		switch self {
-		case .alreadySubscribed:
-			return NSLocalizedString("Can’t add this feed because you’ve already subscribed to it.", comment: "Feed finder")
-		case .initialDownload:
-			return NSLocalizedString("Can’t add this feed because of a download error.", comment: "Feed finder")
-		case .noFeeds:
-			return NSLocalizedString("Can’t add a feed because no feed was found.", comment: "Feed finder")
-		default:
-			return nil
-		}
-	}
-	
-}
-
-fileprivate class AddWebFeedViewModel: ObservableObject {
-	
-	@Published var providedURL: String = ""
-	@Published var providedName: String = ""
-	@Published var selectedFolderIndex: Int = 0
-	@Published var addFeedError: AddWebFeedError? {
-		didSet {
-			addFeedError != .none ? (showError = true) : (showError = false)
-		}
-	}
-	@Published var showError: Bool = false
-	@Published var containers: [Container] = []
-	@Published var showProgressIndicator: Bool = false
-	
-	init() {
-		for account in AccountManager.shared.sortedActiveAccounts {
-			containers.append(account)
-			if let sortedFolders = account.sortedFolders {
-				containers.append(contentsOf: sortedFolders)
-			}
-		}
-	}
-	
-}
 
 struct AddWebFeedView: View {
 	
@@ -62,15 +19,28 @@ struct AddWebFeedView: View {
     @ViewBuilder var body: some View {
 		#if os(iOS)
 			iosForm
+				.onAppear {
+					viewModel.pasteUrlFromPasteboard()
+				}
+				.onReceive(viewModel.$shouldDismiss, perform: { dismiss in
+					if dismiss == true {
+						presentationMode.wrappedValue.dismiss()
+					}
+				})
+				
 		#else
 			macForm
 				.onAppear {
-					pasteUrlFromPasteboard()
+					viewModel.pasteUrlFromPasteboard()
 				}.alert(isPresented: $viewModel.showError) {
 					Alert(title: Text("Oops"), message: Text(viewModel.addFeedError!.localizedDescription), dismissButton: Alert.Button.cancel({
-						viewModel.addFeedError = .none
+						viewModel.addFeedError = AddWebFeedError.none
 					}))
-				}
+				}.onReceive(viewModel.$shouldDismiss, perform: { dismiss in
+					if dismiss == true {
+						presentationMode.wrappedValue.dismiss()
+					}
+				})
 		#endif
     }
 	
@@ -117,7 +87,7 @@ struct AddWebFeedView: View {
 				.help("Cancel Add Feed")
 				, trailing:
 					Button("Add", action: {
-						addWebFeed()
+						viewModel.addWebFeed()
 					})
 					.disabled(!viewModel.providedURL.isValidURL)
 					.help("Add Feed")
@@ -168,93 +138,16 @@ struct AddWebFeedView: View {
 			.help("Cancel Add Feed")
 			
 			Button("Add", action: {
-				addWebFeed()
+				viewModel.addWebFeed()
 			})
 			.disabled(!viewModel.providedURL.isValidURL)
 			.help("Add Feed")
 		}
 	}
 	
-	#if os(macOS)
-	func pasteUrlFromPasteboard() {
-		guard let stringFromPasteboard = urlStringFromPasteboard, stringFromPasteboard.isValidURL else {
-			return
-		}
-		viewModel.providedURL = stringFromPasteboard
-	}
-	#endif
+	
 	
 }
-
-private extension AddWebFeedView {
-
-	#if os(macOS)
-	var urlStringFromPasteboard: String? {
-		if let urlString = NSPasteboard.urlString(from: NSPasteboard.general) {
-			return urlString.normalizedURL
-		}
-		return nil
-	}
-	#else
-	var urlStringFromPasteboard: String? {
-		if let urlString = UIPasteboard.general.url?.absoluteString {
-			return urlString.normalizedURL
-		}
-		return nil
-	}
-	#endif
-	
-	struct AccountAndFolderSpecifier {
-		let account: Account
-		let folder: Folder?
-	}
-
-	func accountAndFolderFromContainer(_ container: Container) -> AccountAndFolderSpecifier? {
-		if let account = container as? Account {
-			return AccountAndFolderSpecifier(account: account, folder: nil)
-		}
-		if let folder = container as? Folder, let account = folder.account {
-			return AccountAndFolderSpecifier(account: account, folder: folder)
-		}
-		return nil
-	}
-	
-	func addWebFeed() {
-		if let account = accountAndFolderFromContainer(viewModel.containers[viewModel.selectedFolderIndex])?.account {
-			
-			viewModel.showProgressIndicator = true
-			
-			let container = viewModel.containers[viewModel.selectedFolderIndex]
-			
-			if account.hasWebFeed(withURL: viewModel.providedURL) {
-				viewModel.addFeedError = .alreadySubscribed
-				viewModel.showProgressIndicator = false
-				return
-			}
-			
-			account.createWebFeed(url: viewModel.providedURL, name: viewModel.providedName, container: container, completion: { result in
-				viewModel.showProgressIndicator = false
-				switch result {
-				case .success(let feed):
-					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
-					presentationMode.wrappedValue.dismiss()
-				case .failure(let error):
-					switch error {
-					case AccountError.createErrorAlreadySubscribed:
-						self.viewModel.addFeedError = .alreadySubscribed
-						return
-					case AccountError.createErrorNotFound:
-						self.viewModel.addFeedError = .noFeeds
-						return
-					default:
-						print("Error")
-					}
-				}
-			})
-		}
-	}
-}
-
 
 struct AddFeedView_Previews: PreviewProvider {
     static var previews: some View {
