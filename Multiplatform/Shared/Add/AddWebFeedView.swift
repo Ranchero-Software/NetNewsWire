@@ -96,11 +96,16 @@ struct AddWebFeedView: View {
 				})
 				.help("Cancel Add Feed")
 				, trailing:
-					Button("Add", action: {
-						viewModel.addWebFeed()
-					})
-					.disabled(!viewModel.providedURL.isValidURL)
-					.help("Add Feed")
+					HStack(spacing: 12) {
+						if viewModel.showProgressIndicator == true {
+							ProgressView()
+						}
+						Button("Add", action: {
+							viewModel.addWebFeed()
+						})
+						.disabled(!viewModel.providedURL.mayBeURL)
+						.help("Add Feed")
+					}
 				)
 		}
 	}
@@ -174,7 +179,7 @@ struct AddWebFeedView: View {
 			Button("Add", action: {
 				viewModel.addWebFeed()
 			})
-			.disabled(!viewModel.providedURL.isValidURL)
+			.disabled(!viewModel.providedURL.mayBeURL)
 			.help("Add Feed")
 		}.padding(.trailing, 2)
 	}
