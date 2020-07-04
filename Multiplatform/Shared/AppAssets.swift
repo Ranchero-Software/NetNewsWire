@@ -69,7 +69,7 @@ struct AppAssets {
 	}()
 	
 	static var faviconTemplateImage: RSImage = {
-		return RSImage(named: "faviconTemplateImage")!
+		return RSImage(named: "FaviconTemplateImage")!
 	}()
 	
 	static var settingsImage: Image = {
