@@ -35,9 +35,14 @@ struct MainApp: App {
 				.toolbar {
 					
 					ToolbarItem() {
-						Button(action: { showSheet = true }, label: {
+						Menu {
+							Button("Add Web Feed", action:  { showSheet = true })
+							Button("Add Reddit Feed", action:  { })
+							Button("Add Twitter Feed", action:  { })
+							Button("Add Folder", action:  { })
+						} label : {
 							AppAssets.addMenuImage
-						}).help("Add Feed")
+						}
 					}
 				
 					ToolbarItem {
