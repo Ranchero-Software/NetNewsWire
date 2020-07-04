@@ -19,6 +19,7 @@ struct MainApp: App {
 	#endif
 	
 	@StateObject private var sceneModel = SceneModel()
+	@StateObject private var refreshProgresModel = RefreshProgressModel()
 	@StateObject private var defaults = AppDefaults.shared
 	@State private var showSheet = false
 	
@@ -28,6 +29,7 @@ struct MainApp: App {
 			SceneNavigationView()
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
 				.environmentObject(sceneModel)
+				.environmentObject(refreshProgresModel)
 				.environmentObject(defaults)
 				.sheet(isPresented: $showSheet, onDismiss: { showSheet = false }) {
 					AddWebFeedView()
@@ -153,6 +155,7 @@ struct MainApp: App {
 		WindowGroup {
 			SceneNavigationView()
 				.environmentObject(sceneModel)
+				.environmentObject(refreshProgresModel)
 				.environmentObject(defaults)
 				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
 		}

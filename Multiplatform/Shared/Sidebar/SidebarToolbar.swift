@@ -43,10 +43,8 @@ struct SidebarToolbar: View {
 				}).help("Settings")
 				
 				Spacer()
-				
-				Text("Last updated")
-					.font(.caption)
-					.foregroundColor(.secondary)
+								
+				RefreshProgressView()
 				
 				Spacer()
 				
@@ -87,6 +85,19 @@ struct SidebarToolbar: View {
 
 struct SidebarToolbar_Previews: PreviewProvider {
     static var previews: some View {
-        SidebarToolbar()
+		Group {
+			SidebarToolbar()
+				.environmentObject(refreshProgressModel(lastRefreshDate: nil, tasksCompleted: 1, totalTasks: 2))
+				.previewDisplayName("Refresh in progress")
+			
+			SidebarToolbar()
+				.environmentObject(refreshProgressModel(lastRefreshDate: Date(timeIntervalSinceNow: -120.0), tasksCompleted: 0, totalTasks: 0))
+				.previewDisplayName("Last refreshed with date")
+						
+			SidebarToolbar()
+				.environmentObject(refreshProgressModel(lastRefreshDate: nil, tasksCompleted: 0, totalTasks: 0))
+				.previewDisplayName("Refresh progress hidden")
+		}
+		.previewLayout(.sizeThatFits)
     }
 }
