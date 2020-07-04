@@ -49,11 +49,10 @@ struct AddWebFeedView: View {
 		Form {
 			HStack {
 				Spacer()
-				Image("FaviconTemplateImage")
+				Image(rsImage: AppAssets.faviconTemplateImage)
 					.resizable()
 					.renderingMode(.template)
 					.frame(width: 30, height: 30)
-					.foregroundColor(.accentColor).font(.title)
 				Text("Add a Web Feed")
 					.font(.title)
 				Spacer()

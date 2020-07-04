@@ -31,6 +31,7 @@
 		17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
+		17D5F19524B0C1DD00375168 /* SidebarToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbar.swift */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
 		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
 		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
@@ -4965,6 +4966,7 @@
 				51E4995024A8734C00B667CB /* ExtensionPoint.swift in Sources */,
 				51E4990E24A808CC00B667CB /* HTMLMetadataDownloader.swift in Sources */,
 				51E498FB24A808BA00B667CB /* FaviconGenerator.swift in Sources */,
+				17D5F19524B0C1DD00375168 /* SidebarToolbar.swift in Sources */,
 				51E4996724A8760B00B667CB /* ArticleStylesManager.swift in Sources */,
 				1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */,
 				51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,

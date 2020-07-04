@@ -14,7 +14,8 @@ struct SidebarToolbar: ViewModifier {
 	@EnvironmentObject private var appSettings: AppDefaults
 	@StateObject private var viewModel = SidebarToolbarModel()
 
-	func body(content: Content) -> some View {
+	@ViewBuilder func body(content: Content) -> some View {
+		#if os(iOS)
 		content
 			.toolbar {
 				ToolbarItem(placement: .automatic) {
@@ -66,6 +67,14 @@ struct SidebarToolbar: ViewModifier {
 					SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: appSettings.userInterfaceColorPalette))
 				}
 			}
+		#else
+		content
+			.toolbar {
+				ToolbarItem {
+					Spacer()
+				}
+			}
+		#endif
 	}
 }
 

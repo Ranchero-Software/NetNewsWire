@@ -26,7 +26,6 @@ struct RegularSidebarContainerView: View {
 				sidebarModel.delegate = sceneModel
 				sidebarModel.rebuildSidebarItems()
 			}
-		
 	}
 	
 }
