@@ -24,6 +24,11 @@ struct TimelineContainerView: View {
 					timelineModel.delegate = sceneModel
 					timelineModel.rebuildTimelineItems(feed)
 				}
+				.overlay(Group {
+					#if os(iOS)
+					TimelineToolbar()
+					#endif
+				},alignment: .bottom)
 		} else {
 			EmptyView()
 		}
