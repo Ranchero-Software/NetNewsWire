@@ -16,6 +16,7 @@ struct CompactSidebarContainerView: View {
 	
 	var body: some View {
 		SidebarView()
+			.modifier(SidebarToolbar())
 			.environmentObject(sidebarModel)
 			.navigationBarTitle(Text("Feeds"))
 			.listStyle(PlainListStyle())
@@ -23,11 +24,7 @@ struct CompactSidebarContainerView: View {
 				sceneModel.sidebarModel = sidebarModel
 				sidebarModel.delegate = sceneModel
 				sidebarModel.rebuildSidebarItems()
-			}.overlay(Group {
-				#if os(iOS)
-				SidebarToolbar()
-				#endif
-			},alignment: .bottom)
+			}
 	}
 	
 }

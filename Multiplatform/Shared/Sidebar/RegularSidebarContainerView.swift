@@ -17,6 +17,7 @@ struct RegularSidebarContainerView: View {
 	
     @ViewBuilder var body: some View {
 		SidebarView()
+			.modifier(SidebarToolbar())
 			.environmentObject(sidebarModel)
 			.navigationTitle(Text("Feeds"))
 			.listStyle(SidebarListStyle())
@@ -25,12 +26,6 @@ struct RegularSidebarContainerView: View {
 				sidebarModel.delegate = sceneModel
 				sidebarModel.rebuildSidebarItems()
 			}
-			.overlay(Group {
-				#if os(iOS)
-				SidebarToolbar()
-				#endif
-			},alignment: .bottom)
-		
 	}
 	
 }
