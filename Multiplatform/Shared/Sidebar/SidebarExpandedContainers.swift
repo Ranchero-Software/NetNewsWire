@@ -12,7 +12,7 @@ import Account
 
 final class SidebarExpandedContainers: ObservableObject {
 	
-	@Published var expandedTable = Set<ContainerIdentifier>()
+	@Published var expandedTable = [ContainerIdentifier: Bool]()
 	var objectDidChange = PassthroughSubject<Void, Never>()
 	
 	var data: Data {
@@ -23,21 +23,24 @@ final class SidebarExpandedContainers: ObservableObject {
 		}
 		set {
 			let decoder = PropertyListDecoder()
-			expandedTable = (try? decoder.decode(Set<ContainerIdentifier>.self, from: newValue)) ?? Set<ContainerIdentifier>()
+			expandedTable = (try? decoder.decode([ContainerIdentifier: Bool].self, from: newValue)) ?? [ContainerIdentifier: Bool]()
 		}
 	}
 	
 	subscript(_ containerID: ContainerIdentifier) -> Bool {
 		get {
-			return expandedTable.contains(containerID)
+			if let result = expandedTable[containerID] {
+				return result
+			}
+			switch containerID {
+			case .smartFeedController, .account:
+				return true
+			default:
+				return false
+			}
 		}
 		set(newValue) {
-			if newValue {
-				expandedTable.insert(containerID)
-			} else {
-				expandedTable.remove(containerID)
-			}
-			objectDidChange.send()
+			expandedTable[containerID] = newValue
 		}
 	}
 	
