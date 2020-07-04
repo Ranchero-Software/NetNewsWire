@@ -118,6 +118,14 @@ struct AppAssets {
 		#endif
 	}()
 	
+	static var sidebarUnreadCountBackground: Color = {
+		return Color("SidebarUnreadCountBackground")
+	}()
+	
+	static var sidebarUnreadCountForeground: Color = {
+		return Color("SidebarUnreadCountForeground")
+	}()
+	
 	static var shareImage: Image = {
 		Image(systemName: "square.and.arrow.up")
 	}()

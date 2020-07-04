@@ -17,7 +17,8 @@ struct UnreadCountView: View {
 			.font(.footnote)
 			.padding(.horizontal, 7)
 			.padding(.vertical, 1)
-			.background(SwiftUI.Color.gray.opacity(0.5))
+			.background(AppAssets.sidebarUnreadCountBackground)
+			.foregroundColor(AppAssets.sidebarUnreadCountForeground)
 			.cornerRadius(8)
     }
 }
