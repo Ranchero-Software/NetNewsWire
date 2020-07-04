@@ -14,7 +14,8 @@ struct UnreadCountView: View {
 	
     var body: some View {
 		Text(verbatim: String(count))
-			.font(.footnote)
+			.font(.caption)
+			.fontWeight(.bold)
 			.padding(.horizontal, 7)
 			.padding(.vertical, 1)
 			.background(AppAssets.sidebarUnreadCountBackground)
