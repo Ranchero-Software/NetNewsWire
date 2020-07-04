@@ -78,7 +78,7 @@ struct AddWebFeedView: View {
 				folderPicker
 			}
 			.listStyle(InsetGroupedListStyle())
-			.navigationTitle("Add Web Feed")
+			.navigationBarTitle("Add Web Feed")
 			.navigationBarTitleDisplayMode(.inline)
 			.navigationBarItems(leading:
 				Button("Cancel", action: {
@@ -99,7 +99,14 @@ struct AddWebFeedView: View {
 	var urlTextField: some View {
 		HStack {
 			Text("Feed:")
+			#if os(iOS)
 			TextField("URL", text: $viewModel.providedURL)
+				.disableAutocorrection(true)
+				.autocapitalization(UITextAutocapitalizationType.none)
+			#else
+			TextField("URL", text: $viewModel.providedURL)
+				.disableAutocorrection(true)
+			#endif
 		}
 	}
 	
