@@ -222,8 +222,6 @@
 		517A757C24451C1500B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5181C5AD24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */; };
 		5181C5AE24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */; };
-		5181C64C24B024B4002E0F70 /* TimelineToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C64B24B024B4002E0F70 /* TimelineToolbar.swift */; };
-		5181C64D24B024B4002E0F70 /* TimelineToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C64B24B024B4002E0F70 /* TimelineToolbar.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -1850,7 +1848,6 @@
 		517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageViewController-Extensions.swift"; sourceTree = "<group>"; };
 		517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthSwift.xcodeproj; path = submodules/OAuthSwift/OAuthSwift.xcodeproj; sourceTree = "<group>"; };
 		5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredColorSchemeModifier.swift; sourceTree = "<group>"; };
-		5181C64B24B024B4002E0F70 /* TimelineToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineToolbar.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
@@ -2694,7 +2691,6 @@
 				514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */,
 				514E6BD924ACEA0400AC6F6E /* TimelineItemView.swift */,
 				51919FF024AB864A00541E64 /* TimelineModel.swift */,
-				5181C64B24B024B4002E0F70 /* TimelineToolbar.swift */,
 				51919FF624AB8B7700541E64 /* TimelineView.swift */,
 			);
 			path = Timeline;
@@ -4815,7 +4811,6 @@
 				514E6BDA24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				51E4990D24A808C500B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
 				51919FF424AB869C00541E64 /* TimelineItem.swift in Sources */,
-				5181C64C24B024B4002E0F70 /* TimelineToolbar.swift in Sources */,
 				514E6C0224AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */,
 				51E49A0024A91FC100B667CB /* RegularSidebarContainerView.swift in Sources */,
 				51E4995C24A875F300B667CB /* ArticleRenderer.swift in Sources */,
@@ -4928,7 +4923,6 @@
 				17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
 				51E4993324A867E700B667CB /* AppNotifications.swift in Sources */,
 				51E4990624A808C300B667CB /* ImageDownloader.swift in Sources */,
-				5181C64D24B024B4002E0F70 /* TimelineToolbar.swift in Sources */,
 				51E4994F24A8734C00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
 				51E498CA24A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				51E4990524A808C300B667CB /* FeaturedImageDownloader.swift in Sources */,
