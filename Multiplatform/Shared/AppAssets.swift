@@ -52,6 +52,14 @@ struct AppAssets {
 		return Image(systemName: "plus")
 	}()
 	
+	static var copyImage: Image = {
+		return Image(systemName: "doc.on.doc")
+	}()
+	
+	static var deleteImage: Image = {
+		return Image(systemName: "trash")
+	}()
+	
 	static var extensionPointMarsEdit: RSImage = {
 		return RSImage(named: "ExtensionPointMarsEdit")!
 	}()
@@ -72,6 +80,10 @@ struct AppAssets {
 		return RSImage(named: "FaviconTemplateImage")!
 	}()
 	
+	static var renameImage: Image = {
+		return Image(systemName: "textformat")
+	}()
+
 	static var settingsImage: Image = {
 		return Image(systemName: "gear")
 	}()

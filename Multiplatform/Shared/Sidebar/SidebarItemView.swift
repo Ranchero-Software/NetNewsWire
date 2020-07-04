@@ -41,7 +41,7 @@ struct SidebarItemView: View {
 				HStack {
 					Text("Mark All As Read in \(sidebarItem.nameForDisplay)")
 					Spacer()
-					Image("markAllAsRead")
+					AppAssets.markAllAsReadImage
 						.resizable()
 						.aspectRatio(contentMode: .fit)
 				}
@@ -52,7 +52,7 @@ struct SidebarItemView: View {
 				HStack {
 					Text("Mark All as Read")
 					Spacer()
-					Image("markAllAsRead")
+					AppAssets.markAllAsReadImage
 						.resizable()
 						.aspectRatio(contentMode: .fit)
 				}
@@ -64,7 +64,7 @@ struct SidebarItemView: View {
 				HStack {
 					Text("Open Home Page")
 					Spacer()
-					Image(systemName: "safari")
+					AppAssets.openInBrowserImage
 				}
 			}
 			Divider()
@@ -72,14 +72,14 @@ struct SidebarItemView: View {
 				HStack {
 					Text("Copy Feed URL")
 					Spacer()
-					Image(systemName: "doc.on.doc")
+					AppAssets.copyImage
 				}
 			}
 			Button(action: {}) {
 				HStack {
 					Text("Copy Home Page URL")
 					Spacer()
-					Image(systemName: "doc.on.doc")
+					AppAssets.copyImage
 				}
 			}
 			Divider()
@@ -87,14 +87,14 @@ struct SidebarItemView: View {
 				HStack {
 					Text("Rename")
 					Spacer()
-					Image(systemName: "textformat")
+					AppAssets.renameImage
 				}
 			}
 			Button(action: {}) {
 				HStack {
 					Text("Delete").foregroundColor(.red)
 					Spacer()
-					Image(systemName: "trash").foregroundColor(.red)
+					AppAssets.deleteImage.foregroundColor(.red)
 				}
 			}
 		}
@@ -103,7 +103,7 @@ struct SidebarItemView: View {
 				HStack {
 					Text("Mark All as Read")
 					Spacer()
-					Image("markAllAsRead")
+					AppAssets.markAllAsReadImage
 						.resizable()
 						.aspectRatio(contentMode: .fit)
 				}
