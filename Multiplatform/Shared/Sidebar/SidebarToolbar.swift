@@ -8,96 +8,74 @@
 
 import SwiftUI
 
-fileprivate enum ToolbarSheets {
-	case none, web, twitter, reddit, folder, settings
-}
 
-fileprivate class SidebarToolbarViewModel: ObservableObject {
-	
-	@Published var showSheet: Bool = false
-	@Published var sheetToShow: ToolbarSheets = .none {
-		didSet {
-			sheetToShow != .none ? (showSheet = true) : (showSheet = false)
-		}
-	}
-	@Published var showActionSheet: Bool = false
-	@Published var showAddSheet: Bool = false
-	
-}
-
-struct SidebarToolbar: View {
+struct SidebarToolbar: ViewModifier {
     
 	@EnvironmentObject private var appSettings: AppDefaults
-	@StateObject private var viewModel = SidebarToolbarViewModel()
+	@StateObject private var viewModel = SidebarToolbarModel()
 
-	var body: some View {
-		VStack {
-			Divider()
-			HStack(alignment: .center) {
-				Button(action: {
-					viewModel.sheetToShow = .settings
-				}, label: {
-					AppAssets.settingsImage
-						.font(.title3)
-						.foregroundColor(.accentColor)
-				}).help("Settings")
+	@ViewBuilder func body(content: Content) -> some View {
+		#if os(iOS)
+		content
+			.toolbar {
+				ToolbarItem(placement: .automatic) {
+					Button(action: {
+						viewModel.sheetToShow = .settings
+					}, label: {
+						AppAssets.settingsImage
+							.font(.title3)
+							.foregroundColor(.accentColor)
+						Spacer()
+					}).help("Settings")
+				}
 				
-				Spacer()
-								
-				RefreshProgressView()
-				
-				Spacer()
-				
-				Button(action: {
-					viewModel.showActionSheet = true
-				}, label: {
-					AppAssets.addMenuImage
-						.font(.title3)
-						.foregroundColor(.accentColor)
+				ToolbarItem(placement: .automatic, content: {
+					Spacer()
+					Text("Last updated")
+						.font(.caption)
+						.foregroundColor(.secondary)
+					Spacer()
 				})
-				.help("Add")
-				.actionSheet(isPresented: $viewModel.showActionSheet) {
-					ActionSheet(title: Text("Add"), buttons: [
-						.cancel(),
-						.default(Text("Add Web Feed"), action: { viewModel.sheetToShow = .web }),
-						.default(Text("Add Twitter Feed")),
-						.default(Text("Add Reddit Feed")),
-						.default(Text("Add Folder"))
-					])
+				
+				ToolbarItem(placement: .automatic, content: {
+					Button(action: {
+						viewModel.showActionSheet = true
+					}, label: {
+						Spacer()
+						AppAssets.addMenuImage
+							.font(.title3)
+							.foregroundColor(.accentColor)
+					})
+					.help("Add")
+					.actionSheet(isPresented: $viewModel.showActionSheet) {
+						ActionSheet(title: Text("Add"), buttons: [
+							.cancel(),
+							.default(Text("Add Web Feed"), action: { viewModel.sheetToShow = .web }),
+							.default(Text("Add Twitter Feed")),
+							.default(Text("Add Reddit Feed")),
+							.default(Text("Add Folder"))
+						])
+					}
+				})
+				
+			}
+			.sheet(isPresented: $viewModel.showSheet, onDismiss: { viewModel.sheetToShow = .none }) {
+				if viewModel.sheetToShow == .web {
+					AddWebFeedView()
+				}
+				if viewModel.sheetToShow == .settings {
+					SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: appSettings.userInterfaceColorPalette))
 				}
 			}
-			.padding(.horizontal, 16)
-			.padding(.bottom, 12)
-			.padding(.top, 4)
-		}
-		.background(VisualEffectBlur(blurStyle: .systemChromeMaterial).edgesIgnoringSafeArea(.bottom))
-		.sheet(isPresented: $viewModel.showSheet, onDismiss: { viewModel.sheetToShow = .none }) {
-			if viewModel.sheetToShow == .web {
-				AddWebFeedView()
+		#else
+		content
+			.toolbar {
+				ToolbarItem {
+					Spacer()
+				}
 			}
-			if viewModel.sheetToShow == .settings {
-				SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: appSettings.userInterfaceColorPalette))
-			}
-		}
-	
-    }
+		#endif
+	}
 }
 
-struct SidebarToolbar_Previews: PreviewProvider {
-    static var previews: some View {
-		Group {
-			SidebarToolbar()
-				.environmentObject(refreshProgressModel(lastRefreshDate: nil, tasksCompleted: 1, totalTasks: 2))
-				.previewDisplayName("Refresh in progress")
-			
-			SidebarToolbar()
-				.environmentObject(refreshProgressModel(lastRefreshDate: Date(timeIntervalSinceNow: -120.0), tasksCompleted: 0, totalTasks: 0))
-				.previewDisplayName("Last refreshed with date")
-						
-			SidebarToolbar()
-				.environmentObject(refreshProgressModel(lastRefreshDate: nil, tasksCompleted: 0, totalTasks: 0))
-				.previewDisplayName("Refresh progress hidden")
-		}
-		.previewLayout(.sizeThatFits)
-    }
-}
+

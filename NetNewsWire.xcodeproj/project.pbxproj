@@ -29,6 +29,9 @@
 		179DB3CE822BFCC2D774D9F4 /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
+		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
+		17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
+		17D5F19524B0C1DD00375168 /* SidebarToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbar.swift */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
 		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
 		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
@@ -222,6 +225,7 @@
 		517A757C24451C1500B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5181C5AD24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */; };
 		5181C5AE24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */; };
+		5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C66124B0C326002E0F70 /* SettingsModel.swift */; };
 		5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */; };
 		5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */; };
 		5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -635,6 +639,8 @@
 		6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */; };
 		6581C74020CED60100F4AD34 /* netnewswire-subscribe-to-feed.js in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */; };
 		6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
+		6594CA3B24AF6F2A005C7D7C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
+		65C2E40124B05D8A000AFDF6 /* FeedsSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */; };
 		65CBAD5A24AE03C20006DD91 /* ColorPaletteContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */; };
 		65ED3FB7235DEF6C0081F399 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		65ED3FB8235DEF6C0081F399 /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848B937121C8C5540038DC0D /* CrashReporter.swift */; };
@@ -1737,6 +1743,7 @@
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
+		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
 		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
 		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
 		3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
@@ -1854,6 +1861,7 @@
 		517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageViewController-Extensions.swift"; sourceTree = "<group>"; };
 		517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthSwift.xcodeproj; path = submodules/OAuthSwift/OAuthSwift.xcodeproj; sourceTree = "<group>"; };
 		5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredColorSchemeModifier.swift; sourceTree = "<group>"; };
+		5181C66124B0C326002E0F70 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
 		5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicImageView.swift; sourceTree = "<group>"; };
 		5183CCE4226F4DFA0010922C /* RefreshInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshInterval.swift; sourceTree = "<group>"; };
@@ -2013,6 +2021,7 @@
 		6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "netnewswire-subscribe-to-feed.js"; sourceTree = "<group>"; };
 		6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ToolbarItemIcon.pdf; sourceTree = "<group>"; };
 		6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Subscribe_to_Feed.entitlements; sourceTree = "<group>"; };
+		65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedsSettingsModel.swift; sourceTree = "<group>"; };
 		65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteContainerView.swift; sourceTree = "<group>"; };
 		65ED4083235DEF6C0081F399 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65ED409D235DEF770081F399 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2392,6 +2401,8 @@
 		172199EB24AB228E00A31D04 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */,
+				5181C66124B0C326002E0F70 /* SettingsModel.swift */,
 				172199C824AB228900A31D04 /* SettingsView.swift */,
 				17B223B924AC24A8001E4592 /* Submenus */,
 			);
@@ -2975,6 +2986,7 @@
 				51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */,
 				51E499FC24A9137600B667CB /* SidebarModel.swift */,
 				172199F024AB716900A31D04 /* SidebarToolbar.swift */,
+				17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */,
 				51919FA524AA64B000541E64 /* SidebarView.swift */,
 				51919FAB24AA8CCA00541E64 /* UnreadCountView.swift */,
 			);
@@ -3984,46 +3996,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -4033,7 +4045,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -4043,7 +4055,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SHJK2V3AJG;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -4809,6 +4821,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */,
 				51E4995924A873F900B667CB /* ErrorHandler.swift in Sources */,
 				51392D1B24AC19A000BE0D35 /* SidebarExpandedContainers.swift in Sources */,
 				51E4992F24A8676400B667CB /* ArticleArray.swift in Sources */,
@@ -4820,6 +4833,7 @@
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
 				514E6C0924AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */,
+				6594CA3B24AF6F2A005C7D7C /* OPMLExporter.swift in Sources */,
 				51919FAF24AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
 				514E6BDA24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				51E4990D24A808C500B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
@@ -4840,6 +4854,7 @@
 				514E6BFF24AD255D00AC6F6E /* PreviewArticles.swift in Sources */,
 				51E4993024A8676400B667CB /* ArticleSorter.swift in Sources */,
 				51408B7E24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
+				65C2E40124B05D8A000AFDF6 /* FeedsSettingsModel.swift in Sources */,
 				51E4990A24A808C500B667CB /* FeaturedImageDownloader.swift in Sources */,
 				51E4993824A8680E00B667CB /* Reachability.swift in Sources */,
 				51E4993224A8676400B667CB /* FetchRequestQueue.swift in Sources */,
@@ -4857,6 +4872,7 @@
 				FF64D0E924AF53EE0084080A /* RefreshProgressView.swift in Sources */,
 				51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */,
 				51A576BE24AE637400078888 /* ArticleView.swift in Sources */,
+				5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
 				17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
@@ -4930,6 +4946,7 @@
 				51E4990824A808C300B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
 				51919FF824AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4992B24A8676300B667CB /* ArticleArray.swift in Sources */,
+				17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */,
 				514E6C0724AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */,
 				51E4994D24A8734C00B667CB /* ExtensionPointIdentifer.swift in Sources */,
 				51E4992224A8095600B667CB /* URL-Extensions.swift in Sources */,
@@ -4975,6 +4992,7 @@
 				51E4995024A8734C00B667CB /* ExtensionPoint.swift in Sources */,
 				51E4990E24A808CC00B667CB /* HTMLMetadataDownloader.swift in Sources */,
 				51E498FB24A808BA00B667CB /* FaviconGenerator.swift in Sources */,
+				17D5F19524B0C1DD00375168 /* SidebarToolbar.swift in Sources */,
 				51E4996724A8760B00B667CB /* ArticleStylesManager.swift in Sources */,
 				1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */,
 				51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,

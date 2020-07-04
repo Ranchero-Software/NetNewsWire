@@ -8,57 +8,19 @@
 
 import SwiftUI
 import Account
-
-
-
-class SettingsViewModel: ObservableObject {
-	
-	enum HelpSites {
-		case netNewsWireHelp, netNewsWire, supportNetNewsWire, github, bugTracker, technotes, netNewsWireSlack, none
-		
-		var url: URL? {
-			switch self {
-			case .netNewsWireHelp:
-				return URL(string: "https://ranchero.com/netnewswire/help/ios/5.0/en/")!
-			case .netNewsWire:
-				return URL(string: "https://ranchero.com/netnewswire/")!
-			case .supportNetNewsWire:
-				return URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!
-			case .github:
-				return URL(string: "https://github.com/brentsimmons/NetNewsWire")!
-			case .bugTracker:
-				return URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!
-			case .technotes:
-				return URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!
-			case .netNewsWireSlack:
-				return URL(string: "https://ranchero.com/netnewswire/slack")!
-			case .none:
-				return nil
-			}
-		}
-	}
-	
-	@Published var presentSheet: Bool = false
-	var selectedWebsite: HelpSites = .none {
-		didSet {
-			if selectedWebsite == .none {
-				presentSheet = false
-			} else {
-				presentSheet = true
-			}
-		}
-	}
-	
-}
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
 	
 	let sortedAccounts = AccountManager.shared.sortedAccounts
 	@Environment(\.presentationMode) var presentationMode
-	
-	@StateObject private var viewModel = SettingsViewModel()
+	@Environment(\.exportFiles) var exportAction
+	@Environment(\.importFiles) var importAction
+
+	@StateObject private var viewModel = SettingsModel()
+	@StateObject private var feedsSettingsModel = FeedsSettingsModel()
 	@StateObject private var settings = AppDefaults.shared
-	
+
 	var body: some View {
 		NavigationView {
 			List {
@@ -114,19 +76,50 @@ struct SettingsView: View {
 	
 	var importExport: some View {
 		Section(header: Text("Feeds"), content: {
-			NavigationLink(
-				destination: EmptyView(),
-				label: {
-					Text("Import Subscriptions")
-				})
-			NavigationLink(
-				destination: EmptyView(),
-				label: {
-					Text("Export Subscriptions")
-				})
+			Button(action:{
+				feedsSettingsModel.onTapImportOPML(action: importOPML)
+			}) {
+				Text("Import Subscriptions")
+					.actionSheet(isPresented: $feedsSettingsModel.showingImportActionSheet, content: importActionSheet)
+					.foregroundColor(.primary)
+			}
+			Button(action:{
+				feedsSettingsModel.onTapExportOPML(action: exportOPML)
+			}) {
+				Text("Export Subscriptions")
+					.actionSheet(isPresented: $feedsSettingsModel.showingExportActionSheet, content: exportActionSheet)
+					.foregroundColor(.primary)
+			}
 		})
+
 	}
-	
+
+	private func importActionSheet() -> ActionSheet {
+		var buttons = sortedAccounts.map { (account) -> ActionSheet.Button in
+			ActionSheet.Button.default(Text(account.nameForDisplay)) {
+				importOPML(account: account)
+			}
+		}
+		buttons.append(.cancel())
+		return ActionSheet(
+			title: Text("Choose an account to receive the imported feeds and folders"),
+			buttons: buttons
+		)
+	}
+
+	private func exportActionSheet() -> ActionSheet {
+		var buttons = sortedAccounts.map { (account) -> ActionSheet.Button in
+			ActionSheet.Button.default(Text(account.nameForDisplay)) {
+				exportOPML(account: account)
+			}
+		}
+		buttons.append(.cancel())
+		return ActionSheet(
+			title: Text("Choose an account with the subscriptions to export"),
+			buttons: buttons
+		)
+	}
+
 	var timeline: some View {
 		Section(header: Text("Timeline"), content: {
 			Toggle("Sort Oldest to Newest", isOn: $settings.timelineSortDirection)
@@ -202,7 +195,24 @@ struct SettingsView: View {
 		let build = dict?.object(forKey: "CFBundleVersion") as? String ?? ""
 		return "NetNewsWire \(version) (Build \(build))"
 	}
-	
+
+	private func exportOPML(account: Account?) {
+		guard let account = account,
+			  let url = feedsSettingsModel.generateExportURL(for: account) else {
+			return
+		}
+
+		exportAction(moving: url) { _ in }
+	}
+
+	private func importOPML(account: Account?) {
+		let types = [UTType(filenameExtension: "opml"), UTType("public.xml")].compactMap { $0 }
+		importAction(multipleOfType: types) { (result: Result<[URL], Error>?) in
+			if let urls = try? result?.get() {
+				feedsSettingsModel.processImportedFiles(urls, account)
+			}
+		}
+	}
 }
 
 struct SettingsView_Previews: PreviewProvider {
