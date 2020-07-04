@@ -10,10 +10,10 @@ import SwiftUI
 
 struct RefreshProgressView: View {
 	
-	@EnvironmentObject var refreshProgressModel: RefreshProgressModel
+	@EnvironmentObject var sceneModel: SceneModel
 	
 	@ViewBuilder var body: some View {
-		switch refreshProgressModel.state {
+		switch sceneModel.refreshProgressState {
 		case .refreshProgress(let progress):
 			ProgressView(value: progress)
 				.frame(width: progressViewWidth())

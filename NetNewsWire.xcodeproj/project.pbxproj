@@ -2791,6 +2791,7 @@
 				1776E88D24AC5F8A00E78166 /* AppDefaults.swift */,
 				51E4995824A873F900B667CB /* ErrorHandler.swift */,
 				51C0513624A77DF700194D5E /* MainApp.swift */,
+				FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */,
 				51E499D724A912C200B667CB /* SceneModel.swift */,
 				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
 				51C0513824A77DF800194D5E /* Assets.xcassets */,
@@ -2978,7 +2979,6 @@
 			isa = PBXGroup;
 			children = (
 				172952AF24AA287100D65E66 /* CompactSidebarContainerView.swift */,
-				FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */,
 				FF64D0E624AF53EE0084080A /* RefreshProgressView.swift */,
 				51E499FF24A91FC100B667CB /* RegularSidebarContainerView.swift */,
 				51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */,
