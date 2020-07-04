@@ -8,7 +8,7 @@
 
 import SwiftUI
 import Account
-
+import UniformTypeIdentifiers
 
 
 class SettingsViewModel: ObservableObject {
@@ -55,10 +55,13 @@ struct SettingsView: View {
 	
 	let sortedAccounts = AccountManager.shared.sortedAccounts
 	@Environment(\.presentationMode) var presentationMode
-	
+	@Environment(\.exportFiles) var exportAction
+	@Environment(\.importFiles) var importAction
+
 	@StateObject private var viewModel = SettingsViewModel()
+	@StateObject private var feedsSettingsModel = FeedsSettingsModel()
 	@StateObject private var settings = AppDefaults.shared
-	
+
 	var body: some View {
 		NavigationView {
 			List {
@@ -114,19 +117,50 @@ struct SettingsView: View {
 	
 	var importExport: some View {
 		Section(header: Text("Feeds"), content: {
-			NavigationLink(
-				destination: EmptyView(),
-				label: {
-					Text("Import Subscriptions")
-				})
-			NavigationLink(
-				destination: EmptyView(),
-				label: {
-					Text("Export Subscriptions")
-				})
+			Button(action:{
+				feedsSettingsModel.onTapImportOPML(action: importOPML)
+			}) {
+				Text("Import Subscriptions")
+					.actionSheet(isPresented: $feedsSettingsModel.showingImportActionSheet, content: importActionSheet)
+					.foregroundColor(.primary)
+			}
+			Button(action:{
+				feedsSettingsModel.onTapExportOPML(action: exportOPML)
+			}) {
+				Text("Export Subscriptions")
+					.actionSheet(isPresented: $feedsSettingsModel.showingExportActionSheet, content: exportActionSheet)
+					.foregroundColor(.primary)
+			}
 		})
+
 	}
-	
+
+	private func importActionSheet() -> ActionSheet {
+		var buttons = sortedAccounts.map { (account) -> ActionSheet.Button in
+			ActionSheet.Button.default(Text(account.nameForDisplay)) {
+				importOPML(account: account)
+			}
+		}
+		buttons.append(.cancel())
+		return ActionSheet(
+			title: Text("Choose an account to receive the imported feeds and folders"),
+			buttons: buttons
+		)
+	}
+
+	private func exportActionSheet() -> ActionSheet {
+		var buttons = sortedAccounts.map { (account) -> ActionSheet.Button in
+			ActionSheet.Button.default(Text(account.nameForDisplay)) {
+				exportOPML(account: account)
+			}
+		}
+		buttons.append(.cancel())
+		return ActionSheet(
+			title: Text("Choose an account with the subscriptions to export"),
+			buttons: buttons
+		)
+	}
+
 	var timeline: some View {
 		Section(header: Text("Timeline"), content: {
 			Toggle("Sort Oldest to Newest", isOn: $settings.timelineSortDirection)
@@ -202,7 +236,24 @@ struct SettingsView: View {
 		let build = dict?.object(forKey: "CFBundleVersion") as? String ?? ""
 		return "NetNewsWire \(version) (Build \(build))"
 	}
-	
+
+	private func exportOPML(account: Account?) {
+		guard let account = account,
+			  let url = feedsSettingsModel.generateExportURL(for: account) else {
+			return
+		}
+
+		exportAction(moving: url) { _ in }
+	}
+
+	private func importOPML(account: Account?) {
+		let types = [UTType(filenameExtension: "opml"), UTType("public.xml")].compactMap { $0 }
+		importAction(multipleOfType: types) { (result: Result<[URL], Error>?) in
+			if let urls = try? result?.get() {
+				feedsSettingsModel.processImportedFiles(urls, account)
+			}
+		}
+	}
 }
 
 struct SettingsView_Previews: PreviewProvider {
