@@ -1,5 +1,5 @@
 //
-//  AddWebFeedViewModel.swift
+//  AddWebFeedModel.swift
 //  NetNewsWire
 //
 //  Created by Stuart Breckenridge on 4/7/20.
@@ -30,7 +30,7 @@ enum AddWebFeedError: LocalizedError {
 	
 }
 
-class AddWebFeedViewModel: ObservableObject {
+class AddWebFeedModel: ObservableObject {
 	
 	@Published var shouldDismiss: Bool = false
 	@Published var providedURL: String = ""

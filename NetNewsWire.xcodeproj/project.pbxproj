@@ -27,8 +27,8 @@
 		17930ED524AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */; };
 		179DB1DFBCF9177104B12E0F /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		179DB3CE822BFCC2D774D9F4 /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
-		17D232A824AFF10A0005F075 /* AddWebFeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedViewModel.swift */; };
-		17D232A924AFF10A0005F075 /* AddWebFeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedViewModel.swift */; };
+		17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
+		17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
 		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
 		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
@@ -1730,7 +1730,7 @@
 		17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedView.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
-		17D232A724AFF10A0005F075 /* AddWebFeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedViewModel.swift; sourceTree = "<group>"; };
+		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
 		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
 		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
 		3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
@@ -2411,7 +2411,7 @@
 		17930ED224AF10CD00A9BA52 /* Add */ = {
 			isa = PBXGroup;
 			children = (
-				17D232A724AFF10A0005F075 /* AddWebFeedViewModel.swift */,
+				17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */,
 				17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */,
 			);
 			path = Add;
@@ -3972,46 +3972,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -4021,7 +4021,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -4031,7 +4031,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -4845,7 +4845,7 @@
 				51A576BE24AE637400078888 /* ArticleView.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
-				17D232A824AFF10A0005F075 /* AddWebFeedViewModel.swift in Sources */,
+				17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
 				51E4994224A8713C00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E498F624A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
 				51E498F224A8085D00B667CB /* SmartFeedsController.swift in Sources */,
@@ -4920,7 +4920,7 @@
 				51E4992224A8095600B667CB /* URL-Extensions.swift in Sources */,
 				51E4990424A808C300B667CB /* WebFeedIconDownloader.swift in Sources */,
 				51E498CB24A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
-				17D232A924AFF10A0005F075 /* AddWebFeedViewModel.swift in Sources */,
+				17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
 				51E4993324A867E700B667CB /* AppNotifications.swift in Sources */,
 				51E4990624A808C300B667CB /* ImageDownloader.swift in Sources */,
 				51E4994F24A8734C00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
