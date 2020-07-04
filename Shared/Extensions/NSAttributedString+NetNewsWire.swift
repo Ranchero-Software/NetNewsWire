@@ -12,7 +12,6 @@ import RSParser
 import AppKit
 typealias Font = NSFont
 typealias FontDescriptor = NSFontDescriptor
-typealias Color = NSColor
 
 private let boldTrait = NSFontDescriptor.SymbolicTraits.bold
 private let italicTrait = NSFontDescriptor.SymbolicTraits.italic
@@ -21,7 +20,6 @@ private let monoSpaceTrait = NSFontDescriptor.SymbolicTraits.monoSpace
 import UIKit
 typealias Font = UIFont
 typealias FontDescriptor = UIFontDescriptor
-typealias Color = UIColor
 
 private let boldTrait = UIFontDescriptor.SymbolicTraits.traitBold
 private let italicTrait = UIFontDescriptor.SymbolicTraits.traitItalic

@@ -34,61 +34,65 @@ struct MainApp: App {
 				}
 				.toolbar {
 					
-					ToolbarItem {
-						Button(action: { showSheet = true }, label: {
-							Image(systemName: "plus").foregroundColor(.secondary)
-						}).help("Add Feed")
+					ToolbarItem() {
+						Menu {
+							Button("Add Web Feed", action:  { showSheet = true })
+							Button("Add Reddit Feed", action:  { })
+							Button("Add Twitter Feed", action:  { })
+							Button("Add Folder", action:  { })
+						} label : {
+							AppAssets.addMenuImage
+						}
 					}
 				
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "folder.fill.badge.plus").foregroundColor(.pink)
-						}).help("New Folder")
-					}
-					
-					ToolbarItem {
-						Button(action: {}, label: {
-							Image(systemName: "arrow.clockwise").foregroundColor(.secondary)
+							AppAssets.refreshImage
 						}).help("Refresh").padding(.trailing, 40)
 					}
-					
+
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "circle.dashed").foregroundColor(.orange)
+							AppAssets.markAllAsReadImagePDF
+								.resizable()
+								.scaledToFit()
+								.frame(width: 20, height: 20, alignment: .center)
 						}).help("Mark All as Read")
 					}
 					
 					ToolbarItem {
-						Button(action: {}, label: {
-							Image(systemName: "arrow.triangle.turn.up.right.circle.fill").foregroundColor(.purple)
-						}).help("Go to Next Unread")
+						MacSearchField()
+							.frame(width: 200)
 					}
-					
+
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "star.fill").foregroundColor(.yellow)
+							AppAssets.nextUnreadArticleImage
+						}).help("Go to Next Unread").padding(.trailing, 40)
+					}
+
+					ToolbarItem {
+						Button(action: {}, label: {
+							AppAssets.toggleStarred
 						}).help("Mark as Starred")
 					}
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
+							AppAssets.toggleRead
 						}).help("Mark as Unread")
 					}
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "safari").foregroundColor(.blue)
+							AppAssets.openInBrowserImage
 						}).help("Open in Browser")
 					}
 					ToolbarItem {
 						Button(action: {}, label: {
-							Image(systemName: "square.and.arrow.up")
+							AppAssets.shareImage
 						}).help("Share")
 					}
 					
-					ToolbarItem {
-						MacSearchField()
-							.frame(width: 300)
-					}
+
 				}
 		}
 		.commands {
@@ -197,22 +201,5 @@ struct MainApp: App {
 			})
 		}
 		#endif
-	}
-}
-
-struct PreferredColorSchemeModifier: ViewModifier {
-
-	var preferredColorScheme: UserInterfaceColorPalette
-
-	@ViewBuilder
-	func body(content: Content) -> some View {
-		switch preferredColorScheme {
-		case .automatic:
-			content
-		case .dark:
-			content.preferredColorScheme(.dark)
-		case .light:
-			content.preferredColorScheme(.light)
-		}
 	}
 }

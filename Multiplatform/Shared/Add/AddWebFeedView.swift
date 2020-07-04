@@ -14,7 +14,7 @@ import RSCore
 struct AddWebFeedView: View {
 	
 	@Environment(\.presentationMode) private var presentationMode
-	@ObservedObject private var viewModel = AddWebFeedViewModel()
+	@ObservedObject private var viewModel = AddWebFeedModel()
 	
     @ViewBuilder var body: some View {
 		#if os(iOS)

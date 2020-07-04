@@ -14,7 +14,14 @@ struct TimelineItemView: View {
 	@StateObject var articleIconImageLoader = ArticleIconImageLoader()
 	
 	var timelineItem: TimelineItem
-	
+
+	#if os(macOS)
+	var verticalPadding: CGFloat = 10
+	#endif
+	#if os(iOS)
+	var verticalPadding: CGFloat = 0
+	#endif
+
     var body: some View {
 		VStack {
 			HStack(alignment: .top) {
@@ -46,6 +53,7 @@ struct TimelineItemView: View {
 				}
 			}
 		}
+		.padding(.vertical, verticalPadding)
 		.onAppear {
 			articleIconImageLoader.loadImage(for: timelineItem.article)
 		}

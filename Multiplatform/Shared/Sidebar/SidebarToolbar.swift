@@ -22,19 +22,14 @@ fileprivate class SidebarToolbarViewModel: ObservableObject {
 	}
 	@Published var showActionSheet: Bool = false
 	@Published var showAddSheet: Bool = false
+	
 }
-
 
 struct SidebarToolbar: View {
     
 	@EnvironmentObject private var appSettings: AppDefaults
 	@StateObject private var viewModel = SidebarToolbarViewModel()
 
-
-	var addActionSheetButtons = [
-		Button(action: {}, label: { Text("Add Feed") })
-	]
-	
 	var body: some View {
 		VStack {
 			Divider()
@@ -42,7 +37,7 @@ struct SidebarToolbar: View {
 				Button(action: {
 					viewModel.sheetToShow = .settings
 				}, label: {
-					Image(systemName: "gear")
+					AppAssets.settingsImage
 						.font(.title3)
 						.foregroundColor(.accentColor)
 				}).help("Settings")
@@ -58,7 +53,7 @@ struct SidebarToolbar: View {
 				Button(action: {
 					viewModel.showActionSheet = true
 				}, label: {
-					Image(systemName: "plus")
+					AppAssets.addMenuImage
 						.font(.title3)
 						.foregroundColor(.accentColor)
 				})
