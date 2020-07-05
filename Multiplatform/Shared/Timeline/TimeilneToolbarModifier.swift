@@ -16,6 +16,14 @@ struct TimelineToolbarModifier: ViewModifier {
 		content
 			.toolbar {
 				#if os(iOS)
+				ToolbarItem(placement: .navigation) {
+					Button(action: {
+					}, label: {
+						AppAssets.filterInactiveImage
+							.font(.title3)
+					}).help("Filter Read Articles")
+				}
+				
 				ToolbarItem {
 					Button(action: {
 					}, label: {
@@ -23,15 +31,19 @@ struct TimelineToolbarModifier: ViewModifier {
 							.foregroundColor(.accentColor)
 					}).help("Mark All As Read")
 				}
+				
 				ToolbarItem {
 					Spacer()
 				}
+				
 				ToolbarItem(placement: .automatic) {
 					RefreshProgressView()
 				}
+				
 				ToolbarItem {
 					Spacer()
 				}
+				
 				ToolbarItem {
 					Button(action: {
 					}, label: {
@@ -39,6 +51,7 @@ struct TimelineToolbarModifier: ViewModifier {
 							.font(.title3)
 					}).help("Next Unread")
 				}
+				
 				#endif
 			}
 	}

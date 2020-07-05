@@ -17,13 +17,21 @@ struct SidebarToolbarModifier: ViewModifier {
 		#if os(iOS)
 		content
 			.toolbar {
+				
+				ToolbarItem(placement: .navigation) {
+					Button(action: {
+					}, label: {
+						AppAssets.filterInactiveImage
+							.font(.title3)
+					}).help("Filter Read Feeds")
+				}
+				
 				ToolbarItem(placement: .automatic) {
 					Button(action: {
 						viewModel.sheetToShow = .settings
 					}, label: {
 						AppAssets.settingsImage
 							.font(.title3)
-							.foregroundColor(.accentColor)
 					}).help("Settings")
 				}
 				
@@ -45,7 +53,6 @@ struct SidebarToolbarModifier: ViewModifier {
 					}, label: {
 						AppAssets.addMenuImage
 							.font(.title3)
-							.foregroundColor(.accentColor)
 					})
 					.help("Add")
 					.actionSheet(isPresented: $viewModel.showActionSheet) {

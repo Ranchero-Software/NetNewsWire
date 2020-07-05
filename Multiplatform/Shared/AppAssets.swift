@@ -80,6 +80,14 @@ struct AppAssets {
 		return RSImage(named: "FaviconTemplateImage")!
 	}()
 	
+	static var filterInactiveImage: Image = {
+		return Image(systemName: "line.horizontal.3.decrease.circle")
+	}()
+
+	static var filterActiveImage: Image = {
+		return Image(systemName: "line.horizontal.3.decrease.circle.fill")
+	}()
+
 	static var getInfoImage: Image = {
 		return Image(systemName: "info.circle")
 	}()
