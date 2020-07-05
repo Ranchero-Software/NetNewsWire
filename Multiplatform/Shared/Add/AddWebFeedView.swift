@@ -56,7 +56,7 @@ struct AddWebFeedView: View {
 				Text("Add a Web Feed")
 					.font(.title)
 				Spacer()
-			}
+			}.padding()
 			
 			LazyVGrid(columns: [GridItem(.fixed(75), spacing: 10, alignment: .trailing),GridItem(.fixed(400), spacing: 0, alignment: .leading) ], alignment: .leading, spacing: 10, pinnedViews: [], content:{
 			
@@ -82,7 +82,7 @@ struct AddWebFeedView: View {
 	#if os(iOS)
 	@ViewBuilder var iosForm: some View {
 		NavigationView {
-			Form {
+			List {
 				urlTextField
 				providedNameTextField
 				folderPicker
@@ -111,38 +111,40 @@ struct AddWebFeedView: View {
 	}
 	#endif
 	
-	var urlTextField: some View {
-		HStack {
-			#if os(iOS)
-			Text("Feed:")
-			TextField("URL", text: $viewModel.providedURL)
-				.disableAutocorrection(true)
-				.autocapitalization(UITextAutocapitalizationType.none)
-			#else
-			TextField("URL", text: $viewModel.providedURL)
-				.disableAutocorrection(true)
-			#endif
-		}
+	@ViewBuilder var urlTextField: some View {
+		#if os(iOS)
+		TextField("URL", text: $viewModel.providedURL)
+			.disableAutocorrection(true)
+			.autocapitalization(UITextAutocapitalizationType.none)
+		#else
+		TextField("URL", text: $viewModel.providedURL)
+			.disableAutocorrection(true)
+		#endif
 	}
 	
 	var providedNameTextField: some View {
-		HStack(alignment: .lastTextBaseline) {
-			#if os(iOS)
-			Text("Name:")
-			#endif
-			TextField("Optional", text: $viewModel.providedName)
-		}
+		TextField("Optional", text: $viewModel.providedName)
 	}
 	
 	@ViewBuilder var folderPicker: some View {
 		#if os(iOS)
-		Picker("Folder:", selection: $viewModel.selectedFolderIndex, content: {
+		Picker("Folder", selection: $viewModel.selectedFolderIndex, content: {
 			ForEach(0..<viewModel.containers.count, id: \.self, content: { index in
 				if let containerName = (viewModel.containers[index] as? DisplayNameProvider)?.nameForDisplay {
 					if viewModel.containers[index] is Folder {
-						Text("\(viewModel.containers[index].account?.nameForDisplay ?? "") / \(containerName)").tag(index)
+						HStack(alignment: .top) {
+							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
+								Image(rsImage: image)
+							}
+							Text("\(containerName)").tag(index)
+						}.padding(.leading, 16)
 					} else {
-						Text(containerName).tag(index)
+						HStack(alignment: .top) {
+							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
+								Image(rsImage: image)
+							}
+							Text(containerName).tag(index)
+						}
 					}
 				}
 			})
@@ -152,7 +154,12 @@ struct AddWebFeedView: View {
 			ForEach(0..<viewModel.containers.count, id: \.self, content: { index in
 				if let containerName = (viewModel.containers[index] as? DisplayNameProvider)?.nameForDisplay {
 					if viewModel.containers[index] is Folder {
-						Text("\(viewModel.containers[index].account?.nameForDisplay ?? "") / \(containerName)").padding(.leading, 2).tag(index)
+						HStack {
+							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
+								Image(rsImage: image)
+							}
+							Text("\(containerName)")
+						}.padding(.leading, 2).tag(index)
 					} else {
 						Text(containerName).padding(.leading, 2).tag(index)
 					}

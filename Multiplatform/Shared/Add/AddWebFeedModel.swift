@@ -134,6 +134,11 @@ class AddWebFeedModel: ObservableObject {
 		}
 	}
 	
-	
+	func smallIconImage(for container: Container) -> RSImage? {
+		if let smallIconProvider = container as? SmallIconProvider {
+			return smallIconProvider.smallIcon?.image
+		}
+		return nil
+	}
 	
 }
