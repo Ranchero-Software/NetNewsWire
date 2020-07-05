@@ -36,10 +36,8 @@ struct TimelineToolbarModifier: ViewModifier {
 					Button(action: {
 					}, label: {
 						AppAssets.nextUnreadArticleImage
-							.resizable()
-							.scaledToFit()
-							.frame(width: 22, height: 22, alignment: .center)
-					})
+							.font(.title3)
+					}).help("Next Unread")
 				}
 				#endif
 			}
