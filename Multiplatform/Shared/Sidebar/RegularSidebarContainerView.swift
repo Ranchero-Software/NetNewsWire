@@ -17,7 +17,7 @@ struct RegularSidebarContainerView: View {
 	
     @ViewBuilder var body: some View {
 		SidebarView()
-			.modifier(SidebarToolbar())
+			.modifier(SidebarToolbarModifier())
 			.environmentObject(sidebarModel)
 			.navigationTitle(Text("Feeds"))
 			.listStyle(SidebarListStyle())

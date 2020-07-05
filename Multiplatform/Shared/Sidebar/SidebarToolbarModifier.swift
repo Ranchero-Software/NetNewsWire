@@ -1,5 +1,5 @@
 //
-//  SidebarToolbar.swift
+//  SidebarToolbarModifier.swift
 //  Multiplatform iOS
 //
 //  Created by Stuart Breckenridge on 30/6/20.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SidebarToolbar: ViewModifier {
+struct SidebarToolbarModifier: ViewModifier {
     
 	@EnvironmentObject private var appSettings: AppDefaults
 	@StateObject private var viewModel = SidebarToolbarModel()

@@ -16,7 +16,7 @@ struct CompactSidebarContainerView: View {
 	
 	var body: some View {
 		SidebarView()
-			.modifier(SidebarToolbar())
+			.modifier(SidebarToolbarModifier())
 			.environmentObject(sidebarModel)
 			.navigationBarTitle(Text("Feeds"))
 			.listStyle(PlainListStyle())
