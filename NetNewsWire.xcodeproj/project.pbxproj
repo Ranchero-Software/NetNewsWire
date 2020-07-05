@@ -214,6 +214,8 @@
 		517630042336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		517630052336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		517630232336657E00E15FFF /* WebViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517630222336657E00E15FFF /* WebViewProvider.swift */; };
+		5177470324B2657F00EB0F74 /* TimeilneToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470224B2657F00EB0F74 /* TimeilneToolbarModifier.swift */; };
+		5177470424B2657F00EB0F74 /* TimeilneToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470224B2657F00EB0F74 /* TimeilneToolbarModifier.swift */; };
 		517A745B2443665000B553B9 /* UIPageViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */; };
 		517A757724451BFC00B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; };
 		517A757824451BFC00B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1859,6 +1861,7 @@
 		51707438232AA97100A461A3 /* ShareFolderPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerController.swift; sourceTree = "<group>"; };
 		517630032336215100E15FFF /* main.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		517630222336657E00E15FFF /* WebViewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewProvider.swift; sourceTree = "<group>"; };
+		5177470224B2657F00EB0F74 /* TimeilneToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeilneToolbarModifier.swift; sourceTree = "<group>"; };
 		517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageViewController-Extensions.swift"; sourceTree = "<group>"; };
 		517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthSwift.xcodeproj; path = submodules/OAuthSwift/OAuthSwift.xcodeproj; sourceTree = "<group>"; };
 		5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredColorSchemeModifier.swift; sourceTree = "<group>"; };
@@ -2712,6 +2715,7 @@
 		51919FCB24AB855000541E64 /* Timeline */ = {
 			isa = PBXGroup;
 			children = (
+				5177470224B2657F00EB0F74 /* TimeilneToolbarModifier.swift */,
 				51919FED24AB85E400541E64 /* TimelineContainerView.swift */,
 				51919FF324AB869C00541E64 /* TimelineItem.swift */,
 				514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */,
@@ -4920,6 +4924,7 @@
 				51C0515E24A77DF800194D5E /* MainApp.swift in Sources */,
 				51919FF724AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4993D24A870F800B667CB /* UserNotificationManager.swift in Sources */,
+				5177470324B2657F00EB0F74 /* TimeilneToolbarModifier.swift in Sources */,
 				51E4991524A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
 				51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				FFA2BBD624AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift in Sources */,
@@ -5028,6 +5033,7 @@
 				1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */,
 				1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */,
 				FFA2BBD724AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift in Sources */,
+				5177470424B2657F00EB0F74 /* TimeilneToolbarModifier.swift in Sources */,
 				51E4992D24A8676300B667CB /* FetchRequestOperation.swift in Sources */,
 				51E4992424A8098400B667CB /* SmartFeedPasteboardWriter.swift in Sources */,
 				51E4991424A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,

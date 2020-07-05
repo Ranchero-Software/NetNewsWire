@@ -18,42 +18,12 @@ struct TimelineContainerView: View {
 	@ViewBuilder var body: some View {
 		if let feed = feed {
 			TimelineView()
+				.modifier(TimelineToolbarModifier())
 				.environmentObject(timelineModel)
 				.onAppear {
 					sceneModel.timelineModel = timelineModel
 					timelineModel.delegate = sceneModel
 					timelineModel.rebuildTimelineItems(feed)
-				}
-				.toolbar {
-					#if os(iOS)
-					ToolbarItem {
-						Button(action: {
-						}, label: {
-							AppAssets.markAllAsReadImage
-								.foregroundColor(.accentColor)
-						}).help("Mark All As Read")
-					}
-					ToolbarItem {
-						Spacer()
-					}
-					ToolbarItem {
-						Text("Last updated")
-							.font(.caption)
-							.foregroundColor(.secondary)
-					}
-					ToolbarItem {
-						Spacer()
-					}
-					ToolbarItem {
-						Button(action: {
-						}, label: {
-							AppAssets.nextUnreadArticleImage
-								.resizable()
-								.scaledToFit()
-								.frame(width: 22, height: 22, alignment: .center)
-						})
-					}
-					#endif
 				}
 		} else {
 			EmptyView()
