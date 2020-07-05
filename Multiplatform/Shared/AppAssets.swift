@@ -52,6 +52,18 @@ struct AppAssets {
 		return Image(systemName: "plus")
 	}()
 	
+	static var articleExtractorError: Image = {
+		return Image("ArticleExtractorError")
+	}()
+
+	static var articleExtractorOff: Image = {
+		return Image(systemName: "doc.plaintext")
+	}()
+
+	static var articleExtractorOn: Image = {
+		return Image("ArticleExtractorOn")
+	}()
+
 	static var copyImage: Image = {
 		return Image(systemName: "doc.on.doc")
 	}()
@@ -92,6 +104,14 @@ struct AppAssets {
 		return Image(systemName: "info.circle")
 	}()
 
+	static var nextArticleImage: Image = {
+		return Image(systemName: "chevron.down")
+	}()
+	
+	static var prevArticleImage: Image = {
+		return Image(systemName: "chevron.up")
+	}()
+
 	static var renameImage: Image = {
 		return Image(systemName: "textformat")
 	}()
@@ -129,6 +149,14 @@ struct AppAssets {
 		return Image(systemName: "safari")
 	}()
 
+	static var readClosedImage: Image = {
+		return Image(systemName: "largecircle.fill.circle")
+	}()
+
+	static var readOpenImage: Image = {
+		return Image(systemName: "circle")
+	}()
+
 	static var refreshImage: Image = {
 		return Image(systemName: "arrow.clockwise")
 	}()
@@ -154,6 +182,14 @@ struct AppAssets {
 		Image(systemName: "square.and.arrow.up")
 	}()
 	
+	static var starClosedImage: Image = {
+		return Image(systemName: "star.fill")
+	}()
+	
+	static var starOpenImage: Image = {
+		return Image(systemName: "star")
+	}()
+
 	static var smartFeedImage: RSImage = {
 		#if os(macOS)
 		return NSImage(systemSymbolName: "gear", accessibilityDescription: nil)!
@@ -213,14 +249,6 @@ struct AppAssets {
 		let coloredImage = image.tinted(color: .orange)!
 		return IconImage(coloredImage)
 		#endif
-	}()
-
-	static var toggleStarred: Image = {
-		return Image(systemName: "star.fill")
-	}()
-
-	static var toggleRead: Image = {
-		return Image(systemName: "largecircle.fill.circle")
 	}()
 
 	static var unreadFeedImage: IconImage {

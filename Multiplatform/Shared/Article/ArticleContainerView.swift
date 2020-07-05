@@ -17,6 +17,7 @@ struct ArticleContainerView: View {
 	
 	@ViewBuilder var body: some View {
 		ArticleView()
+			.modifier(ArticleToolbarModifier())
 			.environmentObject(articleModel)
 			.onAppear {
 				sceneModel.articleModel = articleModel

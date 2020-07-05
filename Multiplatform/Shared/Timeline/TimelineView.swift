@@ -14,10 +14,12 @@ struct TimelineView: View {
 
 	var body: some View {
 		List(timelineModel.timelineItems) { timelineItem in
-			TimelineItemView(timelineItem: timelineItem)
-				.onAppear {
-					timelineModel.loadMoreTimelineItemsIfNecessary(timelineItem)
-				}
+			NavigationLink(destination: (ArticleContainerView(article: timelineItem.article))) {
+				TimelineItemView(timelineItem: timelineItem)
+					.onAppear {
+						timelineModel.loadMoreTimelineItemsIfNecessary(timelineItem)
+					}
+			}
 		}
     }
 	

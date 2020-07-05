@@ -73,12 +73,12 @@ struct MainApp: App {
 
 					ToolbarItem {
 						Button(action: {}, label: {
-							AppAssets.toggleStarred
+							AppAssets.starOpenImage
 						}).help("Mark as Starred")
 					}
 					ToolbarItem {
 						Button(action: {}, label: {
-							AppAssets.toggleRead
+							AppAssets.readClosedImage
 						}).help("Mark as Unread")
 					}
 					ToolbarItem {

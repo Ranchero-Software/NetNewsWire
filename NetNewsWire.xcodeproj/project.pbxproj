@@ -216,6 +216,8 @@
 		517630232336657E00E15FFF /* WebViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517630222336657E00E15FFF /* WebViewProvider.swift */; };
 		5177470324B2657F00EB0F74 /* TimeilneToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470224B2657F00EB0F74 /* TimeilneToolbarModifier.swift */; };
 		5177470424B2657F00EB0F74 /* TimeilneToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470224B2657F00EB0F74 /* TimeilneToolbarModifier.swift */; };
+		5177470624B2910300EB0F74 /* ArticleToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */; };
+		5177470724B2910300EB0F74 /* ArticleToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */; };
 		517A745B2443665000B553B9 /* UIPageViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */; };
 		517A757724451BFC00B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; };
 		517A757824451BFC00B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1862,6 +1864,7 @@
 		517630032336215100E15FFF /* main.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		517630222336657E00E15FFF /* WebViewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewProvider.swift; sourceTree = "<group>"; };
 		5177470224B2657F00EB0F74 /* TimeilneToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeilneToolbarModifier.swift; sourceTree = "<group>"; };
+		5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleToolbarModifier.swift; sourceTree = "<group>"; };
 		517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageViewController-Extensions.swift"; sourceTree = "<group>"; };
 		517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthSwift.xcodeproj; path = submodules/OAuthSwift/OAuthSwift.xcodeproj; sourceTree = "<group>"; };
 		5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredColorSchemeModifier.swift; sourceTree = "<group>"; };
@@ -2740,6 +2743,7 @@
 			children = (
 				51A5769524AE617200078888 /* ArticleContainerView.swift */,
 				51A576BA24AE621800078888 /* ArticleModel.swift */,
+				5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */,
 				51A576BD24AE637400078888 /* ArticleView.swift */,
 			);
 			path = Article;
@@ -4843,6 +4847,7 @@
 				514E6C0924AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */,
 				6594CA3B24AF6F2A005C7D7C /* OPMLExporter.swift in Sources */,
 				FA80C13E24B072AA00974098 /* AddFolderModel.swift in Sources */,
+				5177470624B2910300EB0F74 /* ArticleToolbarModifier.swift in Sources */,
 				51919FAF24AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
 				514E6BDA24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				FA80C11724B0728000974098 /* AddFolderView.swift in Sources */,
@@ -4952,6 +4957,7 @@
 				51919FB024AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
 				51919FEF24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				51E4996624A8760B00B667CB /* ArticleStyle.swift in Sources */,
+				5177470724B2910300EB0F74 /* ArticleToolbarModifier.swift in Sources */,
 				FA80C11824B0728000974098 /* AddFolderView.swift in Sources */,
 				51E4996C24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
 				51E4990824A808C300B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
