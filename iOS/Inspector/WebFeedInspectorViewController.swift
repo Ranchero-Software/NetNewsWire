@@ -50,8 +50,8 @@ class WebFeedInspectorViewController: UITableViewController {
 		notifyAboutNewArticlesSwitch.setOn(webFeed.isNotifyAboutNewArticles ?? false, animated: false)
 		alwaysShowReaderViewSwitch.setOn(webFeed.isArticleExtractorAlwaysOn ?? false, animated: false)
 
-		homePageLabel.text = webFeed.homePageURL
-		feedURLLabel.text = webFeed.url
+		homePageLabel.text = webFeed.homePageURL?.decodedURLString
+		feedURLLabel.text = webFeed.url.decodedURLString
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		
