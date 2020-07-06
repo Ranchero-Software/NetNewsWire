@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		172199C924AB228900A31D04 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199C824AB228900A31D04 /* SettingsView.swift */; };
 		172199ED24AB2E0100A31D04 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199EC24AB2E0100A31D04 /* SafariView.swift */; };
-		172199EF24AB372D00A31D04 /* VisualEffectBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199EE24AB372D00A31D04 /* VisualEffectBlur.swift */; };
 		172199F124AB716900A31D04 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
 		1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */; };
 		1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */; };
@@ -219,6 +218,7 @@
 		5177470724B2910300EB0F74 /* ArticleToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */; };
 		5177470924B2F87600EB0F74 /* SidebarListStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470824B2F87600EB0F74 /* SidebarListStyleModifier.swift */; };
 		5177470A24B2F87600EB0F74 /* SidebarListStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470824B2F87600EB0F74 /* SidebarListStyleModifier.swift */; };
+		5177470E24B2FF6F00EB0F74 /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177470D24B2FF6F00EB0F74 /* ArticleView.swift */; };
 		517A745B2443665000B553B9 /* UIPageViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */; };
 		517A757724451BFC00B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; };
 		517A757824451BFC00B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -284,7 +284,6 @@
 		51A5769724AE617200078888 /* ArticleContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A5769524AE617200078888 /* ArticleContainerView.swift */; };
 		51A576BB24AE621800078888 /* ArticleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A576BA24AE621800078888 /* ArticleModel.swift */; };
 		51A576BC24AE621800078888 /* ArticleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A576BA24AE621800078888 /* ArticleModel.swift */; };
-		51A576BE24AE637400078888 /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A576BD24AE637400078888 /* ArticleView.swift */; };
 		51A576BF24AE637400078888 /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A576BD24AE637400078888 /* ArticleView.swift */; };
 		51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
 		51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
@@ -1736,7 +1735,6 @@
 /* Begin PBXFileReference section */
 		172199C824AB228900A31D04 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		172199EC24AB2E0100A31D04 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
-		172199EE24AB372D00A31D04 /* VisualEffectBlur.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisualEffectBlur.swift; sourceTree = "<group>"; };
 		172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModifier.swift; sourceTree = "<group>"; };
 		1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesView.swift; sourceTree = "<group>"; };
 		1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesView.swift; sourceTree = "<group>"; };
@@ -1866,6 +1864,7 @@
 		5177470224B2657F00EB0F74 /* TimeilneToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeilneToolbarModifier.swift; sourceTree = "<group>"; };
 		5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleToolbarModifier.swift; sourceTree = "<group>"; };
 		5177470824B2F87600EB0F74 /* SidebarListStyleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarListStyleModifier.swift; sourceTree = "<group>"; };
+		5177470D24B2FF6F00EB0F74 /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageViewController-Extensions.swift"; sourceTree = "<group>"; };
 		517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthSwift.xcodeproj; path = submodules/OAuthSwift/OAuthSwift.xcodeproj; sourceTree = "<group>"; };
 		5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredColorSchemeModifier.swift; sourceTree = "<group>"; };
@@ -2652,6 +2651,22 @@
 			path = Reddit;
 			sourceTree = "<group>";
 		};
+		5177470B24B2FF2C00EB0F74 /* Article */ = {
+			isa = PBXGroup;
+			children = (
+				5177470D24B2FF6F00EB0F74 /* ArticleView.swift */,
+			);
+			path = Article;
+			sourceTree = "<group>";
+		};
+		5177470C24B2FF3B00EB0F74 /* Article */ = {
+			isa = PBXGroup;
+			children = (
+				51A576BD24AE637400078888 /* ArticleView.swift */,
+			);
+			path = Article;
+			sourceTree = "<group>";
+		};
 		517A754524451BD500B553B9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2745,7 +2760,6 @@
 				51A5769524AE617200078888 /* ArticleContainerView.swift */,
 				51A576BA24AE621800078888 /* ArticleModel.swift */,
 				5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */,
-				51A576BD24AE637400078888 /* ArticleView.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -2774,12 +2788,12 @@
 		51C0519324A77E6600194D5E /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				5177470B24B2FF2C00EB0F74 /* Article */,
 				51C051CF24A7A72100194D5E /* iOS-dev.entitlements */,
 				51C051CE24A7A72100194D5E /* iOS.entitlements */,
 				51C0513F24A77DF800194D5E /* Info.plist */,
 				51E4993B24A8709900B667CB /* AppDelegate.swift */,
 				172199EC24AB2E0100A31D04 /* SafariView.swift */,
-				172199EE24AB372D00A31D04 /* VisualEffectBlur.swift */,
 				172199EB24AB228E00A31D04 /* Settings */,
 			);
 			path = iOS;
@@ -2788,6 +2802,7 @@
 		51C0519424A77E6D00194D5E /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				5177470C24B2FF3B00EB0F74 /* Article */,
 				51C051CD24A7A6DB00194D5E /* macOS-dev.entitlements */,
 				51C0514724A77DF800194D5E /* macOS.entitlements */,
 				51C0514624A77DF800194D5E /* Info.plist */,
@@ -4860,7 +4875,6 @@
 				51E4992324A8095700B667CB /* URL-Extensions.swift in Sources */,
 				51E4993624A867E800B667CB /* UserInfoKey.swift in Sources */,
 				51E4990924A808C500B667CB /* WebFeedIconDownloader.swift in Sources */,
-				172199EF24AB372D00A31D04 /* VisualEffectBlur.swift in Sources */,
 				51E498F524A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
 				172199F124AB716900A31D04 /* SidebarToolbarModifier.swift in Sources */,
 				65CBAD5A24AE03C20006DD91 /* ColorPaletteContainerView.swift in Sources */,
@@ -4887,7 +4901,6 @@
 				51E4991D24A8092100B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
 				FF64D0E924AF53EE0084080A /* RefreshProgressView.swift in Sources */,
 				51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */,
-				51A576BE24AE637400078888 /* ArticleView.swift in Sources */,
 				5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
@@ -4909,6 +4922,7 @@
 				51E4997124A8764C00B667CB /* ActivityType.swift in Sources */,
 				51E4991E24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
 				51E499D824A912C200B667CB /* SceneModel.swift in Sources */,
+				5177470E24B2FF6F00EB0F74 /* ArticleView.swift in Sources */,
 				51919FB324AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
 				51919FB324AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
 				51E4991324A808FB00B667CB /* AddWebFeedDefaultContainer.swift in Sources */,
