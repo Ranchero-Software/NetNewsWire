@@ -25,6 +25,12 @@ struct SidebarItemView: View {
 			if sidebarItem.unreadCount > 0 {
 				UnreadCountView(count: sidebarItem.unreadCount)
 			}
+			#if os(iOS)
+			if sidebarItem.representedType == .webFeed || sidebarItem.representedType == .pseudoFeed {
+				Spacer()
+					.frame(width: 16)
+			}
+			#endif
 		}
 		.onAppear {
 			if let feed = sidebarItem.feed {
