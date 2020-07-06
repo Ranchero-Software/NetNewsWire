@@ -2426,6 +2426,8 @@
 			children = (
 				65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */,
 				65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */,
+				17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */,
+				65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */,
 				5181C66124B0C326002E0F70 /* SettingsModel.swift */,
 				172199C824AB228900A31D04 /* SettingsView.swift */,
 				17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */,
