@@ -2412,9 +2412,10 @@
 			isa = PBXGroup;
 			children = (
 				65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */,
+				17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */,
+				65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */,
 				5181C66124B0C326002E0F70 /* SettingsModel.swift */,
 				172199C824AB228900A31D04 /* SettingsView.swift */,
-				17B223B924AC24A8001E4592 /* Submenus */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2447,15 +2448,6 @@
 				FA80C11624B0728000974098 /* AddFolderView.swift */,
 			);
 			path = Add;
-			sourceTree = "<group>";
-		};
-		17B223B924AC24A8001E4592 /* Submenus */ = {
-			isa = PBXGroup;
-			children = (
-				17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */,
-				65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */,
-			);
-			path = Submenus;
 			sourceTree = "<group>";
 		};
 		510289CE2451BA1E00426DDF /* Twitter */ = {
