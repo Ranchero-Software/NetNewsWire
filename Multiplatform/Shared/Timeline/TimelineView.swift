@@ -14,11 +14,14 @@ struct TimelineView: View {
 
 	var body: some View {
 		List(timelineModel.timelineItems) { timelineItem in
-			NavigationLink(destination: (ArticleContainerView(article: timelineItem.article))) {
+			ZStack {
 				TimelineItemView(timelineItem: timelineItem)
 					.onAppear {
 						timelineModel.loadMoreTimelineItemsIfNecessary(timelineItem)
 					}
+				NavigationLink(destination: (ArticleContainerView(article: timelineItem.article))) {
+					EmptyView()
+				}.buttonStyle(PlainButtonStyle())
 			}
 		}
     }

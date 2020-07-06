@@ -25,18 +25,27 @@ struct SidebarView: View {
 							if let containerID = sidebarItem.containerID {
 								DisclosureGroup(isExpanded: $expandedContainers[containerID]) {
 									ForEach(sidebarItem.children) { sidebarItem in
-										NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+										ZStack {
 											SidebarItemView(sidebarItem: sidebarItem)
+											NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+												EmptyView()
+											}.buttonStyle(PlainButtonStyle())
 										}
 									}
 								} label: {
-									NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+									ZStack {
 										SidebarItemView(sidebarItem: sidebarItem)
+										NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+											EmptyView()
+										}.buttonStyle(PlainButtonStyle())
 									}
 								}
 							} else {
-								NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+								ZStack {
 									SidebarItemView(sidebarItem: sidebarItem)
+									NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed))) {
+										EmptyView()
+									}.buttonStyle(PlainButtonStyle())
 								}
 							}
 						}
