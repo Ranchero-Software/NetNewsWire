@@ -11,6 +11,12 @@ import RSCore
 import Account
 
 struct AppAssets {
+
+	#if os(iOS)
+	static var accentColor: UIColor! = {
+		return UIColor(named: "AccentColor")
+	}()
+	#endif
 	
 	static var accountLocalMacImage: RSImage! = {
 		return RSImage(named: "AccountLocalMac")

@@ -181,7 +181,7 @@ struct SettingsView: View {
 				viewModel.selectedWebsite = .netNewsWireSlack
 			}).foregroundColor(.primary)
 			NavigationLink(
-				destination: EmptyView(),
+				destination: SettingsAboutView(),
 				label: {
 					Text("About NetNewsWire")
 				})
