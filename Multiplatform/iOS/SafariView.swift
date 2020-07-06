@@ -12,8 +12,6 @@ import SafariServices
 
 private final class Safari: UIViewControllerRepresentable {
 	
-	typealias UIViewControllerType = SFSafariViewController
-	
 	var urlToLoad: URL
 	
 	init(url: URL) {

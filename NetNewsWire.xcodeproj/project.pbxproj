@@ -2788,12 +2788,12 @@
 		51C0519324A77E6600194D5E /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				5177470B24B2FF2C00EB0F74 /* Article */,
 				51C051CF24A7A72100194D5E /* iOS-dev.entitlements */,
 				51C051CE24A7A72100194D5E /* iOS.entitlements */,
 				51C0513F24A77DF800194D5E /* Info.plist */,
 				51E4993B24A8709900B667CB /* AppDelegate.swift */,
 				172199EC24AB2E0100A31D04 /* SafariView.swift */,
+				5177470B24B2FF2C00EB0F74 /* Article */,
 				172199EB24AB228E00A31D04 /* Settings */,
 			);
 			path = iOS;
