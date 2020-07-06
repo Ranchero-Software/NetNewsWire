@@ -17,13 +17,12 @@ final class SceneModel: ObservableObject {
 	var timelineModel: TimelineModel?
 	var articleModel: ArticleModel?
 	
-	private let refreshProgressModel: RefreshProgressModel
+	private var refreshProgressModel: RefreshProgressModel? = nil
 	
-	init(refreshProgressModel: RefreshProgressModel = RefreshProgressModel()) {
-		self.refreshProgressModel = refreshProgressModel
-		self.refreshProgressModel.$state.assign(to: self.$refreshProgressState)
+	func startup() {
+		self.refreshProgressModel = RefreshProgressModel()
+		self.refreshProgressModel!.$state.assign(to: self.$refreshProgressState)
 	}
-	
 }
 
 // MARK: SidebarModelDelegate

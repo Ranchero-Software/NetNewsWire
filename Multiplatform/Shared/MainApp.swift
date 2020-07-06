@@ -29,6 +29,9 @@ struct MainApp: App {
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
 				.environmentObject(sceneModel)
 				.environmentObject(defaults)
+				.onAppear {
+					sceneModel.startup()
+				}
 				.sheet(isPresented: $showSheet, onDismiss: { showSheet = false }) {
 					AddWebFeedView()
 				}
@@ -155,6 +158,9 @@ struct MainApp: App {
 				.environmentObject(sceneModel)
 				.environmentObject(defaults)
 				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
+				.onAppear {
+					sceneModel.startup()
+				}
 		}
 		.commands {
 			CommandGroup(after: .newItem, addition: {
