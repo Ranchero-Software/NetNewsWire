@@ -1,25 +1,26 @@
 //
-//  CompactSidebarContainerView.swift
-//  Multiplatform iOS
+//  SidebarContainerView.swift
+//  NetNewsWire
 //
-//  Created by Stuart Breckenridge on 29/6/20.
+//  Created by Maurice Parker on 6/28/20.
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
 import SwiftUI
 
-struct CompactSidebarContainerView: View {
-    
+struct SidebarContainerView: View {
+	
 	@EnvironmentObject private var sceneModel: SceneModel
 	@StateObject private var sidebarModel = SidebarModel()
+	
 	@State private var showSettings: Bool = false
 	
-	var body: some View {
+    @ViewBuilder var body: some View {
 		SidebarView()
 			.modifier(SidebarToolbarModifier())
+			.modifier(SidebarListStyleModifier())
 			.environmentObject(sidebarModel)
-			.navigationBarTitle(Text("Feeds"))
-			.listStyle(PlainListStyle())
+			.navigationTitle(Text("Feeds"))
 			.onAppear {
 				sceneModel.sidebarModel = sidebarModel
 				sidebarModel.delegate = sceneModel
@@ -29,9 +30,9 @@ struct CompactSidebarContainerView: View {
 	
 }
 
-struct CompactSidebarContainerView_Previews: PreviewProvider {
+struct SidebarContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        CompactSidebarContainerView()
+        SidebarContainerView()
 			.environmentObject(SceneModel())
     }
 }

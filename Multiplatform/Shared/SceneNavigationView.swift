@@ -17,15 +17,10 @@ struct SceneNavigationView: View {
 	var body: some View {
 		NavigationView {
 			#if os(macOS)
-			RegularSidebarContainerView()
+			SidebarContainerView()
 				.frame(minWidth: 100, idealWidth: 150, maxHeight: .infinity)
 			#else
-			if horizontalSizeClass == .compact {
-				CompactSidebarContainerView()
-				
-			} else {
-				RegularSidebarContainerView()
-			}
+				SidebarContainerView()
 			#endif
 
 			#if os(iOS)
