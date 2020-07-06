@@ -1,6 +1,6 @@
 # ![Icon](Technotes/Images/icon.png) NetNewsWire
 
-![CI](https://github.com/Ranchero-Software/NetNewsWire/workflows/CI/badge.svg?branch=master)
+[![CI](https://github.com/Ranchero-Software/NetNewsWire/workflows/CI/badge.svg?branch=master)](https://github.com/Ranchero-Software/NetNewsWire/actions?query=workflow%3ACI+branch%3Amaster)
 
 It’s a free and open source feed reader for macOS and iOS.
 
