@@ -91,6 +91,14 @@ struct SettingsView: View {
 					.foregroundColor(.primary)
 			}
 		})
+		.alert(isPresented: $feedsSettingsModel.showError) {
+			Alert(
+				title: Text(feedsSettingsModel.feedsSettingsError!.title ?? "Oops"),
+				message: Text(feedsSettingsModel.feedsSettingsError!.localizedDescription),
+				dismissButton: Alert.Button.cancel({
+					feedsSettingsModel.feedsSettingsError = FeedsSettingsError.none
+				}))
+		}
 
 	}
 
