@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TimelineLayoutView: View {
     
-	@EnvironmentObject private var appSettings: AppDefaults
+	@EnvironmentObject private var defaults: AppDefaults
 	
 	private let sampleTitle = "Lorem dolor sed viverra ipsum. Gravida rutrum quisque non tellus. Rutrum tellus pellentesque eu tincidunt tortor. Sed blandit libero volutpat sed cras ornare. Et netus et malesuada fames ac. Ultrices eros in cursus turpis massa tincidunt dui ut ornare. Lacus sed viverra tellus in. Sollicitudin ac orci phasellus egestas. Purus in mollis nunc sed. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque. Interdum consectetur libero id faucibus nisl tincidunt eget."
 	
@@ -33,15 +33,17 @@ struct TimelineLayoutView: View {
     }
 	
 	var iconSize: some View {
-		Slider(value: $appSettings.timelineIconDimensions, in: 20...60, step: 10, minimumValueLabel: Text("Small"), maximumValueLabel: Text("Large"), label: {
-			Text(String(appSettings.timelineIconDimensions))
+		Slider(value: $defaults.timelineIconDimensions, in: 20...60, step: 10, minimumValueLabel: Text("Small"), maximumValueLabel: Text("Large"), label: {
+			Text(String(defaults.timelineIconDimensions))
 		})
 	}
 	
 	var numberOfLines: some View {
-		Stepper(value: $appSettings.timelineNumberOfLines, in: 1...5, label: {
-			Text("Title")
+		Slider(value: $defaults.timelineNumberOfLines, in: 1...5, step: 1, minimumValueLabel: Text("1"), maximumValueLabel: Text("5"), label: {
+			Text("Article Title")
 		})
+		
+		
 	}
 	
 	var timelineRowPreview: some View {
@@ -54,13 +56,13 @@ struct TimelineLayoutView: View {
 			
 			Image(systemName: "paperplane.circle")
 				.resizable()
-				.frame(width: CGFloat(appSettings.timelineIconDimensions), height: CGFloat(appSettings.timelineIconDimensions), alignment: .top)
+				.frame(width: CGFloat(defaults.timelineIconDimensions), height: CGFloat(defaults.timelineIconDimensions), alignment: .top)
 				.foregroundColor(.accentColor)
 			
 			VStack(alignment: .leading, spacing: 4) {
 				Text(sampleTitle)
 					.font(.headline)
-					.lineLimit(appSettings.timelineNumberOfLines)
+					.lineLimit(Int(defaults.timelineNumberOfLines))
 				HStack {
 					Text("Feed Name")
 						.foregroundColor(.secondary)

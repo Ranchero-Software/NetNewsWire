@@ -33,7 +33,7 @@ struct TimelineItemView: View {
 				VStack {
 					Text(verbatim: timelineItem.article.title ?? "N/A")
 						.fontWeight(.semibold)
-						.lineLimit(defaults.timelineNumberOfLines)
+						.lineLimit(Int(defaults.timelineNumberOfLines))
 						.frame(maxWidth: .infinity, alignment: .leading)
 						.padding(.trailing, 4)
 					Spacer()

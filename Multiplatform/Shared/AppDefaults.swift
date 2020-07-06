@@ -172,7 +172,7 @@ final class AppDefaults: ObservableObject {
 	// MARK: Timeline
 	@AppStorage(wrappedValue: false, Key.timelineGroupByFeed, store: store) var timelineGroupByFeed: Bool
 	
-	@AppStorage(wrappedValue: 3, Key.timelineNumberOfLines, store: store) var timelineNumberOfLines: Int {
+	@AppStorage(wrappedValue: 2.0, Key.timelineNumberOfLines, store: store) var timelineNumberOfLines: Double {
 		didSet {
 			objectWillChange.send()
 		}
