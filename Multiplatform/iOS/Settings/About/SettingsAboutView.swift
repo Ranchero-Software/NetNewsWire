@@ -17,7 +17,7 @@ struct SettingsAboutView: View {
 		GeometryReader { geometry in
 			List {
 				Text("NetNewsWire").font(.largeTitle)
-				AttributedStringView(string: self.viewModel.about, preferredMaxLayoutWidth: geometry.size.width - 20)
+					AttributedStringView(string: self.viewModel.about, preferredMaxLayoutWidth: geometry.size.width - 20)
 				Section(header: Text("CREDITS")) {
 					AttributedStringView(string: self.viewModel.credits, preferredMaxLayoutWidth: geometry.size.width - 20)
 				}
@@ -29,6 +29,7 @@ struct SettingsAboutView: View {
 				}
 			}.listStyle(InsetGroupedListStyle())
 		}
+		.navigationTitle(Text("About"))
     }
 
 }
