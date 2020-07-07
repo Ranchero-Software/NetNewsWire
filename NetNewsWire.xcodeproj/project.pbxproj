@@ -670,6 +670,9 @@
 		6581C74020CED60100F4AD34 /* netnewswire-subscribe-to-feed.js in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */; };
 		6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
 		6594CA3B24AF6F2A005C7D7C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
+		65ACE48424B4779B003AE06A /* SettingsAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ACE48324B4779B003AE06A /* SettingsAddAccountView.swift */; };
+		65ACE48624B477C9003AE06A /* SettingsAccountLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ACE48524B477C9003AE06A /* SettingsAccountLabelView.swift */; };
+		65ACE48824B48020003AE06A /* SettingsLocalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ACE48724B48020003AE06A /* SettingsLocalAccountView.swift */; };
 		65C2E40124B05D8A000AFDF6 /* FeedsSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */; };
 		65CBAD5A24AE03C20006DD91 /* ColorPaletteContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */; };
 		65ED3FB7235DEF6C0081F399 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
@@ -2079,6 +2082,9 @@
 		6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "netnewswire-subscribe-to-feed.js"; sourceTree = "<group>"; };
 		6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ToolbarItemIcon.pdf; sourceTree = "<group>"; };
 		6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Subscribe_to_Feed.entitlements; sourceTree = "<group>"; };
+		65ACE48324B4779B003AE06A /* SettingsAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAddAccountView.swift; sourceTree = "<group>"; };
+		65ACE48524B477C9003AE06A /* SettingsAccountLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountLabelView.swift; sourceTree = "<group>"; };
+		65ACE48724B48020003AE06A /* SettingsLocalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLocalAccountView.swift; sourceTree = "<group>"; };
 		65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedsSettingsModel.swift; sourceTree = "<group>"; };
 		65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteContainerView.swift; sourceTree = "<group>"; };
 		65ED4083235DEF6C0081F399 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2466,6 +2472,7 @@
 				5181C66124B0C326002E0F70 /* SettingsModel.swift */,
 				172199C824AB228900A31D04 /* SettingsView.swift */,
 				17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */,
+				65ACE46124B47770003AE06A /* Accounts */,
 				5177475724B399B500EB0F74 /* About */,
 			);
 			path = Settings;
@@ -3124,6 +3131,16 @@
 				6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */,
 			);
 			path = SafariExtension;
+			sourceTree = "<group>";
+		};
+		65ACE46124B47770003AE06A /* Accounts */ = {
+			isa = PBXGroup;
+			children = (
+				65ACE48324B4779B003AE06A /* SettingsAddAccountView.swift */,
+				65ACE48524B477C9003AE06A /* SettingsAccountLabelView.swift */,
+				65ACE48724B48020003AE06A /* SettingsLocalAccountView.swift */,
+			);
+			path = Accounts;
 			sourceTree = "<group>";
 		};
 		65ED429A235E71B40081F399 /* Products */ = {
@@ -4984,6 +5001,7 @@
 				51E4996924A8760C00B667CB /* ArticleStylesManager.swift in Sources */,
 				5177471E24B387E100EB0F74 /* ImageTransition.swift in Sources */,
 				51E498F324A8085D00B667CB /* PseudoFeed.swift in Sources */,
+				65ACE48424B4779B003AE06A /* SettingsAddAccountView.swift in Sources */,
 				51A5769624AE617200078888 /* ArticleContainerView.swift in Sources */,
 				5181C5AD24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */,
 				51E4996B24A8762D00B667CB /* ArticleExtractor.swift in Sources */,
@@ -5027,6 +5045,7 @@
 				51E4993C24A8709900B667CB /* AppDelegate.swift in Sources */,
 				51E498F924A8085D00B667CB /* SmartFeed.swift in Sources */,
 				51A576BB24AE621800078888 /* ArticleModel.swift in Sources */,
+				65ACE48824B48020003AE06A /* SettingsLocalAccountView.swift in Sources */,
 				17930ED424AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */,
 				51E4995124A8734D00B667CB /* ExtensionPointManager.swift in Sources */,
 				51E4990C24A808C500B667CB /* AuthorAvatarDownloader.swift in Sources */,
@@ -5035,6 +5054,7 @@
 				51E4992124A8095000B667CB /* RSImage-Extensions.swift in Sources */,
 				51E4990324A808BB00B667CB /* FaviconDownloader.swift in Sources */,
 				172199ED24AB2E0100A31D04 /* SafariView.swift in Sources */,
+				65ACE48624B477C9003AE06A /* SettingsAccountLabelView.swift in Sources */,
 				51E4990224A808BB00B667CB /* ColorHash.swift in Sources */,
 				51919FAC24AA8CCA00541E64 /* UnreadCountView.swift in Sources */,
 				5177476224B3BC4700EB0F74 /* SettingsAboutView.swift in Sources */,
