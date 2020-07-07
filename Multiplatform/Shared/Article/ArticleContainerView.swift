@@ -16,13 +16,8 @@ struct ArticleContainerView: View {
 	var article: Article
 	
 	@ViewBuilder var body: some View {
-		ArticleView()
+		ArticleView(sceneModel: sceneModel, articleModel: articleModel, article: article)
 			.modifier(ArticleToolbarModifier())
-			.environmentObject(articleModel)
-			.onAppear {
-				sceneModel.articleModel = articleModel
-				articleModel.delegate = sceneModel
-			}
 	}
 	
 }

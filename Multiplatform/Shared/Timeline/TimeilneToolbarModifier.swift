@@ -6,8 +6,6 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import Foundation
-
 import SwiftUI
 
 struct TimelineToolbarModifier: ViewModifier {

@@ -27,8 +27,21 @@ class TimelineModel: ObservableObject {
 	private var exceptionArticleFetcher: ArticleFetcher?
 	private var isReadFiltered = false
 	
-	private var articles = [Article]()
+	private var articles = [Article]() {
+		didSet {
+			articleDictionaryNeedsUpdate = true
+		}
+	}
 	
+	private var articleDictionaryNeedsUpdate = true
+	private var _idToArticleDictionary = [String: Article]()
+	private var idToAticleDictionary: [String: Article] {
+		if articleDictionaryNeedsUpdate {
+			rebuildArticleDictionaries()
+		}
+		return _idToArticleDictionary
+	}
+
 	private var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
@@ -63,6 +76,28 @@ class TimelineModel: ObservableObject {
 		}
 	}
 	
+	func articleFor(_ articleID: String) -> Article? {
+		return idToAticleDictionary[articleID]
+	}
+
+	func findPrevArticle(_ article: Article) -> Article? {
+		guard let index = articles.firstIndex(of: article), index > 0 else {
+			return nil
+		}
+		return articles[index - 1]
+	}
+	
+	func findNextArticle(_ article: Article) -> Article? {
+		guard let index = articles.firstIndex(of: article), index + 1 != articles.count else {
+			return nil
+		}
+		return articles[index + 1]
+	}
+	
+	func selectArticle(_ article: Article) {
+		// TODO: Implement me!
+	}
+	
 }
 
 // MARK: Private
@@ -82,6 +117,15 @@ private extension TimelineModel {
 //		restoreSelection(savedSelection)
 	}
 
+	func rebuildArticleDictionaries() {
+		var idDictionary = [String: Article]()
+		articles.forEach { article in
+			idDictionary[article.articleID] = article
+		}
+		_idToArticleDictionary = idDictionary
+		articleDictionaryNeedsUpdate = false
+	}
+	
 	// MARK: Article Fetching
 	
 	func fetchAndReplaceArticlesAsync() {

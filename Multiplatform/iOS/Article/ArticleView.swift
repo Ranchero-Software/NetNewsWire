@@ -7,15 +7,43 @@
 //
 
 import SwiftUI
+import Articles
 
-struct ArticleView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+final class ArticleView: UIViewControllerRepresentable {
+	
+	var sceneModel: SceneModel
+	var articleModel: ArticleModel
+	var article: Article
+	
+	init(sceneModel: SceneModel, articleModel: ArticleModel, article: Article) {
+		self.sceneModel = sceneModel
+		self.articleModel = articleModel
+		self.article = article
+		sceneModel.articleModel = articleModel
+		articleModel.delegate = sceneModel
+	}
+	
+	func makeUIViewController(context: Context) -> ArticleViewController {
+		let controller = ArticleViewController()
+		controller.articleModel = articleModel
+		controller.article = article
+		return controller
+	}
+	
+	func updateUIViewController(_ uiViewController: ArticleViewController, context: Context) {
+		
+	}
+	
 }
 
-struct ArticleView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleView()
-    }
-}
+//struct ArticleView: View {
+//
+//	var sceneModel: SceneModel
+//	var articleModel: ArticleModel
+//	var article: Article
+//
+//	var body: some View {
+//		ArticleViewControllerAdapter(sceneModel: sceneModel, articleModel: articleModel, article: article)
+//    }
+//
+//}

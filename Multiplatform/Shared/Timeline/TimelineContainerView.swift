@@ -18,6 +18,7 @@ struct TimelineContainerView: View {
 	@ViewBuilder var body: some View {
 		if let feed = feed {
 			TimelineView()
+				.modifier(TimelineTitleModifier(title: feed.nameForDisplay))
 				.modifier(TimelineToolbarModifier())
 				.environmentObject(timelineModel)
 				.onAppear {

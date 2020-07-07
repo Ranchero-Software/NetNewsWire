@@ -8,6 +8,7 @@
 
 import Foundation
 import Account
+import Articles
 
 final class SceneModel: ObservableObject {
 	
@@ -18,11 +19,25 @@ final class SceneModel: ObservableObject {
 	var articleModel: ArticleModel?
 	
 	private var refreshProgressModel: RefreshProgressModel? = nil
+	#if os(iOS)
+	private var _webViewProvider: WebViewProvider? = nil
+	#endif
 	
+	// MARK: API
+
 	func startup() {
 		self.refreshProgressModel = RefreshProgressModel()
 		self.refreshProgressModel!.$state.assign(to: self.$refreshProgressState)
+		
+		#if os(iOS)
+		self._webViewProvider = WebViewProvider(sceneModel: self)
+		#endif
 	}
+
+	func articleFor(_ articleID: String) -> Article? {
+		return timelineModel?.articleFor(articleID)
+	}
+	
 }
 
 // MARK: SidebarModelDelegate
@@ -48,6 +63,29 @@ extension SceneModel: TimelineModelDelegate {
 // MARK: ArticleModelDelegate
 
 extension SceneModel: ArticleModelDelegate {
+	
+	#if os(iOS)
+	var webViewProvider: WebViewProvider? {
+		return _webViewProvider
+	}
+	#endif
 
+	func findPrevArticle(_: ArticleModel, article: Article) -> Article? {
+		return timelineModel?.findPrevArticle(article)
+	}
+	
+	func findNextArticle(_: ArticleModel, article: Article) -> Article? {
+		return timelineModel?.findNextArticle(article)
+	}
+	
+	func selectArticle(_: ArticleModel, article: Article) {
+		timelineModel?.selectArticle(article)
+	}
+	
+}
+
+// MARK: Private
+
+private extension SceneModel {
 	
 }

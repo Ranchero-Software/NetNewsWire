@@ -193,6 +193,8 @@ final class AppDefaults: ObservableObject {
 	// MARK: Articles
 	@AppStorage(wrappedValue: false, Key.articleFullscreenAvailable, store: store) var articleFullscreenAvailable: Bool
 	
+	@AppStorage(wrappedValue: false, Key.articleFullscreenEnabled, store: store) var articleFullscreenEnabled: Bool
+	
 	// MARK: Refresh
 	var lastRefresh: Date? {
 		set {

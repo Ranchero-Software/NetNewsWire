@@ -7,15 +7,15 @@
 //
 
 import SwiftUI
+import Articles
 
 struct ArticleView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
 
-struct ArticleView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleView()
+	var sceneModel: SceneModel
+	var articleModel: ArticleModel
+	var article: Article
+
+	var body: some View {
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }

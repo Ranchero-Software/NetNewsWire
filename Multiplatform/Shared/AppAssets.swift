@@ -110,6 +110,18 @@ struct AppAssets {
 		return Image(systemName: "info.circle")
 	}()
 
+	#if os(macOS)
+	static var iconBackgroundColor: NSColor = {
+		return NSColor(named: "IconBackgroundColor")!
+	}()
+	#endif
+
+	#if os(iOS)
+	static var iconBackgroundColor: UIColor = {
+		return UIColor(named: "IconBackgroundColor")!
+	}()
+	#endif
+
 	static var nextArticleImage: Image = {
 		return Image(systemName: "chevron.down")
 	}()
