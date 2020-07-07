@@ -9,7 +9,10 @@
 import SwiftUI
 
 struct SceneNavigationView: View {
-    
+
+	@StateObject private var sceneModel = SceneModel()
+	@State private var showSheet = false
+	
 	#if os(iOS)
 	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
 	#endif
@@ -42,7 +45,70 @@ struct SceneNavigationView: View {
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
 			#endif
 		}
-		
+		.environmentObject(sceneModel)
+		.onAppear {
+			sceneModel.startup()
+		}
+		.sheet(isPresented: $showSheet, onDismiss: { showSheet = false }) {
+			AddWebFeedView()
+		}
+		.toolbar {
+			
+			#if os(macOS)
+			ToolbarItem() {
+				Menu {
+					Button("Add Web Feed", action:  { showSheet = true })
+					Button("Add Reddit Feed", action:  { })
+					Button("Add Twitter Feed", action:  { })
+					Button("Add Folder", action:  { })
+				} label : {
+					AppAssets.addMenuImage
+				}
+			}
+			ToolbarItem {
+				Button(action: {}, label: {
+					AppAssets.refreshImage
+				}).help("Refresh").padding(.trailing, 40)
+			}
+			ToolbarItem {
+				Button(action: {}, label: {
+					AppAssets.markAllAsReadImagePDF
+						.resizable()
+						.scaledToFit()
+						.frame(width: 20, height: 20, alignment: .center)
+				}).help("Mark All as Read")
+			}
+			ToolbarItem {
+				MacSearchField()
+					.frame(width: 200)
+			}
+			ToolbarItem {
+				Button(action: {}, label: {
+					AppAssets.nextUnreadArticleImage
+				}).help("Go to Next Unread").padding(.trailing, 40)
+			}
+			ToolbarItem {
+				Button(action: {}, label: {
+					AppAssets.starOpenImage
+				}).help("Mark as Starred")
+			}
+			ToolbarItem {
+				Button(action: {}, label: {
+					AppAssets.readClosedImage
+				}).help("Mark as Unread")
+			}
+			ToolbarItem {
+				Button(action: {}, label: {
+					AppAssets.openInBrowserImage
+				}).help("Open in Browser")
+			}
+			ToolbarItem {
+				Button(action: {}, label: {
+					AppAssets.shareImage
+				}).help("Share")
+			}
+			#endif
+		}
 	}
 }
 
