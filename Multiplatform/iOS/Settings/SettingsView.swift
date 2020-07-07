@@ -67,7 +67,7 @@ struct SettingsView: View {
 					})
 			})
 			NavigationLink(
-				destination: EmptyView(),
+				destination: SettingsAddAccountView(),
 				label: {
 					Text("Add Account")
 				})
