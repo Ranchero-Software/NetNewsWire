@@ -22,7 +22,9 @@ class PreloadedWebView: WKWebView {
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
 		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
+		#if os(iOS)
 		configuration.allowsInlineMediaPlayback = true
+		#endif
 		configuration.mediaTypesRequiringUserActionForPlayback = .audio
 		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		

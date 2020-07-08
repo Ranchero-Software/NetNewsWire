@@ -326,6 +326,11 @@
 		51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A5F42380F6A60033AADF /* ModalNavigationController.swift */; };
 		51A9A60A2382FD240033AADF /* PoppableGestureRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */; };
 		51AB8AB323B7F4C6008F147D /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51AB8AB223B7F4C6008F147D /* WebViewController.swift */; };
+		51B54A4324B5499B0014348B /* WebViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471924B3863000EB0F74 /* WebViewProvider.swift */; };
+		51B54A6524B549B20014348B /* WrapperScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517B2EBB24B3E62A001AC46C /* WrapperScriptMessageHandler.swift */; };
+		51B54A6624B549CB0014348B /* PreloadedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471324B37D4000EB0F74 /* PreloadedWebView.swift */; };
+		51B54A6724B549FE0014348B /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471524B37D9700EB0F74 /* ArticleIconSchemeHandler.swift */; };
+		51B54A6924B54A490014348B /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54A6824B54A490014348B /* IconView.swift */; };
 		51B5C87723F22B8200032075 /* ExtensionContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87623F22B8200032075 /* ExtensionContainers.swift */; };
 		51B5C87B23F2317700032075 /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
 		51B5C87D23F2346200032075 /* ExtensionContainersFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */; };
@@ -1969,6 +1974,7 @@
 		51A9A5F42380F6A60033AADF /* ModalNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalNavigationController.swift; sourceTree = "<group>"; };
 		51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoppableGestureRecognizerDelegate.swift; sourceTree = "<group>"; };
 		51AB8AB223B7F4C6008F147D /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		51B54A6824B54A490014348B /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		51B5C87623F22B8200032075 /* ExtensionContainers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContainers.swift; sourceTree = "<group>"; };
 		51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionFeedAddRequest.swift; sourceTree = "<group>"; };
 		51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContainersFile.swift; sourceTree = "<group>"; };
@@ -2706,17 +2712,13 @@
 			isa = PBXGroup;
 			children = (
 				5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */,
-				5177471524B37D9700EB0F74 /* ArticleIconSchemeHandler.swift */,
 				5177470D24B2FF6F00EB0F74 /* ArticleView.swift */,
 				5177470F24B3029400EB0F74 /* ArticleViewController.swift */,
 				5177471724B3812200EB0F74 /* IconView.swift */,
 				5177471B24B387AC00EB0F74 /* ImageScrollView.swift */,
 				5177471D24B387E100EB0F74 /* ImageTransition.swift */,
 				5177471F24B3882600EB0F74 /* ImageViewController.swift */,
-				5177471324B37D4000EB0F74 /* PreloadedWebView.swift */,
 				5177471124B37C5400EB0F74 /* WebViewController.swift */,
-				5177471924B3863000EB0F74 /* WebViewProvider.swift */,
-				517B2EBB24B3E62A001AC46C /* WrapperScriptMessageHandler.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -2725,6 +2727,7 @@
 			isa = PBXGroup;
 			children = (
 				51A576BD24AE637400078888 /* ArticleView.swift */,
+				51B54A6824B54A490014348B /* IconView.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -2838,8 +2841,12 @@
 				517B2EDE24B3E8FE001AC46C /* page.html */,
 				517B2EE124B3E8FE001AC46C /* main_multiplatform.js */,
 				51A5769524AE617200078888 /* ArticleContainerView.swift */,
+				5177471524B37D9700EB0F74 /* ArticleIconSchemeHandler.swift */,
 				51A576BA24AE621800078888 /* ArticleModel.swift */,
 				5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */,
+				5177471324B37D4000EB0F74 /* PreloadedWebView.swift */,
+				5177471924B3863000EB0F74 /* WebViewProvider.swift */,
+				517B2EBB24B3E62A001AC46C /* WrapperScriptMessageHandler.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -2883,12 +2890,12 @@
 		51C0519424A77E6D00194D5E /* macOS */ = {
 			isa = PBXGroup;
 			children = (
-				5177470C24B2FF3B00EB0F74 /* Article */,
 				51C051CD24A7A6DB00194D5E /* macOS-dev.entitlements */,
 				51C0514724A77DF800194D5E /* macOS.entitlements */,
 				51C0514624A77DF800194D5E /* Info.plist */,
 				51E4993924A8708800B667CB /* AppDelegate.swift */,
 				1729529A24AA1FD200D65E66 /* MacSearchField.swift */,
+				5177470C24B2FF3B00EB0F74 /* Article */,
 				1729528F24AA1A4F00D65E66 /* Preferences */,
 			);
 			path = macOS;
@@ -5084,6 +5091,7 @@
 				51E498CE24A8085D00B667CB /* UnreadFeed.swift in Sources */,
 				51E498C724A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				51919FB724AABCA100541E64 /* IconImageView.swift in Sources */,
+				51B54A6924B54A490014348B /* IconView.swift in Sources */,
 				51E498FA24A808BA00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4993F24A8713B00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E4993724A8680E00B667CB /* Reachability.swift in Sources */,
@@ -5102,6 +5110,7 @@
 				17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */,
 				514E6C0724AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */,
 				51E4994D24A8734C00B667CB /* ExtensionPointIdentifer.swift in Sources */,
+				51B54A6724B549FE0014348B /* ArticleIconSchemeHandler.swift in Sources */,
 				51E4992224A8095600B667CB /* URL-Extensions.swift in Sources */,
 				51E4990424A808C300B667CB /* WebFeedIconDownloader.swift in Sources */,
 				51E498CB24A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
@@ -5135,6 +5144,7 @@
 				51E4994A24A8734C00B667CB /* ExtensionPointManager.swift in Sources */,
 				514E6C0324AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */,
 				51A576BC24AE621800078888 /* ArticleModel.swift in Sources */,
+				51B54A6524B549B20014348B /* WrapperScriptMessageHandler.swift in Sources */,
 				51E4996D24A8762D00B667CB /* ArticleExtractor.swift in Sources */,
 				51E4994024A8713B00B667CB /* AccountRefreshTimer.swift in Sources */,
 				51E49A0424A91FF600B667CB /* SceneNavigationView.swift in Sources */,
@@ -5173,6 +5183,7 @@
 				FA80C13F24B072AB00974098 /* AddFolderModel.swift in Sources */,
 				51392D1C24AC19A000BE0D35 /* SidebarExpandedContainers.swift in Sources */,
 				51C0515F24A77DF800194D5E /* MainApp.swift in Sources */,
+				51B54A4324B5499B0014348B /* WebViewProvider.swift in Sources */,
 				514E6C0024AD255D00AC6F6E /* PreviewArticles.swift in Sources */,
 				1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */,
 				1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */,
@@ -5183,6 +5194,7 @@
 				51E4991424A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
 				51A576BF24AE637400078888 /* ArticleView.swift in Sources */,
 				FF64D0EA24AF53EE0084080A /* RefreshProgressView.swift in Sources */,
+				51B54A6624B549CB0014348B /* PreloadedWebView.swift in Sources */,
 				51E4991024A808DE00B667CB /* SmallIconProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
