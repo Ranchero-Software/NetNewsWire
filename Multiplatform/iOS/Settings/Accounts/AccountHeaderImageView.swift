@@ -11,19 +11,25 @@ import RSCore
 
 struct AccountHeaderImageView: View {
 	var image: RSImage
-	
+
 	var body: some View {
-		Image(rsImage: image)
-			.resizable()
-			.aspectRatio(1, contentMode: .fit)
-			.frame(height: 48, alignment: .center)
-			.padding()
-		
+		HStack(alignment: .center) {
+			Image(rsImage: image)
+				.resizable()
+				.scaledToFit()
+				.frame(height: 48, alignment: .center)
+				.padding()
+		}
 	}
 }
 
 struct AccountHeaderImageView_Previews: PreviewProvider {
 	static var previews: some View {
-		AccountHeaderImageView(image: AppAssets.image(for: .onMyMac)!)
+		Group {
+			AccountHeaderImageView(image: AppAssets.image(for: .onMyMac)!)
+			AccountHeaderImageView(image: AppAssets.image(for: .feedbin)!)
+			AccountHeaderImageView(image: AppAssets.accountLocalPadImage)
+		}
+
 	}
 }
