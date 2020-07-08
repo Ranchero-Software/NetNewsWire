@@ -18,34 +18,31 @@ struct SettingsFeedbinAccountView: View {
 
 	var body: some View {
 		NavigationView {
-			VStack {
-				AccountHeaderImageView(image: AppAssets.image(for: .feedbin)!)
-				List {
-					Section {
-						TextField("Email", text: $settingsModel.email).textContentType(.emailAddress)
-						SecureField("Password", text: $settingsModel.password)
-					}
-					Section(footer: errorFooter) {
-						HStack {
-							Spacer()
-							Button(action: { settingsModel.addAccount() }) {
-								if settingsModel.isUpdate {
-									Text("Update Account")
-								} else {
-									Text("Add Account")
-								}
+			List {
+				Section(header: AccountHeaderImageView(image: AppAssets.image(for: .feedbin)!)) {
+					TextField("Email", text: $settingsModel.email).textContentType(.emailAddress)
+					SecureField("Password", text: $settingsModel.password)
+				}
+				Section(footer: errorFooter) {
+					HStack {
+						Spacer()
+						Button(action: { settingsModel.addAccount() }) {
+							if settingsModel.isUpdate {
+								Text("Update Account")
+							} else {
+								Text("Add Account")
 							}
-							.disabled(!settingsModel.isValid)
-							Spacer()
-							if settingsModel.busy {
-								ProgressView()
-							}
+						}
+						.disabled(!settingsModel.isValid)
+						Spacer()
+						if settingsModel.busy {
+							ProgressView()
 						}
 					}
 				}
-				.listStyle(InsetGroupedListStyle())
-				.disabled(settingsModel.busy)
 			}
+			.listStyle(InsetGroupedListStyle())
+			.disabled(settingsModel.busy)
 			.onReceive(settingsModel.$shouldDismiss, perform: { dismiss in
 				if dismiss == true {
 					presentationMode.wrappedValue.dismiss()

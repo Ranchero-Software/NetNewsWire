@@ -15,26 +15,23 @@ struct SettingsLocalAccountView: View {
 
 	var body: some View {
 		NavigationView {
-			VStack(spacing: 0) {
-				AccountHeaderImageView(image: AppAssets.image(for: .onMyMac)!)
-				List {
-					Section {
-						HStack {
-							TextField("Name", text: $name)
-						}
-					}
-					Section {
-						HStack {
-							Spacer()
-							Button(action: { self.addAccount() }) {
-								Text("Add Account")
-							}
-							Spacer()
-						}
+			List {
+				Section(header: AccountHeaderImageView(image: AppAssets.image(for: .onMyMac)!)) {
+					HStack {
+						TextField("Name", text: $name)
 					}
 				}
-				.listStyle(InsetGroupedListStyle())
+				Section {
+					HStack {
+						Spacer()
+						Button(action: { self.addAccount() }) {
+							Text("Add Account")
+						}
+						Spacer()
+					}
+				}
 			}
+			.listStyle(InsetGroupedListStyle())
 			.navigationBarTitle(Text(verbatim: Account.defaultLocalAccountName), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: { self.dismiss() }) { Text("Cancel") } )
 		}
