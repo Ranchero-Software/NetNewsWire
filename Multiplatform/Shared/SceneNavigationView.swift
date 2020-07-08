@@ -99,6 +99,11 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				Button(action: {}, label: {
+					AppAssets.articleExtractorOff
+				}).help("Show Reader View")
+			}
+			ToolbarItem {
+				Button(action: {}, label: {
 					AppAssets.openInBrowserImage
 				}).help("Open in Browser")
 			}
