@@ -17,8 +17,8 @@ struct SettingsAccountLabelView: View {
 		HStack {
 			Image(rsImage: accountImage!)
 				.resizable()
-				.aspectRatio(1, contentMode: .fit)
-				.frame(height: 32)
+				.scaledToFit()
+				.frame(width: 32, height: 32)
 			Text(verbatim: accountLabel).font(.title)
 		}
 		.foregroundColor(.primary).padding(4.0)
@@ -27,10 +27,23 @@ struct SettingsAccountLabelView: View {
 
 struct SettingsAccountLabelView_Previews: PreviewProvider {
     static var previews: some View {
-		SettingsAccountLabelView(
-			accountImage: AppAssets.image(for: .onMyMac),
-			accountLabel: "On My Device"
-		)
-		.previewLayout(.fixed(width: 300, height: 44))
+		List {
+			SettingsAccountLabelView(
+				accountImage: AppAssets.image(for: .onMyMac),
+				accountLabel: "On My Device"
+			)
+			SettingsAccountLabelView(
+				accountImage: AppAssets.image(for: .feedbin),
+				accountLabel: "Feedbin"
+			)
+			SettingsAccountLabelView(
+				accountImage: AppAssets.accountLocalPadImage,
+				accountLabel: "On My iPad"
+			)
+			SettingsAccountLabelView(
+				accountImage: AppAssets.accountLocalPhoneImage,
+				accountLabel: "On My iPhone"
+			)
+		}
     }
 }

@@ -16,8 +16,7 @@ struct SettingsLocalAccountView: View {
 	var body: some View {
 		NavigationView {
 			List {
-				Section {
-					imageView
+				Section(header: AccountHeaderImageView(image: AppAssets.image(for: .onMyMac)!)) {
 					HStack {
 						TextField("Name", text: $name)
 					}
@@ -36,19 +35,6 @@ struct SettingsLocalAccountView: View {
 			.navigationBarTitle(Text(verbatim: Account.defaultLocalAccountName), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: { self.dismiss() }) { Text("Cancel") } )
 		}
-	}
-
-	var imageView: some View {
-		HStack {
-			Spacer()
-			Image(rsImage: AppAssets.image(for: .onMyMac)!)
-				.resizable()
-				.aspectRatio(1, contentMode: .fit)
-				.frame(height: 48, alignment: .center)
-				.padding()
-			Spacer()
-		}
-		.listRowBackground(Color.clear)
 	}
 
 	private func addAccount() {
