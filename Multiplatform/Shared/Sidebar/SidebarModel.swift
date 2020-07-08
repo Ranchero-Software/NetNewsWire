@@ -20,6 +20,28 @@ class SidebarModel: ObservableObject {
 	
 	@Published var sidebarItems = [SidebarItem]()
 	
+	#if os(macOS)
+	@Published var selectedSidebarItems = Set<FeedIdentifier>() {
+		didSet {
+			print(selectedSidebarItems)
+		}
+	}
+	#endif
+	
+	private var items = Set<FeedIdentifier>()
+	
+	@Published var selectedSidebarItem: FeedIdentifier? = .none {
+		willSet {
+			#if os(macOS)
+			if newValue != nil {
+				items.insert(newValue!)
+			} else {
+				selectedSidebarItems = items
+				items.removeAll()
+			}
+			#endif
+		}
+	}
 	
 	
 	init() {

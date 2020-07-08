@@ -16,12 +16,10 @@ struct SidebarView: View {
 	@StateObject private var expandedContainers = SidebarExpandedContainers()
 	@EnvironmentObject private var sidebarModel: SidebarModel
 	
-	@StateObject private var sidebarSelectionModel = SidebarSelectionModel()
-	
 	@ViewBuilder
 	var body: some View {
 		#if os(macOS)
-		List(selection: $sidebarSelectionModel.selectedSidebarItems) {
+		List(selection: $sidebarModel.selectedSidebarItems) {
 			containedList
 		}
 		#else
@@ -49,7 +47,7 @@ struct SidebarView: View {
 										SidebarItemView(sidebarItem: sidebarItem)
 										NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed)),
 													   tag: sidebarItem.feed!.feedID!,
-													   selection: $sidebarSelectionModel.selectedSidebarItem) {
+													   selection: $sidebarModel.selectedSidebarItem) {
 											EmptyView()
 										}.buttonStyle(PlainButtonStyle())
 									}
@@ -59,7 +57,7 @@ struct SidebarView: View {
 									SidebarItemView(sidebarItem: sidebarItem)
 									NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed)),
 												   tag: sidebarItem.feed!.feedID!,
-												   selection: $sidebarSelectionModel.selectedSidebarItem) {
+												   selection: $sidebarModel.selectedSidebarItem) {
 										EmptyView()
 									}.buttonStyle(PlainButtonStyle())
 								}
@@ -69,7 +67,7 @@ struct SidebarView: View {
 								SidebarItemView(sidebarItem: sidebarItem)
 								NavigationLink(destination: (TimelineContainerView(feed: sidebarItem.feed)),
 											   tag: sidebarItem.feed!.feedID!,
-											   selection: $sidebarSelectionModel.selectedSidebarItem) {
+											   selection: $sidebarModel.selectedSidebarItem) {
 									EmptyView()
 								}.buttonStyle(PlainButtonStyle())
 							}
