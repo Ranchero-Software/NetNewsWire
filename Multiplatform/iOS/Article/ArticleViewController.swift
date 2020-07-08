@@ -130,24 +130,6 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 	
 }
 
-// MARK: UIGestureRecognizerDelegate
-
-extension ArticleViewController: UIGestureRecognizerDelegate {
-	
-	func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-		return true
-	}
-
-	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-		let point = gestureRecognizer.location(in: nil)
-		if point.x > 40 {
-			return true
-		}
-		return false
-	}
-	
-}
-
 // MARK: Private
 
 private extension ArticleViewController {
