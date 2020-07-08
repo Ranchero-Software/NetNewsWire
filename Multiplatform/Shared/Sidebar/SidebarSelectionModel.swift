@@ -12,6 +12,7 @@ import Account
 
 
 class SidebarSelectionModel: ObservableObject {
+	
 	#if os(macOS)
 	@Published var selectedSidebarItems = Set<FeedIdentifier>() {
 		didSet {
@@ -20,7 +21,7 @@ class SidebarSelectionModel: ObservableObject {
 	}
 	#endif
 	
-	private var items = Set<FeedIdentifier>()
+	private var items = Set<FeedIdentifier>() 
 	
 	@Published var selectedSidebarItem: FeedIdentifier? = .none {
 		willSet {
