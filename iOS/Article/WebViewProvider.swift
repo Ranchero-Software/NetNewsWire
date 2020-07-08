@@ -116,8 +116,8 @@ class WebViewProviderDequeueOperation: MainThreadOperation {
 			webView.ready { preloadedWebView in
 				preloadedWebView.removeFromSuperview()
 				self.completion(preloadedWebView)
-				self.operationDelegate?.operationDidComplete(self)
 			}
+			self.operationDelegate?.operationDidComplete(self)
 			return
 		}
 
@@ -127,8 +127,8 @@ class WebViewProviderDequeueOperation: MainThreadOperation {
 		webView.preload()
 		webView.ready { preloadedWebView in
 			self.completion(preloadedWebView)
-			self.operationDelegate?.operationDidComplete(self)
 		}
+		self.operationDelegate?.operationDidComplete(self)
 	}
 	
 }
