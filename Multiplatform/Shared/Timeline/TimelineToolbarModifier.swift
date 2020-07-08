@@ -1,5 +1,5 @@
 //
-//  TimeilneToolbarModifier.swift
+//  TimelineToolbarModifier.swift
 //  NetNewsWire
 //
 //  Created by Maurice Parker on 7/5/20.
