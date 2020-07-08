@@ -25,12 +25,14 @@ class SidebarSelectionModel: ObservableObject {
 	
 	@Published var selectedSidebarItem: FeedIdentifier? = .none {
 		willSet {
+			#if os(macOS)
 			if newValue != nil {
 				items.insert(newValue!)
 			} else {
 				selectedSidebarItems = items
 				items.removeAll()
 			}
+			#endif
 		}
 	}
 }
