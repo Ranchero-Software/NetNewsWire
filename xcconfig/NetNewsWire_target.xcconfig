@@ -29,8 +29,8 @@ PROVISIONING_PROFILE_SPECIFIER =
 #include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
 
 // High Level Settings common to both the Mac application and any extensions we bundle with it
-MARKETING_VERSION = 5.0.4d1
-CURRENT_PROJECT_VERSION = 2619
+MARKETING_VERSION = 5.0.4d2
+CURRENT_PROJECT_VERSION = 2620
 
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 COMBINE_HIDPI_IMAGES = YES
