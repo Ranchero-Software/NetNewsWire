@@ -14,12 +14,15 @@ struct AccountHeaderImageView: View {
 
 	var body: some View {
 		HStack(alignment: .center) {
+			Spacer()
 			Image(rsImage: image)
 				.resizable()
 				.scaledToFit()
 				.frame(height: 48, alignment: .center)
-				.padding()
+				.foregroundColor(Color.primary)
+			Spacer()
 		}
+		.padding(16)
 	}
 }
 
@@ -30,6 +33,5 @@ struct AccountHeaderImageView_Previews: PreviewProvider {
 			AccountHeaderImageView(image: AppAssets.image(for: .feedbin)!)
 			AccountHeaderImageView(image: AppAssets.accountLocalPadImage)
 		}
-
 	}
 }
