@@ -246,7 +246,7 @@ struct AppAssets {
 	static var timelineUnread: Image {
 		#if os(macOS)
 		let image = NSImage(systemSymbolName: "circle.fill", accessibilityDescription: nil)!
-		let coloredImage = image.tinted(with: NSColor(named: "AccentColor")!)
+		let coloredImage = image.tinted(with: NSColor.controlAccentColor)
 		return Image(nsImage: coloredImage)
 		#endif
 		#if os(iOS)
