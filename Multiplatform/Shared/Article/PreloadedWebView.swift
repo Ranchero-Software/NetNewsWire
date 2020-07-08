@@ -48,6 +48,23 @@ class PreloadedWebView: WKWebView {
 		}
 	}
 	
+	#if os(macOS)
+	override func willOpenMenu(_ menu: NSMenu, with event: NSEvent) {
+		// There’s no API for affecting a WKWebView’s contextual menu.
+		// (WebView had API for this.)
+		//
+		// This a minor hack. It hides unwanted menu items.
+		// The menu item identifiers are not documented anywhere;
+		// they could change, and this code would need updating.
+		for menuItem in menu.items {
+			if shouldHideMenuItem(menuItem) {
+				menuItem.isHidden = true
+			}
+		}
+
+		super.willOpenMenu(menu, with: event)
+	}
+	#endif
 }
 
 // MARK: WKScriptMessageHandler
@@ -75,3 +92,37 @@ private extension PreloadedWebView {
 	}
 	
 }
+
+#if os(macOS)
+private extension NSUserInterfaceItemIdentifier {
+
+	static let DetailMenuItemIdentifierReload = NSUserInterfaceItemIdentifier(rawValue: "WKMenuItemIdentifierReload")
+	static let DetailMenuItemIdentifierOpenLink = NSUserInterfaceItemIdentifier(rawValue: "WKMenuItemIdentifierOpenLink")
+}
+
+private extension PreloadedWebView {
+
+	static let menuItemIdentifiersToHide: [NSUserInterfaceItemIdentifier] = [.DetailMenuItemIdentifierReload, .DetailMenuItemIdentifierOpenLink]
+	static let menuItemIdentifierMatchStrings = ["newwindow", "download"]
+
+	func shouldHideMenuItem(_ menuItem: NSMenuItem) -> Bool {
+
+		guard let identifier = menuItem.identifier else {
+			return false
+		}
+
+		if PreloadedWebView.menuItemIdentifiersToHide.contains(identifier) {
+			return true
+		}
+
+		let lowerIdentifier = identifier.rawValue.lowercased()
+		for matchString in PreloadedWebView.menuItemIdentifierMatchStrings {
+			if lowerIdentifier.contains(matchString) {
+				return true
+			}
+		}
+
+		return false
+	}
+}
+#endif
