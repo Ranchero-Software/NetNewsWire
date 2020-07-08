@@ -40,7 +40,7 @@ struct SettingsAddAccountView: View {
 				SettingsLocalAccountView()
 			}
 			if selectedAccountType == .feedbin {
-				//SettingsFeedbinAccountView(viewModel: SettingsFeedbinAccountView.ViewModel())
+				SettingsFeedbinAccountView()
 			}
 		}
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
