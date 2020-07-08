@@ -35,15 +35,3 @@ final class ArticleView: UIViewControllerRepresentable {
 	}
 	
 }
-
-//struct ArticleView: View {
-//
-//	var sceneModel: SceneModel
-//	var articleModel: ArticleModel
-//	var article: Article
-//
-//	var body: some View {
-//		ArticleViewControllerAdapter(sceneModel: sceneModel, articleModel: articleModel, article: article)
-//    }
-//
-//}
