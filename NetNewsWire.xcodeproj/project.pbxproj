@@ -331,6 +331,7 @@
 		51B54A6624B549CB0014348B /* PreloadedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471324B37D4000EB0F74 /* PreloadedWebView.swift */; };
 		51B54A6724B549FE0014348B /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471524B37D9700EB0F74 /* ArticleIconSchemeHandler.swift */; };
 		51B54A6924B54A490014348B /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54A6824B54A490014348B /* IconView.swift */; };
+		51B54AB324B5AC830014348B /* ArticleExtractorButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */; };
 		51B5C87723F22B8200032075 /* ExtensionContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87623F22B8200032075 /* ExtensionContainers.swift */; };
 		51B5C87B23F2317700032075 /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
 		51B5C87D23F2346200032075 /* ExtensionContainersFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */; };
@@ -2715,7 +2716,6 @@
 		5177470B24B2FF2C00EB0F74 /* Article */ = {
 			isa = PBXGroup;
 			children = (
-				5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */,
 				5177470D24B2FF6F00EB0F74 /* ArticleView.swift */,
 				5177470F24B3029400EB0F74 /* ArticleViewController.swift */,
 				5177471724B3812200EB0F74 /* IconView.swift */,
@@ -2845,6 +2845,7 @@
 				517B2EDE24B3E8FE001AC46C /* page.html */,
 				517B2EE124B3E8FE001AC46C /* main_multiplatform.js */,
 				51A5769524AE617200078888 /* ArticleContainerView.swift */,
+				5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */,
 				5177471524B37D9700EB0F74 /* ArticleIconSchemeHandler.swift */,
 				51A576BA24AE621800078888 /* ArticleModel.swift */,
 				5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */,
@@ -5115,6 +5116,7 @@
 				51E4990824A808C300B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
 				51919FF824AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4992B24A8676300B667CB /* ArticleArray.swift in Sources */,
+				51B54AB324B5AC830014348B /* ArticleExtractorButtonState.swift in Sources */,
 				17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */,
 				514E6C0724AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */,
 				51E4994D24A8734C00B667CB /* ExtensionPointIdentifer.swift in Sources */,
