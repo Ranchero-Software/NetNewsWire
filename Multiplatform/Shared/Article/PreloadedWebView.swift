@@ -17,7 +17,6 @@ class PreloadedWebView: WKWebView {
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false
-		preferences.javaScriptEnabled = true
 		
 		let configuration = WKWebViewConfiguration()
 		configuration.preferences = preferences
