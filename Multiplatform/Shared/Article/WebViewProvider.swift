@@ -112,8 +112,8 @@ class WebViewProviderDequeueOperation: MainThreadOperation {
 	
 	func run() {
 		if let webView = queue.lastObject as? PreloadedWebView {
-			queue.removeLastObject()
 			webView.ready { preloadedWebView in
+				self.queue.removeLastObject()
 				self.completion(preloadedWebView)
 			}
 			self.operationDelegate?.operationDidComplete(self)
