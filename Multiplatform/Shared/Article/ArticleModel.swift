@@ -14,9 +14,7 @@ import Account
 import Articles
 
 protocol ArticleModelDelegate: class {
-	#if os(iOS)
-	var webViewProvider: WebViewProvider? { get }
-	#endif
+	var articleModelWebViewProvider: WebViewProvider? { get }
 	func findPrevArticle(_: ArticleModel, article: Article) -> Article?
 	func findNextArticle(_: ArticleModel, article: Article) -> Article?
 	func selectArticle(_: ArticleModel, article: Article)
@@ -26,11 +24,9 @@ class ArticleModel: ObservableObject {
 	
 	weak var delegate: ArticleModelDelegate?
 	
-	#if os(iOS)
 	var webViewProvider: WebViewProvider? {
-		return delegate?.webViewProvider
+		return delegate?.articleModelWebViewProvider
 	}
-	#endif
 	
 	// MARK: API
 	

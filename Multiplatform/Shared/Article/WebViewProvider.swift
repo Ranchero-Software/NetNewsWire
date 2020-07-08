@@ -18,8 +18,8 @@ class WebViewProvider: NSObject {
 	private let operationQueue = MainThreadOperationQueue()
 	private var queue = NSMutableArray()
 	
-	init(sceneModel: SceneModel) {
-		articleIconSchemeHandler = ArticleIconSchemeHandler(sceneModel: sceneModel)
+	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
+		self.articleIconSchemeHandler = articleIconSchemeHandler
 		super.init()
 		replenishQueueIfNeeded()
 	}

@@ -19,7 +19,8 @@ final class SceneModel: ObservableObject {
 	var articleModel: ArticleModel?
 	
 	private var refreshProgressModel: RefreshProgressModel? = nil
-	private var _webViewProvider: WebViewProvider? = nil
+	private var articleIconSchemeHandler: ArticleIconSchemeHandler? = nil
+	private var webViewProvider: WebViewProvider? = nil
 	
 	// MARK: API
 
@@ -27,7 +28,8 @@ final class SceneModel: ObservableObject {
 		self.refreshProgressModel = RefreshProgressModel()
 		self.refreshProgressModel!.$state.assign(to: self.$refreshProgressState)
 		
-		self._webViewProvider = WebViewProvider(sceneModel: self)
+		self.articleIconSchemeHandler = ArticleIconSchemeHandler(sceneModel: self)
+		self.webViewProvider = WebViewProvider(articleIconSchemeHandler: self.articleIconSchemeHandler!)
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
@@ -60,8 +62,8 @@ extension SceneModel: TimelineModelDelegate {
 
 extension SceneModel: ArticleModelDelegate {
 	
-	var webViewProvider: WebViewProvider? {
-		return _webViewProvider
+	var articleModelWebViewProvider: WebViewProvider? {
+		return webViewProvider
 	}
 
 	func findPrevArticle(_: ArticleModel, article: Article) -> Article? {

@@ -312,7 +312,6 @@
 		51A5769724AE617200078888 /* ArticleContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A5769524AE617200078888 /* ArticleContainerView.swift */; };
 		51A576BB24AE621800078888 /* ArticleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A576BA24AE621800078888 /* ArticleModel.swift */; };
 		51A576BC24AE621800078888 /* ArticleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A576BA24AE621800078888 /* ArticleModel.swift */; };
-		51A576BF24AE637400078888 /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A576BD24AE637400078888 /* ArticleView.swift */; };
 		51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
 		51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
 		51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */; };
@@ -332,6 +331,8 @@
 		51B54A6724B549FE0014348B /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471524B37D9700EB0F74 /* ArticleIconSchemeHandler.swift */; };
 		51B54A6924B54A490014348B /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54A6824B54A490014348B /* IconView.swift */; };
 		51B54AB324B5AC830014348B /* ArticleExtractorButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */; };
+		51B54AB624B5B33C0014348B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54AB524B5B33C0014348B /* WebViewController.swift */; };
+		51B54ABC24B5BEF20014348B /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54ABB24B5BEF20014348B /* ArticleView.swift */; };
 		51B5C87723F22B8200032075 /* ExtensionContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87623F22B8200032075 /* ExtensionContainers.swift */; };
 		51B5C87B23F2317700032075 /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
 		51B5C87D23F2346200032075 /* ExtensionContainersFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */; };
@@ -1969,7 +1970,6 @@
 		51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
 		51A5769524AE617200078888 /* ArticleContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleContainerView.swift; sourceTree = "<group>"; };
 		51A576BA24AE621800078888 /* ArticleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleModel.swift; sourceTree = "<group>"; };
-		51A576BD24AE637400078888 /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedDefaultContainer.swift; sourceTree = "<group>"; };
 		51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerAccountCell.xib; sourceTree = "<group>"; };
 		51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerFolderCell.xib; sourceTree = "<group>"; };
@@ -1978,6 +1978,8 @@
 		51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoppableGestureRecognizerDelegate.swift; sourceTree = "<group>"; };
 		51AB8AB223B7F4C6008F147D /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		51B54A6824B54A490014348B /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
+		51B54AB524B5B33C0014348B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		51B54ABB24B5BEF20014348B /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		51B5C87623F22B8200032075 /* ExtensionContainers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContainers.swift; sourceTree = "<group>"; };
 		51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionFeedAddRequest.swift; sourceTree = "<group>"; };
 		51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContainersFile.swift; sourceTree = "<group>"; };
@@ -2730,8 +2732,9 @@
 		5177470C24B2FF3B00EB0F74 /* Article */ = {
 			isa = PBXGroup;
 			children = (
-				51A576BD24AE637400078888 /* ArticleView.swift */,
+				51B54AB524B5B33C0014348B /* WebViewController.swift */,
 				51B54A6824B54A490014348B /* IconView.swift */,
+				51B54ABB24B5BEF20014348B /* ArticleView.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -5104,6 +5107,7 @@
 				51E498FA24A808BA00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4993F24A8713B00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E4993724A8680E00B667CB /* Reachability.swift in Sources */,
+				51B54AB624B5B33C0014348B /* WebViewController.swift in Sources */,
 				51E4994B24A8734C00B667CB /* SendToMicroBlogCommand.swift in Sources */,
 				51E4996F24A8764C00B667CB /* ActivityType.swift in Sources */,
 				51E4994E24A8734C00B667CB /* SendToMarsEditCommand.swift in Sources */,
@@ -5188,6 +5192,7 @@
 				51919FA724AA64B000541E64 /* SidebarView.swift in Sources */,
 				51E498FD24A808BA00B667CB /* ColorHash.swift in Sources */,
 				51E4991824A8090A00B667CB /* CacheCleaner.swift in Sources */,
+				51B54ABC24B5BEF20014348B /* ArticleView.swift in Sources */,
 				51E498CD24A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				51E4996124A875F400B667CB /* ArticleRenderer.swift in Sources */,
 				FA80C13F24B072AB00974098 /* AddFolderModel.swift in Sources */,
@@ -5202,7 +5207,6 @@
 				51E4992D24A8676300B667CB /* FetchRequestOperation.swift in Sources */,
 				51E4992424A8098400B667CB /* SmartFeedPasteboardWriter.swift in Sources */,
 				51E4991424A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
-				51A576BF24AE637400078888 /* ArticleView.swift in Sources */,
 				FF64D0EA24AF53EE0084080A /* RefreshProgressView.swift in Sources */,
 				51B54A6624B549CB0014348B /* PreloadedWebView.swift in Sources */,
 				51E4991024A808DE00B667CB /* SmallIconProvider.swift in Sources */,
