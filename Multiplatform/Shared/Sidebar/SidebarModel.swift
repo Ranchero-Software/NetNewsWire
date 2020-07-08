@@ -20,6 +20,8 @@ class SidebarModel: ObservableObject {
 	
 	@Published var sidebarItems = [SidebarItem]()
 	
+	
+	
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
@@ -62,7 +64,6 @@ class SidebarModel: ObservableObject {
 		
 		sidebarItems = items
 	}
-	
 }
 
 // MARK: Private
