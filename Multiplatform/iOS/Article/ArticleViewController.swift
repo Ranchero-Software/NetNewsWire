@@ -14,7 +14,7 @@ import SafariServices
 
 class ArticleViewController: UIViewController, ArticleManager {
 	
-	weak var articleModel: ArticleModel?
+	weak var sceneModel: SceneModel?
 	
 	private var pageViewController: UIPageViewController!
 	
@@ -24,8 +24,8 @@ class ArticleViewController: UIViewController, ArticleManager {
 	
 	var currentArticle: Article? {
 		didSet {
-			if let controller = currentWebViewController, controller.article != article {
-				controller.setArticle(article)
+			if let controller = currentWebViewController, controller.article != currentArticle {
+				controller.setArticle(currentArticle)
 				DispatchQueue.main.async {
 					// You have to set the view controller to clear out the UIPageViewController child controller cache.
 					// You also have to do it in an async call or you will get a strange assertion error.
@@ -52,9 +52,10 @@ class ArticleViewController: UIViewController, ArticleManager {
 			view.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor)
 		])
 				
-		let controller = createWebViewController(article, updateView: true)
+		let controller = createWebViewController(currentArticle, updateView: true)
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
 		
+		sceneModel?.updateArticleSelection()
 	}
 			
 	// MARK: API
@@ -97,7 +98,7 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
 		guard let webViewController = viewController as? WebViewController,
 			let currentArticle = webViewController.article,
-			let article = articleModel?.findPrevArticle(currentArticle) else {
+			let article = sceneModel?.findPrevArticle(currentArticle) else {
 			return nil
 		}
 		return createWebViewController(article)
@@ -106,7 +107,7 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
 		guard let webViewController = viewController as? WebViewController,
 			let currentArticle = webViewController.article,
-			let article = articleModel?.findNextArticle(currentArticle) else {
+			let article = sceneModel?.findNextArticle(currentArticle) else {
 			return nil
 		}
 		return createWebViewController(article)
@@ -120,9 +121,9 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 
 	func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
 		guard finished, completed else { return }
-		guard let article = currentWebViewController?.article else { return }
+//		guard let article = currentWebViewController?.article else { return }
 		
-		articleModel?.selectArticle(article)
+		sceneModel?.updateArticleSelection()
 //		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
 		
 		previousViewControllers.compactMap({ $0 as? WebViewController }).forEach({ $0.stopWebViewActivity() })
@@ -136,15 +137,15 @@ private extension ArticleViewController {
 	
 	func createWebViewController(_ article: Article?, updateView: Bool = true) -> WebViewController {
 		let controller = WebViewController()
-		controller.articleModel = articleModel
+		controller.sceneModel = sceneModel
 		controller.delegate = self
 		controller.setArticle(article, updateView: updateView)
 		return controller
 	}
 	
 	func resetWebViewController() {
-		articleModel?.webViewProvider?.flushQueue()
-		articleModel?.webViewProvider?.replenishQueueIfNeeded()
+		sceneModel?.webViewProvider?.flushQueue()
+		sceneModel?.webViewProvider?.replenishQueueIfNeeded()
 		if let controller = currentWebViewController {
 			controller.fullReload()
 			self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)

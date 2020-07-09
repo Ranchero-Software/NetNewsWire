@@ -100,14 +100,26 @@ struct SceneNavigationView: View {
 				}).help("Go to Next Unread").padding(.trailing, 40)
 			}
 			ToolbarItem {
-				Button(action: {}, label: {
-					AppAssets.starOpenImage
-				}).help("Mark as Starred")
+				Button(action: { sceneModel.toggleReadForCurrentArticle() }, label: {
+					if sceneModel.readButtonState == .on {
+						AppAssets.readClosedImage
+					} else {
+						AppAssets.readOpenImage
+					}
+				})
+				.disabled(sceneModel.readButtonState == nil ? true : false)
+				.help(sceneModel.readButtonState == .on ? "Mark as Unread" : "Mark as Read")
 			}
 			ToolbarItem {
-				Button(action: {}, label: {
-					AppAssets.readClosedImage
-				}).help("Mark as Unread")
+				Button(action: { sceneModel.toggleStarForCurrentArticle() }, label: {
+					if sceneModel.starButtonState == .on {
+						AppAssets.starClosedImage
+					} else {
+						AppAssets.starOpenImage
+					}
+				})
+				.disabled(sceneModel.starButtonState == nil ? true : false)
+				.help(sceneModel.starButtonState == .on ? "Mark as Unstarred" : "Mark as Starred")
 			}
 			ToolbarItem {
 				Button(action: {}, label: {

@@ -57,7 +57,7 @@ class WebViewController: UIViewController {
 		}
 	}
 	
-	var articleModel: ArticleModel?
+	var sceneModel: SceneModel?
 	weak var delegate: WebViewControllerDelegate?
 	
 	private(set) var article: Article?
@@ -372,9 +372,10 @@ extension WebViewController: WKScriptMessageHandler {
 		case MessageName.imageWasClicked:
 			imageWasClicked(body: message.body as? String)
 		case MessageName.showFeedInspector:
-			if let webFeed = article?.webFeed {
+			return
+//			if let webFeed = article?.webFeed {
 //				coordinator.showFeedInspector(for: webFeed)
-			}
+//			}
 		default:
 			return
 		}
@@ -449,7 +450,7 @@ private extension WebViewController {
 			return
 		}
 		
-		articleModel?.webViewProvider?.dequeueWebView() { webView in
+		sceneModel?.webViewProvider?.dequeueWebView() { webView in
 			
 			// Add the webview
 			webView.translatesAutoresizingMaskIntoConstraints = false

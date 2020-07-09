@@ -46,7 +46,7 @@ class WebViewController: NSViewController, ArticleManager {
 		}
 	}
 	
-	var articleModel: ArticleModel?
+	var sceneModel: SceneModel?
 	weak var delegate: WebViewControllerDelegate?
 	
 	var currentArticle: Article?
@@ -75,6 +75,8 @@ class WebViewController: NSViewController, ArticleManager {
 		])
 		
 		loadWebView()
+		
+		sceneModel?.updateArticleSelection()
 	}
 
 	// MARK: Notifications
@@ -217,7 +219,7 @@ private extension WebViewController {
 			return
 		}
 		
-		articleModel?.webViewProvider?.dequeueWebView() { webView in
+		sceneModel?.webViewProvider?.dequeueWebView() { webView in
 			
 			// Add the webview
 			webView.translatesAutoresizingMaskIntoConstraints = false

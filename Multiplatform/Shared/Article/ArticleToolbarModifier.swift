@@ -10,6 +10,8 @@ import SwiftUI
 
 struct ArticleToolbarModifier: ViewModifier {
 	
+	@EnvironmentObject private var sceneModel: SceneModel
+	
 	func body(content: Content) -> some View {
 		content
 			.toolbar {
@@ -31,11 +33,15 @@ struct ArticleToolbarModifier: ViewModifier {
 				}
 
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: {
-					}, label: {
-						AppAssets.readOpenImage
-							.font(.title3)
-					}).help("Mark as Unread")
+					Button(action: { sceneModel.toggleReadForCurrentArticle() }, label: {
+						if sceneModel.readButtonState == .on {
+							AppAssets.readClosedImage
+						} else {
+							AppAssets.readOpenImage
+						}
+					})
+					.disabled(sceneModel.readButtonState == nil ? true : false)
+					.help(sceneModel.readButtonState == .on ? "Mark as Unread" : "Mark as Read")
 				}
 
 				ToolbarItem(placement: .bottomBar) {
@@ -43,11 +49,15 @@ struct ArticleToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: {
-					}, label: {
-						AppAssets.starOpenImage
-							.font(.title3)
-					}).help("Mark as Starred")
+					Button(action: { sceneModel.toggleStarForCurrentArticle() }, label: {
+						if sceneModel.starButtonState == .on {
+							AppAssets.starClosedImage
+						} else {
+							AppAssets.starOpenImage
+						}
+					})
+					.disabled(sceneModel.starButtonState == nil ? true : false)
+					.help(sceneModel.starButtonState == .on ? "Mark as Unstarred" : "Mark as Starred")
 				}
 
 				ToolbarItem(placement: .bottomBar) {
