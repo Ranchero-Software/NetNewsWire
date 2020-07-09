@@ -11,7 +11,8 @@ import SwiftUI
 struct SceneNavigationView: View {
 
 	@StateObject private var sceneModel = SceneModel()
-	@State private var showSheet = false
+	@State private var showSheet: Bool = false
+	@State private var sheetToShow: ToolbarSheets = .none
 	
 	#if os(iOS)
 	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -49,18 +50,27 @@ struct SceneNavigationView: View {
 		.onAppear {
 			sceneModel.startup()
 		}
-		.sheet(isPresented: $showSheet, onDismiss: { showSheet = false }) {
-			AddWebFeedView()
+		.sheet(isPresented: $showSheet, onDismiss: { sheetToShow = .none }) {
+			
+			if sheetToShow == .web {
+				AddWebFeedView()
+			}
+			if sheetToShow == .folder {
+				AddFolderView()
+			}
+		}
+		.onChange(of: sheetToShow) { value in
+			value != .none ? (showSheet = true) : (showSheet = false)
 		}
 		.toolbar {
 			
 			#if os(macOS)
 			ToolbarItem() {
 				Menu {
-					Button("Add Web Feed", action:  { showSheet = true })
+					Button("Add Web Feed", action: { sheetToShow = .web })
 					Button("Add Reddit Feed", action:  { })
 					Button("Add Twitter Feed", action:  { })
-					Button("Add Folder", action:  { })
+					Button("Add Folder", action:  { sheetToShow = .folder})
 				} label : {
 					AppAssets.addMenuImage
 				}
