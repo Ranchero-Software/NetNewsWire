@@ -20,6 +20,30 @@ class SidebarModel: ObservableObject {
 	
 	@Published var sidebarItems = [SidebarItem]()
 	
+	#if os(macOS)
+	@Published var selectedSidebarItems = Set<FeedIdentifier>() {
+		didSet {
+			print(selectedSidebarItems)
+		}
+	}
+	#endif
+	
+	private var items = Set<FeedIdentifier>()
+	
+	@Published var selectedSidebarItem: FeedIdentifier? = .none {
+		willSet {
+			#if os(macOS)
+			if newValue != nil {
+				items.insert(newValue!)
+			} else {
+				selectedSidebarItems = items
+				items.removeAll()
+			}
+			#endif
+		}
+	}
+	
+	
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
@@ -62,7 +86,6 @@ class SidebarModel: ObservableObject {
 		
 		sidebarItems = items
 	}
-	
 }
 
 // MARK: Private
