@@ -10,36 +10,27 @@ import SwiftUI
 import Account
 
 struct SettingsAddAccountView: View {
-	@State private var isAddPresented = false
-	@State private var selectedAccountType: AccountType = .onMyMac
+	@StateObject private var model = SettingsAddAccountModel()
 
 	var body: some View {
 		List {
-			Button(action: {
-				self.selectedAccountType = AccountType.onMyMac
-				self.isAddPresented = true
-			}) {
-				SettingsAccountLabelView(
-					accountImage: AppAssets.image(for: .onMyMac),
-					accountLabel: Account.defaultLocalAccountName
-				)
-			}
-			Button(action: {
-				self.selectedAccountType = AccountType.feedbin
-				self.isAddPresented = true
-			}) {
-				SettingsAccountLabelView(
-					accountImage: AppAssets.image(for: .feedbin),
-					accountLabel: "Feedbin"
-				)
+			ForEach(model.accounts) { account in
+				Button(action: {
+					model.selectedAccountType = account.accountType
+				}) {
+					SettingsAccountLabelView(
+						accountImage: account.image,
+						accountLabel: account.name
+					)
+				}
 			}
 		}
 		.listStyle(InsetGroupedListStyle())
-		.sheet(isPresented: $isAddPresented) {
-			if selectedAccountType == .onMyMac {
+		.sheet(isPresented: $model.isAddPresented) {
+			if model.selectedAccountType == .onMyMac {
 				SettingsLocalAccountView()
 			}
-			if selectedAccountType == .feedbin {
+			if model.selectedAccountType == .feedbin {
 				SettingsFeedbinAccountView()
 			}
 		}
