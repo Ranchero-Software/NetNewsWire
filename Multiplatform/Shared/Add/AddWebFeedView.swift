@@ -14,7 +14,7 @@ import RSCore
 struct AddWebFeedView: View {
 	
 	@Environment(\.presentationMode) private var presentationMode
-	@ObservedObject private var viewModel = AddWebFeedModel()
+	@StateObject private var viewModel = AddWebFeedModel()
 	
     @ViewBuilder var body: some View {
 		#if os(iOS)
@@ -27,14 +27,15 @@ struct AddWebFeedView: View {
 						presentationMode.wrappedValue.dismiss()
 					}
 				})
-				
 		#else
 			macForm
 				.onAppear {
 					viewModel.pasteUrlFromPasteboard()
 				}.alert(isPresented: $viewModel.showError) {
-					Alert(title: Text("Oops"), message: Text(viewModel.addFeedError!.localizedDescription), dismissButton: Alert.Button.cancel({
-						viewModel.addFeedError = AddWebFeedError.none
+					Alert(title: Text("Oops"),
+						  message: Text(viewModel.addFeedError!.localizedDescription),
+						  dismissButton: Alert.Button.cancel({
+							viewModel.addFeedError = AddWebFeedError.none
 					}))
 				}.onReceive(viewModel.$shouldDismiss, perform: { dismiss in
 					if dismiss == true {
@@ -59,7 +60,6 @@ struct AddWebFeedView: View {
 			}.padding()
 			
 			LazyVGrid(columns: [GridItem(.fixed(75), spacing: 10, alignment: .trailing),GridItem(.fixed(400), spacing: 0, alignment: .leading) ], alignment: .leading, spacing: 10, pinnedViews: [], content:{
-			
 				Text("URL:").bold()
 				urlTextField
 					.textFieldStyle(RoundedBorderTextFieldStyle())
@@ -123,7 +123,7 @@ struct AddWebFeedView: View {
 	}
 	
 	var providedNameTextField: some View {
-		TextField("Optional", text: $viewModel.providedName)
+		TextField("Title (Optional)", text: $viewModel.providedName)
 	}
 	
 	@ViewBuilder var folderPicker: some View {
@@ -135,15 +135,19 @@ struct AddWebFeedView: View {
 						HStack(alignment: .top) {
 							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
 								Image(rsImage: image)
+									.foregroundColor(.accentColor)
 							}
-							Text("\(containerName)").tag(index)
+							Text("\(containerName)")
+								.tag(index)
 						}.padding(.leading, 16)
 					} else {
 						HStack(alignment: .top) {
 							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
 								Image(rsImage: image)
+									.foregroundColor(.accentColor)
 							}
-							Text(containerName).tag(index)
+							Text(containerName)
+								.tag(index)
 						}
 					}
 				}
@@ -159,13 +163,18 @@ struct AddWebFeedView: View {
 								Image(rsImage: image)
 							}
 							Text("\(containerName)")
-						}.padding(.leading, 2).tag(index)
+						}
+						.padding(.leading, 2)
+						.tag(index)
 					} else {
-						Text(containerName).padding(.leading, 2).tag(index)
+						Text(containerName)
+							.padding(.leading, 2)
+							.tag(index)
 					}
 				}
 			})
-		}).padding(.leading, -8)
+		})
+		.padding(.leading, -8)
 		#endif
 		
 	}
@@ -188,7 +197,8 @@ struct AddWebFeedView: View {
 			})
 			.disabled(!viewModel.providedURL.mayBeURL)
 			.help("Add Feed")
-		}.padding(.trailing, 2)
+		}
+		.padding(.trailing, 2)
 	}
 	
 	
