@@ -66,8 +66,7 @@ final class WebStatusBarView: NSView {
 			didConfigureLayerRadius = true
 		}
 		
-		let color = self.effectiveAppearance.isDarkMode ? NSColor.textBackgroundColor : AppAssets.webStatusBarBackground
-		layer.backgroundColor = color.cgColor
+		layer.backgroundColor = NSColor.selectedTextBackgroundColor.cgColor
 	}
 }
 
