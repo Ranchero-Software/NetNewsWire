@@ -12,6 +12,7 @@ body {
 :root {
 	color-scheme: light dark;
 	font: -apple-system-body;
+	font-family: -apple-system;
 	font-size: [[font-size]]px;
 	--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .75);
 	--block-quote-border-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .50);
