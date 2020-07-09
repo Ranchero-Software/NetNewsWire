@@ -30,7 +30,7 @@ struct ArticleToolbarModifier: ViewModifier {
 					}
 				}
 
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Button(action: {
 					}, label: {
 						AppAssets.readOpenImage
@@ -38,11 +38,11 @@ struct ArticleToolbarModifier: ViewModifier {
 					}).help("Mark as Unread")
 				}
 
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Spacer()
 				}
 				
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Button(action: {
 					}, label: {
 						AppAssets.starOpenImage
@@ -50,11 +50,11 @@ struct ArticleToolbarModifier: ViewModifier {
 					}).help("Mark as Starred")
 				}
 
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Spacer()
 				}
 				
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Button(action: {
 					}, label: {
 						AppAssets.nextUnreadArticleImage
@@ -62,11 +62,11 @@ struct ArticleToolbarModifier: ViewModifier {
 					}).help("Next Unread")
 				}
 
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Spacer()
 				}
 				
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Button(action: {
 					}, label: {
 						AppAssets.articleExtractorOff
@@ -74,11 +74,11 @@ struct ArticleToolbarModifier: ViewModifier {
 					}).help("Reader View")
 				}
 
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Spacer()
 				}
 				
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Button(action: {
 					}, label: {
 						AppAssets.shareImage
