@@ -14,7 +14,16 @@ import Secrets
 
 struct SettingsFeedbinAccountView: View {
 	@Environment(\.presentationMode) var presentationMode
-	@StateObject var settingsModel = SettingsFeedbinAccountModel()
+	@ObservedObject var settingsModel: SettingsFeedbinAccountModel
+
+	init(account: Account? = nil) {
+		if let account = account {
+			self.settingsModel = SettingsFeedbinAccountModel(account: account)
+		}
+		else {
+			self.settingsModel = SettingsFeedbinAccountModel()
+		}
+	}
 
 	var body: some View {
 		NavigationView {

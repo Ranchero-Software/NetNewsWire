@@ -12,7 +12,6 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
 	
-	let sortedAccounts = AccountManager.shared.sortedAccounts
 	@Environment(\.presentationMode) var presentationMode
 	@Environment(\.exportFiles) var exportAction
 	@Environment(\.importFiles) var importAction
@@ -59,11 +58,11 @@ struct SettingsView: View {
 	
 	var accounts: some View {
 		Section(header: Text("Accounts"), content: {
-			ForEach(0..<sortedAccounts.count, content: { i in
+			ForEach(0..<viewModel.accounts.count, id: \.hashValue , content: { i in
 				NavigationLink(
-					destination: EmptyView(),
+					destination: SettingsDetailAccountView(viewModel.accounts[i]),
 					label: {
-						Text(sortedAccounts[i].nameForDisplay)
+						Text(viewModel.accounts[i].nameForDisplay)
 					})
 			})
 			NavigationLink(
@@ -103,7 +102,7 @@ struct SettingsView: View {
 	}
 
 	private func importActionSheet() -> ActionSheet {
-		var buttons = sortedAccounts.map { (account) -> ActionSheet.Button in
+		var buttons = viewModel.accounts.map { (account) -> ActionSheet.Button in
 			ActionSheet.Button.default(Text(account.nameForDisplay)) {
 				importOPML(account: account)
 			}
@@ -116,7 +115,7 @@ struct SettingsView: View {
 	}
 
 	private func exportActionSheet() -> ActionSheet {
-		var buttons = sortedAccounts.map { (account) -> ActionSheet.Button in
+		var buttons = viewModel.accounts.map { (account) -> ActionSheet.Button in
 			ActionSheet.Button.default(Text(account.nameForDisplay)) {
 				exportOPML(account: account)
 			}
