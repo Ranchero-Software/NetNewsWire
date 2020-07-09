@@ -20,12 +20,21 @@ protocol ArticleModelDelegate: class {
 	func selectArticle(_: ArticleModel, article: Article)
 }
 
+protocol ArticleManager: class {
+	var currentArticle: Article? { get }
+}
+
 class ArticleModel: ObservableObject {
 	
+	weak var articleManager: ArticleManager?
 	weak var delegate: ArticleModelDelegate?
 	
 	var webViewProvider: WebViewProvider? {
 		return delegate?.articleModelWebViewProvider
+	}
+	
+	var currentArticle: Article? {
+		return articleManager?.currentArticle
 	}
 	
 	// MARK: API
@@ -41,6 +50,19 @@ class ArticleModel: ObservableObject {
 	func selectArticle(_ article: Article) {
 		delegate?.selectArticle(self, article: article)
 	}
+
+	func toggleReadForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles([article], statusKey: .starred, flag: !article.status.starred)
+		}
+	}
+	
+	func toggleStarForCurrentArticle() {
+		if let article = currentArticle {
+			markArticles([article], statusKey: .starred, flag: !article.status.starred)
+		}
+	}
+	
 	
 }
 

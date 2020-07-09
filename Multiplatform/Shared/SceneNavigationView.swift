@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SceneNavigationView: View {
 
+	@Environment(\.undoManager) var undoManager
 	@StateObject private var sceneModel = SceneModel()
 	@State private var showSheet: Bool = false
 	@State private var sheetToShow: ToolbarSheets = .none
@@ -48,6 +49,7 @@ struct SceneNavigationView: View {
 		}
 		.environmentObject(sceneModel)
 		.onAppear {
+			sceneModel.undoManager = undoManager
 			sceneModel.startup()
 		}
 		.sheet(isPresented: $showSheet, onDismiss: { sheetToShow = .none }) {

@@ -12,7 +12,7 @@ import Account
 import Articles
 import SafariServices
 
-class ArticleViewController: UIViewController {
+class ArticleViewController: UIViewController, ArticleManager {
 	
 	weak var articleModel: ArticleModel?
 	
@@ -22,7 +22,7 @@ class ArticleViewController: UIViewController {
 		return pageViewController?.viewControllers?.first as? WebViewController
 	}
 	
-	var article: Article? {
+	var currentArticle: Article? {
 		didSet {
 			if let controller = currentWebViewController, controller.article != article {
 				controller.setArticle(article)

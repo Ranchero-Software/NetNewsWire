@@ -8,6 +8,16 @@
 
 import Foundation
 
+enum ArticleReadButtonState {
+	case on
+	case off
+}
+
+enum ArticleStarButtonState {
+	case on
+	case off
+}
+
 enum ArticleExtractorButtonState {
 	case error
 	case animated

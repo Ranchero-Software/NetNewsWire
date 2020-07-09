@@ -26,7 +26,7 @@ struct ArticleView: NSViewControllerRepresentable {
 	func makeNSViewController(context: Context) -> WebViewController {
 		let controller = WebViewController()
 		controller.articleModel = articleModel
-		controller.article = article
+		controller.currentArticle = article
 		return controller
 	}
 	
