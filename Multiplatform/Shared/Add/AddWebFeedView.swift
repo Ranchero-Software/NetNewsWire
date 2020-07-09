@@ -134,14 +134,14 @@ struct AddWebFeedView: View {
 					if viewModel.containers[index] is Folder {
 						HStack(alignment: .top) {
 							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
-								Image(rsImage: image)
+								Image(rsImage: image).foregroundColor(.accentColor)
 							}
 							Text("\(containerName)").tag(index)
 						}.padding(.leading, 16)
 					} else {
 						HStack(alignment: .top) {
 							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
-								Image(rsImage: image)
+								Image(rsImage: image).foregroundColor(.accentColor)
 							}
 							Text(containerName).tag(index)
 						}
