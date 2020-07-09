@@ -282,6 +282,12 @@ struct AppAssets {
 		#endif
 	}
 
+	#if os(macOS)
+	static var webStatusBarBackground: NSColor = {
+		return NSColor(named: "WebStatusBarBackground")!
+	}()
+	#endif
+	
 	static func image(for accountType: AccountType) -> RSImage? {
 		switch accountType {
 		case .onMyMac:

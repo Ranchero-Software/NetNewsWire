@@ -333,6 +333,7 @@
 		51B54AB324B5AC830014348B /* ArticleExtractorButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */; };
 		51B54AB624B5B33C0014348B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54AB524B5B33C0014348B /* WebViewController.swift */; };
 		51B54ABC24B5BEF20014348B /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54ABB24B5BEF20014348B /* ArticleView.swift */; };
+		51B54B6724B6A7960014348B /* WebStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54B6624B6A7960014348B /* WebStatusBarView.swift */; };
 		51B5C87723F22B8200032075 /* ExtensionContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87623F22B8200032075 /* ExtensionContainers.swift */; };
 		51B5C87B23F2317700032075 /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
 		51B5C87D23F2346200032075 /* ExtensionContainersFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */; };
@@ -1981,6 +1982,7 @@
 		51B54A6824B54A490014348B /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		51B54AB524B5B33C0014348B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		51B54ABB24B5BEF20014348B /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
+		51B54B6624B6A7960014348B /* WebStatusBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebStatusBarView.swift; sourceTree = "<group>"; };
 		51B5C87623F22B8200032075 /* ExtensionContainers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContainers.swift; sourceTree = "<group>"; };
 		51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionFeedAddRequest.swift; sourceTree = "<group>"; };
 		51B5C87C23F2346200032075 /* ExtensionContainersFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContainersFile.swift; sourceTree = "<group>"; };
@@ -2734,9 +2736,10 @@
 		5177470C24B2FF3B00EB0F74 /* Article */ = {
 			isa = PBXGroup;
 			children = (
-				51B54AB524B5B33C0014348B /* WebViewController.swift */,
-				51B54A6824B54A490014348B /* IconView.swift */,
 				51B54ABB24B5BEF20014348B /* ArticleView.swift */,
+				51B54A6824B54A490014348B /* IconView.swift */,
+				51B54B6624B6A7960014348B /* WebStatusBarView.swift */,
+				51B54AB524B5B33C0014348B /* WebViewController.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -4135,46 +4138,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -4184,7 +4187,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -4194,7 +4197,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -5184,6 +5187,7 @@
 				51E4991F24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
 				51A5769724AE617200078888 /* ArticleContainerView.swift in Sources */,
 				51E4991224A808FB00B667CB /* AddWebFeedDefaultContainer.swift in Sources */,
+				51B54B6724B6A7960014348B /* WebStatusBarView.swift in Sources */,
 				51E4993E24A870F900B667CB /* UserNotificationManager.swift in Sources */,
 				51E4992E24A8676300B667CB /* FetchRequestQueue.swift in Sources */,
 				51E498CF24A8085D00B667CB /* SmartFeed.swift in Sources */,

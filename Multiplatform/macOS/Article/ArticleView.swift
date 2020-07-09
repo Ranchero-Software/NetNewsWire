@@ -9,7 +9,7 @@
 import SwiftUI
 import Articles
 
-final class ArticleView: NSViewControllerRepresentable {
+struct ArticleView: NSViewControllerRepresentable {
 	
 	var sceneModel: SceneModel
 	var articleModel: ArticleModel

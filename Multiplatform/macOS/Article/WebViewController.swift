@@ -27,8 +27,12 @@ class WebViewController: NSViewController {
 	private struct MessageName {
 		static let imageWasClicked = "imageWasClicked"
 		static let imageWasShown = "imageWasShown"
+		static let mouseDidEnter = "mouseDidEnter"
+		static let mouseDidExit = "mouseDidExit"
 		static let showFeedInspector = "showFeedInspector"
 	}
+	
+	var statusBarView: WebStatusBarView!
 	
 	private var webView: PreloadedWebView?
 	
@@ -59,6 +63,16 @@ class WebViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleColorPreferencesChanged(_:)), name: .appleColorPreferencesChangedNotification, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleInterfaceThemeChanged(_:)), name: .appleInterfaceThemeChangedNotification, object: nil)
+		
+		statusBarView = WebStatusBarView()
+		statusBarView.translatesAutoresizingMaskIntoConstraints = false
+		self.view.addSubview(statusBarView)
+		NSLayoutConstraint.activate([
+			self.view.leadingAnchor.constraint(equalTo: statusBarView.leadingAnchor, constant: -6),
+			self.view.trailingAnchor.constraint(greaterThanOrEqualTo: statusBarView.trailingAnchor, constant: 6),
+			self.view.bottomAnchor.constraint(equalTo: statusBarView.bottomAnchor, constant: 2),
+			statusBarView.heightAnchor.constraint(equalToConstant: 20)
+		])
 		
 		loadWebView()
 	}
@@ -178,6 +192,12 @@ extension WebViewController: WKScriptMessageHandler {
 			return
 		case MessageName.imageWasClicked:
 			return
+		case MessageName.mouseDidEnter:
+			if let link = message.body as? String {
+				statusBarView.mouseoverLink = link
+			}
+		case MessageName.mouseDidExit:
+			statusBarView.mouseoverLink = nil
 		case MessageName.showFeedInspector:
 			return
 		default:
@@ -201,7 +221,7 @@ private extension WebViewController {
 			
 			// Add the webview
 			webView.translatesAutoresizingMaskIntoConstraints = false
-			self.view.addSubview(webView)
+			self.view.addSubview(webView, positioned: .below, relativeTo: self.statusBarView)
 			NSLayoutConstraint.activate([
 				self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
 				self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
@@ -211,6 +231,8 @@ private extension WebViewController {
 		
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
+			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.mouseDidEnter)
+			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.mouseDidExit)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
 
 			self.renderPage(webView)
