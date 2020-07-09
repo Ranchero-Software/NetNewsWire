@@ -123,7 +123,7 @@ struct AddWebFeedView: View {
 	}
 	
 	var providedNameTextField: some View {
-		TextField("Optional", text: $viewModel.providedName)
+		TextField("Title (Optional)", text: $viewModel.providedName)
 	}
 	
 	@ViewBuilder var folderPicker: some View {
