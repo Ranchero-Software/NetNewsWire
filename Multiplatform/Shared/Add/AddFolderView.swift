@@ -71,22 +71,28 @@ struct AddFolderView: View {
 		Form {
 			HStack {
 				Spacer()
-				Image("FaviconTemplateImage")
+				Image(rsImage: AppAssets.faviconTemplateImage)
 					.resizable()
 					.renderingMode(.template)
 					.frame(width: 30, height: 30)
-					.foregroundColor(.accentColor).font(.title)
 				Text("Add a Folder")
 					.font(.title)
 				Spacer()
 			}
-			TextField("Name", text: $viewModel.folderName)
-				.textFieldStyle(RoundedBorderTextFieldStyle())
-				.help("The name of the folder you want to create")
-			accountPicker
-				.help("Pick the account you want to create a folder in.")
+			
+			LazyVGrid(columns: [GridItem(.fixed(75), spacing: 10, alignment: .trailing),GridItem(.fixed(400), spacing: 0, alignment: .leading) ], alignment: .leading, spacing: 10, pinnedViews: [], content:{
+				Text("Name:").bold()
+				TextField("Name", text: $viewModel.folderName)
+					.textFieldStyle(RoundedBorderTextFieldStyle())
+					.help("The name of the folder you want to create")
+				Text("Account:").bold()
+				accountPicker
+					.help("Pick the account you want to create a folder in.")
+			})
 			buttonStack
 		}
+		.frame(maxWidth: 485)
+		.padding(12)
 	}
 	#endif
 	
