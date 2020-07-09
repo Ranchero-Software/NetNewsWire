@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Account
 
 class SettingsModel: ObservableObject {
 	
@@ -36,6 +37,23 @@ class SettingsModel: ObservableObject {
 	}
 	
 	@Published var presentSheet: Bool = false
+	var accounts: [Account] {
+		get {
+			AccountManager.shared.sortedAccounts
+		}
+		set {
+
+		}
+	}
+
+	// MARK: Init
+
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount), name: .UserDidAddAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount), name: .UserDidDeleteAccount, object: nil)
+	}
+
 	var selectedWebsite: HelpSites = .none {
 		didSet {
 			if selectedWebsite == .none {
@@ -45,5 +63,22 @@ class SettingsModel: ObservableObject {
 			}
 		}
 	}
-	
+
+	func refreshAccounts() {
+		objectWillChange.self.send()
+	}
+
+	// MARK:- Notifications
+
+	@objc func displayNameDidChange() {
+		refreshAccounts()
+	}
+
+	@objc func userDidAddAccount() {
+		refreshAccounts()
+	}
+
+	@objc func userDidDeleteAccount() {
+		refreshAccounts()
+	}
 }
