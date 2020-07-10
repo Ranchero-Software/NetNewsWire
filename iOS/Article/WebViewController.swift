@@ -123,24 +123,38 @@ class WebViewController: UIViewController {
 
 	func canScrollDown() -> Bool {
 		guard let webView = webView else { return false }
-		return webView.scrollView.contentOffset.y < finalScrollPosition()
+		return webView.scrollView.contentOffset.y < finalScrollPosition(scrollingUp: false)
 	}
 
-	func scrollPageDown() {
+	func canScrollUp() -> Bool {
+		guard let webView = webView else { return false }
+		return webView.scrollView.contentOffset.y > finalScrollPosition(scrollingUp: true)
+	}
+
+	private func scrollPage(up scrollingUp: Bool) {
 		guard let webView = webView else { return }
-		
+
 		let overlap = 2 * UIFont.systemFont(ofSize: UIFont.systemFontSize).lineHeight * UIScreen.main.scale
 		let scrollToY: CGFloat = {
-			let fullScroll = webView.scrollView.contentOffset.y + webView.scrollView.layoutMarginsGuide.layoutFrame.height - overlap
-			let final = finalScrollPosition()
-			return fullScroll < final ? fullScroll : final
+			let scrollDistance = webView.scrollView.layoutMarginsGuide.layoutFrame.height - overlap;
+			let fullScroll = webView.scrollView.contentOffset.y + (scrollingUp ? -scrollDistance : scrollDistance)
+			let final = finalScrollPosition(scrollingUp: scrollingUp)
+			return (scrollingUp ? fullScroll > final : fullScroll < final) ? fullScroll : final
 		}()
-		
+
 		let convertedPoint = self.view.convert(CGPoint(x: 0, y: 0), to: webView.scrollView)
 		let scrollToPoint = CGPoint(x: convertedPoint.x, y: scrollToY)
 		webView.scrollView.setContentOffset(scrollToPoint, animated: true)
 	}
-	
+
+	func scrollPageDown() {
+		scrollPage(up: false)
+	}
+
+	func scrollPageUp() {
+		scrollPage(up: true)
+	}
+
 	func hideClickedImage() {
 		webView?.evaluateJavaScript("hideClickedImage();")
 	}
@@ -539,9 +553,14 @@ private extension WebViewController {
 		
 	}
 	
-	func finalScrollPosition() -> CGFloat {
+	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
 		guard let webView = webView else { return 0 }
-		return webView.scrollView.contentSize.height - webView.scrollView.bounds.height + webView.scrollView.safeAreaInsets.bottom
+
+		if scrollingUp {
+			return -webView.scrollView.safeAreaInsets.top
+		} else {
+			return webView.scrollView.contentSize.height - webView.scrollView.bounds.height + webView.scrollView.safeAreaInsets.bottom
+		}
 	}
 	
 	func startArticleExtractor() {

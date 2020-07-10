@@ -35,6 +35,10 @@ class RootSplitViewController: UISplitViewController {
 	@objc func scrollOrGoToNextUnread(_ sender: Any?) {
 		coordinator.scrollOrGoToNextUnread()
 	}
+
+	@objc func scrollUp(_ sender: Any?) {
+		coordinator.scrollUp()
+	}
 	
 	@objc func goToPreviousUnread(_ sender: Any?) {
 		coordinator.selectPrevUnread()

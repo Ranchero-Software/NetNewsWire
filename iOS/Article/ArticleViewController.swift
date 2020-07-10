@@ -293,8 +293,16 @@ class ArticleViewController: UIViewController {
 		return currentWebViewController?.canScrollDown() ?? false
 	}
 
+	func canScrollUp() -> Bool {
+		return currentWebViewController?.canScrollUp() ?? false
+	}
+
 	func scrollPageDown() {
 		currentWebViewController?.scrollPageDown()
+	}
+
+	func scrollPageUp() {
+		currentWebViewController?.scrollPageUp()
 	}
 	
 	func stopArticleExtractorIfProcessing() {
