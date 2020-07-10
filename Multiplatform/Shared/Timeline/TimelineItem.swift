@@ -19,19 +19,16 @@ struct TimelineItem: Identifiable {
 	
 	var article: Article
 	
+	init(article: Article) {
+		self.article = article
+		updateStatus()
+	}
+	
 	var id: String {
 		return article.articleID
 	}
 	
-	var status:  TimelineItemStatus {
-		if article.status.starred == true {
-			return .showStar
-		}
-		if article.status.read == false {
-			return .showUnread
-		}
-		return .showNone
-	}
+	var status:  TimelineItemStatus = .showNone
 	
 	var byline: String {
 		return article.webFeed?.nameForDisplay ?? ""
@@ -39,6 +36,18 @@ struct TimelineItem: Identifiable {
 	
 	var dateTimeString: String {
 		return ArticleStringFormatter.dateString(article.logicalDatePublished)
+	}
+	
+	mutating func updateStatus() {
+		if article.status.starred == true {
+			status = .showStar
+		} else {
+			if article.status.read == false {
+				status = .showUnread
+			} else {
+				status = .showNone
+			}
+		}
 	}
 	
 }

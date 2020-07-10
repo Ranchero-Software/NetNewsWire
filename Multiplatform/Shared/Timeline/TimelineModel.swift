@@ -35,7 +35,7 @@ class TimelineModel: ObservableObject {
 	
 	private var articleDictionaryNeedsUpdate = true
 	private var _idToArticleDictionary = [String: Article]()
-	private var idToAticleDictionary: [String: Article] {
+	private var idToArticleDictionary: [String: Article] {
 		if articleDictionaryNeedsUpdate {
 			rebuildArticleDictionaries()
 		}
@@ -59,6 +59,7 @@ class TimelineModel: ObservableObject {
 	}
 	
 	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 	}
 	
 	// MARK: API
@@ -77,7 +78,7 @@ class TimelineModel: ObservableObject {
 	}
 	
 	func articleFor(_ articleID: String) -> Article? {
-		return idToAticleDictionary[articleID]
+		return idToArticleDictionary[articleID]
 	}
 
 	func findPrevArticle(_ article: Article) -> Article? {
@@ -103,6 +104,21 @@ class TimelineModel: ObservableObject {
 // MARK: Private
 
 private extension TimelineModel {
+	
+	// MARK: Notifications
+
+	@objc func statusesDidChange(_ note: Notification) {
+		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
+			return
+		}
+		for i in 0..<timelineItems.count {
+			if articleIDs.contains(timelineItems[i].article.articleID) {
+				timelineItems[i].updateStatus()
+			}
+		}
+	}
+	
+	// MARK:
 	
 	func sortParametersDidChange() {
 		performBlockAndRestoreSelection {
