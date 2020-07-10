@@ -39,8 +39,22 @@ class SharingTests: XCTestCase {
 
     private func article(titled title: String) -> Article {
         let articleId = randomId()
-		return Article(accountID: randomId(), articleID: articleId, webFeedID: randomId(), uniqueID: randomId(), title: title, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: ArticleStatus(articleID: articleId, read: true, dateArrived: Date())
-        )
+		return Article(accountID: randomId(),
+					   articleID: articleId,
+					   webFeedID: randomId(),
+					   uniqueID: randomId(),
+					   title: title,
+					   contentHTML: nil,
+					   contentText: nil,
+					   url: nil,
+					   externalURL: nil,
+					   summary: nil,
+					   imageURL: nil,
+					   datePublished: nil,
+					   dateModified: nil,
+					   authors: nil,
+					   status: ArticleStatus(articleID: articleId, read: true, dateArrived: Date())
+		)
     }
 
     private func randomId() -> String {
