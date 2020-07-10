@@ -167,8 +167,18 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		}
 	}
 
+	func canScrollUp(_ completion: @escaping (Bool) -> Void) {
+		fetchScrollInfo { (scrollInfo) in
+			completion(scrollInfo?.canScrollUp ?? false)
+		}
+	}
+
 	override func scrollPageDown(_ sender: Any?) {
 		webView.scrollPageDown(sender)
+	}
+
+	override func scrollPageUp(_ sender: Any?) {
+		webView.scrollPageUp(sender)
 	}
 }
 

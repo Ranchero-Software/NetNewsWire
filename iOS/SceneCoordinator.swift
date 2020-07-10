@@ -990,6 +990,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			selectNextUnread()
 		}
 	}
+
+	func scrollUp() {
+		if articleViewController?.canScrollUp() ?? false {
+			articleViewController?.scrollPageUp()
+		}
+	}
 	
 	func markAllAsRead(_ articles: [Article]) {
 		markArticlesWithUndo(articles, statusKey: .read, flag: true)
