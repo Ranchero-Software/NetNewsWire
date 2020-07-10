@@ -19,7 +19,7 @@ class AccountsAddViewController: NSViewController {
 	#if DEBUG
 	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
 	#else
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .cloudKit, .newsBlur]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
 	#endif
 	
 	init() {
