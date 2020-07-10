@@ -223,7 +223,11 @@ protocol SidebarDelegate: class {
 		if outlineView.selectionIsEmpty {
 			return
 		}
+		let firstRow = outlineView.selectedRowIndexes.min()
 		deleteNodes(selectedNodes)
+		if let restoreRow = firstRow, restoreRow < outlineView.numberOfRows {
+			outlineView.selectRow(restoreRow)
+		}
 	}
 	
 	@IBAction func doubleClickedSidebar(_ sender: Any?) {
