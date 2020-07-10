@@ -12,6 +12,16 @@
 	</dict>
 	<dict>
 		<key>title</key>
+		<string>Scroll or Go to Next Unread</string>
+		<key>key</key>
+		<string>[space]</string>
+		<key>shiftModifier</key>
+		<true/>
+		<key>action</key>
+		<string>scrollUp:</string>
+	</dict>
+	<dict>
+		<key>title</key>
 		<string>Go to Previous Unread</string>
 		<key>key</key>
 		<string>-</string>

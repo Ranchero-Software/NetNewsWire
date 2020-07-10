@@ -264,6 +264,19 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
+	@IBAction func scrollUp(_ sender: Any?) {
+		guard let detailViewController = detailViewController else {
+			return
+		}
+		detailViewController.canScrollUp { (canScroll) in
+			if (canScroll) {
+				NSCursor.setHiddenUntilMouseMoves(true)
+				detailViewController.scrollPageUp(sender)
+			}
+		}
+
+	}
+
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		if let link = currentLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)

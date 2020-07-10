@@ -66,8 +66,16 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		currentWebViewController.canScrollDown(callback)
 	}
 
+	func canScrollUp(_ callback: @escaping (Bool) -> Void) {
+		currentWebViewController.canScrollUp(callback)
+	}
+
 	override func scrollPageDown(_ sender: Any?) {
 		currentWebViewController.scrollPageDown(sender)
+	}
+
+	override func scrollPageUp(_ sender: Any?) {
+		currentWebViewController.scrollPageUp(sender)
 	}
 	
 	// MARK: - Navigation
