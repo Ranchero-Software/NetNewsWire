@@ -82,7 +82,7 @@ private extension NNW3ImportController {
 			guard let account = accessoryViewController.selectedAccount else {
 				return
 			}
-			AppDefaults.importOPMLAccountID = account.accountID
+			AppDefaults.shared.importOPMLAccountID = account.accountID
 
 			NNW3ImportController.importSubscriptionsPlist(subscriptionsPlistURL, into: account)
 		}

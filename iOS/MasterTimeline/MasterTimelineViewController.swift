@@ -68,8 +68,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Configure the table
 		tableView.dataSource = dataSource
-		numberOfTextLines = AppDefaults.timelineNumberOfLines
-		iconSize = AppDefaults.timelineIconSize
+		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
 		
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
@@ -455,9 +455,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		if numberOfTextLines != AppDefaults.timelineNumberOfLines || iconSize != AppDefaults.timelineIconSize {
-			numberOfTextLines = AppDefaults.timelineNumberOfLines
-			iconSize = AppDefaults.timelineIconSize
+		if numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || iconSize != AppDefaults.shared.timelineIconSize {
+			numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+			iconSize = AppDefaults.shared.timelineIconSize
 			resetEstimatedRowHeight()
 			reloadAllVisibleCells()
 		}

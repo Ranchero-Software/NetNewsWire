@@ -57,7 +57,7 @@ protocol SidebarDelegate: class {
 	// MARK: - NSViewController
 
 	override func viewDidLoad() {
-		sidebarCellAppearance = SidebarCellAppearance(fontSize: AppDefaults.sidebarFontSize)
+		sidebarCellAppearance = SidebarCellAppearance(fontSize: AppDefaults.shared.sidebarFontSize)
 
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 import RSCore
 import RSWeb
 
@@ -28,6 +29,8 @@ final class SingleFaviconDownloader {
 	var iconImage: IconImage?
 	let homePageURL: String?
 
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "SingleFaviconDownloader")
+	
 	private var lastDownloadAttemptDate: Date
 	private var diskStatus = DiskStatus.unknown
 	private var diskCache: BinaryDiskCache
@@ -145,7 +148,7 @@ private extension SingleFaviconDownloader {
 			}
 
 			if let error = error {
-				appDelegate.logMessage("Error downloading favicon at \(url): \(error)", type: .warning)
+				os_log(.info, log: self.log, "Error downloading image at %@: %@.", url.absoluteString, error.localizedDescription)
 			}
 
 			completion(nil)

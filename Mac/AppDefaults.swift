@@ -14,7 +14,10 @@ enum FontSize: Int {
 	case veryLarge = 3
 }
 
-struct AppDefaults {
+final class AppDefaults {
+	
+	static var shared = AppDefaults()
+	private init() {}
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
@@ -50,14 +53,14 @@ struct AppDefaults {
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
 	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
-	static let isDeveloperBuild: Bool = {
+	let isDeveloperBuild: Bool = {
 		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
 			return true
 		}
 		return false
 	}()
 	
-	static let isFirstRun: Bool = {
+	var isFirstRun: Bool = {
 		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
 			return false
 		}
@@ -65,7 +68,7 @@ struct AppDefaults {
 		return true
 	}()
 	
-	static var windowState: [AnyHashable : Any]? {
+	var windowState: [AnyHashable : Any]? {
 		get {
 			return UserDefaults.standard.object(forKey: Key.windowState) as? [AnyHashable : Any]
 		}
@@ -74,7 +77,7 @@ struct AppDefaults {
 		}
 	}
 	
-	static var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
+	var activeExtensionPointIDs: [[AnyHashable : AnyHashable]]? {
 		get {
 			return UserDefaults.standard.object(forKey: Key.activeExtensionPointIDs) as? [[AnyHashable : AnyHashable]]
 		}
@@ -83,160 +86,160 @@ struct AppDefaults {
 		}
 	}
 	
-	static var lastImageCacheFlushDate: Date? {
+	var lastImageCacheFlushDate: Date? {
 		get {
-			return date(for: Key.lastImageCacheFlushDate)
+			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
 		}
 		set {
-			setDate(for: Key.lastImageCacheFlushDate, newValue)
+			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
 		}
 	}
 	
-	static var openInBrowserInBackground: Bool {
+	var openInBrowserInBackground: Bool {
 		get {
-			return bool(for: Key.openInBrowserInBackground)
+			return AppDefaults.bool(for: Key.openInBrowserInBackground)
 		}
 		set {
-			setBool(for: Key.openInBrowserInBackground, newValue)
+			AppDefaults.setBool(for: Key.openInBrowserInBackground, newValue)
 		}
 	}
 
-	static var sidebarFontSize: FontSize {
+	var sidebarFontSize: FontSize {
 		get {
 			return fontSize(for: Key.sidebarFontSize)
 		}
 		set {
-			setFontSize(for: Key.sidebarFontSize, newValue)
+			AppDefaults.setFontSize(for: Key.sidebarFontSize, newValue)
 		}
 	}
 
-	static var timelineFontSize: FontSize {
+	var timelineFontSize: FontSize {
 		get {
 			return fontSize(for: Key.timelineFontSize)
 		}
 		set {
-			setFontSize(for: Key.timelineFontSize, newValue)
+			AppDefaults.setFontSize(for: Key.timelineFontSize, newValue)
 		}
 	}
 
-	static var detailFontSize: FontSize {
+	var detailFontSize: FontSize {
 		get {
 			return fontSize(for: Key.detailFontSize)
 		}
 		set {
-			setFontSize(for: Key.detailFontSize, newValue)
+			AppDefaults.setFontSize(for: Key.detailFontSize, newValue)
 		}
 	}
 
-	static var addWebFeedAccountID: String? {
+	var addWebFeedAccountID: String? {
 		get {
-			return string(for: Key.addWebFeedAccountID)
+			return AppDefaults.string(for: Key.addWebFeedAccountID)
 		}
 		set {
-			setString(for: Key.addWebFeedAccountID, newValue)
+			AppDefaults.setString(for: Key.addWebFeedAccountID, newValue)
 		}
 	}
 	
-	static var addWebFeedFolderName: String? {
+	var addWebFeedFolderName: String? {
 		get {
-			return string(for: Key.addWebFeedFolderName)
+			return AppDefaults.string(for: Key.addWebFeedFolderName)
 		}
 		set {
-			setString(for: Key.addWebFeedFolderName, newValue)
+			AppDefaults.setString(for: Key.addWebFeedFolderName, newValue)
 		}
 	}
 
-	static var addFolderAccountID: String? {
+	var addFolderAccountID: String? {
 		get {
-			return string(for: Key.addFolderAccountID)
+			return AppDefaults.string(for: Key.addFolderAccountID)
 		}
 		set {
-			setString(for: Key.addFolderAccountID, newValue)
+			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
 		}
 	}
 	
-	static var importOPMLAccountID: String? {
+	var importOPMLAccountID: String? {
 		get {
-			return string(for: Key.importOPMLAccountID)
+			return AppDefaults.string(for: Key.importOPMLAccountID)
 		}
 		set {
-			setString(for: Key.importOPMLAccountID, newValue)
+			AppDefaults.setString(for: Key.importOPMLAccountID, newValue)
 		}
 	}
 	
-	static var exportOPMLAccountID: String? {
+	var exportOPMLAccountID: String? {
 		get {
-			return string(for: Key.exportOPMLAccountID)
+			return AppDefaults.string(for: Key.exportOPMLAccountID)
 		}
 		set {
-			setString(for: Key.exportOPMLAccountID, newValue)
+			AppDefaults.setString(for: Key.exportOPMLAccountID, newValue)
 		}
 	}
 
-	static var defaultBrowserID: String? {
+	var defaultBrowserID: String? {
 		get {
-			return string(for: Key.defaultBrowserID)
+			return AppDefaults.string(for: Key.defaultBrowserID)
 		}
 		set {
-			setString(for: Key.defaultBrowserID, newValue)
+			AppDefaults.setString(for: Key.defaultBrowserID, newValue)
 		}
 	}
 	
-	static var showTitleOnMainWindow: Bool {
-		return bool(for: Key.showTitleOnMainWindow)
+	var showTitleOnMainWindow: Bool {
+		return AppDefaults.bool(for: Key.showTitleOnMainWindow)
 	}
 
-	static var showDebugMenu: Bool {
- 		return bool(for: Key.showDebugMenu)
+	var showDebugMenu: Bool {
+		return AppDefaults.bool(for: Key.showDebugMenu)
  	}
 
-	static var hideDockUnreadCount: Bool {
-		return bool(for: Key.hideDockUnreadCount)
+	var hideDockUnreadCount: Bool {
+		return AppDefaults.bool(for: Key.hideDockUnreadCount)
 	}
 
 	#if !MAC_APP_STORE
-		static var webInspectorEnabled: Bool {
+		var webInspectorEnabled: Bool {
 			get {
-				return bool(for: Key.webInspectorEnabled)
+				return AppDefaults.bool(for: Key.webInspectorEnabled)
 			}
 			set {
-				setBool(for: Key.webInspectorEnabled, newValue)
+				AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
 			}
 		}
 
-		static var webInspectorStartsAttached: Bool {
+		var webInspectorStartsAttached: Bool {
 			get {
-				return bool(for: Key.webInspectorStartsAttached)
+				return AppDefaults.bool(for: Key.webInspectorStartsAttached)
 			}
 			set {
-				setBool(for: Key.webInspectorStartsAttached, newValue)
+				AppDefaults.setBool(for: Key.webInspectorStartsAttached, newValue)
 			}
 		}
 	#endif
 
-	static var timelineSortDirection: ComparisonResult {
+	var timelineSortDirection: ComparisonResult {
 		get {
-			return sortDirection(for: Key.timelineSortDirection)
+			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
 		}
 		set {
-			setSortDirection(for: Key.timelineSortDirection, newValue)
+			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
 		}
 	}
 	
-	static var timelineGroupByFeed: Bool {
+	var timelineGroupByFeed: Bool {
 		get {
-			return bool(for: Key.timelineGroupByFeed)
+			return AppDefaults.bool(for: Key.timelineGroupByFeed)
 		}
 		set {
-			setBool(for: Key.timelineGroupByFeed, newValue)
+			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
 		}
 	}
 	
-	static var timelineShowsSeparators: Bool {
-		return bool(for: Key.timelineShowsSeparators)
+	var timelineShowsSeparators: Bool {
+		return AppDefaults.bool(for: Key.timelineShowsSeparators)
 	}
 
-	static var refreshInterval: RefreshInterval {
+	var refreshInterval: RefreshInterval {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
 			return RefreshInterval(rawValue: rawValue) ?? RefreshInterval.everyHour
@@ -246,7 +249,7 @@ struct AppDefaults {
 		}
 	}
 
-	static func registerDefaults() {
+	func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
  		#else
@@ -278,7 +281,7 @@ struct AppDefaults {
 		// TODO: revisit the above when coming back to state restoration issues.
 	}
 
-	static func actualFontSize(for fontSize: FontSize) -> CGFloat {
+	func actualFontSize(for fontSize: FontSize) -> CGFloat {
 		switch fontSize {
 		case .small:
 			return NSFont.systemFontSize
@@ -296,14 +299,14 @@ private extension AppDefaults {
 
 	static var firstRunDate: Date? {
 		get {
-			return date(for: Key.firstRunDate)
+			return AppDefaults.date(for: Key.firstRunDate)
 		}
 		set {
-			setDate(for: Key.firstRunDate, newValue)
+			AppDefaults.setDate(for: Key.firstRunDate, newValue)
 		}
 	}
 
-	static func fontSize(for key: String) -> FontSize {
+	func fontSize(for key: String) -> FontSize {
 		// Punted till after 1.0.
 		return .medium
 

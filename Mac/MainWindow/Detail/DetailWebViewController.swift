@@ -116,7 +116,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		waitingForFirstReload = true
 
 		#if !MAC_APP_STORE
-			webInspectorEnabled = AppDefaults.webInspectorEnabled
+			webInspectorEnabled = AppDefaults.shared.webInspectorEnabled
 			NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 		#endif
 

@@ -12,8 +12,8 @@ struct ShareDefaultContainer {
 	
 	static func defaultContainer(containers: ExtensionContainers) -> ExtensionContainer? {
 		
-		if let accountID = AppDefaults.addWebFeedAccountID, let account = containers.accounts.first(where: { $0.accountID == accountID }) {
-			if let folderName = AppDefaults.addWebFeedFolderName, let folder = account.folders.first(where: { $0.name == folderName }) {
+		if let accountID = AppDefaults.shared.addWebFeedAccountID, let account = containers.accounts.first(where: { $0.accountID == accountID }) {
+			if let folderName = AppDefaults.shared.addWebFeedFolderName, let folder = account.folders.first(where: { $0.name == folderName }) {
 				return folder
 			} else {
 				return substituteContainerIfNeeded(account: account)
@@ -27,11 +27,11 @@ struct ShareDefaultContainer {
 	}
 	
 	static func saveDefaultContainer(_ container: ExtensionContainer) {
-		AppDefaults.addWebFeedAccountID = container.accountID
+		AppDefaults.shared.addWebFeedAccountID = container.accountID
 		if let folder = container as? ExtensionFolder {
-			AppDefaults.addWebFeedFolderName = folder.name
+			AppDefaults.shared.addWebFeedFolderName = folder.name
 		} else {
-			AppDefaults.addWebFeedFolderName = nil
+			AppDefaults.shared.addWebFeedFolderName = nil
 		}
 	}
 	

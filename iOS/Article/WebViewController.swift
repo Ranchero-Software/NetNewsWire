@@ -37,7 +37,7 @@ class WebViewController: UIViewController {
 	
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
-		return AppDefaults.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
+		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
@@ -169,7 +169,7 @@ class WebViewController: UIViewController {
 	}
 
 	func showBars() {
-		AppDefaults.articleFullscreenEnabled = false
+		AppDefaults.shared.articleFullscreenEnabled = false
 		coordinator.showStatusBar()
 		topShowBarsViewConstraint?.constant = 0
 		bottomShowBarsViewConstraint?.constant = 0
@@ -180,7 +180,7 @@ class WebViewController: UIViewController {
 		
 	func hideBars() {
 		if isFullScreenAvailable {
-			AppDefaults.articleFullscreenEnabled = true
+			AppDefaults.shared.articleFullscreenEnabled = true
 			coordinator.hideStatusBar()
 			topShowBarsViewConstraint?.constant = -44.0
 			bottomShowBarsViewConstraint?.constant = 44.0
@@ -632,7 +632,7 @@ private extension WebViewController {
 		topShowBarsView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(topShowBarsView)
 		
-		if AppDefaults.articleFullscreenEnabled {
+		if AppDefaults.shared.articleFullscreenEnabled {
 			topShowBarsViewConstraint = view.topAnchor.constraint(equalTo: topShowBarsView.bottomAnchor, constant: -44.0)
 		} else {
 			topShowBarsViewConstraint = view.topAnchor.constraint(equalTo: topShowBarsView.bottomAnchor, constant: 0.0)
@@ -652,7 +652,7 @@ private extension WebViewController {
 		topShowBarsView.backgroundColor = .clear
 		bottomShowBarsView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(bottomShowBarsView)
-		if AppDefaults.articleFullscreenEnabled {
+		if AppDefaults.shared.articleFullscreenEnabled {
 			bottomShowBarsViewConstraint = view.bottomAnchor.constraint(equalTo: bottomShowBarsView.topAnchor, constant: 44.0)
 		} else {
 			bottomShowBarsViewConstraint = view.bottomAnchor.constraint(equalTo: bottomShowBarsView.topAnchor, constant: 0.0)

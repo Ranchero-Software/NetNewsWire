@@ -17,7 +17,7 @@ struct SidebarCellAppearance: Equatable {
 	let textFieldFont: NSFont
 
 	init(fontSize: FontSize) {
-		self.textFieldFontSize = AppDefaults.actualFontSize(for: fontSize)
+		self.textFieldFontSize = AppDefaults.shared.actualFontSize(for: fontSize)
 		self.textFieldFont = NSFont.systemFont(ofSize: textFieldFontSize)
 	}
 }

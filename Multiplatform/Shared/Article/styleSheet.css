@@ -1,0 +1,65 @@
+body {
+	margin-top: 3px;
+	margin-bottom: 20px;
+	padding-left: 20px;
+	padding-right: 20px;
+
+	word-break: break-word;
+	-webkit-hyphens: auto;
+	-webkit-text-size-adjust: none;
+}
+
+:root {
+	color-scheme: light dark;
+	font: -apple-system-body;
+	font-family: -apple-system;
+	font-size: [[font-size]]px;
+	--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .75);
+	--block-quote-border-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .50);
+}
+
+@media(prefers-color-scheme: dark) {
+	:root {
+		--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .75);
+		--block-quote-border-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .50);
+		--header-table-border-color: rgba(255, 255, 255, 0.2);
+	}
+}
+
+body a, body a:link, body a:visited {
+	color: var(--accent-color);
+}
+body .header {
+	font: -apple-system-body;
+	font-size: [[font-size]]px;
+}
+body .header a:link, body .header a:visited {
+	color: var(--accent-color);
+}
+
+.avatar img {
+	border-radius: 4px;
+}
+
+pre {
+	border: 1px solid var(--accent-color);
+	padding: 5px;
+}
+
+.nnw-overflow table {
+	border: 1px solid var(--accent-color);
+}
+
+.activityIndicatorWrap {
+	position: relative;
+}
+
+.activityIndicator {
+	z-index: 1;
+	width: 64px;
+	height: 64px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 import RSCore
 import RSWeb
 
@@ -16,6 +17,8 @@ extension Notification.Name {
 }
 
 final class ImageDownloader {
+
+	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
 
 	private let folder: String
 	private var diskCache: BinaryDiskCache
@@ -112,7 +115,7 @@ private extension ImageDownloader {
 				self.badURLs.insert(url)
 			}
 			if let error = error {
-				appDelegate.logMessage("Error downloading image at \(url): \(error)", type: .warning)
+				os_log(.info, log: self.log, "Error downloading image at %@: %@.", url, error.localizedDescription)
 			}
 
 			completion(nil)

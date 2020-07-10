@@ -1,0 +1,50 @@
+CODE_SIGN_IDENTITY= iPhone Developer
+DEVELOPMENT_TEAM = M8L2WTLA8W
+CODE_SIGN_STYLE = Automatic
+ORGANIZATION_IDENTIFIER = com.ranchero
+DEVELOPER_ENTITLEMENTS =
+PROVISIONING_PROFILE_SPECIFIER =
+
+// developers can locally override the Xcode settings for code signing
+// by creating a DeveloperSettings.xcconfig file locally at the appropriate path
+// This allows a pristine project to have code signing set up with the appropriate
+// developer ID and certificates, and for dev to be able to have local settings
+// without needing to check in anything into source control
+//
+// As an example, make a ../../SharedXcodeSettings/DeveloperSettings.xcconfig file and
+// give it the contents
+//
+//    CODE_SIGN_IDENTITY[sdk=macosx*] = Mac Developer
+//    CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+//    CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
+//    DEVELOPMENT_TEAM = <Your Team ID>
+//    ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
+//    CODE_SIGN_STYLE = Automatic
+//    DEVELOPER_ENTITLEMENTS = -dev
+//    PROVISIONING_PROFILE_SPECIFIER =
+//
+// And you should be able to build without code signing errors and without modifying
+// the NetNewsWire Xcode project.
+//
+// Example:  if your NetNewsWire Xcode project file is at
+//     /Users/Shared/git/NetNewsWire/NetNewsWire.xcodeproj
+// create your DeveloperSettings.xcconfig file at
+//     /Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig
+//
+
+#include? "../../SharedXcodeSettings/ProjectSettings.xcconfig"
+#include? "../../SharedXcodeSettings/DeveloperSettings.xcconfig"
+#include "./common/NetNewsWire_ios_target_common.xcconfig"
+
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
+INFOPLIST_FILE = Multiplatform/iOS/Info.plist
+CODE_SIGN_ENTITLEMENTS = Multiplatform/iOS/iOS$(DEVELOPER_ENTITLEMENTS).entitlements
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS
+PRODUCT_NAME = NetNewsWire
+
+// Override NetNewsWire_project.xcconfig until we are ready to only target 10.16
+IPHONEOS_DEPLOYMENT_TARGET = 14.0
+SWIFT_SWIFT3_OBJC_INFERENCE = Off
+SWIFT_VERSION = 5.3
+
+OTHER_SWIFT_FLAGS = -DSWIFTUI $(inherited)

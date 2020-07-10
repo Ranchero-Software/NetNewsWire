@@ -58,39 +58,6 @@ final class MasterFeedTableViewIdentifier: NSObject, NSCopying {
 		return feedID.hashValue
 	}
 
-//	override func isEqual(_ object: Any?) -> Bool {
-//		guard let otherIdentifier = object as? MasterFeedTableViewIdentifier else { return false }
-//		if self === otherIdentifier { return true }
-//
-//		return feedID == otherIdentifier.feedID &&
-//			containerID == otherIdentifier.containerID &&
-//			parentContainerID == otherIdentifier.parentContainerID &&
-//			isEditable == otherIdentifier.isEditable &&
-//			isPsuedoFeed == otherIdentifier.isPsuedoFeed &&
-//			isFolder == otherIdentifier.isFolder &&
-//			isWebFeed == otherIdentifier.isWebFeed &&
-//			nameForDisplay == otherIdentifier.nameForDisplay &&
-//			url == otherIdentifier.url &&
-//			unreadCount == otherIdentifier.unreadCount &&
-//			childCount == otherIdentifier.childCount
-//	}
-//
-//	override var hash: Int {
-//		var hasher = Hasher()
-//		hasher.combine(feedID)
-//		hasher.combine(containerID)
-//		hasher.combine(parentContainerID)
-//		hasher.combine(isEditable)
-//		hasher.combine(isPsuedoFeed)
-//		hasher.combine(isFolder)
-//		hasher.combine(isWebFeed)
-//		hasher.combine(nameForDisplay)
-//		hasher.combine(url)
-//		hasher.combine(unreadCount)
-//		hasher.combine(childCount)
-//		return hasher.finalize()
-//	}
-//
 	func copy(with zone: NSZone? = nil) -> Any {
 		return self
 	}

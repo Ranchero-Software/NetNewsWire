@@ -22,7 +22,7 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 	
 	private var accounts: [Account]! {
 		didSet {
-			if let predefinedAccount = accounts.first(where: { $0.accountID == AppDefaults.addFolderAccountID }) {
+			if let predefinedAccount = accounts.first(where: { $0.accountID == AppDefaults.shared.addFolderAccountID }) {
 				selectedAccount = predefinedAccount
 			} else {
 				selectedAccount = accounts[0]
@@ -69,7 +69,7 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
     }
 	
 	private func didSelect(_ account: Account) {
-		AppDefaults.addFolderAccountID = account.accountID
+		AppDefaults.shared.addFolderAccountID = account.accountID
 		selectedAccount = account
 	}
 
