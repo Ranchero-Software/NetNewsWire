@@ -7,6 +7,35 @@
         <language>en</language>
 
 	<item>
+         <title>NetNewsWire 5.0.4d2</title>
+            <description><![CDATA[
+<p>Feeds view: fixed bug where multiple sequential deletes could mess up the current selection index</p>
+<p>Article view: dealt with Twitter change that caused Twitter embeds to get cut off</p>
+<p>Article view: properly size emojis that are actually graphics (from Wordpress, for instance)</p>
+<p>Article view: stop playing any audio if the window is closed</p>
+<p>Article view: don’t let line lengths get too long</p>
+<p>Article view: fixed display of BandCamp widgets</p>
+<p>OPML export: use an accessory view instead of an intermediate sheet</p>
+<p>Add Folder: disable Add Folder button when text field is empty</p>
+<p>Feed icons: get more icons from Feedbin; get favicons from some tricky cases</p>
+<p>Add Feed: now allows IPv6 literal URLs</p>
+<p>Feed discovery: give less weight to feeds with the word “podcast” in them, because they’re probably not what we want</p>
+<p>Refreshing: fixed bug where automatic refreshing might not happening after the computer wakes from sleep</p>
+<p>Preferences > Accounts: Renamed “Create” account button to “Add Account”</p>
+<p>Fixed bug where a Feedbin article could stay unread right after you select it</p>
+<p>Fixed bug where folder names with double quotes would have the quotes replaced with the HTML entity for quote</p>
+<p>When importing from NNW 3, the app now ignores script feeds (since we don’t have that feature yet)</p>
+<p>Fixed bug where, right after initial launch, the spacebar might not work to go to next unread article</p>
+<p>Pressing return now opens the selected article in your browser</p>
+		]]></description>
+            <pubDate>Fri, 10 Jul 2020 18:00:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.0.4d2/NetNewsWire5.0.4d2.zip" sparkle:version="2620" sparkle:shortVersionString="5.0.4d2" length="5128921" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
+
+	<item>
          <title>NetNewsWire 5.0.3</title>
             <description><![CDATA[
 <p>Same as 5.0.3b2 — just bumped the version number to 5.0.3.</p>
