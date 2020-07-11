@@ -13,18 +13,18 @@ struct TimelineContainerView: View {
 	
 	@EnvironmentObject private var sceneModel: SceneModel
 	@StateObject private var timelineModel = TimelineModel()
-	var feed: Feed? = nil
+	var feeds: [Feed]? = nil
 	
 	@ViewBuilder var body: some View {
-		if let feed = feed {
+		if let feeds = feeds {
 			TimelineView()
-				.modifier(TimelineTitleModifier(title: feed.nameForDisplay))
+				.modifier(TimelineTitleModifier(title: timelineModel.nameForDisplay))
 				.modifier(TimelineToolbarModifier())
 				.environmentObject(timelineModel)
 				.onAppear {
 					sceneModel.timelineModel = timelineModel
 					timelineModel.delegate = sceneModel
-					timelineModel.rebuildTimelineItems(feed)
+					timelineModel.rebuildTimelineItems(feeds: feeds)
 				}
 		} else {
 			EmptyView()

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 import RSCore
 import Account
 
@@ -19,31 +20,13 @@ class SidebarModel: ObservableObject {
 	weak var delegate: SidebarModelDelegate?
 	
 	@Published var sidebarItems = [SidebarItem]()
+	@Published var selectedFeedIdentifiers = Set<FeedIdentifier>()
+	@Published var selectedFeedIdentifier: FeedIdentifier? = .none
+	@Published var selectedFeeds = [Feed]()
 	
-	#if os(macOS)
-	@Published var selectedSidebarItems = Set<FeedIdentifier>() {
-		didSet {
-			print(selectedSidebarItems)
-		}
-	}
-	#endif
-	
-	private var items = Set<FeedIdentifier>()
-	
-	@Published var selectedSidebarItem: FeedIdentifier? = .none {
-		willSet {
-			#if os(macOS)
-			if newValue != nil {
-				items.insert(newValue!)
-			} else {
-				selectedSidebarItems = items
-				items.removeAll()
-			}
-			#endif
-		}
-	}
-	
-	
+	private var selectedFeedIdentifiersCancellable: AnyCancellable?
+	private var selectedFeedIdentifierCancellable: AnyCancellable?
+
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
@@ -52,6 +35,21 @@ class SidebarModel: ObservableObject {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
+		
+		// TODO: This should be rewritten to use Combine correctly
+		selectedFeedIdentifiersCancellable = $selectedFeedIdentifiers.sink { [weak self] feedIDs in
+			guard let self = self else { return }
+			self.selectedFeeds = feedIDs.compactMap { AccountManager.shared.existingFeed(with: $0) }
+		}
+		
+		// TODO: This should be rewritten to use Combine correctly
+		selectedFeedIdentifierCancellable = $selectedFeedIdentifier.sink { [weak self] feedID in
+			guard let self = self else { return }
+			if let feedID = feedID, let feed = AccountManager.shared.existingFeed(with: feedID) {
+				self.selectedFeeds = [feed]
+			}
+		}
+		
 	}
 	
 	// MARK: API
@@ -86,6 +84,7 @@ class SidebarModel: ObservableObject {
 		
 		sidebarItems = items
 	}
+	
 }
 
 // MARK: Private

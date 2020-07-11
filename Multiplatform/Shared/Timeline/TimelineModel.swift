@@ -19,9 +19,9 @@ class TimelineModel: ObservableObject {
 	
 	weak var delegate: TimelineModelDelegate?
 	
+	@Published var nameForDisplay = ""
 	@Published var timelineItems = [TimelineItem]()
 	
-	private var feeds = [Feed]()
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -64,9 +64,13 @@ class TimelineModel: ObservableObject {
 	
 	// MARK: API
 	
-	func rebuildTimelineItems(_ feed: Feed) {
-		feeds = [feed]
-		fetchAndReplaceArticlesAsync()
+	func rebuildTimelineItems(feeds: [Feed]) {
+		if feeds.count == 1 {
+			nameForDisplay = feeds.first!.nameForDisplay
+		} else {
+			nameForDisplay = NSLocalizedString("Multiple", comment: "Multiple Feeds")
+		}
+		fetchAndReplaceArticlesAsync(feeds: feeds)
 	}
 	
 	// TODO: Replace this with ScrollViewReader if we have to keep it
@@ -144,9 +148,7 @@ private extension TimelineModel {
 	
 	// MARK: Article Fetching
 	
-	func fetchAndReplaceArticlesAsync() {
-		cancelPendingAsyncFetches()
-		
+	func fetchAndReplaceArticlesAsync(feeds: [Feed]) {
 		var fetchers = feeds as [ArticleFetcher]
 		if let fetcher = exceptionArticleFetcher {
 			fetchers.append(fetcher)
@@ -168,7 +170,7 @@ private extension TimelineModel {
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: isReadFiltered ?? true, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: isReadFiltered, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
