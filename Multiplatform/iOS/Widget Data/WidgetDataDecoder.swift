@@ -12,16 +12,12 @@ struct WidgetDataDecoder {
 	
 	static func decodeWidgetData() throws -> WidgetData {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
-		print(appGroup)
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 		let dataURL = containerURL?.appendingPathComponent("widget-data.json")
-		print("decoder path: \(dataURL!.path)")
-		
 		if FileManager.default.fileExists(atPath: dataURL!.path) {
 			let decodedWidgetData = try JSONDecoder().decode(WidgetData.self, from: Data(contentsOf: dataURL!))
 			return decodedWidgetData
 		} else {
-			print("No data at location")
 			return WidgetData(currentUnreadCount: 0, currentTodayCount: 0, latestArticles: [], lastUpdateTime: Date())
 		}
 	}

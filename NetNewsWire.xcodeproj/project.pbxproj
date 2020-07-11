@@ -2974,6 +2974,7 @@
 				5177470B24B2FF2C00EB0F74 /* Article */,
 				172199EB24AB228E00A31D04 /* Settings */,
 				17EEA7F824B8926700AAD8BF /* Widget */,
+				17EEA80824B8998900AAD8BF /* Widget Data */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -3010,7 +3011,6 @@
 				51E499FB24A9135A00B667CB /* Sidebar */,
 				514E6C0424AD2B0400AC6F6E /* SwiftUI Extensions */,
 				51919FCB24AB855000541E64 /* Timeline */,
-				17EEA80824B8998900AAD8BF /* Widget Data */,
 			);
 			path = Shared;
 			sourceTree = "<group>";

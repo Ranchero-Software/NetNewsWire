@@ -13,7 +13,7 @@ import os.log
 struct WidgetDataEncoder {
 	
 	static func encodeWidgetData() {
-		os_log(.info, "Starting Widget data refresh")
+		os_log(.info, "Starting widget data encoding")
 		do {
 			let articles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished! > $1.datePublished!  })
 			var latest = [LatestArticle]()
@@ -34,17 +34,15 @@ struct WidgetDataEncoder {
 			
 			let encodedData = try JSONEncoder().encode(latestData)
 			let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
-			print(appGroup)
 			let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 			let dataURL = containerURL?.appendingPathComponent("widget-data.json")
-			print("Encoder path: \(dataURL!.path)")
 			if FileManager.default.fileExists(atPath: dataURL!.path) {
 				try FileManager.default.removeItem(at: dataURL!)
 			}
 			try encodedData.write(to: dataURL!)
 			
 			WidgetCenter.shared.reloadAllTimelines()
-			os_log(.info, "Finished data refresh")
+			os_log(.info, "Finished encoding widget data")
 		} catch {
 			os_log(.error, "%@", error.localizedDescription)
 		}

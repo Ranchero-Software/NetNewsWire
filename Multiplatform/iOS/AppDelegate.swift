@@ -179,7 +179,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
-			WidgetDataEncoder.encodeWidgetData()
 		}
 	}
 	
