@@ -21,7 +21,7 @@ struct FaviconURLFinder {
 		}
 
 		HTMLMetadataDownloader.downloadMetadata(for: homePageURL) { (htmlMetadata) in
-			callback(htmlMetadata?.faviconLinks)
+			callback(htmlMetadata?.favicons.compactMap{ $0.urlString })
 		}
 	}
 }
