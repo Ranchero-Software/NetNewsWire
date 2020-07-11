@@ -12,6 +12,7 @@ import RSWeb
 import Account
 import BackgroundTasks
 import os.log
+import WidgetKit
 
 var appDelegate: AppDelegate!
 
@@ -115,6 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		syncTimer!.update()
 		#endif
 		
+		
 		return true
 		
 	}
@@ -131,6 +133,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
+	}
+	
+	func refreshWidgetData() {
+		
+		do {
+			let articles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished! > $1.datePublished!  })
+			var latest = [LatestArticle]()
+			for article in articles {
+				let latestArticle = LatestArticle(feedTitle: article.sortableWebFeedID,
+												  articleTitle: article.title,
+												  articleSummary: article.summary,
+												  feedIcon: article.iconImage()?.image.dataRepresentation(),
+												  pubDate: article.datePublished!.description)
+				latest.append(latestArticle)
+				if latest.count == 5 { break }
+			}
+			
+			print(latest.map({ $0.pubDate }))
+			
+			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
+										currentTodayCount: SmartFeedsController.shared.todayFeed.unreadCount,
+										latestArticles: latest,
+										lastUpdateTime: Date())
+			
+			print(latestData)
+			
+			let encodedData = try JSONEncoder().encode(latestData)
+			let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
+			let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
+			let dataURL = containerURL?.appendingPathComponent("widget-data.json")
+			if FileManager.default.fileExists(atPath: dataURL!.path) {
+				try FileManager.default.removeItem(at: dataURL!)
+			}
+			try encodedData.write(to: dataURL!)
+			print(dataURL!.path)
+			WidgetCenter.shared.reloadAllTimelines()
+		} catch {
+			os_log(.error, log: self.log, "%@", error.localizedDescription)
+		}
 	}
 	
 	// MARK: Notifications
@@ -373,6 +414,7 @@ private extension AppDelegate {
 			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
+					WidgetDataEncoder.encodeWidgetData()
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
 					task.setTaskCompleted(success: true)
