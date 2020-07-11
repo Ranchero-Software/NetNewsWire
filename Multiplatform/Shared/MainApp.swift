@@ -16,7 +16,6 @@ struct MainApp: App {
 	#endif
 	#if os(iOS)
 	@UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
-	@Environment(\.scenePhase) private var scenePhase
 	#endif
 	
 	@StateObject private var defaults = AppDefaults.shared
@@ -87,10 +86,6 @@ struct MainApp: App {
 			SceneNavigationView()
 				.environmentObject(defaults)
 				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
-				.onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-					print("didEnterBackgroundNotification")
-					WidgetDataEncoder.encodeWidgetData()
-				}
 		}
 		.commands {
 			CommandGroup(after: .newItem, addition: {
@@ -136,18 +131,6 @@ struct MainApp: App {
 					.keyboardShortcut(.rightArrow, modifiers: [.command])
 			})
 		}
-		.onChange(of: scenePhase, perform: { newPhase in
-			switch newPhase {
-			case .active:
-				print("active")
-			case .inactive:
-				print("inactive")
-			case .background:
-				print("background")
-			@unknown default:
-				print("unknown")
-			}
-		})
 		#endif
 	}
 }

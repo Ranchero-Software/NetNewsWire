@@ -9,11 +9,15 @@
 import Foundation
 import WidgetKit
 import os.log
+import UIKit
 
 struct WidgetDataEncoder {
 	
+	static let taskIdentifier = "com.ranchero.NetNewsWire.WidgetEncode"
+	
 	static func encodeWidgetData() {
 		os_log(.info, "Starting widget data encoding")
+		let task = UIApplication.shared.beginBackgroundTask(withName: taskIdentifier, expirationHandler: nil)
 		do {
 			let articles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished! > $1.datePublished!  })
 			var latest = [LatestArticle]()
@@ -43,8 +47,11 @@ struct WidgetDataEncoder {
 			
 			WidgetCenter.shared.reloadAllTimelines()
 			os_log(.info, "Finished encoding widget data")
+			print(UIApplication.shared.backgroundTimeRemaining)
+			UIApplication.shared.endBackgroundTask(task)
 		} catch {
 			os_log(.error, "%@", error.localizedDescription)
+			UIApplication.shared.endBackgroundTask(task)
 		}
 	}
 	

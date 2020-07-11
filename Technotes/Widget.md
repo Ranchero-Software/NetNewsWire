@@ -4,8 +4,7 @@
 
 The NetNewsWire iOS widget supports the `systemSmall` and `systemMedium` styles. 
 
-The `systemSmall` style displays the current Today and Unread counts; `systemMedium` displays the latest two articles along with current 
-Today and Unread count.
+The `systemSmall` style displays the current Today and Unread counts; `systemMedium` displays the latest two articles.
 
 ## Passing Data from the App to the Widget
 
@@ -35,9 +34,8 @@ struct LatestArticle: Codable {
 
 ## When is JSON Data Saved?
 
-1. On `unreadCountDidChange`
+1. When the app enters the background
 2. After a background refresh
-3. When the app enters the background
 
 After JSON data is saved, Widget timelines are reloaded.
 
