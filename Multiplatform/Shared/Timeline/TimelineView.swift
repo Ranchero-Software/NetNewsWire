@@ -35,7 +35,7 @@ struct TimelineView: View {
 
 	func buildTimelineItemNavigation(_ timelineItem: TimelineItem) -> some View {
 		#if os(macOS)
-		return TimelineItemView(timelineItem: timelineItem) //.tag(timelineItem.article.articleID)
+		return TimelineItemView(timelineItem: timelineItem)
 		#else
 		return ZStack {
 			TimelineItemView(timelineItem: timelineItem)
