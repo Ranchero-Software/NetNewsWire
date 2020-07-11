@@ -33,9 +33,7 @@
             <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
         </item>
 
-	<item>
-
-	<item>
+		<item>
          <title>NetNewsWire 5.0.3</title>
             <description><![CDATA[
 <p>Same as 5.0.3b2 — just bumped the version number to 5.0.3.</p>
