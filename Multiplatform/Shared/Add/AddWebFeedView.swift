@@ -135,7 +135,7 @@ struct AddWebFeedView: View {
 						HStack(alignment: .top) {
 							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
 								Image(rsImage: image)
-									.foregroundColor(.accentColor)
+									.foregroundColor(Color("AccentColor"))
 							}
 							Text("\(containerName)")
 								.tag(index)
@@ -144,7 +144,7 @@ struct AddWebFeedView: View {
 						HStack(alignment: .top) {
 							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
 								Image(rsImage: image)
-									.foregroundColor(.accentColor)
+									.foregroundColor(Color("AccentColor"))
 							}
 							Text(containerName)
 								.tag(index)
