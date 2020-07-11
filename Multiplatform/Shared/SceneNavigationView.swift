@@ -17,7 +17,6 @@ struct SceneNavigationView: View {
 	
 	#if os(iOS)
 	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
-	@Environment(\.scenePhase) private var scenePhase
 	#endif
 	
 	var body: some View {
@@ -64,13 +63,6 @@ struct SceneNavigationView: View {
 		}
 		.onChange(of: sheetToShow) { value in
 			value != .none ? (showSheet = true) : (showSheet = false)
-		}
-		.onChange(of: scenePhase) { newPhase in
-			if newPhase == .background {
-				#if os(iOS)
-				WidgetDataEncoder.encodeWidgetData()
-				#endif
-			}
 		}
 		.toolbar {
 			
