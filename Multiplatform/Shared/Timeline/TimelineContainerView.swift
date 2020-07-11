@@ -11,20 +11,19 @@ import Account
 
 struct TimelineContainerView: View {
 	
+	@Environment(\.undoManager) var undoManager
 	@EnvironmentObject private var sceneModel: SceneModel
-	@StateObject private var timelineModel = TimelineModel()
 	var feeds: [Feed]? = nil
 	
 	@ViewBuilder var body: some View {
 		if let feeds = feeds {
 			TimelineView()
-				.modifier(TimelineTitleModifier(title: timelineModel.nameForDisplay))
+				.modifier(TimelineTitleModifier(title: sceneModel.timelineModel.nameForDisplay))
 				.modifier(TimelineToolbarModifier())
-				.environmentObject(timelineModel)
+				.environmentObject(sceneModel.timelineModel)
 				.onAppear {
-					sceneModel.timelineModel = timelineModel
-					timelineModel.delegate = sceneModel
-					timelineModel.rebuildTimelineItems(feeds: feeds)
+					sceneModel.timelineModel.undoManager = undoManager
+					sceneModel.timelineModel.rebuildTimelineItems(feeds: feeds)
 				}
 		} else {
 			EmptyView()

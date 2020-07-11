@@ -211,8 +211,6 @@
 		51707439232AA97100A461A3 /* ShareFolderPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51707438232AA97100A461A3 /* ShareFolderPickerController.swift */; };
 		5171B4D424B7BABA00FB8D3B /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		5171B4F624B7BABA00FB8D3B /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
-		5171B4F824B7CB3600FB8D3B /* ArticleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5171B4F724B7CB3600FB8D3B /* ArticleManager.swift */; };
-		5171B4F924B7CB3600FB8D3B /* ArticleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5171B4F724B7CB3600FB8D3B /* ArticleManager.swift */; };
 		517630042336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		517630052336215100E15FFF /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 517630032336215100E15FFF /* main.js */; };
 		517630232336657E00E15FFF /* WebViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517630222336657E00E15FFF /* WebViewProvider.swift */; };
@@ -1906,7 +1904,6 @@
 		516AE9B22371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedTableViewSectionHeaderLayout.swift; sourceTree = "<group>"; };
 		516AE9DE2372269A007DEEAA /* IconImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImage.swift; sourceTree = "<group>"; };
 		51707438232AA97100A461A3 /* ShareFolderPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerController.swift; sourceTree = "<group>"; };
-		5171B4F724B7CB3600FB8D3B /* ArticleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleManager.swift; sourceTree = "<group>"; };
 		517630032336215100E15FFF /* main.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		517630222336657E00E15FFF /* WebViewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewProvider.swift; sourceTree = "<group>"; };
 		5177470224B2657F00EB0F74 /* TimelineToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineToolbarModifier.swift; sourceTree = "<group>"; };
@@ -2867,7 +2864,6 @@
 				5177471324B37D4000EB0F74 /* PreloadedWebView.swift */,
 				5177471924B3863000EB0F74 /* WebViewProvider.swift */,
 				517B2EBB24B3E62A001AC46C /* WrapperScriptMessageHandler.swift */,
-				5171B4F724B7CB3600FB8D3B /* ArticleManager.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -5095,7 +5091,6 @@
 				51E4990324A808BB00B667CB /* FaviconDownloader.swift in Sources */,
 				172199ED24AB2E0100A31D04 /* SafariView.swift in Sources */,
 				65ACE48624B477C9003AE06A /* SettingsAccountLabelView.swift in Sources */,
-				5171B4F824B7CB3600FB8D3B /* ArticleManager.swift in Sources */,
 				51E4990224A808BB00B667CB /* ColorHash.swift in Sources */,
 				51919FAC24AA8CCA00541E64 /* UnreadCountView.swift in Sources */,
 				5177476224B3BC4700EB0F74 /* SettingsAboutView.swift in Sources */,
@@ -5142,7 +5137,6 @@
 				51E4996C24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
 				51E4990824A808C300B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
 				51919FF824AB8B7700541E64 /* TimelineView.swift in Sources */,
-				5171B4F924B7CB3600FB8D3B /* ArticleManager.swift in Sources */,
 				51E4992B24A8676300B667CB /* ArticleArray.swift in Sources */,
 				51B54AB324B5AC830014348B /* ArticleButtonState.swift in Sources */,
 				17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */,

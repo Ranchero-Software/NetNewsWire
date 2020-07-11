@@ -9,21 +9,15 @@
 import SwiftUI
 import Articles
 
-final class ArticleView: UIViewControllerRepresentable {
+struct ArticleView: UIViewControllerRepresentable {
 	
 	var sceneModel: SceneModel
-	var article: Article
-	
-	init(sceneModel: SceneModel, article: Article) {
-		self.sceneModel = sceneModel
-		self.article = article
-	}
+	var articles: [Article]
 	
 	func makeUIViewController(context: Context) -> ArticleViewController {
 		let controller = ArticleViewController()
-		sceneModel.articleManager = controller
 		controller.sceneModel = sceneModel
-		controller.currentArticle = article
+		controller.articles = articles
 		return controller
 	}
 	

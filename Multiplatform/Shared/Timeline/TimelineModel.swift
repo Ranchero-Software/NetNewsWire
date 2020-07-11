@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 import RSCore
 import Account
 import Articles
@@ -15,13 +16,22 @@ protocol TimelineModelDelegate: class {
 	func timelineRequestedWebFeedSelection(_: TimelineModel, webFeed: WebFeed)
 }
 
-class TimelineModel: ObservableObject {
+class TimelineModel: ObservableObject, UndoableCommandRunner {
 	
 	weak var delegate: TimelineModelDelegate?
 	
 	@Published var nameForDisplay = ""
 	@Published var timelineItems = [TimelineItem]()
+	@Published var selectedArticleIDs = Set<String>()
+	@Published var selectedArticleID: String? = .none
+	@Published var selectedArticles = [Article]()
 	
+	var undoManager: UndoManager?
+	var undoableCommands = [UndoableCommand]()
+
+	private var selectedArticleIDsCancellable: AnyCancellable?
+	private var selectedArticleIDCancellable: AnyCancellable?
+
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -60,6 +70,20 @@ class TimelineModel: ObservableObject {
 	
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
+
+		// TODO: This should be rewritten to use Combine correctly
+		selectedArticleIDsCancellable = $selectedArticleIDs.sink { [weak self] articleIDs in
+			guard let self = self else { return }
+			self.selectedArticles = articleIDs.compactMap { self.idToArticleDictionary[$0] }
+		}
+		
+		// TODO: This should be rewritten to use Combine correctly
+		selectedArticleIDCancellable = $selectedArticleID.sink { [weak self] articleID in
+			guard let self = self else { return }
+			if let articleID = articleID, let article = self.idToArticleDictionary[articleID] {
+				self.selectedArticles = [article]
+			}
+		}
 	}
 	
 	// MARK: API
@@ -71,14 +95,6 @@ class TimelineModel: ObservableObject {
 			nameForDisplay = NSLocalizedString("Multiple", comment: "Multiple Feeds")
 		}
 		fetchAndReplaceArticlesAsync(feeds: feeds)
-	}
-	
-	// TODO: Replace this with ScrollViewReader if we have to keep it
-	func loadMoreTimelineItemsIfNecessary(_ timelineItem: TimelineItem) {
-		let thresholdIndex = timelineItems.index(timelineItems.endIndex, offsetBy: -10)
-		if timelineItems.firstIndex(where: { $0.id == timelineItem.id }) == thresholdIndex {
-			nextBatch()
-		}
 	}
 	
 	func articleFor(_ articleID: String) -> Article? {
@@ -182,17 +198,8 @@ private extension TimelineModel {
 	
 	func replaceArticles(with unsortedArticles: Set<Article>) {
 		articles = Array(unsortedArticles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
-		timelineItems = [TimelineItem]()
-		nextBatch()
+		timelineItems = articles.map { TimelineItem(article: $0) }
 		// TODO: Update unread counts and other item done in didSet on AppKit
-	}
-
-	func nextBatch() {
-		let rangeEndIndex = timelineItems.endIndex + 50 > articles.endIndex ? articles.endIndex : timelineItems.endIndex + 50
-		let range = timelineItems.endIndex..<rangeEndIndex
-		for i in range {
-			timelineItems.append(TimelineItem(article: articles[i]))
-		}
 	}
 	
 	// MARK: - Notifications

@@ -15,7 +15,7 @@ protocol SidebarModelDelegate: class {
 	func unreadCount(for: Feed) -> Int
 }
 
-class SidebarModel: ObservableObject {
+class SidebarModel: ObservableObject, UndoableCommandRunner {
 	
 	weak var delegate: SidebarModelDelegate?
 	
@@ -26,6 +26,9 @@ class SidebarModel: ObservableObject {
 	
 	private var selectedFeedIdentifiersCancellable: AnyCancellable?
 	private var selectedFeedIdentifierCancellable: AnyCancellable?
+
+	var undoManager: UndoManager?
+	var undoableCommands = [UndoableCommand]()
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
@@ -49,7 +52,6 @@ class SidebarModel: ObservableObject {
 				self.selectedFeeds = [feed]
 			}
 		}
-		
 	}
 	
 	// MARK: API

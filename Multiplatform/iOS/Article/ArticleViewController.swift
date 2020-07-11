@@ -12,7 +12,7 @@ import Account
 import Articles
 import SafariServices
 
-class ArticleViewController: UIViewController, ArticleManager {
+class ArticleViewController: UIViewController {
 	
 	weak var sceneModel: SceneModel?
 	
@@ -20,6 +20,12 @@ class ArticleViewController: UIViewController, ArticleManager {
 	
 	private var currentWebViewController: WebViewController? {
 		return pageViewController?.viewControllers?.first as? WebViewController
+	}
+	
+	var articles: [Article]? {
+		didSet {
+			currentArticle = articles?.first
+		}
 	}
 	
 	var currentArticle: Article? {
@@ -54,8 +60,6 @@ class ArticleViewController: UIViewController, ArticleManager {
 				
 		let controller = createWebViewController(currentArticle, updateView: true)
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
-		
-		sceneModel?.updateArticleSelection()
 	}
 			
 	// MARK: API
@@ -123,7 +127,6 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 		guard finished, completed else { return }
 //		guard let article = currentWebViewController?.article else { return }
 		
-		sceneModel?.updateArticleSelection()
 //		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
 		
 		previousViewControllers.compactMap({ $0 as? WebViewController }).forEach({ $0.stopWebViewActivity() })

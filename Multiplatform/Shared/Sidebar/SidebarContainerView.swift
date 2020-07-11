@@ -10,8 +10,8 @@ import SwiftUI
 
 struct SidebarContainerView: View {
 	
+	@Environment(\.undoManager) var undoManager
 	@EnvironmentObject private var sceneModel: SceneModel
-	@StateObject private var sidebarModel = SidebarModel()
 	
 	@State private var showSettings: Bool = false
 	
@@ -19,12 +19,11 @@ struct SidebarContainerView: View {
 		SidebarView()
 			.modifier(SidebarToolbarModifier())
 			.modifier(SidebarListStyleModifier())
-			.environmentObject(sidebarModel)
+			.environmentObject(sceneModel.sidebarModel)
 			.navigationTitle(Text("Feeds"))
 			.onAppear {
-				sceneModel.sidebarModel = sidebarModel
-				sidebarModel.delegate = sceneModel
-				sidebarModel.rebuildSidebarItems()
+				sceneModel.sidebarModel.undoManager = undoManager
+				sceneModel.sidebarModel.rebuildSidebarItems()
 			}
 	}
 	

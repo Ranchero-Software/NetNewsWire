@@ -21,23 +21,17 @@ final class SceneModel: ObservableObject {
 	private var refreshProgressModel: RefreshProgressModel? = nil
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler? = nil
 	
-	var webViewProvider: WebViewProvider? = nil
-	
-	var undoManager: UndoManager?
-	var undoableCommands = [UndoableCommand]()
-	
-	var sidebarModel: SidebarModel?
-	var timelineModel: TimelineModel?
-	var articleManager: ArticleManager?
-	
-	var currentArticle: Article? {
-		return articleManager?.currentArticle
-	}
+	private(set) var webViewProvider: WebViewProvider? = nil
+	private(set) var sidebarModel = SidebarModel()
+	private(set) var timelineModel = TimelineModel()
 
 	// MARK: Initialization API
 
 	/// Prepares the SceneModel to be used in the views
 	func startup() {
+		sidebarModel.delegate = self
+		timelineModel.delegate = self
+
 		self.refreshProgressModel = RefreshProgressModel()
 		self.refreshProgressModel!.$state.assign(to: self.$refreshProgressState)
 		
@@ -48,58 +42,20 @@ final class SceneModel: ObservableObject {
 	}
 	
 	// MARK: Article Management API
-
-	/// Toggles the read indicator for the currently viewable article
-	func toggleReadForCurrentArticle() {
-		if let article = articleManager?.currentArticle {
-			toggleRead(article)
-		}
-	}
-
-	/// Toggles the read indicator for the given article
-	func toggleRead(_ article: Article) {
-		guard !article.status.read || article.isAvailableToMarkUnread else { return }
-		markArticles([article], statusKey: .read, flag: !article.status.read)
-	}
-
-	/// Toggles the star indicator for the currently viewable article
-	func toggleStarForCurrentArticle() {
-		if let article = articleManager?.currentArticle {
-			toggleStar(article)
-		}
-	}
-	
-	/// Toggles the star indicator for the given article
-	func toggleStar(_ article: Article) {
-		markArticles([article], statusKey: .starred, flag: !article.status.starred)
-	}
 	
 	/// Retrieves the article before the given article in the Timeline
 	func findPrevArticle(_ article: Article) -> Article? {
-		return timelineModel?.findPrevArticle(article)
+		return timelineModel.findPrevArticle(article)
 	}
 	
 	/// Retrieves the article after the given article in the Timeline
 	func findNextArticle(_ article: Article) -> Article? {
-		return timelineModel?.findNextArticle(article)
-	}
-	
-	/// Marks the article as read and selects it in the Timeline.  Don't call until after the ArticleManager article has been set.
-	func updateArticleSelection() {
-		guard let article = currentArticle else { return }
-		
-		timelineModel?.selectArticle(article)
-		
-		if article.status.read {
-			updateArticleState()
-		} else {
-			markArticles([article], statusKey: .read, flag: true)
-		}
+		return timelineModel.findNextArticle(article)
 	}
 	
 	/// Returns the article with the given articleID
 	func articleFor(_ articleID: String) -> Article? {
-		return timelineModel?.articleFor(articleID)
+		return timelineModel.articleFor(articleID)
 	}
 	
 }
@@ -124,19 +80,6 @@ extension SceneModel: TimelineModelDelegate {
 	
 }
 
-// MARK: UndoableCommandRunner
-
-extension SceneModel: UndoableCommandRunner {
-	
-	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
-	}
-
-}
-
 // MARK: Private
 
 private extension SceneModel {
@@ -144,30 +87,39 @@ private extension SceneModel {
 	// MARK: Notifications
 	
 	@objc func statusesDidChange(_ note: Notification) {
-		guard let article = currentArticle, let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
+		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
 			return
 		}
-		if articleIDs.contains(article.articleID) {
+		let selectedArticleIDs = timelineModel.selectedArticles.map { $0.articleID }
+		if !articleIDs.intersection(selectedArticleIDs).isEmpty {
 			updateArticleState()
 		}
 	}
 	
-	// MARK: State Updates
+	// MARK: Button State Updates
 	
 	func updateArticleState() {
-		guard let article = currentArticle else {
+		let articles = timelineModel.selectedArticles
+		
+		guard !articles.isEmpty else {
 			readButtonState = nil
 			starButtonState = nil
 			return
 		}
 		
-		if article.isAvailableToMarkUnread {
-			readButtonState = article.status.read ? .off : .on
+		if articles.anyArticleIsUnread() {
+			readButtonState = .on
+		} else if articles.anyArticleIsReadAndCanMarkUnread() {
+			readButtonState = .off
 		} else {
 			readButtonState = nil
 		}
 		
-		starButtonState = article.status.starred ? .on : .off
+		if articles.anyArticleIsUnstarred() {
+			starButtonState = .on
+		} else {
+			starButtonState = .off
+		}
 	}
 
 }

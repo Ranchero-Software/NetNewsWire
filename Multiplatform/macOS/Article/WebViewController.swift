@@ -22,7 +22,7 @@ protocol WebViewControllerDelegate: class {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
 
-class WebViewController: NSViewController, ArticleManager {
+class WebViewController: NSViewController {
 	
 	private struct MessageName {
 		static let imageWasClicked = "imageWasClicked"
@@ -49,7 +49,7 @@ class WebViewController: NSViewController, ArticleManager {
 	var sceneModel: SceneModel?
 	weak var delegate: WebViewControllerDelegate?
 	
-	var currentArticle: Article?
+	var articles: [Article]?
 	
 	override func loadView() {
 		view = NSView()
@@ -75,8 +75,6 @@ class WebViewController: NSViewController, ArticleManager {
 		])
 		
 		loadWebView()
-		
-		sceneModel?.updateArticleSelection()
 	}
 
 	// MARK: Notifications
@@ -119,7 +117,7 @@ class WebViewController: NSViewController, ArticleManager {
 	
 	func toggleArticleExtractor() {
 
-		guard let article = currentArticle else {
+		guard let article = articles?.first else {
 			return
 		}
 
@@ -247,17 +245,19 @@ private extension WebViewController {
 		let style = ArticleStylesManager.shared.currentStyle
 		let rendering: ArticleRenderer.Rendering
 
-		if let articleExtractor = articleExtractor, articleExtractor.state == .processing {
+		if articles?.count ?? 0 > 1 {
+			rendering = ArticleRenderer.multipleSelectionHTML(style: style)
+		} else if let articleExtractor = articleExtractor, articleExtractor.state == .processing {
 			rendering = ArticleRenderer.loadingHTML(style: style)
-		} else if let articleExtractor = articleExtractor, articleExtractor.state == .failedToParse, let article = currentArticle {
+		} else if let articleExtractor = articleExtractor, articleExtractor.state == .failedToParse, let article = articles?.first {
 			rendering = ArticleRenderer.articleHTML(article: article, style: style)
-		} else if let article = currentArticle, let extractedArticle = extractedArticle {
+		} else if let article = articles?.first, let extractedArticle = extractedArticle {
 			if isShowingExtractedArticle {
 				rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
 			} else {
 				rendering = ArticleRenderer.articleHTML(article: article, style: style)
 			}
-		} else if let article = currentArticle {
+		} else if let article = articles?.first {
 			rendering = ArticleRenderer.articleHTML(article: article, style: style)
 		} else {
 			rendering = ArticleRenderer.noSelectionHTML(style: style)
@@ -299,7 +299,7 @@ private extension WebViewController {
 	}
 	
 	func startArticleExtractor() {
-		if let link = currentArticle?.preferredLink, let extractor = ArticleExtractor(link) {
+		if let link = articles?.first?.preferredLink, let extractor = ArticleExtractor(link) {
 			extractor.delegate = self
 			extractor.process()
 			articleExtractor = extractor
@@ -315,7 +315,7 @@ private extension WebViewController {
 	}
 
 	func reloadArticleImage() {
-		guard let article = currentArticle else { return }
+		guard let article = articles?.first else { return }
 
 		var components = URLComponents()
 		components.scheme = ArticleRenderer.imageIconScheme

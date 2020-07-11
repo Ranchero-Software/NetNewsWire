@@ -11,25 +11,41 @@ import SwiftUI
 struct TimelineView: View {
 	
 	@EnvironmentObject private var timelineModel: TimelineModel
+	@State var navigate = false
 
-	var body: some View {
-		List(timelineModel.timelineItems) { timelineItem in
-			ZStack {
-				TimelineItemView(timelineItem: timelineItem)
-					.onAppear {
-						timelineModel.loadMoreTimelineItemsIfNecessary(timelineItem)
-					}
-				NavigationLink(destination: (ArticleContainerView(article: timelineItem.article))) {
-					EmptyView()
-				}.buttonStyle(PlainButtonStyle())
+	@ViewBuilder var body: some View {
+		#if os(macOS)
+		ZStack {
+			NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles), isActive: $navigate) {
+				EmptyView()
+			}.hidden()
+			List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
+				buildTimelineItemNavigation(timelineItem)
 			}
 		}
+		.onChange(of: timelineModel.selectedArticleIDs) { value in
+			navigate = !timelineModel.selectedArticleIDs.isEmpty
+		}
+		#else
+		List(timelineModel.timelineItems) { timelineItem in
+			buildTimelineItemNavigation(timelineItem)
+		}
+		#endif
     }
-	
-//	var body: some View {
-//		List(timelineModel.timelineItems) { timelineItem in
-//			TimelineItemView(timelineItem: timelineItem)
-//		}
-//	}
+
+	func buildTimelineItemNavigation(_ timelineItem: TimelineItem) -> some View {
+		#if os(macOS)
+		return TimelineItemView(timelineItem: timelineItem) //.tag(timelineItem.article.articleID)
+		#else
+		return ZStack {
+			TimelineItemView(timelineItem: timelineItem)
+			NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles),
+						   tag: timelineItem.article.articleID,
+						   selection: $timelineModel.selectedArticleID) {
+				EmptyView()
+			}.buttonStyle(PlainButtonStyle())
+		}
+		#endif
+	}
 	
 }

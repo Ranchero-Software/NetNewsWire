@@ -12,18 +12,12 @@ import Articles
 struct ArticleView: NSViewControllerRepresentable {
 	
 	var sceneModel: SceneModel
-	var article: Article
-	
-	init(sceneModel: SceneModel, article: Article) {
-		self.sceneModel = sceneModel
-		self.article = article
-	}
+	var articles: [Article]
 	
 	func makeNSViewController(context: Context) -> WebViewController {
 		let controller = WebViewController()
-		sceneModel.articleManager = controller
 		controller.sceneModel = sceneModel
-		controller.currentArticle = article
+		controller.articles = articles
 		return controller
 	}
 	

@@ -10,7 +10,6 @@ import SwiftUI
 
 struct SceneNavigationView: View {
 
-	@Environment(\.undoManager) var undoManager
 	@StateObject private var sceneModel = SceneModel()
 	@State private var showSheet: Bool = false
 	@State private var sheetToShow: ToolbarSheets = .none
@@ -49,7 +48,6 @@ struct SceneNavigationView: View {
 		}
 		.environmentObject(sceneModel)
 		.onAppear {
-			sceneModel.undoManager = undoManager
 			sceneModel.startup()
 		}
 		.sheet(isPresented: $showSheet, onDismiss: { sheetToShow = .none }) {
@@ -100,7 +98,7 @@ struct SceneNavigationView: View {
 				}).help("Go to Next Unread").padding(.trailing, 40)
 			}
 			ToolbarItem {
-				Button(action: { sceneModel.toggleReadForCurrentArticle() }, label: {
+				Button(action: {  }, label: {
 					if sceneModel.readButtonState == .on {
 						AppAssets.readClosedImage
 					} else {
@@ -111,7 +109,7 @@ struct SceneNavigationView: View {
 				.help(sceneModel.readButtonState == .on ? "Mark as Unread" : "Mark as Read")
 			}
 			ToolbarItem {
-				Button(action: { sceneModel.toggleStarForCurrentArticle() }, label: {
+				Button(action: {  }, label: {
 					if sceneModel.starButtonState == .on {
 						AppAssets.starClosedImage
 					} else {

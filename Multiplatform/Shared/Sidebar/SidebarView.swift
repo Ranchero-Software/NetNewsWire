@@ -17,8 +17,7 @@ struct SidebarView: View {
 	@EnvironmentObject private var sidebarModel: SidebarModel
 	@State var navigate = false
 
-	@ViewBuilder
-	var body: some View {
+	@ViewBuilder var body: some View {
 		#if os(macOS)
 		ZStack {
 			NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds), isActive: $navigate) {
