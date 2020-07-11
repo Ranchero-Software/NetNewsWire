@@ -89,9 +89,8 @@ struct MainApp: App {
 				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
 				.onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
 					print("didEnterBackgroundNotification")
-					appDelegate.refreshWidgetData()
+					WidgetDataEncoder.encodeWidgetData()
 				}
-				
 		}
 		.commands {
 			CommandGroup(after: .newItem, addition: {

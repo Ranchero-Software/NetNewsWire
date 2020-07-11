@@ -179,7 +179,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
-			refreshWidgetData()
+			WidgetDataEncoder.encodeWidgetData()
 		}
 	}
 	
@@ -415,7 +415,7 @@ private extension AppDelegate {
 			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
-					self.refreshWidgetData()
+					WidgetDataEncoder.encodeWidgetData()
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
 					task.setTaskCompleted(success: true)

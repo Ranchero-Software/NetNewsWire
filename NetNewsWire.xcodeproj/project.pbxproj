@@ -17,6 +17,9 @@
 		1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529A24AA1FD200D65E66 /* MacSearchField.swift */; };
 		175942AA24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		175942AB24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
+		1772066324B946EC00970353 /* WidgetDataEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1772066224B946EC00970353 /* WidgetDataEncoder.swift */; };
+		1772068624B9480800970353 /* WidgetDataDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1772068524B9480800970353 /* WidgetDataDecoder.swift */; };
+		1772068724B9480800970353 /* WidgetDataDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1772068524B9480800970353 /* WidgetDataDecoder.swift */; };
 		1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		17930ED424AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */; };
@@ -28,6 +31,7 @@
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
+		17E1AFE824B99D20009DD525 /* widget-data-sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 17E1AFC624B99D20009DD525 /* widget-data-sample.json */; };
 		17EEA7F524B8926700AAD8BF /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17EEA7F424B8926700AAD8BF /* WidgetKit.framework */; };
 		17EEA7F724B8926700AAD8BF /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17EEA7F624B8926700AAD8BF /* SwiftUI.framework */; };
 		17EEA7FA24B8926700AAD8BF /* LatestWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EEA7F924B8926700AAD8BF /* LatestWidget.swift */; };
@@ -1811,12 +1815,16 @@
 		1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesView.swift; sourceTree = "<group>"; };
 		1729529624AA1CD000D65E66 /* MacPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencesView.swift; sourceTree = "<group>"; };
 		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
+		1772066224B946EC00970353 /* WidgetDataEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataEncoder.swift; sourceTree = "<group>"; };
+		1772068524B9480800970353 /* WidgetDataDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataDecoder.swift; sourceTree = "<group>"; };
+		1772068824B94F6700970353 /* WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetExtension.entitlements; sourceTree = "<group>"; };
 		1776E88D24AC5F8A00E78166 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
 		17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedView.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
 		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
+		17E1AFC624B99D20009DD525 /* widget-data-sample.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "widget-data-sample.json"; sourceTree = "<group>"; };
 		17EEA7F324B8926700AAD8BF /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		17EEA7F424B8926700AAD8BF /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		17EEA7F624B8926700AAD8BF /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -2575,7 +2583,9 @@
 		17EEA7F824B8926700AAD8BF /* Widget */ = {
 			isa = PBXGroup;
 			children = (
+				1772068824B94F6700970353 /* WidgetExtension.entitlements */,
 				17EEA7F924B8926700AAD8BF /* LatestWidget.swift */,
+				17E1AFC624B99D20009DD525 /* widget-data-sample.json */,
 				17EEA7FB24B8926700AAD8BF /* Assets.xcassets */,
 				17EEA7FD24B8926700AAD8BF /* Info.plist */,
 			);
@@ -2586,6 +2596,8 @@
 			isa = PBXGroup;
 			children = (
 				17EEA80524B8996100AAD8BF /* WidgetData.swift */,
+				1772066224B946EC00970353 /* WidgetDataEncoder.swift */,
+				1772068524B9480800970353 /* WidgetDataDecoder.swift */,
 			);
 			path = "Widget Data";
 			sourceTree = "<group>";
@@ -4230,6 +4242,7 @@
 				TargetAttributes = {
 					17EEA7F224B8926700AAD8BF = {
 						CreatedOnToolsVersion = 12.0;
+						DevelopmentTeam = FQLBNX3GP7;
 						ProvisioningStyle = Automatic;
 					};
 					51314636235A7BBE00387FDC = {
@@ -4696,6 +4709,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17EEA7FC24B8926700AAD8BF /* Assets.xcassets in Resources */,
+				17E1AFE824B99D20009DD525 /* widget-data-sample.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5038,6 +5052,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1772068724B9480800970353 /* WidgetDataDecoder.swift in Sources */,
 				17EEA7FA24B8926700AAD8BF /* LatestWidget.swift in Sources */,
 				17EEA80724B8996100AAD8BF /* WidgetData.swift in Sources */,
 			);
@@ -5121,6 +5136,7 @@
 				65ACE48A24B4C2D8003AE06A /* SettingsFeedbinAccountView.swift in Sources */,
 				51E4993624A867E800B667CB /* UserInfoKey.swift in Sources */,
 				51E4990924A808C500B667CB /* WebFeedIconDownloader.swift in Sources */,
+				1772066324B946EC00970353 /* WidgetDataEncoder.swift in Sources */,
 				51E498F524A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
 				172199F124AB716900A31D04 /* SidebarToolbarModifier.swift in Sources */,
 				65CBAD5A24AE03C20006DD91 /* ColorPaletteContainerView.swift in Sources */,
@@ -5175,6 +5191,7 @@
 				51E4996824A8760C00B667CB /* ArticleStyle.swift in Sources */,
 				51E4990024A808BB00B667CB /* FaviconGenerator.swift in Sources */,
 				51E4997124A8764C00B667CB /* ActivityType.swift in Sources */,
+				1772068624B9480800970353 /* WidgetDataDecoder.swift in Sources */,
 				51E4991E24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
 				51E499D824A912C200B667CB /* SceneModel.swift in Sources */,
 				5177470E24B2FF6F00EB0F74 /* ArticleView.swift in Sources */,
@@ -6198,9 +6215,12 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Multiplatform/iOS/Widget/WidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = FQLBNX3GP7;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -6223,7 +6243,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stuartbreckenridge.NetNewsWire.iOS.Widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stuartbreckenridge.opensource.NetNewsWire.iOS.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -6269,9 +6289,12 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Multiplatform/iOS/Widget/WidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = FQLBNX3GP7;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -6287,8 +6310,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stuartbreckenridge.NetNewsWire.iOS.Widget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stuartbreckenridge.opensource.NetNewsWire.iOS.Widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
