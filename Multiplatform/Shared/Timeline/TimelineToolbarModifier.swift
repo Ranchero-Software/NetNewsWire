@@ -19,15 +19,17 @@ struct TimelineToolbarModifier: ViewModifier {
 				ToolbarItem(placement: .navigation) {
 					Button (action: {
 						withAnimation {
-							timelineModel.isReadFiltered.toggle()
+							timelineModel.toggleReadFilter()
 						}
 					}, label: {
-						if timelineModel.isReadFiltered {
+						if timelineModel.isReadFiltered ?? false {
 							AppAssets.filterActiveImage.font(.title3)
 						} else {
 							AppAssets.filterInactiveImage.font(.title3)
 						}
-					}).help(timelineModel.isReadFiltered ? "Show Read Articles" : "Filter Read Articles")
+					})
+					.hidden(timelineModel.isReadFiltered == nil)
+					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				
 				ToolbarItem {

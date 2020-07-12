@@ -296,6 +296,8 @@
 		5193CD58245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
 		5193CD59245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
 		5193CD5A245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
+		5194736E24BBB937001A2939 /* HiddenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194736D24BBB937001A2939 /* HiddenModifier.swift */; };
+		5194736F24BBB937001A2939 /* HiddenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194736D24BBB937001A2939 /* HiddenModifier.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
 		519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */; };
@@ -1960,6 +1962,7 @@
 		51934CCD2310792F006127BE /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
 		5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RedditFeedProvider-Extensions.swift"; sourceTree = "<group>"; };
+		5194736D24BBB937001A2939 /* HiddenModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenModifier.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		519E743422C663F900A78E47 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExtensionPointViewController.swift; sourceTree = "<group>"; };
@@ -2687,6 +2690,7 @@
 			children = (
 				514E6C0524AD2B5F00AC6F6E /* Image-Extensions.swift */,
 				5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */,
+				5194736D24BBB937001A2939 /* HiddenModifier.swift */,
 			);
 			path = "SwiftUI Extensions";
 			sourceTree = "<group>";
@@ -4992,6 +4996,7 @@
 				FF64D0E724AF53EE0084080A /* RefreshProgressModel.swift in Sources */,
 				51E4996A24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
 				51919FF124AB864A00541E64 /* TimelineModel.swift in Sources */,
+				5194736E24BBB937001A2939 /* HiddenModifier.swift in Sources */,
 				51E498F124A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
@@ -5119,6 +5124,7 @@
 				51E4993A24A8708800B667CB /* AppDelegate.swift in Sources */,
 				51E498CE24A8085D00B667CB /* UnreadFeed.swift in Sources */,
 				51E498C724A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
+				5194736F24BBB937001A2939 /* HiddenModifier.swift in Sources */,
 				51919FB724AABCA100541E64 /* IconImageView.swift in Sources */,
 				51B54A6924B54A490014348B /* IconView.swift in Sources */,
 				51E498FA24A808BA00B667CB /* SingleFaviconDownloader.swift in Sources */,

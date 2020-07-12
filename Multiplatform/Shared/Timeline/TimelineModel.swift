@@ -25,7 +25,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedArticleIDs = Set<String>()  // Don't use directly.  Use selectedArticles
 	@Published var selectedArticleID: String? = .none  // Don't use directly.  Use selectedArticles
 	@Published var selectedArticles = [Article]()
-	@Published var isReadFiltered = false
+	@Published var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	@Published var isReadFiltered: Bool? = nil
 
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
@@ -33,8 +34,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	private var selectedArticleIDsCancellable: AnyCancellable?
 	private var selectedArticleIDCancellable: AnyCancellable?
 	private var selectedArticlesCancellable: AnyCancellable?
-	private var selectedReadFilteredCancellable: AnyCancellable?
 
+	private var feeds = [Feed]()
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -97,21 +98,28 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			}
 		}
 		
-		selectedReadFilteredCancellable = $isReadFiltered.sink { [weak self] filter in
-			guard let self = self else { return }
-			self.rebuildTimelineItems(isReadFiltered: filter)
-		}
 	}
 	
 	// MARK: API
 	
 	func fetchArticles(feeds: [Feed]) {
+		self.feeds = feeds
+		
 		if feeds.count == 1 {
 			nameForDisplay = feeds.first!.nameForDisplay
 		} else {
 			nameForDisplay = NSLocalizedString("Multiple", comment: "Multiple Feeds")
 		}
+		
+		resetReadFilter()
 		fetchAndReplaceArticlesAsync(feeds: feeds)
+	}
+	
+	func toggleReadFilter() {
+		guard let filter = isReadFiltered, let feedID = feeds.first?.feedID else { return }
+		readFilterEnabledTable[feedID] = !filter
+		isReadFiltered = !filter
+		rebuildTimelineItems(isReadFiltered: isReadFiltered)
 	}
 	
 	func toggleReadStatusForSelectedArticles() {
@@ -207,6 +215,24 @@ private extension TimelineModel {
 	
 	// MARK: Timeline Management
 	
+	func resetReadFilter() {
+		guard feeds.count == 1, let timelineFeed = feeds.first else {
+			isReadFiltered = nil
+			return
+		}
+		
+		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
+			isReadFiltered = nil
+			return
+		}
+		
+		if let feedID = timelineFeed.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
+			isReadFiltered =  readFilterEnabled
+		} else {
+			isReadFiltered = timelineFeed.defaultReadFilterType == .read
+		}
+	}
+
 	func sortParametersDidChange() {
 		performBlockAndRestoreSelection {
 			let unsortedArticles = Set(articles)
@@ -253,7 +279,9 @@ private extension TimelineModel {
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: isReadFiltered, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let filtered = isReadFiltered ?? false
+
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: filtered, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
@@ -269,11 +297,12 @@ private extension TimelineModel {
 		// TODO: Update unread counts and other item done in didSet on AppKit
 	}
 	
-	func rebuildTimelineItems(isReadFiltered: Bool) {
+	func rebuildTimelineItems(isReadFiltered: Bool?) {
+		let filtered = isReadFiltered ?? false
 		let selectedArticleIDs = selectedArticles.map { $0.articleID }
 
 		timelineItems = articles.compactMap { article in
-			if isReadFiltered && article.status.read && !selectedArticleIDs.contains(article.articleID) {
+			if filtered && article.status.read && !selectedArticleIDs.contains(article.articleID) {
 				return nil
 			} else {
 				return TimelineItem(article: article)

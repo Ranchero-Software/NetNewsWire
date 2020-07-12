@@ -20,18 +20,19 @@ struct TimelineView: View {
 				Spacer()
 				Button (action: {
 					withAnimation {
-						timelineModel.isReadFiltered.toggle()
+						timelineModel.toggleReadFilter()
 					}
 				}, label: {
-					if timelineModel.isReadFiltered {
+					if timelineModel.isReadFiltered ?? false {
 						AppAssets.filterActiveImage
 					} else {
 						AppAssets.filterInactiveImage
 					}
 				})
+				.hidden(timelineModel.isReadFiltered == nil)
 				.padding(.top, 8).padding(.trailing)
 				.buttonStyle(PlainButtonStyle())
-				.help(timelineModel.isReadFiltered ? "Show Read Articles" : "Filter Read Articles")
+				.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 			}
 			ZStack {
 				NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles), isActive: $navigate) {
