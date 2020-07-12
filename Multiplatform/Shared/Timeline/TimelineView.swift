@@ -46,6 +46,7 @@ struct TimelineView: View {
 				navigate = !timelineModel.selectedArticleIDs.isEmpty
 			}
 		}
+		.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
 		#else
 		List(timelineModel.timelineItems) { timelineItem in
 			ZStack {

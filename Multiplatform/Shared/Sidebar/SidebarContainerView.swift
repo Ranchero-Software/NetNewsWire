@@ -20,7 +20,6 @@ struct SidebarContainerView: View {
 			.modifier(SidebarToolbarModifier())
 			.modifier(SidebarListStyleModifier())
 			.environmentObject(sceneModel.sidebarModel)
-			.navigationTitle(Text("Feeds"))
 			.onAppear {
 				sceneModel.sidebarModel.undoManager = undoManager
 				sceneModel.sidebarModel.rebuildSidebarItems()

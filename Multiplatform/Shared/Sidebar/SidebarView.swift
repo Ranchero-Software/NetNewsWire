@@ -53,6 +53,7 @@ struct SidebarView: View {
 		List {
 			rows
 		}
+		.navigationTitle(Text("Feeds"))
 		#endif
 //		.onAppear {
 //			expandedContainers.data = expandedContainerData
