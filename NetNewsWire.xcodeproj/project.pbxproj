@@ -2507,19 +2507,19 @@
 			children = (
 				1717535524BADF33004498C6 /* MacPreferencesModel.swift */,
 				1729529624AA1CD000D65E66 /* MacPreferencesView.swift */,
-				1729529924AA1CE100D65E66 /* Preferences Subviews */,
+				1729529924AA1CE100D65E66 /* Preference Panes */,
 			);
 			path = Preferences;
 			sourceTree = "<group>";
 		};
-		1729529924AA1CE100D65E66 /* Preferences Subviews */ = {
+		1729529924AA1CE100D65E66 /* Preference Panes */ = {
 			isa = PBXGroup;
 			children = (
 				1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */,
 				1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */,
 				1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */,
 			);
-			path = "Preferences Subviews";
+			path = "Preference Panes";
 			sourceTree = "<group>";
 		};
 		17930ED224AF10CD00A9BA52 /* Add */ = {

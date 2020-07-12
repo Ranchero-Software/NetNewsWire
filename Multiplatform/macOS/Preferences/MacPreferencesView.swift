@@ -17,7 +17,7 @@ struct MacPreferencesView: View {
 		VStack {
 			switch viewModel.currentPreferencePane {
 			case .general:
-				GeneralPreferencesView()
+				GeneralPreferencesView(preferences: viewModel)
 					.environmentObject(defaults)
 			case .accounts:
 				AccountsPreferencesView()

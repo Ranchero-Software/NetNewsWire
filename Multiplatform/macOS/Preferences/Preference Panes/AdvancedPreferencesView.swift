@@ -12,37 +12,34 @@ struct AdvancedPreferencesView: View {
 	@EnvironmentObject private var preferences: AppDefaults
     
     var body: some View {
-        VStack {
+        
             Form {
                 Toggle("Check for app updates automatically", isOn: $preferences.checkForUpdatesAutomatically)
                 
                 Toggle("Download Test Builds", isOn: $preferences.downloadTestBuilds)
-                HStack {
-                    Spacer()
-                    Text("If you’re not sure, don't enable test builds. Test builds may have bugs, which may include crashing bugs and data loss.").foregroundColor(.secondary)
-                    Spacer()
-                }
+				
+				Text("If you’re not sure, don't enable test builds. Test builds may have bugs, which may include crashing bugs and data loss.")
+					.foregroundColor(.secondary)
+					.lineLimit(3)
+					.padding(.bottom, 8)
                 
                 HStack {
                     Spacer()
                     Button("Check for Updates", action: {})
                     Spacer()
-                }.padding(.vertical, 12)
+                }.padding(.bottom, 8)
                 
                 
                 Toggle("Send Crash Logs Automatically", isOn: $preferences.sendCrashLogs)
                 
-                Spacer()
                 HStack {
                     Spacer()
-                    Button("Privacy Policy", action: {})
+                    Button("Privacy Policy", action: {
+						NSWorkspace.shared.open(URL(string: "https://ranchero.com/netnewswire/privacypolicy")!)
+					})
                     Spacer()
                 }.padding(.top, 12)
-                
-                
-            }
-            Spacer()
-        }.frame(width: 300, alignment: .center)
+			}.frame(width: 400, alignment: .center)
     }
     
 }

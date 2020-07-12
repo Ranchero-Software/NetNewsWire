@@ -10,11 +10,11 @@ import SwiftUI
 struct GeneralPreferencesView: View {
 	
 	@EnvironmentObject private var defaults: AppDefaults
+	@ObservedObject var preferences: MacPreferencesModel
 	
 	var body: some View {
-		VStack {
 			Form {
-				Picker("Refresh Feeds",
+				Picker("Refresh feeds",
 					   selection: $defaults.interval,
 					   content: {
 						ForEach(RefreshInterval.allCases, content: { interval in
@@ -23,12 +23,19 @@ struct GeneralPreferencesView: View {
 					   })
 					.frame(width: 300, alignment: .center)
 				
+				Picker("Default RSS reader", selection: $preferences.rssReaderSelection, content: {
+					ForEach(0..<preferences.rssReaders.count, content: { i in
+						Text(preferences.rssReaders[i].nameMinusAppSuffix)
+					})
+				})
+				
+				
 				Toggle("Open webpages in background in browser", isOn: $defaults.openInBrowserInBackground)
 				
 				Toggle("Hide Unread Count in Dock", isOn: $defaults.hideDockUnreadCount)
 			}
-			Spacer()
-		}.frame(width: 300, alignment: .center)
+			.frame(width: 400, alignment: .center)
+			.lineLimit(2)
 	}
 	
 }
