@@ -31,6 +31,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 
 	private var selectedArticleIDsCancellable: AnyCancellable?
 	private var selectedArticleIDCancellable: AnyCancellable?
+	private var selectedArticlesCancellable: AnyCancellable?
 
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
@@ -84,6 +85,16 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 				self.selectedArticles = [article]
 			}
 		}
+
+		// TODO: This should be rewritten to use Combine correctly
+		selectedArticlesCancellable = $selectedArticles.sink { articles in
+			if articles.count == 1 {
+				let article = articles.first!
+				if !article.status.read {
+					markArticles(Set([article]), statusKey: .read, flag: true)
+				}
+			}
+		}
 	}
 	
 	// MARK: API
@@ -95,6 +106,56 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			nameForDisplay = NSLocalizedString("Multiple", comment: "Multiple Feeds")
 		}
 		fetchAndReplaceArticlesAsync(feeds: feeds)
+	}
+	
+	func toggleReadStatusForSelectedArticles() {
+		guard !selectedArticles.isEmpty else {
+			return
+		}
+		if selectedArticles.anyArticleIsUnread() {
+			markSelectedArticlesAsRead()
+		} else {
+			markSelectedArticlesAsUnread()
+		}
+	}
+
+	func markSelectedArticlesAsRead() {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+	
+	func markSelectedArticlesAsUnread() {
+		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markUnreadCommand)
+	}
+	
+	func toggleStarredStatusForSelectedArticles() {
+		guard !selectedArticles.isEmpty else {
+			return
+		}
+		if selectedArticles.anyArticleIsUnstarred() {
+			markSelectedArticlesAsStarred()
+		} else {
+			markSelectedArticlesAsUnstarred()
+		}
+	}
+
+	func markSelectedArticlesAsStarred() {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingStarred: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+	
+	func markSelectedArticlesAsUnstarred() {
+		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingStarred: false, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markUnreadCommand)
 	}
 	
 	func articleFor(_ articleID: String) -> Article? {
@@ -138,7 +199,7 @@ private extension TimelineModel {
 		}
 	}
 	
-	// MARK:
+	// MARK: Timeline Management
 	
 	func sortParametersDidChange() {
 		performBlockAndRestoreSelection {
@@ -202,6 +263,4 @@ private extension TimelineModel {
 		// TODO: Update unread counts and other item done in didSet on AppKit
 	}
 	
-	// MARK: - Notifications
-
 }

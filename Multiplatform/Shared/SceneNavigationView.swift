@@ -98,7 +98,7 @@ struct SceneNavigationView: View {
 				}).help("Go to Next Unread").padding(.trailing, 40)
 			}
 			ToolbarItem {
-				Button(action: {  }, label: {
+				Button(action: { sceneModel.toggleReadStatusForSelectedArticles() }, label: {
 					if sceneModel.readButtonState == .on {
 						AppAssets.readClosedImage
 					} else {
@@ -109,7 +109,7 @@ struct SceneNavigationView: View {
 				.help(sceneModel.readButtonState == .on ? "Mark as Unread" : "Mark as Read")
 			}
 			ToolbarItem {
-				Button(action: {  }, label: {
+				Button(action: { sceneModel.toggleStarredStatusForSelectedArticles() }, label: {
 					if sceneModel.starButtonState == .on {
 						AppAssets.starClosedImage
 					} else {

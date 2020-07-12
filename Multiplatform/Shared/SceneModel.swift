@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 import Account
 import Articles
 import RSCore
@@ -25,6 +26,8 @@ final class SceneModel: ObservableObject {
 	private(set) var sidebarModel = SidebarModel()
 	private(set) var timelineModel = TimelineModel()
 
+	private var selectedArticlesCancellable: AnyCancellable?
+
 	// MARK: Initialization API
 
 	/// Prepares the SceneModel to be used in the views
@@ -39,9 +42,21 @@ final class SceneModel: ObservableObject {
 		self.webViewProvider = WebViewProvider(articleIconSchemeHandler: self.articleIconSchemeHandler!)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
+
+		selectedArticlesCancellable = timelineModel.$selectedArticles.sink { [weak self] articles in
+			self?.updateArticleState(articles: articles)
+		}
 	}
 	
 	// MARK: Article Management API
+	
+	func toggleReadStatusForSelectedArticles() {
+		timelineModel.toggleReadStatusForSelectedArticles()
+	}
+	
+	func toggleStarredStatusForSelectedArticles() {
+		timelineModel.toggleStarredStatusForSelectedArticles()
+	}
 	
 	/// Retrieves the article before the given article in the Timeline
 	func findPrevArticle(_ article: Article) -> Article? {
@@ -92,15 +107,13 @@ private extension SceneModel {
 		}
 		let selectedArticleIDs = timelineModel.selectedArticles.map { $0.articleID }
 		if !articleIDs.intersection(selectedArticleIDs).isEmpty {
-			updateArticleState()
+			updateArticleState(articles: timelineModel.selectedArticles)
 		}
 	}
 	
 	// MARK: Button State Updates
 	
-	func updateArticleState() {
-		let articles = timelineModel.selectedArticles
-		
+	func updateArticleState(articles: [Article]) {
 		guard !articles.isEmpty else {
 			readButtonState = nil
 			starButtonState = nil
@@ -116,9 +129,9 @@ private extension SceneModel {
 		}
 		
 		if articles.anyArticleIsUnstarred() {
-			starButtonState = .on
-		} else {
 			starButtonState = .off
+		} else {
+			starButtonState = .on
 		}
 	}
 

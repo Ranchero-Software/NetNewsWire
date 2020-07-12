@@ -33,7 +33,7 @@ struct ArticleToolbarModifier: ViewModifier {
 				}
 
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: {  }, label: {
+					Button(action: { sceneModel.toggleReadStatusForSelectedArticles() }, label: {
 						if sceneModel.readButtonState == .on {
 							AppAssets.readClosedImage
 						} else {
@@ -49,7 +49,7 @@ struct ArticleToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: {  }, label: {
+					Button(action: { sceneModel.toggleStarredStatusForSelectedArticles() }, label: {
 						if sceneModel.starButtonState == .on {
 							AppAssets.starClosedImage
 						} else {
