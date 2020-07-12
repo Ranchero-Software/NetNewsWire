@@ -112,14 +112,14 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 		
 		resetReadFilter()
-		fetchAndReplaceArticlesAsync(feeds: feeds)
+		fetchAndReplaceArticlesAsync()
 	}
 	
 	func toggleReadFilter() {
 		guard let filter = isReadFiltered, let feedID = feeds.first?.feedID else { return }
 		readFilterEnabledTable[feedID] = !filter
 		isReadFiltered = !filter
-		rebuildTimelineItems(isReadFiltered: isReadFiltered)
+		rebuildTimelineItems()
 	}
 	
 	func toggleReadStatusForSelectedArticles() {
@@ -257,7 +257,7 @@ private extension TimelineModel {
 	
 	// MARK: Article Fetching
 	
-	func fetchAndReplaceArticlesAsync(feeds: [Feed]) {
+	func fetchAndReplaceArticlesAsync() {
 		var fetchers = feeds as [ArticleFetcher]
 		if let fetcher = exceptionArticleFetcher {
 			fetchers.append(fetcher)
@@ -279,9 +279,13 @@ private extension TimelineModel {
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
-		let filtered = isReadFiltered ?? false
 
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: filtered, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		// Right now we are pulling all the records and filtering them in the UI.  This is because the async
+		// change of the timeline times doesn't trigger an animation because it isn't in a withAnimation block.
+		// Ideally this would be done in the database tier with a query, but if you look, we always pull everything
+		// from SQLite and filter it programmatically at that level currently.  So no big deal.
+		// We should change this as soon as we figure out how to trigger animations on Lists with async tasks.
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: false, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
@@ -293,11 +297,11 @@ private extension TimelineModel {
 	
 	func replaceArticles(with unsortedArticles: Set<Article>) {
 		articles = Array(unsortedArticles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
-		rebuildTimelineItems(isReadFiltered: isReadFiltered)
+		rebuildTimelineItems()
 		// TODO: Update unread counts and other item done in didSet on AppKit
 	}
 	
-	func rebuildTimelineItems(isReadFiltered: Bool?) {
+	func rebuildTimelineItems() {
 		let filtered = isReadFiltered ?? false
 		let selectedArticleIDs = selectedArticles.map { $0.articleID }
 
