@@ -23,9 +23,11 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedFeedIdentifiers = Set<FeedIdentifier>()
 	@Published var selectedFeedIdentifier: FeedIdentifier? = .none
 	@Published var selectedFeeds = [Feed]()
+	@Published var isReadFiltered = false
 	
 	private var selectedFeedIdentifiersCancellable: AnyCancellable?
 	private var selectedFeedIdentifierCancellable: AnyCancellable?
+	private var selectedReadFilteredCancellable: AnyCancellable?
 
 	private let rebuildSidebarItemsQueue = CoalescingQueue(name: "Rebuild The Sidebar Items", interval: 0.5)
 
@@ -55,41 +57,20 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 				self.selectedFeeds = [feed]
 			}
 		}
+
+		selectedReadFilteredCancellable = $isReadFiltered.sink { [weak self] filter in
+			guard let self = self else { return }
+			self.rebuildSidebarItems(isReadFiltered: filter)
+		}
 	}
 	
 	// MARK: API
 	
-	@objc func rebuildSidebarItems() {
-		guard let delegate = delegate else { return }
-		var items = [SidebarItem]()
-		
-		var smartFeedControllerItem = SidebarItem(SmartFeedsController.shared)
-		for feed in SmartFeedsController.shared.smartFeeds {
-			smartFeedControllerItem.addChild(SidebarItem(feed, unreadCount: delegate.unreadCount(for: feed)))
-		}
-		items.append(smartFeedControllerItem)
-
-		for account in AccountManager.shared.sortedActiveAccounts {
-			var accountItem = SidebarItem(account)
-			
-			for webFeed in sort(account.topLevelWebFeeds) {
-				accountItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
-			}
-			
-			for folder in sort(account.folders ?? Set<Folder>()) {
-				var folderItem = SidebarItem(folder, unreadCount: delegate.unreadCount(for: folder))
-				for webFeed in sort(folder.topLevelWebFeeds) {
-					folderItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
-				}
-				accountItem.addChild(folderItem)
-			}
-
-			items.append(accountItem)
-		}
-		
-		sidebarItems = items
+	/// Rebuilds the sidebar items to cause the sidebar to rebuild itself
+	func rebuildSidebarItems() {
+		rebuildSidebarItemsWithCurrentValues()
 	}
-	
+
 }
 
 // MARK: Private
@@ -114,16 +95,61 @@ private extension SidebarModel {
 	}
 	
 	func queueRebuildSidebarItems() {
-		rebuildSidebarItemsQueue.add(self, #selector(rebuildSidebarItems))
+		rebuildSidebarItemsQueue.add(self, #selector(rebuildSidebarItemsWithCurrentValues))
 	}
+	
+	@objc func rebuildSidebarItemsWithCurrentValues() {
+		rebuildSidebarItems(isReadFiltered: isReadFiltered)
+	}
+	
+	func rebuildSidebarItems(isReadFiltered: Bool) {
+		guard let delegate = delegate else { return }
+		var items = [SidebarItem]()
+		
+		var smartFeedControllerItem = SidebarItem(SmartFeedsController.shared)
+		for feed in SmartFeedsController.shared.smartFeeds {
+// It looks like SwiftUI loses its mind when the last element in a section is removed.  Don't filter
+// the smartfeeds yet or we crash about everytime because Starred is almost always filtered
+//			if !isReadFiltered || feed.unreadCount > 0 {
+				smartFeedControllerItem.addChild(SidebarItem(feed, unreadCount: delegate.unreadCount(for: feed)))
+//			}
+		}
+		items.append(smartFeedControllerItem)
 
+		for account in AccountManager.shared.sortedActiveAccounts {
+			var accountItem = SidebarItem(account)
+			
+			for webFeed in sort(account.topLevelWebFeeds) {
+				if !isReadFiltered || webFeed.unreadCount > 0 {
+					accountItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
+				}
+			}
+			
+			for folder in sort(account.folders ?? Set<Folder>()) {
+				if !isReadFiltered || folder.unreadCount > 0 {
+					var folderItem = SidebarItem(folder, unreadCount: delegate.unreadCount(for: folder))
+					for webFeed in sort(folder.topLevelWebFeeds) {
+						if !isReadFiltered || webFeed.unreadCount > 0 {
+							folderItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
+						}
+					}
+					accountItem.addChild(folderItem)
+				}
+			}
+
+			items.append(accountItem)
+		}
+		
+		sidebarItems = items
+	}
+	
 	// MARK: Notifications
 	
 	@objc func unreadCountDidInitialize(_ notification: Notification) {
 		guard notification.object is AccountManager else {
 			return
 		}
-		rebuildSidebarItems()
+		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -135,27 +161,27 @@ private extension SidebarModel {
 	}
 	
 	@objc func containerChildrenDidChange(_ notification: Notification) {
-		rebuildSidebarItems()
+		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 	
 	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildSidebarItems()
+		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 	
 	@objc func displayNameDidChange(_ note: Notification) {
-		rebuildSidebarItems()
+		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 	
 	@objc func accountStateDidChange(_ note: Notification) {
-		rebuildSidebarItems()
+		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 	
 	@objc func userDidAddAccount(_ note: Notification) {
-		rebuildSidebarItems()
+		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 	
 	@objc func userDidDeleteAccount(_ note: Notification) {
-		rebuildSidebarItems()
+		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 	
 }

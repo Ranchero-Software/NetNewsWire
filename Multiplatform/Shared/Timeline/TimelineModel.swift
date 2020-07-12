@@ -25,7 +25,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedArticleIDs = Set<String>()
 	@Published var selectedArticleID: String? = .none
 	@Published var selectedArticles = [Article]()
-	
+	@Published var isReadFiltered = false
+
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
 
@@ -36,7 +37,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
-	private var isReadFiltered = false
 	
 	private var articles = [Article]() {
 		didSet {

@@ -19,16 +19,34 @@ struct SidebarView: View {
 
 	@ViewBuilder var body: some View {
 		#if os(macOS)
-		ZStack {
-			NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds), isActive: $navigate) {
-				EmptyView()
-			}.hidden()
-			List(selection: $sidebarModel.selectedFeedIdentifiers) {
-				rows
+		VStack {
+			HStack {
+				Spacer()
+				Button (action: {
+					withAnimation {
+						sidebarModel.isReadFiltered.toggle()
+					}
+				}, label: {
+					if sidebarModel.isReadFiltered {
+						AppAssets.filterActiveImage
+					} else {
+						AppAssets.filterInactiveImage
+					}
+				})
+				.padding(.top).padding(.trailing)
+				.buttonStyle(PlainButtonStyle())
 			}
-		}
-		.onChange(of: sidebarModel.selectedFeedIdentifiers) { value in
-			navigate = !sidebarModel.selectedFeedIdentifiers.isEmpty
+			ZStack {
+				NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds), isActive: $navigate) {
+					EmptyView()
+				}.hidden()
+				List(selection: $sidebarModel.selectedFeedIdentifiers) {
+					rows
+				}
+			}
+			.onChange(of: sidebarModel.selectedFeedIdentifiers) { value in
+				navigate = !sidebarModel.selectedFeedIdentifiers.isEmpty
+			}
 		}
 		#else
 		List {

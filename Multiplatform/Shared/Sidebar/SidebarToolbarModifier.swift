@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SidebarToolbarModifier: ViewModifier {
     
+	@EnvironmentObject private var sidebarModel: SidebarModel
 	@EnvironmentObject private var defaults: AppDefaults
 	@StateObject private var viewModel = SidebarToolbarModel()
 
@@ -19,10 +20,16 @@ struct SidebarToolbarModifier: ViewModifier {
 			.toolbar {
 				
 				ToolbarItem(placement: .navigation) {
-					Button(action: {
+					Button (action: {
+						withAnimation {
+							sidebarModel.isReadFiltered.toggle()
+						}
 					}, label: {
-						AppAssets.filterInactiveImage
-							.font(.title3)
+						if sidebarModel.isReadFiltered {
+							AppAssets.filterActiveImage.font(.title3)
+						} else {
+							AppAssets.filterInactiveImage.font(.title3)
+						}
 					}).help("Filter Read Feeds")
 				}
 				
