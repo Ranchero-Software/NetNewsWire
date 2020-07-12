@@ -27,11 +27,14 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	private var selectedFeedIdentifiersCancellable: AnyCancellable?
 	private var selectedFeedIdentifierCancellable: AnyCancellable?
 
+	private let rebuildSidebarItemsQueue = CoalescingQueue(name: "Rebuild The Sidebar Items", interval: 0.5)
+
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
@@ -56,7 +59,7 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	
 	// MARK: API
 	
-	func rebuildSidebarItems() {
+	@objc func rebuildSidebarItems() {
 		guard let delegate = delegate else { return }
 		var items = [SidebarItem]()
 		
@@ -110,6 +113,10 @@ private extension SidebarModel {
 		return feeds.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
 	}
 	
+	func queueRebuildSidebarItems() {
+		rebuildSidebarItemsQueue.add(self, #selector(rebuildSidebarItems))
+	}
+
 	// MARK: Notifications
 	
 	@objc func unreadCountDidInitialize(_ notification: Notification) {
@@ -117,6 +124,14 @@ private extension SidebarModel {
 			return
 		}
 		rebuildSidebarItems()
+	}
+
+	@objc func unreadCountDidChange(_ note: Notification) {
+		// We will handle the filtering of unread feeds in unreadCountDidInitialize after they have all be calculated
+		guard AccountManager.shared.isUnreadCountsInitialized else {
+			return
+		}
+		queueRebuildSidebarItems()
 	}
 	
 	@objc func containerChildrenDidChange(_ notification: Notification) {
