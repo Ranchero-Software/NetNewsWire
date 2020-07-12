@@ -18,14 +18,16 @@ struct GeneralPreferencesView: View {
 					   selection: $defaults.interval,
 					   content: {
 						ForEach(RefreshInterval.allCases, content: { interval in
-							Text(interval.description()).tag(interval.rawValue)
+							Text(interval.description())
+								.tag(interval.rawValue)
 						})
 					   })
 					.frame(width: 300, alignment: .center)
 				
-				Picker("Default RSS reader", selection: $preferences.rssReaderSelection, content: {
-					ForEach(0..<preferences.rssReaders.count, content: { i in
-						Text(preferences.rssReaders[i].nameMinusAppSuffix)
+				Picker("Default RSS reader", selection: $preferences.readerSelection, content: {
+					ForEach(0..<preferences.rssReaders.count, content: { index in
+						Text(preferences.rssReaders[index].nameMinusAppSuffix)
+							.tag(index)
 					})
 				})
 				

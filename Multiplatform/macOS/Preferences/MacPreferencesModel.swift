@@ -28,8 +28,20 @@ enum PreferencePane: Int, CaseIterable {
 class MacPreferencesModel: ObservableObject {
 	
 	@Published var currentPreferencePane: PreferencePane = PreferencePane.general
-	@Published var rssReaders = Array(RSSReaderInfo.fetchRSSReaders(nil)) 
-	@Published var rssReaderSelection: Set<RSSReader> = RSSReaderInfo.fetchRSSReaders(nil)
+	@Published var rssReaders = [RSSReader]()
+	@Published var readerSelection: Int = 0 {
+		willSet {
+			if newValue != readerSelection {
+				registerAppWithBundleID(rssReaders[newValue].bundleID)
+			}
+		}
+	}
+	
+	private let readerInfo = RSSReaderInfo()
+	
+	init() {
+		prepareRSSReaders()
+	}
 	
 }
 
@@ -38,20 +50,27 @@ class MacPreferencesModel: ObservableObject {
 private extension MacPreferencesModel {
 	
 	func prepareRSSReaders() {
-		// Top item should always be: NetNewsWire (this app)
-		// Additional items should be sorted alphabetically.
-		// Any older versions of NetNewsWire should be listed as: NetNewsWire (old version)
 		
+		// Populate rssReaders
+		var thisApp = RSSReader(bundleID: Bundle.main.bundleIdentifier!)
+		thisApp?.nameMinusAppSuffix.append(" (this app—multiplatform)")
 		
+		let otherRSSReaders = readerInfo.rssReaders.filter { $0.bundleID != Bundle.main.bundleIdentifier! }.sorted(by: { $0.nameMinusAppSuffix < $1.nameMinusAppSuffix })
+		rssReaders.append(thisApp!)
+		rssReaders.append(contentsOf: otherRSSReaders)
 		
-		
-		
+		if readerInfo.defaultRSSReaderBundleID != nil {
+			let defaultReader = rssReaders.filter({ $0.bundleID == readerInfo.defaultRSSReaderBundleID })
+			if defaultReader.count == 1 {
+				let reader = defaultReader[0]
+				readerSelection = rssReaders.firstIndex(of: reader)!
+			}
+		}
 	}
 	
 	func registerAppWithBundleID(_ bundleID: String) {
 		NSWorkspace.shared.setDefaultAppBundleID(forURLScheme: "feed", to: bundleID)
 		NSWorkspace.shared.setDefaultAppBundleID(forURLScheme: "feeds", to: bundleID)
-		objectWillChange.send()
 	}
 	
 }
@@ -61,23 +80,20 @@ private extension MacPreferencesModel {
 
 struct RSSReaderInfo {
 
-	let defaultRSSReaderBundleID: String?
+	var defaultRSSReaderBundleID: String? {
+		NSWorkspace.shared.defaultAppBundleID(forURLScheme: RSSReaderInfo.feedURLScheme)
+	}
 	let rssReaders: Set<RSSReader>
 	static let feedURLScheme = "feed:"
 
 	init() {
-		let defaultRSSReaderBundleID = NSWorkspace.shared.defaultAppBundleID(forURLScheme: RSSReaderInfo.feedURLScheme)
-		self.defaultRSSReaderBundleID = defaultRSSReaderBundleID
-		self.rssReaders = RSSReaderInfo.fetchRSSReaders(defaultRSSReaderBundleID)
+		self.rssReaders = RSSReaderInfo.fetchRSSReaders()
 	}
 
-	static func fetchRSSReaders(_ defaultRSSReaderBundleID: String?) -> Set<RSSReader> {
+	static func fetchRSSReaders() -> Set<RSSReader> {
 		let rssReaderBundleIDs = NSWorkspace.shared.bundleIDsForApps(forURLScheme: feedURLScheme)
 
 		var rssReaders = Set<RSSReader>()
-		if let defaultRSSReaderBundleID = defaultRSSReaderBundleID, let defaultReader = RSSReader(bundleID: defaultRSSReaderBundleID) {
-			rssReaders.insert(defaultReader)
-		}
 		rssReaderBundleIDs.forEach { (bundleID) in
 			if let reader = RSSReader(bundleID: bundleID) {
 				rssReaders.insert(reader)
@@ -94,7 +110,7 @@ struct RSSReader: Hashable {
 
 	let bundleID: String
 	let name: String
-	let nameMinusAppSuffix: String
+	var nameMinusAppSuffix: String
 	let path: String
 
 	init?(bundleID: String) {
