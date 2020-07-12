@@ -30,7 +30,7 @@ struct SidebarToolbarModifier: ViewModifier {
 						} else {
 							AppAssets.filterInactiveImage.font(.title3)
 						}
-					}).help("Filter Read Feeds")
+					}).help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 				}
 				
 				ToolbarItem(placement: .automatic) {

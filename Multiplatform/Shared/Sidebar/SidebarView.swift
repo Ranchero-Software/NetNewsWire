@@ -35,6 +35,7 @@ struct SidebarView: View {
 				})
 				.padding(.top, 8).padding(.trailing)
 				.buttonStyle(PlainButtonStyle())
+				.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 			}
 			ZStack {
 				NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds), isActive: $navigate) {

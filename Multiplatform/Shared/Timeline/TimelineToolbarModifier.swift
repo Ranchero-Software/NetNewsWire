@@ -10,16 +10,24 @@ import SwiftUI
 
 struct TimelineToolbarModifier: ViewModifier {
 	
+	@EnvironmentObject private var timelineModel: TimelineModel
+
 	func body(content: Content) -> some View {
 		content
 			.toolbar {
 				#if os(iOS)
 				ToolbarItem(placement: .navigation) {
-					Button(action: {
+					Button (action: {
+						withAnimation {
+							timelineModel.isReadFiltered.toggle()
+						}
 					}, label: {
-						AppAssets.filterInactiveImage
-							.font(.title3)
-					}).help("Filter Read Articles")
+						if timelineModel.isReadFiltered {
+							AppAssets.filterActiveImage.font(.title3)
+						} else {
+							AppAssets.filterInactiveImage.font(.title3)
+						}
+					}).help(timelineModel.isReadFiltered ? "Show Read Articles" : "Filter Read Articles")
 				}
 				
 				ToolbarItem {

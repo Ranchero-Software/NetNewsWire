@@ -31,6 +31,7 @@ struct TimelineView: View {
 				})
 				.padding(.top, 8).padding(.trailing)
 				.buttonStyle(PlainButtonStyle())
+				.help(timelineModel.isReadFiltered ? "Show Read Articles" : "Filter Read Articles")
 			}
 			ZStack {
 				NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles), isActive: $navigate) {
