@@ -20,7 +20,7 @@ struct TimelineView: View {
 				EmptyView()
 			}.hidden()
 			List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
-				buildTimelineItemNavigation(timelineItem)
+				TimelineItemView(timelineItem: timelineItem)
 			}
 		}
 		.onChange(of: timelineModel.selectedArticleIDs) { value in
@@ -28,24 +28,16 @@ struct TimelineView: View {
 		}
 		#else
 		List(timelineModel.timelineItems) { timelineItem in
-			buildTimelineItemNavigation(timelineItem)
+			ZStack {
+				TimelineItemView(timelineItem: timelineItem)
+				NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles),
+							   tag: timelineItem.article.articleID,
+							   selection: $timelineModel.selectedArticleID) {
+					EmptyView()
+				}.buttonStyle(PlainButtonStyle())
+			}
 		}
 		#endif
     }
 
-	func buildTimelineItemNavigation(_ timelineItem: TimelineItem) -> some View {
-		#if os(macOS)
-		return TimelineItemView(timelineItem: timelineItem)
-		#else
-		return ZStack {
-			TimelineItemView(timelineItem: timelineItem)
-			NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles),
-						   tag: timelineItem.article.articleID,
-						   selection: $timelineModel.selectedArticleID) {
-				EmptyView()
-			}.buttonStyle(PlainButtonStyle())
-		}
-		#endif
-	}
-	
 }
