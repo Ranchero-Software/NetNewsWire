@@ -51,11 +51,14 @@ final class MasterFeedTableViewIdentifier: NSObject, NSCopying {
 	override func isEqual(_ object: Any?) -> Bool {
 		guard let otherIdentifier = object as? MasterFeedTableViewIdentifier else { return false }
 		if self === otherIdentifier { return true }
-		return feedID == otherIdentifier.feedID
+		return feedID == otherIdentifier.feedID && parentContainerID == otherIdentifier.parentContainerID
 	}
 	
 	override var hash: Int {
-		return feedID.hashValue
+		var hasher = Hasher()
+		hasher.combine(feedID)
+		hasher.combine(parentContainerID)
+		return hasher.finalize()
 	}
 
 	func copy(with zone: NSZone? = nil) -> Any {
