@@ -22,8 +22,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	
 	@Published var nameForDisplay = ""
 	@Published var timelineItems = [TimelineItem]()
-	@Published var selectedArticleIDs = Set<String>()
-	@Published var selectedArticleID: String? = .none
+	@Published var selectedArticleIDs = Set<String>()  // Don't use directly.  Use selectedArticles
+	@Published var selectedArticleID: String? = .none  // Don't use directly.  Use selectedArticles
 	@Published var selectedArticles = [Article]()
 	@Published var isReadFiltered = false
 
@@ -33,6 +33,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	private var selectedArticleIDsCancellable: AnyCancellable?
 	private var selectedArticleIDCancellable: AnyCancellable?
 	private var selectedArticlesCancellable: AnyCancellable?
+	private var selectedReadFilteredCancellable: AnyCancellable?
 
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
@@ -95,11 +96,16 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 				}
 			}
 		}
+		
+		selectedReadFilteredCancellable = $isReadFiltered.sink { [weak self] filter in
+			guard let self = self else { return }
+			self.rebuildTimelineItems(isReadFiltered: filter)
+		}
 	}
 	
 	// MARK: API
 	
-	func rebuildTimelineItems(feeds: [Feed]) {
+	func fetchArticles(feeds: [Feed]) {
 		if feeds.count == 1 {
 			nameForDisplay = feeds.first!.nameForDisplay
 		} else {
@@ -259,8 +265,20 @@ private extension TimelineModel {
 	
 	func replaceArticles(with unsortedArticles: Set<Article>) {
 		articles = Array(unsortedArticles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
-		timelineItems = articles.map { TimelineItem(article: $0) }
+		rebuildTimelineItems(isReadFiltered: isReadFiltered)
 		// TODO: Update unread counts and other item done in didSet on AppKit
 	}
 	
+	func rebuildTimelineItems(isReadFiltered: Bool) {
+		let selectedArticleIDs = selectedArticles.map { $0.articleID }
+
+		timelineItems = articles.compactMap { article in
+			if isReadFiltered && article.status.read && !selectedArticleIDs.contains(article.articleID) {
+				return nil
+			} else {
+				return TimelineItem(article: article)
+			}
+		}
+	}
+
 }

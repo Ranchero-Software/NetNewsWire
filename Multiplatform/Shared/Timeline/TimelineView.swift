@@ -15,16 +15,34 @@ struct TimelineView: View {
 
 	@ViewBuilder var body: some View {
 		#if os(macOS)
-		ZStack {
-			NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles), isActive: $navigate) {
-				EmptyView()
-			}.hidden()
-			List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
-				TimelineItemView(timelineItem: timelineItem)
+		VStack {
+			HStack {
+				Spacer()
+				Button (action: {
+					withAnimation {
+						timelineModel.isReadFiltered.toggle()
+					}
+				}, label: {
+					if timelineModel.isReadFiltered {
+						AppAssets.filterActiveImage
+					} else {
+						AppAssets.filterInactiveImage
+					}
+				})
+				.padding(.top, 8).padding(.trailing)
+				.buttonStyle(PlainButtonStyle())
 			}
-		}
-		.onChange(of: timelineModel.selectedArticleIDs) { value in
-			navigate = !timelineModel.selectedArticleIDs.isEmpty
+			ZStack {
+				NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles), isActive: $navigate) {
+					EmptyView()
+				}.hidden()
+				List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
+					TimelineItemView(timelineItem: timelineItem)
+				}
+			}
+			.onChange(of: timelineModel.selectedArticleIDs) { value in
+				navigate = !timelineModel.selectedArticleIDs.isEmpty
+			}
 		}
 		#else
 		List(timelineModel.timelineItems) { timelineItem in

@@ -33,7 +33,7 @@ struct SidebarView: View {
 						AppAssets.filterInactiveImage
 					}
 				})
-				.padding(.top).padding(.trailing)
+				.padding(.top, 8).padding(.trailing)
 				.buttonStyle(PlainButtonStyle())
 			}
 			ZStack {

@@ -23,7 +23,7 @@ struct TimelineContainerView: View {
 				.environmentObject(sceneModel.timelineModel)
 				.onAppear {
 					sceneModel.timelineModel.undoManager = undoManager
-					sceneModel.timelineModel.rebuildTimelineItems(feeds: feeds)
+					sceneModel.timelineModel.fetchArticles(feeds: feeds)
 				}
 		} else {
 			EmptyView()
