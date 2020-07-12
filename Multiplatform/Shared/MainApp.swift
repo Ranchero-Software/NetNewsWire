@@ -77,7 +77,6 @@ struct MainApp: App {
 			.navigationTitle("Preferences")
 			.environmentObject(defaults)
 		}
-		.windowToolbarStyle(UnifiedWindowToolbarStyle())
 		
 		#endif
 		
