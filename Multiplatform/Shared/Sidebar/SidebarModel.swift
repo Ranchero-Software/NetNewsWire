@@ -42,13 +42,13 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 		// TODO: This should be rewritten to use Combine correctly
 		selectedFeedIdentifiersCancellable = $selectedFeedIdentifiers.sink { [weak self] feedIDs in
 			guard let self = self else { return }
-			self.selectedFeeds = feedIDs.compactMap { AccountManager.shared.existingFeed(with: $0) }
+			self.selectedFeeds = feedIDs.compactMap { self.findFeed($0) }
 		}
 		
 		// TODO: This should be rewritten to use Combine correctly
 		selectedFeedIdentifierCancellable = $selectedFeedIdentifier.sink { [weak self] feedID in
 			guard let self = self else { return }
-			if let feedID = feedID, let feed = AccountManager.shared.existingFeed(with: feedID) {
+			if let feedID = feedID, let feed = self.findFeed(feedID) {
 				self.selectedFeeds = [feed]
 			}
 		}
@@ -92,6 +92,15 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 // MARK: Private
 
 private extension SidebarModel {
+	
+	func findFeed(_ feedID: FeedIdentifier) -> Feed? {
+		switch feedID {
+		case .smartFeed:
+			return SmartFeedsController.shared.find(by: feedID)
+		default:
+			return AccountManager.shared.existingFeed(with: feedID)
+		}
+	}
 	
 	func sort(_ folders: Set<Folder>) -> [Folder] {
 		return folders.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
