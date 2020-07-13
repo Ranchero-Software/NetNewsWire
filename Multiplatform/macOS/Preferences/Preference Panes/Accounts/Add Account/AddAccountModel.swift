@@ -129,11 +129,10 @@ extension AddAccountModel {
 				do {
 					try account.removeCredentials(type: .basic)
 					try account.storeCredentials(validatedCredentials)
-					
+					self.accountAdded = true
 					account.refreshAll(completion: { result in
 						switch result {
 						case .success:
-							self.accountAdded = true
 							break
 						case .failure(let error):
 							self.addAccountError = .other(error: error)
@@ -178,11 +177,10 @@ extension AddAccountModel {
 					try account.removeCredentials(type: .feedWranglerToken)
 					try account.storeCredentials(credentials)
 					try account.storeCredentials(validatedCredentials)
-					
+					self.accountAdded = true
 					account.refreshAll(completion: { result in
 						switch result {
 						case .success:
-							self.accountAdded = true
 							break
 						case .failure(let error):
 							self.addAccountError = .other(error: error)
@@ -224,11 +222,10 @@ extension AddAccountModel {
 					try account.removeCredentials(type: .newsBlurSessionId)
 					try account.storeCredentials(credentials)
 					try account.storeCredentials(validatedCredentials)
-					
+					self.accountAdded = true
 					account.refreshAll(completion: { result in
 						switch result {
 						case .success:
-							self.accountAdded = true
 							break
 						case .failure(let error):
 							self.addAccountError = .other(error: error)
@@ -271,11 +268,10 @@ extension AddAccountModel {
 					try account.removeCredentials(type: .readerAPIKey)
 					try account.storeCredentials(credentials)
 					try account.storeCredentials(validatedCredentials)
-					
+					self.accountAdded = true
 					account.refreshAll(completion: { result in
 						switch result {
 						case .success:
-							self.accountAdded = true
 							break
 						case .failure(let error):
 							self.addAccountError = .other(error: error)
