@@ -41,6 +41,7 @@ class SettingsFeedbinAccountModel: ObservableObject {
 		}
 	}
 	@Published var showError: Bool = false
+	@Published var showPassword: Bool = false
 
 	init() {
 
