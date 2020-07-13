@@ -338,6 +338,7 @@ extension WebViewController: WKNavigationDelegate {
 				if MFMailComposeViewController.canSendMail() {
 					let mailComposeViewController = MFMailComposeViewController()
 					mailComposeViewController.setToRecipients([emailAddress])
+					mailComposeViewController.setSubject(url.valueFor("subject") ?? "")
 					mailComposeViewController.mailComposeDelegate = self
 					self.present(mailComposeViewController, animated: true, completion: {})
 				} else {
