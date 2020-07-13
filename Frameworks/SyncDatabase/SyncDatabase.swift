@@ -22,7 +22,6 @@ public struct SyncDatabase {
 	public init(databaseFilePath: String) {
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
 		queue.runCreateStatements(SyncDatabase.tableCreationStatements)
-		queue.vacuumIfNeeded(daysBetweenVacuums: 11)
 		self.queue = queue
 
 		self.syncStatusTable = SyncStatusTable(queue: queue)

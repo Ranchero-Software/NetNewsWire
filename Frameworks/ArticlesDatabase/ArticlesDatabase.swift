@@ -44,7 +44,6 @@ public final class ArticlesDatabase {
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
 		}
 
-		queue.vacuumIfNeeded(daysBetweenVacuums: 9)
 		DispatchQueue.main.async {
 			self.articlesTable.indexUnindexedArticles()
 		}
