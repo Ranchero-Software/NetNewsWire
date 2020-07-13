@@ -96,14 +96,14 @@ class AddAccountModel: ObservableObject {
 	
 }
 
-// MARK:- Authentication API
+// MARK:- Authentication APIs
 
 extension AddAccountModel {
 	
 	private func addLocalAccount() {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = newLocalAccountName
-		accountAdded.toggle()
+		accountAdded = true
 	}
 	
 	private func authenticateFeedbin() {
@@ -133,7 +133,7 @@ extension AddAccountModel {
 					account.refreshAll(completion: { result in
 						switch result {
 						case .success:
-							self.accountAdded.toggle()
+							self.accountAdded = true
 							break
 						case .failure(let error):
 							self.addAccountError = .other(error: error)
@@ -182,7 +182,7 @@ extension AddAccountModel {
 					account.refreshAll(completion: { result in
 						switch result {
 						case .success:
-							self.accountAdded.toggle()
+							self.accountAdded = true
 							break
 						case .failure(let error):
 							self.addAccountError = .other(error: error)
@@ -228,7 +228,7 @@ extension AddAccountModel {
 					account.refreshAll(completion: { result in
 						switch result {
 						case .success:
-							self.accountAdded.toggle()
+							self.accountAdded = true
 							break
 						case .failure(let error):
 							self.addAccountError = .other(error: error)
@@ -275,7 +275,7 @@ extension AddAccountModel {
 					account.refreshAll(completion: { result in
 						switch result {
 						case .success:
-							self.accountAdded.toggle()
+							self.accountAdded = true
 							break
 						case .failure(let error):
 							self.addAccountError = .other(error: error)
@@ -294,7 +294,7 @@ extension AddAccountModel {
 	
 	private func authenticateCloudKit() {
 		let _ = AccountManager.shared.createAccount(type: .cloudKit)
-		self.accountAdded.toggle()
+		self.accountAdded = true
 	}
 	
 	private func authenticateFeedly() {
