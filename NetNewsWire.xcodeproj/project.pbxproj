@@ -254,8 +254,6 @@
 		517B2EE724B3E8FE001AC46C /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 517B2EE024B3E8FE001AC46C /* styleSheet.css */; };
 		517B2EE824B3E8FE001AC46C /* main_multiplatform.js in Resources */ = {isa = PBXBuildFile; fileRef = 517B2EE124B3E8FE001AC46C /* main_multiplatform.js */; };
 		517B2EE924B3E8FE001AC46C /* main_multiplatform.js in Resources */ = {isa = PBXBuildFile; fileRef = 517B2EE124B3E8FE001AC46C /* main_multiplatform.js */; };
-		517B2EEB24B40E09001AC46C /* TimelineTitleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517B2EEA24B40E09001AC46C /* TimelineTitleModifier.swift */; };
-		517B2EEC24B40E09001AC46C /* TimelineTitleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517B2EEA24B40E09001AC46C /* TimelineTitleModifier.swift */; };
 		5181C5AD24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */; };
 		5181C5AE24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */; };
 		5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5181C66124B0C326002E0F70 /* SettingsModel.swift */; };
@@ -1937,7 +1935,6 @@
 		517B2EDF24B3E8FE001AC46C /* blank.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		517B2EE024B3E8FE001AC46C /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
 		517B2EE124B3E8FE001AC46C /* main_multiplatform.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main_multiplatform.js; sourceTree = "<group>"; };
-		517B2EEA24B40E09001AC46C /* TimelineTitleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineTitleModifier.swift; sourceTree = "<group>"; };
 		5181C5AC24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredColorSchemeModifier.swift; sourceTree = "<group>"; };
 		5181C66124B0C326002E0F70 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
 		5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonIntrinsicLabel.swift; sourceTree = "<group>"; };
@@ -2841,7 +2838,6 @@
 				514E6BD924ACEA0400AC6F6E /* TimelineItemView.swift */,
 				51919FF024AB864A00541E64 /* TimelineModel.swift */,
 				5194737024BBCAF4001A2939 /* TimelineSortOrderView.swift */,
-				517B2EEA24B40E09001AC46C /* TimelineTitleModifier.swift */,
 				5177470224B2657F00EB0F74 /* TimelineToolbarModifier.swift */,
 				51919FF624AB8B7700541E64 /* TimelineView.swift */,
 			);
@@ -5051,7 +5047,6 @@
 				FF64D0E924AF53EE0084080A /* RefreshProgressView.swift in Sources */,
 				6591720E24B59C5100B638E8 /* SettingsFeedbinAccountModel.swift in Sources */,
 				51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */,
-				517B2EEB24B40E09001AC46C /* TimelineTitleModifier.swift in Sources */,
 				5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				5177471024B3029400EB0F74 /* ArticleViewController.swift in Sources */,
@@ -5171,7 +5166,6 @@
 				51E4995B24A875D500B667CB /* ArticlePasteboardWriter.swift in Sources */,
 				51E4993424A867E700B667CB /* UserInfoKey.swift in Sources */,
 				1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */,
-				517B2EEC24B40E09001AC46C /* TimelineTitleModifier.swift in Sources */,
 				1729529724AA1CD000D65E66 /* MacPreferencesView.swift in Sources */,
 				51E4994C24A8734C00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */,

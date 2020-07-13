@@ -59,6 +59,7 @@ struct TimelineView: View {
 				}.buttonStyle(PlainButtonStyle())
 			}
 		}
+		.navigationBarTitle(Text(verbatim: timelineModel.nameForDisplay), displayMode: .inline)
 		#endif
     }
 
