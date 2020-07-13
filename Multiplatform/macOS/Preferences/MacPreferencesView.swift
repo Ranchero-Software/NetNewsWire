@@ -29,33 +29,43 @@ struct MacPreferencesView: View {
 		}
 		.toolbar {
 			ToolbarItem {
-				Button(action: {
-					viewModel.currentPreferencePane = .general
-				}, label: {
-					Image(systemName: "checkmark.rectangle")
-					Text("General")
-				})
-			}
-			ToolbarItem {
-				Button(action: {
-					viewModel.currentPreferencePane = .accounts
-				}, label: {
-					Image(systemName: "network")
-					Text("Accounts")
-				})
-			}
-			ToolbarItem {
-				Button(action: {
-					viewModel.currentPreferencePane = .advanced
-				}, label: {
-					Image(systemName: "gearshape.fill")
-					Text("Advanced")
-				})
+				HStack {
+					Button(action: {
+						viewModel.currentPreferencePane = .general
+					}, label: {
+						VStack {
+							Image(systemName: "gearshape")
+								.font(.title2)
+							Text("General")
+						}.foregroundColor(
+							viewModel.currentPreferencePane == .general ? Color("AccentColor") : Color.gray
+						)
+					})
+					Button(action: {
+						viewModel.currentPreferencePane = .accounts
+					}, label: {
+						VStack {
+							Image(systemName: "at")
+								.font(.title2)
+							Text("Accounts")
+						}.foregroundColor(
+							viewModel.currentPreferencePane == .accounts ? Color("AccentColor") : Color.gray
+						)
+					})
+					Button(action: {
+						viewModel.currentPreferencePane = .advanced
+					}, label: {
+						VStack {
+							Image(systemName: "scale.3d")
+								.font(.title2)
+							Text("Advanced")
+						}.foregroundColor(
+							viewModel.currentPreferencePane == .advanced ? Color("AccentColor") : Color.gray
+						)
+					})
+				}
 			}
 		}
-		.presentedWindowToolbarStyle(UnifiedCompactWindowToolbarStyle())
-		.presentedWindowStyle(TitleBarWindowStyle())
-		.navigationTitle(Text(viewModel.currentPreferencePane.description))
 	}
 }
 

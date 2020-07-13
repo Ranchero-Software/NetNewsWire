@@ -14,11 +14,7 @@ class AccountsPreferenceModel: ObservableObject {
 	
 	
 	@Published var sortedAccounts: [Account] = []
-	
-	// Configured Accounts
 	@Published var selectedConfiguredAccountID: String? = nil
-	
-	// Sheets
 	@Published var showAddAccountView: Bool = false
 	
 	var selectedAccountIsDefault: Bool {
@@ -32,19 +28,19 @@ class AccountsPreferenceModel: ObservableObject {
 	}
 	
 	// Subscriptions
-	var notifcationSubscriptions = Set<AnyCancellable>()
+	var notificationSubscriptions = Set<AnyCancellable>()
 	
 	init() {
 		sortedAccounts = AccountManager.shared.sortedAccounts
 		
 		NotificationCenter.default.publisher(for: .UserDidAddAccount).sink(receiveValue: {  _ in
 			self.sortedAccounts = AccountManager.shared.sortedAccounts
-		}).store(in: &notifcationSubscriptions)
+		}).store(in: &notificationSubscriptions)
 		
 		NotificationCenter.default.publisher(for: .UserDidDeleteAccount).sink(receiveValue: { _ in
 			self.selectedConfiguredAccountID = nil
 			self.sortedAccounts = AccountManager.shared.sortedAccounts
-		}).store(in: &notifcationSubscriptions)
+		}).store(in: &notificationSubscriptions)
 	}
 	
 }
