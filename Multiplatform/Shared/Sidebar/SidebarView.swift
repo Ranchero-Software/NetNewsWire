@@ -81,7 +81,11 @@ struct SidebarView: View {
 						}
 					}
 				} label: {
+					#if os(macOS)
 					SidebarItemView(sidebarItem: sidebarItem).padding(.leading, 4)
+					#else
+					SidebarItemView(sidebarItem: sidebarItem)
+					#endif
 				}
 			}
 		}
