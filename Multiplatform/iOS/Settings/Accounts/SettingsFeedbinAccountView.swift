@@ -30,7 +30,19 @@ struct SettingsFeedbinAccountView: View {
 			List {
 				Section(header: AccountHeaderImageView(image: AppAssets.image(for: .feedbin)!)) {
 					TextField("Email", text: $settingsModel.email).textContentType(.emailAddress)
-					SecureField("Password", text: $settingsModel.password)
+					HStack {
+						if settingsModel.showPassword {
+							TextField("Password", text:$settingsModel.password)
+						}
+						else {
+							SecureField("Password", text: $settingsModel.password)
+						}
+						Button(action: {
+							settingsModel.showPassword.toggle()
+						}) {
+							Text(settingsModel.showPassword ? "Hide" : "Show")
+						}
+					}
 				}
 				Section(footer: errorFooter) {
 					HStack {
