@@ -6,10 +6,17 @@
 //
 
 import SwiftUI
+import Account
 
 struct AccountPreferencesViewModel {
-	let accountTypes = ["On My Mac", "FeedBin"]
-	var selectedAccount = Int?.none
+	
+	// Sorted Accounts
+	let sortedAccounts = AccountManager.shared.sortedAccounts
+	
+	// Available Accounts
+	let accountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
+	
+	var selectedAccount: Int? = 0
 }
 
 struct AccountsPreferencesView: View {
@@ -24,18 +31,21 @@ struct AccountsPreferencesView: View {
 		VStack {
 			HStack(alignment: .top, spacing: 10) {
 				VStack(alignment: .leading) {
-					List(selection: $viewModel.selectedAccount, content: {
-						ForEach(0..<viewModel.accountTypes.count, content: { i in
-							AccountDetailRow(imageName: "desktopcomputer", accountName: viewModel.accountTypes[i]).padding(.vertical, 8)
+					List(selection: $viewModel.selectedAccount) {
+						ForEach(0..<viewModel.sortedAccounts.count, content: { i in
+							ConfiguredAccountRow(account: viewModel.sortedAccounts[i])
+								.tag(i)
 						})
-					}).overlay(
+					}.overlay(
 						Group {
 							bottomButtonStack
 						}, alignment: .bottom)
 					
-				}.frame(width: 225, height: 300, alignment: .leading).border(Color.gray, width: 1)
+				}
+				.frame(width: 225, height: 300, alignment: .leading)
+				.border(Color.gray, width: 1)
 				VStack(alignment: .leading) {
-					viewModel.selectedAccount == nil ? Text("Select Account") : Text(viewModel.accountTypes[viewModel.selectedAccount!])
+					EmptyView()
 					Spacer()
 				}.frame(width: 225, height: 300, alignment: .leading)
 			}
@@ -57,7 +67,8 @@ struct AccountsPreferencesView: View {
 					Image(systemName: "plus")
 						.font(.title)
 						.frame(width: 30, height: 30)
-						.overlay(RoundedRectangle(cornerRadius: 4, style: .continuous).foregroundColor(hoverOnAdd ? Color.gray.opacity(0.1) : Color.clear))
+						.overlay(RoundedRectangle(cornerRadius: 4, style: .continuous)
+									.foregroundColor(hoverOnAdd ? Color.gray.opacity(0.1) : Color.clear))
 						.padding(4)
 				})
 				.buttonStyle(BorderlessButtonStyle())
@@ -67,12 +78,13 @@ struct AccountsPreferencesView: View {
 				.help("Add Account")
 				
 				Button(action: {
-					showAddAccountView.toggle()
+					//
 				}, label: {
 					Image(systemName: "minus")
 						.font(.title)
 						.frame(width: 30, height: 30)
-						.overlay(RoundedRectangle(cornerRadius: 4, style: .continuous).foregroundColor(hoverOnRemove ? Color.gray.opacity(0.1) : Color.clear))
+						.overlay(RoundedRectangle(cornerRadius: 4, style: .continuous)
+									.foregroundColor(hoverOnRemove ? Color.gray.opacity(0.1) : Color.clear))
 						.padding(4)
 				})
 				.buttonStyle(BorderlessButtonStyle())
@@ -92,70 +104,120 @@ struct AccountsPreferencesView: View {
 	
 }
 
-struct AccountDetailRow: View {
+struct ConfiguredAccountRow: View {
 	
-	var imageName: String
-	var accountName: String
+	var account: Account
 	
 	var body: some View {
-		HStack {
-			Image(systemName: imageName).font(.headline)
-			Text(accountName).font(.headline)
-		}
+		HStack(alignment: .center) {
+			if let img = account.smallIcon?.image {
+				Image(rsImage: img)
+			}
+			Text(account.nameForDisplay)
+		}.padding(.vertical, 4)
 	}
 	
 }
 
-struct AddAccountView: View {
+struct AddAccountPickerRow: View {
 	
-	@Environment(\.presentationMode) var presentationMode
-	let accountTypes = ["On My Mac", "FeedBin"]
-	@State var selectedAccount: Int = 0
-	@State private var userName: String = ""
-	@State private var password: String = ""
+	var accountType: AccountType
 	
 	var body: some View {
-		
+		HStack {
+			if let img = AppAssets.image(for: accountType) {
+				Image(rsImage: img)
+					.resizable()
+					.frame(width: 15, height: 15)
+			}
+			
+			switch accountType {
+			case .onMyMac:
+				Text(Account.defaultLocalAccountName)
+			case .cloudKit:
+				Text("iCloud")
+			case .feedbin:
+				Text("Feedbin")
+			case .feedWrangler:
+				Text("FeedWrangler")
+			case .freshRSS:
+				Text("FreshRSS")
+			case .feedly:
+				Text("Feedly")
+			case .newsBlur:
+				Text("NewsBlur")
+			}
+			}
+			
+			
+			
+		}
+	}
+	
+
+struct AddAccountView: View {
+
+	@Environment(\.presentationMode) var presentationMode
+	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
+	@State private var selectedAccount: AccountType = .onMyMac
+	@State private var userName: String = ""
+	@State private var password: String = ""
+	@State private var newLocalAccountName = ""
+	
+	var body: some View {
+
 		VStack(alignment: .leading) {
 			Text("Add an Account").font(.headline)
 			Form {
 				Picker("Account Type",
 					   selection: $selectedAccount,
 					   content: {
-						ForEach(0..<accountTypes.count, content: {
-							AccountDetailRow(imageName: "desktopcomputer", accountName: accountTypes[$0])
+						ForEach(0..<addableAccountTypes.count, content: { i in
+							AddAccountPickerRow(accountType: addableAccountTypes[i]).tag(addableAccountTypes[i])
 						})
 					   })
-				
-				if selectedAccount == 1 {
+
+				if selectedAccount != .onMyMac {
 					TextField("Email", text: $userName)
+						.textFieldStyle(RoundedBorderTextFieldStyle())
 					SecureField("Password", text: $password)
+						.textFieldStyle(RoundedBorderTextFieldStyle())
+				}
+				
+				if selectedAccount == .onMyMac {
+					TextField("Account Name", text: $newLocalAccountName)
+						.textFieldStyle(RoundedBorderTextFieldStyle())
+					Text("This account stores all of its data on your device. It does not sync.")
+						.foregroundColor(.secondary)
+						.multilineTextAlignment(.leading)
 				}
 			}
 			Spacer()
 			HStack {
 				Spacer()
-				
-				
+
+
 				Button(action: { presentationMode.wrappedValue.dismiss() }, label: {
 					Text("Cancel")
 				})
-				
-				if selectedAccount == 0 {
+
+				if selectedAccount == .onMyMac {
 					Button("Add", action: {})
 				}
-				
-				if selectedAccount != 0 {
-					Button("Create", action: {})
+
+				if selectedAccount != .onMyMac {
+					Button("Add Account", action: {})
 						.disabled(userName.count == 0 || password.count == 0)
 				}
-				
-				
+
+
 			}
-		}.frame(width: 300, alignment: .top).padding()
-		
+		}
+		.frame(idealWidth: 300, idealHeight: 200, alignment: .top)
+		.padding()
+
 	}
-	
+
 }
 
 
