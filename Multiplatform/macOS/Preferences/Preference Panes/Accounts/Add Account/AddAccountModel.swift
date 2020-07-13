@@ -38,7 +38,7 @@ class AddAccountModel: ObservableObject {
 			case (.other(let lhsError), .other(let rhsError)):
 				return lhsError.localizedDescription == rhsError.localizedDescription
 			default:
-				return lhs == rhs
+				return false
 			}
 		}
 	}

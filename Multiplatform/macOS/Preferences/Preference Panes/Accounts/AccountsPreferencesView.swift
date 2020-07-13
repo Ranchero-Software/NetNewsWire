@@ -103,7 +103,7 @@ struct ConfiguredAccountRow: View {
 			if let img = account.smallIcon?.image {
 				Image(rsImage: img)
 					.resizable()
-					.frame(width: 30, height: 30)
+					.frame(width: 20, height: 20)
 					.aspectRatio(contentMode: .fit)
 			}
 			Text(account.nameForDisplay)

@@ -40,7 +40,7 @@ struct MacPreferencesView: View {
 						}.foregroundColor(
 							viewModel.currentPreferencePane == .general ? Color("AccentColor") : Color.gray
 						)
-					})
+					}).frame(width: 70)
 					Button(action: {
 						viewModel.currentPreferencePane = .accounts
 					}, label: {
@@ -51,7 +51,7 @@ struct MacPreferencesView: View {
 						}.foregroundColor(
 							viewModel.currentPreferencePane == .accounts ? Color("AccentColor") : Color.gray
 						)
-					})
+					}).frame(width: 70)
 					Button(action: {
 						viewModel.currentPreferencePane = .advanced
 					}, label: {
@@ -62,7 +62,7 @@ struct MacPreferencesView: View {
 						}.foregroundColor(
 							viewModel.currentPreferencePane == .advanced ? Color("AccentColor") : Color.gray
 						)
-					})
+					}).frame(width: 70)
 				}
 			}
 		}
