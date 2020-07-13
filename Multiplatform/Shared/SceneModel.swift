@@ -16,8 +16,13 @@ final class SceneModel: ObservableObject {
 	
 	@Published var refreshProgressState = RefreshProgressModel.State.none
 
+	@Published var markAllAsReadButtonState: Bool?
+	@Published var nextUnreadButtonState: Bool?
 	@Published var readButtonState: Bool?
 	@Published var starButtonState: Bool?
+	@Published var extractorButtonState: ArticleExtractorButtonState?
+	@Published var openInBrowserButtonState: Bool?
+	@Published var shareButtonState: Bool?
 
 	private var refreshProgressModel: RefreshProgressModel? = nil
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler? = nil
@@ -44,7 +49,7 @@ final class SceneModel: ObservableObject {
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 
 		selectedArticlesCancellable = timelineModel.$selectedArticles.sink { [weak self] articles in
-			self?.updateArticleState(articles: articles)
+			self?.updateArticleButtonsState(articles: articles)
 		}
 	}
 	
@@ -107,13 +112,13 @@ private extension SceneModel {
 		}
 		let selectedArticleIDs = timelineModel.selectedArticles.map { $0.articleID }
 		if !articleIDs.intersection(selectedArticleIDs).isEmpty {
-			updateArticleState(articles: timelineModel.selectedArticles)
+			updateArticleButtonsState(articles: timelineModel.selectedArticles)
 		}
 	}
 	
 	// MARK: Button State Updates
 	
-	func updateArticleState(articles: [Article]) {
+	func updateArticleButtonsState(articles: [Article]) {
 		guard !articles.isEmpty else {
 			readButtonState = nil
 			starButtonState = nil
@@ -132,6 +137,14 @@ private extension SceneModel {
 			starButtonState = false
 		} else {
 			starButtonState = true
+		}
+		
+		if articles.count == 1, articles.first?.preferredLink != nil {
+			openInBrowserButtonState = true
+			shareButtonState = true
+		} else {
+			openInBrowserButtonState = nil
+			shareButtonState = nil
 		}
 	}
 

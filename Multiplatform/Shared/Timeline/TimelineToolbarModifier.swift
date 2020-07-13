@@ -17,27 +17,27 @@ struct TimelineToolbarModifier: ViewModifier {
 			.toolbar {
 				#if os(iOS)
 				ToolbarItem(placement: .navigation) {
-					Button (action: {
+					Button {
 						withAnimation {
 							timelineModel.toggleReadFilter()
 						}
-					}, label: {
+					} label: {
 						if timelineModel.isReadFiltered ?? false {
 							AppAssets.filterActiveImage.font(.title3)
 						} else {
 							AppAssets.filterInactiveImage.font(.title3)
 						}
-					})
+					}
 					.hidden(timelineModel.isReadFiltered == nil)
 					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				
 				ToolbarItem {
-					Button(action: {
-					}, label: {
-						AppAssets.markAllAsReadImage
-							.foregroundColor(.accentColor)
-					}).help("Mark All As Read")
+					Button {
+					} label: {
+						AppAssets.markAllAsReadImage //.foregroundColor(.accentColor)
+					}
+					.help("Mark All As Read")
 				}
 				
 				ToolbarItem {
@@ -53,11 +53,11 @@ struct TimelineToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem {
-					Button(action: {
-					}, label: {
-						AppAssets.nextUnreadArticleImage
-							.font(.title3)
-					}).help("Next Unread")
+					Button {
+					} label: {
+						AppAssets.nextUnreadArticleImage.font(.title3)
+					}
+					.help("Next Unread")
 				}
 				
 				#endif

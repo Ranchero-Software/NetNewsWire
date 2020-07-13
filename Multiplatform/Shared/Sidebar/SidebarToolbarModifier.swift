@@ -20,26 +20,27 @@ struct SidebarToolbarModifier: ViewModifier {
 			.toolbar {
 				
 				ToolbarItem(placement: .navigation) {
-					Button (action: {
+					Button {
 						withAnimation {
 							sidebarModel.isReadFiltered.toggle()
 						}
-					}, label: {
+					} label: {
 						if sidebarModel.isReadFiltered {
 							AppAssets.filterActiveImage.font(.title3)
 						} else {
 							AppAssets.filterInactiveImage.font(.title3)
 						}
-					}).help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
+					}
+					.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 				}
 				
 				ToolbarItem(placement: .automatic) {
-					Button(action: {
+					Button {
 						viewModel.sheetToShow = .settings
-					}, label: {
-						AppAssets.settingsImage
-							.font(.title3)
-					}).help("Settings")
+					} label: {
+						AppAssets.settingsImage.font(.title3)
+					}
+					.help("Settings")
 				}
 				
 				ToolbarItem {
@@ -55,12 +56,11 @@ struct SidebarToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .automatic, content: {
-					Button(action: {
+					Button {
 						viewModel.showActionSheet = true
-					}, label: {
-						AppAssets.addMenuImage
-							.font(.title3)
-					})
+					} label: {
+						AppAssets.addMenuImage.font(.title3)
+					}
 					.help("Add")
 					.actionSheet(isPresented: $viewModel.showActionSheet) {
 						ActionSheet(title: Text("Add"), buttons: [

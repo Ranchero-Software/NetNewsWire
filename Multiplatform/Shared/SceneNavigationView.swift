@@ -76,63 +76,84 @@ struct SceneNavigationView: View {
 				}
 			}
 			ToolbarItem {
-				Button(action: {}, label: {
+				Button {
+				} label: {
 					AppAssets.refreshImage
-				}).help("Refresh").padding(.trailing, 40)
+				}
+				.help("Refresh").padding(.trailing, 40)
 			}
 			ToolbarItem {
-				Button(action: {}, label: {
+				Button {
+				} label: {
 					AppAssets.markAllAsReadImagePDF
 						.resizable()
 						.scaledToFit()
 						.frame(width: 20, height: 20, alignment: .center)
-				}).help("Mark All as Read")
+				}
+				.disabled(sceneModel.markAllAsReadButtonState == nil)
+				.help("Mark All as Read")
 			}
 			ToolbarItem {
 				MacSearchField()
 					.frame(width: 200)
 			}
 			ToolbarItem {
-				Button(action: {}, label: {
+				Button {
+				} label: {
 					AppAssets.nextUnreadArticleImage
-				}).help("Go to Next Unread").padding(.trailing, 40)
+				}
+				.disabled(sceneModel.nextUnreadButtonState == nil)
+				.help("Go to Next Unread").padding(.trailing, 40)
 			}
 			ToolbarItem {
-				Button(action: { sceneModel.toggleReadStatusForSelectedArticles() }, label: {
+				Button {
+					sceneModel.toggleReadStatusForSelectedArticles()
+				} label: {
 					if sceneModel.readButtonState ?? false {
 						AppAssets.readClosedImage
 					} else {
 						AppAssets.readOpenImage
 					}
-				})
-				.disabled(sceneModel.readButtonState == nil ? true : false)
+				}
+				.disabled(sceneModel.readButtonState == nil)
 				.help(sceneModel.readButtonState ?? false ? "Mark as Unread" : "Mark as Read")
 			}
 			ToolbarItem {
-				Button(action: { sceneModel.toggleStarredStatusForSelectedArticles() }, label: {
+				Button {
+					sceneModel.toggleStarredStatusForSelectedArticles()
+				} label: {
 					if sceneModel.starButtonState ?? false {
 						AppAssets.starClosedImage
 					} else {
 						AppAssets.starOpenImage
 					}
-				})
-				.disabled(sceneModel.starButtonState == nil ? true : false)
+				}
+				.disabled(sceneModel.starButtonState == nil)
 				.help(sceneModel.starButtonState ?? false ? "Mark as Unstarred" : "Mark as Starred")
 			}
 			ToolbarItem {
-				Button(action: {}, label: {
+				Button {
+				} label: {
 					AppAssets.articleExtractorOff
-				}).help("Show Reader View")
+				}
+				.disabled(sceneModel.extractorButtonState == nil)
+				.help("Show Reader View")
 			}
 			ToolbarItem {
-				Button(action: {}, label: {
+				Button {
+				} label: {
 					AppAssets.openInBrowserImage
-				}).help("Open in Browser")
+				}
+				.disabled(sceneModel.openInBrowserButtonState == nil)
+				.help("Open in Browser")
 			}
 			ToolbarItem {
-				Button(action: {}, label: {
+				Button {
+				} label: {
 					AppAssets.shareImage
-				}).help("Share")
+				}
+				.disabled(sceneModel.shareButtonState == nil)
+				.help("Share")
 			}
 			#endif
 		}

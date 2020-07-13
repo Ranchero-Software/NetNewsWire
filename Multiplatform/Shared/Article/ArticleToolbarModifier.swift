@@ -19,29 +19,32 @@ struct ArticleToolbarModifier: ViewModifier {
 				
 				ToolbarItem(placement: .navigation) {
 					HStack(spacing: 20) {
-						Button(action: {
-						}, label: {
+						Button {
+						} label: {
 							AppAssets.prevArticleImage
 								.font(.title3)
-						}).help("Previouse Unread")
-						Button(action: {
-						}, label: {
-							AppAssets.nextArticleImage
-								.font(.title3)
-						}).help("Next Unread")
+						}
+						.help("Previouse Unread")
+						Button {
+						} label: {
+							AppAssets.nextArticleImage.font(.title3)
+						}
+						.help("Next Unread")
 					}
 				}
 
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: { sceneModel.toggleReadStatusForSelectedArticles() }, label: {
-						if sceneModel.readButtonState == .on {
+					Button {
+						sceneModel.toggleReadStatusForSelectedArticles()
+					} label: {
+						if sceneModel.readButtonState == true {
 							AppAssets.readClosedImage
 						} else {
 							AppAssets.readOpenImage
 						}
-					})
-					.disabled(sceneModel.readButtonState == nil ? true : false)
-					.help(sceneModel.readButtonState == .on ? "Mark as Unread" : "Mark as Read")
+					}
+					.disabled(sceneModel.readButtonState == nil)
+					.help(sceneModel.readButtonState ?? false ? "Mark as Unread" : "Mark as Read")
 				}
 
 				ToolbarItem(placement: .bottomBar) {
@@ -49,15 +52,17 @@ struct ArticleToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: { sceneModel.toggleStarredStatusForSelectedArticles() }, label: {
-						if sceneModel.starButtonState == .on {
+					Button {
+						sceneModel.toggleStarredStatusForSelectedArticles()
+					} label: {
+						if sceneModel.starButtonState ?? false {
 							AppAssets.starClosedImage
 						} else {
 							AppAssets.starOpenImage
 						}
-					})
-					.disabled(sceneModel.starButtonState == nil ? true : false)
-					.help(sceneModel.starButtonState == .on ? "Mark as Unstarred" : "Mark as Starred")
+					}
+					.disabled(sceneModel.starButtonState == nil)
+					.help(sceneModel.starButtonState ?? false ? "Mark as Unstarred" : "Mark as Starred")
 				}
 
 				ToolbarItem(placement: .bottomBar) {
@@ -65,11 +70,12 @@ struct ArticleToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: {
-					}, label: {
-						AppAssets.nextUnreadArticleImage
-							.font(.title3)
-					}).help("Next Unread")
+					Button {
+					} label: {
+						AppAssets.nextUnreadArticleImage.font(.title3)
+					}
+					.disabled(sceneModel.nextUnreadButtonState == nil)
+					.help("Next Unread")
 				}
 
 				ToolbarItem(placement: .bottomBar) {
@@ -77,11 +83,13 @@ struct ArticleToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: {
-					}, label: {
+					Button {
+					} label: {
 						AppAssets.articleExtractorOff
 							.font(.title3)
-					}).help("Reader View")
+					}
+					.disabled(sceneModel.extractorButtonState == nil)
+					.help("Reader View")
 				}
 
 				ToolbarItem(placement: .bottomBar) {
@@ -89,11 +97,12 @@ struct ArticleToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .bottomBar) {
-					Button(action: {
-					}, label: {
-						AppAssets.shareImage
-							.font(.title3)
-					}).help("Share")
+					Button {
+					} label: {
+						AppAssets.shareImage.font(.title3)
+					}
+					.disabled(sceneModel.shareButtonState == nil)
+					.help("Share")
 				}
 
 				#endif
