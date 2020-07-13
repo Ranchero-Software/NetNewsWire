@@ -99,25 +99,25 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				Button(action: { sceneModel.toggleReadStatusForSelectedArticles() }, label: {
-					if sceneModel.readButtonState == .on {
+					if sceneModel.readButtonState ?? false {
 						AppAssets.readClosedImage
 					} else {
 						AppAssets.readOpenImage
 					}
 				})
 				.disabled(sceneModel.readButtonState == nil ? true : false)
-				.help(sceneModel.readButtonState == .on ? "Mark as Unread" : "Mark as Read")
+				.help(sceneModel.readButtonState ?? false ? "Mark as Unread" : "Mark as Read")
 			}
 			ToolbarItem {
 				Button(action: { sceneModel.toggleStarredStatusForSelectedArticles() }, label: {
-					if sceneModel.starButtonState == .on {
+					if sceneModel.starButtonState ?? false {
 						AppAssets.starClosedImage
 					} else {
 						AppAssets.starOpenImage
 					}
 				})
 				.disabled(sceneModel.starButtonState == nil ? true : false)
-				.help(sceneModel.starButtonState == .on ? "Mark as Unstarred" : "Mark as Starred")
+				.help(sceneModel.starButtonState ?? false ? "Mark as Unstarred" : "Mark as Starred")
 			}
 			ToolbarItem {
 				Button(action: {}, label: {

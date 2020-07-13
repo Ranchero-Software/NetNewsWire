@@ -16,8 +16,8 @@ final class SceneModel: ObservableObject {
 	
 	@Published var refreshProgressState = RefreshProgressModel.State.none
 
-	@Published var readButtonState: ArticleReadButtonState?
-	@Published var starButtonState: ArticleStarButtonState?	
+	@Published var readButtonState: Bool?
+	@Published var starButtonState: Bool?
 
 	private var refreshProgressModel: RefreshProgressModel? = nil
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler? = nil
@@ -121,17 +121,17 @@ private extension SceneModel {
 		}
 		
 		if articles.anyArticleIsUnread() {
-			readButtonState = .on
+			readButtonState = true
 		} else if articles.anyArticleIsReadAndCanMarkUnread() {
-			readButtonState = .off
+			readButtonState = false
 		} else {
 			readButtonState = nil
 		}
 		
 		if articles.anyArticleIsUnstarred() {
-			starButtonState = .off
+			starButtonState = false
 		} else {
-			starButtonState = .on
+			starButtonState = true
 		}
 	}
 

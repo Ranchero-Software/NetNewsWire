@@ -230,7 +230,7 @@
 		5177471C24B387AC00EB0F74 /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471B24B387AC00EB0F74 /* ImageScrollView.swift */; };
 		5177471E24B387E100EB0F74 /* ImageTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471D24B387E100EB0F74 /* ImageTransition.swift */; };
 		5177472024B3882600EB0F74 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471F24B3882600EB0F74 /* ImageViewController.swift */; };
-		5177472224B38CAE00EB0F74 /* ArticleButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177472124B38CAE00EB0F74 /* ArticleButtonState.swift */; };
+		5177472224B38CAE00EB0F74 /* ArticleExtractorButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */; };
 		5177475C24B39AD500EB0F74 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5177475824B39AD400EB0F74 /* Credits.rtf */; };
 		5177475D24B39AD500EB0F74 /* Dedication.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5177475924B39AD400EB0F74 /* Dedication.rtf */; };
 		5177475E24B39AD500EB0F74 /* Thanks.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5177475A24B39AD500EB0F74 /* Thanks.rtf */; };
@@ -331,7 +331,7 @@
 		51B54A6624B549CB0014348B /* PreloadedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471324B37D4000EB0F74 /* PreloadedWebView.swift */; };
 		51B54A6724B549FE0014348B /* ArticleIconSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177471524B37D9700EB0F74 /* ArticleIconSchemeHandler.swift */; };
 		51B54A6924B54A490014348B /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54A6824B54A490014348B /* IconView.swift */; };
-		51B54AB324B5AC830014348B /* ArticleButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177472124B38CAE00EB0F74 /* ArticleButtonState.swift */; };
+		51B54AB324B5AC830014348B /* ArticleExtractorButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */; };
 		51B54AB624B5B33C0014348B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54AB524B5B33C0014348B /* WebViewController.swift */; };
 		51B54ABC24B5BEF20014348B /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54ABB24B5BEF20014348B /* ArticleView.swift */; };
 		51B54B6724B6A7960014348B /* WebStatusBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B54B6624B6A7960014348B /* WebStatusBarView.swift */; };
@@ -1921,7 +1921,7 @@
 		5177471B24B387AC00EB0F74 /* ImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageScrollView.swift; sourceTree = "<group>"; };
 		5177471D24B387E100EB0F74 /* ImageTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransition.swift; sourceTree = "<group>"; };
 		5177471F24B3882600EB0F74 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
-		5177472124B38CAE00EB0F74 /* ArticleButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleButtonState.swift; sourceTree = "<group>"; };
+		5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButtonState.swift; sourceTree = "<group>"; };
 		5177475824B39AD400EB0F74 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 		5177475924B39AD400EB0F74 /* Dedication.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Dedication.rtf; sourceTree = "<group>"; };
 		5177475A24B39AD500EB0F74 /* Thanks.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Thanks.rtf; sourceTree = "<group>"; };
@@ -2862,8 +2862,8 @@
 				517B2EDF24B3E8FE001AC46C /* blank.html */,
 				517B2EDE24B3E8FE001AC46C /* page.html */,
 				517B2EE124B3E8FE001AC46C /* main_multiplatform.js */,
-				5177472124B38CAE00EB0F74 /* ArticleButtonState.swift */,
 				51A5769524AE617200078888 /* ArticleContainerView.swift */,
+				5177472124B38CAE00EB0F74 /* ArticleExtractorButtonState.swift */,
 				5177471524B37D9700EB0F74 /* ArticleIconSchemeHandler.swift */,
 				5177470524B2910300EB0F74 /* ArticleToolbarModifier.swift */,
 				5177471324B37D4000EB0F74 /* PreloadedWebView.swift */,
@@ -5091,7 +5091,7 @@
 				17930ED424AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */,
 				51E4995124A8734D00B667CB /* ExtensionPointManager.swift in Sources */,
 				51E4990C24A808C500B667CB /* AuthorAvatarDownloader.swift in Sources */,
-				5177472224B38CAE00EB0F74 /* ArticleButtonState.swift in Sources */,
+				5177472224B38CAE00EB0F74 /* ArticleExtractorButtonState.swift in Sources */,
 				5177471A24B3863000EB0F74 /* WebViewProvider.swift in Sources */,
 				51E4992124A8095000B667CB /* RSImage-Extensions.swift in Sources */,
 				51E4990324A808BB00B667CB /* FaviconDownloader.swift in Sources */,
@@ -5146,7 +5146,7 @@
 				51E4990824A808C300B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
 				51919FF824AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4992B24A8676300B667CB /* ArticleArray.swift in Sources */,
-				51B54AB324B5AC830014348B /* ArticleButtonState.swift in Sources */,
+				51B54AB324B5AC830014348B /* ArticleExtractorButtonState.swift in Sources */,
 				17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */,
 				514E6C0724AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */,
 				51E4994D24A8734C00B667CB /* ExtensionPointIdentifer.swift in Sources */,
