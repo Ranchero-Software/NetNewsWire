@@ -675,6 +675,7 @@
 		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
 		5F323809231DF9F000706F6B /* VibrantTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */; };
+		653A4E7924BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653A4E7824BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift */; };
 		65422D1724B75CD1008A2FA2 /* SettingsAddAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65422D1624B75CD1008A2FA2 /* SettingsAddAccountModel.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
 		6581C73A20CED60100F4AD34 /* SafariExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */; };
@@ -2093,6 +2094,7 @@
 		55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsReaderAPI.xib; sourceTree = "<group>"; };
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
 		5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantTableViewCell.swift; sourceTree = "<group>"; };
+		653A4E7824BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCloudKitAccountView.swift; sourceTree = "<group>"; };
 		65422D1624B75CD1008A2FA2 /* SettingsAddAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAddAccountModel.swift; sourceTree = "<group>"; };
 		6543108B2322D90900658221 /* common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = common; sourceTree = "<group>"; };
 		6581C73320CED60000F4AD34 /* Subscribe to Feed.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Subscribe to Feed.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3176,6 +3178,7 @@
 				6591723024B5C35400B638E8 /* AccountHeaderImageView.swift */,
 				6591727E24B5D19500B638E8 /* SettingsDetailAccountView.swift */,
 				6586A5F624B632F8002BCF4F /* SettingsDetailAccountModel.swift */,
+				653A4E7824BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -5113,6 +5116,7 @@
 				51E4991524A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
 				51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				FFA2BBD624AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift in Sources */,
+				653A4E7924BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift in Sources */,
 				51E4995724A8734D00B667CB /* ExtensionPoint.swift in Sources */,
 				1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */,
 				51E4991124A808DE00B667CB /* SmallIconProvider.swift in Sources */,
