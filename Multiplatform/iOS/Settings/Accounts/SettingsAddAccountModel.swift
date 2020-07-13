@@ -34,7 +34,11 @@ class SettingsAddAccountModel: ObservableObject {
 	init() {
 		self.accounts = [
 			SettingsAddAccount(name: Account.defaultLocalAccountName, accountType: .onMyMac),
-			SettingsAddAccount(name: "Feedbin", accountType: .feedbin)
+			SettingsAddAccount(name: "Feedbin", accountType: .feedbin),
+			SettingsAddAccount(name: "Feedly", accountType: .feedly),
+			SettingsAddAccount(name: "Feed Wrangler", accountType: .feedWrangler),
+			SettingsAddAccount(name: "iCloud", accountType: .cloudKit),
+			SettingsAddAccount(name: "NewsBlur", accountType: .newsBlur)
 		]
 	}
 

@@ -27,11 +27,19 @@ struct SettingsAddAccountView: View {
 		}
 		.listStyle(InsetGroupedListStyle())
 		.sheet(isPresented: $model.isAddPresented) {
-			if model.selectedAccountType == .onMyMac {
+
+			switch model.selectedAccountType {
+			case .onMyMac:
 				SettingsLocalAccountView()
-			}
-			if model.selectedAccountType == .feedbin {
+
+			case .feedbin:
 				SettingsFeedbinAccountView()
+
+			case .cloudKit:
+				SettingsCloudKitAccountView()
+
+			default:
+				EmptyView()
 			}
 		}
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)
