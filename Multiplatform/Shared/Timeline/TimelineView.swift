@@ -17,6 +17,7 @@ struct TimelineView: View {
 		#if os(macOS)
 		VStack {
 			HStack {
+				TimelineSortOrderView()
 				Spacer()
 				Button (action: {
 					withAnimation {

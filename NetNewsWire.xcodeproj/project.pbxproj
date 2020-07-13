@@ -298,6 +298,7 @@
 		5193CD5A245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */; };
 		5194736E24BBB937001A2939 /* HiddenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194736D24BBB937001A2939 /* HiddenModifier.swift */; };
 		5194736F24BBB937001A2939 /* HiddenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194736D24BBB937001A2939 /* HiddenModifier.swift */; };
+		5194737124BBCAF4001A2939 /* TimelineSortOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194737024BBCAF4001A2939 /* TimelineSortOrderView.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
 		519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */; };
@@ -1963,6 +1964,7 @@
 		51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTimelineFeedDelegate.swift; sourceTree = "<group>"; };
 		5193CD57245E44A90092735E /* RedditFeedProvider-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RedditFeedProvider-Extensions.swift"; sourceTree = "<group>"; };
 		5194736D24BBB937001A2939 /* HiddenModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenModifier.swift; sourceTree = "<group>"; };
+		5194737024BBCAF4001A2939 /* TimelineSortOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineSortOrderView.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		519E743422C663F900A78E47 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExtensionPointViewController.swift; sourceTree = "<group>"; };
@@ -2833,13 +2835,14 @@
 		51919FCB24AB855000541E64 /* Timeline */ = {
 			isa = PBXGroup;
 			children = (
-				5177470224B2657F00EB0F74 /* TimelineToolbarModifier.swift */,
 				51919FED24AB85E400541E64 /* TimelineContainerView.swift */,
 				51919FF324AB869C00541E64 /* TimelineItem.swift */,
 				514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */,
 				514E6BD924ACEA0400AC6F6E /* TimelineItemView.swift */,
 				51919FF024AB864A00541E64 /* TimelineModel.swift */,
+				5194737024BBCAF4001A2939 /* TimelineSortOrderView.swift */,
 				517B2EEA24B40E09001AC46C /* TimelineTitleModifier.swift */,
+				5177470224B2657F00EB0F74 /* TimelineToolbarModifier.swift */,
 				51919FF624AB8B7700541E64 /* TimelineView.swift */,
 			);
 			path = Timeline;
@@ -5200,6 +5203,7 @@
 				514E6BDB24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				51E4996E24A8764C00B667CB /* ActivityManager.swift in Sources */,
 				51E4995A24A873F900B667CB /* ErrorHandler.swift in Sources */,
+				5194737124BBCAF4001A2939 /* TimelineSortOrderView.swift in Sources */,
 				51E4991F24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
 				51A5769724AE617200078888 /* ArticleContainerView.swift in Sources */,
 				51E4991224A808FB00B667CB /* AddWebFeedDefaultContainer.swift in Sources */,

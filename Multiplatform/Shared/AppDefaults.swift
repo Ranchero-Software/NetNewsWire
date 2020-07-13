@@ -170,7 +170,11 @@ final class AppDefaults: ObservableObject {
 	}
 	
 	// MARK: Timeline
-	@AppStorage(wrappedValue: false, Key.timelineGroupByFeed, store: store) var timelineGroupByFeed: Bool
+	@AppStorage(wrappedValue: false, Key.timelineGroupByFeed, store: store) var timelineGroupByFeed: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
 	
 	@AppStorage(wrappedValue: 2.0, Key.timelineNumberOfLines, store: store) var timelineNumberOfLines: Double {
 		didSet {
@@ -185,7 +189,11 @@ final class AppDefaults: ObservableObject {
 	}
 	
 	/// Set to `true` to sort oldest to newest, `false` for newest to oldest. Default is `false`.
-	@AppStorage(wrappedValue: false, Key.timelineSortDirection, store: store) var timelineSortDirection: Bool
+	@AppStorage(wrappedValue: false, Key.timelineSortDirection, store: store) var timelineSortDirection: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
 	
 	// MARK: Refresh
 	@AppStorage(wrappedValue: false, Key.refreshClearsReadArticles, store: store) var refreshClearsReadArticles: Bool

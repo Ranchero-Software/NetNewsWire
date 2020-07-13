@@ -55,25 +55,18 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		return _idToArticleDictionary
 	}
 
-	private var sortDirection = AppDefaults.shared.timelineSortDirection {
-		didSet {
-			if sortDirection != oldValue {
-				sortParametersDidChange()
-			}
-		}
+	private var sortDirection: Bool {
+		AppDefaults.shared.timelineSortDirection
 	}
 	
-	private var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
-		didSet {
-			if groupByFeed != oldValue {
-				sortParametersDidChange()
-			}
-		}
+	private var groupByFeed: Bool {
+		AppDefaults.shared.timelineGroupByFeed
 	}
 	
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		
 		// TODO: This should be rewritten to use Combine correctly
 		selectedArticleIDsCancellable = $selectedArticleIDs.sink { [weak self] articleIDs in
 			guard let self = self else { return }
@@ -213,6 +206,13 @@ private extension TimelineModel {
 		}
 	}
 	
+	@objc func userDefaultsDidChange(_ note: Notification) {
+		performBlockAndRestoreSelection {
+			articles = articles.sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
+			rebuildTimelineItems()
+		}
+	}
+	
 	// MARK: Timeline Management
 	
 	func resetReadFilter() {
@@ -233,13 +233,6 @@ private extension TimelineModel {
 		}
 	}
 
-	func sortParametersDidChange() {
-		performBlockAndRestoreSelection {
-			let unsortedArticles = Set(articles)
-			replaceArticles(with: unsortedArticles)
-		}
-	}
-	
 	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
 //		let savedSelection = selectedArticleIDs()
 		block()

@@ -70,6 +70,10 @@ struct AppAssets {
 		return Image("ArticleExtractorOn")
 	}()
 
+	static var checkmarkImage: Image = {
+		return Image(systemName: "checkmark")
+	}()
+	
 	static var copyImage: Image = {
 		return Image(systemName: "doc.on.doc")
 	}()
