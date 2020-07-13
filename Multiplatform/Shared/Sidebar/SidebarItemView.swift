@@ -86,6 +86,7 @@ struct SidebarItemView: View {
 				AppAssets.openInBrowserImage
 				#endif
 			}
+			Divider()
 			Button(action: {}) {
 				Text("Copy Feed URL")
 				#if os(iOS)
