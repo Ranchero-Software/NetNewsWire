@@ -81,7 +81,7 @@ struct SidebarView: View {
 						}
 					}
 				} label: {
-					SidebarItemView(sidebarItem: sidebarItem)
+					SidebarItemView(sidebarItem: sidebarItem).padding(.leading, 4)
 				}
 			}
 		}
