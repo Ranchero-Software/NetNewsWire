@@ -1,5 +1,5 @@
 //
-//  AccountsPreferenceModel.swift
+//  AccountsPreferencesModel.swift
 //  Multiplatform macOS
 //
 //  Created by Stuart Breckenridge on 13/7/20.
@@ -10,8 +10,7 @@ import Foundation
 import Account
 import Combine
 
-class AccountsPreferenceModel: ObservableObject {
-	
+class AccountsPreferencesModel: ObservableObject {
 	
 	@Published var sortedAccounts: [Account] = []
 	@Published var selectedConfiguredAccountID: String? = nil

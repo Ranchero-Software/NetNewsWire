@@ -11,8 +11,7 @@ import Account
 
 struct AccountsPreferencesView: View {
 	
-	@StateObject var viewModel = AccountsPreferenceModel()
-	
+	@StateObject var viewModel = AccountsPreferencesModel()
 	@State private var hoverOnAdd: Bool = false
 	@State private var hoverOnRemove: Bool = false
 	
@@ -88,64 +87,6 @@ struct AccountsPreferencesView: View {
 			}
 			.background(Color.white)
 		}
-		
-		
 	}
 	
 }
-
-struct ConfiguredAccountRow: View {
-	
-	var account: Account
-	
-	var body: some View {
-		HStack(alignment: .center) {
-			if let img = account.smallIcon?.image {
-				Image(rsImage: img)
-					.resizable()
-					.frame(width: 20, height: 20)
-					.aspectRatio(contentMode: .fit)
-			}
-			Text(account.nameForDisplay)
-		}.padding(.vertical, 4)
-	}
-	
-}
-
-struct AddAccountPickerRow: View {
-	
-	var accountType: AccountType
-	
-	var body: some View {
-		HStack {
-			if let img = AppAssets.image(for: accountType) {
-				Image(rsImage: img)
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 15, height: 15)
-			}
-			
-			switch accountType {
-				case .onMyMac:
-					Text(Account.defaultLocalAccountName)
-				case .cloudKit:
-					Text("iCloud")
-				case .feedbin:
-					Text("Feedbin")
-				case .feedWrangler:
-					Text("FeedWrangler")
-				case .freshRSS:
-					Text("FreshRSS")
-				case .feedly:
-					Text("Feedly")
-				case .newsBlur:
-					Text("NewsBlur")
-			}
-		}
-	}
-}
-
-
-
-
-

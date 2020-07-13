@@ -18,9 +18,11 @@
 		1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529A24AA1FD200D65E66 /* MacSearchField.swift */; };
 		175942AA24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		175942AB24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
-		1769E32224BC5925000E1E8E /* AccountsPreferenceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32124BC5925000E1E8E /* AccountsPreferenceModel.swift */; };
+		1769E32224BC5925000E1E8E /* AccountsPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */; };
 		1769E32524BC5A65000E1E8E /* AddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32424BC5A65000E1E8E /* AddAccountView.swift */; };
 		1769E32724BC5B6C000E1E8E /* AddAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */; };
+		1769E32924BCAFC7000E1E8E /* AddAccountPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */; };
+		1769E32B24BCB030000E1E8E /* ConfiguredAccountRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */; };
 		1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		17930ED424AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */; };
@@ -1791,9 +1793,11 @@
 		1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesView.swift; sourceTree = "<group>"; };
 		1729529624AA1CD000D65E66 /* MacPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencesView.swift; sourceTree = "<group>"; };
 		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
-		1769E32124BC5925000E1E8E /* AccountsPreferenceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsPreferenceModel.swift; sourceTree = "<group>"; };
+		1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesModel.swift; sourceTree = "<group>"; };
 		1769E32424BC5A65000E1E8E /* AddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountView.swift; sourceTree = "<group>"; };
 		1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountModel.swift; sourceTree = "<group>"; };
+		1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountPickerRow.swift; sourceTree = "<group>"; };
+		1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfiguredAccountRow.swift; sourceTree = "<group>"; };
 		1776E88D24AC5F8A00E78166 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
 		17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedView.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
@@ -2539,8 +2543,9 @@
 		1769E31F24BC58A4000E1E8E /* Accounts */ = {
 			isa = PBXGroup;
 			children = (
-				1769E32124BC5925000E1E8E /* AccountsPreferenceModel.swift */,
+				1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */,
 				1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */,
+				1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */,
 				1769E32324BC5A50000E1E8E /* Add Account */,
 			);
 			path = Accounts;
@@ -2559,6 +2564,7 @@
 			children = (
 				1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */,
 				1769E32424BC5A65000E1E8E /* AddAccountView.swift */,
+				1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */,
 			);
 			path = "Add Account";
 			sourceTree = "<group>";
@@ -5199,7 +5205,8 @@
 				5177470A24B2F87600EB0F74 /* SidebarListStyleModifier.swift in Sources */,
 				51E4990524A808C300B667CB /* FeaturedImageDownloader.swift in Sources */,
 				5181C5AE24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */,
-				1769E32224BC5925000E1E8E /* AccountsPreferenceModel.swift in Sources */,
+				1769E32924BCAFC7000E1E8E /* AddAccountPickerRow.swift in Sources */,
+				1769E32224BC5925000E1E8E /* AccountsPreferencesModel.swift in Sources */,
 				51E4991624A8090300B667CB /* ArticleUtilities.swift in Sources */,
 				51919FF224AB864A00541E64 /* TimelineModel.swift in Sources */,
 				51E4991A24A8090F00B667CB /* IconImage.swift in Sources */,
@@ -5216,6 +5223,7 @@
 				51E498C924A8085D00B667CB /* PseudoFeed.swift in Sources */,
 				51E498FC24A808BA00B667CB /* FaviconURLFinder.swift in Sources */,
 				51E4991C24A8092000B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
+				1769E32B24BCB030000E1E8E /* ConfiguredAccountRow.swift in Sources */,
 				FF64D0E824AF53EE0084080A /* RefreshProgressModel.swift in Sources */,
 				51E499D924A912C200B667CB /* SceneModel.swift in Sources */,
 				51919FB424AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,

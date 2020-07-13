@@ -12,7 +12,7 @@ import Account
 struct AddAccountView: View {
 	
 	@Environment(\.presentationMode) private var presentationMode
-	@ObservedObject var preferencesModel: AccountsPreferenceModel
+	@ObservedObject var preferencesModel: AccountsPreferencesModel
 	@StateObject private var viewModel = AddAccountModel()
 
 	var body: some View {
@@ -133,6 +133,6 @@ struct AddAccountView: View {
 }
 struct AddAccountView_Previews: PreviewProvider {
 	static var previews: some View {
-		AddAccountView(preferencesModel: AccountsPreferenceModel())
+		AddAccountView(preferencesModel: AccountsPreferencesModel())
 	}
 }
