@@ -27,8 +27,3 @@ struct ConfiguredAccountRow: View {
 	
 }
 
-struct ConfiguredAccountRow_Previews: PreviewProvider {
-    static var previews: some View {
-        ConfiguredAccountRow()
-    }
-}
