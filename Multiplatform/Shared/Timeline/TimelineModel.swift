@@ -55,12 +55,19 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		return _idToArticleDictionary
 	}
 
-	private var sortDirection: Bool {
-		AppDefaults.shared.timelineSortDirection
+	private var sortDirection = AppDefaults.shared.timelineSortDirection {
+		didSet {
+			if sortDirection != oldValue {
+				sortParametersDidChange()
+			}
+		}
 	}
-	
-	private var groupByFeed: Bool {
-		AppDefaults.shared.timelineGroupByFeed
+	private var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
+		didSet {
+			if groupByFeed != oldValue {
+				sortParametersDidChange()
+			}
+		}
 	}
 	
 	init() {
@@ -207,10 +214,8 @@ private extension TimelineModel {
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		performBlockAndRestoreSelection {
-			articles = articles.sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
-			rebuildTimelineItems()
-		}
+		sortDirection = AppDefaults.shared.timelineSortDirection
+		groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}
 	
 	// MARK: Timeline Management
@@ -233,6 +238,13 @@ private extension TimelineModel {
 		}
 	}
 
+	func sortParametersDidChange() {
+		performBlockAndRestoreSelection {
+			articles = articles.sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
+			rebuildTimelineItems()
+		}
+	}
+	
 	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
 //		let savedSelection = selectedArticleIDs()
 		block()
