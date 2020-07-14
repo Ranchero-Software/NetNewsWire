@@ -19,6 +19,7 @@ final class ArticlesTable: DatabaseTable {
 	private let queue: DatabaseQueue
 	private let statusesTable: StatusesTable
 	private let authorsLookupTable: DatabaseLookupTable
+	private let retentionStyle: ArticlesDatabase.RetentionStyle
 	private var databaseArticlesCache = [String: DatabaseArticle]()
 
 	private lazy var searchTable: SearchTable = {
@@ -31,12 +32,13 @@ final class ArticlesTable: DatabaseTable {
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
 
-	init(name: String, accountID: String, queue: DatabaseQueue) {
+	init(name: String, accountID: String, queue: DatabaseQueue, retentionStyle: ArticlesDatabase.RetentionStyle) {
 
 		self.name = name
 		self.accountID = accountID
 		self.queue = queue
 		self.statusesTable = StatusesTable(queue: queue)
+		self.retentionStyle = retentionStyle
 
 		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
 		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
@@ -422,6 +424,63 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Cleanup
 
+	/// Delete articles that we won’t show in the UI any longer
+	/// — their arrival date is before our 90-day recency window;
+	/// they are read; they are not starred.
+	///
+	/// Because deleting articles might block the database for too long,
+	/// we do this in a careful way: delete articles older than a year,
+	/// check to see how much time has passed, then decide whether or not to continue.
+	/// Repeat for successively more-recent dates.
+	///
+	/// Returns `true` if it deleted old articles all the way up to the 90 day cutoff date.
+	func deleteOldArticles() {
+		precondition(retentionStyle == .syncSystem)
+
+		queue.runInTransaction { database in
+			func deleteOldArticles(cutoffDate: Date) {
+				let sql = "delete from articles where articleID in (select articleID from articles natural join statuses where dateArrived<? and read=1 and starred=0);"
+				let parameters = [cutoffDate] as [Any]
+				database.executeUpdate(sql, withArgumentsIn: parameters)
+			}
+
+			let startTime = Date()
+			func tooMuchTimeHasPassed() -> Bool {
+				let timeElapsed = Date().timeIntervalSince(startTime)
+				return timeElapsed > 2.0
+			}
+
+			let dayIntervals = [365, 300, 225, 150]
+			for dayInterval in dayIntervals {
+				deleteOldArticles(cutoffDate: startTime.bySubtracting(days: dayInterval))
+				if tooMuchTimeHasPassed() {
+					return
+				}
+			}
+			deleteOldArticles(cutoffDate: self.articleCutoffDate)
+		}
+	}
+
+	/// Delete old statuses.
+	func deleteOldStatuses() {
+		queue.runInTransaction { database in
+			let sql: String
+			let cutoffDate: Date
+
+			switch self.retentionStyle {
+			case .syncSystem:
+				sql = "delete from statuses where dateArrived<? and read=1 and starred=0 and articleID not in (select articleID from articles);"
+				cutoffDate = Date().bySubtracting(days: 180)
+			case .feedBased:
+				sql = "delete from statuses where dateArrived<? and starred=0 and articleID not in (select articleID from articles);"
+				cutoffDate = Date().bySubtracting(days: 30)
+			}
+
+			let parameters = [cutoffDate] as [Any]
+			database.executeUpdate(sql, withArgumentsIn: parameters)
+		}
+	}
+
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
 	/// This deletes from the articles and articleStatuses tables,
 	/// and, via a trigger, it also deletes from the search index.
@@ -442,6 +501,18 @@ final class ArticlesTable: DatabaseTable {
 			}
 			self.removeArticles(articleIDs, database)
 			self.statusesTable.removeStatuses(articleIDs, database)
+		}
+	}
+
+	/// Mark statuses beyond the 90-day window as read.
+	///
+	/// This is not intended for wide use: this is part of implementing
+	/// the April 2020 retention policy change for feed-based accounts.
+	func markOlderStatusesAsRead() {
+		queue.runInTransaction { database in
+			let sql = "update statuses set read = true where dateArrived<?;"
+			let parameters = [self.articleCutoffDate] as [Any]
+			database.executeUpdate(sql, withArgumentsIn: parameters)
 		}
 	}
 }

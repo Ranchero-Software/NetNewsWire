@@ -22,6 +22,11 @@ public typealias UpdateArticlesCompletionBlock = (Set<Article>?, Set<Article>?) 
 
 public final class ArticlesDatabase {
 
+	public enum RetentionStyle {
+		case feedBased // Local and iCloud: article retention is defined by contents of feed
+		case syncSystem // Feedbin, Feedly, etc.: article retention is defined by external system
+	}
+
 	/// When ArticlesDatabase is suspended, database calls will crash the app.
 	public var isSuspended: Bool {
 		return queue.isSuspended
@@ -29,11 +34,13 @@ public final class ArticlesDatabase {
 
 	private let articlesTable: ArticlesTable
 	private let queue: DatabaseQueue
+	private let retentionStyle: RetentionStyle
 
-	public init(databaseFilePath: String, accountID: String) {
+	public init(databaseFilePath: String, accountID: String, retentionStyle: RetentionStyle) {
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
 		self.queue = queue
-		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue)
+		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue, retentionStyle: retentionStyle)
+		self.retentionStyle = retentionStyle
 
 		queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
 		queue.runInDatabase { database in
@@ -175,11 +182,35 @@ public final class ArticlesDatabase {
 
 	// MARK: - Cleanup
 
-	// These are to be used only at startup. These are to prevent the database from growing forever.
+	/// Calls the various clean-up functions. To be used only at startup.
+	///
+	/// This prevents the database from growing forever. If we didn’t do this:
+	/// 1) The database would grow to an inordinate size, and
+	/// 2) the app would become very slow.
+	public func cleanupDatabaseAtStartup(subscribedToWebFeedIDs: Set<String>) {
+		if retentionStyle == .syncSystem {
+			articlesTable.deleteOldArticles()
+		}
+		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToWebFeedIDs)
+		articlesTable.deleteOldStatuses()
+	}
 
-	/// Calls the various clean-up functions.
-	public func cleanupDatabaseAtStartup(subscribedToFeedIDs: Set<String>) {
-		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToFeedIDs)
+	/// Do database cleanups made necessary by the retention policy change in April 2020.
+	///
+	/// The retention policy for feed-based systems changed in April 2020:
+	/// we keep articles only for as long as they’re in the feed.
+	/// This change could result in a bunch of older articles suddenly
+	/// appearing as unread articles.
+	///
+	/// These are articles that were in the database,
+	/// but weren’t appearing in the UI because they were beyond the 90-day window.
+	/// (The previous retention policy used a 90-day window.)
+	///
+	/// This function marks everything as read that’s beyond that 90-day window.
+	/// It’s intended to be called only once on an account.
+	public func performApril2020RetentionPolicyChange() {
+		precondition(retentionStyle == .feedBased)
+		articlesTable.markOlderStatusesAsRead()
 	}
 }
 
