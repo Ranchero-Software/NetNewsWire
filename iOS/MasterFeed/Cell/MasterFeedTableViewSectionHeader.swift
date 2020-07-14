@@ -21,10 +21,20 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		get {
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
-				return "\(name) \(unreadCount) \(unreadLabel)"
+				return "\(name) \(unreadCount) \(unreadLabel) \(expandedStateMessage) "
 			} else {
-				return name
+				return "\(name) \(expandedStateMessage) "
 			}
+		}
+	}
+
+	private var expandedStateMessage: String {
+		set {}
+		get {
+			if disclosureExpanded {
+				return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
+			}
+			return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
 		}
 	}
 	
