@@ -35,7 +35,7 @@ struct TimelineToolbarModifier: ViewModifier {
 				ToolbarItem {
 					Button {
 					} label: {
-						AppAssets.markAllAsReadImage //.foregroundColor(.accentColor)
+						AppAssets.markAllAsReadImage
 					}
 					.help("Mark All As Read")
 				}
