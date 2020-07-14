@@ -27,12 +27,11 @@ struct AccountsPreferencesView: View {
 							bottomButtonStack
 						}, alignment: .bottom)
 				}
-				.frame(width: 225, height: 300, alignment: .leading)
+				.frame(width: 160, height: 300, alignment: .leading)
 				.border(Color.gray, width: 1)
-				VStack(alignment: .leading) {
-					EmptyView()
-					Spacer()
-				}.frame(width: 225, height: 300, alignment: .leading)
+				
+				EditAccountView(viewModel: viewModel)
+				.frame(height: 300, alignment: .leading)
 			}
 			Spacer()
 		}.sheet(isPresented: $viewModel.showAddAccountView,
