@@ -11,6 +11,7 @@ import SwiftUI
 struct ArticleToolbarModifier: ViewModifier {
 	
 	@EnvironmentObject private var sceneModel: SceneModel
+	@State private var showActivityView = false
 	
 	func body(content: Content) -> some View {
 		content
@@ -98,11 +99,17 @@ struct ArticleToolbarModifier: ViewModifier {
 				
 				ToolbarItem(placement: .bottomBar) {
 					Button {
+						showActivityView.toggle()
 					} label: {
 						AppAssets.shareImage.font(.title3)
 					}
 					.disabled(sceneModel.shareButtonState == nil)
 					.help("Share")
+					.sheet(isPresented: $showActivityView) {
+						if let article = sceneModel.selectedArticles.first, let link = article.preferredLink, let url = URL(string: link) {
+							ActivityViewController(title: article.title, url: url)
+						}
+					}
 				}
 
 				#endif

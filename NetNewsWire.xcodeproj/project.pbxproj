@@ -349,6 +349,11 @@
 		51B5C8E623F4BBFA00032075 /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
 		51B5C8E723F4BBFA00032075 /* ExtensionFeedAddRequestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C8BF23F3866C00032075 /* ExtensionFeedAddRequestFile.swift */; };
 		51B62E68233186730085F949 /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B62E67233186730085F949 /* IconView.swift */; };
+		51B80EB824BD1F8B00C6C32D /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80EB724BD1F8B00C6C32D /* ActivityViewController.swift */; };
+		51B80EDB24BD225200C6C32D /* OpenInSafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80EDA24BD225200C6C32D /* OpenInSafariActivity.swift */; };
+		51B80EDD24BD296700C6C32D /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80EDC24BD296700C6C32D /* ArticleActivityItemSource.swift */; };
+		51B80EDF24BD298900C6C32D /* TitleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80EDE24BD298900C6C32D /* TitleActivityItemSource.swift */; };
+		51B80EE124BD3E9600C6C32D /* FindInArticleActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80EE024BD3E9600C6C32D /* FindInArticleActivity.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
 		51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
@@ -1994,6 +1999,11 @@
 		51B5C8BC23F3780900032075 /* ShareDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareDefaultContainer.swift; sourceTree = "<group>"; };
 		51B5C8BF23F3866C00032075 /* ExtensionFeedAddRequestFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionFeedAddRequestFile.swift; sourceTree = "<group>"; };
 		51B62E67233186730085F949 /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
+		51B80EB724BD1F8B00C6C32D /* ActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
+		51B80EDA24BD225200C6C32D /* OpenInSafariActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInSafariActivity.swift; sourceTree = "<group>"; };
+		51B80EDC24BD296700C6C32D /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
+		51B80EDE24BD298900C6C32D /* TitleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleActivityItemSource.swift; sourceTree = "<group>"; };
+		51B80EE024BD3E9600C6C32D /* FindInArticleActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindInArticleActivity.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
@@ -2732,12 +2742,17 @@
 		5177470B24B2FF2C00EB0F74 /* Article */ = {
 			isa = PBXGroup;
 			children = (
+				51B80EB724BD1F8B00C6C32D /* ActivityViewController.swift */,
+				51B80EDC24BD296700C6C32D /* ArticleActivityItemSource.swift */,
 				5177470D24B2FF6F00EB0F74 /* ArticleView.swift */,
 				5177470F24B3029400EB0F74 /* ArticleViewController.swift */,
+				51B80EE024BD3E9600C6C32D /* FindInArticleActivity.swift */,
 				5177471724B3812200EB0F74 /* IconView.swift */,
 				5177471B24B387AC00EB0F74 /* ImageScrollView.swift */,
 				5177471D24B387E100EB0F74 /* ImageTransition.swift */,
 				5177471F24B3882600EB0F74 /* ImageViewController.swift */,
+				51B80EDA24BD225200C6C32D /* OpenInSafariActivity.swift */,
+				51B80EDE24BD298900C6C32D /* TitleActivityItemSource.swift */,
 				5177471124B37C5400EB0F74 /* WebViewController.swift */,
 			);
 			path = Article;
@@ -5021,6 +5036,7 @@
 				51E4993624A867E800B667CB /* UserInfoKey.swift in Sources */,
 				51E4990924A808C500B667CB /* WebFeedIconDownloader.swift in Sources */,
 				51E498F524A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
+				51B80EDB24BD225200C6C32D /* OpenInSafariActivity.swift in Sources */,
 				172199F124AB716900A31D04 /* SidebarToolbarModifier.swift in Sources */,
 				65CBAD5A24AE03C20006DD91 /* ColorPaletteContainerView.swift in Sources */,
 				5177470924B2F87600EB0F74 /* SidebarListStyleModifier.swift in Sources */,
@@ -5055,8 +5071,10 @@
 				5177471024B3029400EB0F74 /* ArticleViewController.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
 				17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
+				51B80EB824BD1F8B00C6C32D /* ActivityViewController.swift in Sources */,
 				51E4994224A8713C00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E498F624A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
+				51B80EE124BD3E9600C6C32D /* FindInArticleActivity.swift in Sources */,
 				6586A5F724B632F8002BCF4F /* SettingsDetailAccountModel.swift in Sources */,
 				51E498F224A8085D00B667CB /* SmartFeedsController.swift in Sources */,
 				51919FB624AABCA100541E64 /* IconImageView.swift in Sources */,
@@ -5079,6 +5097,7 @@
 				5171B4F624B7BABA00FB8D3B /* MarkStatusCommand.swift in Sources */,
 				65422D1724B75CD1008A2FA2 /* SettingsAddAccountModel.swift in Sources */,
 				5177471424B37D4000EB0F74 /* PreloadedWebView.swift in Sources */,
+				51B80EDD24BD296700C6C32D /* ArticleActivityItemSource.swift in Sources */,
 				517B2EBC24B3E62A001AC46C /* WrapperScriptMessageHandler.swift in Sources */,
 				51919FB324AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
 				5177472024B3882600EB0F74 /* ImageViewController.swift in Sources */,
@@ -5108,6 +5127,7 @@
 				51919FF724AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4993D24A870F800B667CB /* UserNotificationManager.swift in Sources */,
 				5177470324B2657F00EB0F74 /* TimelineToolbarModifier.swift in Sources */,
+				51B80EDF24BD298900C6C32D /* TitleActivityItemSource.swift in Sources */,
 				51E4991524A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
 				51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				FFA2BBD624AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift in Sources */,

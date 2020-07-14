@@ -156,3 +156,8 @@ private extension ArticleViewController {
 	}
 	
 }
+
+public extension Notification.Name {
+	static let FindInArticle = Notification.Name("FindInArticle")
+	static let EndFindInArticle = Notification.Name("EndFindInArticle")
+}

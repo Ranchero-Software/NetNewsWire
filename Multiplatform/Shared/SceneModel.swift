@@ -24,6 +24,10 @@ final class SceneModel: ObservableObject {
 	@Published var openInBrowserButtonState: Bool?
 	@Published var shareButtonState: Bool?
 
+	var selectedArticles: [Article] {
+		timelineModel.selectedArticles
+	}
+	
 	private var refreshProgressModel: RefreshProgressModel? = nil
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler? = nil
 	
