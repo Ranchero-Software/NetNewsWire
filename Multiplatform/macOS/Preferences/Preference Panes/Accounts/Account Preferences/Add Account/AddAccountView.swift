@@ -50,7 +50,7 @@ struct AddAccountView: View {
 			Spacer()
 			HStack {
 				if viewModel.accountIsAuthenticating {
-					ProgressView()
+					ProgressView("Adding Account")
 				}
 				Spacer()
 				Button(action: { presentationMode.wrappedValue.dismiss() }, label: {
@@ -121,12 +121,9 @@ struct AddAccountView: View {
 	var userNamePasswordAndAPIUrlView: some View {
 		Group {
 			TextField("Email", text: $viewModel.userName)
-				.textFieldStyle(RoundedBorderTextFieldStyle())
 			SecureField("Password", text: $viewModel.password)
-				.textFieldStyle(RoundedBorderTextFieldStyle())
 			TextField("API URL", text: $viewModel.apiUrl)
-				.textFieldStyle(RoundedBorderTextFieldStyle())
-		}
+		}.textFieldStyle(RoundedBorderTextFieldStyle())
 	}
 	
 	

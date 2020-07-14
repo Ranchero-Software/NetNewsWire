@@ -16,9 +16,10 @@ class AccountsPreferencesModel: ObservableObject {
 		case add, credentials, none
 	}
 	
+	// Selected Account
 	public private(set) var account: Account?
 	
-	// Configured Accounts
+	// All Accounts
 	@Published var sortedAccounts: [Account] = []
 	@Published var selectedConfiguredAccountID: String? = AccountManager.shared.defaultAccount.accountID {
 		didSet {
@@ -61,8 +62,6 @@ class AccountsPreferencesModel: ObservableObject {
 		}
 	}
 	@Published var showDeleteConfirmation: Bool = false
-	
-	
 	
 	// Subscriptions
 	var notificationSubscriptions = Set<AnyCancellable>()

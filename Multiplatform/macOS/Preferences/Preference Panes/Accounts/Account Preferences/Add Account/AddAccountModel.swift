@@ -13,35 +13,7 @@ import Secrets
 
 class AddAccountModel: ObservableObject {
 	
-	enum AddAccountErrors: CustomStringConvertible {
-		case invalidUsernamePassword, invalidUsernamePasswordAPI, networkError, keyChainError, other(error: Error) , none
-		
-		var description: String {
-			switch self {
-			case .invalidUsernamePassword:
-				return NSLocalizedString("Invalid email or password combination.", comment: "Invalid email/password combination.")
-			case .invalidUsernamePasswordAPI:
-				return NSLocalizedString("Invalid email, password, or API URL combination.", comment: "Invalid email/password/API combination.")
-			case .networkError:
-				return NSLocalizedString("Network Error. Please try later.", comment: "Network Error. Please try later.")
-			case .keyChainError:
-				return NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
-			case .other(let error):
-				return NSLocalizedString(error.localizedDescription, comment: "Other add account error")
-			default:
-				return NSLocalizedString("N/A", comment: "N/A")
-			}
-		}
-		
-		static func ==(lhs: AddAccountErrors, rhs: AddAccountErrors) -> Bool {
-			switch (lhs, rhs) {
-			case (.other(let lhsError), .other(let rhsError)):
-				return lhsError.localizedDescription == rhsError.localizedDescription
-			default:
-				return false
-			}
-		}
-	}
+	
 	
 	#if DEBUG
 	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
@@ -56,7 +28,7 @@ class AddAccountModel: ObservableObject {
 	@Published var apiUrl: String = ""
 	@Published var newLocalAccountName: String = ""
 	@Published var accountIsAuthenticating: Bool = false
-	@Published var addAccountError: AddAccountErrors = .none {
+	@Published var addAccountError: AccountUpdateErrors = .none {
 		didSet {
 			if addAccountError == .none {
 				showError = false
@@ -261,7 +233,7 @@ extension AddAccountModel {
 					return
 				}
 				
-				let account = AccountManager.shared.createAccount(type: .newsBlur)
+				let account = AccountManager.shared.createAccount(type: .freshRSS)
 				
 				do {
 					try account.removeCredentials(type: .readerBasic)

@@ -1,5 +1,5 @@
 //
-//  EditAccountView.swift
+//  AccountDetailView.swift
 //  Multiplatform macOS
 //
 //  Created by Stuart Breckenridge on 14/7/20.
@@ -10,7 +10,7 @@ import SwiftUI
 import Account
 import Combine
 
-struct EditAccountView: View {
+struct AccountDetailView: View {
     
 	@ObservedObject var viewModel: AccountsPreferencesModel
 	
@@ -76,8 +76,8 @@ struct EditAccountView: View {
 	
 }
 
-struct EditAccountView_Previews: PreviewProvider {
+struct AccountDetailView_Previews: PreviewProvider {
     static var previews: some View {
-		EditAccountView(viewModel: AccountsPreferencesModel())
+		AccountDetailView(viewModel: AccountsPreferencesModel())
     }
 }

@@ -23,8 +23,10 @@
 		1769E32724BC5B6C000E1E8E /* AddAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */; };
 		1769E32924BCAFC7000E1E8E /* AddAccountPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */; };
 		1769E32B24BCB030000E1E8E /* ConfiguredAccountRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */; };
-		1769E32D24BD20A0000E1E8E /* EditAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32C24BD20A0000E1E8E /* EditAccountView.swift */; };
-		1769E33024BD6271000E1E8E /* EditAccountCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32F24BD6271000E1E8E /* EditAccountCredentials.swift */; };
+		1769E32D24BD20A0000E1E8E /* AccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32C24BD20A0000E1E8E /* AccountDetailView.swift */; };
+		1769E33024BD6271000E1E8E /* EditAccountCredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32F24BD6271000E1E8E /* EditAccountCredentialsView.swift */; };
+		1769E33624BD9621000E1E8E /* EditAccountCredentialsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E33524BD9621000E1E8E /* EditAccountCredentialsModel.swift */; };
+		1769E33824BD97CB000E1E8E /* AccountUpdateErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E33724BD97CB000E1E8E /* AccountUpdateErrors.swift */; };
 		1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		17930ED424AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */; };
@@ -1800,8 +1802,10 @@
 		1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountModel.swift; sourceTree = "<group>"; };
 		1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountPickerRow.swift; sourceTree = "<group>"; };
 		1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfiguredAccountRow.swift; sourceTree = "<group>"; };
-		1769E32C24BD20A0000E1E8E /* EditAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountView.swift; sourceTree = "<group>"; };
-		1769E32F24BD6271000E1E8E /* EditAccountCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountCredentials.swift; sourceTree = "<group>"; };
+		1769E32C24BD20A0000E1E8E /* AccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailView.swift; sourceTree = "<group>"; };
+		1769E32F24BD6271000E1E8E /* EditAccountCredentialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountCredentialsView.swift; sourceTree = "<group>"; };
+		1769E33524BD9621000E1E8E /* EditAccountCredentialsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountCredentialsModel.swift; sourceTree = "<group>"; };
+		1769E33724BD97CB000E1E8E /* AccountUpdateErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountUpdateErrors.swift; sourceTree = "<group>"; };
 		1776E88D24AC5F8A00E78166 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
 		17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedView.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
@@ -2547,11 +2551,8 @@
 		1769E31F24BC58A4000E1E8E /* Accounts */ = {
 			isa = PBXGroup;
 			children = (
-				1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */,
-				1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */,
-				1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */,
-				1769E32E24BD5F22000E1E8E /* Edit Account */,
-				1769E32324BC5A50000E1E8E /* Add Account */,
+				1769E33724BD97CB000E1E8E /* AccountUpdateErrors.swift */,
+				1769E33924BD97E5000E1E8E /* Account Preferences */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -2577,10 +2578,23 @@
 		1769E32E24BD5F22000E1E8E /* Edit Account */ = {
 			isa = PBXGroup;
 			children = (
-				1769E32C24BD20A0000E1E8E /* EditAccountView.swift */,
-				1769E32F24BD6271000E1E8E /* EditAccountCredentials.swift */,
+				1769E32C24BD20A0000E1E8E /* AccountDetailView.swift */,
+				1769E32F24BD6271000E1E8E /* EditAccountCredentialsView.swift */,
+				1769E33524BD9621000E1E8E /* EditAccountCredentialsModel.swift */,
 			);
 			path = "Edit Account";
+			sourceTree = "<group>";
+		};
+		1769E33924BD97E5000E1E8E /* Account Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */,
+				1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */,
+				1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */,
+				1769E32324BC5A50000E1E8E /* Add Account */,
+				1769E32E24BD5F22000E1E8E /* Edit Account */,
+			);
+			path = "Account Preferences";
 			sourceTree = "<group>";
 		};
 		17930ED224AF10CD00A9BA52 /* Add */ = {
@@ -5193,6 +5207,7 @@
 				51E4996F24A8764C00B667CB /* ActivityType.swift in Sources */,
 				51E4994E24A8734C00B667CB /* SendToMarsEditCommand.swift in Sources */,
 				51919FB024AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
+				1769E33624BD9621000E1E8E /* EditAccountCredentialsModel.swift in Sources */,
 				51919FEF24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				51E4996624A8760B00B667CB /* ArticleStyle.swift in Sources */,
 				5171B4D424B7BABA00FB8D3B /* MarkStatusCommand.swift in Sources */,
@@ -5217,6 +5232,7 @@
 				51E4994F24A8734C00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
 				51E498CA24A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				5177470A24B2F87600EB0F74 /* SidebarListStyleModifier.swift in Sources */,
+				1769E33824BD97CB000E1E8E /* AccountUpdateErrors.swift in Sources */,
 				51E4990524A808C300B667CB /* FeaturedImageDownloader.swift in Sources */,
 				5181C5AE24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */,
 				1769E32924BCAFC7000E1E8E /* AddAccountPickerRow.swift in Sources */,
@@ -5233,7 +5249,7 @@
 				1729529724AA1CD000D65E66 /* MacPreferencesView.swift in Sources */,
 				51E4994C24A8734C00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */,
-				1769E32D24BD20A0000E1E8E /* EditAccountView.swift in Sources */,
+				1769E32D24BD20A0000E1E8E /* AccountDetailView.swift in Sources */,
 				51919FAD24AA8CCA00541E64 /* UnreadCountView.swift in Sources */,
 				51E498C924A8085D00B667CB /* PseudoFeed.swift in Sources */,
 				51E498FC24A808BA00B667CB /* FaviconURLFinder.swift in Sources */,
@@ -5263,7 +5279,7 @@
 				51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
 				514E6BDB24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				51E4996E24A8764C00B667CB /* ActivityManager.swift in Sources */,
-				1769E33024BD6271000E1E8E /* EditAccountCredentials.swift in Sources */,
+				1769E33024BD6271000E1E8E /* EditAccountCredentialsView.swift in Sources */,
 				51E4995A24A873F900B667CB /* ErrorHandler.swift in Sources */,
 				51E4991F24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
 				51A5769724AE617200078888 /* ArticleContainerView.swift in Sources */,

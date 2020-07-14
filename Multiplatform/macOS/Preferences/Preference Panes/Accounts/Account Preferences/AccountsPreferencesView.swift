@@ -20,7 +20,7 @@ struct AccountsPreferencesView: View {
 			HStack(alignment: .top, spacing: 10) {
 				listOfAccounts
 				
-				EditAccountView(viewModel: viewModel)
+				AccountDetailView(viewModel: viewModel)
 				.frame(height: 300, alignment: .leading)
 			}
 			Spacer()
@@ -32,7 +32,7 @@ struct AccountsPreferencesView: View {
 					case .add:
 						AddAccountView(preferencesModel: viewModel)
 					case .credentials:
-						EditAccountCredentials(viewModel: viewModel)
+						EditAccountCredentialsView(viewModel: viewModel)
 					case .none:
 						EmptyView()
 					}
@@ -48,7 +48,6 @@ struct AccountsPreferencesView: View {
 					viewModel.showDeleteConfirmation = false
 				  }))
 		})
-	
 	}
 	
 	var listOfAccounts: some View {
