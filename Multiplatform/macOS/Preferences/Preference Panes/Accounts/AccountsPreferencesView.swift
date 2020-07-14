@@ -104,7 +104,7 @@ struct AccountsPreferencesView: View {
 				
 				Spacer()
 			}
-			.background(Color.white)
+			.background(Color.init(.windowBackgroundColor))
 		}
 	}
 	
