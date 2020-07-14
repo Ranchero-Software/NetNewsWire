@@ -11,7 +11,8 @@ import SwiftUI
 struct SceneNavigationView: View {
 
 	@StateObject private var sceneModel = SceneModel()
-	@State private var showSheet: Bool = false
+	@State private var showSheet = false
+	@State private var showShareSheet = false
 	@State private var sheetToShow: ToolbarSheets = .none
 	
 	#if os(iOS)
@@ -148,9 +149,16 @@ struct SceneNavigationView: View {
 				.help("Open in Browser")
 			}
 			ToolbarItem {
-				Button {
-				} label: {
-					AppAssets.shareImage
+				ZStack {
+					if showShareSheet {
+						SharingServiceView(articles: sceneModel.selectedArticles, showing: $showShareSheet)
+							.frame(width: 20, height: 20)
+					}
+					Button {
+						showShareSheet = true
+					} label: {
+						AppAssets.shareImage
+					}
 				}
 				.disabled(sceneModel.shareButtonState == nil)
 				.help("Share")

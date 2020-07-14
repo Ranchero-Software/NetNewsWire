@@ -354,6 +354,9 @@
 		51B80EDD24BD296700C6C32D /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80EDC24BD296700C6C32D /* ArticleActivityItemSource.swift */; };
 		51B80EDF24BD298900C6C32D /* TitleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80EDE24BD298900C6C32D /* TitleActivityItemSource.swift */; };
 		51B80EE124BD3E9600C6C32D /* FindInArticleActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80EE024BD3E9600C6C32D /* FindInArticleActivity.swift */; };
+		51B80F1F24BE531200C6C32D /* SharingServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80F1E24BE531200C6C32D /* SharingServiceView.swift */; };
+		51B80F4224BE588200C6C32D /* SharingServicePickerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80F4124BE588200C6C32D /* SharingServicePickerDelegate.swift */; };
+		51B80F4424BE58BF00C6C32D /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80F4324BE58BF00C6C32D /* SharingServiceDelegate.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
 		51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
@@ -2004,6 +2007,9 @@
 		51B80EDC24BD296700C6C32D /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51B80EDE24BD298900C6C32D /* TitleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleActivityItemSource.swift; sourceTree = "<group>"; };
 		51B80EE024BD3E9600C6C32D /* FindInArticleActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindInArticleActivity.swift; sourceTree = "<group>"; };
+		51B80F1E24BE531200C6C32D /* SharingServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceView.swift; sourceTree = "<group>"; };
+		51B80F4124BE588200C6C32D /* SharingServicePickerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServicePickerDelegate.swift; sourceTree = "<group>"; };
+		51B80F4324BE58BF00C6C32D /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
@@ -2763,6 +2769,9 @@
 			children = (
 				51B54ABB24B5BEF20014348B /* ArticleView.swift */,
 				51B54A6824B54A490014348B /* IconView.swift */,
+				51B80F4324BE58BF00C6C32D /* SharingServiceDelegate.swift */,
+				51B80F4124BE588200C6C32D /* SharingServicePickerDelegate.swift */,
+				51B80F1E24BE531200C6C32D /* SharingServiceView.swift */,
 				51B54B6624B6A7960014348B /* WebStatusBarView.swift */,
 				51B54AB524B5B33C0014348B /* WebViewController.swift */,
 			);
@@ -5152,6 +5161,7 @@
 				51E498FA24A808BA00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4993F24A8713B00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E4993724A8680E00B667CB /* Reachability.swift in Sources */,
+				51B80F4424BE58BF00C6C32D /* SharingServiceDelegate.swift in Sources */,
 				51B54AB624B5B33C0014348B /* WebViewController.swift in Sources */,
 				51E4994B24A8734C00B667CB /* SendToMicroBlogCommand.swift in Sources */,
 				51E4996F24A8764C00B667CB /* ActivityType.swift in Sources */,
@@ -5174,8 +5184,10 @@
 				51E4992224A8095600B667CB /* URL-Extensions.swift in Sources */,
 				51E4990424A808C300B667CB /* WebFeedIconDownloader.swift in Sources */,
 				51E498CB24A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
+				51B80F1F24BE531200C6C32D /* SharingServiceView.swift in Sources */,
 				17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
 				51E4993324A867E700B667CB /* AppNotifications.swift in Sources */,
+				51B80F4224BE588200C6C32D /* SharingServicePickerDelegate.swift in Sources */,
 				51E4990624A808C300B667CB /* ImageDownloader.swift in Sources */,
 				51E4994F24A8734C00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
 				51E498CA24A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
