@@ -69,24 +69,24 @@ class AccountsPreferencesModel: ObservableObject {
 	init() {
 		sortedAccounts = AccountManager.shared.sortedAccounts
 		
-		NotificationCenter.default.publisher(for: .UserDidAddAccount).sink(receiveValue: {  _ in
-			self.sortedAccounts = AccountManager.shared.sortedAccounts
+		NotificationCenter.default.publisher(for: .UserDidAddAccount).sink(receiveValue: {  [weak self] _ in
+			self?.sortedAccounts = AccountManager.shared.sortedAccounts
 		}).store(in: &notificationSubscriptions)
 		
-		NotificationCenter.default.publisher(for: .UserDidDeleteAccount).sink(receiveValue: { _ in
-			self.selectedConfiguredAccountID = nil
-			self.sortedAccounts = AccountManager.shared.sortedAccounts
-			self.selectedConfiguredAccountID = AccountManager.shared.defaultAccount.accountID
+		NotificationCenter.default.publisher(for: .UserDidDeleteAccount).sink(receiveValue: { [weak self] _ in
+			self?.selectedConfiguredAccountID = nil
+			self?.sortedAccounts = AccountManager.shared.sortedAccounts
+			self?.selectedConfiguredAccountID = AccountManager.shared.defaultAccount.accountID
 		}).store(in: &notificationSubscriptions)
 		
-		NotificationCenter.default.publisher(for: .AccountStateDidChange).sink(receiveValue: { notification in
+		NotificationCenter.default.publisher(for: .AccountStateDidChange).sink(receiveValue: { [weak self] notification in
 			guard let account = notification.object as? Account else {
 				return
 			}
-			if account.accountID == self.account?.accountID {
-				self.account = account
-				self.accountIsActive = account.isActive
-				self.accountName = account.name ?? ""
+			if account.accountID == self?.account?.accountID {
+				self?.account = account
+				self?.accountIsActive = account.isActive
+				self?.accountName = account.name ?? ""
 			}
 		}).store(in: &notificationSubscriptions)
 	}
