@@ -20,12 +20,14 @@ struct MainApp: App {
 	
 	@StateObject private var defaults = AppDefaults.shared
 
+
 	@SceneBuilder var body: some Scene {
 		#if os(macOS)
 		WindowGroup {
 			SceneNavigationView()
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
 				.environmentObject(defaults)
+				.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 		}
 		.windowToolbarStyle(UnifiedWindowToolbarStyle())
 		.commands {
@@ -68,6 +70,7 @@ struct MainApp: App {
 					.keyboardShortcut(.rightArrow, modifiers: [.command])
 			})
 		}
+		
 		
 		// Mac Preferences
 		Settings {

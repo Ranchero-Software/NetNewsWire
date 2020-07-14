@@ -24,6 +24,7 @@
 		1769E32924BCAFC7000E1E8E /* AddAccountPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */; };
 		1769E32B24BCB030000E1E8E /* ConfiguredAccountRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */; };
 		1769E32D24BD20A0000E1E8E /* EditAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32C24BD20A0000E1E8E /* EditAccountView.swift */; };
+		1769E33024BD6271000E1E8E /* EditAccountCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32F24BD6271000E1E8E /* EditAccountCredentials.swift */; };
 		1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		17930ED424AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */; };
@@ -1800,6 +1801,7 @@
 		1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountPickerRow.swift; sourceTree = "<group>"; };
 		1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfiguredAccountRow.swift; sourceTree = "<group>"; };
 		1769E32C24BD20A0000E1E8E /* EditAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountView.swift; sourceTree = "<group>"; };
+		1769E32F24BD6271000E1E8E /* EditAccountCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountCredentials.swift; sourceTree = "<group>"; };
 		1776E88D24AC5F8A00E78166 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
 		17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedView.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
@@ -2548,7 +2550,7 @@
 				1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */,
 				1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */,
 				1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */,
-				1769E32C24BD20A0000E1E8E /* EditAccountView.swift */,
+				1769E32E24BD5F22000E1E8E /* Edit Account */,
 				1769E32324BC5A50000E1E8E /* Add Account */,
 			);
 			path = Accounts;
@@ -2570,6 +2572,15 @@
 				1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */,
 			);
 			path = "Add Account";
+			sourceTree = "<group>";
+		};
+		1769E32E24BD5F22000E1E8E /* Edit Account */ = {
+			isa = PBXGroup;
+			children = (
+				1769E32C24BD20A0000E1E8E /* EditAccountView.swift */,
+				1769E32F24BD6271000E1E8E /* EditAccountCredentials.swift */,
+			);
+			path = "Edit Account";
 			sourceTree = "<group>";
 		};
 		17930ED224AF10CD00A9BA52 /* Add */ = {
@@ -5252,6 +5263,7 @@
 				51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
 				514E6BDB24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				51E4996E24A8764C00B667CB /* ActivityManager.swift in Sources */,
+				1769E33024BD6271000E1E8E /* EditAccountCredentials.swift in Sources */,
 				51E4995A24A873F900B667CB /* ErrorHandler.swift in Sources */,
 				51E4991F24A8094300B667CB /* RSImage-AppIcons.swift in Sources */,
 				51A5769724AE617200078888 /* ArticleContainerView.swift in Sources */,

@@ -15,7 +15,6 @@ struct EditAccountView: View {
 	@ObservedObject var viewModel: AccountsPreferencesModel
 	
 	var body: some View {
-        
 		ZStack {
 			RoundedRectangle(cornerRadius: 8, style: .circular)
 				.foregroundColor(Color.secondary.opacity(0.1))
@@ -23,11 +22,9 @@ struct EditAccountView: View {
 			
 			VStack {
 				editAccountHeader
-			
 				if viewModel.account != nil {
 					editAccountForm
 				}
-				
 				Spacer()
 			}
 		}
@@ -67,12 +64,14 @@ struct EditAccountView: View {
 				HStack {
 					Spacer()
 					Button("Credentials", action: {
-						
+						viewModel.sheetToShow = .credentials
 					})
 					Spacer()
 				}
 			}
-		}).padding()
+		})
+		.padding()
+		
 	}
 	
 }

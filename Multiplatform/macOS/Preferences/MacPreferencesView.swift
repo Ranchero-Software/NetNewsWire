@@ -66,6 +66,8 @@ struct MacPreferencesView: View {
 				}
 			}
 		}
+		.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
+		
 	}
 }
 

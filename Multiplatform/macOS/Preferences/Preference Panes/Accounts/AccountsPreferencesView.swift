@@ -18,28 +18,51 @@ struct AccountsPreferencesView: View {
 	var body: some View {
 		VStack {
 			HStack(alignment: .top, spacing: 10) {
-				VStack(alignment: .leading) {
-					List(viewModel.sortedAccounts, id: \.accountID, selection: $viewModel.selectedConfiguredAccountID) {
-						ConfiguredAccountRow(account: $0)
-							.id($0.accountID)
-					}.overlay(
-						Group {
-							bottomButtonStack
-						}, alignment: .bottom)
-				}
-				.frame(width: 160, height: 300, alignment: .leading)
-				.border(Color.gray, width: 1)
+				listOfAccounts
 				
 				EditAccountView(viewModel: viewModel)
 				.frame(height: 300, alignment: .leading)
 			}
 			Spacer()
-		}.sheet(isPresented: $viewModel.showAddAccountView,
-				onDismiss: { viewModel.showAddAccountView.toggle() },
+		}
+		.sheet(isPresented: $viewModel.showSheet,
+				onDismiss: { viewModel.sheetToShow = .none },
 				content: {
-					AddAccountView(preferencesModel: viewModel)
+					switch viewModel.sheetToShow {
+					case .add:
+						AddAccountView(preferencesModel: viewModel)
+					case .credentials:
+						EditAccountCredentials(viewModel: viewModel)
+					case .none:
+						EmptyView()
+					}
 				})
+		.alert(isPresented: $viewModel.showDeleteConfirmation, content: {
+			Alert(title: Text("Delete \(viewModel.account!.nameForDisplay)?"),
+				  message: Text("Are you sure you want to delete the account \"\(viewModel.account!.nameForDisplay)\"?  This can not be undone."),
+				  primaryButton: .destructive(Text("Delete"), action: {
+					AccountManager.shared.deleteAccount(viewModel.account!)
+					viewModel.showDeleteConfirmation = false
+				  }),
+				  secondaryButton: .cancel({
+					viewModel.showDeleteConfirmation = false
+				  }))
+		})
 	
+	}
+	
+	var listOfAccounts: some View {
+		VStack(alignment: .leading) {
+			List(viewModel.sortedAccounts, id: \.accountID, selection: $viewModel.selectedConfiguredAccountID) {
+				ConfiguredAccountRow(account: $0)
+					.id($0.accountID)
+			}.overlay(
+				Group {
+					bottomButtonStack
+				}, alignment: .bottom)
+		}
+		.frame(width: 160, height: 300, alignment: .leading)
+		.border(Color.gray, width: 1)
 	}
 	
 	var bottomButtonStack: some View {
@@ -47,7 +70,7 @@ struct AccountsPreferencesView: View {
 			Divider()
 			HStack(alignment: .center, spacing: 4) {
 				Button(action: {
-					viewModel.showAddAccountView.toggle()
+					viewModel.sheetToShow = .add
 				}, label: {
 					Image(systemName: "plus")
 						.font(.title)
@@ -63,10 +86,7 @@ struct AccountsPreferencesView: View {
 				.help("Add Account")
 				
 				Button(action: {
-					if let account = viewModel.sortedAccounts.first(where: { $0.accountID == viewModel.selectedConfiguredAccountID }) {
-						AccountManager.shared.deleteAccount(account)
-					}
-					
+					viewModel.showDeleteConfirmation = true
 				}, label: {
 					Image(systemName: "minus")
 						.font(.title)

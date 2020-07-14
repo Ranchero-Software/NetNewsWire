@@ -12,6 +12,12 @@ import Combine
 
 class AccountsPreferencesModel: ObservableObject {
 	
+	enum AccountConfigurationSheets {
+		case add, credentials, none
+	}
+	
+	public private(set) var account: Account?
+	
 	// Configured Accounts
 	@Published var sortedAccounts: [Account] = []
 	@Published var selectedConfiguredAccountID: String? = AccountManager.shared.defaultAccount.accountID {
@@ -24,9 +30,17 @@ class AccountsPreferencesModel: ObservableObject {
 		}
 	}
 	@Published var showAddAccountView: Bool = false
+	var selectedAccountIsDefault: Bool {
+		guard let selected = selectedConfiguredAccountID else {
+			return true
+		}
+		if selected == AccountManager.shared.defaultAccount.accountID {
+			return true
+		}
+		return false
+	}
 	
 	// Edit Account
-	public private(set) var account: Account?
 	@Published var accountIsActive: Bool = false {
 		didSet {
 			account?.isActive = accountIsActive
@@ -37,16 +51,18 @@ class AccountsPreferencesModel: ObservableObject {
 			account?.name = accountName
 		}
 	}
+	@Published var showAddCredentialsView: Bool = false
 	
-	var selectedAccountIsDefault: Bool {
-		guard let selected = selectedConfiguredAccountID else {
-			return true
+	// Sheets
+	@Published var showSheet: Bool = false
+	@Published var sheetToShow: AccountConfigurationSheets = .none {
+		didSet {
+			showSheet = sheetToShow != .none
 		}
-		if selected == AccountManager.shared.defaultAccount.accountID {
-			return true
-		}
-		return false
 	}
+	@Published var showDeleteConfirmation: Bool = false
+	
+	
 	
 	// Subscriptions
 	var notificationSubscriptions = Set<AnyCancellable>()
