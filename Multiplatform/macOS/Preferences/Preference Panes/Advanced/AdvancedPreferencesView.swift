@@ -25,7 +25,9 @@ struct AdvancedPreferencesView: View {
                 
                 HStack {
                     Spacer()
-                    Button("Check for Updates", action: {})
+					Button("Check for Updates") {
+						appDelegate.softwareUpdater.checkForUpdates()
+					}
                     Spacer()
                 }.padding(.bottom, 8)
                 

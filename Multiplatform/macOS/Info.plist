@@ -49,5 +49,9 @@
 			</array>
 		</dict>
 	</array>
+	<key>SUFeedURL</key>
+	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
+	<key>FeedURLForTestBuilds</key>
+	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
 </dict>
 </plist>
