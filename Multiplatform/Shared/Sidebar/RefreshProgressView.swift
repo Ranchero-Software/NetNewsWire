@@ -13,7 +13,7 @@ struct RefreshProgressView: View {
 	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 
 	@ViewBuilder var body: some View {
-		switch refreshProgress.refreshProgressState {
+		switch refreshProgress.state {
 		case .refreshProgress(let progress):
 			ProgressView(value: progress)
 				.frame(width: progressViewWidth())
