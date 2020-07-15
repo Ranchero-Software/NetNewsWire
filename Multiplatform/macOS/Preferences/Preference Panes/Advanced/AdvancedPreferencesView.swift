@@ -10,6 +10,7 @@ import SwiftUI
 struct AdvancedPreferencesView: View {
     
 	@EnvironmentObject private var preferences: AppDefaults
+	@StateObject private var viewModel = AdvancedPreferencesModel()
     
     var body: some View {
             Form {
@@ -34,6 +35,9 @@ struct AdvancedPreferencesView: View {
                     Spacer()
                 }
 			}
+			.onChange(of: preferences.downloadTestBuilds, perform: { _ in
+				viewModel.updateAppcast()
+			})
 			.frame(width: 400, alignment: .center)
 			.lineLimit(3)
     }

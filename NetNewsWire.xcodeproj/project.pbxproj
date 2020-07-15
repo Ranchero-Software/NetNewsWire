@@ -38,6 +38,7 @@
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
+		17E4DBD624BFC53E00FE462A /* AdvancedPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
 		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
 		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
@@ -1812,6 +1813,7 @@
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
 		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
+		17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesModel.swift; sourceTree = "<group>"; };
 		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
 		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
 		3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
@@ -2560,6 +2562,7 @@
 		1769E32024BC58AD000E1E8E /* Advanced */ = {
 			isa = PBXGroup;
 			children = (
+				17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */,
 				1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */,
 			);
 			path = Advanced;
@@ -5211,6 +5214,7 @@
 				51919FEF24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				51E4996624A8760B00B667CB /* ArticleStyle.swift in Sources */,
 				5171B4D424B7BABA00FB8D3B /* MarkStatusCommand.swift in Sources */,
+				17E4DBD624BFC53E00FE462A /* AdvancedPreferencesModel.swift in Sources */,
 				5177470724B2910300EB0F74 /* ArticleToolbarModifier.swift in Sources */,
 				FA80C11824B0728000974098 /* AddFolderView.swift in Sources */,
 				51E4996C24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
