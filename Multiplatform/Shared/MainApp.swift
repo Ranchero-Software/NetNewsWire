@@ -79,6 +79,7 @@ struct MainApp: App {
 			.frame(width: 500)
 			.navigationTitle("Preferences")
 			.environmentObject(defaults)
+			.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 		}
 		
 		#endif
