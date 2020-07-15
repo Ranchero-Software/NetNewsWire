@@ -2770,7 +2770,6 @@
 			isa = PBXGroup;
 			children = (
 				51B54ABB24B5BEF20014348B /* ArticleView.swift */,
-				51B80F4524BF76E700C6C32D /* Browser.swift */,
 				51B54A6824B54A490014348B /* IconView.swift */,
 				51B80F4324BE58BF00C6C32D /* SharingServiceDelegate.swift */,
 				51B80F4124BE588200C6C32D /* SharingServicePickerDelegate.swift */,
@@ -2943,6 +2942,7 @@
 				51C0514724A77DF800194D5E /* macOS.entitlements */,
 				51C0514624A77DF800194D5E /* Info.plist */,
 				51E4993924A8708800B667CB /* AppDelegate.swift */,
+				51B80F4524BF76E700C6C32D /* Browser.swift */,
 				1729529A24AA1FD200D65E66 /* MacSearchField.swift */,
 				5177470C24B2FF3B00EB0F74 /* Article */,
 				1729528F24AA1A4F00D65E66 /* Preferences */,
