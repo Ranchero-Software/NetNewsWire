@@ -38,11 +38,7 @@ class AddAccountModel: ObservableObject {
 	}
 	@Published var showError: Bool = false
 	@Published var accountAdded: Bool = false
-	
-	init() {
-		restrictAccounts()
-	}
-	
+		
 	func resetUserEntries() {
 		userName = ""
 		password = ""
@@ -66,25 +62,6 @@ class AddAccountModel: ObservableObject {
 			authenticateFeedly()
 		case .newsBlur:
 			authenticateNewsBlur()
-		}
-	}
-	
-	func restrictAccounts() {
-		func removeAccountType(_ accountType: AccountType) {
-			if let index = addableAccountTypes.firstIndex(of: accountType) {
-				addableAccountTypes.remove(at: index)
-			}
-		}
-		
-		if AppDefaults.shared.isDeveloperBuild {
-			removeAccountType(.cloudKit)
-			removeAccountType(.feedly)
-			removeAccountType(.feedWrangler)
-			return
-		}
-
-		if AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
-			removeAccountType(.cloudKit)
 		}
 	}
 	
