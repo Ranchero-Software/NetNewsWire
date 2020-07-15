@@ -357,6 +357,7 @@
 		51B80F1F24BE531200C6C32D /* SharingServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80F1E24BE531200C6C32D /* SharingServiceView.swift */; };
 		51B80F4224BE588200C6C32D /* SharingServicePickerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80F4124BE588200C6C32D /* SharingServicePickerDelegate.swift */; };
 		51B80F4424BE58BF00C6C32D /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80F4324BE58BF00C6C32D /* SharingServiceDelegate.swift */; };
+		51B80F4624BF76E700C6C32D /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80F4524BF76E700C6C32D /* Browser.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
 		51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
@@ -2010,6 +2011,7 @@
 		51B80F1E24BE531200C6C32D /* SharingServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceView.swift; sourceTree = "<group>"; };
 		51B80F4124BE588200C6C32D /* SharingServicePickerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServicePickerDelegate.swift; sourceTree = "<group>"; };
 		51B80F4324BE58BF00C6C32D /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
+		51B80F4524BF76E700C6C32D /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
@@ -2768,6 +2770,7 @@
 			isa = PBXGroup;
 			children = (
 				51B54ABB24B5BEF20014348B /* ArticleView.swift */,
+				51B80F4524BF76E700C6C32D /* Browser.swift */,
 				51B54A6824B54A490014348B /* IconView.swift */,
 				51B80F4324BE58BF00C6C32D /* SharingServiceDelegate.swift */,
 				51B80F4124BE588200C6C32D /* SharingServicePickerDelegate.swift */,
@@ -5221,6 +5224,7 @@
 				51E498CC24A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
 				51E498C824A8085D00B667CB /* SmartFeedsController.swift in Sources */,
 				175942AB24AD533200585066 /* RefreshInterval.swift in Sources */,
+				51B80F4624BF76E700C6C32D /* Browser.swift in Sources */,
 				51E4992C24A8676300B667CB /* ArticleSorter.swift in Sources */,
 				514E6C0A24AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */,
 				51E4995024A8734C00B667CB /* ExtensionPoint.swift in Sources */,

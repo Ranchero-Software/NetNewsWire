@@ -7,9 +7,6 @@
 //
 
 import AppKit
-import Articles
-
-import AppKit
 import RSCore
 import Articles
 
@@ -207,6 +204,24 @@ extension WebViewController: WKScriptMessageHandler {
 	
 }
 
+extension WebViewController: WKNavigationDelegate {
+
+	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+		if navigationAction.navigationType == .linkActivated {
+			if let url = navigationAction.request.url {
+				let flags = navigationAction.modifierFlags
+				let invert = flags.contains(.shift) || flags.contains(.command)
+				Browser.open(url.absoluteString, invertPreference: invert)
+			}
+			decisionHandler(.cancel)
+			return
+		}
+
+		decisionHandler(.allow)
+	}
+	
+}
+
 // MARK: Private
 
 private extension WebViewController {
@@ -228,6 +243,8 @@ private extension WebViewController {
 				self.view.topAnchor.constraint(equalTo: webView.topAnchor),
 				self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
 			])
+			
+			webView.navigationDelegate = self
 		
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
