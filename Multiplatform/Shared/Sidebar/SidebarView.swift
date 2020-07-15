@@ -71,13 +71,13 @@ struct SidebarView: View {
 						if let containerID = sidebarItem.containerID {
 							DisclosureGroup(isExpanded: $expandedContainers[containerID]) {
 								ForEach(sidebarItem.children) { sidebarItem in
-									buildSidebarItemNavigation(sidebarItem)
+									SidebarItemNavigation(sidebarItem: sidebarItem)
 								}
 							} label: {
-								buildSidebarItemNavigation(sidebarItem)
+								SidebarItemNavigation(sidebarItem: sidebarItem)
 							}
 						} else {
-							buildSidebarItemNavigation(sidebarItem)
+							SidebarItemNavigation(sidebarItem: sidebarItem)
 						}
 					}
 				} label: {
@@ -90,20 +90,27 @@ struct SidebarView: View {
 			}
 		}
 	}
-	
-	func buildSidebarItemNavigation(_ sidebarItem: SidebarItem) -> some View {
-		#if os(macOS)
-		return SidebarItemView(sidebarItem: sidebarItem).tag(sidebarItem.feed!.feedID!)
-		#else
-		return ZStack {
-			SidebarItemView(sidebarItem: sidebarItem)
-			NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds),
-						   tag: sidebarItem.feed!.feedID!,
-						   selection: $sidebarModel.selectedFeedIdentifier) {
-				EmptyView()
-			}.buttonStyle(PlainButtonStyle())
+
+	struct SidebarItemNavigation: View {
+		
+		@EnvironmentObject private var sidebarModel: SidebarModel
+		var sidebarItem: SidebarItem
+		
+		@ViewBuilder var body: some View {
+			#if os(macOS)
+			SidebarItemView(sidebarItem: sidebarItem).tag(sidebarItem.feed!.feedID!)
+			#else
+			ZStack {
+				SidebarItemView(sidebarItem: sidebarItem)
+				NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds),
+							   tag: sidebarItem.feed!.feedID!,
+							   selection: $sidebarModel.selectedFeedIdentifier) {
+					EmptyView()
+				}.buttonStyle(PlainButtonStyle())
+			}
+			#endif
 		}
-		#endif
+		
 	}
 	
 }
