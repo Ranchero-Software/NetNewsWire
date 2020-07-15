@@ -43,23 +43,6 @@ struct TimelineToolbarModifier: ViewModifier {
 				ToolbarItem {
 					Spacer()
 				}
-				
-				ToolbarItem(placement: .automatic) {
-					RefreshProgressView()
-				}
-				
-				ToolbarItem {
-					Spacer()
-				}
-				
-				ToolbarItem {
-					Button {
-					} label: {
-						AppAssets.nextUnreadArticleImage.font(.title3)
-					}
-					.help("Next Unread")
-				}
-				
 				#endif
 			}
 	}
