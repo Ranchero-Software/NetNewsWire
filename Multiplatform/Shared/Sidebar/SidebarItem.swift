@@ -17,7 +17,7 @@ public enum SidebarItemIdentifier: Hashable, Equatable {
 }
 
 public enum RepresentedType {
-	case webFeed, folder, pseudoFeed, account, unknown
+	case smartFeedController, webFeed, folder, pseudoFeed, account, unknown
 }
 
 struct SidebarItem: Identifiable {
@@ -43,6 +43,8 @@ struct SidebarItem: Identifiable {
 	
 	var representedType: RepresentedType {
 		switch type(of: represented) {
+		case is SmartFeedsController.Type:
+			return .smartFeedController
 		case is SmartFeed.Type:
 			return .pseudoFeed
 		case is UnreadFeed.Type:
