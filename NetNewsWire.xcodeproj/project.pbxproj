@@ -1095,8 +1095,6 @@
 		FF64D0E824AF53EE0084080A /* RefreshProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */; };
 		FF64D0E924AF53EE0084080A /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF64D0E624AF53EE0084080A /* RefreshProgressView.swift */; };
 		FF64D0EA24AF53EE0084080A /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF64D0E624AF53EE0084080A /* RefreshProgressView.swift */; };
-		FFA2BBD624AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA2BBD524AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift */; };
-		FFA2BBD724AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA2BBD524AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift */; };
 		FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD43E372340F320009E5CA3 /* MarkAsReadAlertController.swift */; };
 /* End PBXBuildFile section */
 
@@ -2338,7 +2336,6 @@
 		FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorter.swift; sourceTree = "<group>"; };
 		FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshProgressModel.swift; sourceTree = "<group>"; };
 		FF64D0E624AF53EE0084080A /* RefreshProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
-		FFA2BBD524AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreviewProvider+RefreshProgressModel.swift"; sourceTree = "<group>"; };
 		FFD43E372340F320009E5CA3 /* MarkAsReadAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkAsReadAlertController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2699,7 +2696,6 @@
 			isa = PBXGroup;
 			children = (
 				514E6BFE24AD255D00AC6F6E /* PreviewArticles.swift */,
-				FFA2BBD524AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift */,
 			);
 			path = Previews;
 			sourceTree = "<group>";
@@ -5142,7 +5138,6 @@
 				51B80EDF24BD298900C6C32D /* TitleActivityItemSource.swift in Sources */,
 				51E4991524A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
 				51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
-				FFA2BBD624AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift in Sources */,
 				653A4E7924BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift in Sources */,
 				51E4995724A8734D00B667CB /* ExtensionPoint.swift in Sources */,
 				1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */,
@@ -5264,7 +5259,6 @@
 				514E6C0024AD255D00AC6F6E /* PreviewArticles.swift in Sources */,
 				1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */,
 				1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */,
-				FFA2BBD724AF751100B3149D /* PreviewProvider+RefreshProgressModel.swift in Sources */,
 				5177470424B2657F00EB0F74 /* TimelineToolbarModifier.swift in Sources */,
 				51E4992D24A8676300B667CB /* FetchRequestOperation.swift in Sources */,
 				51E4992424A8098400B667CB /* SmartFeedPasteboardWriter.swift in Sources */,

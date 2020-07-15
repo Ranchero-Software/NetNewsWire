@@ -26,8 +26,9 @@ struct MainApp: App {
 		WindowGroup {
 			SceneNavigationView()
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
-				.environmentObject(defaults)
+				.onAppear { refreshProgress.startup() }
 				.environmentObject(refreshProgress)
+				.environmentObject(defaults)
 		}
 		.windowToolbarStyle(UnifiedWindowToolbarStyle())
 		.commands {
@@ -86,8 +87,9 @@ struct MainApp: App {
 		#if os(iOS)
 		WindowGroup {
 			SceneNavigationView()
-				.environmentObject(defaults)
+				.onAppear { refreshProgress.startup() }
 				.environmentObject(refreshProgress)
+				.environmentObject(defaults)
 				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
 		}
 		.commands {

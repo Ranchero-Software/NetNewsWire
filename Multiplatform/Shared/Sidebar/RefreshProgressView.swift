@@ -38,18 +38,3 @@ struct RefreshProgressView: View {
 	}
 	
 }
-
-struct RefreshProgressView_Previews: PreviewProvider {
-	static var previews: some View {
-		Group {
-			RefreshProgressView()
-				.environmentObject(refreshProgressModel(lastRefreshDate: nil, tasksCompleted: 1, totalTasks: 2))
-				.previewDisplayName("Refresh in progress")
-						
-			RefreshProgressView()
-				.environmentObject(refreshProgressModel(lastRefreshDate: Date(timeIntervalSinceNow: -120.0), tasksCompleted: 0, totalTasks: 0))
-				.previewDisplayName("Last refreshed with date")
-		}
-		.previewLayout(.sizeThatFits)
-    }
-}
