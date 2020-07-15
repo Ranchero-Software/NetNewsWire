@@ -52,7 +52,6 @@ class AccountsPreferencesModel: ObservableObject {
 			account?.name = accountName
 		}
 	}
-	@Published var showAddCredentialsView: Bool = false
 	
 	// Sheets
 	@Published var showSheet: Bool = false

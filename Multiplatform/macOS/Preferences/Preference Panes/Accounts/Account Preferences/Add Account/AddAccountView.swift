@@ -95,6 +95,7 @@ struct AddAccountView: View {
 		.onChange(of: viewModel.accountAdded) { value in
 			if value == true {
 				preferencesModel.showAddAccountView = false
+				presentationMode.wrappedValue.dismiss()
 			}
 		}
 		.alert(isPresented: $viewModel.showError) {

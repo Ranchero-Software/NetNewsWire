@@ -70,6 +70,7 @@ struct EditAccountCredentialsView: View {
 		.onChange(of: editModel.accountCredentialsWereUpdated) { value in
 			if value == true {
 				viewModel.sheetToShow = .none
+				presentationMode.wrappedValue.dismiss()
 			}
 		}
 		.alert(isPresented: $editModel.showError) {
