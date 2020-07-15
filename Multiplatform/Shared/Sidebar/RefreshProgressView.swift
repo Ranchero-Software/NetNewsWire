@@ -10,10 +10,10 @@ import SwiftUI
 
 struct RefreshProgressView: View {
 	
-	@EnvironmentObject var sceneModel: SceneModel
-	
+	@EnvironmentObject private var refreshProgress: RefreshProgressModel
+
 	@ViewBuilder var body: some View {
-		switch sceneModel.refreshProgressState {
+		switch refreshProgress.refreshProgressState {
 		case .refreshProgress(let progress):
 			ProgressView(value: progress)
 				.frame(width: progressViewWidth())
@@ -30,12 +30,10 @@ struct RefreshProgressView: View {
 	// MARK -
 	
 	private func progressViewWidth() -> CGFloat {
-		#if os(iOS)
-		return 100.0
-		#endif
-		
 		#if os(macOS)
 		return 40.0
+		#else
+		return 100.0
 		#endif
 	}
 	

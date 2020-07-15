@@ -10,8 +10,8 @@ import SwiftUI
 
 struct SidebarToolbarModifier: ViewModifier {
     
-	@EnvironmentObject private var sidebarModel: SidebarModel
 	@EnvironmentObject private var defaults: AppDefaults
+	@EnvironmentObject private var sidebarModel: SidebarModel
 	@StateObject private var viewModel = SidebarToolbarModel()
 
 	@ViewBuilder func body(content: Content) -> some View {

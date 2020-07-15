@@ -18,6 +18,7 @@ struct MainApp: App {
 	@UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 	#endif
 	
+	@StateObject private var refreshProgress = RefreshProgressModel()
 	@StateObject private var defaults = AppDefaults.shared
 
 	@SceneBuilder var body: some Scene {
@@ -26,6 +27,7 @@ struct MainApp: App {
 			SceneNavigationView()
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
 				.environmentObject(defaults)
+				.environmentObject(refreshProgress)
 		}
 		.windowToolbarStyle(UnifiedWindowToolbarStyle())
 		.commands {
@@ -85,6 +87,7 @@ struct MainApp: App {
 		WindowGroup {
 			SceneNavigationView()
 				.environmentObject(defaults)
+				.environmentObject(refreshProgress)
 				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
 		}
 		.commands {

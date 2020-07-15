@@ -14,8 +14,6 @@ import RSCore
 
 final class SceneModel: ObservableObject {
 	
-	@Published var refreshProgressState = RefreshProgressModel.State.none
-
 	@Published var markAllAsReadButtonState: Bool?
 	@Published var nextUnreadButtonState: Bool?
 	@Published var readButtonState: Bool?
@@ -43,9 +41,6 @@ final class SceneModel: ObservableObject {
 	func startup() {
 		sidebarModel.delegate = self
 		timelineModel.delegate = self
-
-		self.refreshProgressModel = RefreshProgressModel()
-		self.refreshProgressModel!.$state.assign(to: self.$refreshProgressState)
 		
 		self.articleIconSchemeHandler = ArticleIconSchemeHandler(sceneModel: self)
 		self.webViewProvider = WebViewProvider(articleIconSchemeHandler: self.articleIconSchemeHandler!)
