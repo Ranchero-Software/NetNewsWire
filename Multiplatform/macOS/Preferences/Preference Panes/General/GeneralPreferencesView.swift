@@ -11,7 +11,7 @@ struct GeneralPreferencesView: View {
 	
 	@EnvironmentObject private var defaults: AppDefaults
 	@Environment(\.colorScheme) private var colorScheme
-	@ObservedObject var preferences: MacPreferencesModel
+	@StateObject private var preferences = GeneralPreferencesModel()
 	private let colorPalettes = UserInterfaceColorPalette.allCases
 	
 	var body: some View {

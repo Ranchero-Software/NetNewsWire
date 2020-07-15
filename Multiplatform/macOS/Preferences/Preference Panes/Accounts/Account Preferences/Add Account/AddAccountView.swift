@@ -44,13 +44,8 @@ struct AddAccountView: View {
 					case .newsBlur:
 						userNameAndPasswordView
 				}
-				
-				
 			}
-			
-			
-			
-			
+						
 			Spacer()
 			HStack {
 				if viewModel.accountIsAuthenticating {

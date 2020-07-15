@@ -1,5 +1,5 @@
 //
-//  MacPreferencesModel.swift
+//  GeneralPreferencesModel.swift
 //  Multiplatform macOS
 //
 //  Created by Stuart Breckenridge on 12/7/20.
@@ -8,26 +8,10 @@
 
 import Foundation
 
-enum PreferencePane: Int, CaseIterable {
-	case general = 0
-	case accounts = 1
-	case advanced = 2
-	
-	var description: String {
-		switch self {
-		case .general:
-			return "General"
-		case .accounts:
-			return "Accounts"
-		case .advanced:
-			return "Advanced"
-		}
-	}
-}
 
-class MacPreferencesModel: ObservableObject {
+
+class GeneralPreferencesModel: ObservableObject {
 	
-	@Published var currentPreferencePane: PreferencePane = PreferencePane.general
 	@Published var rssReaders = [RSSReader]()
 	@Published var readerSelection: Int = 0 {
 		willSet {
@@ -47,7 +31,7 @@ class MacPreferencesModel: ObservableObject {
 
 // MARK:- RSS Readers
 
-private extension MacPreferencesModel {
+private extension GeneralPreferencesModel {
 	
 	func prepareRSSReaders() {
 		

@@ -15,9 +15,9 @@ import RSCore
 class AddAccountModel: ObservableObject {
 	
 	#if DEBUG
-	var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
+	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
 	#else
-	var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
+	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
 	#endif
 	
 	// Add Accounts

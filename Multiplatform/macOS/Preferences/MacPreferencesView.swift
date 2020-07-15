@@ -7,17 +7,33 @@
 
 import SwiftUI
 
+enum PreferencePane: Int, CaseIterable {
+	case general = 0
+	case accounts = 1
+	case advanced = 2
+	
+	var description: String {
+		switch self {
+		case .general:
+			return "General"
+		case .accounts:
+			return "Accounts"
+		case .advanced:
+			return "Advanced"
+		}
+	}
+}
 
 struct MacPreferencesView: View {
 	
 	@EnvironmentObject var defaults: AppDefaults
-	@StateObject private var viewModel = MacPreferencesModel()
+	@State private var preferencePane: PreferencePane = .general
 	
 	var body: some View {
 		VStack {
-			switch viewModel.currentPreferencePane {
+			switch preferencePane {
 			case .general:
-				GeneralPreferencesView(preferences: viewModel)
+				GeneralPreferencesView()
 					.environmentObject(defaults)
 			case .accounts:
 				AccountsPreferencesView()
@@ -31,36 +47,36 @@ struct MacPreferencesView: View {
 			ToolbarItem {
 				HStack {
 					Button(action: {
-						viewModel.currentPreferencePane = .general
+						preferencePane = .general
 					}, label: {
 						VStack {
 							Image(systemName: "gearshape")
 								.font(.title2)
 							Text("General")
 						}.foregroundColor(
-							viewModel.currentPreferencePane == .general ? Color("AccentColor") : Color.gray
+							preferencePane == .general ? Color("AccentColor") : Color.gray
 						)
 					}).frame(width: 70)
 					Button(action: {
-						viewModel.currentPreferencePane = .accounts
+						preferencePane = .accounts
 					}, label: {
 						VStack {
 							Image(systemName: "at")
 								.font(.title2)
 							Text("Accounts")
 						}.foregroundColor(
-							viewModel.currentPreferencePane == .accounts ? Color("AccentColor") : Color.gray
+							preferencePane == .accounts ? Color("AccentColor") : Color.gray
 						)
 					}).frame(width: 70)
 					Button(action: {
-						viewModel.currentPreferencePane = .advanced
+						preferencePane = .advanced
 					}, label: {
 						VStack {
 							Image(systemName: "scale.3d")
 								.font(.title2)
 							Text("Advanced")
 						}.foregroundColor(
-							viewModel.currentPreferencePane == .advanced ? Color("AccentColor") : Color.gray
+							preferencePane == .advanced ? Color("AccentColor") : Color.gray
 						)
 					}).frame(width: 70)
 				}
