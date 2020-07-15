@@ -9,6 +9,7 @@
 import Foundation
 import Account
 import Secrets
+import RSCore
 
 class EditAccountCredentialsModel: ObservableObject {
 	
@@ -52,19 +53,17 @@ class EditAccountCredentialsModel: ObservableObject {
 		case .feedbin:
 			let credentials = try? account.retrieveCredentials(type: .basic)
 			userName = credentials?.username ?? ""
-			password = credentials?.secret ??  ""
 		case .feedWrangler:
 			let credentials = try? account.retrieveCredentials(type: .feedWranglerBasic)
 			userName = credentials?.username ?? ""
-			password = credentials?.secret ?? ""
+		case .feedly:
+			return
 		case .freshRSS:
 			let credentials = try? account.retrieveCredentials(type: .readerBasic)
 			userName = credentials?.username ?? ""
-			password = credentials?.secret ?? ""
 		case .newsBlur:
 			let credentials = try? account.retrieveCredentials(type: .newsBlurBasic)
 			userName = credentials?.username ?? ""
-			password = credentials?.secret ?? ""
 		default:
 			return
 		}
@@ -160,7 +159,11 @@ extension EditAccountCredentialsModel {
 	}
 	
 	func updateFeedly(_ account: Account) {
-		
+		accountIsUpdatingCredentials = true
+		let updateAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
+		updateAccount.delegate = self
+		updateAccount.presentationAnchor = NSApplication.shared.windows.last
+		MainThreadOperationQueue.shared.add(updateAccount)
 	}
 	
 	func updateFreshRSS(_ account: Account) {
@@ -251,12 +254,23 @@ extension EditAccountCredentialsModel {
 	
 }
 
-// MARK:- Retrieve Credentials
-extension EditAccountCredentialsModel {
+// MARK:- OAuthAccountAuthorizationOperationDelegate
+extension EditAccountCredentialsModel: OAuthAccountAuthorizationOperationDelegate {
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		accountIsUpdatingCredentials = false
+		accountCredentialsWereUpdated = true
+		account.refreshAll { [weak self] result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				self?.error = .other(error: error)
+			}
+		}
+	}
 	
-	
-	
-	
-	
-	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+		accountIsUpdatingCredentials = false
+		self.error = .other(error: error)
+	}
 }

@@ -28,12 +28,11 @@ struct AddAccountView: View {
 						})
 					   })
 				
-				
 				switch viewModel.selectedAddAccount {
 					case .onMyMac:
 						addLocalAccountView
 					case .cloudKit:
-						Text("iCloud")
+						iCloudAccountView
 					case .feedbin:
 						userNameAndPasswordView
 					case .feedWrangler:
@@ -41,12 +40,17 @@ struct AddAccountView: View {
 					case .freshRSS:
 						userNamePasswordAndAPIUrlView
 					case .feedly:
-						Text("Feedly")
+						oAuthView
 					case .newsBlur:
 						userNameAndPasswordView
 				}
 				
+				
 			}
+			
+			
+			
+			
 			Spacer()
 			HStack {
 				if viewModel.accountIsAuthenticating {
@@ -57,28 +61,33 @@ struct AddAccountView: View {
 					Text("Cancel")
 				})
 				
-				if viewModel.selectedAddAccount == .onMyMac {
-					Button("Add", action: {
-						viewModel.authenticateAccount()
-					})
-				}
-				
-				if viewModel.selectedAddAccount != .onMyMac && viewModel.selectedAddAccount != .freshRSS  {
-					Button("Add Account", action: {
-						viewModel.authenticateAccount()
-					})
-					.disabled(viewModel.userName.count == 0 || viewModel.password.count == 0)
-				}
-				
-				if viewModel.selectedAddAccount == .freshRSS  {
-					Button("Add Account", action: {
-						viewModel.authenticateAccount()
-					})
-					.disabled(viewModel.userName.count == 0 || viewModel.password.count == 0 || viewModel.apiUrl.count == 0)
+				switch viewModel.selectedAddAccount {
+					case .onMyMac:
+						Button("Add Account", action: {
+							viewModel.authenticateAccount()
+						})
+					case .feedly:
+						Button("Authenticate", action: {
+							viewModel.authenticateAccount()
+						})
+					case .cloudKit:
+						Button("Add Account", action: {
+							viewModel.authenticateAccount()
+						})
+					case .freshRSS:
+						Button("Add Account", action: {
+							viewModel.authenticateAccount()
+						})
+						.disabled(viewModel.userName.count == 0 || viewModel.password.count == 0 || viewModel.apiUrl.count == 0)
+					default:
+						Button("Add Account", action: {
+							viewModel.authenticateAccount()
+						})
+						.disabled(viewModel.userName.count == 0 || viewModel.password.count == 0)
 				}
 			}
 		}
-		.frame(idealWidth: 300, idealHeight: 200, alignment: .top)
+		.frame(width: 300, height: 200, alignment: .top)
 		.padding()
 		.onChange(of: viewModel.selectedAddAccount) { _ in
 			viewModel.resetUserEntries()
@@ -102,20 +111,25 @@ struct AddAccountView: View {
 	var addLocalAccountView: some View {
 		Group {
 			TextField("Account Name", text: $viewModel.newLocalAccountName)
-				.textFieldStyle(RoundedBorderTextFieldStyle())
 			Text("This account stores all of its data on your device. It does not sync.")
 				.foregroundColor(.secondary)
 				.multilineTextAlignment(.leading)
-		}
+		}.textFieldStyle(RoundedBorderTextFieldStyle())
+	}
+	
+	var iCloudAccountView: some View {
+		Group {
+			Text("This account syncs across your devices using your iCloud account.")
+				.foregroundColor(.secondary)
+				.multilineTextAlignment(.leading)
+		}.textFieldStyle(RoundedBorderTextFieldStyle())
 	}
 	
 	var userNameAndPasswordView: some View {
 		Group {
 			TextField("Email", text: $viewModel.userName)
-				.textFieldStyle(RoundedBorderTextFieldStyle())
 			SecureField("Password", text: $viewModel.password)
-				.textFieldStyle(RoundedBorderTextFieldStyle())
-		}
+		}.textFieldStyle(RoundedBorderTextFieldStyle())
 	}
 	
 	var userNamePasswordAndAPIUrlView: some View {
@@ -123,6 +137,12 @@ struct AddAccountView: View {
 			TextField("Email", text: $viewModel.userName)
 			SecureField("Password", text: $viewModel.password)
 			TextField("API URL", text: $viewModel.apiUrl)
+		}.textFieldStyle(RoundedBorderTextFieldStyle())
+	}
+	
+	var oAuthView: some View {
+		Group {
+			Text("Click Authenticate")
 		}.textFieldStyle(RoundedBorderTextFieldStyle())
 	}
 	

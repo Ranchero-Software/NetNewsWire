@@ -10,15 +10,14 @@ import Foundation
 import Account
 import RSWeb
 import Secrets
+import RSCore
 
 class AddAccountModel: ObservableObject {
 	
-	
-	
 	#if DEBUG
-	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
+	var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
 	#else
-	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
+	var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
 	#endif
 	
 	// Add Accounts
@@ -39,6 +38,10 @@ class AddAccountModel: ObservableObject {
 	}
 	@Published var showError: Bool = false
 	@Published var accountAdded: Bool = false
+	
+	init() {
+		restrictAccounts()
+	}
 	
 	func resetUserEntries() {
 		userName = ""
@@ -63,6 +66,25 @@ class AddAccountModel: ObservableObject {
 			authenticateFeedly()
 		case .newsBlur:
 			authenticateNewsBlur()
+		}
+	}
+	
+	func restrictAccounts() {
+		func removeAccountType(_ accountType: AccountType) {
+			if let index = addableAccountTypes.firstIndex(of: accountType) {
+				addableAccountTypes.remove(at: index)
+			}
+		}
+		
+		if AppDefaults.shared.isDeveloperBuild {
+			removeAccountType(.cloudKit)
+			removeAccountType(.feedly)
+			removeAccountType(.feedWrangler)
+			return
+		}
+
+		if AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
+			removeAccountType(.cloudKit)
 		}
 	}
 	
@@ -266,7 +288,32 @@ extension AddAccountModel {
 	}
 	
 	private func authenticateFeedly() {
-		// TBC
+		accountIsAuthenticating = true
+		let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
+		addAccount.delegate = self
+		addAccount.presentationAnchor = NSApplication.shared.windows.last
+		MainThreadOperationQueue.shared.add(addAccount)
 	}
 	
+}
+
+// MARK:- OAuthAccountAuthorizationOperationDelegate
+extension AddAccountModel: OAuthAccountAuthorizationOperationDelegate {
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		accountIsAuthenticating = false
+		accountAdded = true
+		account.refreshAll { [weak self] result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				self?.addAccountError = .other(error: error)
+			}
+		}
+	}
+	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+		accountIsAuthenticating = false
+		addAccountError = .other(error: error)
+	}
 }
