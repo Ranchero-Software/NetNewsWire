@@ -154,15 +154,6 @@ private extension ArticleViewController {
 		return controller
 	}
 	
-	func resetWebViewController() {
-		sceneModel?.webViewProvider?.flushQueue()
-		sceneModel?.webViewProvider?.replenishQueueIfNeeded()
-		if let controller = currentWebViewController {
-			controller.fullReload()
-			self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
-		}
-	}
-	
 }
 
 public extension Notification.Name {
