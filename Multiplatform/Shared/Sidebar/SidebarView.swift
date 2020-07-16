@@ -14,11 +14,9 @@ struct SidebarView: View {
 	// I had to comment out SceneStorage because it blows up if used on macOS
 	//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
 	@StateObject private var expandedContainers = SidebarExpandedContainers()
+	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var sidebarModel: SidebarModel
 	@State var navigate = false
-
-	@State var refreshErrorMessage = ""
-	@State var showRefreshError: Bool = false
 
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
@@ -71,9 +69,6 @@ struct SidebarView: View {
 				ProgressView().offset(y: -40)
 			}
 		}
-		.alert(isPresented: $showRefreshError) {
-			Alert(title: Text("Account Error"), message: Text(verbatim: refreshErrorMessage), dismissButton: .default(Text("OK")))
-		}
 		#endif
 //		.onAppear {
 //			expandedContainers.data = expandedContainerData
@@ -106,8 +101,7 @@ struct SidebarView: View {
 	}
 	
 	func handleRefreshError(_ error: Error) {
-		refreshErrorMessage = error.localizedDescription
-		showRefreshError = true
+		sceneModel.accountErrorMessage = error.localizedDescription
 	}
 	
 	struct RefreshFixedView: View {

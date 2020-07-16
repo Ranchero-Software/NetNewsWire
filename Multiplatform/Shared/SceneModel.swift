@@ -22,6 +22,8 @@ final class SceneModel: ObservableObject {
 	@Published var openInBrowserButtonState: Bool?
 	@Published var shareButtonState: Bool?
 
+	@Published var accountErrorMessage = ""
+
 	var selectedArticles: [Article] {
 		timelineModel.selectedArticles
 	}

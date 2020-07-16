@@ -13,6 +13,7 @@ struct SceneNavigationView: View {
 	@StateObject private var sceneModel = SceneModel()
 	@State private var showSheet = false
 	@State private var showShareSheet = false
+	@State private var showRefreshError = false
 	@State private var sheetToShow: ToolbarSheets = .none
 	
 	#if os(iOS)
@@ -62,6 +63,19 @@ struct SceneNavigationView: View {
 		}
 		.onChange(of: sheetToShow) { value in
 			value != .none ? (showSheet = true) : (showSheet = false)
+		}
+		.onChange(of: showRefreshError) { value in
+			if !value {
+				sceneModel.accountErrorMessage = ""
+			}
+		}
+		.onReceive(sceneModel.$accountErrorMessage) { message in
+			if !message.isEmpty {
+				showRefreshError = true
+			}
+		}
+		.alert(isPresented: $showRefreshError) {
+			Alert(title: Text("Account Error"), message: Text(verbatim: sceneModel.accountErrorMessage), dismissButton: .default(Text("OK")))
 		}
 		.toolbar {
 			
