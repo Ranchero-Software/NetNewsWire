@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SidebarToolbarModifier: ViewModifier {
     
+	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var defaults: AppDefaults
 	@EnvironmentObject private var sidebarModel: SidebarModel
 	@StateObject private var viewModel = SidebarToolbarModel()
@@ -48,7 +49,18 @@ struct SidebarToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .automatic) {
-					RefreshProgressView()
+					switch refreshProgress.state {
+					case .refreshProgress(let progress):
+						ProgressView(value: progress)
+							.frame(width: 100)
+					case .lastRefreshDateText(let text):
+						Text(text)
+							.lineLimit(1)
+							.font(.caption)
+							.foregroundColor(.secondary)
+					case .none:
+						EmptyView()
+					}
 				}
 				
 				ToolbarItem {

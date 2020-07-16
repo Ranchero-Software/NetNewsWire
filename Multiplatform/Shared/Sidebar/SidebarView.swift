@@ -14,6 +14,7 @@ struct SidebarView: View {
 	// I had to comment out SceneStorage because it blows up if used on macOS
 	//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
 	@StateObject private var expandedContainers = SidebarExpandedContainers()
+	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var sidebarModel: SidebarModel
 	@State var navigate = false
@@ -21,8 +22,9 @@ struct SidebarView: View {
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
 	@State private var scrollOffset: CGFloat = 0
+	@State var pulling: Bool = false
 	@State var refreshing: Bool = false
-	
+
 	@ViewBuilder var body: some View {
 		#if os(macOS)
 		VStack {
@@ -43,12 +45,24 @@ struct SidebarView: View {
 				.buttonStyle(PlainButtonStyle())
 				.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 			}
-			ZStack {
+			ZStack(alignment: .bottom) {
 				NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds), isActive: $navigate) {
 					EmptyView()
 				}.hidden()
 				List(selection: $sidebarModel.selectedFeedIdentifiers) {
 					rows
+				}
+				if case .refreshProgress(let percent) = refreshProgress.state {
+					HStack(alignment: .center) {
+						Spacer()
+						ProgressView(value: percent).frame(width: 100)
+						Spacer()
+					}
+					.padding(8)
+					.background(Color(NSColor.windowBackgroundColor))
+					.frame(height: 30)
+					.animation(.easeInOut(duration: 0.5))
+					.transition(.move(edge: .bottom))
 				}
 			}
 			.onChange(of: sidebarModel.selectedFeedIdentifiers) { value in
@@ -65,7 +79,7 @@ struct SidebarView: View {
 			.onPreferenceChange(RefreshKeyTypes.PrefKey.self) { values in
 				refreshLogic(values: values)
 			}
-			if refreshing {
+			if pulling {
 				ProgressView().offset(y: -40)
 			}
 		}
@@ -85,14 +99,14 @@ struct SidebarView: View {
 			scrollOffset = movingBounds.minY - fixedBounds.minY
 
 			// Crossing the threshold on the way down, we start the refresh process
-			if !refreshing && (scrollOffset > threshold && previousScrollOffset <= threshold) {
-				refreshing = true
+			if !pulling && (scrollOffset > threshold && previousScrollOffset <= threshold) {
+				pulling = true
 				AccountManager.shared.refreshAll(errorHandler: handleRefreshError)
 			}
 
 			// Crossing the threshold on the way UP, we end the refresh
-			if refreshing && previousScrollOffset > threshold && scrollOffset <= threshold {
-				refreshing = false
+			if pulling && previousScrollOffset > threshold && scrollOffset <= threshold {
+				pulling = false
 			}
 			
 			// Update last scroll offset

@@ -1104,8 +1104,6 @@
 		FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
 		FF64D0E724AF53EE0084080A /* RefreshProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */; };
 		FF64D0E824AF53EE0084080A /* RefreshProgressModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */; };
-		FF64D0E924AF53EE0084080A /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF64D0E624AF53EE0084080A /* RefreshProgressView.swift */; };
-		FF64D0EA24AF53EE0084080A /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF64D0E624AF53EE0084080A /* RefreshProgressView.swift */; };
 		FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD43E372340F320009E5CA3 /* MarkAsReadAlertController.swift */; };
 /* End PBXBuildFile section */
 
@@ -2357,7 +2355,6 @@
 		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };
 		FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorter.swift; sourceTree = "<group>"; };
 		FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshProgressModel.swift; sourceTree = "<group>"; };
-		FF64D0E624AF53EE0084080A /* RefreshProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
 		FFD43E372340F320009E5CA3 /* MarkAsReadAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkAsReadAlertController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -3220,7 +3217,6 @@
 		51E499FB24A9135A00B667CB /* Sidebar */ = {
 			isa = PBXGroup;
 			children = (
-				FF64D0E624AF53EE0084080A /* RefreshProgressView.swift */,
 				51E499FF24A91FC100B667CB /* SidebarContainerView.swift */,
 				51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */,
 				51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */,
@@ -4255,46 +4251,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -4304,7 +4300,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -4314,7 +4310,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -5152,7 +5148,6 @@
 				51E49A0324A91FF600B667CB /* SceneNavigationView.swift in Sources */,
 				51E4990124A808BB00B667CB /* FaviconURLFinder.swift in Sources */,
 				51E4991D24A8092100B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
-				FF64D0E924AF53EE0084080A /* RefreshProgressView.swift in Sources */,
 				6591720E24B59C5100B638E8 /* SettingsFeedbinAccountModel.swift in Sources */,
 				51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */,
 				5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */,
@@ -5355,7 +5350,6 @@
 				51E4992D24A8676300B667CB /* FetchRequestOperation.swift in Sources */,
 				51E4992424A8098400B667CB /* SmartFeedPasteboardWriter.swift in Sources */,
 				51E4991424A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
-				FF64D0EA24AF53EE0084080A /* RefreshProgressView.swift in Sources */,
 				51B54A6624B549CB0014348B /* PreloadedWebView.swift in Sources */,
 				51E4991024A808DE00B667CB /* SmallIconProvider.swift in Sources */,
 			);
