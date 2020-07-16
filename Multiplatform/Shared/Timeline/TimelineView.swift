@@ -52,7 +52,7 @@ struct TimelineView: View {
 		List(timelineModel.timelineItems) { timelineItem in
 			ZStack {
 				TimelineItemView(timelineItem: timelineItem)
-				NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles),
+				NavigationLink(destination: ArticleContainerView(),
 							   tag: timelineItem.article.articleID,
 							   selection: $timelineModel.selectedArticleID) {
 					EmptyView()
