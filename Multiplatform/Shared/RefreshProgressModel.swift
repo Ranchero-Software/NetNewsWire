@@ -6,10 +6,10 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import Account
-import Combine
-import Foundation
 import SwiftUI
+import Combine
+import RSCore
+import Account
 
 class RefreshProgressModel: ObservableObject {
 	
@@ -40,10 +40,14 @@ class RefreshProgressModel: ObservableObject {
 	// MARK: Observing account changes
 	
 	private func observeRefreshProgress() {
-		NotificationCenter.default.addObserver(self, selector: #selector(updateState), name: .AccountRefreshProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshProgressDidChange), name: .AccountRefreshProgressDidChange, object: nil)
 	}
 	
 	// MARK: Refreshing state
+	
+	@objc private func accountRefreshProgressDidChange() {
+		CoalescingQueue.standard.add(self, #selector(updateState))
+	}
 	
 	@objc private func updateState() {
 		let progress = AccountManager.shared.combinedRefreshProgress
