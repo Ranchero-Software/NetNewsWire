@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Account
 
 struct SceneNavigationView: View {
 
@@ -92,6 +93,7 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				Button {
+					AccountManager.shared.refreshAll(errorHandler: handleRefreshError)
 				} label: {
 					AppAssets.refreshImage
 				}
@@ -180,6 +182,11 @@ struct SceneNavigationView: View {
 			#endif
 		}
 	}
+
+	func handleRefreshError(_ error: Error) {
+		sceneModel.accountErrorMessage = error.localizedDescription
+	}
+	
 }
 
 struct NavigationView_Previews: PreviewProvider {
