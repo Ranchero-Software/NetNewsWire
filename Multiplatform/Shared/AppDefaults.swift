@@ -138,6 +138,17 @@ final class AppDefaults: ObservableObject {
 		}
 	}
 	
+	static var userInterfaceColorScheme: ColorScheme? {
+		switch AppDefaults.shared.userInterfaceColorPalette {
+		case .light:
+			return ColorScheme.light
+		case .dark:
+			return ColorScheme.dark
+		default:
+			return nil
+		}
+	}
+	
 	// MARK: Feeds & Folders
 	@AppStorage(Key.addWebFeedAccountID, store: store) var addWebFeedAccountID: String?
 	

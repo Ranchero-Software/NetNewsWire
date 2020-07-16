@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="mPU-HG-I4u">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="mPU-HG-I4u">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -32,14 +31,14 @@
             <objects>
                 <viewController title="General" storyboardIdentifier="General" id="iuH-lz-18x" customClass="GeneralPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="WnV-px-wCT">
-                        <rect key="frame" x="0.0" y="0.0" width="501" height="217"/>
+                        <rect key="frame" x="0.0" y="0.0" width="501" height="213"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ut3-yd-q6G">
-                                <rect key="frame" x="80" y="16" width="340" height="185"/>
+                                <rect key="frame" x="83" y="16" width="334" height="181"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ucw-vG-yLt">
-                                        <rect key="frame" x="29" y="162" width="92" height="16"/>
+                                        <rect key="frame" x="29" y="159" width="92" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Refresh feeds:" id="F7c-lm-g97">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -47,13 +46,13 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SFF-mL-yc8">
-                                        <rect key="frame" x="125" y="157" width="218" height="25"/>
+                                        <rect key="frame" x="125" y="153" width="212" height="25"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="N1a-qV-4Os"/>
                                         </constraints>
                                         <popUpButtonCell key="cell" type="push" title="Every 30 minutes" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="3" imageScaling="proportionallyDown" inset="2" selectedItem="rZU-Tg-xwo" id="Jwn-HD-eP6">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="system"/>
                                             <menu key="menu" id="v0m-Z7-oG3">
                                                 <items>
                                                     <menuItem title="Manually only" tag="1" id="doa-Wq-4Uq"/>
@@ -82,7 +81,7 @@
                                         </popUpButtonCell>
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rbK-cS-VQl">
-                                        <rect key="frame" x="-2" y="131" width="123" height="16"/>
+                                        <rect key="frame" x="-2" y="128" width="123" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Default RSS reader:" id="bUb-r3-SmS">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -90,10 +89,10 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cSu-T2-Jby">
-                                        <rect key="frame" x="125" y="126" width="218" height="25"/>
+                                        <rect key="frame" x="125" y="122" width="212" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="NetNewsWire" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="bEy-Qx-Grl" id="Dyk-WN-XOo" userLabel="Popup">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="system"/>
                                             <menu key="menu" id="8PF-kj-u99">
                                                 <items>
                                                     <menuItem title="NetNewsWire" state="on" id="bEy-Qx-Grl"/>
@@ -105,7 +104,7 @@
                                         </connections>
                                     </popUpButton>
                                     <button verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
-                                        <rect key="frame" x="125" y="67" width="215" height="18"/>
+                                        <rect key="frame" x="125" y="64" width="211" height="18"/>
                                         <buttonCell key="cell" type="check" title="Open in background in browser" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t0a-LN-rCv">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -125,7 +124,7 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jVd-Ie-CGX">
-                                        <rect key="frame" x="53" y="4" width="68" height="16"/>
+                                        <rect key="frame" x="53" y="3" width="68" height="16"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Dock icon:" id="vFc-Nz-RFp">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -133,7 +132,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mwT-nY-TrX">
-                                        <rect key="frame" x="125" y="3" width="143" height="18"/>
+                                        <rect key="frame" x="125" y="2" width="139" height="18"/>
                                         <buttonCell key="cell" type="check" title="Show unread count" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="lh0-G6-9v4">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -154,18 +153,18 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="j0t-Wa-UTL">
-                                        <rect key="frame" x="145" y="32" width="197" height="28"/>
+                                        <rect key="frame" x="145" y="30" width="191" height="28"/>
                                         <textFieldCell key="cell" controlSize="small" title="Hold the Shift key to invert this preference." id="EMq-9M-zTJ">
-                                            <font key="font" usesAppearanceFont="YES"/>
+                                            <font key="font" metaFont="toolTip"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ci4-fW-KjU">
-                                        <rect key="frame" x="125" y="95" width="218" height="25"/>
+                                        <rect key="frame" x="125" y="91" width="212" height="25"/>
                                         <popUpButtonCell key="cell" type="push" title="Safari" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ObP-qK-qDJ" id="hrm-aT-Rc2" userLabel="Popup">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="menu"/>
+                                            <font key="font" metaFont="system"/>
                                             <menu key="menu" id="j1i-Ev-7rI">
                                                 <items>
                                                     <menuItem title="Safari" state="on" id="ObP-qK-qDJ"/>
@@ -177,7 +176,7 @@
                                         </connections>
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wsb-Lr-8Q7">
-                                        <rect key="frame" x="45" y="100" width="76" height="16"/>
+                                        <rect key="frame" x="45" y="97" width="76" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Web pages:" id="CgU-dE-Qtb">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -243,14 +242,14 @@
             <objects>
                 <viewController storyboardIdentifier="Advanced" id="GNh-Wp-giO" customClass="AdvancedPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Hij-7D-6Pw">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="278"/>
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="277"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="uJD-OF-YVY">
-                                <rect key="frame" x="60" y="20" width="330" height="238"/>
+                                <rect key="frame" x="60" y="20" width="330" height="237"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="EH5-aS-E55">
-                                        <rect key="frame" x="-2" y="222" width="87" height="16"/>
+                                        <rect key="frame" x="-2" y="221" width="87" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="App Updates:" id="zqG-X2-E9b">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -258,7 +257,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="T4A-0o-p2w">
-                                        <rect key="frame" x="89" y="221" width="149" height="18"/>
+                                        <rect key="frame" x="89" y="220" width="145" height="18"/>
                                         <buttonCell key="cell" type="check" title="Check automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="dm8-Xy-0Ba">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -276,7 +275,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QCu-J4-0yV">
-                                        <rect key="frame" x="89" y="193" width="114" height="18"/>
+                                        <rect key="frame" x="90" y="193" width="110" height="18"/>
                                         <buttonCell key="cell" type="radio" title="Release builds" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="F8M-rS-und">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -286,7 +285,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CeE-AE-hRG">
-                                        <rect key="frame" x="89" y="171" width="92" height="18"/>
+                                        <rect key="frame" x="90" y="171" width="88" height="18"/>
                                         <buttonCell key="cell" type="radio" title="Test builds" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Fuf-rU-D6M">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -307,7 +306,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TKI-a9-bRX">
-                                        <rect key="frame" x="84" y="81" width="160" height="32"/>
+                                        <rect key="frame" x="85" y="80" width="154" height="32"/>
                                         <buttonCell key="cell" type="push" title="Check for Updates" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AaA-Rr-UYD">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -325,7 +324,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <button horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="UHg-1l-FlD">
-                                        <rect key="frame" x="89" y="39" width="142" height="18"/>
+                                        <rect key="frame" x="89" y="39" width="138" height="18"/>
                                         <buttonCell key="cell" type="check" title="Send automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="jnc-C5-4oI">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -345,7 +344,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uuc-f2-OFX">
-                                        <rect key="frame" x="84" y="-7" width="160" height="32"/>
+                                        <rect key="frame" x="85" y="-7" width="154" height="32"/>
                                         <buttonCell key="cell" type="push" title="Privacy Policy" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kSv-Wu-NYx">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -416,16 +415,16 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="7UM-iq-OLB" customClass="PreferencesTableViewBackgroundView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="20" y="44" width="160" height="223"/>
+                                <rect key="frame" x="20" y="44" width="160" height="213"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="PaF-du-r3c">
-                                        <rect key="frame" x="1" y="0.0" width="158" height="222"/>
+                                        <rect key="frame" x="1" y="0.0" width="158" height="212"/>
                                         <clipView key="contentView" id="cil-Gq-akO">
-                                            <rect key="frame" x="0.0" y="0.0" width="158" height="222"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="158" height="212"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" viewBased="YES" id="aTp-KR-y6b">
-                                                    <rect key="frame" x="0.0" y="0.0" width="188" height="222"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="159" height="212"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -444,7 +443,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="Cell" id="h2e-5a-qNO">
-                                                                    <rect key="frame" x="11" y="1" width="165" height="17"/>
+                                                                    <rect key="frame" x="1" y="1" width="156" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="27f-p8-Wnt">
@@ -456,7 +455,7 @@
                                                                             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="lKA-xK-bHU"/>
                                                                         </imageView>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hR2-bm-0wE">
-                                                                            <rect key="frame" x="26" y="1" width="135" height="16"/>
+                                                                            <rect key="frame" x="26" y="1" width="126" height="16"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="CcS-BO-sdv">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -532,7 +531,7 @@
                                 <rect key="frame" x="83" y="20" width="97" height="24"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Y7D-xQ-wep">
-                                <rect key="frame" x="188" y="20" width="242" height="247"/>
+                                <rect key="frame" x="188" y="20" width="242" height="237"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -587,16 +586,16 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="pjs-G4-byk" customClass="PreferencesTableViewBackgroundView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="20" y="44" width="160" height="216"/>
+                                <rect key="frame" x="20" y="44" width="160" height="206"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="29T-r2-ckC">
-                                        <rect key="frame" x="1" y="0.0" width="158" height="215"/>
+                                        <rect key="frame" x="1" y="0.0" width="158" height="205"/>
                                         <clipView key="contentView" id="dXw-GY-TP8">
-                                            <rect key="frame" x="0.0" y="0.0" width="158" height="215"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="158" height="205"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" viewBased="YES" id="dfn-Vn-oDp">
-                                                    <rect key="frame" x="0.0" y="0.0" width="188" height="215"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="159" height="205"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -615,7 +614,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView identifier="Cell" id="xQs-6E-Kpy">
-                                                                    <rect key="frame" x="11" y="1" width="165" height="17"/>
+                                                                    <rect key="frame" x="1" y="1" width="156" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kmG-vw-CbN">
@@ -627,7 +626,7 @@
                                                                             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="OVD-Jo-TXU"/>
                                                                         </imageView>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6cr-cB-qAN">
-                                                                            <rect key="frame" x="26" y="1" width="135" height="16"/>
+                                                                            <rect key="frame" x="26" y="1" width="126" height="16"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="goO-QG-kk7">
                                                                                 <font key="font" metaFont="system"/>
                                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -699,7 +698,7 @@
                                 <rect key="frame" x="83" y="20" width="97" height="24"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="N1N-pE-gBL">
-                                <rect key="frame" x="188" y="20" width="242" height="240"/>
+                                <rect key="frame" x="188" y="20" width="242" height="230"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -734,8 +733,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="NSActionTemplate" width="17" height="15"/>
-        <image name="NSAddTemplate" width="15" height="11"/>
-        <image name="NSRemoveTemplate" width="15" height="2"/>
+        <image name="NSActionTemplate" width="14" height="14"/>
+        <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSRemoveTemplate" width="11" height="11"/>
     </resources>
 </document>

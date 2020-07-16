@@ -21,6 +21,7 @@ struct MainApp: App {
 	@StateObject private var refreshProgress = RefreshProgressModel()
 	@StateObject private var defaults = AppDefaults.shared
 
+
 	@SceneBuilder var body: some Scene {
 		#if os(macOS)
 		WindowGroup {
@@ -29,6 +30,7 @@ struct MainApp: App {
 				.onAppear { refreshProgress.startup() }
 				.environmentObject(refreshProgress)
 				.environmentObject(defaults)
+				.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 		}
 		.windowToolbarStyle(UnifiedWindowToolbarStyle())
 		.commands {
@@ -72,6 +74,7 @@ struct MainApp: App {
 			})
 		}
 		
+		
 		// Mac Preferences
 		Settings {
 			MacPreferencesView()
@@ -79,8 +82,8 @@ struct MainApp: App {
 			.frame(width: 500)
 			.navigationTitle("Preferences")
 			.environmentObject(defaults)
+			.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 		}
-		.windowToolbarStyle(UnifiedWindowToolbarStyle())
 		
 		#endif
 		

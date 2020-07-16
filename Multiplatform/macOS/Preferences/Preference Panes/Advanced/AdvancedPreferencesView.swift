@@ -10,39 +10,36 @@ import SwiftUI
 struct AdvancedPreferencesView: View {
     
 	@EnvironmentObject private var preferences: AppDefaults
+	@StateObject private var viewModel = AdvancedPreferencesModel()
     
     var body: some View {
-        VStack {
             Form {
                 Toggle("Check for app updates automatically", isOn: $preferences.checkForUpdatesAutomatically)
-                
                 Toggle("Download Test Builds", isOn: $preferences.downloadTestBuilds)
+				Text("If you’re not sure, don't enable test builds. Test builds may have bugs, which may include crashing bugs and data loss.")
+					.foregroundColor(.secondary)
                 HStack {
                     Spacer()
-                    Text("If you’re not sure, don't enable test builds. Test builds may have bugs, which may include crashing bugs and data loss.").foregroundColor(.secondary)
+					Button("Check for Updates") {
+						appDelegate.softwareUpdater.checkForUpdates()
+					}
                     Spacer()
                 }
-                
-                HStack {
-                    Spacer()
-                    Button("Check for Updates", action: {})
-                    Spacer()
-                }.padding(.vertical, 12)
-                
-                
                 Toggle("Send Crash Logs Automatically", isOn: $preferences.sendCrashLogs)
-                
-                Spacer()
+				Divider()
                 HStack {
                     Spacer()
-                    Button("Privacy Policy", action: {})
+                    Button("Privacy Policy", action: {
+						NSWorkspace.shared.open(URL(string: "https://ranchero.com/netnewswire/privacypolicy")!)
+					})
                     Spacer()
-                }.padding(.top, 12)
-                
-                
-            }
-            Spacer()
-        }.frame(width: 300, alignment: .center)
+                }
+			}
+			.onChange(of: preferences.downloadTestBuilds, perform: { _ in
+				viewModel.updateAppcast()
+			})
+			.frame(width: 400, alignment: .center)
+			.lineLimit(3)
     }
     
 }

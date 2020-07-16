@@ -35,5 +35,23 @@
 	<string>$(ORGANIZATION_IDENTIFIER)</string>
 	<key>DeveloperEntitlements</key>
 	<string>$(DEVELOPER_ENTITLEMENTS)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleURLName</key>
+			<string>RSS Feed</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>feed</string>
+				<string>feeds</string>
+			</array>
+		</dict>
+	</array>
+	<key>SUFeedURL</key>
+	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
+	<key>FeedURLForTestBuilds</key>
+	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
 </dict>
 </plist>
