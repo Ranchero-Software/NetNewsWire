@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import Combine
 import RSCore
 import Articles
 
@@ -46,7 +47,15 @@ class WebViewController: NSViewController {
 	var sceneModel: SceneModel?
 	weak var delegate: WebViewControllerDelegate?
 	
-	var articles: [Article]?
+	var articles: [Article]? {
+		didSet {
+			if oldValue != articles {
+				loadWebView()
+			}
+		}
+	}
+	
+	private var selectedArticlesCancellable: AnyCancellable?
 	
 	override func loadView() {
 		view = NSView()
@@ -71,7 +80,9 @@ class WebViewController: NSViewController {
 			statusBarView.heightAnchor.constraint(equalToConstant: 20)
 		])
 		
-		loadWebView()
+		selectedArticlesCancellable = sceneModel?.timelineModel.$selectedArticles.sink { [weak self] articles in
+			self?.articles = articles
+		}
 	}
 
 	// MARK: Notifications
@@ -235,6 +246,8 @@ private extension WebViewController {
 		sceneModel?.webViewProvider?.dequeueWebView() { webView in
 			
 			// Add the webview
+			self.webView = webView
+			
 			webView.translatesAutoresizingMaskIntoConstraints = false
 			self.view.addSubview(webView, positioned: .below, relativeTo: self.statusBarView)
 			NSLayoutConstraint.activate([

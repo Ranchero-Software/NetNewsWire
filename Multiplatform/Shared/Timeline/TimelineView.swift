@@ -36,7 +36,7 @@ struct TimelineView: View {
 				.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 			}
 			ZStack {
-				NavigationLink(destination: ArticleContainerView(articles: timelineModel.selectedArticles), isActive: $navigate) {
+				NavigationLink(destination: ArticleContainerView(), isActive: $navigate) {
 					EmptyView()
 				}.hidden()
 				List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in

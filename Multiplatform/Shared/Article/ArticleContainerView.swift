@@ -12,10 +12,9 @@ import Articles
 struct ArticleContainerView: View {
 	
 	@EnvironmentObject private var sceneModel: SceneModel
-	var articles: [Article]
 	
 	@ViewBuilder var body: some View {
-		ArticleView(sceneModel: sceneModel, articles: articles)
+		ArticleView(sceneModel: sceneModel)
 			.modifier(ArticleToolbarModifier())
 	}
 	

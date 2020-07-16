@@ -12,17 +12,14 @@ import Articles
 struct ArticleView: NSViewControllerRepresentable {
 	
 	var sceneModel: SceneModel
-	var articles: [Article]
 	
 	func makeNSViewController(context: Context) -> WebViewController {
 		let controller = WebViewController()
 		controller.sceneModel = sceneModel
-		controller.articles = articles
 		return controller
 	}
 	
-	func updateNSViewController(_ uiViewController: WebViewController, context: Context) {
-		
+	func updateNSViewController(_ controller: WebViewController, context: Context) {
 	}
 	
 }
