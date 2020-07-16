@@ -43,8 +43,8 @@ struct TimelineView: View {
 					TimelineItemView(timelineItem: timelineItem)
 				}
 			}
-			.onChange(of: timelineModel.selectedArticleIDs) { value in
-				navigate = !timelineModel.selectedArticleIDs.isEmpty
+			.onChange(of: timelineModel.selectedArticleIDs) { ids in
+				navigate = !ids.isEmpty
 			}
 		}
 		.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
