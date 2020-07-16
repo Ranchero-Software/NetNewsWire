@@ -16,17 +16,12 @@ class WebViewProvider: NSObject {
 	
 	private let articleIconSchemeHandler: ArticleIconSchemeHandler
 	private let operationQueue = MainThreadOperationQueue()
-	private var queue = UIView()
+	private var queue = NSMutableArray()
 	
-	init(coordinator: SceneCoordinator, viewController: UIViewController) {
+	init(coordinator: SceneCoordinator) {
 		articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 		super.init()
-		viewController.view.insertSubview(queue, at: 0)
 		replenishQueueIfNeeded()
-	}
-	
-	func flushQueue() {
-		operationQueue.add(WebViewProviderFlushQueueOperation(queue: queue))
 	}
 
 	func replenishQueueIfNeeded() {
@@ -36,28 +31,6 @@ class WebViewProvider: NSObject {
 	func dequeueWebView(completion: @escaping (PreloadedWebView) -> ()) {
 		operationQueue.add(WebViewProviderDequeueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler, completion: completion))
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
-	}
-	
-}
-
-class WebViewProviderFlushQueueOperation: MainThreadOperation {
-	
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "WebViewProviderFlushQueueOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
-	private var queue: UIView
-	
-	init(queue: UIView) {
-		self.queue = queue
-	}
-	
-	func run() {
-		queue.subviews.forEach { $0.removeFromSuperview() }
-		self.operationDelegate?.operationDidComplete(self)
 	}
 	
 }
@@ -73,18 +46,18 @@ class WebViewProviderReplenishQueueOperation: MainThreadOperation {
 
 	private let minimumQueueDepth = 3
 
-	private var queue: UIView
+	private var queue: NSMutableArray
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler
 	
-	init(queue: UIView, articleIconSchemeHandler: ArticleIconSchemeHandler) {
+	init(queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		self.queue = queue
 		self.articleIconSchemeHandler = articleIconSchemeHandler
 	}
 	
 	func run() {
-		while queue.subviews.count < minimumQueueDepth {
+		while queue.count < minimumQueueDepth {
 			let webView = PreloadedWebView(articleIconSchemeHandler: articleIconSchemeHandler)
-			queue.insertSubview(webView, at: 0)
+			queue.insert(webView, at: 0)
 			webView.preload()
 		}
 		self.operationDelegate?.operationDidComplete(self)
@@ -101,21 +74,21 @@ class WebViewProviderDequeueOperation: MainThreadOperation {
 	public var name: String? = "WebViewProviderFlushQueueOperation"
 	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
 
-	private var queue: UIView
+	private var queue: NSMutableArray
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler
 	private var completion: (PreloadedWebView) -> ()
 	
-	init(queue: UIView, articleIconSchemeHandler: ArticleIconSchemeHandler, completion: @escaping (PreloadedWebView) -> ()) {
+	init(queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler, completion: @escaping (PreloadedWebView) -> ()) {
 		self.queue = queue
 		self.articleIconSchemeHandler = articleIconSchemeHandler
 		self.completion = completion
 	}
 	
 	func run() {
-		if let webView = queue.subviews.last as? PreloadedWebView {
+		if let webView = queue.lastObject as? PreloadedWebView {
 			webView.ready { preloadedWebView in
-				preloadedWebView.removeFromSuperview()
 				self.completion(preloadedWebView)
+				self.queue.remove(webView)
 			}
 			self.operationDelegate?.operationDidComplete(self)
 			return
