@@ -11,7 +11,7 @@ import Articles
 
 struct ArticleView: NSViewControllerRepresentable {
 	
-	var sceneModel: SceneModel
+	@EnvironmentObject private var sceneModel: SceneModel
 	
 	func makeNSViewController(context: Context) -> WebViewController {
 		let controller = WebViewController()
