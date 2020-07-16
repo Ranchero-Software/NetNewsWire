@@ -11,7 +11,7 @@ import SwiftUI
 struct TimelineView: View {
 	
 	@EnvironmentObject private var timelineModel: TimelineModel
-	@State var navigate = false
+	@State var navigate = true
 
 	@ViewBuilder var body: some View {
 		#if os(macOS)
@@ -42,9 +42,6 @@ struct TimelineView: View {
 				List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
 					TimelineItemView(timelineItem: timelineItem)
 				}
-			}
-			.onChange(of: timelineModel.selectedArticleIDs) { ids in
-				navigate = !ids.isEmpty
 			}
 		}
 		.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))

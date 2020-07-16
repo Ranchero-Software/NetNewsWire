@@ -303,6 +303,9 @@ private extension TimelineModel {
 	func replaceArticles(with unsortedArticles: Set<Article>) {
 		articles = Array(unsortedArticles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
 		rebuildTimelineItems()
+		
+		selectedArticleIDs = Set<String>()
+		selectedArticleID = nil
 		// TODO: Update unread counts and other item done in didSet on AppKit
 	}
 	
