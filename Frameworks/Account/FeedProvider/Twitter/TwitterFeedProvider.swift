@@ -227,8 +227,12 @@ public final class TwitterFeedProvider: FeedProvider {
 				if let sinceID = statuses.first?.idStr {
 					webFeed.sinceToken = sinceID
 				}
-				let parsedItems = self.makeParsedItems(webFeed.url, statuses)
-				completion(.success(parsedItems))
+				DispatchQueue.global(qos: .background).async {
+					let parsedItems = self.makeParsedItems(webFeed.url, statuses)
+					DispatchQueue.main.async {
+						completion(.success(parsedItems))
+					}
+				}
 			case .failure(let error):
 				completion(.failure(error))
 			}

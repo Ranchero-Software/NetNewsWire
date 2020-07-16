@@ -192,8 +192,12 @@ public final class RedditFeedProvider: FeedProvider {
 		fetch(api: api, parameters: [:], resultType: RedditLinkListing.self) { result in
 			switch result {
 			case .success(let linkListing):
-				let parsedItems = self.makeParsedItems(webFeed.url, identifySubreddit, linkListing)
-				completion(.success(parsedItems))
+				DispatchQueue.global(qos: .background).async {
+					let parsedItems = self.makeParsedItems(webFeed.url, identifySubreddit, linkListing)
+					DispatchQueue.main.async {
+						completion(.success(parsedItems))
+					}
+				}
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -324,11 +328,6 @@ private extension RedditFeedProvider {
 			switch result {
 			case .success(let response):
 				
-//				let jsonString = String(data: response.data, encoding: .utf8)
-//				let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("reddit.json")
-//				print("******** writing to: \(url.path)")
-//				try? jsonString?.write(toFile: url.path, atomically: true, encoding: .utf8)
-
 				if let remaining = response.response.value(forHTTPHeaderField: "X-Ratelimit-Remaining") {
 					self.rateLimitRemaining = Int(remaining)
 				} else {
