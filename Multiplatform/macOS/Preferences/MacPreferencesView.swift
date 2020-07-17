@@ -10,7 +10,8 @@ import SwiftUI
 enum PreferencePane: Int, CaseIterable {
 	case general = 0
 	case accounts = 1
-	case advanced = 2
+	case viewing = 2
+	case advanced = 3
 	
 	var description: String {
 		switch self {
@@ -18,6 +19,8 @@ enum PreferencePane: Int, CaseIterable {
 			return "General"
 		case .accounts:
 			return "Accounts"
+		case .viewing:
+			return "Appearance"
 		case .advanced:
 			return "Advanced"
 		}
@@ -38,6 +41,9 @@ struct MacPreferencesView: View {
 			case .accounts:
 				AccountsPreferencesView()
 					.environmentObject(defaults)
+			case .viewing:
+				LayoutPreferencesView()
+					.environmentObject(defaults)
 			case .advanced:
 				AdvancedPreferencesView()
 					.environmentObject(defaults)
@@ -56,7 +62,7 @@ struct MacPreferencesView: View {
 						}.foregroundColor(
 							preferencePane == .general ? Color("AccentColor") : Color.gray
 						)
-					}).frame(width: 70)
+					}).frame(width: 70, height: 50)
 					Button(action: {
 						preferencePane = .accounts
 					}, label: {
@@ -67,7 +73,18 @@ struct MacPreferencesView: View {
 						}.foregroundColor(
 							preferencePane == .accounts ? Color("AccentColor") : Color.gray
 						)
-					}).frame(width: 70)
+					}).frame(width: 70, height: 50)
+					Button(action: {
+						preferencePane = .viewing
+					}, label: {
+						VStack {
+							Image(systemName: "eyeglasses")
+								.font(.title2)
+							Text("Viewing")
+						}.foregroundColor(
+							preferencePane == .viewing ? Color("AccentColor") : Color.gray
+						)
+					}).frame(width: 70, height: 50)
 					Button(action: {
 						preferencePane = .advanced
 					}, label: {
@@ -78,7 +95,7 @@ struct MacPreferencesView: View {
 						}.foregroundColor(
 							preferencePane == .advanced ? Color("AccentColor") : Color.gray
 						)
-					}).frame(width: 70)
+					}).frame(width: 70, height: 50)
 				}
 			}
 		}

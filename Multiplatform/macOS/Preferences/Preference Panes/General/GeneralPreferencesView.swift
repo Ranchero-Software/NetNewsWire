@@ -10,9 +10,7 @@ import SwiftUI
 struct GeneralPreferencesView: View {
 	
 	@EnvironmentObject private var defaults: AppDefaults
-	@Environment(\.colorScheme) private var colorScheme
 	@StateObject private var preferences = GeneralPreferencesModel()
-	private let colorPalettes = UserInterfaceColorPalette.allCases
 	
 	var body: some View {
 		Form {
@@ -41,15 +39,6 @@ struct GeneralPreferencesView: View {
 			Toggle("Open webpages in background in browser", isOn: $defaults.openInBrowserInBackground)
 			
 			Toggle("Hide Unread Count in Dock", isOn: $defaults.hideDockUnreadCount)
-			
-			Divider()
-			
-			Picker("Appearance", selection: $defaults.userInterfaceColorPalette, content: {
-				ForEach(colorPalettes, id: \.self, content: {
-					Text($0.description)
-				})
-			}).pickerStyle(RadioGroupPickerStyle())
-			
 			
 		}
 		.frame(width: 400, alignment: .center)
