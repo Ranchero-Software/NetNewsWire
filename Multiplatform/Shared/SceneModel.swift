@@ -6,7 +6,11 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 import Combine
 import Account
 import Articles
@@ -52,6 +56,19 @@ final class SceneModel: ObservableObject {
 		selectedArticlesCancellable = timelineModel.$selectedArticles.sink { [weak self] articles in
 			self?.updateArticleButtonsState(articles: articles)
 		}
+	}
+	
+	// MARK Navigation API
+	
+	func openInBrowser() {
+		guard let link = selectedArticles.first?.preferredLink else { return }
+		
+		#if os(macOS)
+		Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+		#else
+		guard let url = URL(string: link) else { return }
+		UIApplication.shared.open(url, options: [:])
+		#endif
 	}
 	
 	// MARK: Article Management API
