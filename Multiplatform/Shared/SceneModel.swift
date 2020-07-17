@@ -123,6 +123,8 @@ private extension SceneModel {
 		guard !articles.isEmpty else {
 			readButtonState = nil
 			starButtonState = nil
+			openInBrowserButtonState = nil
+			shareButtonState = nil
 			return
 		}
 		
