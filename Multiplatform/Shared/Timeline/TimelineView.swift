@@ -14,50 +14,52 @@ struct TimelineView: View {
 	@State var navigate = true
 
 	@ViewBuilder var body: some View {
-		#if os(macOS)
-		VStack {
-			HStack {
-				TimelineSortOrderView()
-				Spacer()
-				Button (action: {
-					withAnimation {
-						timelineModel.toggleReadFilter()
+		GeometryReader { proxy in
+			#if os(macOS)
+			VStack {
+				HStack {
+					TimelineSortOrderView()
+					Spacer()
+					Button (action: {
+						withAnimation {
+							timelineModel.toggleReadFilter()
+						}
+					}, label: {
+						if timelineModel.isReadFiltered ?? false {
+							AppAssets.filterActiveImage
+						} else {
+							AppAssets.filterInactiveImage
+						}
+					})
+					.hidden(timelineModel.isReadFiltered == nil)
+					.padding(.top, 8).padding(.trailing)
+					.buttonStyle(PlainButtonStyle())
+					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
+				}
+				ZStack {
+					NavigationLink(destination: ArticleContainerView(), isActive: $navigate) {
+						EmptyView()
+					}.hidden()
+					List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
+						TimelineItemView(width: proxy.size.width, timelineItem: timelineItem)
 					}
-				}, label: {
-					if timelineModel.isReadFiltered ?? false {
-						AppAssets.filterActiveImage
-					} else {
-						AppAssets.filterInactiveImage
-					}
-				})
-				.hidden(timelineModel.isReadFiltered == nil)
-				.padding(.top, 8).padding(.trailing)
-				.buttonStyle(PlainButtonStyle())
-				.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
-			}
-			ZStack {
-				NavigationLink(destination: ArticleContainerView(), isActive: $navigate) {
-					EmptyView()
-				}.hidden()
-				List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
-					TimelineItemView(timelineItem: timelineItem)
 				}
 			}
-		}
-		.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
-		#else
-		List(timelineModel.timelineItems) { timelineItem in
-			ZStack {
-				TimelineItemView(timelineItem: timelineItem)
-				NavigationLink(destination: ArticleContainerView(),
-							   tag: timelineItem.article.articleID,
-							   selection: $timelineModel.selectedArticleID) {
-					EmptyView()
-				}.buttonStyle(PlainButtonStyle())
+			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
+			#else
+			List(timelineModel.timelineItems) { timelineItem in
+				ZStack {
+					TimelineItemView(width: proxy.size.width, timelineItem: timelineItem)
+					NavigationLink(destination: ArticleContainerView(),
+								   tag: timelineItem.article.articleID,
+								   selection: $timelineModel.selectedArticleID) {
+						EmptyView()
+					}.buttonStyle(PlainButtonStyle())
+				}
 			}
+			.navigationBarTitle(Text(verbatim: timelineModel.nameForDisplay), displayMode: .inline)
+			#endif
 		}
-		.navigationBarTitle(Text(verbatim: timelineModel.nameForDisplay), displayMode: .inline)
-		#endif
     }
 
 }

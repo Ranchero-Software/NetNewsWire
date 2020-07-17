@@ -13,6 +13,7 @@ struct TimelineItemView: View {
 	@EnvironmentObject var defaults: AppDefaults
 	@StateObject var articleIconImageLoader = ArticleIconImageLoader()
 	
+	var width: CGFloat
 	var timelineItem: TimelineItem
 
 	#if os(macOS)
@@ -23,52 +24,48 @@ struct TimelineItemView: View {
 	#endif
 
     var body: some View {
-		VStack {
-			HStack(alignment: .top) {
-				TimelineItemStatusView(status: timelineItem.status)
-				if let image = articleIconImageLoader.image {
-					IconImageView(iconImage: image)
-						.frame(width: CGFloat(defaults.timelineIconDimensions), height: CGFloat(defaults.timelineIconDimensions), alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-				}
-				VStack {
-					Text(verbatim: timelineItem.article.title ?? "N/A")
+		HStack(alignment: .top) {
+			TimelineItemStatusView(status: timelineItem.status)
+			if let image = articleIconImageLoader.image {
+				IconImageView(iconImage: image)
+					.frame(width: CGFloat(defaults.timelineIconDimensions), height: CGFloat(defaults.timelineIconDimensions), alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+			}
+			VStack {
+				let titleLines = timelineItem.numberOfTitleLines(width: width)
+				if titleLines > 0 {
+					Text(verbatim: timelineItem.truncatedTitle)
 						.fontWeight(.semibold)
-						.lineLimit(Int(defaults.timelineNumberOfLines))
+						.lineLimit(titleLines)
 						.frame(maxWidth: .infinity, alignment: .leading)
 						.padding(.trailing, 4)
+						.fixedSize(horizontal: false, vertical: true)
+				}
+				let summaryLines = timelineItem.numberOfSummaryLines(width: width, titleLines: titleLines)
+				if summaryLines > 0 {
+					Text(verbatim: timelineItem.truncatedSummary)
+						.lineLimit(summaryLines)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding(.trailing, 4)
+						.fixedSize(horizontal: false, vertical: true)
+				}
+				HStack {
+					Text(verbatim: timelineItem.byline)
+						.lineLimit(1)
+						.truncationMode(.tail)
+						.font(.footnote)
+						.foregroundColor(.secondary)
 					Spacer()
-					HStack {
-						Text(verbatim: timelineItem.byline)
-							.lineLimit(1)
-							.truncationMode(.tail)
-							.font(.footnote)
-							.foregroundColor(.secondary)
-						Spacer()
-						Text(verbatim: timelineItem.dateTimeString)
-							.lineLimit(1)
-							.font(.footnote)
-							.foregroundColor(.secondary)
-							.padding(.trailing, 4)
-					}
+					Text(verbatim: timelineItem.dateTimeString)
+						.lineLimit(1)
+						.font(.footnote)
+						.foregroundColor(.secondary)
+						.padding(.trailing, 4)
 				}
 			}
 		}
 		.padding(.vertical, verticalPadding)
 		.onAppear {
 			articleIconImageLoader.loadImage(for: timelineItem.article)
-		}
-    }
-}
-
-struct TimelineItemView_Previews: PreviewProvider {
-    static var previews: some View {
-		Group {
-			TimelineItemView(timelineItem: TimelineItem(article: PreviewArticles.basicRead))
-				.frame(maxWidth: 250)
-			TimelineItemView(timelineItem: TimelineItem(article: PreviewArticles.basicUnread))
-				.frame(maxWidth: 250)
-			TimelineItemView(timelineItem: TimelineItem(article: PreviewArticles.basicStarred))
-				.frame(maxWidth: 250)
 		}
     }
 }
