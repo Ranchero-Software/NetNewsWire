@@ -94,7 +94,8 @@ struct SidebarToolbarModifier: ViewModifier {
 					AddFolderView()
 				}
 				if viewModel.sheetToShow == .settings {
-					SettingsView().modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
+					SettingsView()
+						.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 				}
 			}
 		#else

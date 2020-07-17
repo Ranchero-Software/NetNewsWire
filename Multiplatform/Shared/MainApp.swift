@@ -93,7 +93,7 @@ struct MainApp: App {
 				.onAppear { refreshProgress.startup() }
 				.environmentObject(refreshProgress)
 				.environmentObject(defaults)
-				.modifier(PreferredColorSchemeModifier(preferredColorScheme: defaults.userInterfaceColorPalette))
+				.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 		}
 		.commands {
 			CommandGroup(after: .newItem, addition: {

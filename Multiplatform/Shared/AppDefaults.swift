@@ -134,7 +134,9 @@ final class AppDefaults: ObservableObject {
 		}
 		set {
 			AppDefaults.store.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
-			objectWillChange.send()
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+				self.objectWillChange.send()
+			})
 		}
 	}
 	
