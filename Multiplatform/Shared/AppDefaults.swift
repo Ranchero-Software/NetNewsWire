@@ -134,7 +134,13 @@ final class AppDefaults: ObservableObject {
 		}
 		set {
 			AppDefaults.store.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
-			objectWillChange.send()
+			#if os(macOS)
+			self.objectWillChange.send()
+			#else
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+				self.objectWillChange.send()
+			})
+			#endif
 		}
 	}
 	
