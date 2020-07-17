@@ -173,14 +173,17 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 
 	func canMarkAboveAsRead(_ article: Article) -> Bool {
+		let article = correctedAboveArticle(article)
 		return articles.articlesAbove(article: article).canMarkAllAsRead()
 	}
 
 	func canMarkBelowAsRead(_ article: Article) -> Bool {
+		let article = correctedBelowArticle(article)
 		return articles.articlesBelow(article: article).canMarkAllAsRead()
 	}
 
 	func markAboveAsRead(_ article: Article) {
+		let article = correctedAboveArticle(article)
 		let articlesToMark = articles.articlesAbove(article: article)
 		guard !articlesToMark.isEmpty else { return }
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
@@ -190,6 +193,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 
 	func markBelowAsRead(_ article: Article) {
+		let article = correctedBelowArticle(article)
 		let articlesToMark = articles.articlesBelow(article: article)
 		guard !articlesToMark.isEmpty else { return }
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
@@ -225,6 +229,22 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 // MARK: Private
 
 private extension TimelineModel {
+	
+	func correctedAboveArticle(_ article: Article) -> Article {
+		if selectedArticles.contains(article) {
+			return selectedArticles.first!
+		} else {
+			return article
+		}
+	}
+	
+	func correctedBelowArticle(_ article: Article) -> Article {
+		if selectedArticles.contains(article) {
+			return selectedArticles.last!
+		} else {
+			return article
+		}
+	}
 	
 	// MARK: Notifications
 
