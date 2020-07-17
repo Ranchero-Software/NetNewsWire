@@ -374,6 +374,8 @@
 		51B8104624C0E6D200C6C32D /* TimelineTextSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8104424C0E6D200C6C32D /* TimelineTextSizer.swift */; };
 		51B8BCC224C25C3E00360B00 /* SidebarContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8BCC124C25C3E00360B00 /* SidebarContextMenu.swift */; };
 		51B8BCC324C25C3E00360B00 /* SidebarContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8BCC124C25C3E00360B00 /* SidebarContextMenu.swift */; };
+		51B8BCE624C25F7C00360B00 /* TimelineContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8BCE524C25F7C00360B00 /* TimelineContextMenu.swift */; };
+		51B8BCE724C25F7C00360B00 /* TimelineContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8BCE524C25F7C00360B00 /* TimelineContextMenu.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
 		51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
@@ -2038,6 +2040,7 @@
 		51B80F4524BF76E700C6C32D /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		51B8104424C0E6D200C6C32D /* TimelineTextSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineTextSizer.swift; sourceTree = "<group>"; };
 		51B8BCC124C25C3E00360B00 /* SidebarContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarContextMenu.swift; sourceTree = "<group>"; };
+		51B8BCE524C25F7C00360B00 /* TimelineContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineContextMenu.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
@@ -2952,6 +2955,7 @@
 			isa = PBXGroup;
 			children = (
 				51919FED24AB85E400541E64 /* TimelineContainerView.swift */,
+				51B8BCE524C25F7C00360B00 /* TimelineContextMenu.swift */,
 				51919FF324AB869C00541E64 /* TimelineItem.swift */,
 				514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */,
 				514E6BD924ACEA0400AC6F6E /* TimelineItemView.swift */,
@@ -5237,6 +5241,7 @@
 				51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				653A4E7924BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift in Sources */,
 				51E4995724A8734D00B667CB /* ExtensionPoint.swift in Sources */,
+				51B8BCE624C25F7C00360B00 /* TimelineContextMenu.swift in Sources */,
 				1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */,
 				51E4991124A808DE00B667CB /* SmallIconProvider.swift in Sources */,
 			);
@@ -5339,6 +5344,7 @@
 				1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */,
 				51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
 				514E6BDB24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
+				51B8BCE724C25F7C00360B00 /* TimelineContextMenu.swift in Sources */,
 				51E4996E24A8764C00B667CB /* ActivityManager.swift in Sources */,
 				1769E33024BD6271000E1E8E /* EditAccountCredentialsView.swift in Sources */,
 				51E4995A24A873F900B667CB /* ErrorHandler.swift in Sources */,

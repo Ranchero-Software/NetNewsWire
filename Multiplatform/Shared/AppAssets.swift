@@ -126,6 +126,14 @@ struct AppAssets {
 	}()
 	#endif
 
+	static var markBelowAsReadImage: Image = {
+		return Image(systemName: "arrowtriangle.down.circle")
+	}()
+	
+	static var markAboveAsReadImage: Image = {
+		return Image(systemName: "arrowtriangle.up.circle")
+	}()
+	
 	static var nextArticleImage: Image = {
 		return Image(systemName: "chevron.down")
 	}()

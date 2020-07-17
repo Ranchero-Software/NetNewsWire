@@ -171,6 +171,32 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 		runCommand(markUnreadCommand)
 	}
+
+	func canMarkAboveAsRead(_ article: Article) -> Bool {
+		return articles.articlesAbove(article: article).canMarkAllAsRead()
+	}
+
+	func canMarkBelowAsRead(_ article: Article) -> Bool {
+		return articles.articlesBelow(article: article).canMarkAllAsRead()
+	}
+
+	func markAboveAsRead(_ article: Article) {
+		let articlesToMark = articles.articlesAbove(article: article)
+		guard !articlesToMark.isEmpty else { return }
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+
+	func markBelowAsRead(_ article: Article) {
+		let articlesToMark = articles.articlesBelow(article: article)
+		guard !articlesToMark.isEmpty else { return }
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
 	
 	func articleFor(_ articleID: String) -> Article? {
 		return idToArticleDictionary[articleID]

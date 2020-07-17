@@ -67,5 +67,8 @@ struct TimelineItemView: View {
 		.onAppear {
 			articleIconImageLoader.loadImage(for: timelineItem.article)
 		}
+		.contextMenu {
+			TimelineContextMenu(timelineItem: timelineItem)
+		}
     }
 }
