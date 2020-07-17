@@ -15,13 +15,15 @@ struct SidebarContextMenu: View {
     @ViewBuilder var body: some View {
 		
 		if sidebarItem.representedType == .account {
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Get Info")
 				#if os(iOS)
 				AppAssets.getInfoImage
 				#endif
 			}
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
 				AppAssets.markAllAsReadImage
@@ -30,7 +32,8 @@ struct SidebarContextMenu: View {
 		}
 		
 		if sidebarItem.representedType == .pseudoFeed {
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
 				AppAssets.markAllAsReadImage
@@ -39,46 +42,53 @@ struct SidebarContextMenu: View {
 		}
 		
 		if sidebarItem.representedType == .webFeed {
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Get Info")
 				#if os(iOS)
 				AppAssets.getInfoImage
 				#endif
 			}
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
 				AppAssets.markAllAsReadImage
 				#endif
 			}
 			Divider()
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Open Home Page")
 				#if os(iOS)
 				AppAssets.openInBrowserImage
 				#endif
 			}
 			Divider()
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Copy Feed URL")
 				#if os(iOS)
 				AppAssets.copyImage
 				#endif
 			}
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Copy Home Page URL")
 				#if os(iOS)
 				AppAssets.copyImage
 				#endif
 			}
 			Divider()
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Rename")
 				#if os(iOS)
 				AppAssets.renameImage
 				#endif
 			}
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Delete")
 				#if os(iOS)
 				AppAssets.deleteImage
@@ -87,20 +97,23 @@ struct SidebarContextMenu: View {
 		}
 		
 		if sidebarItem.representedType == .folder {
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
 				AppAssets.markAllAsReadImage
 				#endif
 			}
 			Divider()
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Rename")
 				#if os(iOS)
 				AppAssets.renameImage
 				#endif
 			}
-			Button(action: {}) {
+			Button {
+			} label: {
 				Text("Delete")
 				#if os(iOS)
 				AppAssets.deleteImage

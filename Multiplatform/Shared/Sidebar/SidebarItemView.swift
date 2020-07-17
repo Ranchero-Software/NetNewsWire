@@ -36,9 +36,9 @@ struct SidebarItemView: View {
 			if let feed = sidebarItem.feed {
 				feedIconImageLoader.loadImage(for: feed)
 			}
-		}.contextMenu(menuItems: {
+		}.contextMenu {
 			SidebarContextMenu(sidebarItem: sidebarItem)
-		})
+		}
     }
 	
 }
