@@ -372,6 +372,8 @@
 		51B80F4624BF76E700C6C32D /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B80F4524BF76E700C6C32D /* Browser.swift */; };
 		51B8104524C0E6D200C6C32D /* TimelineTextSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8104424C0E6D200C6C32D /* TimelineTextSizer.swift */; };
 		51B8104624C0E6D200C6C32D /* TimelineTextSizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8104424C0E6D200C6C32D /* TimelineTextSizer.swift */; };
+		51B8BCC224C25C3E00360B00 /* SidebarContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8BCC124C25C3E00360B00 /* SidebarContextMenu.swift */; };
+		51B8BCC324C25C3E00360B00 /* SidebarContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B8BCC124C25C3E00360B00 /* SidebarContextMenu.swift */; };
 		51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */; };
 		51BB7C312335ACDE008E8144 /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 51BB7C302335ACDE008E8144 /* page.html */; };
 		51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
@@ -2035,6 +2037,7 @@
 		51B80F4324BE58BF00C6C32D /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
 		51B80F4524BF76E700C6C32D /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		51B8104424C0E6D200C6C32D /* TimelineTextSizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineTextSizer.swift; sourceTree = "<group>"; };
+		51B8BCC124C25C3E00360B00 /* SidebarContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarContextMenu.swift; sourceTree = "<group>"; };
 		51BB7C262335A8E5008E8144 /* ArticleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleActivityItemSource.swift; sourceTree = "<group>"; };
 		51BB7C302335ACDE008E8144 /* page.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL-Extensions.swift"; sourceTree = "<group>"; };
@@ -3233,6 +3236,7 @@
 			isa = PBXGroup;
 			children = (
 				51E499FF24A91FC100B667CB /* SidebarContainerView.swift */,
+				51B8BCC124C25C3E00360B00 /* SidebarContextMenu.swift */,
 				51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */,
 				51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */,
 				51919FAE24AA8EFA00541E64 /* SidebarItemView.swift */,
@@ -4266,46 +4270,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -4315,7 +4319,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -4325,7 +4329,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -5170,6 +5174,7 @@
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				5177471024B3029400EB0F74 /* ArticleViewController.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
+				51B8BCC224C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
 				17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
 				51B80EB824BD1F8B00C6C32D /* ActivityViewController.swift in Sources */,
 				51E4994224A8713C00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
@@ -5244,6 +5249,7 @@
 				17930ED524AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */,
 				51E4993A24A8708800B667CB /* AppDelegate.swift in Sources */,
 				51E498CE24A8085D00B667CB /* UnreadFeed.swift in Sources */,
+				51B8BCC324C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
 				51E498C724A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				5194736F24BBB937001A2939 /* HiddenModifier.swift in Sources */,
 				51919FB724AABCA100541E64 /* IconImageView.swift in Sources */,
