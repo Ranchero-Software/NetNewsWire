@@ -63,22 +63,22 @@ class AccountsPreferencesModel: ObservableObject {
 	@Published var showDeleteConfirmation: Bool = false
 	
 	// Subscriptions
-	var notificationSubscriptions = Set<AnyCancellable>()
+	var cancellables = Set<AnyCancellable>()
 	
 	init() {
 		sortedAccounts = AccountManager.shared.sortedAccounts
 		
-		NotificationCenter.default.publisher(for: .UserDidAddAccount).sink(receiveValue: {  [weak self] _ in
+		NotificationCenter.default.publisher(for: .UserDidAddAccount).sink {  [weak self] _ in
 			self?.sortedAccounts = AccountManager.shared.sortedAccounts
-		}).store(in: &notificationSubscriptions)
+		}.store(in: &cancellables)
 		
-		NotificationCenter.default.publisher(for: .UserDidDeleteAccount).sink(receiveValue: { [weak self] _ in
+		NotificationCenter.default.publisher(for: .UserDidDeleteAccount).sink { [weak self] _ in
 			self?.selectedConfiguredAccountID = nil
 			self?.sortedAccounts = AccountManager.shared.sortedAccounts
 			self?.selectedConfiguredAccountID = AccountManager.shared.defaultAccount.accountID
-		}).store(in: &notificationSubscriptions)
+		}.store(in: &cancellables)
 		
-		NotificationCenter.default.publisher(for: .AccountStateDidChange).sink(receiveValue: { [weak self] notification in
+		NotificationCenter.default.publisher(for: .AccountStateDidChange).sink { [weak self] notification in
 			guard let account = notification.object as? Account else {
 				return
 			}
@@ -87,7 +87,7 @@ class AccountsPreferencesModel: ObservableObject {
 				self?.accountIsActive = account.isActive
 				self?.accountName = account.name ?? ""
 			}
-		}).store(in: &notificationSubscriptions)
+		}.store(in: &cancellables)
 	}
 	
 }

@@ -7,17 +7,27 @@
 //
 
 import SwiftUI
+import Combine
 import Account
 
 final class FeedIconImageLoader: ObservableObject {
 	
-	private var feed: Feed?
-	
 	@Published var image: IconImage?
+	private var feed: Feed?
+	private var cancellables = Set<AnyCancellable>()
 	
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.publisher(for: .FaviconDidBecomeAvailable).sink {  [weak self] _ in
+			self?.fetchImage()
+		}.store(in: &cancellables)
+		
+		
+		NotificationCenter.default.publisher(for: .WebFeedIconDidBecomeAvailable).sink {  [weak self] note in
+			guard let feed = self?.feed as? WebFeed, let noteFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, feed == noteFeed else {
+				return
+			}
+			self?.fetchImage()
+		}.store(in: &cancellables)
 	}
 	
 	func loadImage(for feed: Feed) {
@@ -29,17 +39,6 @@ final class FeedIconImageLoader: ObservableObject {
 }
 
 private extension FeedIconImageLoader {
-	
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		fetchImage()
-	}
-
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = feed as? WebFeed, let noteFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, feed == noteFeed else {
-			return
-		}
-		fetchImage()
-	}
 	
 	func fetchImage() {
 		if let webFeed = feed as? WebFeed {

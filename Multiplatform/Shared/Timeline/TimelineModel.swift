@@ -42,10 +42,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
 
-	private var selectedFeedsCancellable: AnyCancellable?
-	private var selectedArticleIDsCancellable: AnyCancellable?
-	private var selectedArticleIDCancellable: AnyCancellable?
-	private var selectedArticlesCancellable: AnyCancellable?
+	private var cancellables = Set<AnyCancellable>()
 
 	private var feeds = [Feed]()
 	private var fetchSerialNumber = 0
@@ -78,39 +75,51 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	func startup() {
-		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-		
-		// TODO: This should be rewritten to use Combine correctly
-		selectedFeedsCancellable = delegate?.selectedFeeds.sink { [weak self] feeds in
-			guard let self = self else { return }
-			self.fetchArticles(feeds: feeds)
-		}
+		NotificationCenter.default.publisher(for: .StatusesDidChange).sink {  [weak self] note in
+			guard let self = self, let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
+				return
+			}
+			for i in 0..<self.timelineItems.count {
+				if articleIDs.contains(self.timelineItems[i].article.articleID) {
+					self.timelineItems[i].updateStatus()
+				}
+			}
+		}.store(in: &cancellables)
+
+		NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification).sink {  [weak self] _ in
+			self?.sortDirection = AppDefaults.shared.timelineSortDirection
+			self?.groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		}.store(in: &cancellables)
 
 		// TODO: This should be rewritten to use Combine correctly
-		selectedArticleIDsCancellable = $selectedArticleIDs.sink { [weak self] articleIDs in
+		delegate?.selectedFeeds.sink { [weak self] feeds in
+			guard let self = self else { return }
+			self.fetchArticles(feeds: feeds)
+		}.store(in: &cancellables)
+
+		// TODO: This should be rewritten to use Combine correctly
+		$selectedArticleIDs.sink { [weak self] articleIDs in
 			guard let self = self else { return }
 			self.selectedArticles = articleIDs.compactMap { self.idToArticleDictionary[$0] }
-		}
+		}.store(in: &cancellables)
 		
 		// TODO: This should be rewritten to use Combine correctly
-		selectedArticleIDCancellable = $selectedArticleID.sink { [weak self] articleID in
+		$selectedArticleID.sink { [weak self] articleID in
 			guard let self = self else { return }
 			if let articleID = articleID, let article = self.idToArticleDictionary[articleID] {
 				self.selectedArticles = [article]
 			}
-		}
+		}.store(in: &cancellables)
 
 		// TODO: This should be rewritten to use Combine correctly
-		selectedArticlesCancellable = $selectedArticles.sink { articles in
+		$selectedArticles.sink { articles in
 			if articles.count == 1 {
 				let article = articles.first!
 				if !article.status.read {
 					markArticles(Set([article]), statusKey: .read, flag: true)
 				}
 			}
-		}
-		
+		}.store(in: &cancellables)
 	}
 	
 	// MARK: API
@@ -323,24 +332,6 @@ private extension TimelineModel {
 			return
 		}
 		runCommand(markReadCommand)
-	}
-	
-	// MARK: Notifications
-
-	@objc func statusesDidChange(_ note: Notification) {
-		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
-			return
-		}
-		for i in 0..<timelineItems.count {
-			if articleIDs.contains(timelineItems[i].article.articleID) {
-				timelineItems[i].updateStatus()
-			}
-		}
-	}
-	
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		sortDirection = AppDefaults.shared.timelineSortDirection
-		groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}
 	
 	// MARK: Timeline Management

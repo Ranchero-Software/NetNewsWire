@@ -25,9 +25,7 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedFeeds = [Feed]()
 	@Published var isReadFiltered = false
 	
-	private var selectedFeedIdentifiersCancellable: AnyCancellable?
-	private var selectedFeedIdentifierCancellable: AnyCancellable?
-	private var selectedReadFilteredCancellable: AnyCancellable?
+	private var cancellables = Set<AnyCancellable>()
 
 	private let rebuildSidebarItemsQueue = CoalescingQueue(name: "Rebuild The Sidebar Items", interval: 0.5)
 
@@ -35,33 +33,55 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
-		
+		NotificationCenter.default.publisher(for: .UnreadCountDidInitialize)
+			.filter { $0.object is AccountManager }
+			.sink {  [weak self] note in
+				guard let self = self else { return	}
+				self.rebuildSidebarItems(isReadFiltered: self.isReadFiltered)
+			}.store(in: &cancellables)
+
+		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
+			.filter { _ in AccountManager.shared.isUnreadCountsInitialized }
+			.sink {  [weak self] _ in
+				self?.queueRebuildSidebarItems()
+			}.store(in: &cancellables)
+
+		let chidrenDidChangePublisher = NotificationCenter.default.publisher(for: .ChildrenDidChange)
+		let batchUpdateDidPerformPublisher = NotificationCenter.default.publisher(for: .BatchUpdateDidPerform)
+		let displayNameDidChangePublisher = NotificationCenter.default.publisher(for: .DisplayNameDidChange)
+		let accountStateDidChangePublisher = NotificationCenter.default.publisher(for: .AccountStateDidChange)
+		let userDidAddAccountPublisher = NotificationCenter.default.publisher(for: .UserDidAddAccount)
+		let userDidDeleteAccountPublisher = NotificationCenter.default.publisher(for: .UserDidDeleteAccount)
+
+		let sidebarRebuildPublishers = chidrenDidChangePublisher.merge(with: batchUpdateDidPerformPublisher,
+																	   displayNameDidChangePublisher,
+																	   accountStateDidChangePublisher,
+																	   userDidAddAccountPublisher,
+																	   userDidDeleteAccountPublisher)
+
+		sidebarRebuildPublishers.sink {  [weak self] _ in
+			guard let self = self else { return	}
+			self.rebuildSidebarItems(isReadFiltered: self.isReadFiltered)
+		}.store(in: &cancellables)
+
+
 		// TODO: This should be rewritten to use Combine correctly
-		selectedFeedIdentifiersCancellable = $selectedFeedIdentifiers.sink { [weak self] feedIDs in
+		$selectedFeedIdentifiers.sink { [weak self] feedIDs in
 			guard let self = self else { return }
 			self.selectedFeeds = feedIDs.compactMap { self.findFeed($0) }
-		}
+		}.store(in: &cancellables)
 		
 		// TODO: This should be rewritten to use Combine correctly
-		selectedFeedIdentifierCancellable = $selectedFeedIdentifier.sink { [weak self] feedID in
+		$selectedFeedIdentifier.sink { [weak self] feedID in
 			guard let self = self else { return }
 			if let feedID = feedID, let feed = self.findFeed(feedID) {
 				self.selectedFeeds = [feed]
 			}
-		}
+		}.store(in: &cancellables)
 
-		selectedReadFilteredCancellable = $isReadFiltered.sink { [weak self] filter in
-			guard let self = self else { return }
-			self.rebuildSidebarItems(isReadFiltered: filter)
-		}
+		$isReadFiltered.sink { [weak self] filter in
+			self?.rebuildSidebarItems(isReadFiltered: filter)
+		}.store(in: &cancellables)
 	}
 	
 	// MARK: API
@@ -141,47 +161,6 @@ private extension SidebarModel {
 		}
 		
 		sidebarItems = items
-	}
-	
-	// MARK: Notifications
-	
-	@objc func unreadCountDidInitialize(_ notification: Notification) {
-		guard notification.object is AccountManager else {
-			return
-		}
-		rebuildSidebarItems(isReadFiltered: isReadFiltered)
-	}
-
-	@objc func unreadCountDidChange(_ note: Notification) {
-		// We will handle the filtering of unread feeds in unreadCountDidInitialize after they have all be calculated
-		guard AccountManager.shared.isUnreadCountsInitialized else {
-			return
-		}
-		queueRebuildSidebarItems()
-	}
-	
-	@objc func containerChildrenDidChange(_ notification: Notification) {
-		rebuildSidebarItems(isReadFiltered: isReadFiltered)
-	}
-	
-	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildSidebarItems(isReadFiltered: isReadFiltered)
-	}
-	
-	@objc func displayNameDidChange(_ note: Notification) {
-		rebuildSidebarItems(isReadFiltered: isReadFiltered)
-	}
-	
-	@objc func accountStateDidChange(_ note: Notification) {
-		rebuildSidebarItems(isReadFiltered: isReadFiltered)
-	}
-	
-	@objc func userDidAddAccount(_ note: Notification) {
-		rebuildSidebarItems(isReadFiltered: isReadFiltered)
-	}
-	
-	@objc func userDidDeleteAccount(_ note: Notification) {
-		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 	
 }

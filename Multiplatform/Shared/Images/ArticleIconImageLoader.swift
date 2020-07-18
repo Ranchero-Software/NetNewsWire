@@ -7,19 +7,40 @@
 //
 
 import Foundation
+import Combine
 import Account
 import Articles
 
 final class ArticleIconImageLoader: ObservableObject {
 	
-	private var article: Article?
-	
 	@Published var image: IconImage?
-	
+	private var article: Article?
+	private var cancellables = Set<AnyCancellable>()
+
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
+		NotificationCenter.default.publisher(for: .FaviconDidBecomeAvailable).sink {  [weak self] _ in
+			guard let self = self, let article = self.article else { return }
+			self.image = article.iconImage()
+		}.store(in: &cancellables)
+
+		NotificationCenter.default.publisher(for: .WebFeedIconDidBecomeAvailable).sink {  [weak self] note in
+			guard let self = self, let article = self.article, let noteFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, noteFeed == article.webFeed else {
+				return
+			}
+			self.image = article.iconImage()
+		}.store(in: &cancellables)
+
+		NotificationCenter.default.publisher(for: .AvatarDidBecomeAvailable).sink {  [weak self] note in
+			guard let self = self, let article = self.article, let authors = article.authors, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+				return
+			}
+			for author in authors {
+				if author.avatarURL == avatarURL {
+					self.image = article.iconImage()
+					return
+				}
+			}
+		}.store(in: &cancellables)
 	}
 	
 	func loadImage(for article: Article) {
@@ -28,32 +49,4 @@ final class ArticleIconImageLoader: ObservableObject {
 		image = article.iconImage()
 	}
 	
-}
-
-private extension ArticleIconImageLoader {
-	
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		guard let article = article else { return }
-		image = article.iconImage()
-	}
-
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard let article = article, let noteFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed, noteFeed == article.webFeed else {
-			return
-		}
-		image = article.iconImage()
-	}
-	
-	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		guard let article = article, let authors = article.authors, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
-			return
-		}
-
-		for author in authors {
-			if author.avatarURL == avatarURL {
-				image = article.iconImage()
-				return
-			}
-		}
-	}
 }
