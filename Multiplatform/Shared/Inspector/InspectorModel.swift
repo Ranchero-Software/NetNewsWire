@@ -27,7 +27,11 @@ class InspectorModel: ObservableObject {
 			updateNotificationSettings()
 		}
 	}
-	@Published var alwaysShowReaderView: Bool = false
+	@Published var alwaysShowReaderView: Bool = false {
+		didSet {
+			selectedWebFeed?.isArticleExtractorAlwaysOn = alwaysShowReaderView
+		}
+	}
 	private let centre = UNUserNotificationCenter.current()
 	private var selectedWebFeed: WebFeed?
 	private var selectedFolder: Folder?
