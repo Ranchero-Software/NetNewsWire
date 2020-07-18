@@ -81,6 +81,18 @@ struct TimelineContextMenu: View {
 			}
 		}
 		
+		if let feed = timelineItem.article.webFeed, timelineModel.canMarkAllAsReadInFeed(feed) {
+			Divider()
+			Button {
+				timelineModel.markAllAsReadInFeed(feed)
+			} label: {
+				Text("Mark All as Read in “\(feed.nameForDisplay)”")
+				#if os(iOS)
+				AppAssets.markAllAsReadImage
+				#endif
+			}
+		}
+
 		if timelineModel.canOpenIndicatedArticleInBrowser(timelineItem.article) {
 			Divider()
 			Button {

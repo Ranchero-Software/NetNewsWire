@@ -189,6 +189,19 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
 	}
 	
+	func canMarkAllAsReadInFeed(_ feed: Feed) -> Bool {
+		guard let articlesSet = try? feed.fetchArticles() else {
+			return false
+		}
+		return Array(articlesSet).canMarkAllAsRead()
+	}
+	
+	func markAllAsReadInFeed(_ feed: Feed) {
+		guard let articlesSet = try? feed.fetchArticles() else { return	}
+		let articlesToMark = Array(articlesSet)
+		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
+	}
+	
 	func toggleStarredStatusForSelectedArticles() {
 		guard !selectedArticles.isEmpty else {
 			return
