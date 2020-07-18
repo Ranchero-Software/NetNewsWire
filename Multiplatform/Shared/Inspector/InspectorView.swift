@@ -110,7 +110,6 @@ struct InspectorView: View {
 			HStack {
 				Spacer()
 				Button("Cancel", action: {
-					(sidebarItem.feed as? Folder)?.name = nil
 					presentationMode.wrappedValue.dismiss()
 				})
 				Button("Confirm", action: {
