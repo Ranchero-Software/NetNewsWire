@@ -14,8 +14,7 @@ struct InspectorView: View {
 	
 	@Environment(\.presentationMode) var presentationMode
 	@StateObject private var feedIconImageLoader = FeedIconImageLoader()
-	@State private var editedName: String = ""
-	@State private var shouldUpdate: Bool = false
+	@StateObject private var inspectorModel = InspectorModel()
 	var sidebarItem: SidebarItem
 	
 	@ViewBuilder
@@ -23,13 +22,13 @@ struct InspectorView: View {
 		switch sidebarItem.representedType {
 		case .webFeed:
 			WebFeedInspectorView
-				.modifier(InspectorPlatformModifier(shouldUpdate: $shouldUpdate))
+				.modifier(InspectorPlatformModifier(shouldUpdate: $inspectorModel.shouldUpdate))
 		case .folder:
 			FolderInspectorView
-				.modifier(InspectorPlatformModifier(shouldUpdate: $shouldUpdate))
+				.modifier(InspectorPlatformModifier(shouldUpdate: $inspectorModel.shouldUpdate))
 		case .account:
 			AccountInspectorView
-				.modifier(InspectorPlatformModifier(shouldUpdate: $shouldUpdate))
+				.modifier(InspectorPlatformModifier(shouldUpdate: $inspectorModel.shouldUpdate))
 		default:
 			EmptyView()
 		}
@@ -44,9 +43,18 @@ struct InspectorView: View {
 						IconImageView(iconImage: image)
 							.frame(width: 30, height: 30)
 					}
-					TextField("", text: $editedName)
+					TextField("", text: $inspectorModel.editedName)
 				}
 			}
+			
+			#if os(macOS)
+			Divider()
+			#endif
+			
+			Section(content: {
+				Toggle("Notify About New Articles", isOn: $inspectorModel.notifyAboutNewArticles)
+				Toggle("Always Show Reader View", isOn: $inspectorModel.alwaysShowReaderView)
+			})
 			
 			#if os(macOS)
 			Divider()
@@ -71,18 +79,18 @@ struct InspectorView: View {
 					presentationMode.wrappedValue.dismiss()
 				})
 				Button("Done", action: {
-					shouldUpdate = true
-				})
+					inspectorModel.shouldUpdate = true
+				}).keyboardShortcut(.defaultAction)
 			}.padding(.top)
 			#endif
 		}
 		.onAppear {
-			editedName = sidebarItem.nameForDisplay
+			inspectorModel.configure(with: sidebarItem.feed as! WebFeed)
 			feedIconImageLoader.loadImage(for: sidebarItem.feed!)
-		}.onChange(of: shouldUpdate) { value in
+		}.onChange(of: inspectorModel.shouldUpdate) { value in
 			if value == true {
-				if editedName.trimmingWhitespace.count > 0  {
-					(sidebarItem.feed as? WebFeed)?.editedName = editedName
+				if inspectorModel.editedName.trimmingWhitespace.count > 0  {
+					(sidebarItem.feed as? WebFeed)?.editedName = inspectorModel.editedName
 				} else {
 					(sidebarItem.feed as? WebFeed)?.editedName = nil
 				}
@@ -102,7 +110,7 @@ struct InspectorView: View {
 						IconImageView(iconImage: image)
 							.frame(width: 30, height: 30)
 					}
-					TextField("", text: $editedName)
+					TextField("", text: $inspectorModel.editedName)
 				}
 			}
 			
@@ -113,20 +121,20 @@ struct InspectorView: View {
 					presentationMode.wrappedValue.dismiss()
 				})
 				Button("Done", action: {
-					shouldUpdate = true
-				})
+					inspectorModel.shouldUpdate = true
+				}).keyboardShortcut(.defaultAction)
 			}.padding(.top)
 			#endif
 			
 		}
 		.onAppear {
-			editedName = sidebarItem.nameForDisplay
+			inspectorModel.configure(with: sidebarItem.represented as! Folder)
 			feedIconImageLoader.loadImage(for: sidebarItem.feed!)
 		}
-		.onChange(of: shouldUpdate) { value in
+		.onChange(of: inspectorModel.shouldUpdate) { value in
 			if value == true {
-				if editedName.trimmingWhitespace.count > 0  {
-					(sidebarItem.feed as? Folder)?.name = editedName
+				if inspectorModel.editedName.trimmingWhitespace.count > 0  {
+					(sidebarItem.feed as? Folder)?.name = inspectorModel.editedName
 				} else {
 					(sidebarItem.feed as? Folder)?.name = nil
 				}
@@ -146,7 +154,7 @@ struct InspectorView: View {
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 30, height: 30)
 					}
-					TextField("", text: $editedName)
+					TextField("", text: $inspectorModel.editedName)
 				}
 			}
 			
@@ -157,17 +165,18 @@ struct InspectorView: View {
 					presentationMode.wrappedValue.dismiss()
 				})
 				Button("Done", action: {
-					shouldUpdate = true
-				})
+					inspectorModel.shouldUpdate = true
+				}).keyboardShortcut(.defaultAction)
 			}.padding(.top)
 			#endif
 		}
 		.onAppear {
-			editedName = sidebarItem.nameForDisplay
-		}.onChange(of: shouldUpdate) { value in
+			inspectorModel.configure(with: sidebarItem.represented as! Account)
+		}
+		.onChange(of: inspectorModel.shouldUpdate) { value in
 			if value == true {
-				if editedName.trimmingWhitespace.count > 0  {
-					(sidebarItem.represented as? Account)?.name = editedName
+				if inspectorModel.editedName.trimmingWhitespace.count > 0  {
+					(sidebarItem.represented as? Account)?.name = inspectorModel.editedName
 				} else {
 					(sidebarItem.represented as? Account)?.name = nil
 				}
