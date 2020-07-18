@@ -91,10 +91,11 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			self?.groupByFeed = AppDefaults.shared.timelineGroupByFeed
 		}.store(in: &cancellables)
 
-		// TODO: This should be rewritten to use Combine correctly
+		// TODO: This should be rewritten to use Combine correctly (including fixing the read filter toggle to work as a published bool)
 		delegate?.selectedFeeds.sink { [weak self] feeds in
 			guard let self = self else { return }
-			self.fetchArticles(feeds: feeds)
+			self.feeds = feeds
+			self.fetchArticles()
 		}.store(in: &cancellables)
 
 		// TODO: This should be rewritten to use Combine correctly
@@ -128,7 +129,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		guard let filter = isReadFiltered, let feedID = feeds.first?.feedID else { return }
 		readFilterEnabledTable[feedID] = !filter
 		isReadFiltered = !filter
-		rebuildTimelineItems()
+		self.fetchArticles()
 	}
 	
 	func toggleReadStatusForSelectedArticles() {
@@ -378,9 +379,7 @@ private extension TimelineModel {
 	
 	// MARK: Article Fetching
 	
-	func fetchArticles(feeds: [Feed]) {
-		self.feeds = feeds
-		
+	func fetchArticles() {
 		if feeds.count == 1 {
 			nameForDisplay = feeds.first!.nameForDisplay
 		} else {
@@ -414,12 +413,8 @@ private extension TimelineModel {
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
 
-		// Right now we are pulling all the records and filtering them in the UI.  This is because the async
-		// change of the timeline times doesn't trigger an animation because it isn't in a withAnimation block.
-		// Ideally this would be done in the database tier with a query, but if you look, we always pull everything
-		// from SQLite and filter it programmatically at that level currently.  So no big deal.
-		// We should change this as soon as we figure out how to trigger animations on Lists with async tasks.
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: false, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let filtered = isReadFiltered ?? false
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: filtered, representedObjects: representedObjects) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
@@ -439,16 +434,7 @@ private extension TimelineModel {
 	}
 	
 	func rebuildTimelineItems() {
-		let filtered = isReadFiltered ?? false
-		let selectedArticleIDs = selectedArticles.map { $0.articleID }
-
-		timelineItems = articles.compactMap { article in
-			if filtered && article.status.read && !selectedArticleIDs.contains(article.articleID) {
-				return nil
-			} else {
-				return TimelineItem(article: article)
-			}
-		}
+		timelineItems = articles.map { TimelineItem(article: $0) }
 	}
 
 }
