@@ -10,12 +10,15 @@ import SwiftUI
 
 struct SidebarContextMenu: View {
 	
+	@Binding var showInspector: Bool
 	var sidebarItem: SidebarItem
+	
 	
     @ViewBuilder var body: some View {
 		
 		if sidebarItem.representedType == .account {
 			Button {
+				showInspector = true
 			} label: {
 				Text("Get Info")
 				#if os(iOS)
@@ -43,6 +46,7 @@ struct SidebarContextMenu: View {
 		
 		if sidebarItem.representedType == .webFeed {
 			Button {
+				showInspector = true
 			} label: {
 				Text("Get Info")
 				#if os(iOS)
@@ -106,6 +110,7 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
+				showInspector = true
 			} label: {
 				Text("Rename")
 				#if os(iOS)
