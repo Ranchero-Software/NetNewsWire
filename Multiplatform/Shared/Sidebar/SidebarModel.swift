@@ -86,19 +86,19 @@ private extension SidebarModel {
 	}
 	
 	func subscribeToSelectedFeedChanges() {
-		// TODO: This should be rewritten to use Combine correctly
-		$selectedFeedIdentifiers.sink { [weak self] feedIDs in
-			guard let self = self else { return }
-			self.selectedFeeds = feedIDs.compactMap { self.findFeed($0) }
-		}.store(in: &cancellables)
+		$selectedFeedIdentifiers.map { [weak self] feedIDs in
+			feedIDs.compactMap { self?.findFeed($0) }
+		}
+		.assign(to: $selectedFeeds)
 		
-		// TODO: This should be rewritten to use Combine correctly
-		$selectedFeedIdentifier.sink { [weak self] feedID in
-			guard let self = self else { return }
-			if let feedID = feedID, let feed = self.findFeed(feedID) {
-				self.selectedFeeds = [feed]
+		$selectedFeedIdentifier.map { [weak self] feedID in
+			if let feedID = feedID, let feed = self?.findFeed(feedID) {
+				return [feed]
+			} else {
+				return [Feed]()
 			}
-		}.store(in: &cancellables)
+		}
+		.assign(to: $selectedFeeds)
 	}
 	
 	func subscribeToReadFilterChanges() {
