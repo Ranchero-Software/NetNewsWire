@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TimelineToolbarModifier: ViewModifier {
 	
+	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var timelineModel: TimelineModel
 
 	func body(content: Content) -> some View {
@@ -34,9 +35,11 @@ struct TimelineToolbarModifier: ViewModifier {
 				
 				ToolbarItem {
 					Button {
+						sceneModel.markAllAsRead()
 					} label: {
 						AppAssets.markAllAsReadImage
 					}
+					.disabled(sceneModel.markAllAsReadButtonState == nil)
 					.help("Mark All As Read")
 				}
 				

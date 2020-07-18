@@ -35,6 +35,7 @@ final class SceneModel: ObservableObject {
 	private(set) var sidebarModel = SidebarModel()
 	private(set) var timelineModel = TimelineModel()
 
+	private var articlesCancellable: AnyCancellable?
 	private var selectedArticlesCancellable: AnyCancellable?
 
 	// MARK: Initialization API
@@ -50,12 +51,21 @@ final class SceneModel: ObservableObject {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 
+		articlesCancellable = timelineModel.$articles.sink { [weak self] articles in
+			self?.updateMarkAllAsReadButtonsState(articles: articles)
+		}
+
 		selectedArticlesCancellable = timelineModel.$selectedArticles.sink { [weak self] articles in
-			self?.updateArticleButtonsState(articles: articles)
+			self?.updateArticleButtonsState(selectedArticles: articles)
 		}
 	}
 	
 	// MARK: Article Management API
+	
+	/// Marks all the articles in the Timeline as read
+	func markAllAsRead() {
+		timelineModel.markAllAsRead()
+	}
 	
 	/// Toggles the read status for the selected articles
 	func toggleReadStatusForSelectedArticles() {
@@ -123,16 +133,25 @@ private extension SceneModel {
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
 			return
 		}
+		updateMarkAllAsReadButtonsState(articles: timelineModel.articles)
 		let selectedArticleIDs = timelineModel.selectedArticles.map { $0.articleID }
 		if !articleIDs.intersection(selectedArticleIDs).isEmpty {
-			updateArticleButtonsState(articles: timelineModel.selectedArticles)
+			updateArticleButtonsState(selectedArticles: timelineModel.selectedArticles)
 		}
 	}
 	
 	// MARK: Button State Updates
 	
-	func updateArticleButtonsState(articles: [Article]) {
-		guard !articles.isEmpty else {
+	func updateMarkAllAsReadButtonsState(articles: [Article]) {
+		if articles.canMarkAllAsRead() {
+			markAllAsReadButtonState = false
+		} else {
+			markAllAsReadButtonState = nil
+		}
+	}
+	
+	func updateArticleButtonsState(selectedArticles: [Article]) {
+		guard !selectedArticles.isEmpty else {
 			readButtonState = nil
 			starButtonState = nil
 			openInBrowserButtonState = nil
@@ -140,21 +159,21 @@ private extension SceneModel {
 			return
 		}
 		
-		if articles.anyArticleIsUnread() {
+		if selectedArticles.anyArticleIsUnread() {
 			readButtonState = true
-		} else if articles.anyArticleIsReadAndCanMarkUnread() {
+		} else if selectedArticles.anyArticleIsReadAndCanMarkUnread() {
 			readButtonState = false
 		} else {
 			readButtonState = nil
 		}
 		
-		if articles.anyArticleIsUnstarred() {
+		if selectedArticles.anyArticleIsUnstarred() {
 			starButtonState = false
 		} else {
 			starButtonState = true
 		}
 		
-		if articles.count == 1, articles.first?.preferredLink != nil {
+		if selectedArticles.count == 1, selectedArticles.first?.preferredLink != nil {
 			openInBrowserButtonState = true
 			shareButtonState = true
 		} else {

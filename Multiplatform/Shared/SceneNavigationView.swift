@@ -92,6 +92,7 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				Button {
+					sceneModel.markAllAsRead()
 				} label: {
 					AppAssets.markAllAsReadImagePDF
 						.resizable()

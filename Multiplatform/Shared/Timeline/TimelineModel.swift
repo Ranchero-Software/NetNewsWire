@@ -33,6 +33,12 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var readFilterEnabledTable = [FeedIdentifier: Bool]()
 	@Published var isReadFiltered: Bool? = nil
 
+	@Published var articles = [Article]() {
+		didSet {
+			articleDictionaryNeedsUpdate = true
+		}
+	}
+
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
 
@@ -45,13 +51,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
-	
-	private var articles = [Article]() {
-		didSet {
-			articleDictionaryNeedsUpdate = true
-		}
-	}
-	
+		
 	private var articleDictionaryNeedsUpdate = true
 	private var _idToArticleDictionary = [String: Article]()
 	private var idToArticleDictionary: [String: Article] {
@@ -198,6 +198,14 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
 	}
 	
+	func canMarkAllAsRead() -> Bool {
+		return articles.canMarkAllAsRead()
+	}
+	
+	func markAllAsRead() {
+		markArticlesWithUndo(articles, statusKey: .read, flag: true)
+	}
+
 	func toggleStarredStatusForSelectedArticles() {
 		guard !selectedArticles.isEmpty else {
 			return
