@@ -89,6 +89,15 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	func startup() {
+		subscribeToArticleStatusChanges()
+		subscribeToUserDefaultsChanges()
+		subscribeToSelectedFeedChanges()
+		subscribeToSelectedArticleSelectionChanges()
+	}
+	
+	// MARK: Subscriptions
+	
+	func subscribeToArticleStatusChanges() {
 		NotificationCenter.default.publisher(for: .StatusesDidChange).sink {  [weak self] note in
 			guard let self = self, let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
 				return
@@ -99,19 +108,25 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 				}
 			}
 		}.store(in: &cancellables)
-
+	}
+	
+	func subscribeToUserDefaultsChanges() {
 		NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification).sink {  [weak self] _ in
 			self?.sortDirection = AppDefaults.shared.timelineSortDirection
 			self?.groupByFeed = AppDefaults.shared.timelineGroupByFeed
 		}.store(in: &cancellables)
-
+	}
+	
+	func subscribeToSelectedFeedChanges() {
 		// TODO: This should be rewritten to use Combine correctly (including fixing the read filter toggle to work as a published bool)
 		delegate?.selectedFeeds.sink { [weak self] feeds in
 			guard let self = self else { return }
 			self.feeds = feeds
 			self.fetchArticles()
 		}.store(in: &cancellables)
-
+	}
+	
+	func subscribeToSelectedArticleSelectionChanges() {
 		// TODO: This should be rewritten to use Combine correctly
 		$selectedArticleIDs.sink { [weak self] articleIDs in
 			guard let self = self else { return }

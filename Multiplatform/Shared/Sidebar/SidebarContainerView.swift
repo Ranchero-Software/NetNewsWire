@@ -22,7 +22,6 @@ struct SidebarContainerView: View {
 			.environmentObject(sceneModel.sidebarModel)
 			.onAppear {
 				sceneModel.sidebarModel.undoManager = undoManager
-				sceneModel.sidebarModel.rebuildSidebarItems()
 			}
 	}
 	

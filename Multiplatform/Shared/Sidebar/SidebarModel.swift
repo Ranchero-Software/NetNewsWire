@@ -33,19 +33,39 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 
 	init() {
+		subscribeToUnreadCountInitialization()
+		subscribeToUnreadCountChanges()
+		subscribeToRebuildSidebarItemsEvents()
+		subscribeToSelectedFeedChanges()
+		subscribeToReadFilterChanges()
+	}
+	
+}
+
+// MARK: Private
+
+private extension SidebarModel {
+	
+	// MARK: Subscriptions
+	
+	func subscribeToUnreadCountInitialization() {
 		NotificationCenter.default.publisher(for: .UnreadCountDidInitialize)
 			.filter { $0.object is AccountManager }
 			.sink {  [weak self] note in
 				guard let self = self else { return	}
 				self.rebuildSidebarItems(isReadFiltered: self.isReadFiltered)
 			}.store(in: &cancellables)
-
+	}
+	
+	func subscribeToUnreadCountChanges() {
 		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
 			.filter { _ in AccountManager.shared.isUnreadCountsInitialized }
 			.sink {  [weak self] _ in
 				self?.queueRebuildSidebarItems()
 			}.store(in: &cancellables)
-
+	}
+	
+	func subscribeToRebuildSidebarItemsEvents() {
 		let chidrenDidChangePublisher = NotificationCenter.default.publisher(for: .ChildrenDidChange)
 		let batchUpdateDidPerformPublisher = NotificationCenter.default.publisher(for: .BatchUpdateDidPerform)
 		let displayNameDidChangePublisher = NotificationCenter.default.publisher(for: .DisplayNameDidChange)
@@ -63,8 +83,9 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 			guard let self = self else { return	}
 			self.rebuildSidebarItems(isReadFiltered: self.isReadFiltered)
 		}.store(in: &cancellables)
-
-
+	}
+	
+	func subscribeToSelectedFeedChanges() {
 		// TODO: This should be rewritten to use Combine correctly
 		$selectedFeedIdentifiers.sink { [weak self] feedIDs in
 			guard let self = self else { return }
@@ -78,24 +99,15 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 				self.selectedFeeds = [feed]
 			}
 		}.store(in: &cancellables)
-
+	}
+	
+	func subscribeToReadFilterChanges() {
 		$isReadFiltered.sink { [weak self] filter in
 			self?.rebuildSidebarItems(isReadFiltered: filter)
 		}.store(in: &cancellables)
 	}
 	
-	// MARK: API
-	
-	/// Rebuilds the sidebar items to cause the sidebar to rebuild itself
-	func rebuildSidebarItems() {
-		rebuildSidebarItemsWithCurrentValues()
-	}
-
-}
-
-// MARK: Private
-
-private extension SidebarModel {
+	// MARK:
 	
 	func findFeed(_ feedID: FeedIdentifier) -> Feed? {
 		switch feedID {
