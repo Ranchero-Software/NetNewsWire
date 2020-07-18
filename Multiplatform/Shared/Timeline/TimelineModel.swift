@@ -26,7 +26,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	weak var delegate: TimelineModelDelegate?
 	
 	@Published var nameForDisplay = ""
-	@Published var timelineItems = [TimelineItem]()
 	@Published var selectedArticleIDs = Set<String>()  // Don't use directly.  Use selectedArticles
 	@Published var selectedArticleID: String? = .none  // Don't use directly.  Use selectedArticles
 	@Published var selectedArticles = [Article]()
@@ -36,6 +35,12 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var articles = [Article]() {
 		didSet {
 			articleDictionaryNeedsUpdate = true
+		}
+	}
+	
+	@Published var timelineItems = [TimelineItem]() {
+		didSet {
+			timelineItemDictionaryNeedsUpdate = true
 		}
 	}
 
@@ -56,6 +61,15 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			rebuildArticleDictionaries()
 		}
 		return _idToArticleDictionary
+	}
+
+	private var timelineItemDictionaryNeedsUpdate = true
+	private var _idToTimelineItemDictionary = [String: Int]()
+	private var idToTimelineItemDictionary: [String: Int] {
+		if timelineItemDictionaryNeedsUpdate {
+			rebuildTimelineItemDictionaries()
+		}
+		return _idToTimelineItemDictionary
 	}
 
 	private var sortDirection = AppDefaults.shared.timelineSortDirection {
@@ -79,9 +93,9 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			guard let self = self, let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
 				return
 			}
-			for i in 0..<self.timelineItems.count {
-				if articleIDs.contains(self.timelineItems[i].article.articleID) {
-					self.timelineItems[i].updateStatus()
+			articleIDs.forEach { articleID in
+				if let timelineItemIndex = self.idToTimelineItemDictionary[articleID] {
+					self.timelineItems[timelineItemIndex].updateStatus()
 				}
 			}
 		}.store(in: &cancellables)
@@ -375,6 +389,15 @@ private extension TimelineModel {
 		}
 		_idToArticleDictionary = idDictionary
 		articleDictionaryNeedsUpdate = false
+	}
+	
+	func rebuildTimelineItemDictionaries() {
+		var idDictionary = [String: Int]()
+		for (index, timelineItem) in timelineItems.enumerated() {
+			idDictionary[timelineItem.article.articleID] = index
+		}
+		_idToTimelineItemDictionary = idDictionary
+		timelineItemDictionaryNeedsUpdate = false
 	}
 	
 	// MARK: Article Fetching
