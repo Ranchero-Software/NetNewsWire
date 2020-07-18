@@ -81,5 +81,17 @@ struct TimelineContextMenu: View {
 			}
 		}
 		
+		if timelineModel.canOpenIndicatedArticleInBrowser(timelineItem.article) {
+			Divider()
+			Button {
+				timelineModel.openIndicatedArticleInBrowser(timelineItem.article)
+			} label: {
+				Text("Open in Browser")
+				#if os(iOS)
+				AppAssets.openInBrowserImage
+				#endif
+			}
+		}
+		
 	}
 }

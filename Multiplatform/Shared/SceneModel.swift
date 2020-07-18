@@ -6,11 +6,7 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-#if os(macOS)
-import AppKit
-#else
-import UIKit
-#endif
+import Foundation
 import Combine
 import Account
 import Articles
@@ -58,27 +54,21 @@ final class SceneModel: ObservableObject {
 		}
 	}
 	
-	// MARK Navigation API
-	
-	func openInBrowser() {
-		guard let link = selectedArticles.first?.preferredLink else { return }
-		
-		#if os(macOS)
-		Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		#else
-		guard let url = URL(string: link) else { return }
-		UIApplication.shared.open(url, options: [:])
-		#endif
-	}
-	
 	// MARK: Article Management API
 	
+	/// Toggles the read status for the selected articles
 	func toggleReadStatusForSelectedArticles() {
 		timelineModel.toggleReadStatusForSelectedArticles()
 	}
 	
+	/// Toggles the star status for the selected articles
 	func toggleStarredStatusForSelectedArticles() {
 		timelineModel.toggleStarredStatusForSelectedArticles()
+	}
+
+	/// Opens the selected article in an external browser
+	func openSelectedArticleInBrowser() {
+		timelineModel.openSelectedArticleInBrowser()
 	}
 	
 	/// Retrieves the article before the given article in the Timeline

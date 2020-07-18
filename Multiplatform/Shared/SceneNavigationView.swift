@@ -158,7 +158,7 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				Button {
-					sceneModel.openInBrowser()
+					sceneModel.openSelectedArticleInBrowser()
 				} label: {
 					AppAssets.openInBrowserImage
 				}

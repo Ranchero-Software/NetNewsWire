@@ -6,7 +6,11 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 import Combine
 import RSCore
 import Account
@@ -222,6 +226,27 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 
 	func markSelectedArticlesAsUnstarred() {
 		markArticlesWithUndo(selectedArticles, statusKey: .starred, flag: false)
+	}
+	
+	func canOpenIndicatedArticleInBrowser(_ article: Article) -> Bool {
+		guard indicatedArticles(article).count == 1 else { return false }
+		return article.preferredLink != nil
+	}
+	
+	func openIndicatedArticleInBrowser(_ article: Article) {
+		guard let link = article.preferredLink else { return }
+		
+		#if os(macOS)
+		Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+		#else
+		guard let url = URL(string: link) else { return }
+		UIApplication.shared.open(url, options: [:])
+		#endif
+	}
+	
+	func openSelectedArticleInBrowser() {
+		guard let article = selectedArticles.first else { return }
+		openIndicatedArticleInBrowser(article)
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
