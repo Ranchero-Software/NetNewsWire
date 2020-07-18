@@ -133,18 +133,56 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 	}
 
+	func canMarkIndicatedArticlesAsRead(_ article: Article) -> Bool {
+		let articles = indicatedArticles(article)
+		return articles.anyArticleIsUnread()
+	}
+
+	func markIndicatedArticlesAsRead(_ article: Article) {
+		let articles = indicatedArticles(article)
+		markArticlesWithUndo(articles, statusKey: .read, flag: true)
+	}
+	
 	func markSelectedArticlesAsRead() {
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
+		markArticlesWithUndo(selectedArticles, statusKey: .read, flag: true)
+	}
+	
+	func canMarkIndicatedArticlesAsUnread(_ article: Article) -> Bool {
+		let articles = indicatedArticles(article)
+		return articles.anyArticleIsReadAndCanMarkUnread()
+	}
+
+	func markIndicatedArticlesAsUnread(_ article: Article) {
+		let articles = indicatedArticles(article)
+		markArticlesWithUndo(articles, statusKey: .read, flag: false)
 	}
 	
 	func markSelectedArticlesAsUnread() {
-		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markUnreadCommand)
+		markArticlesWithUndo(selectedArticles, statusKey: .read, flag: false)
+	}
+	
+	func canMarkAboveAsRead(_ article: Article) -> Bool {
+		let article = indicatedAboveArticle(article)
+		return articles.articlesAbove(article: article).canMarkAllAsRead()
+	}
+
+	func markAboveAsRead(_ article: Article) {
+		let article = indicatedAboveArticle(article)
+		let articlesToMark = articles.articlesAbove(article: article)
+		guard !articlesToMark.isEmpty else { return }
+		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
+	}
+
+	func canMarkBelowAsRead(_ article: Article) -> Bool {
+		let article = indicatedBelowArticle(article)
+		return articles.articlesBelow(article: article).canMarkAllAsRead()
+	}
+
+	func markBelowAsRead(_ article: Article) {
+		let article = indicatedBelowArticle(article)
+		let articlesToMark = articles.articlesBelow(article: article)
+		guard !articlesToMark.isEmpty else { return }
+		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
 	}
 	
 	func toggleStarredStatusForSelectedArticles() {
@@ -158,50 +196,34 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 	}
 
+	func canMarkIndicatedArticlesAsStarred(_ article: Article) -> Bool {
+		let articles = indicatedArticles(article)
+		return articles.anyArticleIsUnstarred()
+	}
+
+	func markIndicatedArticlesAsStarred(_ article: Article) {
+		let articles = indicatedArticles(article)
+		markArticlesWithUndo(articles, statusKey: .starred, flag: true)
+	}
+
 	func markSelectedArticlesAsStarred() {
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingStarred: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
+		markArticlesWithUndo(selectedArticles, statusKey: .starred, flag: true)
 	}
 	
+	func canMarkIndicatedArticlesAsUnstarred(_ article: Article) -> Bool {
+		let articles = indicatedArticles(article)
+		return articles.anyArticleIsStarred()
+	}
+
+	func markIndicatedArticlesAsUnstarred(_ article: Article) {
+		let articles = indicatedArticles(article)
+		markArticlesWithUndo(articles, statusKey: .starred, flag: false)
+	}
+
 	func markSelectedArticlesAsUnstarred() {
-		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingStarred: false, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markUnreadCommand)
+		markArticlesWithUndo(selectedArticles, statusKey: .starred, flag: false)
 	}
 
-	func canMarkAboveAsRead(_ article: Article) -> Bool {
-		let article = correctedAboveArticle(article)
-		return articles.articlesAbove(article: article).canMarkAllAsRead()
-	}
-
-	func canMarkBelowAsRead(_ article: Article) -> Bool {
-		let article = correctedBelowArticle(article)
-		return articles.articlesBelow(article: article).canMarkAllAsRead()
-	}
-
-	func markAboveAsRead(_ article: Article) {
-		let article = correctedAboveArticle(article)
-		let articlesToMark = articles.articlesAbove(article: article)
-		guard !articlesToMark.isEmpty else { return }
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
-	}
-
-	func markBelowAsRead(_ article: Article) {
-		let article = correctedBelowArticle(article)
-		let articlesToMark = articles.articlesBelow(article: article)
-		guard !articlesToMark.isEmpty else { return }
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
-	}
-	
 	func articleFor(_ articleID: String) -> Article? {
 		return idToArticleDictionary[articleID]
 	}
@@ -230,7 +252,15 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 
 private extension TimelineModel {
 	
-	func correctedAboveArticle(_ article: Article) -> Article {
+	func indicatedArticles(_ article: Article) -> [Article] {
+		if selectedArticles.contains(article) {
+			return selectedArticles
+		} else {
+			return [article]
+		}
+	}
+	
+	func indicatedAboveArticle(_ article: Article) -> Article {
 		if selectedArticles.contains(article) {
 			return selectedArticles.first!
 		} else {
@@ -238,12 +268,19 @@ private extension TimelineModel {
 		}
 	}
 	
-	func correctedBelowArticle(_ article: Article) -> Article {
+	func indicatedBelowArticle(_ article: Article) -> Article {
 		if selectedArticles.contains(article) {
 			return selectedArticles.last!
 		} else {
 			return article
 		}
+	}
+	
+	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
 	}
 	
 	// MARK: Notifications

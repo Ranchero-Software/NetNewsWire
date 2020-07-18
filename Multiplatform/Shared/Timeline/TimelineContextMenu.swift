@@ -15,6 +15,50 @@ struct TimelineContextMenu: View {
 
     @ViewBuilder var body: some View {
 		
+		if timelineModel.canMarkIndicatedArticlesAsRead(timelineItem.article) {
+			Button {
+				timelineModel.markIndicatedArticlesAsRead(timelineItem.article)
+			} label: {
+				Text("Mark as Read")
+				#if os(iOS)
+				AppAssets.readOpenImage
+				#endif
+			}
+		}
+		
+		if timelineModel.canMarkIndicatedArticlesAsUnread(timelineItem.article) {
+			Button {
+				timelineModel.markIndicatedArticlesAsUnread(timelineItem.article)
+			} label: {
+				Text("Mark as Unread")
+				#if os(iOS)
+				AppAssets.readClosedImage
+				#endif
+			}
+		}
+		
+		if timelineModel.canMarkIndicatedArticlesAsStarred(timelineItem.article) {
+			Button {
+				timelineModel.markIndicatedArticlesAsStarred(timelineItem.article)
+			} label: {
+				Text("Mark as Starred")
+				#if os(iOS)
+				AppAssets.starClosedImage
+				#endif
+			}
+		}
+		
+		if timelineModel.canMarkIndicatedArticlesAsUnstarred(timelineItem.article) {
+			Button {
+				timelineModel.markIndicatedArticlesAsUnstarred(timelineItem.article)
+			} label: {
+				Text("Mark as Unstarred")
+				#if os(iOS)
+				AppAssets.starOpenImage
+				#endif
+			}
+		}
+		
 		if timelineModel.canMarkAboveAsRead(timelineItem.article) {
 			Button {
 				timelineModel.markAboveAsRead(timelineItem.article)
