@@ -70,7 +70,7 @@ struct InspectorView: View {
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
 				})
-				Button("Confirm", action: {
+				Button("Done", action: {
 					shouldUpdate = true
 				})
 			}.padding(.top)
@@ -112,7 +112,7 @@ struct InspectorView: View {
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
 				})
-				Button("Confirm", action: {
+				Button("Done", action: {
 					shouldUpdate = true
 				})
 			}.padding(.top)
@@ -156,7 +156,7 @@ struct InspectorView: View {
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
 				})
-				Button("Confirm", action: {
+				Button("Done", action: {
 					shouldUpdate = true
 				})
 			}.padding(.top)
