@@ -46,7 +46,7 @@ struct SidebarView: View {
 				.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 			}
 			ZStack(alignment: .bottom) {
-				NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds), isActive: $navigate) {
+				NavigationLink(destination: TimelineContainerView(), isActive: $navigate) {
 					EmptyView()
 				}.hidden()
 				List(selection: $sidebarModel.selectedFeedIdentifiers) {
@@ -194,7 +194,7 @@ struct SidebarView: View {
 			#else
 			ZStack {
 				SidebarItemView(sidebarItem: sidebarItem)
-				NavigationLink(destination: TimelineContainerView(feeds: sidebarModel.selectedFeeds),
+				NavigationLink(destination: TimelineContainerView(),
 							   tag: sidebarItem.feed!.feedID!,
 							   selection: $sidebarModel.selectedFeedIdentifier) {
 					EmptyView()

@@ -43,6 +43,7 @@ final class SceneModel: ObservableObject {
 	func startup() {
 		sidebarModel.delegate = self
 		timelineModel.delegate = self
+		timelineModel.startup()
 		
 		self.articleIconSchemeHandler = ArticleIconSchemeHandler(sceneModel: self)
 		self.webViewProvider = WebViewProvider(articleIconSchemeHandler: self.articleIconSchemeHandler!)
@@ -103,6 +104,10 @@ extension SceneModel: SidebarModelDelegate {
 
 extension SceneModel: TimelineModelDelegate {
 
+	var selectedFeeds: Published<[Feed]>.Publisher {
+		return sidebarModel.$selectedFeeds
+	}
+	
 	func timelineRequestedWebFeedSelection(_: TimelineModel, webFeed: WebFeed) {
 	}
 	

@@ -32,22 +32,13 @@ struct SceneNavigationView: View {
 
 			#if os(iOS)
 			if horizontalSizeClass != .compact {
-				Text("Timeline")
-					.frame(maxWidth: .infinity, maxHeight: .infinity)
+				TimelineContainerView()
 			}
 			#else
-			Text("Timeline")
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
+			TimelineContainerView()
 			#endif
 
-			#if os(macOS)
-			Text("None Selected")
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.toolbar { Spacer() }
-			#else
-			Text("None Selected")
-				.frame(maxWidth: .infinity, maxHeight: .infinity)
-			#endif
+			ArticleContainerView()
 		}
 		.environmentObject(sceneModel)
 		.onAppear {

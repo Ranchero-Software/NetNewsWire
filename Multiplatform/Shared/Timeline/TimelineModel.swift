@@ -17,6 +17,7 @@ import Account
 import Articles
 
 protocol TimelineModelDelegate: class {
+	var selectedFeeds: Published<[Feed]>.Publisher { get }
 	func timelineRequestedWebFeedSelection(_: TimelineModel, webFeed: WebFeed)
 }
 
@@ -35,6 +36,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
 
+	private var selectedFeedsCancellable: AnyCancellable?
 	private var selectedArticleIDsCancellable: AnyCancellable?
 	private var selectedArticleIDCancellable: AnyCancellable?
 	private var selectedArticlesCancellable: AnyCancellable?
@@ -66,6 +68,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			}
 		}
 	}
+	
 	private var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
 		didSet {
 			if groupByFeed != oldValue {
@@ -74,10 +77,16 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 	}
 	
-	init() {
+	func startup() {
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		
+		// TODO: This should be rewritten to use Combine correctly
+		selectedFeedsCancellable = delegate?.selectedFeeds.sink { [weak self] feeds in
+			guard let self = self else { return }
+			self.fetchArticles(feeds: feeds)
+		}
+
 		// TODO: This should be rewritten to use Combine correctly
 		selectedArticleIDsCancellable = $selectedArticleIDs.sink { [weak self] articleIDs in
 			guard let self = self else { return }
@@ -105,19 +114,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	// MARK: API
-	
-	func fetchArticles(feeds: [Feed]) {
-		self.feeds = feeds
-		
-		if feeds.count == 1 {
-			nameForDisplay = feeds.first!.nameForDisplay
-		} else {
-			nameForDisplay = NSLocalizedString("Multiple", comment: "Multiple Feeds")
-		}
-		
-		resetReadFilter()
-		fetchAndReplaceArticlesAsync()
-	}
 	
 	func toggleReadFilter() {
 		guard let filter = isReadFiltered, let feedID = feeds.first?.feedID else { return }
@@ -382,6 +378,19 @@ private extension TimelineModel {
 	}
 	
 	// MARK: Article Fetching
+	
+	func fetchArticles(feeds: [Feed]) {
+		self.feeds = feeds
+		
+		if feeds.count == 1 {
+			nameForDisplay = feeds.first!.nameForDisplay
+		} else {
+			nameForDisplay = NSLocalizedString("Multiple", comment: "Multiple Feeds")
+		}
+		
+		resetReadFilter()
+		fetchAndReplaceArticlesAsync()
+	}
 	
 	func fetchAndReplaceArticlesAsync() {
 		var fetchers = feeds as [ArticleFetcher]
