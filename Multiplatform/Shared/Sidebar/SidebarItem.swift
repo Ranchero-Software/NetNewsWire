@@ -27,11 +27,7 @@ struct SidebarItem: Identifiable {
 	var children: [SidebarItem] = [SidebarItem]()
 	
 	var unreadCount: Int
-	
-	var nameForDisplay: String {
-		guard let displayNameProvider = represented as? DisplayNameProvider else { return "" }
-		return displayNameProvider.nameForDisplay
-	}
+	var nameForDisplay: String
 	
 	var feed: Feed? {
 		represented as? Feed
@@ -64,18 +60,21 @@ struct SidebarItem: Identifiable {
 		self.id = .smartFeedController
 		self.represented = smartFeedsController
 		self.unreadCount = 0
+		self.nameForDisplay = smartFeedsController.nameForDisplay
 	}
 
 	init(_ account: Account) {
 		self.id = .account(account.accountID)
 		self.represented = account
 		self.unreadCount = account.unreadCount
+		self.nameForDisplay = account.nameForDisplay
 	}
 
 	init(_ feed: Feed, unreadCount: Int) {
 		self.id = .feed(feed.feedID!)
 		self.represented = feed
 		self.unreadCount = unreadCount
+		self.nameForDisplay = feed.nameForDisplay
 	}
 
 	mutating func addChild(_ sidebarItem: SidebarItem) {
