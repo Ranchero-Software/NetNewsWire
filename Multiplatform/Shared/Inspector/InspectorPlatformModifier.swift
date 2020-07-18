@@ -30,7 +30,7 @@ struct InspectorPlatformModifier: ViewModifier {
 						presentationMode.wrappedValue.dismiss()
 					}),
 					trailing:
-					Button("Confirm", action: {
+					Button("Done", action: {
 						shouldUpdate = true
 					})
 				)
