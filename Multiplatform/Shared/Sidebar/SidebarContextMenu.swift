@@ -86,13 +86,6 @@ struct SidebarContextMenu: View {
 			Divider()
 			Button {
 			} label: {
-				Text("Rename")
-				#if os(iOS)
-				AppAssets.renameImage
-				#endif
-			}
-			Button {
-			} label: {
 				Text("Delete")
 				#if os(iOS)
 				AppAssets.deleteImage
@@ -102,6 +95,14 @@ struct SidebarContextMenu: View {
 		
 		if sidebarItem.representedType == .folder {
 			Button {
+				showInspector = true
+			} label: {
+				Text("Get Info")
+				#if os(iOS)
+				AppAssets.getInfoImage
+				#endif
+			}
+			Button {
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -109,14 +110,6 @@ struct SidebarContextMenu: View {
 				#endif
 			}
 			Divider()
-			Button {
-				showInspector = true
-			} label: {
-				Text("Rename")
-				#if os(iOS)
-				AppAssets.renameImage
-				#endif
-			}
 			Button {
 			} label: {
 				Text("Delete")
