@@ -19,9 +19,12 @@ import UIKit
 
 class InspectorModel: ObservableObject {
 	
-	@Published var notificationSettings: UNNotificationSettings?
+	// Global Inspector Variables
 	@Published var editedName: String = ""
 	@Published var shouldUpdate: Bool = false
+	
+	// Account Inspector Variables
+	@Published var notificationSettings: UNNotificationSettings?
 	@Published var notifyAboutNewArticles: Bool = false {
 		didSet {
 			updateNotificationSettings()
@@ -32,6 +35,14 @@ class InspectorModel: ObservableObject {
 			selectedWebFeed?.isArticleExtractorAlwaysOn = alwaysShowReaderView
 		}
 	}
+	@Published var accountIsActive: Bool = false {
+		didSet {
+			selectedAccount?.isActive = accountIsActive 
+		}
+	}
+	@Published var showHomePage: Bool = false // iOS only
+	
+	// Private Variables
 	private let centre = UNUserNotificationCenter.current()
 	private var selectedWebFeed: WebFeed?
 	private var selectedFolder: Folder?
@@ -71,6 +82,7 @@ class InspectorModel: ObservableObject {
 	func configure(with account: Account) {
 		selectedAccount = account
 		editedName = account.nameForDisplay
+		accountIsActive = account.isActive
 	}
 	
 	func updateNotificationSettings() {

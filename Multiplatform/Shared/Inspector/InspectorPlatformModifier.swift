@@ -16,24 +16,29 @@ struct InspectorPlatformModifier: ViewModifier {
 	@ViewBuilder func body(content: Content) -> some View {
 		
 		#if os(macOS)
-		content
-			.textFieldStyle(RoundedBorderTextFieldStyle())
-			.frame(width: 300)
-			.padding()
+		Form {
+			content
+		}
+		.textFieldStyle(RoundedBorderTextFieldStyle())
+		.frame(width: 300)
+		.padding()
 		#else
 		NavigationView {
-			content
-				.navigationBarTitle("Inspector", displayMode: .inline)
-				.navigationBarItems(
-					leading:
-					Button("Cancel", action: {
-						presentationMode.wrappedValue.dismiss()
-					}),
-					trailing:
-					Button("Done", action: {
-						shouldUpdate = true
-					})
-				)
+			List {
+				content
+			}
+			.listStyle(InsetGroupedListStyle())
+			.navigationBarTitle("Inspector", displayMode: .inline)
+			.navigationBarItems(
+				leading:
+				Button("Cancel", action: {
+					presentationMode.wrappedValue.dismiss()
+				}),
+				trailing:
+				Button("Done", action: {
+					shouldUpdate = true
+				})
+			)
 		}
 		#endif
 	}
