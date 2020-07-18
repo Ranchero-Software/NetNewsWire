@@ -12,13 +12,14 @@ import Account
 struct SidebarItemView: View {
 	
 	@StateObject var feedIconImageLoader = FeedIconImageLoader()
+	@State private var showInspector: Bool = false
 	var sidebarItem: SidebarItem
 	
     var body: some View {
 		HStack {
 			if let image = feedIconImageLoader.image {
 				IconImageView(iconImage: image)
-					.frame(width: 20, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+					.frame(width: 20, height: 20, alignment: .center)
 			}
 			Text(verbatim: sidebarItem.nameForDisplay)
 			Spacer()
@@ -37,7 +38,10 @@ struct SidebarItemView: View {
 				feedIconImageLoader.loadImage(for: feed)
 			}
 		}.contextMenu {
-			SidebarContextMenu(sidebarItem: sidebarItem)
+			SidebarContextMenu(showInspector: $showInspector, sidebarItem: sidebarItem)
+		}
+		.sheet(isPresented: $showInspector, onDismiss: { showInspector = false}) {
+			InspectorView(sidebarItem: sidebarItem)
 		}
     }
 	

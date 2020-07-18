@@ -190,7 +190,8 @@ struct SidebarView: View {
 		
 		@ViewBuilder var body: some View {
 			#if os(macOS)
-			SidebarItemView(sidebarItem: sidebarItem).tag(sidebarItem.feed!.feedID!)
+			SidebarItemView(sidebarItem: sidebarItem)
+				.tag(sidebarItem.feed!.feedID!)
 			#else
 			ZStack {
 				SidebarItemView(sidebarItem: sidebarItem)
