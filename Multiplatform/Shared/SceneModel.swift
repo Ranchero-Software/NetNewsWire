@@ -51,6 +51,13 @@ final class SceneModel: ObservableObject {
 		subscribeToToolbarChangeEvents()
 	}
 	
+	// MARK: Navigation API
+	
+	/// Goes to the next unread item found in Sidebar and Timeline order, top to bottom
+	func goToNextUnread() {
+		
+	}
+	
 	// MARK: Article Management API
 	
 	/// Marks all the articles in the Timeline as read

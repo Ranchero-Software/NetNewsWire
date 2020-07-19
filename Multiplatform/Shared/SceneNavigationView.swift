@@ -108,6 +108,7 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				Button {
+					sceneModel.goToNextUnread()
 				} label: {
 					AppAssets.nextUnreadArticleImage
 				}

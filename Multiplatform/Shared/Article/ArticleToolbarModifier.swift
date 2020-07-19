@@ -72,6 +72,7 @@ struct ArticleToolbarModifier: ViewModifier {
 				
 				ToolbarItem(placement: .bottomBar) {
 					Button {
+						sceneModel.goToNextUnread()
 					} label: {
 						AppAssets.nextUnreadArticleImage.font(.title3)
 					}
