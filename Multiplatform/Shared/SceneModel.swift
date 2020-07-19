@@ -35,8 +35,7 @@ final class SceneModel: ObservableObject {
 	private(set) var sidebarModel = SidebarModel()
 	private(set) var timelineModel = TimelineModel()
 
-	private var articlesCancellable: AnyCancellable?
-	private var selectedArticlesCancellable: AnyCancellable?
+	private var cancellables = Set<AnyCancellable>()
 
 	// MARK: Initialization API
 
@@ -51,13 +50,13 @@ final class SceneModel: ObservableObject {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 
-		articlesCancellable = timelineModel.$articles.sink { [weak self] articles in
+		timelineModel.$articles.sink { [weak self] articles in
 			self?.updateMarkAllAsReadButtonsState(articles: articles)
-		}
+		}.store(in: &cancellables)
 
-		selectedArticlesCancellable = timelineModel.$selectedArticles.sink { [weak self] articles in
+		timelineModel.$selectedArticles.sink { [weak self] articles in
 			self?.updateArticleButtonsState(selectedArticles: articles)
-		}
+		}.store(in: &cancellables)
 	}
 	
 	// MARK: Article Management API
