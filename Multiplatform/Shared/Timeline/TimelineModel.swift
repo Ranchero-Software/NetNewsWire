@@ -118,7 +118,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	func subscribeToSelectedFeedChanges() {
-		// TODO: This should be rewritten to use Combine correctly (including fixing the read filter toggle to work as a published bool)
 		delegate?.selectedFeeds.sink { [weak self] feeds in
 			guard let self = self else { return }
 			self.feeds = feeds
@@ -127,29 +126,26 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	func subscribeToSelectedArticleSelectionChanges() {
-		// TODO: This should be rewritten to use Combine correctly
-		$selectedArticleIDs.sink { [weak self] articleIDs in
-			guard let self = self else { return }
-			self.selectedArticles = articleIDs.compactMap { self.idToArticleDictionary[$0] }
-		}.store(in: &cancellables)
+		$selectedArticleIDs.map { [weak self] articleIDs in
+			return articleIDs.compactMap { self?.idToArticleDictionary[$0] }
+		}
+		.assign(to: $selectedArticles)
 		
-		// TODO: This should be rewritten to use Combine correctly
-		$selectedArticleID.sink { [weak self] articleID in
-			guard let self = self else { return }
-			if let articleID = articleID, let article = self.idToArticleDictionary[articleID] {
-				self.selectedArticles = [article]
+		$selectedArticleID.map { [weak self] articleID in
+			if let articleID = articleID, let article = self?.idToArticleDictionary[articleID] {
+				return [article]
+			} else {
+				return [Article]()
 			}
-		}.store(in: &cancellables)
+		}
+		.assign(to: $selectedArticles)
 
-		// TODO: This should be rewritten to use Combine correctly
-		$selectedArticles.sink { articles in
-			if articles.count == 1 {
-				let article = articles.first!
-				if !article.status.read {
-					markArticles(Set([article]), statusKey: .read, flag: true)
-				}
-			}
-		}.store(in: &cancellables)
+		$selectedArticles
+			.filter { $0.count == 1 }
+			.compactMap { $0.first }
+			.filter { !$0.status.read }
+			.sink {	markArticles(Set([$0]), statusKey: .read, flag: true) }
+			.store(in: &cancellables)
 	}
 	
 	// MARK: API
