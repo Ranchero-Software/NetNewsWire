@@ -21,7 +21,6 @@ struct MainApp: App {
 	@StateObject private var refreshProgress = RefreshProgressModel()
 	@StateObject private var defaults = AppDefaults.shared
 
-
 	@SceneBuilder var body: some Scene {
 		#if os(macOS)
 		WindowGroup {
@@ -74,7 +73,6 @@ struct MainApp: App {
 			})
 		}
 		
-		
 		// Mac Preferences
 		Settings {
 			MacPreferencesView()
@@ -84,7 +82,6 @@ struct MainApp: App {
 			.environmentObject(defaults)
 			.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 		}
-		
 		#endif
 		
 		#if os(iOS)
