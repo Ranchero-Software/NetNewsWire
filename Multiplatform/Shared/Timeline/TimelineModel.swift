@@ -402,9 +402,11 @@ private extension TimelineModel {
 	}
 	
 	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
-//		let savedSelection = selectedArticleIDs()
+		let savedArticleIDs = selectedArticleIDs
+		let savedArticleID = selectedArticleID
 		block()
-//		restoreSelection(savedSelection)
+		selectedArticleIDs = savedArticleIDs
+		selectedArticleID = savedArticleID
 	}
 
 	func rebuildArticleDictionaries() {
