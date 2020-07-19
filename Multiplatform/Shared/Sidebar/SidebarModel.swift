@@ -39,6 +39,21 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 		subscribeToSelectedFeedChanges()
 		subscribeToReadFilterChanges()
 	}
+
+	// MARK: API
+
+	func goToNextUnread() {
+		guard let lastSelectedFeed = selectedFeeds.last,
+			  let currentSidebarItem = sidebarItems.first(where: { $0.feed?.feedID == lastSelectedFeed.feedID }) else {
+			return
+		}
+		
+		if !goToNextUnread(startingAt: currentSidebarItem) {
+			if let firstSidebarItem = sidebarItems.first {
+				goToNextUnread(startingAt: firstSidebarItem)
+			}
+		}
+	}
 	
 }
 
@@ -107,16 +122,7 @@ private extension SidebarModel {
 		}.store(in: &cancellables)
 	}
 	
-	// MARK:
-	
-	func findFeed(_ feedID: FeedIdentifier) -> Feed? {
-		switch feedID {
-		case .smartFeed:
-			return SmartFeedsController.shared.find(by: feedID)
-		default:
-			return AccountManager.shared.existingFeed(with: feedID)
-		}
-	}
+	// MARK: Sidebar Building
 	
 	func sort(_ folders: Set<Folder>) -> [Folder] {
 		return folders.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
@@ -173,6 +179,36 @@ private extension SidebarModel {
 		}
 		
 		sidebarItems = items
+	}
+	
+	// MARK:
+	
+	func findFeed(_ feedID: FeedIdentifier) -> Feed? {
+		switch feedID {
+		case .smartFeed:
+			return SmartFeedsController.shared.find(by: feedID)
+		default:
+			return AccountManager.shared.existingFeed(with: feedID)
+		}
+	}
+	
+	@discardableResult
+	func goToNextUnread(startingAt: SidebarItem) -> Bool {
+		guard let startIndex = sidebarItems.firstIndex(where: { $0.id == startingAt.id }) else { return false }
+		
+		for i in startIndex..<sidebarItems.count {
+			if sidebarItems[i].unreadCount > 0, let feedID = sidebarItems[i].feed?.feedID {
+				select(feedID)
+				return true
+			}
+		}
+		
+		return false
+	}
+
+	func select(_ feedID: FeedIdentifier) {
+		selectedFeedIdentifiers = Set([feedID])
+		selectedFeedIdentifier = feedID
 	}
 	
 }

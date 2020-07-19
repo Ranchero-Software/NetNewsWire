@@ -315,6 +315,14 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		openIndicatedArticleInBrowser(article)
 	}
 
+	func canGoToNextUnread() -> Bool {
+		return false
+	}
+	
+	func goToNextUnread() {
+		
+	}
+
 	func articleFor(_ articleID: String) -> Article? {
 		return idToArticleDictionary[articleID]
 	}

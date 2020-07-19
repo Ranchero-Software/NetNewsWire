@@ -120,6 +120,12 @@ private extension SceneModel {
 	
 	// MARK: Subscriptions
 	func subscribeToToolbarChangeEvents() {
+		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
+			.compactMap { $0.object as? AccountManager }
+			.sink {  [weak self] accountManager in
+				self?.updateNextUnreadButtonState(accountManager: accountManager)
+			}.store(in: &cancellables)
+		
 		let combinedPublisher = timelineModel.$articles.combineLatest(timelineModel.$selectedArticles,
 																	  NotificationCenter.default.publisher(for: .StatusesDidChange))
 		
@@ -130,6 +136,14 @@ private extension SceneModel {
 	}
 	
 	// MARK: Button State Updates
+	
+	func updateNextUnreadButtonState(accountManager: AccountManager) {
+		if accountManager.unreadCount > 0 {
+			self.nextUnreadButtonState = false
+		} else {
+			self.nextUnreadButtonState = nil
+		}
+	}
 	
 	func updateMarkAllAsReadButtonsState(articles: [Article]) {
 		if articles.canMarkAllAsRead() {
