@@ -136,8 +136,9 @@ private extension SceneModel {
 				self?.updateNextUnreadButtonState(accountManager: accountManager)
 			}.store(in: &cancellables)
 		
-		let combinedPublisher = timelineModel.$articles.combineLatest(timelineModel.$selectedArticles,
-																	  NotificationCenter.default.publisher(for: .StatusesDidChange))
+		let blankNotification = Notification(name: .StatusesDidChange)
+		let statusesDidChangePublisher = NotificationCenter.default.publisher(for: .StatusesDidChange).prepend(blankNotification)
+		let combinedPublisher = timelineModel.$articles.combineLatest(timelineModel.$selectedArticles, statusesDidChangePublisher)
 		
 		combinedPublisher.sink { [weak self] (articles, selectedArticles, _) in
 			self?.updateMarkAllAsReadButtonsState(articles: articles)
