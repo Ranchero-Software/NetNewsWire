@@ -122,7 +122,7 @@ struct InspectorView: View {
 				Spacer()
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
-				})
+				}).keyboardShortcut(.cancelAction)
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
 				}).keyboardShortcut(.defaultAction)
@@ -170,7 +170,7 @@ struct InspectorView: View {
 				Spacer()
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
-				})
+				}).keyboardShortcut(.cancelAction)
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
 				}).keyboardShortcut(.defaultAction)
@@ -221,7 +221,7 @@ struct InspectorView: View {
 				Spacer()
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
-				})
+				}).keyboardShortcut(.cancelAction)
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
 				}).keyboardShortcut(.defaultAction)
