@@ -95,6 +95,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		subscribeToUserDefaultsChanges()
 		subscribeToSelectedFeedChanges()
 		subscribeToSelectedArticleSelectionChanges()
+		subscribeToAccountDidDownloadArticles()
 	}
 	
 	// MARK: Subscriptions
