@@ -414,6 +414,12 @@ private extension TimelineModel {
 	// MARK: Article Fetching
 	
 	func fetchArticles() {
+		guard !feeds.isEmpty else {
+			nameForDisplay = ""
+			replaceArticles(with: Set<Article>())
+			return
+		}
+		
 		if feeds.count == 1 {
 			nameForDisplay = feeds.first!.nameForDisplay
 		} else {
