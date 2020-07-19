@@ -43,14 +43,11 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	// MARK: API
 
 	func goToNextUnread() {
-		guard let lastSelectedFeed = selectedFeeds.last,
-			  let currentSidebarItem = sidebarItems.first(where: { $0.feed?.feedID == lastSelectedFeed.feedID }) else {
-			return
-		}
+		guard let startFeed = selectedFeeds.first ?? sidebarItems.first?.children.first?.feed else { return }
 		
-		if !goToNextUnread(startingAt: currentSidebarItem) {
-			if let firstSidebarItem = sidebarItems.first {
-				goToNextUnread(startingAt: firstSidebarItem)
+		if !goToNextUnread(startingAt: startFeed) {
+			if let firstFeed = sidebarItems.first?.children.first?.feed {
+				goToNextUnread(startingAt: firstFeed)
 			}
 		}
 	}
@@ -193,14 +190,29 @@ private extension SidebarModel {
 	}
 	
 	@discardableResult
-	func goToNextUnread(startingAt: SidebarItem) -> Bool {
-		guard let startIndex = sidebarItems.firstIndex(where: { $0.id == startingAt.id }) else { return false }
-		
-		for i in startIndex..<sidebarItems.count {
-			if sidebarItems[i].unreadCount > 0, let feedID = sidebarItems[i].feed?.feedID {
-				select(feedID)
-				return true
+	func goToNextUnread(startingAt: Feed) -> Bool {
+
+		var foundStartFeed = false
+		var nextSidebarItem: SidebarItem? = nil
+		for section in sidebarItems {
+			if nextSidebarItem == nil  {
+				section.visit { sidebarItem in
+					if !foundStartFeed && sidebarItem.feed?.feedID == startingAt.feedID {
+						foundStartFeed = true
+						return false
+					}
+					if foundStartFeed && sidebarItem.unreadCount > 0 {
+						nextSidebarItem = sidebarItem
+						return true
+					}
+					return false
+				}
 			}
+		}
+
+		if let nextFeedID = nextSidebarItem?.feed?.feedID {
+			select(nextFeedID)
+			return true
 		}
 		
 		return false

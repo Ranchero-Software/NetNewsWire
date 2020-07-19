@@ -77,8 +77,22 @@ struct SidebarItem: Identifiable {
 		self.nameForDisplay = feed.nameForDisplay
 	}
 
+	/// Add a sidebar item to the child list
 	mutating func addChild(_ sidebarItem: SidebarItem) {
 		children.append(sidebarItem)
 	}
 	
+	/// Recursively visits each sidebar item.  Return true when done visiting.
+	@discardableResult
+	func visit(_ block: (SidebarItem) -> Bool) -> Bool {
+		let stop = block(self)
+		if !stop {
+			for child in children {
+				if child.visit(block) {
+					break
+				}
+			}
+		}
+		return stop
+	}
 }

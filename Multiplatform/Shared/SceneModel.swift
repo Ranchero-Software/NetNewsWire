@@ -55,7 +55,10 @@ final class SceneModel: ObservableObject {
 	
 	/// Goes to the next unread item found in Sidebar and Timeline order, top to bottom
 	func goToNextUnread() {
-		
+		if !timelineModel.goToNextUnread() {
+			sidebarModel.goToNextUnread()
+			timelineModel.goToNextUnread()
+		}
 	}
 	
 	// MARK: Article Management API

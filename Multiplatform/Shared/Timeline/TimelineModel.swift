@@ -315,12 +315,23 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		openIndicatedArticleInBrowser(article)
 	}
 
-	func canGoToNextUnread() -> Bool {
-		return false
-	}
-	
-	func goToNextUnread() {
+	@discardableResult
+	func goToNextUnread() -> Bool {
+		var startIndex: Int
+		if let firstArticle = selectedArticles.first, let index = timelineItems.firstIndex(where: { $0.article == firstArticle }) {
+			startIndex = index
+		} else {
+			startIndex = 0
+		}
 		
+		for i in startIndex..<timelineItems.count {
+			if !timelineItems[i].article.status.read {
+				select(timelineItems[i].article.articleID)
+				return true
+			}
+		}
+		
+		return false
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
@@ -380,6 +391,11 @@ private extension TimelineModel {
 			return
 		}
 		runCommand(markReadCommand)
+	}
+	
+	func select(_ articleID: String) {
+		selectedArticleIDs = Set([articleID])
+		selectedArticleID = articleID
 	}
 	
 	// MARK: Timeline Management
