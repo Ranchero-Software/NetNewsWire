@@ -131,11 +131,11 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 		.assign(to: $selectedArticles)
 		
-		$selectedArticleID.map { [weak self] articleID in
+		$selectedArticleID.compactMap { [weak self] articleID in
 			if let articleID = articleID, let article = self?.idToArticleDictionary[articleID] {
 				return [article]
 			} else {
-				return [Article]()
+				return nil
 			}
 		}
 		.assign(to: $selectedArticles)

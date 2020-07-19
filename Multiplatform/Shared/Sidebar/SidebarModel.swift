@@ -91,11 +91,11 @@ private extension SidebarModel {
 		}
 		.assign(to: $selectedFeeds)
 		
-		$selectedFeedIdentifier.map { [weak self] feedID in
+		$selectedFeedIdentifier.compactMap { [weak self] feedID in
 			if let feedID = feedID, let feed = self?.findFeed(feedID) {
 				return [feed]
 			} else {
-				return [Feed]()
+				return nil
 			}
 		}
 		.assign(to: $selectedFeeds)
