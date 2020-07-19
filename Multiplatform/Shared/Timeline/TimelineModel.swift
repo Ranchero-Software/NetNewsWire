@@ -53,7 +53,9 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
-		
+
+	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5, maxInterval: 2.0)
+
 	private var articleDictionaryNeedsUpdate = true
 	private var _idToArticleDictionary = [String: Article]()
 	private var idToArticleDictionary: [String: Article] {
@@ -98,7 +100,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	// MARK: Subscriptions
 	
 	func subscribeToArticleStatusChanges() {
-		NotificationCenter.default.publisher(for: .StatusesDidChange).sink {  [weak self] note in
+		NotificationCenter.default.publisher(for: .StatusesDidChange).sink { [weak self] note in
 			guard let self = self, let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
 				return
 			}
@@ -110,8 +112,19 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}.store(in: &cancellables)
 	}
 	
+	func subscribeToAccountDidDownloadArticles() {
+		NotificationCenter.default.publisher(for: .AccountDidDownloadArticles).sink { [weak self] note in
+			guard let self = self, let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
+				return
+			}
+			if self.anySelectedFeedIntersection(with: feeds) || self.anySelectedFeedIsPseudoFeed() {
+				self.queueFetchAndMergeArticles()
+			}
+		}.store(in: &cancellables)
+	}
+	
 	func subscribeToUserDefaultsChanges() {
-		NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification).sink {  [weak self] _ in
+		NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification).sink { [weak self] _ in
 			self?.sortDirection = AppDefaults.shared.timelineSortDirection
 			self?.groupByFeed = AppDefaults.shared.timelineGroupByFeed
 		}.store(in: &cancellables)
@@ -477,4 +490,50 @@ private extension TimelineModel {
 		timelineItems = articles.map { TimelineItem(article: $0) }
 	}
 
+	func queueFetchAndMergeArticles() {
+		TimelineModel.fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticles))
+	}
+	
+	@objc func fetchAndMergeArticles() {
+		
+		fetchUnsortedArticlesAsync(for: feeds) { [weak self] (unsortedArticles) in
+			// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
+			guard let strongSelf = self else {
+				return
+			}
+			let unsortedArticleIDs = unsortedArticles.articleIDs()
+			var updatedArticles = unsortedArticles
+			for article in strongSelf.articles {
+				if !unsortedArticleIDs.contains(article.articleID) {
+					updatedArticles.insert(article)
+				}
+			}
+			strongSelf.performBlockAndRestoreSelection {
+				strongSelf.replaceArticles(with: updatedArticles)
+			}
+		}
+	}
+	
+	func anySelectedFeedIsPseudoFeed() -> Bool {
+		return feeds.contains(where: { $0 is PseudoFeed})
+	}
+	
+	func anySelectedFeedIntersection(with webFeeds: Set<WebFeed>) -> Bool {
+		for feed in feeds {
+			if let selectedWebFeed = feed as? WebFeed {
+				for webFeed in webFeeds {
+					if selectedWebFeed.webFeedID == webFeed.webFeedID || selectedWebFeed.url == webFeed.url {
+						return true
+					}
+				}
+			} else if let folder = feed as? Folder {
+				for webFeed in webFeeds {
+					if folder.hasWebFeed(with: webFeed.webFeedID) || folder.hasWebFeed(withURL: webFeed.url) {
+						return true
+					}
+				}
+			}
+		}
+		return false
+	}
 }
