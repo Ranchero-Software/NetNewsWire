@@ -61,7 +61,7 @@ struct InspectorView: View {
 					Text((sidebarItem.feed as? WebFeed)?.homePageURL ?? "")
 						.fixedSize(horizontal: false, vertical: true)
 					Spacer()
-					Image(systemName: "safari")
+					AppAssets.openInBrowserImage
 						.foregroundColor(.accentColor)
 				}
 				.onTapGesture {
@@ -82,8 +82,6 @@ struct InspectorView: View {
 							UIPasteboard.general.string = urlString
 							#endif
 						}
-						
-						
 					}, label: {
 						Text("Copy Home Page URL")
 					})
