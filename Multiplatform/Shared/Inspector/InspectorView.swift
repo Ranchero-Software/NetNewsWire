@@ -100,21 +100,26 @@ struct InspectorView: View {
 			#endif
 			
 			Section(header: Text("Feed URL")) {
-				Text(verbatim: (sidebarItem.feed as? WebFeed)?.url ?? "")
-					.fixedSize(horizontal: false, vertical: true)
-					.contextMenu(ContextMenu(menuItems: {
-						Button(action: {
-							if let urlString = (sidebarItem.feed as? WebFeed)?.url {
-								#if os(macOS)
-								URLPasteboardWriter.write(urlString: urlString, to: NSPasteboard.general)
-								#else
-								UIPasteboard.general.string = urlString
-								#endif
-							}
-						}, label: {
-							Text("Copy Feed URL")
-						})
-					}))
+				VStack {
+					#if os(macOS)
+					Spacer() // This shouldn't be necessary, but for some reason macOS doesn't put the space in itself
+					#endif
+					Text(verbatim: (sidebarItem.feed as? WebFeed)?.url ?? "")
+						.fixedSize(horizontal: false, vertical: true)
+						.contextMenu(ContextMenu(menuItems: {
+							Button(action: {
+								if let urlString = (sidebarItem.feed as? WebFeed)?.url {
+									#if os(macOS)
+									URLPasteboardWriter.write(urlString: urlString, to: NSPasteboard.general)
+									#else
+									UIPasteboard.general.string = urlString
+									#endif
+								}
+							}, label: {
+								Text("Copy Feed URL")
+							})
+						}))
+				}
 			}
 			
 			#if os(macOS)
