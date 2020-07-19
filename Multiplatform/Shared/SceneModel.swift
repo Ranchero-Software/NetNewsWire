@@ -56,8 +56,8 @@ final class SceneModel: ObservableObject {
 	/// Goes to the next unread item found in Sidebar and Timeline order, top to bottom
 	func goToNextUnread() {
 		if !timelineModel.goToNextUnread() {
+			timelineModel.isSelectNextUnread = true
 			sidebarModel.goToNextUnread()
-			timelineModel.goToNextUnread()
 		}
 	}
 	

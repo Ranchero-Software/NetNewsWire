@@ -44,6 +44,9 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 	}
 
+	// I don't like this flag and feel like it is a hack.  Maybe there is a better way to do this using Combine.
+	var isSelectNextUnread = false
+	
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
 
@@ -510,6 +513,12 @@ private extension TimelineModel {
 		
 		selectedArticleIDs = Set<String>()
 		selectedArticleID = nil
+		
+		if isSelectNextUnread {
+			goToNextUnread()
+			isSelectNextUnread = false
+		}
+		
 		// TODO: Update unread counts and other item done in didSet on AppKit
 	}
 	
