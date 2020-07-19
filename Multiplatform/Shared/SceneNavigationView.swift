@@ -94,10 +94,8 @@ struct SceneNavigationView: View {
 				Button {
 					sceneModel.markAllAsRead()
 				} label: {
-					AppAssets.markAllAsReadImagePDF
-						.resizable()
-						.scaledToFit()
-						.frame(width: 20, height: 20, alignment: .center)
+					AppAssets.markAllAsReadImagePNG
+						.offset(y: 7)
 				}
 				.disabled(sceneModel.markAllAsReadButtonState == nil)
 				.help("Mark All as Read")

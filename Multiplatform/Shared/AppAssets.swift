@@ -167,10 +167,10 @@ struct AppAssets {
 		return Image("MarkAllAsRead")
 	}()
 	
-	static var markAllAsReadImagePDF: Image = {
-		return Image("MarkAllAsReadPDF")
+	static var markAllAsReadImagePNG: Image = {
+		return Image("MarkAllAsReadPNG")
 	}()
-	
+
 	static var nextUnreadArticleImage: Image = {
 		return Image(systemName: "chevron.down.circle")
 	}()
