@@ -41,7 +41,8 @@ struct TimelineView: View {
 						EmptyView()
 					}.hidden()
 					List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
-						TimelineItemView(width: proxy.size.width, timelineItem: timelineItem)
+						let selected = timelineModel.selectedArticleIDs.contains(timelineItem.article.articleID)
+						TimelineItemView(selected: selected, width: proxy.size.width, timelineItem: timelineItem)
 					}
 				}
 			}

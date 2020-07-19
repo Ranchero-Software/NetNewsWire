@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TimelineItemStatusView: View {
 	
+	var selected: Bool
 	var status: TimelineItemStatus
 	
 	@ViewBuilder var statusView: some View {
@@ -17,10 +18,17 @@ struct TimelineItemStatusView: View {
 			Spacer().frame(width: 12)
 			switch status {
 			case .showUnread:
-				AppAssets.timelineUnread
-					.resizable()
-					.frame(width: 8, height: 8, alignment: .center)
-					.padding(.all, 2)
+				if selected {
+					AppAssets.timelineUnreadSelected
+						.resizable()
+						.frame(width: 8, height: 8, alignment: .center)
+						.padding(.all, 2)
+				} else {
+					AppAssets.timelineUnread
+						.resizable()
+						.frame(width: 8, height: 8, alignment: .center)
+						.padding(.all, 2)
+				}
 			case .showStar:
 				AppAssets.timelineStarred
 					.resizable()

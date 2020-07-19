@@ -268,6 +268,10 @@ struct AppAssets {
 		#endif
 	}
 	
+	static var timelineUnreadSelected: Image {
+		return Image(systemName: "circle.fill")
+	}
+
 	static var todayFeedImage: IconImage = {
 		#if os(macOS)
 		let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!

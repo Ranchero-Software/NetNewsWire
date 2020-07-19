@@ -13,6 +13,7 @@ struct TimelineItemView: View {
 	@EnvironmentObject var defaults: AppDefaults
 	@StateObject var articleIconImageLoader = ArticleIconImageLoader()
 	
+	var selected: Bool
 	var width: CGFloat
 	var timelineItem: TimelineItem
 
@@ -25,7 +26,7 @@ struct TimelineItemView: View {
 
     var body: some View {
 		HStack(alignment: .top) {
-			TimelineItemStatusView(status: timelineItem.status)
+			TimelineItemStatusView(selected: selected, status: timelineItem.status)
 			if let image = articleIconImageLoader.image {
 				IconImageView(iconImage: image)
 					.frame(width: CGFloat(defaults.timelineIconDimensions), height: CGFloat(defaults.timelineIconDimensions), alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
