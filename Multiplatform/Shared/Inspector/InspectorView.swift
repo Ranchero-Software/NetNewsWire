@@ -52,47 +52,47 @@ struct InspectorView: View {
 				Toggle("Always Show Reader View", isOn: $inspectorModel.alwaysShowReaderView)
 			})
 			
-			#if os(macOS)
-			Divider()
-			#endif
-			
-			Section(header: Text("Home Page URL")) {
-				HStack {
-					Text((sidebarItem.feed as? WebFeed)?.homePageURL ?? "")
-						.fixedSize(horizontal: false, vertical: true)
-					Spacer()
-					AppAssets.openInBrowserImage
-						.foregroundColor(.accentColor)
-				}
-				.onTapGesture {
-					if let url = URL(string: (sidebarItem.feed as? WebFeed)?.homePageURL ?? "") {
-						#if os(macOS)
-						NSWorkspace.shared.open(url)
-						#else
-						inspectorModel.showHomePage = true
-						#endif
+			if let homePageURL = (sidebarItem.feed as? WebFeed)?.homePageURL {
+				#if os(macOS)
+				Divider()
+				#endif
+				
+				Section(header: Text("Home Page URL")) {
+					HStack {
+						Text(verbatim: homePageURL)
+							.fixedSize(horizontal: false, vertical: true)
+						Spacer()
+						AppAssets.openInBrowserImage
+							.foregroundColor(.accentColor)
 					}
-				}
-				.contextMenu(ContextMenu(menuItems: {
-					Button(action: {
-						if let urlString = (sidebarItem.feed as? WebFeed)?.homePageURL {
+					.onTapGesture {
+						if let url = URL(string: homePageURL) {
 							#if os(macOS)
-							URLPasteboardWriter.write(urlString: urlString, to: NSPasteboard.general)
+							NSWorkspace.shared.open(url)
 							#else
-							UIPasteboard.general.string = urlString
+							inspectorModel.showHomePage = true
 							#endif
 						}
-					}, label: {
-						Text("Copy Home Page URL")
-					})
-				}))
-			}
-			.sheet(isPresented: $inspectorModel.showHomePage, onDismiss: { inspectorModel.showHomePage = false }) {
-				#if os(macOS)
-				EmptyView()
-				#else
-				SafariView(url: URL(string: (sidebarItem.feed as! WebFeed).homePageURL!)!)
-				#endif
+					}
+					.contextMenu(ContextMenu(menuItems: {
+						Button(action: {
+							#if os(macOS)
+							URLPasteboardWriter.write(urlString: homePageURL, to: NSPasteboard.general)
+							#else
+							UIPasteboard.general.string = homePageURL
+							#endif
+						}, label: {
+							Text("Copy Home Page URL")
+						})
+					}))
+				}
+				.sheet(isPresented: $inspectorModel.showHomePage, onDismiss: { inspectorModel.showHomePage = false }) {
+					#if os(macOS)
+					EmptyView()
+					#else
+					SafariView(url: URL(string: (sidebarItem.feed as! WebFeed).homePageURL!)!)
+					#endif
+				}
 			}
 			
 			#if os(macOS)
@@ -100,7 +100,7 @@ struct InspectorView: View {
 			#endif
 			
 			Section(header: Text("Feed URL")) {
-				Text((sidebarItem.feed as? WebFeed)?.url ?? "")
+				Text(verbatim: (sidebarItem.feed as? WebFeed)?.url ?? "")
 					.fixedSize(horizontal: false, vertical: true)
 					.contextMenu(ContextMenu(menuItems: {
 						Button(action: {
