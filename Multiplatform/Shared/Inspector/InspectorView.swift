@@ -34,17 +34,13 @@ struct InspectorView: View {
 		}
 	}
 	
+	// MARK: WebFeed Inspector
+	
 	@ViewBuilder
 	var WebFeedInspectorView: some View {
-		Form {
-			Section(header: Text("Name").bold()) {
-				HStack(alignment: .center) {
-					if let image = feedIconImageLoader.image {
-						IconImageView(iconImage: image)
-							.frame(width: 30, height: 30)
-					}
-					TextField("", text: $inspectorModel.editedName)
-				}
+		Group {
+			Section(header: webFeedHeader) {
+				TextField("", text: $inspectorModel.editedName)
 			}
 			
 			#if os(macOS)
@@ -60,16 +56,65 @@ struct InspectorView: View {
 			Divider()
 			#endif
 			
-			Section(header: Text("Home Page URL").bold()) {
-				Text((sidebarItem.feed as? WebFeed)?.homePageURL ?? "")
+			Section(header: Text("Home Page URL")) {
+				HStack {
+					Text((sidebarItem.feed as? WebFeed)?.homePageURL ?? "")
+						.fixedSize(horizontal: false, vertical: true)
+					Spacer()
+					AppAssets.openInBrowserImage
+						.foregroundColor(.accentColor)
+				}
+				.onTapGesture {
+					if let url = URL(string: (sidebarItem.feed as? WebFeed)?.homePageURL ?? "") {
+						#if os(macOS)
+						NSWorkspace.shared.open(url)
+						#else
+						inspectorModel.showHomePage = true
+						#endif
+					}
+				}
+				.contextMenu(ContextMenu(menuItems: {
+					Button(action: {
+						if let urlString = (sidebarItem.feed as? WebFeed)?.homePageURL {
+							#if os(macOS)
+							URLPasteboardWriter.write(urlString: urlString, to: NSPasteboard.general)
+							#else
+							UIPasteboard.general.string = urlString
+							#endif
+						}
+					}, label: {
+						Text("Copy Home Page URL")
+					})
+				}))
+			}
+			.sheet(isPresented: $inspectorModel.showHomePage, onDismiss: { inspectorModel.showHomePage = false }) {
+				#if os(macOS)
+				EmptyView()
+				#else
+				SafariView(url: URL(string: (sidebarItem.feed as! WebFeed).homePageURL!)!)
+				#endif
 			}
 			
 			#if os(macOS)
 			Divider()
 			#endif
 			
-			Section(header: Text("Feed URL").bold()) {
+			Section(header: Text("Feed URL")) {
 				Text((sidebarItem.feed as? WebFeed)?.url ?? "")
+					.fixedSize(horizontal: false, vertical: true)
+					.contextMenu(ContextMenu(menuItems: {
+						Button(action: {
+							if let urlString = (sidebarItem.feed as? WebFeed)?.url {
+								#if os(macOS)
+								URLPasteboardWriter.write(urlString: urlString, to: NSPasteboard.general)
+								#else
+								UIPasteboard.general.string = urlString
+								#endif
+							}
+						}, label: {
+							Text("Copy Feed URL")
+						})
+					}))
 			}
 			
 			#if os(macOS)
@@ -77,7 +122,7 @@ struct InspectorView: View {
 				Spacer()
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
-				})
+				}).keyboardShortcut(.cancelAction)
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
 				}).keyboardShortcut(.defaultAction)
@@ -87,7 +132,7 @@ struct InspectorView: View {
 		.onAppear {
 			inspectorModel.configure(with: sidebarItem.feed as! WebFeed)
 			feedIconImageLoader.loadImage(for: sidebarItem.feed!)
-		}.onChange(of: inspectorModel.shouldUpdate) { value in
+		}.onReceive(inspectorModel.$shouldUpdate) { value in
 			if value == true {
 				if inspectorModel.editedName.trimmingWhitespace.count > 0  {
 					(sidebarItem.feed as? WebFeed)?.editedName = inspectorModel.editedName
@@ -97,21 +142,27 @@ struct InspectorView: View {
 				presentationMode.wrappedValue.dismiss()
 			}
 		}
-		
 	}
+	
+	var webFeedHeader: some View {
+		HStack(alignment: .center) {
+			Spacer()
+			if let image = feedIconImageLoader.image {
+				IconImageView(iconImage: image)
+					.frame(width: 50, height: 50)
+			}
+			Spacer()
+		}.padding()
+	}
+	
+	
+	// MARK: Folder Inspector
 	
 	@ViewBuilder
 	var FolderInspectorView: some View {
-		
-		Form {
-			Section(header: Text("Name").bold()) {
-				HStack(alignment: .center) {
-					if let image = feedIconImageLoader.image {
-						IconImageView(iconImage: image)
-							.frame(width: 30, height: 30)
-					}
-					TextField("", text: $inspectorModel.editedName)
-				}
+		Group {
+			Section(header: folderHeader) {
+				TextField("", text: $inspectorModel.editedName)
 			}
 			
 			#if os(macOS)
@@ -119,7 +170,7 @@ struct InspectorView: View {
 				Spacer()
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
-				})
+				}).keyboardShortcut(.cancelAction)
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
 				}).keyboardShortcut(.defaultAction)
@@ -131,7 +182,7 @@ struct InspectorView: View {
 			inspectorModel.configure(with: sidebarItem.represented as! Folder)
 			feedIconImageLoader.loadImage(for: sidebarItem.feed!)
 		}
-		.onChange(of: inspectorModel.shouldUpdate) { value in
+		.onReceive(inspectorModel.$shouldUpdate) { value in
 			if value == true {
 				if inspectorModel.editedName.trimmingWhitespace.count > 0  {
 					(sidebarItem.feed as? Folder)?.name = inspectorModel.editedName
@@ -143,19 +194,26 @@ struct InspectorView: View {
 		}
 	}
 	
+	var folderHeader: some View {
+		HStack(alignment: .center) {
+			Spacer()
+			if let image = feedIconImageLoader.image {
+				IconImageView(iconImage: image)
+					.frame(width: 50, height: 50)
+			}
+			Spacer()
+		}.padding()
+	}
+	
+	
+	// MARK: Account Inspector
+	
 	@ViewBuilder
 	var AccountInspectorView: some View {
-		Form {
-			Section(header: Text("Name").bold()) {
-				HStack(alignment: .center) {
-					if let image = (sidebarItem.represented as? Account)?.smallIcon?.image {
-						Image(rsImage: image)
-							.resizable()
-							.aspectRatio(contentMode: .fit)
-							.frame(width: 30, height: 30)
-					}
-					TextField("", text: $inspectorModel.editedName)
-				}
+		Group {
+			Section(header: accountHeader) {
+				TextField("", text: $inspectorModel.editedName)
+				Toggle("Active", isOn: $inspectorModel.accountIsActive)
 			}
 			
 			#if os(macOS)
@@ -163,7 +221,7 @@ struct InspectorView: View {
 				Spacer()
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
-				})
+				}).keyboardShortcut(.cancelAction)
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
 				}).keyboardShortcut(.defaultAction)
@@ -173,7 +231,7 @@ struct InspectorView: View {
 		.onAppear {
 			inspectorModel.configure(with: sidebarItem.represented as! Account)
 		}
-		.onChange(of: inspectorModel.shouldUpdate) { value in
+		.onReceive(inspectorModel.$shouldUpdate) { value in
 			if value == true {
 				if inspectorModel.editedName.trimmingWhitespace.count > 0  {
 					(sidebarItem.represented as? Account)?.name = inspectorModel.editedName
@@ -184,6 +242,20 @@ struct InspectorView: View {
 			}
 		}
 	}
+	
+	var accountHeader: some View {
+		HStack(alignment: .center) {
+			Spacer()
+			if let image = (sidebarItem.represented as? Account)?.smallIcon?.image {
+				Image(rsImage: image)
+					.resizable()
+					.aspectRatio(contentMode: .fit)
+					.frame(width: 50, height: 50)
+			}
+			Spacer()
+		}.padding()
+	}
+	
 	
 }
 
