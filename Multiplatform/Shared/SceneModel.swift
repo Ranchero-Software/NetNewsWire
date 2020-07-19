@@ -47,16 +47,8 @@ final class SceneModel: ObservableObject {
 		
 		self.articleIconSchemeHandler = ArticleIconSchemeHandler(sceneModel: self)
 		self.webViewProvider = WebViewProvider(articleIconSchemeHandler: self.articleIconSchemeHandler!)
-		
-		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 
-		timelineModel.$articles.sink { [weak self] articles in
-			self?.updateMarkAllAsReadButtonsState(articles: articles)
-		}.store(in: &cancellables)
-
-		timelineModel.$selectedArticles.sink { [weak self] articles in
-			self?.updateArticleButtonsState(selectedArticles: articles)
-		}.store(in: &cancellables)
+		subscribeToToolbarChangeEvents()
 	}
 	
 	// MARK: Article Management API
@@ -126,17 +118,15 @@ extension SceneModel: TimelineModelDelegate {
 
 private extension SceneModel {
 	
-	// MARK: Notifications
-	
-	@objc func statusesDidChange(_ note: Notification) {
-		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
-			return
-		}
-		updateMarkAllAsReadButtonsState(articles: timelineModel.articles)
-		let selectedArticleIDs = timelineModel.selectedArticles.map { $0.articleID }
-		if !articleIDs.intersection(selectedArticleIDs).isEmpty {
-			updateArticleButtonsState(selectedArticles: timelineModel.selectedArticles)
-		}
+	// MARK: Subscriptions
+	func subscribeToToolbarChangeEvents() {
+		let combinedPublisher = timelineModel.$articles.combineLatest(timelineModel.$selectedArticles,
+																	  NotificationCenter.default.publisher(for: .StatusesDidChange))
+		
+		combinedPublisher.sink { [weak self] (articles, selectedArticles, _) in
+			self?.updateMarkAllAsReadButtonsState(articles: articles)
+			self?.updateArticleButtonsState(selectedArticles: selectedArticles)
+		}.store(in: &cancellables)
 	}
 	
 	// MARK: Button State Updates
