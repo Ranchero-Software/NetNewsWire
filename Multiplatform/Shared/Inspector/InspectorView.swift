@@ -140,9 +140,7 @@ struct InspectorView: View {
 		}.onReceive(inspectorModel.$shouldUpdate) { value in
 			if value == true {
 				if inspectorModel.editedName.trimmingWhitespace.count > 0  {
-					(sidebarItem.feed as? WebFeed)?.editedName = inspectorModel.editedName
-				} else {
-					(sidebarItem.feed as? WebFeed)?.editedName = nil
+					(sidebarItem.feed as? WebFeed)?.rename(to: inspectorModel.editedName.trimmingWhitespace) { _ in }
 				}
 				presentationMode.wrappedValue.dismiss()
 			}
@@ -190,9 +188,7 @@ struct InspectorView: View {
 		.onReceive(inspectorModel.$shouldUpdate) { value in
 			if value == true {
 				if inspectorModel.editedName.trimmingWhitespace.count > 0  {
-					(sidebarItem.feed as? Folder)?.name = inspectorModel.editedName
-				} else {
-					(sidebarItem.feed as? Folder)?.name = nil
+					(sidebarItem.feed as? Folder)?.rename(to: inspectorModel.editedName.trimmingWhitespace) { _ in }
 				}
 				presentationMode.wrappedValue.dismiss()
 			}
