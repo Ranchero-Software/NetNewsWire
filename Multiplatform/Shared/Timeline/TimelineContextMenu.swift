@@ -15,9 +15,9 @@ struct TimelineContextMenu: View {
 
     @ViewBuilder var body: some View {
 		
-		if timelineModel.canMarkIndicatedArticlesAsRead(timelineItem.article) {
+		if timelineModel.canMarkIndicatedArticlesAsRead(timelineItem) {
 			Button {
-				timelineModel.markIndicatedArticlesAsRead(timelineItem.article)
+				timelineModel.markIndicatedArticlesAsRead(timelineItem)
 			} label: {
 				Text("Mark as Read")
 				#if os(iOS)
@@ -26,9 +26,9 @@ struct TimelineContextMenu: View {
 			}
 		}
 		
-		if timelineModel.canMarkIndicatedArticlesAsUnread(timelineItem.article) {
+		if timelineModel.canMarkIndicatedArticlesAsUnread(timelineItem) {
 			Button {
-				timelineModel.markIndicatedArticlesAsUnread(timelineItem.article)
+				timelineModel.markIndicatedArticlesAsUnread(timelineItem)
 			} label: {
 				Text("Mark as Unread")
 				#if os(iOS)
@@ -37,9 +37,9 @@ struct TimelineContextMenu: View {
 			}
 		}
 		
-		if timelineModel.canMarkIndicatedArticlesAsStarred(timelineItem.article) {
+		if timelineModel.canMarkIndicatedArticlesAsStarred(timelineItem) {
 			Button {
-				timelineModel.markIndicatedArticlesAsStarred(timelineItem.article)
+				timelineModel.markIndicatedArticlesAsStarred(timelineItem)
 			} label: {
 				Text("Mark as Starred")
 				#if os(iOS)
@@ -48,9 +48,9 @@ struct TimelineContextMenu: View {
 			}
 		}
 		
-		if timelineModel.canMarkIndicatedArticlesAsUnstarred(timelineItem.article) {
+		if timelineModel.canMarkIndicatedArticlesAsUnstarred(timelineItem) {
 			Button {
-				timelineModel.markIndicatedArticlesAsUnstarred(timelineItem.article)
+				timelineModel.markIndicatedArticlesAsUnstarred(timelineItem)
 			} label: {
 				Text("Mark as Unstarred")
 				#if os(iOS)
@@ -59,9 +59,9 @@ struct TimelineContextMenu: View {
 			}
 		}
 		
-		if timelineModel.canMarkAboveAsRead(timelineItem.article) {
+		if timelineModel.canMarkAboveAsRead(timelineItem) {
 			Button {
-				timelineModel.markAboveAsRead(timelineItem.article)
+				timelineModel.markAboveAsRead(timelineItem)
 			} label: {
 				Text("Mark Above as Read")
 				#if os(iOS)
@@ -70,9 +70,9 @@ struct TimelineContextMenu: View {
 			}
 		}
 		
-		if timelineModel.canMarkBelowAsRead(timelineItem.article) {
+		if timelineModel.canMarkBelowAsRead(timelineItem) {
 			Button {
-				timelineModel.markBelowAsRead(timelineItem.article)
+				timelineModel.markBelowAsRead(timelineItem)
 			} label: {
 				Text("Mark Below As Read")
 				#if os(iOS)
@@ -81,22 +81,22 @@ struct TimelineContextMenu: View {
 			}
 		}
 		
-		if let feed = timelineItem.article.webFeed, timelineModel.canMarkAllAsReadInFeed(feed) {
+		if timelineModel.canMarkAllAsReadInWebFeed(timelineItem) {
 			Divider()
 			Button {
-				timelineModel.markAllAsReadInFeed(feed)
+				timelineModel.markAllAsReadInWebFeed(timelineItem)
 			} label: {
-				Text("Mark All as Read in “\(feed.nameForDisplay)”")
+				Text("Mark All as Read in “\(timelineItem.article.webFeed?.nameForDisplay ?? "")”")
 				#if os(iOS)
 				AppAssets.markAllAsReadImage
 				#endif
 			}
 		}
 
-		if timelineModel.canOpenIndicatedArticleInBrowser(timelineItem.article) {
+		if timelineModel.canOpenIndicatedArticleInBrowser(timelineItem) {
 			Divider()
 			Button {
-				timelineModel.openIndicatedArticleInBrowser(timelineItem.article)
+				timelineModel.openIndicatedArticleInBrowser(timelineItem)
 			} label: {
 				Text("Open in Browser")
 				#if os(iOS)

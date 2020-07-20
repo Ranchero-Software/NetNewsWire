@@ -27,8 +27,9 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	
 	@Published var nameForDisplay = ""
 	@Published var selectedArticleIDs = Set<String>()  // Don't use directly.  Use selectedArticles
-	@Published var selectedArticleID: String? = .none  // Don't use directly.  Use selectedArticles
+	@Published var selectedArticleID: String? = nil    // Don't use directly.  Use selectedArticles
 	@Published var selectedArticles = [Article]()
+	@Published var selectedTimelineItems = [TimelineItem]()
 	@Published var readFilterEnabledTable = [FeedIdentifier: Bool]()
 	@Published var isReadFiltered: Bool? = nil
 
@@ -157,6 +158,17 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 		.assign(to: $selectedArticles)
 
+		// Assign the selected timeline items
+		$selectedArticles.compactMap { [weak self] selectedArticles in
+			return selectedArticles.compactMap {
+				if let index = self?.idToTimelineItemDictionary[$0.articleID] {
+					return self?.timelineItems[index]
+				}
+				return nil
+			}
+		}.assign(to: $selectedTimelineItems)
+		
+		// Automatically mark a selected record as read
 		$selectedArticles
 			.filter { $0.count == 1 }
 			.compactMap { $0.first }
@@ -185,13 +197,13 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 	}
 
-	func canMarkIndicatedArticlesAsRead(_ article: Article) -> Bool {
-		let articles = indicatedArticles(article)
+	func canMarkIndicatedArticlesAsRead(_ timelineItem: TimelineItem) -> Bool {
+		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		return articles.anyArticleIsUnread()
 	}
 
-	func markIndicatedArticlesAsRead(_ article: Article) {
-		let articles = indicatedArticles(article)
+	func markIndicatedArticlesAsRead(_ timelineItem: TimelineItem) {
+		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		markArticlesWithUndo(articles, statusKey: .read, flag: true)
 	}
 	
@@ -199,13 +211,13 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(selectedArticles, statusKey: .read, flag: true)
 	}
 	
-	func canMarkIndicatedArticlesAsUnread(_ article: Article) -> Bool {
-		let articles = indicatedArticles(article)
+	func canMarkIndicatedArticlesAsUnread(_ timelineItem: TimelineItem) -> Bool {
+		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		return articles.anyArticleIsReadAndCanMarkUnread()
 	}
 
-	func markIndicatedArticlesAsUnread(_ article: Article) {
-		let articles = indicatedArticles(article)
+	func markIndicatedArticlesAsUnread(_ timelineItem: TimelineItem) {
+		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		markArticlesWithUndo(articles, statusKey: .read, flag: false)
 	}
 	
@@ -213,36 +225,36 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(selectedArticles, statusKey: .read, flag: false)
 	}
 	
-	func canMarkAboveAsRead(_ article: Article) -> Bool {
-		let article = indicatedAboveArticle(article)
-		return articles.articlesAbove(article: article).canMarkAllAsRead()
+	func canMarkAboveAsRead(_ timelineItem: TimelineItem) -> Bool {
+		let timelineItem = indicatedAboveTimelineItem(timelineItem)
+		return articles.articlesAbove(position: timelineItem.index).canMarkAllAsRead()
 	}
 
-	func markAboveAsRead(_ article: Article) {
-		let article = indicatedAboveArticle(article)
-		let articlesToMark = articles.articlesAbove(article: article)
+	func markAboveAsRead(_ timelineItem: TimelineItem) {
+		let timelineItem = indicatedAboveTimelineItem(timelineItem)
+		let articlesToMark = articles.articlesAbove(position: timelineItem.index)
 		guard !articlesToMark.isEmpty else { return }
 		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
 	}
 
-	func canMarkBelowAsRead(_ article: Article) -> Bool {
-		let article = indicatedBelowArticle(article)
-		return articles.articlesBelow(article: article).canMarkAllAsRead()
+	func canMarkBelowAsRead(_ timelineItem: TimelineItem) -> Bool {
+		let timelineItem = indicatedBelowTimelineItem(timelineItem)
+		return articles.articlesBelow(position: timelineItem.index).canMarkAllAsRead()
 	}
 
-	func markBelowAsRead(_ article: Article) {
-		let article = indicatedBelowArticle(article)
-		let articlesToMark = articles.articlesBelow(article: article)
+	func markBelowAsRead(_ timelineItem: TimelineItem) {
+		let timelineItem = indicatedBelowTimelineItem(timelineItem)
+		let articlesToMark = articles.articlesBelow(position: timelineItem.index)
 		guard !articlesToMark.isEmpty else { return }
 		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
 	}
 	
-	func canMarkAllAsReadInFeed(_ feed: Feed) -> Bool {
-		return feed.unreadCount > 0
+	func canMarkAllAsReadInWebFeed(_ timelineItem: TimelineItem) -> Bool {
+		return timelineItem.article.webFeed?.unreadCount ?? 0 > 0
 	}
 	
-	func markAllAsReadInFeed(_ feed: Feed) {
-		guard let articlesSet = try? feed.fetchArticles() else { return	}
+	func markAllAsReadInWebFeed(_ timelineItem: TimelineItem) {
+		guard let articlesSet = try? timelineItem.article.webFeed?.fetchArticles() else { return	}
 		let articlesToMark = Array(articlesSet)
 		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
 	}
@@ -266,13 +278,13 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		}
 	}
 
-	func canMarkIndicatedArticlesAsStarred(_ article: Article) -> Bool {
-		let articles = indicatedArticles(article)
+	func canMarkIndicatedArticlesAsStarred(_ timelineItem: TimelineItem) -> Bool {
+		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		return articles.anyArticleIsUnstarred()
 	}
 
-	func markIndicatedArticlesAsStarred(_ article: Article) {
-		let articles = indicatedArticles(article)
+	func markIndicatedArticlesAsStarred(_ timelineItem: TimelineItem) {
+		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		markArticlesWithUndo(articles, statusKey: .starred, flag: true)
 	}
 
@@ -280,13 +292,13 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(selectedArticles, statusKey: .starred, flag: true)
 	}
 	
-	func canMarkIndicatedArticlesAsUnstarred(_ article: Article) -> Bool {
-		let articles = indicatedArticles(article)
+	func canMarkIndicatedArticlesAsUnstarred(_ timelineItem: TimelineItem) -> Bool {
+		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		return articles.anyArticleIsStarred()
 	}
 
-	func markIndicatedArticlesAsUnstarred(_ article: Article) {
-		let articles = indicatedArticles(article)
+	func markIndicatedArticlesAsUnstarred(_ timelineItem: TimelineItem) {
+		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		markArticlesWithUndo(articles, statusKey: .starred, flag: false)
 	}
 
@@ -294,9 +306,13 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(selectedArticles, statusKey: .starred, flag: false)
 	}
 	
-	func canOpenIndicatedArticleInBrowser(_ article: Article) -> Bool {
-		guard indicatedArticles(article).count == 1 else { return false }
-		return article.preferredLink != nil
+	func canOpenIndicatedArticleInBrowser(_ timelineItem: TimelineItem) -> Bool {
+		guard indicatedTimelineItems(timelineItem).count == 1 else { return false }
+		return timelineItem.article.preferredLink != nil
+	}
+	
+	func openIndicatedArticleInBrowser(_ timelineItem: TimelineItem) {
+		openIndicatedArticleInBrowser(timelineItem.article)
 	}
 	
 	func openIndicatedArticleInBrowser(_ article: Article) {
@@ -362,27 +378,27 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 
 private extension TimelineModel {
 	
-	func indicatedArticles(_ article: Article) -> [Article] {
-		if selectedArticles.contains(article) {
-			return selectedArticles
+	func indicatedTimelineItems(_ timelineItem: TimelineItem) -> [TimelineItem] {
+		if selectedTimelineItems.contains(where: { $0.id == timelineItem.id }) {
+			return selectedTimelineItems
 		} else {
-			return [article]
+			return [timelineItem]
 		}
 	}
 	
-	func indicatedAboveArticle(_ article: Article) -> Article {
-		if selectedArticles.contains(article) {
-			return selectedArticles.first!
+	func indicatedAboveTimelineItem(_ timelineItem: TimelineItem) -> TimelineItem {
+		if selectedTimelineItems.contains(where: { $0.id == timelineItem.id }) {
+			return selectedTimelineItems.first!
 		} else {
-			return article
+			return timelineItem
 		}
 	}
 	
-	func indicatedBelowArticle(_ article: Article) -> Article {
-		if selectedArticles.contains(article) {
-			return selectedArticles.last!
+	func indicatedBelowTimelineItem(_ timelineItem: TimelineItem) -> TimelineItem {
+		if selectedTimelineItems.contains(where: { $0.id == timelineItem.id }) {
+			return selectedTimelineItems.last!
 		} else {
-			return article
+			return timelineItem
 		}
 	}
 	
@@ -521,7 +537,11 @@ private extension TimelineModel {
 	}
 	
 	func rebuildTimelineItems() {
-		timelineItems = articles.map { TimelineItem(article: $0) }
+		var items = [TimelineItem]()
+		for (index, article) in articles.enumerated() {
+			items.append(TimelineItem(index: index, article: article))
+		}
+		timelineItems = items
 	}
 
 	func queueFetchAndMergeArticles() {
