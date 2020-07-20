@@ -49,6 +49,7 @@ struct TimelineItemView: View {
 						.padding(.trailing, 4)
 						.fixedSize(horizontal: false, vertical: true)
 				}
+				Spacer(minLength: 0)
 				HStack {
 					Text(verbatim: timelineItem.byline)
 						.lineLimit(1)
