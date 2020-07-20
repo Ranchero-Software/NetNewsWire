@@ -471,9 +471,10 @@ private extension TimelineModel {
 	// MARK: Article Fetching
 	
 	func fetchArticles() {
+		replaceArticles(with: Set<Article>())
+
 		guard !feeds.isEmpty else {
 			nameForDisplay = ""
-			replaceArticles(with: Set<Article>())
 			return
 		}
 		
