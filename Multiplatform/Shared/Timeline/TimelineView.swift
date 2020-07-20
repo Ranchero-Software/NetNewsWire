@@ -50,7 +50,8 @@ struct TimelineView: View {
 			#else
 			List(timelineModel.timelineItems) { timelineItem in
 				ZStack {
-					TimelineItemView(width: proxy.size.width, timelineItem: timelineItem)
+					let selected = timelineModel.selectedArticleID == timelineItem.article.articleID
+					TimelineItemView(selected: selected, width: proxy.size.width, timelineItem: timelineItem)
 					NavigationLink(destination: ArticleContainerView(),
 								   tag: timelineItem.article.articleID,
 								   selection: $timelineModel.selectedArticleID) {
