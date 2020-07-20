@@ -13,8 +13,6 @@ struct SidebarContainerView: View {
 	@Environment(\.undoManager) var undoManager
 	@EnvironmentObject private var sceneModel: SceneModel
 	
-	@State private var showSettings: Bool = false
-	
     @ViewBuilder var body: some View {
 		SidebarView()
 			.modifier(SidebarToolbarModifier())
