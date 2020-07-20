@@ -390,10 +390,11 @@ private extension TimelineModel {
 	}
 	
 	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
-			return
+		if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) {
+			runCommand(markReadCommand)
+		} else {
+			markArticles(Set(articles), statusKey: statusKey, flag: flag)
 		}
-		runCommand(markReadCommand)
 	}
 	
 	func select(_ articleID: String) {
