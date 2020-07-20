@@ -238,10 +238,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	func canMarkAllAsReadInFeed(_ feed: Feed) -> Bool {
-		guard let articlesSet = try? feed.fetchArticles() else {
-			return false
-		}
-		return Array(articlesSet).canMarkAllAsRead()
+		return feed.unreadCount > 0
 	}
 	
 	func markAllAsReadInFeed(_ feed: Feed) {
