@@ -485,9 +485,29 @@ private extension TimelineModel {
 		}
 		
 		resetReadFilter()
+		
+		#if os(macOS)
+		fetchAndReplaceArticlesSync()
+		#else
 		fetchAndReplaceArticlesAsync()
+		#endif
 	}
 	
+	func fetchAndReplaceArticlesSync() {
+		// To be called when the user has made a change of selection in the sidebar.
+		// It blocks the main thread, so that there’s no async delay,
+		// so that the entire display refreshes at once.
+		// It’s a better user experience this way.
+		var fetchers = feeds as [ArticleFetcher]
+		if let fetcher = exceptionArticleFetcher {
+			fetchers.append(fetcher)
+			exceptionArticleFetcher = nil
+		}
+		
+		let fetchedArticles = fetchUnsortedArticlesSync(for: fetchers)
+		replaceArticles(with: fetchedArticles)
+	}
+
 	func fetchAndReplaceArticlesAsync() {
 		var fetchers = feeds as [ArticleFetcher]
 		if let fetcher = exceptionArticleFetcher {
@@ -505,6 +525,28 @@ private extension TimelineModel {
 		fetchRequestQueue.cancelAllRequests()
 	}
 
+	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
+		cancelPendingAsyncFetches()
+		let articleFetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+		if articleFetchers.isEmpty {
+			return Set<Article>()
+		}
+
+		var fetchedArticles = Set<Article>()
+		for articleFetcher in articleFetchers {
+			if isReadFiltered ?? true {
+				if let articles = try? articleFetcher.fetchUnreadArticles() {
+					fetchedArticles.formUnion(articles)
+				}
+			} else {
+				if let articles = try? articleFetcher.fetchArticles() {
+					fetchedArticles.formUnion(articles)
+				}
+			}
+		}
+		return fetchedArticles
+	}
+	
 	func fetchUnsortedArticlesAsync(for representedObjects: [Any], completion: @escaping ArticleSetBlock) {
 		// The callback will *not* be called if the fetch is no longer relevant — that is,
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
