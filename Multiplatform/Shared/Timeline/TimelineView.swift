@@ -11,8 +11,7 @@ import SwiftUI
 struct TimelineView: View {
 	
 	@EnvironmentObject private var timelineModel: TimelineModel
-	@State var navigate = true
-
+	
 	@ViewBuilder var body: some View {
 		GeometryReader { proxy in
 			#if os(macOS)
@@ -36,14 +35,9 @@ struct TimelineView: View {
 					.buttonStyle(PlainButtonStyle())
 					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
-				ZStack {
-					NavigationLink(destination: ArticleContainerView(), isActive: $navigate) {
-						EmptyView()
-					}.hidden()
-					List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
-						let selected = timelineModel.selectedArticleIDs.contains(timelineItem.article.articleID)
-						TimelineItemView(selected: selected, width: proxy.size.width, timelineItem: timelineItem)
-					}
+				List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
+					let selected = timelineModel.selectedArticleIDs.contains(timelineItem.article.articleID)
+					TimelineItemView(selected: selected, width: proxy.size.width, timelineItem: timelineItem)
 				}
 			}
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
