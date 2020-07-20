@@ -17,7 +17,6 @@ struct SidebarView: View {
 	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var sidebarModel: SidebarModel
-	@State var navigate = false
 
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
@@ -45,28 +44,20 @@ struct SidebarView: View {
 				.buttonStyle(PlainButtonStyle())
 				.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 			}
-			ZStack(alignment: .bottom) {
-				NavigationLink(destination: TimelineContainerView(), isActive: $navigate) {
-					EmptyView()
-				}.hidden()
-				List(selection: $sidebarModel.selectedFeedIdentifiers) {
-					rows
-				}
-				if case .refreshProgress(let percent) = refreshProgress.state {
-					HStack(alignment: .center) {
-						Spacer()
-						ProgressView(value: percent).frame(width: 100)
-						Spacer()
-					}
-					.padding(8)
-					.background(Color(NSColor.windowBackgroundColor))
-					.frame(height: 30)
-					.animation(.easeInOut(duration: 0.5))
-					.transition(.move(edge: .bottom))
-				}
+			List(selection: $sidebarModel.selectedFeedIdentifiers) {
+				rows
 			}
-			.onChange(of: sidebarModel.selectedFeedIdentifiers) { value in
-				navigate = !sidebarModel.selectedFeedIdentifiers.isEmpty
+			if case .refreshProgress(let percent) = refreshProgress.state {
+				HStack(alignment: .center) {
+					Spacer()
+					ProgressView(value: percent).frame(width: 100)
+					Spacer()
+				}
+				.padding(8)
+				.background(Color(NSColor.windowBackgroundColor))
+				.frame(height: 30)
+				.animation(.easeInOut(duration: 0.5))
+				.transition(.move(edge: .bottom))
 			}
 		}
 		#else
