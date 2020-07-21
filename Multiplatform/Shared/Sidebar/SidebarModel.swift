@@ -31,8 +31,8 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 
 	init() {
-		subscribeToRebuildSidebarItemsEvents()
 		subscribeToSelectedFeedChanges()
+		subscribeToRebuildSidebarItemsEvents()
 	}
 
 	// MARK: API
@@ -55,6 +55,22 @@ private extension SidebarModel {
 	
 	// MARK: Subscriptions
 	
+	func subscribeToSelectedFeedChanges() {
+		$selectedFeedIdentifiers.map { [weak self] feedIDs in
+			feedIDs.compactMap { self?.findFeed($0) }
+		}
+		.assign(to: $selectedFeeds)
+		
+		$selectedFeedIdentifier.compactMap { [weak self] feedID in
+			if let feedID = feedID, let feed = self?.findFeed(feedID) {
+				return [feed]
+			} else {
+				return nil
+			}
+		}
+		.assign(to: $selectedFeeds)
+	}
+	
 	func subscribeToRebuildSidebarItemsEvents() {
 		let chidrenDidChangePublisher = NotificationCenter.default.publisher(for: .ChildrenDidChange)
 		let batchUpdateDidPerformPublisher = NotificationCenter.default.publisher(for: .BatchUpdateDidPerform)
@@ -75,26 +91,10 @@ private extension SidebarModel {
 
 		sidebarRebuildPublishers
 			.debounce(for: .milliseconds(500), scheduler: RunLoop.main)
-			.combineLatest($isReadFiltered)
-			.sink {  [weak self] _, readFilter in
-				self?.rebuildSidebarItems(isReadFiltered: readFilter)
+			.combineLatest($isReadFiltered, $selectedFeeds)
+			.sink {  [weak self] _, readFilter, selectedFeeds in
+				self?.rebuildSidebarItems(isReadFiltered: readFilter, selectedFeeds: selectedFeeds)
 		}.store(in: &cancellables)
-	}
-	
-	func subscribeToSelectedFeedChanges() {
-		$selectedFeedIdentifiers.map { [weak self] feedIDs in
-			feedIDs.compactMap { self?.findFeed($0) }
-		}
-		.assign(to: $selectedFeeds)
-		
-		$selectedFeedIdentifier.compactMap { [weak self] feedID in
-			if let feedID = feedID, let feed = self?.findFeed(feedID) {
-				return [feed]
-			} else {
-				return nil
-			}
-		}
-		.assign(to: $selectedFeeds)
 	}
 	
 	// MARK: Sidebar Building
@@ -107,7 +107,7 @@ private extension SidebarModel {
 		return feeds.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
 	}
 	
-	func rebuildSidebarItems(isReadFiltered: Bool) {
+	func rebuildSidebarItems(isReadFiltered: Bool, selectedFeeds: [Feed]) {
 		guard let delegate = delegate else { return }
 		var items = [SidebarItem]()
 		
@@ -121,20 +121,22 @@ private extension SidebarModel {
 		}
 		items.append(smartFeedControllerItem)
 
+		let selectedFeedIDs = Set(selectedFeeds.map { $0.feedID })
+		
 		for account in AccountManager.shared.sortedActiveAccounts {
 			var accountItem = SidebarItem(account)
 			
 			for webFeed in sort(account.topLevelWebFeeds) {
-				if !isReadFiltered || webFeed.unreadCount > 0 {
+				if !isReadFiltered || !(webFeed.unreadCount < 1 && !selectedFeedIDs.contains(webFeed.feedID)) {
 					accountItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
 				}
 			}
 			
 			for folder in sort(account.folders ?? Set<Folder>()) {
-				if !isReadFiltered || folder.unreadCount > 0 {
+				if !isReadFiltered || !(folder.unreadCount < 1 && !selectedFeedIDs.contains(folder.feedID)) {
 					var folderItem = SidebarItem(folder, unreadCount: delegate.unreadCount(for: folder))
 					for webFeed in sort(folder.topLevelWebFeeds) {
-						if !isReadFiltered || webFeed.unreadCount > 0 {
+						if !isReadFiltered || !(webFeed.unreadCount < 1 && !selectedFeedIDs.contains(webFeed.feedID)) {
 							folderItem.addChild(SidebarItem(webFeed, unreadCount: delegate.unreadCount(for: webFeed)))
 						}
 					}
