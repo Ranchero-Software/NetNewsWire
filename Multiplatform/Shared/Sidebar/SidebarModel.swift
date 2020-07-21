@@ -27,17 +27,12 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	
 	private var cancellables = Set<AnyCancellable>()
 
-	private let rebuildSidebarItemsQueue = CoalescingQueue(name: "Rebuild The Sidebar Items", interval: 0.5)
-
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
 
 	init() {
-		subscribeToUnreadCountInitialization()
-		subscribeToUnreadCountChanges()
 		subscribeToRebuildSidebarItemsEvents()
 		subscribeToSelectedFeedChanges()
-		subscribeToReadFilterChanges()
 	}
 
 	// MARK: API
@@ -60,23 +55,6 @@ private extension SidebarModel {
 	
 	// MARK: Subscriptions
 	
-	func subscribeToUnreadCountInitialization() {
-		NotificationCenter.default.publisher(for: .UnreadCountDidInitialize)
-			.filter { $0.object is AccountManager }
-			.sink {  [weak self] note in
-				guard let self = self else { return	}
-				self.rebuildSidebarItems(isReadFiltered: self.isReadFiltered)
-			}.store(in: &cancellables)
-	}
-	
-	func subscribeToUnreadCountChanges() {
-		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
-			.filter { _ in AccountManager.shared.isUnreadCountsInitialized }
-			.sink {  [weak self] _ in
-				self?.queueRebuildSidebarItems()
-			}.store(in: &cancellables)
-	}
-	
 	func subscribeToRebuildSidebarItemsEvents() {
 		let chidrenDidChangePublisher = NotificationCenter.default.publisher(for: .ChildrenDidChange)
 		let batchUpdateDidPerformPublisher = NotificationCenter.default.publisher(for: .BatchUpdateDidPerform)
@@ -84,16 +62,22 @@ private extension SidebarModel {
 		let accountStateDidChangePublisher = NotificationCenter.default.publisher(for: .AccountStateDidChange)
 		let userDidAddAccountPublisher = NotificationCenter.default.publisher(for: .UserDidAddAccount)
 		let userDidDeleteAccountPublisher = NotificationCenter.default.publisher(for: .UserDidDeleteAccount)
+		let unreadCountDidInitializePublisher = NotificationCenter.default.publisher(for: .UnreadCountDidInitialize)
+		let unreadCountDidChangePublisher = NotificationCenter.default.publisher(for: .UnreadCountDidChange)
 
 		let sidebarRebuildPublishers = chidrenDidChangePublisher.merge(with: batchUpdateDidPerformPublisher,
 																	   displayNameDidChangePublisher,
 																	   accountStateDidChangePublisher,
 																	   userDidAddAccountPublisher,
-																	   userDidDeleteAccountPublisher)
+																	   userDidDeleteAccountPublisher,
+																	   unreadCountDidInitializePublisher,
+																	   unreadCountDidChangePublisher)
 
-		sidebarRebuildPublishers.sink {  [weak self] _ in
-			guard let self = self else { return	}
-			self.rebuildSidebarItems(isReadFiltered: self.isReadFiltered)
+		sidebarRebuildPublishers
+			.combineLatest($isReadFiltered)
+			.debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+			.sink {  [weak self] _, readFilter in
+				self?.rebuildSidebarItems(isReadFiltered: readFilter)
 		}.store(in: &cancellables)
 	}
 	
@@ -113,12 +97,6 @@ private extension SidebarModel {
 		.assign(to: $selectedFeeds)
 	}
 	
-	func subscribeToReadFilterChanges() {
-		$isReadFiltered.sink { [weak self] filter in
-			self?.rebuildSidebarItems(isReadFiltered: filter)
-		}.store(in: &cancellables)
-	}
-	
 	// MARK: Sidebar Building
 	
 	func sort(_ folders: Set<Folder>) -> [Folder] {
@@ -127,14 +105,6 @@ private extension SidebarModel {
 
 	func sort(_ feeds: Set<WebFeed>) -> [Feed] {
 		return feeds.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
-	}
-	
-	func queueRebuildSidebarItems() {
-		rebuildSidebarItemsQueue.add(self, #selector(rebuildSidebarItemsWithCurrentValues))
-	}
-	
-	@objc func rebuildSidebarItemsWithCurrentValues() {
-		rebuildSidebarItems(isReadFiltered: isReadFiltered)
 	}
 	
 	func rebuildSidebarItems(isReadFiltered: Bool) {
