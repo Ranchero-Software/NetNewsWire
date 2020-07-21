@@ -39,6 +39,9 @@ struct SettingsCredentialsAccountView: View {
 							Text(settingsModel.showPassword ? "Hide" : "Show")
 						}
 					}
+					if settingsModel.apiUrlEnabled {
+						TextField("API URL", text: $settingsModel.apiUrl)
+					}
 				}
 				Section(footer: errorFooter) {
 					HStack {

@@ -16,6 +16,7 @@ class SettingsCredentialsAccountModel: ObservableObject {
 	@Published var shouldDismiss: Bool = false
 	@Published var email: String = ""
 	@Published var password: String = ""
+	@Published var apiUrl: String = ""
 	@Published var busy: Bool = false
 	@Published var accountCredentialsError: AccountCredentialsError? {
 		didSet {
@@ -43,6 +44,9 @@ class SettingsCredentialsAccountModel: ObservableObject {
 	}
 
 	var isValid: Bool {
+		if apiUrlEnabled {
+			return !email.isEmpty && !password.isEmpty && !apiUrl.isEmpty
+		}
 		return !email.isEmpty && !password.isEmpty
 	}
 
@@ -69,6 +73,10 @@ class SettingsCredentialsAccountModel: ObservableObject {
 		return accountType == .newsBlur ? NSLocalizedString("Username or Email", comment: "") : NSLocalizedString("Email", comment: "")
 	}
 
+	var apiUrlEnabled: Bool {
+		return accountType == .freshRSS
+	}
+
 	func addAccount() {
 		switch accountType {
 		case .feedbin:
@@ -77,6 +85,8 @@ class SettingsCredentialsAccountModel: ObservableObject {
 			addFeedWranglerAccount()
 		case .newsBlur:
 			addNewsBlurAccount()
+		case .freshRSS:
+			addFreshRSSAccount()
 		default:
 			return
 		}
@@ -200,6 +210,53 @@ extension SettingsCredentialsAccountModel {
 				do {
 					try account.removeCredentials(type: .newsBlurBasic)
 					try account.removeCredentials(type: .newsBlurSessionId)
+					try account.storeCredentials(credentials)
+					try account.storeCredentials(validatedCredentials)
+					self.shouldDismiss = true
+					account.refreshAll(completion: { result in
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							self.accountCredentialsError = .other(error: error)
+						}
+					})
+
+				} catch {
+					self.accountCredentialsError = .keyChain
+				}
+
+			case .failure:
+				self.accountCredentialsError = .noNetwork
+			}
+		}
+	}
+
+	// MARK:- Fresh RSS
+
+	func addFreshRSSAccount() {
+		busy = true
+		let credentials = Credentials(type: .readerBasic, username: email, secret: password)
+
+		Account.validateCredentials(type: .freshRSS, credentials: credentials, endpoint: URL(string: apiUrl)!) { [weak self] result in
+
+			guard let self = self else { return }
+
+			self.busy = false
+
+			switch result {
+			case .success(let validatedCredentials):
+
+				guard let validatedCredentials = validatedCredentials else {
+					self.accountCredentialsError = .invalidCredentials
+					return
+				}
+
+				let account = AccountManager.shared.createAccount(type: .freshRSS)
+
+				do {
+					try account.removeCredentials(type: .readerBasic)
+					try account.removeCredentials(type: .readerAPIKey)
 					try account.storeCredentials(credentials)
 					try account.storeCredentials(validatedCredentials)
 					self.shouldDismiss = true

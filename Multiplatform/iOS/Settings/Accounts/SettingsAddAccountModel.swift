@@ -38,7 +38,8 @@ class SettingsAddAccountModel: ObservableObject {
 			SettingsAddAccount(name: "Feedly", accountType: .feedly),
 			SettingsAddAccount(name: "Feed Wrangler", accountType: .feedWrangler),
 			SettingsAddAccount(name: "iCloud", accountType: .cloudKit),
-			SettingsAddAccount(name: "NewsBlur", accountType: .newsBlur)
+			SettingsAddAccount(name: "NewsBlur", accountType: .newsBlur),
+			SettingsAddAccount(name: "Fresh RSS", accountType: .freshRSS)
 		]
 	}
 
