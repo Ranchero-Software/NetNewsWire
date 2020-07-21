@@ -16,7 +16,7 @@ struct SidebarItemView: View {
 	var sidebarItem: SidebarItem
 	
     var body: some View {
-		HStack {
+		HStack(alignment: .top) {
 			if let image = feedIconImageLoader.image {
 				IconImageView(iconImage: image)
 					.frame(width: 20, height: 20, alignment: .center)
