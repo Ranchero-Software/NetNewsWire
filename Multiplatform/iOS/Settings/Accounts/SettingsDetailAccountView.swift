@@ -45,7 +45,7 @@ struct SettingsDetailAccountView: View {
 					}
 				}
 				.sheet(isPresented: $isFeedbinCredentialsPresented) {
-					self.settingsFeedbinAccountView
+					self.settingsCredentialsAccountView
 				}
 			}
 			if settingsModel.isDeletable {
@@ -78,8 +78,8 @@ struct SettingsDetailAccountView: View {
 		.navigationBarTitle(Text(verbatim: settingsModel.nameForDisplay), displayMode: .inline)
 	}
 
-	var settingsFeedbinAccountView: SettingsFeedbinAccountView {
-		return SettingsFeedbinAccountView(account: settingsModel.account)
+	var settingsCredentialsAccountView: SettingsCredentialsAccountView {
+		return SettingsCredentialsAccountView(account: settingsModel.account)
 	}
 
 	func dismiss() {
