@@ -85,7 +85,7 @@ final class IconView: NSView {
 			return
 		}
 
-		let color = AppAssets.iconBackgroundColor
+		let color = AppAssets.nsIconBackgroundColor
 		color.set()
 		dirtyRect.fill()
 	}
