@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import RSCore
 import Account
+import Articles
 
 protocol SidebarModelDelegate: class {
 	func unreadCount(for: Feed) -> Int
@@ -53,6 +54,90 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 }
+
+// MARK: Side Context Menu Actions
+extension SidebarModel {
+	
+	func markAllAsRead(feed: Feed) {
+		
+		var articles = Set<Article>()
+		let fetchedArticles = try! feed.fetchArticles()
+		for article in fetchedArticles {
+			articles.insert(article)
+		}
+		
+		for selectedFeed in selectedFeeds {
+			let fetchedArticles = try! selectedFeed.fetchArticles()
+			for article in fetchedArticles {
+				articles.insert(article)
+			}
+		}
+		
+		markAllAsRead(Array(articles))
+	}
+	
+	func markAllAsRead(account: Account) {
+		var articles = Set<Article>()
+		for feed in account.flattenedWebFeeds() {
+			let unreadArticles = try! feed.fetchUnreadArticles()
+			articles.formUnion(unreadArticles)
+		}
+		markAllAsRead(Array(articles))
+	}
+	
+	
+	/// Marks provided artices as read.
+	/// - Parameter articles: An array of `Article`s.
+	/// - Warning: An `UndoManager` is created here as the `Environment`'s undo manager appears to be `nil`.
+	private func markAllAsRead(_ articles: [Article]) {
+		guard let undoManager = undoManager ?? UndoManager(),
+			  let markAsReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
+	
+			return
+		}
+		runCommand(markAsReadCommand)
+	}
+	
+	func deleteItems(item: SidebarItem) {
+		if selectedFeeds.count > 0 {
+			for feed in selectedFeeds {
+				if feed is WebFeed {
+					let account = (feed as! WebFeed).account
+					account?.removeWebFeed(feed as! WebFeed)
+				}
+				if feed is Folder {
+					let account = (feed as! Folder).account
+					account?.removeFolder(feed as! Folder, completion: { (result) in
+						switch result {
+						case .success( _):
+							print("Deleted folder")
+						case .failure(let err):
+							print(err.localizedDescription)
+						}
+					})
+				}
+			}
+		} else {
+			if item.feed is WebFeed {
+				let account = (item.feed as! WebFeed).account
+				account?.removeWebFeed(item.feed as! WebFeed)
+			}
+			if item.feed is Folder {
+				let account = (item.feed as! Folder).account
+				account?.removeFolder(item.feed as! Folder, completion: { (result) in
+					switch result {
+					case .success( _):
+						print("Deleted folder")
+					case .failure(let err):
+						print(err.localizedDescription)
+					}
+				})
+			}
+		}
+	}
+}
+
+
 
 // MARK: Private
 

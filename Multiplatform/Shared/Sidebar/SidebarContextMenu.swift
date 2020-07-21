@@ -7,9 +7,14 @@
 //
 
 import SwiftUI
+import RSCore
+import Account
 
 struct SidebarContextMenu: View {
 	
+	@Environment(\.undoManager) var undoManager
+	@Environment(\.openURL) var openURL
+	@EnvironmentObject private var sidebarModel: SidebarModel
 	@Binding var showInspector: Bool
 	var sidebarItem: SidebarItem
 	
@@ -26,6 +31,7 @@ struct SidebarContextMenu: View {
 				#endif
 			}
 			Button {
+				sidebarModel.markAllAsRead(account: sidebarItem.represented as! Account)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -36,6 +42,10 @@ struct SidebarContextMenu: View {
 		
 		if sidebarItem.representedType == .pseudoFeed {
 			Button {
+				guard let feed = sidebarItem.feed else {
+					return
+				}
+				sidebarModel.markAllAsRead(feed: feed)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -54,6 +64,10 @@ struct SidebarContextMenu: View {
 				#endif
 			}
 			Button {
+				guard let feed = sidebarItem.feed else {
+					return
+				}
+				sidebarModel.markAllAsRead(feed: feed)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -62,6 +76,11 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
+				guard let homepage = (sidebarItem.feed as? WebFeed)?.homePageURL,
+					  let url = URL(string: homepage) else {
+					return
+				}
+				openURL(url)
 			} label: {
 				Text("Open Home Page")
 				#if os(iOS)
@@ -70,6 +89,15 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
+				guard let feedUrl = (sidebarItem.feed as? WebFeed)?.url else {
+					return
+				}
+				#if os(macOS)
+				URLPasteboardWriter.write(urlString: feedUrl, to: NSPasteboard.general)
+				#else
+				UIPasteboard.general.string = feedUrl
+				#endif
+				
 			} label: {
 				Text("Copy Feed URL")
 				#if os(iOS)
@@ -77,6 +105,14 @@ struct SidebarContextMenu: View {
 				#endif
 			}
 			Button {
+				guard let homepage = (sidebarItem.feed as? WebFeed)?.homePageURL else {
+					return
+				}
+				#if os(macOS)
+				URLPasteboardWriter.write(urlString: homepage, to: NSPasteboard.general)
+				#else
+				UIPasteboard.general.string = homepage
+				#endif
 			} label: {
 				Text("Copy Home Page URL")
 				#if os(iOS)
@@ -85,6 +121,7 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
+				sidebarModel.deleteItems(item: sidebarItem)
 			} label: {
 				Text("Delete")
 				#if os(iOS)
@@ -103,6 +140,10 @@ struct SidebarContextMenu: View {
 				#endif
 			}
 			Button {
+				guard let feed = sidebarItem.feed else {
+					return
+				}
+				sidebarModel.markAllAsRead(feed: feed)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -111,6 +152,7 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
+				sidebarModel.deleteItems(item: sidebarItem)
 			} label: {
 				Text("Delete")
 				#if os(iOS)

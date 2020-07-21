@@ -6,7 +6,7 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 import RSCore
 import Account
 
