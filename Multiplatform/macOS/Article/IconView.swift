@@ -107,10 +107,6 @@ private extension IconView {
 		let imageSize = image.size
 		let viewSize = bounds.size
 		if imageSize.height == imageSize.width {
-			if imageSize.height >= viewSize.height * 0.75 {
-				// Close enough to viewSize to scale up the image.
-				return NSMakeRect(0.0, 0.0, viewSize.width, viewSize.height)
-			}
 			let offset = floor((viewSize.height - imageSize.height) / 2.0)
 			return NSMakeRect(offset, offset, imageSize.width, imageSize.height)
 		}

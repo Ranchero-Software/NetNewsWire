@@ -39,11 +39,7 @@ struct IconImageView: View {
 		let newSize: CGSize
 		
 		if imageSize.height == imageSize.width {
-			if imageSize.height >= viewSize.height * 0.75 {
-				newSize = CGSize(width: viewSize.width, height: viewSize.height)
-			} else {
-				newSize = CGSize(width: imageSize.width, height: imageSize.height)
-			}
+			return imageSize
 		} else if imageSize.height > imageSize.width {
 			let factor = viewSize.height / imageSize.height
 			let width = imageSize.width * factor
