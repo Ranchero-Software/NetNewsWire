@@ -74,8 +74,8 @@ private extension SidebarModel {
 																	   unreadCountDidChangePublisher)
 
 		sidebarRebuildPublishers
-			.combineLatest($isReadFiltered)
 			.debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+			.combineLatest($isReadFiltered)
 			.sink {  [weak self] _, readFilter in
 				self?.rebuildSidebarItems(isReadFiltered: readFilter)
 		}.store(in: &cancellables)
