@@ -30,7 +30,7 @@ struct SettingsAddAccountView: View {
 			switch model.selectedAccountType {
 			case .onMyMac:
 				SettingsLocalAccountView()
-			case .feedbin, .feedWrangler, .newsBlur:
+			case .feedbin, .feedWrangler, .newsBlur, .freshRSS:
 				SettingsCredentialsAccountView(accountType: model.selectedAccountType!)
 			case .cloudKit:
 				SettingsCloudKitAccountView()
