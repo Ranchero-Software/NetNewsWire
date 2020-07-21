@@ -16,17 +16,31 @@ struct SidebarItemView: View {
 	var sidebarItem: SidebarItem
 	
     var body: some View {
-		HStack(alignment: .top) {
-			if let image = feedIconImageLoader.image {
-				IconImageView(iconImage: image)
-					.frame(width: 20, height: 20, alignment: .center)
+		HStack {
+			#if os(macOS)
+			HStack {
+				if let image = feedIconImageLoader.image {
+					IconImageView(iconImage: image)
+						.frame(width: 20, height: 20, alignment: .center)
+				}
+				Text(verbatim: sidebarItem.nameForDisplay)
+				Spacer()
+				if sidebarItem.unreadCount > 0 {
+					UnreadCountView(count: sidebarItem.unreadCount)
+				}
 			}
-			Text(verbatim: sidebarItem.nameForDisplay)
+			#else
+			HStack(alignment: .top) {
+				if let image = feedIconImageLoader.image {
+					IconImageView(iconImage: image)
+						.frame(width: 20, height: 20)
+				}
+				Text(verbatim: sidebarItem.nameForDisplay)
+			}
 			Spacer()
 			if sidebarItem.unreadCount > 0 {
 				UnreadCountView(count: sidebarItem.unreadCount)
 			}
-			#if os(iOS)
 			if sidebarItem.representedType == .webFeed || sidebarItem.representedType == .pseudoFeed {
 				Spacer()
 					.frame(width: 16)
