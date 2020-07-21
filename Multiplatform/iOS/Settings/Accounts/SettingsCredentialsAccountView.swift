@@ -1,35 +1,31 @@
 //
-//  SettingsFeedbinAccountView.swift
+//  SettingsCredentialsAccountView.swift
 //  Multiplatform iOS
 //
-//  Created by Rizwan on 07/07/20.
+//  Created by Rizwan on 21/07/20.
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
 import SwiftUI
 import Account
-import Combine
-import RSWeb
-import Secrets
 
-struct SettingsFeedbinAccountView: View {
+struct SettingsCredentialsAccountView: View {
 	@Environment(\.presentationMode) var presentationMode
-	@ObservedObject var settingsModel: SettingsFeedbinAccountModel
+	@ObservedObject var settingsModel: SettingsCredentialsAccountModel
 
-	init(account: Account? = nil) {
-		if let account = account {
-			self.settingsModel = SettingsFeedbinAccountModel(account: account)
-		}
-		else {
-			self.settingsModel = SettingsFeedbinAccountModel()
-		}
+	init(account: Account) {
+		self.settingsModel = SettingsCredentialsAccountModel(account: account)
+	}
+
+	init(accountType: AccountType) {
+		self.settingsModel = SettingsCredentialsAccountModel(accountType: accountType)
 	}
 
 	var body: some View {
 		NavigationView {
 			List {
-				Section(header: AccountHeaderImageView(image: AppAssets.image(for: .feedbin)!)) {
-					TextField("Email", text: $settingsModel.email).textContentType(.emailAddress)
+				Section(header: AccountHeaderImageView(image: AppAssets.image(for: settingsModel.accountType)!)) {
+					TextField(settingsModel.emailText, text: $settingsModel.email).textContentType(.emailAddress)
 					HStack {
 						if settingsModel.showPassword {
 							TextField("Password", text:$settingsModel.password)
@@ -69,7 +65,7 @@ struct SettingsFeedbinAccountView: View {
 					presentationMode.wrappedValue.dismiss()
 				}
 			})
-			.navigationBarTitle(Text(verbatim: "Feedbin"), displayMode: .inline)
+			.navigationBarTitle(Text(verbatim: settingsModel.accountName), displayMode: .inline)
 			.navigationBarItems(leading:
 									Button(action: { self.dismiss() }) { Text("Cancel") }
 			)
@@ -80,7 +76,7 @@ struct SettingsFeedbinAccountView: View {
 		HStack {
 			Spacer()
 			if settingsModel.showError {
-				Text(verbatim: settingsModel.feedbinAccountError!.localizedDescription).foregroundColor(.red)
+				Text(verbatim: settingsModel.accountCredentialsError!.description).foregroundColor(.red)
 			}
 			Spacer()
 		}
@@ -91,8 +87,8 @@ struct SettingsFeedbinAccountView: View {
 	}
 }
 
-struct SettingsFeedbinAccountView_Previews: PreviewProvider {
-	static var previews: some View {
-		SettingsFeedbinAccountView()
-	}
+struct SettingsCredentialsAccountView_Previews: PreviewProvider {
+    static var previews: some View {
+		SettingsCredentialsAccountView(accountType: .feedbin)
+    }
 }

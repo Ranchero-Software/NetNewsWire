@@ -706,6 +706,9 @@
 		55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */; };
 		55E15BCC229D65A900D6602A /* AccountsReaderAPIWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */; };
 		5F323809231DF9F000706F6B /* VibrantTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */; };
+		65082A2F24C72AC8009FA994 /* SettingsCredentialsAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65082A2E24C72AC8009FA994 /* SettingsCredentialsAccountView.swift */; };
+		65082A5224C72B88009FA994 /* SettingsCredentialsAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65082A5124C72B88009FA994 /* SettingsCredentialsAccountModel.swift */; };
+		65082A5424C73D2F009FA994 /* AccountCredentialsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65082A5324C73D2F009FA994 /* AccountCredentialsError.swift */; };
 		653A4E7924BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653A4E7824BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift */; };
 		65422D1724B75CD1008A2FA2 /* SettingsAddAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65422D1624B75CD1008A2FA2 /* SettingsAddAccountModel.swift */; };
 		6581C73820CED60100F4AD34 /* SafariExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6581C73720CED60100F4AD34 /* SafariExtensionHandler.swift */; };
@@ -714,14 +717,12 @@
 		6581C74020CED60100F4AD34 /* netnewswire-subscribe-to-feed.js in Resources */ = {isa = PBXBuildFile; fileRef = 6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */; };
 		6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */; };
 		6586A5F724B632F8002BCF4F /* SettingsDetailAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6586A5F624B632F8002BCF4F /* SettingsDetailAccountModel.swift */; };
-		6591720E24B59C5100B638E8 /* SettingsFeedbinAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6591720D24B59C5100B638E8 /* SettingsFeedbinAccountModel.swift */; };
 		6591723124B5C35400B638E8 /* AccountHeaderImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6591723024B5C35400B638E8 /* AccountHeaderImageView.swift */; };
 		6591727F24B5D19500B638E8 /* SettingsDetailAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6591727E24B5D19500B638E8 /* SettingsDetailAccountView.swift */; };
 		6594CA3B24AF6F2A005C7D7C /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
 		65ACE48424B4779B003AE06A /* SettingsAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ACE48324B4779B003AE06A /* SettingsAddAccountView.swift */; };
 		65ACE48624B477C9003AE06A /* SettingsAccountLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ACE48524B477C9003AE06A /* SettingsAccountLabelView.swift */; };
 		65ACE48824B48020003AE06A /* SettingsLocalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ACE48724B48020003AE06A /* SettingsLocalAccountView.swift */; };
-		65ACE48A24B4C2D8003AE06A /* SettingsFeedbinAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65ACE48924B4C2D8003AE06A /* SettingsFeedbinAccountView.swift */; };
 		65C2E40124B05D8A000AFDF6 /* FeedsSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */; };
 		65CBAD5A24AE03C20006DD91 /* ColorPaletteContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */; };
 		65ED3FB7235DEF6C0081F399 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
@@ -2147,6 +2148,9 @@
 		55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsReaderAPI.xib; sourceTree = "<group>"; };
 		55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsReaderAPIWindowController.swift; sourceTree = "<group>"; };
 		5F323808231DF9F000706F6B /* VibrantTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantTableViewCell.swift; sourceTree = "<group>"; };
+		65082A2E24C72AC8009FA994 /* SettingsCredentialsAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCredentialsAccountView.swift; sourceTree = "<group>"; };
+		65082A5124C72B88009FA994 /* SettingsCredentialsAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCredentialsAccountModel.swift; sourceTree = "<group>"; };
+		65082A5324C73D2F009FA994 /* AccountCredentialsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCredentialsError.swift; sourceTree = "<group>"; };
 		653A4E7824BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCloudKitAccountView.swift; sourceTree = "<group>"; };
 		65422D1624B75CD1008A2FA2 /* SettingsAddAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAddAccountModel.swift; sourceTree = "<group>"; };
 		6543108B2322D90900658221 /* common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = common; sourceTree = "<group>"; };
@@ -2160,13 +2164,11 @@
 		6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ToolbarItemIcon.pdf; sourceTree = "<group>"; };
 		6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Subscribe_to_Feed.entitlements; sourceTree = "<group>"; };
 		6586A5F624B632F8002BCF4F /* SettingsDetailAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailAccountModel.swift; sourceTree = "<group>"; };
-		6591720D24B59C5100B638E8 /* SettingsFeedbinAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFeedbinAccountModel.swift; sourceTree = "<group>"; };
 		6591723024B5C35400B638E8 /* AccountHeaderImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountHeaderImageView.swift; sourceTree = "<group>"; };
 		6591727E24B5D19500B638E8 /* SettingsDetailAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailAccountView.swift; sourceTree = "<group>"; };
 		65ACE48324B4779B003AE06A /* SettingsAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAddAccountView.swift; sourceTree = "<group>"; };
 		65ACE48524B477C9003AE06A /* SettingsAccountLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccountLabelView.swift; sourceTree = "<group>"; };
 		65ACE48724B48020003AE06A /* SettingsLocalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLocalAccountView.swift; sourceTree = "<group>"; };
-		65ACE48924B4C2D8003AE06A /* SettingsFeedbinAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFeedbinAccountView.swift; sourceTree = "<group>"; };
 		65C2E40024B05D8A000AFDF6 /* FeedsSettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedsSettingsModel.swift; sourceTree = "<group>"; };
 		65CBAD5924AE03C20006DD91 /* ColorPaletteContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteContainerView.swift; sourceTree = "<group>"; };
 		65ED4083235DEF6C0081F399 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3312,12 +3314,13 @@
 				65422D1624B75CD1008A2FA2 /* SettingsAddAccountModel.swift */,
 				65ACE48524B477C9003AE06A /* SettingsAccountLabelView.swift */,
 				65ACE48724B48020003AE06A /* SettingsLocalAccountView.swift */,
-				65ACE48924B4C2D8003AE06A /* SettingsFeedbinAccountView.swift */,
-				6591720D24B59C5100B638E8 /* SettingsFeedbinAccountModel.swift */,
 				6591723024B5C35400B638E8 /* AccountHeaderImageView.swift */,
 				6591727E24B5D19500B638E8 /* SettingsDetailAccountView.swift */,
 				6586A5F624B632F8002BCF4F /* SettingsDetailAccountModel.swift */,
 				653A4E7824BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift */,
+				65082A2E24C72AC8009FA994 /* SettingsCredentialsAccountView.swift */,
+				65082A5124C72B88009FA994 /* SettingsCredentialsAccountModel.swift */,
+				65082A5324C73D2F009FA994 /* AccountCredentialsError.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -5161,7 +5164,6 @@
 				5177471824B3812200EB0F74 /* IconView.swift in Sources */,
 				51E4995C24A875F300B667CB /* ArticleRenderer.swift in Sources */,
 				51E4992324A8095700B667CB /* URL-Extensions.swift in Sources */,
-				65ACE48A24B4C2D8003AE06A /* SettingsFeedbinAccountView.swift in Sources */,
 				51E4993624A867E800B667CB /* UserInfoKey.swift in Sources */,
 				51E4990924A808C500B667CB /* WebFeedIconDownloader.swift in Sources */,
 				51E498F524A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
@@ -5169,6 +5171,7 @@
 				172199F124AB716900A31D04 /* SidebarToolbarModifier.swift in Sources */,
 				65CBAD5A24AE03C20006DD91 /* ColorPaletteContainerView.swift in Sources */,
 				5177470924B2F87600EB0F74 /* SidebarListStyleModifier.swift in Sources */,
+				65082A5424C73D2F009FA994 /* AccountCredentialsError.swift in Sources */,
 				51E4990B24A808C500B667CB /* ImageDownloader.swift in Sources */,
 				51E498F424A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				514E6BFF24AD255D00AC6F6E /* PreviewArticles.swift in Sources */,
@@ -5192,11 +5195,12 @@
 				51E49A0324A91FF600B667CB /* SceneNavigationView.swift in Sources */,
 				51E4990124A808BB00B667CB /* FaviconURLFinder.swift in Sources */,
 				51E4991D24A8092100B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
-				6591720E24B59C5100B638E8 /* SettingsFeedbinAccountModel.swift in Sources */,
+				65082A2F24C72AC8009FA994 /* SettingsCredentialsAccountView.swift in Sources */,
 				51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */,
 				5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				5177471024B3029400EB0F74 /* ArticleViewController.swift in Sources */,
+				65082A5224C72B88009FA994 /* SettingsCredentialsAccountModel.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
 				51B8BCC224C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
 				17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,

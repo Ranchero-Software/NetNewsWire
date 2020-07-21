@@ -27,17 +27,13 @@ struct SettingsAddAccountView: View {
 		}
 		.listStyle(InsetGroupedListStyle())
 		.sheet(isPresented: $model.isAddPresented) {
-
 			switch model.selectedAccountType {
 			case .onMyMac:
 				SettingsLocalAccountView()
-
-			case .feedbin:
-				SettingsFeedbinAccountView()
-
+			case .feedbin, .feedWrangler, .newsBlur:
+				SettingsCredentialsAccountView(accountType: model.selectedAccountType!)
 			case .cloudKit:
 				SettingsCloudKitAccountView()
-
 			default:
 				EmptyView()
 			}
