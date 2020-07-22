@@ -12,6 +12,7 @@ import Account
 struct SidebarItemView: View {
 	
 	@StateObject var feedIconImageLoader = FeedIconImageLoader()
+	@EnvironmentObject private var sidebarModel: SidebarModel
 	@State private var showInspector: Bool = false
 	var sidebarItem: SidebarItem
 	
@@ -53,6 +54,7 @@ struct SidebarItemView: View {
 			}
 		}.contextMenu {
 			SidebarContextMenu(showInspector: $showInspector, sidebarItem: sidebarItem)
+				.environmentObject(sidebarModel)
 		}
 		.sheet(isPresented: $showInspector, onDismiss: { showInspector = false}) {
 			InspectorView(sidebarItem: sidebarItem)

@@ -13,11 +13,12 @@ struct SidebarView: View {
 	
 	// I had to comment out SceneStorage because it blows up if used on macOS
 	//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
+	@Environment(\.undoManager) var undoManager
 	@StateObject private var expandedContainers = SidebarExpandedContainers()
 	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var sidebarModel: SidebarModel
-
+	
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
 	@State private var scrollOffset: CGFloat = 0
@@ -60,6 +61,9 @@ struct SidebarView: View {
 				.transition(.move(edge: .bottom))
 			}
 		}
+		.onAppear {
+			sidebarModel.undoManager = undoManager
+		}
 		#else
 		ZStack(alignment: .top) {
 			List {
@@ -74,7 +78,11 @@ struct SidebarView: View {
 				ProgressView().offset(y: -40)
 			}
 		}
+		.onAppear {
+			sidebarModel.undoManager = undoManager
+		}
 		#endif
+		
 //		.onAppear {
 //			expandedContainers.data = expandedContainerData
 //		}
@@ -158,15 +166,19 @@ struct SidebarView: View {
 					}
 				} label: {
 					#if os(macOS)
-					SidebarItemView(sidebarItem: sidebarItem).padding(.leading, 4)
+					SidebarItemView(sidebarItem: sidebarItem)
+						.padding(.leading, 4)
+						.environmentObject(sidebarModel)
 					#else
 					if sidebarItem.representedType == .smartFeedController {
 						GeometryReader { proxy in
 							SidebarItemView(sidebarItem: sidebarItem)
 								.preference(key: RefreshKeyTypes.PrefKey.self, value: [RefreshKeyTypes.PrefData(vType: .movingView, bounds: proxy.frame(in: .global))])
+								.environmentObject(sidebarModel)
 						}
 					} else {
 						SidebarItemView(sidebarItem: sidebarItem)
+							.environmentObject(sidebarModel)
 					}
 					#endif
 				}
