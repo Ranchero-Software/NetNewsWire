@@ -50,7 +50,6 @@ public final class RedditFeedProvider: FeedProvider {
 	
 	public var username: String?
 	
-	private var refreshingAuthToken = false
 	private var oauthToken: String
 	private var oauthRefreshToken: String
 
@@ -411,37 +410,27 @@ private extension RedditFeedProvider {
     func handleFailure(error: OAuthSwiftError, completion: @escaping (Error?) -> Void) {
 		if case .tokenExpired = error {
 
-			if refreshingAuthToken {
-				DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-					completion(nil)
-				}
-			}
-			
-			refreshingAuthToken = true
 			os_log(.debug, log: self.log, "Access token expired, attempting to renew...")
 			
 			oauthSwift?.renewAccessToken(withRefreshToken: oauthRefreshToken) { [weak self] result in
-				guard let self = self, let username = self.username else {
+				guard let strongSelf = self, let username = strongSelf.username else {
 					completion(nil)
 					return
 				}
 				
 				switch result {
 				case .success(let tokenSuccess):
-					self.oauthToken = tokenSuccess.credential.oauthToken
-					self.oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
+					strongSelf.oauthToken = tokenSuccess.credential.oauthToken
+					strongSelf.oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
 					do {
-						try Self.storeCredentials(username: username, oauthToken: self.oauthToken, oauthRefreshToken: self.oauthRefreshToken)
-						os_log(.debug, log: self.log, "Access token renewed.")
+						try Self.storeCredentials(username: username, oauthToken: strongSelf.oauthToken, oauthRefreshToken: strongSelf.oauthRefreshToken)
+						os_log(.debug, log: strongSelf.log, "Access token renewed.")
 					} catch {
-						self.refreshingAuthToken = false
 						completion(error)
 						return
 					}
-					self.refreshingAuthToken = false
 					completion(nil)
 				case .failure(let oathError):
-					self.refreshingAuthToken = false
 					completion(oathError)
 				}
 			}
