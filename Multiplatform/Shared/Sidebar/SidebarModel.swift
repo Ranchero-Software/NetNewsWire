@@ -147,7 +147,7 @@ private extension SidebarModel {
 		$selectedFeedIdentifiers.map { [weak self] feedIDs in
 			feedIDs.compactMap { self?.findFeed($0) }
 		}
-		.assign(to: $selectedFeeds)
+		.assign(to: &$selectedFeeds)
 		
 		$selectedFeedIdentifier.compactMap { [weak self] feedID in
 			if let feedID = feedID, let feed = self?.findFeed(feedID) {
@@ -156,7 +156,7 @@ private extension SidebarModel {
 				return nil
 			}
 		}
-		.assign(to: $selectedFeeds)
+		.assign(to: &$selectedFeeds)
 	}
 	
 	func subscribeToRebuildSidebarItemsEvents() {

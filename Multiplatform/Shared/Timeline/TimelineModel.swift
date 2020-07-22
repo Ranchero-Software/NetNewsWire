@@ -147,7 +147,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		$selectedArticleIDs.map { [weak self] articleIDs in
 			return articleIDs.compactMap { self?.idToArticleDictionary[$0] }
 		}
-		.assign(to: $selectedArticles)
+		.assign(to: &$selectedArticles)
 		
 		$selectedArticleID.compactMap { [weak self] articleID in
 			if let articleID = articleID, let article = self?.idToArticleDictionary[articleID] {
@@ -156,7 +156,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 				return nil
 			}
 		}
-		.assign(to: $selectedArticles)
+		.assign(to: &$selectedArticles)
 
 		// Assign the selected timeline items
 		$selectedArticles.compactMap { [weak self] selectedArticles in
@@ -166,7 +166,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 				}
 				return nil
 			}
-		}.assign(to: $selectedTimelineItems)
+		}.assign(to: &$selectedTimelineItems)
 		
 		// Automatically mark a selected record as read
 		$selectedArticles
