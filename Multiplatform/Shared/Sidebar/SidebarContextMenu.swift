@@ -20,7 +20,7 @@ struct SidebarContextMenu: View {
 	
 	
     @ViewBuilder var body: some View {
-		
+		// MARK: Account Context Menu
 		if sidebarItem.representedType == .account {
 			Button {
 				showInspector = true
@@ -40,6 +40,7 @@ struct SidebarContextMenu: View {
 			}
 		}
 		
+		// MARK: Pseudofeed Context Menu
 		if sidebarItem.representedType == .pseudoFeed {
 			Button {
 				guard let feed = sidebarItem.feed else {
@@ -54,6 +55,7 @@ struct SidebarContextMenu: View {
 			}
 		}
 		
+		// MARK: Webfeed Context Menu
 		if sidebarItem.representedType == .webFeed {
 			Button {
 				showInspector = true
@@ -130,6 +132,7 @@ struct SidebarContextMenu: View {
 			}
 		}
 		
+		// MARK: Folder Context Menu
 		if sidebarItem.representedType == .folder {
 			Button {
 				showInspector = true

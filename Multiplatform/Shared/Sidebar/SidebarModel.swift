@@ -99,9 +99,11 @@ extension SidebarModel {
 	}
 	
 	func deleteItems(item: SidebarItem) {
+		#if os(macOS)
 		if selectedFeeds.count > 0 {
 			for feed in selectedFeeds {
 				if feed is WebFeed {
+					print(feed.nameForDisplay)
 					let account = (feed as! WebFeed).account
 					account?.removeWebFeed(feed as! WebFeed)
 				}
@@ -117,23 +119,24 @@ extension SidebarModel {
 					})
 				}
 			}
-		} else {
-			if item.feed is WebFeed {
-				let account = (item.feed as! WebFeed).account
-				account?.removeWebFeed(item.feed as! WebFeed)
-			}
-			if item.feed is Folder {
-				let account = (item.feed as! Folder).account
-				account?.removeFolder(item.feed as! Folder, completion: { (result) in
-					switch result {
-					case .success( _):
-						print("Deleted folder")
-					case .failure(let err):
-						print(err.localizedDescription)
-					}
-				})
-			}
 		}
+		#else
+		if item.feed is WebFeed {
+			let account = (item.feed as! WebFeed).account
+			account?.removeWebFeed(item.feed as! WebFeed)
+		}
+		if item.feed is Folder {
+			let account = (item.feed as! Folder).account
+			account?.removeFolder(item.feed as! Folder, completion: { (result) in
+				switch result {
+				case .success( _):
+					print("Deleted folder")
+				case .failure(let err):
+					print(err.localizedDescription)
+				}
+			})
+		}
+		#endif
 	}
 }
 
