@@ -69,7 +69,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 	#endif
 
 	override init() {
-		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
 
 		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)

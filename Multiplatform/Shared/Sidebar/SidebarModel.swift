@@ -176,8 +176,11 @@ private extension SidebarModel {
 																	   userDidDeleteAccountPublisher,
 																	   unreadCountDidInitializePublisher,
 																	   unreadCountDidChangePublisher)
-
+		
+		let kickStarter = Notification(name: Notification.Name(rawValue: "Kick Starter"))
+		
 		sidebarRebuildPublishers
+			.prepend(kickStarter)
 			.debounce(for: .milliseconds(500), scheduler: RunLoop.main)
 			.combineLatest($isReadFiltered, $selectedFeeds)
 			.sink {  [weak self] _, readFilter, selectedFeeds in
