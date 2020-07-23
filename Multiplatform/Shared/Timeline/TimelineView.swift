@@ -11,9 +11,10 @@ import SwiftUI
 struct TimelineView: View {
 	
 	@EnvironmentObject private var timelineModel: TimelineModel
+	@State private var timelineItemFrames = [String: CGRect]()
 	
 	@ViewBuilder var body: some View {
-		GeometryReader { proxy in
+		GeometryReader { geometryReaderProxy in
 			#if os(macOS)
 			VStack {
 				HStack {
@@ -35,22 +36,60 @@ struct TimelineView: View {
 					.buttonStyle(PlainButtonStyle())
 					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
-				List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
-					let selected = timelineModel.selectedArticleIDs.contains(timelineItem.article.articleID)
-					TimelineItemView(selected: selected, width: proxy.size.width, timelineItem: timelineItem)
+				ScrollViewReader { scrollViewProxy in
+					List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
+						let selected = timelineModel.selectedArticleIDs.contains(timelineItem.article.articleID)
+						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
+							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
+					}
+					.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
+						for pref in preferences {
+							timelineItemFrames[pref.articleID] = pref.frame
+						}
+					}
+					.onChange(of: timelineModel.selectedArticleIDs) { selectedArticleIDs in
+						let proxyFrame = geometryReaderProxy.frame(in: .global)
+						for articleID in selectedArticleIDs {
+							if let itemFrame = timelineItemFrames[articleID] {
+								if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 35 {
+									withAnimation {
+										scrollViewProxy.scrollTo(articleID, anchor: .center)
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
 			#else
-			List(timelineModel.timelineItems) { timelineItem in
-				ZStack {
-					let selected = timelineModel.selectedArticleID == timelineItem.article.articleID
-					TimelineItemView(selected: selected, width: proxy.size.width, timelineItem: timelineItem)
-					NavigationLink(destination: ArticleContainerView(),
-								   tag: timelineItem.article.articleID,
-								   selection: $timelineModel.selectedArticleID) {
-						EmptyView()
-					}.buttonStyle(PlainButtonStyle())
+			ScrollViewReader { scrollViewProxy in
+				List(timelineModel.timelineItems) { timelineItem in
+					ZStack {
+						let selected = timelineModel.selectedArticleID == timelineItem.article.articleID
+						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
+							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
+						NavigationLink(destination: ArticleContainerView(),
+									   tag: timelineItem.article.articleID,
+									   selection: $timelineModel.selectedArticleID) {
+							EmptyView()
+						}.buttonStyle(PlainButtonStyle())
+					}
+				}
+				.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
+					for pref in preferences {
+						timelineItemFrames[pref.articleID] = pref.frame
+					}
+				}
+				.onChange(of: timelineModel.selectedArticleID) { selectedArticleID in
+					let proxyFrame = geometryReaderProxy.frame(in: .global)
+					if let articleID = selectedArticleID, let itemFrame = timelineItemFrames[articleID] {
+						if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 3 {
+							withAnimation {
+								scrollViewProxy.scrollTo(articleID, anchor: .center)
+							}
+						}
+					}
 				}
 			}
 			.navigationBarTitle(Text(verbatim: timelineModel.nameForDisplay), displayMode: .inline)
@@ -58,4 +97,32 @@ struct TimelineView: View {
 		}
     }
 
+}
+
+struct TimelineItemFramePreferenceKey: PreferenceKey {
+	typealias Value = [TimelineItemFramePreference]
+
+	static var defaultValue: [TimelineItemFramePreference] = []
+	
+	static func reduce(value: inout [TimelineItemFramePreference], nextValue: () -> [TimelineItemFramePreference]) {
+		value.append(contentsOf: nextValue())
+	}
+}
+
+struct TimelineItemFramePreference: Equatable {
+	let articleID: String
+	let frame: CGRect
+}
+
+struct TimelineItemFramePreferenceView: View {
+	let timelineItem: TimelineItem
+	
+	var body: some View {
+		GeometryReader { proxy in
+			Rectangle()
+				.fill(Color.clear)
+				.preference(key: TimelineItemFramePreferenceKey.self,
+							value: [TimelineItemFramePreference(articleID: timelineItem.article.articleID, frame: proxy.frame(in: .global))])
+		}
+	}
 }
