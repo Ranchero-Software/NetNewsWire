@@ -150,6 +150,7 @@
             </property>
             <property name="email address" code="eMal" type="text" access="r" description="email address for the author avatar (optional)">
                 <cocoa key="emailAddress"/>
+				<synonym name="email"/>
             </property>
         </class>
 
