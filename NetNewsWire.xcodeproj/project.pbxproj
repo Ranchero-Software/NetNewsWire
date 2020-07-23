@@ -332,6 +332,12 @@
 		51A5769624AE617200078888 /* ArticleContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A5769524AE617200078888 /* ArticleContainerView.swift */; };
 		51A5769724AE617200078888 /* ArticleContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A5769524AE617200078888 /* ArticleContainerView.swift */; };
 		51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
+		51A8001224CA0FC700F41F1D /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001124CA0FC700F41F1D /* Sink.swift */; };
+		51A8001324CA0FC700F41F1D /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001124CA0FC700F41F1D /* Sink.swift */; };
+		51A8001524CA0FEC00F41F1D /* DemandBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */; };
+		51A8001624CA0FEC00F41F1D /* DemandBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */; };
+		51A8FFED24CA0CF400F41F1D /* WIthLatestFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8FFEC24CA0CF400F41F1D /* WIthLatestFrom.swift */; };
+		51A8FFEE24CA0CF400F41F1D /* WIthLatestFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8FFEC24CA0CF400F41F1D /* WIthLatestFrom.swift */; };
 		51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
 		51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */; };
 		51A9A5E62380C8B20033AADF /* ShareFolderPickerFolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */; };
@@ -2023,6 +2029,9 @@
 		51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbinAccountViewController.swift; sourceTree = "<group>"; };
 		51A5769524AE617200078888 /* ArticleContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleContainerView.swift; sourceTree = "<group>"; };
 		51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedDefaultContainer.swift; sourceTree = "<group>"; };
+		51A8001124CA0FC700F41F1D /* Sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sink.swift; sourceTree = "<group>"; };
+		51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemandBuffer.swift; sourceTree = "<group>"; };
+		51A8FFEC24CA0CF400F41F1D /* WIthLatestFrom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIthLatestFrom.swift; sourceTree = "<group>"; };
 		51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerAccountCell.xib; sourceTree = "<group>"; };
 		51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerFolderCell.xib; sourceTree = "<group>"; };
 		51A9A5E72380CA130033AADF /* ShareFolderPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareFolderPickerCell.swift; sourceTree = "<group>"; };
@@ -3016,6 +3025,16 @@
 			path = Article;
 			sourceTree = "<group>";
 		};
+		51A8001024CA0FAE00F41F1D /* CombineExt */ = {
+			isa = PBXGroup;
+			children = (
+				51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */,
+				51A8001124CA0FC700F41F1D /* Sink.swift */,
+				51A8FFEC24CA0CF400F41F1D /* WIthLatestFrom.swift */,
+			);
+			path = CombineExt;
+			sourceTree = "<group>";
+		};
 		51B5C85A23F22A7A00032075 /* CommonExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -3080,6 +3099,7 @@
 				51C0513824A77DF800194D5E /* Assets.xcassets */,
 				17930ED224AF10CD00A9BA52 /* Add */,
 				51A576B924AE617B00078888 /* Article */,
+				51A8001024CA0FAE00F41F1D /* CombineExt */,
 				51919FB124AAB95300541E64 /* Images */,
 				17897AA724C281520014BA03 /* Inspector */,
 				514E6BFD24AD252400AC6F6E /* Previews */,
@@ -4297,46 +4317,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -4346,7 +4366,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -4356,7 +4376,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -5174,6 +5194,7 @@
 				65082A5424C73D2F009FA994 /* AccountCredentialsError.swift in Sources */,
 				51E4990B24A808C500B667CB /* ImageDownloader.swift in Sources */,
 				51E498F424A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
+				51A8001524CA0FEC00F41F1D /* DemandBuffer.swift in Sources */,
 				514E6BFF24AD255D00AC6F6E /* PreviewArticles.swift in Sources */,
 				51E4993024A8676400B667CB /* ArticleSorter.swift in Sources */,
 				51408B7E24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
@@ -5196,6 +5217,7 @@
 				51E4990124A808BB00B667CB /* FaviconURLFinder.swift in Sources */,
 				51E4991D24A8092100B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
 				65082A2F24C72AC8009FA994 /* SettingsCredentialsAccountView.swift in Sources */,
+				51A8FFED24CA0CF400F41F1D /* WIthLatestFrom.swift in Sources */,
 				51E499FD24A9137600B667CB /* SidebarModel.swift in Sources */,
 				5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
@@ -5248,6 +5270,7 @@
 				5177472224B38CAE00EB0F74 /* ArticleExtractorButtonState.swift in Sources */,
 				5177471A24B3863000EB0F74 /* WebViewProvider.swift in Sources */,
 				51E4992124A8095000B667CB /* RSImage-Extensions.swift in Sources */,
+				51A8001224CA0FC700F41F1D /* Sink.swift in Sources */,
 				51E4990324A808BB00B667CB /* FaviconDownloader.swift in Sources */,
 				172199ED24AB2E0100A31D04 /* SafariView.swift in Sources */,
 				65ACE48624B477C9003AE06A /* SettingsAccountLabelView.swift in Sources */,
@@ -5284,11 +5307,13 @@
 				51B8BCC324C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
 				51E498C724A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				5194736F24BBB937001A2939 /* HiddenModifier.swift in Sources */,
+				51A8001624CA0FEC00F41F1D /* DemandBuffer.swift in Sources */,
 				51919FB724AABCA100541E64 /* IconImageView.swift in Sources */,
 				51B54A6924B54A490014348B /* IconView.swift in Sources */,
 				17897ACB24C281A40014BA03 /* InspectorView.swift in Sources */,
 				51E498FA24A808BA00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				1727B39924C1368D00A4DBDC /* LayoutPreferencesView.swift in Sources */,
+				51A8FFEE24CA0CF400F41F1D /* WIthLatestFrom.swift in Sources */,
 				51E4993F24A8713B00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E4993724A8680E00B667CB /* Reachability.swift in Sources */,
 				51B80F4424BE58BF00C6C32D /* SharingServiceDelegate.swift in Sources */,
@@ -5407,6 +5432,7 @@
 				1769E32724BC5B6C000E1E8E /* AddAccountModel.swift in Sources */,
 				1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */,
 				5177470424B2657F00EB0F74 /* TimelineToolbarModifier.swift in Sources */,
+				51A8001324CA0FC700F41F1D /* Sink.swift in Sources */,
 				51E4992D24A8676300B667CB /* FetchRequestOperation.swift in Sources */,
 				51E4992424A8098400B667CB /* SmartFeedPasteboardWriter.swift in Sources */,
 				51E4991424A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
