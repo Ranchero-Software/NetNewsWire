@@ -19,8 +19,9 @@ protocol SidebarModelDelegate: class {
 class SidebarModel: ObservableObject, UndoableCommandRunner {
 	
 	weak var delegate: SidebarModelDelegate?
+
+	var sidebarItemsPublisher: AnyPublisher<[SidebarItem], Never>?
 	
-	@Published var sidebarItems = [SidebarItem]()
 	@Published var selectedFeedIdentifiers = Set<FeedIdentifier>()
 	@Published var selectedFeedIdentifier: FeedIdentifier? = .none
 	@Published var selectedFeeds = [Feed]()
@@ -39,13 +40,13 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	// MARK: API
 
 	func goToNextUnread() {
-		guard let startFeed = selectedFeeds.first ?? sidebarItems.first?.children.first?.feed else { return }
-		
-		if !goToNextUnread(startingAt: startFeed) {
-			if let firstFeed = sidebarItems.first?.children.first?.feed {
-				goToNextUnread(startingAt: firstFeed)
-			}
-		}
+//		guard let startFeed = selectedFeeds.first ?? sidebarItems.first?.children.first?.feed else { return }
+//
+//		if !goToNextUnread(startingAt: startFeed) {
+//			if let firstFeed = sidebarItems.first?.children.first?.feed {
+//				goToNextUnread(startingAt: firstFeed)
+//			}
+//		}
 	}
 	
 }
@@ -179,13 +180,14 @@ private extension SidebarModel {
 		
 		let kickStarter = Notification(name: Notification.Name(rawValue: "Kick Starter"))
 		
-		sidebarRebuildPublishers
+		sidebarItemsPublisher = sidebarRebuildPublishers
 			.prepend(kickStarter)
 			.debounce(for: .milliseconds(500), scheduler: RunLoop.main)
 			.combineLatest($isReadFiltered, $selectedFeeds)
-			.sink {  [weak self] _, readFilter, selectedFeeds in
+			.compactMap {  [weak self] _, readFilter, selectedFeeds in
 				self?.rebuildSidebarItems(isReadFiltered: readFilter, selectedFeeds: selectedFeeds)
-		}.store(in: &cancellables)
+			}
+			.eraseToAnyPublisher()
 	}
 	
 	// MARK: Sidebar Building
@@ -198,9 +200,9 @@ private extension SidebarModel {
 		return feeds.sorted(by: { $0.nameForDisplay.localizedStandardCompare($1.nameForDisplay) == .orderedAscending })
 	}
 	
-	func rebuildSidebarItems(isReadFiltered: Bool, selectedFeeds: [Feed]) {
-		guard let delegate = delegate else { return }
+	func rebuildSidebarItems(isReadFiltered: Bool, selectedFeeds: [Feed]) -> [SidebarItem] {
 		var items = [SidebarItem]()
+		guard let delegate = delegate else { return items }
 		
 		var smartFeedControllerItem = SidebarItem(SmartFeedsController.shared)
 		for feed in SmartFeedsController.shared.smartFeeds {
@@ -238,7 +240,7 @@ private extension SidebarModel {
 			items.append(accountItem)
 		}
 		
-		sidebarItems = items
+		return items
 	}
 	
 	// MARK:
@@ -252,38 +254,38 @@ private extension SidebarModel {
 		}
 	}
 	
-	@discardableResult
-	func goToNextUnread(startingAt: Feed) -> Bool {
-
-		var foundStartFeed = false
-		var nextSidebarItem: SidebarItem? = nil
-		for section in sidebarItems {
-			if nextSidebarItem == nil  {
-				section.visit { sidebarItem in
-					if !foundStartFeed && sidebarItem.feed?.feedID == startingAt.feedID {
-						foundStartFeed = true
-						return false
-					}
-					if foundStartFeed && sidebarItem.unreadCount > 0 {
-						nextSidebarItem = sidebarItem
-						return true
-					}
-					return false
-				}
-			}
-		}
-
-		if let nextFeedID = nextSidebarItem?.feed?.feedID {
-			select(nextFeedID)
-			return true
-		}
-		
-		return false
-	}
-
-	func select(_ feedID: FeedIdentifier) {
-		selectedFeedIdentifiers = Set([feedID])
-		selectedFeedIdentifier = feedID
-	}
+//	@discardableResult
+//	func goToNextUnread(startingAt: Feed) -> Bool {
+//
+//		var foundStartFeed = false
+//		var nextSidebarItem: SidebarItem? = nil
+//		for section in sidebarItems {
+//			if nextSidebarItem == nil  {
+//				section.visit { sidebarItem in
+//					if !foundStartFeed && sidebarItem.feed?.feedID == startingAt.feedID {
+//						foundStartFeed = true
+//						return false
+//					}
+//					if foundStartFeed && sidebarItem.unreadCount > 0 {
+//						nextSidebarItem = sidebarItem
+//						return true
+//					}
+//					return false
+//				}
+//			}
+//		}
+//
+//		if let nextFeedID = nextSidebarItem?.feed?.feedID {
+//			select(nextFeedID)
+//			return true
+//		}
+//
+//		return false
+//	}
+//
+//	func select(_ feedID: FeedIdentifier) {
+//		selectedFeedIdentifiers = Set([feedID])
+//		selectedFeedIdentifier = feedID
+//	}
 	
 }

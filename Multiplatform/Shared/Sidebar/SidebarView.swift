@@ -18,6 +18,8 @@ struct SidebarView: View {
 	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var sidebarModel: SidebarModel
+
+	@State var sidebarItems = [SidebarItem]()
 	
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
@@ -64,6 +66,9 @@ struct SidebarView: View {
 		.onAppear {
 			sidebarModel.undoManager = undoManager
 		}
+		.onReceive(sidebarModel.sidebarItemsPublisher!) { newItems in
+			sidebarItems = newItems
+		}
 		#else
 		ZStack(alignment: .top) {
 			List {
@@ -80,6 +85,11 @@ struct SidebarView: View {
 		}
 		.onAppear {
 			sidebarModel.undoManager = undoManager
+		}
+		.onReceive(sidebarModel.sidebarItemsPublisher!) { newItems in
+			withAnimation {
+				sidebarItems = newItems
+			}
 		}
 		#endif
 		
@@ -148,7 +158,7 @@ struct SidebarView: View {
 	}
 	
 	var rows: some View {
-		ForEach(sidebarModel.sidebarItems) { sidebarItem in
+		ForEach(sidebarItems) { sidebarItem in
 			if let containerID = sidebarItem.containerID {
 				DisclosureGroup(isExpanded: $expandedContainers[containerID]) {
 					ForEach(sidebarItem.children) { sidebarItem in
