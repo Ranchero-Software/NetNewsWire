@@ -17,7 +17,7 @@ struct TimelineToolbarModifier: ViewModifier {
 		content
 			.toolbar {
 				#if os(iOS)
-				ToolbarItem(placement: .navigation) {
+				ToolbarItem(placement: .primaryAction) {
 					Button {
 						withAnimation {
 							timelineModel.toggleReadFilter()
@@ -33,7 +33,7 @@ struct TimelineToolbarModifier: ViewModifier {
 					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Button {
 						sceneModel.markAllAsRead()
 					} label: {
@@ -43,7 +43,7 @@ struct TimelineToolbarModifier: ViewModifier {
 					.help("Mark All As Read")
 				}
 				
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Spacer()
 				}
 				#endif

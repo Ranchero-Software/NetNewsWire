@@ -18,7 +18,7 @@ struct ArticleToolbarModifier: ViewModifier {
 			.toolbar {
 				#if os(iOS)
 				
-				ToolbarItem(placement: .navigation) {
+				ToolbarItem(placement: .primaryAction) {
 					HStack(spacing: 20) {
 						Button {
 						} label: {

@@ -20,7 +20,7 @@ struct SidebarToolbarModifier: ViewModifier {
 		content
 			.toolbar {
 				
-				ToolbarItem(placement: .navigation) {
+				ToolbarItem(placement: .primaryAction) {
 					Button {
 						withAnimation {
 							sidebarModel.isReadFiltered.toggle()
@@ -35,7 +35,7 @@ struct SidebarToolbarModifier: ViewModifier {
 					.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 				}
 				
-				ToolbarItem(placement: .automatic) {
+				ToolbarItem(placement: .bottomBar) {
 					Button {
 						viewModel.sheetToShow = .settings
 					} label: {
@@ -44,11 +44,11 @@ struct SidebarToolbarModifier: ViewModifier {
 					.help("Settings")
 				}
 				
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Spacer()
 				}
 				
-				ToolbarItem(placement: .automatic) {
+				ToolbarItem(placement: .bottomBar) {
 					switch refreshProgress.state {
 					case .refreshProgress(let progress):
 						ProgressView(value: progress)
@@ -63,11 +63,11 @@ struct SidebarToolbarModifier: ViewModifier {
 					}
 				}
 				
-				ToolbarItem {
+				ToolbarItem(placement: .bottomBar) {
 					Spacer()
 				}
 				
-				ToolbarItem(placement: .automatic, content: {
+				ToolbarItem(placement: .bottomBar, content: {
 					Button {
 						viewModel.showActionSheet = true
 					} label: {
