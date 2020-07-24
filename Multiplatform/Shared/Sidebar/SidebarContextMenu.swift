@@ -31,7 +31,7 @@ struct SidebarContextMenu: View {
 				#endif
 			}
 			Button {
-//				sidebarModel.markAllAsRead(account: sidebarItem.represented as! Account)
+				sidebarModel.markAllAsReadInAccount.send(sidebarItem.represented as! Account)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)

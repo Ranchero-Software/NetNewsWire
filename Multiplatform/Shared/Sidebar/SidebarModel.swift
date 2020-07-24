@@ -29,7 +29,7 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	
 	var selectNextUnread = PassthroughSubject<Bool, Never>()
 	var markAllAsReadInFeed = PassthroughSubject<Feed, Never>()
-	var markAllAsReadInAccount = PassthroughSubject<Feed, Never>()
+	var markAllAsReadInAccount = PassthroughSubject<Account, Never>()
 
 	private var cancellables = Set<AnyCancellable>()
 
@@ -41,6 +41,7 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 		subscribeToRebuildSidebarItemsEvents()
 		subscribeToNextUnread()
 		subscribeToMarkAllAsReadInFeed()
+		subscribeToMarkAllAsReadInAccount()
 	}
 	
 }
@@ -48,51 +49,6 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 // MARK: Side Context Menu Actions
 
 private extension SidebarModel {
-	
-	func subscribeToMarkAllAsReadInFeed() {
-		guard let selectedFeedsPublisher = selectedFeedsPublisher else { return }
-
-		markAllAsReadInFeed
-			.withLatestFrom(selectedFeedsPublisher, resultSelector: { givenFeed, selectedFeeds -> [Feed] in
-				if selectedFeeds.contains(where: { $0.feedID == givenFeed.feedID }) {
-					return selectedFeeds
-				} else {
-					return [givenFeed]
-				}
-			})
-			.map { feeds in
-				var articles = [Article]()
-				for feed in feeds {
-					articles.append(contentsOf: (try? feed.fetchArticles()) ?? Set<Article>())
-				}
-				return articles
-			}
-			.sink { [weak self] allArticles in
-				self?.markAllAsRead(allArticles)
-			}
-			.store(in: &cancellables)
-	}
-	
-	func markAllAsRead(account: Account) {
-		var articles = Set<Article>()
-		for feed in account.flattenedWebFeeds() {
-			let unreadArticles = try! feed.fetchUnreadArticles()
-			articles.formUnion(unreadArticles)
-		}
-		markAllAsRead(Array(articles))
-	}
-	
-	
-	/// Marks provided artices as read.
-	/// - Parameter articles: An array of `Article`s.
-	/// - Warning: An `UndoManager` is created here as the `Environment`'s undo manager appears to be `nil`.
-	private func markAllAsRead(_ articles: [Article]) {
-		guard let undoManager = undoManager ?? UndoManager(),
-			  let markAsReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markAsReadCommand)
-	}
 	
 	func deleteItems(item: SidebarItem) {
 //		#if os(macOS)
@@ -211,6 +167,57 @@ private extension SidebarModel {
 				self?.select(nextFeedID)
 			}
 			.store(in: &cancellables)
+	}
+	
+	func subscribeToMarkAllAsReadInFeed() {
+		guard let selectedFeedsPublisher = selectedFeedsPublisher else { return }
+
+		markAllAsReadInFeed
+			.withLatestFrom(selectedFeedsPublisher, resultSelector: { givenFeed, selectedFeeds -> [Feed] in
+				if selectedFeeds.contains(where: { $0.feedID == givenFeed.feedID }) {
+					return selectedFeeds
+				} else {
+					return [givenFeed]
+				}
+			})
+			.map { feeds in
+				var articles = [Article]()
+				for feed in feeds {
+					articles.append(contentsOf: (try? feed.fetchUnreadArticles()) ?? Set<Article>())
+				}
+				return articles
+			}
+			.sink { [weak self] allArticles in
+				self?.markAllAsRead(allArticles)
+			}
+			.store(in: &cancellables)
+	}
+	
+	func subscribeToMarkAllAsReadInAccount() {
+		markAllAsReadInAccount
+			.map { account in
+				var articles = [Article]()
+				for feed in account.flattenedWebFeeds() {
+					articles.append(contentsOf: (try? feed.fetchUnreadArticles()) ?? Set<Article>())
+				}
+				return articles
+			}
+			.sink { [weak self] articles in
+				self?.markAllAsRead(articles)
+			}
+			.store(in: &cancellables)
+	}
+	
+	
+	/// Marks provided artices as read.
+	/// - Parameter articles: An array of `Article`s.
+	/// - Warning: An `UndoManager` is created here as the `Environment`'s undo manager appears to be `nil`.
+	private func markAllAsRead(_ articles: [Article]) {
+		guard let undoManager = undoManager ?? UndoManager(),
+			  let markAsReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markAsReadCommand)
 	}
 	
 	// MARK: Sidebar Building
