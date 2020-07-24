@@ -27,7 +27,7 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	var sidebarItemsPublisher: AnyPublisher<[SidebarItem], Never>?
 	var selectedFeedsPublisher: AnyPublisher<[Feed], Never>?
 	
-	var selectNextUnread = PassthroughSubject<Bool, Never>()
+	var selectNextUnread = PassthroughSubject<Void, Never>()
 	var markAllAsReadInFeed = PassthroughSubject<Feed, Never>()
 	var markAllAsReadInAccount = PassthroughSubject<Account, Never>()
 	var deleteFromAccount = PassthroughSubject<Feed, Never>()

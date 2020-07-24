@@ -57,7 +57,7 @@ final class SceneModel: ObservableObject {
 	func goToNextUnread() {
 		if !timelineModel.goToNextUnread() {
 			timelineModel.isSelectNextUnread = true
-			sidebarModel.selectNextUnread.send(true)
+			sidebarModel.selectNextUnread.send()
 		}
 	}
 	
