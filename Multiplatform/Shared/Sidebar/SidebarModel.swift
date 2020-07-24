@@ -18,16 +18,19 @@ protocol SidebarModelDelegate: class {
 
 class SidebarModel: ObservableObject, UndoableCommandRunner {
 	
+	@Published var selectedFeedIdentifiers = Set<FeedIdentifier>()
+	@Published var selectedFeedIdentifier: FeedIdentifier? = .none
+	@Published var isReadFiltered = false
+	
 	weak var delegate: SidebarModelDelegate?
 
 	var sidebarItemsPublisher: AnyPublisher<[SidebarItem], Never>?
+	var selectedFeedsPublisher: AnyPublisher<[Feed], Never>?
+	
 	var selectNextUnread = PassthroughSubject<Bool, Never>()
-	
-	@Published var selectedFeedIdentifiers = Set<FeedIdentifier>()
-	@Published var selectedFeedIdentifier: FeedIdentifier? = .none
-	@Published var selectedFeeds = [Feed]()
-	@Published var isReadFiltered = false
-	
+	var markAllAsReadInFeed = PassthroughSubject<Feed, Never>()
+	var markAllAsReadInAccount = PassthroughSubject<Feed, Never>()
+
 	private var cancellables = Set<AnyCancellable>()
 
 	var undoManager: UndoManager?
@@ -37,29 +40,37 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 		subscribeToSelectedFeedChanges()
 		subscribeToRebuildSidebarItemsEvents()
 		subscribeToNextUnread()
+		subscribeToMarkAllAsReadInFeed()
 	}
 	
 }
 
 // MARK: Side Context Menu Actions
 
-extension SidebarModel {
+private extension SidebarModel {
 	
-	func markAllAsRead(feed: Feed) {
-		var articles = Set<Article>()
-		let fetchedArticles = try! feed.fetchArticles()
-		for article in fetchedArticles {
-			articles.insert(article)
-		}
-		
-		for selectedFeed in selectedFeeds {
-			let fetchedArticles = try! selectedFeed.fetchArticles()
-			for article in fetchedArticles {
-				articles.insert(article)
+	func subscribeToMarkAllAsReadInFeed() {
+		guard let selectedFeedsPublisher = selectedFeedsPublisher else { return }
+
+		markAllAsReadInFeed
+			.withLatestFrom(selectedFeedsPublisher, resultSelector: { givenFeed, selectedFeeds -> [Feed] in
+				if selectedFeeds.contains(where: { $0.feedID == givenFeed.feedID }) {
+					return selectedFeeds
+				} else {
+					return [givenFeed]
+				}
+			})
+			.map { feeds in
+				var articles = [Article]()
+				for feed in feeds {
+					articles.append(contentsOf: (try? feed.fetchArticles()) ?? Set<Article>())
+				}
+				return articles
 			}
-		}
-		
-		markAllAsRead(Array(articles))
+			.sink { [weak self] allArticles in
+				self?.markAllAsRead(allArticles)
+			}
+			.store(in: &cancellables)
 	}
 	
 	func markAllAsRead(account: Account) {
@@ -78,51 +89,50 @@ extension SidebarModel {
 	private func markAllAsRead(_ articles: [Article]) {
 		guard let undoManager = undoManager ?? UndoManager(),
 			  let markAsReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
-	
 			return
 		}
 		runCommand(markAsReadCommand)
 	}
 	
 	func deleteItems(item: SidebarItem) {
-		#if os(macOS)
-		if selectedFeeds.count > 0 {
-			for feed in selectedFeeds {
-				if feed is WebFeed {
-					print(feed.nameForDisplay)
-					let account = (feed as! WebFeed).account
-					account?.removeWebFeed(feed as! WebFeed)
-				}
-				if feed is Folder {
-					let account = (feed as! Folder).account
-					account?.removeFolder(feed as! Folder, completion: { (result) in
-						switch result {
-						case .success( _):
-							print("Deleted folder")
-						case .failure(let err):
-							print(err.localizedDescription)
-						}
-					})
-				}
-			}
-		}
-		#else
-		if item.feed is WebFeed {
-			let account = (item.feed as! WebFeed).account
-			account?.removeWebFeed(item.feed as! WebFeed)
-		}
-		if item.feed is Folder {
-			let account = (item.feed as! Folder).account
-			account?.removeFolder(item.feed as! Folder, completion: { (result) in
-				switch result {
-				case .success( _):
-					print("Deleted folder")
-				case .failure(let err):
-					print(err.localizedDescription)
-				}
-			})
-		}
-		#endif
+//		#if os(macOS)
+//		if selectedFeeds.count > 0 {
+//			for feed in selectedFeeds {
+//				if feed is WebFeed {
+//					print(feed.nameForDisplay)
+//					let account = (feed as! WebFeed).account
+//					account?.removeWebFeed(feed as! WebFeed)
+//				}
+//				if feed is Folder {
+//					let account = (feed as! Folder).account
+//					account?.removeFolder(feed as! Folder, completion: { (result) in
+//						switch result {
+//						case .success( _):
+//							print("Deleted folder")
+//						case .failure(let err):
+//							print(err.localizedDescription)
+//						}
+//					})
+//				}
+//			}
+//		}
+//		#else
+//		if item.feed is WebFeed {
+//			let account = (item.feed as! WebFeed).account
+//			account?.removeWebFeed(item.feed as! WebFeed)
+//		}
+//		if item.feed is Folder {
+//			let account = (item.feed as! Folder).account
+//			account?.removeFolder(item.feed as! Folder, completion: { (result) in
+//				switch result {
+//				case .success( _):
+//					print("Deleted folder")
+//				case .failure(let err):
+//					print(err.localizedDescription)
+//				}
+//			})
+//		}
+//		#endif
 	}
 }
 
@@ -135,22 +145,31 @@ private extension SidebarModel {
 	// MARK: Subscriptions
 	
 	func subscribeToSelectedFeedChanges() {
-		$selectedFeedIdentifiers.map { [weak self] feedIDs in
-			feedIDs.compactMap { self?.findFeed($0) }
-		}
-		.assign(to: &$selectedFeeds)
-		
-		$selectedFeedIdentifier.compactMap { [weak self] feedID in
-			if let feedID = feedID, let feed = self?.findFeed(feedID) {
-				return [feed]
-			} else {
-				return nil
+		let selectedFeedIdentifersPublisher = $selectedFeedIdentifiers
+			.map { [weak self] feedIDs -> [Feed] in
+				return feedIDs.compactMap { self?.findFeed($0) }
 			}
-		}
-		.assign(to: &$selectedFeeds)
+		
+		let selectedFeedIdentiferPublisher = $selectedFeedIdentifier
+			.compactMap { [weak self] feedID -> [Feed]? in
+				if let feedID = feedID, let feed = self?.findFeed(feedID) {
+					return [feed]
+				} else {
+					return nil
+				}
+			}
+		
+		selectedFeedsPublisher = selectedFeedIdentifersPublisher
+			.merge(with: selectedFeedIdentiferPublisher)
+			.removeDuplicates(by: { previousFeeds, currentFeeds in
+				return previousFeeds.elementsEqual(currentFeeds, by: { $0.feedID == $1.feedID })
+			})
+			.eraseToAnyPublisher()
 	}
 	
 	func subscribeToRebuildSidebarItemsEvents() {
+		guard let selectedFeedsPublisher = selectedFeedsPublisher else { return }
+		
 		let chidrenDidChangePublisher = NotificationCenter.default.publisher(for: .ChildrenDidChange)
 		let batchUpdateDidPerformPublisher = NotificationCenter.default.publisher(for: .BatchUpdateDidPerform)
 		let displayNameDidChangePublisher = NotificationCenter.default.publisher(for: .DisplayNameDidChange)
@@ -173,7 +192,7 @@ private extension SidebarModel {
 		sidebarItemsPublisher = sidebarRebuildPublishers
 			.prepend(kickStarter)
 			.debounce(for: .milliseconds(500), scheduler: RunLoop.main)
-			.combineLatest($isReadFiltered, $selectedFeeds)
+			.combineLatest($isReadFiltered.removeDuplicates(), selectedFeedsPublisher)
 			.compactMap {  [weak self] _, readFilter, selectedFeeds in
 				self?.rebuildSidebarItems(isReadFiltered: readFilter, selectedFeeds: selectedFeeds)
 			}
@@ -181,10 +200,10 @@ private extension SidebarModel {
 	}
 	
 	func subscribeToNextUnread() {
-		guard let sidebarItemsPublisher = sidebarItemsPublisher else { return }
+		guard let sidebarItemsPublisher = sidebarItemsPublisher, let selectedFeedsPublisher = selectedFeedsPublisher else { return }
 
 		selectNextUnread
-			.withLatestFrom(sidebarItemsPublisher, $selectedFeeds)
+			.withLatestFrom(sidebarItemsPublisher, selectedFeedsPublisher)
 			.compactMap { [weak self] (sidebarItems, selectedFeeds) in
 				return self?.nextUnread(sidebarItems: sidebarItems, selectedFeeds: selectedFeeds)
 			}

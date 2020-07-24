@@ -31,7 +31,7 @@ struct SidebarContextMenu: View {
 				#endif
 			}
 			Button {
-				sidebarModel.markAllAsRead(account: sidebarItem.represented as! Account)
+//				sidebarModel.markAllAsRead(account: sidebarItem.represented as! Account)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -46,7 +46,7 @@ struct SidebarContextMenu: View {
 				guard let feed = sidebarItem.feed else {
 					return
 				}
-				sidebarModel.markAllAsRead(feed: feed)
+				sidebarModel.markAllAsReadInFeed.send(feed)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -69,7 +69,7 @@ struct SidebarContextMenu: View {
 				guard let feed = sidebarItem.feed else {
 					return
 				}
-				sidebarModel.markAllAsRead(feed: feed)
+				sidebarModel.markAllAsReadInFeed.send(feed)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -123,7 +123,7 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
-				sidebarModel.deleteItems(item: sidebarItem)
+//				sidebarModel.deleteItems(item: sidebarItem)
 			} label: {
 				Text("Delete")
 				#if os(iOS)
@@ -146,7 +146,7 @@ struct SidebarContextMenu: View {
 				guard let feed = sidebarItem.feed else {
 					return
 				}
-				sidebarModel.markAllAsRead(feed: feed)
+				sidebarModel.markAllAsReadInFeed.send(feed)
 			} label: {
 				Text("Mark All As Read")
 				#if os(iOS)
@@ -155,7 +155,7 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
-				sidebarModel.deleteItems(item: sidebarItem)
+//				sidebarModel.deleteItems(item: sidebarItem)
 			} label: {
 				Text("Delete")
 				#if os(iOS)

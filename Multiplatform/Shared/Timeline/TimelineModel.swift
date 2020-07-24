@@ -17,7 +17,7 @@ import Account
 import Articles
 
 protocol TimelineModelDelegate: class {
-	var selectedFeeds: Published<[Feed]>.Publisher { get }
+	var selectedFeedsPublisher: AnyPublisher<[Feed], Never>? { get }
 	func timelineRequestedWebFeedSelection(_: TimelineModel, webFeed: WebFeed)
 }
 
@@ -136,7 +136,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	func subscribeToSelectedFeedChanges() {
-		delegate?.selectedFeeds.sink { [weak self] feeds in
+		guard let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
+		selectedFeedsPublisher.sink { [weak self] feeds in
 			guard let self = self else { return }
 			self.feeds = feeds
 			self.fetchArticles()

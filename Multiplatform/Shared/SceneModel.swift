@@ -115,8 +115,8 @@ extension SceneModel: SidebarModelDelegate {
 
 extension SceneModel: TimelineModelDelegate {
 
-	var selectedFeeds: Published<[Feed]>.Publisher {
-		return sidebarModel.$selectedFeeds
+	var selectedFeedsPublisher: AnyPublisher<[Feed], Never>? {
+		return sidebarModel.selectedFeedsPublisher
 	}
 	
 	func timelineRequestedWebFeedSelection(_: TimelineModel, webFeed: WebFeed) {
