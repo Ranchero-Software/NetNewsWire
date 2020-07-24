@@ -123,7 +123,7 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
-//				sidebarModel.deleteItems(item: sidebarItem)
+				sidebarModel.deleteFromAccount.send(sidebarItem.feed!)
 			} label: {
 				Text("Delete")
 				#if os(iOS)
@@ -155,7 +155,7 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
-//				sidebarModel.deleteItems(item: sidebarItem)
+				sidebarModel.deleteFromAccount.send(sidebarItem.feed!)
 			} label: {
 				Text("Delete")
 				#if os(iOS)

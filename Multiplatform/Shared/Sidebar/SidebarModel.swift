@@ -30,6 +30,7 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	var selectNextUnread = PassthroughSubject<Bool, Never>()
 	var markAllAsReadInFeed = PassthroughSubject<Feed, Never>()
 	var markAllAsReadInAccount = PassthroughSubject<Account, Never>()
+	var deleteFromAccount = PassthroughSubject<Feed, Never>()
 
 	private var cancellables = Set<AnyCancellable>()
 
@@ -42,57 +43,10 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 		subscribeToNextUnread()
 		subscribeToMarkAllAsReadInFeed()
 		subscribeToMarkAllAsReadInAccount()
+		subscribeToDeleteFromAccount()
 	}
 	
 }
-
-// MARK: Side Context Menu Actions
-
-private extension SidebarModel {
-	
-	func deleteItems(item: SidebarItem) {
-//		#if os(macOS)
-//		if selectedFeeds.count > 0 {
-//			for feed in selectedFeeds {
-//				if feed is WebFeed {
-//					print(feed.nameForDisplay)
-//					let account = (feed as! WebFeed).account
-//					account?.removeWebFeed(feed as! WebFeed)
-//				}
-//				if feed is Folder {
-//					let account = (feed as! Folder).account
-//					account?.removeFolder(feed as! Folder, completion: { (result) in
-//						switch result {
-//						case .success( _):
-//							print("Deleted folder")
-//						case .failure(let err):
-//							print(err.localizedDescription)
-//						}
-//					})
-//				}
-//			}
-//		}
-//		#else
-//		if item.feed is WebFeed {
-//			let account = (item.feed as! WebFeed).account
-//			account?.removeWebFeed(item.feed as! WebFeed)
-//		}
-//		if item.feed is Folder {
-//			let account = (item.feed as! Folder).account
-//			account?.removeFolder(item.feed as! Folder, completion: { (result) in
-//				switch result {
-//				case .success( _):
-//					print("Deleted folder")
-//				case .failure(let err):
-//					print(err.localizedDescription)
-//				}
-//			})
-//		}
-//		#endif
-	}
-}
-
-
 
 // MARK: Private
 
@@ -208,11 +162,34 @@ private extension SidebarModel {
 			.store(in: &cancellables)
 	}
 	
+	func subscribeToDeleteFromAccount() {
+		guard let selectedFeedsPublisher = selectedFeedsPublisher else { return }
+
+		deleteFromAccount
+			.withLatestFrom(selectedFeedsPublisher, resultSelector: { givenFeed, selectedFeeds -> [Feed] in
+				if selectedFeeds.contains(where: { $0.feedID == givenFeed.feedID }) {
+					return selectedFeeds
+				} else {
+					return [givenFeed]
+				}
+			})
+			.sink { feeds in
+				for feed in feeds {
+					if let webFeed = feed as? WebFeed {
+						webFeed.account?.removeWebFeed(webFeed)
+					}
+					if let folder = feed as? Folder {
+						folder.account?.removeFolder(folder) { _ in }
+					}
+				}
+			}
+			.store(in: &cancellables)
+	}
 	
 	/// Marks provided artices as read.
 	/// - Parameter articles: An array of `Article`s.
 	/// - Warning: An `UndoManager` is created here as the `Environment`'s undo manager appears to be `nil`.
-	private func markAllAsRead(_ articles: [Article]) {
+	func markAllAsRead(_ articles: [Article]) {
 		guard let undoManager = undoManager ?? UndoManager(),
 			  let markAsReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
 			return
