@@ -75,19 +75,30 @@ struct SettingsView: View {
 	
 	var importExport: some View {
 		Section(header: Text("Feeds"), content: {
-			Button(action:{
-				feedsSettingsModel.onTapImportOPML(action: importOPML)
-			}) {
-				Text("Import Subscriptions")
-					.actionSheet(isPresented: $feedsSettingsModel.showingImportActionSheet, content: importActionSheet)
-					.foregroundColor(.primary)
+			if viewModel.activeAccounts.count > 1 {
+				NavigationLink("Import Subscriptions", destination: importOptions)
 			}
-			Button(action:{
-				feedsSettingsModel.onTapExportOPML(action: exportOPML)
-			}) {
-				Text("Export Subscriptions")
-					.actionSheet(isPresented: $feedsSettingsModel.showingExportActionSheet, content: exportActionSheet)
-					.foregroundColor(.primary)
+			else {
+				Button(action:{
+					if feedsSettingsModel.checkForActiveAccount() {
+						importOPML(account: viewModel.activeAccounts.first)
+					}
+				}) {
+					Text("Import Subscriptions")
+						.foregroundColor(.primary)
+				}
+			}
+
+			if viewModel.accounts.count > 1 {
+				NavigationLink("Export Subscriptions", destination: exportOptions)
+			}
+			else {
+				Button(action:{
+					exportOPML(account: viewModel.accounts.first)
+				}) {
+					Text("Export Subscriptions")
+						.foregroundColor(.primary)
+				}
 			}
 		})
 		.alert(isPresented: $feedsSettingsModel.showError) {
@@ -98,35 +109,40 @@ struct SettingsView: View {
 					feedsSettingsModel.feedsSettingsError = FeedsSettingsError.none
 				}))
 		}
-
 	}
 
-	private func importActionSheet() -> ActionSheet {
-		var buttons = viewModel.accounts.map { (account) -> ActionSheet.Button in
-			ActionSheet.Button.default(Text(account.nameForDisplay)) {
-				importOPML(account: account)
-			}
+	var importOptions: some View {
+		List {
+			Section(header: Text("Choose an account to receive the imported feeds and folders"), content: {
+				ForEach(0..<viewModel.activeAccounts.count, id: \.hashValue , content: { i in
+					Button {
+						importOPML(account: viewModel.activeAccounts[i])
+					} label: {
+						Text(viewModel.activeAccounts[i].nameForDisplay)
+					}
+				})
+			})
 		}
-		buttons.append(.cancel())
-		return ActionSheet(
-			title: Text("Choose an account to receive the imported feeds and folders"),
-			buttons: buttons
-		)
+		.listStyle(InsetGroupedListStyle())
+		.navigationBarTitle("Import Subscriptions", displayMode: .inline)
 	}
 
-	private func exportActionSheet() -> ActionSheet {
-		var buttons = viewModel.accounts.map { (account) -> ActionSheet.Button in
-			ActionSheet.Button.default(Text(account.nameForDisplay)) {
-				exportOPML(account: account)
-			}
+	var exportOptions: some View {
+		List {
+			Section(header: Text("Choose an account with the subscriptions to export"), content: {
+				ForEach(0..<viewModel.accounts.count, id: \.hashValue , content: { i in
+					Button {
+						exportOPML(account: viewModel.accounts[i])
+					} label: {
+						Text(viewModel.accounts[i].nameForDisplay)
+					}
+				})
+			})
 		}
-		buttons.append(.cancel())
-		return ActionSheet(
-			title: Text("Choose an account with the subscriptions to export"),
-			buttons: buttons
-		)
+		.listStyle(InsetGroupedListStyle())
+		.navigationBarTitle("Export Subscriptions", displayMode: .inline)
 	}
-
+	
 	var timeline: some View {
 		Section(header: Text("Timeline"), content: {
 			Toggle("Sort Oldest to Newest", isOn: $settings.timelineSortDirection)
