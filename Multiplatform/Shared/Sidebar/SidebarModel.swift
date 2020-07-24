@@ -106,6 +106,7 @@ private extension SidebarModel {
 			.compactMap {  [weak self] _, readFilter, selectedFeeds in
 				self?.rebuildSidebarItems(isReadFiltered: readFilter, selectedFeeds: selectedFeeds)
 			}
+			.share()
 			.eraseToAnyPublisher()
 	}
 	
