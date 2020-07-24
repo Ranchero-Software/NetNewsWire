@@ -44,8 +44,6 @@ enum FeedsSettingsError: LocalizedError, Equatable {
 }
 
 class FeedsSettingsModel: ObservableObject {
-	@Published var showingImportActionSheet = false
-	@Published var showingExportActionSheet = false
 	@Published var exportingFilePath = ""
 	@Published var feedsSettingsError: FeedsSettingsError? {
 		didSet {
@@ -54,25 +52,12 @@ class FeedsSettingsModel: ObservableObject {
 	}
 	@Published var showError: Bool = false
 
-	func onTapExportOPML(action: ((Account?) -> Void)) {
-		if AccountManager.shared.accounts.count == 1 {
-			action(AccountManager.shared.accounts.first)
-		}
-		else {
-			showingExportActionSheet = true
-		}
-	}
-
-	func onTapImportOPML(action: ((Account?) -> Void)) {
-		switch AccountManager.shared.activeAccounts.count {
-		case 0:
+	func checkForActiveAccount() -> Bool {
+		if AccountManager.shared.activeAccounts.count == 0 {
 			feedsSettingsError = .noActiveAccount
-			return
-		case 1:
-			action(AccountManager.shared.activeAccounts.first)
-		default:
-			showingImportActionSheet = true
+			return false
 		}
+		return true
 	}
 
 	func generateExportURL(for account: Account) -> URL? {

@@ -46,6 +46,15 @@ class SettingsModel: ObservableObject {
 		}
 	}
 
+	var activeAccounts: [Account] {
+		get {
+			AccountManager.shared.sortedActiveAccounts
+		}
+		set {
+			
+		}
+	}
+
 	// MARK: Init
 
 	init() {
