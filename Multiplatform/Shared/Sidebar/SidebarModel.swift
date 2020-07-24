@@ -102,7 +102,7 @@ private extension SidebarModel {
 		sidebarItemsPublisher = sidebarRebuildPublishers
 			.prepend(kickStarter)
 			.debounce(for: .milliseconds(500), scheduler: RunLoop.main)
-			.combineLatest($isReadFiltered.removeDuplicates(), selectedFeedsPublisher)
+			.combineLatest($isReadFiltered, selectedFeedsPublisher)
 			.compactMap {  [weak self] _, readFilter, selectedFeeds in
 				self?.rebuildSidebarItems(isReadFiltered: readFilter, selectedFeeds: selectedFeeds)
 			}
