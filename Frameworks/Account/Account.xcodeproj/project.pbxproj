@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1748B4A724CADA17008F9850 /* AccountSyncError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1748B4A624CADA17008F9850 /* AccountSyncError.swift */; };
 		179DB02FFBC17AC9798F0EBC /* NewsBlurStory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB7399814F6FB3247825C /* NewsBlurStory.swift */; };
 		179DB0B17A6C51B95ABC1741 /* NewsBlurStoryStatusChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB5B421C5433B45C5F13E /* NewsBlurStoryStatusChange.swift */; };
 		179DB28CF49F73A945EBF5DB /* NewsBlurLoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DB088236E3236010462E8 /* NewsBlurLoginResponse.swift */; };
@@ -267,6 +268,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1748B4A624CADA17008F9850 /* AccountSyncError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSyncError.swift; sourceTree = "<group>"; };
 		179DB088236E3236010462E8 /* NewsBlurLoginResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurLoginResponse.swift; sourceTree = "<group>"; };
 		179DB1B909672E0E807B5E8C /* NewsBlurFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurFeed.swift; sourceTree = "<group>"; };
 		179DB3CBADAFCF5377DA3D02 /* NewsBlurFeedChange.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewsBlurFeedChange.swift; sourceTree = "<group>"; };
@@ -774,6 +776,7 @@
 				51BB7B83233531BC008E8144 /* AccountBehaviors.swift */,
 				51E3EB40229AF61B00645299 /* AccountError.swift */,
 				846E77531F6F00E300A165E2 /* AccountManager.swift */,
+				1748B4A624CADA17008F9850 /* AccountSyncError.swift */,
 				5170743B232AEDB500A461A3 /* OPMLFile.swift */,
 				519E84A52433D49000D238B0 /* OPMLNormalizer.swift */,
 				84AF4EA3222CFDD100F6A800 /* AccountMetadata.swift */,
@@ -1183,6 +1186,7 @@
 				9E7299D9235062A200DAEFB7 /* FeedlyResourceProviding.swift in Sources */,
 				51F6C591245DB302001E41CA /* CloudKitReceiveStatusOperation.swift in Sources */,
 				9E672394236F7CA0000BE141 /* FeedlyRefreshAccessTokenOperation.swift in Sources */,
+				1748B4A724CADA17008F9850 /* AccountSyncError.swift in Sources */,
 				514BF5202391B0DB00902FE8 /* SingleArticleFetcher.swift in Sources */,
 				9EC688EC232C583300A8D0A2 /* FeedlyAccountDelegate+OAuth.swift in Sources */,
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,

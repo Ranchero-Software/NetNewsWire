@@ -26,6 +26,7 @@ struct SidebarView: View {
 	@State private var scrollOffset: CGFloat = 0
 	@State var pulling: Bool = false
 	@State var refreshing: Bool = false
+	
 
 	@ViewBuilder var body: some View {
 		#if os(macOS)
@@ -110,7 +111,7 @@ struct SidebarView: View {
 			// Crossing the threshold on the way down, we start the refresh process
 			if !pulling && (scrollOffset > threshold && previousScrollOffset <= threshold) {
 				pulling = true
-				AccountManager.shared.refreshAll(errorHandler: handleRefreshError)
+				AccountManager.shared.refreshAll()
 			}
 
 			// Crossing the threshold on the way UP, we end the refresh
@@ -121,10 +122,6 @@ struct SidebarView: View {
 			// Update last scroll offset
 			self.previousScrollOffset = self.scrollOffset
 		}
-	}
-	
-	func handleRefreshError(_ error: Error) {
-		sceneModel.accountErrorMessage = error.localizedDescription
 	}
 	
 	struct RefreshFixedView: View {
