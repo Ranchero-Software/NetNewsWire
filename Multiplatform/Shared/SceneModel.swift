@@ -150,10 +150,10 @@ private extension SceneModel {
 	func subscribeToAccountSyncErrors() {
 		NotificationCenter.default.publisher(for: .AccountsDidFailToSyncWithErrors)
 			.sink { [weak self] notification in
-				guard let errors = notification.object as? [AccountSyncError] else {
+				guard let syncErrors = notification.userInfo?[Account.UserInfoKey.syncErrors] as? [AccountSyncError] else {
 					return
 				}
-				self?.accountSyncErrors = errors
+				self?.accountSyncErrors = syncErrors
 			}.store(in: &cancellables)
 	}
 	
