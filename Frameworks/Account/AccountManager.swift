@@ -267,7 +267,7 @@ public final class AccountManager: UnreadCountProvider {
 		
 		group.notify(queue: DispatchQueue.main) {
 			if syncErrors.count > 0 {
-				NotificationCenter.default.post(Notification(name: .AccountsDidFailToSyncWithErrors, object: syncErrors, userInfo: nil))
+				NotificationCenter.default.post(Notification(name: .AccountsDidFailToSyncWithErrors, object: self, userInfo: [Account.UserInfoKey.syncErrors: syncErrors]))
 			}
 			completion?()
 		}

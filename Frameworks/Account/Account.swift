@@ -66,6 +66,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		public static let articles = "articles" // StatusesDidChange
 		public static let articleIDs = "articleIDs" // StatusesDidChange
 		public static let webFeeds = "webFeeds" // AccountDidDownloadArticles, StatusesDidChange
+		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
 
 	public static let defaultLocalAccountName: String = {
