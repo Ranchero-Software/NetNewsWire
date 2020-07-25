@@ -30,6 +30,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedTimelineItemID: String? = nil    // Don't use directly.  Use selectedTimelineItemsPublisher
 	@Published var isReadFiltered: Bool? = nil
 
+	var selectedArticles = [Article]()
+	
 	var timelineItemsPublisher: AnyPublisher<TimelineItems, Never>?
 	var articlesPublisher: AnyPublisher<[Article], Never>?
 	var selectedTimelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
@@ -57,7 +59,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		subscribeToUserDefaultsChanges()
 		subscribeToReadFilterChanges()
 		subscribeToArticleFetchChanges()
-		subscribeToSelectedArticleSelectionChanges()
+		subscribeToArticleSelectionChanges()
 		subscribeToArticleStatusChanges()
 //		subscribeToAccountDidDownloadArticles()
 		subscribeToArticleMarkingEvents()
@@ -222,7 +224,7 @@ private extension TimelineModel {
 			.assign(to: &$nameForDisplay)
 	}
 	
-	func subscribeToSelectedArticleSelectionChanges() {
+	func subscribeToArticleSelectionChanges() {
 		guard let timelineItemsPublisher = timelineItemsPublisher else { return }
 		
 		let timelineSelectedIDsPublisher = $selectedTimelineItemIDs
@@ -249,6 +251,12 @@ private extension TimelineModel {
 			.share(replay: 1)
 			.eraseToAnyPublisher()
 
+		selectedArticlesPublisher!
+			.sink { [weak self] selectedArticles in
+				self?.selectedArticles = selectedArticles
+			}
+			.store(in: &cancellables)
+		
 		// Automatically mark a selected record as read
 		selectedTimelineItemsPublisher!
 			.filter { $0.count == 1 }

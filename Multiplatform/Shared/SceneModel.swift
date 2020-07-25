@@ -25,8 +25,7 @@ final class SceneModel: ObservableObject {
 	@Published var accountSyncErrors: [AccountSyncError] = []
 
 	var selectedArticles: [Article] {
-		return [Article]()
-//		timelineModel.selectedArticles
+		timelineModel.selectedArticles
 	}
 	
 	private var refreshProgressModel: RefreshProgressModel? = nil
