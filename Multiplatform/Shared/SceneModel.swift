@@ -68,7 +68,7 @@ final class SceneModel: ObservableObject {
 	
 	/// Toggles the read status for the selected articles
 	func toggleReadStatusForSelectedArticles() {
-//		timelineModel.toggleReadStatusForSelectedArticles()
+		timelineModel.toggleReadStatusForSelectedArticlesSubject.send()
 	}
 	
 	/// Toggles the star status for the selected articles

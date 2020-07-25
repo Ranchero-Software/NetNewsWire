@@ -36,6 +36,9 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var selectedArticlesPublisher: AnyPublisher<[Article], Never>?
 	var articleStatusChangePublisher: AnyPublisher<Set<String>, Never>?
 	
+	var toggleReadStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
+	
+	
 	var readFilterEnabledTable = [FeedIdentifier: Bool]()
 
 	var undoManager: UndoManager?
@@ -56,7 +59,66 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		subscribeToSelectedArticleSelectionChanges()
 		subscribeToArticleStatusChanges()
 //		subscribeToAccountDidDownloadArticles()
+		subscribeToArticleMarkingEvents()
 	}
+	
+	// MARK: API
+	
+	func toggleReadFilter() {
+//		guard let filter = isReadFiltered, let feedID = feeds.first?.feedID else { return }
+//		readFilterEnabledTable[feedID] = !filter
+//		isReadFiltered = !filter
+//		self.fetchArticles()
+	}
+
+	@discardableResult
+	func goToNextUnread() -> Bool {
+//		var startIndex: Int
+//		if let firstArticle = selectedArticles.first, let index = timelineItems.firstIndex(where: { $0.article == firstArticle }) {
+//			startIndex = index
+//		} else {
+//			startIndex = 0
+//		}
+//
+//		for i in startIndex..<timelineItems.count {
+//			if !timelineItems[i].article.status.read {
+//				select(timelineItems[i].article.articleID)
+//				return true
+//			}
+//		}
+//
+		return false
+	}
+
+	func articleFor(_ articleID: String) -> Article? {
+		return timelineItems[articleID]?.article
+	}
+
+	func findPrevArticle(_ article: Article) -> Article? {
+		return nil
+//		guard let index = articles.firstIndex(of: article), index > 0 else {
+//			return nil
+//		}
+//		return articles[index - 1]
+	}
+	
+	func findNextArticle(_ article: Article) -> Article? {
+		return nil
+//		guard let index = articles.firstIndex(of: article), index + 1 != articles.count else {
+//			return nil
+//		}
+//		return articles[index + 1]
+	}
+	
+	func selectArticle(_ article: Article) {
+		// TODO: Implement me!
+	}
+	
+}
+
+// MARK: Private
+
+private extension TimelineModel {
 	
 	// MARK: Subscriptions
 	
@@ -194,82 +256,32 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			.sink {	markArticles(Set([$0]), statusKey: .read, flag: true) }
 			.store(in: &cancellables)
 	}
-	
-	// MARK: API
-	
-	func toggleReadFilter() {
-//		guard let filter = isReadFiltered, let feedID = feeds.first?.feedID else { return }
-//		readFilterEnabledTable[feedID] = !filter
-//		isReadFiltered = !filter
-//		self.fetchArticles()
-	}
-	
-	func toggleReadStatusForSelectedArticles() {
-//		guard !selectedArticles.isEmpty else {
-//			return
-//		}
-//		if selectedArticles.anyArticleIsUnread() {
-//			markSelectedArticlesAsRead()
-//		} else {
-//			markSelectedArticlesAsUnread()
-//		}
-	}
 
-	@discardableResult
-	func goToNextUnread() -> Bool {
-//		var startIndex: Int
-//		if let firstArticle = selectedArticles.first, let index = timelineItems.firstIndex(where: { $0.article == firstArticle }) {
-//			startIndex = index
-//		} else {
-//			startIndex = 0
-//		}
-//
-//		for i in startIndex..<timelineItems.count {
-//			if !timelineItems[i].article.status.read {
-//				select(timelineItems[i].article.articleID)
-//				return true
-//			}
-//		}
-//
-		return false
-	}
-
-	func articleFor(_ articleID: String) -> Article? {
-		return timelineItems[articleID]?.article
-	}
-
-	func findPrevArticle(_ article: Article) -> Article? {
-		return nil
-//		guard let index = articles.firstIndex(of: article), index > 0 else {
-//			return nil
-//		}
-//		return articles[index - 1]
-	}
-	
-	func findNextArticle(_ article: Article) -> Article? {
-		return nil
-//		guard let index = articles.firstIndex(of: article), index + 1 != articles.count else {
-//			return nil
-//		}
-//		return articles[index + 1]
-	}
-	
-	func selectArticle(_ article: Article) {
-		// TODO: Implement me!
-	}
-	
-}
-
-// MARK: Private
-
-private extension TimelineModel {
-	
-	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
-		if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) {
-			runCommand(markReadCommand)
-		} else {
-			markArticles(Set(articles), statusKey: statusKey, flag: flag)
-		}
+	func subscribeToArticleMarkingEvents() {
+		guard let selectedArticlesPublisher = selectedArticlesPublisher else { return }
+		
+		let toggleReadPublisher = toggleReadStatusForSelectedArticlesSubject
+			.withLatestFrom(selectedArticlesPublisher)
+			.filter { !$0.isEmpty }
+			.map {selectedArticles -> ([Article], ArticleStatus.Key, Bool) in
+				if selectedArticles.anyArticleIsUnread() {
+					return (selectedArticles, ArticleStatus.Key.read, true)
+				} else {
+					return (selectedArticles, ArticleStatus.Key.read, false)
+				}
+			}
+		
+		toggleReadPublisher
+			.sink { [weak self] (articles, key, flag) in
+				if let undoManager = self?.undoManager,
+				   let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: key, flag: flag, undoManager: undoManager) {
+					self?.runCommand(markReadCommand)
+				} else {
+					markArticles(Set(articles), statusKey: key, flag: flag)
+				}
+			}
+			.store(in: &cancellables)
+		
 	}
 	
 	// MARK: Timeline Management
