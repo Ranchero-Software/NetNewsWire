@@ -130,40 +130,51 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			}
 			.share(replay: 1)
 			.eraseToAnyPublisher()
+
+		// Set the timeline name for display
+		selectedFeedsPublisher
+			.map { feeds -> String in
+				switch feeds.count {
+				case 0:
+					return ""
+				case 1:
+					return feeds.first!.nameForDisplay
+				default:
+					return NSLocalizedString("Multiple", comment: "Multiple")
+				}
+			}
+			.assign(to: &$nameForDisplay)
 	}
 	
 	func subscribeToSelectedArticleSelectionChanges() {
-//		$selectedArticleIDs.map { [weak self] articleIDs in
-//			return articleIDs.compactMap { self?.idToArticleDictionary[$0] }
-//		}
-//		.assign(to: &$selectedArticles)
-//
-//		$selectedArticleID.compactMap { [weak self] articleID in
-//			if let articleID = articleID, let article = self?.idToArticleDictionary[articleID] {
-//				return [article]
-//			} else {
-//				return nil
-//			}
-//		}
-//		.assign(to: &$selectedArticles)
-//
-//		// Assign the selected timeline items
-//		$selectedArticles.compactMap { [weak self] selectedArticles in
-//			return selectedArticles.compactMap {
-//				if let index = self?.idToTimelineItemDictionary[$0.articleID] {
-//					return self?.timelineItems[index]
-//				}
-//				return nil
-//			}
-//		}.assign(to: &$selectedTimelineItems)
-//
-//		// Automatically mark a selected record as read
-//		$selectedArticles
-//			.filter { $0.count == 1 }
-//			.compactMap { $0.first }
-//			.filter { !$0.status.read }
-//			.sink {	markArticles(Set([$0]), statusKey: .read, flag: true) }
-//			.store(in: &cancellables)
+		guard let timelineItemsPublisher = timelineItemsPublisher else { return }
+		
+		let timelineSelectedIDsPublisher = $selectedTimelineItemIDs
+			.withLatestFrom(timelineItemsPublisher, resultSelector: { timelineItemIds, timelineItems -> [TimelineItem] in
+				return timelineItemIds.compactMap { timelineItems[$0] }
+			})
+		
+		let timelineSelectedIDPublisher = $selectedTimelineItemID
+			.withLatestFrom(timelineItemsPublisher, resultSelector: { timelineItemId, timelineItems -> [TimelineItem] in
+				if let id = timelineItemId, let item = timelineItems[id] {
+					return [item]
+				} else {
+					return [TimelineItem]()
+				}
+			})
+		
+		selectedTimelineItemsPublisher = timelineSelectedIDsPublisher
+			.merge(with: timelineSelectedIDPublisher)
+			.share(replay: 1)
+			.eraseToAnyPublisher()
+
+		// Automatically mark a selected record as read
+		selectedTimelineItemsPublisher!
+			.filter { $0.count == 1 }
+			.compactMap { $0.first?.article }
+			.filter { !$0.status.read }
+			.sink {	markArticles(Set([$0]), statusKey: .read, flag: true) }
+			.store(in: &cancellables)
 	}
 	
 	// MARK: API
