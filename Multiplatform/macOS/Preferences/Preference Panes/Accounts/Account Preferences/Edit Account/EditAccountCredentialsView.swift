@@ -83,7 +83,6 @@ struct EditAccountCredentialsView: View {
 		}
 		.frame(idealWidth: 300, idealHeight: 200, alignment: .top)
 		.padding()
-	
     }
 }
 

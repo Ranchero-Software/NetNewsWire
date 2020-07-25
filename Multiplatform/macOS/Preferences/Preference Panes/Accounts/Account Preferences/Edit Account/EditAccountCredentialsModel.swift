@@ -162,7 +162,9 @@ extension EditAccountCredentialsModel {
 		accountIsUpdatingCredentials = true
 		let updateAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 		updateAccount.delegate = self
+		#if os(macOS)
 		updateAccount.presentationAnchor = NSApplication.shared.windows.last
+		#endif
 		MainThreadOperationQueue.shared.add(updateAccount)
 	}
 	

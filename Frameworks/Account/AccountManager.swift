@@ -247,6 +247,32 @@ public final class AccountManager: UnreadCountProvider {
 			completion?()
 		}
 	}
+	
+	public func refreshAll(completion: (() -> Void)? = nil) {
+		var syncErrors = [AccountSyncError]()
+		let group = DispatchGroup()
+		
+		activeAccounts.forEach { account in
+			group.enter()
+			account.refreshAll() { result in
+				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					syncErrors.append(AccountSyncError(account: account, error: error))
+				}
+			}
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			if syncErrors.count > 0 {
+				NotificationCenter.default.post(Notification(name: .AccountsDidFailToSyncWithErrors, object: syncErrors, userInfo: nil))
+			}
+			completion?()
+		}
+		
+	}
 
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()

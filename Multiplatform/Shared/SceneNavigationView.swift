@@ -14,8 +14,8 @@ struct SceneNavigationView: View {
 	@StateObject private var sceneModel = SceneModel()
 	@State private var showSheet = false
 	@State private var showShareSheet = false
-	@State private var showRefreshError = false
-	@State private var sheetToShow: ToolbarSheets = .none
+	@State private var sheetToShow: SidebarSheets = .none
+	@State private var showAccountSyncErrorAlert = false // multiple sync errors
 	
 	#if os(iOS)
 	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -44,31 +44,58 @@ struct SceneNavigationView: View {
 		.onAppear {
 			sceneModel.startup()
 		}
-		.sheet(isPresented: $showSheet, onDismiss: { sheetToShow = .none }) {
-			
-			if sheetToShow == .web {
-				AddWebFeedView()
-			}
-			if sheetToShow == .folder {
-				AddFolderView()
-			}
-		}
 		.onChange(of: sheetToShow) { value in
 			value != .none ? (showSheet = true) : (showSheet = false)
 		}
-		.onChange(of: showRefreshError) { value in
-			if !value {
-				sceneModel.accountErrorMessage = ""
+		.onReceive(sceneModel.$accountSyncErrors) { errors in
+			if errors.count == 0 {
+				showAccountSyncErrorAlert = false
+			} else {
+				if errors.count > 1 {
+					showAccountSyncErrorAlert = true
+				} else {
+					sheetToShow = .fixCredentials
+				}
 			}
 		}
-		.onReceive(sceneModel.$accountErrorMessage) { message in
-			if !message.isEmpty {
-				showRefreshError = true
-			}
+		.sheet(isPresented: $showSheet,
+			   onDismiss: {
+				sheetToShow = .none
+				sceneModel.accountSyncErrors = []
+			   }) {
+					if sheetToShow == .web {
+						AddWebFeedView()
+					}
+					if sheetToShow == .folder {
+						AddFolderView()
+					}
+					#if os(iOS)
+					if sheetToShow == .settings {
+						SettingsView()
+					}
+					#endif
+					if sheetToShow == .fixCredentials {
+						FixAccountCredentialView(accountSyncError: sceneModel.accountSyncErrors[0])
+					}
 		}
-		.alert(isPresented: $showRefreshError) {
-			Alert(title: Text("Account Error"), message: Text(verbatim: sceneModel.accountErrorMessage), dismissButton: .default(Text("OK")))
-		}
+		.alert(isPresented: $showAccountSyncErrorAlert, content: {
+			#if os(macOS)
+			return Alert(title: Text("Account Sync Error"),
+						 message: Text("The following accounts failed to sync: ") + Text(sceneModel.accountSyncErrors.map({ $0.account.nameForDisplay }).joined(separator: ", ")) + Text(". You can update credentials in Preferences"),
+						 dismissButton: .default(Text("Dismiss")))
+			#else
+			return Alert(title: Text("Account Sync Error"),
+				  message: Text("The following accounts failed to sync: ") + Text(sceneModel.accountSyncErrors.map({ $0.account.nameForDisplay }).joined(separator: ", ")) + Text(". You can update credentials in Settings"),
+				  primaryButton: .default(Text("Show Settings"), action: {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+						sheetToShow = .settings
+					})
+					
+				  }),
+				  secondaryButton: .cancel(Text("Dismiss")))
+			
+			#endif
+		})
 		.toolbar {
 			
 			#if os(macOS)
@@ -84,7 +111,10 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				Button {
-					AccountManager.shared.refreshAll(errorHandler: handleRefreshError)
+//					AccountManager.shared.refreshAll(errorHandler: handleRefreshError)
+					
+					AccountManager.shared.refreshAll(completion: nil)
+					
 				} label: {
 					AppAssets.refreshImage
 				}
