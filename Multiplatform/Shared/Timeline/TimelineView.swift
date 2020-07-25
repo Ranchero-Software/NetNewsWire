@@ -11,6 +11,7 @@ import SwiftUI
 struct TimelineView: View {
 	
 	@EnvironmentObject private var timelineModel: TimelineModel
+	@State private var timelineItems = [TimelineItem]()
 	@State private var timelineItemFrames = [String: CGRect]()
 	
 	@ViewBuilder var body: some View {
@@ -37,7 +38,7 @@ struct TimelineView: View {
 					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				ScrollViewReader { scrollViewProxy in
-					List(timelineModel.timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
+					List(timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
 						let selected = timelineModel.selectedArticleIDs.contains(timelineItem.article.articleID)
 						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
 							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
@@ -59,6 +60,11 @@ struct TimelineView: View {
 							}
 						}
 					}
+				}
+			}
+			.onReceive(timelineModel.timelineItemsPublisher!) { items in
+				withAnimation {
+					timelineItems = items
 				}
 			}
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))

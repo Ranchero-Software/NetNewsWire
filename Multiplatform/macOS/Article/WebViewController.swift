@@ -80,9 +80,9 @@ class WebViewController: NSViewController {
 			statusBarView.heightAnchor.constraint(equalToConstant: 20)
 		])
 		
-		selectedArticlesCancellable = sceneModel?.timelineModel.$selectedArticles.sink { [weak self] articles in
-			self?.articles = articles
-		}
+//		selectedArticlesCancellable = sceneModel?.timelineModel.$selectedArticles.sink { [weak self] articles in
+//			self?.articles = articles
+//		}
 	}
 
 	// MARK: Notifications

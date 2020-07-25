@@ -37,7 +37,8 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	var undoManager: UndoManager?
 	var undoableCommands = [UndoableCommand]()
 
-	init() {
+	init(delegate: SidebarModelDelegate) {
+		self.delegate = delegate
 		subscribeToSelectedFeedChanges()
 		subscribeToRebuildSidebarItemsEvents()
 		subscribeToNextUnread()

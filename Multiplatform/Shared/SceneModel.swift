@@ -25,15 +25,16 @@ final class SceneModel: ObservableObject {
 	@Published var accountErrorMessage = ""
 
 	var selectedArticles: [Article] {
-		timelineModel.selectedArticles
+		return [Article]()
+//		timelineModel.selectedArticles
 	}
 	
 	private var refreshProgressModel: RefreshProgressModel? = nil
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler? = nil
 	
 	private(set) var webViewProvider: WebViewProvider? = nil
-	private(set) var sidebarModel = SidebarModel()
-	private(set) var timelineModel = TimelineModel()
+	private(set) lazy var sidebarModel = SidebarModel(delegate: self)
+	private(set) lazy var timelineModel = TimelineModel(delegate: self)
 
 	private var cancellables = Set<AnyCancellable>()
 
@@ -41,10 +42,6 @@ final class SceneModel: ObservableObject {
 
 	/// Prepares the SceneModel to be used in the views
 	func startup() {
-		sidebarModel.delegate = self
-		timelineModel.delegate = self
-		timelineModel.startup()
-		
 		self.articleIconSchemeHandler = ArticleIconSchemeHandler(sceneModel: self)
 		self.webViewProvider = WebViewProvider(articleIconSchemeHandler: self.articleIconSchemeHandler!)
 
@@ -56,7 +53,7 @@ final class SceneModel: ObservableObject {
 	/// Goes to the next unread item found in Sidebar and Timeline order, top to bottom
 	func goToNextUnread() {
 		if !timelineModel.goToNextUnread() {
-			timelineModel.isSelectNextUnread = true
+//			timelineModel.isSelectNextUnread = true
 			sidebarModel.selectNextUnread.send()
 		}
 	}
@@ -65,22 +62,22 @@ final class SceneModel: ObservableObject {
 	
 	/// Marks all the articles in the Timeline as read
 	func markAllAsRead() {
-		timelineModel.markAllAsRead()
+//		timelineModel.markAllAsRead()
 	}
 	
 	/// Toggles the read status for the selected articles
 	func toggleReadStatusForSelectedArticles() {
-		timelineModel.toggleReadStatusForSelectedArticles()
+//		timelineModel.toggleReadStatusForSelectedArticles()
 	}
 	
 	/// Toggles the star status for the selected articles
 	func toggleStarredStatusForSelectedArticles() {
-		timelineModel.toggleStarredStatusForSelectedArticles()
+//		timelineModel.toggleStarredStatusForSelectedArticles()
 	}
 
 	/// Opens the selected article in an external browser
 	func openSelectedArticleInBrowser() {
-		timelineModel.openSelectedArticleInBrowser()
+//		timelineModel.openSelectedArticleInBrowser()
 	}
 	
 	/// Retrieves the article before the given article in the Timeline
@@ -130,20 +127,20 @@ private extension SceneModel {
 	
 	// MARK: Subscriptions
 	func subscribeToToolbarChangeEvents() {
-		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
-			.compactMap { $0.object as? AccountManager }
-			.sink {  [weak self] accountManager in
-				self?.updateNextUnreadButtonState(accountManager: accountManager)
-			}.store(in: &cancellables)
-		
-		let blankNotification = Notification(name: .StatusesDidChange)
-		let statusesDidChangePublisher = NotificationCenter.default.publisher(for: .StatusesDidChange).prepend(blankNotification)
-		let combinedPublisher = timelineModel.$articles.combineLatest(timelineModel.$selectedArticles, statusesDidChangePublisher)
-		
-		combinedPublisher.sink { [weak self] (articles, selectedArticles, _) in
-			self?.updateMarkAllAsReadButtonsState(articles: articles)
-			self?.updateArticleButtonsState(selectedArticles: selectedArticles)
-		}.store(in: &cancellables)
+//		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
+//			.compactMap { $0.object as? AccountManager }
+//			.sink {  [weak self] accountManager in
+//				self?.updateNextUnreadButtonState(accountManager: accountManager)
+//			}.store(in: &cancellables)
+//
+//		let blankNotification = Notification(name: .StatusesDidChange)
+//		let statusesDidChangePublisher = NotificationCenter.default.publisher(for: .StatusesDidChange).prepend(blankNotification)
+//		let combinedPublisher = timelineModel.$articles.combineLatest(timelineModel.$selectedArticles, statusesDidChangePublisher)
+//
+//		combinedPublisher.sink { [weak self] (articles, selectedArticles, _) in
+//			self?.updateMarkAllAsReadButtonsState(articles: articles)
+//			self?.updateArticleButtonsState(selectedArticles: selectedArticles)
+//		}.store(in: &cancellables)
 	}
 	
 	// MARK: Button State Updates
