@@ -488,7 +488,7 @@ final class ArticlesTable: DatabaseTable {
 		if feedIDs.isEmpty {
 			return
 		}
-		queue.runInDatabase { (database) in
+		queue.runInTransaction { (database) in
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 			let sql = "select articleID from articles where feedID not in \(placeholders);"
 			let parameters = Array(feedIDs) as [Any]
