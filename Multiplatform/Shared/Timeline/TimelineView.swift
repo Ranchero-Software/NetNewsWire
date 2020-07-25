@@ -120,13 +120,14 @@ struct TimelineView: View {
 			.onReceive(timelineModel.articleStatusChangePublisher!) { articleIDs in
 				articleIDs.forEach { articleID in
 					if let position = timelineItems.index[articleID] {
-						if timelineItems.items[position].isReadOnly {
-							withAnimation {
-								timelineItems.items[position].updateStatus()
-							}
-						} else {
+// This will trigger a deselect on iPhones and iPads, so we will disable it for now
+//						if timelineItems.items[position].isReadOnly {
+//							withAnimation {
+//								timelineItems.items[position].updateStatus()
+//							}
+//						} else {
 							timelineItems.items[position].updateStatus()
-						}
+//						}
 					}
 				}
 			}
