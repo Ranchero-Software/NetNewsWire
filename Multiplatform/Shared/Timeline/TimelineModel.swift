@@ -30,7 +30,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedTimelineItemID: String? = nil    // Don't use directly.  Use selectedTimelineItemsPublisher
 	@Published var isReadFiltered: Bool? = nil
 
-	var timelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
+	var timelineItemsPublisher: AnyPublisher<OrderedDictionary<String, TimelineItem>, Never>?
 	var selectedTimelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
 
 	var readFilterEnabledTable = [FeedIdentifier: Bool]()
@@ -124,9 +124,9 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 				return self?.fetchArticles(feeds: feeds) ?? Set<Article>()
 			}
 			.combineLatest(sortDirectionPublisher, groupByPublisher)
-			.compactMap { [weak self] articles, sortDirection, groupBy -> [TimelineItem] in
+			.compactMap { [weak self] articles, sortDirection, groupBy in
 				let sortedArticles = Array(articles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupBy)
-				return self?.buildTimelineItems(articles: sortedArticles) ?? [TimelineItem]()
+				return self?.buildTimelineItems(articles: sortedArticles) ?? OrderedDictionary<String, TimelineItem>()
 			}
 			.share(replay: 1)
 			.eraseToAnyPublisher()
@@ -284,10 +284,11 @@ private extension TimelineModel {
 		return fetchedArticles
 	}	
 	
-	func buildTimelineItems(articles: [Article]) -> [TimelineItem] {
-		var items = [TimelineItem]()
+	func buildTimelineItems(articles: [Article]) -> OrderedDictionary<String, TimelineItem> {
+		var items = OrderedDictionary<String, TimelineItem>()
 		for (index, article) in articles.enumerated() {
-			items.append(TimelineItem(index: index, article: article))
+			let item = TimelineItem(index: index, article: article)
+			items[item.id] = item
 		}
 		return items
 	}
