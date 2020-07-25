@@ -72,16 +72,18 @@ struct TimelineView: View {
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
 			#else
 			ScrollViewReader { scrollViewProxy in
-				List(timelineItems) { timelineItem in
-					ZStack {
-						let selected = timelineModel.selectedTimelineItemID == timelineItem.article.articleID
-						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
-							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
-						NavigationLink(destination: ArticleContainerView(),
-									   tag: timelineItem.article.articleID,
-									   selection: $timelineModel.selectedTimelineItemID) {
-							EmptyView()
-						}.buttonStyle(PlainButtonStyle())
+				List(timelineItems.keys, id: \.self) { timelineItemID in
+					if let timelineItem = timelineItems[timelineItemID] {
+						ZStack {
+							let selected = timelineModel.selectedTimelineItemID == timelineItem.article.articleID
+							TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
+								.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
+							NavigationLink(destination: ArticleContainerView(),
+										   tag: timelineItem.article.articleID,
+										   selection: $timelineModel.selectedTimelineItemID) {
+								EmptyView()
+							}.buttonStyle(PlainButtonStyle())
+						}
 					}
 				}
 				.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in

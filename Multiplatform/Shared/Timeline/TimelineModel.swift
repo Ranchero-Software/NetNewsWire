@@ -32,6 +32,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 
 	var timelineItemsPublisher: AnyPublisher<OrderedDictionary<String, TimelineItem>, Never>?
 	var selectedTimelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
+	var selectedArticlesPublisher: AnyPublisher<[Article], Never>?
 
 	var readFilterEnabledTable = [FeedIdentifier: Bool]()
 
@@ -165,6 +166,11 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		
 		selectedTimelineItemsPublisher = timelineSelectedIDsPublisher
 			.merge(with: timelineSelectedIDPublisher)
+			.share(replay: 1)
+			.eraseToAnyPublisher()
+		
+		selectedArticlesPublisher = selectedTimelineItemsPublisher!
+			.map { timelineItems in timelineItems.map { $0.article } }
 			.share(replay: 1)
 			.eraseToAnyPublisher()
 

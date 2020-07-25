@@ -55,8 +55,8 @@ class WebViewController: NSViewController {
 		}
 	}
 	
-	private var selectedArticlesCancellable: AnyCancellable?
-	
+	private var cancellables = Set<AnyCancellable>()
+
 	override func loadView() {
 		view = NSView()
 	}
@@ -79,10 +79,11 @@ class WebViewController: NSViewController {
 			self.view.bottomAnchor.constraint(equalTo: statusBarView.bottomAnchor, constant: 2),
 			statusBarView.heightAnchor.constraint(equalToConstant: 20)
 		])
-		
-//		selectedArticlesCancellable = sceneModel?.timelineModel.$selectedArticles.sink { [weak self] articles in
-//			self?.articles = articles
-//		}
+
+		sceneModel?.timelineModel.selectedArticlesPublisher?.sink { [weak self] articles in
+			self?.articles = articles
+		}
+		.store(in: &cancellables)
 	}
 
 	// MARK: Notifications
