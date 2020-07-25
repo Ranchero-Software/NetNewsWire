@@ -340,6 +340,10 @@
 		51A8001324CA0FC700F41F1D /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001124CA0FC700F41F1D /* Sink.swift */; };
 		51A8001524CA0FEC00F41F1D /* DemandBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */; };
 		51A8001624CA0FEC00F41F1D /* DemandBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */; };
+		51A8002D24CC451500F41F1D /* ShareReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8002C24CC451500F41F1D /* ShareReplay.swift */; };
+		51A8002E24CC451600F41F1D /* ShareReplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8002C24CC451500F41F1D /* ShareReplay.swift */; };
+		51A8005124CC453C00F41F1D /* ReplaySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8005024CC453C00F41F1D /* ReplaySubject.swift */; };
+		51A8005224CC453C00F41F1D /* ReplaySubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8005024CC453C00F41F1D /* ReplaySubject.swift */; };
 		51A8FFED24CA0CF400F41F1D /* WIthLatestFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8FFEC24CA0CF400F41F1D /* WIthLatestFrom.swift */; };
 		51A8FFEE24CA0CF400F41F1D /* WIthLatestFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8FFEC24CA0CF400F41F1D /* WIthLatestFrom.swift */; };
 		51A9A5E12380C4FE0033AADF /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C45255226507D200C03939 /* AppDefaults.swift */; };
@@ -2036,6 +2040,8 @@
 		51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedDefaultContainer.swift; sourceTree = "<group>"; };
 		51A8001124CA0FC700F41F1D /* Sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sink.swift; sourceTree = "<group>"; };
 		51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemandBuffer.swift; sourceTree = "<group>"; };
+		51A8002C24CC451500F41F1D /* ShareReplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareReplay.swift; sourceTree = "<group>"; };
+		51A8005024CC453C00F41F1D /* ReplaySubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaySubject.swift; sourceTree = "<group>"; };
 		51A8FFEC24CA0CF400F41F1D /* WIthLatestFrom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIthLatestFrom.swift; sourceTree = "<group>"; };
 		51A9A5E32380C8870033AADF /* ShareFolderPickerAccountCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerAccountCell.xib; sourceTree = "<group>"; };
 		51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShareFolderPickerFolderCell.xib; sourceTree = "<group>"; };
@@ -3044,6 +3050,8 @@
 				51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */,
 				51A8001124CA0FC700F41F1D /* Sink.swift */,
 				51A8FFEC24CA0CF400F41F1D /* WIthLatestFrom.swift */,
+				51A8002C24CC451500F41F1D /* ShareReplay.swift */,
+				51A8005024CC453C00F41F1D /* ReplaySubject.swift */,
 			);
 			path = CombineExt;
 			sourceTree = "<group>";
@@ -4331,46 +4339,46 @@
 				TargetAttributes = {
 					51314636235A7BBE00387FDC = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
 					};
 					513C5CE5232571C2003D4054 = {
 						CreatedOnToolsVersion = 11.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					518B2ED12351B3DD00400001 = {
 						CreatedOnToolsVersion = 11.2;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 840D617B2029031C009BC708;
 					};
 					51C0513C24A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					51C0514324A77DF800194D5E = {
 						CreatedOnToolsVersion = 12.0;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					6581C73220CED60000F4AD34 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED3FA2235DEF6C0081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					65ED4090235DEF770081F399 = {
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 					};
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -4380,7 +4388,7 @@
 					};
 					849C645F1ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -4390,7 +4398,7 @@
 					};
 					849C64701ED37A5D003D8FC0 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQLBNX3GP7;
+						DevelopmentTeam = SHJK2V3AJG;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 849C645F1ED37A5D003D8FC0;
 					};
@@ -5241,6 +5249,7 @@
 				65082A5224C72B88009FA994 /* SettingsCredentialsAccountModel.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
 				51B8BCC224C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
+				51A8005124CC453C00F41F1D /* ReplaySubject.swift in Sources */,
 				17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
 				51B80EB824BD1F8B00C6C32D /* ActivityViewController.swift in Sources */,
 				51E4994224A8713C00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
@@ -5308,6 +5317,7 @@
 				51919FEE24AB85E400541E64 /* TimelineContainerView.swift in Sources */,
 				653A4E7924BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift in Sources */,
 				51E4995724A8734D00B667CB /* ExtensionPoint.swift in Sources */,
+				51A8002D24CC451500F41F1D /* ShareReplay.swift in Sources */,
 				51B8BCE624C25F7C00360B00 /* TimelineContextMenu.swift in Sources */,
 				1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */,
 				51E4991124A808DE00B667CB /* SmallIconProvider.swift in Sources */,
@@ -5361,6 +5371,7 @@
 				51E498CB24A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
 				51B80F1F24BE531200C6C32D /* SharingServiceView.swift in Sources */,
 				17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
+				51A8005224CC453C00F41F1D /* ReplaySubject.swift in Sources */,
 				51E4993324A867E700B667CB /* AppNotifications.swift in Sources */,
 				51B80F4224BE588200C6C32D /* SharingServicePickerDelegate.swift in Sources */,
 				51E4990624A808C300B667CB /* ImageDownloader.swift in Sources */,
@@ -5418,6 +5429,7 @@
 				514E6BDB24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				51B8BCE724C25F7C00360B00 /* TimelineContextMenu.swift in Sources */,
 				51E4996E24A8764C00B667CB /* ActivityManager.swift in Sources */,
+				51A8002E24CC451600F41F1D /* ShareReplay.swift in Sources */,
 				1769E33024BD6271000E1E8E /* EditAccountCredentialsView.swift in Sources */,
 				51E4995A24A873F900B667CB /* ErrorHandler.swift in Sources */,
 				5194737124BBCAF4001A2939 /* TimelineSortOrderView.swift in Sources */,

@@ -26,8 +26,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	weak var delegate: TimelineModelDelegate?
 	
 	@Published var nameForDisplay = ""
-	@Published var selectedArticleIDs = Set<String>()  // Don't use directly.  Use selectedArticles
-	@Published var selectedArticleID: String? = nil    // Don't use directly.  Use selectedArticles
+	@Published var selectedTimelineItemIDs = Set<String>()  // Don't use directly.  Use selectedTimelineItemsPublisher
+	@Published var selectedTimelineItemID: String? = nil    // Don't use directly.  Use selectedTimelineItemsPublisher
 	@Published var isReadFiltered: Bool? = nil
 
 	var timelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
@@ -40,15 +40,16 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 
 	private var cancellables = Set<AnyCancellable>()
 
-	private var sortDirectionSubject = PassthroughSubject<Bool, Never>()
-	private var groupByFeedSubject = PassthroughSubject<Bool, Never>()
+	private var sortDirectionSubject = ReplaySubject<Bool, Never>(bufferSize: 1)
+	private var groupByFeedSubject = ReplaySubject<Bool, Never>(bufferSize: 1)
 	
 	init(delegate: TimelineModelDelegate) {
 		self.delegate = delegate
-//		subscribeToArticleStatusChanges()
 		subscribeToUserDefaultsChanges()
+		subscribeToReadFilterChanges()
 		subscribeToArticleFetchChanges()
 		subscribeToSelectedArticleSelectionChanges()
+//		subscribeToArticleStatusChanges()
 //		subscribeToAccountDidDownloadArticles()
 	}
 	
@@ -78,6 +79,31 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 //		}.store(in: &cancellables)
 //	}
 	
+	func subscribeToReadFilterChanges() {
+		guard let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
+
+		selectedFeedsPublisher.sink { [weak self] feeds in
+			guard let self = self else { return }
+			
+			guard feeds.count == 1, let timelineFeed = feeds.first else {
+				self.isReadFiltered = nil
+				return
+			}
+	
+			guard timelineFeed.defaultReadFilterType != .alwaysRead else {
+				self.isReadFiltered = nil
+				return
+			}
+	
+			if let feedID = timelineFeed.feedID, let readFilterEnabled = self.readFilterEnabledTable[feedID] {
+				self.isReadFiltered =  readFilterEnabled
+			} else {
+				self.isReadFiltered = timelineFeed.defaultReadFilterType == .read
+			}
+		}
+		.store(in: &cancellables)
+	}
+	
 	func subscribeToUserDefaultsChanges() {
 		let kickStartNote = Notification(name: Notification.Name("Kick Start"))
 		NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
@@ -97,11 +123,12 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			.map { [weak self] feeds -> Set<Article> in
 				return self?.fetchArticles(feeds: feeds) ?? Set<Article>()
 			}
-			.combineLatest($isReadFiltered, sortDirectionPublisher, groupByPublisher)
-			.compactMap { [weak self] articles, filtered, sortDirection, groupBy -> [TimelineItem] in
+			.combineLatest(sortDirectionPublisher, groupByPublisher)
+			.compactMap { [weak self] articles, sortDirection, groupBy -> [TimelineItem] in
 				let sortedArticles = Array(articles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupBy)
 				return self?.buildTimelineItems(articles: sortedArticles) ?? [TimelineItem]()
 			}
+			.share(replay: 1)
 			.eraseToAnyPublisher()
 	}
 	
@@ -218,24 +245,6 @@ private extension TimelineModel {
 	}
 	
 	// MARK: Timeline Management
-	
-//	func resetReadFilter() {
-//		guard feeds.count == 1, let timelineFeed = feeds.first else {
-//			isReadFiltered = nil
-//			return
-//		}
-//
-//		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
-//			isReadFiltered = nil
-//			return
-//		}
-//
-//		if let feedID = timelineFeed.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
-//			isReadFiltered =  readFilterEnabled
-//		} else {
-//			isReadFiltered = timelineFeed.defaultReadFilterType == .read
-//		}
-//	}
 
 	func sortParametersDidChange() {
 //		performBlockAndRestoreSelection {

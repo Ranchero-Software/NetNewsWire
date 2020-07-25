@@ -61,9 +61,9 @@ class ArticleViewController: UIViewController {
 			view.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor)
 		])
 				
-		selectedArticlesCancellable = sceneModel?.timelineModel.$selectedArticles.sink { [weak self] articles in
-			self?.articles = articles
-		}
+//		selectedArticlesCancellable = sceneModel?.timelineModel.$selectedArticles.sink { [weak self] articles in
+//			self?.articles = articles
+//		}
 		
 		let controller = createWebViewController(currentArticle, updateView: true)
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)

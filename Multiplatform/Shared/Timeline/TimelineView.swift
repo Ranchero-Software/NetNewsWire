@@ -38,8 +38,8 @@ struct TimelineView: View {
 					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				ScrollViewReader { scrollViewProxy in
-					List(timelineItems, selection: $timelineModel.selectedArticleIDs) { timelineItem in
-						let selected = timelineModel.selectedArticleIDs.contains(timelineItem.article.articleID)
+					List(timelineItems, selection: $timelineModel.selectedTimelineItemIDs) { timelineItem in
+						let selected = timelineModel.selectedTimelineItemIDs.contains(timelineItem.article.articleID)
 						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
 							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
 					}
@@ -48,7 +48,7 @@ struct TimelineView: View {
 							timelineItemFrames[pref.articleID] = pref.frame
 						}
 					}
-					.onChange(of: timelineModel.selectedArticleIDs) { selectedArticleIDs in
+					.onChange(of: timelineModel.selectedTimelineItemIDs) { selectedArticleIDs in
 						let proxyFrame = geometryReaderProxy.frame(in: .global)
 						for articleID in selectedArticleIDs {
 							if let itemFrame = timelineItemFrames[articleID] {
@@ -70,14 +70,14 @@ struct TimelineView: View {
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
 			#else
 			ScrollViewReader { scrollViewProxy in
-				List(timelineModel.timelineItems) { timelineItem in
+				List(timelineItems) { timelineItem in
 					ZStack {
-						let selected = timelineModel.selectedArticleID == timelineItem.article.articleID
+						let selected = timelineModel.selectedTimelineItemID == timelineItem.article.articleID
 						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
 							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
 						NavigationLink(destination: ArticleContainerView(),
 									   tag: timelineItem.article.articleID,
-									   selection: $timelineModel.selectedArticleID) {
+									   selection: $timelineModel.selectedTimelineItemID) {
 							EmptyView()
 						}.buttonStyle(PlainButtonStyle())
 					}
@@ -87,7 +87,7 @@ struct TimelineView: View {
 						timelineItemFrames[pref.articleID] = pref.frame
 					}
 				}
-				.onChange(of: timelineModel.selectedArticleID) { selectedArticleID in
+				.onChange(of: timelineModel.selectedTimelineItemID) { selectedArticleID in
 					let proxyFrame = geometryReaderProxy.frame(in: .global)
 					if let articleID = selectedArticleID, let itemFrame = timelineItemFrames[articleID] {
 						if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 3 {
@@ -97,6 +97,12 @@ struct TimelineView: View {
 						}
 					}
 				}
+			}
+			.onReceive(timelineModel.timelineItemsPublisher!) { items in
+// Animations crash on iPadOS right now
+//				withAnimation {
+					timelineItems = items
+//				}
 			}
 			.navigationBarTitle(Text(verbatim: timelineModel.nameForDisplay), displayMode: .inline)
 			#endif
