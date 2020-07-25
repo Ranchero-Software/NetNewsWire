@@ -98,19 +98,17 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 
 	func findPrevArticle(_ article: Article) -> Article? {
-		return nil
-//		guard let index = articles.firstIndex(of: article), index > 0 else {
-//			return nil
-//		}
-//		return articles[index - 1]
+		guard let index = timelineItems.index[article.articleID], index > 0 else {
+			return nil
+		}
+		return timelineItems.items[index - 1].article
 	}
 	
 	func findNextArticle(_ article: Article) -> Article? {
-		return nil
-//		guard let index = articles.firstIndex(of: article), index + 1 != articles.count else {
-//			return nil
-//		}
-//		return articles[index + 1]
+		guard let index = timelineItems.index[article.articleID], index + 1 != timelineItems.items.count else {
+			return nil
+		}
+		return timelineItems.items[index + 1].article
 	}
 	
 	func selectArticle(_ article: Article) {
@@ -313,13 +311,6 @@ private extension TimelineModel {
 	}
 	
 	// MARK: Timeline Management
-
-	func sortParametersDidChange() {
-//		performBlockAndRestoreSelection {
-//			articles = articles.sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupByFeed)
-//			rebuildTimelineItems()
-//		}
-	}
 	
 	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
 //		let savedArticleIDs = selectedArticleIDs
