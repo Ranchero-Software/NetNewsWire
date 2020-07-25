@@ -31,6 +31,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var isReadFiltered: Bool? = nil
 
 	var timelineItemsPublisher: AnyPublisher<OrderedDictionary<String, TimelineItem>, Never>?
+	var articlesPublisher: AnyPublisher<[Article], Never>?
 	var selectedTimelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
 	var selectedArticlesPublisher: AnyPublisher<[Article], Never>?
 
@@ -80,6 +81,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 //		}.store(in: &cancellables)
 //	}
 	
+	// TODO: Don't forget to redo this!!!
 	func subscribeToReadFilterChanges() {
 		guard let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
 
@@ -132,6 +134,12 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			.share(replay: 1)
 			.eraseToAnyPublisher()
 
+		articlesPublisher = timelineItemsPublisher!
+			.map { timelineItems in
+				timelineItems.values.values.map { $0.article }
+			}
+			.eraseToAnyPublisher()
+		
 		// Set the timeline name for display
 		selectedFeedsPublisher
 			.map { feeds -> String in

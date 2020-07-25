@@ -128,20 +128,31 @@ private extension SceneModel {
 	
 	// MARK: Subscriptions
 	func subscribeToToolbarChangeEvents() {
-//		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
-//			.compactMap { $0.object as? AccountManager }
-//			.sink {  [weak self] accountManager in
-//				self?.updateNextUnreadButtonState(accountManager: accountManager)
-//			}.store(in: &cancellables)
-//
-//		let blankNotification = Notification(name: .StatusesDidChange)
-//		let statusesDidChangePublisher = NotificationCenter.default.publisher(for: .StatusesDidChange).prepend(blankNotification)
-//		let combinedPublisher = timelineModel.$articles.combineLatest(timelineModel.$selectedArticles, statusesDidChangePublisher)
-//
-//		combinedPublisher.sink { [weak self] (articles, selectedArticles, _) in
-//			self?.updateMarkAllAsReadButtonsState(articles: articles)
-//			self?.updateArticleButtonsState(selectedArticles: selectedArticles)
-//		}.store(in: &cancellables)
+		guard let selectedArticlesPublisher = timelineModel.selectedArticlesPublisher,
+			  let articlesPublisher = timelineModel.articlesPublisher else { return }
+		
+		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
+			.compactMap { $0.object as? AccountManager }
+			.sink {  [weak self] accountManager in
+				self?.updateNextUnreadButtonState(accountManager: accountManager)
+			}.store(in: &cancellables)
+
+		let blankNotification = Notification(name: .StatusesDidChange)
+		let statusesDidChangePublisher = NotificationCenter.default.publisher(for: .StatusesDidChange).prepend(blankNotification)
+
+		statusesDidChangePublisher
+			.combineLatest(selectedArticlesPublisher)
+			.sink { [weak self] _, selectedArticles in
+				self?.updateArticleButtonsState(selectedArticles: selectedArticles)
+			}
+			.store(in: &cancellables)
+
+		statusesDidChangePublisher
+			.combineLatest(articlesPublisher)
+			.sink { [weak self] _, articles in
+				self?.updateMarkAllAsReadButtonsState(articles: articles)
+			}
+			.store(in: &cancellables)
 	}
 	
 	func subscribeToAccountSyncErrors() {
