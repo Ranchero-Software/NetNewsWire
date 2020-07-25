@@ -37,7 +37,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var articleStatusChangePublisher: AnyPublisher<Set<String>, Never>?
 	
 	var toggleReadStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
-	
+	var toggleStarredStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
 	
 	var readFilterEnabledTable = [FeedIdentifier: Bool]()
 
@@ -270,8 +270,21 @@ private extension TimelineModel {
 					return (selectedArticles, ArticleStatus.Key.read, false)
 				}
 			}
+
+		let toggleStarred = toggleStarredStatusForSelectedArticlesSubject
+			.withLatestFrom(selectedArticlesPublisher)
+			.filter { !$0.isEmpty }
+			.map {selectedArticles -> ([Article], ArticleStatus.Key, Bool) in
+				if selectedArticles.anyArticleIsUnstarred() {
+					return (selectedArticles, ArticleStatus.Key.starred, true)
+				} else {
+					return (selectedArticles, ArticleStatus.Key.read, false)
+				}
+			}
 		
+
 		toggleReadPublisher
+			.merge(with: toggleStarred)
 			.sink { [weak self] (articles, key, flag) in
 				if let undoManager = self?.undoManager,
 				   let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: key, flag: flag, undoManager: undoManager) {

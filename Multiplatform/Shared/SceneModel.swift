@@ -73,7 +73,7 @@ final class SceneModel: ObservableObject {
 	
 	/// Toggles the star status for the selected articles
 	func toggleStarredStatusForSelectedArticles() {
-//		timelineModel.toggleStarredStatusForSelectedArticles()
+		timelineModel.toggleStarredStatusForSelectedArticlesSubject.send()
 	}
 
 	/// Opens the selected article in an external browser
