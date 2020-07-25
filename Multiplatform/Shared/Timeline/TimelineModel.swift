@@ -44,6 +44,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 
 	private var sortDirectionSubject = ReplaySubject<Bool, Never>(bufferSize: 1)
 	private var groupByFeedSubject = ReplaySubject<Bool, Never>(bufferSize: 1)
+
+	private var timelineItems = OrderedDictionary<String, TimelineItem>()
 	
 	init(delegate: TimelineModelDelegate) {
 		self.delegate = delegate
@@ -134,10 +136,18 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			.share(replay: 1)
 			.eraseToAnyPublisher()
 
+		timelineItemsPublisher!
+			.sink { [weak self] timelineItems in
+				self?.timelineItems = timelineItems
+			}
+			.store(in: &cancellables)
+		
+		// Transform to articles for those that just need articles
 		articlesPublisher = timelineItemsPublisher!
 			.map { timelineItems in
 				timelineItems.values.values.map { $0.article }
 			}
+			.share()
 			.eraseToAnyPublisher()
 		
 		// Set the timeline name for display
@@ -231,8 +241,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
-		return nil
-//		return idToArticleDictionary[articleID]
+		return timelineItems[articleID]?.article
 	}
 
 	func findPrevArticle(_ article: Article) -> Article? {
