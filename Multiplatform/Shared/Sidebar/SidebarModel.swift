@@ -75,7 +75,7 @@ private extension SidebarModel {
 			.removeDuplicates(by: { previousFeeds, currentFeeds in
 				return previousFeeds.elementsEqual(currentFeeds, by: { $0.feedID == $1.feedID })
 			})
-			.share(replay: 1)
+			.share()
 			.eraseToAnyPublisher()
 	}
 	
@@ -108,7 +108,7 @@ private extension SidebarModel {
 			.compactMap {  [weak self] _, readFilter, selectedFeeds in
 				self?.rebuildSidebarItems(isReadFiltered: readFilter, selectedFeeds: selectedFeeds)
 			}
-			.share(replay: 1)
+			.share()
 			.eraseToAnyPublisher()
 	}
 	
