@@ -36,6 +36,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var selectedArticlesPublisher: AnyPublisher<[Article], Never>?
 	var articleStatusChangePublisher: AnyPublisher<Set<String>, Never>?
 	
+	var markAllAsReadSubject = PassthroughSubject<Void, Never>()
 	var toggleReadStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
 	var toggleStarredStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
 	
@@ -258,12 +259,19 @@ private extension TimelineModel {
 	}
 
 	func subscribeToArticleMarkingEvents() {
-		guard let selectedArticlesPublisher = selectedArticlesPublisher else { return }
+		guard let articlesPublisher = articlesPublisher, let selectedArticlesPublisher = selectedArticlesPublisher else { return }
 		
+		let markAllAsReadPublisher = markAllAsReadSubject
+			.withLatestFrom(articlesPublisher)
+			.filter { !$0.isEmpty }
+			.map { articles -> ([Article], ArticleStatus.Key, Bool) in
+				return (articles, ArticleStatus.Key.read, true)
+			}
+
 		let toggleReadPublisher = toggleReadStatusForSelectedArticlesSubject
 			.withLatestFrom(selectedArticlesPublisher)
 			.filter { !$0.isEmpty }
-			.map {selectedArticles -> ([Article], ArticleStatus.Key, Bool) in
+			.map { selectedArticles -> ([Article], ArticleStatus.Key, Bool) in
 				if selectedArticles.anyArticleIsUnread() {
 					return (selectedArticles, ArticleStatus.Key.read, true)
 				} else {
@@ -274,17 +282,16 @@ private extension TimelineModel {
 		let toggleStarred = toggleStarredStatusForSelectedArticlesSubject
 			.withLatestFrom(selectedArticlesPublisher)
 			.filter { !$0.isEmpty }
-			.map {selectedArticles -> ([Article], ArticleStatus.Key, Bool) in
+			.map { selectedArticles -> ([Article], ArticleStatus.Key, Bool) in
 				if selectedArticles.anyArticleIsUnstarred() {
 					return (selectedArticles, ArticleStatus.Key.starred, true)
 				} else {
-					return (selectedArticles, ArticleStatus.Key.read, false)
+					return (selectedArticles, ArticleStatus.Key.starred, false)
 				}
 			}
-		
 
-		toggleReadPublisher
-			.merge(with: toggleStarred)
+		markAllAsReadPublisher
+			.merge(with: toggleReadPublisher, toggleStarred)
 			.sink { [weak self] (articles, key, flag) in
 				if let undoManager = self?.undoManager,
 				   let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: key, flag: flag, undoManager: undoManager) {

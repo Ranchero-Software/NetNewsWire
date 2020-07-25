@@ -63,7 +63,7 @@ final class SceneModel: ObservableObject {
 	
 	/// Marks all the articles in the Timeline as read
 	func markAllAsRead() {
-//		timelineModel.markAllAsRead()
+		timelineModel.markAllAsReadSubject.send()
 	}
 	
 	/// Toggles the read status for the selected articles
