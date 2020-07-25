@@ -212,7 +212,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.supportsSubFolders
 	}
 	
-	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
+	init?(dataFolder: String, type: AccountType, accountID: String, defaults: AccountDefaults, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
@@ -229,7 +229,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		self.opmlFilePath = (dataFolder as NSString).appendingPathComponent("Subscriptions.opml")
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("DB.sqlite3")
-		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID)
+		let retentionStyle: ArticlesDatabase.RetentionStyle = type == .onMyMac ? .feedBased : .syncSystem
+		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID, retentionStyle: retentionStyle)
 
 		self.feedMetadataPath = (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist")
 		self.metadataPath = (dataFolder as NSString).appendingPathComponent("Settings.plist")
@@ -254,9 +255,24 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
 		pullObjectsFromDisk()
-		
+
+		var shouldHandleRetentionPolicyChange = false
+		if !defaults.performedApril2020RetentionPolicyChange {
+			// Check each account’s metadata as well as UserDefaults.
+			// We want to make sure we do this only once per account.
+			if type == .onMyMac {
+				let didHandlePolicyChange = metadata.performedApril2020RetentionPolicyChange ?? false
+				shouldHandleRetentionPolicyChange = !didHandlePolicyChange
+			}
+		}
+
 		DispatchQueue.main.async {
-			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeeds().feedIDs())
+			if shouldHandleRetentionPolicyChange {
+				// Handle one-time database changes made necessary by April 2020 retention policy change.
+				self.database.performApril2020RetentionPolicyChange()
+				self.metadata.performedApril2020RetentionPolicyChange = true
+			}
+			self.database.cleanupDatabaseAtStartup(subscribedToWebFeedIDs: self.flattenedFeeds().feedIDs())
 			self.fetchAllUnreadCounts()
 		}
 

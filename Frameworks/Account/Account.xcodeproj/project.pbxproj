@@ -47,6 +47,7 @@
 		844B297D2106C7EC004020B3 /* Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B297C2106C7EC004020B3 /* Feed.swift */; };
 		844B297F210CE37E004020B3 /* UnreadCountProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844B297E210CE37E004020B3 /* UnreadCountProvider.swift */; };
 		844B2981210CE3BF004020B3 /* RSWeb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844B2980210CE3BF004020B3 /* RSWeb.framework */; };
+		8467472124C381CF00A4E594 /* AccountDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467472024C381CF00A4E594 /* AccountDefaults.swift */; };
 		8469F81C1F6DD15E0084783E /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848935101F62486800CEBD24 /* Account.swift */; };
 		846CA1882392349E00B55117 /* SyncDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846CA1872392349E00B55117 /* SyncDatabase.framework */; };
 		846E77451F6EF9B900A165E2 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419740D1F6DD25F006346C4 /* Container.swift */; };
@@ -154,6 +155,7 @@
 		844B297C2106C7EC004020B3 /* Feed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feed.swift; sourceTree = "<group>"; };
 		844B297E210CE37E004020B3 /* UnreadCountProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadCountProvider.swift; sourceTree = "<group>"; };
 		844B2980210CE3BF004020B3 /* RSWeb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSWeb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8467472024C381CF00A4E594 /* AccountDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDefaults.swift; sourceTree = "<group>"; };
 		846CA1872392349E00B55117 /* SyncDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SyncDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		846E77531F6F00E300A165E2 /* AccountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		848934F61F62484F00CEBD24 /* Account.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Account.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -303,6 +305,7 @@
 			isa = PBXGroup;
 			children = (
 				848935101F62486800CEBD24 /* Account.swift */,
+				8467472024C381CF00A4E594 /* AccountDefaults.swift */,
 				841974241F6DDCE4006346C4 /* AccountDelegate.swift */,
 				51E3EB40229AF61B00645299 /* AccountError.swift */,
 				846E77531F6F00E300A165E2 /* AccountManager.swift */,
@@ -545,6 +548,7 @@
 				515E4EB72324FF8C0057B0E7 /* Credentials.swift in Sources */,
 				51E490362288C37100C791F0 /* FeedbinDate.swift in Sources */,
 				5165D72922835F7A00D9D53D /* FeedSpecifier.swift in Sources */,
+				8467472124C381CF00A4E594 /* AccountDefaults.swift in Sources */,
 				844B297D2106C7EC004020B3 /* Feed.swift in Sources */,
 				515E4EB62324FF8C0057B0E7 /* URLRequest+RSWeb.swift in Sources */,
 				5154367B228EEB28005E1CDF /* FeedbinImportResult.swift in Sources */,

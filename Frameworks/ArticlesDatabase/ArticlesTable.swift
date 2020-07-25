@@ -27,7 +27,7 @@ final class ArticlesTable: DatabaseTable {
 	}()
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
-	private var articleCutoffDate = Date().bySubtracting(days: 3 * 31)
+	let articleCutoffDate = Date().bySubtracting(days: 90)
 	private var maximumArticleCutoffDate = Date().bySubtracting(days: 4 * 31)
 
 	private typealias ArticlesFetchMethod = (FMDatabase) -> Set<Article>
@@ -397,7 +397,7 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
-		queue.runInDatabase { (database) in
+		queue.runInTransaction { (database) in
 			let sql = "select articleID from articles where searchRowID is null limit 500;"
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 				return
@@ -406,7 +406,7 @@ final class ArticlesTable: DatabaseTable {
 			if articleIDs.isEmpty {
 				return
 			}
-			self.searchTable.ensureIndexedArticles(for: articleIDs)
+			self.searchTable.ensureIndexedArticles(articleIDs, database)
 
 			DispatchQueue.main.async {
 				self.indexUnindexedArticles()
@@ -510,7 +510,7 @@ final class ArticlesTable: DatabaseTable {
 	/// the April 2020 retention policy change for feed-based accounts.
 	func markOlderStatusesAsRead() {
 		queue.runInTransaction { database in
-			let sql = "update statuses set read = true where dateArrived<?;"
+			let sql = "update statuses set read = 1 where dateArrived<?;"
 			let parameters = [self.articleCutoffDate] as [Any]
 			database.executeUpdate(sql, withArgumentsIn: parameters)
 		}

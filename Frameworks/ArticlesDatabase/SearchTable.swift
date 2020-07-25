@@ -77,12 +77,8 @@ final class SearchTable: DatabaseTable {
 			self.ensureIndexedArticles(articleIDs, database)
 		}
 	}
-}
 
-// MARK: - Private
-
-private extension SearchTable {
-
+	/// Add to, or update, the search index for articles with specified IDs.
 	func ensureIndexedArticles(_ articleIDs: Set<String>, _ database: FMDatabase) {
 		guard let articlesTable = articlesTable else {
 			return
@@ -97,6 +93,11 @@ private extension SearchTable {
 		let indexedArticles = articleSearchInfos.filter { $0.searchRowID != nil }
 		updateIndexForArticles(indexedArticles, database)
 	}
+}
+
+// MARK: - Private
+
+private extension SearchTable {
 
 	func performInitialIndexForArticles(_ articles: Set<ArticleSearchInfo>, _ database: FMDatabase) {
 		articles.forEach { performInitialIndex($0, database) }

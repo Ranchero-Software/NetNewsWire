@@ -74,6 +74,8 @@ public final class AccountManager: UnreadCountProvider {
 		let downloadProgressArray = activeAccounts.map { $0.refreshProgress }
 		return CombinedRefreshProgress(downloadProgressArray: downloadProgressArray)
 	}
+
+	private var defaults = AccountDefaults()
 	
 	public init() {
 		// The local "On My Mac" account must always exist, even if it's empty.
@@ -86,10 +88,11 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 
-		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)!
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier, defaults: defaults)!
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
+		defaults.performedApril2020RetentionPolicyChange = true // Part of a paranoid safeguard to make sure we don’t do it more than once.
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
@@ -112,7 +115,7 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 		
-		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)!
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID, defaults: defaults)!
 		accountsDictionary[accountID] = account
 		
 		NotificationCenter.default.post(name: .AccountsDidChange, object: self)
@@ -255,7 +258,7 @@ private extension AccountManager {
 	}
 
 	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
+		return Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier, defaults: defaults)
 	}
 
 	func loadAccount(_ filename: String) -> Account? {
