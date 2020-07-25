@@ -83,18 +83,16 @@ struct TimelineView: View {
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
 			#else
 			ScrollViewReader { scrollViewProxy in
-				List(timelineItems.keys, id: \.self) { timelineItemID in
-					if let timelineItem = timelineItems[timelineItemID] {
-						ZStack {
-							let selected = timelineModel.selectedTimelineItemID == timelineItem.article.articleID
-							TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
-								.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
-							NavigationLink(destination: ArticleContainerView(),
-										   tag: timelineItem.article.articleID,
-										   selection: $timelineModel.selectedTimelineItemID) {
-								EmptyView()
-							}.buttonStyle(PlainButtonStyle())
-						}
+				List(timelineItems.items) { timelineItem in
+					ZStack {
+						let selected = timelineModel.selectedTimelineItemID == timelineItem.article.articleID
+						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
+							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
+						NavigationLink(destination: ArticleContainerView(),
+									   tag: timelineItem.article.articleID,
+									   selection: $timelineModel.selectedTimelineItemID) {
+							EmptyView()
+						}.buttonStyle(PlainButtonStyle())
 					}
 				}
 				.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
@@ -118,6 +116,19 @@ struct TimelineView: View {
 //				withAnimation {
 					timelineItems = items
 //				}
+			}
+			.onReceive(timelineModel.articleStatusChangePublisher!) { articleIDs in
+				articleIDs.forEach { articleID in
+					if let position = timelineItems.index[articleID] {
+						if timelineItems.items[position].isReadOnly {
+							withAnimation {
+								timelineItems.items[position].updateStatus()
+							}
+						} else {
+							timelineItems.items[position].updateStatus()
+						}
+					}
+				}
 			}
 			.navigationBarTitle(Text(verbatim: timelineModel.nameForDisplay), displayMode: .inline)
 			#endif
