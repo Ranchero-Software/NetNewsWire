@@ -11,7 +11,7 @@ import SwiftUI
 struct TimelineView: View {
 	
 	@EnvironmentObject private var timelineModel: TimelineModel
-	@State private var timelineItems = OrderedDictionary<String, TimelineItem>()
+	@State private var timelineItems = TimelineItems()
 	@State private var timelineItemFrames = [String: CGRect]()
 	
 	@ViewBuilder var body: some View {
@@ -38,12 +38,10 @@ struct TimelineView: View {
 					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				ScrollViewReader { scrollViewProxy in
-					List(timelineItems.keys, id: \.self, selection: $timelineModel.selectedTimelineItemIDs) { timelineItemID in
-						if let timelineItem = timelineItems[timelineItemID] {
-							let selected = timelineModel.selectedTimelineItemIDs.contains(timelineItem.article.articleID)
-							TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
-								.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
-						}
+					List(timelineItems.items, selection: $timelineModel.selectedTimelineItemIDs) { timelineItem in
+						let selected = timelineModel.selectedTimelineItemIDs.contains(timelineItem.article.articleID)
+						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
+							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
 					}
 					.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
 						for pref in preferences {
@@ -67,6 +65,19 @@ struct TimelineView: View {
 			.onReceive(timelineModel.timelineItemsPublisher!) { items in
 				withAnimation {
 					timelineItems = items
+				}
+			}
+			.onReceive(timelineModel.articleStatusChangePublisher!) { articleIDs in
+				articleIDs.forEach { articleID in
+					if let position = timelineItems.index[articleID] {
+						if timelineItems.items[position].isReadOnly {
+							withAnimation {
+								timelineItems.items[position].updateStatus()
+							}
+						} else {
+							timelineItems.items[position].updateStatus()
+						}
+					}
 				}
 			}
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))

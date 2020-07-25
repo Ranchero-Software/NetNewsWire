@@ -30,11 +30,12 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedTimelineItemID: String? = nil    // Don't use directly.  Use selectedTimelineItemsPublisher
 	@Published var isReadFiltered: Bool? = nil
 
-	var timelineItemsPublisher: AnyPublisher<OrderedDictionary<String, TimelineItem>, Never>?
+	var timelineItemsPublisher: AnyPublisher<TimelineItems, Never>?
 	var articlesPublisher: AnyPublisher<[Article], Never>?
 	var selectedTimelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
 	var selectedArticlesPublisher: AnyPublisher<[Article], Never>?
-
+	var articleStatusChangePublisher: AnyPublisher<Set<String>, Never>?
+	
 	var readFilterEnabledTable = [FeedIdentifier: Bool]()
 
 	var undoManager: UndoManager?
@@ -45,7 +46,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	private var sortDirectionSubject = ReplaySubject<Bool, Never>(bufferSize: 1)
 	private var groupByFeedSubject = ReplaySubject<Bool, Never>(bufferSize: 1)
 
-	private var timelineItems = OrderedDictionary<String, TimelineItem>()
+	private var timelineItems = TimelineItems()
 	
 	init(delegate: TimelineModelDelegate) {
 		self.delegate = delegate
@@ -53,24 +54,17 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		subscribeToReadFilterChanges()
 		subscribeToArticleFetchChanges()
 		subscribeToSelectedArticleSelectionChanges()
-//		subscribeToArticleStatusChanges()
+		subscribeToArticleStatusChanges()
 //		subscribeToAccountDidDownloadArticles()
 	}
 	
 	// MARK: Subscriptions
 	
-//	func subscribeToArticleStatusChanges() {
-//		NotificationCenter.default.publisher(for: .StatusesDidChange).sink { [weak self] note in
-//			guard let self = self, let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
-//				return
-//			}
-//			articleIDs.forEach { articleID in
-//				if let timelineItemIndex = self.idToTimelineItemDictionary[articleID] {
-//					self.timelineItems[timelineItemIndex].updateStatus()
-//				}
-//			}
-//		}.store(in: &cancellables)
-//	}
+	func subscribeToArticleStatusChanges() {
+		articleStatusChangePublisher = NotificationCenter.default.publisher(for: .StatusesDidChange)
+			.compactMap { $0.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> }
+			.eraseToAnyPublisher()
+	}
 	
 //	func subscribeToAccountDidDownloadArticles() {
 //		NotificationCenter.default.publisher(for: .AccountDidDownloadArticles).sink { [weak self] note in
@@ -131,7 +125,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 			.combineLatest(sortDirectionPublisher, groupByPublisher)
 			.compactMap { [weak self] articles, sortDirection, groupBy in
 				let sortedArticles = Array(articles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupBy)
-				return self?.buildTimelineItems(articles: sortedArticles) ?? OrderedDictionary<String, TimelineItem>()
+				return self?.buildTimelineItems(articles: sortedArticles) ?? TimelineItems()
 			}
 			.share(replay: 1)
 			.eraseToAnyPublisher()
@@ -145,7 +139,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		// Transform to articles for those that just need articles
 		articlesPublisher = timelineItemsPublisher!
 			.map { timelineItems in
-				timelineItems.values.values.map { $0.article }
+				timelineItems.items.map { $0.article }
 			}
 			.share()
 			.eraseToAnyPublisher()
@@ -318,11 +312,10 @@ private extension TimelineModel {
 		return fetchedArticles
 	}	
 	
-	func buildTimelineItems(articles: [Article]) -> OrderedDictionary<String, TimelineItem> {
-		var items = OrderedDictionary<String, TimelineItem>()
-		for (index, article) in articles.enumerated() {
-			let item = TimelineItem(index: index, article: article)
-			items[item.id] = item
+	func buildTimelineItems(articles: [Article]) -> TimelineItems {
+		var items = TimelineItems()
+		for (position, article) in articles.enumerated() {
+			items.append(TimelineItem(position: position, article: article))
 		}
 		return items
 	}

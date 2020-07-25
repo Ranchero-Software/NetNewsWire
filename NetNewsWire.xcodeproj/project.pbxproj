@@ -477,11 +477,8 @@
 		51C452AF2265108300C03939 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		51C452B42265141B00C03939 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C452B32265141B00C03939 /* WebKit.framework */; };
 		51C452B82265178500C03939 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 51C452B72265178500C03939 /* styleSheet.css */; };
-		51C65AD524CC834F008EB3BD /* OrderedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AD424CC834F008EB3BD /* OrderedDictionary.swift */; };
-		51C65AD624CC834F008EB3BD /* OrderedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AD424CC834F008EB3BD /* OrderedDictionary.swift */; };
-		51C65AD724CC834F008EB3BD /* OrderedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AD424CC834F008EB3BD /* OrderedDictionary.swift */; };
-		51C65AD824CC834F008EB3BD /* OrderedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AD424CC834F008EB3BD /* OrderedDictionary.swift */; };
-		51C65AD924CC834F008EB3BD /* OrderedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AD424CC834F008EB3BD /* OrderedDictionary.swift */; };
+		51C65AFC24CCB2C9008EB3BD /* TimelineItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AFB24CCB2C9008EB3BD /* TimelineItems.swift */; };
+		51C65AFD24CCB2C9008EB3BD /* TimelineItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AFB24CCB2C9008EB3BD /* TimelineItems.swift */; };
 		51C9DE5823EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */; };
 		51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51CE1C0823621EDA005548FC /* RefreshProgressView.xib */; };
 		51CE1C0B23622007005548FC /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CE1C0A23622006005548FC /* RefreshProgressView.swift */; };
@@ -2113,7 +2110,7 @@
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
-		51C65AD424CC834F008EB3BD /* OrderedDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedDictionary.swift; sourceTree = "<group>"; };
+		51C65AFB24CCB2C9008EB3BD /* TimelineItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineItems.swift; sourceTree = "<group>"; };
 		51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperScriptMessageHandler.swift; sourceTree = "<group>"; };
 		51CE1C0823621EDA005548FC /* RefreshProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RefreshProgressView.xib; sourceTree = "<group>"; };
 		51CE1C0A23622006005548FC /* RefreshProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
@@ -3012,6 +3009,7 @@
 				51919FED24AB85E400541E64 /* TimelineContainerView.swift */,
 				51B8BCE524C25F7C00360B00 /* TimelineContextMenu.swift */,
 				51919FF324AB869C00541E64 /* TimelineItem.swift */,
+				51C65AFB24CCB2C9008EB3BD /* TimelineItems.swift */,
 				514E6C0124AD29A300AC6F6E /* TimelineItemStatusView.swift */,
 				514E6BD924ACEA0400AC6F6E /* TimelineItemView.swift */,
 				51919FF024AB864A00541E64 /* TimelineModel.swift */,
@@ -3588,7 +3586,6 @@
 				51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */,
 				84411E701FE5FBFA004B527F /* SmallIconProvider.swift */,
 				51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */,
-				51C65AD424CC834F008EB3BD /* OrderedDictionary.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -5209,6 +5206,7 @@
 				51E4990D24A808C500B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
 				51919FF424AB869C00541E64 /* TimelineItem.swift in Sources */,
 				514E6C0224AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */,
+				51C65AFC24CCB2C9008EB3BD /* TimelineItems.swift in Sources */,
 				51E49A0024A91FC100B667CB /* SidebarContainerView.swift in Sources */,
 				5177471824B3812200EB0F74 /* IconView.swift in Sources */,
 				51E4995C24A875F300B667CB /* ArticleRenderer.swift in Sources */,
@@ -5254,7 +5252,6 @@
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				5177471024B3029400EB0F74 /* ArticleViewController.swift in Sources */,
 				65082A5224C72B88009FA994 /* SettingsCredentialsAccountModel.swift in Sources */,
-				51C65AD824CC834F008EB3BD /* OrderedDictionary.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
 				51B8BCC224C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
 				51A8005124CC453C00F41F1D /* ReplaySubject.swift in Sources */,
@@ -5373,6 +5370,7 @@
 				17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */,
 				514E6C0724AD2B5F00AC6F6E /* Image-Extensions.swift in Sources */,
 				51E4994D24A8734C00B667CB /* ExtensionPointIdentifer.swift in Sources */,
+				51C65AFD24CCB2C9008EB3BD /* TimelineItems.swift in Sources */,
 				51B54A6724B549FE0014348B /* ArticleIconSchemeHandler.swift in Sources */,
 				51E4992224A8095600B667CB /* URL-Extensions.swift in Sources */,
 				51E4990424A808C300B667CB /* WebFeedIconDownloader.swift in Sources */,
@@ -5393,7 +5391,6 @@
 				1769E32224BC5925000E1E8E /* AccountsPreferencesModel.swift in Sources */,
 				51E4991624A8090300B667CB /* ArticleUtilities.swift in Sources */,
 				51919FF224AB864A00541E64 /* TimelineModel.swift in Sources */,
-				51C65AD924CC834F008EB3BD /* OrderedDictionary.swift in Sources */,
 				51E4991A24A8090F00B667CB /* IconImage.swift in Sources */,
 				1799E6AA24C2F93F00511E91 /* InspectorPlatformModifier.swift in Sources */,
 				51B8104624C0E6D200C6C32D /* TimelineTextSizer.swift in Sources */,
@@ -5649,7 +5646,6 @@
 				65ED403F235DEF6C0081F399 /* ArticleRenderer.swift in Sources */,
 				65ED4040235DEF6C0081F399 /* GeneralPrefencesViewController.swift in Sources */,
 				179DB1DFBCF9177104B12E0F /* AccountsNewsBlurWindowController.swift in Sources */,
-				51C65AD624CC834F008EB3BD /* OrderedDictionary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5807,7 +5803,6 @@
 				D3555BF524664566005E48C3 /* ArticleSearchBar.swift in Sources */,
 				B24E9ADE245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */,
 				C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */,
-				51C65AD724CC834F008EB3BD /* OrderedDictionary.swift in Sources */,
 				51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
@@ -5939,7 +5934,6 @@
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
 				511B9806237DCAC90028BCAA /* UserInfoKey.swift in Sources */,
 				84C9FC7722629E1200D921D6 /* AdvancedPreferencesViewController.swift in Sources */,
-				51C65AD524CC834F008EB3BD /* OrderedDictionary.swift in Sources */,
 				849EE72120391F560082A1EA /* SharingServicePickerDelegate.swift in Sources */,
 				5108F6B62375E612001ABC45 /* CacheCleaner.swift in Sources */,
 				849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */,

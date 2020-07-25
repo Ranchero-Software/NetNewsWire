@@ -129,25 +129,25 @@ struct AddWebFeedView: View {
 	@ViewBuilder var folderPicker: some View {
 		#if os(iOS)
 		Picker("Folder", selection: $viewModel.selectedFolderIndex, content: {
-			ForEach(0..<viewModel.containers.count, id: \.self, content: { index in
-				if let containerName = (viewModel.containers[index] as? DisplayNameProvider)?.nameForDisplay {
-					if viewModel.containers[index] is Folder {
+			ForEach(0..<viewModel.containers.count, id: \.self, content: { position in
+				if let containerName = (viewModel.containers[position] as? DisplayNameProvider)?.nameForDisplay {
+					if viewModel.containers[position] is Folder {
 						HStack(alignment: .top) {
-							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
+							if let image = viewModel.smallIconImage(for: viewModel.containers[position]) {
 								Image(rsImage: image)
 									.foregroundColor(Color("AccentColor"))
 							}
 							Text("\(containerName)")
-								.tag(index)
+								.tag(position)
 						}.padding(.leading, 16)
 					} else {
 						HStack(alignment: .top) {
-							if let image = viewModel.smallIconImage(for: viewModel.containers[index]) {
+							if let image = viewModel.smallIconImage(for: viewModel.containers[position]) {
 								Image(rsImage: image)
 									.foregroundColor(Color("AccentColor"))
 							}
 							Text(containerName)
-								.tag(index)
+								.tag(position)
 						}
 					}
 				}

@@ -18,7 +18,7 @@ enum TimelineItemStatus {
 struct TimelineItem: Identifiable {
 	
 	var id: String
-	var index: Int
+	var position: Int
 	var article: Article
 
 	var status: TimelineItemStatus = .showNone
@@ -27,15 +27,19 @@ struct TimelineItem: Identifiable {
 	var byline: String
 	var dateTimeString: String
 	
-	init(index: Int, article: Article) {
+	init(position: Int, article: Article) {
 		self.id = article.articleID
-		self.index = index
+		self.position = position
 		self.article = article
 		self.byline = article.webFeed?.nameForDisplay ?? ""
 		self.dateTimeString = ArticleStringFormatter.dateString(article.logicalDatePublished)
 		self.truncatedTitle = ArticleStringFormatter.truncatedTitle(article)
 		self.truncatedSummary = ArticleStringFormatter.truncatedSummary(article)
 		updateStatus()
+	}
+	
+	var isReadOnly: Bool {
+		return article.status.read == true && article.status.starred == false
 	}
 	
 	mutating func updateStatus() {
