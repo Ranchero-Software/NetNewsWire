@@ -21,8 +21,8 @@ final class SceneModel: ObservableObject {
 	@Published var extractorButtonState: ArticleExtractorButtonState?
 	@Published var openInBrowserButtonState: Bool?
 	@Published var shareButtonState: Bool?
-
 	@Published var accountErrorMessage = ""
+	@Published var accountSyncErrors: [AccountSyncError] = []
 
 	var selectedArticles: [Article] {
 		timelineModel.selectedArticles
@@ -48,6 +48,7 @@ final class SceneModel: ObservableObject {
 		self.articleIconSchemeHandler = ArticleIconSchemeHandler(sceneModel: self)
 		self.webViewProvider = WebViewProvider(articleIconSchemeHandler: self.articleIconSchemeHandler!)
 
+		subscribeToAccountSyncErrors()
 		subscribeToToolbarChangeEvents()
 	}
 	
@@ -144,6 +145,16 @@ private extension SceneModel {
 			self?.updateMarkAllAsReadButtonsState(articles: articles)
 			self?.updateArticleButtonsState(selectedArticles: selectedArticles)
 		}.store(in: &cancellables)
+	}
+	
+	func subscribeToAccountSyncErrors() {
+		NotificationCenter.default.publisher(for: .AccountsDidFailToSyncWithErrors)
+			.sink { [weak self] notification in
+				guard let errors = notification.object as? [AccountSyncError] else {
+					return
+				}
+				self?.accountSyncErrors = errors
+			}.store(in: &cancellables)
 	}
 	
 	// MARK: Button State Updates
