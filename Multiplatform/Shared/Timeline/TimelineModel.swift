@@ -41,6 +41,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var markAllAsReadSubject = PassthroughSubject<Void, Never>()
 	var toggleReadStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
 	var toggleStarredStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
+	var openSelectedArticlesInBrowserSubject = PassthroughSubject<Void, Never>()
 	
 	var readFilterEnabledTable = [FeedIdentifier: Bool]()
 
@@ -63,6 +64,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		subscribeToArticleStatusChanges()
 //		subscribeToAccountDidDownloadArticles()
 		subscribeToArticleMarkingEvents()
+		subscribeToOpenInBrowserEvents()
 	}
 	
 	// MARK: API
@@ -308,6 +310,25 @@ private extension TimelineModel {
 			}
 			.store(in: &cancellables)
 		
+	}
+	
+	func subscribeToOpenInBrowserEvents() {
+		guard let selectedArticlesPublisher = selectedArticlesPublisher else { return }
+		
+		let selectedArticleOpenInBrowserPublisher = openSelectedArticlesInBrowserSubject
+			.withLatestFrom(selectedArticlesPublisher)
+			.compactMap { $0.first?.preferredLink }
+		
+		selectedArticleOpenInBrowserPublisher
+			.sink { link in
+				#if os(macOS)
+				Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+				#else
+				guard let url = URL(string: link) else { return }
+				UIApplication.shared.open(url, options: [:])
+				#endif
+			}
+			.store(in: &cancellables)
 	}
 	
 	// MARK: Timeline Management

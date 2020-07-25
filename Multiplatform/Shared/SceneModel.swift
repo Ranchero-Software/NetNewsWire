@@ -77,7 +77,7 @@ final class SceneModel: ObservableObject {
 
 	/// Opens the selected article in an external browser
 	func openSelectedArticleInBrowser() {
-//		timelineModel.openSelectedArticleInBrowser()
+		timelineModel.openSelectedArticlesInBrowserSubject.send()
 	}
 	
 	/// Retrieves the article before the given article in the Timeline
