@@ -10,10 +10,9 @@ import SwiftUI
 import Combine
 import Account
 
-final class SidebarExpandedContainers: ObservableObject {
+struct SidebarExpandedContainers {
 	
-	@Published var expandedTable = [ContainerIdentifier: Bool]()
-	var objectDidChange = PassthroughSubject<Void, Never>()
+	var expandedTable = [ContainerIdentifier: Bool]()
 	
 	var data: Data {
 		get {
@@ -41,7 +40,6 @@ final class SidebarExpandedContainers: ObservableObject {
 		}
 		set(newValue) {
 			expandedTable[containerID] = newValue
-			objectDidChange.send()
 		}
 	}
 	

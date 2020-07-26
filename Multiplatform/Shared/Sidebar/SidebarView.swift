@@ -19,7 +19,6 @@ struct SidebarView: View {
 
 	// I had to comment out SceneStorage because it blows up if used on macOS
 	//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
-	@StateObject private var expandedContainers = SidebarExpandedContainers()
 
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
@@ -142,10 +141,10 @@ struct SidebarView: View {
 	var rows: some View {
 		ForEach(sidebarItems) { sidebarItem in
 			if let containerID = sidebarItem.containerID {
-				DisclosureGroup(isExpanded: $expandedContainers[containerID]) {
+				DisclosureGroup(isExpanded: $sidebarModel.expandedContainers[containerID]) {
 					ForEach(sidebarItem.children) { sidebarItem in
 						if let containerID = sidebarItem.containerID {
-							DisclosureGroup(isExpanded: $expandedContainers[containerID]) {
+							DisclosureGroup(isExpanded: $sidebarModel.expandedContainers[containerID]) {
 								ForEach(sidebarItem.children) { sidebarItem in
 									SidebarItemNavigation(sidebarItem: sidebarItem)
 								}

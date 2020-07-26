@@ -21,6 +21,7 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedFeedIdentifiers = Set<FeedIdentifier>()
 	@Published var selectedFeedIdentifier: FeedIdentifier? = .none
 	@Published var isReadFiltered = false
+	@Published var expandedContainers = SidebarExpandedContainers()
 	
 	weak var delegate: SidebarModelDelegate?
 
