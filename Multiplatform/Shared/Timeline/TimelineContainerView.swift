@@ -33,18 +33,7 @@ struct TimelineContainerView: View {
 			.onReceive(sceneModel.timelineModel.articleStatusChangePublisher!) { articleIDs in
 				articleIDs.forEach { articleID in
 					if let position = timelineItems.index[articleID] {
-						// This animation will trigger a deselect on iPhones and iPads, so we will disable it for now
-						#if os(macOS)
-						if timelineItems.items[position].isReadOnly {
-							withAnimation {
-								timelineItems.items[position].updateStatus()
-							}
-						} else {
-							timelineItems.items[position].updateStatus()
-						}
-						#else
 						timelineItems.items[position].updateStatus()
-						#endif
 					}
 				}
 			}
