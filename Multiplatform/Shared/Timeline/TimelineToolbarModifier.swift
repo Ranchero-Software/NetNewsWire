@@ -12,25 +12,26 @@ struct TimelineToolbarModifier: ViewModifier {
 	
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var timelineModel: TimelineModel
-
+	@State private var isReadFiltered: Bool? = nil
+	
 	func body(content: Content) -> some View {
 		content
 			.toolbar {
 				#if os(iOS)
 				ToolbarItem(placement: .primaryAction) {
 					Button {
-						withAnimation {
-							timelineModel.toggleReadFilter()
+						if let filter = isReadFiltered {
+							timelineModel.changeReadFilterSubject.send(!filter)
 						}
 					} label: {
-						if timelineModel.isReadFiltered ?? false {
+						if isReadFiltered ?? false {
 							AppAssets.filterActiveImage.font(.title3)
 						} else {
 							AppAssets.filterInactiveImage.font(.title3)
 						}
 					}
-					.hidden(timelineModel.isReadFiltered == nil)
-					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
+					.hidden(isReadFiltered == nil)
+					.help(isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				
 				ToolbarItem(placement: .bottomBar) {
@@ -47,6 +48,9 @@ struct TimelineToolbarModifier: ViewModifier {
 					Spacer()
 				}
 				#endif
+			}
+			.onReceive(timelineModel.readFilterAndFeedsPublisher!) { (_, filtered) in
+				isReadFiltered = filtered
 			}
 	}
 	

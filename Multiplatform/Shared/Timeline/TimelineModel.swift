@@ -28,7 +28,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var nameForDisplay = ""
 	@Published var selectedTimelineItemIDs = Set<String>()  // Don't use directly.  Use selectedTimelineItemsPublisher
 	@Published var selectedTimelineItemID: String? = nil    // Don't use directly.  Use selectedTimelineItemsPublisher
-	@Published var isReadFiltered: Bool? = nil
 
 	var selectedArticles = [Article]()
 	
@@ -37,11 +36,13 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var selectedTimelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
 	var selectedArticlesPublisher: AnyPublisher<[Article], Never>?
 	var articleStatusChangePublisher: AnyPublisher<Set<String>, Never>?
+	var readFilterAndFeedsPublisher: AnyPublisher<([Feed], Bool?), Never>?
 	
 	var markAllAsReadSubject = PassthroughSubject<Void, Never>()
 	var toggleReadStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
 	var toggleStarredStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
 	var openSelectedArticlesInBrowserSubject = PassthroughSubject<Void, Never>()
+	var changeReadFilterSubject = PassthroughSubject<Bool, Never>()
 	
 	var readFilterEnabledTable = [FeedIdentifier: Bool]()
 
@@ -58,7 +59,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	init(delegate: TimelineModelDelegate) {
 		self.delegate = delegate
 		subscribeToUserDefaultsChanges()
-		subscribeToReadFilterChanges()
+		subscribeToReadFilterAndFeedChanges()
 		subscribeToArticleFetchChanges()
 		subscribeToArticleSelectionChanges()
 		subscribeToArticleStatusChanges()
@@ -67,15 +68,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		subscribeToOpenInBrowserEvents()
 	}
 	
-	// MARK: API
-	
-	func toggleReadFilter() {
-//		guard let filter = isReadFiltered, let feedID = feeds.first?.feedID else { return }
-//		readFilterEnabledTable[feedID] = !filter
-//		isReadFiltered = !filter
-//		self.fetchArticles()
-	}
-
 	@discardableResult
 	func goToNextUnread() -> Bool {
 //		var startIndex: Int
@@ -142,32 +134,6 @@ private extension TimelineModel {
 //		}.store(in: &cancellables)
 //	}
 	
-	// TODO: Don't forget to redo this!!!
-	func subscribeToReadFilterChanges() {
-		guard let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
-
-		selectedFeedsPublisher.sink { [weak self] feeds in
-			guard let self = self else { return }
-			
-			guard feeds.count == 1, let timelineFeed = feeds.first else {
-				self.isReadFiltered = nil
-				return
-			}
-	
-			guard timelineFeed.defaultReadFilterType != .alwaysRead else {
-				self.isReadFiltered = nil
-				return
-			}
-	
-			if let feedID = timelineFeed.feedID, let readFilterEnabled = self.readFilterEnabledTable[feedID] {
-				self.isReadFiltered =  readFilterEnabled
-			} else {
-				self.isReadFiltered = timelineFeed.defaultReadFilterType == .read
-			}
-		}
-		.store(in: &cancellables)
-	}
-	
 	func subscribeToUserDefaultsChanges() {
 		let kickStartNote = Notification(name: Notification.Name("Kick Start"))
 		NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
@@ -178,17 +144,60 @@ private extension TimelineModel {
 		}.store(in: &cancellables)
 	}
 	
-	func subscribeToArticleFetchChanges() {
+	func subscribeToReadFilterAndFeedChanges() {
 		guard let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
+		
+		let toggledReadFilterPublisher = changeReadFilterSubject
+			.map { Optional($0) }
+			.withLatestFrom(selectedFeedsPublisher, resultSelector: { ($1, $0) })
+			.share()
+
+		toggledReadFilterPublisher
+			.sink { [weak self] (selectedFeeds, readFiltered) in
+				if let feedID = selectedFeeds.first?.feedID {
+					self?.readFilterEnabledTable[feedID] = readFiltered
+				}
+			}
+			.store(in: &cancellables)
+		
+		let feedsReadFilterPublisher = selectedFeedsPublisher
+			.map { [weak self] feeds -> ([Feed], Bool?) in
+				guard let self = self else { return (feeds, nil) }
+				
+				guard feeds.count == 1, let timelineFeed = feeds.first else {
+					return (feeds, nil)
+				}
+				
+				guard timelineFeed.defaultReadFilterType != .alwaysRead else {
+					return (feeds, nil)
+				}
+				
+				if let feedID = timelineFeed.feedID, let readFilterEnabled = self.readFilterEnabledTable[feedID] {
+					return (feeds, readFilterEnabled)
+				} else {
+					return (feeds, timelineFeed.defaultReadFilterType == .read)
+				}
+			}
+
+		readFilterAndFeedsPublisher = toggledReadFilterPublisher
+			.merge(with: feedsReadFilterPublisher)
+			.eraseToAnyPublisher()
+	}
+	
+	func subscribeToArticleFetchChanges() {
+		guard let readFilterAndFeedsPublisher = readFilterAndFeedsPublisher,
+			  let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
+		
 		let sortDirectionPublisher = sortDirectionSubject.removeDuplicates()
 		let groupByPublisher = groupByFeedSubject.removeDuplicates()
 		
-		timelineItemsPublisher = selectedFeedsPublisher
-			.map { [weak self] feeds -> Set<Article> in
-				return self?.fetchArticles(feeds: feeds) ?? Set<Article>()
+		timelineItemsPublisher = readFilterAndFeedsPublisher
+			.map { [weak self] (feeds, readFilter) -> Set<Article> in
+				return self?.fetchArticles(feeds: feeds, isReadFiltered: readFilter) ?? Set<Article>()
 			}
 			.combineLatest(sortDirectionPublisher, groupByPublisher)
 			.compactMap { [weak self] articles, sortDirection, groupBy in
+				print("************")
 				let sortedArticles = Array(articles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupBy)
 				return self?.buildTimelineItems(articles: sortedArticles) ?? TimelineItems()
 			}
@@ -343,7 +352,7 @@ private extension TimelineModel {
 	
 	// MARK: Article Fetching
 	
-	func fetchArticles(feeds: [Feed]) -> Set<Article> {
+	func fetchArticles(feeds: [Feed], isReadFiltered: Bool?) -> Set<Article> {
 		if feeds.isEmpty {
 			return Set<Article>()
 		}

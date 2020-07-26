@@ -13,6 +13,7 @@ struct TimelineView: View {
 	@EnvironmentObject private var timelineModel: TimelineModel
 	@State private var timelineItems = TimelineItems()
 	@State private var timelineItemFrames = [String: CGRect]()
+	@State private var isReadFiltered: Bool? = nil
 	
 	@ViewBuilder var body: some View {
 		GeometryReader { geometryReaderProxy in
@@ -22,20 +23,20 @@ struct TimelineView: View {
 					TimelineSortOrderView()
 					Spacer()
 					Button (action: {
-						withAnimation {
-							timelineModel.toggleReadFilter()
+						if let filtered = isReadFiltered {
+							timelineModel.changeReadFilterSubject.send(!filtered)
 						}
 					}, label: {
-						if timelineModel.isReadFiltered ?? false {
+						if isReadFiltered ?? false {
 							AppAssets.filterActiveImage
 						} else {
 							AppAssets.filterInactiveImage
 						}
 					})
-					.hidden(timelineModel.isReadFiltered == nil)
+					.hidden(isReadFiltered == nil)
 					.padding(.top, 8).padding(.trailing)
 					.buttonStyle(PlainButtonStyle())
-					.help(timelineModel.isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
+					.help(isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				ScrollViewReader { scrollViewProxy in
 					List(timelineItems.items, selection: $timelineModel.selectedTimelineItemIDs) { timelineItem in
@@ -61,6 +62,9 @@ struct TimelineView: View {
 						}
 					}
 				}
+			}
+			.onReceive(timelineModel.readFilterAndFeedsPublisher!) { (_, filtered) in
+				isReadFiltered = filtered
 			}
 			.onReceive(timelineModel.timelineItemsPublisher!) { items in
 				withAnimation {
