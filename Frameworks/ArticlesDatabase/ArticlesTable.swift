@@ -597,7 +597,7 @@ final class ArticlesTable: DatabaseTable {
 				return
 			}
 
-			let sql = "update statuses set read = true where dateArrived<?;"
+			let sql = "update statuses set read = 1 where dateArrived<?;"
 			let parameters = [self.articleCutoffDate] as [Any]
 			database.executeUpdate(sql, withArgumentsIn: parameters)
 		}
