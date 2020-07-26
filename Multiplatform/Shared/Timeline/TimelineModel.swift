@@ -147,6 +147,13 @@ private extension TimelineModel {
 	func subscribeToReadFilterAndFeedChanges() {
 		guard let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
 		
+		selectedFeedsPublisher
+			.sink { [weak self] _ in
+				self?.selectedTimelineItemIDs = Set<String>()
+				self?.selectedTimelineItemID = nil
+			}
+			.store(in: &cancellables)
+
 		let toggledReadFilterPublisher = changeReadFilterSubject
 			.map { Optional($0) }
 			.withLatestFrom(selectedFeedsPublisher, resultSelector: { ($1, $0) })
@@ -178,7 +185,7 @@ private extension TimelineModel {
 					return (feeds, timelineFeed.defaultReadFilterType == .read)
 				}
 			}
-
+		
 		readFilterAndFeedsPublisher = toggledReadFilterPublisher
 			.merge(with: feedsReadFilterPublisher)
 			.share(replay: 1)
