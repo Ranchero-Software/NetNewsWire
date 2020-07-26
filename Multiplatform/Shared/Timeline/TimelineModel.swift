@@ -378,16 +378,6 @@ private extension TimelineModel {
 			.store(in: &cancellables)
 	}
 	
-	// MARK: Timeline Management
-	
-	func performBlockAndRestoreSelection(_ block: (() -> Void)) {
-//		let savedArticleIDs = selectedArticleIDs
-//		let savedArticleID = selectedArticleID
-		block()
-//		selectedArticleIDs = savedArticleIDs
-//		selectedArticleID = savedArticleID
-	}
-	
 	// MARK: Article Fetching
 	
 	static func fetchArticles(feeds: [Feed], isReadFiltered: Bool?) -> Future<Set<Article>, Never> {
