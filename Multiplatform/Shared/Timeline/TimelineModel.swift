@@ -214,13 +214,13 @@ private extension TimelineModel {
 		let groupByPublisher = groupByFeedSubject.removeDuplicates()
 		
 		timelineItemsPublisher = readFilterAndFeedsPublisher
-			.map { [weak self] (feeds, readFilter) -> Set<Article> in
-				return self?.fetchArticles(feeds: feeds, isReadFiltered: readFilter) ?? Set<Article>()
+			.flatMap { (feeds, readFilter) in
+				Self.fetchArticles(feeds: feeds, isReadFiltered: readFilter)
 			}
 			.combineLatest(sortDirectionPublisher, groupByPublisher)
-			.compactMap { [weak self] articles, sortDirection, groupBy in
+			.compactMap { articles, sortDirection, groupBy in
 				let sortedArticles = Array(articles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupBy)
-				return self?.buildTimelineItems(articles: sortedArticles) ?? TimelineItems()
+				return Self.buildTimelineItems(articles: sortedArticles)
 			}
 			.share(replay: 1)
 			.eraseToAnyPublisher()
@@ -360,28 +360,44 @@ private extension TimelineModel {
 	
 	// MARK: Article Fetching
 	
-	func fetchArticles(feeds: [Feed], isReadFiltered: Bool?) -> Set<Article> {
-		if feeds.isEmpty {
-			return Set<Article>()
-		}
+	static func fetchArticles(feeds: [Feed], isReadFiltered: Bool?) -> Future<Set<Article>, Never> {
+		return Future<Set<Article>, Never> { promise in
+			
+			if feeds.isEmpty {
+				promise(.success(Set<Article>()))
+			}
 
-		var fetchedArticles = Set<Article>()
-		for feed in feeds {
-			if isReadFiltered ?? true {
-				if let articles = try? feed.fetchUnreadArticles() {
-					fetchedArticles.formUnion(articles)
+			let group = DispatchGroup()
+			var result = Set<Article>()
+			
+			for feed in feeds {
+				if isReadFiltered ?? true {
+					group.enter()
+					feed.fetchUnreadArticlesAsync { articleSetResult in
+						let articles = (try? articleSetResult.get()) ?? Set<Article>()
+						result.formUnion(articles)
+						group.leave()
+					}
 				}
-			} else {
-				if let articles = try? feed.fetchArticles() {
-					fetchedArticles.formUnion(articles)
+				else {
+					group.enter()
+					feed.fetchArticlesAsync { articleSetResult in
+						let articles = (try? articleSetResult.get()) ?? Set<Article>()
+						result.formUnion(articles)
+						group.leave()
+					}
 				}
 			}
+			
+			group.notify(queue: DispatchQueue.main) {
+				promise(.success(result))
+			}
+			
 		}
 
-		return fetchedArticles
-	}	
+	}
 	
-	func buildTimelineItems(articles: [Article]) -> TimelineItems {
+	static func buildTimelineItems(articles: [Article]) -> TimelineItems {
 		var items = TimelineItems()
 		for (position, article) in articles.enumerated() {
 			items.append(TimelineItem(position: position, article: article))
