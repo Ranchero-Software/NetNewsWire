@@ -233,7 +233,7 @@ class SettingsViewController: UITableViewController {
 				openURL("https://ranchero.com/netnewswire/")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 2:
-				openURL("https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")
+				openURL("https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/HowToSupportNetNewsWire.markdown")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 3:
 				openURL("https://github.com/brentsimmons/NetNewsWire")
@@ -242,7 +242,7 @@ class SettingsViewController: UITableViewController {
 				openURL("https://github.com/brentsimmons/NetNewsWire/issues")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 5:
-				openURL("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")
+				openURL("https://github.com/brentsimmons/NetNewsWire/tree/main/Technotes")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 6:
 				openURL("https://ranchero.com/netnewswire/slack")

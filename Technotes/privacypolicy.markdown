@@ -64,5 +64,5 @@ NetNewsWire displays HTML that comes from feeds from other sites. Some of these 
 
 If you have questions or comments about this privacy policy, please contact <a href="mailto:brent@ranchero.com">brent@ranchero.com</a>.
 
-This [policy](https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/privacypolicy.markdown) is stored in the NetNewsWire GitHub repository, where you can track any changes we might make.
+This [policy](https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/privacypolicy.markdown) is stored in the NetNewsWire GitHub repository, where you can track any changes we might make.
 
