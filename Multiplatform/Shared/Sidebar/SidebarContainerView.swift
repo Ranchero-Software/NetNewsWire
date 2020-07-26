@@ -13,13 +13,20 @@ struct SidebarContainerView: View {
 	@Environment(\.undoManager) var undoManager
 	@EnvironmentObject private var sceneModel: SceneModel
 	
+	@State var sidebarItems = [SidebarItem]()
+
     @ViewBuilder var body: some View {
-		SidebarView()
+		SidebarView(sidebarItems: $sidebarItems)
 			.modifier(SidebarToolbarModifier())
 			.modifier(SidebarListStyleModifier())
 			.environmentObject(sceneModel.sidebarModel)
 			.onAppear {
 				sceneModel.sidebarModel.undoManager = undoManager
+			}
+			.onReceive(sceneModel.sidebarModel.sidebarItemsPublisher!) { newItems in
+				withAnimation {
+					sidebarItems = newItems
+				}
 			}
 	}
 	

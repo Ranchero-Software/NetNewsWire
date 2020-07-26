@@ -13,20 +13,18 @@ struct SidebarView: View {
 	
 	// I had to comment out SceneStorage because it blows up if used on macOS
 	//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
-	@Environment(\.undoManager) var undoManager
 	@StateObject private var expandedContainers = SidebarExpandedContainers()
 	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var sidebarModel: SidebarModel
 
-	@State var sidebarItems = [SidebarItem]()
+	@Binding var sidebarItems: [SidebarItem]
 	
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
 	@State private var scrollOffset: CGFloat = 0
 	@State var pulling: Bool = false
 	@State var refreshing: Bool = false
-	
 
 	@ViewBuilder var body: some View {
 		#if os(macOS)
@@ -64,12 +62,6 @@ struct SidebarView: View {
 				.transition(.move(edge: .bottom))
 			}
 		}
-		.onAppear {
-			sidebarModel.undoManager = undoManager
-		}
-		.onReceive(sidebarModel.sidebarItemsPublisher!) { newItems in
-			sidebarItems = newItems
-		}
 		#else
 		ZStack(alignment: .top) {
 			List {
@@ -82,14 +74,6 @@ struct SidebarView: View {
 			}
 			if pulling {
 				ProgressView().offset(y: -40)
-			}
-		}
-		.onAppear {
-			sidebarModel.undoManager = undoManager
-		}
-		.onReceive(sidebarModel.sidebarItemsPublisher!) { newItems in
-			withAnimation {
-				sidebarItems = newItems
 			}
 		}
 		#endif
