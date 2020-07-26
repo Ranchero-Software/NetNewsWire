@@ -27,8 +27,15 @@ struct TimelineContainerView: View {
 			.onReceive(sceneModel.timelineModel.readFilterAndFeedsPublisher!) { (_, filtered) in
 				isReadFiltered = filtered
 			}
-			.onReceive(sceneModel.timelineModel.timelineItemsPublisher!) { items in
+			.onReceive(sceneModel.timelineModel.timelineItemsSelectPublisher!) { (items, selectTimelineItemID) in
 				timelineItems = items
+				if let selectID = selectTimelineItemID {
+					#if os(macOS)
+					sceneModel.timelineModel.selectedTimelineItemIDs = Set([selectID])
+					#else
+					sceneModel.timelineModel.selectedTimelineItemID = selectID
+					#endif
+				}
 			}
 			.onReceive(sceneModel.timelineModel.articleStatusChangePublisher!) { articleIDs in
 				articleIDs.forEach { articleID in

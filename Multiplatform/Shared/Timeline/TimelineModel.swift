@@ -34,6 +34,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	var timelineItemsPublisher: AnyPublisher<TimelineItems, Never>?
+	var timelineItemsSelectPublisher: AnyPublisher<(TimelineItems, String?), Never>?
 	var selectedTimelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
 	var selectedArticlesPublisher: AnyPublisher<[Article], Never>?
 	var articleStatusChangePublisher: AnyPublisher<Set<String>, Never>?
@@ -46,7 +47,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var toggleStarredStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
 	var openSelectedArticlesInBrowserSubject = PassthroughSubject<Void, Never>()
 	var changeReadFilterSubject = PassthroughSubject<Bool, Never>()
-	
+	var selectNextUnreadSubject = PassthroughSubject<Bool, Never>()
+
 	var readFilterEnabledTable = [FeedIdentifier: Bool]()
 
 	var undoManager: UndoManager?
@@ -76,20 +78,22 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	
 	@discardableResult
 	func goToNextUnread() -> Bool {
-//		var startIndex: Int
-//		if let firstArticle = selectedArticles.first, let index = timelineItems.firstIndex(where: { $0.article == firstArticle }) {
-//			startIndex = index
-//		} else {
-//			startIndex = 0
-//		}
-//
-//		for i in startIndex..<timelineItems.count {
-//			if !timelineItems[i].article.status.read {
-//				select(timelineItems[i].article.articleID)
-//				return true
-//			}
-//		}
-//
+		var startIndex: Int
+		if let index = selectedTimelineItems.sorted(by: { $0.position < $1.position }).first?.position {
+			startIndex = index
+		} else {
+			startIndex = 0
+		}
+
+		for i in startIndex..<timelineItems.items.count {
+			if !timelineItems.items[i].article.status.read {
+				let timelineItemID = timelineItems.items[i].id
+				selectedTimelineItemIDs = Set([timelineItemID])
+				selectedTimelineItemID = timelineItemID
+				return true
+			}
+		}
+
 		return false
 	}
 
@@ -348,7 +352,7 @@ private extension TimelineModel {
 
 		timelineItemsPublisher = inputTimelineItemsPublisher
 			.merge(with: downloadTimelineItemsPublisher)
-			.share(replay: 1)
+			.share()
 			.eraseToAnyPublisher()
 
 		timelineItemsPublisher!
@@ -368,6 +372,24 @@ private extension TimelineModel {
 			}
 			.store(in: &cancellables)
 		
+		// Automatically select the first unread if requested
+		timelineItemsSelectPublisher = timelineItemsPublisher!
+			.withLatestFrom(selectNextUnreadSubject.prepend(false), resultSelector: { ($0, $1) })
+			.map { (timelineItems, selectNextUnread) -> (TimelineItems, String?) in
+				var selectTimelineItemID: String? = nil
+				if selectNextUnread {
+					selectTimelineItemID = timelineItems.items.first(where: { $0.article.status.read == false })?.id
+				}
+				return (timelineItems, selectTimelineItemID)
+			}
+			.share(replay: 1)
+			.eraseToAnyPublisher()
+		
+		timelineItemsSelectPublisher!
+			.sink { [weak self] _ in
+				self?.selectNextUnreadSubject.send(false)
+			}
+			.store(in: &cancellables)
 	}
 	
 	func subscribeToArticleSelectionChanges() {
