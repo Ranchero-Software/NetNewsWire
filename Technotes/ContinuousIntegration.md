@@ -1,13 +1,13 @@
 # NetNewsWire Continuous Integration
 
 CI for NetNewsWire is enabled through Github Actions. The CI workflow configuration (hosted in
-[`.github/workflows/build.yml`](https://github.com/brentsimmons/NetNewsWire/blob/master/.github/workflows/build.yml)
+[`.github/workflows/build.yml`](https://github.com/brentsimmons/NetNewsWire/blob/main/.github/workflows/build.yml)
 uses `xcodebuild` to build the project after syncing the repository and the various submodules.
 
 The build itself focuses on the scheme NetNewsWire for macOS and NetNewsWire-iOS for iOS. Also it leverages the
 `NetNewsWire.xcworkspace` configuration.
 
-Private keys, certificates and provisioning profiles are stored in Github under `buildscripts` folder. Decrypting neccessary certificates, copy to build machine keychain and delete the certificates are handled by the [`buildscripts/ci-build.sh`](https://github.com/Ranchero-Software/NetNewsWire/blob/master/buildscripts/ci-build.sh) script.
+Private keys, certificates and provisioning profiles are stored in Github under `buildscripts` folder. Decrypting neccessary certificates, copy to build machine keychain and delete the certificates are handled by the [`buildscripts/ci-build.sh`](https://github.com/Ranchero-Software/NetNewsWire/blob/main/buildscripts/ci-build.sh) script.
 
 Each submodule also has it's own CI configuration, which are set up and built from
 their own repositories. The submodule CI systems are entirely independent so that

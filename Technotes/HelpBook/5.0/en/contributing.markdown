@@ -18,4 +18,4 @@ Slack
 GitHub
 ------
 
-The [NetNewsWire project on GitHub](https://github.com/brentsimmons/NetNewsWire) is the place to raise formal issues like bugs and feature requests. If you want to make contributions to NetNewsWire’s code or documentation, please refer to our [contribution guidelines](https://github.com/brentsimmons/NetNewsWire/blob/master/CONTRIBUTING.md) page on GitHub.
+The [NetNewsWire project on GitHub](https://github.com/brentsimmons/NetNewsWire) is the place to raise formal issues like bugs and feature requests. If you want to make contributions to NetNewsWire’s code or documentation, please refer to our [contribution guidelines](https://github.com/brentsimmons/NetNewsWire/blob/main/CONTRIBUTING.md) page on GitHub.
