@@ -30,6 +30,9 @@ struct TimelineToolbarModifier: ViewModifier {
 							AppAssets.filterInactiveImage.font(.title3)
 						}
 					}
+					.onReceive(timelineModel.readFilterAndFeedsPublisher!) { (_, filtered) in
+						isReadFiltered = filtered
+					}
 					.hidden(isReadFiltered == nil)
 					.help(isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
@@ -48,9 +51,6 @@ struct TimelineToolbarModifier: ViewModifier {
 					Spacer()
 				}
 				#endif
-			}
-			.onReceive(timelineModel.readFilterAndFeedsPublisher!) { (_, filtered) in
-				isReadFiltered = filtered
 			}
 	}
 	

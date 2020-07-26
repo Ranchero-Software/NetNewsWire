@@ -181,6 +181,7 @@ private extension TimelineModel {
 
 		readFilterAndFeedsPublisher = toggledReadFilterPublisher
 			.merge(with: feedsReadFilterPublisher)
+			.share(replay: 1)
 			.eraseToAnyPublisher()
 	}
 	
