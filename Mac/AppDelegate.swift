@@ -458,7 +458,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func openHowToSupport(_ sender: Any?) {
 		
-		Browser.open("https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown", inBackground: false)
+		Browser.open("https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/HowToSupportNetNewsWire.markdown", inBackground: false)
 	}
 	
 	@IBAction func openRepository(_ sender: Any?) {
@@ -477,7 +477,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func openTechnotes(_ sender: Any?) {
 
-		Browser.open("https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes", inBackground: false)
+		Browser.open("https://github.com/brentsimmons/NetNewsWire/tree/main/Technotes", inBackground: false)
 	}
 
 	@IBAction func showHelp(_ sender: Any?) {
