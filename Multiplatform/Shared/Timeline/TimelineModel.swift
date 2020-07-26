@@ -147,6 +147,21 @@ private extension TimelineModel {
 	func subscribeToReadFilterAndFeedChanges() {
 		guard let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
 		
+		// Set the timeline name for display
+		selectedFeedsPublisher
+			.map { feeds -> String in
+				switch feeds.count {
+				case 0:
+					return ""
+				case 1:
+					return feeds.first!.nameForDisplay
+				default:
+					return NSLocalizedString("Multiple", comment: "Multiple")
+				}
+			}
+			.assign(to: &$nameForDisplay)
+
+		// Clear the selected timeline items when the selected feed(s) change
 		selectedFeedsPublisher
 			.sink { [weak self] _ in
 				self?.selectedTimelineItemIDs = Set<String>()
@@ -193,8 +208,7 @@ private extension TimelineModel {
 	}
 	
 	func subscribeToArticleFetchChanges() {
-		guard let readFilterAndFeedsPublisher = readFilterAndFeedsPublisher,
-			  let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
+		guard let readFilterAndFeedsPublisher = readFilterAndFeedsPublisher else { return }
 		
 		let sortDirectionPublisher = sortDirectionSubject.removeDuplicates()
 		let groupByPublisher = groupByFeedSubject.removeDuplicates()
@@ -225,19 +239,6 @@ private extension TimelineModel {
 			.share()
 			.eraseToAnyPublisher()
 		
-		// Set the timeline name for display
-		selectedFeedsPublisher
-			.map { feeds -> String in
-				switch feeds.count {
-				case 0:
-					return ""
-				case 1:
-					return feeds.first!.nameForDisplay
-				default:
-					return NSLocalizedString("Multiple", comment: "Multiple")
-				}
-			}
-			.assign(to: &$nameForDisplay)
 	}
 	
 	func subscribeToArticleSelectionChanges() {
