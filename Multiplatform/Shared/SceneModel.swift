@@ -126,8 +126,7 @@ private extension SceneModel {
 	
 	// MARK: Subscriptions
 	func subscribeToToolbarChangeEvents() {
-		guard let selectedArticlesPublisher = timelineModel.selectedArticlesPublisher,
-			  let articlesPublisher = timelineModel.articlesPublisher else { return }
+		guard let selectedArticlesPublisher = timelineModel.selectedArticlesPublisher else { return }
 		
 		NotificationCenter.default.publisher(for: .UnreadCountDidChange)
 			.compactMap { $0.object as? AccountManager }
@@ -146,7 +145,7 @@ private extension SceneModel {
 			.store(in: &cancellables)
 
 		statusesDidChangePublisher
-			.combineLatest(articlesPublisher)
+			.combineLatest(timelineModel.articlesSubject)
 			.sink { [weak self] _, articles in
 				self?.updateMarkAllAsReadButtonsState(articles: articles)
 			}

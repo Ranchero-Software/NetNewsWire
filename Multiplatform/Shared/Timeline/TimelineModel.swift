@@ -32,12 +32,13 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	var selectedArticles = [Article]()
 	
 	var timelineItemsPublisher: AnyPublisher<TimelineItems, Never>?
-	var articlesPublisher: AnyPublisher<[Article], Never>?
 	var selectedTimelineItemsPublisher: AnyPublisher<[TimelineItem], Never>?
 	var selectedArticlesPublisher: AnyPublisher<[Article], Never>?
 	var articleStatusChangePublisher: AnyPublisher<Set<String>, Never>?
 	var readFilterAndFeedsPublisher: AnyPublisher<([Feed], Bool?), Never>?
 	
+	var articlesSubject = ReplaySubject<[Article], Never>(bufferSize: 1)
+
 	var markAllAsReadSubject = PassthroughSubject<Void, Never>()
 	var toggleReadStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
 	var toggleStarredStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
@@ -123,17 +124,6 @@ private extension TimelineModel {
 			.eraseToAnyPublisher()
 	}
 	
-//	func subscribeToAccountDidDownloadArticles() {
-//		NotificationCenter.default.publisher(for: .AccountDidDownloadArticles).sink { [weak self] note in
-//			guard let self = self, let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
-//				return
-//			}
-//			if self.anySelectedFeedIntersection(with: feeds) || self.anySelectedFeedIsPseudoFeed() {
-//				self.queueFetchAndMergeArticles()
-//			}
-//		}.store(in: &cancellables)
-//	}
-	
 	func subscribeToUserDefaultsChanges() {
 		let kickStartNote = Notification(name: Notification.Name("Kick Start"))
 		NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
@@ -213,15 +203,53 @@ private extension TimelineModel {
 		let sortDirectionPublisher = sortDirectionSubject.removeDuplicates()
 		let groupByPublisher = groupByFeedSubject.removeDuplicates()
 		
-		timelineItemsPublisher = readFilterAndFeedsPublisher
+		// Download articles and transform them into timeline items
+		let inputTimelineItemsPublisher = readFilterAndFeedsPublisher
 			.flatMap { (feeds, readFilter) in
 				Self.fetchArticles(feeds: feeds, isReadFiltered: readFilter)
 			}
 			.combineLatest(sortDirectionPublisher, groupByPublisher)
-			.compactMap { articles, sortDirection, groupBy in
+			.compactMap { articles, sortDirection, groupBy -> TimelineItems in
 				let sortedArticles = Array(articles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupBy)
 				return Self.buildTimelineItems(articles: sortedArticles)
 			}
+
+		guard let selectedFeedsPublisher = delegate?.selectedFeedsPublisher else { return }
+
+		// Subscribe to any article downloads that may need to update the timeline
+		let accountDidDownloadPublisher = NotificationCenter.default.publisher(for: .AccountDidDownloadArticles)
+			.compactMap { $0.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed>  }
+			.withLatestFrom(selectedFeedsPublisher, resultSelector: { ($0, $1) })
+			.map { (noteFeeds, selectedFeeds) in
+				return Self.anyFeedIsPseudoFeed(selectedFeeds) || Self.anyFeedIntersection(selectedFeeds, webFeeds: noteFeeds)
+			}
+			.filter { $0 }
+		
+		// Download articles and merge them and then transform into timeline items
+		let downloadTimelineItemsPublisher = accountDidDownloadPublisher
+			.withLatestFrom(readFilterAndFeedsPublisher)
+			.flatMap { (feeds, readFilter) in
+				Self.fetchArticles(feeds: feeds, isReadFiltered: readFilter)
+			}
+			.withLatestFrom(articlesSubject, sortDirectionPublisher, groupByPublisher, resultSelector: { (downloadArticles, latest) in
+				return (downloadArticles, latest.0, latest.1, latest.2)
+			})
+			.map { (downloadArticles, currentArticles, sortDirection, groupBy) -> TimelineItems in
+				let downloadArticleIDs = downloadArticles.articleIDs()
+				var updatedArticles = downloadArticles
+				
+				for article in currentArticles {
+					if !downloadArticleIDs.contains(article.articleID) {
+						updatedArticles.insert(article)
+					}
+				}
+				
+				let sortedArticles = Array(updatedArticles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupBy)
+				return Self.buildTimelineItems(articles: sortedArticles)
+			}
+
+		timelineItemsPublisher = inputTimelineItemsPublisher
+			.merge(with: downloadTimelineItemsPublisher)
 			.share(replay: 1)
 			.eraseToAnyPublisher()
 
@@ -232,12 +260,14 @@ private extension TimelineModel {
 			.store(in: &cancellables)
 		
 		// Transform to articles for those that just need articles
-		articlesPublisher = timelineItemsPublisher!
+		timelineItemsPublisher!
 			.map { timelineItems in
 				timelineItems.items.map { $0.article }
 			}
-			.share()
-			.eraseToAnyPublisher()
+			.sink { [weak self] articles in
+				self?.articlesSubject.send(articles)
+			}
+			.store(in: &cancellables)
 		
 	}
 	
@@ -284,10 +314,10 @@ private extension TimelineModel {
 	}
 
 	func subscribeToArticleMarkingEvents() {
-		guard let articlesPublisher = articlesPublisher, let selectedArticlesPublisher = selectedArticlesPublisher else { return }
+		guard let selectedArticlesPublisher = selectedArticlesPublisher else { return }
 		
 		let markAllAsReadPublisher = markAllAsReadSubject
-			.withLatestFrom(articlesPublisher)
+			.withLatestFrom(articlesSubject)
 			.filter { !$0.isEmpty }
 			.map { articles -> ([Article], ArticleStatus.Key, Bool) in
 				return (articles, ArticleStatus.Key.read, true)
@@ -405,26 +435,26 @@ private extension TimelineModel {
 		return items
 	}
 
-//	func anySelectedFeedIsPseudoFeed() -> Bool {
-//		return feeds.contains(where: { $0 is PseudoFeed})
-//	}
-//
-//	func anySelectedFeedIntersection(with webFeeds: Set<WebFeed>) -> Bool {
-//		for feed in feeds {
-//			if let selectedWebFeed = feed as? WebFeed {
-//				for webFeed in webFeeds {
-//					if selectedWebFeed.webFeedID == webFeed.webFeedID || selectedWebFeed.url == webFeed.url {
-//						return true
-//					}
-//				}
-//			} else if let folder = feed as? Folder {
-//				for webFeed in webFeeds {
-//					if folder.hasWebFeed(with: webFeed.webFeedID) || folder.hasWebFeed(withURL: webFeed.url) {
-//						return true
-//					}
-//				}
-//			}
-//		}
-//		return false
-//	}
+	static func anyFeedIsPseudoFeed(_ feeds: [Feed]) -> Bool {
+		return feeds.contains(where: { $0 is PseudoFeed})
+	}
+
+	static func anyFeedIntersection(_ feeds: [Feed], webFeeds: Set<WebFeed>) -> Bool {
+		for feed in feeds {
+			if let selectedWebFeed = feed as? WebFeed {
+				for webFeed in webFeeds {
+					if selectedWebFeed.webFeedID == webFeed.webFeedID || selectedWebFeed.url == webFeed.url {
+						return true
+					}
+				}
+			} else if let folder = feed as? Folder {
+				for webFeed in webFeeds {
+					if folder.hasWebFeed(with: webFeed.webFeedID) || folder.hasWebFeed(withURL: webFeed.url) {
+						return true
+					}
+				}
+			}
+		}
+		return false
+	}
 }
