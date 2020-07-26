@@ -64,7 +64,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		subscribeToArticleFetchChanges()
 		subscribeToArticleSelectionChanges()
 		subscribeToArticleStatusChanges()
-//		subscribeToAccountDidDownloadArticles()
 		subscribeToArticleMarkingEvents()
 		subscribeToOpenInBrowserEvents()
 	}
