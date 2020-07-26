@@ -26,6 +26,10 @@ struct SidebarExpandedContainers {
 		}
 	}
 	
+	func contains(_ containerID: ContainerIdentifier) -> Bool {
+		return expandedTable.keys.contains(containerID)
+	}
+	
 	subscript(_ containerID: ContainerIdentifier) -> Bool {
 		get {
 			if let result = expandedTable[containerID] {
