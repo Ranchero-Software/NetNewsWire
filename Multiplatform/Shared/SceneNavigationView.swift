@@ -205,10 +205,6 @@ struct SceneNavigationView: View {
 		}
 	}
 
-	func handleRefreshError(_ error: Error) {
-		sceneModel.accountErrorMessage = error.localizedDescription
-	}
-	
 }
 
 struct NavigationView_Previews: PreviewProvider {

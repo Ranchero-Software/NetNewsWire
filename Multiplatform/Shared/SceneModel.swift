@@ -21,7 +21,6 @@ final class SceneModel: ObservableObject {
 	@Published var extractorButtonState: ArticleExtractorButtonState?
 	@Published var openInBrowserButtonState: Bool?
 	@Published var shareButtonState: Bool?
-	@Published var accountErrorMessage = ""
 	@Published var accountSyncErrors: [AccountSyncError] = []
 
 	var selectedArticles: [Article] {
