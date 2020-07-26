@@ -197,7 +197,6 @@ private extension TimelineModel {
 			}
 			.combineLatest(sortDirectionPublisher, groupByPublisher)
 			.compactMap { [weak self] articles, sortDirection, groupBy in
-				print("************")
 				let sortedArticles = Array(articles).sortedByDate(sortDirection ? .orderedDescending : .orderedAscending, groupByFeed: groupBy)
 				return self?.buildTimelineItems(articles: sortedArticles) ?? TimelineItems()
 			}
