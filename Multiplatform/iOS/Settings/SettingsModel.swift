@@ -21,13 +21,13 @@ class SettingsModel: ObservableObject {
 			case .netNewsWire:
 				return URL(string: "https://ranchero.com/netnewswire/")!
 			case .supportNetNewsWire:
-				return URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/HowToSupportNetNewsWire.markdown")!
+				return URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/HowToSupportNetNewsWire.markdown")!
 			case .github:
 				return URL(string: "https://github.com/brentsimmons/NetNewsWire")!
 			case .bugTracker:
 				return URL(string: "https://github.com/brentsimmons/NetNewsWire/issues")!
 			case .technotes:
-				return URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/master/Technotes")!
+				return URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/main/Technotes")!
 			case .netNewsWireSlack:
 				return URL(string: "https://ranchero.com/netnewswire/slack")!
 			case .none:
