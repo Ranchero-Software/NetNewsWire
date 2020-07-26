@@ -118,7 +118,7 @@ final class ArticlesTable: DatabaseTable {
 		}
 		let parameters = feedIDs.map { $0 as AnyObject } + [cutoffDate as AnyObject, cutoffDate as AnyObject]
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-		let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and userDeleted = 0"
+		let whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?))"
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 	}
 
@@ -133,13 +133,13 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	private func fetchStarredArticles(_ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
-		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and starred = 1 and userDeleted = 0;
+		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and starred = 1;
 		if feedIDs.isEmpty {
 			return Set<Article>()
 		}
 		let parameters = feedIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-		let whereClause = "feedID in \(placeholders) and starred = 1 and userDeleted = 0"
+		let whereClause = "feedID in \(placeholders) and starred = 1"
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters, withLimits: false)
 		}
 
@@ -215,7 +215,7 @@ final class ArticlesTable: DatabaseTable {
 
 		// 1. Ensure statuses for all the incoming articles.
 		// 2. Create incoming articles with parsedItems.
-		// 3. Ignore incoming articles that are userDeleted || (!starred and really old)
+		// 3. Ignore incoming articles that are (!starred and really old)
 		// 4. Fetch all articles for the feed.
 		// 5. Create array of Articles not in database and save them.
 		// 6. Create array of updated Articles and save what’s changed.
@@ -309,7 +309,7 @@ final class ArticlesTable: DatabaseTable {
 		
 		queue.runInDatabase { (database) in
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0 and userDeleted=0;"
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
 
 			var parameters = [Any]()
 			parameters += Array(feedIDs) as [Any]
@@ -330,7 +330,7 @@ final class ArticlesTable: DatabaseTable {
 		let cutoffDate = articleCutoffDate
 
 		queue.runInDatabase { (database) in
-			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and userDeleted=0 and (starred=1 or dateArrived>?) group by feedID;"
+			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 and (starred=1 or dateArrived>?) group by feedID;"
 
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) else {
 				DispatchQueue.main.async {
@@ -361,7 +361,7 @@ final class ArticlesTable: DatabaseTable {
 
 		queue.runInDatabase { (database) in
 			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1 and userDeleted=0;"
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
 			let parameters = Array(feedIDs) as [Any]
 
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
@@ -629,7 +629,7 @@ private extension ArticlesTable {
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 
 		if withLimits {
-			let sql = "select * from articles natural join statuses where \(whereClause) and userDeleted=0 and (starred=1 or dateArrived>?);"
+			let sql = "select * from articles natural join statuses where \(whereClause) and (starred=1 or dateArrived>?);"
 			return articlesWithSQL(sql, parameters + [articleCutoffDate as AnyObject], database)
 		}
 		else {
@@ -644,7 +644,7 @@ private extension ArticlesTable {
 		// * Must not be deleted.
 		// * Must be either 1) starred or 2) dateArrived must be newer than cutoff date.
 
-		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and userDeleted=0 and (starred=1 or dateArrived>?);"
+		let sql = "select count(*) from articles natural join statuses where feedID=? and read=0 and (starred=1 or dateArrived>?);"
 		return numberWithSQLAndParameters(sql, [feedID, articleCutoffDate], in: database)
 	}
 	
@@ -803,10 +803,7 @@ private extension ArticlesTable {
 	}
 
 	func statusIndicatesArticleIsIgnorable(_ status: ArticleStatus) -> Bool {
-		// Ignorable articles: either userDeleted==1 or (not starred and arrival date > 4 months).
-		if status.userDeleted {
-			return true
-		}
+		// Ignorable articles: not starred and arrival date > 4 months.
 		if status.starred {
 			return false
 		}

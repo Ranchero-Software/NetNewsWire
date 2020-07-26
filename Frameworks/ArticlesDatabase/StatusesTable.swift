@@ -13,7 +13,7 @@ import Articles
 
 // Article->ArticleStatus is a to-one relationship.
 //
-// CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, userDeleted BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
+// CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 
 final class StatusesTable: DatabaseTable {
 
@@ -75,15 +75,15 @@ final class StatusesTable: DatabaseTable {
 	// MARK: - Fetching
 
 	func fetchUnreadArticleIDs() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses where read=0 and userDeleted=0;")
+		return fetchArticleIDs("select articleID from statuses where read=0;")
 	}
 
 	func fetchStarredArticleIDs() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses where starred=1 and userDeleted=0;")
+		return fetchArticleIDs("select articleID from statuses where starred=1;")
 	}
 	
 	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and userDeleted=0 and not exists (select 1 from articles a where a.articleID = s.articleID);")
+		return fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and not exists (select 1 from articles a where a.articleID = s.articleID);")
 	}
 	
 	func fetchArticleIDs(_ sql: String) -> Set<String> {
