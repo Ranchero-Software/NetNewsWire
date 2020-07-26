@@ -10,10 +10,12 @@ import SwiftUI
 
 struct TimelineView: View {
 	
+	@Binding var timelineItems: TimelineItems
+	@Binding var isReadFiltered: Bool?
+
 	@EnvironmentObject private var timelineModel: TimelineModel
-	@State private var timelineItems = TimelineItems()
+
 	@State private var timelineItemFrames = [String: CGRect]()
-	@State private var isReadFiltered: Bool? = nil
 	
 	@ViewBuilder var body: some View {
 		GeometryReader { geometryReaderProxy in
@@ -63,27 +65,6 @@ struct TimelineView: View {
 					}
 				}
 			}
-			.onReceive(timelineModel.readFilterAndFeedsPublisher!) { (_, filtered) in
-				isReadFiltered = filtered
-			}
-			.onReceive(timelineModel.timelineItemsPublisher!) { items in
-				withAnimation {
-					timelineItems = items
-				}
-			}
-			.onReceive(timelineModel.articleStatusChangePublisher!) { articleIDs in
-				articleIDs.forEach { articleID in
-					if let position = timelineItems.index[articleID] {
-						if timelineItems.items[position].isReadOnly {
-							withAnimation {
-								timelineItems.items[position].updateStatus()
-							}
-						} else {
-							timelineItems.items[position].updateStatus()
-						}
-					}
-				}
-			}
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
 			#else
 			ScrollViewReader { scrollViewProxy in
@@ -112,26 +93,6 @@ struct TimelineView: View {
 								scrollViewProxy.scrollTo(articleID, anchor: .center)
 							}
 						}
-					}
-				}
-			}
-			.onReceive(timelineModel.timelineItemsPublisher!) { items in
-// Animations crash on iPadOS right now
-//				withAnimation {
-					timelineItems = items
-//				}
-			}
-			.onReceive(timelineModel.articleStatusChangePublisher!) { articleIDs in
-				articleIDs.forEach { articleID in
-					if let position = timelineItems.index[articleID] {
-// This will trigger a deselect on iPhones and iPads, so we will disable it for now
-//						if timelineItems.items[position].isReadOnly {
-//							withAnimation {
-//								timelineItems.items[position].updateStatus()
-//							}
-//						} else {
-							timelineItems.items[position].updateStatus()
-//						}
 					}
 				}
 			}

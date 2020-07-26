@@ -11,15 +11,16 @@ import Account
 
 struct SidebarView: View {
 	
-	// I had to comment out SceneStorage because it blows up if used on macOS
-	//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
-	@StateObject private var expandedContainers = SidebarExpandedContainers()
+	@Binding var sidebarItems: [SidebarItem]
+	
 	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var sidebarModel: SidebarModel
 
-	@Binding var sidebarItems: [SidebarItem]
-	
+	// I had to comment out SceneStorage because it blows up if used on macOS
+	//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
+	@StateObject private var expandedContainers = SidebarExpandedContainers()
+
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
 	@State private var scrollOffset: CGFloat = 0
