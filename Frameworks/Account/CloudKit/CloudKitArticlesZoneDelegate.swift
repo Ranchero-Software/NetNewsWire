@@ -132,26 +132,34 @@ private extension CloudKitArticlesZoneDelegate {
 			group.leave()
 		}
 		
-		let parsedItems = records.compactMap { makeParsedItem($0) }
-		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		for (webFeedID, parsedItems) in webFeedIDsAndItems {
-			group.enter()
-			self.account?.update(webFeedID, with: parsedItems, deleteOlder: false) { result in
-				switch result {
-				case .success(let articleChanges):
-					guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
-						group.leave()
-						return
+		group.enter()
+		DispatchQueue.global(qos: .userInitiated).async {
+			let parsedItems = records.compactMap { self.makeParsedItem($0) }
+			let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+			
+			DispatchQueue.main.async {
+				for (webFeedID, parsedItems) in webFeedIDsAndItems {
+					group.enter()
+					self.account?.update(webFeedID, with: parsedItems, deleteOlder: false) { result in
+						switch result {
+						case .success(let articleChanges):
+							guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
+								group.leave()
+								return
+							}
+							let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
+							try? self.database.insertStatuses(syncStatuses)
+							group.leave()
+						case .failure(let databaseError):
+							errorOccurred = true
+							os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
+							group.leave()
+						}
 					}
-					let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
-					try? self.database.insertStatuses(syncStatuses)
-					group.leave()
-				case .failure(let databaseError):
-					errorOccurred = true
-					os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
-					group.leave()
 				}
+				group.leave()
 			}
+			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
