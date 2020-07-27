@@ -28,7 +28,8 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	@Published var nameForDisplay = ""
 	@Published var selectedTimelineItemIDs = Set<String>()  // Don't use directly.  Use selectedTimelineItemsPublisher
 	@Published var selectedTimelineItemID: String? = nil    // Don't use directly.  Use selectedTimelineItemsPublisher
-
+	@Published var listID = ""
+	
 	var selectedArticles: [Article] {
 		return selectedTimelineItems.map { $0.article }
 	}
@@ -252,6 +253,12 @@ private extension TimelineModel {
 				}
 			}
 			.assign(to: &$nameForDisplay)
+		
+		selectedFeedsPublisher
+			.map { _ in
+				return UUID().uuidString
+			}
+			.assign(to: &$listID)
 
 		// Clear the selected timeline items when the selected feed(s) change
 		selectedFeedsPublisher
@@ -308,7 +315,7 @@ private extension TimelineModel {
 		// Download articles and transform them into timeline items
 		let inputTimelineItemsPublisher = readFilterAndFeedsPublisher
 			.flatMap { (feeds, readFilter) in
-				Self.fetchArticles(feeds: feeds, isReadFiltered: readFilter)
+				Self.fetchArticlesPublisher(feeds: feeds, isReadFiltered: readFilter)
 			}
 			.combineLatest(sortDirectionPublisher, groupByPublisher)
 			.compactMap { articles, sortDirection, groupBy -> TimelineItems in
@@ -331,7 +338,7 @@ private extension TimelineModel {
 		let downloadTimelineItemsPublisher = accountDidDownloadPublisher
 			.withLatestFrom(readFilterAndFeedsPublisher)
 			.flatMap { (feeds, readFilter) in
-				Self.fetchArticles(feeds: feeds, isReadFiltered: readFilter)
+				Self.fetchArticlesPublisher(feeds: feeds, isReadFiltered: readFilter)
 			}
 			.withLatestFrom(articlesSubject, sortDirectionPublisher, groupByPublisher, resultSelector: { (downloadArticles, latest) in
 				return (downloadArticles, latest.0, latest.1, latest.2)
@@ -501,13 +508,54 @@ private extension TimelineModel {
 	
 	// MARK: Article Fetching
 	
-	static func fetchArticles(feeds: [Feed], isReadFiltered: Bool?) -> Future<Set<Article>, Never> {
+	func fetchArticles(feeds: [Feed], isReadFiltered: Bool?) -> Set<Article> {
+		if feeds.isEmpty {
+			return Set<Article>()
+		}
+
+		var fetchedArticles = Set<Article>()
+		for feed in feeds {
+			if isReadFiltered ?? true {
+				if let articles = try? feed.fetchUnreadArticles() {
+					fetchedArticles.formUnion(articles)
+				}
+			} else {
+				if let articles = try? feed.fetchArticles() {
+					fetchedArticles.formUnion(articles)
+				}
+			}
+		}
+
+		return fetchedArticles
+	}
+
+	static func fetchArticlesPublisher(feeds: [Feed], isReadFiltered: Bool?) -> Future<Set<Article>, Never> {
 		return Future<Set<Article>, Never> { promise in
 			
 			if feeds.isEmpty {
 				promise(.success(Set<Article>()))
 			}
 
+			#if os(macOS)
+			
+			var result = Set<Article>()
+			
+			for feed in feeds {
+				if isReadFiltered ?? true {
+					if let articles = try? feed.fetchUnreadArticles() {
+						result.formUnion(articles)
+					}
+				} else {
+					if let articles = try? feed.fetchArticles() {
+						result.formUnion(articles)
+					}
+				}
+			}
+			
+			promise(.success(result))
+			
+			#else
+			
 			let group = DispatchGroup()
 			var result = Set<Article>()
 			
@@ -533,6 +581,8 @@ private extension TimelineModel {
 			group.notify(queue: DispatchQueue.main) {
 				promise(.success(result))
 			}
+			
+			#endif
 			
 		}
 

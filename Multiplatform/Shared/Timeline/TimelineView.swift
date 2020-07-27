@@ -46,6 +46,7 @@ struct TimelineView: View {
 						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
 							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
 					}
+					.id(timelineModel.listID)
 					.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
 						for pref in preferences {
 							timelineItemFrames[pref.articleID] = pref.frame
@@ -80,6 +81,7 @@ struct TimelineView: View {
 						}.buttonStyle(PlainButtonStyle())
 					}
 				}
+				.id(timelineModel.listID)
 				.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
 					for pref in preferences {
 						timelineItemFrames[pref.articleID] = pref.frame
