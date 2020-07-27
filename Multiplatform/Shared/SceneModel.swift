@@ -61,22 +61,22 @@ final class SceneModel: ObservableObject {
 	
 	/// Marks all the articles in the Timeline as read
 	func markAllAsRead() {
-		timelineModel.markAllAsReadSubject.send()
+		timelineModel.markAllAsRead()
 	}
 	
 	/// Toggles the read status for the selected articles
 	func toggleReadStatusForSelectedArticles() {
-		timelineModel.toggleReadStatusForSelectedArticlesSubject.send()
+		timelineModel.toggleReadStatusForSelectedArticles()
 	}
 	
 	/// Toggles the star status for the selected articles
 	func toggleStarredStatusForSelectedArticles() {
-		timelineModel.toggleStarredStatusForSelectedArticlesSubject.send()
+		timelineModel.toggleStarredStatusForSelectedArticles()
 	}
 
 	/// Opens the selected article in an external browser
 	func openSelectedArticleInBrowser() {
-		timelineModel.openSelectedArticlesInBrowserSubject.send()
+		timelineModel.openSelectedArticleInBrowser()
 	}
 	
 	/// Retrieves the article before the given article in the Timeline

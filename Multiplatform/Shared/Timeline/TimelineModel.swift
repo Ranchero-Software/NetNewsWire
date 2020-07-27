@@ -43,10 +43,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	
 	var articlesSubject = ReplaySubject<[Article], Never>(bufferSize: 1)
 
-	var markAllAsReadSubject = PassthroughSubject<Void, Never>()
-	var toggleReadStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
-	var toggleStarredStatusForSelectedArticlesSubject = PassthroughSubject<Void, Never>()
-	var openSelectedArticlesInBrowserSubject = PassthroughSubject<Void, Never>()
 	var changeReadFilterSubject = PassthroughSubject<Bool, Never>()
 	var selectNextUnreadSubject = PassthroughSubject<Bool, Never>()
 
@@ -71,8 +67,6 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		subscribeToArticleFetchChanges()
 		subscribeToArticleSelectionChanges()
 		subscribeToArticleStatusChanges()
-		subscribeToArticleMarkingEvents()
-		subscribeToOpenInBrowserEvents()
 	}
 	
 	// MARK: API
@@ -120,6 +114,17 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		// TODO: Implement me!
 	}
 
+	func toggleReadStatusForSelectedArticles() {
+		guard !selectedArticles.isEmpty else {
+			return
+		}
+		if selectedArticles.anyArticleIsUnread() {
+			markSelectedArticlesAsRead()
+		} else {
+			markSelectedArticlesAsUnread()
+		}
+	}
+
 	func canMarkIndicatedArticlesAsRead(_ timelineItem: TimelineItem) -> Bool {
 		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		return articles.anyArticleIsUnread()
@@ -130,6 +135,10 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(articles, statusKey: .read, flag: true)
 	}
 	
+	func markSelectedArticlesAsRead() {
+		markArticlesWithUndo(selectedArticles, statusKey: .read, flag: true)
+	}
+
 	func canMarkIndicatedArticlesAsUnread(_ timelineItem: TimelineItem) -> Bool {
 		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		return articles.anyArticleIsReadAndCanMarkUnread()
@@ -138,6 +147,10 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	func markIndicatedArticlesAsUnread(_ timelineItem: TimelineItem) {
 		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		markArticlesWithUndo(articles, statusKey: .read, flag: false)
+	}
+	
+	func markSelectedArticlesAsUnread() {
+		markArticlesWithUndo(selectedArticles, statusKey: .read, flag: false)
 	}
 	
 	func canMarkAboveAsRead(_ timelineItem: TimelineItem) -> Bool {
@@ -174,6 +187,25 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(articlesToMark, statusKey: .read, flag: true)
 	}
 	
+	func canMarkAllAsRead() -> Bool {
+		return articles.canMarkAllAsRead()
+	}
+	
+	func markAllAsRead() {
+		markArticlesWithUndo(articles, statusKey: .read, flag: true)
+	}
+
+	func toggleStarredStatusForSelectedArticles() {
+		guard !selectedArticles.isEmpty else {
+			return
+		}
+		if selectedArticles.anyArticleIsUnstarred() {
+			markSelectedArticlesAsStarred()
+		} else {
+			markSelectedArticlesAsUnstarred()
+		}
+	}
+
 	func canMarkIndicatedArticlesAsStarred(_ timelineItem: TimelineItem) -> Bool {
 		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		return articles.anyArticleIsUnstarred()
@@ -184,6 +216,10 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(articles, statusKey: .starred, flag: true)
 	}
 
+	func markSelectedArticlesAsStarred() {
+		markArticlesWithUndo(selectedArticles, statusKey: .starred, flag: true)
+	}
+	
 	func canMarkIndicatedArticlesAsUnstarred(_ timelineItem: TimelineItem) -> Bool {
 		let articles = indicatedTimelineItems(timelineItem).map { $0.article }
 		return articles.anyArticleIsStarred()
@@ -194,11 +230,20 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 		markArticlesWithUndo(articles, statusKey: .starred, flag: false)
 	}
 
+	func markSelectedArticlesAsUnstarred() {
+		markArticlesWithUndo(selectedArticles, statusKey: .starred, flag: false)
+	}
+	
 	func canOpenIndicatedArticleInBrowser(_ timelineItem: TimelineItem) -> Bool {
 		guard indicatedTimelineItems(timelineItem).count == 1 else { return false }
 		return timelineItem.article.preferredLink != nil
 	}
 	
+	func openSelectedArticleInBrowser() {
+		guard let article = selectedArticles.first else { return }
+		openIndicatedArticleInBrowser(article)
+	}
+
 	func openIndicatedArticleInBrowser(_ timelineItem: TimelineItem) {
 		openIndicatedArticleInBrowser(timelineItem.article)
 	}
@@ -438,71 +483,6 @@ private extension TimelineModel {
 			.compactMap { $0.first?.article }
 			.filter { !$0.status.read }
 			.sink {	markArticles(Set([$0]), statusKey: .read, flag: true) }
-			.store(in: &cancellables)
-	}
-
-	func subscribeToArticleMarkingEvents() {
-		guard let selectedArticlesPublisher = selectedArticlesPublisher else { return }
-		
-		let markAllAsReadPublisher = markAllAsReadSubject
-			.withLatestFrom(articlesSubject)
-			.filter { !$0.isEmpty }
-			.map { articles -> ([Article], ArticleStatus.Key, Bool) in
-				return (articles, ArticleStatus.Key.read, true)
-			}
-
-		let toggleReadPublisher = toggleReadStatusForSelectedArticlesSubject
-			.withLatestFrom(selectedArticlesPublisher)
-			.filter { !$0.isEmpty }
-			.map { selectedArticles -> ([Article], ArticleStatus.Key, Bool) in
-				if selectedArticles.anyArticleIsUnread() {
-					return (selectedArticles, ArticleStatus.Key.read, true)
-				} else {
-					return (selectedArticles, ArticleStatus.Key.read, false)
-				}
-			}
-
-		let toggleStarred = toggleStarredStatusForSelectedArticlesSubject
-			.withLatestFrom(selectedArticlesPublisher)
-			.filter { !$0.isEmpty }
-			.map { selectedArticles -> ([Article], ArticleStatus.Key, Bool) in
-				if selectedArticles.anyArticleIsUnstarred() {
-					return (selectedArticles, ArticleStatus.Key.starred, true)
-				} else {
-					return (selectedArticles, ArticleStatus.Key.starred, false)
-				}
-			}
-
-		markAllAsReadPublisher
-			.merge(with: toggleReadPublisher, toggleStarred)
-			.sink { [weak self] (articles, key, flag) in
-				if let undoManager = self?.undoManager,
-				   let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: key, flag: flag, undoManager: undoManager) {
-					self?.runCommand(markReadCommand)
-				} else {
-					markArticles(Set(articles), statusKey: key, flag: flag)
-				}
-			}
-			.store(in: &cancellables)
-		
-	}
-	
-	func subscribeToOpenInBrowserEvents() {
-		guard let selectedArticlesPublisher = selectedArticlesPublisher else { return }
-		
-		let selectedArticleOpenInBrowserPublisher = openSelectedArticlesInBrowserSubject
-			.withLatestFrom(selectedArticlesPublisher)
-			.compactMap { $0.first?.preferredLink }
-		
-		selectedArticleOpenInBrowserPublisher
-			.sink { link in
-				#if os(macOS)
-				Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-				#else
-				guard let url = URL(string: link) else { return }
-				UIApplication.shared.open(url, options: [:])
-				#endif
-			}
 			.store(in: &cancellables)
 	}
 	
