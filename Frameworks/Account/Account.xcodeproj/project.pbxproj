@@ -52,6 +52,8 @@
 		5133BB4D2460CA0B0001E3D0 /* RedditMe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133BB4C2460CA0B0001E3D0 /* RedditMe.swift */; };
 		5133BB4F2460EC230001E3D0 /* RedditMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133BB4E2460EC230001E3D0 /* RedditMedia.swift */; };
 		5133BB512460EE730001E3D0 /* RedditMediaEmbed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5133BB502460EE730001E3D0 /* RedditMediaEmbed.swift */; };
+		5138B4CA24CF85050018089B /* RedditMediaMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5138B4C924CF85050018089B /* RedditMediaMetadata.swift */; };
+		5138B4CC24CF877A0018089B /* RedditGalleryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5138B4CB24CF877A0018089B /* RedditGalleryData.swift */; };
 		5139A6382459822D004D960C /* CloudKitArticleStatusUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5139A6372459822D004D960C /* CloudKitArticleStatusUpdate.swift */; };
 		5141000A2464DAA6001DA326 /* RedditSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514100092464DAA6001DA326 /* RedditSort.swift */; };
 		5144EA49227B497600D19003 /* FeedbinAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5144EA48227B497600D19003 /* FeedbinAPICaller.swift */; };
@@ -316,6 +318,8 @@
 		5133BB4C2460CA0B0001E3D0 /* RedditMe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditMe.swift; sourceTree = "<group>"; };
 		5133BB4E2460EC230001E3D0 /* RedditMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditMedia.swift; sourceTree = "<group>"; };
 		5133BB502460EE730001E3D0 /* RedditMediaEmbed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditMediaEmbed.swift; sourceTree = "<group>"; };
+		5138B4C924CF85050018089B /* RedditMediaMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditMediaMetadata.swift; sourceTree = "<group>"; };
+		5138B4CB24CF877A0018089B /* RedditGalleryData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditGalleryData.swift; sourceTree = "<group>"; };
 		5139A6372459822D004D960C /* CloudKitArticleStatusUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitArticleStatusUpdate.swift; sourceTree = "<group>"; };
 		514100092464DAA6001DA326 /* RedditSort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSort.swift; sourceTree = "<group>"; };
 		5144EA48227B497600D19003 /* FeedbinAPICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAPICaller.swift; sourceTree = "<group>"; };
@@ -649,11 +653,13 @@
 			isa = PBXGroup;
 			children = (
 				5193CD53245E3F7A0092735E /* RedditFeedProvider.swift */,
+				5138B4CB24CF877A0018089B /* RedditGalleryData.swift */,
 				5133BB48246078910001E3D0 /* RedditLink.swift */,
 				5133BB46245FD8140001E3D0 /* RedditLinkListing.swift */,
 				5133BB4C2460CA0B0001E3D0 /* RedditMe.swift */,
 				5133BB4E2460EC230001E3D0 /* RedditMedia.swift */,
 				5133BB502460EE730001E3D0 /* RedditMediaEmbed.swift */,
+				5138B4C924CF85050018089B /* RedditMediaMetadata.swift */,
 				5100E4CC246243990010A63D /* RedditPreview.swift */,
 				514100092464DAA6001DA326 /* RedditSort.swift */,
 				5133BB4A2460BDF30001E3D0 /* RedditSubreddit.swift */,
@@ -1187,6 +1193,7 @@
 				51F6C591245DB302001E41CA /* CloudKitReceiveStatusOperation.swift in Sources */,
 				9E672394236F7CA0000BE141 /* FeedlyRefreshAccessTokenOperation.swift in Sources */,
 				1748B4A724CADA17008F9850 /* AccountSyncError.swift in Sources */,
+				5138B4CA24CF85050018089B /* RedditMediaMetadata.swift in Sources */,
 				514BF5202391B0DB00902FE8 /* SingleArticleFetcher.swift in Sources */,
 				9EC688EC232C583300A8D0A2 /* FeedlyAccountDelegate+OAuth.swift in Sources */,
 				8469F81C1F6DD15E0084783E /* Account.swift in Sources */,
@@ -1256,6 +1263,7 @@
 				9EF1B10323584B4C000A486A /* FeedlySyncStreamContentsOperation.swift in Sources */,
 				5154367B228EEB28005E1CDF /* FeedbinImportResult.swift in Sources */,
 				84B2D4D02238CD8A00498ADA /* WebFeedMetadata.swift in Sources */,
+				5138B4CC24CF877A0018089B /* RedditGalleryData.swift in Sources */,
 				9E84DC472359A23200D6E809 /* FeedlyIngestUnreadArticleIdsOperation.swift in Sources */,
 				9EAEC624233315F60085D7C9 /* FeedlyEntry.swift in Sources */,
 				9EEAE073235D01AE00E3FEE4 /* FeedlyGetStreamIdsService.swift in Sources */,

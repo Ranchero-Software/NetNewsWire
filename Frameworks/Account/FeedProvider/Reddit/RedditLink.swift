@@ -37,6 +37,8 @@ final class RedditLinkData: Codable {
 	let mediaEmbed: RedditMediaEmbed?
 	let preview: RedditPreview?
 	let crossPostParents: [RedditLinkData]?
+	let galleryData: RedditGalleryData?
+	let mediaMetadata: [String: RedditMediaMetadata]?
     
     enum CodingKeys: String, CodingKey {
         case title = "title"
@@ -54,6 +56,8 @@ final class RedditLinkData: Codable {
 		case mediaEmbed = "media_embed"
 		case preview = "preview"
 		case crossPostParents = "crosspost_parent_list"
+		case galleryData = "gallery_data"
+		case mediaMetadata = "media_metadata"
     }
 	
 	var createdDate: Date? {
@@ -135,6 +139,21 @@ final class RedditLinkData: Codable {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
 			html += ">"
+			html += linkURL(url, linkOutOnly: false)
+			return html
+		}
+		
+		if let galleryDataItems = galleryData?.items, let mediaMetadata = mediaMetadata {
+			var html = ""
+			for item in galleryDataItems {
+				if let mediaID = item.mediaID, let itemMetadata = mediaMetadata[mediaID], let imageURL = itemMetadata.image?.url {
+					html += "<img src=\"\(imageURL)\" "
+					if let width = itemMetadata.image?.width, let height = itemMetadata.image?.height {
+						html += "width=\"\(width)\" height=\"\(height)\" "
+					}
+					html += ">"
+				}
+			}
 			html += linkURL(url, linkOutOnly: false)
 			return html
 		}
