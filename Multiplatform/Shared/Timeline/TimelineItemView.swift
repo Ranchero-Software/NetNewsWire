@@ -17,13 +17,6 @@ struct TimelineItemView: View {
 	var width: CGFloat
 	var timelineItem: TimelineItem
 
-	#if os(macOS)
-	var verticalPadding: CGFloat = 10
-	#endif
-	#if os(iOS)
-	var verticalPadding: CGFloat = 0
-	#endif
-
     var body: some View {
 		HStack(alignment: .top) {
 			TimelineItemStatusView(selected: selected, status: timelineItem.status)
@@ -65,7 +58,8 @@ struct TimelineItemView: View {
 				}
 			}
 		}
-		.padding(.vertical, verticalPadding)
+		.padding(.vertical, 10)
+		.padding(.horizontal)
 		.onAppear {
 			articleIconImageLoader.loadImage(for: timelineItem.article)
 		}
