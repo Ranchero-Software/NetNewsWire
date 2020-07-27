@@ -70,8 +70,8 @@ struct SidebarToolbarModifier: ViewModifier {
 				ToolbarItem(placement: .bottomBar, content: {
 					Menu(content: {
 						Button { viewModel.sheetToShow = .web } label: { Text("Add Web Feed") }
-						Button { /* TODO:- Add Twitter Feed */ } label: { Text("Add Twitter Feed") }
-						Button { /* TODO:- Add Reddit Feed */ } label: { Text("Add Reddit Feed") }
+						Button { viewModel.sheetToShow = .twitter } label: { Text("Add Twitter Feed") }
+						Button { viewModel.sheetToShow = .reddit } label: { Text("Add Reddit Feed") }
 						Button { viewModel.sheetToShow = .folder } label: { Text("Add Folder") }
 					}, label: {
 						AppAssets.addMenuImage.font(.title3)
