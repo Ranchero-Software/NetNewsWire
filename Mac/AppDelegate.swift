@@ -234,8 +234,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()
 		
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in }
-        NSApplication.shared.registerForRemoteNotifications()
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					NSApplication.shared.registerForRemoteNotifications()
+				}
+			}
+		}
 
 		UNUserNotificationCenter.current().delegate = self
 		userNotificationManager = UserNotificationManager()
