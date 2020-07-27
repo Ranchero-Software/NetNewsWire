@@ -68,21 +68,14 @@ struct SidebarToolbarModifier: ViewModifier {
 				}
 				
 				ToolbarItem(placement: .bottomBar, content: {
-					Button {
-						viewModel.showActionSheet = true
-					} label: {
+					Menu(content: {
+						Button { viewModel.sheetToShow = .web } label: { Text("Add Web Feed") }
+						Button { viewModel.sheetToShow = .twitter } label: { Text("Add Twitter Feed") }
+						Button { viewModel.sheetToShow = .reddit } label: { Text("Add Reddit Feed") }
+						Button { viewModel.sheetToShow = .folder } label: { Text("Add Folder") }
+					}, label: {
 						AppAssets.addMenuImage.font(.title3)
-					}
-					.help("Add")
-					.actionSheet(isPresented: $viewModel.showActionSheet) {
-						ActionSheet(title: Text("Add"), buttons: [
-							.cancel(),
-							.default(Text("Add Web Feed"), action: { viewModel.sheetToShow = .web }),
-							.default(Text("Add Twitter Feed")),
-							.default(Text("Add Reddit Feed")),
-							.default(Text("Add Folder"), action: { viewModel.sheetToShow = .folder })
-						])
-					}
+					})
 				})
 				
 			}
