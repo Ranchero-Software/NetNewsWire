@@ -48,6 +48,8 @@ public final class RedditFeedProvider: FeedProvider {
 		"all": NSLocalizedString("All", comment: "All")
 	]
 	
+	private var parsingQueue = DispatchQueue(label: "RedditFeedProvider parse queue")
+	
 	public var username: String?
 	
 	private var oauthToken: String
@@ -192,7 +194,7 @@ public final class RedditFeedProvider: FeedProvider {
 		fetch(api: api, parameters: [:], resultType: RedditLinkListing.self) { result in
 			switch result {
 			case .success(let linkListing):
-				DispatchQueue.global(qos: .background).async {
+				self.parsingQueue.async {
 					let parsedItems = self.makeParsedItems(webFeed.url, identifySubreddit, linkListing)
 					DispatchQueue.main.async {
 						completion(.success(parsedItems))

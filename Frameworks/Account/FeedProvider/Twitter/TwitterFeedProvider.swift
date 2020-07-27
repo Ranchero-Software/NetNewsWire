@@ -47,6 +47,8 @@ public final class TwitterFeedProvider: FeedProvider {
 	private static let userPaths = ["/home", "/notifications"]
 	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
 	
+	private var parsingQueue = DispatchQueue(label: "TwitterFeedProvider parse queue")
+
 	public var screenName: String
 	
 	private var oauthToken: String
@@ -227,7 +229,7 @@ public final class TwitterFeedProvider: FeedProvider {
 				if let sinceID = statuses.first?.idStr {
 					webFeed.sinceToken = sinceID
 				}
-				DispatchQueue.global(qos: .background).async {
+				self.parsingQueue.async {
 					let parsedItems = self.makeParsedItems(webFeed.url, statuses)
 					DispatchQueue.main.async {
 						completion(.success(parsedItems))
