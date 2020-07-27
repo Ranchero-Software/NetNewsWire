@@ -15,7 +15,6 @@ struct TimelineView: View {
 
 	@EnvironmentObject private var timelineModel: TimelineModel
 
-	@State private var navigate = false
 	@State private var timelineItemFrames = [String: CGRect]()
 	
 	@ViewBuilder var body: some View {
@@ -41,31 +40,24 @@ struct TimelineView: View {
 					.buttonStyle(PlainButtonStyle())
 					.help(isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
-				ScrollView {
-					ScrollViewReader { scrollViewProxy in
-						LazyVStack {
-							ForEach(timelineItems.items) { timelineItem in
-								let selected = timelineModel.selectedTimelineItemIDs.contains(timelineItem.article.articleID)
-								TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
-									.background(TimelineItemBackgroundView(selected: selected, timelineItem: timelineItem))
-									.onTapGesture {
-										timelineModel.selectedTimelineItemIDs = Set([timelineItem.id])
-									}
-							}
-							.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
-								for pref in preferences {
-									timelineItemFrames[pref.articleID] = pref.frame
-								}
-							}
-							.onChange(of: timelineModel.selectedTimelineItemIDs) { selectedArticleIDs in
-								let proxyFrame = geometryReaderProxy.frame(in: .global)
-								for articleID in selectedArticleIDs {
-									if let itemFrame = timelineItemFrames[articleID] {
-										if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 35 {
-											withAnimation {
-												scrollViewProxy.scrollTo(articleID, anchor: .center)
-											}
-										}
+				ScrollViewReader { scrollViewProxy in
+					List(timelineItems.items, selection: $timelineModel.selectedTimelineItemIDs) { timelineItem in
+						let selected = timelineModel.selectedTimelineItemIDs.contains(timelineItem.article.articleID)
+						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
+							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
+					}
+					.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
+						for pref in preferences {
+							timelineItemFrames[pref.articleID] = pref.frame
+						}
+					}
+					.onChange(of: timelineModel.selectedTimelineItemIDs) { selectedArticleIDs in
+						let proxyFrame = geometryReaderProxy.frame(in: .global)
+						for articleID in selectedArticleIDs {
+							if let itemFrame = timelineItemFrames[articleID] {
+								if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 35 {
+									withAnimation {
+										scrollViewProxy.scrollTo(articleID, anchor: .center)
 									}
 								}
 							}
@@ -75,36 +67,30 @@ struct TimelineView: View {
 			}
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
 			#else
-			ZStack {
-				NavigationLink(destination: ArticleView(), isActive: $navigate) {
-					EmptyView()
+			ScrollViewReader { scrollViewProxy in
+				List(timelineItems.items) { timelineItem in
+					ZStack {
+						let selected = timelineModel.selectedTimelineItemID == timelineItem.article.articleID
+						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
+							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
+						NavigationLink(destination: ArticleContainerView(),
+									   tag: timelineItem.article.articleID,
+									   selection: $timelineModel.selectedTimelineItemID) {
+							EmptyView()
+						}.buttonStyle(PlainButtonStyle())
+					}
 				}
-				ScrollView {
-					ScrollViewReader { scrollViewProxy in
-						LazyVStack {
-							ForEach(timelineItems.items) { timelineItem in
-								let selected = timelineModel.selectedTimelineItemID == timelineItem.article.articleID
-								TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
-									.background(TimelineItemBackgroundView(selected: selected, timelineItem: timelineItem))
-									.onTapGesture {
-										timelineModel.selectedTimelineItemIDs = Set([timelineItem.id])
-										navigate = true
-									}
-							}
-						}
-						.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
-							for pref in preferences {
-								timelineItemFrames[pref.articleID] = pref.frame
-							}
-						}
-						.onChange(of: timelineModel.selectedTimelineItemID) { selectedArticleID in
-							let proxyFrame = geometryReaderProxy.frame(in: .global)
-							if let articleID = selectedArticleID, let itemFrame = timelineItemFrames[articleID] {
-								if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 3 {
-									withAnimation {
-										scrollViewProxy.scrollTo(articleID, anchor: .center)
-									}
-								}
+				.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
+					for pref in preferences {
+						timelineItemFrames[pref.articleID] = pref.frame
+					}
+				}
+				.onChange(of: timelineModel.selectedTimelineItemID) { selectedArticleID in
+					let proxyFrame = geometryReaderProxy.frame(in: .global)
+					if let articleID = selectedArticleID, let itemFrame = timelineItemFrames[articleID] {
+						if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 3 {
+							withAnimation {
+								scrollViewProxy.scrollTo(articleID, anchor: .center)
 							}
 						}
 					}
@@ -132,16 +118,13 @@ struct TimelineItemFramePreference: Equatable {
 	let frame: CGRect
 }
 
-struct TimelineItemBackgroundView: View {
-	
-	let selected: Bool
+struct TimelineItemFramePreferenceView: View {
 	let timelineItem: TimelineItem
 	
 	var body: some View {
 		GeometryReader { proxy in
 			Rectangle()
-				.fill(selected ? Color.accentColor : Color.clear)
-				.cornerRadius(6)
+				.fill(Color.clear)
 				.preference(key: TimelineItemFramePreferenceKey.self,
 							value: [TimelineItemFramePreference(articleID: timelineItem.article.articleID, frame: proxy.frame(in: .global))])
 		}
