@@ -20,7 +20,6 @@ class SidebarToolbarModel: ObservableObject {
 			sheetToShow != .none ? (showSheet = true) : (showSheet = false)
 		}
 	}
-	@Published var showActionSheet: Bool = false
 	@Published var showAddSheet: Bool = false
 	
 }
