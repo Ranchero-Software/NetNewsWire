@@ -342,7 +342,7 @@ private extension RedditFeedProvider {
 					self.rateLimitReset = nil
 				}
 
-				DispatchQueue.global(qos: .background).async {
+				self.parsingQueue.async {
 					let decoder = JSONDecoder()
 					do {
 						let result = try decoder.decode(resultType, from: response.data)
