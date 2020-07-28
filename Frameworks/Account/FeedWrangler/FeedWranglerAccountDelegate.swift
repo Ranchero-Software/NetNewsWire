@@ -511,7 +511,7 @@ private extension FeedWranglerAccountDelegate {
 		let parsedItems = feedItems.map { (item: FeedWranglerFeedItem) -> ParsedItem in
 			let itemID = String(item.feedItemID)
 			// let authors = ...
-			let parsedItem = ParsedItem(syncServiceID: itemID, uniqueID: itemID, feedURL: String(item.feedID), url: nil, externalURL: item.url, title: item.title, contentHTML: item.body, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: item.publishedDate, dateModified: item.updatedDate, authors: nil, tags: nil, attachments: nil)
+			let parsedItem = ParsedItem(syncServiceID: itemID, uniqueID: itemID, feedURL: String(item.feedID), url: nil, externalURL: item.url, title: item.title, language: nil, contentHTML: item.body, contentText: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: item.publishedDate, dateModified: item.updatedDate, authors: nil, tags: nil, attachments: nil)
 			
 			return parsedItem
 		}

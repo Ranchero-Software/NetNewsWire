@@ -37,7 +37,7 @@ class OpenInSafariActivity: UIActivity {
 	}
 	
 	override func perform() {
-		guard let url = activityItems?.firstElementPassingTest({ $0 is URL }) as? URL else {
+		guard let url = activityItems?.first(where: { $0 is URL }) as? URL else {
 			activityDidFinish(false)
 			return
 		}
