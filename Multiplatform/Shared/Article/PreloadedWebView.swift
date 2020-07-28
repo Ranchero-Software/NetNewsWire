@@ -8,6 +8,7 @@
 
 import Foundation
 import WebKit
+import RSWeb
 
 class PreloadedWebView: WKWebView {
 	
@@ -28,6 +29,10 @@ class PreloadedWebView: WKWebView {
 		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		
 		super.init(frame: .zero, configuration: configuration)
+		
+		if let userAgent = UserAgent.fromInfoPlist() {
+			customUserAgent = userAgent
+		}
 	}
 	
 	required init?(coder: NSCoder) {
