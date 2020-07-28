@@ -271,23 +271,19 @@ private extension SidebarModel {
 		if let feedID = nextUnread(sidebarItems: sidebarItems, startingAt: startFeed) {
 			return feedID
 		} else {
-			if let firstFeed = sidebarItems.first?.children.first?.feed {
-				return nextUnread(sidebarItems: sidebarItems, startingAt: firstFeed)
-			}
+			return nextUnread(sidebarItems: sidebarItems, startingAt: nil)
 		}
-		
-		return nil
 	}
 	
 	@discardableResult
-	func nextUnread(sidebarItems: [SidebarItem], startingAt: Feed) -> FeedIdentifier? {
-		var foundStartFeed = false
+	func nextUnread(sidebarItems: [SidebarItem], startingAt: Feed?) -> FeedIdentifier? {
+		var foundStartFeed = startingAt == nil ? true : false
 		var nextSidebarItem: SidebarItem? = nil
 		
 		for section in sidebarItems {
 			if nextSidebarItem == nil  {
 				section.visit { sidebarItem in
-					if !foundStartFeed && sidebarItem.feed?.feedID == startingAt.feedID {
+					if !foundStartFeed && sidebarItem.feed?.feedID == startingAt?.feedID {
 						foundStartFeed = true
 						return false
 					}
