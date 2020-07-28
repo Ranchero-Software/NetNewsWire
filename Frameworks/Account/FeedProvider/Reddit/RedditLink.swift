@@ -147,11 +147,11 @@ final class RedditLinkData: Codable {
 			var html = ""
 			for item in galleryDataItems {
 				if let mediaID = item.mediaID, let itemMetadata = mediaMetadata[mediaID], let imageURL = itemMetadata.image?.url {
-					html += "<img src=\"\(imageURL)\" "
+					html += "<figure><img src=\"\(imageURL)\" "
 					if let width = itemMetadata.image?.width, let height = itemMetadata.image?.height {
 						html += "width=\"\(width)\" height=\"\(height)\" "
 					}
-					html += ">"
+					html += "></figure>"
 				}
 			}
 			html += linkURL(url, linkOutOnly: false)
