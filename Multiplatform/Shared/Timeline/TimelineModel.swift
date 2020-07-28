@@ -75,7 +75,7 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	func goToNextUnread() -> Bool {
 		var startIndex: Int
 		if let index = selectedTimelineItems.sorted(by: { $0.position < $1.position }).first?.position {
-			startIndex = index
+			startIndex = index + 1
 		} else {
 			startIndex = 0
 		}

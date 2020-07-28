@@ -289,6 +289,7 @@ private extension SidebarModel {
 				section.visit { sidebarItem in
 					if !foundStartFeed && sidebarItem.feed?.feedID == startingAt.feedID {
 						foundStartFeed = true
+						return false
 					}
 					if foundStartFeed && sidebarItem.unreadCount > 0 {
 						nextSidebarItem = sidebarItem
