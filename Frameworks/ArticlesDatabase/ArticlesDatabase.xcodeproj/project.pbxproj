@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5102AE8C24D181080050839C /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE8B24D181080050839C /* RSCore */; };
+		5102AE8D24D181080050839C /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE8B24D181080050839C /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51C451FF2264CF2100C03939 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C451FE2264CF2100C03939 /* RSParser.framework */; };
 		84116B8923E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84116B8823E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift */; };
 		841D4D742106B59F00DD04E6 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D732106B59F00DD04E6 /* Articles.framework */; };
@@ -22,7 +24,6 @@
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
 		84611DCC23E62FE200BC630C /* FetchUnreadCountsForFeedsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84611DCB23E62FE200BC630C /* FetchUnreadCountsForFeedsOperation.swift */; };
 		8477ACBC2221E76F00DF7F37 /* SearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBB2221E76F00DF7F37 /* SearchTable.swift */; };
-		848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EB820FBCFD20004B7ED /* RSCore.framework */; };
 		848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */; };
 		84C242C923DEB45C00C50516 /* FetchAllUnreadCountsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C242C823DEB45C00C50516 /* FetchAllUnreadCountsOperation.swift */; };
 		84E156EA1F0AB80500F8CC05 /* ArticlesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156E91F0AB80500F8CC05 /* ArticlesDatabase.swift */; };
@@ -111,6 +112,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		5102AE8E24D181090050839C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5102AE8D24D181080050839C /* RSCore in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		51C451FE2264CF2100C03939 /* RSParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		84116B8823E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchFeedUnreadCountOperation.swift; sourceTree = "<group>"; };
@@ -154,10 +169,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5102AE8C24D181080050839C /* RSCore in Frameworks */,
 				51C451FF2264CF2100C03939 /* RSParser.framework in Frameworks */,
 				841D4D742106B59F00DD04E6 /* Articles.framework in Frameworks */,
 				848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */,
-				848E3EB920FBCFD20004B7ED /* RSCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,12 +337,16 @@
 				844BEE341F0AB3AA004AB7CD /* Headers */,
 				844BEE351F0AB3AA004AB7CD /* Resources */,
 				51C8F34A234FB0F50048ED95 /* Run Script: Verify No Build Settings */,
+				5102AE8E24D181090050839C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = ArticlesDatabase;
+			packageProductDependencies = (
+				5102AE8B24D181080050839C /* RSCore */,
+			);
 			productName = Database;
 			productReference = 844BEE371F0AB3AA004AB7CD /* ArticlesDatabase.framework */;
 			productType = "com.apple.product-type.framework";
@@ -382,6 +401,9 @@
 				en,
 			);
 			mainGroup = 844BEE2D1F0AB3AA004AB7CD;
+			packageReferences = (
+				5102AE8A24D181080050839C /* XCRemoteSwiftPackageReference "RSCore" */,
+			);
 			productRefGroup = 844BEE381F0AB3AA004AB7CD /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -637,6 +659,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5102AE8A24D181080050839C /* XCRemoteSwiftPackageReference "RSCore" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Ranchero-Software/RSCore.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = "1.0.0-beta1";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5102AE8B24D181080050839C /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE8A24D181080050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 844BEE2E1F0AB3AA004AB7CD /* Project object */;
 }

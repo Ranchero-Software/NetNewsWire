@@ -8,6 +8,7 @@
 
 import AppKit
 import RSCore
+import RSCoreResources
 import RSTree
 import Articles
 import Account

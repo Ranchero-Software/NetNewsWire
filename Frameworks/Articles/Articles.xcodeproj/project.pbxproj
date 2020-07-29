@@ -3,17 +3,18 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5102AE8724D180E50050839C /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE8624D180E50050839C /* RSCore */; };
+		5102AE8824D180E50050839C /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE8624D180E50050839C /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		840405CA1F1A8E4300DF0296 /* DatabaseID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840405C91F1A8E4300DF0296 /* DatabaseID.swift */; };
 		844BEE651F0AB3C9004AB7CD /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 844BEE5B1F0AB3C8004AB7CD /* Articles.framework */; };
 		844BEE6A1F0AB3C9004AB7CD /* DataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE691F0AB3C9004AB7CD /* DataTests.swift */; };
 		844BEE7F1F0AB4CA004AB7CD /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE7E1F0AB4CA004AB7CD /* Article.swift */; };
 		844BEE811F0AB4D0004AB7CD /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE801F0AB4D0004AB7CD /* Author.swift */; };
 		844BEE851F0AB4DB004AB7CD /* ArticleStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844BEE841F0AB4DB004AB7CD /* ArticleStatus.swift */; };
-		848E3EB420FBCFAE0004B7ED /* RSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EB320FBCFAE0004B7ED /* RSCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		5102AE8924D180E60050839C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5102AE8824D180E50050839C /* RSCore in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		840405C91F1A8E4300DF0296 /* DatabaseID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseID.swift; sourceTree = "<group>"; };
 		844BEE5B1F0AB3C8004AB7CD /* Articles.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Articles.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,7 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				848E3EB420FBCFAE0004B7ED /* RSCore.framework in Frameworks */,
+				5102AE8724D180E50050839C /* RSCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,12 +190,16 @@
 				844BEE581F0AB3C8004AB7CD /* Headers */,
 				844BEE591F0AB3C8004AB7CD /* Resources */,
 				51C8F34B234FB11A0048ED95 /* Run Script: Verify No Build Settings */,
+				5102AE8924D180E60050839C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = Articles;
+			packageProductDependencies = (
+				5102AE8624D180E50050839C /* RSCore */,
+			);
 			productName = Data;
 			productReference = 844BEE5B1F0AB3C8004AB7CD /* Articles.framework */;
 			productType = "com.apple.product-type.framework";
@@ -235,6 +254,9 @@
 				en,
 			);
 			mainGroup = 844BEE511F0AB3C8004AB7CD;
+			packageReferences = (
+				5102AE8524D180E50050839C /* XCRemoteSwiftPackageReference "RSCore" */,
+			);
 			productRefGroup = 844BEE5C1F0AB3C8004AB7CD /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -417,6 +439,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5102AE8524D180E50050839C /* XCRemoteSwiftPackageReference "RSCore" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Ranchero-Software/RSCore.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = "1.0.0-beta1";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5102AE8624D180E50050839C /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE8524D180E50050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 844BEE521F0AB3C8004AB7CD /* Project object */;
 }
