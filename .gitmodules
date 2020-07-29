@@ -4,9 +4,6 @@
 [submodule "submodules/RSParser"]
 	path = submodules/RSParser
 	url = https://github.com/brentsimmons/RSParser
-[submodule "submodules/RSTree"]
-	path = submodules/RSTree
-	url = https://github.com/brentsimmons/RSTree
 [submodule "submodules/RSDatabase"]
 	path = submodules/RSDatabase
 	url = https://github.com/brentsimmons/RSDatabase
