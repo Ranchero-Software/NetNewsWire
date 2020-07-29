@@ -65,6 +65,15 @@
         }
       },
       {
+        "package": "RSWeb",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSWeb.git",
+        "state": {
+          "branch": null,
+          "revision": "cb76e7c3b6f1dd31f20e2d9c5a5d1092f4d000e4",
+          "version": "1.0.0-beta2"
+        }
+      },
+      {
         "package": "Swifter",
         "repositoryURL": "https://github.com/httpswift/swifter.git",
         "state": {

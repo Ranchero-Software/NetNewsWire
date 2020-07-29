@@ -1,6 +1,3 @@
-[submodule "submodules/RSWeb"]
-	path = submodules/RSWeb
-	url = https://github.com/brentsimmons/RSWeb
 [submodule "submodules/RSParser"]
 	path = submodules/RSParser
 	url = https://github.com/brentsimmons/RSParser
