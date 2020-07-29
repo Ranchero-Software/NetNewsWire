@@ -280,12 +280,6 @@
 		5177476524B3BDAE00EB0F74 /* AttributedStringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177476424B3BDAE00EB0F74 /* AttributedStringView.swift */; };
 		5177476724B3BE3400EB0F74 /* SettingsAboutModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5177476624B3BE3400EB0F74 /* SettingsAboutModel.swift */; };
 		517A745B2443665000B553B9 /* UIPageViewController-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */; };
-		517A757724451BFC00B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; };
-		517A757824451BFC00B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		517A757924451C0700B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; };
-		517A757A24451C0700B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		517A757B24451C1500B553B9 /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; };
-		517A757C24451C1500B553B9 /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		517B2EBC24B3E62A001AC46C /* WrapperScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517B2EBB24B3E62A001AC46C /* WrapperScriptMessageHandler.swift */; };
 		517B2EE224B3E8FE001AC46C /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 517B2EDE24B3E8FE001AC46C /* page.html */; };
 		517B2EE324B3E8FE001AC46C /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = 517B2EDE24B3E8FE001AC46C /* page.html */; };
@@ -516,8 +510,6 @@
 		51E4988224A8061400B667CB /* Articles.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E4988324A8061400B667CB /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
 		51E4988424A8061400B667CB /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		51E4988524A8061400B667CB /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; };
-		51E4988624A8061400B667CB /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755324451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E4988924A8061400B667CB /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC420DD8E0C00CA8CF5 /* RSDatabase.framework */; };
 		51E4988A24A8061400B667CB /* RSDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC420DD8E0C00CA8CF5 /* RSDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E4988B24A8061400B667CB /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8C20DD8CF800CA8CF5 /* RSParser.framework */; };
@@ -536,8 +528,6 @@
 		51E4989D24A8069300B667CB /* Articles.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 840716732262A60F00344432 /* Articles.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E4989E24A8069300B667CB /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; };
 		51E4989F24A8069300B667CB /* ArticlesDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407167F2262A61100344432 /* ArticlesDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		51E498A024A8069300B667CB /* OAuthSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; };
-		51E498A124A8069300B667CB /* OAuthSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 517A755524451BD500B553B9 /* OAuthSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E498A424A8069300B667CB /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC020DD8E0C00CA8CF5 /* RSDatabase.framework */; };
 		51E498A524A8069300B667CB /* RSDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37FC020DD8E0C00CA8CF5 /* RSDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E498A624A8069300B667CB /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84C37F8C20DD8CF800CA8CF5 /* RSParser.framework */; };
@@ -1165,55 +1155,6 @@
 			remoteGlobalIDString = 51554BEA228B6E8F0055115A;
 			remoteInfo = SyncDatabase;
 		};
-		517A755224451BD500B553B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F435027A1A6791B200038A29;
-			remoteInfo = OAuthSwift;
-		};
-		517A755424451BD500B553B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C48B28021AFA598D00C7DEF6;
-			remoteInfo = OAuthSwiftMacOS;
-		};
-		517A755624451BD500B553B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C4B6EE1E1BF74CE300443596;
-			remoteInfo = OAuthSwiftTVOS;
-		};
-		517A755824451BD500B553B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C40890C01C11B37000E3146A;
-			remoteInfo = OAuthSwiftWatchOS;
-		};
-		517A755A24451BD500B553B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F451E3C5195B8CD80051434C;
-			remoteInfo = OAuthSwiftDemo;
-		};
-		517A755C24451BD500B553B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C49FD5241AFB5DF500791E1A;
-			remoteInfo = OAuthSwiftMacOSDemo;
-		};
-		517A755E24451BD500B553B9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C4D50DF71BFB693F0053B624;
-			remoteInfo = OAuthSwiftTests;
-		};
 		518B2ED72351B3DD00400001 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
@@ -1626,7 +1567,6 @@
 				51C451F92264C83E00C03939 /* Account.framework in Embed Frameworks */,
 				510ECA4624D1E010001C31A6 /* RSTree in Embed Frameworks */,
 				51C451F12264C83100C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
-				517A757C24451C1500B553B9 /* OAuthSwift.framework in Embed Frameworks */,
 				51C451F52264C83900C03939 /* Articles.framework in Embed Frameworks */,
 				51C451E92264C81000C03939 /* RSDatabase.framework in Embed Frameworks */,
 				51554C31228B71A10055115A /* SyncDatabase.framework in Embed Frameworks */,
@@ -1647,7 +1587,6 @@
 				51E4988A24A8061400B667CB /* RSDatabase.framework in Embed Frameworks */,
 				51E4988024A8061400B667CB /* Account.framework in Embed Frameworks */,
 				51E4988224A8061400B667CB /* Articles.framework in Embed Frameworks */,
-				51E4988624A8061400B667CB /* OAuthSwift.framework in Embed Frameworks */,
 				51E4989424A8061400B667CB /* SyncDatabase.framework in Embed Frameworks */,
 				51E4988C24A8061400B667CB /* RSParser.framework in Embed Frameworks */,
 				5102AE7A24D17FF20050839C /* RSCore in Embed Frameworks */,
@@ -1668,7 +1607,6 @@
 				51E4989B24A8069300B667CB /* Account.framework in Embed Frameworks */,
 				5102AE7D24D17FFB0050839C /* RSCore in Embed Frameworks */,
 				51E4989D24A8069300B667CB /* Articles.framework in Embed Frameworks */,
-				51E498A124A8069300B667CB /* OAuthSwift.framework in Embed Frameworks */,
 				51E498AF24A8069300B667CB /* SyncDatabase.framework in Embed Frameworks */,
 				51E4997724A87FFC00B667CB /* Sparkle.framework in Embed Frameworks */,
 				51E498A724A8069300B667CB /* RSParser.framework in Embed Frameworks */,
@@ -1711,7 +1649,6 @@
 			files = (
 				65ED4071235DEF6C0081F399 /* RSWeb.framework in Embed Frameworks */,
 				65ED4072235DEF6C0081F399 /* RSDatabase.framework in Embed Frameworks */,
-				517A757A24451C0700B553B9 /* OAuthSwift.framework in Embed Frameworks */,
 				65ED4074235DEF6C0081F399 /* ArticlesDatabase.framework in Embed Frameworks */,
 				65ED4076235DEF6C0081F399 /* Account.framework in Embed Frameworks */,
 				65ED4077235DEF6C0081F399 /* Articles.framework in Embed Frameworks */,
@@ -1759,7 +1696,6 @@
 				84C37FC620DD8E1D00CA8CF5 /* RSDatabase.framework in Embed Frameworks */,
 				5102AE6524D17F640050839C /* RSCore in Embed Frameworks */,
 				51C451AA226377C200C03939 /* ArticlesDatabase.framework in Embed Frameworks */,
-				517A757824451BFC00B553B9 /* OAuthSwift.framework in Embed Frameworks */,
 				51C451BE226377D000C03939 /* Account.framework in Embed Frameworks */,
 				51C451BA226377C900C03939 /* Articles.framework in Embed Frameworks */,
 				84C37FB620DD8DBB00CA8CF5 /* RSParser.framework in Embed Frameworks */,
@@ -1948,7 +1884,6 @@
 		5177476424B3BDAE00EB0F74 /* AttributedStringView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributedStringView.swift; sourceTree = "<group>"; };
 		5177476624B3BE3400EB0F74 /* SettingsAboutModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutModel.swift; sourceTree = "<group>"; };
 		517A745A2443665000B553B9 /* UIPageViewController-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIPageViewController-Extensions.swift"; sourceTree = "<group>"; };
-		517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthSwift.xcodeproj; path = submodules/OAuthSwift/OAuthSwift.xcodeproj; sourceTree = "<group>"; };
 		517B2EBB24B3E62A001AC46C /* WrapperScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperScriptMessageHandler.swift; sourceTree = "<group>"; };
 		517B2EDE24B3E8FE001AC46C /* page.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		517B2EDF24B3E8FE001AC46C /* blank.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
@@ -2407,7 +2342,6 @@
 				51E4988924A8061400B667CB /* RSDatabase.framework in Frameworks */,
 				51E4987F24A8061400B667CB /* Account.framework in Frameworks */,
 				51E4988124A8061400B667CB /* Articles.framework in Frameworks */,
-				51E4988524A8061400B667CB /* OAuthSwift.framework in Frameworks */,
 				51E4989324A8061400B667CB /* SyncDatabase.framework in Frameworks */,
 				51E4988B24A8061400B667CB /* RSParser.framework in Frameworks */,
 				51E4989724A8065700B667CB /* CloudKit.framework in Frameworks */,
@@ -2427,7 +2361,6 @@
 				51E4997624A87FFC00B667CB /* Sparkle.framework in Frameworks */,
 				51E4989A24A8069300B667CB /* Account.framework in Frameworks */,
 				51E4989C24A8069300B667CB /* Articles.framework in Frameworks */,
-				51E498A024A8069300B667CB /* OAuthSwift.framework in Frameworks */,
 				51E498AE24A8069300B667CB /* SyncDatabase.framework in Frameworks */,
 				51E498A624A8069300B667CB /* RSParser.framework in Frameworks */,
 				51E498B124A806A400B667CB /* CloudKit.framework in Frameworks */,
@@ -2451,7 +2384,6 @@
 			files = (
 				65ED4043235DEF6C0081F399 /* RSWeb.framework in Frameworks */,
 				65ED4044235DEF6C0081F399 /* RSDatabase.framework in Frameworks */,
-				517A757924451C0700B553B9 /* OAuthSwift.framework in Frameworks */,
 				5102AE6C24D17F7C0050839C /* RSCoreResources in Frameworks */,
 				65ED4046235DEF6C0081F399 /* ArticlesDatabase.framework in Frameworks */,
 				65ED4047235DEF6C0081F399 /* RSParser.framework in Frameworks */,
@@ -2481,7 +2413,6 @@
 				5102FD9D24400A0500534F17 /* Secrets.framework in Frameworks */,
 				51C451F82264C83E00C03939 /* Account.framework in Frameworks */,
 				51C451F02264C83100C03939 /* ArticlesDatabase.framework in Frameworks */,
-				517A757B24451C1500B553B9 /* OAuthSwift.framework in Frameworks */,
 				51C451F42264C83900C03939 /* Articles.framework in Frameworks */,
 				51C451E82264C81000C03939 /* RSDatabase.framework in Frameworks */,
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
@@ -2508,7 +2439,6 @@
 				5102AE6424D17F640050839C /* RSCore in Frameworks */,
 				5102FD83244009F000534F17 /* Secrets.framework in Frameworks */,
 				51554C24228B71910055115A /* SyncDatabase.framework in Frameworks */,
-				517A757724451BFC00B553B9 /* OAuthSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2890,20 +2820,6 @@
 				5177476024B3BC4700EB0F74 /* SettingsAboutView.swift */,
 			);
 			path = About;
-			sourceTree = "<group>";
-		};
-		517A754524451BD500B553B9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				517A755324451BD500B553B9 /* OAuthSwift.framework */,
-				517A755524451BD500B553B9 /* OAuthSwift.framework */,
-				517A755724451BD500B553B9 /* OAuthSwift.framework */,
-				517A755924451BD500B553B9 /* OAuthSwift.framework */,
-				517A755B24451BD500B553B9 /* OAuthSwiftDemo.app */,
-				517A755D24451BD500B553B9 /* OAuthSwiftMacOSDemo.app */,
-				517A755F24451BD500B553B9 /* OAuthSwiftTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		5183CCEA226F70350010922C /* Timer */ = {
@@ -3634,7 +3550,6 @@
 				D5907CDA2002F084005947E5 /* xcconfig */,
 				849C64611ED37A5D003D8FC0 /* Products */,
 				51C452B22265141B00C03939 /* Frameworks */,
-				517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */,
 				84C37FB920DD8E0C00CA8CF5 /* RSDatabase.xcodeproj */,
 				84C37F8620DD8CF800CA8CF5 /* RSParser.xcodeproj */,
 				84C37F9820DD8D0400CA8CF5 /* RSWeb.xcodeproj */,
@@ -4395,10 +4310,6 @@
 					ProjectRef = 841D4D5E2106B3E100DD04E6 /* ArticlesDatabase.xcodeproj */;
 				},
 				{
-					ProductGroup = 517A754524451BD500B553B9 /* Products */;
-					ProjectRef = 517A754424451BD500B553B9 /* OAuthSwift.xcodeproj */;
-				},
-				{
 					ProductGroup = 84C37FBA20DD8E0C00CA8CF5 /* Products */;
 					ProjectRef = 84C37FB920DD8E0C00CA8CF5 /* RSDatabase.xcodeproj */;
 				},
@@ -4453,55 +4364,6 @@
 			fileType = wrapper.framework;
 			path = SyncDatabase.framework;
 			remoteRef = 51554C00228B6EB50055115A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		517A755324451BD500B553B9 /* OAuthSwift.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = OAuthSwift.framework;
-			remoteRef = 517A755224451BD500B553B9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		517A755524451BD500B553B9 /* OAuthSwift.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = OAuthSwift.framework;
-			remoteRef = 517A755424451BD500B553B9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		517A755724451BD500B553B9 /* OAuthSwift.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = OAuthSwift.framework;
-			remoteRef = 517A755624451BD500B553B9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		517A755924451BD500B553B9 /* OAuthSwift.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = OAuthSwift.framework;
-			remoteRef = 517A755824451BD500B553B9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		517A755B24451BD500B553B9 /* OAuthSwiftDemo.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = OAuthSwiftDemo.app;
-			remoteRef = 517A755A24451BD500B553B9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		517A755D24451BD500B553B9 /* OAuthSwiftMacOSDemo.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = OAuthSwiftMacOSDemo.app;
-			remoteRef = 517A755C24451BD500B553B9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		517A755F24451BD500B553B9 /* OAuthSwiftTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OAuthSwiftTests.xctest;
-			remoteRef = 517A755E24451BD500B553B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		65ED42B0235E71B40081F399 /* Sparkle.framework */ = {
