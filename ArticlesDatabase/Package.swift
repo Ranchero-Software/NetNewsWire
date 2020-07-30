@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "ArticlesDatabase",
+	platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
     products: [
         .library(
             name: "ArticlesDatabase",
@@ -14,10 +15,16 @@ let package = Package(
 		.package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMajor(from: "1.0.0-beta1")),
 		.package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0-beta1")),
 		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.0-beta1")),
+		.package(url: "../Articles", .upToNextMajor(from: "1.0.0")),
     ],
     targets: [
         .target(
             name: "ArticlesDatabase",
-            dependencies: []),
+            dependencies: [
+				.product(name: "RSCore", package: "RSCore"),
+				.product(name: "RSDatabase", package: "RSDatabase"),
+				.product(name: "RSParser", package: "RSParser"),
+				.product(name: "Articles", package: "Articles"),
+			]),
     ]
 )

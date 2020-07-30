@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "SyncDatabase",
+	platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
     products: [
         .library(
             name: "SyncDatabase",
@@ -10,10 +11,14 @@ let package = Package(
     ],
     dependencies: [
 		.package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0-beta1")),
+		.package(url: "../Articles", .upToNextMajor(from: "1.0.0")),
     ],
     targets: [
         .target(
             name: "SyncDatabase",
-            dependencies: []),
+            dependencies: [
+				.product(name: "RSDatabase", package: "RSDatabase"),
+				.product(name: "Articles", package: "Articles"),
+			]),
     ]
 )

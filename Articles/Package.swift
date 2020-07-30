@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Articles",
+	platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
     products: [
         .library(
             name: "Articles",
@@ -14,6 +15,8 @@ let package = Package(
     targets: [
         .target(
             name: "Articles",
-            dependencies: []),
-    ]
+			dependencies: [
+				.product(name: "RSCore", package: "RSCore"),
+			]),
+	]
 )

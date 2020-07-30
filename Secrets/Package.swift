@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Secrets",
+	platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
     products: [
         .library(
             name: "Secrets",
@@ -14,7 +15,9 @@ let package = Package(
     targets: [
         .target(
             name: "Secrets",
-            dependencies: [],
+            dependencies: [
+				.product(name: "OAuthSwift", package: "OAuthSwift"),
+			],
 			exclude: ["Secrets.swift.gyb"]),
     ]
 )

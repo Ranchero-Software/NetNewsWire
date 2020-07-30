@@ -44,3 +44,6 @@ IPHONEOS_DEPLOYMENT_TARGET = 13.0
 //SDKROOT = macosx
 SWIFT_SWIFT3_OBJC_INFERENCE = Off
 SWIFT_VERSION = 5.1
+
+// https://forums.swift.org/t/swift-packages-in-multiple-targets-results-in-this-will-result-in-duplication-of-library-code-errors/34892/33
+DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES
