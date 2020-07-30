@@ -1,6 +1,3 @@
-[submodule "submodules/RSParser"]
-	path = submodules/RSParser
-	url = https://github.com/brentsimmons/RSParser
 [submodule "submodules/Sparkle"]
 	path = submodules/Sparkle
 	url = https://github.com/brentsimmons/Sparkle

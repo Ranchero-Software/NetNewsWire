@@ -82,6 +82,8 @@
 		519E84AC2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84AB2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift */; };
 		51B0DF1B24D24F12000AD99E /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF1A24D24F12000AD99E /* RSDatabase */; };
 		51B0DF1C24D24F12000AD99E /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF1A24D24F12000AD99E /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		51B0DF2D24D2C8B1000AD99E /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF2C24D2C8B1000AD99E /* RSParser */; };
+		51B0DF2E24D2C8B1000AD99E /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF2C24D2C8B1000AD99E /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51B36305244B6135000DEF2A /* TwitterEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36304244B6135000DEF2A /* TwitterEntities.swift */; };
 		51B36307244B6234000DEF2A /* TwitterHashtag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36306244B6234000DEF2A /* TwitterHashtag.swift */; };
 		51B36309244B62A5000DEF2A /* TwitterURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36308244B62A5000DEF2A /* TwitterURL.swift */; };
@@ -119,7 +121,6 @@
 		55203300229D5D5A009559E0 /* ReaderAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552032F5229D5D5A009559E0 /* ReaderAPICaller.swift */; };
 		769F295938E5A30D03DFF88F /* NewsBlurAccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F2A8DF190549E24B5D110 /* NewsBlurAccountDelegate.swift */; };
 		769F2BA02EF5F329CDE45F5A /* NewsBlurAPICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F275FD5D942502C5B4716 /* NewsBlurAPICaller.swift */; };
-		841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841973FA1F6DD1AC006346C4 /* RSParser.framework */; };
 		841974011F6DD1EC006346C4 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974001F6DD1EC006346C4 /* Folder.swift */; };
 		841974251F6DDCE4006346C4 /* AccountDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841974241F6DDCE4006346C4 /* AccountDelegate.swift */; };
 		841D4D702106B40400DD04E6 /* ArticlesDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D6F2106B40400DD04E6 /* ArticlesDatabase.framework */; };
@@ -281,6 +282,7 @@
 			files = (
 				51383A4724D1FF160027E272 /* RSWeb in Embed Frameworks */,
 				51383A4424D1FF030027E272 /* RSCore in Embed Frameworks */,
+				51B0DF2E24D2C8B1000AD99E /* RSParser in Embed Frameworks */,
 				51B0DF1C24D24F12000AD99E /* RSDatabase in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -534,13 +536,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51B0DF2D24D2C8B1000AD99E /* RSParser in Frameworks */,
 				51383A4624D1FF160027E272 /* RSWeb in Frameworks */,
 				841D4D722106B40A00DD04E6 /* Articles.framework in Frameworks */,
 				841D4D702106B40400DD04E6 /* ArticlesDatabase.framework in Frameworks */,
 				51383A4324D1FF030027E272 /* RSCore in Frameworks */,
 				51B0DF1B24D24F12000AD99E /* RSDatabase in Frameworks */,
 				51E148EC234B8FFC0004F7A5 /* SyncDatabase.framework in Frameworks */,
-				841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */,
 				5102FD80244009E000534F17 /* Secrets.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1037,6 +1039,7 @@
 				51383A4224D1FF030027E272 /* RSCore */,
 				51383A4524D1FF160027E272 /* RSWeb */,
 				51B0DF1A24D24F12000AD99E /* RSDatabase */,
+				51B0DF2C24D2C8B1000AD99E /* RSParser */,
 			);
 			productName = Account;
 			productReference = 848934F61F62484F00CEBD24 /* Account.framework */;
@@ -1093,6 +1096,7 @@
 				5102AE8024D180A80050839C /* XCRemoteSwiftPackageReference "RSCore" */,
 				51383A3E24D1FE9A0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */,
 				51B0DF1924D24F12000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */,
+				51B0DF2B24D2C8B1000AD99E /* XCRemoteSwiftPackageReference "RSParser" */,
 			);
 			productRefGroup = 848934F71F62484F00CEBD24 /* Products */;
 			projectDirPath = "";
@@ -1521,6 +1525,14 @@
 				minimumVersion = "1.0.0-beta1";
 			};
 		};
+		51B0DF2B24D2C8B1000AD99E /* XCRemoteSwiftPackageReference "RSParser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Ranchero-Software/RSParser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = "2.0.0-beta1";
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1538,6 +1550,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 51B0DF1924D24F12000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
 			productName = RSDatabase;
+		};
+		51B0DF2C24D2C8B1000AD99E /* RSParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF2B24D2C8B1000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
+			productName = RSParser;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
