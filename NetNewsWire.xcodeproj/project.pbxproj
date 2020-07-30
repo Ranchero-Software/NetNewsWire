@@ -76,13 +76,6 @@
 		5102AE7C24D17FFB0050839C /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE7B24D17FFB0050839C /* RSCore */; };
 		5102AE7D24D17FFB0050839C /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE7B24D17FFB0050839C /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5102AE7F24D17FFB0050839C /* RSCoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE7E24D17FFB0050839C /* RSCoreResources */; };
-		5102FD83244009F000534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
-		5102FD84244009F000534F17 /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5102FD9B244009FA00534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
-		5102FD9C244009FA00534F17 /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5102FD9D24400A0500534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
-		5102FD9E24400A0500534F17 /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5102FDA224400A2000534F17 /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
 		5103A9982421643300410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9972421643300410853 /* blank.html */; };
 		5103A9992421643300410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9972421643300410853 /* blank.html */; };
 		5103A9B424216A4200410853 /* blank.html in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9B324216A4200410853 /* blank.html */; };
@@ -491,14 +484,10 @@
 		51E4398023805EBC00015C31 /* AddComboTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397F23805EBC00015C31 /* AddComboTableViewCell.swift */; };
 		51E4987F24A8061400B667CB /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; };
 		51E4988024A8061400B667CB /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		51E4989124A8061400B667CB /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
-		51E4989224A8061400B667CB /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E4989724A8065700B667CB /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4989624A8065700B667CB /* CloudKit.framework */; };
 		51E4989924A8067000B667CB /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4989824A8067000B667CB /* WebKit.framework */; };
 		51E4989A24A8069300B667CB /* Account.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; };
 		51E4989B24A8069300B667CB /* Account.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8407166A2262A60D00344432 /* Account.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		51E498AC24A8069300B667CB /* Secrets.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; };
-		51E498AD24A8069300B667CB /* Secrets.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5102FD7B244008A700534F17 /* Secrets.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		51E498B124A806A400B667CB /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4DAEC2425F6940091EB5B /* CloudKit.framework */; };
 		51E498B324A806AA00B667CB /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E498B224A806AA00B667CB /* WebKit.framework */; };
 		51E498C724A8085D00B667CB /* StarredFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */; };
@@ -1070,13 +1059,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5102FD7A244008A700534F17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5102FD72244008A700534F17 /* Secrets.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 514BB41A243FFA640023B621;
-			remoteInfo = Secrets;
-		};
 		5131463C235A7BBE00387FDC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 849C64581ED37A5D003D8FC0 /* Project object */;
@@ -1334,7 +1316,6 @@
 				510ECA4624D1E010001C31A6 /* RSTree in Embed Frameworks */,
 				51383A3624D1F91F0027E272 /* RSWeb in Embed Frameworks */,
 				5102AE6F24D17F9C0050839C /* RSCore in Embed Frameworks */,
-				5102FD9E24400A0500534F17 /* Secrets.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1349,7 +1330,6 @@
 				51E4988024A8061400B667CB /* Account.framework in Embed Frameworks */,
 				51383A3924D1F9470027E272 /* RSWeb in Embed Frameworks */,
 				5102AE7A24D17FF20050839C /* RSCore in Embed Frameworks */,
-				51E4989224A8061400B667CB /* Secrets.framework in Embed Frameworks */,
 				51B0DF1F24D24F53000AD99E /* RSDatabase in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1367,7 +1347,6 @@
 				51383A3C24D1F9510027E272 /* RSWeb in Embed Frameworks */,
 				5102AE7D24D17FFB0050839C /* RSCore in Embed Frameworks */,
 				51E4997724A87FFC00B667CB /* Sparkle.framework in Embed Frameworks */,
-				51E498AD24A8069300B667CB /* Secrets.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1405,7 +1384,6 @@
 			files = (
 				65ED4076235DEF6C0081F399 /* Account.framework in Embed Frameworks */,
 				5102AE6A24D17F7C0050839C /* RSCore in Embed Frameworks */,
-				5102FD9C244009FA00534F17 /* Secrets.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1444,7 +1422,6 @@
 				51B0DF1024D24E3B000AD99E /* RSDatabase in Embed Frameworks */,
 				51B0DF2624D2C7FA000AD99E /* RSParser in Embed Frameworks */,
 				51383A3324D1F90E0027E272 /* RSWeb in Embed Frameworks */,
-				5102FD84244009F000534F17 /* Secrets.framework in Embed Frameworks */,
 				5102AE6524D17F640050839C /* RSCore in Embed Frameworks */,
 				51C451BE226377D000C03939 /* Account.framework in Embed Frameworks */,
 				65ED42DF235E74230081F399 /* Sparkle.framework in Embed Frameworks */,
@@ -1505,7 +1482,6 @@
 		510289D12451BC1F00426DDF /* TwitterSelectTypeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectTypeTableViewController.swift; sourceTree = "<group>"; };
 		510289D32451BD7B00426DDF /* SelectURLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectURLBuilder.swift; sourceTree = "<group>"; };
 		510289D52451DDD100426DDF /* TwitterSelectAccountTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwitterSelectAccountTableViewController.swift; sourceTree = "<group>"; };
-		5102FD72244008A700534F17 /* Secrets.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Secrets.xcodeproj; path = Frameworks/Secrets/Secrets.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5103A9972421643300410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsAddCloudKit.xib; sourceTree = "<group>"; };
@@ -1752,6 +1728,7 @@
 		51CD32A824D2CB25009ABAEF /* SyncDatabase */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SyncDatabase; sourceTree = "<group>"; };
 		51CD32C324D2CD57009ABAEF /* ArticlesDatabase */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ArticlesDatabase; sourceTree = "<group>"; };
 		51CD32C424D2CF1D009ABAEF /* Articles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Articles; sourceTree = "<group>"; };
+		51CD32C524D2D070009ABAEF /* Secrets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Secrets; sourceTree = "<group>"; };
 		51CE1C0823621EDA005548FC /* RefreshProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RefreshProgressView.xib; sourceTree = "<group>"; };
 		51CE1C0A23622006005548FC /* RefreshProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
 		51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineDataSource.swift; sourceTree = "<group>"; };
@@ -2042,7 +2019,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				513146BF235A8FDB00387FDC /* Account.framework in Frameworks */,
-				5102FDA224400A2000534F17 /* Secrets.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2072,7 +2048,6 @@
 				5102AE7924D17FF20050839C /* RSCore in Frameworks */,
 				51E4987F24A8061400B667CB /* Account.framework in Frameworks */,
 				51E4989724A8065700B667CB /* CloudKit.framework in Frameworks */,
-				51E4989124A8061400B667CB /* Secrets.framework in Frameworks */,
 				51E4989924A8067000B667CB /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2089,7 +2064,6 @@
 				51E498B124A806A400B667CB /* CloudKit.framework in Frameworks */,
 				5102AE7C24D17FFB0050839C /* RSCore in Frameworks */,
 				51B0DF2124D24F66000AD99E /* RSDatabase in Frameworks */,
-				51E498AC24A8069300B667CB /* Secrets.framework in Frameworks */,
 				51E498B324A806AA00B667CB /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2108,7 +2082,6 @@
 				5102AE6C24D17F7C0050839C /* RSCoreResources in Frameworks */,
 				65ED4048235DEF6C0081F399 /* Account.framework in Frameworks */,
 				5102AE6924D17F7C0050839C /* RSCore in Frameworks */,
-				5102FD9B244009FA00534F17 /* Secrets.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2127,7 +2100,6 @@
 				510ECA4524D1E010001C31A6 /* RSTree in Frameworks */,
 				5102AE6E24D17F9C0050839C /* RSCore in Frameworks */,
 				51C452B42265141B00C03939 /* WebKit.framework in Frameworks */,
-				5102FD9D24400A0500534F17 /* Secrets.framework in Frameworks */,
 				51C451F82264C83E00C03939 /* Account.framework in Frameworks */,
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
 			);
@@ -2146,7 +2118,6 @@
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				51383A3224D1F90E0027E272 /* RSWeb in Frameworks */,
 				5102AE6424D17F640050839C /* RSCore in Frameworks */,
-				5102FD83244009F000534F17 /* Secrets.framework in Frameworks */,
 				51B0DF2524D2C7FA000AD99E /* RSParser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2300,14 +2271,6 @@
 				51BEB22C2451E8340066DEDD /* TwitterEnterDetailTableViewController.swift */,
 			);
 			path = Twitter;
-			sourceTree = "<group>";
-		};
-		5102FD73244008A700534F17 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5102FD7B244008A700534F17 /* Secrets.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		510C43F5243D0325009F70C3 /* ExtensionPoints */ = {
@@ -3222,6 +3185,7 @@
 		849C64571ED37A5D003D8FC0 = {
 			isa = PBXGroup;
 			children = (
+				51CD32C524D2D070009ABAEF /* Secrets */,
 				51CD32C424D2CF1D009ABAEF /* Articles */,
 				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,
 				51CD32A824D2CB25009ABAEF /* SyncDatabase */,
@@ -3307,7 +3271,6 @@
 			isa = PBXGroup;
 			children = (
 				846E77301F6EF5D600A165E2 /* Account.xcodeproj */,
-				5102FD72244008A700534F17 /* Secrets.xcodeproj */,
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
 				511B9805237DCAC90028BCAA /* UserInfoKey.swift */,
 				51C452AD2265102800C03939 /* Timeline */,
@@ -3952,10 +3915,6 @@
 					ProjectRef = 846E77301F6EF5D600A165E2 /* Account.xcodeproj */;
 				},
 				{
-					ProductGroup = 5102FD73244008A700534F17 /* Products */;
-					ProjectRef = 5102FD72244008A700534F17 /* Secrets.xcodeproj */;
-				},
-				{
 					ProductGroup = 65ED429A235E71B40081F399 /* Products */;
 					ProjectRef = 65ED4299235E71B40081F399 /* Sparkle.xcodeproj */;
 				},
@@ -3978,13 +3937,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		5102FD7B244008A700534F17 /* Secrets.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Secrets.framework;
-			remoteRef = 5102FD7A244008A700534F17 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		65ED42B0235E71B40081F399 /* Sparkle.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
