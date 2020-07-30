@@ -92,7 +92,7 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		let urlString = urlTextField.text ?? ""
 		let normalizedURLString = urlString.normalizedURL
 		
-		guard !normalizedURLString.isEmpty, let url = URL(string: normalizedURLString) else {
+		guard !normalizedURLString.isEmpty, let url = URL(unicodeString: normalizedURLString) else {
 			delegate?.processingDidCancel()
 			return
 		}
