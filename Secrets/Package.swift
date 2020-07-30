@@ -16,8 +16,5 @@ let package = Package(
             name: "Secrets",
             dependencies: [],
 			exclude: ["Secrets.swift.gyb"]),
-        .testTarget(
-            name: "SecretsTests",
-            dependencies: ["Secrets"]),
     ]
 )
