@@ -74,8 +74,8 @@ public final class TwitterFeedProvider: FeedProvider {
 		let tokenSecretCredentials = Credentials(type: .oauthAccessTokenSecret, username: screenName, secret: oauthTokenSecret)
 		try? CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
 		
-		client = OAuthSwiftClient(consumerKey: Secrets.twitterConsumerKey,
-								  consumerSecret: Secrets.twitterConsumerSecret,
+		client = OAuthSwiftClient(consumerKey: SecretsManager.provider.twitterConsumerKey,
+								  consumerSecret: SecretsManager.provider.twitterConsumerSecret,
 								  oauthToken: oauthToken,
 								  oauthTokenSecret: oauthTokenSecret,
 								  version: .oauth1)
@@ -92,8 +92,8 @@ public final class TwitterFeedProvider: FeedProvider {
 		self.oauthToken = tokenCredentials.secret
 		self.oauthTokenSecret = tokenSecretCredentials.secret
 		
-		client = OAuthSwiftClient(consumerKey: Secrets.twitterConsumerKey,
-								  consumerSecret: Secrets.twitterConsumerSecret,
+		client = OAuthSwiftClient(consumerKey: SecretsManager.provider.twitterConsumerKey,
+								  consumerSecret: SecretsManager.provider.twitterConsumerSecret,
 								  oauthToken: oauthToken,
 								  oauthTokenSecret: oauthTokenSecret,
 								  version: .oauth1)
@@ -286,8 +286,8 @@ extension TwitterFeedProvider: OAuth1SwiftProvider {
 	
 	public static var oauth1Swift: OAuth1Swift {
 		return OAuth1Swift(
-			consumerKey: Secrets.twitterConsumerKey,
-			consumerSecret: Secrets.twitterConsumerSecret,
+			consumerKey: SecretsManager.provider.twitterConsumerKey,
+			consumerSecret: SecretsManager.provider.twitterConsumerSecret,
 			requestTokenUrl: "https://api.twitter.com/oauth/request_token",
 			authorizeUrl:    "https://api.twitter.com/oauth/authorize",
 			accessTokenUrl:  "https://api.twitter.com/oauth/access_token"

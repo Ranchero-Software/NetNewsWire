@@ -30,7 +30,7 @@ public extension URLRequest {
 			self.url = url.appendingQueryItems([
 				URLQueryItem(name: "email", value: credentials.username),
 				URLQueryItem(name: "password", value: credentials.secret),
-				URLQueryItem(name: "client_key", value: FeedWranglerConfig.clientKey)
+				URLQueryItem(name: "client_key", value: SecretsManager.provider.feedWranglerKey)
 			])
 		case .feedWranglerToken:
 			self.url = url.appendingQueryItem(URLQueryItem(name: "access_token", value: credentials.secret))

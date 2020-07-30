@@ -14,6 +14,7 @@ import RSWeb
 import Account
 import RSCore
 import RSCoreResources
+import Secrets
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
 // for AppDelegate to comply
@@ -104,6 +105,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
 
+		SecretsManager.provider = Secrets()
 		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
 		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
 

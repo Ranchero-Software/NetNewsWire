@@ -12,6 +12,7 @@ import RSWeb
 import Account
 import BackgroundTasks
 import os.log
+import Secrets
 
 var appDelegate: AppDelegate!
 
@@ -60,6 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		super.init()
 		appDelegate = self
 
+		SecretsManager.provider = Secrets()
 		let documentAccountURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 		let documentAccountsFolder = documentAccountURL.appendingPathComponent("Accounts").absoluteString
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))

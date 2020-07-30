@@ -17,7 +17,6 @@ let package = Package(
             name: "Secrets",
             dependencies: [
 				.product(name: "OAuthSwift", package: "OAuthSwift"),
-			],
-			exclude: ["Secrets.swift.gyb"]),
+			]),
     ]
 )

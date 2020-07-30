@@ -444,6 +444,12 @@
 		51C452AF2265108300C03939 /* ArticleArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F204DF1FAACBB30076E152 /* ArticleArray.swift */; };
 		51C452B42265141B00C03939 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C452B32265141B00C03939 /* WebKit.framework */; };
 		51C452B82265178500C03939 /* styleSheet.css in Resources */ = {isa = PBXBuildFile; fileRef = 51C452B72265178500C03939 /* styleSheet.css */; };
+		51C4CFF024D37D1F00AF9874 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4CFEF24D37D1F00AF9874 /* Secrets.swift */; };
+		51C4CFF124D37D1F00AF9874 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4CFEF24D37D1F00AF9874 /* Secrets.swift */; };
+		51C4CFF224D37D1F00AF9874 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4CFEF24D37D1F00AF9874 /* Secrets.swift */; };
+		51C4CFF324D37D1F00AF9874 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4CFEF24D37D1F00AF9874 /* Secrets.swift */; };
+		51C4CFF424D37D1F00AF9874 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4CFEF24D37D1F00AF9874 /* Secrets.swift */; };
+		51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 51C4CFF524D37DD500AF9874 /* Secrets */; };
 		51C65AFC24CCB2C9008EB3BD /* TimelineItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AFB24CCB2C9008EB3BD /* TimelineItems.swift */; };
 		51C65AFD24CCB2C9008EB3BD /* TimelineItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C65AFB24CCB2C9008EB3BD /* TimelineItems.swift */; };
 		51C9DE5823EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */; };
@@ -1661,6 +1667,7 @@
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
+		51C4CFEF24D37D1F00AF9874 /* Secrets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		51C65AFB24CCB2C9008EB3BD /* TimelineItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineItems.swift; sourceTree = "<group>"; };
 		51C9DE5723EA2EF4003D5A6D /* WrapperScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperScriptMessageHandler.swift; sourceTree = "<group>"; };
 		51CD32A824D2CB25009ABAEF /* SyncDatabase */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SyncDatabase; sourceTree = "<group>"; };
@@ -2043,6 +2050,7 @@
 				514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */,
 				65ED42DE235E74230081F399 /* Sparkle.framework in Frameworks */,
 				65ED42D9235E740D0081F399 /* Sparkle.framework in Frameworks */,
+				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				514C16E124D2EF38009A3AFA /* RSCoreResources in Frameworks */,
 				514C16CE24D2E63F009A3AFA /* Account in Frameworks */,
@@ -3190,6 +3198,7 @@
 			isa = PBXGroup;
 			children = (
 				842E45CD1ED8C308000A8B52 /* AppNotifications.swift */,
+				51C4CFEF24D37D1F00AF9874 /* Secrets.swift */,
 				511B9805237DCAC90028BCAA /* UserInfoKey.swift */,
 				51C452AD2265102800C03939 /* Timeline */,
 				84702AB31FA27AE8006B8943 /* Commands */,
@@ -3702,6 +3711,7 @@
 				514C16CD24D2E63F009A3AFA /* Account */,
 				514C16DD24D2EF15009A3AFA /* RSTree */,
 				514C16E024D2EF38009A3AFA /* RSCoreResources */,
+				51C4CFF524D37DD500AF9874 /* Secrets */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -4420,6 +4430,7 @@
 				51B80EB824BD1F8B00C6C32D /* ActivityViewController.swift in Sources */,
 				51E4994224A8713C00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
 				51E498F624A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
+				51C4CFF324D37D1F00AF9874 /* Secrets.swift in Sources */,
 				51B80EE124BD3E9600C6C32D /* FindInArticleActivity.swift in Sources */,
 				6586A5F724B632F8002BCF4F /* SettingsDetailAccountModel.swift in Sources */,
 				51E498F224A8085D00B667CB /* SmartFeedsController.swift in Sources */,
@@ -4625,6 +4636,7 @@
 				51B54A4324B5499B0014348B /* WebViewProvider.swift in Sources */,
 				1799E6CE24C320D600511E91 /* InspectorModel.swift in Sources */,
 				514E6C0024AD255D00AC6F6E /* PreviewArticles.swift in Sources */,
+				51C4CFF424D37D1F00AF9874 /* Secrets.swift in Sources */,
 				1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */,
 				1769E32724BC5B6C000E1E8E /* AddAccountModel.swift in Sources */,
 				1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */,
@@ -4803,6 +4815,7 @@
 				65ED403C235DEF6C0081F399 /* SingleLineTextFieldSizer.swift in Sources */,
 				65ED403D235DEF6C0081F399 /* TimelineTableCellView.swift in Sources */,
 				65ED403E235DEF6C0081F399 /* TimelineCellAppearance.swift in Sources */,
+				51C4CFF124D37D1F00AF9874 /* Secrets.swift in Sources */,
 				510C43F4243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift in Sources */,
 				65ED403F235DEF6C0081F399 /* ArticleRenderer.swift in Sources */,
 				65ED4040235DEF6C0081F399 /* GeneralPrefencesViewController.swift in Sources */,
@@ -4888,6 +4901,7 @@
 				5F323809231DF9F000706F6B /* VibrantTableViewCell.swift in Sources */,
 				51FE10042345529D0056195D /* UserNotificationManager.swift in Sources */,
 				519ED47C24488C6F007F8E94 /* ExtensionInspectorViewController.swift in Sources */,
+				51C4CFF224D37D1F00AF9874 /* Secrets.swift in Sources */,
 				51C452A022650A1900C03939 /* WebFeedIconDownloader.swift in Sources */,
 				51C4529E22650A1900C03939 /* ImageDownloader.swift in Sources */,
 				51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */,
@@ -5140,6 +5154,7 @@
 				84B99C9D1FAE83C600ECDEDB /* DeleteCommand.swift in Sources */,
 				849A97541ED9EAC0007D329B /* AddWebFeedWindowController.swift in Sources */,
 				5144EA40227A37EC00D19003 /* ImportOPMLWindowController.swift in Sources */,
+				51C4CFF024D37D1F00AF9874 /* Secrets.swift in Sources */,
 				849A976D1ED9EBC8007D329B /* TimelineTableView.swift in Sources */,
 				51333D1624685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */,
 				84D52E951FE588BB00D14F5B /* DetailStatusBarView.swift in Sources */,
@@ -5781,6 +5796,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
 			productName = RSTree;
+		};
+		51C4CFF524D37DD500AF9874 /* Secrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Secrets;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

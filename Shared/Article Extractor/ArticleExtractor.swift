@@ -38,8 +38,8 @@ class ArticleExtractor {
 		self.articleLink = articleLink
 		
 		let clientURL = "https://extract.feedbin.com/parser"
-		let username = Secrets.mercuryClientId
-		let signiture = articleLink.hmacUsingSHA1(key: Secrets.mercuryClientSecret)
+		let username = SecretsManager.provider.mercuryClientId
+		let signiture = articleLink.hmacUsingSHA1(key: SecretsManager.provider.mercuryClientSecret)
 		
 		if let base64URL = articleLink.data(using: .utf8)?.base64EncodedString() {
 			let fullURL = "\(clientURL)/\(username)/\(signiture)?base64_url=\(base64URL)"
