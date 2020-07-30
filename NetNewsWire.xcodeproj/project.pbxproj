@@ -125,6 +125,12 @@
 		51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
 		51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
 		51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
+		5138E92624D33E4500AFF0FE /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E92524D33E4500AFF0FE /* RSTree */; };
+		5138E92724D33E4500AFF0FE /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E92524D33E4500AFF0FE /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		5138E93724D33E4C00AFF0FE /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93624D33E4C00AFF0FE /* RSTree */; };
+		5138E93824D33E4C00AFF0FE /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93624D33E4C00AFF0FE /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93924D33E5600AFF0FE /* RSTree */; };
+		5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93924D33E5600AFF0FE /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51392D1B24AC19A000BE0D35 /* SidebarExpandedContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */; };
 		51392D1C24AC19A000BE0D35 /* SidebarExpandedContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */; };
 		513C5CE9232571C2003D4054 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513C5CE8232571C2003D4054 /* ShareViewController.swift */; };
@@ -1210,6 +1216,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				5138E92724D33E4500AFF0FE /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1220,6 +1227,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				5138E93824D33E4C00AFF0FE /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1242,6 +1250,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1929,6 +1938,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				516B696324D2F34E00B5702F /* Account in Frameworks */,
+				5138E93724D33E4C00AFF0FE /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1937,6 +1947,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				516B696124D2F34600B5702F /* Account in Frameworks */,
+				5138E92624D33E4500AFF0FE /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1998,6 +2009,7 @@
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
 				51C452B42265141B00C03939 /* WebKit.framework in Frameworks */,
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
+				5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3459,6 +3471,7 @@
 			name = "NetNewsWire iOS Intents Extension";
 			packageProductDependencies = (
 				516B696224D2F34E00B5702F /* Account */,
+				5138E93624D33E4C00AFF0FE /* RSTree */,
 			);
 			productName = "NetNewsWire iOS Intents Extension";
 			productReference = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */;
@@ -3480,6 +3493,7 @@
 			name = "NetNewsWire iOS Share Extension";
 			packageProductDependencies = (
 				516B696024D2F34600B5702F /* Account */,
+				5138E92524D33E4500AFF0FE /* RSTree */,
 			);
 			productName = "NetNewsWire iOS Share Extension";
 			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
@@ -3625,6 +3639,7 @@
 			name = "NetNewsWire-iOS";
 			packageProductDependencies = (
 				516B695E24D2F33B00B5702F /* Account */,
+				5138E93924D33E5600AFF0FE /* RSTree */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -5664,6 +5679,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
 			productName = RSCoreResources;
+		};
+		5138E92524D33E4500AFF0FE /* RSTree */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
+			productName = RSTree;
+		};
+		5138E93624D33E4C00AFF0FE /* RSTree */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
+			productName = RSTree;
+		};
+		5138E93924D33E5600AFF0FE /* RSTree */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
+			productName = RSTree;
 		};
 		514C16CD24D2E63F009A3AFA /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
