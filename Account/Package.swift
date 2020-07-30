@@ -25,9 +25,7 @@ let package = Package(
             dependencies: [
 				.product(name: "RSCore", package: "RSCore"),
 				.product(name: "RSDatabase", package: "RSDatabase"),
-//				.product(name: "RSDatabaseObjC", package: "RSDatabase"),
 				.product(name: "RSParser", package: "RSParser"),
-//				.product(name: "RSParserObjC", package: "RSParser"),
 				.product(name: "RSWeb", package: "RSWeb"),
 				.product(name: "Articles", package: "Articles"),
 				.product(name: "ArticlesDatabase", package: "ArticlesDatabase"),
