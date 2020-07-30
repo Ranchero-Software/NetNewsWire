@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import RSDatabase
+import RSDatabaseObjC
 import Articles
 
 // Article->ArticleStatus is a to-one relationship.

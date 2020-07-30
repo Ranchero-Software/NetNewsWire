@@ -80,6 +80,8 @@
 		519E84A62433D49000D238B0 /* OPMLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A52433D49000D238B0 /* OPMLNormalizer.swift */; };
 		519E84A82434C5EF00D238B0 /* CloudKitArticlesZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84A72434C5EF00D238B0 /* CloudKitArticlesZone.swift */; };
 		519E84AC2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E84AB2435019100D238B0 /* CloudKitArticlesZoneDelegate.swift */; };
+		51B0DF1B24D24F12000AD99E /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF1A24D24F12000AD99E /* RSDatabase */; };
+		51B0DF1C24D24F12000AD99E /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF1A24D24F12000AD99E /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51B36305244B6135000DEF2A /* TwitterEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36304244B6135000DEF2A /* TwitterEntities.swift */; };
 		51B36307244B6234000DEF2A /* TwitterHashtag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36306244B6234000DEF2A /* TwitterHashtag.swift */; };
 		51B36309244B62A5000DEF2A /* TwitterURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B36308244B62A5000DEF2A /* TwitterURL.swift */; };
@@ -137,7 +139,6 @@
 		84C8B3F41F89DE430053CCA6 /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C8B3F31F89DE430053CCA6 /* DataExtensions.swift */; };
 		84CAD7161FDF2E22000F0755 /* FeedbinEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CAD7151FDF2E22000F0755 /* FeedbinEntry.swift */; };
 		84D09623217418DC00D77525 /* FeedbinTagging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D09622217418DC00D77525 /* FeedbinTagging.swift */; };
-		84EAC4822148CC6300F154AB /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84EAC4812148CC6300F154AB /* RSDatabase.framework */; };
 		84F1F06E2243524700DA0616 /* AccountMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AF4EA3222CFDD100F6A800 /* AccountMetadata.swift */; };
 		84F73CF1202788D90000BCEF /* ArticleFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F73CF0202788D80000BCEF /* ArticleFetcher.swift */; };
 		9E03C11C235D921400FB6D9E /* FeedlyOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E03C11B235D921400FB6D9E /* FeedlyOperationTests.swift */; };
@@ -280,6 +281,7 @@
 			files = (
 				51383A4724D1FF160027E272 /* RSWeb in Embed Frameworks */,
 				51383A4424D1FF030027E272 /* RSCore in Embed Frameworks */,
+				51B0DF1C24D24F12000AD99E /* RSDatabase in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -533,10 +535,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				51383A4624D1FF160027E272 /* RSWeb in Frameworks */,
-				84EAC4822148CC6300F154AB /* RSDatabase.framework in Frameworks */,
 				841D4D722106B40A00DD04E6 /* Articles.framework in Frameworks */,
 				841D4D702106B40400DD04E6 /* ArticlesDatabase.framework in Frameworks */,
 				51383A4324D1FF030027E272 /* RSCore in Frameworks */,
+				51B0DF1B24D24F12000AD99E /* RSDatabase in Frameworks */,
 				51E148EC234B8FFC0004F7A5 /* SyncDatabase.framework in Frameworks */,
 				841973FF1F6DD1C5006346C4 /* RSParser.framework in Frameworks */,
 				5102FD80244009E000534F17 /* Secrets.framework in Frameworks */,
@@ -1034,6 +1036,7 @@
 			packageProductDependencies = (
 				51383A4224D1FF030027E272 /* RSCore */,
 				51383A4524D1FF160027E272 /* RSWeb */,
+				51B0DF1A24D24F12000AD99E /* RSDatabase */,
 			);
 			productName = Account;
 			productReference = 848934F61F62484F00CEBD24 /* Account.framework */;
@@ -1089,6 +1092,7 @@
 			packageReferences = (
 				5102AE8024D180A80050839C /* XCRemoteSwiftPackageReference "RSCore" */,
 				51383A3E24D1FE9A0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */,
+				51B0DF1924D24F12000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */,
 			);
 			productRefGroup = 848934F71F62484F00CEBD24 /* Products */;
 			projectDirPath = "";
@@ -1509,6 +1513,14 @@
 				minimumVersion = "1.0.0-beta2";
 			};
 		};
+		51B0DF1924D24F12000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Ranchero-Software/RSDatabase.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = "1.0.0-beta1";
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1521,6 +1533,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 51383A3E24D1FE9A0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
 			productName = RSWeb;
+		};
+		51B0DF1A24D24F12000AD99E /* RSDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF1924D24F12000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
+			productName = RSDatabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

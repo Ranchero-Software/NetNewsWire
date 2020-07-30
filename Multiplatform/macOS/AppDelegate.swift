@@ -10,7 +10,6 @@ import AppKit
 import os.log
 import UserNotifications
 import Articles
-import RSTree
 import RSWeb
 import Account
 import RSCore

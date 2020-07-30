@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		5102AE8C24D181080050839C /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE8B24D181080050839C /* RSCore */; };
 		5102AE8D24D181080050839C /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5102AE8B24D181080050839C /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		51B0DF1724D24EC4000AD99E /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF1624D24EC4000AD99E /* RSDatabase */; };
+		51B0DF1824D24EC4000AD99E /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF1624D24EC4000AD99E /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51C451FF2264CF2100C03939 /* RSParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51C451FE2264CF2100C03939 /* RSParser.framework */; };
 		84116B8923E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84116B8823E01E86000B2E98 /* FetchFeedUnreadCountOperation.swift */; };
 		841D4D742106B59F00DD04E6 /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 841D4D732106B59F00DD04E6 /* Articles.framework */; };
@@ -24,7 +26,6 @@
 		8455807A1F0AF67D003CCFA1 /* ArticleStatus+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845580791F0AF67D003CCFA1 /* ArticleStatus+Database.swift */; };
 		84611DCC23E62FE200BC630C /* FetchUnreadCountsForFeedsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84611DCB23E62FE200BC630C /* FetchUnreadCountsForFeedsOperation.swift */; };
 		8477ACBC2221E76F00DF7F37 /* SearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477ACBB2221E76F00DF7F37 /* SearchTable.swift */; };
-		848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848E3EBC20FBCFDE0004B7ED /* RSDatabase.framework */; };
 		84C242C923DEB45C00C50516 /* FetchAllUnreadCountsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C242C823DEB45C00C50516 /* FetchAllUnreadCountsOperation.swift */; };
 		84E156EA1F0AB80500F8CC05 /* ArticlesDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156E91F0AB80500F8CC05 /* ArticlesDatabase.swift */; };
 		84E156EC1F0AB80E00F8CC05 /* ArticlesTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E156EB1F0AB80E00F8CC05 /* ArticlesTable.swift */; };
@@ -119,6 +120,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				51B0DF1824D24EC4000AD99E /* RSDatabase in Embed Frameworks */,
 				5102AE8D24D181080050839C /* RSCore in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -169,10 +171,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51B0DF1724D24EC4000AD99E /* RSDatabase in Frameworks */,
 				5102AE8C24D181080050839C /* RSCore in Frameworks */,
 				51C451FF2264CF2100C03939 /* RSParser.framework in Frameworks */,
 				841D4D742106B59F00DD04E6 /* Articles.framework in Frameworks */,
-				848E3EBD20FBCFDE0004B7ED /* RSDatabase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,6 +348,7 @@
 			name = ArticlesDatabase;
 			packageProductDependencies = (
 				5102AE8B24D181080050839C /* RSCore */,
+				51B0DF1624D24EC4000AD99E /* RSDatabase */,
 			);
 			productName = Database;
 			productReference = 844BEE371F0AB3AA004AB7CD /* ArticlesDatabase.framework */;
@@ -403,6 +406,7 @@
 			mainGroup = 844BEE2D1F0AB3AA004AB7CD;
 			packageReferences = (
 				5102AE8A24D181080050839C /* XCRemoteSwiftPackageReference "RSCore" */,
+				51B0DF1524D24EC4000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */,
 			);
 			productRefGroup = 844BEE381F0AB3AA004AB7CD /* Products */;
 			projectDirPath = "";
@@ -669,6 +673,14 @@
 				minimumVersion = "1.0.0-beta1";
 			};
 		};
+		51B0DF1524D24EC4000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Ranchero-Software/RSDatabase.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = "1.0.0-beta1";
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -676,6 +688,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5102AE8A24D181080050839C /* XCRemoteSwiftPackageReference "RSCore" */;
 			productName = RSCore;
+		};
+		51B0DF1624D24EC4000AD99E /* RSDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF1524D24EC4000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
+			productName = RSDatabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

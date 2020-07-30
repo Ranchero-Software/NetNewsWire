@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,10 +14,25 @@
 		51554C1F228B701F0055115A /* SyncDatabase_project_debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51554C1A228B701F0055115A /* SyncDatabase_project_debug.xcconfig */; };
 		51554C21228B701F0055115A /* SyncDatabase_project_release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51554C1C228B701F0055115A /* SyncDatabase_project_release.xcconfig */; };
 		51554C22228B701F0055115A /* SyncDatabase_target.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 51554C1D228B701F0055115A /* SyncDatabase_target.xcconfig */; };
-		51554C36228B72F40055115A /* RSDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C35228B72F40055115A /* RSDatabase.framework */; };
 		51554C38228B7DAC0055115A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51554C37228B7DAC0055115A /* Constants.swift */; };
 		51554C3A228B83380055115A /* Articles.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554C39228B83380055115A /* Articles.framework */; };
+		51B0DF1324D24EA6000AD99E /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF1224D24EA6000AD99E /* RSDatabase */; };
+		51B0DF1424D24EA6000AD99E /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51B0DF1224D24EA6000AD99E /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		51B0DEC524D245A2000AD99E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				51B0DF1424D24EA6000AD99E /* RSDatabase in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		51554BEB228B6E8F0055115A /* SyncDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -39,8 +54,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51B0DF1324D24EA6000AD99E /* RSDatabase in Frameworks */,
 				51554C3A228B83380055115A /* Articles.framework in Frameworks */,
-				51554C36228B72F40055115A /* RSDatabase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,12 +126,16 @@
 				51554BE8228B6E8F0055115A /* Frameworks */,
 				51554BE9228B6E8F0055115A /* Resources */,
 				51C8F349234FB0C40048ED95 /* Run Script: Verfiy No Build Settings */,
+				51B0DEC524D245A2000AD99E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = SyncDatabase;
+			packageProductDependencies = (
+				51B0DF1224D24EA6000AD99E /* RSDatabase */,
+			);
 			productName = SyncDatabase;
 			productReference = 51554BEB228B6E8F0055115A /* SyncDatabase.framework */;
 			productType = "com.apple.product-type.framework";
@@ -143,6 +162,9 @@
 				en,
 			);
 			mainGroup = 51554BE1228B6E8F0055115A;
+			packageReferences = (
+				51B0DF1124D24EA6000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */,
+			);
 			productRefGroup = 51554BEC228B6E8F0055115A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -252,6 +274,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		51B0DF1124D24EA6000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Ranchero-Software/RSDatabase.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = "1.0.0-beta1";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		51B0DF1224D24EA6000AD99E /* RSDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF1124D24EA6000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
+			productName = RSDatabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 51554BE2228B6E8F0055115A /* Project object */;
 }

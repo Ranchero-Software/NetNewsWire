@@ -9,6 +9,7 @@
 import Foundation
 import Articles
 import RSDatabase
+import RSDatabaseObjC
 import RSParser
 
 // MARK: - DatabaseObject

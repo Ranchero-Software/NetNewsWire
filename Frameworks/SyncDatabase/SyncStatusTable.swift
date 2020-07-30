@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import Articles
 import RSDatabase
+import RSDatabaseObjC
 
 struct SyncStatusTable: DatabaseTable {
 

@@ -8,6 +8,7 @@
 
 import Foundation
 import RSDatabase
+import RSDatabaseObjC
 import Articles
 
 extension ArticleStatus {
