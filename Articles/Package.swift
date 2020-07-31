@@ -16,7 +16,7 @@ let package = Package(
         .target(
             name: "Articles",
 			dependencies: [
-				.product(name: "RSCore", package: "RSCore"),
+				"RSCore"
 			]),
 	]
 )

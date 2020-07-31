@@ -16,7 +16,7 @@ let package = Package(
         .target(
             name: "Secrets",
             dependencies: [
-				.product(name: "OAuthSwift", package: "OAuthSwift"),
+				"OAuthSwift",
 			]),
     ]
 )

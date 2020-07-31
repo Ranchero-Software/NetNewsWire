@@ -17,8 +17,8 @@ let package = Package(
         .target(
             name: "SyncDatabase",
             dependencies: [
-				.product(name: "RSDatabase", package: "RSDatabase"),
-				.product(name: "Articles", package: "Articles"),
+				"RSDatabase",
+				"Articles",
 			]),
     ]
 )

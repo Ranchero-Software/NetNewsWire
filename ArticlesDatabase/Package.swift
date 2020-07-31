@@ -21,10 +21,10 @@ let package = Package(
         .target(
             name: "ArticlesDatabase",
             dependencies: [
-				.product(name: "RSCore", package: "RSCore"),
-				.product(name: "RSDatabase", package: "RSDatabase"),
-				.product(name: "RSParser", package: "RSParser"),
-				.product(name: "Articles", package: "Articles"),
+				"RSCore",
+				"RSDatabase",
+				"RSParser",
+				"Articles",
 			]),
     ]
 )

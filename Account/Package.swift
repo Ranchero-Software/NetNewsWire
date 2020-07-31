@@ -23,14 +23,14 @@ let package = Package(
         .target(
             name: "Account",
             dependencies: [
-				.product(name: "RSCore", package: "RSCore"),
-				.product(name: "RSDatabase", package: "RSDatabase"),
-				.product(name: "RSParser", package: "RSParser"),
-				.product(name: "RSWeb", package: "RSWeb"),
-				.product(name: "Articles", package: "Articles"),
-				.product(name: "ArticlesDatabase", package: "ArticlesDatabase"),
-				.product(name: "Secrets", package: "Secrets"),
-				.product(name: "SyncDatabase", package: "SyncDatabase"),
+				"RSCore",
+				"RSDatabase",
+				"RSParser",
+				"RSWeb",
+				"Articles",
+				"ArticlesDatabase",
+				"Secrets",
+				"SyncDatabase",
 			]),
         .testTarget(
             name: "AccountTests",

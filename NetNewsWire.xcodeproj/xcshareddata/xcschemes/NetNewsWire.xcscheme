@@ -56,6 +56,16 @@
                ReferencedContainer = "container:NetNewsWire.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AccountTests"
+               BuildableName = "AccountTests"
+               BlueprintName = "AccountTests"
+               ReferencedContainer = "container:Account">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
