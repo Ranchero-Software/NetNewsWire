@@ -18,7 +18,20 @@ class MasterTimelineTitleView: UIView {
 	private lazy var pointerInteraction: UIPointerInteraction = {
 		UIPointerInteraction(delegate: self)
 	}()
-	
+
+	override var accessibilityLabel: String? {
+		set { }
+		get {
+			if let name = label.text {
+				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
+				return "\(name) \(unreadCountView.unreadCount) \(unreadLabel)"
+			}
+			else {
+				return nil
+			}
+		}
+	}
+
 	func buttonize() {
 		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
 		accessibilityTraits = .button
@@ -28,6 +41,7 @@ class MasterTimelineTitleView: UIView {
 	}
 	
 	func debuttonize() {
+		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
 		accessibilityTraits.remove(.button)
 		if #available(iOS 13.4, *) {
 			removeInteraction(pointerInteraction)
