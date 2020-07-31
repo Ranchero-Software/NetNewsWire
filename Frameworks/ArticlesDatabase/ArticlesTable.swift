@@ -47,11 +47,11 @@ final class ArticlesTable: DatabaseTable {
 	// MARK: - Fetching Articles for Feed
 	
 	func fetchArticles(_ webFeedID: String) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchArticlesForFeedID(webFeedID, withLimits: true, $0) }
+		return try fetchArticles{ self.fetchArticlesForFeedID(webFeedID, $0) }
 	}
 
 	func fetchArticlesAsync(_ webFeedID: String, _ completion: @escaping ArticleSetResultBlock) {
-		fetchArticlesAsync({ self.fetchArticlesForFeedID(webFeedID, withLimits: true, $0) }, completion)
+		fetchArticlesAsync({ self.fetchArticlesForFeedID(webFeedID, $0) }, completion)
 	}
 
 	func fetchArticles(_ webFeedIDs: Set<String>) throws -> Set<Article> {
@@ -203,7 +203,7 @@ final class ArticlesTable: DatabaseTable {
 					return
 				}
 
-				let fetchedArticles = self.fetchArticlesForFeedID(webFeedID, withLimits: false, database) //4
+				let fetchedArticles = self.fetchArticlesForFeedID(webFeedID, database) //4
 				let fetchedArticlesDictionary = fetchedArticles.dictionary()
 
 				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
@@ -803,7 +803,7 @@ private extension ArticlesTable {
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
-	func fetchArticlesForFeedID(_ webFeedID: String, withLimits: Bool, _ database: FMDatabase) -> Set<Article> {
+	func fetchArticlesForFeedID(_ webFeedID: String, _ database: FMDatabase) -> Set<Article> {
 		return fetchArticlesWithWhereClause(database, whereClause: "articles.feedID = ?", parameters: [webFeedID as AnyObject])
 	}
 
