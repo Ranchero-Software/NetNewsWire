@@ -49,7 +49,11 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 		updateUI()
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 	}
-
+	
+	override func viewDidAppear() {
+		updateNotificationSettings()
+	}
+	
 	// MARK: Actions
 	@IBAction func isNotifyAboutNewArticlesChanged(_ sender: Any) {
 		feed?.isNotifyAboutNewArticles = (isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
@@ -135,7 +139,18 @@ private extension WebFeedInspectorViewController {
 	func updateFeedURL() {
 		urlTextField?.stringValue = feed?.url.decodedURLString ?? ""
 	}
-	
+
+	func updateNotificationSettings() {
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			DispatchQueue.main.async {
+				self.userNotificationSettings = settings
+				if settings.authorizationStatus == .authorized {
+					NSApplication.shared.registerForRemoteNotifications()
+				}
+			}
+		}
+	}
+
 	func updateNotifyAboutNewArticles() {
 		isNotifyAboutNewArticlesCheckBox?.state = (feed?.isNotifyAboutNewArticles ?? false) ? .on : .off
 	}
