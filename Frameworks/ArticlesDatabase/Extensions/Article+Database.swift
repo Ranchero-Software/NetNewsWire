@@ -13,8 +13,31 @@ import RSParser
 
 extension Article {
 	
-	init(databaseArticle: DatabaseArticle, accountID: String, authors: Set<Author>?) {
-		self.init(accountID: accountID, articleID: databaseArticle.articleID, feedID: databaseArticle.feedID, uniqueID: databaseArticle.uniqueID, title: databaseArticle.title, contentHTML: databaseArticle.contentHTML, contentText: databaseArticle.contentText, url: databaseArticle.url, externalURL: databaseArticle.externalURL, summary: databaseArticle.summary, imageURL: databaseArticle.imageURL, bannerImageURL: databaseArticle.bannerImageURL, datePublished: databaseArticle.datePublished, dateModified: databaseArticle.dateModified, authors: authors, status: databaseArticle.status)
+	init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
+		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+			assertionFailure("Expected articleID.")
+			return nil
+		}
+		guard let webFeedID = row.string(forColumn: DatabaseKey.feedID) else {
+			assertionFailure("Expected feedID.")
+			return nil
+		}
+		guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
+			assertionFailure("Expected uniqueID.")
+			return nil
+		}
+
+		let title = row.string(forColumn: DatabaseKey.title)
+		let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
+		let contentText = row.string(forColumn: DatabaseKey.contentText)
+		let url = row.string(forColumn: DatabaseKey.url)
+		let externalURL = row.string(forColumn: DatabaseKey.externalURL)
+		let summary = row.string(forColumn: DatabaseKey.summary)
+		let imageURL = row.string(forColumn: DatabaseKey.imageURL)
+		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
+		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
+
+		self.init(accountID: accountID, articleID: articleID, feedID: webFeedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
 	}
 
 	init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
@@ -34,7 +57,7 @@ extension Article {
 			dateModified = nil
 		}
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, bannerImageURL: parsedItem.bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article,String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
@@ -43,6 +66,13 @@ extension Article {
 		}
 	}
 	
+	func byAdding(_ authors: Set<Author>) -> Article {
+		if authors.isEmpty {
+			return self
+		}
+		return Article(accountID: self.accountID, articleID: self.articleID, feedID: self.feedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, url: self.url, externalURL: self.externalURL, summary: self.summary, imageURL: self.imageURL, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
+	}
+
 	func changesFrom(_ existingArticle: Article) -> DatabaseDictionary? {
 		if self == existingArticle {
 			return nil
@@ -60,7 +90,6 @@ extension Article {
 		addPossibleStringChangeWithKeyPath(\Article.externalURL, existingArticle, DatabaseKey.externalURL, &d)
 		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, &d)
 		addPossibleStringChangeWithKeyPath(\Article.imageURL, existingArticle, DatabaseKey.imageURL, &d)
-		addPossibleStringChangeWithKeyPath(\Article.bannerImageURL, existingArticle, DatabaseKey.bannerImageURL, &d)
 
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
@@ -78,10 +107,9 @@ extension Article {
 		return d.count < 1 ? nil : d
 	}
 
-//	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ accountID: String, _ feedID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
-//		let maximumDateAllowed = Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
-//		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
-//	}
+	private static func _maximumDateAllowed() -> Date {
+		return Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
+	}
 
 	static func articlesWithFeedIDsAndItems(_ feedIDsAndItems: [String: Set<ParsedItem>], _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
 		let maximumDateAllowed = Date().addingTimeInterval(60 * 60 * 24) // Allow dates up to about 24 hours ahead of now
@@ -91,6 +119,11 @@ extension Article {
 			articles.formUnion(feedArticles)
 		}
 		return articles
+	}
+
+	static func articlesWithParsedItems(_ parsedItems: Set<ParsedItem>, _ feedID: String, _ accountID: String, _ statusesDictionary: [String: ArticleStatus]) -> Set<Article> {
+		let maximumDateAllowed = _maximumDateAllowed()
+		return Set(parsedItems.map{ Article(parsedItem: $0, maximumDateAllowed: maximumDateAllowed, accountID: accountID, feedID: feedID, status: statusesDictionary[$0.articleID]!) })
 	}
 }
 
@@ -123,9 +156,6 @@ extension Article: DatabaseObject {
 		}
 		if let imageURL = imageURL {
 			d[DatabaseKey.imageURL] = imageURL
-		}
-		if let bannerImageURL = bannerImageURL {
-			d[DatabaseKey.bannerImageURL] = bannerImageURL
 		}
 		if let datePublished = datePublished {
 			d[DatabaseKey.datePublished] = datePublished

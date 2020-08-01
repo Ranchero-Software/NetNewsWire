@@ -18,7 +18,14 @@ import Articles
 
 public typealias UnreadCountDictionary = [String: Int] // feedID: unreadCount
 public typealias UnreadCountCompletionBlock = (UnreadCountDictionary) -> Void
-public typealias UpdateArticlesCompletionBlock = (Set<Article>?, Set<Article>?) -> Void //newArticles, updatedArticles
+
+public struct ArticleChanges {
+	public let newArticles: Set<Article>?
+	public let updatedArticles: Set<Article>?
+	public let deletedArticles: Set<Article>?
+}
+public typealias UpdateArticlesCompletionBlock = (ArticleChanges) -> Void
+
 
 public final class ArticlesDatabase {
 
