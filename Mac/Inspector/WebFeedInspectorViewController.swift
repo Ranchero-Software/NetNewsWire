@@ -66,8 +66,8 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 			// Notifications are not authorized, so toggle the checkbox back
 			// to its original state...
 			isNotifyAboutNewArticlesCheckBox.setNextState()
-			// ...and then alert the user to the issue
-			// TODO: present alert to user
+			// ...then alert the user to the issue...
+			showNotificationsDeniedError()
 		} else if settings.authorizationStatus == .authorized {
 			// Notifications are authorized, so set the feed's isNotifyAboutNewArticles
 			// property to match the state of isNotifyAboutNewArticlesCheckbox.
@@ -181,6 +181,19 @@ private extension WebFeedInspectorViewController {
 					NSApplication.shared.registerForRemoteNotifications()
 				}
 			}
+		}
+	}
+
+	func showNotificationsDeniedError() {
+		let updateAlert = NSAlert()
+		updateAlert.alertStyle = .informational
+		updateAlert.messageText = NSLocalizedString("Enable Notifications", comment: "Notifications")
+		updateAlert.informativeText = NSLocalizedString("Notifications need to be enabled in System Preferences > Notifications.", comment: "Notifications need to be enabled in System Preferences > Notifications.")
+		updateAlert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
+		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
+		let modalResponse = updateAlert.runModal()
+		if modalResponse == .alertFirstButtonReturn {
+			NSWorkspace.shared.open(URL(fileURLWithPath: "x-apple.systempreferences:com.apple.preference"))
 		}
 	}
 
