@@ -9,6 +9,7 @@
 import AppKit
 import Articles
 import Account
+import UserNotifications
 
 final class WebFeedInspectorViewController: NSViewController, Inspector {
 
@@ -26,6 +27,8 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 			}
 		}
 	}
+
+	private var userNotificationSettings: UNNotificationSettings?
 
 	// MARK: Inspector
 
