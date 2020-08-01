@@ -56,7 +56,40 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	
 	// MARK: Actions
 	@IBAction func isNotifyAboutNewArticlesChanged(_ sender: Any) {
-		feed?.isNotifyAboutNewArticles = (isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+		guard let settings = userNotificationSettings else  {
+			// Something went wront fetching the user notification settings,
+			// so toggle the checkbox back to its original state and return.
+			isNotifyAboutNewArticlesCheckBox.setNextState()
+			return
+		}
+		if settings.authorizationStatus == .denied {
+			// Notifications are not authorized, so toggle the checkbox back
+			// to its original state...
+			isNotifyAboutNewArticlesCheckBox.setNextState()
+			// ...and then alert the user to the issue
+			// TODO: present alert to user
+		} else if settings.authorizationStatus == .authorized {
+			// Notifications are authorized, so set the feed's isNotifyAboutNewArticles
+			// property to match the state of isNotifyAboutNewArticlesCheckbox.
+			feed?.isNotifyAboutNewArticles = (isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+		} else {
+			// We're not sure what the status may be but we've /probably/ not requested
+			// permission to send notifications, so do that:
+			UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+				self.updateNotificationSettings()
+				if granted {
+					// We've been given permission, so set the feed's isNotifyAboutNewArticles
+					// property to match the state of isNotifyAboutNewArticlesCheckbox and then
+					// register for remote notifications.
+					self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+					NSApplication.shared.registerForRemoteNotifications()
+				} else {
+					// We weren't given permission, so toggle the checkbox back to its
+					// original state.
+					self.isNotifyAboutNewArticlesCheckBox.setNextState()
+				}
+			}
+		}
 	}
 	
 	@IBAction func isReaderViewAlwaysOnChanged(_ sender: Any) {
