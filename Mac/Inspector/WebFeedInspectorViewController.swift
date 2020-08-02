@@ -56,8 +56,10 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	
 	// MARK: Actions
 	@IBAction func isNotifyAboutNewArticlesChanged(_ sender: Any) {
-		guard let settings = userNotificationSettings else  {
-			isNotifyAboutNewArticlesCheckBox.setNextState()
+		guard userNotificationSettings != nil else  {
+			DispatchQueue.main.async {
+				self.isNotifyAboutNewArticlesCheckBox.setNextState()
+			}
 			return
 		}
 		
