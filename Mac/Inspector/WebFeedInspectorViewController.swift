@@ -9,6 +9,7 @@
 import AppKit
 import Articles
 import Account
+import UserNotifications
 
 final class WebFeedInspectorViewController: NSViewController, Inspector {
 
@@ -26,6 +27,8 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 			}
 		}
 	}
+
+	private var userNotificationSettings: UNNotificationSettings?
 
 	// MARK: Inspector
 
@@ -46,10 +49,48 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 		updateUI()
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
 	}
-
+	
+	override func viewDidAppear() {
+		updateNotificationSettings()
+	}
+	
 	// MARK: Actions
 	@IBAction func isNotifyAboutNewArticlesChanged(_ sender: Any) {
-		feed?.isNotifyAboutNewArticles = (isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+		guard userNotificationSettings != nil else  {
+			DispatchQueue.main.async {
+				self.isNotifyAboutNewArticlesCheckBox.setNextState()
+			}
+			return
+		}
+		
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			self.updateNotificationSettings()
+			
+			if settings.authorizationStatus == .denied {
+				DispatchQueue.main.async {
+					self.isNotifyAboutNewArticlesCheckBox.setNextState()
+					self.showNotificationsDeniedError()
+				}
+			} else if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+				}
+			} else {
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+					self.updateNotificationSettings()
+					if granted {
+						DispatchQueue.main.async {
+							self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+							NSApplication.shared.registerForRemoteNotifications()
+						}
+					} else {
+						DispatchQueue.main.async {
+							self.isNotifyAboutNewArticlesCheckBox.setNextState()
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	@IBAction func isReaderViewAlwaysOnChanged(_ sender: Any) {
@@ -132,7 +173,7 @@ private extension WebFeedInspectorViewController {
 	func updateFeedURL() {
 		urlTextField?.stringValue = feed?.url.decodedURLString ?? ""
 	}
-	
+
 	func updateNotifyAboutNewArticles() {
 		isNotifyAboutNewArticlesCheckBox?.state = (feed?.isNotifyAboutNewArticles ?? false) ? .on : .off
 	}
@@ -140,4 +181,29 @@ private extension WebFeedInspectorViewController {
 	func updateIsReaderViewAlwaysOn() {
 		isReaderViewAlwaysOnCheckBox?.state = (feed?.isArticleExtractorAlwaysOn ?? false) ? .on : .off
 	}
+
+	func updateNotificationSettings() {
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			self.userNotificationSettings = settings
+			if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					NSApplication.shared.registerForRemoteNotifications()
+				}
+			}
+		}
+	}
+
+	func showNotificationsDeniedError() {
+		let updateAlert = NSAlert()
+		updateAlert.alertStyle = .informational
+		updateAlert.messageText = NSLocalizedString("Enable Notifications", comment: "Notifications")
+		updateAlert.informativeText = NSLocalizedString("To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.", comment: "To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.")
+		updateAlert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
+		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
+		let modalResponse = updateAlert.runModal()
+		if modalResponse == .alertFirstButtonReturn {
+			NSWorkspace.shared.open(URL(fileURLWithPath: "x-apple.systempreferences:com.apple.preference.notifications"))
+		}
+	}
+
 }
