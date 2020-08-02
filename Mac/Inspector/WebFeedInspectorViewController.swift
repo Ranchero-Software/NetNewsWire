@@ -173,9 +173,9 @@ private extension WebFeedInspectorViewController {
 
 	func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			DispatchQueue.main.async {
-				self.userNotificationSettings = settings
-				if settings.authorizationStatus == .authorized {
+			self.userNotificationSettings = settings
+			if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
 					NSApplication.shared.registerForRemoteNotifications()
 				}
 			}
