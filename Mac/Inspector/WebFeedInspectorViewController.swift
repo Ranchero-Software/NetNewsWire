@@ -60,22 +60,31 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 			isNotifyAboutNewArticlesCheckBox.setNextState()
 			return
 		}
-		if settings.authorizationStatus == .denied {
-			isNotifyAboutNewArticlesCheckBox.setNextState()
-			showNotificationsDeniedError()
-		} else if settings.authorizationStatus == .authorized {
-			feed?.isNotifyAboutNewArticles = (isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
-		} else {
-			UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
-				self.updateNotificationSettings()
-				if granted {
-					DispatchQueue.main.async {
-						self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
-						NSApplication.shared.registerForRemoteNotifications()
-					}
-				} else {
-					DispatchQueue.main.async {
-						self.isNotifyAboutNewArticlesCheckBox.setNextState()
+		
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			self.updateNotificationSettings()
+			
+			if settings.authorizationStatus == .denied {
+				DispatchQueue.main.async {
+					self.isNotifyAboutNewArticlesCheckBox.setNextState()
+					self.showNotificationsDeniedError()
+				}
+			} else if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+				}
+			} else {
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+					self.updateNotificationSettings()
+					if granted {
+						DispatchQueue.main.async {
+							self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+							NSApplication.shared.registerForRemoteNotifications()
+						}
+					} else {
+						DispatchQueue.main.async {
+							self.isNotifyAboutNewArticlesCheckBox.setNextState()
+						}
 					}
 				}
 			}
