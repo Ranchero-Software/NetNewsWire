@@ -76,7 +76,7 @@ final class SendToMicroBlogCommand: ExtensionPoint, SendToCommand {
 			return
 		}
 
-		let _ = try? NSWorkspace.shared.open(url, options: [], configuration: [:])
+		NSWorkspace.shared.open(url)
 	}
 }
 
