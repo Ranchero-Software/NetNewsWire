@@ -26,9 +26,7 @@ import RSCore
 	}
 
 	static func customSharingServices(for items: [Any]) -> [NSSharingService] {
-		// MarsEdit and MicroBlog are hardcode only for the Mac 5.1 release
-		let hardCodedCommands: [SendToCommand] = [SendToMarsEditCommand(), SendToMicroBlogCommand()]
-		let customServices = hardCodedCommands.compactMap { (sendToCommand) -> NSSharingService? in
+		let customServices = ExtensionPointManager.shared.activeSendToCommands.compactMap { (sendToCommand) -> NSSharingService? in
 
 			guard let object = items.first else {
 				return nil

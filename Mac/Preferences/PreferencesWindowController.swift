@@ -40,9 +40,9 @@ class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
 											 name: NSLocalizedString("Accounts", comment: "Preferences"),
 											 image: NSImage(named: NSImage.userAccountsName))]
-//		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Extensions,
-//											 name: NSLocalizedString("Extensions", comment: "Preferences"),
-//											 image: AppAssets.extensionPreference)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Extensions,
+											 name: NSLocalizedString("Extensions", comment: "Preferences"),
+											 image: AppAssets.extensionPreference)]
 
 		// Omit the Advanced Preferences for now because the Software Update related functionality is
 		// forbidden/non-applicable, and we can rely upon Apple to some extent for crash reports. We
