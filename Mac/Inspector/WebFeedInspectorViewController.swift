@@ -163,6 +163,14 @@ private extension WebFeedInspectorViewController {
 		urlTextField?.stringValue = feed?.url.decodedURLString ?? ""
 	}
 
+	func updateNotifyAboutNewArticles() {
+		isNotifyAboutNewArticlesCheckBox?.state = (feed?.isNotifyAboutNewArticles ?? false) ? .on : .off
+	}
+
+	func updateIsReaderViewAlwaysOn() {
+		isReaderViewAlwaysOnCheckBox?.state = (feed?.isArticleExtractorAlwaysOn ?? false) ? .on : .off
+	}
+
 	func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			DispatchQueue.main.async {
@@ -186,12 +194,6 @@ private extension WebFeedInspectorViewController {
 			NSWorkspace.shared.open(URL(fileURLWithPath: "x-apple.systempreferences:com.apple.preference"))
 		}
 	}
-
-	func updateNotifyAboutNewArticles() {
-		isNotifyAboutNewArticlesCheckBox?.state = (feed?.isNotifyAboutNewArticles ?? false) ? .on : .off
 	}
 
-	func updateIsReaderViewAlwaysOn() {
-		isReaderViewAlwaysOnCheckBox?.state = (feed?.isArticleExtractorAlwaysOn ?? false) ? .on : .off
-	}
 }
