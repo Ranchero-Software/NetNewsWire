@@ -996,7 +996,7 @@ private extension FeedbinAccountDelegate {
 		os_log(.debug, log: log, "Refreshing missing articles...")
 		let group = DispatchGroup()
 
-		let fetchedArticleIDs = account.fetchArticleIDsForStatusesWithoutArticles()
+		let fetchedArticleIDs = account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 		let articleIDs = Array(fetchedArticleIDs)
 		let chunkedArticleIDs = articleIDs.chunked(into: 100)
 

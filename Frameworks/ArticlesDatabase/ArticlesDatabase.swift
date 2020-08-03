@@ -139,8 +139,15 @@ public final class ArticlesDatabase {
 
 	// MARK: - Saving and Updating Articles
 
-	/// Update articles and save new ones. The key for feedIDsAndItems is feedID.
+	/// Update articles and save new ones — for feed-based systems (local and iCloud).
+	public func update(with parsedItems: Set<ParsedItem>, feedID: String, completion: @escaping UpdateArticlesCompletionBlock) {
+		precondition(retentionStyle == .feedBased)
+		articlesTable.update(parsedItems, feedID, completion)
+	}
+
+	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
 	public func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping UpdateArticlesCompletionBlock) {
+		precondition(retentionStyle == .syncSystem)
 		articlesTable.update(feedIDsAndItems, defaultRead, completion)
 	}
 
@@ -158,8 +165,8 @@ public final class ArticlesDatabase {
 		return articlesTable.fetchStarredArticleIDs()
 	}
 	
-	public func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return articlesTable.fetchArticleIDsForStatusesWithoutArticles()
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() -> Set<String> {
+		return articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
 	
 	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<ArticleStatus>? {

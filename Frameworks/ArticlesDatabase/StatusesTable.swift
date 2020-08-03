@@ -100,11 +100,18 @@ final class StatusesTable: DatabaseTable {
 	func fetchStarredArticleIDs() -> Set<String> {
 		return fetchArticleIDs("select articleID from statuses where starred=1;")
 	}
-	
-	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return fetchArticleIDs("select articleID from statuses s where (read=0 or starred=1) and not exists (select 1 from articles a where a.articleID = s.articleID);")
+
+	func fetchArticleIDsForStatusesWithoutArticlesNewerThan(_ cutoffDate: Date) -> Set<String> {
+		var articleIDs = Set<String>()
+		queue.runInDatabaseSync { database in
+			let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
+			if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
+				articleIDs = resultSet.mapToSet(self.articleIDWithRow)
+			}
+		}
+		return articleIDs
 	}
-	
+
 	func fetchArticleIDs(_ sql: String) -> Set<String> {
 		var articleIDs = Set<String>()
 		queue.runInDatabaseSync { (database) in

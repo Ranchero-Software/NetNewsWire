@@ -393,8 +393,8 @@ final class ArticlesTable: DatabaseTable {
 		return statusesTable.fetchStarredArticleIDs()
 	}
 	
-	func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return statusesTable.fetchArticleIDsForStatusesWithoutArticles()
+	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() -> Set<String> {
+		return statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate)
 	}
 	
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) -> Set<ArticleStatus>? {

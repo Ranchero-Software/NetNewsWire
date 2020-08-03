@@ -543,8 +543,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return database.fetchStarredArticleIDs()
 	}
 	
-	public func fetchArticleIDsForStatusesWithoutArticles() -> Set<String> {
-		return database.fetchArticleIDsForStatusesWithoutArticles()
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate() -> Set<String> {
+		return database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate()
 	}
 
 	public func opmlDocument() -> String {
@@ -593,33 +593,70 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	func update(_ feed: Feed, with parsedFeed: ParsedFeed, _ completion: @escaping (() -> Void)) {
 		// Used only by an On My Mac account.
+		precondition(Thread.isMainThread)
+		precondition(type == .onMyMac) // TODO: allow iCloud
 		feed.takeSettings(from: parsedFeed)
-		let feedIDsAndItems = [feed.feedID: parsedFeed.items]
-		update(feedIDsAndItems: feedIDsAndItems, defaultRead: false, completion: completion)
+		let parsedItems = parsedFeed.items
+		guard !parsedItems.isEmpty else {
+			completion()
+			return
+		}
+
+		database.update(with: parsedItems, feedID: feed.feedID) { articleChanges in
+			self.sendNotificationAbout(articleChanges)
+			completion()
+		}
 	}
 
 	func update(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool, completion: @escaping (() -> Void)) {
-		assert(Thread.isMainThread)
+		// Used only by syncing systems.
+		precondition(Thread.isMainThread)
+		precondition(type != .onMyMac) // TODO: also make sure type != iCloud
 		guard !feedIDsAndItems.isEmpty else {
 			completion()
 			return
 		}
-		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { (newArticles, updatedArticles) in
-			var userInfo = [String: Any]()
-			let feeds = Set(feedIDsAndItems.compactMap { (key, _) -> Feed? in
-				self.existingFeed(withFeedID: key)
-			})
-			if let newArticles = newArticles, !newArticles.isEmpty {
-				self.updateUnreadCounts(for: feeds)
-				userInfo[UserInfoKey.newArticles] = newArticles
-			}
-			if let updatedArticles = updatedArticles, !updatedArticles.isEmpty {
-				userInfo[UserInfoKey.updatedArticles] = updatedArticles
-			}
-			userInfo[UserInfoKey.feeds] = feeds
-
+		database.update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { articleChanges in
+			self.sendNotificationAbout(articleChanges)
 			completion()
+		}
+	}
 
+	func sendNotificationAbout(_ articleChanges: ArticleChanges) {
+		var webFeeds = Set<Feed>()
+
+		if let newArticles = articleChanges.newArticles {
+			webFeeds.formUnion(Set(newArticles.compactMap { $0.feed }))
+		}
+		if let updatedArticles = articleChanges.updatedArticles {
+			webFeeds.formUnion(Set(updatedArticles.compactMap { $0.feed }))
+		}
+
+		var shouldSendNotification = false
+		var shouldUpdateUnreadCounts = false
+		var userInfo = [String: Any]()
+
+		if let newArticles = articleChanges.newArticles, !newArticles.isEmpty {
+			shouldSendNotification = true
+			shouldUpdateUnreadCounts = true
+			userInfo[UserInfoKey.newArticles] = newArticles
+		}
+
+		if let updatedArticles = articleChanges.updatedArticles, !updatedArticles.isEmpty {
+			shouldSendNotification = true
+			userInfo[UserInfoKey.updatedArticles] = updatedArticles
+		}
+
+		if let deletedArticles = articleChanges.deletedArticles, !deletedArticles.isEmpty {
+			shouldUpdateUnreadCounts = true
+		}
+
+		if shouldUpdateUnreadCounts {
+			self.updateUnreadCounts(for: webFeeds)
+		}
+
+		if shouldSendNotification {
+			userInfo[UserInfoKey.feeds] = webFeeds
 			NotificationCenter.default.post(name: .AccountDidDownloadArticles, object: self, userInfo: userInfo)
 		}
 	}
