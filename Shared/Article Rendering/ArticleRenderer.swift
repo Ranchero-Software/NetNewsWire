@@ -266,10 +266,8 @@ private extension ArticleRenderer {
 	func styleSubstitutions() -> [String: String] {
 		var d = [String: String]()
 		
-		#if SWIFTUI
-			let bodyFont = NSFont.preferredFont(forTextStyle: .body)
-			d["font-size"] = String(describing: Int(round(bodyFont.pointSize * 1.33)))
-		#endif
+		let bodyFont = NSFont.preferredFont(forTextStyle: .body)
+		d["font-size"] = String(describing: Int(round(bodyFont.pointSize * 1.33)))
 		
 		guard let linkColor = NSColor.controlAccentColor.usingColorSpace(.deviceRGB) else {
 			return d
