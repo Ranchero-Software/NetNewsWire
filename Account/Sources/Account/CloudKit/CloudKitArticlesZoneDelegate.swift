@@ -133,7 +133,7 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.enter()
-		DispatchQueue.global(qos: .userInitiated).async {
+		DispatchQueue.global(qos: .utility).async {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
 			let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 			

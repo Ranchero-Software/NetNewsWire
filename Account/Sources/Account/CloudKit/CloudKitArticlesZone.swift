@@ -114,7 +114,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 		
-		DispatchQueue.global(qos: .userInitiated).async {
+		DispatchQueue.global(qos: .utility).async {
 			
 			for statusUpdate in statusUpdates {
 				switch statusUpdate.record {
