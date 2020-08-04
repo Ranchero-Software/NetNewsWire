@@ -7,6 +7,18 @@
         <language>en</language>
 
 	<item>
+         <title>NetNewsWire 5.0.4b1</title>
+            <description><![CDATA[
+<p>Changed the retention policy to match iOS</p>
+<p>Performance enhancement: fetching articles is faster and uses less memory</p>
+		]]></description>
+            <pubDate>Mon, 03 Aug 2020 18:50:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.0.4b1/NetNewsWire5.0.4b1.zip" sparkle:version="2621" sparkle:shortVersionString="5.0.4b1" length="5130055" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+
+	<item>
          <title>NetNewsWire 5.0.4d2</title>
             <description><![CDATA[
 <p>Feeds view: fixed bug where multiple sequential deletes could mess up the current selection index</p>
