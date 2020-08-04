@@ -20,8 +20,8 @@ class AccountFeedbinSyncTest: XCTestCase {
 	func testDownloadSync() {
 		
 		let testTransport = TestTransport()
-		testTransport.testFiles["tags.json"] = "tags_add.json"
-		testTransport.testFiles["subscriptions.json"] = "subscriptions_initial.json"
+		testTransport.testFiles["tags.json"] = "JSON/tags_add.json"
+		testTransport.testFiles["subscriptions.json"] = "JSON/subscriptions_initial.json"
 		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
 		
 		// Test initial folders
@@ -44,7 +44,7 @@ class AccountFeedbinSyncTest: XCTestCase {
 		XCTAssertEqual("https://daringfireball.net/", daringFireball!.homePageURL)
 
 		// Test Adding a Feed
-		testTransport.testFiles["subscriptions.json"] = "subscriptions_add.json"
+		testTransport.testFiles["subscriptions.json"] = "JSON/subscriptions_add.json"
 		
 		let addExpection = self.expectation(description: "Add feeds")
 		account.refreshAll() { result in

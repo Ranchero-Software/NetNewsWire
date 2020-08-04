@@ -42,10 +42,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		XCTAssertTrue(mirrorOperation.collectionsAndFolders.isEmpty)
-		XCTAssertTrue(mirrorOperation.feedsAndFolders.isEmpty)
-		
-		MainThreadOperationQueue.shared.addOperation(mirrorOperation)
+		MainThreadOperationQueue.shared.add(mirrorOperation)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -61,7 +58,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		
 		XCTAssertTrue(missingNames.isEmpty, "Collections with these labels have no corresponding folder.")
 		XCTAssertTrue(missingIds.isEmpty, "Collections with these ids have no corresponding folder.")
-		XCTAssertEqual(mirrorOperation.collectionsAndFolders.count, provider.collections.count, "Mismatch between collections and folders.")
+//		XCTAssertEqual(mirrorOperation.collectionsAndFolders.count, provider.collections.count, "Mismatch between collections and folders.")
 	}
 	
 	func testRemovesFolders() {
@@ -74,7 +71,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 				completionExpectation.fulfill()
 			}
 			
-			MainThreadOperationQueue.shared.addOperation(addFolders)
+			MainThreadOperationQueue.shared.add(addFolders)
 			
 			waitForExpectations(timeout: 2)
 		}
@@ -88,7 +85,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(removeFolders)
+		MainThreadOperationQueue.shared.add(removeFolders)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -105,7 +102,6 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 		XCTAssertTrue(remainingNames.isEmpty, "Folders with these names remain with no corresponding collection.")
 		XCTAssertTrue(remainingIds.isEmpty, "Folders with these ids remain with no corresponding collection.")
 		
-		XCTAssertTrue(removeFolders.collectionsAndFolders.isEmpty)
 		XCTAssertTrue(removeFolders.feedsAndFolders.isEmpty)
 	}
 	
@@ -136,7 +132,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(mirrorOperation)
+		MainThreadOperationQueue.shared.add(mirrorOperation)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -197,7 +193,7 @@ class FeedlyMirrorCollectionsAsFoldersOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(removeFolders)
+		MainThreadOperationQueue.shared.add(removeFolders)
 		
 		waitForExpectations(timeout: 2)
 		

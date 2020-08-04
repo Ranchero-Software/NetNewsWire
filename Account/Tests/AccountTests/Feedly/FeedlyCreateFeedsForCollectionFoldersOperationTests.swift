@@ -61,7 +61,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 		
 		XCTAssertTrue(account.flattenedWebFeeds().isEmpty, "Expected empty account.")
 		
-		MainThreadOperationQueue.shared.addOperation(createFeeds)
+		MainThreadOperationQueue.shared.add(createFeeds)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -132,7 +132,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			
 			XCTAssertTrue(account.flattenedWebFeeds().isEmpty, "Expected empty account.")
 			
-			MainThreadOperationQueue.shared.addOperation(createFeeds)
+			MainThreadOperationQueue.shared.add(createFeeds)
 			
 			waitForExpectations(timeout: 2)
 		}
@@ -154,7 +154,7 @@ class FeedlyCreateFeedsForCollectionFoldersOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(removeFeeds)
+		MainThreadOperationQueue.shared.add(removeFeeds)
 		
 		waitForExpectations(timeout: 2)
 		

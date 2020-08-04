@@ -40,7 +40,7 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(getStreamIds)
+		MainThreadOperationQueue.shared.add(getStreamIds)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -73,7 +73,7 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(getStreamIds)
+		MainThreadOperationQueue.shared.add(getStreamIds)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -89,7 +89,7 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 	func testGetStreamIdsFromJSON() {
 		let support = FeedlyTestSupport()
 		let (transport, caller) = support.makeMockNetworkStack()
-		let jsonName = "feedly_unreads_1000"
+		let jsonName = "JSON/feedly_unreads_1000"
 		transport.testFiles["/v3/streams/ids"] = "\(jsonName).json"
 		
 		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
@@ -100,7 +100,7 @@ class FeedlyGetStreamIdsOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(getStreamIds)
+		MainThreadOperationQueue.shared.add(getStreamIds)
 		
 		waitForExpectations(timeout: 2)
 		

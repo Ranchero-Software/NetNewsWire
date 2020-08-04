@@ -37,13 +37,6 @@ let package = Package(
             dependencies: ["Account"],
 			resources: [
 				.copy("JSON"),
-				.copy("Feedly/feedly-1-initial"),
-				.copy("Feedly/feedly-2-changestatuses"),
-				.copy("Feedly/feedly-3-changestatusesagain"),
-				.copy("Feedly/feedly-4-addfeedsandfolders"),
-				.copy("Feedly/feedly-5-removefeedsandfolders"),
-				.copy("Feedly/feedly-add-new-feed"),
-				.copy("Feedly/Initial"),
 			]),
     ]
 )

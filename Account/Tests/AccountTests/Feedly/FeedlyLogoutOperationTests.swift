@@ -9,6 +9,7 @@
 import XCTest
 @testable import Account
 import RSCore
+import Secrets
 
 class FeedlyLogoutOperationTests: XCTestCase {
 
@@ -73,7 +74,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(logout)
+		MainThreadOperationQueue.shared.add(logout)
 		
 		MainThreadOperationQueue.shared.cancelOperations([logout])
 		
@@ -105,7 +106,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(logout)
+		MainThreadOperationQueue.shared.add(logout)
 		
 		waitForExpectations(timeout: 1)
 		
@@ -151,7 +152,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(logout)
+		MainThreadOperationQueue.shared.add(logout)
 		
 		waitForExpectations(timeout: 1)
 		
@@ -197,7 +198,7 @@ class FeedlyLogoutOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(logout)
+		MainThreadOperationQueue.shared.add(logout)
 				
 		waitForExpectations(timeout: 1)
 		

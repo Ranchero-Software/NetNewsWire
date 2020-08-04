@@ -20,7 +20,7 @@ class AccountFeedbinFolderSyncTest: XCTestCase {
     func testDownloadSync() {
 
 		let testTransport = TestTransport()
-		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "tags_initial.json"
+		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_initial.json"
 		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
 		
 		// Test initial folders
@@ -40,7 +40,7 @@ class AccountFeedbinFolderSyncTest: XCTestCase {
 		XCTAssertTrue(initialFolderNames.contains("Outdoors"))
 
 		// Test removing folders
-		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "tags_delete.json"
+		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_delete.json"
 		
 		let deleteExpection = self.expectation(description: "Delete tags")
 		account.refreshAll() { _ in
@@ -59,7 +59,7 @@ class AccountFeedbinFolderSyncTest: XCTestCase {
 		XCTAssertFalse(deleteFolderNames.contains("Tech Media"))
 
 		// Test Adding Folders
-		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "tags_add.json"
+		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_add.json"
 		
 		let addExpection = self.expectation(description: "Add tags")
 		account.refreshAll() { _ in 

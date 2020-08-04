@@ -10,6 +10,7 @@ import XCTest
 @testable import Account
 import RSWeb
 import RSCore
+import Secrets
 
 class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 	
@@ -61,7 +62,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(refresh)
+		MainThreadOperationQueue.shared.add(refresh)
 		
 		MainThreadOperationQueue.shared.cancelOperations([refresh])
 		
@@ -100,7 +101,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(refresh)
+		MainThreadOperationQueue.shared.add(refresh)
 		
 		waitForExpectations(timeout: 1)
 		
@@ -147,7 +148,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(refresh)
+		MainThreadOperationQueue.shared.add(refresh)
 				
 		waitForExpectations(timeout: 1)
 		
@@ -201,7 +202,7 @@ class FeedlyRefreshAccessTokenOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(refresh)
+		MainThreadOperationQueue.shared.add(refresh)
 				
 		waitForExpectations(timeout: 1)
 		

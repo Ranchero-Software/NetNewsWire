@@ -19,6 +19,10 @@ class FeedlyTestSupport {
 	var refreshToken = Credentials(type: .oauthRefreshToken, username: "Test", secret: "t3st-refresh-tok3n")
 	var transport = TestTransport()
 	
+	init() {
+		SecretsManager.provider = FeedlyTestSecrets()
+	}
+	
 	func makeMockNetworkStack() -> (TestTransport, FeedlyAPICaller) {
 		let caller = FeedlyAPICaller(transport: transport, api: .sandbox)
 		caller.credentials = accessToken
@@ -90,8 +94,7 @@ class FeedlyTestSupport {
 	}
 	
 	func testJSON(named: String, subdirectory: String? = nil) -> Any {
-		let bundle = Bundle(for: TestTransport.self)
-		let url = bundle.url(forResource: named, withExtension: "json", subdirectory: subdirectory)!
+		let url = Bundle.module.url(forResource: named, withExtension: "json", subdirectory: subdirectory)!
 		let data = try! Data(contentsOf: url)
 		let json = try! JSONSerialization.jsonObject(with: data)
 		return json

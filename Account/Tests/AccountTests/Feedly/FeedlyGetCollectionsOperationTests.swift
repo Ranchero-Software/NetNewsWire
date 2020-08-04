@@ -16,7 +16,7 @@ class FeedlyGetCollectionsOperationTests: XCTestCase {
 	func testGetCollections() {
 		let support = FeedlyTestSupport()
 		let (transport, caller) = support.makeMockNetworkStack()
-		let jsonName = "feedly_collections_initial"
+		let jsonName = "JSON/feedly_collections_initial"
 		transport.testFiles["/v3/collections"] = "\(jsonName).json"
 		
 		let getCollections = FeedlyGetCollectionsOperation(service: caller, log: support.log)

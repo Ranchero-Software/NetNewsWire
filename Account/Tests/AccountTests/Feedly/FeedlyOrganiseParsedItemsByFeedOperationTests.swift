@@ -47,7 +47,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(organise)
+		MainThreadOperationQueue.shared.add(organise)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -68,7 +68,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(organise)
+		MainThreadOperationQueue.shared.add(organise)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -89,7 +89,7 @@ class FeedlyOrganiseParsedItemsByFeedOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(organise)
+		MainThreadOperationQueue.shared.add(organise)
 		
 		waitForExpectations(timeout: 2)
 		

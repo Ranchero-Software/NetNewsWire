@@ -53,7 +53,7 @@ final class TestTransport: Transport {
 			testFileURL = providerUrl
 			
 		} else if let testKeyAndFileName = testFiles.first(where: { urlString.contains($0.key) }) {
-			testFileURL = Bundle(for: TestTransport.self).resourceURL!.appendingPathComponent(testKeyAndFileName.value)
+			testFileURL = Bundle.module.resourceURL!.appendingPathComponent(testKeyAndFileName.value)
 			
 		} else {
 			// XCTFail("Missing mock response for: \(urlString)")

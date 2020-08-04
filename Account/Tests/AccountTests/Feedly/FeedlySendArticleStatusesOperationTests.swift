@@ -41,7 +41,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 	}
@@ -72,7 +72,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -115,7 +115,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -158,7 +158,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -201,7 +201,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -244,7 +244,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -287,7 +287,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -330,7 +330,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -373,7 +373,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -392,7 +392,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	
 	func testSendAllSuccess() {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let keys = [ArticleStatus.Key.read, .starred]
+		let keys = [SyncStatus.Key.read, .starred]
 		let flags = [true, false]
 		let statuses = articleIds.map { articleId -> SyncStatus in
 			let key = keys.randomElement()!
@@ -433,7 +433,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -452,7 +452,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 	
 	func testSendAllFailure() {
 		let articleIds = Set((0..<100).map { "feed/0/article/\($0)" })
-		let keys = [ArticleStatus.Key.read, .starred]
+		let keys = [SyncStatus.Key.read, .starred]
 		let flags = [true, false]
 		let statuses = articleIds.map { articleId -> SyncStatus in
 			let key = keys.randomElement()!
@@ -494,7 +494,7 @@ class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(send)
+		MainThreadOperationQueue.shared.add(send)
 		
 		waitForExpectations(timeout: 2)
 		

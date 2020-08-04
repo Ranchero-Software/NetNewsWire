@@ -52,7 +52,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(syncStreamContents)
+		MainThreadOperationQueue.shared.add(syncStreamContents)
 		
 		waitForExpectations(timeout: 2)
 		
@@ -86,7 +86,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(syncStreamContents)
+		MainThreadOperationQueue.shared.add(syncStreamContents)
 		
 		waitForExpectations(timeout: 2)
 	}
@@ -127,7 +127,7 @@ class FeedlySyncStreamContentsOperationTests: XCTestCase {
 			completionExpectation.fulfill()
 		}
 		
-		MainThreadOperationQueue.shared.addOperation(syncStreamContents)
+		MainThreadOperationQueue.shared.add(syncStreamContents)
 		
 		waitForExpectations(timeout: 30)
 		

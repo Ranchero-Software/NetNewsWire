@@ -9,6 +9,7 @@
 import XCTest
 import RSWeb
 @testable import Account
+import Secrets
 
 class AccountCredentialsTest: XCTestCase {
 
