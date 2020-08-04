@@ -92,50 +92,6 @@ struct MainApp: App {
 				.environmentObject(defaults)
 				.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 		}
-		.commands {
-			CommandGroup(after: .newItem, addition: {
-				Button("New Feed", action: {})
-					.keyboardShortcut("N")
-				Button("New Folder", action: {})
-					.keyboardShortcut("N", modifiers: [.shift, .command])
-				Button("Refresh", action: {})
-					.keyboardShortcut("R")
-			})
-			CommandGroup(before: .sidebar, addition: {
-				Button("Show Sidebar", action: {})
-					.keyboardShortcut("S", modifiers: [.control, .command])
-			})
-			CommandMenu("Subscriptions", content: {
-				Button("Import Subscriptions", action: {})
-					.keyboardShortcut("I", modifiers: [.shift, .command])
-				Button("Import NNW 3 Subscriptions", action: {})
-					.keyboardShortcut("O", modifiers: [.shift, .command])
-				Button("Export Subscriptions", action: {})
-					.keyboardShortcut("E", modifiers: [.shift, .command])
-			})
-			CommandMenu("Go", content: {
-				Button("Next Unread", action: {})
-					.keyboardShortcut("/", modifiers: [.command])
-				Button("Today", action: {})
-					.keyboardShortcut("1", modifiers: [.command])
-				Button("All Unread", action: {})
-					.keyboardShortcut("2", modifiers: [.command])
-				Button("Starred", action: {})
-					.keyboardShortcut("3", modifiers: [.command])
-			})
-			CommandMenu("Article", content: {
-				Button("Mark as Read", action: {})
-					.keyboardShortcut("U", modifiers: [.shift, .command])
-				Button("Mark All as Read", action: {})
-					.keyboardShortcut("K", modifiers: [.command])
-				Button("Mark Older as Read", action: {})
-					.keyboardShortcut("K", modifiers: [.shift, .command])
-				Button("Mark as Starred", action: {})
-					.keyboardShortcut("L", modifiers: [.shift, .command])
-				Button("Open in Browser", action: {})
-					.keyboardShortcut(.rightArrow, modifiers: [.command])
-			})
-		}
 		#endif
 	}
 }
