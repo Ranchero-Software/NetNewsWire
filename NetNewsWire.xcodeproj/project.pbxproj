@@ -319,6 +319,14 @@
 		51A5769624AE617200078888 /* ArticleContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A5769524AE617200078888 /* ArticleContainerView.swift */; };
 		51A5769724AE617200078888 /* ArticleContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A5769524AE617200078888 /* ArticleContainerView.swift */; };
 		51A66685238075AE00CB272D /* AddWebFeedDefaultContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */; };
+		51A737AE24DB19730015FA66 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737AD24DB19730015FA66 /* RSCore */; };
+		51A737AF24DB19730015FA66 /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737AD24DB19730015FA66 /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		51A737BF24DB197F0015FA66 /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737BE24DB197F0015FA66 /* RSDatabase */; };
+		51A737C024DB197F0015FA66 /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737BE24DB197F0015FA66 /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		51A737C524DB19B50015FA66 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C424DB19B50015FA66 /* RSWeb */; };
+		51A737C624DB19B50015FA66 /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C424DB19B50015FA66 /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		51A737C824DB19CC0015FA66 /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C724DB19CC0015FA66 /* RSParser */; };
+		51A737C924DB19CC0015FA66 /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51A737C724DB19CC0015FA66 /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51A8001224CA0FC700F41F1D /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001124CA0FC700F41F1D /* Sink.swift */; };
 		51A8001324CA0FC700F41F1D /* Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001124CA0FC700F41F1D /* Sink.swift */; };
 		51A8001524CA0FEC00F41F1D /* DemandBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A8001424CA0FEC00F41F1D /* DemandBuffer.swift */; };
@@ -1368,7 +1376,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				51A737C624DB19B50015FA66 /* RSWeb in Embed Frameworks */,
+				51A737C024DB197F0015FA66 /* RSDatabase in Embed Frameworks */,
 				65ED42DF235E74230081F399 /* Sparkle.framework in Embed Frameworks */,
+				51A737AF24DB19730015FA66 /* RSCore in Embed Frameworks */,
+				51A737C924DB19CC0015FA66 /* RSParser in Embed Frameworks */,
 				514C16DF24D2EF15009A3AFA /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -2047,13 +2059,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51A737C524DB19B50015FA66 /* RSWeb in Frameworks */,
 				514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */,
 				65ED42DE235E74230081F399 /* Sparkle.framework in Frameworks */,
 				65ED42D9235E740D0081F399 /* Sparkle.framework in Frameworks */,
 				51C4CFF624D37DD500AF9874 /* Secrets in Frameworks */,
+				51A737AE24DB19730015FA66 /* RSCore in Frameworks */,
+				51A737C824DB19CC0015FA66 /* RSParser in Frameworks */,
 				51E4DAED2425F6940091EB5B /* CloudKit.framework in Frameworks */,
 				514C16E124D2EF38009A3AFA /* RSCoreResources in Frameworks */,
 				514C16CE24D2E63F009A3AFA /* Account in Frameworks */,
+				51A737BF24DB197F0015FA66 /* RSDatabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3712,6 +3728,10 @@
 				514C16DD24D2EF15009A3AFA /* RSTree */,
 				514C16E024D2EF38009A3AFA /* RSCoreResources */,
 				51C4CFF524D37DD500AF9874 /* Secrets */,
+				51A737AD24DB19730015FA66 /* RSCore */,
+				51A737BE24DB197F0015FA66 /* RSDatabase */,
+				51A737C424DB19B50015FA66 /* RSWeb */,
+				51A737C724DB19CC0015FA66 /* RSParser */,
 			);
 			productName = NetNewsWire;
 			productReference = 849C64601ED37A5D003D8FC0 /* NetNewsWire.app */;
@@ -5778,6 +5798,26 @@
 		516B695E24D2F33B00B5702F /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Account;
+		};
+		51A737AD24DB19730015FA66 /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+		51A737BE24DB197F0015FA66 /* RSDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF0D24D24E3B000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
+			productName = RSDatabase;
+		};
+		51A737C424DB19B50015FA66 /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
+			productName = RSWeb;
+		};
+		51A737C724DB19CC0015FA66 /* RSParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
+			productName = RSParser;
 		};
 		51BC2F3724D3439A00E90810 /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
