@@ -30,74 +30,66 @@ enum PreferencePane: Int, CaseIterable {
 struct MacPreferencesView: View {
 	
 	@EnvironmentObject var defaults: AppDefaults
-	@State private var preferencePane: PreferencePane = .general
+	@State private var selectedPane: PreferencePane = .general
 	
 	var body: some View {
-		VStack {
-			switch preferencePane {
-			case .general:
-				GeneralPreferencesView()
-					.environmentObject(defaults)
-			case .accounts:
-				AccountsPreferencesView()
-					.environmentObject(defaults)
-			case .viewing:
-				LayoutPreferencesView()
-					.environmentObject(defaults)
-			case .advanced:
-				AdvancedPreferencesView()
-					.environmentObject(defaults)
-			}
-		}
-		.toolbar {
-			ToolbarItem {
-				HStack {
-					Button(action: {
-						preferencePane = .general
-					}, label: {
-						VStack {
-							Image(systemName: "gearshape")
-								.font(.title2)
-							Text("General")
-						}.foregroundColor(
-							preferencePane == .general ? Color("AccentColor") : Color.gray
-						)
-					}).frame(width: 70, height: 50)
-					Button(action: {
-						preferencePane = .accounts
-					}, label: {
-						VStack {
-							Image(systemName: "at")
-								.font(.title2)
-							Text("Accounts")
-						}.foregroundColor(
-							preferencePane == .accounts ? Color("AccentColor") : Color.gray
-						)
-					}).frame(width: 70, height: 50)
-					Button(action: {
-						preferencePane = .viewing
-					}, label: {
-						VStack {
-							Image(systemName: "eyeglasses")
-								.font(.title2)
-							Text("Viewing")
-						}.foregroundColor(
-							preferencePane == .viewing ? Color("AccentColor") : Color.gray
-						)
-					}).frame(width: 70, height: 50)
-					Button(action: {
-						preferencePane = .advanced
-					}, label: {
-						VStack {
-							Image(systemName: "scale.3d")
-								.font(.title2)
-							Text("Advanced")
-						}.foregroundColor(
-							preferencePane == .advanced ? Color("AccentColor") : Color.gray
-						)
-					}).frame(width: 70, height: 50)
+		TabView(selection: $selectedPane) {
+			GeneralPreferencesView()
+				.environmentObject(defaults)
+				.tabItem {
+					VStack {
+						Image(systemName: "gearshape")
+							.font(.title2)
+						Text("General")
+					}
 				}
-			}
+				.onTapGesture {
+					selectedPane = .general
+				}
+				.tag(PreferencePane.general)
+			
+			
+			AccountsPreferencesView()
+				.environmentObject(defaults)
+				.tabItem {
+					VStack {
+						Image(systemName: "at")
+							.font(.title2)
+						Text("Accounts")
+					}
+				}
+				.onTapGesture {
+					selectedPane = .accounts
+				}
+				.tag(PreferencePane.accounts)
+			
+			LayoutPreferencesView()
+				.environmentObject(defaults)
+				.tabItem {
+					VStack {
+						Image(systemName: "eyeglasses")
+							.font(.title2)
+						Text("Viewing")
+					}
+				}
+				.onTapGesture {
+					selectedPane = .viewing
+				}
+				.tag(PreferencePane.viewing)
+			
+			AdvancedPreferencesView()
+				.environmentObject(defaults)
+				.tabItem {
+					VStack {
+						Image(systemName: "scale.3d")
+							.font(.title2)
+						Text("Advanced")
+					}
+				}
+				.onTapGesture {
+					selectedPane = .advanced
+				}
+				.tag(PreferencePane.advanced)
 		}
 		
 	}
