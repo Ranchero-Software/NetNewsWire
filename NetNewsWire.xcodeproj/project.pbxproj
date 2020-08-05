@@ -19,7 +19,7 @@
 		1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */; };
 		1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */; };
 		1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */; };
-		1729529724AA1CD000D65E66 /* MacPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529624AA1CD000D65E66 /* MacPreferencesView.swift */; };
+		1729529724AA1CD000D65E66 /* MacPreferencePanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */; };
 		1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529A24AA1FD200D65E66 /* MacSearchField.swift */; };
 		175942AA24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		175942AB24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -1395,7 +1395,7 @@
 		1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesView.swift; sourceTree = "<group>"; };
 		1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesView.swift; sourceTree = "<group>"; };
 		1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesView.swift; sourceTree = "<group>"; };
-		1729529624AA1CD000D65E66 /* MacPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencesView.swift; sourceTree = "<group>"; };
+		1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencePanes.swift; sourceTree = "<group>"; };
 		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
 		1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesModel.swift; sourceTree = "<group>"; };
 		1769E32424BC5A65000E1E8E /* AddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountView.swift; sourceTree = "<group>"; };
@@ -2100,7 +2100,7 @@
 		1729528F24AA1A4F00D65E66 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				1729529624AA1CD000D65E66 /* MacPreferencesView.swift */,
+				1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */,
 				1729529924AA1CE100D65E66 /* Preference Panes */,
 			);
 			path = Preferences;
@@ -4571,7 +4571,7 @@
 				51E4995B24A875D500B667CB /* ArticlePasteboardWriter.swift in Sources */,
 				51E4993424A867E700B667CB /* UserInfoKey.swift in Sources */,
 				1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */,
-				1729529724AA1CD000D65E66 /* MacPreferencesView.swift in Sources */,
+				1729529724AA1CD000D65E66 /* MacPreferencePanes.swift in Sources */,
 				51E4994C24A8734C00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */,
 				171BCB8D24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */,

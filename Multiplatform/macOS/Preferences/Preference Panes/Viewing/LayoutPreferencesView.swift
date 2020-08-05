@@ -10,7 +10,7 @@ import SwiftUI
 
 struct LayoutPreferencesView: View {
     
-	@EnvironmentObject var defaults: AppDefaults
+	@StateObject private var defaults = AppDefaults.shared
 	private let colorPalettes = UserInterfaceColorPalette.allCases
 	private let sampleTitle = "Lorem dolor sed viverra ipsum. Gravida rutrum quisque non tellus. Rutrum tellus pellentesque eu tincidunt tortor. Sed blandit libero volutpat sed cras ornare. Et netus et malesuada fames ac. Ultrices eros in cursus turpis massa tincidunt dui ut ornare. Lacus sed viverra tellus in. Sollicitudin ac orci phasellus egestas. Purus in mollis nunc sed. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque. Interdum consectetur libero id faucibus nisl tincidunt eget."
 	
