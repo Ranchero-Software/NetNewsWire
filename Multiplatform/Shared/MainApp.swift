@@ -33,6 +33,7 @@ struct MainApp: App {
 		}
 		.windowToolbarStyle(UnifiedWindowToolbarStyle())
 		.commands {
+			SidebarCommands()
 			CommandGroup(after: .newItem, addition: {
 				Button("New Feed", action: {})
 					.keyboardShortcut("N")
