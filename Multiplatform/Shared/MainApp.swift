@@ -13,6 +13,7 @@ struct MainApp: App {
 	
 	#if os(macOS)
 	@NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
+	@State private var selectedPane: MacPreferencePane = .general
 	#endif
 	#if os(iOS)
 	@UIApplicationDelegateAdaptor(AppDelegate.self) private var delegate
@@ -20,7 +21,7 @@ struct MainApp: App {
 	
 	@StateObject private var refreshProgress = RefreshProgressModel()
 	@StateObject private var defaults = AppDefaults.shared
-
+	
 	@SceneBuilder var body: some Scene {
 		#if os(macOS)
 		WindowGroup {
@@ -76,12 +77,41 @@ struct MainApp: App {
 		
 		// Mac Preferences
 		Settings {
-			MacPreferencesView()
-			.padding()
+			TabView(selection: $selectedPane) {
+				GeneralPreferencesView()
+					.tabItem {
+						Image(systemName: "gearshape")
+							.font(.title2)
+						Text("General")
+					}
+					.tag(MacPreferencePane.general)
+				
+				AccountsPreferencesView()
+					.tabItem {
+						Image(systemName: "at")
+							.font(.title2)
+						Text("Accounts")
+					}
+					.tag(MacPreferencePane.accounts)
+				
+				LayoutPreferencesView()
+					.tabItem {
+						Image(systemName: "eyeglasses")
+							.font(.title2)
+						Text("Viewing")
+					}
+					.tag(MacPreferencePane.viewing)
+				
+				AdvancedPreferencesView()
+					.tabItem {
+						Image(systemName: "scale.3d")
+							.font(.title2)
+						Text("Advanced")
+					}
+					.tag(MacPreferencePane.advanced)
+			}
 			.frame(width: 500)
-			.navigationTitle("Preferences")
-			.environmentObject(defaults)
-			.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
+			.padding()
 		}
 		#endif
 		

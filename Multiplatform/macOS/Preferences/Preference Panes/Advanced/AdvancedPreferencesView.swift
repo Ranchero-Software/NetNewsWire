@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AdvancedPreferencesView: View {
     
-	@EnvironmentObject private var preferences: AppDefaults
+	@StateObject private var preferences = AppDefaults.shared
 	@StateObject private var viewModel = AdvancedPreferencesModel()
     
     var body: some View {
