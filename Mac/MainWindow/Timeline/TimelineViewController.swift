@@ -164,6 +164,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
+	private var previouslySelectedArticles: ArticleArray?
+
 	private var oneSelectedArticle: Article? {
 		return selectedArticles.count == 1 ? selectedArticles.first : nil
 	}
@@ -816,6 +818,8 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private func selectionDidChange(_ selectedArticles: ArticleArray?) {
+		guard selectedArticles != previouslySelectedArticles else { return }
+		previouslySelectedArticles = selectedArticles
 		delegate?.timelineSelectionDidChange(self, selectedArticles: selectedArticles)
 		delegate?.timelineInvalidatedRestorationState(self)
 	}
