@@ -28,19 +28,4 @@ public extension UIBarButtonItem {
 		}
 	}
 	
-	var isHidden: Bool {
-		get {
-			return tintColor == UIColor.clear
-		}
-		set(hide) {
-			if hide {
-				isEnabled = false
-				tintColor = UIColor.clear
-			} else {
-				isEnabled = true
-				tintColor = nil 
-			}
-		}
-	}
-	
 }

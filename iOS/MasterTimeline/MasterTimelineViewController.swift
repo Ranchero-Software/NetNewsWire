@@ -19,10 +19,11 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	private var refreshProgressView: RefreshProgressView?
 
-	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
-	@IBOutlet weak var firstUnreadButton: UIBarButtonItem!
-	
+
+	private var filterButton: UIBarButtonItem!
+	private var firstUnreadButton: UIBarButtonItem!
+
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
 	
@@ -53,6 +54,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
+		// Initialize Programmatic Buttons
+		filterButton = UIBarButtonItem(image: AppAssets.filterInactiveImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+		firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
+		
 		// Setup the Search Controller
 		searchController.delegate = self
 		searchController.searchResultsUpdater = self
@@ -597,9 +602,9 @@ private extension MasterTimelineViewController {
 
 		switch coordinator.timelineDefaultReadFilterType {
 		case .none, .read:
-			filterButton.isHidden = false
+			navigationItem.rightBarButtonItem = filterButton
 		case .alwaysRead:
-			filterButton.isHidden = true
+			navigationItem.rightBarButtonItem = nil
 		}
 		
 		if coordinator.isReadArticlesFiltered {
@@ -624,9 +629,16 @@ private extension MasterTimelineViewController {
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		if coordinator.isRootSplitCollapsed {
-			firstUnreadButton.isHidden = false
+			if let toolbarItems = toolbarItems, toolbarItems.last != firstUnreadButton {
+				var items = toolbarItems
+				items.append(firstUnreadButton)
+				setToolbarItems(items, animated: false)
+			}
 		} else {
-			firstUnreadButton.isHidden = true
+			if let toolbarItems = toolbarItems, toolbarItems.last == firstUnreadButton {
+				let items = Array(toolbarItems[0..<toolbarItems.count - 1])
+				setToolbarItems(items, animated: false)
+			}
 		}
 	}
 	
