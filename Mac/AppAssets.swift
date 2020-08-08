@@ -122,15 +122,11 @@ struct AppAssets {
 	}()
 
 	static var searchFeedImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 	}()
 
-	static var smartFeedImage: RSImage = {
-		return RSImage(named: NSImage.smartBadgeTemplateName)!
-	}()
-	
 	static var starredFeedImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 	}()
 
 	static var timelineStar: RSImage! = {
@@ -138,11 +134,11 @@ struct AppAssets {
 	}()
 
 	static var todayFeedImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 	}()
 
 	static var unreadFeedImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 	}()
 
 	static var swipeMarkReadImage: RSImage = {

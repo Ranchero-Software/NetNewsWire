@@ -29,9 +29,3 @@ protocol PseudoFeed: class, Feed, SmallIconProvider {
 }
 
 #endif
-
-extension PseudoFeed {
-	var smallIcon: RSImage? {
-		return AppAssets.smartFeedImage
-	}
-}
