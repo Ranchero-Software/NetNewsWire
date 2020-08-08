@@ -7,6 +7,16 @@
         <language>en</language>
 
 	<item>
+         <title>NetNewsWire 5.0.4</title>
+            <description><![CDATA[
+<p>Same as 5.0.4b1, except now it’s the official 5.0.4 release. :)</p>
+		]]></description>
+            <pubDate>Sat, 08 Aug 2020 11:40:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.0.4/NetNewsWire5.0.4.zip" sparkle:version="2622" sparkle:shortVersionString="5.0.4" length="5130054" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.14.4</sparkle:minimumSystemVersion>
+        </item>
+
+	<item>
          <title>NetNewsWire 5.0.4b1</title>
             <description><![CDATA[
 <p>Changed the retention policy to match iOS</p>
