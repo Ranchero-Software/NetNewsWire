@@ -118,7 +118,13 @@ struct AppAssets {
 	}()
 
 	static var masterFolderImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.folderName)!)
+		if #available(macOS 10.16, *) {
+			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
+			let coloredImage = image.tinted(with: NSColor(named: "AccentColor")!)
+			return IconImage(coloredImage, isSymbol: true)
+		} else {
+			return IconImage(RSImage(named: NSImage.folderName)!)
+		}
 	}()
 
 	static var searchFeedImage: IconImage = {
@@ -126,7 +132,13 @@ struct AppAssets {
 	}()
 
 	static var starredFeedImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+		if #available(macOS 10.16, *) {
+			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
+			let coloredImage = image.tinted(with: NSColor(named: "StarColor")!)
+			return IconImage(coloredImage, isSymbol: true)
+		} else {
+			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+		}
 	}()
 
 	static var timelineStar: RSImage! = {
@@ -134,11 +146,23 @@ struct AppAssets {
 	}()
 
 	static var todayFeedImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+		if #available(macOS 10.16, *) {
+			let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
+			let coloredImage = image.tinted(with: .orange)
+			return IconImage(coloredImage, isSymbol: true)
+		} else {
+			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+		}
 	}()
 
 	static var unreadFeedImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+		if #available(macOS 10.16, *) {
+			let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
+			let coloredImage = image.tinted(with: NSColor(named: "AccentColor")!)
+			return IconImage(coloredImage, isSymbol: true)
+		} else {
+			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+		}
 	}()
 
 	static var swipeMarkReadImage: RSImage = {
