@@ -10,14 +10,29 @@ import AppKit
 
 struct SidebarCellAppearance: Equatable {
 
-	let imageSize = CGSize(width: 16, height: 16)
+	let imageSize: CGSize
 	let imageMarginRight: CGFloat = 4.0
 	let unreadCountMarginLeft: CGFloat = 10.0
 	let textFieldFontSize: CGFloat
 	let textFieldFont: NSFont
 
-	init(fontSize: FontSize) {
-		self.textFieldFontSize = AppDefaults.shared.actualFontSize(for: fontSize)
+	init(rowSizeStyle: NSTableView.RowSizeStyle) {
+		switch rowSizeStyle {
+		case .small:
+			imageSize = CGSize(width: 16, height: 16)
+			textFieldFontSize = 11
+		case .large:
+			imageSize = CGSize(width: 24, height: 24)
+			if #available(macOS 10.16, *) {
+				textFieldFontSize = 15
+			} else {
+				textFieldFontSize = 13
+			}
+		default:
+			imageSize = CGSize(width: 20, height: 20)
+			textFieldFontSize = 13
+		}
+		
 		self.textFieldFont = NSFont.systemFont(ofSize: textFieldFontSize)
 	}
 }

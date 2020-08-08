@@ -12,6 +12,10 @@ import Articles
 import Account
 import RSCore
 
+extension Notification.Name {
+	static let appleSideBarDefaultIconSizeChanged = Notification.Name("AppleSideBarDefaultIconSizeChanged")
+}
+
 protocol SidebarDelegate: class {
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?)
 	func unreadCount(for: AnyObject) -> Int
@@ -46,7 +50,6 @@ protocol SidebarDelegate: class {
 
     var undoableCommands = [UndoableCommand]()
 	private var animatingChanges = false
-	private var sidebarCellAppearance: SidebarCellAppearance!
 
 	var renameWindowController: RenameWindowController?
 
@@ -57,8 +60,6 @@ protocol SidebarDelegate: class {
 	// MARK: - NSViewController
 
 	override func viewDidLoad() {
-		sidebarCellAppearance = SidebarCellAppearance(fontSize: AppDefaults.shared.sidebarFontSize)
-
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
@@ -76,6 +77,7 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
 
 		outlineView.reloadData()
 
@@ -216,11 +218,14 @@ protocol SidebarDelegate: class {
 		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
 	}
 
-	@objc func userDidRequestSidebarSelection(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.webFeed] else {
-			return
+	@objc func appleSideBarDefaultIconSizeChanged(_ note: Notification) {
+		// The outline view doesn't have the new row style size set yet when we get
+		// this notification, so give it half a second to catch up.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			let savedSelection = self.selectedNodes
+			self.outlineView.reloadData()
+			self.restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
 		}
-		revealAndSelectRepresentedObject(feed as AnyObject)
 	}
 	
 	// MARK: - Actions
@@ -727,7 +732,7 @@ private extension SidebarViewController {
 	}
 	
 	func configure(_ cell: SidebarCell, _ node: Node) {
-		cell.cellAppearance = sidebarCellAppearance
+		cell.cellAppearance = SidebarCellAppearance(rowSizeStyle: outlineView.effectiveRowSizeStyle)
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		configureFavicon(cell, node)
