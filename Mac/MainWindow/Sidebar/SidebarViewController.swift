@@ -73,6 +73,7 @@ protocol SidebarDelegate: class {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
@@ -191,6 +192,11 @@ protocol SidebarDelegate: class {
 		applyToAvailableCells(configureFavicon)
 	}
 
+	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
+		guard let webFeed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
+		configureCellsForRepresentedObject(webFeed)
+	}
+	
 	@objc func webFeedSettingDidChange(_ note: Notification) {
 		guard let webFeed = note.object as? WebFeed, let key = note.userInfo?[WebFeed.WebFeedSettingUserInfoKey] as? String else {
 			return
@@ -733,7 +739,7 @@ private extension SidebarViewController {
 	}
 
 	func configureFavicon(_ cell: SidebarCell, _ node: Node) {
-		cell.image = imageFor(node)?.image
+		cell.iconImage = imageFor(node)
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
@@ -741,6 +747,9 @@ private extension SidebarViewController {
 	}
 
 	func imageFor(_ node: Node) -> IconImage? {
+		if let feed = node.representedObject as? WebFeed, let feedIcon = appDelegate.webFeedIconDownloader.icon(for: feed) {
+			return feedIcon
+		}
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
 			return smallIconProvider.smallIcon
 		}

@@ -13,15 +13,13 @@ import RSTree
 
 class SidebarCell : NSTableCellView {
 
-	var image: NSImage? {
+	var iconImage: IconImage? {
 		didSet {
-			if let image = image {
-				faviconImageView.image = shouldShowImage ? image : nil
-				faviconImageView.alphaValue = image.isTemplate ? 0.75 : 1.0
+			if let image = iconImage {
+				faviconImageView.iconImage = shouldShowImage ? image : nil
 			}
 			else {
-				faviconImageView.image = nil
-				faviconImageView.alphaValue = 1.0
+				faviconImageView.iconImage = nil
 			}
 		}
 	}
@@ -31,7 +29,7 @@ class SidebarCell : NSTableCellView {
 			if shouldShowImage != oldValue {
 				needsLayout = true
 			}
-			faviconImageView.image = shouldShowImage ? image : nil
+			faviconImageView.iconImage = shouldShowImage ? iconImage : nil
 		}
 	}
 
@@ -80,14 +78,7 @@ class SidebarCell : NSTableCellView {
 		return textField
 	}()
 
-	private let faviconImageView: NSImageView = {
-		let imageView = NSImageView(frame: NSRect.zero)
-		imageView.animates = false
-		imageView.imageAlignment = .alignCenter
-		imageView.imageScaling = .scaleProportionallyDown
-		imageView.wantsLayer = true
-		return imageView
-	}()
+	private let faviconImageView = IconView()
 
 	private let unreadCountView = UnreadCountView(frame: NSZeroRect)
 
