@@ -270,7 +270,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </view>
-                        <toolbar key="toolbar" implicitIdentifier="F82AF654-C4E7-4D89-8DD6-35FB7FC7405A" displayMode="iconOnly" sizeMode="regular" id="4wH-0N-M2I">
+                        <toolbar key="toolbar" implicitIdentifier="F82AF654-C4E7-4D89-8DD6-35FB7FC7405A" explicitIdentifier="UnifiedToolbar" displayMode="iconOnly" sizeMode="regular" id="4wH-0N-M2I">
                             <allowedToolbarItems>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="NkL-XI-XbY"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1rv-ob-E5Y"/>
@@ -656,6 +656,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="450" height="198"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <visualEffectView blendingMode="behindWindow" material="contentBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="PdS-jL-yH1">
+                                <rect key="frame" x="0.0" y="119" width="450" height="27"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="27" id="ZMg-gZ-6aa"/>
+                                </constraints>
+                            </visualEffectView>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
                                 <rect key="frame" x="0.0" y="125" width="49" height="17"/>
                                 <constraints>
@@ -704,9 +710,6 @@
                                     <action selector="toggleReadArticlesFilter:" target="Ebq-4s-EwK" id="tcC-72-Npk"/>
                                 </connections>
                             </button>
-                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="7p6-pA-iw6">
-                                <rect key="frame" x="20" y="119" width="410" height="5"/>
-                            </box>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Zpk-pq-9nW" customClass="TimelineContainerView" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="121"/>
                             </customView>
@@ -715,13 +718,13 @@
                             <constraint firstAttribute="trailing" secondItem="Zpk-pq-9nW" secondAttribute="trailing" id="67d-pI-I9C"/>
                             <constraint firstAttribute="trailing" secondItem="iA5-go-AO0" secondAttribute="trailing" constant="12" id="9Dl-n9-vRI"/>
                             <constraint firstItem="lSU-OC-sEC" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="Ceb-sA-ECJ"/>
-                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="7p6-pA-iw6" secondAttribute="bottom" id="KCa-8b-a6y"/>
+                            <constraint firstItem="PdS-jL-yH1" firstAttribute="leading" secondItem="M3G-7s-D6y" secondAttribute="leading" id="KW1-4o-qoz"/>
+                            <constraint firstItem="PdS-jL-yH1" firstAttribute="trailing" secondItem="M3G-7s-D6y" secondAttribute="trailing" id="WHL-h4-cLZ"/>
                             <constraint firstItem="Zpk-pq-9nW" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="XF2-31-E1x"/>
-                            <constraint firstItem="Ebd-af-pc9" firstAttribute="trailing" secondItem="7p6-pA-iw6" secondAttribute="trailing" id="fG3-fe-Stb"/>
+                            <constraint firstItem="PdS-jL-yH1" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" id="aB8-Pt-Szt"/>
                             <constraint firstAttribute="bottom" secondItem="Zpk-pq-9nW" secondAttribute="bottom" id="fyv-EG-PC8"/>
+                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="lSU-OC-sEC" secondAttribute="bottom" constant="5" id="gFm-Ix-hBf"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="top" secondItem="Ebd-af-pc9" secondAttribute="top" constant="-15" id="nM9-iA-OzY"/>
-                            <constraint firstItem="7p6-pA-iw6" firstAttribute="leading" secondItem="Ebd-af-pc9" secondAttribute="leading" id="pZU-jW-B1h"/>
-                            <constraint firstItem="7p6-pA-iw6" firstAttribute="top" secondItem="Ebd-af-pc9" secondAttribute="top" constant="4" id="tUm-nX-Jce"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lSU-OC-sEC" secondAttribute="trailing" constant="8" id="yCg-gc-exN"/>
                             <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="Ebd-af-pc9" secondAttribute="top" constant="-16" id="zay-ZJ-od3"/>
                         </constraints>
