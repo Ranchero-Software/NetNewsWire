@@ -50,7 +50,7 @@
                                         <action selector="toolbarShowShareMenu:" target="Oky-zY-oP4" id="zUk-sS-frQ"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="3552D790-D29C-4BF2-AF02-5BEFE49C7FB9" label="New Feed" paletteLabel="New Feed" toolTip="New Feed" image="NSAddTemplate" id="Skp-5r-70Q" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="3552D790-D29C-4BF2-AF02-5BEFE49C7FB9" explicitItemIdentifier="newFeed" label="New Feed" paletteLabel="New Feed" toolTip="New Feed" image="NSAddTemplate" id="Skp-5r-70Q" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="rHO-y7-lG9">
@@ -65,7 +65,7 @@
                                         <action selector="showAddWebFeedWindow:" target="Oky-zY-oP4" id="pEy-MV-Lnd"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="25C9E98A-867B-4EE2-BC1A-7B453D6B40BF" label="New Folder" paletteLabel="New Folder" toolTip="New Folder" image="newFolder" id="st0-Wp-nPK" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="25C9E98A-867B-4EE2-BC1A-7B453D6B40BF" explicitItemIdentifier="newFolder" label="New Folder" paletteLabel="New Folder" toolTip="New Folder" image="newFolder" id="st0-Wp-nPK" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="nvZ-IA-qOA">
@@ -80,7 +80,7 @@
                                         <action selector="showAddFolderWindow:" target="Oky-zY-oP4" id="JH4-ym-YWq"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="D783290E-C822-40DF-8CB8-925D92EA4D83" label="Next Unread" paletteLabel="Next Unread" toolTip="Go to Next Unread" image="nextUnread" id="p7Y-Vm-ILH" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="D783290E-C822-40DF-8CB8-925D92EA4D83" explicitItemIdentifier="nextUnread" label="Next Unread" paletteLabel="Next Unread" toolTip="Go to Next Unread" image="nextUnread" id="p7Y-Vm-ILH" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="1g8-XX-BhA" customClass="RSDarkModeAdaptingToolbarButton" customModule="RSCore">
@@ -95,7 +95,7 @@
                                         <action selector="nextUnread:" target="Oky-zY-oP4" id="tR6-kc-nFc"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="4A460A5C-B005-4797-AA95-FD667F0A61C2" label="Mark All as Read" paletteLabel="Mark All as Read" toolTip="Mark All as Read" image="markAllRead" id="lst-vn-0Iw" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="4A460A5C-B005-4797-AA95-FD667F0A61C2" explicitItemIdentifier="markAllAsRead" label="Mark All as Read" paletteLabel="Mark All as Read" toolTip="Mark All as Read" image="markAllRead" id="lst-vn-0Iw" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="0d4-hY-S6r">
@@ -110,7 +110,7 @@
                                         <action selector="markAllAsRead:" target="Oky-zY-oP4" id="qQg-Wj-NpN"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="540B93C9-F805-41C8-A638-3DC0825A020B" label="Mark Read" paletteLabel="Mark Read" toolTip="Mark Read or Unread" image="markRead" id="N7D-g2-EPD" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="540B93C9-F805-41C8-A638-3DC0825A020B" explicitItemIdentifier="markRead" label="Mark Read" paletteLabel="Mark Read" toolTip="Mark Read or Unread" image="markRead" id="N7D-g2-EPD" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="Pe3-wh-G7e">
@@ -125,7 +125,7 @@
                                         <action selector="toggleRead:" target="B8D-0N-5wS" id="r02-sN-noB"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="09CE2FC7-B9B6-4A74-85B3-2DED57082923" label="Star" paletteLabel="Star" toolTip="Star or Unstar" image="star" id="Gxg-WQ-ufC" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="09CE2FC7-B9B6-4A74-85B3-2DED57082923" explicitItemIdentifier="markStar" label="Star" paletteLabel="Star" toolTip="Star or Unstar" image="star" id="Gxg-WQ-ufC" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="Ehx-31-ELo">
@@ -140,7 +140,7 @@
                                         <action selector="toggleStarred:" target="Oky-zY-oP4" id="44J-UK-89l"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="openInBrowser" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="4DED27B7-8961-48F3-A995-9C961E2C0257" explicitItemIdentifier="openInBrowser" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="openInBrowser" id="tid-SB-me3" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="pgp-lZ-j6S">
@@ -155,7 +155,7 @@
                                         <action selector="openArticleInBrowser:" target="Oky-zY-oP4" id="txK-8m-Gcm"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="94C3EB28-587B-4C5C-9647-F8A2A240A1FD" label="Refresh" paletteLabel="Refresh" toolTip="Refresh" image="NSRefreshTemplate" id="QD0-SQ-OIM" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="94C3EB28-587B-4C5C-9647-F8A2A240A1FD" explicitItemIdentifier="refresh" label="Refresh" paletteLabel="Refresh" toolTip="Refresh" image="NSRefreshTemplate" id="QD0-SQ-OIM" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="tRb-KW-Z3i">
@@ -170,7 +170,7 @@
                                         <action selector="refreshAll:" target="Oky-zY-oP4" id="KRz-Df-3zA"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="642D2379-B9AF-4990-8E09-A1115C60ED1A" label="Reader" paletteLabel="Reader" toolTip="Reader View" id="6Vm-OW-3mR" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="642D2379-B9AF-4990-8E09-A1115C60ED1A" explicitItemIdentifier="readerView" label="Reader" paletteLabel="Reader" toolTip="Reader View" id="6Vm-OW-3mR" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
                                     <button key="view" verticalHuggingPriority="750" id="1b9-Tf-u5V" customClass="ArticleExtractorButton" customModule="NetNewsWire" customModuleProvider="target">
@@ -185,7 +185,7 @@
                                         <action selector="toggleArticleExtractor:" target="B8D-0N-5wS" id="ZKQ-SK-5YJ"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="ACB5604B-4543-4985-BA1A-54ADA9DF5845" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="SsT-iS-pKE" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="ACB5604B-4543-4985-BA1A-54ADA9DF5845" explicitItemIdentifier="cleanUp" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="SsT-iS-pKE" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="9At-yP-WNY">
                                         <rect key="frame" x="12" y="14" width="32" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -199,21 +199,7 @@
                                     </connections>
                                 </toolbarItem>
                             </allowedToolbarItems>
-                            <defaultToolbarItems>
-                                <toolbarItem reference="Skp-5r-70Q"/>
-                                <toolbarItem reference="st0-Wp-nPK"/>
-                                <toolbarItem reference="QD0-SQ-OIM"/>
-                                <toolbarItem reference="YMs-P5-Xhn"/>
-                                <toolbarItem reference="lst-vn-0Iw"/>
-                                <toolbarItem reference="1Ql-WJ-KYi"/>
-                                <toolbarItem reference="YMs-P5-Xhn"/>
-                                <toolbarItem reference="p7Y-Vm-ILH"/>
-                                <toolbarItem reference="Gxg-WQ-ufC"/>
-                                <toolbarItem reference="N7D-g2-EPD"/>
-                                <toolbarItem reference="6Vm-OW-3mR"/>
-                                <toolbarItem reference="tid-SB-me3"/>
-                                <toolbarItem reference="nv0-Ju-lP7"/>
-                            </defaultToolbarItems>
+                            <defaultToolbarItems/>
                             <connections>
                                 <outlet property="delegate" destination="B8D-0N-5wS" id="bgf-8m-klH"/>
                             </connections>
@@ -274,7 +260,7 @@
                             <allowedToolbarItems>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="NkL-XI-XbY"/>
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1rv-ob-E5Y"/>
-                                <toolbarItem implicitItemIdentifier="85D5559D-7E93-4640-B490-E45FCC6DEEFC" label="Mark All as Read" paletteLabel="Mark All as Read" toolTip="Mark All as Read" image="markAllAsRead" sizingBehavior="auto" id="kCl-RN-C8U" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="85D5559D-7E93-4640-B490-E45FCC6DEEFC" explicitItemIdentifier="markAllAsRead" label="Mark All as Read" paletteLabel="Mark All as Read" toolTip="Mark All as Read" image="markAllAsRead" sizingBehavior="auto" id="kCl-RN-C8U" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="pma-GT-lQ6">
                                         <rect key="frame" x="38" y="14" width="19" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -287,7 +273,7 @@
                                         <action selector="markAllAsRead:" target="oDX-XL-3t0" id="ZJZ-f1-VpE"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="E0330BEC-A31C-4734-9E98-DC684AE0188B" label="Mark Read" paletteLabel="Mark Read" toolTip="Mark Read or Unread" image="circle" catalog="system" sizingBehavior="auto" id="aBG-KW-0rC" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="E0330BEC-A31C-4734-9E98-DC684AE0188B" explicitItemIdentifier="markRead" label="Mark Read" paletteLabel="Mark Read" toolTip="Mark Read or Unread" image="circle" catalog="system" sizingBehavior="auto" id="aBG-KW-0rC" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="ogU-Zg-MEq">
                                         <rect key="frame" x="21" y="14" width="21" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -300,7 +286,7 @@
                                         <action selector="toggleRead:" target="RpU-Uf-KSH" id="vmC-mT-McD"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="7F38EDBC-3754-4A46-B1C5-ECCA6FA0E2EB" label="Refresh" paletteLabel="Refresh" toolTip="Refresh" image="arrow.clockwise" catalog="system" sizingBehavior="auto" id="saA-2q-Exi" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="7F38EDBC-3754-4A46-B1C5-ECCA6FA0E2EB" explicitItemIdentifier="refresh" label="Refresh" paletteLabel="Refresh" toolTip="Refresh" image="arrow.clockwise" catalog="system" sizingBehavior="auto" id="saA-2q-Exi" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="NOF-FH-5ht">
                                         <rect key="frame" x="14" y="14" width="20" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -313,7 +299,7 @@
                                         <action selector="refreshAll:" target="oDX-XL-3t0" id="fAJ-7N-WHH"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="98FE3AB9-1527-442F-A2AD-37A16D281F6C" label="Reader" paletteLabel="Reader" toolTip="Reader View" sizingBehavior="auto" id="z8Y-kH-YkM" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="98FE3AB9-1527-442F-A2AD-37A16D281F6C" explicitItemIdentifier="reader" label="Reader" paletteLabel="Reader" toolTip="Reader View" sizingBehavior="auto" id="z8Y-kH-YkM" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="Gj7-2v-wnj" customClass="ArticleExtractorButton" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="19" y="14" width="6" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -326,7 +312,7 @@
                                         <action selector="toggleArticleExtractor:" target="B8D-0N-5wS" id="VGv-tQ-zSw"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="5E605EAD-F9C6-46B1-AB4A-4F8B41EA8D71" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="gbb-1C-xgT" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="5E605EAD-F9C6-46B1-AB4A-4F8B41EA8D71" explicitItemIdentifier="cleanUp" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="gbb-1C-xgT" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="3mT-0D-slf">
                                         <rect key="frame" x="12" y="14" width="32" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -339,7 +325,7 @@
                                         <action selector="cleanUp:" target="oDX-XL-3t0" id="ZI7-sh-FxF"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="D843F871-CE3E-4562-864D-468D253F7017" label="Next Unread" paletteLabel="Next Unread" toolTip="Go to Next Unread" image="chevron.down.circle" catalog="system" sizingBehavior="auto" id="Em1-AN-RSV" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="D843F871-CE3E-4562-864D-468D253F7017" explicitItemIdentifier="nextUnread" label="Next Unread" paletteLabel="Next Unread" toolTip="Go to Next Unread" image="chevron.down.circle" catalog="system" sizingBehavior="auto" id="Em1-AN-RSV" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="f65-dC-yVw" customClass="RSDarkModeAdaptingToolbarButton" customModule="RSCore">
                                         <rect key="frame" x="26" y="14" width="21" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -352,7 +338,7 @@
                                         <action selector="nextUnread:" target="oDX-XL-3t0" id="Njy-rJ-nwV"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="DF97E70F-6C5A-4E11-8F23-F92C0DFDD20C" label="Star" paletteLabel="Star" toolTip="Star or Unstar" image="star" catalog="system" sizingBehavior="auto" id="w0G-8M-ORk" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="DF97E70F-6C5A-4E11-8F23-F92C0DFDD20C" explicitItemIdentifier="markStar" label="Star" paletteLabel="Star" toolTip="Star or Unstar" image="star" catalog="system" sizingBehavior="auto" id="w0G-8M-ORk" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="PH8-Ep-8RY">
                                         <rect key="frame" x="3" y="14" width="23" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -365,7 +351,7 @@
                                         <action selector="toggleStarred:" target="oDX-XL-3t0" id="8CC-3h-U4D"/>
                                     </connections>
                                 </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="0C1590CE-2F2C-4B1C-B8E2-FB95E26B3247" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="safari" catalog="system" sizingBehavior="auto" id="r1w-Ep-Fxv" customClass="RSToolbarItem" customModule="RSCore">
+                                <toolbarItem implicitItemIdentifier="0C1590CE-2F2C-4B1C-B8E2-FB95E26B3247" explicitItemIdentifier="openInBrowser" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="safari" catalog="system" sizingBehavior="auto" id="r1w-Ep-Fxv" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="0qi-r3-cJ7">
                                         <rect key="frame" x="37" y="14" width="21" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -391,7 +377,7 @@
                                         <action selector="toolbarShowShareMenu:" target="oDX-XL-3t0" id="Jnn-YA-XUu"/>
                                     </connections>
                                 </toolbarItem>
-                                <searchToolbarItem implicitItemIdentifier="B7230336-8AEE-41E4-A45A-97033AE39514" label="Search" paletteLabel="Search" id="ZKI-Wi-Azg">
+                                <searchToolbarItem implicitItemIdentifier="B7230336-8AEE-41E4-A45A-97033AE39514" explicitItemIdentifier="search" label="Search" paletteLabel="Search" id="ZKI-Wi-Azg">
                                     <nil key="toolTip"/>
                                     <searchField key="view" verticalHuggingPriority="750" textCompletion="NO" id="dKj-A6-Jhr">
                                         <rect key="frame" x="0.0" y="0.0" width="100" height="21"/>
@@ -404,17 +390,7 @@
                                     </searchField>
                                 </searchToolbarItem>
                             </allowedToolbarItems>
-                            <defaultToolbarItems>
-                                <toolbarItem reference="saA-2q-Exi"/>
-                                <searchToolbarItem reference="ZKI-Wi-Azg"/>
-                                <toolbarItem reference="kCl-RN-C8U"/>
-                                <toolbarItem reference="1rv-ob-E5Y"/>
-                                <toolbarItem reference="Em1-AN-RSV"/>
-                                <toolbarItem reference="aBG-KW-0rC"/>
-                                <toolbarItem reference="w0G-8M-ORk"/>
-                                <toolbarItem reference="r1w-Ep-Fxv"/>
-                                <toolbarItem reference="G63-IG-tKX"/>
-                            </defaultToolbarItems>
+                            <defaultToolbarItems/>
                             <connections>
                                 <outlet property="delegate" destination="RpU-Uf-KSH" id="676-nf-53M"/>
                             </connections>
@@ -456,7 +432,7 @@
                 </viewController>
                 <customObject id="6Eo-XA-2Zy" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-638.5" y="401"/>
+            <point key="canvasLocation" x="-666" y="394"/>
         </scene>
         <!--Sidebar View Controller-->
         <scene sceneID="Yae-mu-VsH">

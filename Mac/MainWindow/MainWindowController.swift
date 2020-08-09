@@ -62,17 +62,6 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
 		if #available(macOS 10.16, *) {
-			DispatchQueue.main.async {
-				if self.window?.toolbar?.existingItem(withIdentifier: .newSidebarItemMenu) == nil {
-					self.window?.toolbar?.insertItem(withItemIdentifier: .newSidebarItemMenu, at: 1)
-				}
-				if self.window?.toolbar?.existingItem(withIdentifier: .sidebarTrackingSeparator) == nil {
-					self.window?.toolbar?.insertItem(withItemIdentifier: .sidebarTrackingSeparator, at: 2)
-				}
-				if self.window?.toolbar?.existingItem(withIdentifier: .trackingSeparator) == nil {
-					self.window?.toolbar?.insertItem(withItemIdentifier: .trackingSeparator, at: 5)
-				}
-			}
 		} else {
 			if !AppDefaults.shared.showTitleOnMainWindow {
 				window?.titleVisibility = .hidden
@@ -698,10 +687,19 @@ extension MainWindowController : ScriptingMainWindowController {
 // MARK: - NSToolbarDelegate
 
 extension NSToolbarItem.Identifier {
+	static let newFeed = NSToolbarItem.Identifier("newFeed")
+	static let newFolder = NSToolbarItem.Identifier("newFolder")
+	static let refresh = NSToolbarItem.Identifier("refresh")
 	static let newSidebarItemMenu = NSToolbarItem.Identifier("newSidebarItemMenu")
-	static let trackingSeparator = NSToolbarItem.Identifier("trackingSeparator")
-	static let share = NSToolbarItem.Identifier("share")
+	static let timelineTrackingSeparator = NSToolbarItem.Identifier("timelineTrackingSeparator")
 	static let search = NSToolbarItem.Identifier("search")
+	static let markAllAsRead = NSToolbarItem.Identifier("markAllAsRead")
+	static let nextUnread = NSToolbarItem.Identifier("nextUnread")
+	static let markRead = NSToolbarItem.Identifier("markRead")
+	static let markStar = NSToolbarItem.Identifier("markStar")
+	static let readerView = NSToolbarItem.Identifier("readerView")
+	static let openInBrowser = NSToolbarItem.Identifier("openInBrowser")
+	static let share = NSToolbarItem.Identifier("share")
 }
 
 extension MainWindowController: NSToolbarDelegate {
@@ -714,11 +712,46 @@ extension MainWindowController: NSToolbarDelegate {
 			return menuToolbarItem
 		}
 		
-		if #available(macOS 10.16, *), itemIdentifier == .trackingSeparator {
-			return NSTrackingSeparatorToolbarItem(identifier: .trackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
+		if #available(macOS 10.16, *), itemIdentifier == .timelineTrackingSeparator {
+			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 		}
 		
 		return nil
+	}
+	
+	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+		if #available(macOS 10.16, *) {
+			return [
+				.refresh,
+				.newSidebarItemMenu,
+				.sidebarTrackingSeparator,
+				.search,
+				.markAllAsRead,
+				.timelineTrackingSeparator,
+				.flexibleSpace,
+				.nextUnread,
+				.markRead,
+				.markStar,
+				.openInBrowser,
+				.share
+			]
+		} else {
+			return [
+				.newFeed,
+				.newFolder,
+				.refresh,
+				.flexibleSpace,
+				.markAllAsRead,
+				.search,
+				.flexibleSpace,
+				.nextUnread,
+				.markStar,
+				.markRead,
+				.readerView,
+				.openInBrowser,
+				.share
+			]
+		}
 	}
 	
 	func toolbarWillAddItem(_ notification: Notification) {
