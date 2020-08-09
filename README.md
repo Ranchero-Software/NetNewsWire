@@ -71,12 +71,12 @@ DEVELOPER_ENTITLEMENTS = -dev
 PROVISIONING_PROFILE_SPECIFIER =
 ```
 
-Set `DEVELOPMENT_TEAM` to your Apple supplied development team.  You can use Keychain 
+Set `DEVELOPMENT_TEAM` to your Apple supplied development team.  You can use Keychain
 Access to [find your development team ID](/Technotes/FindingYourDevelopmentTeamID.md).
 Set `ORGANIZATION_IDENTIFIER` to a reversed domain name that you control or have made up.
-Note that `PROVISIONING_PROFILE_SPECIFIER` should not have a value associated with it. 
+Note that `PROVISIONING_PROFILE_SPECIFIER` should not have a value associated with it.
 
-You can now open the `NetNewsWire.xcworkspace` in Xcode.
+You can now open the `NetNewsWire.xccodeproj` in Xcode.
 
 Now you should be able to build without code signing errors and without modifying
 the NetNewsWire Xcode project.  This is a special build of NetNewsWire with some
