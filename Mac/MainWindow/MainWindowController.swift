@@ -764,11 +764,20 @@ extension MainWindowController: NSToolbarDelegate {
 			button.sendAction(on: .leftMouseDown)
 		}
 
-		if item.itemIdentifier == .search, let searchField = item.view as? NSSearchField {
-			searchField.delegate = self
-			searchField.target = self
-			searchField.action = #selector(runSearch(_:))
-			currentSearchField = searchField
+		if #available(macOS 10.16, *) {
+			if item.itemIdentifier == .search, let searchItem = item as? NSSearchToolbarItem {
+				searchItem.searchField.delegate = self
+				searchItem.searchField.target = self
+				searchItem.searchField.action = #selector(runSearch(_:))
+				currentSearchField = searchItem.searchField
+			}
+		} else {
+			if item.itemIdentifier == .search, let searchField = item.view as? NSSearchField {
+				searchField.delegate = self
+				searchField.target = self
+				searchField.action = #selector(runSearch(_:))
+				currentSearchField = searchField
+			}
 		}
 	}
 
@@ -777,13 +786,23 @@ extension MainWindowController: NSToolbarDelegate {
 			return
 		}
 
-		if item.itemIdentifier == .search, let searchField = item.view as? NSSearchField {
-			searchField.delegate = nil
-			searchField.target = nil
-			searchField.action = nil
-			currentSearchField = nil
+		if #available(macOS 10.16, *) {
+			if item.itemIdentifier == .search, let searchItem = item as? NSSearchToolbarItem {
+				searchItem.searchField.delegate = nil
+				searchItem.searchField.target = nil
+				searchItem.searchField.action = nil
+				currentSearchField = nil
+			}
+		} else {
+			if item.itemIdentifier == .search, let searchField = item.view as? NSSearchField {
+				searchField.delegate = nil
+				searchField.target = nil
+				searchField.action = nil
+				currentSearchField = nil
+			}
 		}
 	}
+	
 }
 
 // MARK: - Private
