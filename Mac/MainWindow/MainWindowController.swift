@@ -61,8 +61,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
-		if !AppDefaults.shared.showTitleOnMainWindow {
-			window?.titleVisibility = .hidden
+		if #available(macOS 10.16, *) {
+		} else {
+			if !AppDefaults.shared.showTitleOnMainWindow {
+				window?.titleVisibility = .hidden
+			}
 		}
 		
 		if let window = window {
@@ -983,14 +986,11 @@ private extension MainWindowController {
 		}
 		
 		if displayName != nil {
-			if unreadCount ?? 0 > 0 {
-				window?.title = "\(displayName!) (\(unreadCount!))"
+			window?.title = displayName!
+			if #available(macOS 10.16, *) {
+				window?.subtitle = "\(unreadCount ?? 0) unread"
 			}
-			else {
-				window?.title = "\(displayName!)"
-			}
-		}
-		else {
+		} else {
 			window?.title = appDelegate.appName!
 			return
 		}

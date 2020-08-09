@@ -186,7 +186,7 @@
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="ACB5604B-4543-4985-BA1A-54ADA9DF5845" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="SsT-iS-pKE" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="9At-yP-WNY">
-                                        <rect key="frame" x="7" y="14" width="42" height="25"/>
+                                        <rect key="frame" x="12" y="14" width="32" height="23"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="cleanUp" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Zwg-74-ZkZ">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -260,7 +260,7 @@
         <scene sceneID="VeQ-nD-ueb">
             <objects>
                 <windowController storyboardIdentifier="UnifiedWindowController" id="RpU-Uf-KSH" customClass="MainWindowController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" toolbarStyle="unified" id="QRu-QX-dSP">
+                    <window key="window" title="NetNewsWire" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" toolbarStyle="unified" id="QRu-QX-dSP">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="425" y="462" width="480" height="270"/>
@@ -269,20 +269,15 @@
                             <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </view>
-                        <toolbar key="toolbar" implicitIdentifier="1E198E11-63E9-4726-A08C-8BE5F0FA2F9D" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="sdn-e6-SaZ">
+                        <toolbar key="toolbar" implicitIdentifier="F82AF654-C4E7-4D89-8DD6-35FB7FC7405A" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="4wH-0N-M2I">
                             <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="6xq-gX-wfK"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="gOt-Xa-Q6I"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="unZ-Zb-Afs"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="C7g-JL-H03"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="FiB-yP-EH5"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="NkL-XI-XbY"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1rv-ob-E5Y"/>
                             </allowedToolbarItems>
-                            <defaultToolbarItems>
-                                <toolbarItem reference="6xq-gX-wfK"/>
-                                <toolbarItem reference="gOt-Xa-Q6I"/>
-                                <toolbarItem reference="FiB-yP-EH5"/>
-                                <toolbarItem reference="unZ-Zb-Afs"/>
-                            </defaultToolbarItems>
+                            <defaultToolbarItems/>
+                            <connections>
+                                <outlet property="delegate" destination="RpU-Uf-KSH" id="676-nf-53M"/>
+                            </connections>
                         </toolbar>
                         <connections>
                             <outlet property="delegate" destination="RpU-Uf-KSH" id="B17-f3-AE3"/>
@@ -294,7 +289,7 @@
                 </windowController>
                 <customObject id="oDX-XL-3t0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1307" y="423"/>
+            <point key="canvasLocation" x="-1309" y="401"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="ZPA-jO-OkH">
@@ -382,7 +377,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView identifier="HeaderCell" id="qkt-WA-5tB">
-                                                            <rect key="frame" x="11" y="0.0" width="163" height="17"/>
+                                                            <rect key="frame" x="11" y="0.0" width="183" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fNJ-z1-0Up">
@@ -400,7 +395,7 @@
                                                             </connections>
                                                         </tableCellView>
                                                         <tableCellView identifier="DataCell" id="HJn-Tm-YNO" customClass="SidebarCell" customModule="NetNewsWire" customModuleProvider="target">
-                                                            <rect key="frame" x="11" y="17" width="163" height="17"/>
+                                                            <rect key="frame" x="11" y="17" width="183" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </tableCellView>
                                                     </prototypeCellViews>
