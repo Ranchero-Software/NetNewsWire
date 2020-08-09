@@ -36,7 +36,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 	
 	private var shareToolbarItem: NSToolbarItem? {
-		return window?.toolbar?.existingItem(withIdentifier: .Share)
+		return window?.toolbar?.existingItem(withIdentifier: .share)
 	}
 
 	private static var detailViewMinimumThickness = 384
@@ -63,8 +63,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		if #available(macOS 10.16, *) {
 			DispatchQueue.main.async {
-				if self.window?.toolbar?.existingItem(withIdentifier: .TrackingSeparator) == nil {
-					self.window?.toolbar?.insertItem(withItemIdentifier: .TrackingSeparator, at: 2)
+				if self.window?.toolbar?.existingItem(withIdentifier: .trackingSeparator) == nil {
+					self.window?.toolbar?.insertItem(withItemIdentifier: .trackingSeparator, at: 2)
 				}
 			}
 		} else {
@@ -692,16 +692,16 @@ extension MainWindowController : ScriptingMainWindowController {
 // MARK: - NSToolbarDelegate
 
 extension NSToolbarItem.Identifier {
-	static let TrackingSeparator = NSToolbarItem.Identifier("trackingSeparator")
-	static let Share = NSToolbarItem.Identifier("share")
-	static let Search = NSToolbarItem.Identifier("search")
+	static let trackingSeparator = NSToolbarItem.Identifier("trackingSeparator")
+	static let share = NSToolbarItem.Identifier("share")
+	static let search = NSToolbarItem.Identifier("search")
 }
 
 extension MainWindowController: NSToolbarDelegate {
 
 	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-		if #available(macOS 10.16, *), itemIdentifier == .TrackingSeparator {
-			return NSTrackingSeparatorToolbarItem(identifier: .TrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
+		if #available(macOS 10.16, *), itemIdentifier == .trackingSeparator {
+			return NSTrackingSeparatorToolbarItem(identifier: .trackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 		}
 		return nil
 	}
@@ -711,12 +711,12 @@ extension MainWindowController: NSToolbarDelegate {
 			return
 		}
 
-		if item.itemIdentifier == .Share, let button = item.view as? NSButton {
+		if item.itemIdentifier == .share, let button = item.view as? NSButton {
 			// The share button should send its action on mouse down, not mouse up.
 			button.sendAction(on: .leftMouseDown)
 		}
 
-		if item.itemIdentifier == .Search, let searchField = item.view as? NSSearchField {
+		if item.itemIdentifier == .search, let searchField = item.view as? NSSearchField {
 			searchField.delegate = self
 			searchField.target = self
 			searchField.action = #selector(runSearch(_:))
@@ -729,7 +729,7 @@ extension MainWindowController: NSToolbarDelegate {
 			return
 		}
 
-		if item.itemIdentifier == .Search, let searchField = item.view as? NSSearchField {
+		if item.itemIdentifier == .search, let searchField = item.view as? NSSearchField {
 			searchField.delegate = nil
 			searchField.target = nil
 			searchField.action = nil
