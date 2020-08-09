@@ -62,6 +62,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
 		if #available(macOS 10.16, *) {
+			DispatchQueue.main.async {
+				if self.window?.toolbar?.existingItem(withIdentifier: .TrackingSeparator) == nil {
+					self.window?.toolbar?.insertItem(withItemIdentifier: .TrackingSeparator, at: 2)
+				}
+			}
 		} else {
 			if !AppDefaults.shared.showTitleOnMainWindow {
 				window?.titleVisibility = .hidden
@@ -687,12 +692,20 @@ extension MainWindowController : ScriptingMainWindowController {
 // MARK: - NSToolbarDelegate
 
 extension NSToolbarItem.Identifier {
+	static let TrackingSeparator = NSToolbarItem.Identifier("trackingSeparator")
 	static let Share = NSToolbarItem.Identifier("share")
 	static let Search = NSToolbarItem.Identifier("search")
 }
 
 extension MainWindowController: NSToolbarDelegate {
 
+	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+		if #available(macOS 10.16, *), itemIdentifier == .TrackingSeparator {
+			return NSTrackingSeparatorToolbarItem(identifier: .TrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
+		}
+		return nil
+	}
+	
 	func toolbarWillAddItem(_ notification: Notification) {
 		guard let item = notification.userInfo?["item"] as? NSToolbarItem else {
 			return
@@ -831,6 +844,10 @@ private extension MainWindowController {
 			menuItem.title = commandName
 		}
 		
+		if #available(macOS 10.16, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
+		}
+		
 		return result
 	}
 
@@ -908,13 +925,14 @@ private extension MainWindowController {
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
-//			if let button = toolbarItem.view as? NSButton {
-//				button.image = NSImage(named: starring ? .star : .unstar)
-//			}
 		}
 
 		if let menuItem = item as? NSMenuItem {
 			menuItem.title = commandName
+		}
+
+		if #available(macOS 10.16, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			button.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		}
 
 		return result

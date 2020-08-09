@@ -127,10 +127,30 @@ struct AppAssets {
 		}
 	}()
 
+	@available(macOS 10.16, *)
+	static var readClosedImage: RSImage = {
+		return NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
+	}()
+
+	@available(macOS 10.16, *)
+	static var readOpenImage: RSImage = {
+		return NSImage(systemSymbolName: "circle", accessibilityDescription: nil)!
+	}()
+	
 	static var searchFeedImage: IconImage = {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 	}()
 
+	@available(macOS 10.16, *)
+	static var starClosedImage: RSImage = {
+		return NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
+	}()
+
+	@available(macOS 10.16, *)
+	static var starOpenImage: RSImage = {
+		return NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
+	}()
+	
 	static var starredFeedImage: IconImage = {
 		if #available(macOS 10.16, *) {
 			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
