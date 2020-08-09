@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17147"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -68,9 +69,21 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="bib-Uj-vzu">
                                     <items>
-                                        <menuItem title="New Feed" keyEquivalent="n" id="Was-JA-tGl">
+                                        <menuItem title="New Web Feed" keyEquivalent="n" id="Was-JA-tGl">
                                             <connections>
                                                 <action selector="showAddWebFeedWindow:" target="Ady-hI-5gd" id="LkT-kx-aCR"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="New Reddit Feed" id="n6h-Bp-CIc">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showAddRedditFeedWindow:" target="Ady-hI-5gd" id="Irh-Rw-mFK"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="New Twitter Feed" id="ki4-7l-tM6">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showAddTwitterFeedWindow:" target="Ady-hI-5gd" id="dZR-aU-O52"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="New Folder" keyEquivalent="N" id="wkh-LX-Xp1">
