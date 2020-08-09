@@ -45,6 +45,11 @@ struct AppAssets {
 		return RSImage(named: "accountNewsBlur")
 	}()
 	
+	@available(macOS 10.16, *)
+	static var addNewSidebarItemImage: RSImage = {
+		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
+	}()
+
 	static var articleExtractor: RSImage! = {
 		return RSImage(named: "articleExtractor")
 	}()

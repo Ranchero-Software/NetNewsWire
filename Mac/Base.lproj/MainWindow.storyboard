@@ -276,8 +276,8 @@
                                 <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1rv-ob-E5Y"/>
                                 <toolbarItem implicitItemIdentifier="85D5559D-7E93-4640-B490-E45FCC6DEEFC" label="Mark All as Read" paletteLabel="Mark All as Read" toolTip="Mark All as Read" image="markAllAsRead" sizingBehavior="auto" id="kCl-RN-C8U" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="pma-GT-lQ6">
-                                        <rect key="frame" x="29" y="14" width="38" height="25"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="38" y="14" width="19" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="markAllAsRead" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="TPq-5K-4FI">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -289,8 +289,8 @@
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="E0330BEC-A31C-4734-9E98-DC684AE0188B" label="Mark Read" paletteLabel="Mark Read" toolTip="Mark Read or Unread" image="circle" catalog="system" sizingBehavior="auto" id="aBG-KW-0rC" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="ogU-Zg-MEq">
-                                        <rect key="frame" x="13" y="14" width="38" height="25"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="21" y="14" width="21" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="circle" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="S9F-pa-vC7">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -302,8 +302,8 @@
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="7F38EDBC-3754-4A46-B1C5-ECCA6FA0E2EB" label="Refresh" paletteLabel="Refresh" toolTip="Refresh" image="arrow.clockwise" catalog="system" sizingBehavior="auto" id="saA-2q-Exi" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="NOF-FH-5ht">
-                                        <rect key="frame" x="5" y="14" width="38" height="25"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="14" y="14" width="20" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.clockwise" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bev-B0-Rm9">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -315,8 +315,8 @@
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="98FE3AB9-1527-442F-A2AD-37A16D281F6C" label="Reader" paletteLabel="Reader" toolTip="Reader View" sizingBehavior="auto" id="z8Y-kH-YkM" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="Gj7-2v-wnj" customClass="ArticleExtractorButton" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="3" y="14" width="38" height="25"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="19" y="14" width="6" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fcj-WC-4ef">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -341,8 +341,8 @@
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="D843F871-CE3E-4562-864D-468D253F7017" label="Next Unread" paletteLabel="Next Unread" toolTip="Go to Next Unread" image="chevron.down.circle" catalog="system" sizingBehavior="auto" id="Em1-AN-RSV" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="f65-dC-yVw" customClass="RSDarkModeAdaptingToolbarButton" customModule="RSCore">
-                                        <rect key="frame" x="18" y="14" width="38" height="25"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="26" y="14" width="21" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="chevron.down.circle" catalog="system" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="20M-ji-Qfb">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -354,8 +354,8 @@
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="DF97E70F-6C5A-4E11-8F23-F92C0DFDD20C" label="Star" paletteLabel="Star" toolTip="Star or Unstar" image="star" catalog="system" sizingBehavior="auto" id="w0G-8M-ORk" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="PH8-Ep-8RY">
-                                        <rect key="frame" x="0.0" y="14" width="38" height="25"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="3" y="14" width="23" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="star" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="Dwm-37-obJ">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -367,8 +367,8 @@
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="0C1590CE-2F2C-4B1C-B8E2-FB95E26B3247" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="safari" catalog="system" sizingBehavior="auto" id="r1w-Ep-Fxv" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="0qi-r3-cJ7">
-                                        <rect key="frame" x="28" y="14" width="38" height="25"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="37" y="14" width="21" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="safari" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="upn-Uv-4pt">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -380,8 +380,8 @@
                                 </toolbarItem>
                                 <toolbarItem implicitItemIdentifier="5DC1C687-AF4A-477B-BACD-C28FA65145B8" explicitItemIdentifier="share" label="Share" paletteLabel="Share" toolTip="Share" image="square.and.arrow.up" catalog="system" sizingBehavior="auto" id="G63-IG-tKX" customClass="RSToolbarItem" customModule="RSCore">
                                     <button key="view" verticalHuggingPriority="750" id="BDf-kK-Izc">
-                                        <rect key="frame" x="0.0" y="14" width="38" height="25"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="8" y="14" width="22" height="23"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="square.and.arrow.up" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4zk-xN-QSG">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -405,9 +405,9 @@
                                 </searchToolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems>
+                                <toolbarItem reference="saA-2q-Exi"/>
                                 <searchToolbarItem reference="ZKI-Wi-Azg"/>
                                 <toolbarItem reference="kCl-RN-C8U"/>
-                                <toolbarItem reference="saA-2q-Exi"/>
                                 <toolbarItem reference="1rv-ob-E5Y"/>
                                 <toolbarItem reference="Em1-AN-RSV"/>
                                 <toolbarItem reference="aBG-KW-0rC"/>

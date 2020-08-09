@@ -63,8 +63,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		if #available(macOS 10.16, *) {
 			DispatchQueue.main.async {
+				if self.window?.toolbar?.existingItem(withIdentifier: .newSidebarItemMenu) == nil {
+					self.window?.toolbar?.insertItem(withItemIdentifier: .newSidebarItemMenu, at: 1)
+				}
+				if self.window?.toolbar?.existingItem(withIdentifier: .sidebarTrackingSeparator) == nil {
+					self.window?.toolbar?.insertItem(withItemIdentifier: .sidebarTrackingSeparator, at: 2)
+				}
 				if self.window?.toolbar?.existingItem(withIdentifier: .trackingSeparator) == nil {
-					self.window?.toolbar?.insertItem(withItemIdentifier: .trackingSeparator, at: 2)
+					self.window?.toolbar?.insertItem(withItemIdentifier: .trackingSeparator, at: 5)
 				}
 			}
 		} else {
@@ -692,6 +698,7 @@ extension MainWindowController : ScriptingMainWindowController {
 // MARK: - NSToolbarDelegate
 
 extension NSToolbarItem.Identifier {
+	static let newSidebarItemMenu = NSToolbarItem.Identifier("newSidebarItemMenu")
 	static let trackingSeparator = NSToolbarItem.Identifier("trackingSeparator")
 	static let share = NSToolbarItem.Identifier("share")
 	static let search = NSToolbarItem.Identifier("search")
@@ -700,9 +707,17 @@ extension NSToolbarItem.Identifier {
 extension MainWindowController: NSToolbarDelegate {
 
 	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+		if #available(macOS 10.16, *), itemIdentifier == .newSidebarItemMenu {
+			let menuToolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
+			menuToolbarItem.image = AppAssets.addNewSidebarItemImage
+			menuToolbarItem.menu = buildNewSidebarItemMenu()
+			return menuToolbarItem
+		}
+		
 		if #available(macOS 10.16, *), itemIdentifier == .trackingSeparator {
 			return NSTrackingSeparatorToolbarItem(identifier: .trackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 		}
+		
 		return nil
 	}
 	
@@ -1053,5 +1068,32 @@ private extension MainWindowController {
 		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
 		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
 	}
+
+	func buildNewSidebarItemMenu() -> NSMenu {
+		let menu = NSMenu()
+		
+		let newWebFeedItem = NSMenuItem()
+		newWebFeedItem.title = NSLocalizedString("New Web Feed", comment: "New Web Feed")
+		newWebFeedItem.action = Selector(("showAddWebFeedWindow:"))
+		menu.addItem(newWebFeedItem)
+		
+		let newRedditFeedItem = NSMenuItem()
+		newRedditFeedItem.title = NSLocalizedString("New Reddit Feed", comment: "New Reddit Feed")
+		newRedditFeedItem.action = Selector(("showAddRedditFeedWindow:"))
+		menu.addItem(newRedditFeedItem)
+		
+		let newTwitterFeedItem = NSMenuItem()
+		newTwitterFeedItem.title = NSLocalizedString("New Twitter Feed", comment: "New Twitter Feed")
+		newTwitterFeedItem.action = Selector(("showAddTwitterFeedWindow:"))
+		menu.addItem(newTwitterFeedItem)
+		
+		let newFolderFeedItem = NSMenuItem()
+		newFolderFeedItem.title = NSLocalizedString("New Folder", comment: "New Folder")
+		newFolderFeedItem.action = Selector(("showAddFolderWindow:"))
+		menu.addItem(newFolderFeedItem)
+		
+		return menu
+	}
+
 }
 
