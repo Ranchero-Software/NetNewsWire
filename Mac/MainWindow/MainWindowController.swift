@@ -720,7 +720,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 			case .refresh:
 				let title = NSLocalizedString("Refresh", comment: "Refresh")
-				return toolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
+				return buildToolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
 			
 			case .newSidebarItemMenu:
 				let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
@@ -740,34 +740,34 @@ extension MainWindowController: NSToolbarDelegate {
 
 			case .markAllAsRead:
 				let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
-				return toolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
+				return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
 			
 			case .timelineTrackingSeparator:
 				return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
 			case .nextUnread:
 				let title = NSLocalizedString("Next Unread", comment: "Next Unread")
-				return toolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
+				return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
 			
 			case .markRead:
 				let title = NSLocalizedString("Mark Read", comment: "Mark Read")
-				return toolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
+				return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
 			
 			case .markStar:
 				let title = NSLocalizedString("Star", comment: "Star")
-				return toolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
+				return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
 			
 			case .openInBrowser:
 				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-				return toolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
+				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
 			
 			case .share:
 				let title = NSLocalizedString("Share", comment: "Share")
-				return toolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
+				return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
 			
 			case .cleanUp:
 				let title = NSLocalizedString("Clean Up", comment: "Clean Up")
-				return toolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
+				return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
 			
 			default:
 				break
@@ -1217,17 +1217,17 @@ private extension MainWindowController {
 		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
 	}
 
-	func toolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String) -> NSToolbarItem {
+	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String) -> NSToolbarItem {
 		let toolbarItem = RSToolbarItem(itemIdentifier: itemIdentifier)
 		toolbarItem.autovalidates = true
 		
 		let button = NSButton()
 		button.bezelStyle = .texturedRounded
 		button.image = image
-		button.toolTip = title
 		button.action = Selector((selector))
 		
 		toolbarItem.view = button
+		toolbarItem.toolTip = title
 		toolbarItem.label = title
 		return toolbarItem
 	}
