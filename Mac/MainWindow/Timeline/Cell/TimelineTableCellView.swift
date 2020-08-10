@@ -20,7 +20,7 @@ class TimelineTableCellView: NSTableCellView {
 
 	private lazy var iconView = IconView()
 
-	private let starView = TimelineTableCellView.imageView(with: AppAssets.timelineStar, scaling: .scaleNone)
+	private let starView = TimelineTableCellView.imageView(with: AppAssets.timelineStar, scaling: .scaleProportionallyUpOrDown)
 	private let separatorView = TimelineTableCellView.separatorView()
 
 	private lazy var textFields = {

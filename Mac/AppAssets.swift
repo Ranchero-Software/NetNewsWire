@@ -167,7 +167,13 @@ struct AppAssets {
 	}()
 
 	static var timelineStar: RSImage! = {
-		return RSImage(named: .timelineStar)
+		if #available(macOS 10.16, *) {
+			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
+			let coloredImage = image.tinted(with: NSColor(named: "StarColor")!)
+			return coloredImage
+		} else {
+			return RSImage(named: .timelineStar)
+		}
 	}()
 
 	static var todayFeedImage: IconImage = {
