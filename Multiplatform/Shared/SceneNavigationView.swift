@@ -8,6 +8,9 @@
 
 import SwiftUI
 import Account
+#if os(macOS)
+import AppKit
+#endif
 
 struct SceneNavigationView: View {
 
@@ -99,6 +102,14 @@ struct SceneNavigationView: View {
 		.toolbar {
 			
 			#if os(macOS)
+			ToolbarItem(placement: .navigation) {
+				Button {
+					NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+				} label: {
+					Image(systemName: "sidebar.left")
+				}
+				.help("Toggle Sidebar").padding(.trailing, 40)
+			}
 			ToolbarItem() {
 				Menu {
 					Button("Add Web Feed", action: { sheetToShow = .web })
@@ -111,8 +122,6 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				Button {
-//					AccountManager.shared.refreshAll(errorHandler: handleRefreshError)
-					
 					AccountManager.shared.refreshAll(completion: nil)
 					
 				} label: {
@@ -130,10 +139,10 @@ struct SceneNavigationView: View {
 				.disabled(sceneModel.markAllAsReadButtonState == nil)
 				.help("Mark All as Read")
 			}
-			ToolbarItem {
-				MacSearchField()
-					.frame(width: 200)
-			}
+//			ToolbarItem {
+//				MacSearchField()
+//					.frame(width: 200)
+//			}
 			ToolbarItem {
 				Button {
 					sceneModel.goToNextUnread()
