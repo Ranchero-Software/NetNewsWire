@@ -4,7 +4,6 @@
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17147"/>
         <capability name="NSView safe area layout guides" minToolsVersion="12.0"/>
-        <capability name="Search Toolbar Item" minToolsVersion="12.0" minSystemVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -377,18 +376,6 @@
                                         <action selector="toolbarShowShareMenu:" target="oDX-XL-3t0" id="Jnn-YA-XUu"/>
                                     </connections>
                                 </toolbarItem>
-                                <searchToolbarItem implicitItemIdentifier="B7230336-8AEE-41E4-A45A-97033AE39514" explicitItemIdentifier="search" label="Search" paletteLabel="Search" id="ZKI-Wi-Azg">
-                                    <nil key="toolTip"/>
-                                    <searchField key="view" verticalHuggingPriority="750" textCompletion="NO" id="dKj-A6-Jhr">
-                                        <rect key="frame" x="0.0" y="0.0" width="100" height="21"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" id="mWX-qu-TTX">
-                                            <font key="font" usesAppearanceFont="YES"/>
-                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </searchFieldCell>
-                                    </searchField>
-                                </searchToolbarItem>
                             </allowedToolbarItems>
                             <defaultToolbarItems/>
                             <connections>
@@ -795,7 +782,7 @@
         <image name="openInBrowser" width="19" height="19"/>
         <image name="safari" catalog="system" width="15" height="15"/>
         <image name="square.and.arrow.up" catalog="system" width="16" height="17"/>
-        <image name="star" catalog="system" width="17" height="16"/>
         <image name="star" width="19" height="19"/>
+        <image name="star" catalog="system" width="17" height="16"/>
     </resources>
 </document>

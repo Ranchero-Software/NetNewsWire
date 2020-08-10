@@ -725,7 +725,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.refresh,
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
-				.search,
+//				.search,
 				.markAllAsRead,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
