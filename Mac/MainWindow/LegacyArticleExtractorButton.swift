@@ -60,12 +60,12 @@ class LegacyArticleExtractorButton: NSButton {
 			addAnimatedSublayer(to: hostedLayer)
 		default:
 			if NSApplication.shared.isActive {
-				addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractor, opacity: opacity)
+				addImageSublayer(to: hostedLayer, image: AppAssets.legacyArticleExtractor, opacity: opacity)
 			} else {
 				if NSApplication.shared.effectiveAppearance.isDarkMode {
-					addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractorInactiveDark, opacity: opacity)
+					addImageSublayer(to: hostedLayer, image: AppAssets.legacyArticleExtractorInactiveDark, opacity: opacity)
 				} else {
-					addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractorInactiveLight, opacity: opacity)
+					addImageSublayer(to: hostedLayer, image: AppAssets.legacyArticleExtractorInactiveLight, opacity: opacity)
 				}
 			}
 		}
@@ -86,10 +86,10 @@ class LegacyArticleExtractorButton: NSButton {
 	}
 	
 	private func addAnimatedSublayer(to hostedLayer: CALayer) {
-		let imageProgress1 = AppAssets.articleExtractorProgress1
-		let imageProgress2 = AppAssets.articleExtractorProgress2
-		let imageProgress3 = AppAssets.articleExtractorProgress3
-		let imageProgress4 = AppAssets.articleExtractorProgress4
+		let imageProgress1 = AppAssets.legacyArticleExtractorProgress1
+		let imageProgress2 = AppAssets.legacyArticleExtractorProgress2
+		let imageProgress3 = AppAssets.legacyArticleExtractorProgress3
+		let imageProgress4 = AppAssets.legacyArticleExtractorProgress4
 		let images = [imageProgress1, imageProgress2, imageProgress3, imageProgress4, imageProgress3, imageProgress2]
 		
 		let imageLayer = CALayer()

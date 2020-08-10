@@ -45,38 +45,18 @@ struct AppAssets {
 		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 	}()
 
-	static var articleExtractor: RSImage! = {
-		return RSImage(named: "articleExtractor")
+	static var articleExtractorError: RSImage = {
+		return RSImage(named: "articleExtractorError")!
 	}()
-	
-	static var articleExtractorError: RSImage! = {
-		return RSImage(named: "articleExtractorError")
+
+	static var articleExtractorOff: RSImage = {
+		return RSImage(named: "articleExtractorOff")!
 	}()
-	
-	static var articleExtractorInactiveDark: RSImage! = {
-		return RSImage(named: "articleExtractorInactiveDark")
+
+	static var articleExtractorOn: RSImage = {
+		return RSImage(named: "articleExtractorOn")!
 	}()
-	
-	static var articleExtractorInactiveLight: RSImage! = {
-		return RSImage(named: "articleExtractorInactiveLight")
-	}()
-	
-	static var articleExtractorProgress1: RSImage! = {
-		return RSImage(named: "articleExtractorProgress1")
-	}()
-	
-	static var articleExtractorProgress2: RSImage! = {
-		return RSImage(named: "articleExtractorProgress2")
-	}()
-	
-	static var articleExtractorProgress3: RSImage! = {
-		return RSImage(named: "articleExtractorProgress3")
-	}()
-	
-	static var articleExtractorProgress4: RSImage! = {
-		return RSImage(named: "articleExtractorProgress4")
-	}()
-	
+
 	@available(macOS 11.0, *)
 	static var cleanUpImage: RSImage = {
 		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
@@ -117,7 +97,39 @@ struct AppAssets {
 	static var iconDarkBackgroundColor: NSColor = {
 		return NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
 	}()
-
+	
+	static var legacyArticleExtractor: RSImage! = {
+		return RSImage(named: "legacyArticleExtractor")
+	}()
+	
+	static var legacyArticleExtractorError: RSImage! = {
+		return RSImage(named: "legacyArticleExtractorError")
+	}()
+	
+	static var legacyArticleExtractorInactiveDark: RSImage! = {
+		return RSImage(named: "legacyArticleExtractorInactiveDark")
+	}()
+	
+	static var legacyArticleExtractorInactiveLight: RSImage! = {
+		return RSImage(named: "legacyArticleExtractorInactiveLight")
+	}()
+	
+	static var legacyArticleExtractorProgress1: RSImage! = {
+		return RSImage(named: "legacyArticleExtractorProgress1")
+	}()
+	
+	static var legacyArticleExtractorProgress2: RSImage! = {
+		return RSImage(named: "legacyArticleExtractorProgress2")
+	}()
+	
+	static var legacyArticleExtractorProgress3: RSImage! = {
+		return RSImage(named: "legacyArticleExtractorProgress3")
+	}()
+	
+	static var legacyArticleExtractorProgress4: RSImage! = {
+		return RSImage(named: "legacyArticleExtractorProgress4")
+	}()
+	
 	static var masterFolderImage: IconImage {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!

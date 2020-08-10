@@ -757,6 +757,17 @@ extension MainWindowController: NSToolbarDelegate {
 				let title = NSLocalizedString("Star", comment: "Star")
 				return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
 			
+			case .readerView:
+				let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
+				toolbarItem.autovalidates = true
+				let description = NSLocalizedString("Reader View", comment: "Reader View")
+				toolbarItem.toolTip = description
+				toolbarItem.label = description
+				let button = ArticleExtractorButton()
+				button.action = #selector(toggleArticleExtractor(_:))
+				toolbarItem.view = button
+				return toolbarItem
+
 			case .openInBrowser:
 				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
@@ -791,6 +802,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.nextUnread,
 				.markRead,
 				.markStar,
+				.readerView,
 				.openInBrowser,
 				.share,
 				.cleanUp
@@ -828,6 +840,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.nextUnread,
 				.markRead,
 				.markStar,
+				.readerView,
 				.openInBrowser,
 				.share
 			]
@@ -1019,32 +1032,59 @@ private extension MainWindowController {
 			return false
 		}
 		
-		guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? LegacyArticleExtractorButton else {
-			if let menuItem = item as? NSMenuItem {
-				menuItem.state = isShowingExtractedArticle ? .on : .off
-			}
-			return currentLink != nil
-		}
-		
-		toolbarButton.state = isShowingExtractedArticle ? .on : .off
+		if #available(macOS 11.0, *) {
 
-		guard let state = articleExtractor?.state else {
-			toolbarButton.isError = false
-			toolbarButton.isInProgress = false
-			toolbarButton.state = .off
-			return currentLink != nil
-		}
-		
-		switch state {
-		case .processing:
-			toolbarButton.isError = false
-			toolbarButton.isInProgress = true
-		case .failedToParse:
-			toolbarButton.isError = true
-			toolbarButton.isInProgress = false
-		case .ready, .cancelled, .complete:
-			toolbarButton.isError = false
-			toolbarButton.isInProgress = false
+			guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? ArticleExtractorButton else {
+				if let menuItem = item as? NSMenuItem {
+					menuItem.state = isShowingExtractedArticle ? .on : .off
+				}
+				return currentLink != nil
+			}
+
+			guard let state = articleExtractor?.state else {
+				toolbarButton.buttonState = .off
+				return currentLink != nil
+			}
+
+			switch state {
+			case .processing:
+				toolbarButton.buttonState = .animated
+			case .failedToParse:
+				toolbarButton.buttonState = .error
+			case .ready, .cancelled, .complete:
+				toolbarButton.buttonState = isShowingExtractedArticle ? .on : .off
+			}
+
+		} else {
+			
+			guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? LegacyArticleExtractorButton else {
+				if let menuItem = item as? NSMenuItem {
+					menuItem.state = isShowingExtractedArticle ? .on : .off
+				}
+				return currentLink != nil
+			}
+			
+			toolbarButton.state = isShowingExtractedArticle ? .on : .off
+
+			guard let state = articleExtractor?.state else {
+				toolbarButton.isError = false
+				toolbarButton.isInProgress = false
+				toolbarButton.state = .off
+				return currentLink != nil
+			}
+			
+			switch state {
+			case .processing:
+				toolbarButton.isError = false
+				toolbarButton.isInProgress = true
+			case .failedToParse:
+				toolbarButton.isError = true
+				toolbarButton.isInProgress = false
+			case .ready, .cancelled, .complete:
+				toolbarButton.isError = false
+				toolbarButton.isInProgress = false
+			}
+			
 		}
 
 		return true
