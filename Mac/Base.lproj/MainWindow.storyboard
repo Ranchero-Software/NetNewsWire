@@ -172,7 +172,7 @@
                                 <toolbarItem implicitItemIdentifier="642D2379-B9AF-4990-8E09-A1115C60ED1A" explicitItemIdentifier="readerView" label="Reader" paletteLabel="Reader" toolTip="Reader View" id="6Vm-OW-3mR" customClass="RSToolbarItem" customModule="RSCore">
                                     <size key="minSize" width="38" height="25"/>
                                     <size key="maxSize" width="38" height="27"/>
-                                    <button key="view" verticalHuggingPriority="750" id="1b9-Tf-u5V" customClass="ArticleExtractorButton" customModule="NetNewsWire" customModuleProvider="target">
+                                    <button key="view" verticalHuggingPriority="750" id="1b9-Tf-u5V" customClass="LegacyArticleExtractorButton" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="3" y="14" width="38" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sXz-Xe-Kd7">
@@ -298,12 +298,12 @@
         <scene sceneID="Yae-mu-VsH">
             <objects>
                 <viewController id="XML-A3-pDn" userLabel="Sidebar View Controller" customClass="SidebarViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" misplaced="YES" id="bJZ-bH-vgc">
+                    <view key="view" wantsLayer="YES" id="bJZ-bH-vgc">
                         <rect key="frame" x="0.0" y="0.0" width="206" height="468"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="977-L4-4ey">
-                                <rect key="frame" x="0.0" y="410" width="206" height="24"/>
+                                <rect key="frame" x="0.0" y="392" width="206" height="24"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eZS-8K-qiN">
                                         <rect key="frame" x="180" y="5" width="14" height="14"/>
@@ -328,13 +328,13 @@
                                 </constraints>
                             </visualEffectView>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
-                                <rect key="frame" x="0.0" y="0.0" width="206" height="410"/>
+                                <rect key="frame" x="0.0" y="0.0" width="206" height="392"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="2eU-Wz-F9g">
-                                    <rect key="frame" x="0.0" y="0.0" width="206" height="410"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="206" height="392"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="28" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="206" height="410"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="206" height="392"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>

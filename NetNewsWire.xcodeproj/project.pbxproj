@@ -651,7 +651,7 @@
 		51FA73A52332BE110090D516 /* ArticleExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A32332BE110090D516 /* ArticleExtractor.swift */; };
 		51FA73A72332BE880090D516 /* ExtractedArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A62332BE880090D516 /* ExtractedArticle.swift */; };
 		51FA73A82332BE880090D516 /* ExtractedArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73A62332BE880090D516 /* ExtractedArticle.swift */; };
-		51FA73B72332D5F70090D516 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */; };
+		51FA73B72332D5F70090D516 /* LegacyArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73B62332D5F70090D516 /* LegacyArticleExtractorButton.swift */; };
 		51FD413B2342BD0500880194 /* MasterTimelineUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FD413A2342BD0500880194 /* MasterTimelineUnreadCountView.swift */; };
 		51FE10032345529D0056195D /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE10022345529D0056195D /* UserNotificationManager.swift */; };
 		51FE10042345529D0056195D /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE10022345529D0056195D /* UserNotificationManager.swift */; };
@@ -765,7 +765,7 @@
 		65ED400C235DEF6C0081F399 /* FolderInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841ABA5D20145E9200980E11 /* FolderInspectorViewController.swift */; };
 		65ED400D235DEF6C0081F399 /* SmartFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DEE56422C32CA4005FC42C /* SmartFeedDelegate.swift */; };
 		65ED400E235DEF6C0081F399 /* ImageDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845213221FCA5B10003B6E93 /* ImageDownloader.swift */; };
-		65ED400F235DEF6C0081F399 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */; };
+		65ED400F235DEF6C0081F399 /* LegacyArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FA73B62332D5F70090D516 /* LegacyArticleExtractorButton.swift */; };
 		65ED4010235DEF6C0081F399 /* AccountsAddTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F912279CA620050506E /* AccountsAddTableCellView.swift */; };
 		65ED4011235DEF6C0081F399 /* AddFolderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A97421ED9EAA9007D329B /* AddFolderWindowController.swift */; };
 		65ED4012235DEF6C0081F399 /* TimelineContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8405DDA422168C62008CE1BF /* TimelineContainerViewController.swift */; };
@@ -1742,7 +1742,7 @@
 		51F9F3FA23DFB25700A314FD /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
 		51FA73A32332BE110090D516 /* ArticleExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractor.swift; sourceTree = "<group>"; };
 		51FA73A62332BE880090D516 /* ExtractedArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractedArticle.swift; sourceTree = "<group>"; };
-		51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
+		51FA73B62332D5F70090D516 /* LegacyArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyArticleExtractorButton.swift; sourceTree = "<group>"; };
 		51FD413A2342BD0500880194 /* MasterTimelineUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineUnreadCountView.swift; sourceTree = "<group>"; };
 		51FE10022345529D0056195D /* UserNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationManager.swift; sourceTree = "<group>"; };
 		51FFF0C3235EE8E5002762AA /* VibrantButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrantButton.swift; sourceTree = "<group>"; };
@@ -2905,7 +2905,7 @@
 				849A975D1ED9EB72007D329B /* MainWindowController.swift */,
 				519B8D322143397200FA689C /* SharingServiceDelegate.swift */,
 				849EE72020391F560082A1EA /* SharingServicePickerDelegate.swift */,
-				51FA73B62332D5F70090D516 /* ArticleExtractorButton.swift */,
+				51FA73B62332D5F70090D516 /* LegacyArticleExtractorButton.swift */,
 				847CD6C9232F4CBF00FAC46D /* IconView.swift */,
 				844B5B6B1FEA224B00C7C76A /* Keyboard */,
 				849A975F1ED9EB95007D329B /* Sidebar */,
@@ -4787,7 +4787,7 @@
 				65ED400C235DEF6C0081F399 /* FolderInspectorViewController.swift in Sources */,
 				65ED400D235DEF6C0081F399 /* SmartFeedDelegate.swift in Sources */,
 				65ED400E235DEF6C0081F399 /* ImageDownloader.swift in Sources */,
-				65ED400F235DEF6C0081F399 /* ArticleExtractorButton.swift in Sources */,
+				65ED400F235DEF6C0081F399 /* LegacyArticleExtractorButton.swift in Sources */,
 				65ED4010235DEF6C0081F399 /* AccountsAddTableCellView.swift in Sources */,
 				65ED4011235DEF6C0081F399 /* AddFolderWindowController.swift in Sources */,
 				65ED4012235DEF6C0081F399 /* TimelineContainerViewController.swift in Sources */,
@@ -5147,7 +5147,7 @@
 				841ABA5E20145E9200980E11 /* FolderInspectorViewController.swift in Sources */,
 				84DEE56522C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */,
-				51FA73B72332D5F70090D516 /* ArticleExtractorButton.swift in Sources */,
+				51FA73B72332D5F70090D516 /* LegacyArticleExtractorButton.swift in Sources */,
 				51EF0F922279CA620050506E /* AccountsAddTableCellView.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ArticleExtractorButton: NSButton {
+class LegacyArticleExtractorButton: NSButton {
 	
 	var isError = false {
 		didSet {

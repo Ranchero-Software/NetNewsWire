@@ -1019,7 +1019,7 @@ private extension MainWindowController {
 			return false
 		}
 		
-		guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? ArticleExtractorButton else {
+		guard let toolbarItem = item as? NSToolbarItem, let toolbarButton = toolbarItem.view as? LegacyArticleExtractorButton else {
 			if let menuItem = item as? NSMenuItem {
 				menuItem.state = isShowingExtractedArticle ? .on : .off
 			}
