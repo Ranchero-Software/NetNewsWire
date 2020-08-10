@@ -77,6 +77,11 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorProgress4")
 	}()
 	
+	@available(macOS 10.16, *)
+	static var cleanUpImage: RSImage = {
+		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
+	}()
+
 	static var extensionPointMarsEdit: RSImage = {
 		return RSImage(named: "extensionPointMarsEdit")!
 	}()
@@ -132,6 +137,16 @@ struct AppAssets {
 	}()
 
 	@available(macOS 10.16, *)
+	static var nextUnreadImage: RSImage = {
+		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
+	}()
+
+	@available(macOS 10.16, *)
+	static var openInBrowserImage: RSImage = {
+		return NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
+	}()
+
+	@available(macOS 10.16, *)
 	static var readClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 	}()
@@ -148,6 +163,11 @@ struct AppAssets {
 	
 	static var searchFeedImage: IconImage = {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+	}()
+	
+	@available(macOS 10.16, *)
+	static var shareImage: RSImage = {
+		return NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
 	}()
 
 	@available(macOS 10.16, *)

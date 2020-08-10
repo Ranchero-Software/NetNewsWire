@@ -65,7 +65,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			DispatchQueue.main.async {
 				let toolbar = NSToolbar(identifier: "MainWindowToolbar")
 				toolbar.allowsUserCustomization = true
-//				toolbar.autosavesConfiguration = true
+				toolbar.autosavesConfiguration = true
 				toolbar.displayMode = .iconOnly
 				toolbar.delegate = self
 				self.window?.toolbar = toolbar
@@ -745,6 +745,30 @@ extension MainWindowController: NSToolbarDelegate {
 			case .timelineTrackingSeparator:
 				return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
+			case .nextUnread:
+				let title = NSLocalizedString("Next Unread", comment: "Next Unread")
+				return toolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
+			
+			case .markRead:
+				let title = NSLocalizedString("Mark Read", comment: "Mark Read")
+				return toolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
+			
+			case .markStar:
+				let title = NSLocalizedString("Star", comment: "Star")
+				return toolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
+			
+			case .openInBrowser:
+				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+				return toolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
+			
+			case .share:
+				let title = NSLocalizedString("Share", comment: "Share")
+				return toolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
+			
+			case .cleanUp:
+				let title = NSLocalizedString("Clean Up", comment: "Clean Up")
+				return toolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
+			
 			default:
 				break
 			}
@@ -764,12 +788,12 @@ extension MainWindowController: NSToolbarDelegate {
 				.markAllAsRead,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
-//				.nextUnread,
-//				.markRead,
-//				.markStar,
-//				.openInBrowser,
-//				.share,
-//				.cleanUp
+				.nextUnread,
+				.markRead,
+				.markStar,
+				.openInBrowser,
+				.share,
+				.cleanUp
 			]
 		} else {
 			return [
@@ -801,11 +825,11 @@ extension MainWindowController: NSToolbarDelegate {
 				.markAllAsRead,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
-//				.nextUnread,
-//				.markRead,
-//				.markStar,
-//				.openInBrowser,
-//				.share
+				.nextUnread,
+				.markRead,
+				.markStar,
+				.openInBrowser,
+				.share
 			]
 		} else {
 			return [
