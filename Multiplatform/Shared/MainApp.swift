@@ -110,6 +110,7 @@ struct MainApp: App {
 					}
 					.tag(MacPreferencePane.advanced)
 			}
+			.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 			.frame(width: 500)
 			.padding()
 		}
