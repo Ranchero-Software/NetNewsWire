@@ -626,8 +626,11 @@ private extension MasterTimelineViewController {
 	}
 	
 	func updateToolbar() {
+		guard firstUnreadButton != nil else { return }
+		
 		markAllAsReadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
+		
 		if coordinator.isRootSplitCollapsed {
 			if let toolbarItems = toolbarItems, toolbarItems.last != firstUnreadButton {
 				var items = toolbarItems
