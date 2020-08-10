@@ -15,12 +15,7 @@ class SidebarCell : NSTableCellView {
 
 	var iconImage: IconImage? {
 		didSet {
-			if let image = iconImage {
-				faviconImageView.iconImage = shouldShowImage ? image : nil
-			}
-			else {
-				faviconImageView.iconImage = nil
-			}
+			updateFaviconImage()
 		}
 	}
 
@@ -32,7 +27,6 @@ class SidebarCell : NSTableCellView {
 			faviconImageView.iconImage = shouldShowImage ? iconImage : nil
 		}
 	}
-
 
 	var cellAppearance: SidebarCellAppearance? {
 		didSet {
@@ -68,6 +62,12 @@ class SidebarCell : NSTableCellView {
 		}
 	}
 
+	var isSelected: Bool = false {
+		didSet {
+			updateFaviconImage()
+		}
+	}
+
 	private let titleView: NSTextField = {
 		let textField = NSTextField(labelWithString: "")
 		textField.usesSingleLineMode = true
@@ -79,7 +79,6 @@ class SidebarCell : NSTableCellView {
 	}()
 
 	private let faviconImageView = IconView()
-
 	private let unreadCountView = UnreadCountView(frame: NSZeroRect)
 
 	override var isFlipped: Bool {
@@ -137,5 +136,31 @@ private extension SidebarCell {
 		titleView.setFrame(ifNotEqualTo: layout.titleRect)
 		unreadCountView.setFrame(ifNotEqualTo: layout.unreadCountRect)
 	}
+	
+	func updateFaviconImage() {
+		var updatedIconImage = iconImage
+		
+		if let iconImage = iconImage, iconImage.isSymbol {
+			if isSelected {
+				let image = iconImage.image.tinted(with: .white)
+				updatedIconImage = IconImage(image, isSymbol: true)
+			} else {
+				if let preferredColor = iconImage.preferredColor {
+					let image = iconImage.image.tinted(with: NSColor(cgColor: preferredColor)!)
+					updatedIconImage = IconImage(image, isSymbol: true)
+				} else {
+					let image = iconImage.image.tinted(with: .controlAccentColor)
+					updatedIconImage = IconImage(image, isSymbol: true)
+				}
+			}
+		}
+
+		if let image = updatedIconImage {
+			faviconImageView.iconImage = shouldShowImage ? image : nil
+		} else {
+			faviconImageView.iconImage = nil
+		}
+	}
+	
 }
 

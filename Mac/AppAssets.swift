@@ -118,15 +118,16 @@ struct AppAssets {
 		return NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
 	}()
 
-	static var masterFolderImage: IconImage = {
+	static var masterFolderImage: IconImage {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
-			let coloredImage = image.tinted(with: NSColor(named: "AccentColor")!)
-			return IconImage(coloredImage, isSymbol: true)
+			let preferredColor = NSColor(named: "AccentColor")!
+			let coloredImage = image.tinted(with: preferredColor)
+			return IconImage(coloredImage, isSymbol: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.folderName)!)
 		}
-	}()
+	}
 
 	static var markAllAsReadImage: RSImage = {
 		return RSImage(named: "markAllAsRead")!
@@ -211,8 +212,9 @@ struct AppAssets {
 	static var starredFeedImage: IconImage = {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
-			let coloredImage = image.tinted(with: NSColor(named: "StarColor")!)
-			return IconImage(coloredImage, isSymbol: true)
+			let preferredColor = NSColor(named: "StarColor")!
+			let coloredImage = image.tinted(with: preferredColor)
+			return IconImage(coloredImage, isSymbol: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 		}
@@ -231,8 +233,9 @@ struct AppAssets {
 	static var todayFeedImage: IconImage = {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
-			let coloredImage = image.tinted(with: .orange)
-			return IconImage(coloredImage, isSymbol: true)
+			let preferredColor = NSColor.orange
+			let coloredImage = image.tinted(with: preferredColor)
+			return IconImage(coloredImage, isSymbol: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 		}
@@ -241,8 +244,9 @@ struct AppAssets {
 	static var unreadFeedImage: IconImage = {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
-			let coloredImage = image.tinted(with: NSColor(named: "AccentColor")!)
-			return IconImage(coloredImage, isSymbol: true)
+			let preferredColor = NSColor(named: "AccentColor")!
+			let coloredImage = image.tinted(with: preferredColor)
+			return IconImage(coloredImage, isSymbol: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 		}

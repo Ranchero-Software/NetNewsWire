@@ -57,6 +57,8 @@ protocol SidebarDelegate: class {
 		return selectedNodes.representedObjects()
 	}
 
+	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sidebarRow")
+
 	// MARK: - NSViewController
 
 	override func viewDidLoad() {
@@ -340,6 +342,15 @@ protocol SidebarDelegate: class {
 
 	// MARK: - NSOutlineViewDelegate
     
+	func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
+		if let rowView = outlineView.makeView(withIdentifier: SidebarViewController.rowViewIdentifier, owner: nil) as? SidebarTableRowView {
+			return rowView
+		}
+		let rowView = SidebarTableRowView()
+		rowView.identifier = SidebarViewController.rowViewIdentifier
+		return rowView
+	}
+
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 		let node = item as! Node
 
