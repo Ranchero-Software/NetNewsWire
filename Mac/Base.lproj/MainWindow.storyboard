@@ -425,12 +425,12 @@
         <scene sceneID="Yae-mu-VsH">
             <objects>
                 <viewController id="XML-A3-pDn" userLabel="Sidebar View Controller" customClass="SidebarViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="bJZ-bH-vgc">
-                        <rect key="frame" x="0.0" y="0.0" width="206" height="465"/>
+                    <view key="view" wantsLayer="YES" misplaced="YES" id="bJZ-bH-vgc">
+                        <rect key="frame" x="0.0" y="0.0" width="206" height="468"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="977-L4-4ey">
-                                <rect key="frame" x="0.0" y="389" width="206" height="24"/>
+                                <rect key="frame" x="0.0" y="444" width="206" height="24"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eZS-8K-qiN">
                                         <rect key="frame" x="180" y="5" width="14" height="14"/>
@@ -454,16 +454,16 @@
                                     <constraint firstItem="eZS-8K-qiN" firstAttribute="top" secondItem="977-L4-4ey" secondAttribute="top" constant="5" id="M0q-C7-z10"/>
                                 </constraints>
                             </visualEffectView>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
-                                <rect key="frame" x="0.0" y="0.0" width="206" height="389"/>
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
+                                <rect key="frame" x="0.0" y="0.0" width="206" height="444"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="2eU-Wz-F9g">
-                                    <rect key="frame" x="0.0" y="0.0" width="206" height="389"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="206" height="444"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="28" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="206" height="389"/>
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="24" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="206" height="444"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <size key="intercellSpacing" width="3" height="0.0"/>
+                                            <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
@@ -480,7 +480,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView identifier="HeaderCell" id="qkt-WA-5tB">
-                                                            <rect key="frame" x="11" y="0.0" width="183" height="17"/>
+                                                            <rect key="frame" x="1" y="1" width="174" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fNJ-z1-0Up">
@@ -498,7 +498,7 @@
                                                             </connections>
                                                         </tableCellView>
                                                         <tableCellView identifier="DataCell" id="HJn-Tm-YNO" customClass="SidebarCell" customModule="NetNewsWire" customModuleProvider="target">
-                                                            <rect key="frame" x="11" y="17" width="183" height="17"/>
+                                                            <rect key="frame" x="1" y="20" width="174" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </tableCellView>
                                                     </prototypeCellViews>
@@ -539,7 +539,7 @@
                                         </constraints>
                                     </progressIndicator>
                                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iyL-pW-cT6">
-                                        <rect key="frame" x="62" y="6" width="106" height="16"/>
+                                        <rect key="frame" x="62" y="6" width="126" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="dVE-XG-mlU">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -572,7 +572,7 @@
                             <constraint firstItem="cJj-Wv-9ep" firstAttribute="top" secondItem="977-L4-4ey" secondAttribute="bottom" id="FPj-rG-6Lw"/>
                             <constraint firstItem="mQg-Jg-Bfh" firstAttribute="trailing" secondItem="iyL-pW-cT6" secondAttribute="trailing" constant="20" id="Mnm-9S-Qpm"/>
                             <constraint firstAttribute="bottom" secondItem="HZs-Zf-G8s" secondAttribute="bottom" constant="-28" id="UN9-Wa-uxb"/>
-                            <constraint firstItem="977-L4-4ey" firstAttribute="top" secondItem="mQg-Jg-Bfh" secondAttribute="top" constant="-20" id="eBr-dj-I25"/>
+                            <constraint firstItem="977-L4-4ey" firstAttribute="top" secondItem="j0H-G3-rg2" secondAttribute="top" id="eBr-dj-I25"/>
                             <constraint firstAttribute="trailing" secondItem="HZs-Zf-G8s" secondAttribute="trailing" id="iNE-nb-QEB"/>
                             <constraint firstItem="HZs-Zf-G8s" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="tPp-xB-CgB"/>
                             <constraint firstAttribute="trailing" secondItem="cJj-Wv-9ep" secondAttribute="trailing" id="vo7-3F-Fd3"/>
@@ -620,13 +620,13 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="contentBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="PdS-jL-yH1">
-                                <rect key="frame" x="0.0" y="119" width="450" height="27"/>
+                                <rect key="frame" x="0.0" y="171" width="450" height="27"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="27" id="ZMg-gZ-6aa"/>
                                 </constraints>
                             </visualEffectView>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
-                                <rect key="frame" x="0.0" y="125" width="49" height="17"/>
+                                <rect key="frame" x="0.0" y="177" width="49" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="16" id="DoO-KI-ena"/>
                                 </constraints>
@@ -659,7 +659,7 @@
                                 </popUpButtonCell>
                             </popUpButton>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iA5-go-AO0">
-                                <rect key="frame" x="424" y="127" width="14" height="14"/>
+                                <rect key="frame" x="424" y="179" width="14" height="14"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="14" id="FbQ-4n-ThT"/>
                                     <constraint firstAttribute="height" constant="14" id="dlW-82-T6N"/>
@@ -674,7 +674,7 @@
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Zpk-pq-9nW" customClass="TimelineContainerView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="121"/>
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="173"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -687,9 +687,9 @@
                             <constraint firstItem="PdS-jL-yH1" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" id="aB8-Pt-Szt"/>
                             <constraint firstAttribute="bottom" secondItem="Zpk-pq-9nW" secondAttribute="bottom" id="fyv-EG-PC8"/>
                             <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="lSU-OC-sEC" secondAttribute="bottom" constant="5" id="gFm-Ix-hBf"/>
-                            <constraint firstItem="iA5-go-AO0" firstAttribute="top" secondItem="Ebd-af-pc9" secondAttribute="top" constant="-15" id="nM9-iA-OzY"/>
+                            <constraint firstItem="iA5-go-AO0" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" constant="5" id="nM9-iA-OzY"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lSU-OC-sEC" secondAttribute="trailing" constant="8" id="yCg-gc-exN"/>
-                            <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="Ebd-af-pc9" secondAttribute="top" constant="-16" id="zay-ZJ-od3"/>
+                            <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" constant="4" id="zay-ZJ-od3"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="M3G-7s-D6y"/>
                         <viewLayoutGuide key="layoutMargins" id="Ebd-af-pc9"/>
@@ -763,12 +763,12 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="vR7-7g-Zc3"/>
+        <segue reference="WS2-WB-dc4"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="NSAddTemplate" width="15" height="13"/>
-        <image name="NSRefreshTemplate" width="14" height="16"/>
-        <image name="NSShareTemplate" width="16" height="17"/>
+        <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSRefreshTemplate" width="11" height="15"/>
+        <image name="NSShareTemplate" width="11" height="16"/>
         <image name="arrow.clockwise" catalog="system" width="14" height="16"/>
         <image name="chevron.down.circle" catalog="system" width="15" height="15"/>
         <image name="circle" catalog="system" width="15" height="15"/>
@@ -782,7 +782,7 @@
         <image name="openInBrowser" width="19" height="19"/>
         <image name="safari" catalog="system" width="15" height="15"/>
         <image name="square.and.arrow.up" catalog="system" width="16" height="17"/>
-        <image name="star" width="19" height="19"/>
         <image name="star" catalog="system" width="17" height="16"/>
+        <image name="star" width="19" height="19"/>
     </resources>
 </document>
