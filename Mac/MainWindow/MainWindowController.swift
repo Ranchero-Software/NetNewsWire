@@ -62,6 +62,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
 		if #available(macOS 10.16, *) {
+			DispatchQueue.main.async {
+				let toolbar = NSToolbar(identifier: "MainWindowToolbar")
+				toolbar.allowsUserCustomization = true
+//				toolbar.autosavesConfiguration = true
+				toolbar.displayMode = .iconOnly
+				toolbar.delegate = self
+				self.window?.toolbar = toolbar
+			}
 		} else {
 			if !AppDefaults.shared.showTitleOnMainWindow {
 				window?.titleVisibility = .hidden
@@ -91,7 +99,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
-
+		
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
 		}
@@ -700,23 +708,76 @@ extension NSToolbarItem.Identifier {
 	static let readerView = NSToolbarItem.Identifier("readerView")
 	static let openInBrowser = NSToolbarItem.Identifier("openInBrowser")
 	static let share = NSToolbarItem.Identifier("share")
+	static let cleanUp = NSToolbarItem.Identifier("cleanUp")
 }
 
 extension MainWindowController: NSToolbarDelegate {
 
 	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-		if #available(macOS 10.16, *), itemIdentifier == .newSidebarItemMenu {
-			let menuToolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
-			menuToolbarItem.image = AppAssets.addNewSidebarItemImage
-			menuToolbarItem.menu = buildNewSidebarItemMenu()
-			return menuToolbarItem
-		}
-		
-		if #available(macOS 10.16, *), itemIdentifier == .timelineTrackingSeparator {
-			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
+		if #available(macOS 10.16, *) {
+
+			switch itemIdentifier {
+
+			case .refresh:
+				let title = NSLocalizedString("Refresh", comment: "Refresh")
+				return toolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
+			
+			case .newSidebarItemMenu:
+				let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
+				toolbarItem.image = AppAssets.addNewSidebarItemImage
+				let description = NSLocalizedString("Add Item", comment: "Add Item")
+				toolbarItem.toolTip = description
+				toolbarItem.label = description
+				toolbarItem.menu = buildNewSidebarItemMenu()
+				return toolbarItem
+
+			case .timelineTrackingSeparator:
+				return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
+
+			default:
+				break
+			}
+
 		}
 		
 		return nil
+	}
+	
+	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+		if #available(macOS 10.16, *) {
+			return [
+				.refresh,
+				.newSidebarItemMenu,
+				.sidebarTrackingSeparator,
+//				.search,
+//				.markAllAsRead,
+				.timelineTrackingSeparator,
+				.flexibleSpace,
+//				.nextUnread,
+//				.markRead,
+//				.markStar,
+//				.openInBrowser,
+//				.share,
+//				.cleanUp
+			]
+		} else {
+			return [
+				.newFeed,
+				.newFolder,
+				.refresh,
+				.flexibleSpace,
+				.markAllAsRead,
+				.search,
+				.flexibleSpace,
+				.nextUnread,
+				.markStar,
+				.markRead,
+				.readerView,
+				.openInBrowser,
+				.share,
+				.cleanUp
+			]
+		}
 	}
 	
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
@@ -726,14 +787,14 @@ extension MainWindowController: NSToolbarDelegate {
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
 //				.search,
-				.markAllAsRead,
+//				.markAllAsRead,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
-				.nextUnread,
-				.markRead,
-				.markStar,
-				.openInBrowser,
-				.share
+//				.nextUnread,
+//				.markRead,
+//				.markStar,
+//				.openInBrowser,
+//				.share
 			]
 		} else {
 			return [
@@ -1119,6 +1180,21 @@ private extension MainWindowController {
 
 		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
 		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
+	}
+
+	func toolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String) -> NSToolbarItem {
+		let toolbarItem = RSToolbarItem(itemIdentifier: itemIdentifier)
+		toolbarItem.autovalidates = true
+		
+		let button = NSButton()
+		button.bezelStyle = .texturedRounded
+		button.image = image
+		button.toolTip = title
+		button.action = Selector((selector))
+		
+		toolbarItem.view = button
+		toolbarItem.label = title
+		return toolbarItem
 	}
 
 	func buildNewSidebarItemMenu() -> NSMenu {

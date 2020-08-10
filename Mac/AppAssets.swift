@@ -142,6 +142,11 @@ struct AppAssets {
 		return NSImage(systemSymbolName: "circle", accessibilityDescription: nil)!
 	}()
 	
+	@available(macOS 10.16, *)
+	static var refreshImage: RSImage = {
+		return NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
+	}()
+	
 	static var searchFeedImage: IconImage = {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 	}()

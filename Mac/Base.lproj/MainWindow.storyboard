@@ -255,133 +255,6 @@
                             <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </view>
-                        <toolbar key="toolbar" implicitIdentifier="F82AF654-C4E7-4D89-8DD6-35FB7FC7405A" explicitIdentifier="UnifiedToolbar" displayMode="iconOnly" sizeMode="regular" id="4wH-0N-M2I">
-                            <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="NkL-XI-XbY"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1rv-ob-E5Y"/>
-                                <toolbarItem implicitItemIdentifier="85D5559D-7E93-4640-B490-E45FCC6DEEFC" explicitItemIdentifier="markAllAsRead" label="Mark All as Read" paletteLabel="Mark All as Read" toolTip="Mark All as Read" image="markAllAsRead" sizingBehavior="auto" id="kCl-RN-C8U" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" id="pma-GT-lQ6">
-                                        <rect key="frame" x="38" y="14" width="19" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="markAllAsRead" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="TPq-5K-4FI">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="markAllAsRead:" target="oDX-XL-3t0" id="ZJZ-f1-VpE"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="E0330BEC-A31C-4734-9E98-DC684AE0188B" explicitItemIdentifier="markRead" label="Mark Read" paletteLabel="Mark Read" toolTip="Mark Read or Unread" image="circle" catalog="system" sizingBehavior="auto" id="aBG-KW-0rC" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" id="ogU-Zg-MEq">
-                                        <rect key="frame" x="21" y="14" width="21" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="circle" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="S9F-pa-vC7">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="toggleRead:" target="RpU-Uf-KSH" id="vmC-mT-McD"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="7F38EDBC-3754-4A46-B1C5-ECCA6FA0E2EB" explicitItemIdentifier="refresh" label="Refresh" paletteLabel="Refresh" toolTip="Refresh" image="arrow.clockwise" catalog="system" sizingBehavior="auto" id="saA-2q-Exi" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" id="NOF-FH-5ht">
-                                        <rect key="frame" x="14" y="14" width="20" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.clockwise" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bev-B0-Rm9">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="refreshAll:" target="oDX-XL-3t0" id="fAJ-7N-WHH"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="98FE3AB9-1527-442F-A2AD-37A16D281F6C" explicitItemIdentifier="reader" label="Reader" paletteLabel="Reader" toolTip="Reader View" sizingBehavior="auto" id="z8Y-kH-YkM" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" id="Gj7-2v-wnj" customClass="ArticleExtractorButton" customModule="NetNewsWire" customModuleProvider="target">
-                                        <rect key="frame" x="19" y="14" width="6" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Fcj-WC-4ef">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="toggleArticleExtractor:" target="B8D-0N-5wS" id="VGv-tQ-zSw"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="5E605EAD-F9C6-46B1-AB4A-4F8B41EA8D71" explicitItemIdentifier="cleanUp" label="Clean UP" paletteLabel="Clean Up" toolTip="Clean Up" image="cleanUp" sizingBehavior="auto" id="gbb-1C-xgT" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" id="3mT-0D-slf">
-                                        <rect key="frame" x="12" y="14" width="32" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="cleanUp" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c2Z-gF-mZk">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="cleanUp:" target="oDX-XL-3t0" id="ZI7-sh-FxF"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="D843F871-CE3E-4562-864D-468D253F7017" explicitItemIdentifier="nextUnread" label="Next Unread" paletteLabel="Next Unread" toolTip="Go to Next Unread" image="chevron.down.circle" catalog="system" sizingBehavior="auto" id="Em1-AN-RSV" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" id="f65-dC-yVw" customClass="RSDarkModeAdaptingToolbarButton" customModule="RSCore">
-                                        <rect key="frame" x="26" y="14" width="21" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="chevron.down.circle" catalog="system" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="20M-ji-Qfb">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="nextUnread:" target="oDX-XL-3t0" id="Njy-rJ-nwV"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="DF97E70F-6C5A-4E11-8F23-F92C0DFDD20C" explicitItemIdentifier="markStar" label="Star" paletteLabel="Star" toolTip="Star or Unstar" image="star" catalog="system" sizingBehavior="auto" id="w0G-8M-ORk" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" id="PH8-Ep-8RY">
-                                        <rect key="frame" x="3" y="14" width="23" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="star" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="Dwm-37-obJ">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="toggleStarred:" target="oDX-XL-3t0" id="8CC-3h-U4D"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="0C1590CE-2F2C-4B1C-B8E2-FB95E26B3247" explicitItemIdentifier="openInBrowser" label="Open in Browser" paletteLabel="Open in Browser" toolTip="Open in Browser" image="safari" catalog="system" sizingBehavior="auto" id="r1w-Ep-Fxv" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" allowsExpansionToolTips="YES" id="0qi-r3-cJ7">
-                                        <rect key="frame" x="37" y="14" width="21" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="safari" catalog="system" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" id="upn-Uv-4pt">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="openArticleInBrowser:" target="oDX-XL-3t0" id="llu-Yi-oJ3"/>
-                                    </connections>
-                                </toolbarItem>
-                                <toolbarItem implicitItemIdentifier="5DC1C687-AF4A-477B-BACD-C28FA65145B8" explicitItemIdentifier="share" label="Share" paletteLabel="Share" toolTip="Share" image="square.and.arrow.up" catalog="system" sizingBehavior="auto" id="G63-IG-tKX" customClass="RSToolbarItem" customModule="RSCore">
-                                    <button key="view" verticalHuggingPriority="750" id="BDf-kK-Izc">
-                                        <rect key="frame" x="8" y="14" width="22" height="23"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="square.and.arrow.up" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4zk-xN-QSG">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                    <connections>
-                                        <action selector="toolbarShowShareMenu:" target="oDX-XL-3t0" id="Jnn-YA-XUu"/>
-                                    </connections>
-                                </toolbarItem>
-                            </allowedToolbarItems>
-                            <defaultToolbarItems/>
-                            <connections>
-                                <outlet property="delegate" destination="RpU-Uf-KSH" id="676-nf-53M"/>
-                            </connections>
-                        </toolbar>
                         <connections>
                             <outlet property="delegate" destination="RpU-Uf-KSH" id="B17-f3-AE3"/>
                         </connections>
@@ -430,7 +303,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="977-L4-4ey">
-                                <rect key="frame" x="0.0" y="444" width="206" height="24"/>
+                                <rect key="frame" x="0.0" y="410" width="206" height="24"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eZS-8K-qiN">
                                         <rect key="frame" x="180" y="5" width="14" height="14"/>
@@ -454,16 +327,16 @@
                                     <constraint firstItem="eZS-8K-qiN" firstAttribute="top" secondItem="977-L4-4ey" secondAttribute="top" constant="5" id="M0q-C7-z10"/>
                                 </constraints>
                             </visualEffectView>
-                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
-                                <rect key="frame" x="0.0" y="0.0" width="206" height="444"/>
+                            <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
+                                <rect key="frame" x="0.0" y="0.0" width="206" height="410"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="2eU-Wz-F9g">
-                                    <rect key="frame" x="0.0" y="0.0" width="206" height="444"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="206" height="410"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="24" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="206" height="444"/>
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="28" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="206" height="410"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <size key="intercellSpacing" width="3" height="2"/>
+                                            <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
@@ -480,7 +353,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView identifier="HeaderCell" id="qkt-WA-5tB">
-                                                            <rect key="frame" x="1" y="1" width="174" height="17"/>
+                                                            <rect key="frame" x="11" y="0.0" width="183" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fNJ-z1-0Up">
@@ -498,7 +371,7 @@
                                                             </connections>
                                                         </tableCellView>
                                                         <tableCellView identifier="DataCell" id="HJn-Tm-YNO" customClass="SidebarCell" customModule="NetNewsWire" customModuleProvider="target">
-                                                            <rect key="frame" x="1" y="20" width="174" height="17"/>
+                                                            <rect key="frame" x="11" y="17" width="183" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </tableCellView>
                                                     </prototypeCellViews>
@@ -539,7 +412,7 @@
                                         </constraints>
                                     </progressIndicator>
                                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iyL-pW-cT6">
-                                        <rect key="frame" x="62" y="6" width="126" height="16"/>
+                                        <rect key="frame" x="62" y="6" width="106" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="dVE-XG-mlU">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -620,13 +493,13 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="contentBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="PdS-jL-yH1">
-                                <rect key="frame" x="0.0" y="171" width="450" height="27"/>
+                                <rect key="frame" x="0.0" y="119" width="450" height="27"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="27" id="ZMg-gZ-6aa"/>
                                 </constraints>
                             </visualEffectView>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
-                                <rect key="frame" x="0.0" y="177" width="49" height="17"/>
+                                <rect key="frame" x="0.0" y="125" width="49" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="16" id="DoO-KI-ena"/>
                                 </constraints>
@@ -659,7 +532,7 @@
                                 </popUpButtonCell>
                             </popUpButton>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iA5-go-AO0">
-                                <rect key="frame" x="424" y="179" width="14" height="14"/>
+                                <rect key="frame" x="424" y="127" width="14" height="14"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="14" id="FbQ-4n-ThT"/>
                                     <constraint firstAttribute="height" constant="14" id="dlW-82-T6N"/>
@@ -674,7 +547,7 @@
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Zpk-pq-9nW" customClass="TimelineContainerView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="173"/>
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="121"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -766,23 +639,16 @@
         <segue reference="WS2-WB-dc4"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="NSAddTemplate" width="11" height="11"/>
-        <image name="NSRefreshTemplate" width="11" height="15"/>
-        <image name="NSShareTemplate" width="11" height="16"/>
-        <image name="arrow.clockwise" catalog="system" width="14" height="16"/>
-        <image name="chevron.down.circle" catalog="system" width="15" height="15"/>
-        <image name="circle" catalog="system" width="15" height="15"/>
+        <image name="NSAddTemplate" width="15" height="13"/>
+        <image name="NSRefreshTemplate" width="14" height="16"/>
+        <image name="NSShareTemplate" width="16" height="17"/>
         <image name="cleanUp" width="149" height="113"/>
         <image name="filterInactive" width="100" height="101"/>
-        <image name="markAllAsRead" width="13" height="20"/>
         <image name="markAllRead" width="22" height="19"/>
         <image name="markRead" width="19" height="19"/>
         <image name="newFolder" width="19" height="19"/>
         <image name="nextUnread" width="24" height="19"/>
         <image name="openInBrowser" width="19" height="19"/>
-        <image name="safari" catalog="system" width="15" height="15"/>
-        <image name="square.and.arrow.up" catalog="system" width="16" height="17"/>
-        <image name="star" catalog="system" width="17" height="16"/>
         <image name="star" width="19" height="19"/>
     </resources>
 </document>
