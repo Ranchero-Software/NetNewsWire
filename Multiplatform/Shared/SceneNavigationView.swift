@@ -109,7 +109,7 @@ struct SceneNavigationView: View {
 				} label: {
 					Image(systemName: "sidebar.left")
 				}
-				.help("Toggle Sidebar").padding(.trailing, 40)
+				.help("Toggle Sidebar")
 			}
 			ToolbarItem() {
 				Menu {
