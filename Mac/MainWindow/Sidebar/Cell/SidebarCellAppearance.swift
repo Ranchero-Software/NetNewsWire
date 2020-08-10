@@ -23,7 +23,7 @@ struct SidebarCellAppearance: Equatable {
 			textFieldFontSize = 11
 		case .large:
 			imageSize = CGSize(width: 24, height: 24)
-			if #available(macOS 10.16, *) {
+			if #available(macOS 11.0, *) {
 				textFieldFontSize = 15
 			} else {
 				textFieldFontSize = 13

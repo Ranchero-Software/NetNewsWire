@@ -40,7 +40,7 @@ struct AppAssets {
 		return RSImage(named: "accountNewsBlur")
 	}()
 	
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var addNewSidebarItemImage: RSImage = {
 		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 	}()
@@ -77,7 +77,7 @@ struct AppAssets {
 		return RSImage(named: "articleExtractorProgress4")
 	}()
 	
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var cleanUpImage: RSImage = {
 		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
 	}()
@@ -119,7 +119,7 @@ struct AppAssets {
 	}()
 
 	static var masterFolderImage: IconImage = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 			let coloredImage = image.tinted(with: NSColor(named: "AccentColor")!)
 			return IconImage(coloredImage, isSymbol: true)
@@ -132,18 +132,18 @@ struct AppAssets {
 		return RSImage(named: "markAllAsRead")!
 	}()
 
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var nextUnreadImage: RSImage = {
 		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var openInBrowserImage: RSImage = {
 		return NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
 	}()
 
 	static var preferencesToolbarAccountsImage: RSImage = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			return NSImage(systemSymbolName: "at", accessibilityDescription: nil)!
 		} else {
 			return NSImage(named: NSImage.userAccountsName)!
@@ -151,7 +151,7 @@ struct AppAssets {
 	}()
 	
 	static var preferencesToolbarExtensionsImage: RSImage = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			return NSImage(named: "preferencesToolbarExtensions")!
 		} else {
 			return NSImage(contentsOfFile: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/KEXT.icns")!
@@ -159,7 +159,7 @@ struct AppAssets {
 	}()
 	
 	static var preferencesToolbarGeneralImage: RSImage = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			return NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
 		} else {
 			return NSImage(named: NSImage.preferencesGeneralName)!
@@ -167,24 +167,24 @@ struct AppAssets {
 	}()
 	
 	static var preferencesToolbarAdvancedImage: RSImage = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			return NSImage(systemSymbolName: "gearshape.2", accessibilityDescription: nil)!
 		} else {
 			return NSImage(named: NSImage.advancedName)!
 		}
 	}()
 
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var readClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var readOpenImage: RSImage = {
 		return NSImage(systemSymbolName: "circle", accessibilityDescription: nil)!
 	}()
 	
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var refreshImage: RSImage = {
 		return NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: nil)!
 	}()
@@ -193,23 +193,23 @@ struct AppAssets {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
 	}()
 	
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var shareImage: RSImage = {
 		return NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var starClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 	}()
 
-	@available(macOS 10.16, *)
+	@available(macOS 11.0, *)
 	static var starOpenImage: RSImage = {
 		return NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
 	}()
 	
 	static var starredFeedImage: IconImage = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 			let coloredImage = image.tinted(with: NSColor(named: "StarColor")!)
 			return IconImage(coloredImage, isSymbol: true)
@@ -219,7 +219,7 @@ struct AppAssets {
 	}()
 
 	static var timelineStar: RSImage! = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 			let coloredImage = image.tinted(with: NSColor(named: "StarColor")!)
 			return coloredImage
@@ -229,7 +229,7 @@ struct AppAssets {
 	}()
 
 	static var todayFeedImage: IconImage = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
 			let coloredImage = image.tinted(with: .orange)
 			return IconImage(coloredImage, isSymbol: true)
@@ -239,7 +239,7 @@ struct AppAssets {
 	}()
 
 	static var unreadFeedImage: IconImage = {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 			let coloredImage = image.tinted(with: NSColor(named: "AccentColor")!)
 			return IconImage(coloredImage, isSymbol: true)

@@ -266,7 +266,7 @@ private extension ArticleRenderer {
 	func styleSubstitutions() -> [String: String] {
 		var d = [String: String]()
 		
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			let bodyFont = NSFont.preferredFont(forTextStyle: .body)
 			d["font-size"] = String(describing: Int(round(bodyFont.pointSize * 1.33)))
 		}

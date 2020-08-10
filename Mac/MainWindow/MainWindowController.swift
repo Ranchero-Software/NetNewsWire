@@ -61,7 +61,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			DispatchQueue.main.async {
 				let toolbar = NSToolbar(identifier: "MainWindowToolbar")
 				toolbar.allowsUserCustomization = true
@@ -714,7 +714,7 @@ extension NSToolbarItem.Identifier {
 extension MainWindowController: NSToolbarDelegate {
 
 	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 
 			switch itemIdentifier {
 
@@ -779,7 +779,7 @@ extension MainWindowController: NSToolbarDelegate {
 	}
 	
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			return [
 				.refresh,
 				.newSidebarItemMenu,
@@ -816,7 +816,7 @@ extension MainWindowController: NSToolbarDelegate {
 	}
 	
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			return [
 				.refresh,
 				.newSidebarItemMenu,
@@ -860,7 +860,7 @@ extension MainWindowController: NSToolbarDelegate {
 			button.sendAction(on: .leftMouseDown)
 		}
 
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			if item.itemIdentifier == .search, let searchItem = item as? NSSearchToolbarItem {
 				searchItem.searchField.delegate = self
 				searchItem.searchField.target = self
@@ -882,7 +882,7 @@ extension MainWindowController: NSToolbarDelegate {
 			return
 		}
 
-		if #available(macOS 10.16, *) {
+		if #available(macOS 11.0, *) {
 			if item.itemIdentifier == .search, let searchItem = item as? NSSearchToolbarItem {
 				searchItem.searchField.delegate = nil
 				searchItem.searchField.target = nil
@@ -1007,7 +1007,7 @@ private extension MainWindowController {
 			menuItem.title = commandName
 		}
 		
-		if #available(macOS 10.16, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+		if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
 		}
 		
@@ -1094,7 +1094,7 @@ private extension MainWindowController {
 			menuItem.title = commandName
 		}
 
-		if #available(macOS 10.16, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+		if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 			button.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		}
 
@@ -1168,7 +1168,7 @@ private extension MainWindowController {
 		
 		if displayName != nil {
 			window?.title = displayName!
-			if #available(macOS 10.16, *) {
+			if #available(macOS 11.0, *) {
 				window?.subtitle = "\(unreadCount ?? 0) unread"
 			}
 		} else {
