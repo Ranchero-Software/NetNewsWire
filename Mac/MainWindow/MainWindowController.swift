@@ -731,6 +731,17 @@ extension MainWindowController: NSToolbarDelegate {
 				toolbarItem.menu = buildNewSidebarItemMenu()
 				return toolbarItem
 
+			case .search:
+				let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
+				let description = NSLocalizedString("Search", comment: "Search")
+				toolbarItem.toolTip = description
+				toolbarItem.label = description
+				return toolbarItem
+
+			case .markAllAsRead:
+				let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+				return toolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
+			
 			case .timelineTrackingSeparator:
 				return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
@@ -749,8 +760,8 @@ extension MainWindowController: NSToolbarDelegate {
 				.refresh,
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
-//				.search,
-//				.markAllAsRead,
+				.search,
+				.markAllAsRead,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
 //				.nextUnread,
@@ -786,8 +797,8 @@ extension MainWindowController: NSToolbarDelegate {
 				.refresh,
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
-//				.search,
-//				.markAllAsRead,
+				.search,
+				.markAllAsRead,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
 //				.nextUnread,

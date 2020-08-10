@@ -10,11 +10,6 @@ import AppKit
 import RSCore
 import Account
 
-extension NSImage.Name {
-	static let star = NSImage.Name("star")
-	static let timelineStar = NSImage.Name("timelineStar")
-}
-
 struct AppAssets {
 
 	static var accountCloudKit: RSImage! = {
@@ -132,6 +127,10 @@ struct AppAssets {
 		}
 	}()
 
+	static var markAllAsReadImage: RSImage = {
+		return RSImage(named: "markAllAsRead")!
+	}()
+
 	@available(macOS 10.16, *)
 	static var readClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
@@ -177,7 +176,7 @@ struct AppAssets {
 			let coloredImage = image.tinted(with: NSColor(named: "StarColor")!)
 			return coloredImage
 		} else {
-			return RSImage(named: .timelineStar)
+			return RSImage(named: "timelineStar")
 		}
 	}()
 
