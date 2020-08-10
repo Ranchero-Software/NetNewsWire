@@ -301,6 +301,10 @@ struct AppAssets {
 		return IconImage(coloredImage, isSymbol: true)
 		#endif
 	}
+	
+	static var sidebarToggleImage: Image {
+		return Image(systemName: "sidebar.left")
+	}
 
 	#if os(macOS)
 	static var webStatusBarBackground: NSColor = {
