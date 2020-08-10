@@ -98,10 +98,6 @@ struct AppAssets {
 		return RSImage(named: "extensionPointTwitter")!
 	}()
 	
-	static var extensionPreference: RSImage? = {
-		return RSImage(contentsOfFile: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/KEXT.icns")
-	}()
-		
 	static var faviconTemplateImage: RSImage = {
 		return RSImage(named: "faviconTemplateImage")!
 	}()
@@ -144,6 +140,38 @@ struct AppAssets {
 	@available(macOS 10.16, *)
 	static var openInBrowserImage: RSImage = {
 		return NSImage(systemSymbolName: "safari", accessibilityDescription: nil)!
+	}()
+
+	static var preferencesToolbarAccountsImage: RSImage = {
+		if #available(macOS 10.16, *) {
+			return NSImage(systemSymbolName: "at", accessibilityDescription: nil)!
+		} else {
+			return NSImage(named: NSImage.userAccountsName)!
+		}
+	}()
+	
+	static var preferencesToolbarExtensionsImage: RSImage = {
+		if #available(macOS 10.16, *) {
+			return NSImage(named: "preferencesToolbarExtensions")!
+		} else {
+			return NSImage(contentsOfFile: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/KEXT.icns")!
+		}
+	}()
+	
+	static var preferencesToolbarGeneralImage: RSImage = {
+		if #available(macOS 10.16, *) {
+			return NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)!
+		} else {
+			return NSImage(named: NSImage.preferencesGeneralName)!
+		}
+	}()
+	
+	static var preferencesToolbarAdvancedImage: RSImage = {
+		if #available(macOS 10.16, *) {
+			return NSImage(systemSymbolName: "gearshape.2", accessibilityDescription: nil)!
+		} else {
+			return NSImage(named: NSImage.advancedName)!
+		}
 	}()
 
 	@available(macOS 10.16, *)
