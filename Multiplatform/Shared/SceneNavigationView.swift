@@ -104,6 +104,7 @@ struct SceneNavigationView: View {
 			#if os(macOS)
 			ToolbarItem(placement: .navigation) {
 				Button {
+					#warning("Use of AppKit in SwiftUI.")
 					NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
 				} label: {
 					Image(systemName: "sidebar.left")
