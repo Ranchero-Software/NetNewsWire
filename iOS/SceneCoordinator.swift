@@ -384,7 +384,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			case .readArticle:
 				self.handleReadArticle(activity.userInfo)
 			case .addFeedIntent:
-				self.showAdd(.feed)
+				self.showAddFeed()
 			}
 		}
 	}
@@ -1167,19 +1167,27 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
 	
-	func showAdd(_ type: AddControllerType, initialFeed: String? = nil, initialFeedName: String? = nil) {
+	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
+		
+		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
 		selectFeed(nil)
 
-		let addViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
+		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
 		
-		let containerController = addViewController.topViewController as! AddContainerViewController
-		containerController.initialControllerType = type
-		containerController.initialFeed = initialFeed
-		containerController.initialFeedName = initialFeedName
+		let addViewController = addNavViewController.topViewController as! AddWebFeedViewController
+		addViewController.initialFeed = initialFeed
+		addViewController.initialFeedName = initialFeedName
 		
-		addViewController.modalPresentationStyle = .formSheet
-		addViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
-		masterFeedViewController.present(addViewController, animated: true)
+		addNavViewController.modalPresentationStyle = .formSheet
+		addNavViewController.preferredContentSize = AddWebFeedViewController.preferredContentSizeForFormSheetDisplay
+		masterFeedViewController.present(addNavViewController, animated: true)
+	}
+	
+	func showAddFolder() {
+		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
+		addNavViewController.modalPresentationStyle = .formSheet
+		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
+		masterFeedViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {

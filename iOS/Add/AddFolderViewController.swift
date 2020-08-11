@@ -10,11 +10,14 @@ import UIKit
 import Account
 import RSCore
 
-class AddFolderViewController: UITableViewController, AddContainerViewControllerChild {
+class AddFolderViewController: UITableViewController {
 
+	@IBOutlet private weak var addButton: UIBarButtonItem!
 	@IBOutlet private weak var nameTextField: UITextField!
 	@IBOutlet private weak var accountLabel: UILabel!
 	@IBOutlet private weak var accountPickerView: UIPickerView!
+	
+	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 	
 	private var shouldDisplayPicker: Bool {
 		return accounts.count > 1
@@ -37,10 +40,7 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		}
 	}
 	
-	weak var delegate: AddContainerViewControllerChildDelegate?
-	
 	override func viewDidLoad() {
-
 		super.viewDidLoad()
 		
 		accounts = AccountManager.shared
@@ -61,11 +61,9 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 			accountPickerView.isHidden = true
 		}
 		
-		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
-		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
-		
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: nameTextField)
 		
+		nameTextField.becomeFirstResponder()
     }
 	
 	private func didSelect(_ account: Account) {
@@ -73,26 +71,27 @@ class AddFolderViewController: UITableViewController, AddContainerViewController
 		selectedAccount = account
 	}
 
-	func cancel() {
-		delegate?.processingDidEnd()
+	@IBAction func cancel(_ sender: Any) {
+		dismiss(animated: true)
 	}
 	
-	func add() {
+	@IBAction func add(_ sender: Any) {
 		guard let folderName = nameTextField.text else {
 			return
 		}
 		selectedAccount.addFolder(folderName) { result in
 			switch result {
 			case .success:
-				self.delegate?.processingDidEnd()
+				self.dismiss(animated: true)
 			case .failure(let error):
 				self.presentError(error)
+				self.dismiss(animated: true)
 			}
 		}
 	}
 
 	@objc func textDidChange(_ note: Notification) {
-		delegate?.readyToAdd(state: !(nameTextField.text?.isEmpty ?? false))
+		addButton.isEnabled = !(nameTextField.text?.isEmpty ?? false)
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

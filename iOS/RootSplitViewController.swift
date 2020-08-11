@@ -95,11 +95,11 @@ class RootSplitViewController: UISplitViewController {
 	}
 	
 	@objc func addNewFeed(_ sender: Any?) {
-		coordinator.showAdd(.feed)
+		coordinator.showAddFeed()
 	}
 
 	@objc func addNewFolder(_ sender: Any?) {
-		coordinator.showAdd(.folder)
+		coordinator.showAddFolder()
 	}
 
 	@objc func cleanUp(_ sender: Any?) {

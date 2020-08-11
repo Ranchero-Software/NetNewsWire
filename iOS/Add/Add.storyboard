@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="bqE-WD-JXz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17120"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
-        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Add Web Feed-->
         <scene sceneID="2Tc-JN-edX">
             <objects>
-                <tableViewController storyboardIdentifier="AddWebFeedViewController" id="7aE-6a-iP7" customClass="AddWebFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="7aE-6a-iP7" customClass="AddWebFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="D0S-TM-mtm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -30,19 +30,10 @@
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="URL"/>
                                                 </textField>
-                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f0N-Iy-ZFD">
-                                                    <rect key="frame" x="297.66666666666669" y="10.666666666666666" width="25.333333333333314" height="22.666666666666671"/>
-                                                    <state key="normal" image="hammer" catalog="system"/>
-                                                    <connections>
-                                                        <action selector="showURLBuilder:" destination="7aE-6a-iP7" eventType="touchUpInside" id="wVv-BU-ND8"/>
-                                                    </connections>
-                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="eRp-AP-WFq" firstAttribute="top" secondItem="eNS-Rp-w0A" secondAttribute="top" constant="4" id="80p-a2-3NC"/>
-                                                <constraint firstItem="f0N-Iy-ZFD" firstAttribute="centerY" secondItem="eRp-AP-WFq" secondAttribute="centerY" id="Ci9-Fe-KrJ"/>
                                                 <constraint firstAttribute="trailing" secondItem="eRp-AP-WFq" secondAttribute="trailing" id="Xue-v3-aqR"/>
-                                                <constraint firstAttribute="trailing" secondItem="f0N-Iy-ZFD" secondAttribute="trailing" constant="20" symbolic="YES" id="aHH-ef-7dH"/>
                                                 <constraint firstItem="eRp-AP-WFq" firstAttribute="leading" secondItem="eNS-Rp-w0A" secondAttribute="leading" constant="20" symbolic="YES" id="bHJ-7l-Pl3"/>
                                                 <constraint firstAttribute="bottom" secondItem="eRp-AP-WFq" secondAttribute="bottom" constant="4" id="fs0-iw-zTo"/>
                                             </constraints>
@@ -58,7 +49,7 @@
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Title (Optional)" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="u7n-VL-Ho9">
                                                     <rect key="frame" x="20" y="4" width="303" height="36"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <textInputTraits key="textInputTraits"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -106,26 +97,47 @@
                             <outlet property="delegate" destination="7aE-6a-iP7" id="zYS-q2-iEf"/>
                         </connections>
                     </tableView>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="Add Web Feed" id="i1W-2z-PAk">
-                        <barButtonItem key="rightBarButtonItem" id="r7V-oB-aHz">
-                            <view key="customView" contentMode="scaleToFill" id="4in-Eb-Rxp">
-                                <rect key="frame" x="339" y="12" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="QpU-Ro-nHd">
+                            <connections>
+                                <action selector="cancel:" destination="7aE-6a-iP7" id="g4H-Mc-Jnh"/>
+                            </connections>
                         </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem enabled="NO" title="Add" id="F8z-me-Hnx">
+                                <connections>
+                                    <action selector="add:" destination="7aE-6a-iP7" id="66n-Ea-YXO"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem id="qP4-8x-XbO">
+                                <view key="customView" contentMode="scaleToFill" id="9ct-kH-nAp">
+                                    <rect key="frame" x="300.33333333333331" y="12" width="20" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="3ph-Td-s1Z">
+                                            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="3ph-Td-s1Z" id="ouh-78-smj"/>
+                        <outlet property="addButton" destination="F8z-me-Hnx" id="l1b-UL-238"/>
                         <outlet property="nameTextField" destination="u7n-VL-Ho9" id="YQV-Xq-f9q"/>
-                        <outlet property="urlBuilderButton" destination="f0N-Iy-ZFD" id="HlB-Cu-Dak"/>
                         <outlet property="urlTextField" destination="eRp-AP-WFq" id="FG3-pH-2Fh"/>
                         <outlet property="urlTextFieldToSuperViewConstraint" destination="Xue-v3-aqR" id="ZcO-5b-g08"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TO9-rb-MQ7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1711.2" y="89.408866995073893"/>
+            <point key="canvasLocation" x="-1711" y="89"/>
         </scene>
         <!--Modal Navigation Controller-->
         <scene sceneID="hbe-Yu-anW">
@@ -141,7 +153,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ndl-Bj-xD7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2452" y="757"/>
+            <point key="canvasLocation" x="-1711" y="756"/>
         </scene>
         <!--Web Feed Folder-->
         <scene sceneID="wnD-aY-W32">
@@ -237,116 +249,28 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gE2-fq-mL5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1686" y="757"/>
+            <point key="canvasLocation" x="-962" y="756"/>
         </scene>
         <!--Navigation Controller-->
-        <scene sceneID="9m0-Wv-Ipq">
+        <scene sceneID="1In-mk-bYI">
             <objects>
-                <navigationController storyboardIdentifier="AddContainerNavigationViewController" id="bqE-WD-JXz" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="dZt-u5-9kz">
+                <navigationController storyboardIdentifier="AddWebFeedViewControllerNav" id="4Ej-aI-tUP" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Fot-QF-7Rn">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="G8j-dh-7Ji" kind="relationship" relationship="rootViewController" id="rGX-Hf-QYs"/>
+                        <segue destination="7aE-6a-iP7" kind="relationship" relationship="rootViewController" id="4tH-Fk-eD2"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ay4-WY-2PI" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8GA-I5-K0s" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3233" y="91"/>
-        </scene>
-        <!--Add Container View Controller-->
-        <scene sceneID="ICN-hJ-Mn2">
-            <objects>
-                <viewController storyboardIdentifier="AddContainerViewController" id="G8j-dh-7Ji" customClass="AddContainerViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="cJo-ve-mLk">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uZB-hh-ssC">
-                                <rect key="frame" x="16" y="108" width="343" height="44"/>
-                                <subviews>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="1Ce-E7-rG2">
-                                        <rect key="frame" x="81.666666666666686" y="6.6666666666666714" width="180" height="32"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="180" id="IEO-pf-4PB"/>
-                                        </constraints>
-                                        <segments>
-                                            <segment title="Web Feed"/>
-                                            <segment title="Folder"/>
-                                        </segments>
-                                        <connections>
-                                            <action selector="typeSelectorChanged:" destination="G8j-dh-7Ji" eventType="valueChanged" id="evz-dY-V8G"/>
-                                        </connections>
-                                    </segmentedControl>
-                                </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="GUX-dy-aVL"/>
-                                    <constraint firstItem="1Ce-E7-rG2" firstAttribute="centerY" secondItem="uZB-hh-ssC" secondAttribute="centerY" id="Tb3-6c-IQ1"/>
-                                    <constraint firstItem="1Ce-E7-rG2" firstAttribute="centerX" secondItem="uZB-hh-ssC" secondAttribute="centerX" id="rOR-X2-CpH"/>
-                                </constraints>
-                            </view>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TUN-mZ-uLE">
-                                <rect key="frame" x="0.0" y="172" width="375" height="640"/>
-                            </containerView>
-                        </subviews>
-                        <color key="backgroundColor" systemColor="systemGroupedBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="uZB-hh-ssC" firstAttribute="top" secondItem="pP4-52-FAl" secondAttribute="top" constant="20" id="9dr-mx-TgM"/>
-                            <constraint firstItem="uZB-hh-ssC" firstAttribute="leading" secondItem="pP4-52-FAl" secondAttribute="leading" constant="16" id="Gnt-hX-ubZ"/>
-                            <constraint firstAttribute="bottom" secondItem="TUN-mZ-uLE" secondAttribute="bottom" id="GrY-qn-cjm"/>
-                            <constraint firstItem="TUN-mZ-uLE" firstAttribute="top" secondItem="uZB-hh-ssC" secondAttribute="bottom" constant="20" id="JMI-ia-iIJ"/>
-                            <constraint firstItem="TUN-mZ-uLE" firstAttribute="trailing" secondItem="pP4-52-FAl" secondAttribute="trailing" id="SJI-cb-6hr"/>
-                            <constraint firstItem="TUN-mZ-uLE" firstAttribute="leading" secondItem="pP4-52-FAl" secondAttribute="leading" id="ab5-qk-Xmn"/>
-                            <constraint firstItem="pP4-52-FAl" firstAttribute="trailing" secondItem="uZB-hh-ssC" secondAttribute="trailing" constant="16" id="t9m-rQ-Ijv"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="pP4-52-FAl"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="3Al-Zd-2cS">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="Uz9-n0-t2M">
-                            <connections>
-                                <action selector="cancel:" destination="G8j-dh-7Ji" id="7m6-ad-a2V"/>
-                            </connections>
-                        </barButtonItem>
-                        <rightBarButtonItems>
-                            <barButtonItem enabled="NO" title="Add" id="tVq-rz-5pe">
-                                <connections>
-                                    <action selector="add:" destination="G8j-dh-7Ji" id="fWb-l7-nc0"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem id="chA-NW-oNo">
-                                <view key="customView" contentMode="scaleToFill" id="nG1-ZO-oLQ">
-                                    <rect key="frame" x="300" y="12" width="20" height="20"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Vwh-O4-dFl">
-                                            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        </activityIndicatorView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </view>
-                            </barButtonItem>
-                        </rightBarButtonItems>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="activityIndicatorView" destination="Vwh-O4-dFl" id="xJ0-0X-Yq0"/>
-                        <outlet property="addButton" destination="tVq-rz-5pe" id="kNP-KC-naP"/>
-                        <outlet property="cancelButton" destination="Uz9-n0-t2M" id="dZu-nz-p4J"/>
-                        <outlet property="containerView" destination="TUN-mZ-uLE" id="8p5-N0-LRa"/>
-                        <outlet property="typeSelectorContainer" destination="uZB-hh-ssC" id="gg2-Za-eTy"/>
-                        <outlet property="typeSelectorSegmentedControl" destination="1Ce-E7-rG2" id="3JA-Su-PFn"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="KrE-EC-ioA" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-2452" y="90"/>
+            <point key="canvasLocation" x="-1711" y="-611"/>
         </scene>
         <!--Add Folder-->
         <scene sceneID="m7L-uI-ghq">
             <objects>
-                <tableViewController storyboardIdentifier="AddFolderViewController" id="3dI-34-ljo" customClass="AddFolderViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="3dI-34-ljo" customClass="AddFolderViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="static" style="insetGrouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="7xa-gZ-zHA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -363,7 +287,7 @@
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lZK-wx-jbo">
                                                     <rect key="frame" x="20" y="4" width="303" height="36"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <textInputTraits key="textInputTraits"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -435,11 +359,23 @@
                             <outlet property="delegate" destination="3dI-34-ljo" id="ZXX-gI-6ii"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Add Folder" id="LuA-AC-n99"/>
+                    <navigationItem key="navigationItem" title="Add Folder" id="LuA-AC-n99">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="OPb-pt-GzR">
+                            <connections>
+                                <action selector="cancel:" destination="3dI-34-ljo" id="LLG-Xw-5nu"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Add" id="gXG-Xt-d9B">
+                            <connections>
+                                <action selector="add:" destination="3dI-34-ljo" id="d1a-W6-8ST"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="accountLabel" destination="mxj-Bw-Jfx" id="l4A-ta-dUi"/>
                         <outlet property="accountPickerView" destination="eGY-V8-gzJ" id="zGk-k4-Jnd"/>
+                        <outlet property="addButton" destination="gXG-Xt-d9B" id="BW0-Q7-stj"/>
                         <outlet property="nameTextField" destination="lZK-wx-jbo" id="Xvq-LH-kwC"/>
                     </connections>
                 </tableViewController>
@@ -447,90 +383,24 @@
             </objects>
             <point key="canvasLocation" x="-961" y="89"/>
         </scene>
-        <!--Modal Navigation Controller-->
-        <scene sceneID="cdQ-dD-r6b">
+        <!--Navigation Controller-->
+        <scene sceneID="Hm3-Dz-Cpu">
             <objects>
-                <navigationController storyboardIdentifier="SelectURLBuilderNavViewController" id="iBn-vt-JuI" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="5ft-mx-bH1">
+                <navigationController storyboardIdentifier="AddFolderViewControllerNav" id="edk-IE-nce" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Pi1-Bc-YXQ">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="Wls-o6-7V8" kind="relationship" relationship="rootViewController" id="jlb-J3-50h"/>
+                        <segue destination="3dI-34-ljo" kind="relationship" relationship="rootViewController" id="nk7-pM-zHX"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tmd-jJ-oxP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ivk-RR-1yS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2452" y="1416"/>
-        </scene>
-        <!--Select URL Builder-->
-        <scene sceneID="uAc-pe-d1U">
-            <objects>
-                <tableViewController storyboardIdentifier="SelectURLBuilderViewController" title="Select URL Builder" id="Wls-o6-7V8" customClass="SelectURLBuilderTableViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="SBu-NT-kQA">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="URLBuilderCell" rowHeight="55" id="7Qf-cp-hyD" customClass="SelectComboTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="16" y="55.333332061767578" width="343" height="55"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7Qf-cp-hyD" id="Rsw-xP-7HT">
-                                    <rect key="frame" x="0.0" y="0.0" width="317" height="55"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Jka-S1-56k">
-                                            <rect key="frame" x="20" y="15.666666666666664" width="130" height="24"/>
-                                            <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="hammer" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="lQk-5J-fON">
-                                                    <rect key="frame" x="0.0" y="-0.66666666666666785" width="24" height="26.333333333333336"/>
-                                                    <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="24" id="u9L-D0-kgu"/>
-                                                        <constraint firstAttribute="height" constant="24" id="wDw-bL-u3p"/>
-                                                    </constraints>
-                                                </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="URL Builder" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ys7-kv-kLW">
-                                                    <rect key="frame" x="40" y="0.0" width="90" height="24"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </stackView>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="Jka-S1-56k" firstAttribute="leading" secondItem="Rsw-xP-7HT" secondAttribute="leading" constant="20" symbolic="YES" id="2Sh-PL-a9u"/>
-                                        <constraint firstItem="Jka-S1-56k" firstAttribute="centerY" secondItem="Rsw-xP-7HT" secondAttribute="centerY" id="k1d-3l-LGF"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                                <inset key="separatorInset" minX="45" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                <connections>
-                                    <outlet property="icon" destination="lQk-5J-fON" id="uCm-OV-S80"/>
-                                    <outlet property="label" destination="Ys7-kv-kLW" id="v99-KU-U8q"/>
-                                </connections>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="Wls-o6-7V8" id="3V5-PC-jlM"/>
-                            <outlet property="delegate" destination="Wls-o6-7V8" id="kWB-zE-rh5"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Select URL Builder" id="02z-m5-leN">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="xeT-hn-DyW">
-                            <connections>
-                                <action selector="cancel:" destination="Wls-o6-7V8" id="9rX-tp-GwL"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="qFt-gM-HqV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1687" y="1416"/>
+            <point key="canvasLocation" x="-962" y="-618"/>
         </scene>
     </scenes>
     <resources>
-        <image name="hammer" catalog="system" width="128" height="115"/>
         <namedColor name="secondaryAccentColor">
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

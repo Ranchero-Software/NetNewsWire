@@ -12,25 +12,29 @@ import RSCore
 import RSTree
 import RSParser
 
-class AddWebFeedViewController: UITableViewController, AddContainerViewControllerChild {
+class AddWebFeedViewController: UITableViewController {
 	
-	@IBOutlet private weak var urlTextField: UITextField!
+	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+	@IBOutlet weak var addButton: UIBarButtonItem!
+	@IBOutlet weak var urlTextField: UITextField!
 	@IBOutlet weak var urlTextFieldToSuperViewConstraint: NSLayoutConstraint!
-	@IBOutlet weak var urlBuilderButton: UIButton!
-	@IBOutlet private weak var nameTextField: UITextField!
+	@IBOutlet weak var nameTextField: UITextField!
+	
+	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 	
 	private var folderLabel = ""
 	private var userCancelled = false
 
-	weak var delegate: AddContainerViewControllerChildDelegate?
 	var initialFeed: String?
 	var initialFeedName: String?
 
 	var container: Container?
 	
 	override func viewDidLoad() {
-		
         super.viewDidLoad()
+		
+		activityIndicator.isHidden = true
+		activityIndicator.color = .label
 		
 		if initialFeed == nil, let urlString = UIPasteboard.general.string {
 			if urlString.mayBeURL {
@@ -43,15 +47,8 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		urlTextField.text = initialFeed
 		urlTextField.delegate = self
 		
-		if ExtensionPointManager.shared.isTwitterEnabled {
-			urlTextFieldToSuperViewConstraint.isActive = false
-			urlTextField.trailingAnchor.constraint(equalTo: urlBuilderButton.leadingAnchor, constant: -8).isActive = true
-		} else {
-			urlBuilderButton.isHidden = true
-		}
-		
 		if initialFeed != nil {
-			delegate?.readyToAdd(state: true)
+			addButton.isEnabled = true
 		}
 		
 		nameTextField.text = initialFeedName
@@ -60,40 +57,31 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 		if let defaultContainer = AddWebFeedDefaultContainer.defaultContainer {
 			container = defaultContainer
 		} else {
-			delegate?.readyToAdd(state: false)
+			addButton.isEnabled = false
 		}
 		
 		updateFolderLabel()
 		
-		// I couldn't figure out the gap at the top of the UITableView, so I took a hammer to it.
-		tableView.contentInset = UIEdgeInsets(top: -28, left: 0, bottom: 0, right: 0)
-		
 		tableView.register(UINib(nibName: "AddWebFeedSelectFolderTableViewCell", bundle: nil), forCellReuseIdentifier: "AddWebFeedSelectFolderTableViewCell")
 
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: urlTextField)
-
+		
+		if initialFeed == nil {
+			urlTextField.becomeFirstResponder()
+		}
 	}
 	
-	@IBAction func showURLBuilder(_ sender: Any) {
-		let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "SelectURLBuilderNavViewController") as! UINavigationController
-		navController.modalPresentationStyle = .currentContext
-		let selectURLBuilder = navController.topViewController as! SelectURLBuilderTableViewController
-		selectURLBuilder.delegate = self
-		present(navController, animated: true)
-	}
-	
-	func cancel() {
+	@IBAction func cancel(_ sender: Any) {
 		userCancelled = true
-		delegate?.processingDidCancel()
+		dismiss(animated: true)
 	}
 	
-	func add() {
+	@IBAction func add(_ sender: Any) {
 
 		let urlString = urlTextField.text ?? ""
 		let normalizedURLString = urlString.normalizedURL
 		
 		guard !normalizedURLString.isEmpty, let url = URL(unicodeString: normalizedURLString) else {
-			delegate?.processingDidCancel()
 			return
 		}
 		
@@ -111,7 +99,9 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
  			return
 		}
 		
-		delegate?.processingDidBegin()
+		addButton.isEnabled = false
+		activityIndicator.isHidden = false
+		activityIndicator.startAnimating()
 		
 		let feedName = (nameTextField.text?.isEmpty ?? true) ? nil : nameTextField.text
 		
@@ -123,11 +113,13 @@ class AddWebFeedViewController: UITableViewController, AddContainerViewControlle
 			
 			switch result {
 			case .success(let feed):
-				self.delegate?.processingDidEnd()
+				self.dismiss(animated: true)
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])
 			case .failure(let error):
+				self.addButton.isEnabled = true
+				self.activityIndicator.isHidden = true
+				self.activityIndicator.stopAnimating()
 				self.presentError(error)
-				self.delegate?.processingDidCancel()
 			}
 
 		}
@@ -171,17 +163,6 @@ extension AddWebFeedViewController: AddWebFeedFolderViewControllerDelegate {
 	}
 }
 
-// MARK: AddWebFeedFolderViewControllerDelegate
-
-extension AddWebFeedViewController: SelectURLBuilderDelegate {
-	
-	func selectURLBuilderDidBuildURL(_ url: URL) {
-		urlTextField.text = url.absoluteString
-		updateUI()
-	}
-	
-}
-
 // MARK: UITextFieldDelegate
 
 extension AddWebFeedViewController: UITextFieldDelegate {
@@ -198,7 +179,7 @@ extension AddWebFeedViewController: UITextFieldDelegate {
 private extension AddWebFeedViewController {
 	
 	func updateUI() {
-		delegate?.readyToAdd(state: urlTextField.text?.mayBeURL ?? false)
+		addButton.isEnabled = (urlTextField.text?.mayBeURL ?? false)
 	}
 	
 	func updateFolderLabel() {

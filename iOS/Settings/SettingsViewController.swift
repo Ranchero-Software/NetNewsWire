@@ -371,14 +371,13 @@ private extension SettingsViewController {
 	
 	func addFeed() {
 		self.dismiss(animated: true)
-		
-		let addNavViewController = UIStoryboard.add.instantiateInitialViewController() as! UINavigationController
-		let addViewController = addNavViewController.topViewController as! AddContainerViewController
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddContainerViewController.preferredContentSizeForFormSheetDisplay
-		addViewController.initialControllerType = .feed
+
+		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
+		let addViewController = addNavViewController.topViewController as! AddWebFeedViewController
 		addViewController.initialFeed = appNewsURLString
-		addViewController.initialFeedName = "NetNewsWire News"
+		addViewController.initialFeedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
+		addNavViewController.modalPresentationStyle = .formSheet
+		addNavViewController.preferredContentSize = AddWebFeedViewController.preferredContentSizeForFormSheetDisplay
 		
 		presentingParentController?.present(addNavViewController, animated: true)
 	}

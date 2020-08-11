@@ -394,7 +394,29 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	@IBAction func add(_ sender: UIBarButtonItem) {
-		coordinator.showAdd(.feed)
+		let title = NSLocalizedString("Add Item", comment: "Add Item")
+		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+		
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
+		
+		let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+		let addWebFeedAction = UIAlertAction(title: addWebFeedActionTitle, style: .default) { _ in
+			self.coordinator.showAddFeed()
+		}
+		
+		let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
+			self.coordinator.showAddFolder()
+		}
+		
+		alertController.addAction(addWebFeedAction)
+		alertController.addAction(addWebFolderAction)
+		alertController.addAction(cancelAction)
+		
+		alertController.popoverPresentationController?.barButtonItem = sender
+
+		present(alertController, animated: true)
 	}
 	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {

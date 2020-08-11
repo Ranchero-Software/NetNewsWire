@@ -100,7 +100,7 @@ private extension SceneDelegate {
 		case "com.ranchero.NetNewsWire.ShowSearch":
 			coordinator.showSearch()
 		case "com.ranchero.NetNewsWire.ShowAdd":
-			coordinator.showAdd(.feed)
+			coordinator.showAddFeed()
 		default:
 			break
 		}
