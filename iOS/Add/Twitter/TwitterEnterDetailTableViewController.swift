@@ -9,19 +9,18 @@
 import UIKit
 import Account
 
-class TwitterEnterDetailTableViewController: UITableViewController, SelectURLBuilder {
+class TwitterEnterDetailTableViewController: UITableViewController {
 	
 	@IBOutlet weak var detailTextField: UITextField!
 	
 	var doneBarButtonItem = UIBarButtonItem()
 	var twitterFeedType: TwitterFeedType?
-	weak var delegate: SelectURLBuilderDelegate?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 
-		doneBarButtonItem.title = NSLocalizedString("Done", comment: "Done")
-		doneBarButtonItem.style = .done
+		doneBarButtonItem.title = NSLocalizedString("Next", comment: "Next")
+		doneBarButtonItem.style = .plain
 		doneBarButtonItem.target = self
 		doneBarButtonItem.action = #selector(done)
 		navigationItem.rightBarButtonItem = doneBarButtonItem
@@ -42,21 +41,21 @@ class TwitterEnterDetailTableViewController: UITableViewController, SelectURLBui
 
 	@objc func done() {
 		guard let twitterFeedType = twitterFeedType, var text = detailTextField.text?.collapsingWhitespace else { return }
-		
+
+		let url: String?
 		if twitterFeedType == .screenName {
 			if text.starts(with: "@") {
 				text = String(text[text.index(text.startIndex, offsetBy: 1)..<text.endIndex])
 			}
-			if let url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: text, searchField: nil) {
-				delegate?.selectURLBuilderDidBuildURL(url)
-			}
+			url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: text, searchField: nil)?.absoluteString
 		} else {
-			if let url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: nil, searchField: text) {
-				delegate?.selectURLBuilderDidBuildURL(url)
-			}
+			url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: nil, searchField: text)?.absoluteString
 		}
 		
-		dismiss(animated: true)
+		let addViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewController") as! AddWebFeedViewController
+		addViewController.addFeedType = .twitter
+		addViewController.initialFeed = url
+		navigationController?.pushViewController(addViewController, animated: true)
 	}
 	
 	@objc func textDidChange(_ note: Notification) {

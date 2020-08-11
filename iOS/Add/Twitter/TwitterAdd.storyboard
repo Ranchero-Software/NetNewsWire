@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="q78-0w-suH">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="4Q4-Hi-Lic">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -8,6 +8,22 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="np9-bP-Yhx">
+            <objects>
+                <navigationController id="4Q4-Hi-Lic" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9e6-4b-IPV">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="q78-0w-suH" kind="relationship" relationship="rootViewController" id="xn5-zT-uXK"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sjJ-Fz-BXf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1254" y="173"/>
+        </scene>
         <!--Select Type-->
         <scene sceneID="Fmm-TL-h7h">
             <objects>
@@ -19,11 +35,11 @@
                         <sections>
                             <tableViewSection id="Dp6-La-NeL">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="WAs-zr-8RJ" detailTextLabel="f8o-SY-a2H" style="IBUITableViewCellStyleSubtitle" id="VbH-aQ-M4H" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="WAs-zr-8RJ" detailTextLabel="f8o-SY-a2H" style="IBUITableViewCellStyleSubtitle" id="VbH-aQ-M4H" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="18" width="374" height="59"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VbH-aQ-M4H" id="Qud-m5-1ZQ">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="59"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Home Timeline" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="WAs-zr-8RJ">
@@ -43,11 +59,11 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="K0b-HX-8dR" detailTextLabel="uaZ-4Q-FBS" style="IBUITableViewCellStyleSubtitle" id="jft-wJ-OVX" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="K0b-HX-8dR" detailTextLabel="uaZ-4Q-FBS" style="IBUITableViewCellStyleSubtitle" id="jft-wJ-OVX" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="77" width="374" height="59"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jft-wJ-OVX" id="dXF-Bc-NkR">
-                                            <rect key="frame" x="0.0" y="0.0" width="374" height="59"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="59"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Mentions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="K0b-HX-8dR">
@@ -123,6 +139,7 @@
                             <outlet property="delegate" destination="q78-0w-suH" id="j69-O6-ths"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Select Twitter Type" id="kjr-7P-QSh"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yI5-IG-7Sl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -138,15 +155,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="j8c-JM-nzm" style="IBUITableViewCellStyleDefault" id="vEE-Gx-Zgc" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="Cell" textLabel="j8c-JM-nzm" style="IBUITableViewCellStyleDefault" id="vEE-Gx-Zgc" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="20" y="55.5" width="374" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vEE-Gx-Zgc" id="pa0-mR-hgR">
-                                    <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="343" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="j8c-JM-nzm">
-                                            <rect key="frame" x="20" y="0.0" width="334" height="43.5"/>
+                                            <rect key="frame" x="20" y="0.0" width="315" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <nil key="textColor"/>

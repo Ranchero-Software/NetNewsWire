@@ -9,12 +9,11 @@
 import UIKit
 import Account
 
-class TwitterSelectAccountTableViewController: UITableViewController, SelectURLBuilder {
+class TwitterSelectAccountTableViewController: UITableViewController {
 	
 	private var twitterFeedProviders = [TwitterFeedProvider]()
 	
 	var twitterFeedType: TwitterFeedType?
-	weak var delegate: SelectURLBuilderDelegate?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,11 +32,14 @@ class TwitterSelectAccountTableViewController: UITableViewController, SelectURLB
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		guard let twitterFeedType = twitterFeedType else { return }
+
 		let username = twitterFeedProviders[indexPath.row].screenName
-		if let url = TwitterFeedProvider.buildURL(twitterFeedType, username: username, screenName: nil, searchField: nil) {
-			delegate?.selectURLBuilderDidBuildURL(url)
-		}
-		dismiss(animated: true)
+		let url = TwitterFeedProvider.buildURL(twitterFeedType, username: username, screenName: nil, searchField: nil)?.absoluteString
+
+		let addViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewController") as! AddWebFeedViewController
+		addViewController.addFeedType = .twitter
+		addViewController.initialFeed = url
+		navigationController?.pushViewController(addViewController, animated: true)
 	}
 	
 }
