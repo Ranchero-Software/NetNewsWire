@@ -164,6 +164,7 @@ class AddFeedViewController: UITableViewController {
 			navController.modalPresentationStyle = .currentContext
 			let folderViewController = navController.topViewController as! AddFeedFolderViewController
 			folderViewController.delegate = self
+			folderViewController.addFeedType = addFeedType
 			folderViewController.initialContainer = container
 			present(navController, animated: true)
 		}

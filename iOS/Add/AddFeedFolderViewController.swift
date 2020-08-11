@@ -17,6 +17,7 @@ protocol AddFeedFolderViewControllerDelegate {
 class AddFeedFolderViewController: UITableViewController {
 	
 	var delegate: AddFeedFolderViewControllerDelegate?
+	var addFeedType = AddFeedType.web
 	var initialContainer: Container?
 	
 	var containers = [Container]()
@@ -24,7 +25,14 @@ class AddFeedFolderViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		for account in AccountManager.shared.sortedActiveAccounts {
+		var sortedActiveAccounts: [Account]
+		if addFeedType == .web {
+			sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
+		} else {
+			sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts.filter { $0.type == .onMyMac || $0.type == .cloudKit }
+		}
+		
+		for account in sortedActiveAccounts {
 			containers.append(account)
 			if let sortedFolders = account.sortedFolders {
 				containers.append(contentsOf: sortedFolders)
