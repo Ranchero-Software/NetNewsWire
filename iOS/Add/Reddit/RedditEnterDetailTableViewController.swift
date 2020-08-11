@@ -11,13 +11,12 @@ import Foundation
 import UIKit
 import Account
 
-class RedditEnterDetailTableViewController: UITableViewController, SelectURLBuilder {
+class RedditEnterDetailTableViewController: UITableViewController {
 	
 	@IBOutlet weak var detailTextField: UITextField!
 	
 	var nextBarButtonItem = UIBarButtonItem()
 	var redditFeedType: RedditFeedType?
-	weak var delegate: SelectURLBuilderDelegate?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +37,6 @@ class RedditEnterDetailTableViewController: UITableViewController, SelectURLBuil
 		let selectSort = UIStoryboard.redditAdd.instantiateController(ofType: RedditSelectSortTableViewController.self)
 		selectSort.redditFeedType = redditFeedType
 		selectSort.subreddit = detailTextField.text?.collapsingWhitespace
-		selectSort.delegate = delegate
 		navigationController?.pushViewController(selectSort, animated: true)
 	}
 	

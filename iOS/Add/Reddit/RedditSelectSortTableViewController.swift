@@ -9,16 +9,11 @@
 import UIKit
 import Account
 
-class RedditSelectSortTableViewController: UITableViewController, SelectURLBuilder {
+class RedditSelectSortTableViewController: UITableViewController {
 	
-	weak var delegate: SelectURLBuilderDelegate?
 	var redditFeedType: RedditFeedType?
 	var username: String?
 	var subreddit: String?
-	
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
@@ -39,11 +34,13 @@ class RedditSelectSortTableViewController: UITableViewController, SelectURLBuild
 		}
 
 		guard let redditFeedType = redditFeedType else { return }
+		let url = RedditFeedProvider.buildURL(redditFeedType, username: username, subreddit: subreddit, sort: sort)?.absoluteString
 		
-		if let url = RedditFeedProvider.buildURL(redditFeedType, username: username, subreddit: subreddit, sort: sort) {
-			delegate?.selectURLBuilderDidBuildURL(url)
-		}
-		dismiss(animated: true)
+		let addViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewController") as! AddWebFeedViewController
+		addViewController.addFeedType = .reddit
+		addViewController.initialFeed = url
+		navigationController?.pushViewController(addViewController, animated: true)
+
 	}
 	
 }

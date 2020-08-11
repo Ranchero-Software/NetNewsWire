@@ -402,7 +402,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
 		let addWebFeedAction = UIAlertAction(title: addWebFeedActionTitle, style: .default) { _ in
-			self.coordinator.showAddFeed()
+			self.coordinator.showAddWebFeed()
+		}
+		
+		let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
+		let addRedditFeedAction = UIAlertAction(title: addRedditFeedActionTitle, style: .default) { _ in
+			self.coordinator.showAddRedditFeed()
 		}
 		
 		let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
@@ -411,6 +416,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		alertController.addAction(addWebFeedAction)
+		alertController.addAction(addRedditFeedAction)
 		alertController.addAction(addWebFolderAction)
 		alertController.addAction(cancelAction)
 		

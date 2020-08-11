@@ -384,7 +384,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			case .readArticle:
 				self.handleReadArticle(activity.userInfo)
 			case .addFeedIntent:
-				self.showAddFeed()
+				self.showAddWebFeed()
 			}
 		}
 	}
@@ -1167,7 +1167,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
 	
-	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
+	func showAddWebFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
 		
 		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
 		selectFeed(nil)
@@ -1178,6 +1178,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		addViewController.initialFeed = initialFeed
 		addViewController.initialFeedName = initialFeedName
 		
+		addNavViewController.modalPresentationStyle = .formSheet
+		addNavViewController.preferredContentSize = AddWebFeedViewController.preferredContentSizeForFormSheetDisplay
+		masterFeedViewController.present(addNavViewController, animated: true)
+	}
+	
+	func showAddRedditFeed() {
+		let addNavViewController = UIStoryboard.redditAdd.instantiateInitialViewController() as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddWebFeedViewController.preferredContentSizeForFormSheetDisplay
 		masterFeedViewController.present(addNavViewController, animated: true)

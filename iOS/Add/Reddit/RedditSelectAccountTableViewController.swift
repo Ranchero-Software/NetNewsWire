@@ -11,12 +11,11 @@ import Foundation
 import UIKit
 import Account
 
-class RedditSelectAccountTableViewController: UITableViewController, SelectURLBuilder {
+class RedditSelectAccountTableViewController: UITableViewController {
 	
 	private var redditFeedProviders = [RedditFeedProvider]()
 	
 	var redditFeedType: RedditFeedType?
-	weak var delegate: SelectURLBuilderDelegate?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +36,6 @@ class RedditSelectAccountTableViewController: UITableViewController, SelectURLBu
 		let selectSort = UIStoryboard.redditAdd.instantiateController(ofType: RedditSelectSortTableViewController.self)
 		selectSort.redditFeedType = redditFeedType
 		selectSort.username = redditFeedProviders[indexPath.row].username
-		selectSort.delegate = delegate
 		navigationController?.pushViewController(selectSort, animated: true)
 	}
 	

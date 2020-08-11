@@ -12,6 +12,12 @@ import RSCore
 import RSTree
 import RSParser
 
+enum AddFeedType {
+	case web
+	case reddit
+	case twitter
+}
+
 class AddWebFeedViewController: UITableViewController {
 	
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
@@ -25,6 +31,7 @@ class AddWebFeedViewController: UITableViewController {
 	private var folderLabel = ""
 	private var userCancelled = false
 
+	var addFeedType = AddFeedType.web
 	var initialFeed: String?
 	var initialFeedName: String?
 
@@ -32,6 +39,17 @@ class AddWebFeedViewController: UITableViewController {
 	
 	override func viewDidLoad() {
         super.viewDidLoad()
+		
+		switch addFeedType {
+		case .reddit:
+			navigationItem.title = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
+			navigationItem.leftBarButtonItem = nil
+		case .twitter:
+			navigationItem.title = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
+			navigationItem.leftBarButtonItem = nil
+		default:
+			break
+		}
 		
 		activityIndicator.isHidden = true
 		activityIndicator.color = .label

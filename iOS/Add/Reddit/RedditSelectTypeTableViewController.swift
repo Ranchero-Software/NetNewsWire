@@ -9,14 +9,12 @@
 import UIKit
 import Account
 
-class RedditSelectTypeTableViewController: UITableViewController, SelectURLBuilder {
+class RedditSelectTypeTableViewController: UITableViewController {
 	
-	weak var delegate: SelectURLBuilderDelegate?
+	@IBAction func cancel(_ sender: Any) {
+		dismiss(animated: true)
+	}
 	
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		switch indexPath.row {
 		case 0:
@@ -25,28 +23,23 @@ class RedditSelectTypeTableViewController: UITableViewController, SelectURLBuild
 				let selectSort = UIStoryboard.redditAdd.instantiateController(ofType: RedditSelectSortTableViewController.self)
 				selectSort.redditFeedType = .home
 				selectSort.username = redditFeedProviders.first!.username
-				selectSort.delegate = delegate
 				navigationController?.pushViewController(selectSort, animated: true)
 			} else {
 				let selectAccount = UIStoryboard.redditAdd.instantiateController(ofType: RedditSelectAccountTableViewController.self)
 				selectAccount.redditFeedType = .home
-				selectAccount.delegate = delegate
 				navigationController?.pushViewController(selectAccount, animated: true)
 			}
 		case 1:
 			let selectSort = UIStoryboard.redditAdd.instantiateController(ofType: RedditSelectSortTableViewController.self)
 			selectSort.redditFeedType = .popular
-			selectSort.delegate = delegate
 			navigationController?.pushViewController(selectSort, animated: true)
 		case 2:
 			let selectSort = UIStoryboard.redditAdd.instantiateController(ofType: RedditSelectSortTableViewController.self)
 			selectSort.redditFeedType = .all
-			selectSort.delegate = delegate
 			navigationController?.pushViewController(selectSort, animated: true)
 		case 3:
 			let enterDetail = UIStoryboard.redditAdd.instantiateController(ofType: RedditEnterDetailTableViewController.self)
 			enterDetail.redditFeedType = .subreddit
-			enterDetail.delegate = delegate
 			navigationController?.pushViewController(enterDetail, animated: true)
 		default:
 			fatalError()
