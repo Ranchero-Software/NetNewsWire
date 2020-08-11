@@ -27,7 +27,7 @@ body {
 	}
 }
 
-body a, body a:link, body a:visited {
+body a, body a:visited {
 	color: var(--secondary-accent-color);
 }
 body .header {
