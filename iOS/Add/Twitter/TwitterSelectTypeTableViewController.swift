@@ -18,6 +18,10 @@ class TwitterSelectTypeTableViewController: UITableViewController {
 		twitterFeedProviders = ExtensionPointManager.shared.activeExtensionPoints.values.compactMap { $0 as? TwitterFeedProvider }
     }
 
+	@IBAction func cancel(_ sender: Any) {
+		dismiss(animated: true)
+	}
+	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = super.tableView(tableView, cellForRowAt: indexPath)
 		if indexPath.row < 2 {

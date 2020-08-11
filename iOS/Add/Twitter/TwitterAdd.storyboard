@@ -139,7 +139,13 @@
                             <outlet property="delegate" destination="q78-0w-suH" id="j69-O6-ths"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Select Twitter Type" id="kjr-7P-QSh"/>
+                    <navigationItem key="navigationItem" title="Select Twitter Type" id="kjr-7P-QSh">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="xkx-QM-tXd">
+                            <connections>
+                                <action selector="cancel:" destination="q78-0w-suH" id="3LG-Q8-Aqh"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yI5-IG-7Sl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
