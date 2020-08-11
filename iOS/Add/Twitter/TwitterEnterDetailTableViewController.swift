@@ -52,7 +52,7 @@ class TwitterEnterDetailTableViewController: UITableViewController {
 			url = TwitterFeedProvider.buildURL(twitterFeedType, username: nil, screenName: nil, searchField: text)?.absoluteString
 		}
 		
-		let addViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewController") as! AddWebFeedViewController
+		let addViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewController") as! AddFeedViewController
 		addViewController.addFeedType = .twitter
 		addViewController.initialFeed = url
 		navigationController?.pushViewController(addViewController, animated: true)

@@ -1,5 +1,5 @@
 //
-//  AddWebFeedSelectFolderTableViewCell.swift
+//  AddFeedSelectFolderTableViewCell.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 12/8/19.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AddWebFeedSelectFolderTableViewCell: VibrantTableViewCell {
+class AddFeedSelectFolderTableViewCell: VibrantTableViewCell {
 	
 	@IBOutlet weak var folderLabel: UILabel!
 	@IBOutlet weak var detailLabel: UILabel!

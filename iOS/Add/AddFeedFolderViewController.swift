@@ -1,5 +1,5 @@
 //
-//  AddWebFeedFolderViewController.swift
+//  AddFeedFolderViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 11/16/19.
@@ -10,13 +10,13 @@ import UIKit
 import RSCore
 import Account
 
-protocol AddWebFeedFolderViewControllerDelegate {
+protocol AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container)
 }
 
-class AddWebFeedFolderViewController: UITableViewController {
+class AddFeedFolderViewController: UITableViewController {
 	
-	var delegate: AddWebFeedFolderViewControllerDelegate?
+	var delegate: AddFeedFolderViewControllerDelegate?
 	var initialContainer: Container?
 	
 	var containers = [Container]()
@@ -90,7 +90,7 @@ class AddWebFeedFolderViewController: UITableViewController {
 	
 }
 
-private extension AddWebFeedFolderViewController {
+private extension AddFeedFolderViewController {
 	
 	func dismiss() {
 		dismiss(animated: true)

@@ -18,7 +18,7 @@ enum AddFeedType {
 	case twitter
 }
 
-class AddWebFeedViewController: UITableViewController {
+class AddFeedViewController: UITableViewController {
 	
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var addButton: UIBarButtonItem!
@@ -80,7 +80,7 @@ class AddWebFeedViewController: UITableViewController {
 		
 		updateFolderLabel()
 		
-		tableView.register(UINib(nibName: "AddWebFeedSelectFolderTableViewCell", bundle: nil), forCellReuseIdentifier: "AddWebFeedSelectFolderTableViewCell")
+		tableView.register(UINib(nibName: "AddFeedSelectFolderTableViewCell", bundle: nil), forCellReuseIdentifier: "AddFeedSelectFolderTableViewCell")
 
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: urlTextField)
 		
@@ -150,7 +150,7 @@ class AddWebFeedViewController: UITableViewController {
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		if indexPath.row == 2 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "AddWebFeedSelectFolderTableViewCell", for: indexPath) as? AddWebFeedSelectFolderTableViewCell
+			let cell = tableView.dequeueReusableCell(withIdentifier: "AddFeedSelectFolderTableViewCell", for: indexPath) as? AddFeedSelectFolderTableViewCell
 			cell!.detailLabel.text = folderLabel
 			return cell!
 		} else {
@@ -162,7 +162,7 @@ class AddWebFeedViewController: UITableViewController {
 		if indexPath.row == 2 {
 			let navController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedFolderNavViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
-			let folderViewController = navController.topViewController as! AddWebFeedFolderViewController
+			let folderViewController = navController.topViewController as! AddFeedFolderViewController
 			folderViewController.delegate = self
 			folderViewController.initialContainer = container
 			present(navController, animated: true)
@@ -173,7 +173,7 @@ class AddWebFeedViewController: UITableViewController {
 
 // MARK: AddWebFeedFolderViewControllerDelegate
 
-extension AddWebFeedViewController: AddWebFeedFolderViewControllerDelegate {
+extension AddFeedViewController: AddFeedFolderViewControllerDelegate {
 	func didSelect(container: Container) {
 		self.container = container
 		updateFolderLabel()
@@ -183,7 +183,7 @@ extension AddWebFeedViewController: AddWebFeedFolderViewControllerDelegate {
 
 // MARK: UITextFieldDelegate
 
-extension AddWebFeedViewController: UITextFieldDelegate {
+extension AddFeedViewController: UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
@@ -194,7 +194,7 @@ extension AddWebFeedViewController: UITextFieldDelegate {
 
 // MARK: Private
 
-private extension AddWebFeedViewController {
+private extension AddFeedViewController {
 	
 	func updateUI() {
 		addButton.isEnabled = (urlTextField.text?.mayBeURL ?? false)

@@ -373,11 +373,11 @@ private extension SettingsViewController {
 		self.dismiss(animated: true)
 
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
-		let addViewController = addNavViewController.topViewController as! AddWebFeedViewController
+		let addViewController = addNavViewController.topViewController as! AddFeedViewController
 		addViewController.initialFeed = appNewsURLString
 		addViewController.initialFeedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
 		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddWebFeedViewController.preferredContentSizeForFormSheetDisplay
+		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
 		
 		presentingParentController?.present(addNavViewController, animated: true)
 	}

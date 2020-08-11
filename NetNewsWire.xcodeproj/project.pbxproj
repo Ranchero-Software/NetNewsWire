@@ -420,7 +420,7 @@
 		51C4527C2265091600C03939 /* MasterTimelineDefaultCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452752265091600C03939 /* MasterTimelineDefaultCellLayout.swift */; };
 		51C4527F2265092C00C03939 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4527E2265092C00C03939 /* ArticleViewController.swift */; };
 		51C452862265093600C03939 /* Add.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51C452822265093600C03939 /* Add.storyboard */; };
-		51C452882265093600C03939 /* AddWebFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452842265093600C03939 /* AddWebFeedViewController.swift */; };
+		51C452882265093600C03939 /* AddFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C452842265093600C03939 /* AddFeedViewController.swift */; };
 		51C4528D2265095F00C03939 /* AddFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C4528B2265095F00C03939 /* AddFolderViewController.swift */; };
 		51C4528E2265099C00C03939 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
 		51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5391FC2308B00998D64 /* UnreadFeed.swift */; };
@@ -470,11 +470,11 @@
 		51DC37072402153E0095D371 /* UpdateSelectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */; };
 		51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */; };
 		51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */; };
-		51E36E71239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */; };
-		51E36E8C239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */; };
+		51E36E71239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E36E70239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift */; };
+		51E36E8C239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51E36E8B239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib */; };
 		51E3EB33229AB02C00645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB32229AB02C00645299 /* ErrorHandler.swift */; };
 		51E3EB3D229AB08300645299 /* ErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E3EB3C229AB08300645299 /* ErrorHandler.swift */; };
-		51E43962238037C400015C31 /* AddWebFeedFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */; };
+		51E43962238037C400015C31 /* AddFeedFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E43961238037C400015C31 /* AddFeedFolderViewController.swift */; };
 		51E4398023805EBC00015C31 /* AddComboTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4397F23805EBC00015C31 /* AddComboTableViewCell.swift */; };
 		51E4989724A8065700B667CB /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4989624A8065700B667CB /* CloudKit.framework */; };
 		51E4989924A8067000B667CB /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51E4989824A8067000B667CB /* WebKit.framework */; };
@@ -1673,7 +1673,7 @@
 		51C452752265091600C03939 /* MasterTimelineDefaultCellLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTimelineDefaultCellLayout.swift; sourceTree = "<group>"; };
 		51C4527E2265092C00C03939 /* ArticleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
 		51C452822265093600C03939 /* Add.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Add.storyboard; sourceTree = "<group>"; };
-		51C452842265093600C03939 /* AddWebFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddWebFeedViewController.swift; sourceTree = "<group>"; };
+		51C452842265093600C03939 /* AddFeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFeedViewController.swift; sourceTree = "<group>"; };
 		51C4528B2265095F00C03939 /* AddFolderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddFolderViewController.swift; sourceTree = "<group>"; };
 		51C452B32265141B00C03939 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		51C452B72265178500C03939 /* styleSheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = styleSheet.css; sourceTree = "<group>"; };
@@ -1692,11 +1692,11 @@
 		51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSelectionOperation.swift; sourceTree = "<group>"; };
 		51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedDataSourceOperation.swift; sourceTree = "<group>"; };
 		51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedWebView.swift; sourceTree = "<group>"; };
-		51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedSelectFolderTableViewCell.swift; sourceTree = "<group>"; };
-		51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddWebFeedSelectFolderTableViewCell.xib; sourceTree = "<group>"; };
+		51E36E70239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedSelectFolderTableViewCell.swift; sourceTree = "<group>"; };
+		51E36E8B239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddFeedSelectFolderTableViewCell.xib; sourceTree = "<group>"; };
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		51E3EB3C229AB08300645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
-		51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedFolderViewController.swift; sourceTree = "<group>"; };
+		51E43961238037C400015C31 /* AddFeedFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedFolderViewController.swift; sourceTree = "<group>"; };
 		51E4397F23805EBC00015C31 /* AddComboTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddComboTableViewCell.swift; sourceTree = "<group>"; };
 		51E4989624A8065700B667CB /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		51E4989824A8067000B667CB /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -2734,12 +2734,12 @@
 			children = (
 				51C452822265093600C03939 /* Add.storyboard */,
 				51E4397F23805EBC00015C31 /* AddComboTableViewCell.swift */,
+				51E43961238037C400015C31 /* AddFeedFolderViewController.swift */,
+				51E36E70239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift */,
+				51C452842265093600C03939 /* AddFeedViewController.swift */,
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
-				51E43961238037C400015C31 /* AddWebFeedFolderViewController.swift */,
-				51E36E70239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift */,
-				51C452842265093600C03939 /* AddWebFeedViewController.swift */,
 				510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */,
-				51E36E8B239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib */,
+				51E36E8B239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib */,
 				516AE5DD246AF2DD00731738 /* Reddit */,
 				510289CE2451BA1E00426DDF /* Twitter */,
 			);
@@ -4154,7 +4154,7 @@
 				51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 				514219582353C28900E07E2C /* main_ios.js in Resources */,
-				51E36E8C239D6765006F47A5 /* AddWebFeedSelectFolderTableViewCell.xib in Resources */,
+				51E36E8C239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib in Resources */,
 				51C452B82265178500C03939 /* styleSheet.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4854,7 +4854,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51E36E71239D6610006F47A5 /* AddWebFeedSelectFolderTableViewCell.swift in Sources */,
+				51E36E71239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift in Sources */,
 				512DD4C92430086400C17B1F /* CloudKitAccountViewController.swift in Sources */,
 				840D617F2029031C009BC708 /* AppDelegate.swift in Sources */,
 				51236339236915B100951F16 /* RoundedProgressView.swift in Sources */,
@@ -4878,7 +4878,7 @@
 				51C45269226508F600C03939 /* MasterFeedTableViewCell.swift in Sources */,
 				51F85BFD2275DCA800C787DC /* SingleLineUILabelSizer.swift in Sources */,
 				517630232336657E00E15FFF /* WebViewProvider.swift in Sources */,
-				51E43962238037C400015C31 /* AddWebFeedFolderViewController.swift in Sources */,
+				51E43962238037C400015C31 /* AddFeedFolderViewController.swift in Sources */,
 				519ED47A24482AEB007F8E94 /* EnableExtensionPointViewController.swift in Sources */,
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
 				51FD413B2342BD0500880194 /* MasterTimelineUnreadCountView.swift in Sources */,
@@ -4979,7 +4979,7 @@
 				512392C224E33A3C00F11704 /* RedditEnterDetailTableViewController.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5108F6D823763094001ABC45 /* TickMarkSlider.swift in Sources */,
-				51C452882265093600C03939 /* AddWebFeedViewController.swift in Sources */,
+				51C452882265093600C03939 /* AddFeedViewController.swift in Sources */,
 				51B5C8C023F3866C00032075 /* ExtensionFeedAddRequestFile.swift in Sources */,
 				51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */,
 				51934CCE2310792F006127BE /* ActivityManager.swift in Sources */,

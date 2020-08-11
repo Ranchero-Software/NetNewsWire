@@ -1174,26 +1174,26 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
 		
-		let addViewController = addNavViewController.topViewController as! AddWebFeedViewController
+		let addViewController = addNavViewController.topViewController as! AddFeedViewController
 		addViewController.initialFeed = initialFeed
 		addViewController.initialFeedName = initialFeedName
 		
 		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddWebFeedViewController.preferredContentSizeForFormSheetDisplay
+		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
 		masterFeedViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showAddRedditFeed() {
 		let addNavViewController = UIStoryboard.redditAdd.instantiateInitialViewController() as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddWebFeedViewController.preferredContentSizeForFormSheetDisplay
+		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
 		masterFeedViewController.present(addNavViewController, animated: true)
 	}
 	
 	func showAddTwitterFeed() {
 		let addNavViewController = UIStoryboard.twitterAdd.instantiateInitialViewController() as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddWebFeedViewController.preferredContentSizeForFormSheetDisplay
+		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
 		masterFeedViewController.present(addNavViewController, animated: true)
 	}
 	

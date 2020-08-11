@@ -36,7 +36,7 @@ class RedditSelectSortTableViewController: UITableViewController {
 		guard let redditFeedType = redditFeedType else { return }
 		let url = RedditFeedProvider.buildURL(redditFeedType, username: username, subreddit: subreddit, sort: sort)?.absoluteString
 		
-		let addViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewController") as! AddWebFeedViewController
+		let addViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewController") as! AddFeedViewController
 		addViewController.addFeedType = .reddit
 		addViewController.initialFeed = url
 		navigationController?.pushViewController(addViewController, animated: true)
