@@ -836,7 +836,6 @@ extension MainWindowController: NSToolbarDelegate {
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
 		if #available(macOS 11.0, *) {
 			return [
-				.sidebarToggle,
 				.flexibleSpace,
 				.refresh,
 				.newSidebarItemMenu,
