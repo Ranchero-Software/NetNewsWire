@@ -30,7 +30,7 @@ struct SceneNavigationView: View {
 			SidebarContainerView()
 				.frame(minWidth: 100, idealWidth: 150, maxHeight: .infinity)
 			#else
-				SidebarContainerView()
+			SidebarContainerView()
 			#endif
 
 			#if os(iOS)
