@@ -155,10 +155,22 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
-		let iconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : AppAssets.secondaryAccentColor
+		
+		let iconTintColor: UIColor
+		if isHighlighted || isSelected {
+			iconTintColor = AppAssets.vibrantTextColor
+		} else {
+			if let preferredColor = iconImage?.preferredColor {
+				iconTintColor = UIColor(cgColor: preferredColor)
+			} else {
+				iconTintColor = AppAssets.secondaryAccentColor
+			}
+		}
+		
 		UIView.animate(withDuration: duration(animated: animated)) {
 			self.iconView.tintColor = iconTintColor
 		}
+		
 		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
 	}
 	
