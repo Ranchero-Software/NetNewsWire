@@ -405,6 +405,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
+		let isSpecialAccountAvailable = AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit })
 
 		if item.action == #selector(refreshAll(_:)) {
 			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty
@@ -419,13 +420,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		if item.action == #selector(showAddRedditFeedWindow(_:)) {
-			guard !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty else {
+			guard !isDisplayingSheet && isSpecialAccountAvailable else {
 				return false
 			}
 			return ExtensionPointManager.shared.isRedditEnabled
 		}
 		if item.action == #selector(showAddTwitterFeedWindow(_:)) {
-			guard !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty else {
+			guard !isDisplayingSheet && isSpecialAccountAvailable else {
 				return false
 			}
 			return ExtensionPointManager.shared.isTwitterEnabled

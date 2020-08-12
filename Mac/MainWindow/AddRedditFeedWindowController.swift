@@ -90,7 +90,7 @@ class AddRedditFeedWindowController : NSWindowController, AddFeedWindowControlle
 		}
 		accountPopupButton.menu = accountMenu
 		
-		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController.rootNode)
+		folderPopupButton.menu = FolderTreeMenu.createFolderPopupMenu(with: folderTreeController.rootNode, restrictToSpecialAccounts: true)
 		
 		if let container = AddWebFeedDefaultContainer.defaultContainer {
 			if let folder = container as? Folder, let account = folder.account {

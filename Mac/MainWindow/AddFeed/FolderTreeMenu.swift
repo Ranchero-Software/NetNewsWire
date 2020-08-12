@@ -13,7 +13,7 @@ import Account
 
 class FolderTreeMenu {
 
-	static func createFolderPopupMenu(with rootNode: Node) -> NSMenu {
+	static func createFolderPopupMenu(with rootNode: Node, restrictToSpecialAccounts: Bool = false) -> NSMenu {
 		
 		let menu = NSMenu(title: "Folders")
 		menu.autoenablesItems = false
@@ -21,6 +21,10 @@ class FolderTreeMenu {
 		for childNode in rootNode.childNodes {
 			
 			guard let account = childNode.representedObject as? Account else {
+				continue
+			}
+			
+			if restrictToSpecialAccounts && !(account.type == .onMyMac || account.type == .cloudKit) {
 				continue
 			}
 			
