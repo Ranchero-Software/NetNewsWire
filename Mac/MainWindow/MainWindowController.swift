@@ -695,6 +695,7 @@ extension MainWindowController : ScriptingMainWindowController {
 // MARK: - NSToolbarDelegate
 
 extension NSToolbarItem.Identifier {
+	static let sidebarToggle = NSToolbarItem.Identifier("sidebarToggle")
 	static let newFeed = NSToolbarItem.Identifier("newFeed")
 	static let newFolder = NSToolbarItem.Identifier("newFolder")
 	static let refresh = NSToolbarItem.Identifier("refresh")
@@ -717,6 +718,10 @@ extension MainWindowController: NSToolbarDelegate {
 		if #available(macOS 11.0, *) {
 
 			switch itemIdentifier {
+
+			case .sidebarToggle:
+				let title = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
+				return buildToolbarButton(.toggleSidebar, title, AppAssets.sidebarToggleImage, "toggleTheSidebar:")
 
 			case .refresh:
 				let title = NSLocalizedString("Refresh", comment: "Refresh")
@@ -792,6 +797,7 @@ extension MainWindowController: NSToolbarDelegate {
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
 		if #available(macOS 11.0, *) {
 			return [
+				.sidebarToggle,
 				.refresh,
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
@@ -830,6 +836,8 @@ extension MainWindowController: NSToolbarDelegate {
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
 		if #available(macOS 11.0, *) {
 			return [
+				.sidebarToggle,
+				.flexibleSpace,
 				.refresh,
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,

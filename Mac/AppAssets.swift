@@ -212,6 +212,11 @@ struct AppAssets {
 	}()
 
 	@available(macOS 11.0, *)
+	static var sidebarToggleImage: RSImage = {
+		return NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
+	}()
+	
+	@available(macOS 11.0, *)
 	static var starClosedImage: RSImage = {
 		return NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 	}()
