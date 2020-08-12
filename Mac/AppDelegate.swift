@@ -420,13 +420,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 		if item.action == #selector(showAddRedditFeedWindow(_:)) {
-			guard !isDisplayingSheet && isSpecialAccountAvailable else {
+			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isRedditEnabled else {
 				return false
 			}
 			return ExtensionPointManager.shared.isRedditEnabled
 		}
 		if item.action == #selector(showAddTwitterFeedWindow(_:)) {
-			guard !isDisplayingSheet && isSpecialAccountAvailable else {
+			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isTwitterEnabled else {
 				return false
 			}
 			return ExtensionPointManager.shared.isTwitterEnabled

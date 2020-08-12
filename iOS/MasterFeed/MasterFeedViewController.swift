@@ -423,8 +423,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		alertController.addAction(addWebFeedAction)
 		
 		if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-			alertController.addAction(addRedditFeedAction)
-			alertController.addAction(addTwitterFeedAction)
+			if ExtensionPointManager.shared.isRedditEnabled {
+				alertController.addAction(addRedditFeedAction)
+			}
+			if ExtensionPointManager.shared.isTwitterEnabled {
+				alertController.addAction(addTwitterFeedAction)
+			}
 		}
 		
 		alertController.addAction(addWebFolderAction)

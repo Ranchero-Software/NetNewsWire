@@ -27,7 +27,7 @@ class ExtensionPointAddViewController: NSViewController {
         super.viewDidLoad()
 		tableView.dataSource = self
 		tableView.delegate = self
-		availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes
+		availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
     }
     
 }

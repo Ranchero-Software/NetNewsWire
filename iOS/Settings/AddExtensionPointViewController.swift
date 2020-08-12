@@ -18,7 +18,7 @@ class AddExtensionPointViewController: UITableViewController, AddExtensionPointD
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes
+		availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
 	}
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
