@@ -15,7 +15,7 @@ struct SidebarContainerView: View {
 	
 	@State var sidebarItems = [SidebarItem]()
 
-    @ViewBuilder var body: some View {
+    var body: some View {
 		SidebarView(sidebarItems: $sidebarItems)
 			.modifier(SidebarToolbarModifier())
 			.modifier(SidebarListStyleModifier())

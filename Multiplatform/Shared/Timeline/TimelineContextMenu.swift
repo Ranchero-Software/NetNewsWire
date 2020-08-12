@@ -13,7 +13,7 @@ struct TimelineContextMenu: View {
 	@EnvironmentObject private var timelineModel: TimelineModel
 	var timelineItem: TimelineItem
 
-    @ViewBuilder var body: some View {
+    var body: some View {
 		
 		if timelineModel.canMarkIndicatedArticlesAsRead(timelineItem) {
 			Button {

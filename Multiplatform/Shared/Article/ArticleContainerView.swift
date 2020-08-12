@@ -11,7 +11,7 @@ import Articles
 
 struct ArticleContainerView: View {
 	
-	@ViewBuilder var body: some View {
+	var body: some View {
 		ArticleView()
 			.modifier(ArticleToolbarModifier())
 	}

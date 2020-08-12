@@ -16,7 +16,7 @@ struct AddWebFeedView: View {
 	@Environment(\.presentationMode) private var presentationMode
 	@StateObject private var viewModel = AddWebFeedModel()
 	
-    @ViewBuilder var body: some View {
+    var body: some View {
 		#if os(iOS)
 			iosForm
 				.onAppear {

@@ -15,7 +15,7 @@ struct AddFolderView: View {
 	@Environment(\.presentationMode) private var presentationMode
 	@ObservedObject private var viewModel = AddFolderModel()
 	
-    @ViewBuilder var body: some View {
+    var body: some View {
 		#if os(iOS)
 			iosForm
 				.onReceive(viewModel.$shouldDismiss, perform: {

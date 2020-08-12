@@ -26,7 +26,7 @@ struct SidebarView: View {
 	@State var pulling: Bool = false
 	@State var refreshing: Bool = false
 
-	@ViewBuilder var body: some View {
+	var body: some View {
 		#if os(macOS)
 		VStack {
 			HStack {
@@ -182,7 +182,7 @@ struct SidebarView: View {
 		@EnvironmentObject private var sidebarModel: SidebarModel
 		var sidebarItem: SidebarItem
 		
-		@ViewBuilder var body: some View {
+		var body: some View {
 			#if os(macOS)
 			SidebarItemView(sidebarItem: sidebarItem)
 				.tag(sidebarItem.feed!.feedID!)
