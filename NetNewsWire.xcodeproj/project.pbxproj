@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1704053424E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
+		1704053524E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
 		1717535624BADF33004498C6 /* GeneralPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1717535524BADF33004498C6 /* GeneralPreferencesModel.swift */; };
 		171BCB8C24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
 		171BCB8D24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
@@ -1415,6 +1417,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1704053324E5985A00A00787 /* SceneNavigationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigationModel.swift; sourceTree = "<group>"; };
 		1717535524BADF33004498C6 /* GeneralPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesModel.swift; sourceTree = "<group>"; };
 		171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixAccountCredentialView.swift; sourceTree = "<group>"; };
 		172199C824AB228900A31D04 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -2634,6 +2637,7 @@
 				FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */,
 				51E499D724A912C200B667CB /* SceneModel.swift */,
 				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
+				1704053324E5985A00A00787 /* SceneNavigationModel.swift */,
 				51C0513824A77DF800194D5E /* Assets.xcassets */,
 				17930ED224AF10CD00A9BA52 /* Add */,
 				51A576B924AE617B00078888 /* Article */,
@@ -4419,6 +4423,7 @@
 				51E498F124A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
+				1704053424E5985A00A00787 /* SceneNavigationModel.swift in Sources */,
 				514E6C0924AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */,
 				6594CA3B24AF6F2A005C7D7C /* OPMLExporter.swift in Sources */,
 				FA80C13E24B072AA00974098 /* AddFolderModel.swift in Sources */,
@@ -4643,6 +4648,7 @@
 				514E6C0324AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */,
 				51B54A6524B549B20014348B /* WrapperScriptMessageHandler.swift in Sources */,
 				51E4996D24A8762D00B667CB /* ArticleExtractor.swift in Sources */,
+				1704053524E5985A00A00787 /* SceneNavigationModel.swift in Sources */,
 				51E4994024A8713B00B667CB /* AccountRefreshTimer.swift in Sources */,
 				51E49A0424A91FF600B667CB /* SceneNavigationView.swift in Sources */,
 				51E498CC24A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,

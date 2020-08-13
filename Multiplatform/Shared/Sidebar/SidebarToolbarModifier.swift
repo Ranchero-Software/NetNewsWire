@@ -81,10 +81,10 @@ struct SidebarToolbarModifier: ViewModifier {
 			}
 			.sheet(isPresented: $viewModel.showSheet, onDismiss: { viewModel.sheetToShow = .none }) {
 				if viewModel.sheetToShow == .web {
-					AddWebFeedView()
+					AddWebFeedView(isPresented: $viewModel.showSheet)
 				}
 				if viewModel.sheetToShow == .folder {
-					AddFolderView()
+					AddFolderView(isPresented: $viewModel.showSheet)
 				}
 				if viewModel.sheetToShow == .settings {
 					SettingsView()

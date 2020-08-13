@@ -12,8 +12,8 @@ import RSCore
 
 struct AddFolderView: View {
 	
-	@Environment(\.presentationMode) private var presentationMode
 	@ObservedObject private var viewModel = AddFolderModel()
+	@Binding var isPresented: Bool
 	
     var body: some View {
 		#if os(iOS)
@@ -21,16 +21,14 @@ struct AddFolderView: View {
 				.onReceive(viewModel.$shouldDismiss, perform: {
 					dismiss in
 					if dismiss == true {
-						presentationMode
-							.wrappedValue
-							.dismiss()
+						isPresented = false
 					}
 				})
 		#else
 			macForm
 				.onReceive(viewModel.$shouldDismiss, perform: { dismiss in
 					if dismiss == true {
-						presentationMode.wrappedValue.dismiss()
+						isPresented = false
 					}
 				})
 		#endif
@@ -50,7 +48,7 @@ struct AddFolderView: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.navigationBarItems(
 				leading:Button("Cancel", action: {
-					presentationMode.wrappedValue.dismiss()					
+					isPresented = false
 				}
 				)
 				.help("Cancel Adding Folder"),
@@ -113,7 +111,7 @@ struct AddFolderView: View {
 			}
 			Spacer()
 			Button("Cancel", action: {
-				presentationMode.wrappedValue.dismiss()
+				isPresented = false
 			})
 			.help("Cancel Adding Folder")
 			
@@ -124,10 +122,4 @@ struct AddFolderView: View {
 			.help("Add Folder")
 		}
 	}
-}
-
-struct AddFolderView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddFolderView()
-    }
 }

@@ -12,13 +12,11 @@ import Account
 import AppKit
 #endif
 
+
 struct SceneNavigationView: View {
 
 	@StateObject private var sceneModel = SceneModel()
-	@State private var showSheet = false
-	@State private var showShareSheet = false
-	@State private var sheetToShow: SidebarSheets = .none
-	@State private var showAccountSyncErrorAlert = false // multiple sync errors
+	@StateObject private var sceneNavigationModel = SceneNavigationModel()
 	
 	#if os(iOS)
 	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -47,41 +45,38 @@ struct SceneNavigationView: View {
 		.onAppear {
 			sceneModel.startup()
 		}
-		.onChange(of: sheetToShow) { value in
-			value != .none ? (showSheet = true) : (showSheet = false)
-		}
 		.onReceive(sceneModel.$accountSyncErrors) { errors in
 			if errors.count == 0 {
-				showAccountSyncErrorAlert = false
+				sceneNavigationModel.showAccountSyncErrorAlert = false
 			} else {
 				if errors.count > 1 {
-					showAccountSyncErrorAlert = true
+					sceneNavigationModel.showAccountSyncErrorAlert = true
 				} else {
-					sheetToShow = .fixCredentials
+					sceneNavigationModel.sheetToShow = .fixCredentials
 				}
 			}
 		}
-		.sheet(isPresented: $showSheet,
+		.sheet(isPresented: $sceneNavigationModel.showSheet,
 			   onDismiss: {
-				sheetToShow = .none
+				sceneNavigationModel.sheetToShow = .none
 				sceneModel.accountSyncErrors = []
 			   }) {
-					if sheetToShow == .web {
-						AddWebFeedView()
+					if sceneNavigationModel.sheetToShow == .web {
+						AddWebFeedView(isPresented: $sceneNavigationModel.showSheet)
 					}
-					if sheetToShow == .folder {
-						AddFolderView()
+					if sceneNavigationModel.sheetToShow == .folder {
+						AddFolderView(isPresented: $sceneNavigationModel.showSheet)
 					}
 					#if os(iOS)
-					if sheetToShow == .settings {
+					if sceneNavigationModel.sheetToShow == .settings {
 						SettingsView()
 					}
 					#endif
-					if sheetToShow == .fixCredentials {
+					if sceneNavigationModel.sheetToShow == .fixCredentials {
 						FixAccountCredentialView(accountSyncError: sceneModel.accountSyncErrors[0])
 					}
 		}
-		.alert(isPresented: $showAccountSyncErrorAlert, content: {
+		.alert(isPresented: $sceneNavigationModel.showAccountSyncErrorAlert, content: {
 			#if os(macOS)
 			return Alert(title: Text("Account Sync Error"),
 						 message: Text("The following accounts failed to sync: ") + Text(sceneModel.accountSyncErrors.map({ $0.account.nameForDisplay }).joined(separator: ", ")) + Text(". You can update credentials in Preferences"),
@@ -91,7 +86,7 @@ struct SceneNavigationView: View {
 				  message: Text("The following accounts failed to sync: ") + Text(sceneModel.accountSyncErrors.map({ $0.account.nameForDisplay }).joined(separator: ", ")) + Text(". You can update credentials in Settings"),
 				  primaryButton: .default(Text("Show Settings"), action: {
 					DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-						sheetToShow = .settings
+						sceneNavigationModel.sheetToShow = .settings
 					})
 					
 				  }),
@@ -112,10 +107,10 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem() {
 				Menu {
-					Button("Add Web Feed", action: { sheetToShow = .web })
+					Button("Add Web Feed", action: { sceneNavigationModel.sheetToShow = .web })
 					Button("Add Reddit Feed", action:  { })
 					Button("Add Twitter Feed", action:  { })
-					Button("Add Folder", action:  { sheetToShow = .folder})
+					Button("Add Folder", action:  { sceneNavigationModel.sheetToShow = .folder})
 				} label : {
 					AppAssets.addMenuImage
 				}
@@ -197,12 +192,12 @@ struct SceneNavigationView: View {
 			}
 			ToolbarItem {
 				ZStack {
-					if showShareSheet {
-						SharingServiceView(articles: sceneModel.selectedArticles, showing: $showShareSheet)
+					if sceneNavigationModel.showShareSheet {
+						SharingServiceView(articles: sceneModel.selectedArticles, showing: $sceneNavigationModel.showShareSheet)
 							.frame(width: 20, height: 20)
 					}
 					Button {
-						showShareSheet = true
+						sceneNavigationModel.showShareSheet = true
 					} label: {
 						AppAssets.shareImage
 					}

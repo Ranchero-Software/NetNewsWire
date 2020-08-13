@@ -13,8 +13,8 @@ import RSCore
 
 struct AddWebFeedView: View {
 	
-	@Environment(\.presentationMode) private var presentationMode
 	@StateObject private var viewModel = AddWebFeedModel()
+	@Binding var isPresented: Bool
 	
     var body: some View {
 		#if os(iOS)
@@ -24,7 +24,7 @@ struct AddWebFeedView: View {
 				}
 				.onReceive(viewModel.$shouldDismiss, perform: { dismiss in
 					if dismiss == true {
-						presentationMode.wrappedValue.dismiss()
+						isPresented = false
 					}
 				})
 		#else
@@ -37,9 +37,10 @@ struct AddWebFeedView: View {
 						  dismissButton: Alert.Button.cancel({
 							viewModel.addFeedError = AddWebFeedError.none
 					}))
-				}.onReceive(viewModel.$shouldDismiss, perform: { dismiss in
+				}
+				.onChange(of: viewModel.shouldDismiss, perform: { dismiss in
 					if dismiss == true {
-						presentationMode.wrappedValue.dismiss()
+						isPresented = false
 					}
 				})
 		#endif
@@ -92,7 +93,7 @@ struct AddWebFeedView: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.navigationBarItems(leading:
 				Button("Cancel", action: {
-					presentationMode.wrappedValue.dismiss()
+					isPresented = false
 				})
 				.help("Cancel Add Feed")
 				, trailing:
@@ -188,7 +189,7 @@ struct AddWebFeedView: View {
 			}
 			Spacer()
 			Button("Cancel", action: {
-				presentationMode.wrappedValue.dismiss()
+				isPresented = false
 			})
 			.help("Cancel Add Feed")
 			
@@ -205,8 +206,4 @@ struct AddWebFeedView: View {
 	
 }
 
-struct AddFeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddWebFeedView()
-    }
-}
+
