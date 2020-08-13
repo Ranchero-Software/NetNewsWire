@@ -7,6 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1704050F24E53D6200A00787 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1704050E24E53D6200A00787 /* RSCore */; };
+		1704051024E53D6200A00787 /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1704050E24E53D6200A00787 /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1704051224E53D6200A00787 /* RSCoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 1704051124E53D6200A00787 /* RSCoreResources */; };
+		1704051424E53D6200A00787 /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 1704051324E53D6200A00787 /* RSTree */; };
+		1704051524E53D6200A00787 /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1704051324E53D6200A00787 /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1704051724E53D6200A00787 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 1704051624E53D6200A00787 /* RSWeb */; };
+		1704051824E53D6200A00787 /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1704051624E53D6200A00787 /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1704051A24E53D6200A00787 /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 1704051924E53D6200A00787 /* RSDatabase */; };
+		1704051B24E53D6200A00787 /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1704051924E53D6200A00787 /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1704051D24E53D6200A00787 /* RSDatabaseObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 1704051C24E53D6200A00787 /* RSDatabaseObjC */; };
+		1704051E24E53D6200A00787 /* RSDatabaseObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1704051C24E53D6200A00787 /* RSDatabaseObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1704052024E53D6200A00787 /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 1704051F24E53D6200A00787 /* RSParser */; };
+		1704052124E53D6200A00787 /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1704051F24E53D6200A00787 /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1704052324E53D6200A00787 /* RSParserObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 1704052224E53D6200A00787 /* RSParserObjC */; };
+		1704052424E53D6200A00787 /* RSParserObjC in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 1704052224E53D6200A00787 /* RSParserObjC */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		1717535624BADF33004498C6 /* GeneralPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1717535524BADF33004498C6 /* GeneralPreferencesModel.swift */; };
 		171BCB8C24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
 		171BCB8D24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
@@ -1321,7 +1336,14 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				1704051E24E53D6200A00787 /* RSDatabaseObjC in Embed Frameworks */,
+				1704051B24E53D6200A00787 /* RSDatabase in Embed Frameworks */,
+				1704051824E53D6200A00787 /* RSWeb in Embed Frameworks */,
+				1704051024E53D6200A00787 /* RSCore in Embed Frameworks */,
+				1704052424E53D6200A00787 /* RSParserObjC in Embed Frameworks */,
 				51E4997724A87FFC00B667CB /* Sparkle.framework in Embed Frameworks */,
+				1704052124E53D6200A00787 /* RSParser in Embed Frameworks */,
+				1704051524E53D6200A00787 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2031,10 +2053,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1704052324E53D6200A00787 /* RSParserObjC in Frameworks */,
+				1704051724E53D6200A00787 /* RSWeb in Frameworks */,
+				1704052024E53D6200A00787 /* RSParser in Frameworks */,
+				1704050F24E53D6200A00787 /* RSCore in Frameworks */,
 				516B695B24D2F28600B5702F /* Account in Frameworks */,
 				51E4997624A87FFC00B667CB /* Sparkle.framework in Frameworks */,
+				1704051424E53D6200A00787 /* RSTree in Frameworks */,
 				51E498B124A806A400B667CB /* CloudKit.framework in Frameworks */,
+				1704051224E53D6200A00787 /* RSCoreResources in Frameworks */,
 				51E498B324A806AA00B667CB /* WebKit.framework in Frameworks */,
+				1704051D24E53D6200A00787 /* RSDatabaseObjC in Frameworks */,
+				1704051A24E53D6200A00787 /* RSDatabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3636,6 +3666,14 @@
 			name = "Multiplatform macOS";
 			packageProductDependencies = (
 				516B695A24D2F28600B5702F /* Account */,
+				1704050E24E53D6200A00787 /* RSCore */,
+				1704051124E53D6200A00787 /* RSCoreResources */,
+				1704051324E53D6200A00787 /* RSTree */,
+				1704051624E53D6200A00787 /* RSWeb */,
+				1704051924E53D6200A00787 /* RSDatabase */,
+				1704051C24E53D6200A00787 /* RSDatabaseObjC */,
+				1704051F24E53D6200A00787 /* RSParser */,
+				1704052224E53D6200A00787 /* RSParserObjC */,
 			);
 			productName = macOS;
 			productReference = 51C0514424A77DF800194D5E /* NetNewsWire.app */;
@@ -5773,6 +5811,46 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1704050E24E53D6200A00787 /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+		1704051124E53D6200A00787 /* RSCoreResources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCoreResources;
+		};
+		1704051324E53D6200A00787 /* RSTree */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
+			productName = RSTree;
+		};
+		1704051624E53D6200A00787 /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
+			productName = RSWeb;
+		};
+		1704051924E53D6200A00787 /* RSDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF0D24D24E3B000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
+			productName = RSDatabase;
+		};
+		1704051C24E53D6200A00787 /* RSDatabaseObjC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF0D24D24E3B000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
+			productName = RSDatabaseObjC;
+		};
+		1704051F24E53D6200A00787 /* RSParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
+			productName = RSParser;
+		};
+		1704052224E53D6200A00787 /* RSParserObjC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
+			productName = RSParserObjC;
+		};
 		17A1597B24E3DEDD005DA32A /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
