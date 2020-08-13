@@ -241,14 +241,19 @@ blockquote {
 .twitterAvatar {
 	vertical-align: middle;
 	border-radius: 4px;
-	height: 24px;
-	width: 24px;
+	height: 1.7em;
+	width: 1.7em;
 }
 
 .twitterUsername {
+	line-height: 1.2;
 	margin-left: 4px;
 	display: inline-block;
 	vertical-align: middle;
+}
+
+.twitterScreenName {
+	font-size: 66%;
 }
 
 .twitterTimestamp {

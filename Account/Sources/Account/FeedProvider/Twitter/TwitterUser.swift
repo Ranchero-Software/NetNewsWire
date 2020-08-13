@@ -30,14 +30,15 @@ struct TwitterUser: Codable {
 		if let avatarURL = avatarURL {
 			html += "<img class=\"twitterAvatar\" src=\"\(avatarURL)\">"
 		}
-		html += "<span class=\"twitterUsername\">"
+		html += "<div class=\"twitterUsername\">"
 		if let name = name {
 			html += " \(name)"
 		}
+		html += "<br><span class=\"twitterScreenName\">"
 		if let screenName = screenName {
 			html += " @\(screenName)"
 		}
-		html += "</span></a></div>"
+		html += "</span></div></a></div>"
 		return html
 	}
 	
