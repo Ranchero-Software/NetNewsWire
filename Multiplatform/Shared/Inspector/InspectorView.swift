@@ -127,11 +127,12 @@ struct InspectorView: View {
 				Spacer()
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
-				}).keyboardShortcut(.cancelAction)
+				})
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
-				}).keyboardShortcut(.defaultAction)
-			}.padding(.top)
+				})
+				
+			}.padding([.top, .bottom])
 			#endif
 		}
 		.onAppear {
