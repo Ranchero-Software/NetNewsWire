@@ -203,6 +203,9 @@ struct SettingsView: View {
 			Button("NetNewsWire Slack", action: {
 				viewModel.selectedWebsite = .netNewsWireSlack
 			}).foregroundColor(.primary)
+			Button("Release Notes", action: {
+				viewModel.selectedWebsite = .releaseNotes
+			}).foregroundColor(.primary)
 			NavigationLink(
 				destination: SettingsAboutView(),
 				label: {
