@@ -36,7 +36,7 @@ struct AddFolderView: View {
 		#endif
     }
 	#if os(iOS)
-	@ViewBuilder var iosForm: some View {
+	var iosForm: some View {
 		NavigationView {
 			Form {
 				Section {
@@ -67,7 +67,7 @@ struct AddFolderView: View {
 	#endif
 	
 	#if os(macOS)
-	@ViewBuilder var macForm: some View {
+	var macForm: some View {
 		Form {
 			HStack {
 				Spacer()

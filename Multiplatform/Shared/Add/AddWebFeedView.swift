@@ -80,7 +80,7 @@ struct AddWebFeedView: View {
 	#endif
 	
 	#if os(iOS)
-	@ViewBuilder var iosForm: some View {
+	var iosForm: some View {
 		NavigationView {
 			List {
 				urlTextField

@@ -13,7 +13,7 @@ struct TimelineItemStatusView: View {
 	var selected: Bool
 	var status: TimelineItemStatus
 	
-	@ViewBuilder var statusView: some View {
+	var statusView: some View {
 		ZStack {
 			Spacer().frame(width: 12)
 			switch status {
