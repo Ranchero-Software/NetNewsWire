@@ -67,6 +67,10 @@
 	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
 	<key>OrganizationIdentifier</key>
 	<string>$(ORGANIZATION_IDENTIFIER)</string>
+	<key>AppGroup</key>
+	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire</string>
+	<key>AppIdentifierPrefix</key>
+	<string>$(AppIdentifierPrefix)</string>
 	<key>DeveloperEntitlements</key>
 	<string>$(DEVELOPER_ENTITLEMENTS)</string>
 </dict>

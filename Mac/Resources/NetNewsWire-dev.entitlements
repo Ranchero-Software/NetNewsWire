@@ -14,5 +14,9 @@
 	<array>
 		<string>com.red-sweater.marsedit4</string>
 	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire</string>
+	</array>
 </dict>
 </plist>

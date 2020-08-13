@@ -40,6 +40,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	var imageDownloader: ImageDownloader!
 	var authorAvatarDownloader: AuthorAvatarDownloader!
 	var webFeedIconDownloader: WebFeedIconDownloader!
+	var extensionContainersFile: ExtensionContainersFile!
+	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
+
 	var appName: String!
 	
 	var refreshTimer: AccountRefreshTimer?
@@ -230,6 +233,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if InspectorWindowController.shouldOpenAtStartup {
 			self.toggleInspectorWindow(self)
 		}
+
+		extensionContainersFile = ExtensionContainersFile()
+		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()
