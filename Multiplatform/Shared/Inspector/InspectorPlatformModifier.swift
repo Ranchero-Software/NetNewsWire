@@ -16,17 +16,13 @@ struct InspectorPlatformModifier: ViewModifier {
 	@ViewBuilder func body(content: Content) -> some View {
 		
 		#if os(macOS)
-		Form {
-			content
-		}
+		content
 		.textFieldStyle(RoundedBorderTextFieldStyle())
 		.frame(width: 300)
 		.padding()
 		#else
 		NavigationView {
-			List {
-				content
-			}
+			content
 			.listStyle(InsetGroupedListStyle())
 			.navigationBarTitle("Inspector", displayMode: .inline)
 			.navigationBarItems(

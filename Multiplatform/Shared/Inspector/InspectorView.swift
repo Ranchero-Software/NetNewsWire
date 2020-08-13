@@ -36,9 +36,9 @@ struct InspectorView: View {
 	
 	// MARK: WebFeed Inspector
 	
-	@ViewBuilder
+	
 	var WebFeedInspectorView: some View {
-		Group {
+		Form {
 			Section(header: webFeedHeader) {
 				TextField("", text: $inspectorModel.editedName)
 			}
@@ -85,13 +85,13 @@ struct InspectorView: View {
 							Text("Copy Home Page URL")
 						})
 					}))
-				}
-				.sheet(isPresented: $inspectorModel.showHomePage, onDismiss: { inspectorModel.showHomePage = false }) {
-					#if os(macOS)
-					EmptyView()
-					#else
-					SafariView(url: URL(string: (sidebarItem.feed as! WebFeed).homePageURL!)!)
-					#endif
+					.sheet(isPresented: $inspectorModel.showHomePage, onDismiss: { inspectorModel.showHomePage = false }) {
+						#if os(macOS)
+						EmptyView()
+						#else
+						SafariView(url: URL(string: (sidebarItem.feed as! WebFeed).homePageURL!)!)
+						#endif
+					}
 				}
 			}
 			
@@ -101,9 +101,9 @@ struct InspectorView: View {
 			
 			Section(header: Text("Feed URL")) {
 				VStack {
-					#if os(macOS)
-					Spacer() // This shouldn't be necessary, but for some reason macOS doesn't put the space in itself
-					#endif
+//					#if os(macOS)
+//					Spacer() // This shouldn't be necessary, but for some reason macOS doesn't put the space in itself
+//					#endif
 					Text(verbatim: (sidebarItem.feed as? WebFeed)?.url ?? "")
 						.fixedSize(horizontal: false, vertical: true)
 						.contextMenu(ContextMenu(menuItems: {
@@ -131,8 +131,7 @@ struct InspectorView: View {
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
 				})
-				
-			}.padding([.top, .bottom])
+			}.padding([.top, .bottom], 20)
 			#endif
 		}
 		.onAppear {
@@ -156,15 +155,14 @@ struct InspectorView: View {
 					.frame(width: 50, height: 50)
 			}
 			Spacer()
-		}.padding()
+		}.padding(.top, 20)
 	}
 	
 	
 	// MARK: Folder Inspector
 	
-	@ViewBuilder
 	var FolderInspectorView: some View {
-		Group {
+		Form {
 			Section(header: folderHeader) {
 				TextField("", text: $inspectorModel.editedName)
 			}
@@ -174,13 +172,12 @@ struct InspectorView: View {
 				Spacer()
 				Button("Cancel", action: {
 					presentationMode.wrappedValue.dismiss()
-				}).keyboardShortcut(.cancelAction)
+				})
 				Button("Done", action: {
 					inspectorModel.shouldUpdate = true
-				}).keyboardShortcut(.defaultAction)
-			}.padding(.top)
+				})
+			}.padding([.top, .bottom])
 			#endif
-			
 		}
 		.onAppear {
 			inspectorModel.configure(with: sidebarItem.represented as! Folder)
@@ -204,15 +201,14 @@ struct InspectorView: View {
 					.frame(width: 50, height: 50)
 			}
 			Spacer()
-		}.padding()
+		}.padding(.top, 20)
 	}
 	
 	
 	// MARK: Account Inspector
 	
-	@ViewBuilder
 	var AccountInspectorView: some View {
-		Group {
+		Form {
 			Section(header: accountHeader) {
 				TextField("", text: $inspectorModel.editedName)
 				Toggle("Active", isOn: $inspectorModel.accountIsActive)
