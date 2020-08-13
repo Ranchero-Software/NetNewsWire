@@ -10,6 +10,7 @@ import Foundation
 import os.log
 import OAuthSwift
 import Secrets
+import RSCore
 import RSParser
 import RSWeb
 
@@ -34,7 +35,7 @@ public enum RedditFeedType: Int {
 	case subreddit = 3
 }
 
-public final class RedditFeedProvider: FeedProvider {
+public final class RedditFeedProvider: FeedProvider, RedditFeedProviderTokenRefreshOperationDelegate {
 
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "RedditFeedProvider")
 
@@ -48,14 +49,16 @@ public final class RedditFeedProvider: FeedProvider {
 		"all": NSLocalizedString("All", comment: "All")
 	]
 	
+	private let operationQueue = MainThreadOperationQueue()
 	private var parsingQueue = DispatchQueue(label: "RedditFeedProvider parse queue")
 	
 	public var username: String?
 	
-	private var oauthToken: String
-	private var oauthRefreshToken: String
+	var oauthTokenLastRefresh: Date?
+	var oauthToken: String
+	var oauthRefreshToken: String
 
-    private var oauthSwift: OAuth2Swift?
+    var oauthSwift: OAuth2Swift?
 	private var client: OAuthSwiftClient? {
 		return oauthSwift?.client
 	}
@@ -259,6 +262,13 @@ public final class RedditFeedProvider: FeedProvider {
 		return components.url
 	}
 
+	static func storeCredentials(username: String, oauthToken: String, oauthRefreshToken: String) throws {
+		let tokenCredentials = Credentials(type: .oauthAccessToken, username: username, secret: oauthToken)
+		try CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
+		let tokenSecretCredentials = Credentials(type: .oauthRefreshToken, username: username, secret: oauthRefreshToken)
+		try CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
+	}
+	
 }
 
 // MARK: OAuth1SwiftProvider
@@ -412,41 +422,22 @@ private extension RedditFeedProvider {
     func handleFailure(error: OAuthSwiftError, completion: @escaping (Error?) -> Void) {
 		if case .tokenExpired = error {
 
-			os_log(.debug, log: self.log, "Access token expired, attempting to renew...")
+			let op = RedditFeedProviderTokenRefreshOperation(delegate: self)
 			
-			oauthSwift?.renewAccessToken(withRefreshToken: oauthRefreshToken) { [weak self] result in
-				guard let strongSelf = self, let username = strongSelf.username else {
+			op.completionBlock = { operation in
+				let refreshOperation = operation as! RedditFeedProviderTokenRefreshOperation
+				if let error = refreshOperation.error {
+					completion(error)
+				} else {
 					completion(nil)
-					return
-				}
-				
-				switch result {
-				case .success(let tokenSuccess):
-					strongSelf.oauthToken = tokenSuccess.credential.oauthToken
-					strongSelf.oauthRefreshToken = tokenSuccess.credential.oauthRefreshToken
-					do {
-						try Self.storeCredentials(username: username, oauthToken: strongSelf.oauthToken, oauthRefreshToken: strongSelf.oauthRefreshToken)
-						os_log(.debug, log: strongSelf.log, "Access token renewed.")
-					} catch {
-						completion(error)
-						return
-					}
-					completion(nil)
-				case .failure(let oathError):
-					completion(oathError)
 				}
 			}
+			
+			operationQueue.add(op)
 			
 		} else {
 			completion(error)
 		}
     }
 
-	static func storeCredentials(username: String, oauthToken: String, oauthRefreshToken: String) throws {
-		let tokenCredentials = Credentials(type: .oauthAccessToken, username: username, secret: oauthToken)
-		try CredentialsManager.storeCredentials(tokenCredentials, server: Self.server)
-		let tokenSecretCredentials = Credentials(type: .oauthRefreshToken, username: username, secret: oauthRefreshToken)
-		try CredentialsManager.storeCredentials(tokenSecretCredentials, server: Self.server)
-	}
-	
 }
