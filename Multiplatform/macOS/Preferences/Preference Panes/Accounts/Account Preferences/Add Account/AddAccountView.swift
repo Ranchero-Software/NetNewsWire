@@ -16,36 +16,35 @@ struct AddAccountView: View {
 	@StateObject private var viewModel = AddAccountModel()
 
 	var body: some View {
-		
-		VStack(alignment: .leading) {
+			
+		Form {
 			Text("Add an Account").font(.headline)
-			Form {
-				Picker("Account Type",
-					   selection: $viewModel.selectedAddAccount,
-					   content: {
-						ForEach(0..<viewModel.addableAccountTypes.count, content: { i in
-							AddAccountPickerRow(accountType: viewModel.addableAccountTypes[i]).tag(viewModel.addableAccountTypes[i])
-						})
-					   })
-				
-				switch viewModel.selectedAddAccount {
-					case .onMyMac:
-						addLocalAccountView
-					case .cloudKit:
-						iCloudAccountView
-					case .feedbin:
-						userNameAndPasswordView
-					case .feedWrangler:
-						userNameAndPasswordView
-					case .freshRSS:
-						userNamePasswordAndAPIUrlView
-					case .feedly:
-						oAuthView
-					case .newsBlur:
-						userNameAndPasswordView
-				}
+			
+			Picker("Account Type",
+					selection: $viewModel.selectedAddAccount,
+					content: {
+					ForEach(0..<viewModel.addableAccountTypes.count, content: { i in
+						AddAccountPickerRow(accountType: viewModel.addableAccountTypes[i]).tag(viewModel.addableAccountTypes[i])
+					})
+					}).pickerStyle(MenuPickerStyle())
+			
+			switch viewModel.selectedAddAccount {
+				case .onMyMac:
+					addLocalAccountView
+				case .cloudKit:
+					iCloudAccountView
+				case .feedbin:
+					userNameAndPasswordView
+				case .feedWrangler:
+					userNameAndPasswordView
+				case .freshRSS:
+					userNamePasswordAndAPIUrlView
+				case .feedly:
+					oAuthView
+				case .newsBlur:
+					userNameAndPasswordView
 			}
-						
+			
 			Spacer()
 			HStack {
 				if viewModel.accountIsAuthenticating {
@@ -82,8 +81,8 @@ struct AddAccountView: View {
 				}
 			}
 		}
-		.frame(width: 300, height: 200, alignment: .top)
-		.padding()
+			
+			
 		.onChange(of: viewModel.selectedAddAccount) { _ in
 			viewModel.resetUserEntries()
 		}

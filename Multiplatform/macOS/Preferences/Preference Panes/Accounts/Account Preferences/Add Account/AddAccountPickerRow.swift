@@ -15,12 +15,12 @@ struct AddAccountPickerRow: View {
 	
 	var body: some View {
 		HStack {
-			if let img = AppAssets.image(for: accountType) {
-				Image(rsImage: img)
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 15, height: 15)
-			}
+//			if let img = AppAssets.image(for: accountType) {
+//				Image(rsImage: img)
+//					.resizable()
+//					.aspectRatio(contentMode: .fit)
+//					.frame(width: 15, height: 15)
+//			}
 			
 			switch accountType {
 				case .onMyMac:
