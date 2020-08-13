@@ -17,7 +17,6 @@ struct InspectorView: View {
 	@StateObject private var inspectorModel = InspectorModel()
 	var sidebarItem: SidebarItem
 	
-	@ViewBuilder
 	var body: some View {
 		switch sidebarItem.representedType {
 		case .webFeed:
