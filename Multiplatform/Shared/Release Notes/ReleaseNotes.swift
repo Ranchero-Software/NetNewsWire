@@ -16,17 +16,13 @@ struct ReleaseNotes {
 		gitHub += "mac-\(String(describing: versionString()))"
 		return URL(string: gitHub)!
 		#else
-		gitHub += "ios-\(String(describing: versionString()))-\(String(describing: buildVersionString()))"
+		gitHub += "ios-\(String(describing: versionString()))"
 		return URL(string: gitHub)!
 		#endif
 	}
 	
 	private func versionString() -> String {
 		Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
-	}
-	
-	private func buildVersionString() -> String {
-		Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
 	}
  
 }
