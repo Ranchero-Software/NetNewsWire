@@ -59,7 +59,7 @@ struct LayoutPreferencesView: View {
 		
     }
 	
-	@ViewBuilder
+	
 	var timelineRowPreview: some View {
 		HStack(alignment: .top) {
 			Image(systemName: "circle.fill")

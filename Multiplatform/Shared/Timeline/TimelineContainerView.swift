@@ -17,7 +17,7 @@ struct TimelineContainerView: View {
 	@State private var timelineItems = TimelineItems()
 	@State private var isReadFiltered: Bool? = nil
 
-	@ViewBuilder var body: some View {
+	var body: some View {
 		TimelineView(timelineItems: $timelineItems, isReadFiltered: $isReadFiltered)
 			.modifier(TimelineToolbarModifier())
 			.environmentObject(sceneModel.timelineModel)

@@ -17,7 +17,7 @@ struct TimelineView: View {
 
 	@State private var timelineItemFrames = [String: CGRect]()
 	
-	@ViewBuilder var body: some View {
+	var body: some View {
 		GeometryReader { geometryReaderProxy in
 			#if os(macOS)
 			VStack {

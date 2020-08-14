@@ -203,6 +203,9 @@ struct SettingsView: View {
 			Button("NetNewsWire Slack", action: {
 				viewModel.selectedWebsite = .netNewsWireSlack
 			}).foregroundColor(.primary)
+			Button("Release Notes", action: {
+				viewModel.selectedWebsite = .releaseNotes
+			}).foregroundColor(.primary)
 			NavigationLink(
 				destination: SettingsAboutView(),
 				label: {
@@ -213,9 +216,8 @@ struct SettingsView: View {
 	}
 	
 	private func appVersion() -> String {
-		let dict = NSDictionary(contentsOf: Bundle.main.url(forResource: "Info", withExtension: "plist")!)
-		let version = dict?.object(forKey: "CFBundleShortVersionString") as? String ?? ""
-		let build = dict?.object(forKey: "CFBundleVersion") as? String ?? ""
+		let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+		let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
 		return "NetNewsWire \(version) (Build \(build))"
 	}
 

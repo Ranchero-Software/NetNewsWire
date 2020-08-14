@@ -73,6 +73,12 @@ struct MainApp: App {
 				Button("Open in Browser", action: {})
 					.keyboardShortcut(.rightArrow, modifiers: [.command])
 			})
+			CommandGroup(after: .help, addition: {
+				Button("Release Notes", action: {
+					NSWorkspace.shared.open(ReleaseNotes().url)
+				})
+				.keyboardShortcut("V", modifiers: [.shift, .command])
+			})
 		}
 		
 		// Mac Preferences

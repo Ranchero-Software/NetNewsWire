@@ -19,7 +19,7 @@ struct SidebarContextMenu: View {
 	var sidebarItem: SidebarItem
 	
 	
-    @ViewBuilder var body: some View {
+    var body: some View {
 		// MARK: Account Context Menu
 		if sidebarItem.representedType == .account {
 			Button {

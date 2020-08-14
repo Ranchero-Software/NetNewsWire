@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1704053424E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
+		1704053524E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
 		1717535624BADF33004498C6 /* GeneralPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1717535524BADF33004498C6 /* GeneralPreferencesModel.swift */; };
 		171BCB8C24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
 		171BCB8D24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
@@ -44,6 +46,18 @@
 		1799E6CE24C320D600511E91 /* InspectorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1799E6CC24C320D600511E91 /* InspectorModel.swift */; };
 		179DB1DFBCF9177104B12E0F /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		179DB3CE822BFCC2D774D9F4 /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
+		17A1597C24E3DEDD005DA32A /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 17A1597B24E3DEDD005DA32A /* RSCore */; };
+		17A1597D24E3DEDD005DA32A /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1597B24E3DEDD005DA32A /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17A1597F24E3DEDD005DA32A /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 17A1597E24E3DEDD005DA32A /* RSTree */; };
+		17A1598024E3DEDD005DA32A /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1597E24E3DEDD005DA32A /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17A1598224E3DEDD005DA32A /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598124E3DEDD005DA32A /* RSWeb */; };
+		17A1598324E3DEDD005DA32A /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598124E3DEDD005DA32A /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17A1598524E3DEDD005DA32A /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598424E3DEDD005DA32A /* RSDatabase */; };
+		17A1598624E3DEDD005DA32A /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598424E3DEDD005DA32A /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17A1598824E3DEDD005DA32A /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598724E3DEDD005DA32A /* RSParser */; };
+		17A1598924E3DEDD005DA32A /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598724E3DEDD005DA32A /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17AC0ABB24E4B65E004C1231 /* ReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AC0ABA24E4B65E004C1231 /* ReleaseNotes.swift */; };
+		17AC0ABC24E4B65E004C1231 /* ReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AC0ABA24E4B65E004C1231 /* ReleaseNotes.swift */; };
 		17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
@@ -1323,6 +1337,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				17A1598924E3DEDD005DA32A /* RSParser in Embed Frameworks */,
+				17A1598624E3DEDD005DA32A /* RSDatabase in Embed Frameworks */,
+				17A1598324E3DEDD005DA32A /* RSWeb in Embed Frameworks */,
+				17A1597D24E3DEDD005DA32A /* RSCore in Embed Frameworks */,
+				17A1598024E3DEDD005DA32A /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1428,6 +1447,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1704053324E5985A00A00787 /* SceneNavigationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigationModel.swift; sourceTree = "<group>"; };
 		1717535524BADF33004498C6 /* GeneralPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesModel.swift; sourceTree = "<group>"; };
 		171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixAccountCredentialView.swift; sourceTree = "<group>"; };
 		172199C824AB228900A31D04 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -1454,6 +1474,7 @@
 		1799E6A824C2F93F00511E91 /* InspectorPlatformModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPlatformModifier.swift; sourceTree = "<group>"; };
 		1799E6CC24C320D600511E91 /* InspectorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorModel.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
+		17AC0ABA24E4B65E004C1231 /* ReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseNotes.swift; sourceTree = "<group>"; };
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
 		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
@@ -2043,7 +2064,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17A1598224E3DEDD005DA32A /* RSWeb in Frameworks */,
+				17A1597F24E3DEDD005DA32A /* RSTree in Frameworks */,
+				17A1598824E3DEDD005DA32A /* RSParser in Frameworks */,
+				17A1597C24E3DEDD005DA32A /* RSCore in Frameworks */,
 				516B695D24D2F28E00B5702F /* Account in Frameworks */,
+				17A1598524E3DEDD005DA32A /* RSDatabase in Frameworks */,
 				51E4989724A8065700B667CB /* CloudKit.framework in Frameworks */,
 				51E4989924A8067000B667CB /* WebKit.framework in Frameworks */,
 			);
@@ -2254,6 +2280,14 @@
 				FA80C11624B0728000974098 /* AddFolderView.swift */,
 			);
 			path = Add;
+			sourceTree = "<group>";
+		};
+		17AC0ACB24E4B66A004C1231 /* Release Notes */ = {
+			isa = PBXGroup;
+			children = (
+				17AC0ABA24E4B65E004C1231 /* ReleaseNotes.swift */,
+			);
+			path = "Release Notes";
 			sourceTree = "<group>";
 		};
 		510289CE2451BA1E00426DDF /* Twitter */ = {
@@ -2660,6 +2694,7 @@
 				FF64D0C424AF53EE0084080A /* RefreshProgressModel.swift */,
 				51E499D724A912C200B667CB /* SceneModel.swift */,
 				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
+				1704053324E5985A00A00787 /* SceneNavigationModel.swift */,
 				51C0513824A77DF800194D5E /* Assets.xcassets */,
 				17930ED224AF10CD00A9BA52 /* Add */,
 				51A576B924AE617B00078888 /* Article */,
@@ -2671,6 +2706,7 @@
 				514E6C0424AD2B0400AC6F6E /* SwiftUI Extensions */,
 				51919FCB24AB855000541E64 /* Timeline */,
 				171BCBB124CBD569006E22D9 /* Account Management  */,
+				17AC0ACB24E4B66A004C1231 /* Release Notes */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -3657,6 +3693,11 @@
 			name = "Multiplatform iOS";
 			packageProductDependencies = (
 				516B695C24D2F28E00B5702F /* Account */,
+				17A1597B24E3DEDD005DA32A /* RSCore */,
+				17A1597E24E3DEDD005DA32A /* RSTree */,
+				17A1598124E3DEDD005DA32A /* RSWeb */,
+				17A1598424E3DEDD005DA32A /* RSDatabase */,
+				17A1598724E3DEDD005DA32A /* RSParser */,
 			);
 			productName = iOS;
 			productReference = 51C0513D24A77DF800194D5E /* NetNewsWire.app */;
@@ -4493,6 +4534,7 @@
 				51E498F124A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
+				1704053424E5985A00A00787 /* SceneNavigationModel.swift in Sources */,
 				514E6C0924AD39AD00AC6F6E /* ArticleIconImageLoader.swift in Sources */,
 				6594CA3B24AF6F2A005C7D7C /* OPMLExporter.swift in Sources */,
 				FA80C13E24B072AA00974098 /* AddFolderModel.swift in Sources */,
@@ -4533,6 +4575,7 @@
 				51E4991724A8090400B667CB /* ArticleUtilities.swift in Sources */,
 				51E4991B24A8091000B667CB /* IconImage.swift in Sources */,
 				51E4995424A8734D00B667CB /* ExtensionPointIdentifer.swift in Sources */,
+				17AC0ABB24E4B65E004C1231 /* ReleaseNotes.swift in Sources */,
 				51E4996924A8760C00B667CB /* ArticleStylesManager.swift in Sources */,
 				5177471E24B387E100EB0F74 /* ImageTransition.swift in Sources */,
 				51E498F324A8085D00B667CB /* PseudoFeed.swift in Sources */,
@@ -4716,6 +4759,7 @@
 				514E6C0324AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */,
 				51B54A6524B549B20014348B /* WrapperScriptMessageHandler.swift in Sources */,
 				51E4996D24A8762D00B667CB /* ArticleExtractor.swift in Sources */,
+				1704053524E5985A00A00787 /* SceneNavigationModel.swift in Sources */,
 				51E4994024A8713B00B667CB /* AccountRefreshTimer.swift in Sources */,
 				51E49A0424A91FF600B667CB /* SceneNavigationView.swift in Sources */,
 				51E498CC24A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
@@ -4748,6 +4792,7 @@
 				51E4990724A808C300B667CB /* AuthorAvatarDownloader.swift in Sources */,
 				51E4997424A8784400B667CB /* DefaultFeedsImporter.swift in Sources */,
 				51919FF524AB869C00541E64 /* TimelineItem.swift in Sources */,
+				17AC0ABC24E4B65E004C1231 /* ReleaseNotes.swift in Sources */,
 				51E4992024A8095000B667CB /* RSImage-Extensions.swift in Sources */,
 				51E499FE24A9137600B667CB /* SidebarModel.swift in Sources */,
 				51E498FE24A808BA00B667CB /* FaviconDownloader.swift in Sources */,
@@ -5887,6 +5932,31 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		17A1597B24E3DEDD005DA32A /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+		17A1597E24E3DEDD005DA32A /* RSTree */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
+			productName = RSTree;
+		};
+		17A1598124E3DEDD005DA32A /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
+			productName = RSWeb;
+		};
+		17A1598424E3DEDD005DA32A /* RSDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF0D24D24E3B000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
+			productName = RSDatabase;
+		};
+		17A1598724E3DEDD005DA32A /* RSParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
+			productName = RSParser;
+		};
 		5102AE6824D17F7C0050839C /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;

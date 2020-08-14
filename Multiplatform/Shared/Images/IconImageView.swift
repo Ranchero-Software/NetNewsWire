@@ -13,7 +13,7 @@ struct IconImageView: View {
 	@Environment(\.colorScheme) var colorScheme
 	var iconImage: IconImage
 	
-    @ViewBuilder var body: some View {
+    var body: some View {
 		GeometryReader { proxy in
 			
 			let newSize = newImageSize(viewSize: proxy.size)

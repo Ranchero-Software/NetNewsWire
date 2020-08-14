@@ -12,7 +12,7 @@ import Account
 class SettingsModel: ObservableObject {
 	
 	enum HelpSites {
-		case netNewsWireHelp, netNewsWire, supportNetNewsWire, github, bugTracker, technotes, netNewsWireSlack, none
+		case netNewsWireHelp, netNewsWire, supportNetNewsWire, github, bugTracker, technotes, netNewsWireSlack, releaseNotes, none
 		
 		var url: URL? {
 			switch self {
@@ -30,6 +30,8 @@ class SettingsModel: ObservableObject {
 				return URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/main/Technotes")!
 			case .netNewsWireSlack:
 				return URL(string: "https://ranchero.com/netnewswire/slack")!
+			case .releaseNotes:
+				return ReleaseNotes().url
 			case .none:
 				return nil
 			}

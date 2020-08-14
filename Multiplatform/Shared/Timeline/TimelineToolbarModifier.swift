@@ -12,6 +12,10 @@ struct TimelineToolbarModifier: ViewModifier {
 	
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var timelineModel: TimelineModel
+	@Environment(\.presentationMode) var presentationMode
+	#if os(iOS)
+	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+	#endif
 	@State private var isReadFiltered: Bool? = nil
 	
 	func body(content: Content) -> some View {
@@ -40,6 +44,11 @@ struct TimelineToolbarModifier: ViewModifier {
 				ToolbarItem(placement: .bottomBar) {
 					Button {
 						sceneModel.markAllAsRead()
+						#if os(iOS)
+						if horizontalSizeClass == .compact {
+							presentationMode.wrappedValue.dismiss()
+						}
+						#endif
 					} label: {
 						AppAssets.markAllAsReadImage
 					}
