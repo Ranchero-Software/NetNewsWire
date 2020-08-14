@@ -54,7 +54,16 @@ class ShareViewController: NSViewController {
     }
 
     @IBAction func send(_ sender: AnyObject?) {
-        self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
+		guard let url = url, let selectedContainer = selectedContainer, let containerID = selectedContainer.containerID else {
+			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
+			return
+		}
+
+//		let name = contentText.isEmpty ? nil : contentText
+//		let request = ExtensionFeedAddRequest(name: name, feedURL: url, destinationContainerID: containerID)
+//		ExtensionFeedAddRequestFile.save(request)
+		
+		self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 	}
 
     @IBAction func cancel(_ sender: AnyObject?) {
