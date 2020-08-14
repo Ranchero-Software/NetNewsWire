@@ -8,6 +8,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ShareViewController" customModule="NetNewsWire_Share_Extension" customModuleProvider="target">
             <connections>
+                <outlet property="folderPopUpButton" destination="AZO-uN-Q3y" id="p9m-qP-eZO"/>
+                <outlet property="nameTextField" destination="HzY-aJ-Kyc" id="9Ql-Io-Cnk"/>
                 <outlet property="view" destination="1" id="2"/>
             </connections>
         </customObject>
@@ -82,7 +84,7 @@ Gw
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KT5-nj-VPk">
-                    <rect key="frame" x="6" y="51" width="50" height="16"/>
+                    <rect key="frame" x="6" y="53" width="50" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Folder:" id="qp4-R2-aO5">
                         <font key="font" metaFont="systemBold"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -122,6 +124,7 @@ Gw
                 <constraint firstAttribute="bottom" secondItem="1uM-r7-H1c" secondAttribute="bottom" constant="10" id="4wH-De-nMF"/>
                 <constraint firstItem="1uM-r7-H1c" firstAttribute="top" secondItem="AZO-uN-Q3y" secondAttribute="bottom" constant="20" id="AEF-ge-ntA"/>
                 <constraint firstItem="6li-eA-JHO" firstAttribute="baseline" secondItem="HzY-aJ-Kyc" secondAttribute="baseline" id="B7x-4H-WTn"/>
+                <constraint firstItem="KT5-nj-VPk" firstAttribute="centerY" secondItem="AZO-uN-Q3y" secondAttribute="centerY" id="D7z-Lm-SzG"/>
                 <constraint firstItem="NVE-vN-dkz" firstAttribute="centerY" secondItem="1uM-r7-H1c" secondAttribute="centerY" id="HYN-DC-DWc"/>
                 <constraint firstItem="AZO-uN-Q3y" firstAttribute="trailing" secondItem="HzY-aJ-Kyc" secondAttribute="trailing" id="Hwv-Q7-40h"/>
                 <constraint firstItem="HzY-aJ-Kyc" firstAttribute="leading" secondItem="6li-eA-JHO" secondAttribute="trailing" constant="8" id="ItU-bg-BAi"/>
@@ -130,7 +133,6 @@ Gw
                 <constraint firstItem="AZO-uN-Q3y" firstAttribute="leading" secondItem="HzY-aJ-Kyc" secondAttribute="leading" id="YcI-jO-fZR"/>
                 <constraint firstItem="1uM-r7-H1c" firstAttribute="leading" secondItem="NVE-vN-dkz" secondAttribute="trailing" constant="8" id="a8N-vS-Ew9"/>
                 <constraint firstItem="RbV-Vs-snd" firstAttribute="centerX" secondItem="1" secondAttribute="centerX" id="a8c-Qc-hKw"/>
-                <constraint firstItem="KT5-nj-VPk" firstAttribute="baseline" secondItem="AZO-uN-Q3y" secondAttribute="baseline" id="fDO-8h-qR5"/>
                 <constraint firstItem="KT5-nj-VPk" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="8" id="hpi-b1-IGI"/>
                 <constraint firstItem="RbV-Vs-snd" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" symbolic="YES" id="lDo-dF-3At"/>
                 <constraint firstItem="NVE-vN-dkz" firstAttribute="width" secondItem="1uM-r7-H1c" secondAttribute="width" id="qPo-ky-Fcw"/>
