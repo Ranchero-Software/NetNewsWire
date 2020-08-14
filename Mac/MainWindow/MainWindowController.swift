@@ -1220,7 +1220,9 @@ private extension MainWindowController {
 			}
 		} else {
 			window?.title = appDelegate.appName!
-			return
+			if #available(macOS 11.0, *) {
+				window?.subtitle = "\(appDelegate.unreadCount) unread"
+			}
 		}
 		
 	}
