@@ -170,7 +170,7 @@ private extension SidebarModel {
 		guard let selectedFeedsPublisher = selectedFeedsPublisher else { return }
 
 		deleteFromAccount
-			.withLatestFrom(selectedFeedsPublisher, resultSelector: { givenFeed, selectedFeeds -> [Feed] in
+			.withLatestFrom(selectedFeedsPublisher.prepend([Feed]()), resultSelector: { givenFeed, selectedFeeds -> [Feed] in
 				if selectedFeeds.contains(where: { $0.feedID == givenFeed.feedID }) {
 					return selectedFeeds
 				} else {
