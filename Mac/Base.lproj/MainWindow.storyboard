@@ -495,9 +495,9 @@
                                 </constraints>
                             </visualEffectView>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
-                                <rect key="frame" x="0.0" y="125" width="49" height="17"/>
+                                <rect key="frame" x="4" y="123" width="49" height="19"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="16" id="DoO-KI-ena"/>
+                                    <constraint firstAttribute="height" constant="18" id="DoO-KI-ena"/>
                                 </constraints>
                                 <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" tag="1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="bl0-6I-cH2">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -539,19 +539,19 @@
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Zpk-pq-9nW" customClass="TimelineContainerView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="121"/>
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="120"/>
                             </customView>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="Zpk-pq-9nW" secondAttribute="trailing" id="67d-pI-I9C"/>
                             <constraint firstAttribute="trailing" secondItem="iA5-go-AO0" secondAttribute="trailing" constant="12" id="9Dl-n9-vRI"/>
-                            <constraint firstItem="lSU-OC-sEC" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="Ceb-sA-ECJ"/>
+                            <constraint firstItem="lSU-OC-sEC" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" constant="4" id="Ceb-sA-ECJ"/>
                             <constraint firstItem="PdS-jL-yH1" firstAttribute="leading" secondItem="M3G-7s-D6y" secondAttribute="leading" id="KW1-4o-qoz"/>
                             <constraint firstItem="PdS-jL-yH1" firstAttribute="trailing" secondItem="M3G-7s-D6y" secondAttribute="trailing" id="WHL-h4-cLZ"/>
                             <constraint firstItem="Zpk-pq-9nW" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="XF2-31-E1x"/>
                             <constraint firstItem="PdS-jL-yH1" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" id="aB8-Pt-Szt"/>
                             <constraint firstAttribute="bottom" secondItem="Zpk-pq-9nW" secondAttribute="bottom" id="fyv-EG-PC8"/>
-                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="lSU-OC-sEC" secondAttribute="bottom" constant="5" id="gFm-Ix-hBf"/>
+                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="lSU-OC-sEC" secondAttribute="bottom" constant="4" id="gFm-Ix-hBf"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" constant="5" id="nM9-iA-OzY"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lSU-OC-sEC" secondAttribute="trailing" constant="8" id="yCg-gc-exN"/>
                             <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" constant="4" id="zay-ZJ-od3"/>
