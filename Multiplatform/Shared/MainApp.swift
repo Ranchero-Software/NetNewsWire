@@ -75,7 +75,7 @@ struct MainApp: App {
 			})
 			CommandGroup(after: .help, addition: {
 				Button("Release Notes", action: {
-					NSWorkspace.shared.open(ReleaseNotes().url)
+					NSWorkspace.shared.open(URL.releaseNotes)
 				})
 				.keyboardShortcut("V", modifiers: [.shift, .command])
 			})

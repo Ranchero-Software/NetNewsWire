@@ -15,4 +15,17 @@ extension URL {
 		scheme == "mailto" ? URLComponents(url: self, resolvingAgainstBaseURL: false)?.path : nil
 	}
 	
+	/// URL pointing to current app version release notes.
+	static var releaseNotes: URL {
+		let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+		var gitHub = "https://github.com/Ranchero-Software/NetNewsWire/releases/tag/"
+		#if os(macOS)
+		gitHub += "mac-\(String(describing: appVersion))"
+		return URL(string: gitHub)!
+		#else
+		gitHub += "ios-\(String(describing: appVersion))"
+		return URL(string: gitHub)!
+		#endif
+	}
+	
 }
