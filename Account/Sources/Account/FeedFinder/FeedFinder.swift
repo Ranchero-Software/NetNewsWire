@@ -15,8 +15,17 @@ class FeedFinder {
 	
 	static func find(url: URL, completion: @escaping (Result<Set<FeedSpecifier>, Error>) -> Void) {
 		downloadAddingToCache(url) { (data, response, error) in
+			
 			if response?.forcedStatusCode == 404 {
-				completion(.failure(AccountError.createErrorNotFound))
+				if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
+					urlComponents.path = "\(urlComponents.path).json"
+					if let newURLString = urlComponents.url?.absoluteString {
+						let microblogFeedSpecifier = FeedSpecifier(title: nil, urlString: newURLString, source: .HTMLLink)
+						completion(.success(Set([microblogFeedSpecifier])))
+					}
+				} else {
+					completion(.failure(AccountError.createErrorNotFound))
+				}
 				return
 			}
 			
