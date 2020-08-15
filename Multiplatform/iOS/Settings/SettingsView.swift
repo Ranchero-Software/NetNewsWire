@@ -101,6 +101,7 @@ struct SettingsView: View {
 				}
 			}
 			Toggle("Confirm When Deleting", isOn: $settings.sidebarConfirmDelete)
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 		})
 		.alert(isPresented: $feedsSettingsModel.showError) {
 			Alert(
