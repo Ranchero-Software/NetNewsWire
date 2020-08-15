@@ -639,9 +639,9 @@
         <segue reference="WS2-WB-dc4"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="NSAddTemplate" width="15" height="13"/>
+        <image name="NSAddTemplate" width="14" height="13"/>
         <image name="NSRefreshTemplate" width="14" height="16"/>
-        <image name="NSShareTemplate" width="16" height="17"/>
+        <image name="NSShareTemplate" width="15" height="17"/>
         <image name="cleanUp" width="149" height="113"/>
         <image name="filterInactive" width="100" height="101"/>
         <image name="markAllRead" width="22" height="19"/>

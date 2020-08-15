@@ -10,6 +10,7 @@ import Foundation
 
 struct ReleaseNotes {
 	
+	@available(*, unavailable, message: "Use URL.releaseNotes")
 	var url: URL {
 		var gitHub = "https://github.com/Ranchero-Software/NetNewsWire/releases/tag/"
 		#if os(macOS)

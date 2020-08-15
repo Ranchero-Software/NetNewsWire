@@ -588,6 +588,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		Browser.open("https://ranchero.com/netnewswire/", inBackground: false)
 	}
+	
+	@IBAction func openReleaseNotes(_ sender: Any?) {
+		Browser.open(URL.releaseNotes.absoluteString, inBackground: false)
+	}
+	
 
 	@IBAction func openHowToSupport(_ sender: Any?) {
 		

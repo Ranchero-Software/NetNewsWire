@@ -615,6 +615,12 @@
                                                 <action selector="openWebsite:" target="Ady-hI-5gd" id="rmL-lt-p8g"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Release Notes" id="b5s-xg-B1w" userLabel="Release Notes">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openReleaseNotes:" target="Ady-hI-5gd" id="7LS-uW-Yp0"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="How To Support NetNewsWire" id="kfC-NQ-g3E">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

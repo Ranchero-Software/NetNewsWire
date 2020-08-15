@@ -56,8 +56,6 @@
 		17A1598624E3DEDD005DA32A /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598424E3DEDD005DA32A /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17A1598824E3DEDD005DA32A /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598724E3DEDD005DA32A /* RSParser */; };
 		17A1598924E3DEDD005DA32A /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598724E3DEDD005DA32A /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		17AC0ABB24E4B65E004C1231 /* ReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AC0ABA24E4B65E004C1231 /* ReleaseNotes.swift */; };
-		17AC0ABC24E4B65E004C1231 /* ReleaseNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AC0ABA24E4B65E004C1231 /* ReleaseNotes.swift */; };
 		17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
@@ -1474,7 +1472,6 @@
 		1799E6A824C2F93F00511E91 /* InspectorPlatformModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPlatformModifier.swift; sourceTree = "<group>"; };
 		1799E6CC24C320D600511E91 /* InspectorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorModel.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
-		17AC0ABA24E4B65E004C1231 /* ReleaseNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseNotes.swift; sourceTree = "<group>"; };
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
 		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
@@ -2282,14 +2279,6 @@
 			path = Add;
 			sourceTree = "<group>";
 		};
-		17AC0ACB24E4B66A004C1231 /* Release Notes */ = {
-			isa = PBXGroup;
-			children = (
-				17AC0ABA24E4B65E004C1231 /* ReleaseNotes.swift */,
-			);
-			path = "Release Notes";
-			sourceTree = "<group>";
-		};
 		510289CE2451BA1E00426DDF /* Twitter */ = {
 			isa = PBXGroup;
 			children = (
@@ -2706,7 +2695,6 @@
 				514E6C0424AD2B0400AC6F6E /* SwiftUI Extensions */,
 				51919FCB24AB855000541E64 /* Timeline */,
 				171BCBB124CBD569006E22D9 /* Account Management  */,
-				17AC0ACB24E4B66A004C1231 /* Release Notes */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -4575,7 +4563,6 @@
 				51E4991724A8090400B667CB /* ArticleUtilities.swift in Sources */,
 				51E4991B24A8091000B667CB /* IconImage.swift in Sources */,
 				51E4995424A8734D00B667CB /* ExtensionPointIdentifer.swift in Sources */,
-				17AC0ABB24E4B65E004C1231 /* ReleaseNotes.swift in Sources */,
 				51E4996924A8760C00B667CB /* ArticleStylesManager.swift in Sources */,
 				5177471E24B387E100EB0F74 /* ImageTransition.swift in Sources */,
 				51E498F324A8085D00B667CB /* PseudoFeed.swift in Sources */,
@@ -4792,7 +4779,6 @@
 				51E4990724A808C300B667CB /* AuthorAvatarDownloader.swift in Sources */,
 				51E4997424A8784400B667CB /* DefaultFeedsImporter.swift in Sources */,
 				51919FF524AB869C00541E64 /* TimelineItem.swift in Sources */,
-				17AC0ABC24E4B65E004C1231 /* ReleaseNotes.swift in Sources */,
 				51E4992024A8095000B667CB /* RSImage-Extensions.swift in Sources */,
 				51E499FE24A9137600B667CB /* SidebarModel.swift in Sources */,
 				51E498FE24A808BA00B667CB /* FaviconDownloader.swift in Sources */,

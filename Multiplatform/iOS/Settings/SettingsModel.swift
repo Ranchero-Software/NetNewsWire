@@ -31,7 +31,7 @@ class SettingsModel: ObservableObject {
 			case .netNewsWireSlack:
 				return URL(string: "https://ranchero.com/netnewswire/slack")!
 			case .releaseNotes:
-				return ReleaseNotes().url
+				return URL.releaseNotes
 			case .none:
 				return nil
 			}
