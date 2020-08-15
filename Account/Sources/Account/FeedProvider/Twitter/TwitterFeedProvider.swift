@@ -158,6 +158,21 @@ public final class TwitterFeedProvider: FeedProvider {
 		default:
 			if let hashtag = deriveHashtag(urlComponents) {
 				completion(.success(FeedProviderFeedMetaData(name: "#\(hashtag)", homePageURL: Self.homeURL)))
+			} else if let listID = deriveListID(urlComponents) {
+				retrieveList(listID: listID) { result in
+					switch result {
+					case .success(let list):
+						if let userName = list.name {
+							var urlComponents = URLComponents(string: Self.homeURL)
+							urlComponents?.path = "/i/lists/\(listID)"
+							completion(.success(FeedProviderFeedMetaData(name: userName, homePageURL: urlComponents?.url?.absoluteString)))
+						} else {
+							completion(.failure(TwitterFeedProviderError.screenNameNotFound))
+						}
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
 			} else if let screenName = deriveScreenName(urlComponents) {
 				retrieveUser(screenName: screenName) { result in
 					switch result {
@@ -211,15 +226,16 @@ public final class TwitterFeedProvider: FeedProvider {
 				api = "search/tweets.json"
 				parameters["q"] = "#\(hashtag)"
 				isSearch = true
-			} else {
+			} else if let listID = deriveListID(urlComponents) {
+				api = "lists/statuses.json"
+				parameters["list_id"] = listID
+			} else if let screenName = deriveScreenName(urlComponents) {
 				api = "statuses/user_timeline.json"
 				parameters["exclude_replies"] = true
-				if let screenName = deriveScreenName(urlComponents) {
-					parameters["screen_name"] = screenName
-				} else {
-					completion(.failure(TwitterFeedProviderError.unknown))
-					return
-				}
+				parameters["screen_name"] = screenName
+			} else {
+				completion(.failure(TwitterFeedProviderError.unknown))
+				return
 			}
 		}
 
@@ -319,6 +335,12 @@ private extension TwitterFeedProvider {
 		}
 	}
 	
+	func deriveListID(_ urlComponents: URLComponents) -> String? {
+		let path = urlComponents.path
+		guard path.starts(with: "/i/lists/") else { return nil }
+		return String(path.suffix(from: path.index(path.startIndex, offsetBy: 9)))
+	}
+	
 	func retrieveUser(screenName: String, completion: @escaping (Result<TwitterUser, Error>) -> Void) {
 		let url = "\(Self.apiBase)users/show.json"
 		let parameters = ["screen_name": screenName]
@@ -330,6 +352,26 @@ private extension TwitterFeedProvider {
 				do {
 					let user = try decoder.decode(TwitterUser.self, from: response.data)
 					completion(.success(user))
+				} catch {
+					completion(.failure(error))
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	func retrieveList(listID: String, completion: @escaping (Result<TwitterList, Error>) -> Void) {
+		let url = "\(Self.apiBase)lists/show.json"
+		let parameters = ["list_id": listID]
+		
+		client.get(url, parameters: parameters, headers: Self.userAgentHeaders) { result in
+			switch result {
+			case .success(let response):
+				let decoder = JSONDecoder()
+				do {
+					let collection = try decoder.decode(TwitterList.self, from: response.data)
+					completion(.success(collection))
 				} catch {
 					completion(.failure(error))
 				}
