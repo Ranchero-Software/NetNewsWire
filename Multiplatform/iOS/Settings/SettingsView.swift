@@ -100,6 +100,8 @@ struct SettingsView: View {
 						.foregroundColor(.primary)
 				}
 			}
+			Toggle("Confirm When Deleting", isOn: $settings.sidebarConfirmDelete)
+				.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 		})
 		.alert(isPresented: $feedsSettingsModel.showError) {
 			Alert(
@@ -137,11 +139,14 @@ struct SettingsView: View {
 						Text(viewModel.accounts[i].nameForDisplay)
 					}
 				})
+				
 			})
 		}
 		.listStyle(InsetGroupedListStyle())
 		.navigationBarTitle("Export Subscriptions", displayMode: .inline)
 	}
+	
+	
 	
 	var timeline: some View {
 		Section(header: Text("Timeline"), content: {

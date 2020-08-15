@@ -62,6 +62,23 @@ struct SidebarView: View {
 				.transition(.move(edge: .bottom))
 			}
 		}
+		.alert(isPresented: $sidebarModel.showDeleteConfirmation, content: {
+			Alert(title: sidebarModel.countOfFeedsToDelete() > 1 ?
+							(Text("Delete multiple items?")) :
+							(Text("Delete \(sidebarModel.namesOfFeedsToDelete())?")),
+						 message: Text("Are you sure you wish to delete \(sidebarModel.namesOfFeedsToDelete())?"),
+				  primaryButton: .destructive(Text("Delete"),
+											  action: {
+												sidebarModel.deleteFromAccount.send(sidebarModel.sidebarItemToDelete!)
+												sidebarModel.sidebarItemToDelete = nil
+												sidebarModel.selectedFeedIdentifiers.removeAll()
+												sidebarModel.showDeleteConfirmation = false
+				  }),
+				  secondaryButton: .cancel(Text("Cancel"), action: {
+						sidebarModel.sidebarItemToDelete = nil
+						sidebarModel.showDeleteConfirmation = false
+				  }))
+		})
 		#else
 		ZStack(alignment: .top) {
 			List {
@@ -76,6 +93,23 @@ struct SidebarView: View {
 				ProgressView().offset(y: -40)
 			}
 		}
+		.alert(isPresented: $sidebarModel.showDeleteConfirmation, content: {
+			Alert(title: sidebarModel.countOfFeedsToDelete() > 1 ?
+							(Text("Delete multiple items?")) :
+							(Text("Delete \(sidebarModel.namesOfFeedsToDelete())?")),
+						 message: Text("Are you sure you wish to delete \(sidebarModel.namesOfFeedsToDelete())?"),
+				  primaryButton: .destructive(Text("Delete"),
+											  action: {
+												sidebarModel.deleteFromAccount.send(sidebarModel.sidebarItemToDelete!)
+												sidebarModel.sidebarItemToDelete = nil
+												sidebarModel.selectedFeedIdentifiers.removeAll()
+												sidebarModel.showDeleteConfirmation = false
+				  }),
+				  secondaryButton: .cancel(Text("Cancel"), action: {
+						sidebarModel.sidebarItemToDelete = nil
+						sidebarModel.showDeleteConfirmation = false
+				  }))
+		})
 		#endif
 		
 //		.onAppear {

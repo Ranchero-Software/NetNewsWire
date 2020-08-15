@@ -61,6 +61,9 @@ final class AppDefaults: ObservableObject {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let timelineIconDimensions = "timelineIconDimensions"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
+		
+		// Sidebar Defaults
+		static let sidebarConfirmDelete = "sidebarConfirmDelete"
 
 		// iOS Defaults
 		static let refreshClearsReadArticles = "refreshClearsReadArticles"
@@ -198,7 +201,7 @@ final class AppDefaults: ObservableObject {
 			objectWillChange.send()
 		}
 	}
-	
+
 	@AppStorage(wrappedValue: 40.0, Key.timelineIconDimensions, store: store) var timelineIconDimensions: Double {
 		didSet {
 			objectWillChange.send()
@@ -211,6 +214,14 @@ final class AppDefaults: ObservableObject {
 			objectWillChange.send()
 		}
 	}
+	
+	// MARK: Sidebar
+	@AppStorage(wrappedValue: true, Key.sidebarConfirmDelete, store: store) var sidebarConfirmDelete: Bool {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
 	
 	// MARK: Refresh
 	@AppStorage(wrappedValue: false, Key.refreshClearsReadArticles, store: store) var refreshClearsReadArticles: Bool

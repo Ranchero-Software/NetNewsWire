@@ -22,6 +22,7 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	@Published var selectedFeedIdentifier: FeedIdentifier? = .none
 	@Published var isReadFiltered = false
 	@Published var expandedContainers = SidebarExpandedContainers()
+	@Published var showDeleteConfirmation: Bool = false 
 	
 	weak var delegate: SidebarModelDelegate?
 
@@ -33,6 +34,8 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	var markAllAsReadInAccount = PassthroughSubject<Account, Never>()
 	var deleteFromAccount = PassthroughSubject<Feed, Never>()
 
+	var sidebarItemToDelete: Feed?
+	
 	private var cancellables = Set<AnyCancellable>()
 
 	var undoManager: UndoManager?
@@ -50,6 +53,37 @@ class SidebarModel: ObservableObject, UndoableCommandRunner {
 	
 }
 
+
+extension SidebarModel {
+	
+	func countOfFeedsToDelete() -> Int {
+		var selectedFeeds = selectedFeedIdentifiers
+		
+		if sidebarItemToDelete != nil {
+			selectedFeeds.insert(sidebarItemToDelete!.feedID!)
+		}
+		
+		return selectedFeeds.count
+	}
+	
+	
+	func namesOfFeedsToDelete() -> String {
+		var selectedFeeds = selectedFeedIdentifiers
+		
+		if sidebarItemToDelete != nil {
+			selectedFeeds.insert(sidebarItemToDelete!.feedID!)
+		}
+		
+		let feeds: [Feed] = selectedFeeds
+			.compactMap({ AccountManager.shared.existingFeed(with: $0) })
+		
+		return feeds
+			.map({ $0.nameForDisplay })
+			.joined(separator: ", ")
+	}
+	
+}
+
 // MARK: Private
 
 private extension SidebarModel {
@@ -57,10 +91,12 @@ private extension SidebarModel {
 	// MARK: Subscriptions
 	
 	func subscribeToSelectedFeedChanges() {
+		
 		let selectedFeedIdentifersPublisher = $selectedFeedIdentifiers
 			.map { [weak self] feedIDs -> [Feed] in
 				return feedIDs.compactMap { self?.findFeed($0) }
 			}
+			
 		
 		let selectedFeedIdentiferPublisher = $selectedFeedIdentifier
 			.compactMap { [weak self] feedID -> [Feed]? in
@@ -168,7 +204,7 @@ private extension SidebarModel {
 	
 	func subscribeToDeleteFromAccount() {
 		guard let selectedFeedsPublisher = selectedFeedsPublisher else { return }
-
+		
 		deleteFromAccount
 			.withLatestFrom(selectedFeedsPublisher.prepend([Feed]()), resultSelector: { givenFeed, selectedFeeds -> [Feed] in
 				if selectedFeeds.contains(where: { $0.feedID == givenFeed.feedID }) {
@@ -180,7 +216,19 @@ private extension SidebarModel {
 			.sink { feeds in
 				for feed in feeds {
 					if let webFeed = feed as? WebFeed {
-						webFeed.account?.removeWebFeed(webFeed)
+						guard let account = webFeed.account,
+							  let containerID = account.containerID,
+							  let container = AccountManager.shared.existingContainer(with: containerID) else {
+							return
+						}
+						account.removeWebFeed(webFeed, from: container, completion: { result in
+							switch result {
+							case .success:
+								break
+							case .failure(let err):
+								print(err)
+							}
+						})
 					}
 					if let folder = feed as? Folder {
 						folder.account?.removeFolder(folder) { _ in }
@@ -303,5 +351,7 @@ private extension SidebarModel {
 		selectedFeedIdentifiers = Set([feedID])
 		selectedFeedIdentifier = feedID
 	}
+	
+	
 	
 }

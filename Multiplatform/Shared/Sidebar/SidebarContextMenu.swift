@@ -123,7 +123,12 @@ struct SidebarContextMenu: View {
 			}
 			Divider()
 			Button {
-				sidebarModel.deleteFromAccount.send(sidebarItem.feed!)
+				if AppDefaults.shared.sidebarConfirmDelete == false {
+					sidebarModel.deleteFromAccount.send(sidebarItem.feed!)
+				} else {
+					sidebarModel.sidebarItemToDelete = sidebarItem.feed!
+					sidebarModel.showDeleteConfirmation = true
+				}
 			} label: {
 				Text("Delete")
 				#if os(iOS)
@@ -153,15 +158,26 @@ struct SidebarContextMenu: View {
 				AppAssets.markAllAsReadImage
 				#endif
 			}
+			
+			/*
+				You cannot select folder level items in b4. Delete is disabled for the time being.
+			*/
+			/*
 			Divider()
 			Button {
-				sidebarModel.deleteFromAccount.send(sidebarItem.feed!)
+				if AppDefaults.shared.sidebarConfirmDelete == false {
+					sidebarModel.deleteFromAccount.send(sidebarItem.feed!)
+				} else {
+					sidebarModel.sidebarContextMenuItem = sidebarItem.feed
+					sidebarModel.showDeleteConfirmation = true
+				}
 			} label: {
 				Text("Delete")
 				#if os(iOS)
 				AppAssets.deleteImage
 				#endif
 			}
+			*/
 		}
 		
     }
