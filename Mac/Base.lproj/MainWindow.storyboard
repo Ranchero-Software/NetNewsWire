@@ -294,11 +294,7 @@
                                 <rect key="frame" x="0.0" y="284" width="166" height="23"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eZS-8K-qiN">
-                                        <rect key="frame" x="140" y="4" width="14" height="14"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="14" id="ELp-U5-6Vw"/>
-                                            <constraint firstAttribute="width" constant="14" id="vyT-yU-oaI"/>
-                                        </constraints>
+                                        <rect key="frame" x="141" y="5" width="13" height="13"/>
                                         <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="filterInactive" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="5QJ-Ja-Gng">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -512,11 +508,7 @@
                                 </popUpButtonCell>
                             </popUpButton>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iA5-go-AO0">
-                                <rect key="frame" x="424" y="179" width="14" height="14"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="14" id="FbQ-4n-ThT"/>
-                                    <constraint firstAttribute="height" constant="14" id="dlW-82-T6N"/>
-                                </constraints>
+                                <rect key="frame" x="425" y="180" width="13" height="13"/>
                                 <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="filterInactive" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="j7d-36-DO5">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
