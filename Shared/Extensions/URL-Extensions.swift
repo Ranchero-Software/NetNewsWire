@@ -28,4 +28,13 @@ extension URL {
 		#endif
 	}
 	
+	func valueFor(_ parameter: String) -> String? {
+		guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
+			  let queryItems = components.queryItems,
+			  let value = queryItems.first(where: { $0.name == parameter })?.value else {
+			return nil
+		}
+		return value
+		
+	}
 }
