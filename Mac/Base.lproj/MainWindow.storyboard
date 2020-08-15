@@ -475,9 +475,9 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
-                                <rect key="frame" x="8" y="177" width="49" height="17"/>
+                                <rect key="frame" x="8" y="176" width="49" height="19"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="16" id="DoO-KI-ena"/>
+                                    <constraint firstAttribute="height" constant="18" id="DoO-KI-ena"/>
                                 </constraints>
                                 <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" tag="1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="bl0-6I-cH2">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
@@ -537,7 +537,7 @@
                             <constraint firstItem="7p6-pA-iw6" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="pZU-jW-B1h"/>
                             <constraint firstItem="7p6-pA-iw6" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="23" id="tUm-nX-Jce"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lSU-OC-sEC" secondAttribute="trailing" constant="8" id="yCg-gc-exN"/>
-                            <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="4" id="zay-ZJ-od3"/>
+                            <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="3" id="zay-ZJ-od3"/>
                         </constraints>
                     </view>
                     <connections>
