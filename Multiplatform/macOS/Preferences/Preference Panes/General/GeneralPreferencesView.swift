@@ -35,6 +35,7 @@ struct GeneralPreferencesView: View {
 				})
 			})
 			
+			Toggle("Confirm when deleting feeds and folders", isOn: $defaults.sidebarConfirmDelete)
 			
 			Toggle("Open webpages in background in browser", isOn: $defaults.openInBrowserInBackground)
 			

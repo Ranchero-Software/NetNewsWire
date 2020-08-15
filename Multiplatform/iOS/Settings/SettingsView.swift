@@ -26,6 +26,7 @@ struct SettingsView: View {
 				systemSettings
 				accounts
 				importExport
+				sidebarFeedManagement
 				timeline
 				articles
 				appearance
@@ -141,6 +142,12 @@ struct SettingsView: View {
 		}
 		.listStyle(InsetGroupedListStyle())
 		.navigationBarTitle("Export Subscriptions", displayMode: .inline)
+	}
+	
+	var sidebarFeedManagement: some View {
+		Section(header: Text("Feed Management")) {
+			Toggle("Confirm When Deleting Feeds and Folders", isOn: $settings.sidebarConfirmDelete)
+		}.toggleStyle(SwitchToggleStyle(tint: .accentColor))
 	}
 	
 	var timeline: some View {
