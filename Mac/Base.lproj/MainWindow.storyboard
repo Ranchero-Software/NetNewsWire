@@ -450,24 +450,25 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
-                                <rect key="frame" x="8" y="176" width="49" height="19"/>
+                                <rect key="frame" x="8" y="176" width="51" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="18" id="DoO-KI-ena"/>
                                 </constraints>
                                 <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" tag="1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="bl0-6I-cH2">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                    <font key="font" metaFont="controlContent" size="11"/>
+                                    <font key="font" metaFont="systemBold" size="11"/>
                                     <menu key="menu" id="dN0-S2-uqU">
                                         <items>
                                             <menuItem title="Sort" tag="1" hidden="YES" id="4BZ-ya-evy">
+                                                <attributedString key="attributedTitle"/>
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
-                                            <menuItem title="Newest To Oldest" state="on" tag="2" id="40c-kt-vhO">
+                                            <menuItem title="Newest Article on Top" state="on" tag="2" id="40c-kt-vhO">
                                                 <connections>
                                                     <action selector="sortByNewestArticleOnTop:" target="Ebq-4s-EwK" id="vYg-MZ-zve"/>
                                                 </connections>
                                             </menuItem>
-                                            <menuItem title="Oldest To Newest" tag="3" id="sOF-Ez-vIL">
+                                            <menuItem title="Oldest Article on Top" tag="3" id="sOF-Ez-vIL">
                                                 <connections>
                                                     <action selector="sortByOldestArticleOnTop:" target="Ebq-4s-EwK" id="KFG-M7-blB"/>
                                                 </connections>
@@ -505,10 +506,10 @@
                             <constraint firstAttribute="trailing" secondItem="iA5-go-AO0" secondAttribute="trailing" constant="12" id="9Dl-n9-vRI"/>
                             <constraint firstItem="lSU-OC-sEC" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" constant="8" id="Ceb-sA-ECJ"/>
                             <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="7p6-pA-iw6" secondAttribute="bottom" id="KCa-8b-a6y"/>
+                            <constraint firstItem="lSU-OC-sEC" firstAttribute="centerY" secondItem="iA5-go-AO0" secondAttribute="centerY" id="OeL-Zp-iRT"/>
                             <constraint firstItem="Zpk-pq-9nW" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="XF2-31-E1x"/>
                             <constraint firstAttribute="trailing" secondItem="7p6-pA-iw6" secondAttribute="trailing" id="fG3-fe-Stb"/>
                             <constraint firstAttribute="bottom" secondItem="Zpk-pq-9nW" secondAttribute="bottom" id="fyv-EG-PC8"/>
-                            <constraint firstItem="iA5-go-AO0" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="5" id="nM9-iA-OzY"/>
                             <constraint firstItem="7p6-pA-iw6" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="pZU-jW-B1h"/>
                             <constraint firstItem="7p6-pA-iw6" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="23" id="tUm-nX-Jce"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lSU-OC-sEC" secondAttribute="trailing" constant="8" id="yCg-gc-exN"/>
