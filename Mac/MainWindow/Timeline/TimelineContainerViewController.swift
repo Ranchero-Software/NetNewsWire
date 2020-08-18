@@ -45,6 +45,11 @@ final class TimelineContainerViewController: NSViewController {
 		return regularTimelineViewController.isReadFiltered
 	}
 
+	var isCleanUpAvailable: Bool {
+		guard let currentTimelineViewController = currentTimelineViewController, mode(for: currentTimelineViewController) == .regular else { return false }
+		return regularTimelineViewController.isCleanUpAvailable
+	}
+	
 	lazy var regularTimelineViewController = {
 		return TimelineViewController(delegate: self)
 	}()

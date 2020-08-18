@@ -43,6 +43,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 	
+	var isCleanUpAvailable: Bool {
+		guard isReadFiltered ?? false else { return false }
+		
+		let readSelectedCount = selectedArticles.filter({ $0.status.read }).count
+		let readArticleCount = articles.count - unreadCount
+		let availableToCleanCount = readArticleCount - readSelectedCount
+		return availableToCleanCount > 0
+	}
+	
 	var representedObjects: [AnyObject]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
