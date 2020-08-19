@@ -10,16 +10,16 @@ body {
 :root {
 	--body-color: #444;
 	--body-background-color: -apple-system-text-background;
-	--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .75);
-	--block-quote-border-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .50);
+	--accent-color: rgb(8, 106, 238, 1);
+	--block-quote-border-color: rgb(8, 106, 238, .50);
 }
 
 @media(prefers-color-scheme: dark) {
 	:root {
 		--body-color: #d2d2d2;
 		--body-background-color: #2d2d2d;
-		--accent-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .75);
-		--block-quote-border-color: rgba([[accent-r]], [[accent-g]], [[accent-b]], .50);
+		--accent-color: rgba(45, 128, 241, 1);
+		--block-quote-border-color: rgba(45, 128, 241, .50);
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 	}
 }
