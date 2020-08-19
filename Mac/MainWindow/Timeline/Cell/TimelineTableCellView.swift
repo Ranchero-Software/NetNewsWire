@@ -180,7 +180,7 @@ private extension TimelineTableCellView {
 		titleView.textColor = NSColor.labelColor
 		feedNameView.textColor = NSColor.secondaryLabelColor
 		dateView.textColor = NSColor.secondaryLabelColor
-		summaryView.textColor = NSColor.labelColor
+		summaryView.textColor = NSColor.secondaryLabelColor
 		textView.textColor = NSColor.labelColor
 	}
 
