@@ -164,6 +164,12 @@ private extension ArticleRenderer {
 		else {
 			d["avatars"] = ""
 		}
+		
+		if self.title.isEmpty {
+			d["dateline_style"] = "articleDatelineTitle"
+		} else {
+			d["dateline_style"] = "articleDateline"
+		}
 
 		var feedLink = ""
 		if let feedTitle = article.webFeed?.nameForDisplay {
