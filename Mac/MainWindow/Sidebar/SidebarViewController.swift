@@ -24,7 +24,6 @@ protocol SidebarDelegate: class {
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
     
-	@IBOutlet weak var readFilteredButton: NSButton!
 	@IBOutlet var outlineView: SidebarOutlineView!
 
 	weak var delegate: SidebarDelegate?
@@ -134,8 +133,6 @@ protocol SidebarDelegate: class {
 		if let readFeedsFilterState = state[UserInfoKey.readFeedsFilterState] as? Bool {
 			isReadFiltered = readFeedsFilterState
 		}
-		
-		updateReadFilterButton()
 	}
 	
 	// MARK: - Notifications
@@ -475,7 +472,6 @@ protocol SidebarDelegate: class {
 		}
 		delegate?.sidebarInvalidatedRestorationState(self)
 		rebuildTreeAndRestoreSelection()
-		updateReadFilterButton()
 	}
 	
 }
@@ -845,13 +841,6 @@ private extension SidebarViewController {
 		return outlineView.revealAndSelectRepresentedObject(representedObject, treeController)
 	}
 	
-	func updateReadFilterButton() {
-		if isReadFiltered {
-			readFilteredButton.image = AppAssets.filterActive
-		} else {
-			readFilteredButton.image = AppAssets.filterInactive
-		}
-	}
 }
 
 private extension Node {

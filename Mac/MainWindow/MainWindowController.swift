@@ -1149,9 +1149,7 @@ private extension MainWindowController {
 	}
 	
 	func validateCleanUp(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		let isSidebarFiltered = sidebarViewController?.isReadFiltered ?? false
-		let isTimelineFiltered = timelineContainerViewController?.isReadFiltered ?? false
-		return isSidebarFiltered || isTimelineFiltered
+		return timelineContainerViewController?.isCleanUpAvailable ?? false
 	}
 
 	func validateToggleReadFeeds(_ item: NSValidatedUserInterfaceItem) -> Bool {

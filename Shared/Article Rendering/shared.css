@@ -32,17 +32,20 @@ a:hover {
 	--header-color: rgba(0, 0, 0, 0.3);
 	--body-code-color: #666;
 	--system-message-color: #cbcbcb;
-	--feedlink-color: rgba(0, 0, 0, 0.6);
+	--feedlink-color: rgba(0, 0, 0, 0.3);
 	--article-title-color: #333;
+	--article-date-color: rgba(0, 0, 0, 0.5);
 	--table-cell-border-color: lightgray;
 }
 
 @media(prefers-color-scheme: dark) {
 	:root {
-			--header-color: #d2d2d2;
+		--header-color: #d2d2d2;
 		--body-code-color: #b2b2b2;
 		--system-message-color: #5f5f5f;
+		--feedlink-color: rgba(255, 255, 255, 0.7);
 		--article-title-color: #e0e0e0;
+		--article-date-color: rgba(255, 255, 255, 0.5);
 		--table-cell-border-color: dimgray;
 	}
 }
@@ -59,10 +62,6 @@ body .header {
 	color: var(--header-color);
 }
 
-body .articleDateline, body .articleDateLine.a:link, body .articleDateline a:visited {
-	color: var(--header-color);
-}
-
 body code, body pre {
 	color: var(--body-code-color);
 }
@@ -72,7 +71,7 @@ body > .systemMessage {
 }
 
 .feedlink a:link, .feedlink a:visited {
-	color: var(--feed-link-color);
+	color: var(--feedlink-color);
 }
 
 .avatar img {
@@ -100,6 +99,15 @@ body > .systemMessage {
 }
 
 .articleDateline a:link, .articleDateline a:visited {
+	color: var(--article-date-color);
+}
+
+.articleDatelineTitle {
+	margin-bottom: 25px;
+	font-weight: bold;
+}
+
+.articleDatelineTitle a:link, .articleDatelineTitle a:visited {
 	color: var(--article-title-color);
 }
 

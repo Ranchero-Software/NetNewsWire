@@ -164,6 +164,12 @@ private extension ArticleRenderer {
 		else {
 			d["avatars"] = ""
 		}
+		
+		if self.title.isEmpty {
+			d["dateline_style"] = "articleDatelineTitle"
+		} else {
+			d["dateline_style"] = "articleDateline"
+		}
 
 		var feedLink = ""
 		if let feedTitle = article.webFeed?.nameForDisplay {
@@ -218,19 +224,24 @@ private extension ArticleRenderer {
 			}
 			isFirstAuthor = false
 
-			if let emailAddress = author.emailAddress, emailAddress.contains(" ") {
+			var authorEmailAddress: String? = nil
+			if let emailAddress = author.emailAddress, !(emailAddress.contains("noreply@") || emailAddress.contains("no-reply@")) {
+				authorEmailAddress = emailAddress
+			}
+
+			if let emailAddress = authorEmailAddress, emailAddress.contains(" ") {
 				byline += emailAddress // probably name plus email address
 			}
 			else if let name = author.name, let url = author.url {
 				byline += name.htmlByAddingLink(url)
 			}
-			else if let name = author.name, let emailAddress = author.emailAddress {
+			else if let name = author.name, let emailAddress = authorEmailAddress {
 				byline += "\(name) &lt;\(emailAddress)&gt;"
 			}
 			else if let name = author.name {
 				byline += name
 			}
-			else if let emailAddress = author.emailAddress {
+			else if let emailAddress = authorEmailAddress {
 				byline += "&lt;\(emailAddress)&gt;" // TODO: mailto link
 			}
 			else if let url = author.url {
@@ -271,32 +282,6 @@ private extension ArticleRenderer {
 			d["font-size"] = String(describing: Int(round(bodyFont.pointSize * 1.33)))
 		}
 		
-		guard let linkColor = NSColor.controlAccentColor.usingColorSpace(.deviceRGB) else {
-			return d
-		}
-		
-		let red: Int
-		let green: Int
-		let blue: Int
-		
-		if NSApplication.shared.effectiveAppearance.isDarkMode {
-			let brighten = CGFloat(0.50)
-			let baseRed = linkColor.redComponent * 0xFF
-			red = Int(round(((255 - baseRed) * brighten)) + round(baseRed))
-			let baseGreen = linkColor.greenComponent * 0xFF
-			green = Int(round(((255 - baseGreen) * brighten)) + round(baseGreen))
-			let baseBlue = linkColor.blueComponent * 0xFF
-			blue = Int(round(((255 - baseBlue) * brighten)) + round(baseBlue))
-		} else {
-			let darken = CGFloat(0.75)
-			red = Int(round(linkColor.redComponent * 0xFF * darken))
-			green = Int(round(linkColor.greenComponent * 0xFF * darken))
-			blue = Int(round(linkColor.blueComponent * 0xFF * darken))
-		}
-
-		d["accent-r"] = String(red)
-		d["accent-g"] = String(green)
-		d["accent-b"] = String(blue)
 		return d
 	}
 	#endif

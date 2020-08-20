@@ -114,6 +114,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		let selectedRow = tableView.selectedRow
 		if tableView.selectedRow == -1 {
 			deleteButton.isEnabled = false
+			showController(AccountsAddViewController())
 			return
 		} else {
 			deleteButton.isEnabled = true

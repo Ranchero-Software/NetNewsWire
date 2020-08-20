@@ -237,14 +237,12 @@ struct AppAssets {
 		}
 	}()
 
-	static var timelineStar: RSImage! = {
-		if #available(macOS 11.0, *) {
-			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
-			let coloredImage = image.tinted(with: NSColor(named: "StarColor")!)
-			return coloredImage
-		} else {
-			return RSImage(named: "timelineStar")
-		}
+	static var timelineStarSelected: RSImage! = {
+		return RSImage(named: "timelineStar")?.tinted(with: .white)
+	}()
+
+	static var timelineStarUnselected: RSImage! = {
+		return RSImage(named: "timelineStar")?.tinted(with: starColor)
 	}()
 
 	static var todayFeedImage: IconImage = {
@@ -285,8 +283,8 @@ struct AppAssets {
 		return RSImage(named: "swipeMarkUnstarred")!
 	}()
 	
-	static var swipeMarkUnstarredColor: NSColor = {
-		return NSColor(named: NSColor.Name("swipeMarkUnstarredColor"))!
+	static var starColor: NSColor = {
+		return NSColor(named: NSColor.Name("StarColor"))!
 	}()
 	
 	static func image(for accountType: AccountType) -> NSImage? {

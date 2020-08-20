@@ -20,7 +20,7 @@ class TimelineTableCellView: NSTableCellView {
 
 	private lazy var iconView = IconView()
 
-	private let starView = TimelineTableCellView.imageView(with: AppAssets.timelineStar, scaling: .scaleProportionallyUpOrDown)
+	private var starView = TimelineTableCellView.imageView(with: AppAssets.timelineStarUnselected, scaling: .scaleNone)
 	private let separatorView = TimelineTableCellView.separatorView()
 
 	private lazy var textFields = {
@@ -52,12 +52,14 @@ class TimelineTableCellView: NSTableCellView {
 	var isEmphasized: Bool = false {
 		didSet {
 			unreadIndicatorView.isEmphasized = isEmphasized
+			updateStarView()
 		}
 	}
 
 	var isSelected: Bool = false {
 		didSet {
 			unreadIndicatorView.isSelected = isSelected
+			updateStarView()
 		}
 	}
 	
@@ -180,7 +182,7 @@ private extension TimelineTableCellView {
 		titleView.textColor = NSColor.labelColor
 		feedNameView.textColor = NSColor.secondaryLabelColor
 		dateView.textColor = NSColor.secondaryLabelColor
-		summaryView.textColor = NSColor.labelColor
+		summaryView.textColor = NSColor.secondaryLabelColor
 		textView.textColor = NSColor.labelColor
 	}
 
@@ -279,6 +281,11 @@ private extension TimelineTableCellView {
 	}
 
 	func updateStarView() {
+		if isSelected && isEmphasized {
+			starView.image = AppAssets.timelineStarSelected
+		} else {
+			starView.image = AppAssets.timelineStarUnselected
+		}
 		showOrHideView(starView, !cellData.starred)
 	}
 

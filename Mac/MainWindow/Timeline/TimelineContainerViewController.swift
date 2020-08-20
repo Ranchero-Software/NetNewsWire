@@ -45,6 +45,11 @@ final class TimelineContainerViewController: NSViewController {
 		return regularTimelineViewController.isReadFiltered
 	}
 
+	var isCleanUpAvailable: Bool {
+		guard let currentTimelineViewController = currentTimelineViewController, mode(for: currentTimelineViewController) == .regular else { return false }
+		return regularTimelineViewController.isCleanUpAvailable
+	}
+	
 	lazy var regularTimelineViewController = {
 		return TimelineViewController(delegate: self)
 	}()
@@ -58,6 +63,10 @@ final class TimelineContainerViewController: NSViewController {
         super.viewDidLoad()
         setRepresentedObjects(nil, mode: .regular)
 		showTimeline(for: .regular)
+		
+		makeMenuItemTitleLarger(newestToOldestMenuItem)
+		makeMenuItemTitleLarger(oldestToNewestMenuItem)
+		makeMenuItemTitleLarger(groupByFeedMenuItem)
 		updateViewOptionsPopUpButton()
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
@@ -144,6 +153,11 @@ extension TimelineContainerViewController: TimelineDelegate {
 
 private extension TimelineContainerViewController {
 
+	func makeMenuItemTitleLarger(_ menuItem: NSMenuItem) {
+		menuItem.attributedTitle = NSAttributedString(string: menuItem.title,
+													  attributes: [NSAttributedString.Key.font: NSFont.controlContentFont(ofSize: NSFont.systemFontSize)])
+	}
+	
 	func timelineViewController(for mode: TimelineSourceMode) -> TimelineViewController {
 		switch mode {
 		case .regular:
@@ -165,18 +179,14 @@ private extension TimelineContainerViewController {
 	}
 	
 	func updateViewOptionsPopUpButton() {
-		let localizedTitle = NSLocalizedString("Sort %@", comment: "Sort")
-		
 		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
 			newestToOldestMenuItem.state = .off
 			oldestToNewestMenuItem.state = .on
-			let title = NSString.localizedStringWithFormat(localizedTitle as NSString, oldestToNewestMenuItem.title) as String
-			viewOptionsPopUpButton.setTitle(title)
+			viewOptionsPopUpButton.setTitle(oldestToNewestMenuItem.title)
 		} else {
 			newestToOldestMenuItem.state = .on
 			oldestToNewestMenuItem.state = .off
-			let title = NSString.localizedStringWithFormat(localizedTitle as NSString, newestToOldestMenuItem.title) as String
-			viewOptionsPopUpButton.setTitle(title)
+			viewOptionsPopUpButton.setTitle(newestToOldestMenuItem.title)
 		}
 		
 		if AppDefaults.shared.timelineGroupByFeed == true {

@@ -16,7 +16,7 @@
                         <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
-                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
                         <toolbar key="toolbar" implicitIdentifier="3C53153F-2D4C-441B-B551-D28ADBB5869C" explicitIdentifier="MainWindowToolbar" displayMode="iconOnly" sizeMode="regular" id="463-wM-1ZF">
                             <allowedToolbarItems>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="d4b-Sp-qek"/>
@@ -298,39 +298,18 @@
         <scene sceneID="Yae-mu-VsH">
             <objects>
                 <viewController id="XML-A3-pDn" userLabel="Sidebar View Controller" customClass="SidebarViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="bJZ-bH-vgc">
-                        <rect key="frame" x="0.0" y="0.0" width="206" height="468"/>
+                    <view key="view" wantsLayer="YES" misplaced="YES" id="bJZ-bH-vgc">
+                        <rect key="frame" x="0.0" y="0.0" width="206" height="531"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <visualEffectView blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="977-L4-4ey">
-                                <rect key="frame" x="0.0" y="393" width="206" height="23"/>
-                                <subviews>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eZS-8K-qiN">
-                                        <rect key="frame" x="181" y="5" width="13" height="13"/>
-                                        <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="filterInactive" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="5QJ-Ja-Gng">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <color key="contentTintColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                        <connections>
-                                            <action selector="toggleReadFeedsFilter:" target="Jih-JO-hIE" id="hbr-xR-smq"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="23" id="Ax2-oO-NTV"/>
-                                    <constraint firstAttribute="trailing" secondItem="eZS-8K-qiN" secondAttribute="trailing" constant="12" id="CFy-rz-Otf"/>
-                                    <constraint firstItem="eZS-8K-qiN" firstAttribute="top" secondItem="977-L4-4ey" secondAttribute="top" constant="5" id="M0q-C7-z10"/>
-                                </constraints>
-                            </visualEffectView>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
-                                <rect key="frame" x="0.0" y="0.0" width="206" height="393"/>
+                                <rect key="frame" x="0.0" y="0.0" width="206" height="1098"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="2eU-Wz-F9g">
-                                    <rect key="frame" x="0.0" y="0.0" width="206" height="393"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="206" height="1098"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="sourceList" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="28" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="206" height="393"/>
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="28" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="206" height="1098"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -408,7 +387,7 @@
                                         </constraints>
                                     </progressIndicator>
                                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iyL-pW-cT6">
-                                        <rect key="frame" x="62" y="6" width="106" height="16"/>
+                                        <rect key="frame" x="62" y="6" width="126" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="dVE-XG-mlU">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -437,22 +416,19 @@
                         <constraints>
                             <constraint firstItem="HZs-Zf-G8s" firstAttribute="top" secondItem="cJj-Wv-9ep" secondAttribute="bottom" id="0Zg-oW-o7U"/>
                             <constraint firstItem="cJj-Wv-9ep" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="5Rs-9M-TKq"/>
-                            <constraint firstItem="977-L4-4ey" firstAttribute="leading" secondItem="j0H-G3-rg2" secondAttribute="leading" id="8Oc-5V-xgb"/>
-                            <constraint firstItem="cJj-Wv-9ep" firstAttribute="top" secondItem="977-L4-4ey" secondAttribute="bottom" id="FPj-rG-6Lw"/>
-                            <constraint firstItem="mQg-Jg-Bfh" firstAttribute="trailing" secondItem="iyL-pW-cT6" secondAttribute="trailing" constant="20" id="Mnm-9S-Qpm"/>
+                            <constraint firstItem="cJj-Wv-9ep" firstAttribute="top" secondItem="bJZ-bH-vgc" secondAttribute="top" id="A7C-VI-drt"/>
+                            <constraint firstAttribute="trailing" secondItem="iyL-pW-cT6" secondAttribute="trailing" constant="20" id="Mnm-9S-Qpm"/>
                             <constraint firstAttribute="bottom" secondItem="HZs-Zf-G8s" secondAttribute="bottom" constant="-28" id="UN9-Wa-uxb"/>
-                            <constraint firstItem="977-L4-4ey" firstAttribute="top" secondItem="j0H-G3-rg2" secondAttribute="top" id="eBr-dj-I25"/>
                             <constraint firstAttribute="trailing" secondItem="HZs-Zf-G8s" secondAttribute="trailing" id="iNE-nb-QEB"/>
                             <constraint firstItem="HZs-Zf-G8s" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="tPp-xB-CgB"/>
                             <constraint firstAttribute="trailing" secondItem="cJj-Wv-9ep" secondAttribute="trailing" id="vo7-3F-Fd3"/>
-                            <constraint firstItem="977-L4-4ey" firstAttribute="trailing" secondItem="j0H-G3-rg2" secondAttribute="trailing" id="wWv-I7-qKm"/>
+                            <constraint firstAttribute="trailing" secondItem="j0H-G3-rg2" secondAttribute="trailing" id="wWv-I7-qKm"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="j0H-G3-rg2"/>
                         <viewLayoutGuide key="layoutMargins" id="mQg-Jg-Bfh"/>
                     </view>
                     <connections>
                         <outlet property="outlineView" destination="cnV-kg-Dn2" id="FVf-OT-E3h"/>
-                        <outlet property="readFilteredButton" destination="eZS-8K-qiN" id="DDa-Hl-TSh"/>
                     </connections>
                 </viewController>
                 <customObject id="Jih-JO-hIE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -495,24 +471,25 @@
                                 </constraints>
                             </visualEffectView>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
-                                <rect key="frame" x="4" y="123" width="49" height="19"/>
+                                <rect key="frame" x="8" y="123" width="51" height="19"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="18" id="DoO-KI-ena"/>
                                 </constraints>
                                 <popUpButtonCell key="cell" type="recessed" title="Sort" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" tag="1" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="bl0-6I-cH2">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                    <font key="font" metaFont="controlContent" size="11"/>
+                                    <font key="font" metaFont="smallSystemBold"/>
                                     <menu key="menu" id="dN0-S2-uqU">
                                         <items>
                                             <menuItem title="Sort" tag="1" hidden="YES" id="4BZ-ya-evy">
+                                                <attributedString key="attributedTitle"/>
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
-                                            <menuItem title="Newest To Oldest" state="on" tag="2" id="40c-kt-vhO">
+                                            <menuItem title="Newest Article on Top" state="on" tag="2" id="40c-kt-vhO">
                                                 <connections>
                                                     <action selector="sortByNewestArticleOnTop:" target="Ebq-4s-EwK" id="vYg-MZ-zve"/>
                                                 </connections>
                                             </menuItem>
-                                            <menuItem title="Oldest To Newest" tag="3" id="sOF-Ez-vIL">
+                                            <menuItem title="Oldest Article on Top" tag="3" id="sOF-Ez-vIL">
                                                 <connections>
                                                     <action selector="sortByOldestArticleOnTop:" target="Ebq-4s-EwK" id="KFG-M7-blB"/>
                                                 </connections>
@@ -528,7 +505,7 @@
                                 </popUpButtonCell>
                             </popUpButton>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iA5-go-AO0">
-                                <rect key="frame" x="425" y="128" width="13" height="13"/>
+                                <rect key="frame" x="425" y="127" width="13" height="13"/>
                                 <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="filterInactive" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="j7d-36-DO5">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -543,16 +520,17 @@
                             </customView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="PdS-jL-yH1" secondAttribute="bottom" id="2dy-bB-DI2"/>
                             <constraint firstAttribute="trailing" secondItem="Zpk-pq-9nW" secondAttribute="trailing" id="67d-pI-I9C"/>
                             <constraint firstAttribute="trailing" secondItem="iA5-go-AO0" secondAttribute="trailing" constant="12" id="9Dl-n9-vRI"/>
-                            <constraint firstItem="lSU-OC-sEC" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" constant="4" id="Ceb-sA-ECJ"/>
-                            <constraint firstItem="PdS-jL-yH1" firstAttribute="leading" secondItem="M3G-7s-D6y" secondAttribute="leading" id="KW1-4o-qoz"/>
-                            <constraint firstItem="PdS-jL-yH1" firstAttribute="trailing" secondItem="M3G-7s-D6y" secondAttribute="trailing" id="WHL-h4-cLZ"/>
+                            <constraint firstItem="lSU-OC-sEC" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" constant="8" id="Ceb-sA-ECJ"/>
+                            <constraint firstItem="PdS-jL-yH1" firstAttribute="trailing" secondItem="M3G-7s-D6y" secondAttribute="trailing" id="Eln-Tf-W9k"/>
+                            <constraint firstItem="lSU-OC-sEC" firstAttribute="centerY" secondItem="iA5-go-AO0" secondAttribute="centerY" id="OeL-Zp-iRT"/>
                             <constraint firstItem="Zpk-pq-9nW" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="XF2-31-E1x"/>
                             <constraint firstItem="PdS-jL-yH1" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" id="aB8-Pt-Szt"/>
                             <constraint firstAttribute="bottom" secondItem="Zpk-pq-9nW" secondAttribute="bottom" id="fyv-EG-PC8"/>
-                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="lSU-OC-sEC" secondAttribute="bottom" constant="4" id="gFm-Ix-hBf"/>
-                            <constraint firstItem="iA5-go-AO0" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" constant="5" id="nM9-iA-OzY"/>
+                            <constraint firstItem="PdS-jL-yH1" firstAttribute="leading" secondItem="M3G-7s-D6y" secondAttribute="leading" id="lSy-HN-fWB"/>
+                            <constraint firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="pZU-jW-B1h"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lSU-OC-sEC" secondAttribute="trailing" constant="8" id="yCg-gc-exN"/>
                             <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="M3G-7s-D6y" secondAttribute="top" constant="4" id="zay-ZJ-od3"/>
                         </constraints>
