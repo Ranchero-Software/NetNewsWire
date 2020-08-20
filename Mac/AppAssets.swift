@@ -10,11 +10,6 @@ import AppKit
 import RSCore
 import Account
 
-extension NSImage.Name {
-	static let star = NSImage.Name("star")
-	static let timelineStar = NSImage.Name("timelineStar")
-}
-
 struct AppAssets {
 
 	static var accountCloudKit: RSImage! = {
@@ -133,8 +128,12 @@ struct AppAssets {
 		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!)
 	}()
 
-	static var timelineStar: RSImage! = {
-		return RSImage(named: .timelineStar)
+	static var timelineStarSelected: RSImage! = {
+		return RSImage(named: "timelineStar")?.tinted(with: .white)
+	}()
+
+	static var timelineStarUnselected: RSImage! = {
+		return RSImage(named: "timelineStar")?.tinted(with: starColor)
 	}()
 
 	static var todayFeedImage: IconImage = {
@@ -161,8 +160,8 @@ struct AppAssets {
 		return RSImage(named: "swipeMarkUnstarred")!
 	}()
 	
-	static var swipeMarkUnstarredColor: NSColor = {
-		return NSColor(named: NSColor.Name("swipeMarkUnstarredColor"))!
+	static var starColor: NSColor = {
+		return NSColor(named: NSColor.Name("starColor"))!
 	}()
 	
 	static func image(for accountType: AccountType) -> NSImage? {

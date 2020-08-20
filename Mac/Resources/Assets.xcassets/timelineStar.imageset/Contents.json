@@ -1,13 +1,13 @@
 {
   "images" : [
     {
+      "filename" : "star.pdf",
       "idiom" : "universal",
-      "filename" : "timelineStar.png",
       "scale" : "1x"
     },
     {
+      "filename" : "star@2x.pdf",
       "idiom" : "universal",
-      "filename" : "timelineStar@2x.png",
       "scale" : "2x"
     },
     {
@@ -16,7 +16,11 @@
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true,
+    "template-rendering-intent" : "template"
   }
 }

@@ -910,7 +910,7 @@ extension TimelineViewController: NSTableViewDelegate {
 					self.toggleArticleStarred(article);
 					tableView.rowActionsVisible = false
 				}
-				action.backgroundColor = AppAssets.swipeMarkUnstarredColor
+				action.backgroundColor = AppAssets.starColor
 				action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
 				return [action]
 
