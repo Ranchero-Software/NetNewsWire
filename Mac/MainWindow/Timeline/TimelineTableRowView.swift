@@ -34,6 +34,21 @@ class TimelineTableRowView : NSTableRowView {
 		super.init(coder: coder)
 	}
 	
+	override func drawBackground(in dirtyRect: NSRect) {
+		NSColor.controlBackgroundColor.setFill()
+		dirtyRect.fill()
+	}
+
+	override func drawSelection(in dirtyRect: NSRect) {
+		if isEmphasized {
+			NSColor.selectedContentBackgroundColor.setFill()
+			dirtyRect.fill()
+		} else {
+			NSColor.unemphasizedSelectedContentBackgroundColor.setFill()
+			dirtyRect.fill()
+		}
+	}
+	
 	private var cellView: TimelineTableCellView? {
 		for oneSubview in subviews {
 			if let foundView = oneSubview as? TimelineTableCellView {
