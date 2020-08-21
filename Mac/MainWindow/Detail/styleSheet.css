@@ -10,8 +10,8 @@ body {
 :root {
 	--body-color: #444;
 	--body-background-color: -apple-system-text-background;
-	--accent-color: rgb(8, 106, 238, 1);
-	--block-quote-border-color: rgb(8, 106, 238, .50);
+	--accent-color: rgba(8, 106, 238, 1);
+	--block-quote-border-color: rgba(8, 106, 238, .50);
 }
 
 @media(prefers-color-scheme: dark) {
