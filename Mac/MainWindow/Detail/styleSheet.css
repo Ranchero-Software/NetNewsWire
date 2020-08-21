@@ -18,8 +18,8 @@ body {
 	:root {
 		--body-color: #d2d2d2;
 		--body-background-color: #2d2d2d;
-		--accent-color: rgba(45, 128, 241, 1);
-		--block-quote-border-color: rgba(45, 128, 241, .50);
+		--accent-color: rgba(94, 158, 244, 1);
+		--block-quote-border-color: rgba(94, 158, 244, .50);
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
 	}
 }
