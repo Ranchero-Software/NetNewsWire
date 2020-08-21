@@ -231,6 +231,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()
 		
+		UNUserNotificationCenter.current().requestAuthorization(options:[.badge]) { (granted, error) in }
+
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
