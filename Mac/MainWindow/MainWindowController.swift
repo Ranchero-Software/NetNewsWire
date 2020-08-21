@@ -78,7 +78,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		
 		if let window = window {
 			let point = NSPoint(x: 128, y: 64)
-			let size = NSSize(width: 1000, height: 700)
+			let size = NSSize(width: 1345, height: 900)
 			let minSize = NSSize(width: 600, height: 600)
 			window.setPointAndSizeAdjustingForScreen(point: point, size: size, minimumSize: minSize)
 		}
