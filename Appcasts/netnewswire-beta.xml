@@ -20,6 +20,7 @@
 		<p>Feeds view: remember expansion state between runs</p>
 		<p>Timeline: more compact rows (source and date on same line)</p>
 		<p>Timeline: sort menu on top</p>
+		<p>Timeline: swipe actions</p>
 		<p>Article view: shift-space scrolls backwards</p>
 		<p>AppleScript: article now has a feed property</p>
 		<p>Hold down shift to temporarily toggle open-in-browser in background preference</p>
