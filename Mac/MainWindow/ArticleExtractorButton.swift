@@ -90,7 +90,7 @@ class ArticleExtractorButton: NSButton {
 		let imageProgress2 = AppAssets.articleExtractorProgress2
 		let imageProgress3 = AppAssets.articleExtractorProgress3
 		let imageProgress4 = AppAssets.articleExtractorProgress4
-		let images = [imageProgress1, imageProgress2, imageProgress3, imageProgress4, imageProgress3, imageProgress2]
+		let images = [imageProgress1, imageProgress2, imageProgress3, imageProgress4, imageProgress3, imageProgress2, imageProgress1]
 		
 		let imageLayer = CALayer()
 		imageLayer.bounds = CGRect(x: 0, y: 0, width: imageProgress1?.size.width ?? 0, height: imageProgress1?.size.height ?? 0)
@@ -100,7 +100,7 @@ class ArticleExtractorButton: NSButton {
 		
 		let animation = CAKeyframeAnimation(keyPath: "contents")
 		animation.calculationMode = CAAnimationCalculationMode.linear
-		animation.keyTimes = [0, 0.2, 0.4, 0.6, 0.8, 1]
+		animation.keyTimes = [0, 0.16, 0.32, 0.50, 0.66, 0.82, 1]
 		animation.duration = 2
 		animation.values = images as [Any]
 		animation.repeatCount = HUGE
