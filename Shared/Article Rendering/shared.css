@@ -40,10 +40,10 @@ a:hover {
 
 @media(prefers-color-scheme: dark) {
 	:root {
-		--header-color: rgba(94, 158, 244, 1);
+		--header-color: #d2d2d2;
 		--body-code-color: #b2b2b2;
 		--system-message-color: #5f5f5f;
-		--feedlink-color: rgba(94, 158, 244, 1);
+		--feedlink-color: rgba(255, 255, 255, 0.7);
 		--article-title-color: #e0e0e0;
 		--article-date-color: rgba(255, 255, 255, 0.5);
 		--table-cell-border-color: dimgray;
@@ -58,7 +58,7 @@ body {
 body .headerTable {
 	border-bottom: 1px solid var(--header-table-border-color);
 }
-body .header a:link, .header a:visited {
+body .header {
 	color: var(--header-color);
 }
 
