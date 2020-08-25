@@ -74,7 +74,7 @@ class ArticleExtractorButton: NSButton {
 	private func makeLayerForImage(_ image: NSImage) -> CALayer {
 		let imageLayer = CALayer()
 		imageLayer.bounds = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
-		imageLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+		imageLayer.position = CGPoint(x: bounds.midX, y: floor(bounds.midY))
 		return imageLayer
 	}
 	
@@ -94,7 +94,7 @@ class ArticleExtractorButton: NSButton {
 		
 		let imageLayer = CALayer()
 		imageLayer.bounds = CGRect(x: 0, y: 0, width: imageProgress1?.size.width ?? 0, height: imageProgress1?.size.height ?? 0)
-		imageLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+		imageLayer.position = CGPoint(x: bounds.midX, y: floor(bounds.midY))
 		
 		hostedLayer.addSublayer(imageLayer)
 		
