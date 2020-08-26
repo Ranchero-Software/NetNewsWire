@@ -6,6 +6,32 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
+<item>
+	<title>NetNewsWire 5.1d3</title>
+	<description><![CDATA[
+		<p>Feedly syncing</p>
+		<p>Reader view</p>
+		<p>Notifications (configure per feed in the Info window)</p>
+		<p>Sandboxing</p>
+		<p>Multiple windows - File > New Window</p>
+		<p>View > Hide Read Feeds</p>
+		<p>View > Hide Read Articles (also a filter button above timeline for this)</p>
+		<p>Clean Up command (to immediately hide read articles when hide-read-articles is on)</p>
+		<p>Feeds view: remember expansion state between runs</p>
+		<p>Timeline: more compact rows (source and date on same line)</p>
+		<p>Timeline: sort menu on top</p>
+		<p>Timeline: swipe actions</p>
+		<p>Article view: shift-space scrolls backwards</p>
+		<p>AppleScript: article now has a feed property</p>
+		<p>Hold down shift to temporarily toggle open-in-browser in background preference</p>
+		<p>Article > Mark Above as Read, Mark Below as Read</p>
+		<p>Choose preferred browser (for viewing web pages)</p>
+	]]></description>
+	<pubDate>Thu, 20 Aug 2020 19:48:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1alpha1/NetNewsWire5.1d3.zip" sparkle:version="3003" sparkle:shortVersionString="5.1d3" length="6509306" type="application/zip" />
+	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
 	<item>
          <title>NetNewsWire 5.0.4</title>
             <description><![CDATA[
