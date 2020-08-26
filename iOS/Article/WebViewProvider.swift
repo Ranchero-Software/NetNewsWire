@@ -57,8 +57,8 @@ class WebViewProviderReplenishQueueOperation: MainThreadOperation {
 	func run() {
 		while queue.count < minimumQueueDepth {
 			let webView = PreloadedWebView(articleIconSchemeHandler: articleIconSchemeHandler)
-			queue.insert(webView, at: 0)
 			webView.preload()
+			queue.insert(webView, at: 0)
 		}
 		self.operationDelegate?.operationDidComplete(self)
 	}
