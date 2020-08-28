@@ -8,13 +8,10 @@
 
 import SwiftUI
 import Account
-import UniformTypeIdentifiers
 
 struct SettingsView: View {
 	
 	@Environment(\.presentationMode) var presentationMode
-	@Environment(\.exportFiles) var exportAction
-	@Environment(\.importFiles) var importAction
 
 	@StateObject private var viewModel = SettingsModel()
 	@StateObject private var feedsSettingsModel = FeedsSettingsModel()
@@ -41,6 +38,18 @@ struct SettingsView: View {
 				}
 			)
 		}
+		.fileImporter(
+			isPresented: $feedsSettingsModel.isImporting,
+			allowedContentTypes: feedsSettingsModel.importingContentTypes,
+			allowsMultipleSelection: true,
+			onCompletion: { result in
+				if let urls = try? result.get() {
+					feedsSettingsModel.processImportedFiles(urls)
+				}
+			}
+		)
+		.fileMover(isPresented: $feedsSettingsModel.isExporting,
+				   file: feedsSettingsModel.generateExportURL()) { _ in }
 		.sheet(isPresented: $viewModel.presentSheet, content: {
 			SafariView(url: viewModel.selectedWebsite.url!)
 		})
@@ -81,7 +90,7 @@ struct SettingsView: View {
 			else {
 				Button(action:{
 					if feedsSettingsModel.checkForActiveAccount() {
-						importOPML(account: viewModel.activeAccounts.first)
+						feedsSettingsModel.importOPML(account: viewModel.activeAccounts.first)
 					}
 				}) {
 					Text("Import Subscriptions")
@@ -94,7 +103,7 @@ struct SettingsView: View {
 			}
 			else {
 				Button(action:{
-					exportOPML(account: viewModel.accounts.first)
+					feedsSettingsModel.exportOPML(account: viewModel.accounts.first)
 				}) {
 					Text("Export Subscriptions")
 						.foregroundColor(.primary)
@@ -118,7 +127,7 @@ struct SettingsView: View {
 			Section(header: Text("Choose an account to receive the imported feeds and folders"), content: {
 				ForEach(0..<viewModel.activeAccounts.count, id: \.hashValue , content: { i in
 					Button {
-						importOPML(account: viewModel.activeAccounts[i])
+						feedsSettingsModel.importOPML(account: viewModel.activeAccounts[i])
 					} label: {
 						Text(viewModel.activeAccounts[i].nameForDisplay)
 					}
@@ -134,7 +143,7 @@ struct SettingsView: View {
 			Section(header: Text("Choose an account with the subscriptions to export"), content: {
 				ForEach(0..<viewModel.accounts.count, id: \.hashValue , content: { i in
 					Button {
-						exportOPML(account: viewModel.accounts[i])
+						feedsSettingsModel.exportOPML(account: viewModel.accounts[i])
 					} label: {
 						Text(viewModel.accounts[i].nameForDisplay)
 					}
@@ -226,23 +235,6 @@ struct SettingsView: View {
 		return "NetNewsWire \(version) (Build \(build))"
 	}
 
-	private func exportOPML(account: Account?) {
-		guard let account = account,
-			  let url = feedsSettingsModel.generateExportURL(for: account) else {
-			return
-		}
-
-		exportAction(moving: url) { _ in }
-	}
-
-	private func importOPML(account: Account?) {
-		let types = [UTType(filenameExtension: "opml"), UTType("public.xml")].compactMap { $0 }
-		importAction(multipleOfType: types) { (result: Result<[URL], Error>?) in
-			if let urls = try? result?.get() {
-				feedsSettingsModel.processImportedFiles(urls, account)
-			}
-		}
-	}
 }
 
 struct SettingsView_Previews: PreviewProvider {
