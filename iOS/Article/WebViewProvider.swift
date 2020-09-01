@@ -86,9 +86,7 @@ class WebViewProviderDequeueOperation: MainThreadOperation {
 	
 	func run() {
 		if let webView = queue.lastObject as? PreloadedWebView {
-			webView.ready { preloadedWebView in
-				self.completion(preloadedWebView)
-			}
+			self.completion(webView)
 			self.queue.remove(webView)
 			self.operationDelegate?.operationDidComplete(self)
 			return
@@ -98,9 +96,7 @@ class WebViewProviderDequeueOperation: MainThreadOperation {
 		
 		let webView = PreloadedWebView(articleIconSchemeHandler: articleIconSchemeHandler)
 		webView.preload()
-		webView.ready { preloadedWebView in
-			self.completion(preloadedWebView)
-		}
+		self.completion(webView)
 		self.operationDelegate?.operationDidComplete(self)
 	}
 	

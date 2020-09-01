@@ -246,28 +246,31 @@ private extension WebViewController {
 		
 		sceneModel?.webViewProvider?.dequeueWebView() { webView in
 			
-			// Add the webview
-			self.webView = webView
+			webView.ready {
+				
+				// Add the webview
+				self.webView = webView
+				
+				webView.translatesAutoresizingMaskIntoConstraints = false
+				self.view.addSubview(webView, positioned: .below, relativeTo: self.statusBarView)
+				NSLayoutConstraint.activate([
+					self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
+					self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
+					self.view.topAnchor.constraint(equalTo: webView.topAnchor),
+					self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
+				])
+				
+				webView.navigationDelegate = self
 			
-			webView.translatesAutoresizingMaskIntoConstraints = false
-			self.view.addSubview(webView, positioned: .below, relativeTo: self.statusBarView)
-			NSLayoutConstraint.activate([
-				self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
-				self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
-				self.view.topAnchor.constraint(equalTo: webView.topAnchor),
-				self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
-			])
-			
-			webView.navigationDelegate = self
-		
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.mouseDidEnter)
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.mouseDidExit)
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.mouseDidEnter)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.mouseDidExit)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
 
-			self.renderPage(webView)
+				self.renderPage(webView)
 			
+			}
 		}
 		
 	}

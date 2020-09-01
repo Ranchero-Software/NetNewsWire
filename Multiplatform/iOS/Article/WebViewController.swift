@@ -452,37 +452,41 @@ private extension WebViewController {
 		
 		sceneModel?.webViewProvider?.dequeueWebView() { webView in
 			
-			// Add the webview
-			webView.translatesAutoresizingMaskIntoConstraints = false
-			self.view.insertSubview(webView, at: 0)
-			NSLayoutConstraint.activate([
-				self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
-				self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
-				self.view.topAnchor.constraint(equalTo: webView.topAnchor),
-				self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
-			])
-		
-			// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
-			// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
-			// us from easily swiping between WKWebViews.  This hack fixes that.
-			webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
+			webView.ready {
+				
+				// Add the webview
+				webView.translatesAutoresizingMaskIntoConstraints = false
+				self.view.insertSubview(webView, at: 0)
+				NSLayoutConstraint.activate([
+					self.view.leadingAnchor.constraint(equalTo: webView.leadingAnchor),
+					self.view.trailingAnchor.constraint(equalTo: webView.trailingAnchor),
+					self.view.topAnchor.constraint(equalTo: webView.topAnchor),
+					self.view.bottomAnchor.constraint(equalTo: webView.bottomAnchor)
+				])
+			
+				// UISplitViewController reports the wrong size to WKWebView which can cause horizontal
+				// rubberbanding on the iPad.  This interferes with our UIPageViewController preventing
+				// us from easily swiping between WKWebViews.  This hack fixes that.
+				webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: -1, bottom: 0, right: 0)
 
-			webView.scrollView.setZoomScale(1.0, animated: false)
+				webView.scrollView.setZoomScale(1.0, animated: false)
 
-			self.view.setNeedsLayout()
-			self.view.layoutIfNeeded()
+				self.view.setNeedsLayout()
+				self.view.layoutIfNeeded()
 
-			// Configure the webview
-			webView.navigationDelegate = self
-			webView.uiDelegate = self
-			webView.scrollView.delegate = self
-//			self.configureContextMenuInteraction()
+				// Configure the webview
+				webView.navigationDelegate = self
+				webView.uiDelegate = self
+				webView.scrollView.delegate = self
+	//			self.configureContextMenuInteraction()
 
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
-			webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
 
-			self.renderPage(webView)
+				self.renderPage(webView)
+				
+			}
 			
 		}
 		
