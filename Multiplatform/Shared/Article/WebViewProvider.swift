@@ -88,8 +88,8 @@ class WebViewProviderDequeueOperation: MainThreadOperation {
 		if let webView = queue.lastObject as? PreloadedWebView {
 			webView.ready { preloadedWebView in
 				self.completion(preloadedWebView)
-				self.queue.remove(webView)
 			}
+			self.queue.remove(webView)
 			self.operationDelegate?.operationDidComplete(self)
 			return
 		}
