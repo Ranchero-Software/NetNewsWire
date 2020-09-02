@@ -7,6 +7,23 @@
 <language>en</language>
 
 <item>
+	<title>NetNewsWire 5.1a2</title>
+	<description><![CDATA[
+<p>Feeds view: fixed bug where unread counts might be misplaced at startup</p>
+<p>Timeline: fixed extra row of pixels in swipe actions</p>
+<p>Article view: tweaked some colors</p>
+<p>Toolbar: reader view button is now not blurry on non-retina machines</p>
+<p>Toolbar: review view animation looping fixed</p>
+<p>Inspector: fixed some layout/spacing issues</p>
+<p>Preferences: tweaked text relating to holding down the shift key</p>
+<p>Dock unread count: now asks for permission so it can show it</p>
+	]]></description>
+	<pubDate>Tue, 01 Sep 2020 17:50:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1alpha2/NetNewsWire5.1a2.zip" sparkle:version="3004" sparkle:shortVersionString="5.1a2" length="6514540" type="application/zip" />
+	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 5.1d2</title>
 	<description><![CDATA[
 <p>Testing Sparkle. Does it work?</p>
