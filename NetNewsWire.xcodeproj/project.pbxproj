@@ -333,8 +333,6 @@
 		5194736F24BBB937001A2939 /* HiddenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194736D24BBB937001A2939 /* HiddenModifier.swift */; };
 		5194737124BBCAF4001A2939 /* TimelineSortOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194737024BBCAF4001A2939 /* TimelineSortOrderView.swift */; };
 		519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519B8D322143397200FA689C /* SharingServiceDelegate.swift */; };
-		519D2F2524E1C03300AD7D8A /* SidebarTableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519D2F2424E1C03300AD7D8A /* SidebarTableRowView.swift */; };
-		519D2F2624E1C03300AD7D8A /* SidebarTableRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519D2F2424E1C03300AD7D8A /* SidebarTableRowView.swift */; };
 		519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519E743422C663F900A78E47 /* SceneDelegate.swift */; };
 		519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */; };
 		519ED47A24482AEB007F8E94 /* EnableExtensionPointViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */; };
@@ -1646,7 +1644,6 @@
 		5194736D24BBB937001A2939 /* HiddenModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenModifier.swift; sourceTree = "<group>"; };
 		5194737024BBCAF4001A2939 /* TimelineSortOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineSortOrderView.swift; sourceTree = "<group>"; };
 		519B8D322143397200FA689C /* SharingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingServiceDelegate.swift; sourceTree = "<group>"; };
-		519D2F2424E1C03300AD7D8A /* SidebarTableRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTableRowView.swift; sourceTree = "<group>"; };
 		519E743422C663F900A78E47 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExtensionPointViewController.swift; sourceTree = "<group>"; };
 		519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionPointViewController.swift; sourceTree = "<group>"; };
@@ -3131,7 +3128,6 @@
 				84AD1EBB2032AF5C00BC20B7 /* SidebarOutlineDataSource.swift */,
 				849A97601ED9EB96007D329B /* SidebarOutlineView.swift */,
 				849A97821ED9EC63007D329B /* SidebarStatusBarView.swift */,
-				519D2F2424E1C03300AD7D8A /* SidebarTableRowView.swift */,
 				849A97621ED9EB96007D329B /* SidebarViewController.swift */,
 				84B7178B201E66580091657D /* SidebarViewController+ContextualMenus.swift */,
 				849A97631ED9EB96007D329B /* UnreadCountView.swift */,
@@ -4888,7 +4884,6 @@
 				65ED3FED235DEF6C0081F399 /* SendToMarsEditCommand.swift in Sources */,
 				514A89A6244FD6640085E65D /* AddTwitterFeedWindowController.swift in Sources */,
 				65ED3FEE235DEF6C0081F399 /* UserNotificationManager.swift in Sources */,
-				519D2F2624E1C03300AD7D8A /* SidebarTableRowView.swift in Sources */,
 				65ED3FEF235DEF6C0081F399 /* ScriptingObjectContainer.swift in Sources */,
 				65ED3FF0235DEF6C0081F399 /* ArticleStylesManager.swift in Sources */,
 				65ED3FF1235DEF6C0081F399 /* DetailContainerView.swift in Sources */,
@@ -5293,7 +5288,6 @@
 				848D578E21543519005FFAD5 /* PasteboardWebFeed.swift in Sources */,
 				5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */,
 				849A97801ED9EC42007D329B /* DetailViewController.swift in Sources */,
-				519D2F2524E1C03300AD7D8A /* SidebarTableRowView.swift in Sources */,
 				518C3193237B00D9004D740F /* DetailIconSchemeHandler.swift in Sources */,
 				84C9FC6722629B9000D921D6 /* AppDelegate.swift in Sources */,
 				510C417F24E5D1AE008226FD /* ExtensionContainersFile.swift in Sources */,

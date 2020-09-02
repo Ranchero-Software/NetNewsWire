@@ -62,12 +62,6 @@ class SidebarCell : NSTableCellView {
 		}
 	}
 
-	var isSelected: Bool = false {
-		didSet {
-			updateFaviconImage()
-		}
-	}
-
 	private let titleView: NSTextField = {
 		let textField = NSTextField(labelWithString: "")
 		textField.usesSingleLineMode = true
@@ -81,6 +75,12 @@ class SidebarCell : NSTableCellView {
 	private let faviconImageView = IconView()
 	private let unreadCountView = UnreadCountView(frame: NSZeroRect)
 
+	override var backgroundStyle: NSView.BackgroundStyle {
+		didSet {
+			updateFaviconImage()
+		}
+	}
+	
 	override var isFlipped: Bool {
 		return true
 	}
@@ -141,7 +141,7 @@ private extension SidebarCell {
 		var updatedIconImage = iconImage
 		
 		if let iconImage = iconImage, iconImage.isSymbol {
-			if isSelected {
+			if backgroundStyle != .normal {
 				let image = iconImage.image.tinted(with: .white)
 				updatedIconImage = IconImage(image, isSymbol: true)
 			} else {
