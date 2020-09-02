@@ -1199,30 +1199,45 @@ private extension MainWindowController {
 	}
 
 	func updateWindowTitle() {
-
-		var displayName: String? = nil
-		var unreadCount: Int? = nil
-		
-		if let displayNameProvider = currentFeedOrFolder as? DisplayNameProvider {
-			displayName = displayNameProvider.nameForDisplay
-		}
-		
-		if let unreadCountProvider = currentFeedOrFolder as? UnreadCountProvider {
-			unreadCount = unreadCountProvider.unreadCount
-		}
-		
-		if displayName != nil {
-			window?.title = displayName!
+		func setSubtitle(_ count: Int) {
+			let localizedLabel = NSLocalizedString("%d unread", comment: "Unread")
+			let formattedLabel = NSString.localizedStringWithFormat(localizedLabel as NSString, count)
 			if #available(macOS 11.0, *) {
-				window?.subtitle = "\(unreadCount ?? 0) unread"
+				window?.subtitle = formattedLabel as String
 			}
-		} else {
+		}
+		
+		guard let selectedObjects = selectedObjectsInSidebar(), selectedObjects.count > 0 else {
 			window?.title = appDelegate.appName!
 			if #available(macOS 11.0, *) {
-				window?.subtitle = "\(appDelegate.unreadCount) unread"
+				setSubtitle(appDelegate.unreadCount)
 			}
+			return
 		}
 		
+		guard selectedObjects.count == 1 else {
+			window?.title = NSLocalizedString("Multiple", comment: "Multiple")
+			if #available(macOS 11.0, *) {
+				let unreadCount = selectedObjects.reduce(0, { result, selectedObject in
+					if let unreadCountProvider = selectedObject as? UnreadCountProvider {
+						return result + unreadCountProvider.unreadCount
+					} else {
+						return result
+					}
+				})
+				setSubtitle(unreadCount)
+			}
+			return
+		}
+		
+		if let displayNameProvider = currentFeedOrFolder as? DisplayNameProvider {
+			window?.title = displayNameProvider.nameForDisplay
+			if #available(macOS 11.0, *) {
+				if let unreadCountProvider = currentFeedOrFolder as? UnreadCountProvider {
+					setSubtitle(unreadCountProvider.unreadCount)
+				}
+			}
+		}
 	}
 	
 	func startArticleExtractorForCurrentLink() {
