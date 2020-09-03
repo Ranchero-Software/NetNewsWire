@@ -43,7 +43,7 @@ struct Browser {
 	/// - Note: Some browsers (specifically Chromium-derived ones) will ignore the request
 	///   to open in the background.
 	static func open(_ urlString: String, inBackground: Bool) {
-		if let url = URL(string: urlString) {
+		if let url = URL(unicodeString: urlString) {
 			if let defaultBrowser = defaultBrowser {
 				defaultBrowser.openURL(url, inBackground: inBackground)
 			} else {
