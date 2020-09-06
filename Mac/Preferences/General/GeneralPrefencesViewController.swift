@@ -13,7 +13,8 @@ import RSWeb
 final class GeneralPreferencesViewController: NSViewController {
 
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
-
+    @IBOutlet weak var showUnreadCountCheckbox: NSButton!
+    
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 		commonInit()
@@ -45,6 +46,12 @@ final class GeneralPreferencesViewController: NSViewController {
 		AppDefaults.shared.defaultBrowserID = bundleID
 		updateUI()
 	}
+
+    
+    @IBAction func toggleShowingUnreadCount(_ sender: Any) {
+        guard let checkbox = sender as? NSButton else { return }
+        AppDefaults.shared.hideDockUnreadCount = checkbox.state.rawValue == 0
+    }
 }
 
 // MARK: - Private
@@ -57,6 +64,7 @@ private extension GeneralPreferencesViewController {
 
 	func updateUI() {
 		updateBrowserPopup()
+        updateHideUnreadCountCheckbox()
 	}
 
 	func updateBrowserPopup() {
@@ -89,4 +97,8 @@ private extension GeneralPreferencesViewController {
 
 		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.shared.defaultBrowserID))
 	}
+
+    func updateHideUnreadCountCheckbox() {
+        showUnreadCountCheckbox.state = AppDefaults.shared.hideDockUnreadCount ? .off : .on
+    }
 }
