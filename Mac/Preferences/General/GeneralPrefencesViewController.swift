@@ -9,8 +9,11 @@
 import AppKit
 import RSCore
 import RSWeb
+import UserNotifications
 
 final class GeneralPreferencesViewController: NSViewController {
+
+	private var userNotificationSettings: UNNotificationSettings?
 
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
     @IBOutlet weak var showUnreadCountCheckbox: NSButton!
@@ -28,6 +31,7 @@ final class GeneralPreferencesViewController: NSViewController {
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		updateUI()
+		updateNotificationSettings()
 	}
 
 	// MARK: - Notifications
@@ -50,7 +54,42 @@ final class GeneralPreferencesViewController: NSViewController {
     
     @IBAction func toggleShowingUnreadCount(_ sender: Any) {
         guard let checkbox = sender as? NSButton else { return }
-        AppDefaults.shared.hideDockUnreadCount = checkbox.state.rawValue == 0
+
+		guard userNotificationSettings != nil else {
+			DispatchQueue.main.async {
+				self.showUnreadCountCheckbox.setNextState()
+			}
+			return
+		}
+
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			self.updateNotificationSettings()
+
+			if settings.authorizationStatus == .denied {
+				DispatchQueue.main.async {
+					self.showUnreadCountCheckbox.setNextState()
+					self.showNotificationsDeniedError()
+				}
+			} else if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					AppDefaults.shared.hideDockUnreadCount = (checkbox.state.rawValue == 0)
+				}
+			} else {
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge]) { (granted, error) in
+					self.updateNotificationSettings()
+					if granted {
+						DispatchQueue.main.async {
+							AppDefaults.shared.hideDockUnreadCount = checkbox.state.rawValue == 0
+							NSApplication.shared.registerForRemoteNotifications()
+						}
+					} else {
+						DispatchQueue.main.async {
+							self.showUnreadCountCheckbox.setNextState()
+						}
+					}
+				}
+			}
+		}
     }
 }
 
@@ -101,4 +140,29 @@ private extension GeneralPreferencesViewController {
     func updateHideUnreadCountCheckbox() {
         showUnreadCountCheckbox.state = AppDefaults.shared.hideDockUnreadCount ? .off : .on
     }
+
+	func updateNotificationSettings() {
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			self.userNotificationSettings = settings
+			if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					NSApplication.shared.registerForRemoteNotifications()
+				}
+			}
+		}
+	}
+
+	func showNotificationsDeniedError() {
+		let updateAlert = NSAlert()
+		updateAlert.alertStyle = .informational
+		updateAlert.messageText = NSLocalizedString("Enable Notifications", comment: "Notifications")
+		updateAlert.informativeText = NSLocalizedString("To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.", comment: "To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.")
+		updateAlert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
+		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
+		let modalResponse = updateAlert.runModal()
+		if modalResponse == .alertFirstButtonReturn {
+			NSWorkspace.shared.open(URL(fileURLWithPath: "x-apple.systempreferences:com.apple.preference.notifications"))
+		}
+	}
+
 }
