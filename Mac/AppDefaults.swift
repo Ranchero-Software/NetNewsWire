@@ -194,7 +194,12 @@ final class AppDefaults {
  	}
 
 	var hideDockUnreadCount: Bool {
-		return AppDefaults.bool(for: Key.hideDockUnreadCount)
+		get {
+			return AppDefaults.bool(for: Key.hideDockUnreadCount)
+		}
+		set {
+			AppDefaults.setBool(for: Key.hideDockUnreadCount, newValue)
+		}
 	}
 
 	#if !MAC_APP_STORE
