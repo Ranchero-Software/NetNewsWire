@@ -63,5 +63,6 @@ private extension BuiltinSmartFeedInspectorViewController {
 	func updateUI() {
 
 		nameTextField?.stringValue = smartFeed?.nameForDisplay ?? ""
+		windowTitle = smartFeed?.nameForDisplay ?? NSLocalizedString("Smart Feed Inspector", comment: "Smart Feed Inspector window title")
 	}
 }
