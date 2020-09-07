@@ -19,6 +19,7 @@ final class NothingInspectorViewController: NSViewController, Inspector {
 			updateTextFields()
 		}
 	}
+	var windowTitle: String = NSLocalizedString("Inspector", comment: "Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
 

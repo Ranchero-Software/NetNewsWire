@@ -26,6 +26,7 @@ final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector
 			updateSmartFeed()
 		}
 	}
+	var windowTitle: String = NSLocalizedString("Smart Feed Inspector", comment: "Smart Feed Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
 

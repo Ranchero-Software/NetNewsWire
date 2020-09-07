@@ -38,6 +38,7 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 			updateFeed()
 		}
 	}
+	var windowTitle: String = NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
 		return objects.count == 1 && objects.first is WebFeed
