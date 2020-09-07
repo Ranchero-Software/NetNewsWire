@@ -134,7 +134,7 @@ private extension WebFeedInspectorViewController {
 		updateFeedURL()
 		updateNotifyAboutNewArticles()
 		updateIsReaderViewAlwaysOn()
-		
+		windowTitle = feed?.nameForDisplay ?? NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 		view.needsLayout = true
 	}
 

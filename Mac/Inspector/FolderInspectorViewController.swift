@@ -104,5 +104,6 @@ private extension FolderInspectorViewController {
 		if nameTextField.stringValue != name {
 			nameTextField.stringValue = name
 		}
+		windowTitle = folder?.nameForDisplay ?? NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
 	}
 }
