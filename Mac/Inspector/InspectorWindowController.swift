@@ -111,7 +111,9 @@ private extension InspectorWindowController {
 			return
 		}
 
-		window.title = inspector.windowTitle
+		DispatchQueue.main.async {
+			window.title = inspector.windowTitle
+		}	
 
 		let flippedOrigin = window.flippedOrigin
 
