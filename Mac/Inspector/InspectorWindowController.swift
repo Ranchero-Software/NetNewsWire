@@ -12,6 +12,7 @@ protocol Inspector: class {
 
 	var objects: [Any]? { get set }
 	var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
+	var windowTitle: String { get }
 
 	func canInspect(_ objects: [Any]) -> Bool
 }
@@ -62,6 +63,7 @@ final class InspectorWindowController: NSWindowController {
 
 		inspectors = [feedInspector, folderInspector, builtinSmartFeedInspector, nothingInspector]
 		currentInspector = nothingInspector
+		window?.title = currentInspector.windowTitle
 
 		if let savedOrigin = originFromDefaults() {
 			window?.setFlippedOriginAdjustingForScreen(savedOrigin)
@@ -109,30 +111,7 @@ private extension InspectorWindowController {
 			return
 		}
 
-		switch inspector {
-		case is NothingInspectorViewController:
-			window.title = NSLocalizedString("Inspector", comment: "Inspector window title")
-		case is FolderInspectorViewController:
-			if let folderName = (inspector as? FolderInspectorViewController)?.nameTextField?.stringValue {
-				window.title = folderName
-			} else {
-				window.title = NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
-			}
-		case is WebFeedInspectorViewController:
-			if let feedName = (inspector as? WebFeedInspectorViewController)?.nameTextField?.stringValue {
-				window.title = feedName
-			} else {
-				window.title = NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
-			}
-		case is BuiltinSmartFeedInspectorViewController:
-			if let smartFeedName = (inspector as? BuiltinSmartFeedInspectorViewController)?.nameTextField?.stringValue {
-				window.title = smartFeedName
-			} else {
-				window.title = NSLocalizedString("Smart Feed Inspector", comment: "Smart Feed Inspector window title")
-			}
-		default:
-			window.title = NSLocalizedString("Inspector", comment: "Inspector window title")
-		}
+		window.title = inspector.windowTitle
 
 		let flippedOrigin = window.flippedOrigin
 

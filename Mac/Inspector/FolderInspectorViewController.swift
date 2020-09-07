@@ -30,6 +30,7 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 			updateFolder()
 		}
 	}
+	var windowTitle: String = NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
 
