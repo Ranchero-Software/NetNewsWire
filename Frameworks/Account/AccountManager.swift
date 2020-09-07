@@ -103,7 +103,7 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 
-		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)!
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
@@ -130,7 +130,7 @@ public final class AccountManager: UnreadCountProvider {
 			abort()
 		}
 		
-		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)!
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)
 		accountsDictionary[accountID] = account
 		
 		var userInfo = [String: Any]()
