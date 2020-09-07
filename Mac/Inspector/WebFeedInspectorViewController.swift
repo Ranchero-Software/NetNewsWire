@@ -113,6 +113,7 @@ extension WebFeedInspectorViewController: NSTextFieldDelegate {
 			return
 		}
 		feed.editedName = nameTextField.stringValue
+		windowTitle = feed.editedName ?? NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 	}
 	
 }
