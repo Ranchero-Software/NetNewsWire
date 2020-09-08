@@ -1129,19 +1129,19 @@ private extension TimelineViewController {
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
 		cancelPendingAsyncFetches()
-		let articleFetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
-		if articleFetchers.isEmpty {
+		let feeds = representedObjects.compactMap{ $0 as? Feed }
+		if feeds.isEmpty {
 			return Set<Article>()
 		}
 
 		var fetchedArticles = Set<Article>()
-		for articleFetcher in articleFetchers {
-			if isReadFiltered ?? true {
-				if let articles = try? articleFetcher.fetchUnreadArticles() {
+		for feed in feeds {
+			if feed.readFiltered(readFilterEnabledTable: readFilterEnabledTable) {
+				if let articles = try? feed.fetchUnreadArticles() {
 					fetchedArticles.formUnion(articles)
 				}
 			} else {
-				if let articles = try? articleFetcher.fetchArticles() {
+				if let articles = try? feed.fetchArticles() {
 					fetchedArticles.formUnion(articles)
 				}
 			}
@@ -1154,7 +1154,8 @@ private extension TimelineViewController {
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: isReadFiltered ?? true, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let feeds = representedObjects.compactMap { $0 as? Feed }
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, feeds: feeds) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return

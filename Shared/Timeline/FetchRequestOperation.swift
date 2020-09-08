@@ -19,17 +19,17 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 final class FetchRequestOperation {
 
 	let id: Int
-	let readFilter: Bool
+	let readFilterEnabledTable: [FeedIdentifier: Bool]
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
-	private let representedObjects: [Any]
+	private let feeds: [Feed]
 
-	init(id: Int, readFilter: Bool, representedObjects: [Any], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilterEnabledTable: [FeedIdentifier: Bool], feeds: [Feed], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
-		self.readFilter = readFilter
-		self.representedObjects = representedObjects
+		self.readFilterEnabledTable = readFilterEnabledTable
+		self.feeds = feeds
 		self.resultBlock = resultBlock
 	}
 
@@ -51,15 +51,14 @@ final class FetchRequestOperation {
 			return
 		}
 
-		let articleFetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
-		if articleFetchers.isEmpty {
+		if feeds.isEmpty {
 			isFinished = true
 			resultBlock(Set<Article>(), self)
 			callCompletionIfNeeded()
 			return
 		}
 
-		let numberOfFetchers = articleFetchers.count
+		let numberOfFetchers = feeds.count
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
 		
@@ -81,15 +80,15 @@ final class FetchRequestOperation {
 			}
 		}
 		
-		for articleFetcher in articleFetchers {
-			if readFilter {
-				articleFetcher.fetchUnreadArticlesAsync { articleSetResult in
+		for feed in feeds {
+			if feed.readFiltered(readFilterEnabledTable: readFilterEnabledTable) {
+				feed.fetchUnreadArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
 					process(articles)
 				}
 			}
 			else {
-				articleFetcher.fetchArticlesAsync { articleSetResult in
+				feed.fetchArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
 					process(articles)
 				}

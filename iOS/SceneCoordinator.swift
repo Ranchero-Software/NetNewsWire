@@ -1906,7 +1906,8 @@ private extension SceneCoordinator {
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
 		
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: isReadArticlesFiltered, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let feeds = representedObjects.compactMap { $0 as? Feed }
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, feeds: feeds) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
