@@ -61,6 +61,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountsAddTableCellView {
+			
+			cell.accountType = addableAccountTypes[row]
+			cell.delegate = self
+			
 			switch addableAccountTypes[row] {
 			case .onMyMac:
 				cell.accountNameLabel?.stringValue = Account.defaultLocalAccountName
@@ -88,15 +92,16 @@ extension AccountsAddViewController: NSTableViewDelegate {
 		}
 		return nil
 	}
-	
-	func tableViewSelectionDidChange(_ notification: Notification) {
 		
-		let selectedRow = tableView.selectedRow
-		guard selectedRow != -1 else {
-			return
-		}
+}
 
-		switch addableAccountTypes[selectedRow] {
+// MARK: AccountsAddTableCellViewDelegate
+
+extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
+	
+	func addAccount(_ accountType: AccountType) {
+		
+		switch accountType {
 		case .onMyMac:
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
@@ -133,8 +138,6 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsNewsBlurWindowController
 		}
-		
-		tableView.selectRowIndexes([], byExtendingSelection: false)
 		
 	}
 	

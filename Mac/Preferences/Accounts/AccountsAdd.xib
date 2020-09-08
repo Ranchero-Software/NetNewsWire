@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097.3"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -13,19 +13,19 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="c22-O7-iKe">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+        <customView misplaced="YES" id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="292"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="42" horizontalPageScroll="10" verticalLineScroll="42" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aV5-XD-qtI">
-                    <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="292"/>
                     <clipView key="contentView" id="UDd-jz-Pwe">
-                        <rect key="frame" x="1" y="1" width="478" height="270"/>
+                        <rect key="frame" x="1" y="1" width="478" height="290"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="40" rowSizeStyle="automatic" viewBased="YES" id="YWY-HH-lRy">
-                                <rect key="frame" x="0.0" y="0.0" width="478" height="270"/>
-                                <autoresizingMask key="autoresizingMask"/>
+                                <rect key="frame" x="0.0" y="0.0" width="478" height="290"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <tableViewGridLines key="gridStyleMask" horizontal="YES"/>
@@ -33,7 +33,6 @@
                                 <tableColumns>
                                     <tableColumn width="475" minWidth="40" maxWidth="1000" id="aZS-IU-bl6">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                         </tableHeaderCell>
@@ -49,7 +48,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="17" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xsr-pQ-ts2">
-                                                        <rect key="frame" x="151" y="8" width="173" height="24"/>
+                                                        <rect key="frame" x="20" y="8" width="174" height="24"/>
                                                         <subviews>
                                                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cjk-vg-Vn6">
                                                                 <rect key="frame" x="0.0" y="0.0" width="24" height="24"/>
@@ -60,7 +59,7 @@
                                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="ros-80-3xn"/>
                                                             </imageView>
                                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="5ut-F4-bRA">
-                                                                <rect key="frame" x="39" y="0.0" width="136" height="24"/>
+                                                                <rect key="frame" x="39" y="0.0" width="137" height="24"/>
                                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="2mk-0x-ly6">
                                                                     <font key="font" metaFont="system" size="20"/>
                                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -77,10 +76,24 @@
                                                             <real value="3.4028234663852886e+38"/>
                                                         </customSpacing>
                                                     </stackView>
+                                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="mDB-Dl-30S">
+                                                        <rect key="frame" x="0.0" y="0.0" width="475" height="40"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="yTN-9d-fp3">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="pressed:" target="wVK-qI-WAx" id="fXc-TU-jxw"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                                 <constraints>
+                                                    <constraint firstItem="mDB-Dl-30S" firstAttribute="top" secondItem="wVK-qI-WAx" secondAttribute="top" id="5Q5-w5-FHX"/>
+                                                    <constraint firstAttribute="trailing" secondItem="mDB-Dl-30S" secondAttribute="trailing" id="ZXk-x2-YMq"/>
+                                                    <constraint firstItem="mDB-Dl-30S" firstAttribute="leading" secondItem="wVK-qI-WAx" secondAttribute="leading" id="hBc-Ju-z9p"/>
                                                     <constraint firstItem="xsr-pQ-ts2" firstAttribute="centerY" secondItem="wVK-qI-WAx" secondAttribute="centerY" id="lQw-mm-Vnb"/>
                                                     <constraint firstItem="xsr-pQ-ts2" firstAttribute="leading" secondItem="wVK-qI-WAx" secondAttribute="leading" constant="20" id="msT-9I-cEP"/>
+                                                    <constraint firstAttribute="bottom" secondItem="mDB-Dl-30S" secondAttribute="bottom" id="vfZ-QH-wrN"/>
                                                 </constraints>
                                                 <connections>
                                                     <outlet property="accountImageView" destination="cjk-vg-Vn6" id="laA-LX-gYz"/>
@@ -109,6 +122,7 @@
                 <constraint firstItem="aV5-XD-qtI" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="hrT-XK-tRk"/>
                 <constraint firstItem="aV5-XD-qtI" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="oGe-X8-oCz"/>
             </constraints>
+            <point key="canvasLocation" x="139" y="154"/>
         </customView>
     </objects>
 </document>
