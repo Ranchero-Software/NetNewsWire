@@ -12,6 +12,7 @@ protocol Inspector: class {
 
 	var objects: [Any]? { get set }
 	var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
+	var windowTitle: String { get }
 
 	func canInspect(_ objects: [Any]) -> Bool
 }
@@ -62,6 +63,7 @@ final class InspectorWindowController: NSWindowController {
 
 		inspectors = [feedInspector, folderInspector, builtinSmartFeedInspector, nothingInspector]
 		currentInspector = nothingInspector
+		window?.title = currentInspector.windowTitle
 
 		if let savedOrigin = originFromDefaults() {
 			window?.setFlippedOriginAdjustingForScreen(savedOrigin)
@@ -108,7 +110,11 @@ private extension InspectorWindowController {
 		guard let window = window else {
 			return
 		}
-		
+
+		DispatchQueue.main.async {
+			window.title = inspector.windowTitle
+		}	
+
 		let flippedOrigin = window.flippedOrigin
 
 		if window.contentViewController != inspector {
