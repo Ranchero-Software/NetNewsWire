@@ -7,6 +7,23 @@
         <language>en</language>
 
 <item>
+	<title>NetNewsWire 5.1b1</title>
+	<description><![CDATA[
+<p>Articles with non-ASCII URLs can now open in browser</p>
+<p>Adding feeds with non-ASCII URLs now works</p>
+<p>Feeds view, timeline: fixed bug where multiple selection could result in showing only unread articles</p>
+<p>Help menu: NetNewsWire Help now links to the 5.1 help book</p>
+<p>Inspector: window title now matches name of thing being inspected</p>
+<p>VoiceOver: fix bug navigating into the Add Account table</p>
+<p>Fixed crash that could happen when adding an account</p>
+<p>Preferences: Removed non-working (due to sandboxing) feature for setting the default RSS reader</p>
+	]]></description>
+	<pubDate>Tue, 08 Sep 2020 21:00:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1beta1/NetNewsWire5.1b1.zip" sparkle:version="3005" sparkle:shortVersionString="5.1b1" length="6560355" type="application/zip" />
+	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 5.1a2</title>
 	<description><![CDATA[
 <p>Feeds view: fixed bug where unread counts might be misplaced at startup</p>
