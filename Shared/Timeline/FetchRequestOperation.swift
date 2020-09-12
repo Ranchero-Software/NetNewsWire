@@ -23,13 +23,13 @@ final class FetchRequestOperation {
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
-	private let feeds: [Feed]
+	private let fetchers: [ArticleFetcher]
 
-	init(id: Int, readFilterEnabledTable: [FeedIdentifier: Bool], feeds: [Feed], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilterEnabledTable: [FeedIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
 		self.readFilterEnabledTable = readFilterEnabledTable
-		self.feeds = feeds
+		self.fetchers = fetchers
 		self.resultBlock = resultBlock
 	}
 
@@ -51,14 +51,14 @@ final class FetchRequestOperation {
 			return
 		}
 
-		if feeds.isEmpty {
+		if fetchers.isEmpty {
 			isFinished = true
 			resultBlock(Set<Article>(), self)
 			callCompletionIfNeeded()
 			return
 		}
 
-		let numberOfFetchers = feeds.count
+		let numberOfFetchers = fetchers.count
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
 		
@@ -80,19 +80,19 @@ final class FetchRequestOperation {
 			}
 		}
 		
-		for feed in feeds {
-			if feed.readFiltered(readFilterEnabledTable: readFilterEnabledTable) {
-				feed.fetchUnreadArticlesAsync { articleSetResult in
+		for fetcher in fetchers {
+			if (fetcher as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+				fetcher.fetchUnreadArticlesAsync { articleSetResult in
+					let articles = (try? articleSetResult.get()) ?? Set<Article>()
+					process(articles)
+				}
+			} else {
+				fetcher.fetchArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
 					process(articles)
 				}
 			}
-			else {
-				feed.fetchArticlesAsync { articleSetResult in
-					let articles = (try? articleSetResult.get()) ?? Set<Article>()
-					process(articles)
-				}
-			}
+			
 		}
 	}
 }
