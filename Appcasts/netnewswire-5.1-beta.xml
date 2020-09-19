@@ -7,6 +7,16 @@
         <language>en</language>
 
 <item>
+	<title>NetNewsWire 5.1</title>
+	<description><![CDATA[
+<p>This is the release version of NetNewsWire 5.1.</p>
+	]]></description>
+	<pubDate>Sat, 19 Sep 2020 12:45:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1/NetNewsWire5.1.zip" sparkle:version="3007" sparkle:shortVersionString="5.1" length="6561360" type="application/zip" />
+	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 5.1b2</title>
 	<description><![CDATA[
 <p><b>Important note!</b> If you created an account using a previous 5.1 test build, <b>you will have to create it again.</b></p>
