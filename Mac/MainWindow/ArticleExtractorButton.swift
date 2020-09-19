@@ -68,6 +68,7 @@ class ArticleExtractorButton: NSButton {
 		bezelStyle = .texturedRounded
 		image = AppAssets.articleExtractorOff
 		imageScaling = .scaleProportionallyDown
+		widthAnchor.constraint(equalTo: heightAnchor).isActive = true
 	}
 	
 	override func layout() {
