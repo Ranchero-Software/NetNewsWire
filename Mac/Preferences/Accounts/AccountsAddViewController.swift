@@ -148,6 +148,12 @@ extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
 extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate {
 	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		// `OAuthAccountAuthorizationOperation` is using `ASWebAuthenticationSession` which bounces the user
+		// to their browser on macOS for authorizing NetNewsWire to access the user's Feedly account.
+		// When this authorization is granted, the browser remains the foreground app which is unfortunate
+		// because the user probably wants to see the result of authorizing NetNewsWire to act on their behalf.
+		NSApp.activate(ignoringOtherApps: true)
+		
 		account.refreshAll { [weak self] result in
 			switch result {
 			case .success:
@@ -159,6 +165,10 @@ extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate 
 	}
 	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+		// `OAuthAccountAuthorizationOperation` is using `ASWebAuthenticationSession` which bounces the user
+		// to their browser on macOS for authorizing NetNewsWire to access the user's Feedly account.
+		NSApp.activate(ignoringOtherApps: true)
+		
 		view.window?.presentError(error)
 	}
 }

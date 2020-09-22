@@ -277,8 +277,14 @@ extension AddAccountModel {
 // MARK:- OAuthAccountAuthorizationOperationDelegate
 extension AddAccountModel: OAuthAccountAuthorizationOperationDelegate {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		
 		accountIsAuthenticating = false
 		accountAdded = true
+		
+		// macOS only: `ASWebAuthenticationSession` leaves the browser in the foreground.
+		// Ensure the app is in the foreground so the user can see their Feedly account load.
+		NSApplication.shared.activate(ignoringOtherApps: true)
+		
 		account.refreshAll { [weak self] result in
 			switch result {
 			case .success:
@@ -291,6 +297,11 @@ extension AddAccountModel: OAuthAccountAuthorizationOperationDelegate {
 	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
 		accountIsAuthenticating = false
+		
+		// macOS only: `ASWebAuthenticationSession` leaves the browser in the foreground.
+		// Ensure the app is in the foreground so the user can see the error.
+		NSApplication.shared.activate(ignoringOtherApps: true)
+		
 		addAccountError = .other(error: error)
 	}
 }
