@@ -402,7 +402,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			sidebarViewController?.focus()
 		}
 	}
-
+	
+	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
+		currentTimelineViewController?.markOlderArticlesRead()
+	}
+	
 	@IBAction func markAboveArticlesAsRead(_ sender: Any?) {
 		currentTimelineViewController?.markAboveArticlesRead()
 	}
