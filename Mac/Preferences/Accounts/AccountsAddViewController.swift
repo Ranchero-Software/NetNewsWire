@@ -106,6 +106,7 @@ extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsAddLocalWindowController
+			
 		case .cloudKit:
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
 			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
@@ -115,24 +116,32 @@ extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
 				}
 			}
 			accountsAddWindowController = accountsAddCloudKitWindowController
+			
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsFeedbinWindowController
+			
 		case .feedWrangler:
 			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
 			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsFeedWranglerWindowController
+			
 		case .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = .freshRSS
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsReaderAPIWindowController
+			
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
+			
+			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
+			
 			MainThreadOperationQueue.shared.add(addAccount)
+			
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
@@ -141,6 +150,32 @@ extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
 		
 	}
 	
+	private func runAwaitingFeedlyLoginAlertModal(forLifetimeOf operation: OAuthAccountAuthorizationOperation) {
+		let alert = NSAlert()
+		alert.alertStyle = .informational
+		alert.messageText = NSLocalizedString("Waiting for access to Feedly",
+											  comment: "Alert title when adding a Feedly account and waiting for authorization from the user.")
+		
+		alert.informativeText = NSLocalizedString("Your default web browser will open the Feedly login for you to authorize access.",
+												  comment: "Alert informative text when adding a Feedly account and waiting for authorization from the user.")
+		
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"))
+		
+		let attachedWindow = self.view.window!
+		
+		alert.beginSheetModal(for: attachedWindow) { response in
+			if response == .alertFirstButtonReturn {
+				operation.cancel()
+			}
+		}
+		
+		operation.completionBlock = { _ in
+			guard alert.window.isVisible else {
+				return
+			}
+			attachedWindow.endSheet(alert.window)
+		}
+	}
 }
 
 // MARK: OAuthAccountAuthorizationOperationDelegate
