@@ -7,6 +7,20 @@
         <language>en</language>
 
 <item>
+	<title>NetNewsWire 5.1.1a1</title>
+	<description><![CDATA[
+<p>Preferences: restored ability to set default RSS reader</p>
+<p>Fixed bug where o key wouldn’t mark older as read</p>
+<p>Fixed a crash in the code that handles URLs with non-ASCII characters</p>
+<p>Fixed an Open System Preferences button in an alert that didn’t work</p>
+	]]></description>
+	<pubDate>Sat, 22 Sep 2020 20:20:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.1alpha1/NetNewsWire5.1.1a1.zip" sparkle:version="3010" sparkle:shortVersionString="5.1.1a1" length="6574415" type="application/zip" />
+	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+
+<item>
 	<title>NetNewsWire 5.1</title>
 	<description><![CDATA[
 <p>This is the release version of NetNewsWire 5.1.</p>
