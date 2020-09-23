@@ -204,7 +204,7 @@ private extension WebFeedInspectorViewController {
 		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
 		let modalResponse = updateAlert.runModal()
 		if modalResponse == .alertFirstButtonReturn {
-			NSWorkspace.shared.open(URL(fileURLWithPath: "x-apple.systempreferences:com.apple.preference.notifications"))
+			NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!)
 		}
 	}
 
