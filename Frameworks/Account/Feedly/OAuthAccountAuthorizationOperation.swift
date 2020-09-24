@@ -15,6 +15,13 @@ public protocol OAuthAccountAuthorizationOperationDelegate: class {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
 }
 
+public enum OAuthAccountAuthorizationOperationError: LocalizedError {
+	case duplicateAccount
+	
+	public var errorDescription: String? {
+		return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
+	}
+}
 @objc public final class OAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
 
 	public var isCanceled: Bool = false {
@@ -122,7 +129,11 @@ public protocol OAuthAccountAuthorizationOperationDelegate: class {
 	}
 	
 	private func saveAccount(for grant: OAuthAuthorizationGrant) {
-		// TODO: Find an already existing account for this username?
+		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
+			didFinish(OAuthAccountAuthorizationOperationError.duplicateAccount)
+			return
+		}
+		
 		let account = AccountManager.shared.createAccount(type: .feedly)
 		do {
 			
