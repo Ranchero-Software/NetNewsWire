@@ -165,6 +165,15 @@ public final class AccountManager: UnreadCountProvider {
 		NotificationCenter.default.post(name: .UserDidDeleteAccount, object: self, userInfo: userInfo)
 	}
 	
+	public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
+		for account in accounts {
+			if account.type == type && username == account.username {
+				return true
+			}
+		}
+		return false
+	}
+	
 	public func existingAccount(with accountID: String) -> Account? {
 		return accountsDictionary[accountID]
 	}
@@ -350,15 +359,23 @@ private extension AccountManager {
 			print("Error reading Accounts folder: \(error)")
 			return
 		}
+		
+		filenames = filenames?.sorted()
 
 		filenames?.forEach { (oneFilename) in
 			guard oneFilename != defaultAccountFolderName else {
 				return
 			}
 			if let oneAccount = loadAccount(oneFilename) {
-				accountsDictionary[oneAccount.accountID] = oneAccount
+				if !duplicateServiceAccount(oneAccount) {
+					accountsDictionary[oneAccount.accountID] = oneAccount
+				}
 			}
 		}
+	}
+	
+	func duplicateServiceAccount(_ account: Account) -> Bool {
+		return duplicateServiceAccount(type: account.type, username: account.username)
 	}
 
 	func sortByName(_ accounts: [Account]) -> [Account] {
