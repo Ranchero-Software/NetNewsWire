@@ -166,6 +166,9 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
+		guard type != .onMyMac else {
+			return false
+		}
 		for account in accounts {
 			if account.type == type && username == account.username {
 				return true
