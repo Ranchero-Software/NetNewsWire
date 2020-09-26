@@ -239,7 +239,7 @@ extension CloudKitZone {
 		let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: [CKRecord.ID]())
 		op.savePolicy = .ifServerRecordUnchanged
 		op.isAtomic = false
-		op.qualityOfService = .utility
+		op.qualityOfService = .default
 		
 		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
 			
@@ -352,7 +352,7 @@ extension CloudKitZone {
 		var records = [CKRecord]()
 		
 		let op = CKQueryOperation(query: ckQuery)
-		op.qualityOfService = .utility
+		op.qualityOfService = .default
 		op.recordFetchedBlock = { record in
 			records.append(record)
 		}
@@ -389,7 +389,7 @@ extension CloudKitZone {
 		var records = [CKRecord]()
 		
 		let op = CKQueryOperation(cursor: cursor)
-		op.qualityOfService = .utility
+		op.qualityOfService = .default
 		op.recordFetchedBlock = { record in
 			records.append(record)
 		}
@@ -471,7 +471,7 @@ extension CloudKitZone {
 		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
 		op.savePolicy = .changedKeys
 		op.isAtomic = true
-		op.qualityOfService = .utility
+		op.qualityOfService = .default
 
 		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
 			
@@ -568,7 +568,7 @@ extension CloudKitZone {
 		zoneConfig.previousServerChangeToken = changeToken
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [Self.zoneID], configurationsByRecordZoneID: [Self.zoneID: zoneConfig])
         op.fetchAllChanges = true
-		op.qualityOfService = .utility
+		op.qualityOfService = .default
 
         op.recordZoneChangeTokensUpdatedBlock = { zoneID, token, _ in
 			savedChangeToken = token
