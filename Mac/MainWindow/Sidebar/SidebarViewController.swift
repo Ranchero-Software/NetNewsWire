@@ -241,19 +241,16 @@ protocol SidebarDelegate: class {
 		
 		if availableSelectedNodes.count == 1 {
 			if let folder = availableSelectedNodes.first?.representedObject as? Folder {
-				let localizedMessageText = "Delete the “%@” folder?"
-				alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, folder.nameForDisplay) as String
+				alert.messageText = NSLocalizedString("Delete Folder", comment: "Delete Folder")
 				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
 				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, folder.nameForDisplay) as String
 			} else if let feed = availableSelectedNodes.first?.representedObject as? Feed {
-				let localizedMessageText = "Delete the “%@” feed?"
-				alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, feed.nameForDisplay) as String
+				alert.messageText = NSLocalizedString("Delete Feed", comment: "Delete Feed")
 				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
 				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
 			}
 		} else {
-			let localizedMessageText = "Delete the %d selected items?"
-			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, availableSelectedNodes.count) as String
+			alert.messageText = NSLocalizedString("Delete Items", comment: "Delete Items")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the %d selected items?", comment: "Items delete text")
 			alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, availableSelectedNodes.count) as String
 		}
