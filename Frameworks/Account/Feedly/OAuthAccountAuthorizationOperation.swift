@@ -71,10 +71,26 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError {
 				self?.didEndAuthentication(url: url, error: error)
 			}
 		}
-		self.session = session
+		
 		session.presentationContextProvider = self
 		
-		session.start()
+		guard session.start() else {
+			
+			/// Documentation does not say on why `ASWebAuthenticationSession.start` or `canStart` might return false.
+			/// Perhaps it has something to do with an inter-process communication failure? No browsers installed? No browsers that support web authentication?
+			struct UnableToStartASWebAuthenticationSessionError: LocalizedError {
+				let errorDescription: String? = NSLocalizedString("Unable to start a web authentication session with the default web browser.",
+																  comment: "OAuth - error description - unable to authorize because ASWebAuthenticationSession did not start.")
+				let recoverySuggestion: String? = NSLocalizedString("Check your default web browser in System Preferences or change it to Safari and try again.",
+																	comment: "OAuth - recovery suggestion - ensure browser selected supports web authentication.")
+			}
+			
+			didFinish(UnableToStartASWebAuthenticationSessionError())
+			
+			return
+		}
+		
+		self.session = session
 	}
 	
 	public func cancel() {
