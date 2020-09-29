@@ -230,14 +230,49 @@ protocol SidebarDelegate: class {
 	// MARK: - Actions
 
 	@IBAction func delete(_ sender: AnyObject?) {
-		if outlineView.selectionIsEmpty {
+		let availableSelectedNodes = selectedNodes.filter { !($0.representedObject is PseudoFeed) }
+		
+		if availableSelectedNodes.isEmpty {
 			return
 		}
-		let firstRow = outlineView.selectedRowIndexes.min()
-		deleteNodes(selectedNodes)
-		if let restoreRow = firstRow, restoreRow < outlineView.numberOfRows {
-			outlineView.selectRow(restoreRow)
+		
+		let alert = NSAlert()
+		alert.alertStyle = .warning
+		
+		if availableSelectedNodes.count == 1 {
+			if let folder = availableSelectedNodes.first?.representedObject as? Folder {
+				let localizedMessageText = "Delete the “%@” folder?"
+				alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, folder.nameForDisplay) as String
+				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
+				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, folder.nameForDisplay) as String
+			} else if let feed = availableSelectedNodes.first?.representedObject as? Feed {
+				let localizedMessageText = "Delete the “%@” feed?"
+				alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, feed.nameForDisplay) as String
+				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
+				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
+			}
+		} else {
+			let localizedMessageText = "Delete the %d selected items?"
+			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, availableSelectedNodes.count) as String
+			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the %d selected items?", comment: "Items delete text")
+			alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, availableSelectedNodes.count) as String
 		}
+		
+		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete Account"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Delete Account"))
+			
+		alert.beginSheetModal(for: view.window!) { [weak self] result in
+			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+				guard let self = self else { return }
+
+				let firstRow = self.outlineView.selectedRowIndexes.min()
+				self.deleteNodes(availableSelectedNodes)
+				if let restoreRow = firstRow, restoreRow < self.outlineView.numberOfRows {
+					self.outlineView.selectRow(restoreRow)
+				}
+			}
+		}
+		
 	}
 	
 	@IBAction func doubleClickedSidebar(_ sender: Any?) {
