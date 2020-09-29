@@ -1173,7 +1173,7 @@ private extension MasterFeedViewController {
 		guard let feedID = dataSource.itemIdentifier(for: indexPath)?.feedID, let feed = AccountManager.shared.existingFeed(with: feedID) else { return	}
 
 		let name = dataSource.itemIdentifier(for: indexPath)?.nameForDisplay ?? ""
-		let formatString = NSLocalizedString("Rename “%@”", comment: "Feed finder")
+		let formatString = NSLocalizedString("Rename “%@”", comment: "Rename feed")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, name) as String
 		
 		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
@@ -1224,12 +1224,39 @@ private extension MasterFeedViewController {
 	}
 	
 	func delete(indexPath: IndexPath) {
+		guard let feedID = dataSource.itemIdentifier(for: indexPath)?.feedID, let feed = AccountManager.shared.existingFeed(with: feedID) else { return	}
+
+		let title: String
+		let message: String
+		if feed is Folder {
+			title = NSLocalizedString("Delete Folder", comment: "Delete folder")
+			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
+			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
+		} else  {
+			title = NSLocalizedString("Delete Feed", comment: "Delete feed")
+			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
+			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
+		}
+		
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
+		
+		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+		let deleteAction = UIAlertAction(title: deleteTitle, style: .default) { [weak self] action in
+			self?.delete(indexPath: indexPath, feedID: feedID)
+		}
+		alertController.addAction(deleteAction)
+		
+		self.present(alertController, animated: true)
+	}
+	
+	func delete(indexPath: IndexPath, feedID: FeedIdentifier) {
 		guard let undoManager = undoManager,
-			let feedID = dataSource.itemIdentifier(for: indexPath)?.feedID,
-			let deleteNode = coordinator.nodeFor(feedID: feedID),
-			let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], undoManager: undoManager, errorHandler: ErrorHandler.present(self))
-				else {
-					return
+			  let deleteNode = coordinator.nodeFor(feedID: feedID),
+			  let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], undoManager: undoManager, errorHandler: ErrorHandler.present(self)) else {
+			return
 		}
 
 		if let folder = deleteNode.representedObject as? Folder {
