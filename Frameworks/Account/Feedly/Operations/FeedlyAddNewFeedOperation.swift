@@ -67,6 +67,13 @@ class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, Feedl
 		addCompletionHandler = nil
 		super.didCancel()
 	}
+	
+	override func didFinish(with error: Error) {
+		assert(Thread.isMainThread)
+		addCompletionHandler?(.failure(error))
+		addCompletionHandler = nil
+		super.didFinish(with: error)
+	}
 
 	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse) {
 		guard !isCanceled else {
