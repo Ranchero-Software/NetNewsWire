@@ -7,6 +7,24 @@
         <language>en</language>
 
 <item>
+	<title>NetNewsWire 5.1.1</title>
+	<description><![CDATA[
+<p>Fixed a crash handling a specific type of weird URL</p>
+<p>Preferences: restored ability to set default RSS reader</p>
+<p>Fixed bug where o key wouldn’t mark older as read</p>
+<p>Fixed an Open System Preferences button in an alert that didn’t work</p>
+<p>Fixed a possible hang when adding a feed to Feedly (and the feed isn’t found)</p>
+<p>Fixed some UI issues to do with adding a Feedly account</p>
+<p>Fixed contrast in footnotes indicator</p>
+<p>Fixed bug where duplicate accounts (same username and service) could be made</p>
+<p>Fixed bug where open in Safari in background might not open in the background</p>
+	]]></description>
+	<pubDate>Mon, 05 Oct 2020 11:45:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.1/NetNewsWire5.1.1.zip" sparkle:version="3012" sparkle:shortVersionString="5.1.1" length="6582076" type="application/zip" />
+	<sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 5.1.1a2</title>
 	<description><![CDATA[
 <p>Fixed a crash handling a specific type of really weird URL</p>
