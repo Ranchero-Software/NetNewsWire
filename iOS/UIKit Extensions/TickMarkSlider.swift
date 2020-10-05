@@ -37,7 +37,7 @@ class TickMarkSlider: UISlider {
 			let tick = UIView()
 			tick.translatesAutoresizingMaskIntoConstraints = false
 			tick.backgroundColor = AppAssets.tickMarkColor
-			insertSubview(tick, belowSubview: self)
+			insertSubview(tick, at: 0)
 
 			tick.widthAnchor.constraint(equalToConstant: 3).isActive = true
 			tick.heightAnchor.constraint(equalToConstant: 10).isActive = true
