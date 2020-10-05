@@ -47,10 +47,15 @@ final class FeedlyAPICaller {
 	
 	private let transport: Transport
 	private let baseUrlComponents: URLComponents
+	private let uriComponentAllowed: CharacterSet
 	
 	init(transport: Transport, api: API) {
 		self.transport = transport
 		self.baseUrlComponents = api.baseUrlComponents
+		
+		var urlHostAllowed = CharacterSet.urlHostAllowed
+		urlHostAllowed.remove("+")
+		uriComponentAllowed = urlHostAllowed
 	}
 	
 	weak var delegate: FeedlyAPICallerDelegate?
@@ -271,7 +276,7 @@ final class FeedlyAPICaller {
 	}
 	
 	private func encodeForURLPath(_ pathComponent: String) -> String? {
-		return pathComponent.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+		return pathComponent.addingPercentEncoding(withAllowedCharacters: uriComponentAllowed)
 	}
 	
 	func deleteCollection(with id: String, completion: @escaping (Result<Void, Error>) -> ()) {
