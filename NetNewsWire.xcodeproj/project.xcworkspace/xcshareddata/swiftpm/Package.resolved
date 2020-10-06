@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/Ranchero-Software/RSParser.git",
         "state": {
           "branch": null,
-          "revision": "d7b10caba6396b049a74b4bd11d649ba870331b4",
-          "version": "2.0.0-beta1"
+          "revision": "21d57ffb7ae744cf70bf6ddfb7ad8b7c102e05cf",
+          "version": "2.0.0-beta2"
         }
       },
       {
@@ -87,8 +87,8 @@
         "repositoryURL": "https://github.com/Ranchero-Software/RSWeb.git",
         "state": {
           "branch": null,
-          "revision": "d40861de4048610f81125484130c187edd1f30f3",
-          "version": "1.0.0-beta4"
+          "revision": "043eb0098aa70ba45277cc459cbd450d13b72ff2",
+          "version": "1.0.0-beta5"
         }
       },
       {
@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/httpswift/swifter.git",
         "state": {
           "branch": null,
-          "revision": "8b5afb48ae64d4f729f0489ddcfe09c62b9c3687",
-          "version": "1.4.7"
+          "revision": "9483a5d459b45c3ffd059f7b55f9638e268632fd",
+          "version": "1.5.0"
         }
       }
     ]
