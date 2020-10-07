@@ -19,6 +19,9 @@ class RefreshProgressView: UIView {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		update()
 		scheduleUpdateRefreshLabel()
+
+		isAccessibilityElement = true
+		accessibilityTraits = [.updatesFrequently, .notEnabled]
 	}
 	
 	func update() {
@@ -109,6 +112,7 @@ private extension RefreshProgressView {
 			label.text = ""
 		}
 
+		accessibilityLabel = label.text
 	}
 
 	func scheduleUpdateRefreshLabel() {
