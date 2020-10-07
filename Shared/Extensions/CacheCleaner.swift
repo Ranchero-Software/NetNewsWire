@@ -8,6 +8,7 @@
 
 import Foundation
 import os.log
+import RSWeb
 
 struct CacheCleaner {
 
