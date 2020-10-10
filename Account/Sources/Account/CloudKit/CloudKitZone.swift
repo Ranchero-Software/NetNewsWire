@@ -33,6 +33,7 @@ typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKReco
 protocol CloudKitZone: class {
 	
 	static var zoneID: CKRecordZone.ID { get }
+	static var qualityOfService: QualityOfService { get }
 
 	var log: OSLog { get }
 
@@ -55,6 +56,17 @@ protocol CloudKitZone: class {
 }
 
 extension CloudKitZone {
+	
+	// My observation has been that QoS is treated differently for CloudKit operations on macOS vs iOS.
+	// .userInitiated is too aggressive on iOS and can lead the UI slowing down and appearing to block.
+	// .default (or lower) on macOS will sometimes hang for extended periods of time and appear to hang.
+	static var qualityOfService: QualityOfService {
+		#if os(macOS)
+		return .userInitiated
+		#else
+		return .default
+		#endif
+	}
 	
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken() {
@@ -239,7 +251,7 @@ extension CloudKitZone {
 		let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: [CKRecord.ID]())
 		op.savePolicy = .ifServerRecordUnchanged
 		op.isAtomic = false
-		op.qualityOfService = .default
+		op.qualityOfService = Self.qualityOfService
 		
 		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
 			
@@ -352,7 +364,7 @@ extension CloudKitZone {
 		var records = [CKRecord]()
 		
 		let op = CKQueryOperation(query: ckQuery)
-		op.qualityOfService = .default
+		op.qualityOfService = Self.qualityOfService
 		op.recordFetchedBlock = { record in
 			records.append(record)
 		}
@@ -389,7 +401,7 @@ extension CloudKitZone {
 		var records = [CKRecord]()
 		
 		let op = CKQueryOperation(cursor: cursor)
-		op.qualityOfService = .default
+		op.qualityOfService = Self.qualityOfService
 		op.recordFetchedBlock = { record in
 			records.append(record)
 		}
@@ -471,7 +483,7 @@ extension CloudKitZone {
 		let op = CKModifyRecordsOperation(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete)
 		op.savePolicy = .changedKeys
 		op.isAtomic = true
-		op.qualityOfService = .default
+		op.qualityOfService = Self.qualityOfService
 
 		op.modifyRecordsCompletionBlock = { [weak self] (_, _, error) in
 			
@@ -568,7 +580,7 @@ extension CloudKitZone {
 		zoneConfig.previousServerChangeToken = changeToken
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [Self.zoneID], configurationsByRecordZoneID: [Self.zoneID: zoneConfig])
         op.fetchAllChanges = true
-		op.qualityOfService = .default
+		op.qualityOfService = Self.qualityOfService
 
         op.recordZoneChangeTokensUpdatedBlock = { zoneID, token, _ in
 			savedChangeToken = token
