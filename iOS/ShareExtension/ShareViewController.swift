@@ -88,9 +88,12 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 					return
 				}
 				self?.url = url
+				return
 			})
 		}
 		
+		// Reddit in particular doesn't pass the URL correctly and instead puts it in the contentText
+		url = URL(string: contentText)
 	}
 	
 	override func isContentValid() -> Bool {
@@ -103,7 +106,11 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			return
 		}
 
-		let name = contentText.isEmpty ? nil : contentText
+		var name: String? = nil
+		if !contentText.mayBeURL {
+			name = contentText.isEmpty ? nil : contentText
+		}
+		
 		let request = ExtensionFeedAddRequest(name: name, feedURL: url, destinationContainerID: containerID)
 		ExtensionFeedAddRequestFile.save(request)
 		
