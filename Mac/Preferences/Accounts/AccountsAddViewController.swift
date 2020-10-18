@@ -61,6 +61,10 @@ extension AccountsAddViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountsAddTableCellView {
+			
+			cell.accountType = addableAccountTypes[row]
+			cell.delegate = self
+			
 			switch addableAccountTypes[row] {
 			case .onMyMac:
 				cell.accountNameLabel?.stringValue = Account.defaultLocalAccountName
@@ -88,19 +92,21 @@ extension AccountsAddViewController: NSTableViewDelegate {
 		}
 		return nil
 	}
-	
-	func tableViewSelectionDidChange(_ notification: Notification) {
 		
-		let selectedRow = tableView.selectedRow
-		guard selectedRow != -1 else {
-			return
-		}
+}
 
-		switch addableAccountTypes[selectedRow] {
+// MARK: AccountsAddTableCellViewDelegate
+
+extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
+	
+	func addAccount(_ accountType: AccountType) {
+		
+		switch accountType {
 		case .onMyMac:
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsAddLocalWindowController
+			
 		case .cloudKit:
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
 			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
@@ -110,34 +116,66 @@ extension AccountsAddViewController: NSTableViewDelegate {
 				}
 			}
 			accountsAddWindowController = accountsAddCloudKitWindowController
+			
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsFeedbinWindowController
+			
 		case .feedWrangler:
 			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
 			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsFeedWranglerWindowController
+			
 		case .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = .freshRSS
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsReaderAPIWindowController
+			
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
+			
+			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
+			
 			MainThreadOperationQueue.shared.add(addAccount)
+			
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsNewsBlurWindowController
 		}
 		
-		tableView.selectRowIndexes([], byExtendingSelection: false)
-		
 	}
 	
+	private func runAwaitingFeedlyLoginAlertModal(forLifetimeOf operation: OAuthAccountAuthorizationOperation) {
+		let alert = NSAlert()
+		alert.alertStyle = .informational
+		alert.messageText = NSLocalizedString("Waiting for access to Feedly",
+											  comment: "Alert title when adding a Feedly account and waiting for authorization from the user.")
+		
+		alert.informativeText = NSLocalizedString("Your default web browser will open the Feedly login for you to authorize access.",
+												  comment: "Alert informative text when adding a Feedly account and waiting for authorization from the user.")
+		
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"))
+		
+		let attachedWindow = self.view.window!
+		
+		alert.beginSheetModal(for: attachedWindow) { response in
+			if response == .alertFirstButtonReturn {
+				operation.cancel()
+			}
+		}
+		
+		operation.completionBlock = { _ in
+			guard alert.window.isVisible else {
+				return
+			}
+			attachedWindow.endSheet(alert.window)
+		}
+	}
 }
 
 // MARK: OAuthAccountAuthorizationOperationDelegate
@@ -145,6 +183,12 @@ extension AccountsAddViewController: NSTableViewDelegate {
 extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate {
 	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		// `OAuthAccountAuthorizationOperation` is using `ASWebAuthenticationSession` which bounces the user
+		// to their browser on macOS for authorizing NetNewsWire to access the user's Feedly account.
+		// When this authorization is granted, the browser remains the foreground app which is unfortunate
+		// because the user probably wants to see the result of authorizing NetNewsWire to act on their behalf.
+		NSApp.activate(ignoringOtherApps: true)
+		
 		account.refreshAll { [weak self] result in
 			switch result {
 			case .success:
@@ -156,6 +200,10 @@ extension AccountsAddViewController: OAuthAccountAuthorizationOperationDelegate 
 	}
 	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+		// `OAuthAccountAuthorizationOperation` is using `ASWebAuthenticationSession` which bounces the user
+		// to their browser on macOS for authorizing NetNewsWire to access the user's Feedly account.
+		NSApp.activate(ignoringOtherApps: true)
+		
 		view.window?.presentError(error)
 	}
 }

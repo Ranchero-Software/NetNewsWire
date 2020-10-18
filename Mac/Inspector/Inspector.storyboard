@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16097.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -33,11 +33,11 @@
             <objects>
                 <viewController title="Feed" storyboardIdentifier="Feed" showSeguePresentationStyle="single" id="sfH-oR-GXm" customClass="WebFeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ecA-UY-KEd">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="332"/>
+                        <rect key="frame" x="0.0" y="0.0" width="267" height="318"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IWu-80-XC5">
-                                <rect key="frame" x="20" y="200" width="216" height="56"/>
+                                <rect key="frame" x="20" y="186" width="227" height="56"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="56" id="zV3-AX-gyC"/>
                                 </constraints>
@@ -54,7 +54,7 @@ Field</string>
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2WO-Iu-p5e">
-                                <rect key="frame" x="18" y="96" width="220" height="16"/>
+                                <rect key="frame" x="18" y="96" width="231" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Home Page" usesSingleLineMode="YES" id="Fg8-rA-G5J">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -62,7 +62,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zm0-15-BFy">
-                                <rect key="frame" x="18" y="76" width="220" height="16"/>
+                                <rect key="frame" x="18" y="76" width="231" height="16"/>
                                 <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="http://example.com/" id="L2p-ur-j7a">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -70,7 +70,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ju6-Zo-8X4">
-                                <rect key="frame" x="18" y="40" width="220" height="16"/>
+                                <rect key="frame" x="18" y="40" width="231" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Feed" usesSingleLineMode="YES" id="zzB-rX-1dK">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -78,26 +78,16 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Vvk-KG-JlG">
-                                <rect key="frame" x="18" y="20" width="220" height="16"/>
+                                <rect key="frame" x="18" y="20" width="231" height="16"/>
                                 <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" title="http://example.com/feed" id="HpC-rK-YGK">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nH2-ab-KJ5">
-                                <rect key="frame" x="18" y="130" width="180" height="18"/>
-                                <buttonCell key="cell" type="check" title="Always Show Reader View" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aRe-yV-R0h">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="isReaderViewAlwaysOnChanged:" target="sfH-oR-GXm" id="rsD-0e-ksP"/>
-                                </connections>
-                            </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZBX-E8-k9c">
-                                <rect key="frame" x="18" y="164" width="179" height="18"/>
-                                <buttonCell key="cell" type="check" title="Notify About New Articles" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Bw5-c7-yDX">
+                            <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ZBX-E8-k9c">
+                                <rect key="frame" x="18" y="150" width="231" height="18"/>
+                                <buttonCell key="cell" type="check" title="Show notifications for new articles" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Bw5-c7-yDX">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -105,8 +95,18 @@ Field</string>
                                     <action selector="isNotifyAboutNewArticlesChanged:" target="sfH-oR-GXm" id="Vx9-pQ-RnP"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nH2-ab-KJ5">
+                                <rect key="frame" x="18" y="130" width="167" height="18"/>
+                                <buttonCell key="cell" type="check" title="Always use Reader view" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aRe-yV-R0h">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="isReaderViewAlwaysOnChanged:" target="sfH-oR-GXm" id="rsD-0e-ksP"/>
+                                </connections>
+                            </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="I6k-QR-VmV" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="104" y="264" width="48" height="48"/>
+                                <rect key="frame" x="110" y="250" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="Faa-nE-lkA"/>
                                     <constraint firstAttribute="width" constant="48" id="esD-dT-oWU"/>
@@ -118,7 +118,7 @@ Field</string>
                             <constraint firstItem="ZBX-E8-k9c" firstAttribute="top" secondItem="IWu-80-XC5" secondAttribute="bottom" constant="20" id="5L7-aZ-vdg"/>
                             <constraint firstItem="nH2-ab-KJ5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="8pK-lW-xQk"/>
                             <constraint firstItem="IWu-80-XC5" firstAttribute="top" secondItem="I6k-QR-VmV" secondAttribute="bottom" constant="8" symbolic="YES" id="Bea-j0-QMb"/>
-                            <constraint firstItem="nH2-ab-KJ5" firstAttribute="top" secondItem="ZBX-E8-k9c" secondAttribute="bottom" constant="20" id="CpA-X9-EbP"/>
+                            <constraint firstItem="nH2-ab-KJ5" firstAttribute="top" secondItem="ZBX-E8-k9c" secondAttribute="bottom" constant="6" symbolic="YES" id="CpA-X9-EbP"/>
                             <constraint firstAttribute="bottom" secondItem="Vvk-KG-JlG" secondAttribute="bottom" constant="20" id="IxJ-5N-NhL"/>
                             <constraint firstAttribute="trailing" secondItem="ju6-Zo-8X4" secondAttribute="trailing" constant="20" symbolic="YES" id="Jzi-tP-TIw"/>
                             <constraint firstAttribute="trailing" secondItem="Vvk-KG-JlG" secondAttribute="trailing" constant="20" symbolic="YES" id="KAS-A7-TxB"/>
@@ -132,6 +132,7 @@ Field</string>
                             <constraint firstAttribute="trailing" secondItem="2WO-Iu-p5e" secondAttribute="trailing" constant="20" symbolic="YES" id="dLU-a6-nfx"/>
                             <constraint firstItem="I6k-QR-VmV" firstAttribute="centerX" secondItem="ecA-UY-KEd" secondAttribute="centerX" id="gFG-ZY-eNp"/>
                             <constraint firstAttribute="trailing" secondItem="zm0-15-BFy" secondAttribute="trailing" constant="20" symbolic="YES" id="js6-b2-FIR"/>
+                            <constraint firstAttribute="trailing" secondItem="ZBX-E8-k9c" secondAttribute="trailing" constant="20" symbolic="YES" id="nOw-cs-o8e"/>
                             <constraint firstItem="IWu-80-XC5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="r6h-Z0-g7b"/>
                             <constraint firstItem="2WO-Iu-p5e" firstAttribute="top" secondItem="nH2-ab-KJ5" secondAttribute="bottom" constant="20" id="rRv-qO-dPa"/>
                             <constraint firstItem="Vvk-KG-JlG" firstAttribute="top" secondItem="ju6-Zo-8X4" secondAttribute="bottom" constant="4" id="sAt-dN-Taz"/>
@@ -156,11 +157,11 @@ Field</string>
             <objects>
                 <viewController title="Folder" storyboardIdentifier="Folder" showSeguePresentationStyle="single" id="ylq-Dz-pnT" customClass="FolderInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DIQ-fD-5q6">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="152"/>
+                        <rect key="frame" x="0.0" y="0.0" width="267" height="152"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HJF-Gi-62u">
-                                <rect key="frame" x="104" y="84" width="48" height="48"/>
+                                <rect key="frame" x="110" y="84" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="dts-Bk-DzJ"/>
                                     <constraint firstAttribute="height" constant="48" id="vtI-1q-OKy"/>
@@ -168,7 +169,7 @@ Field</string>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSFolder" id="C4n-vS-297"/>
                             </imageView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="jHf-rc-GNr" userLabel="Folder Name Field">
-                                <rect key="frame" x="20" y="20" width="216" height="56"/>
+                                <rect key="frame" x="20" y="20" width="227" height="56"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="56" id="Ele-JD-mB2"/>
                                 </constraints>
@@ -207,11 +208,11 @@ Field</string>
             <objects>
                 <viewController title="Builtin Smart Feed" storyboardIdentifier="BuiltinSmartFeed" showSeguePresentationStyle="single" id="ye3-co-8lc" customClass="BuiltinSmartFeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="DXo-3M-jJQ">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="112"/>
+                        <rect key="frame" x="0.0" y="0.0" width="267" height="112"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cwK-Ep-mNL">
-                                <rect key="frame" x="104" y="44" width="48" height="48"/>
+                                <rect key="frame" x="110" y="44" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="33r-tp-RWH"/>
                                     <constraint firstAttribute="height" constant="48" id="8F1-sH-5Xs"/>
@@ -219,7 +220,7 @@ Field</string>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSSmartBadgeTemplate" id="Z52-bd-Lgz"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4Xp-FX-kn3">
-                                <rect key="frame" x="18" y="20" width="220" height="16"/>
+                                <rect key="frame" x="18" y="20" width="231" height="16"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Label" id="3v9-Z7-d7l">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -249,11 +250,11 @@ Field</string>
             <objects>
                 <viewController title="Nothing to inspect" storyboardIdentifier="Nothing" showSeguePresentationStyle="single" id="Fdj-2F-Kl1" customClass="NothingInspectorViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="FDE-PJ-bJl">
-                        <rect key="frame" x="0.0" y="0.0" width="256" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="267" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="icb-M6-R2N">
-                                <rect key="frame" x="18" y="20" width="220" height="16"/>
+                                <rect key="frame" x="18" y="20" width="231" height="16"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Nothing to inspect" id="iLD-8q-EAJ">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -261,7 +262,7 @@ Field</string>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zQp-oc-Qtc">
-                                <rect key="frame" x="18" y="20" width="220" height="16"/>
+                                <rect key="frame" x="18" y="20" width="231" height="16"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Multiple selection" id="5oG-0x-T8O">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

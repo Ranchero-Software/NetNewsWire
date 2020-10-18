@@ -55,7 +55,12 @@ class AccountsNewsBlurWindowController: NSWindowController {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username required.", comment: "Credentials Error")
 			return
 		}
-
+		
+		guard !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: usernameTextField.stringValue) else {
+			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
+			return
+		}
+		
 		actionButton.isEnabled = false
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)

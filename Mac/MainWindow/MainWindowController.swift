@@ -295,6 +295,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
+		if AppDefaults.shared.openInBrowserInBackground {
+			window?.makeKeyAndOrderFront(self)
+		}
 		openArticleInBrowser(sender)
 	}
 
@@ -304,6 +307,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func openInBrowserUsingOppositeOfSettings(_ sender: Any?) {
+		if !AppDefaults.shared.openInBrowserInBackground {
+			window?.makeKeyAndOrderFront(self)
+		}
 		if let link = currentLink {
 			Browser.open(link, inBackground: !AppDefaults.shared.openInBrowserInBackground)
 		}
@@ -413,7 +419,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			sidebarViewController?.focus()
 		}
 	}
-
+	
+	@IBAction func markOlderArticlesAsRead(_ sender: Any?) {
+		currentTimelineViewController?.markOlderArticlesRead()
+	}
+	
 	@IBAction func markAboveArticlesAsRead(_ sender: Any?) {
 		currentTimelineViewController?.markAboveArticlesRead()
 	}

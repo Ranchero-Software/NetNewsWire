@@ -32,7 +32,7 @@ final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProv
 		service.getCollections { result in
 			switch result {
 			case .success(let collections):
-				os_log(.debug, log: self.log, "Received collections: %@.", collections.map { $0.id })
+				os_log(.debug, log: self.log, "Received collections: %{public}@", collections.map { $0.id })
 				self.collections = collections
 				self.didFinish()
 				

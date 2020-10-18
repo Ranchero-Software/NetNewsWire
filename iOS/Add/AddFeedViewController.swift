@@ -100,6 +100,7 @@ class AddFeedViewController: UITableViewController {
 		let normalizedURLString = urlString.normalizedURL
 		
 		guard !normalizedURLString.isEmpty, let url = URL(unicodeString: normalizedURLString) else {
+			delegate?.processingDidCancel()
 			return
 		}
 		

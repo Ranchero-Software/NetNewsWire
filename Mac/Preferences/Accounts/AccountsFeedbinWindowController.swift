@@ -58,6 +58,11 @@ class AccountsFeedbinWindowController: NSWindowController {
 			return
 		}
 		
+		guard !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: usernameTextField.stringValue) else {
+			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error")
+			return
+		}
+		
 		actionButton.isEnabled = false
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)

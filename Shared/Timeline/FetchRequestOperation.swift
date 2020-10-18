@@ -19,17 +19,17 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 final class FetchRequestOperation {
 
 	let id: Int
-	let readFilter: Bool
+	let readFilterEnabledTable: [FeedIdentifier: Bool]
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
-	private let representedObjects: [Any]
+	private let fetchers: [ArticleFetcher]
 
-	init(id: Int, readFilter: Bool, representedObjects: [Any], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilterEnabledTable: [FeedIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
-		self.readFilter = readFilter
-		self.representedObjects = representedObjects
+		self.readFilterEnabledTable = readFilterEnabledTable
+		self.fetchers = fetchers
 		self.resultBlock = resultBlock
 	}
 
@@ -51,15 +51,14 @@ final class FetchRequestOperation {
 			return
 		}
 
-		let articleFetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
-		if articleFetchers.isEmpty {
+		if fetchers.isEmpty {
 			isFinished = true
 			resultBlock(Set<Article>(), self)
 			callCompletionIfNeeded()
 			return
 		}
 
-		let numberOfFetchers = articleFetchers.count
+		let numberOfFetchers = fetchers.count
 		var fetchersReturned = 0
 		var fetchedArticles = Set<Article>()
 		
@@ -81,19 +80,19 @@ final class FetchRequestOperation {
 			}
 		}
 		
-		for articleFetcher in articleFetchers {
-			if readFilter {
-				articleFetcher.fetchUnreadArticlesAsync { articleSetResult in
+		for fetcher in fetchers {
+			if (fetcher as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+				fetcher.fetchUnreadArticlesAsync { articleSetResult in
+					let articles = (try? articleSetResult.get()) ?? Set<Article>()
+					process(articles)
+				}
+			} else {
+				fetcher.fetchArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
 					process(articles)
 				}
 			}
-			else {
-				articleFetcher.fetchArticlesAsync { articleSetResult in
-					let articles = (try? articleSetResult.get()) ?? Set<Article>()
-					process(articles)
-				}
-			}
+			
 		}
 	}
 }

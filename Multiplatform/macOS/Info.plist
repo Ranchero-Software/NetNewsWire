@@ -50,8 +50,8 @@
 		</dict>
 	</array>
 	<key>SUFeedURL</key>
-	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
+	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
 	<key>FeedURLForTestBuilds</key>
-	<string>https://ranchero.com/downloads/netnewswire-5.1-beta.xml</string>
+	<string>https://ranchero.com/downloads/netnewswire-beta.xml</string>
 </dict>
 </plist>

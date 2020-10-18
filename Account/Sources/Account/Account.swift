@@ -250,7 +250,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		return delegate.refreshProgress
 	}
 
-	init?(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
+	init(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()

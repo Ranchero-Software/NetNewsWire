@@ -57,7 +57,7 @@
 		</dict>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2019 Ranchero Software. All rights reserved.</string>
+	<string>Copyright © 2019-2020 Brent Simmons. All rights reserved.</string>
 	<key>NSHumanReadableDescription</key>
 	<string>This extension adds a Safari toolbar button for easily subscribing to the syndication feed for the current page.</string>
 </dict>

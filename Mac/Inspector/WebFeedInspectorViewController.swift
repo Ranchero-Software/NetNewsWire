@@ -38,6 +38,7 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 			updateFeed()
 		}
 	}
+	var windowTitle: String = NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
 		return objects.count == 1 && objects.first is WebFeed
@@ -112,6 +113,7 @@ extension WebFeedInspectorViewController: NSTextFieldDelegate {
 			return
 		}
 		feed.editedName = nameTextField.stringValue
+		windowTitle = feed.editedName ?? NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 	}
 	
 }
@@ -133,7 +135,7 @@ private extension WebFeedInspectorViewController {
 		updateFeedURL()
 		updateNotifyAboutNewArticles()
 		updateIsReaderViewAlwaysOn()
-		
+		windowTitle = feed?.nameForDisplay ?? NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 		view.needsLayout = true
 	}
 
@@ -202,7 +204,7 @@ private extension WebFeedInspectorViewController {
 		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
 		let modalResponse = updateAlert.runModal()
 		if modalResponse == .alertFirstButtonReturn {
-			NSWorkspace.shared.open(URL(fileURLWithPath: "x-apple.systempreferences:com.apple.preference.notifications"))
+			NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!)
 		}
 	}
 

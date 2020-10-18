@@ -240,6 +240,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()
 		
+		UNUserNotificationCenter.current().requestAuthorization(options:[.badge]) { (granted, error) in }
+
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
@@ -620,7 +622,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func showHelp(_ sender: Any?) {
 
-		Browser.open("https://ranchero.com/netnewswire/help/mac/5.0/en/", inBackground: false)
+		Browser.open("https://ranchero.com/netnewswire/help/mac/5.1/en/", inBackground: false)
 	}
 
 	@IBAction func donateToAppCampForGirls(_ sender: Any?) {

@@ -32,18 +32,18 @@ a:hover {
 	--header-color: rgba(0, 0, 0, 0.3);
 	--body-code-color: #666;
 	--system-message-color: #cbcbcb;
-	--feedlink-color: rgba(0, 0, 0, 0.3);
+	--feedlink-color: rgba(255, 0, 0, 0.6);
 	--article-title-color: #333;
-	--article-date-color: rgba(0, 0, 0, 0.5);
+	--article-date-color: rgba(0, 0, 0, 0.3);
 	--table-cell-border-color: lightgray;
 }
 
 @media(prefers-color-scheme: dark) {
 	:root {
-		--header-color: #d2d2d2;
+		--header-color: rgba(94, 158, 244, 1);
 		--body-code-color: #b2b2b2;
 		--system-message-color: #5f5f5f;
-		--feedlink-color: rgba(255, 255, 255, 0.7);
+		--feedlink-color: rgba(94, 158, 244, 1);
 		--article-title-color: #e0e0e0;
 		--article-date-color: rgba(255, 255, 255, 0.5);
 		--table-cell-border-color: dimgray;
@@ -57,8 +57,12 @@ body {
 
 body .headerTable {
 	border-bottom: 1px solid var(--header-table-border-color);
+	color: var(--header-color);
 }
 body .header {
+	color: var(--header-color);
+}
+body .header a:link, .header a:visited {
 	color: var(--header-color);
 }
 

@@ -51,13 +51,13 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 
 	override func didCancel() {
-		os_log(.debug, log: log, "Canceling sync stream contents")
+		os_log(.debug, log: log, "Canceling sync stream contents for %{public}@", resource.id)
 		operationQueue.cancelAllOperations()
 		super.didCancel()
 	}
 
 	func enqueueOperations(for continuation: String?) {
-		os_log(.debug, log: log, "Requesting page for %@", resource.id)
+		os_log(.debug, log: log, "Requesting page for %{public}@", resource.id)
 		let operations = pageOperations(for: continuation)
 		operationQueue.addOperations(operations)
 	}
@@ -91,14 +91,14 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	
 	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
 		guard !isCanceled else {
-			os_log(.debug, log: log, "Cancelled requesting page for %@", resource.id)
+			os_log(.debug, log: log, "Cancelled requesting page for %{public}@", resource.id)
 			return
 		}
 		
-		os_log(.debug, log: log, "Ingesting %i items from %@", stream.items.count, stream.id)
+		os_log(.debug, log: log, "Ingesting %i items from %{public}@", stream.items.count, stream.id)
 		
 		guard isPagingEnabled, let continuation = stream.continuation else {
-			os_log(.debug, log: log, "Reached end of stream for %@", stream.id)
+			os_log(.debug, log: log, "Reached end of stream for %{public}@", stream.id)
 			return
 		}
 		
@@ -106,7 +106,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-		os_log(.debug, log: log, "Completed ingesting items from %@", resource.id)
+		os_log(.debug, log: log, "Completed ingesting items from %{public}@", resource.id)
 		didFinish()
 	}
 	

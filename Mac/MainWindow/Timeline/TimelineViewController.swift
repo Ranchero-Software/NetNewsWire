@@ -44,11 +44,20 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	var isCleanUpAvailable: Bool {
-		guard isReadFiltered ?? false else { return false }
+		let isEligibleForCleanUp: Bool?
+		
+		if representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed, timelineFeed.defaultReadFilterType == .alwaysRead {
+			isEligibleForCleanUp = true
+		} else {
+			isEligibleForCleanUp = isReadFiltered
+		}
+
+		guard isEligibleForCleanUp ?? false else { return false }
 		
 		let readSelectedCount = selectedArticles.filter({ $0.status.read }).count
 		let readArticleCount = articles.count - unreadCount
 		let availableToCleanCount = readArticleCount - readSelectedCount
+		
 		return availableToCleanCount > 0
 	}
 	
@@ -451,6 +460,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		return .canDoNothing
 	}
 
+	func markOlderArticlesRead() {
+		markOlderArticlesRead(selectedArticles)
+	}
+
 	func markAboveArticlesRead() {
 		markAboveArticlesRead(selectedArticles)
 	}
@@ -467,6 +480,33 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	func canMarkBelowArticlesAsRead() -> Bool {
 		guard let last = selectedArticles.last else { return false }
 		return articles.articlesBelow(article: last).canMarkAllAsRead()
+	}
+
+	func markOlderArticlesRead(_ selectedArticles: [Article]) {
+		// Mark articles older than the selectedArticles(s) as read.
+
+		var cutoffDate: Date? = nil
+		for article in selectedArticles {
+			if cutoffDate == nil {
+				cutoffDate = article.logicalDatePublished
+			}
+			else if cutoffDate! > article.logicalDatePublished {
+				cutoffDate = article.logicalDatePublished
+			}
+		}
+		if cutoffDate == nil {
+			return
+		}
+
+		let articlesToMark = articles.filter { $0.logicalDatePublished < cutoffDate! }
+		if articlesToMark.isEmpty {
+			return
+		}
+
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
 	}
 
 	func markAboveArticlesRead(_ selectedArticles: [Article]) {
@@ -1129,19 +1169,19 @@ private extension TimelineViewController {
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
 		cancelPendingAsyncFetches()
-		let articleFetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
-		if articleFetchers.isEmpty {
+		let fetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+		if fetchers.isEmpty {
 			return Set<Article>()
 		}
 
 		var fetchedArticles = Set<Article>()
-		for articleFetcher in articleFetchers {
-			if isReadFiltered ?? true {
-				if let articles = try? articleFetcher.fetchUnreadArticles() {
+		for fetchers in fetchers {
+			if (fetchers as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+				if let articles = try? fetchers.fetchUnreadArticles() {
 					fetchedArticles.formUnion(articles)
 				}
 			} else {
-				if let articles = try? articleFetcher.fetchArticles() {
+				if let articles = try? fetchers.fetchArticles() {
 					fetchedArticles.formUnion(articles)
 				}
 			}
@@ -1154,7 +1194,8 @@ private extension TimelineViewController {
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilter: isReadFiltered ?? true, representedObjects: representedObjects) { [weak self] (articles, operation) in
+		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, fetchers: fetchers) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return

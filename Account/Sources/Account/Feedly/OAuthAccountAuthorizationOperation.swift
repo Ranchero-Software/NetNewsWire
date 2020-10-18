@@ -15,6 +15,13 @@ public protocol OAuthAccountAuthorizationOperationDelegate: class {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
 }
 
+public enum OAuthAccountAuthorizationOperationError: LocalizedError {
+	case duplicateAccount
+	
+	public var errorDescription: String? {
+		return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
+	}
+}
 @objc public final class OAuthAccountAuthorizationOperation: NSObject, MainThreadOperation, ASWebAuthenticationPresentationContextProviding {
 
 	public var isCanceled: Bool = false {
@@ -64,10 +71,26 @@ public protocol OAuthAccountAuthorizationOperationDelegate: class {
 				self?.didEndAuthentication(url: url, error: error)
 			}
 		}
-		self.session = session
+		
 		session.presentationContextProvider = self
 		
-		session.start()
+		guard session.start() else {
+			
+			/// Documentation does not say on why `ASWebAuthenticationSession.start` or `canStart` might return false.
+			/// Perhaps it has something to do with an inter-process communication failure? No browsers installed? No browsers that support web authentication?
+			struct UnableToStartASWebAuthenticationSessionError: LocalizedError {
+				let errorDescription: String? = NSLocalizedString("Unable to start a web authentication session with the default web browser.",
+																  comment: "OAuth - error description - unable to authorize because ASWebAuthenticationSession did not start.")
+				let recoverySuggestion: String? = NSLocalizedString("Check your default web browser in System Preferences or change it to Safari and try again.",
+																	comment: "OAuth - recovery suggestion - ensure browser selected supports web authentication.")
+			}
+			
+			didFinish(UnableToStartASWebAuthenticationSessionError())
+			
+			return
+		}
+		
+		self.session = session
 	}
 	
 	public func cancel() {
@@ -122,7 +145,11 @@ public protocol OAuthAccountAuthorizationOperationDelegate: class {
 	}
 	
 	private func saveAccount(for grant: OAuthAuthorizationGrant) {
-		// TODO: Find an already existing account for this username?
+		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
+			didFinish(OAuthAccountAuthorizationOperationError.duplicateAccount)
+			return
+		}
+		
 		let account = AccountManager.shared.createAccount(type: .feedly)
 		do {
 			
