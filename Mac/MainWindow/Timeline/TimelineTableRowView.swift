@@ -35,7 +35,7 @@ class TimelineTableRowView : NSTableRowView {
 	}
 	
 	override func drawBackground(in dirtyRect: NSRect) {
-		NSColor.controlBackgroundColor.setFill()
+		NSColor.alternatingContentBackgroundColors[0].setFill()
 		dirtyRect.fill()
 	}
 
