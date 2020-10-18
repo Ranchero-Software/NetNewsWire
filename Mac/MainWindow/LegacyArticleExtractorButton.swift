@@ -55,7 +55,7 @@ class LegacyArticleExtractorButton: NSButton {
 		
 		switch true {
 		case isError:
-			addImageSublayer(to: hostedLayer, image: AppAssets.articleExtractorError, opacity: opacity)
+			addImageSublayer(to: hostedLayer, image: AppAssets.legacyArticleExtractorError, opacity: opacity)
 		case isInProgress:
 			addAnimatedSublayer(to: hostedLayer)
 		default:
