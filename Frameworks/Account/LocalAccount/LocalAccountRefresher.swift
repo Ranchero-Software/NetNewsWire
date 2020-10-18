@@ -110,11 +110,6 @@ extension LocalAccountRefresher: DownloadSessionDelegate {
 			return false
 		}
 		
-		if data.count > 4096 {
-			let parserData = ParserData(url: feed.url, data: data)
-			return FeedParser.mightBeAbleToParseBasedOnPartialData(parserData)
-		}
-		
 		return true		
 	}
 
