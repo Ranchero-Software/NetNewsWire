@@ -7,6 +7,17 @@
         <language>en</language>
 
 <item>
+    <title>NetNewsWire 5.1.2b1</title>
+    <description><![CDATA[
+    <p>Increased performance downloading feeds in the On My Mac account.</p>
+    <p>Fixed a bug adding a feed to a Feedly collection that has a + in its name</p>
+    ]]></description>
+    <pubDate>Sat, 17 Oct 2020 19:00:00 -0700</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.2beta1/NetNewsWire5.1.2b1.zip" sparkle:version="3013" sparkle:shortVersionString="5.1.2b1" length="658252" type="application/zip" />
+    <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+			
+<item>
 	<title>NetNewsWire 5.1.1</title>
 	<description><![CDATA[
 <p>Fixed a crash handling a specific type of weird URL</p>
