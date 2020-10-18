@@ -155,8 +155,6 @@
 		513146B3235A81A400387FDC /* AddWebFeedIntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513146B1235A81A400387FDC /* AddWebFeedIntentHandler.swift */; };
 		51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 51314707235C41FC00387FDC /* Intents.intentdefinition */; };
 		51314705235C41FC00387FDC /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 51314707235C41FC00387FDC /* Intents.intentdefinition */; };
-		513228FB233037630033D4ED /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
-		513228FC233037630033D4ED /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
 		51333D1624685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
 		51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
 		51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
@@ -584,8 +582,6 @@
 		51E4993424A867E700B667CB /* UserInfoKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9805237DCAC90028BCAA /* UserInfoKey.swift */; };
 		51E4993524A867E800B667CB /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E45CD1ED8C308000A8B52 /* AppNotifications.swift */; };
 		51E4993624A867E800B667CB /* UserInfoKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511B9805237DCAC90028BCAA /* UserInfoKey.swift */; };
-		51E4993724A8680E00B667CB /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
-		51E4993824A8680E00B667CB /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
 		51E4993A24A8708800B667CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4993924A8708800B667CB /* AppDelegate.swift */; };
 		51E4993C24A8709900B667CB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E4993B24A8709900B667CB /* AppDelegate.swift */; };
 		51E4993D24A870F800B667CB /* UserNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51FE10022345529D0056195D /* UserNotificationManager.swift */; };
@@ -725,7 +721,6 @@
 		65ED3FC4235DEF6C0081F399 /* OPMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444C8F11FED81840051386C /* OPMLExporter.swift */; };
 		65ED3FC5235DEF6C0081F399 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849A975D1ED9EB72007D329B /* MainWindowController.swift */; };
 		65ED3FC6235DEF6C0081F399 /* UnreadFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F2D5391FC2308B00998D64 /* UnreadFeed.swift */; };
-		65ED3FC7235DEF6C0081F399 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513228F2233037620033D4ED /* Reachability.swift */; };
 		65ED3FC8235DEF6C0081F399 /* SidebarCellLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845A29211FC9251E007B49E3 /* SidebarCellLayout.swift */; };
 		65ED3FC9235DEF6C0081F399 /* SmartFeedPasteboardWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AD1EB92031649C00BC20B7 /* SmartFeedPasteboardWriter.swift */; };
 		65ED3FCA235DEF6C0081F399 /* SmartFeedsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC88171FE59CBF00644329 /* SmartFeedsController.swift */; };
@@ -1526,7 +1521,6 @@
 		513146B1235A81A400387FDC /* AddWebFeedIntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedIntentHandler.swift; sourceTree = "<group>"; };
 		51314706235C41FC00387FDC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; name = Base; path = Base.lproj/Intents.intentdefinition; sourceTree = "<group>"; };
 		51314714235C420900387FDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Intents.strings; sourceTree = "<group>"; };
-		513228F2233037620033D4ED /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRedditFeedWindowController.swift; sourceTree = "<group>"; };
 		51333D3A2468615D00EB5C91 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddRedditFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarExpandedContainers.swift; sourceTree = "<group>"; };
@@ -2385,14 +2379,6 @@
 				51314684235A7EB900387FDC /* NetNewsWire_iOS_IntentsExtension.entitlements */,
 			);
 			path = IntentsExtension;
-			sourceTree = "<group>";
-		};
-		513228F1233037620033D4ED /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				513228F2233037620033D4ED /* Reachability.swift */,
-			);
-			path = Network;
 			sourceTree = "<group>";
 		};
 		513C5CE7232571C2003D4054 /* ShareExtension */ = {
@@ -3309,7 +3295,6 @@
 				512E08DD22687FA000BDCFDD /* Tree */,
 				849A97561ED9EB0D007D329B /* Extensions */,
 				510C43F5243D0325009F70C3 /* ExtensionPoints */,
-				513228F1233037620033D4ED /* Network */,
 				511D43CE231FA51100FB1562 /* Resources */,
 			);
 			path = Shared;
@@ -4554,7 +4539,6 @@
 				5177476724B3BE3400EB0F74 /* SettingsAboutModel.swift in Sources */,
 				65C2E40124B05D8A000AFDF6 /* FeedsSettingsModel.swift in Sources */,
 				51E4990A24A808C500B667CB /* FeaturedImageDownloader.swift in Sources */,
-				51E4993824A8680E00B667CB /* Reachability.swift in Sources */,
 				51E4993224A8676400B667CB /* FetchRequestQueue.swift in Sources */,
 				51E4991724A8090400B667CB /* ArticleUtilities.swift in Sources */,
 				51E4991B24A8091000B667CB /* IconImage.swift in Sources */,
@@ -4672,7 +4656,6 @@
 				1727B39924C1368D00A4DBDC /* LayoutPreferencesView.swift in Sources */,
 				51A8FFEE24CA0CF400F41F1D /* WIthLatestFrom.swift in Sources */,
 				51E4993F24A8713B00B667CB /* ArticleStatusSyncTimer.swift in Sources */,
-				51E4993724A8680E00B667CB /* Reachability.swift in Sources */,
 				51B80F4424BE58BF00C6C32D /* SharingServiceDelegate.swift in Sources */,
 				51B54AB624B5B33C0014348B /* WebViewController.swift in Sources */,
 				51E4994B24A8734C00B667CB /* SendToMicroBlogCommand.swift in Sources */,
@@ -4833,7 +4816,6 @@
 				65ED3FC4235DEF6C0081F399 /* OPMLExporter.swift in Sources */,
 				65ED3FC5235DEF6C0081F399 /* MainWindowController.swift in Sources */,
 				65ED3FC6235DEF6C0081F399 /* UnreadFeed.swift in Sources */,
-				65ED3FC7235DEF6C0081F399 /* Reachability.swift in Sources */,
 				65ED3FC8235DEF6C0081F399 /* SidebarCellLayout.swift in Sources */,
 				65ED3FC9235DEF6C0081F399 /* SmartFeedPasteboardWriter.swift in Sources */,
 				515A5149243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */,
@@ -5156,7 +5138,6 @@
 				515A517C243E90260089E588 /* ExtensionPointManager.swift in Sources */,
 				51627A6723861DA3007B3B4B /* MasterFeedViewController+Drag.swift in Sources */,
 				51FFF0C4235EE8E5002762AA /* VibrantButton.swift in Sources */,
-				513228FC233037630033D4ED /* Reachability.swift in Sources */,
 				51C45259226508D300C03939 /* AppDefaults.swift in Sources */,
 				51CE1C0B23622007005548FC /* RefreshProgressView.swift in Sources */,
 				511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */,
@@ -5190,7 +5171,6 @@
 				8444C8F21FED81840051386C /* OPMLExporter.swift in Sources */,
 				849A975E1ED9EB72007D329B /* MainWindowController.swift in Sources */,
 				84F2D53A1FC2308B00998D64 /* UnreadFeed.swift in Sources */,
-				513228FB233037630033D4ED /* Reachability.swift in Sources */,
 				845A29221FC9251E007B49E3 /* SidebarCellLayout.swift in Sources */,
 				510C418224E5D1AE008226FD /* ExtensionFeedAddRequest.swift in Sources */,
 				516AE9DF2372269A007DEEAA /* IconImage.swift in Sources */,

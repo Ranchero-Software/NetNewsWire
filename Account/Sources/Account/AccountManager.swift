@@ -8,6 +8,7 @@
 
 import Foundation
 import RSCore
+import RSWeb
 import Articles
 import ArticlesDatabase
 
@@ -228,6 +229,8 @@ public final class AccountManager: UnreadCountProvider {
 	}
 
 	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() -> Void)? = nil) {
+		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
+
 		let group = DispatchGroup()
 		
 		activeAccounts.forEach { account in
@@ -249,6 +252,8 @@ public final class AccountManager: UnreadCountProvider {
 	}
 	
 	public func refreshAll(completion: (() -> Void)? = nil) {
+		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
+
 		var syncErrors = [AccountSyncError]()
 		let group = DispatchGroup()
 		
