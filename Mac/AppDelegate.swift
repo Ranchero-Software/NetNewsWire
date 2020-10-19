@@ -418,32 +418,43 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		if item.action == #selector(refreshAll(_:)) {
 			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty
 		}
+		
+		if item.action == #selector(importOPMLFromFile(_:)) {
+			return AccountManager.shared.activeAccounts.contains(where: { !$0.behaviors.contains(where: { $0 == .disallowOPMLImports }) })
+		}
+		
 		if item.action == #selector(addAppNews(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) && !AccountManager.shared.activeAccounts.isEmpty
 		}
+		
 		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
 			return mainWindowController?.isOpen ?? false
 		}
+		
 		if item.action == #selector(showAddWebFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
+		
 		if item.action == #selector(showAddRedditFeedWindow(_:)) {
 			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isRedditEnabled else {
 				return false
 			}
 			return ExtensionPointManager.shared.isRedditEnabled
 		}
+		
 		if item.action == #selector(showAddTwitterFeedWindow(_:)) {
 			guard !isDisplayingSheet && isSpecialAccountAvailable && ExtensionPointManager.shared.isTwitterEnabled else {
 				return false
 			}
 			return ExtensionPointManager.shared.isTwitterEnabled
 		}
+		
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
 		}
 		#endif
+		
 		return true
 	}
 
