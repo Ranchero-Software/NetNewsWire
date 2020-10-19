@@ -52,7 +52,7 @@ a:hover {
 
 body {
 	color: var(--body-color);
-	background-color: var(--body-background-color);
+	background-color: var(--body-background-color) !important;
 }
 
 body .headerTable {
