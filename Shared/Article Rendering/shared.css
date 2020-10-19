@@ -182,6 +182,9 @@ code, pre {
 	border: none;
 	padding: 0;
 }
+.nnw-overflow table[border="0"] {
+	border-width: 0;
+}
 
 img, figure, video, div, object {
 	max-width: 100%;
