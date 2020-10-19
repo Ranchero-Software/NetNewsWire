@@ -616,13 +616,15 @@ private extension MasterTimelineViewController {
 		}
 
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
-		let dataSourceSnapshot = dataSource.snapshot()
-		if resetScroll && dataSourceSnapshot.indexOfSection(0) != nil && dataSourceSnapshot.itemIdentifiers(inSection: 0).count > 0 {
-			tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+
+		if resetScroll {
+			let snapshot = dataSource.snapshot()
+			if snapshot.sectionIdentifiers.count > 0 && snapshot.itemIdentifiers(inSection: 0).count > 0 {
+				tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+			}
 		}
 		
 		updateToolbar()
-
 	}
 	
 	func updateToolbar() {

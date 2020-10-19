@@ -73,17 +73,22 @@ class FeedWranglerAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func action(_ sender: Any) {
-		
 		guard let email = emailTextField.text, let password = passwordTextField.text else {
 			showError(NSLocalizedString("Username & password required.", comment: "Credentials Error"))
 			return
 		}
+		// When you fill in the email address via auto-complete it adds extra whitespace
+		let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
+
+		guard !AccountManager.shared.duplicateServiceAccount(type: .feedWrangler, username: trimmedEmail) else {
+			showError(NSLocalizedString("There is already a FeedWrangler account with that username created.", comment: "Duplicate Error"))
+			return
+		}
+		
 		resignFirstResponder()
 		toggleActivityIndicatorAnimation(visible: true)
 		setNavigationEnabled(to: false)
 		
-		// When you fill in the email address via auto-complete it adds extra whitespace
-		let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
 		let credentials = Credentials(type: .feedWranglerBasic, username: trimmedEmail, secret: password)
 		Account.validateCredentials(type: .feedWrangler, credentials: credentials) { result in
 			

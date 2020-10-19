@@ -74,17 +74,23 @@ class FeedbinAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func action(_ sender: Any) {
-		
 		guard let email = emailTextField.text, let password = passwordTextField.text else {
 			showError(NSLocalizedString("Username & password required.", comment: "Credentials Error"))
 			return
 		}
-		resignFirstResponder()
-		toggleActivityIndicatorAnimation(visible: true)
-		setNavigationEnabled(to: false)
 		
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
+		
+		guard !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: trimmedEmail) else {
+			showError(NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error"))
+			return
+		}
+		
+		resignFirstResponder()
+		toggleActivityIndicatorAnimation(visible: true)
+		setNavigationEnabled(to: false)
+
 		let credentials = Credentials(type: .basic, username: trimmedEmail, secret: password)
 		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
 			self.toggleActivityIndicatorAnimation(visible: false)
