@@ -267,8 +267,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		guard let folder = container as? Folder else {
+			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+			return
+		}
 		
-		caller.createSubscription(url: url) { result in
+		caller.createSubscription(url: url, name: name, folder: folder) { result in
 			switch result {
 			case .success(let subResult):
 				switch subResult {
@@ -291,7 +295,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 			
 		}
-		
 	}
 	
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
