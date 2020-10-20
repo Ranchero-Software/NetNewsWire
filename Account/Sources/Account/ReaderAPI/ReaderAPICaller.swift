@@ -21,8 +21,6 @@ final class ReaderAPICaller: NSObject {
 	struct ConditionalGetKeys {
 		static let subscriptions = "subscriptions"
 		static let tags = "tags"
-		static let taggings = "taggings"
-		static let icons = "icons"
 		static let unreadEntries = "unreadEntries"
 		static let starredEntries = "starredEntries"
 	}

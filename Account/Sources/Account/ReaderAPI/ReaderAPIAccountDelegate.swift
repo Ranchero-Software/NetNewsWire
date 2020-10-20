@@ -475,7 +475,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 private extension ReaderAPIAccountDelegate {
 	
 	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
 		caller.retrieveTags { result in
 			switch result {
 			case .success(let tags):
@@ -483,21 +482,45 @@ private extension ReaderAPIAccountDelegate {
 					self.syncFolders(account, tags)
 				}
 				self.refreshProgress.completeTask()
+				self.forceExpireFolderFeedRelationship(account, tags)
 				self.refreshFeeds(account, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
 			}
 		}
-		
 	}
-	
+
+	func forceExpireFolderFeedRelationship(_ account: Account, _ tags: [ReaderAPITag]?) {
+		guard let tags = tags else { return }
+
+		let folderNames: [String] =  {
+			if let folders = account.folders {
+				return folders.map { $0.name ?? "" }
+			} else {
+				return [String]()
+			}
+		}()
+
+		let tagNames = deriveTagNames(tags)
+		
+		// The sync service has a tag that we don't have a folder for.  We might not get a new
+		// taggings response for it if it is a folder rename.  Force expire the subscription
+		// so that we will for sure get the new tagging information by pulling all subscriptions.
+		tagNames.forEach { tagName in
+			if !folderNames.contains(tagName) {
+				accountMetadata?.conditionalGetInfo[ReaderAPICaller.ConditionalGetKeys.subscriptions] = nil
+			}
+		}
+
+	}
+
 	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
 
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
 
-		let tagNames = tags.filter { $0.type == "folder" }.map { $0.tagID.replacingOccurrences(of: "user/-/label/", with: "") }
+		let tagNames = deriveTagNames(tags)
 
 		// Delete any folders not at Reader
 		if let folders = account.folders {
@@ -527,6 +550,10 @@ private extension ReaderAPIAccountDelegate {
 			}
 		}
 		
+	}
+	
+	func deriveTagNames(_ tags: [ReaderAPITag]) -> [String] {
+		return tags.filter { $0.type == "folder" }.map { $0.tagID.replacingOccurrences(of: "user/-/label/", with: "") }
 	}
 	
 	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
