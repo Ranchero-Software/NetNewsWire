@@ -1126,49 +1126,44 @@ private extension MasterFeedViewController {
 		}
 
 		guard let feedID = identifier.feedID,
-			let feed = AccountManager.shared.existingFeed(with: feedID),
-			let fetchedArticles = try? feed.fetchArticles() else {
-			return nil
-		}
-
-		let articles = Array(fetchedArticles)
-		return markAllAsReadAction(articles: articles, nameForDisplay: feed.nameForDisplay, indexPath: indexPath)
-	}
-
-	func markAllAsReadAction(account: Account, contentView: UIView?) -> UIAction? {
-		guard let fetchedArticles = try? account.fetchArticles(FetchType.unread) else {
-			return nil
-		}
-
-		let articles = Array(fetchedArticles)
-		return markAllAsReadAction(articles: articles, nameForDisplay: account.nameForDisplay, contentView: contentView)
-	}
-
-	func markAllAsReadAction(articles: [Article], nameForDisplay: String, indexPath: IndexPath? = nil) -> UIAction? {
-		guard let indexPath = indexPath,
-			let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
-				return nil
-		}
-
-		return markAllAsReadAction(articles: articles, nameForDisplay: nameForDisplay, contentView: contentView)
-	}
-
-	func markAllAsReadAction(articles: [Article], nameForDisplay: String, contentView: UIView?) -> UIAction? {
-		guard articles.canMarkAllAsRead(), let contentView = contentView else {
+			  let feed = AccountManager.shared.existingFeed(with: feedID),
+			  feed.unreadCount > 0,
+			  let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, nameForDisplay) as String
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				self?.coordinator.markAllAsRead(articles)
+				if let articles = try? feed.fetchUnreadArticles() {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
 			}
 		}
 
 		return action
 	}
-	
+
+	func markAllAsReadAction(account: Account, contentView: UIView?) -> UIAction? {
+		guard account.unreadCount > 0, let contentView = contentView else {
+			return nil
+		}
+
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? account.fetchArticles(.unread) {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
+			}
+		}
+
+		return action
+	}
+
+
 	func rename(indexPath: IndexPath) {
 		guard let feedID = dataSource.itemIdentifier(for: indexPath)?.feedID, let feed = AccountManager.shared.existingFeed(with: feedID) else { return	}
 
