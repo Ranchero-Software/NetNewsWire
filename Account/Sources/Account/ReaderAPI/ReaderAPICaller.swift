@@ -646,7 +646,7 @@ final class ReaderAPICaller: NSObject {
 		let url = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
-				URLQueryItem(name: "o", value: String(sinceString)),
+				URLQueryItem(name: "ot", value: String(sinceString)),
 				URLQueryItem(name: "n", value: "10000"),
 				URLQueryItem(name: "output", value: "json"),
 				URLQueryItem(name: "xt", value: ReaderState.read.rawValue),
@@ -668,6 +668,11 @@ final class ReaderAPICaller: NSObject {
 				
 				guard let entries = entries else {
 					completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
+					return
+				}
+				
+				guard entries.itemRefs.count > 0 else {
+					completion(.success((nil, nil, nil)))
 					return
 				}
 				
