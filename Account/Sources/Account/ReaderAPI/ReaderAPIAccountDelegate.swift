@@ -979,20 +979,38 @@ private extension ReaderAPIAccountDelegate {
 			return
 		}
 
-		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-		account.fetchUnreadArticleIDs { articleIDsResult in
-			guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-				return
+		database.selectPendingReadStatusArticleIDs() { result in
+
+			func process(_ pendingArticleIDs: Set<String>) {
+				
+				let readerUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+				let updatableReaderUnreadArticleIDs = readerUnreadArticleIDs.subtracting(pendingArticleIDs)
+				
+				account.fetchUnreadArticleIDs { articleIDsResult in
+					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
+						return
+					}
+
+					// Mark articles as unread
+					let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+					account.markAsUnread(deltaUnreadArticleIDs)
+
+					// Mark articles as read
+					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+					account.markAsRead(deltaReadArticleIDs)
+				}
+
 			}
-
-			// Mark articles as unread
-			let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-			account.markAsUnread(deltaUnreadArticleIDs)
-
-			// Mark articles as read
-			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs)
-			account.markAsRead(deltaReadArticleIDs)
+			
+			switch result {
+			case .success(let pendingArticleIDs):
+				process(pendingArticleIDs)
+			case .failure(let error):
+				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
+			}
+			
 		}
+		
 	}
 	
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
@@ -1000,23 +1018,39 @@ private extension ReaderAPIAccountDelegate {
 			return
 		}
 
-		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-		account.fetchStarredArticleIDs { articleIDsResult in
-			guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-				return
+		database.selectPendingStarredStatusArticleIDs() { result in
+
+			func process(_ pendingArticleIDs: Set<String>) {
+				
+				let readerStarredArticleIDs = Set(articleIDs.map { String($0) } )
+				let updatableReaderUnreadArticleIDs = readerStarredArticleIDs.subtracting(pendingArticleIDs)
+
+				account.fetchStarredArticleIDs { articleIDsResult in
+					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
+						return
+					}
+
+					// Mark articles as starred
+					let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+					account.markAsStarred(deltaStarredArticleIDs)
+
+					// Mark articles as unstarred
+					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+					account.markAsUnstarred(deltaUnstarredArticleIDs)
+				}
+								
+			}
+			
+			switch result {
+			case .success(let pendingArticleIDs):
+				process(pendingArticleIDs)
+			case .failure(let error):
+				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
 			}
 
-			// Mark articles as starred
-			let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-			account.markAsStarred(deltaStarredArticleIDs)
-
-			// Mark articles as unstarred
-			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs)
-			account.markAsUnstarred(deltaUnstarredArticleIDs)
 		}
+		
 	}
-
-
 
 	func deleteTagging(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
 		
