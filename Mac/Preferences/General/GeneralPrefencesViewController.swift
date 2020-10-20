@@ -202,10 +202,12 @@ private extension GeneralPreferencesViewController {
 		menu.addItem(NSMenuItem.separator())
 
 		for browser in allBrowsers {
-			let item = NSMenuItem(title: browser.name!, action: nil, keyEquivalent: "")
+			guard let name = browser.name else { continue }
+
+			let item = NSMenuItem(title: name, action: nil, keyEquivalent: "")
 			item.representedObject = browser.bundleIdentifier
 
-			let icon = browser.icon!
+			let icon = browser.icon ?? NSWorkspace.shared.icon(forFileType: kUTTypeApplicationBundle as String)
 			icon.size = NSSize(width: 16.0, height: 16.0)
 			item.image = browser.icon
 			menu.addItem(item)
