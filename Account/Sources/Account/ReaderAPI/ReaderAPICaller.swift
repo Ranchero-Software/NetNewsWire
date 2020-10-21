@@ -389,8 +389,6 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
-				
-				
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -457,8 +455,6 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
-				
-				
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -475,7 +471,6 @@ final class ReaderAPICaller: NSObject {
 						break
 					}
 				})
-				
 				
 			case .failure(let error):
 				completion(.failure(error))
@@ -494,8 +489,6 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
-				
-				
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -512,7 +505,6 @@ final class ReaderAPICaller: NSObject {
 						break
 					}
 				})
-				
 				
 			case .failure(let error):
 				completion(.failure(error))
