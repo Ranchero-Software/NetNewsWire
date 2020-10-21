@@ -85,7 +85,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
 		refreshProgress.addToNumberOfTasksAndRemaining(6)
 		
 		refreshAccount(account) { result in
@@ -93,7 +92,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			case .success():
 				
 				self.sendArticleStatus(for: account) { _ in
+					self.refreshProgress.completeTask()
 					self.refreshArticleStatus(for: account) { _ in
+						self.refreshProgress.completeTask()
 						self.refreshArticles(account) {
 							self.refreshMissingArticles(account) {
 								self.refreshProgress.clear()
@@ -166,9 +167,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		
 		os_log(.debug, log: log, "Refreshing article statuses...")
-		
 		let group = DispatchGroup()
 		
 		group.enter()
@@ -201,7 +200,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
 			completion(.success(()))
 		}
-		
 	}
 	
 	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -217,7 +215,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
@@ -303,7 +303,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			return
 		}
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.createSubscription(url: url, name: name, folder: folder) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success(let subResult):
 				switch subResult {
@@ -336,7 +338,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			return
 		}
 		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.renameSubscription(subscriptionID: subscriptionID, newName: name) { result in
+			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
@@ -380,7 +384,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		if let folder = container as? Folder, let feedName = feed.externalID {
+			refreshProgress.addToNumberOfTasksAndRemaining(1)
 			caller.createTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
+				self.refreshProgress.completeTask()
 				switch result {
 				case .success:
 					DispatchQueue.main.async {
@@ -605,28 +611,19 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
 		caller.retrieveSubscriptions { result in
 			switch result {
 			case .success(let subscriptions):
-				
 				self.refreshProgress.completeTask()
-
 				BatchUpdate.shared.perform {
 					self.syncFeeds(account, subscriptions)
 					self.syncTaggings(account, subscriptions)
 				}
-
-				self.refreshProgress.completeTask()
 				completion(.success(()))
-		
-				
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
-		
 	}
 
 	func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
@@ -674,10 +671,8 @@ private extension ReaderAPIAccountDelegate {
 	}
 
 	func syncTaggings(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
-		
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
-
 		os_log(.debug, log: log, "Syncing taggings with %ld subscriptions.", subscriptions.count)
 		
 		// Set up some structures to make syncing easier
@@ -740,7 +735,6 @@ private extension ReaderAPIAccountDelegate {
 				account.removeWebFeed(feed)
 			}
 		}
-
 	}
 	
 	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
@@ -758,10 +752,7 @@ private extension ReaderAPIAccountDelegate {
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: [SyncStatus],
-							 apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void,
-							 completion: @escaping (() -> Void)) {
-		
+	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void, completion: @escaping (() -> Void)) {
 		guard !statuses.isEmpty else {
 			completion()
 			return
@@ -866,25 +857,36 @@ private extension ReaderAPIAccountDelegate {
 	}
 
 	func initialFeedDownload( account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
 		// Download the initial articles
 		self.caller.retrieveEntries(webFeedID: feed.webFeedID) { result in
+			self.refreshProgress.completeTask()
 			
 			switch result {
 			case .success(let (entries, page)):
-				
 				self.processEntries(account: account, entries: entries) {
+
+					self.refreshProgress.completeTask()
 					self.refreshArticleStatus(for: account) { _ in
+
+						self.refreshProgress.completeTask()
 						self.refreshArticles(account, page: page) {
+
+							self.refreshProgress.completeTask()
 							self.refreshMissingArticles(account) {
+
+								self.refreshProgress.clear()
 								DispatchQueue.main.async {
 									completion(.success(feed))
 								}
+
 							}
 						}
+
 					}
+
 				}
-				
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -894,35 +896,26 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
-
 		os_log(.debug, log: log, "Refreshing articles...")
 		
 		caller.retrieveEntries() { result in
-			
 			switch result {
 			case .success(let (entries, page, lastPageNumber)):
-				
 				if let last = lastPageNumber {
 					self.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
 				}
-				
 				self.processEntries(account: account, entries: entries) {
-					
 					self.refreshProgress.completeTask()
 					self.refreshArticles(account, page: page) {
 						os_log(.debug, log: self.log, "Done refreshing articles.")
 						completion()
 					}
-					
 				}
-
 			case .failure(let error):
 				os_log(.error, log: self.log, "Refresh articles failed: %@.", error.localizedDescription)
 				completion()
 			}
-			
 		}
-		
 	}
 	
 	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
