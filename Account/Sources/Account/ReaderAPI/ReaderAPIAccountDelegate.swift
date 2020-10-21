@@ -235,33 +235,64 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+
+		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
+		guard folder.hasAtLeastOneWebFeed() else {
+			account.removeFolder(folder)
+			completion(.success(()))
+			return
+		}
+
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelWebFeeds {
-			group.enter()
-			removeWebFeed(for: account, with: feed, from: folder) { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+			
+			if feed.folderRelationship?.count ?? 0 > 1 {
+				
+				if let feedExternalID = feed.externalID {
+					group.enter()
+					refreshProgress.addToNumberOfTasksAndRemaining(1)
+					caller.deleteTagging(subscriptionID: feedExternalID, tagName: folder.nameForDisplay) { result in
+						self.refreshProgress.completeTask()
+						group.leave()
+						switch result {
+						case .success:
+							DispatchQueue.main.async {
+								self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+							}
+						case .failure(let error):
+							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						}
+					}
 				}
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			self.caller.deleteTag(name: folder.name!) { (result) in
-				switch result {
-				case .success:
-					account.removeFolder(folder)
-					completion(.success(()))
-				case .failure(let error):
-					os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+				
+			} else {
+				
+				if let subscriptionID = feed.externalID {
+					group.enter()
+					refreshProgress.addToNumberOfTasksAndRemaining(1)
+					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+						self.refreshProgress.completeTask()
+						group.leave()
+						switch result {
+						case .success:
+							DispatchQueue.main.async {
+								account.clearWebFeedMetadata(feed)
+							}
+						case .failure(let error):
+							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+						}
+					}
+					
 				}
 				
 			}
 			
+		}
+		
+		group.notify(queue: DispatchQueue.main) {
+			account.removeFolder(folder)
+			completion(.success(()))
 		}
 		
 	}
@@ -377,40 +408,57 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
+
+		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
+			account.addWebFeed(existingFeed, to: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
+		} else {
+			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+				switch result {
+				case .success:
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
 			}
 		}
 		
 	}
 	
 	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		account.addFolder(folder)
+
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelWebFeeds {
 			
+			folder.topLevelWebFeeds.remove(feed)
+			
 			group.enter()
-			addWebFeed(for: account, with: feed, to: folder) { result in
-				if account.topLevelWebFeeds.contains(feed) {
-					account.removeWebFeed(feed)
-				}
+			restoreWebFeed(for: account, feed: feed, container: folder) { result in
 				group.leave()
+				switch result {
+				case .success:
+					break
+				case .failure(let error):
+					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+				}
 			}
 			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
+			account.addFolder(folder)
 			completion(.success(()))
 		}
 		
 	}
+
 	
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
 		
@@ -745,8 +793,6 @@ private extension ReaderAPIAccountDelegate {
 		}
 		
 	}
-	
-	
 	
 	func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
 		if var folderRelationship = feed.folderRelationship {
