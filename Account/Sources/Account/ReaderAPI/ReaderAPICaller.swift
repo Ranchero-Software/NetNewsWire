@@ -333,7 +333,7 @@ final class ReaderAPICaller: NSObject {
 		
 						let postData = "T=\(token)&ac=subscribe&s=feed/\(feedURL.absoluteString)&a=user/-/label/\(folder.nameForDisplay)&t=\(name ?? "")".data(using: String.Encoding.utf8)
 		
-						self.self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+						self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
 							switch result {
 							case .success:
 		
@@ -356,16 +356,15 @@ final class ReaderAPICaller: NSObject {
 	
 										completion(.success(.created(subscription)))
 	
-									case .failure:
-										completion(.failure(AccountError.createErrorAlreadySubscribed))
+									case .failure(let error):
+										completion(.failure(error))
 									}
 								})
 
-							case .failure(let error):
-								completion(.failure(error))
+							case .failure:
+								completion(.failure(AccountError.createErrorAlreadySubscribed))
 							}
 						})
-		
 		
 					case .failure(let error):
 						completion(.failure(error))
