@@ -17,9 +17,14 @@ class SelectComboTableViewCell: VibrantTableViewCell {
 		super.updateVibrancy(animated: animated)
 		
 		let iconTintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
-		UIView.animate(withDuration: duration(animated: animated)) {
+		if animated {
+			UIView.animate(withDuration: Self.duration) {
+				self.icon.tintColor = iconTintColor
+			}
+		} else {
 			self.icon.tintColor = iconTintColor
 		}
+		
 		updateLabelVibrancy(label, color: labelColor, animated: animated)
 	}
 	

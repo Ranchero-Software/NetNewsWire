@@ -9,7 +9,9 @@
 import UIKit
 
 class VibrantTableViewCell: UITableViewCell {
-
+	
+	static let duration: TimeInterval = 0.6
+	
 	var labelColor: UIColor {
 		return isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
 	}
@@ -54,16 +56,16 @@ class VibrantTableViewCell: UITableViewCell {
 		updateLabelVibrancy(textLabel, color: labelColor, animated: animated)
 		updateLabelVibrancy(detailTextLabel, color: labelColor, animated: animated)
 	}
-
-	func duration(animated: Bool) -> TimeInterval {
-		return animated ? 0.6 : 0.0
-	}
 	
 	func updateLabelVibrancy(_ label: UILabel?, color: UIColor, animated: Bool) {
 		guard let label = label else { return }
-		UIView.transition(with: label, duration: duration(animated: animated), options: .transitionCrossDissolve, animations: {
+		if animated {
+			UIView.transition(with: label, duration: Self.duration, options: .transitionCrossDissolve, animations: {
+				label.textColor = color
+			}, completion: nil)
+		} else {
 			label.textColor = color
-		}, completion: nil)
+		}
 	}
 	
 }
@@ -94,10 +96,15 @@ class VibrantBasicTableViewCell: VibrantTableViewCell {
 	
 	private func updateIconVibrancy(_ icon: UIImageView?, color: UIColor, image: UIImage?, animated: Bool) {
 		guard let icon = icon else { return }
-		UIView.transition(with: icon, duration: duration(animated: animated), options: .transitionCrossDissolve, animations: {
+		if animated {
+			UIView.transition(with: icon, duration: Self.duration, options: .transitionCrossDissolve, animations: {
+				icon.tintColor = color
+				icon.image = image
+			}, completion: nil)
+		} else {
 			icon.tintColor = color
 			icon.image = image
-		}, completion: nil)
+		}
 	}
 	
 }

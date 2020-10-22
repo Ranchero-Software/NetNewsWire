@@ -167,7 +167,11 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 			}
 		}
 		
-		UIView.animate(withDuration: duration(animated: animated)) {
+		if animated {
+			UIView.animate(withDuration: Self.duration) {
+				self.iconView.tintColor = iconTintColor
+			}
+		} else {
 			self.iconView.tintColor = iconTintColor
 		}
 		
