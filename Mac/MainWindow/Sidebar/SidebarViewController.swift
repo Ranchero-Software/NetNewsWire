@@ -236,28 +236,8 @@ protocol SidebarDelegate: class {
 			return
 		}
 		
-		let alert = NSAlert()
-		alert.alertStyle = .warning
+		let alert = SidebarDeleteItemsAlert.build(availableSelectedNodes)
 		
-		if availableSelectedNodes.count == 1 {
-			if let folder = availableSelectedNodes.first?.representedObject as? Folder {
-				alert.messageText = NSLocalizedString("Delete Folder", comment: "Delete Folder")
-				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
-				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, folder.nameForDisplay) as String
-			} else if let feed = availableSelectedNodes.first?.representedObject as? Feed {
-				alert.messageText = NSLocalizedString("Delete Feed", comment: "Delete Feed")
-				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
-				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
-			}
-		} else {
-			alert.messageText = NSLocalizedString("Delete Items", comment: "Delete Items")
-			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the %d selected items?", comment: "Items delete text")
-			alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, availableSelectedNodes.count) as String
-		}
-		
-		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete Account"))
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Delete Account"))
-			
 		alert.beginSheetModal(for: view.window!) { [weak self] result in
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 				guard let self = self else { return }
@@ -269,7 +249,6 @@ protocol SidebarDelegate: class {
 				}
 			}
 		}
-		
 	}
 	
 	@IBAction func doubleClickedSidebar(_ sender: Any?) {

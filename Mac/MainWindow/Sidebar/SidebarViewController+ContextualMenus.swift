@@ -72,13 +72,18 @@ extension SidebarViewController {
 	}
 
 	@objc func deleteFromContextualMenu(_ sender: Any?) {
-
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [AnyObject] else {
 			return
 		}
 		
 		let nodes = objects.compactMap { treeController.nodeInTreeRepresentingObject($0) }
-		deleteNodes(nodes)
+
+		let alert = SidebarDeleteItemsAlert.build(nodes)
+		alert.beginSheetModal(for: view.window!) { [weak self] result in
+			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+				self?.deleteNodes(nodes)
+			}
+		}
 	}
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
