@@ -407,7 +407,7 @@ private extension TwitterFeedProvider {
 					self.rateLimitReset = Date(timeIntervalSince1970: Double(reset) ?? 0)
 				}
 
-				DispatchQueue.global(qos: .background).async {
+				self.parsingQueue.async {
 					do {
 						let tweets: [TwitterStatus]
 						if isSearch {
