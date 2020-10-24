@@ -126,7 +126,7 @@ struct AppAssets {
 	}()
 	
 	static var masterFolderImage: IconImage = {
-		return IconImage(UIImage(systemName: "folder.fill")!)
+		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true)
 	}()
 	
 	static var moreImage: UIImage = {
@@ -158,7 +158,7 @@ struct AppAssets {
 	}()
 	
 	static var searchFeedImage: IconImage = {
-		return IconImage(UIImage(systemName: "magnifyingglass")!)
+		return IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
 	}()
 	
 	static var secondaryAccentColor: UIColor = {
@@ -190,7 +190,7 @@ struct AppAssets {
 	}()
 	
 	static var starredFeedImage: IconImage = {
-		return IconImage(UIImage(systemName: "star.fill")!)
+		return IconImage(UIImage(systemName: "star.fill")!, isSymbol: true)
 	}()
 
 	static var tickMarkColor: UIColor = {
@@ -203,7 +203,7 @@ struct AppAssets {
 	}()
 	
 	static var todayFeedImage: IconImage = {
-		return IconImage(UIImage(systemName: "sun.max.fill")!)
+		return IconImage(UIImage(systemName: "sun.max.fill")!, isSymbol: true)
 	}()
 
 	static var trashImage: UIImage = {
@@ -211,7 +211,7 @@ struct AppAssets {
 	}()
 	
 	static var unreadFeedImage: IconImage = {
-		return IconImage(UIImage(systemName: "largecircle.fill.circle")!)
+		return IconImage(UIImage(systemName: "largecircle.fill.circle")!, isSymbol: true)
 	}()
 	
 	static var vibrantTextColor: UIColor = {

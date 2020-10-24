@@ -52,7 +52,7 @@ final class IconView: UIView {
 	}
 
 	private var isSymbolImage: Bool {
-		return imageView.image?.isSymbolImage ?? false
+		return iconImage?.isSymbol ?? false
 	}
 	
 	override init(frame: CGRect) {

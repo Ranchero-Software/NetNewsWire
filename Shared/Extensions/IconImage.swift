@@ -25,9 +25,11 @@ final class IconImage {
 	}()
 	
 	let image: RSImage
-	
-	init(_ image: RSImage) {
+	let isSymbol: Bool
+
+	init(_ image: RSImage, isSymbol: Bool = false) {
 		self.image = image
+		self.isSymbol = isSymbol
 	}
 	
 }
