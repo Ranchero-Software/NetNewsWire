@@ -434,22 +434,20 @@ final class ArticlesTable: DatabaseTable {
 		statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate, completion)
 	}
 
-	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool) throws -> Set<ArticleStatus>? {
-		var statuses: Set<ArticleStatus>?
-		var error: DatabaseError?
-		self.queue.runInTransactionSync { databaseResult in
+	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
+		self.queue.runInTransaction { databaseResult in
 			switch databaseResult {
 			case .success(let database):
-				statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
+				let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
+				DispatchQueue.main.async {
+					completion(.success(statuses ?? Set<ArticleStatus>()))
+				}
 			case .failure(let databaseError):
-				error = databaseError
+				DispatchQueue.main.async {
+					completion(.failure(databaseError))
+				}
 			}
 		}
-
-		if let error = error {
-			throw error
-		}
-		return statuses
 	}
 
 	func markAndFetchNew(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleIDsCompletionBlock) {

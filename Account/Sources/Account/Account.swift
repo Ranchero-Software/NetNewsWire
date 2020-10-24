@@ -520,8 +520,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		addOPMLItems(OPMLNormalizer.normalize(items))		
 	}
 	
-	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		return delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag)
+	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
+		delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag)
 	}
 
 	func existingContainer(withExternalID externalID: String) -> Container? {
@@ -794,18 +794,23 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 
-	@discardableResult
-	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) throws -> Set<Article>? {
+	func update(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleSetResultBlock) {
 		// Returns set of Articles whose statuses did change.
-		guard !articles.isEmpty, let updatedStatuses = try database.mark(articles, statusKey: statusKey, flag: flag) else {
-			return nil
+		guard !articles.isEmpty else {
+			completion(.success(Set<Article>()))
+			return
 		}
 		
-		let updatedArticleIDs = updatedStatuses.articleIDs()
-		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
-		
-		noteStatusesForArticlesDidChange(updatedArticles)
-		return updatedArticles
+		database.mark(articles, statusKey: statusKey, flag: flag) { result in
+			switch result {
+			case .success(let updatedStatuses):
+				let updatedArticleIDs = updatedStatuses.articleIDs()
+				let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+				self.noteStatusesForArticlesDidChange(updatedArticles)
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
 	}
 
 	/// Make sure statuses exist. Any existing statuses won’t be touched.

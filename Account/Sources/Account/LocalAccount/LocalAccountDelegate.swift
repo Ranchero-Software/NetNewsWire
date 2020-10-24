@@ -203,8 +203,8 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		return try? account.update(articles, statusKey: statusKey, flag: flag)
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
+		account.update(articles, statusKey: statusKey, flag: flag) { _ in }
 	}
 
 	func accountDidInitialize(_ account: Account) {

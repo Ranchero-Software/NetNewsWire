@@ -534,22 +534,27 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
+		account.update(articles, statusKey: statusKey, flag: flag) { result in
+			switch result {
+			case .success(let articles):
+				let syncStatuses = articles.map { article in
+					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+				}
 
-		let syncStatuses = articles.map { article in
-			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-		}
-		try? database.insertStatuses(syncStatuses)
+				try? self.database.insertStatuses(syncStatuses)
 
-		database.selectPendingCount { result in
-			if let count = try? result.get(), count > 100 {
-				self.sendArticleStatus(for: account) { _ in }
+				self.database.selectPendingCount { result in
+					if let count = try? result.get(), count > 100 {
+						self.sendArticleStatus(for: account) { _ in }
+					}
+				}
+			case .failure(let error):
+				os_log(.error, log: self.log, "Error marking article status: %@", error.localizedDescription)
 			}
 		}
-
-		return try? account.update(articles, statusKey: statusKey, flag: flag)
 	}
-	
+
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .basic)
 	}

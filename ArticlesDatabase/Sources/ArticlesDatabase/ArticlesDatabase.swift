@@ -237,8 +237,8 @@ public final class ArticlesDatabase {
 		articlesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(completion)
 	}
 
-	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) throws -> Set<ArticleStatus>? {
-		return try articlesTable.mark(articles, statusKey, flag)
+	public func mark(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
+		return articlesTable.mark(articles, statusKey, flag, completion)
 	}
 
 	public func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {

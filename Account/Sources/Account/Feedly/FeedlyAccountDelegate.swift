@@ -487,24 +487,27 @@ final class FeedlyAccountDelegate: AccountDelegate {
 		}
 	}
 	
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) -> Set<Article>? {
-		
-		let syncStatuses = articles.map { article in
-			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-		}
-		
-		try? database.insertStatuses(syncStatuses)
-		os_log(.debug, log: log, "Marking %@ as %@.", articles.map { $0.title }, syncStatuses)
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
+		account.update(articles, statusKey: statusKey, flag: flag) { result in
+			switch result {
+			case .success(let articles):
+				let syncStatuses = articles.map { article in
+					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+				}
 
-		database.selectPendingCount { result in
-			if let count = try? result.get(), count > 100 {
-				self.sendArticleStatus(for: account) { _ in }
+				try? self.database.insertStatuses(syncStatuses)
+
+				self.database.selectPendingCount { result in
+					if let count = try? result.get(), count > 100 {
+						self.sendArticleStatus(for: account) { _ in }
+					}
+				}
+			case .failure(let error):
+				os_log(.error, log: self.log, "Error marking article status: %@", error.localizedDescription)
 			}
 		}
-
-		return try? account.update(articles, statusKey: statusKey, flag: flag)
 	}
-	
+
 	func accountDidInitialize(_ account: Account) {
 		initializedAccount = account
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
