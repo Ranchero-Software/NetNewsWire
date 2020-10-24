@@ -11,6 +11,8 @@ import Articles
 
 struct TimelineCellData {
 	
+	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
+	
 	let title: String
 	let attributedTitle: NSAttributedString
 	let text: String
@@ -28,8 +30,14 @@ struct TimelineCellData {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
 		self.attributedTitle = ArticleStringFormatter.attributedTruncatedTitle(article)
-		self.text = ArticleStringFormatter.truncatedSummary(article)
 
+		let truncatedSummary = ArticleStringFormatter.truncatedSummary(article)
+		if self.title.isEmpty && truncatedSummary.isEmpty {
+			self.text = Self.noText
+		} else {
+			self.text = truncatedSummary
+		}
+		
 		self.dateString = ArticleStringFormatter.dateString(article.logicalDatePublished)
 
 		if let feedName = feedName {

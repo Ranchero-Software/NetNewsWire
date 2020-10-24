@@ -10,6 +10,8 @@ import UIKit
 import Articles
 
 struct MasterTimelineCellData {
+
+	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
 	
 	let title: String
 	let attributedTitle: NSAttributedString
@@ -30,8 +32,14 @@ struct MasterTimelineCellData {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
 		self.attributedTitle = ArticleStringFormatter.attributedTruncatedTitle(article)
-		self.summary = ArticleStringFormatter.truncatedSummary(article)
 
+		let truncatedSummary = ArticleStringFormatter.truncatedSummary(article)
+		if self.title.isEmpty && truncatedSummary.isEmpty {
+			self.summary = Self.noText
+		} else {
+			self.summary = truncatedSummary
+		}
+		
 		self.dateString = ArticleStringFormatter.dateString(article.logicalDatePublished)
 
 		if let feedName = feedName {
