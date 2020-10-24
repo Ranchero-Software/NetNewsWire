@@ -261,6 +261,12 @@ struct AppAssets {
 			return AppAssets.accountFreshRSSImage
 		case .newsBlur:
 			return AppAssets.accountNewsBlurImage
+		case .inoreader:
+			return AppAssets.accountInoreader
+		case .bazQux:
+			return AppAssets.accountBazQux
+		case .theOldReader:
+			return AppAssets.accountTheOldReader
 		}
 	}
 	
