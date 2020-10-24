@@ -28,7 +28,7 @@ struct TwitterUser: Codable {
 		var html = String()
 		html += "<div><a href=\"\(url)\">"
 		if let avatarURL = avatarURL {
-			html += "<img class=\"twitterAvatar\" src=\"\(avatarURL)\">"
+			html += "<img class=\"twitterAvatar nnw-nozoom\" src=\"\(avatarURL)\">"
 		}
 		html += "<div class=\"twitterUsername\">"
 		if let name = name {
