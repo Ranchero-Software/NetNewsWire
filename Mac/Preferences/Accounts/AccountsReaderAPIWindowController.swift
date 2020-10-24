@@ -38,6 +38,15 @@ class AccountsReaderAPIWindowController: NSWindowController {
 			case .freshRSS:
 				titleImageView.image = AppAssets.accountFreshRSS
 				titleLabel.stringValue = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+			case .inoreader:
+				titleImageView.image = AppAssets.accountInoreader
+				titleLabel.stringValue = NSLocalizedString("InoReader", comment: "InoReader")
+			case .bazQux:
+				titleImageView.image = AppAssets.accountBazQux
+				titleLabel.stringValue = NSLocalizedString("BazQux", comment: "BazQux")
+			case .theOldReader:
+				titleImageView.image = AppAssets.accountTheOldReader
+				titleLabel.stringValue = NSLocalizedString("The Old Reader", comment: "The Old Reader")
 			default:
 				break
 			}

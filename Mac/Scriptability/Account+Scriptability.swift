@@ -170,6 +170,12 @@ class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
                 osType = "NBlr"
 		case .freshRSS:
 				osType = "Frsh"
+		case .inoreader:
+				osType = "Inrd"
+		case .bazQux:
+				osType = "Bzqx"
+		case .theOldReader:
+				osType = "Tord"
         }
         return osType.fourCharCode
     }

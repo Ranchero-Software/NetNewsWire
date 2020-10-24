@@ -42,7 +42,9 @@ public enum AccountType: Int, Codable {
 	case feedWrangler = 18
 	case newsBlur = 19
 	case freshRSS = 20
-	// TODO: more
+	case inoreader = 21
+	case bazQux = 22
+	case theOldReader = 23
 }
 
 public enum FetchType {
@@ -258,14 +260,20 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			self.delegate = CloudKitAccountDelegate(dataFolder: dataFolder)
 		case .feedbin:
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
-		case .freshRSS:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .feedly:
 			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
 		case .feedWrangler:
 			self.delegate = FeedWranglerAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .newsBlur:
 			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
+		case .freshRSS:
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .generic)
+		case .inoreader:
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .inoreader)
+		case .bazQux:
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .bazQux)
+		case .theOldReader:
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .theOldReader)
 		}
 
 		self.delegate.accountMetadata = metadata
@@ -282,17 +290,23 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .onMyMac:
 			defaultName = Account.defaultLocalAccountName
 		case .cloudKit:
-			defaultName = "iCloud"
+			defaultName = NSLocalizedString("iCloud", comment: "iCloud")
 		case .feedly:
-			defaultName = "Feedly"
+			defaultName = NSLocalizedString("Feedly", comment: "Feedly")
 		case .feedbin:
-			defaultName = "Feedbin"
+			defaultName = NSLocalizedString("Feedbin", comment: "Feedbin")
 		case .feedWrangler:
-			defaultName = "FeedWrangler"
+			defaultName = NSLocalizedString("FeedWrangler", comment: "FeedWrangler")
 		case .newsBlur:
-			defaultName = "NewsBlur"
+			defaultName = NSLocalizedString("NewsBlur", comment: "NewsBlur")
 		case .freshRSS:
-			defaultName = "FreshRSS"
+			defaultName = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+		case .inoreader:
+			defaultName = NSLocalizedString("Inoreader", comment: "Inoreader")
+		case .bazQux:
+			defaultName = NSLocalizedString("BazQux", comment: "BazQux")
+		case .theOldReader:
+			defaultName = NSLocalizedString("The Old Reader", comment: "The Old Reader")
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)

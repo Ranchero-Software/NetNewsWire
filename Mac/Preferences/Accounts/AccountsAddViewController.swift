@@ -17,9 +17,9 @@ class AccountsAddViewController: NSViewController {
 	private var accountsAddWindowController: NSWindowController?
 	
 	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
 	#else
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .cloudKit, .newsBlur]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
 	#endif
 	
 	init() {
@@ -87,6 +87,15 @@ extension AccountsAddViewController: NSTableViewDelegate {
 			case .newsBlur:
 				cell.accountNameLabel?.stringValue = NSLocalizedString("NewsBlur", comment: "NewsBlur")
 				cell.accountImageView?.image = AppAssets.accountNewsBlur
+			case .inoreader:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("Inoreader", comment: "Inoreader")
+				cell.accountImageView?.image = AppAssets.accountInoreader
+			case .bazQux:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("Bazqux", comment: "Bazqux")
+				cell.accountImageView?.image = AppAssets.accountBazQux
+			case .theOldReader:
+				cell.accountNameLabel?.stringValue = NSLocalizedString("The Old Reader", comment: "The Old Reader")
+				cell.accountImageView?.image = AppAssets.accountTheOldReader
 			}
 			return cell
 		}
@@ -137,15 +146,32 @@ extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
-			
 			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
-			
 			MainThreadOperationQueue.shared.add(addAccount)
 			
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsNewsBlurWindowController
+
+		case .inoreader:
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.accountType = .inoreader
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsReaderAPIWindowController
+			
+		case .bazQux:
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.accountType = .bazQux
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsReaderAPIWindowController
+			
+		case .theOldReader:
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.accountType = .theOldReader
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			accountsAddWindowController = accountsReaderAPIWindowController
+			
 		}
 		
 	}

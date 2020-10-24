@@ -12,12 +12,12 @@ import Account
 
 struct AppAssets {
 
-	static var accountCloudKit: RSImage! = {
-		return RSImage(named: "accountCloudKit")
+	static var accountBazQux: RSImage! = {
+		return RSImage(named: "accountBazQux")
 	}()
 
-	static var accountLocal: RSImage! = {
-		return RSImage(named: "accountLocal")
+	static var accountCloudKit: RSImage! = {
+		return RSImage(named: "accountCloudKit")
 	}()
 
 	static var accountFeedbin: RSImage! = {
@@ -36,10 +36,22 @@ struct AppAssets {
 		return RSImage(named: "accountFreshRSS")
 	}()
 
+	static var accountInoreader: RSImage! = {
+		return RSImage(named: "accountInoreader")
+	}()
+
+	static var accountLocal: RSImage! = {
+		return RSImage(named: "accountLocal")
+	}()
+
 	static var accountNewsBlur: RSImage! = {
 		return RSImage(named: "accountNewsBlur")
 	}()
 	
+	static var accountTheOldReader: RSImage! = {
+		return RSImage(named: "accountTheOldReader")
+	}()
+
 	@available(macOS 11.0, *)
 	static var addNewSidebarItemImage: RSImage = {
 		return NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
@@ -293,6 +305,8 @@ struct AppAssets {
 			return AppAssets.accountLocal
 		case .cloudKit:
 			return AppAssets.accountCloudKit
+		case .bazQux:
+			return AppAssets.accountBazQux
 		case .feedbin:
 			return AppAssets.accountFeedbin
 		case .feedly:
@@ -301,8 +315,12 @@ struct AppAssets {
 			return AppAssets.accountFeedWrangler
 		case .freshRSS:
 			return AppAssets.accountFreshRSS
+		case .inoreader:
+			return AppAssets.accountInoreader
 		case .newsBlur:
 			return AppAssets.accountNewsBlur
+		case .theOldReader:
+			return AppAssets.accountTheOldReader
 		}
 	}
 	

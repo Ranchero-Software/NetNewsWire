@@ -49,6 +49,7 @@ final class ReaderAPICaller: NSObject {
 	
 	private var transport: Transport!
 	
+	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
 	private var accessToken: String?
 	

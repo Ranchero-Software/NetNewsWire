@@ -21,6 +21,12 @@ public enum ReaderAPIAccountDelegateError: String, Error {
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
 	
+	private var variant: ReaderAPIVariant {
+		didSet {
+			caller.variant = variant
+		}
+	}
+	
 	private let database: SyncDatabase
 	
 	private let caller: ReaderAPICaller
@@ -50,8 +56,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 	
-	init(dataFolder: String, transport: Transport?) {
-		
+	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
 		
@@ -78,6 +83,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			
 		}
 		
+		self.variant = variant
 	}
 	
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
