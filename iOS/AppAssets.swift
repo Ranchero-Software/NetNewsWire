@@ -11,12 +11,8 @@ import Account
 
 struct AppAssets {
 	
-	static var accountLocalPadImage: UIImage = {
-		return UIImage(named: "accountLocalPad")!
-	}()
-
-	static var accountLocalPhoneImage: UIImage = {
-		return UIImage(named: "accountLocalPhone")!
+	static var accountBazQuxImage: UIImage = {
+		return UIImage(named: "accountBazQux")!
 	}()
 
 	static var accountCloudKitImage: UIImage = {
@@ -39,8 +35,24 @@ struct AppAssets {
 		return UIImage(named: "accountFreshRSS")!
 	}()
 
+	static var accountInoreaderImage: UIImage = {
+		return UIImage(named: "accountInoreader")!
+	}()
+
+	static var accountLocalPadImage: UIImage = {
+		return UIImage(named: "accountLocalPad")!
+	}()
+
+	static var accountLocalPhoneImage: UIImage = {
+		return UIImage(named: "accountLocalPhone")!
+	}()
+
 	static var accountNewsBlurImage: UIImage = {
 		return UIImage(named: "accountNewsBlur")!
+	}()
+
+	static var accountTheOldReaderImage: UIImage = {
+		return UIImage(named: "accountTheOldReader")!
 	}()
 
 	static var articleExtractorError: UIImage = {
@@ -262,11 +274,11 @@ struct AppAssets {
 		case .newsBlur:
 			return AppAssets.accountNewsBlurImage
 		case .inoreader:
-			return AppAssets.accountInoreader
+			return AppAssets.accountInoreaderImage
 		case .bazQux:
-			return AppAssets.accountBazQux
+			return AppAssets.accountBazQuxImage
 		case .theOldReader:
-			return AppAssets.accountTheOldReader
+			return AppAssets.accountTheOldReaderImage
 		}
 	}
 	
