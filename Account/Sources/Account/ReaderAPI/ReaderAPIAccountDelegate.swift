@@ -1004,11 +1004,14 @@ private extension ReaderAPIAccountDelegate {
 			return Set<ParsedItem>()
 		}
 		
-		let parsedItems: [ParsedItem] = entries.map { entry in
+		let parsedItems: [ParsedItem] = entries.compactMap { entry in
+			guard let streamID = entry.origin.streamId else {
+				return nil
+			}
 			// let authors = Set([ParsedAuthor(name: entry.authorName, url: entry.jsonFeed?.jsonFeedAuthor?.url, avatarURL: entry.jsonFeed?.jsonFeedAuthor?.avatarURL, emailAddress: nil)])
 			// let feed = account.idToFeedDictionary[entry.origin.streamId!]! // TODO clean this up
 			
-			return ParsedItem(syncServiceID: entry.uniqueID(), uniqueID: entry.uniqueID(), feedURL: entry.origin.streamId!, url: nil, externalURL: entry.alternates.first?.url, title: entry.title, language: nil, contentHTML: entry.summary.content, contentText: nil, summary: entry.summary.content, imageURL: nil, bannerImageURL: nil, datePublished: entry.parseDatePublished(), dateModified: nil, authors: nil, tags: nil, attachments: nil)
+			return ParsedItem(syncServiceID: entry.uniqueID(), uniqueID: entry.uniqueID(), feedURL: streamID, url: nil, externalURL: entry.alternates.first?.url, title: entry.title, language: nil, contentHTML: entry.summary.content, contentText: nil, summary: entry.summary.content, imageURL: nil, bannerImageURL: nil, datePublished: entry.parseDatePublished(), dateModified: nil, authors: nil, tags: nil, attachments: nil)
 		}
 		
 		return Set(parsedItems)
