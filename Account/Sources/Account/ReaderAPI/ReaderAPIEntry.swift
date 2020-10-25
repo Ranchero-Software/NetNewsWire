@@ -74,15 +74,13 @@ struct ReaderAPIEntry: Codable {
 	}
 	
 	func parseDatePublished() -> Date? {
-		
 		guard let unixTime = publishedTimestamp else {
 			return nil
 		}
-		
 		return Date(timeIntervalSince1970: unixTime)
 	}
 	
-	func uniqueID() -> String {
+	func uniqueID(variant: ReaderAPIVariant) -> String {
 		// Should look something like "tag:google.com,2005:reader/item/00058b10ce338909"
 		// REGEX feels heavy, I should be able to just split on / and take the last element
 		
@@ -90,6 +88,10 @@ struct ReaderAPIEntry: Codable {
 			return articleID
 		}
 		
+		guard variant != .theOldReader else {
+			return idPart
+		}
+
 		// Convert hex representation back to integer and then a string representation
 		guard let idNumber = Int(idPart, radix: 16) else {
 			return articleID
@@ -97,6 +99,7 @@ struct ReaderAPIEntry: Codable {
 		
 		return String(idNumber, radix: 10, uppercase: false)
 	}
+	
 }
 
 struct ReaderAPIArticleSummary: Codable {
@@ -115,7 +118,6 @@ struct ReaderAPIAlternateLocation: Codable {
 	}
 }
 
-
 struct ReaderAPIEntryOrigin: Codable {
 	let streamId: String?
 	let title: String?
@@ -125,4 +127,3 @@ struct ReaderAPIEntryOrigin: Codable {
 		case title = "title"
 	}
 }
-

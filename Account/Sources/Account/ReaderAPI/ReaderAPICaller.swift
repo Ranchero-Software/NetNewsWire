@@ -639,9 +639,13 @@ final class ReaderAPICaller: NSObject {
 				}
 				
 				let itemIds = itemRefs.map { (reference) -> String in
-					// Convert the IDs to the (stupid) Google Hex Format
-					let idValue = Int(reference.itemId)!
-					return String(idValue, radix: 16, uppercase: false)
+					if self.variant == .theOldReader {
+						return reference.itemId
+					} else {
+						// Convert the IDs to the (stupid) Google Hex Format
+						let idValue = Int(reference.itemId)!
+						return String(idValue, radix: 16, uppercase: false)
+					}
 				}
 				
 				self.retrieveEntries(articleIDs: itemIds) { (results) in
