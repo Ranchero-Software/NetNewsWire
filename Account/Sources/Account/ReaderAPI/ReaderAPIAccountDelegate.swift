@@ -683,6 +683,7 @@ private extension ReaderAPIAccountDelegate {
 			
 			if let feed = account.existingWebFeed(withWebFeedID: subscription.feedID) {
 				feed.name = subscription.name
+				feed.editedName = nil
 				feed.homePageURL = subscription.homePageURL
 			} else {
 				let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: subscription.feedID, homePageURL: subscription.homePageURL)
