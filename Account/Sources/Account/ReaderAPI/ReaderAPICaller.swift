@@ -42,6 +42,7 @@ final class ReaderAPICaller: NSObject {
 		case tagList = "/reader/api/0/tag/list"
 		case subscriptionList = "/reader/api/0/subscription/list"
 		case subscriptionEdit = "/reader/api/0/subscription/edit"
+		case subscriptionAdd = "/reader/api/0/subscription/quickadd"
 		case contents = "/reader/api/0/stream/items/contents"
 		case itemIds = "/reader/api/0/stream/items/ids"
 		case editTag = "/reader/api/0/edit-tag"
@@ -64,7 +65,7 @@ final class ReaderAPICaller: NSObject {
 	private var APIBaseURL: URL? {
 		get {
 			switch variant {
-			case .generic:
+			case .generic, .freshRSS:
 				guard let accountMetadata = accountMetadata else {
 					return nil
 				}
@@ -307,82 +308,110 @@ final class ReaderAPICaller: NSObject {
 		
 	}
 	
-	func createSubscription(url: String, name: String?, folder: Folder, completion: @escaping (Result<CreateReaderAPISubscriptionResult, Error>) -> Void) {
+	func createSubscription(url: String, name: String?, folder: Folder?, completion: @escaping (Result<CreateReaderAPISubscriptionResult, Error>) -> Void) {
 		guard let baseURL = APIBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
 		
-		guard let url = URL(string: url) else {
-			completion(.failure(LocalAccountDelegateError.invalidParameter))
-			return
+		func findSubscription(streamID: String, completion: @escaping (Result<CreateReaderAPISubscriptionResult, Error>) -> Void) {
+			// There is no call to get a single subscription entry, so we get them all,
+			// look up the one we just subscribed to and return that
+			self.retrieveSubscriptions(completion: { (result) in
+				switch result {
+				case .success(let subscriptions):
+					guard let subscriptions = subscriptions else {
+						completion(.failure(AccountError.createErrorNotFound))
+						return
+					}
+
+					guard let subscription = subscriptions.first(where: { (sub) -> Bool in
+						sub.feedID == streamID
+					}) else {
+						completion(.failure(AccountError.createErrorNotFound))
+						return
+					}
+
+					completion(.success(.created(subscription)))
+
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			})
 		}
 		
-		FeedFinder.find(url: url) { result in
-			
+
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
 			switch result {
-			case .success(let feedSpecifiers):
-				
-				let feedSpecifiers = feedSpecifiers.filter { !$0.urlString.hasSuffix(".json") }
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let feedURL = URL(string: bestFeedSpecifier.urlString) else {
-					completion(.failure(AccountError.createErrorNotFound))
+			case .success(let token):
+				let url = baseURL
+					.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue)
+					.appendingQueryItem(URLQueryItem(name: "quickadd", value: url))
+
+				guard let callURL = url else {
+					completion(.failure(TransportError.noURL))
 					return
 				}
-				
-				self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-					switch result {
-					case .success(let token):
-						let callURL = baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue)
 
-						var request = URLRequest(url: callURL, credentials: self.credentials)
-						self.addVariantHeaders(&request)
-						request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-						request.httpMethod = "POST"
-		
-						let postData = "T=\(token)&ac=subscribe&s=feed/\(feedURL.absoluteString)&a=user/-/label/\(folder.nameForDisplay)&t=\(name ?? "")".data(using: String.Encoding.utf8)
-		
-						self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
-							switch result {
-							case .success:
-		
-								// There is no call to get a single subscription entry, so we get them all,
-								// look up the one we just subscribed to and return that
-								self.retrieveSubscriptions(completion: { (result) in
+				var request = URLRequest(url: callURL, credentials: self.credentials)
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+
+				let postData = "T=\(token)".data(using: String.Encoding.utf8)
+
+				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIQuickAddResult.self, completion: { (result) in
+					switch result {
+					case .success(let (_, subResult)):
+
+						switch subResult?.numResults {
+						case 0:
+							completion(.success(.alreadySubscribed))
+						default:
+							guard let streamId = subResult?.streamId else {
+								completion(.failure(AccountError.createErrorNotFound))
+								return
+							}
+
+							if name == nil && folder == nil {
+								findSubscription(streamID: streamId, completion: completion)
+							} else {
+								let callURL = baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue)
+								var request = URLRequest(url: callURL, credentials: self.credentials)
+								self.addVariantHeaders(&request)
+								request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+								request.httpMethod = "POST"
+				
+								var postString = "T=\(token)&ac=subscribe&s=\(streamId)"
+								if let folder = folder {
+									postString += "&a=user/-/label/\(folder.nameForDisplay)"
+								}
+								if let name = name {
+									postString += "&t=\(name)"
+								}
+								
+								let postData = postString.data(using: String.Encoding.utf8)
+								self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
 									switch result {
-									case .success(let subscriptions):
-										guard let subscriptions = subscriptions else {
-											completion(.failure(AccountError.createErrorNotFound))
-											return
-										}
-	
-										guard let subscription = subscriptions.first(where: { (sub) -> Bool in
-											sub.url == feedURL.absoluteString
-										}) else {
-											completion(.failure(AccountError.createErrorNotFound))
-											return
-										}
-	
-										completion(.success(.created(subscription)))
-	
-									case .failure(let error):
-										completion(.failure(error))
+									case .success:
+										findSubscription(streamID: streamId, completion: completion)
+									case .failure:
+										completion(.failure(AccountError.createErrorAlreadySubscribed))
 									}
 								})
-
-							case .failure:
-								completion(.failure(AccountError.createErrorAlreadySubscribed))
 							}
-						})
-		
+							
+						}
+						
 					case .failure(let error):
 						completion(.failure(error))
 					}
-				}
-				
-			case .failure:
-				completion(.failure(AccountError.createErrorNotFound))
+
+				})
+
+			case .failure(let error):
+				completion(.failure(error))
 			}
-			
+				
 		}
 
 	}

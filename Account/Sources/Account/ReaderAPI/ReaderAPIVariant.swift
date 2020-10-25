@@ -9,6 +9,7 @@ import Foundation
 
 public enum ReaderAPIVariant {
 	case generic
+	case freshRSS
 	case inoreader
 	case bazQux
 	case theOldReader

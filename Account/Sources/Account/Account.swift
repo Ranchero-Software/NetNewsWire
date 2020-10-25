@@ -267,7 +267,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		case .newsBlur:
 			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .freshRSS:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .generic)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .freshRSS)
 		case .inoreader:
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .inoreader)
 		case .bazQux:

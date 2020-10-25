@@ -19,6 +19,18 @@ import RSParser
 
 */
 
+struct ReaderAPIQuickAddResult: Codable {
+	let numResults: Int
+	let error: String?
+	let streamId: String?
+	
+	enum CodingKeys: String, CodingKey {
+		case numResults = "numResults"
+		case error = "error"
+		case streamId = "streamId"
+	}
+}
+
 struct ReaderAPISubscriptionContainer: Codable {
 	let subscriptions: [ReaderAPISubscription]
 	

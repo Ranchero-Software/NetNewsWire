@@ -28,7 +28,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let caller: ReaderAPICaller
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
 
-	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowOPMLImports]
+	var behaviors: AccountBehaviors {
+		var behaviors: AccountBehaviors = [.disallowOPMLImports]
+		if variant == .freshRSS {
+			behaviors.append(.disallowFeedInRootFolder)
+		}
+		return behaviors
+	}
 
 	var server: String? {
 		get {
@@ -297,36 +303,54 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		guard let folder = container as? Folder else {
+		guard let url = URL(string: url) else {
 			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return
 		}
 		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.createSubscription(url: url, name: name, folder: folder) { result in
+		refreshProgress.addToNumberOfTasksAndRemaining(2)
+		
+		FeedFinder.find(url: url) { result in
 			self.refreshProgress.completeTask()
+
 			switch result {
-			case .success(let subResult):
-				switch subResult {
-				case .created(let subscription):
-					self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
-				case .alreadySubscribed:
-					DispatchQueue.main.async {
-						completion(.failure(AccountError.createErrorAlreadySubscribed))
-					}
-				case .notFound:
-					DispatchQueue.main.async {
-						completion(.failure(AccountError.createErrorNotFound))
-					}
+			case .success(let feedSpecifiers):
+				let feedSpecifiers = feedSpecifiers.filter { !$0.urlString.hasSuffix(".json") }
+				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
+					completion(.failure(AccountError.createErrorNotFound))
+					return
 				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+
+				self.caller.createSubscription(url: bestFeedSpecifier.urlString, name: name, folder: container as? Folder) { result in
+					self.refreshProgress.completeTask()
+					switch result {
+					case .success(let subResult):
+						switch subResult {
+						case .created(let subscription):
+							self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
+						case .alreadySubscribed:
+							DispatchQueue.main.async {
+								completion(.failure(AccountError.createErrorAlreadySubscribed))
+							}
+						case .notFound:
+							DispatchQueue.main.async {
+								completion(.failure(AccountError.createErrorNotFound))
+							}
+						}
+					case .failure(let error):
+						DispatchQueue.main.async {
+							let wrappedError = AccountError.wrappedError(error: error, account: account)
+							completion(.failure(wrappedError))
+						}
+					}
+					
 				}
+			case .failure:
+				completion(.failure(AccountError.createErrorNotFound))
 			}
 			
 		}
+		
 	}
 	
 	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
