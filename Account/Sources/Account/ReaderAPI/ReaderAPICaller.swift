@@ -579,7 +579,7 @@ final class ReaderAPICaller: NSObject {
 				
 				// Get ids from above into hex representation of value
 				let idsToFetch = articleIDs.map({ (reference) -> String in
-					return "i=\(reference)"
+					return "i=tag:google.com,2005:reader/item/\(reference)"
 				}).joined(separator:"&")
 				
 				let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
