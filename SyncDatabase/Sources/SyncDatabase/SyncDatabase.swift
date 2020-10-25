@@ -32,10 +32,6 @@ public struct SyncDatabase {
 
 	// MARK: - API
 
-	public func insertStatuses(_ statuses: [SyncStatus]) throws {
-		try syncStatusTable.insertStatuses(statuses)
-	}
-	
 	public func insertStatuses(_ statuses: [SyncStatus], completion: @escaping DatabaseCompletionBlock) {
 		syncStatusTable.insertStatuses(statuses, completion: completion)
 	}

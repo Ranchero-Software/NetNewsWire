@@ -472,11 +472,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 				}
 
-				try? self.database.insertStatuses(syncStatuses)
-
-				self.database.selectPendingCount { result in
-					if let count = try? result.get(), count > 100 {
-						self.sendArticleStatus(for: account) { _ in }
+				self.database.insertStatuses(syncStatuses) { _ in
+					self.database.selectPendingCount { result in
+						if let count = try? result.get(), count > 100 {
+							self.sendArticleStatus(for: account) { _ in }
+						}
 					}
 				}
 			case .failure(let error):
