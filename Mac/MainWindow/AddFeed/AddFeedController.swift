@@ -87,7 +87,9 @@ class AddFeedController: AddFeedWindowControllerDelegate {
 				case AccountError.createErrorNotFound:
 					self.showNoFeedsErrorMessage()
 				default:
-					NSApplication.shared.presentError(error)
+					DispatchQueue.main.async {
+						NSApplication.shared.presentError(error)
+					}
 				}
 			}
 			
