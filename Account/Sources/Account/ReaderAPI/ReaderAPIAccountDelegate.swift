@@ -633,7 +633,7 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func deriveTagNames(_ tags: [ReaderAPITag]) -> [String] {
-		return tags.filter { $0.type == "folder" }.map { $0.tagID.replacingOccurrences(of: "user/-/label/", with: "") }
+		return tags.filter { $0.tagID.hasPrefix("user/-/label/") }.map { $0.tagID.replacingOccurrences(of: "user/-/label/", with: "") }
 	}
 	
 	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -719,13 +719,13 @@ private extension ReaderAPIAccountDelegate {
 			
 			return taggedFeeds
 		}
+		
+		var taggedFeedIDs = Set<String>()
 
 		// Sync the folders
 		for (folderName, groupedTaggings) in taggingsDict {
-			
 			guard let folder = folderDict[folderName] else { return }
-			
-			let taggingFeedIDs = groupedTaggings.map { String($0.feedID) }
+			let taggingFeedIDs = groupedTaggings.map { $0.feedID }
 			
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelWebFeeds {
@@ -740,28 +740,25 @@ private extension ReaderAPIAccountDelegate {
 			let folderFeedIds = folder.topLevelWebFeeds.map { $0.webFeedID }
 			
 			for subscription in groupedTaggings {
-				let taggingFeedID = String(subscription.feedID)
+				let taggingFeedID = subscription.feedID
 				if !folderFeedIds.contains(taggingFeedID) {
 					guard let feed = account.existingWebFeed(withWebFeedID: taggingFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(subscription.feedID))
 					folder.addWebFeed(feed)
+					taggedFeedIDs.insert(taggingFeedID)
 				}
 			}
 			
 		}
 	
-		// I don't know what this is supposed to do.
-		
-//		let taggedFeedIDs = Set(subscriptions.map { String($0.feedID) })
-//
-//		// Remove all feeds from the account container that have a tag
-//		for feed in account.topLevelWebFeeds {
-//			if taggedFeedIDs.contains(feed.webFeedID) {
-//				account.removeWebFeed(feed)
-//			}
-//		}
+		// Remove all feeds from the account container that have a tag
+		for feed in account.topLevelWebFeeds {
+			if taggedFeedIDs.contains(feed.webFeedID) {
+				account.removeWebFeed(feed)
+			}
+		}
 	}
 	
 	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
