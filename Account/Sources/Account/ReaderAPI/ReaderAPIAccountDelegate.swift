@@ -315,7 +315,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 			switch result {
 			case .success(let feedSpecifiers):
-				let feedSpecifiers = feedSpecifiers.filter { !$0.urlString.hasSuffix(".json") }
+				let feedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
 					completion(.failure(AccountError.createErrorNotFound))
 					return
