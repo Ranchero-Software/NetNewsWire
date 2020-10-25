@@ -63,14 +63,21 @@ final class ReaderAPICaller: NSObject {
 	
 	private var APIBaseURL: URL? {
 		get {
-			guard let accountMetadata = accountMetadata else {
-				return nil
+			switch variant {
+			case .inoreader:
+				return URL(string: "https://www.inoreader.com")
+			case .bazQux:
+				return URL(string: "https://bazqux.com")
+			case .theOldReader:
+				return URL(string: "https://theoldreader.com")
+			case .generic:
+				guard let accountMetadata = accountMetadata else {
+					return nil
+				}
+				return accountMetadata.endpointURL
 			}
-	
-			return accountMetadata.endpointURL
 		}
 	}
-	
 	
 	init(transport: Transport) {
 		super.init()
