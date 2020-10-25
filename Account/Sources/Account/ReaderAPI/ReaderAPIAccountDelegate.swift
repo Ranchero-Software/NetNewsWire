@@ -381,12 +381,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		if feed.folderRelationship?.count ?? 0 > 1 {
-			deleteTagging(for: account, with: feed, from: container, completion: completion)
-		} else {
-			account.clearWebFeedMetadata(feed)
-			deleteSubscription(for: account, with: feed, from: container, completion: completion)
-		}
+		account.clearWebFeedMetadata(feed)
+		deleteSubscription(for: account, with: feed, from: container, completion: completion)
 	}
 	
 	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
