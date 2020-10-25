@@ -807,6 +807,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 				let updatedArticleIDs = updatedStatuses.articleIDs()
 				let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
 				self.noteStatusesForArticlesDidChange(updatedArticles)
+				completion(.success(updatedArticles))
 			case .failure(let error):
 				completion(.failure(error))
 			}
