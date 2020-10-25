@@ -67,9 +67,10 @@ private extension RefreshProgressView {
 			if isInViewHierarchy {
 				progressView.setProgress(1, animated: animated)
 			}
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			
+			func completeLabel() {
 				// Check that there are no pending downloads.
-				if (AccountManager.shared.combinedRefreshProgress.isComplete) {
+				if AccountManager.shared.combinedRefreshProgress.isComplete {
 					self.updateRefreshLabel()
 					self.label.isHidden = false
 					self.progressView.isHidden = true
@@ -77,6 +78,14 @@ private extension RefreshProgressView {
 						self.progressView.setProgress(0, animated: animated)
 					}
 				}
+			}
+
+			if animated {
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					completeLabel()
+				}
+			} else {
+				completeLabel()
 			}
 		} else {
 			label.isHidden = true
