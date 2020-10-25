@@ -90,7 +90,8 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		let request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), credentials: credentials)
+		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), credentials: credentials)
+		addVariantHeaders(&request)
 
 		transport.send(request: request) { result in
 			switch result {
@@ -141,7 +142,8 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		let request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.token.rawValue), credentials: credentials)
+		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.token.rawValue), credentials: credentials)
+		addVariantHeaders(&request)
 		
 		transport.send(request: request) { result in
 			switch result {
@@ -182,8 +184,9 @@ final class ReaderAPICaller: NSObject {
 		}
 
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
+		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		addVariantHeaders(&request)
+
 		transport.send(request: request, resultType: ReaderAPITagContainer.self) { result in
 			
 			switch result {
@@ -208,7 +211,7 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.renameTag.rawValue), credentials: self.credentials)
-				
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -245,8 +248,7 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.disableTag.rawValue), credentials: self.credentials)
-				
-				
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -288,8 +290,9 @@ final class ReaderAPICaller: NSObject {
 		}
 		
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
+		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		addVariantHeaders(&request)
+
 		transport.send(request: request, resultType: ReaderAPISubscriptionContainer.self) { result in
 			
 			switch result {
@@ -332,6 +335,7 @@ final class ReaderAPICaller: NSObject {
 						let callURL = baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue)
 
 						var request = URLRequest(url: callURL, credentials: self.credentials)
+						self.addVariantHeaders(&request)
 						request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 						request.httpMethod = "POST"
 		
@@ -393,6 +397,7 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -426,6 +431,7 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -459,6 +465,7 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -493,6 +500,7 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let token):
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -533,6 +541,7 @@ final class ReaderAPICaller: NSObject {
 			case .success(let token):
 				// Do POST asking for data about all the new articles
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), credentials: self.credentials)
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -587,8 +596,9 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
-		
+		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
+		addVariantHeaders(&request)
+
 		transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
 			
 			switch result {
@@ -654,8 +664,9 @@ final class ReaderAPICaller: NSObject {
 		}
 		
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
+		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		addVariantHeaders(&request)
+
 		self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
 			
 			switch result {
@@ -676,6 +687,7 @@ final class ReaderAPICaller: NSObject {
 					case .success(let token):
 						// Do POST asking for data about all the new articles
 						var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), credentials: self.credentials)
+						self.addVariantHeaders(&request)
 						request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 						request.httpMethod = "POST"
 						
@@ -730,7 +742,8 @@ final class ReaderAPICaller: NSObject {
 			completion(.success((nil, nil)))
 			return
 		}
-		let request = URLRequest(url: url, credentials: credentials)
+		var request = URLRequest(url: url, credentials: credentials)
+		addVariantHeaders(&request)
 
 		transport.send(request: request, resultType: [ReaderAPIEntry].self) { result in
 			
@@ -771,8 +784,9 @@ final class ReaderAPICaller: NSObject {
 		}
 
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
+		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		addVariantHeaders(&request)
+
 		transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
 			
 			switch result {
@@ -806,6 +820,7 @@ final class ReaderAPICaller: NSObject {
 			case .success(let token):
 				// Do POST asking for data about all the new articles
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.editTag.rawValue), credentials: self.credentials)
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
@@ -873,8 +888,9 @@ final class ReaderAPICaller: NSObject {
 		}
 		
 		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
-		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		
+		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		addVariantHeaders(&request)
+
 		transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
 			
 			switch result {
@@ -901,7 +917,7 @@ final class ReaderAPICaller: NSObject {
 
 // MARK: Private
 
-extension ReaderAPICaller {
+private extension ReaderAPICaller {
 	
 	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
 		if var conditionalGet = accountMetadata?.conditionalGetInfo {
@@ -909,4 +925,12 @@ extension ReaderAPICaller {
 			accountMetadata?.conditionalGetInfo = conditionalGet
 		}
 	}
+	
+	func addVariantHeaders(_ request: inout URLRequest) {
+		if variant == .inoreader {
+			request.addValue(SecretsManager.provider.inoreaderAppId, forHTTPHeaderField: "AppId")
+			request.addValue(SecretsManager.provider.inoreaderAppKey, forHTTPHeaderField: "AppKey")
+		}
+	}
+	
 }

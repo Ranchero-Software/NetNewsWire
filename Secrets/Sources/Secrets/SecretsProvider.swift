@@ -16,4 +16,6 @@ public protocol SecretsProvider {
 	var twitterConsumerKey: String { get }
 	var twitterConsumerSecret: String { get }
 	var redditConsumerKey: String { get }
+	var inoreaderAppId: String { get }
+	var inoreaderAppKey: String { get }
 }
