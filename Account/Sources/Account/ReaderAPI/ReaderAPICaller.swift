@@ -356,6 +356,7 @@ final class ReaderAPICaller: NSObject {
 				}
 
 				var request = URLRequest(url: callURL, credentials: self.credentials)
+				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 
