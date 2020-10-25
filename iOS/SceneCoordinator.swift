@@ -1107,10 +1107,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 		}
 
-		rebuildBackingStores() {
+		rebuildBackingStores(completion:  {
 			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(webFeed, animations: animations, completion: completion)
-		}
+		})
 		
 	}
 	
@@ -1398,10 +1398,10 @@ private extension SceneCoordinator {
 		addToFilterExeptionsIfNecessary(feed)
 		addShadowTableToFilterExceptions()
 		
-		rebuildBackingStores() {
+		rebuildBackingStores(completion:  {
 			self.treeControllerDelegate.resetFilterExceptions()
 			completion()
-		}
+		})
 	}
 
 	func addToFilterExeptionsIfNecessary(_ feed: Feed?) {
@@ -2134,14 +2134,14 @@ private extension SceneCoordinator {
 			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
 
 			markExpanded(SmartFeedsController.shared)
-			rebuildBackingStores() {
+			rebuildBackingStores(completion:  {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
 					self.selectFeed(indexPath: indexPath) {
 						self.masterFeedViewController.focus()
 					}
 				}
-			}
+			})
 		
 		case .script:
 			break
@@ -2154,7 +2154,7 @@ private extension SceneCoordinator {
 
 			markExpanded(account)
 			
-			rebuildBackingStores() {
+			rebuildBackingStores(completion:  {
 				self.treeControllerDelegate.resetFilterExceptions()
 				
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
@@ -2162,7 +2162,7 @@ private extension SceneCoordinator {
 						self.masterFeedViewController.focus()
 					}
 				}
-			}
+			})
 		
 		case .webFeed(let accountID, let webFeedID):
 			guard let accountNode = findAccountNode(accountID: accountID),
