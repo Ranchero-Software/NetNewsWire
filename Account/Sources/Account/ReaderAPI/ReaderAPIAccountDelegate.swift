@@ -635,7 +635,7 @@ private extension ReaderAPIAccountDelegate {
 
 		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
 		
-		let subFeedIds = subscriptions.map { String($0.feedID) }
+		let subFeedIds = subscriptions.map { $0.feedID }
 		
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
