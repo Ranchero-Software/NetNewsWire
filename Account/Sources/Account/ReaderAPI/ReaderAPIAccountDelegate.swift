@@ -779,7 +779,7 @@ private extension ReaderAPIAccountDelegate {
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int], @escaping (Result<Void, Error>) -> Void) -> Void, completion: @escaping (() -> Void)) {
+	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([String], @escaping (Result<Void, Error>) -> Void) -> Void, completion: @escaping (() -> Void)) {
 		guard !statuses.isEmpty else {
 			completion()
 			return
@@ -787,7 +787,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		let group = DispatchGroup()
 		
-		let articleIDs = statuses.compactMap { Int($0.articleID) }
+		let articleIDs = statuses.compactMap { $0.articleID }
 		let articleIDGroups = articleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
 			
@@ -795,11 +795,11 @@ private extension ReaderAPIAccountDelegate {
 			apiCall(articleIDGroup) { result in
 				switch result {
 				case .success:
-					self.database.deleteSelectedForProcessing(articleIDGroup.map { String($0) } )
+					self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
 					group.leave()
 				case .failure(let error):
 					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
-					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
+					self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
 					group.leave()
 				}
 			}

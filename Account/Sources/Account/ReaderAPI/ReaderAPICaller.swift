@@ -842,7 +842,7 @@ final class ReaderAPICaller: NSObject {
 		
 	}
 	
-	func updateStateToEntries(entries: [Int], state: ReaderState, add: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+	func updateStateToEntries(entries: [String], state: ReaderState, add: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let baseURL = APIBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
@@ -858,9 +858,13 @@ final class ReaderAPICaller: NSObject {
 				request.httpMethod = "POST"
 				
 				// Get ids from above into hex representation of value
-				let idsToFetch = entries.map({ (idValue) -> String in
-					let idHexString = String(format: "%.16llx", idValue)
-					return "i=\(idHexString)"
+				let idsToFetch = entries.map({ idValue -> String in
+					if self.variant == .theOldReader {
+						return "i=tag:google.com,2005:reader/item/\(idValue)"
+					} else {
+						let idHexString = String(format: "%.16llx", idValue)
+						return "i=\(idHexString)"
+					}
 				}).joined(separator:"&")
 				
 				let actionIndicator = add ? "a" : "r"
@@ -883,21 +887,21 @@ final class ReaderAPICaller: NSObject {
 		}
 	}
 	
-	func createUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	func createUnreadEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		updateStateToEntries(entries: entries, state: .read, add: false, completion: completion)
 	}
 	
-	func deleteUnreadEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteUnreadEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		updateStateToEntries(entries: entries, state: .read, add: true, completion: completion)
 
 	}
 	
-	func createStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	func createStarredEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		updateStateToEntries(entries: entries, state: .starred, add: true, completion: completion)
 		
 	}
 	
-	func deleteStarredEntries(entries: [Int], completion: @escaping (Result<Void, Error>) -> Void) {
+	func deleteStarredEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
 		updateStateToEntries(entries: entries, state: .starred, add: false, completion: completion)
 	}
 	
