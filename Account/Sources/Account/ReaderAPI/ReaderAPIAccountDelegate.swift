@@ -633,7 +633,12 @@ private extension ReaderAPIAccountDelegate {
 	}
 	
 	func deriveTagNames(_ tags: [ReaderAPITag]) -> [String] {
-		return tags.filter { $0.tagID.hasPrefix("user/-/label/") }.map { $0.tagID.replacingOccurrences(of: "user/-/label/", with: "") }
+		return tags.filter { $0.tagID.contains("/label/") }.compactMap {
+			guard let range = $0.tagID.range(of: "/label/") else {
+				return nil
+			}
+			return String($0.tagID.suffix(from: range.upperBound))
+		}
 	}
 	
 	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
