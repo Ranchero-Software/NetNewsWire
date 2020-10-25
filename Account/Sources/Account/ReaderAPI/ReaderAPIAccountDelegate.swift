@@ -657,14 +657,13 @@ private extension ReaderAPIAccountDelegate {
 		// Add any feeds we don't have and update any we do
 		subscriptions.forEach { subscription in
 			
-			let subFeedId = String(subscription.feedID)
-			if let feed = account.existingWebFeed(withWebFeedID: subFeedId) {
+			if let feed = account.existingWebFeed(withWebFeedID: subscription.feedID) {
 				feed.name = subscription.name
 				feed.homePageURL = subscription.homePageURL
 			} else {
-				let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: subFeedId, homePageURL: subscription.homePageURL)
+				let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: subscription.feedID, homePageURL: subscription.homePageURL)
 				feed.iconURL = subscription.iconURL
-				feed.externalID = String(subscription.feedID)
+				feed.externalID = subscription.feedID
 				account.addWebFeed(feed)
 			}
 			
@@ -728,15 +727,17 @@ private extension ReaderAPIAccountDelegate {
 			}
 			
 		}
+	
+		// I don't know what this is supposed to do.
 		
-		let taggedFeedIDs = Set(subscriptions.map { String($0.feedID) })
-		
-		// Remove all feeds from the account container that have a tag
-		for feed in account.topLevelWebFeeds {
-			if taggedFeedIDs.contains(feed.webFeedID) {
-				account.removeWebFeed(feed)
-			}
-		}
+//		let taggedFeedIDs = Set(subscriptions.map { String($0.feedID) })
+//
+//		// Remove all feeds from the account container that have a tag
+//		for feed in account.topLevelWebFeeds {
+//			if taggedFeedIDs.contains(feed.webFeedID) {
+//				account.removeWebFeed(feed)
+//			}
+//		}
 	}
 	
 	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
