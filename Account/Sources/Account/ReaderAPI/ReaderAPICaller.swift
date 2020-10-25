@@ -238,10 +238,14 @@ final class ReaderAPICaller: NSObject {
 		}
 	}
 	
-	func deleteTag(name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	func deleteTag(folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let baseURL = APIBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		guard let folderExternalID = folder.externalID else {
+			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return
 		}
 		
@@ -253,8 +257,7 @@ final class ReaderAPICaller: NSObject {
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
-				let tagName = "user/-/label/\(name)"
-				let postData = "T=\(token)&s=\(tagName)".data(using: String.Encoding.utf8)
+				let postData = "T=\(token)&s=\(folderExternalID)".data(using: String.Encoding.utf8)
 				
 				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
 					switch result {
@@ -272,7 +275,6 @@ final class ReaderAPICaller: NSObject {
 				completion(.failure(error))
 			}
 		}
-		
 	}
 	
 	func retrieveSubscriptions(completion: @escaping (Result<[ReaderAPISubscription]?, Error>) -> Void) {

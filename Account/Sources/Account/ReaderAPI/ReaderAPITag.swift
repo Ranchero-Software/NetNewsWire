@@ -26,4 +26,11 @@ struct ReaderAPITag: Codable {
 		case type = "type"
 	}
 	
+	var folderName: String? {
+		guard let range = tagID.range(of: "/label/") else {
+			return nil
+		}
+		return String(tagID.suffix(from: range.upperBound))
+	}
+	
 }

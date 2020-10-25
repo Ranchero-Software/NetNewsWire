@@ -241,13 +241,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
-		guard folder.hasAtLeastOneWebFeed() else {
-			account.removeFolder(folder)
-			completion(.success(()))
-			return
-		}
-
 		let group = DispatchGroup()
 		
 		for feed in folder.topLevelWebFeeds {
@@ -296,8 +289,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			account.removeFolder(folder)
-			completion(.success(()))
+			self.caller.deleteTag(folder: folder) { result in
+				switch result {
+				case .success:
+					account.removeFolder(folder)
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
 		}
 		
 	}
@@ -581,12 +581,12 @@ private extension ReaderAPIAccountDelegate {
 			}
 		}()
 
-		let tagNames = deriveTagNames(tags)
-		
+		let readerFolderNames = tags.compactMap { $0.folderName }
+
 		// The sync service has a tag that we don't have a folder for.  We might not get a new
 		// taggings response for it if it is a folder rename.  Force expire the subscription
 		// so that we will for sure get the new tagging information by pulling all subscriptions.
-		tagNames.forEach { tagName in
+		readerFolderNames.forEach { tagName in
 			if !folderNames.contains(tagName) {
 				accountMetadata?.conditionalGetInfo[ReaderAPICaller.ConditionalGetKeys.subscriptions] = nil
 			}
@@ -600,12 +600,12 @@ private extension ReaderAPIAccountDelegate {
 
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
 
-		let tagNames = deriveTagNames(tags)
+		let readerFolderNames = tags.compactMap { $0.folderName }
 
 		// Delete any folders not at Reader
 		if let folders = account.folders {
 			folders.forEach { folder in
-				if !tagNames.contains(folder.name ?? "") {
+				if !readerFolderNames.contains(folder.name ?? "") {
 					for feed in folder.topLevelWebFeeds {
 						account.addWebFeed(feed)
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
@@ -624,21 +624,13 @@ private extension ReaderAPIAccountDelegate {
 		}()
 
 		// Make any folders Reader has, but we don't
-		tagNames.forEach { tagName in
-			if !folderNames.contains(tagName) {
-				_ = account.ensureFolder(with: tagName)
+		tags.forEach { tag in
+			if let tagFolderName = tag.folderName, !folderNames.contains(tagFolderName) {
+				let folder = account.ensureFolder(with: tagFolderName)
+				folder?.externalID = tag.tagID
 			}
 		}
 		
-	}
-	
-	func deriveTagNames(_ tags: [ReaderAPITag]) -> [String] {
-		return tags.filter { $0.tagID.contains("/label/") }.compactMap {
-			guard let range = $0.tagID.range(of: "/label/") else {
-				return nil
-			}
-			return String($0.tagID.suffix(from: range.upperBound))
-		}
 	}
 	
 	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
