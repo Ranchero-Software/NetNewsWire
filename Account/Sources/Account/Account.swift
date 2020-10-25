@@ -369,12 +369,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		switch type {
 		case .feedbin:
 			FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
-		case .freshRSS:
-			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
 		case .feedWrangler:
 			FeedWranglerAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
 		case .newsBlur:
 			NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, completion: completion)
+		case .freshRSS, .inoreader, .bazQux, .theOldReader:
+			ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint, completion: completion)
 		default:
 			break
 		}

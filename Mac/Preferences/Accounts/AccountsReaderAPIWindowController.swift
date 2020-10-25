@@ -16,6 +16,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	@IBOutlet weak var titleImageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!
 	
+	@IBOutlet weak var gridView: NSGridView!
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!
 	@IBOutlet weak var usernameTextField: NSTextField!
 	@IBOutlet weak var apiURLTextField: NSTextField!
@@ -41,12 +42,15 @@ class AccountsReaderAPIWindowController: NSWindowController {
 			case .inoreader:
 				titleImageView.image = AppAssets.accountInoreader
 				titleLabel.stringValue = NSLocalizedString("InoReader", comment: "InoReader")
+				gridView.row(at: 2).isHidden = true
 			case .bazQux:
 				titleImageView.image = AppAssets.accountBazQux
 				titleLabel.stringValue = NSLocalizedString("BazQux", comment: "BazQux")
+				gridView.row(at: 2).isHidden = true
 			case .theOldReader:
 				titleImageView.image = AppAssets.accountTheOldReader
 				titleLabel.stringValue = NSLocalizedString("The Old Reader", comment: "The Old Reader")
+				gridView.row(at: 2).isHidden = true
 			default:
 				break
 			}
@@ -75,11 +79,34 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	}
 	
 	@IBAction func action(_ sender: Any) {
-		
 		self.errorMessageLabel.stringValue = ""
 		
-		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty && !apiURLTextField.stringValue.isEmpty else {
+		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
+			return
+		}
+		
+		guard let accountType = accountType, !(accountType == .freshRSS && apiURLTextField.stringValue.isEmpty) else {
+			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
+			return
+		}
+		
+		let apiURL: URL
+		switch accountType {
+		case .freshRSS:
+			guard let inputURL = URL(string: apiURLTextField.stringValue) else {
+				self.errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Invalid API URL")
+				return
+			}
+			apiURL = inputURL
+		case .inoreader:
+			apiURL =  URL(string: ReaderAPIVariant.inoreader.host)!
+		case .bazQux:
+			apiURL =  URL(string: ReaderAPIVariant.bazQux.host)!
+		case .theOldReader:
+			apiURL =  URL(string: ReaderAPIVariant.theOldReader.host)!
+		default:
+			self.errorMessageLabel.stringValue = NSLocalizedString("Unrecognized account type.", comment: "Bad account type")
 			return
 		}
 		
@@ -87,13 +114,8 @@ class AccountsReaderAPIWindowController: NSWindowController {
 		progressIndicator.isHidden = false
 		progressIndicator.startAnimation(self)
 		
-		guard let apiURL = URL(string: apiURLTextField.stringValue) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Credentials Error")
-			return
-		}
-		
 		let credentials = Credentials(type: .readerBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: accountType!, credentials: credentials, endpoint: apiURL) { [weak self] result in
+		Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL) { [weak self] result in
 			
 			guard let self = self else { return }
 			

@@ -21,11 +21,7 @@ public enum ReaderAPIAccountDelegateError: String, Error {
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
 	
-	private var variant: ReaderAPIVariant {
-		didSet {
-			caller.variant = variant
-		}
-	}
+	private let variant: ReaderAPIVariant
 	
 	private let database: SyncDatabase
 	
@@ -61,11 +57,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		database = SyncDatabase(databaseFilePath: databaseFilePath)
 		
 		if transport != nil {
-			
 			caller = ReaderAPICaller(transport: transport!)
-			
 		} else {
-			
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 			sessionConfiguration.timeoutIntervalForRequest = 60.0
@@ -80,9 +73,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 			
 			caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
-			
 		}
 		
+		caller.variant = variant
 		self.variant = variant
 	}
 	
@@ -1022,7 +1015,7 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func syncArticleReadState(account: Account, articleIDs: [Int]?) {
+	func syncArticleReadState(account: Account, articleIDs: [String]?) {
 		guard let articleIDs = articleIDs else {
 			return
 		}
@@ -1030,9 +1023,7 @@ private extension ReaderAPIAccountDelegate {
 		database.selectPendingReadStatusArticleIDs() { result in
 
 			func process(_ pendingArticleIDs: Set<String>) {
-				
-				let readerUnreadArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableReaderUnreadArticleIDs = readerUnreadArticleIDs.subtracting(pendingArticleIDs)
+				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 				
 				account.fetchUnreadArticleIDs { articleIDsResult in
 					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
@@ -1047,7 +1038,6 @@ private extension ReaderAPIAccountDelegate {
 					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
 					account.markAsRead(deltaReadArticleIDs)
 				}
-
 			}
 			
 			switch result {
@@ -1061,7 +1051,7 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
+	func syncArticleStarredState(account: Account, articleIDs: [String]?) {
 		guard let articleIDs = articleIDs else {
 			return
 		}
@@ -1069,9 +1059,7 @@ private extension ReaderAPIAccountDelegate {
 		database.selectPendingStarredStatusArticleIDs() { result in
 
 			func process(_ pendingArticleIDs: Set<String>) {
-				
-				let readerStarredArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableReaderUnreadArticleIDs = readerStarredArticleIDs.subtracting(pendingArticleIDs)
+				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
 				account.fetchStarredArticleIDs { articleIDsResult in
 					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
@@ -1086,7 +1074,6 @@ private extension ReaderAPIAccountDelegate {
 					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
 					account.markAsUnstarred(deltaUnstarredArticleIDs)
 				}
-								
 			}
 			
 			switch result {

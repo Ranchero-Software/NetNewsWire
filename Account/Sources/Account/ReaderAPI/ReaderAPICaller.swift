@@ -64,17 +64,13 @@ final class ReaderAPICaller: NSObject {
 	private var APIBaseURL: URL? {
 		get {
 			switch variant {
-			case .inoreader:
-				return URL(string: "https://www.inoreader.com")
-			case .bazQux:
-				return URL(string: "https://bazqux.com")
-			case .theOldReader:
-				return URL(string: "https://theoldreader.com")
 			case .generic:
 				guard let accountMetadata = accountMetadata else {
 					return nil
 				}
 				return accountMetadata.endpointURL
+			default:
+				return URL(string: variant.host)
 			}
 		}
 	}
@@ -685,9 +681,13 @@ final class ReaderAPICaller: NSObject {
 						
 						// Get ids from above into hex representation of value
 						let idsToFetch = entries.itemRefs.map({ (reference) -> String in
-							let idValue = Int(reference.itemId)!
-							let idHexString = String(idValue, radix: 16, uppercase: false)
-							return "i=\(idHexString)"
+							if self.variant == .theOldReader {
+								return "i=\(reference.itemId)"
+							} else {
+								let idValue = Int(reference.itemId)!
+								let idHexString = String(idValue, radix: 16, uppercase: false)
+								return "i=\(idHexString)"
+							}
 						}).joined(separator:"&")
 						
 						let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
@@ -749,7 +749,7 @@ final class ReaderAPICaller: NSObject {
 		
 	}
 
-	func retrieveUnreadEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
+	func retrieveUnreadEntries(completion: @escaping (Result<[String]?, Error>) -> Void) {
 		
 		guard let baseURL = APIBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
@@ -783,7 +783,7 @@ final class ReaderAPICaller: NSObject {
 					return
 				}
 				
-				let itemIds = itemRefs.map{ Int($0.itemId)! }
+				let itemIds = itemRefs.map { $0.itemId }
 				
 				self.storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
 				completion(.success(itemIds))
@@ -853,7 +853,7 @@ final class ReaderAPICaller: NSObject {
 		updateStateToEntries(entries: entries, state: .starred, add: false, completion: completion)
 	}
 	
-	func retrieveStarredEntries(completion: @escaping (Result<[Int]?, Error>) -> Void) {
+	func retrieveStarredEntries(completion: @escaping (Result<[String]?, Error>) -> Void) {
 		guard let baseURL = APIBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
@@ -879,14 +879,12 @@ final class ReaderAPICaller: NSObject {
 			
 			switch result {
 			case .success(let (response, unreadEntries)):
-				
 				guard let itemRefs = unreadEntries?.itemRefs else {
 					completion(.success([]))
 					return
 				}
 				
-				let itemIds = itemRefs.map{ Int($0.itemId)! }
-				
+				let itemIds = itemRefs.map { $0.itemId }
 				self.storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
 				completion(.success(itemIds))
 			case .failure(let error):
