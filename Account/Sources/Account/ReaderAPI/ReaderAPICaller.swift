@@ -708,12 +708,12 @@ final class ReaderAPICaller: NSObject {
 			switch result {
 			case .success(let (_, entries)):
 				
-				guard let entries = entries else {
+				guard let entriesItemRefs = entries?.itemRefs else {
 					completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
 					return
 				}
 				
-				guard entries.itemRefs.count > 0 else {
+				guard entriesItemRefs.count > 0 else {
 					completion(.success((nil, nil, nil)))
 					return
 				}
@@ -728,7 +728,7 @@ final class ReaderAPICaller: NSObject {
 						request.httpMethod = "POST"
 						
 						// Get ids from above into hex representation of value
-						let idsToFetch = entries.itemRefs.map({ (reference) -> String in
+						let idsToFetch = entriesItemRefs.map({ (reference) -> String in
 							if self.variant == .theOldReader {
 								return "i=tag:google.com,2005:reader/item/\(reference.itemId)"
 							} else {

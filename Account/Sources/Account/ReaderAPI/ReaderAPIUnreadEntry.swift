@@ -9,7 +9,7 @@
 import Foundation
 
 struct ReaderAPIReferenceWrapper: Codable {
-	let itemRefs: [ReaderAPIReference]
+	let itemRefs: [ReaderAPIReference]?
 	
 	enum CodingKeys: String, CodingKey {
 		case itemRefs = "itemRefs"
