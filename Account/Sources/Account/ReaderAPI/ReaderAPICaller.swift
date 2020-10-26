@@ -861,12 +861,13 @@ final class ReaderAPICaller: NSObject {
 				request.httpMethod = "POST"
 				
 				// Get ids from above into hex representation of value
-				let idsToFetch = entries.map({ idValue -> String in
+				let idsToFetch = entries.compactMap({ idValue -> String? in
 					if self.variant == .theOldReader {
 						return "i=tag:google.com,2005:reader/item/\(idValue)"
 					} else {
-						let idHexString = String(format: "%.16llx", idValue)
-						return "i=\(idHexString)"
+						guard let intValue = Int(idValue) else { return nil }
+						let idHexString = String(format: "%.16llx", intValue)
+						return "i=tag:google.com,2005:reader/item/\(idHexString)"
 					}
 				}).joined(separator:"&")
 				
