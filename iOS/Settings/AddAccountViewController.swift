@@ -17,9 +17,9 @@ protocol AddAccountDismissDelegate: UIViewController {
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .cloudKit, .newsBlur, .bazQux, .theOldReader, .freshRSS, .inoreader]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
 	#else
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .cloudKit, .newsBlur, .bazQux, .theOldReader, .freshRSS, .inoreader]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
 	#endif
 
 	override func viewDidLoad() {
@@ -73,8 +73,6 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		case .inoreader:
 			cell.comboNameLabel?.text = NSLocalizedString("Inoreader", comment: "Inoreader")
 			cell.comboImage?.image = AppAssets.accountInoreaderImage
-		default:
-			break
 		}
 		
 		return cell
@@ -124,8 +122,6 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			addViewController.accountType = addableAccountTypes[indexPath.row]
 			addViewController.delegate = self
 			present(navController, animated: true)
-		default:
-			break
 		}
 	}
 	
