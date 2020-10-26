@@ -680,7 +680,6 @@ private extension ReaderAPIAccountDelegate {
 				feed.homePageURL = subscription.homePageURL
 			} else {
 				let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: subscription.feedID, homePageURL: subscription.homePageURL)
-				feed.iconURL = subscription.iconURL
 				feed.externalID = subscription.feedID
 				account.addWebFeed(feed)
 			}
