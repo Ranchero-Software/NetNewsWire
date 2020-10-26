@@ -730,11 +730,11 @@ final class ReaderAPICaller: NSObject {
 						// Get ids from above into hex representation of value
 						let idsToFetch = entries.itemRefs.map({ (reference) -> String in
 							if self.variant == .theOldReader {
-								return "i=\(reference.itemId)"
+								return "i=tag:google.com,2005:reader/item/\(reference.itemId)"
 							} else {
 								let idValue = Int(reference.itemId)!
 								let idHexString = String(idValue, radix: 16, uppercase: false)
-								return "i=\(idHexString)"
+								return "i=tag:google.com,2005:reader/item/\(idHexString)"
 							}
 						}).joined(separator:"&")
 						
