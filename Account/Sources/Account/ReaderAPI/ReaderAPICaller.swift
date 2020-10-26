@@ -688,9 +688,8 @@ final class ReaderAPICaller: NSObject {
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
 				URLQueryItem(name: "ot", value: String(sinceString)),
-				URLQueryItem(name: "n", value: "10000"),
+				URLQueryItem(name: "n", value: "1000"),
 				URLQueryItem(name: "output", value: "json"),
-				URLQueryItem(name: "xt", value: ReaderState.read.rawValue),
 				URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue)
 			])
 		
@@ -919,7 +918,7 @@ final class ReaderAPICaller: NSObject {
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
 				URLQueryItem(name: "s", value: ReaderState.starred),
-				URLQueryItem(name: "n", value: "10000"),
+				URLQueryItem(name: "n", value: "1000"),
 				URLQueryItem(name: "output", value: "json")
 			])
 		
