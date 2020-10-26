@@ -214,7 +214,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		if let folder = account.ensureFolder(with: name) {
 			completion(.success(folder))
 		} else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 		}
 	}
 	
@@ -357,7 +357,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return
 		}
 		
@@ -1154,7 +1154,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
-			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
+			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return
 		}
 		
