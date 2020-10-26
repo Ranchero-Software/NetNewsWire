@@ -36,6 +36,7 @@
 		1769E33824BD97CB000E1E8E /* AccountUpdateErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E33724BD97CB000E1E8E /* AccountUpdateErrors.swift */; };
 		1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
+		177A0C2D25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177A0C2C25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift */; };
 		17897ACA24C281A40014BA03 /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17897AC924C281A40014BA03 /* InspectorView.swift */; };
 		17897ACB24C281A40014BA03 /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17897AC924C281A40014BA03 /* InspectorView.swift */; };
 		17930ED424AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */; };
@@ -1462,6 +1463,7 @@
 		1769E33524BD9621000E1E8E /* EditAccountCredentialsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountCredentialsModel.swift; sourceTree = "<group>"; };
 		1769E33724BD97CB000E1E8E /* AccountUpdateErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountUpdateErrors.swift; sourceTree = "<group>"; };
 		1776E88D24AC5F8A00E78166 /* AppDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDefaults.swift; sourceTree = "<group>"; };
+		177A0C2C25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderAPIAccountViewController.swift; sourceTree = "<group>"; };
 		17897AC924C281A40014BA03 /* InspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorView.swift; sourceTree = "<group>"; };
 		17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedView.swift; sourceTree = "<group>"; };
 		1799E6A824C2F93F00511E91 /* InspectorPlatformModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPlatformModifier.swift; sourceTree = "<group>"; };
@@ -2437,6 +2439,7 @@
 				51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */,
 				3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */,
 				769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */,
+				177A0C2C25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -5038,6 +5041,7 @@
 				517A745B2443665000B553B9 /* UIPageViewController-Extensions.swift in Sources */,
 				51BB7C272335A8E5008E8144 /* ArticleActivityItemSource.swift in Sources */,
 				51F85BF52273625800C787DC /* Bundle-Extensions.swift in Sources */,
+				177A0C2D25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift in Sources */,
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
 				5F323809231DF9F000706F6B /* VibrantTableViewCell.swift in Sources */,

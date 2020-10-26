@@ -17,9 +17,9 @@ protocol AddAccountDismissDelegate: UIViewController {
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .cloudKit, .newsBlur]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .cloudKit, .newsBlur, .bazQux, .theOldReader, .freshRSS, .inoreader]
 	#else
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .cloudKit, .newsBlur]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .cloudKit, .newsBlur, .bazQux, .theOldReader, .freshRSS, .inoreader]
 	#endif
 
 	override func viewDidLoad() {
@@ -61,6 +61,18 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		case .newsBlur:
 			cell.comboNameLabel?.text = NSLocalizedString("NewsBlur", comment: "NewsBlur")
 			cell.comboImage?.image = AppAssets.accountNewsBlurImage
+		case .bazQux:
+			cell.comboNameLabel?.text = NSLocalizedString("BazQux", comment: "BazQux")
+			cell.comboImage?.image = AppAssets.accountBazQuxImage
+		case .theOldReader:
+			cell.comboNameLabel?.text = NSLocalizedString("The Old Reader", comment: "The Old Reader")
+			cell.comboImage?.image = AppAssets.accountTheOldReaderImage
+		case .freshRSS:
+			cell.comboNameLabel?.text = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+			cell.comboImage?.image = AppAssets.accountFreshRSSImage
+		case .inoreader:
+			cell.comboNameLabel?.text = NSLocalizedString("Inoreader", comment: "Inoreader")
+			cell.comboImage?.image = AppAssets.accountInoreaderImage
 		default:
 			break
 		}
@@ -103,6 +115,13 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "NewsBlurAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
 			let addViewController = navController.topViewController as! NewsBlurAccountViewController
+			addViewController.delegate = self
+			present(navController, animated: true)
+		case .bazQux, .inoreader, .freshRSS, .theOldReader:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "ReaderAPIAccountNavigationViewController") as! UINavigationController
+			navController.modalPresentationStyle = .currentContext
+			let addViewController = navController.topViewController as! ReaderAPIAccountViewController
+			addViewController.accountType = addableAccountTypes[indexPath.row]
 			addViewController.delegate = self
 			present(navController, animated: true)
 		default:
