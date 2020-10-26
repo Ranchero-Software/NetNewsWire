@@ -317,6 +317,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			case .success(let feedSpecifiers):
 				let feedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
+					self.refreshProgress.clear()
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
@@ -346,6 +347,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					
 				}
 			case .failure:
+				self.refreshProgress.clear()
 				completion(.failure(AccountError.createErrorNotFound))
 			}
 			
