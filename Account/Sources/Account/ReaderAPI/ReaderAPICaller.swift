@@ -809,7 +809,7 @@ final class ReaderAPICaller: NSObject {
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
 				URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue),
-				URLQueryItem(name: "n", value: "10000"),
+				URLQueryItem(name: "n", value: "1000"),
 				URLQueryItem(name: "xt", value: ReaderState.read.rawValue),
 				URLQueryItem(name: "output", value: "json")
 			])
@@ -918,7 +918,7 @@ final class ReaderAPICaller: NSObject {
 		let url = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
-				URLQueryItem(name: "s", value: "user/-/state/com.google/starred"),
+				URLQueryItem(name: "s", value: ReaderState.starred),
 				URLQueryItem(name: "n", value: "10000"),
 				URLQueryItem(name: "output", value: "json")
 			])
