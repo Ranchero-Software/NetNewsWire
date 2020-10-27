@@ -16,6 +16,52 @@ protocol AddAccountDismissDelegate: UIViewController {
 
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
+	private enum AddAccountSections: Int, CaseIterable {
+		case local = 0
+		case icloud
+		case web
+		case selfhosted
+		
+		var sectionHeader: String {
+			switch self {
+			case .local:
+				return NSLocalizedString("Local", comment: "Local Account")
+			case .icloud:
+				return NSLocalizedString("iCloud", comment: "iCloud Account")
+			case .web:
+				return NSLocalizedString("Web", comment: "Web Account")
+			case .selfhosted:
+				return NSLocalizedString("Self-hosted", comment: "Self hosted Account")
+			}
+		}
+		
+		var sectionFooter: String {
+			switch self {
+			case .local:
+				return NSLocalizedString("Local accounts do not sync your subscriptions across devices.", comment: "Local Account")
+			case .icloud:
+				return NSLocalizedString("Use your iCloud account to sync your subscriptions across your iOS and macOS devices.", comment: "iCloud Account")
+			case .web:
+				return NSLocalizedString("Web accounts sync your subscriptions across all your devices.", comment: "Web Account")
+			case .selfhosted:
+				return NSLocalizedString("Self-hosted accounts sync your subscriptions across all your devices.", comment: "Self hosted Account")
+			}
+		}
+		
+		var sectionContent: [AccountType] {
+			switch self {
+			case .local:
+				return [.onMyMac]
+			case .icloud:
+				return [.cloudKit]
+			case .web:
+				return [.bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader]
+			case .selfhosted:
+				return [.freshRSS]
+			}
+		}
+	}
+	
 	#if DEBUG
 	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
 	#else
@@ -28,58 +74,108 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 	}
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
-		1
+		return AddAccountSections.allCases.count
 	}
 	
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return addableAccountTypes.count
+		if section == AddAccountSections.local.rawValue {
+			return AddAccountSections.local.sectionContent.count
+		}
+		
+		if section == AddAccountSections.icloud.rawValue {
+			return AddAccountSections.icloud.sectionContent.count
+		}
+		
+		if section == AddAccountSections.web.rawValue {
+			return AddAccountSections.web.sectionContent.count
+		}
+		
+		if section == AddAccountSections.selfhosted.rawValue {
+			return AddAccountSections.selfhosted.sectionContent.count
+		}
+
+		return 0
 	}
 	
-	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return 52.0
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		switch section {
+		case AddAccountSections.local.rawValue:
+			return AddAccountSections.local.sectionHeader
+		case AddAccountSections.icloud.rawValue:
+			return AddAccountSections.icloud.sectionHeader
+		case AddAccountSections.web.rawValue:
+			return AddAccountSections.web.sectionHeader
+		case AddAccountSections.selfhosted.rawValue:
+			return AddAccountSections.selfhosted.sectionHeader
+		default:
+			return nil
+		}
 	}
+	
+	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+		switch section {
+		case AddAccountSections.local.rawValue:
+			return AddAccountSections.local.sectionFooter
+		case AddAccountSections.icloud.rawValue:
+			return AddAccountSections.icloud.sectionFooter
+		case AddAccountSections.web.rawValue:
+			return AddAccountSections.web.sectionFooter
+		case AddAccountSections.selfhosted.rawValue:
+			return AddAccountSections.selfhosted.sectionFooter
+		default:
+			return nil
+		}
+	}
+	
+//	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//		return 52.0
+//	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 		
-		switch addableAccountTypes[indexPath.row] {
-		case .onMyMac:
-			cell.comboNameLabel?.text = Account.defaultLocalAccountName
-			cell.comboImage?.image = AppAssets.image(for: .onMyMac)
-		case .cloudKit:
-			cell.comboNameLabel?.text = NSLocalizedString("iCloud", comment: "iCloud")
-			cell.comboImage?.image = AppAssets.accountCloudKitImage
-		case .feedbin:
-			cell.comboNameLabel?.text = NSLocalizedString("Feedbin", comment: "Feedbin")
-			cell.comboImage?.image = AppAssets.accountFeedbinImage
-		case .feedWrangler:
-			cell.comboNameLabel?.text = NSLocalizedString("Feed Wrangler", comment: "Feed Wrangler")
-			cell.comboImage?.image = AppAssets.accountFeedWranglerImage
-		case .feedly:
-			cell.comboNameLabel?.text = NSLocalizedString("Feedly", comment: "Feedly")
-			cell.comboImage?.image = AppAssets.accountFeedlyImage
-		case .newsBlur:
-			cell.comboNameLabel?.text = NSLocalizedString("NewsBlur", comment: "NewsBlur")
-			cell.comboImage?.image = AppAssets.accountNewsBlurImage
-		case .bazQux:
-			cell.comboNameLabel?.text = NSLocalizedString("BazQux", comment: "BazQux")
-			cell.comboImage?.image = AppAssets.accountBazQuxImage
-		case .theOldReader:
-			cell.comboNameLabel?.text = NSLocalizedString("The Old Reader", comment: "The Old Reader")
-			cell.comboImage?.image = AppAssets.accountTheOldReaderImage
-		case .freshRSS:
-			cell.comboNameLabel?.text = NSLocalizedString("FreshRSS", comment: "FreshRSS")
-			cell.comboImage?.image = AppAssets.accountFreshRSSImage
-		case .inoreader:
-			cell.comboNameLabel?.text = NSLocalizedString("Inoreader", comment: "Inoreader")
-			cell.comboImage?.image = AppAssets.accountInoreaderImage
+		switch indexPath.section {
+		case AddAccountSections.local.rawValue:
+			cell.comboNameLabel?.text = AddAccountSections.local.sectionContent[indexPath.row].localizedAccountName()
+			cell.comboImage?.image = AppAssets.image(for: .onMyMac)?.tinted(color: AddAccountSections.local.sectionContent[indexPath.row].iconColor())
+		case AddAccountSections.icloud.rawValue:
+			cell.comboNameLabel?.text = AddAccountSections.icloud.sectionContent[indexPath.row].localizedAccountName()
+			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.icloud.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.icloud.sectionContent[indexPath.row].iconColor())
+		case AddAccountSections.web.rawValue:
+			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].localizedAccountName()
+			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.web.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.web.sectionContent[indexPath.row].iconColor())
+		case AddAccountSections.selfhosted.rawValue:
+			cell.comboNameLabel?.text = AddAccountSections.selfhosted.sectionContent[indexPath.row].localizedAccountName()
+			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.selfhosted.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.web.sectionContent[indexPath.row].iconColor())
+			
+		default:
+			return cell
 		}
-		
 		return cell
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		switch addableAccountTypes[indexPath.row] {
+		
+		switch indexPath.section {
+		case AddAccountSections.local.rawValue:
+			let type = AddAccountSections.local.sectionContent[indexPath.row]
+			presentController(for: type)
+		case AddAccountSections.icloud.rawValue:
+			let type = AddAccountSections.icloud.sectionContent[indexPath.row]
+			presentController(for: type)
+		case AddAccountSections.web.rawValue:
+			let type = AddAccountSections.web.sectionContent[indexPath.row]
+			presentController(for: type)
+		case AddAccountSections.selfhosted.rawValue:
+			let type = AddAccountSections.selfhosted.sectionContent[indexPath.row]
+			presentController(for: type)
+		default:
+			return
+		}
+	}
+	
+	private func presentController(for accountType: AccountType) {
+		switch accountType {
 		case .onMyMac:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "LocalAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
@@ -119,7 +215,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "ReaderAPIAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
 			let addViewController = navController.topViewController as! ReaderAPIAccountViewController
-			addViewController.accountType = addableAccountTypes[indexPath.row]
+			addViewController.accountType = accountType
 			addViewController.delegate = self
 			present(navController, animated: true)
 		}

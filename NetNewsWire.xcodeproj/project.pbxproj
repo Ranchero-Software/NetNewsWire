@@ -23,6 +23,8 @@
 		1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */; };
 		1729529724AA1CD000D65E66 /* MacPreferencePanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */; };
 		1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529A24AA1FD200D65E66 /* MacSearchField.swift */; };
+		173A64172547BE0900267F6E /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
+		173A642C2547BE9600267F6E /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		175942AA24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		175942AB24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		1769E32224BC5925000E1E8E /* AccountsPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */; };
@@ -1453,6 +1455,7 @@
 		1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesView.swift; sourceTree = "<group>"; };
 		1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencePanes.swift; sourceTree = "<group>"; };
 		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
+		173A64162547BE0900267F6E /* AccountType+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AccountType+Helpers.swift"; sourceTree = "<group>"; };
 		1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesModel.swift; sourceTree = "<group>"; };
 		1769E32424BC5A65000E1E8E /* AddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountView.swift; sourceTree = "<group>"; };
 		1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountModel.swift; sourceTree = "<group>"; };
@@ -3303,6 +3306,7 @@
 				849A97561ED9EB0D007D329B /* Extensions */,
 				510C43F5243D0325009F70C3 /* ExtensionPoints */,
 				511D43CE231FA51100FB1562 /* Resources */,
+				173A64162547BE0900267F6E /* AccountType+Helpers.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -5118,6 +5122,7 @@
 				5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */,
 				518651DA235621840078E021 /* ImageTransition.swift in Sources */,
 				51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */,
+				173A642C2547BE9600267F6E /* AccountType+Helpers.swift in Sources */,
 				51627A6923861DED007B3B4B /* MasterFeedViewController+Drop.swift in Sources */,
 				514219372352510100E07E2C /* ImageScrollView.swift in Sources */,
 				516AE9B32371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift in Sources */,
@@ -5278,6 +5283,7 @@
 				848D578E21543519005FFAD5 /* PasteboardWebFeed.swift in Sources */,
 				5144EA2F2279FAB600D19003 /* AccountsDetailViewController.swift in Sources */,
 				849A97801ED9EC42007D329B /* DetailViewController.swift in Sources */,
+				173A64172547BE0900267F6E /* AccountType+Helpers.swift in Sources */,
 				518C3193237B00D9004D740F /* DetailIconSchemeHandler.swift in Sources */,
 				84C9FC6722629B9000D921D6 /* AppDelegate.swift in Sources */,
 				510C417F24E5D1AE008226FD /* ExtensionContainersFile.swift in Sources */,
