@@ -70,7 +70,6 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		restrictAccounts()
 	}
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -141,9 +140,16 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		case AddAccountSections.icloud.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.icloud.sectionContent[indexPath.row].localizedAccountName()
 			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.icloud.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.icloud.sectionContent[indexPath.row].iconColor())
+			if AppDefaults.shared.isDeveloperBuild {
+				cell.isUserInteractionEnabled = false
+			}
 		case AddAccountSections.web.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].localizedAccountName()
 			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.web.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.web.sectionContent[indexPath.row].iconColor())
+			let type = AddAccountSections.web.sectionContent[indexPath.row]
+			if (type == .feedly || type == .feedWrangler) && AppDefaults.shared.isDeveloperBuild {
+				cell.isUserInteractionEnabled = false
+			}
 		case AddAccountSections.selfhosted.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.selfhosted.sectionContent[indexPath.row].localizedAccountName()
 			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.selfhosted.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.web.sectionContent[indexPath.row].iconColor())
@@ -250,29 +256,4 @@ extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
 		presentError(error)
 	}
-}
-
-// MARK: Private
-
-private extension AddAccountViewController {
-	
-	func restrictAccounts() {
-		func removeAccountType(_ accountType: AccountType) {
-			if let index = addableAccountTypes.firstIndex(of: accountType) {
-				addableAccountTypes.remove(at: index)
-			}
-		}
-		
-		if AppDefaults.shared.isDeveloperBuild {
-			removeAccountType(.cloudKit)
-			removeAccountType(.feedly)
-			removeAccountType(.feedWrangler)
-			return
-		}
-
-		if AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
-			removeAccountType(.cloudKit)
-		}
-	}
-	
 }
