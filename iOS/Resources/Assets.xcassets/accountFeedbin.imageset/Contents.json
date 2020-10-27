@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "feedbin-logo.pdf",
+      "filename" : "feedbin-logo-filled-1.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "feedbin-logo-filled.pdf",
       "idiom" : "universal"
     }
   ],
@@ -11,6 +21,6 @@
   },
   "properties" : {
     "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
+    "template-rendering-intent" : "original"
   }
 }
