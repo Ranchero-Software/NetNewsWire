@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "feedbin-logo-any.pdf",
+      "filename" : "feedbin-logo-filled-1.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "feedbin-logo-dark.pdf",
+      "filename" : "feedbin-logo-filled.pdf",
       "idiom" : "universal"
     }
   ],
