@@ -52,7 +52,7 @@ class FeedbinAccountViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = AppAssets.image(for: .feedbin)
+			headerView.imageView.image = AppAssets.image(for: .feedbin)?.tinted(color: AccountType.feedbin.iconColor())
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)

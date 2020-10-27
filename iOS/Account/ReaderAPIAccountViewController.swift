@@ -187,13 +187,13 @@ class ReaderAPIAccountViewController: UITableViewController {
 		if let accountType = accountType {
 			switch accountType {
 				case .bazQux:
-					return AppAssets.accountBazQuxImage
+					return AppAssets.accountBazQuxImage.tinted(color: accountType.iconColor())
 				case .inoreader:
-					return AppAssets.accountInoreaderImage
+					return AppAssets.accountInoreaderImage.tinted(color: accountType.iconColor())
 				case .theOldReader:
-					return AppAssets.accountTheOldReaderImage
+					return AppAssets.accountTheOldReaderImage.tinted(color: accountType.iconColor())
 				case .freshRSS:
-					return AppAssets.accountFreshRSSImage
+					return AppAssets.accountFreshRSSImage.tinted(color: accountType.iconColor())
 				default:
 					return nil
 			}
