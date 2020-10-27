@@ -43,6 +43,14 @@ class AddExtensionPointViewController: UITableViewController, AddExtensionPointD
 		return cell
 	}
 	
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		return NSLocalizedString("Feed Provider", comment: "Feed Provider Header")
+	}
+	
+	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+		return NSLocalizedString("Feed Providers allow you to subscribe to web site URL's as if they were RSS feeds.", comment: "Feed Provider Footer")
+	}
+	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		let navController = UIStoryboard.settings.instantiateViewController(withIdentifier: "EnableExtensionPointNavigationViewController") as! UINavigationController
 		navController.modalPresentationStyle = .currentContext
