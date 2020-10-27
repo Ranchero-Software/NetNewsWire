@@ -17,63 +17,6 @@ import UIKit
 extension AccountType {
 	
 	// TODO: Move this to the Account Package.
-	// Colors
-	
-	#if os(macOS)
-	func iconColor() -> NSColor {
-		switch self {
-		case .onMyMac:
-			return NSColor(named: "localColor")!
-		case .bazQux:
-			return NSColor(named: "bazquxColor")!
-		case .cloudKit:
-			return NSColor(named: "cloudkitColor")!
-		case .feedWrangler:
-			return NSColor(named: "feedwranglerColor")!
-		case .feedbin:
-			return NSColor(named: "feedbinColor")!
-		case .feedly:
-			return NSColor(named: "feedlyColor")!
-		case .freshRSS:
-			return NSColor(named: "freshRSSColor")!
-		case .inoreader:
-			return NSColor(named: "inoreaderColor")!
-		case .newsBlur:
-			return NSColor(named: "newsblurColor")!
-		case .theOldReader:
-			return NSColor(named: "theoldreaderColor")!
-		default:
-			return NSColor.blue
-		}
-	}
-	#else
-	func iconColor() -> UIColor {
-		switch self {
-		case .onMyMac:
-			return UIColor(named: "localColor")!
-		case .bazQux:
-			return UIColor(named: "bazquxColor")!
-		case .cloudKit:
-			return UIColor(named: "cloudkitColor")!
-		case .feedWrangler:
-			return UIColor(named: "feedwranglerColor")!
-		case .feedbin:
-			return UIColor(named: "feedbinColor")!
-		case .feedly:
-			return UIColor(named: "feedlyColor")!
-		case .freshRSS:
-			return UIColor(named: "freshRSSColor")!
-		case .inoreader:
-			return UIColor(named: "inoreaderColor")!
-		case .newsBlur:
-			return UIColor(named: "newsblurColor")!
-		case .theOldReader:
-			return UIColor(named: "theoldreaderColor")!
-		default:
-			return UIColor.blue
-		}
-	}
-	#endif
 	
 	func localizedAccountName() -> String {
 		
