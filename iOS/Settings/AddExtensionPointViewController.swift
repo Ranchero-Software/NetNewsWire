@@ -29,10 +29,6 @@ class AddExtensionPointViewController: UITableViewController, AddExtensionPointD
 		return availableExtensionPointTypes.count
 	}
 	
-	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return 52.0
-	}
-	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsExtensionTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 		

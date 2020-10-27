@@ -126,10 +126,6 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		}
 	}
 	
-//	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//		return 52.0
-//	}
-	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 		
