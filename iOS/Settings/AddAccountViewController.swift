@@ -136,23 +136,23 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		switch indexPath.section {
 		case AddAccountSections.local.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.local.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: .onMyMac)?.tinted(color: AddAccountSections.local.sectionContent[indexPath.row].iconColor())
+			cell.comboImage?.image = AppAssets.image(for: .onMyMac)
 		case AddAccountSections.icloud.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.icloud.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.icloud.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.icloud.sectionContent[indexPath.row].iconColor())
+			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.icloud.sectionContent[indexPath.row])
 			if AppDefaults.shared.isDeveloperBuild {
 				cell.isUserInteractionEnabled = false
 			}
 		case AddAccountSections.web.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.web.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.web.sectionContent[indexPath.row].iconColor())
+			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.web.sectionContent[indexPath.row])
 			let type = AddAccountSections.web.sectionContent[indexPath.row]
 			if (type == .feedly || type == .feedWrangler) && AppDefaults.shared.isDeveloperBuild {
 				cell.isUserInteractionEnabled = false
 			}
 		case AddAccountSections.selfhosted.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.selfhosted.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.selfhosted.sectionContent[indexPath.row])?.tinted(color: AddAccountSections.web.sectionContent[indexPath.row].iconColor())
+			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.selfhosted.sectionContent[indexPath.row])
 			
 		default:
 			return cell

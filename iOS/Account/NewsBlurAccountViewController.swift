@@ -52,7 +52,7 @@ class NewsBlurAccountViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = AppAssets.image(for: .newsBlur)?.tinted(color: AccountType.newsBlur.iconColor())
+			headerView.imageView.image = AppAssets.image(for: .newsBlur)
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)
