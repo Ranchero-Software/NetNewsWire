@@ -571,33 +571,47 @@ final class ReaderAPICaller: NSObject {
 		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
 			switch result {
 			case .success(let token):
-				// Do POST asking for data about all the new articles
 				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), credentials: self.credentials)
 				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
-				// Get ids from above into hex representation of value
-				let idsToFetch = articleIDs.map({ (reference) -> String in
-					return "i=tag:google.com,2005:reader/item/\(reference)"
-				}).joined(separator:"&")
+				let chunkedArticleIds = articleIDs.chunked(into: 200)
+				let group = DispatchGroup()
+				var groupEntries = [ReaderAPIEntry]()
+				var groupError: Error? = nil
 				
-				let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
-				
-				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
-					switch result {
-					case .success(let (_, entryWrapper)):
-						guard let entryWrapper = entryWrapper else {
-							completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
-							return
+				for articleIDChunk in chunkedArticleIds {
+					let itemFetchParameters = articleIDChunk.map({ articleID -> String in
+						return "i=tag:google.com,2005:reader/item/\(articleID)"
+					}).joined(separator:"&")
+					
+					let postData = "T=\(token)&output=json&\(itemFetchParameters)".data(using: String.Encoding.utf8)
+					
+					group.enter()
+					self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
+						switch result {
+						case .success(let (_, entryWrapper)):
+							guard let entryWrapper = entryWrapper else {
+								completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
+								return
+							}
+							groupEntries.append(contentsOf: entryWrapper.entries)
+							group.leave()
+						case .failure(let error):
+							groupError = error
+							group.leave()
 						}
-						
-						completion(.success((entryWrapper.entries)))
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				})
+					})
+				}
 				
+				group.notify(queue: DispatchQueue.main) {
+					if let error = groupError {
+						completion(.failure(error))
+					} else {
+						completion(.success(groupEntries))
+					}
+				}
 				
 			case .failure(let error):
 				completion(.failure(error))
@@ -619,7 +633,7 @@ final class ReaderAPICaller: NSObject {
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
 				URLQueryItem(name: "s", value: webFeedID),
-				URLQueryItem(name: "ot", value: String(since.timeIntervalSince1970)),
+				URLQueryItem(name: "ot", value: String(Int(since.timeIntervalSince1970))),
 				URLQueryItem(name: "output", value: "json")
 			])
 		
@@ -683,11 +697,11 @@ final class ReaderAPICaller: NSObject {
 			}
 		}()
 		
-		let sinceString = since.timeIntervalSince1970
+		let sinceTimeInterval = since.timeIntervalSince1970
 		let url = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
-				URLQueryItem(name: "ot", value: String(sinceString)),
+				URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))),
 				URLQueryItem(name: "n", value: "1000"),
 				URLQueryItem(name: "output", value: "json"),
 				URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue)
@@ -698,66 +712,74 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
-		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		var request = URLRequest(url: callURL, credentials: credentials)
 		addVariantHeaders(&request)
 
 		self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
 			
 			switch result {
-			case .success(let (_, entries)):
+			case .success(let (response, entries)):
 				
-				guard let entriesItemRefs = entries?.itemRefs else {
-					completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
-					return
-				}
-				
-				guard entriesItemRefs.count > 0 else {
+				guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
 					completion(.success((nil, nil, nil)))
 					return
 				}
 				
+				// This needs to be moved when we fix paging for item ids
+				let dateInfo = HTTPDateInfo(urlResponse: response)
+				self.accountMetadata?.lastArticleFetchStartTime = dateInfo?.date
+				self.accountMetadata?.lastArticleFetchEndTime = Date()
+				
 				self.requestAuthorizationToken(endpoint: baseURL) { (result) in
 					switch result {
 					case .success(let token):
-						// Do POST asking for data about all the new articles
 						var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), credentials: self.credentials)
 						self.addVariantHeaders(&request)
 						request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 						request.httpMethod = "POST"
 						
-						// Get ids from above into hex representation of value
-						let idsToFetch = entriesItemRefs.map({ (reference) -> String in
-							if self.variant == .theOldReader {
-								return "i=tag:google.com,2005:reader/item/\(reference.itemId)"
-							} else {
-								let idValue = Int(reference.itemId)!
-								let idHexString = String(idValue, radix: 16, uppercase: false)
-								return "i=tag:google.com,2005:reader/item/\(idHexString)"
-							}
-						}).joined(separator:"&")
-						
-						let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
+						let chunkedItemRefs = entriesItemRefs.chunked(into: 200)
+						let group = DispatchGroup()
+						var groupEntries = [ReaderAPIEntry]()
+						var groupError: Error? = nil
 
-						self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
-							switch result {
-							case .success(let (response, entryWrapper)):
-								guard let entryWrapper = entryWrapper else {
-									completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
-									return
+						for itemRefsChunk in chunkedItemRefs {
+							let itemFetchParameters = itemRefsChunk.map({ itemRef -> String in
+								if self.variant == .theOldReader {
+									return "i=tag:google.com,2005:reader/item/\(itemRef.itemId)"
+								} else {
+									let idValue = Int(itemRef.itemId)!
+									let idHexString = String(idValue, radix: 16, uppercase: false)
+									return "i=tag:google.com,2005:reader/item/\(idHexString)"
 								}
-								
-								let dateInfo = HTTPDateInfo(urlResponse: response)
-								self.accountMetadata?.lastArticleFetchStartTime = dateInfo?.date
-								self.accountMetadata?.lastArticleFetchEndTime = Date()
-								
-								completion(.success((entryWrapper.entries, nil, nil)))
-							case .failure(let error):
+							}).joined(separator:"&")
+							
+							let postData = "T=\(token)&output=json&\(itemFetchParameters)".data(using: String.Encoding.utf8)
+
+							group.enter()
+							self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
+								switch result {
+								case .success(let (_, entryWrapper)):
+									guard let entryWrapper = entryWrapper else {
+										completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
+										return
+									}
+									groupEntries.append(contentsOf: entryWrapper.entries)
+									group.leave()
+								case .failure(let error):
+									groupError = error
+									group.leave()
+								}
+							})
+						}
+						
+						group.notify(queue: DispatchQueue.main) {
+							if let error = groupError {
 								completion(.failure(error))
+							} else {
+								completion(.success((groupEntries, nil, nil)))
 							}
-						})
-						
-						
+						}
 					case .failure(let error):
 						completion(.failure(error))
 					}
@@ -917,7 +939,7 @@ final class ReaderAPICaller: NSObject {
 		let url = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
 			.appendingQueryItems([
-				URLQueryItem(name: "s", value: ReaderState.starred),
+				URLQueryItem(name: "s", value: ReaderState.starred.rawValue),
 				URLQueryItem(name: "n", value: "1000"),
 				URLQueryItem(name: "output", value: "json")
 			])
@@ -950,8 +972,6 @@ final class ReaderAPICaller: NSObject {
 		}
 		
 	}
-	
-
 	
 }
 
