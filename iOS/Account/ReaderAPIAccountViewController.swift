@@ -109,8 +109,9 @@ class ReaderAPIAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func action(_ sender: Any) {
-
-		validateDataEntry()
+		guard validateDataEntry() else {
+			return
+		}
 		
 		let username = usernameTextField.text!
 		let password = passwordTextField.text!
@@ -201,23 +202,24 @@ class ReaderAPIAccountViewController: UITableViewController {
 		return nil
 	}
   
-	private func validateDataEntry() {
+	private func validateDataEntry() -> Bool {
 		switch accountType {
 		case .freshRSS:
 			if !usernameTextField.hasText || !passwordTextField.hasText || !apiURLTextField.hasText {
 				showError(NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error"))
-				return
+				return false
 			}
 			guard let _ = URL(string: apiURLTextField.text!) else {
 				showError(NSLocalizedString("Invalid API URL.", comment: "Invalid API URL"))
-				return
+				return false
 			}
 		default:
 			if !usernameTextField.hasText || !passwordTextField.hasText {
 				showError(NSLocalizedString("Username and password are required.", comment: "Credentials Error"))
-				return
+				return false
 			}
 		}
+		return true
 	}
 	
 	private func apiURL() -> URL? {
