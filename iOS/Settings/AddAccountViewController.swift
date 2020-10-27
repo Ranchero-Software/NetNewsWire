@@ -147,7 +147,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].localizedAccountName()
 			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.web.sectionContent[indexPath.row])
 			let type = AddAccountSections.web.sectionContent[indexPath.row]
-			if (type == .feedly || type == .feedWrangler) && AppDefaults.shared.isDeveloperBuild {
+			if (type == .feedly || type == .feedWrangler || type == .inoreader) && AppDefaults.shared.isDeveloperBuild {
 				cell.isUserInteractionEnabled = false
 			}
 		case AddAccountSections.selfhosted.rawValue:
