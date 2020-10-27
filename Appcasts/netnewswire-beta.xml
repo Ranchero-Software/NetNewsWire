@@ -7,6 +7,19 @@
         <language>en</language>
 
 <item>
+    <title>NetNewsWire 5.1.2b2</title>
+    <description><![CDATA[
+<p>Fixed a crashing bug in the timeline</p>
+<p>Fixed a background color bug in dark mode in the timeline</p>
+<p>Fixed a crashing bug updating the browser popup in Preferences</p>
+<p>Feedly: fixed bug syncing feed name changes</p>
+    ]]></description>
+    <pubDate>Mon, 26 Oct 2020 20:45:00 -0700</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.2beta2/NetNewsWire5.1.2b2.zip" sparkle:version="3014" sparkle:shortVersionString="5.1.2b2" length="6583374" type="application/zip" />
+    <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
     <title>NetNewsWire 5.1.2b1</title>
     <description><![CDATA[
     <p>Increased performance downloading feeds in the On My Mac account.</p>
