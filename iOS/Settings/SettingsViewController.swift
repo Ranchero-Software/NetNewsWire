@@ -139,7 +139,7 @@ class SettingsViewController: UITableViewController {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsComboTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 				acctCell.applyThemeProperties()
 				let account = sortedAccounts[indexPath.row]
-				acctCell.comboImage?.image = AppAssets.image(for: account.type)
+				acctCell.comboImage?.image = AppAssets.image(for: account.type)?.tinted(color: account.type.iconColor())
 				acctCell.comboNameLabel?.text = account.nameForDisplay
 				cell = acctCell
 			}
