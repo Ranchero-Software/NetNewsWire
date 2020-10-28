@@ -249,6 +249,7 @@ private extension AccountsAddViewController {
 			removeAccountType(.cloudKit)
 			removeAccountType(.feedly)
 			removeAccountType(.feedWrangler)
+			removeAccountType(.inoreader)
 			return
 		}
 
