@@ -252,7 +252,7 @@ private extension AccountsAddViewController {
 			return
 		}
 
-		if AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
+		if AccountManager.shared.accounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
 			removeAccountType(.cloudKit)
 		}
 	}
