@@ -8,12 +8,17 @@
 
 import AppKit
 import Account
+import SwiftUI
+import RSCore
+
 
 final class AccountsPreferencesViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var detailView: NSView!
 	@IBOutlet weak var deleteButton: NSButton!
+	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
+	
 	
 	private var sortedAccounts = [Account]()
 
@@ -23,12 +28,13 @@ final class AccountsPreferencesViewController: NSViewController {
 		updateSortedAccounts()
 		tableView.delegate = self
 		tableView.dataSource = self
+		addAccountDelegate = self
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 
-		showController(AccountsAddViewController())
+		//showController(AccountsAddViewController())
 
 		// Fix tableView frame — for some reason IB wants it 1pt wider than the clip view. This leads to unwanted horizontal scrolling.
 		var rTable = tableView.frame
@@ -37,8 +43,10 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 	
 	@IBAction func addAccount(_ sender: Any) {
-		tableView.selectRowIndexes([], byExtendingSelection: false)
-		showController(AccountsAddViewController())
+		//tableView.selectRowIndexes([], byExtendingSelection: false)
+		let controller = NSHostingController(rootView: AddAccountsView(delegate: self))
+		controller.rootView.parent = controller
+		presentAsSheet(controller)
 	}
 	
 	@IBAction func removeAccount(_ sender: Any) {
@@ -62,7 +70,7 @@ final class AccountsPreferencesViewController: NSViewController {
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 				guard let self = self else { return }
 				AccountManager.shared.deleteAccount(self.sortedAccounts[self.tableView.selectedRow])
-				self.showController(AccountsAddViewController())
+				//self.showController(AccountsAddViewController())
 			}
 		}
 		
@@ -132,6 +140,106 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 	
 }
 
+// MARK: - AccountsPreferencesAddAccountDelegate
+protocol AccountsPreferencesAddAccountDelegate {
+	func presentSheetForAccount(_ accountType: AccountType)
+}
+
+extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelegate {
+	func presentSheetForAccount(_ accountType: AccountType) {
+		switch accountType {
+		case .onMyMac:
+			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
+			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
+			//accountsAddWindowController = accountsAddLocalWindowController
+			
+		case .cloudKit:
+			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
+			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
+				if response == NSApplication.ModalResponse.OK {
+					//self.restrictAccounts()
+					//self.tableView.reloadData()
+				}
+			}
+			//accountsAddWindowController = accountsAddCloudKitWindowController
+			
+		case .feedbin:
+			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
+			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
+			//accountsAddWindowController = accountsFeedbinWindowController
+			
+		case .feedWrangler:
+			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
+			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
+			//accountsAddWindowController = accountsFeedWranglerWindowController
+			
+		case .freshRSS:
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.accountType = .freshRSS
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			//accountsAddWindowController = accountsReaderAPIWindowController
+			
+		case .feedly:
+			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
+			//addAccount.delegate = self
+			addAccount.presentationAnchor = self.view.window!
+			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
+			MainThreadOperationQueue.shared.add(addAccount)
+			
+		case .newsBlur:
+			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
+			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
+			//accountsAddWindowController = accountsNewsBlurWindowController
+
+		case .inoreader:
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.accountType = .inoreader
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			//accountsAddWindowController = accountsReaderAPIWindowController
+			
+		case .bazQux:
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.accountType = .bazQux
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			//accountsAddWindowController = accountsReaderAPIWindowController
+			
+		case .theOldReader:
+			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
+			accountsReaderAPIWindowController.accountType = .theOldReader
+			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			//accountsAddWindowController = accountsReaderAPIWindowController
+			
+		}
+	}
+	
+	private func runAwaitingFeedlyLoginAlertModal(forLifetimeOf operation: OAuthAccountAuthorizationOperation) {
+		let alert = NSAlert()
+		alert.alertStyle = .informational
+		alert.messageText = NSLocalizedString("Waiting for access to Feedly",
+											  comment: "Alert title when adding a Feedly account and waiting for authorization from the user.")
+		
+		alert.informativeText = NSLocalizedString("Your default web browser will open the Feedly login for you to authorize access.",
+												  comment: "Alert informative text when adding a Feedly account and waiting for authorization from the user.")
+		
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"))
+		
+		let attachedWindow = self.view.window!
+		
+		alert.beginSheetModal(for: attachedWindow) { response in
+			if response == .alertFirstButtonReturn {
+				operation.cancel()
+			}
+		}
+		
+		operation.completionBlock = { _ in
+			guard alert.window.isVisible else {
+				return
+			}
+			attachedWindow.endSheet(alert.window)
+		}
+	}
+}
+
 // MARK: - Private
 
 private extension AccountsPreferencesViewController {
@@ -155,3 +263,4 @@ private extension AccountsPreferencesViewController {
 	}
 	
 }
+
