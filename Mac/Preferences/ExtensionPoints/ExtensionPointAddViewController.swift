@@ -43,6 +43,7 @@ extension ExtensionPointAddViewController: NSTableViewDataSource {
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
 		return nil
 	}
+	
 }
 
 // MARK: - NSTableViewDelegate
@@ -50,9 +51,10 @@ extension ExtensionPointAddViewController: NSTableViewDataSource {
 extension ExtensionPointAddViewController: NSTableViewDelegate {
 	
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-		
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? ExtensionPointAddTableCellView {
 			let extensionPointType = availableExtensionPointTypes[row]
+			cell.extensionPointType = extensionPointType
+			cell.delegate = self
 			cell.titleLabel?.stringValue = extensionPointType.title
 			cell.imageView?.image = extensionPointType.templateImage
 			return cell
@@ -60,20 +62,15 @@ extension ExtensionPointAddViewController: NSTableViewDelegate {
 		return nil
 	}
 	
-	func tableViewSelectionDidChange(_ notification: Notification) {
-		let selectedRow = tableView.selectedRow
-		guard selectedRow != -1 else {
-			return
-		}
+}
 
-		let extensionPointType = availableExtensionPointTypes[selectedRow]
-
+extension ExtensionPointAddViewController: ExtensionPointTableCellViewDelegate {
+	
+	func addExtensionPoint(_ extensionPointType: ExtensionPoint.Type) {
 		let windowController = ExtensionPointEnableWindowController()
 		windowController.extensionPointType = extensionPointType
 		windowController.runSheetOnWindow(self.view.window!)
 		extensionPointAddWindowController = windowController
-		
-		tableView.selectRowIndexes([], byExtendingSelection: false)
 	}
 	
 }
