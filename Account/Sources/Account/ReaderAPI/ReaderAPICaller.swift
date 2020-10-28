@@ -576,42 +576,27 @@ final class ReaderAPICaller: NSObject {
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
-				let chunkedArticleIds = articleIDs.chunked(into: 200)
-				let group = DispatchGroup()
-				var groupEntries = [ReaderAPIEntry]()
-				var groupError: Error? = nil
+				// Get ids from above into hex representation of value
+				let idsToFetch = articleIDs.map({ (reference) -> String in
+					return "i=tag:google.com,2005:reader/item/\(reference)"
+				}).joined(separator:"&")
 				
-				for articleIDChunk in chunkedArticleIds {
-					let itemFetchParameters = articleIDChunk.map({ articleID -> String in
-						return "i=tag:google.com,2005:reader/item/\(articleID)"
-					}).joined(separator:"&")
-					
-					let postData = "T=\(token)&output=json&\(itemFetchParameters)".data(using: String.Encoding.utf8)
-					
-					group.enter()
-					self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
-						switch result {
-						case .success(let (_, entryWrapper)):
-							guard let entryWrapper = entryWrapper else {
-								completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
-								return
-							}
-							groupEntries.append(contentsOf: entryWrapper.entries)
-							group.leave()
-						case .failure(let error):
-							groupError = error
-							group.leave()
+				let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
+					switch result {
+					case .success(let (_, entryWrapper)):
+						guard let entryWrapper = entryWrapper else {
+							completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
+							return
 						}
-					})
-				}
-				
-				group.notify(queue: DispatchQueue.main) {
-					if let error = groupError {
+						
+						completion(.success((entryWrapper.entries)))
+					case .failure(let error):
 						completion(.failure(error))
-					} else {
-						completion(.success(groupEntries))
 					}
-				}
+				})
+				
 				
 			case .failure(let error):
 				completion(.failure(error))
