@@ -1,17 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "reddit-light.pdf",
-      "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "reddit-dark.pdf",
+      "filename" : "reddit_logo.pdf",
       "idiom" : "universal"
     }
   ],
@@ -20,6 +10,6 @@
     "version" : 1
   },
   "properties" : {
-    "template-rendering-intent" : "template"
+    "template-rendering-intent" : "original"
   }
 }
