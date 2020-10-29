@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "theOldReaderAny.pdf",
+      "filename" : "oldreader-icon-any.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "theOldReaderDark.pdf",
+      "filename" : "oldreader-icon-dark.pdf",
       "idiom" : "universal"
     }
   ],

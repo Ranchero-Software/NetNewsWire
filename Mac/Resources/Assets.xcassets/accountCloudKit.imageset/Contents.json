@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "CloudKitAny.pdf",
+      "filename" : "icloud-any.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "CloudKitDark.pdf",
+      "filename" : "icloud-dark.pdf",
       "idiom" : "universal"
     }
   ],
@@ -20,6 +20,7 @@
     "version" : 1
   },
   "properties" : {
+    "preserves-vector-representation" : true,
     "template-rendering-intent" : "original"
   }
 }

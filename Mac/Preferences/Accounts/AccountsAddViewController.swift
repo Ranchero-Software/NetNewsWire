@@ -171,7 +171,6 @@ extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
 			accountsReaderAPIWindowController.accountType = .theOldReader
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsReaderAPIWindowController
-			
 		}
 		
 	}

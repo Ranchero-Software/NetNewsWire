@@ -13,6 +13,7 @@ import AppKit
 #else
 import UIKit
 #endif
+import SwiftUI
 
 extension AccountType {
 	
@@ -51,8 +52,35 @@ extension AccountType {
 			return NSLocalizedString("NewsBlur", comment: "Account name")
 		case .theOldReader:
 			return NSLocalizedString("The Old Reader", comment: "Account name")
+		default:
+			return ""
 		}
-		
+	}
+	
+	// MARK: - SwiftUI Images
+	func image() -> Image {
+		switch self {
+		case .onMyMac:
+			return Image("accountLocal")
+		case .bazQux:
+			return Image("accountBazQux")
+		case .cloudKit:
+			return Image("accountCloudKit")
+		case .feedWrangler:
+			return Image("accountFeedWrangler")
+		case .feedbin:
+			return Image("accountFeedbin")
+		case .feedly:
+			return Image("accountFeedly")
+		case .freshRSS:
+			return Image("accountFreshRSS")
+		case .inoreader:
+			return Image("accountInoreader")
+		case .newsBlur:
+			return Image("accountNewsBlur")
+		case .theOldReader:
+			return Image("accountTheOldReader")
+		}
 	}
 
 }
