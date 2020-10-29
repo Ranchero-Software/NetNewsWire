@@ -80,13 +80,19 @@ class NewsBlurAccountViewController: UITableViewController {
 			return
 		}
 
+		// When you fill in the email address via auto-complete it adds extra whitespace
+		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
+
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: trimmedUsername) else {
+			showError(NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error"))
+			return
+		}
+		
 		let password = passwordTextField.text ?? ""
 
 		startAnimatingActivityIndicator()
 		disableNavigation()
 
-		// When you fill in the email address via auto-complete it adds extra whitespace
-		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
 		let credentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
 		Account.validateCredentials(type: .newsBlur, credentials: credentials) { result in
 

@@ -109,7 +109,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func action(_ sender: Any) {
-		guard validateDataEntry() else {
+		guard validateDataEntry(), let type = accountType else {
 			return
 		}
 		
@@ -117,15 +117,18 @@ class ReaderAPIAccountViewController: UITableViewController {
 		let password = passwordTextField.text!
 		let url = apiURL()!
 		
+		// When you fill in the email address via auto-complete it adds extra whitespace
+		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
+		
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: type, username: trimmedUsername) else {
+			showError(NSLocalizedString("There is already an account of that type with that username created.", comment: "Duplicate Error"))
+			return
+		}
+
 		startAnimatingActivityIndicator()
 		disableNavigation()
 
-		// When you fill in the email address via auto-complete it adds extra whitespace
-		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
 		let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: password)
-		guard let type = accountType else {
-			return
-		}
 		Account.validateCredentials(type: type, credentials: credentials, endpoint: url) { result in
 
 			self.stopAnimatingActivityIndicator()

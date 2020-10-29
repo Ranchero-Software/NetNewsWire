@@ -56,7 +56,7 @@ class AccountsFeedWranglerWindowController: NSWindowController {
 			return
 		}
 		
-		guard !AccountManager.shared.duplicateServiceAccount(type: .feedWrangler, username: usernameTextField.stringValue) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedWrangler, username: usernameTextField.stringValue) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a FeedWrangler account with that username created.", comment: "Duplicate Error")
 			return
 		}

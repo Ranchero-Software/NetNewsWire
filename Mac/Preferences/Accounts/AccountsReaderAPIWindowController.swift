@@ -91,7 +91,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 			return
 		}
 		
-		guard !AccountManager.shared.duplicateServiceAccount(type: accountType, username: usernameTextField.stringValue) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: usernameTextField.stringValue) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
 			return
 		}
