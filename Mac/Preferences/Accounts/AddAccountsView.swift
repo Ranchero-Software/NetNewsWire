@@ -75,22 +75,26 @@ struct AddAccountsView: View {
 			webAccounts
 			selfhostedAccounts
 			
-			HStack {
+			HStack(spacing: 12) {
 				Spacer()
 				if #available(OSX 11.0, *) {
 					Button(action: {
 						parent?.dismiss(nil)
 					}, label: {
 						Text("Cancel")
-							.accessibility(label: Text("Add Account"))
-					}).keyboardShortcut(.cancelAction)
+							.frame(width: 80)
+					})
+					.help("Cancel")
+					.keyboardShortcut(.cancelAction)
+					
 				} else {
 					Button(action: {
 						parent?.dismiss(nil)
 					}, label: {
 						Text("Cancel")
-							.accessibility(label: Text("Add Account"))
+							.frame(width: 80)
 					})
+					.accessibility(label: Text("Add Account"))
 				}
 				if #available(OSX 11.0, *) {
 					Button(action: {
@@ -98,21 +102,26 @@ struct AddAccountsView: View {
 						parent?.dismiss(nil)
 					}, label: {
 						Text("Continue")
-					}).keyboardShortcut(.defaultAction)
+							.frame(width: 80)
+					})
+					.help("Add Account")
+					.keyboardShortcut(.defaultAction)
+					
 				} else {
 					Button(action: {
 						addAccountDelegate?.presentSheetForAccount(selectedAccount)
 						parent?.dismiss(nil)
 					}, label: {
 						Text("Continue")
+							.frame(width: 80)
 					})
 				}
 			}.padding([.top, .bottom], 4)
 		}
 		.pickerStyle(RadioGroupPickerStyle())
 		.fixedSize(horizontal: false, vertical: true)
-		.frame(width: 400)
-		.padding(12)
+		.frame(width: 420)
+		.padding()
     }
 	
 	var localAccount: some View {
@@ -123,11 +132,13 @@ struct AddAccountsView: View {
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.local.sectionContent, id: \.self, content: { account in
 					HStack(alignment: .top) {
-						Image(nsImage: AppAssets.image(for: account)!)
+						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
 							.offset(CGSize(width: 0, height: -2.5))
+							.padding(.leading, 4)
+						
 							
 						VStack(alignment: .leading, spacing: 4) {
 							Text(account.localizedAccountName())
@@ -139,6 +150,7 @@ struct AddAccountsView: View {
 				})
 			})
 			.pickerStyle(RadioGroupPickerStyle())
+			.offset(x: 7.5, y: 0)
 		}
 		
 	}
@@ -151,12 +163,13 @@ struct AddAccountsView: View {
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.icloud.sectionContent, id: \.self, content: { account in
 					HStack(alignment: .top) {
-						Image(nsImage: AppAssets.image(for: account)!)
+						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
 							.offset(CGSize(width: 0, height: -5))
-							
+							.padding(.leading, 4)
+						
 						VStack(alignment: .leading, spacing: 4) {
 							Text(account.localizedAccountName())
 							Text(AddAccountSections.icloud.sectionFooter).foregroundColor(.gray)
@@ -166,6 +179,7 @@ struct AddAccountsView: View {
 					.tag(account)
 				})
 			})
+			.offset(x: 7.5, y: 0)
 			.disabled(isCloudInUse())
 		}
 	}
@@ -179,10 +193,11 @@ struct AddAccountsView: View {
 				ForEach(AddAccountSections.web.sectionContent.filter({ isRestricted($0) != true }), id: \.self, content: { account in
 					
 					HStack(alignment: .center) {
-						Image(nsImage: AppAssets.image(for: account)!)
+						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
+							.padding(.leading, 4)
 							
 						VStack(alignment: .leading) {
 							Text(account.localizedAccountName())
@@ -192,6 +207,7 @@ struct AddAccountsView: View {
 					
 				})
 			})
+			.offset(x: 7.5, y: 0)
 		}
 	}
 	
@@ -203,20 +219,23 @@ struct AddAccountsView: View {
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.selfhosted.sectionContent, id: \.self, content: { account in
 					HStack {
-						Image(nsImage: AppAssets.image(for: account)!)
+						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
+							.padding(.leading, 4)
 
 						Text(account.localizedAccountName())
 					}.tag(account)
 				})
 			})
+			.offset(x: 7.5, y: 0)
 			
 			Text("Web and self-hosted accounts sync across all signed-in devices.")
 				.font(.caption)
-				.padding(.leading, 62)
 				.foregroundColor(.gray)
+				.padding(.horizontal)
+				.offset(x: 57)
 		}
 	}
 	
