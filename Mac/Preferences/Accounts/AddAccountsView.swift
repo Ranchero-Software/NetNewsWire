@@ -59,10 +59,11 @@ struct AddAccountsView: View {
     
 	weak var parent: NSHostingController<AddAccountsView>? // required because presentationMode.dismiss() doesn't work
 	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
+	@State private var selectedAccount: AccountType = .onMyMac
+	
 	init(delegate: AccountsPreferencesAddAccountDelegate?) {
 		self.addAccountDelegate = delegate
 	}
-	@State private var selectedAccount: AccountType = .onMyMac
 	
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {

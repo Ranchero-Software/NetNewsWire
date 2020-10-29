@@ -34,7 +34,6 @@ final class AccountsPreferencesViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 
-		//showController(AccountsAddViewController())
 
 		// Fix tableView frame — for some reason IB wants it 1pt wider than the clip view. This leads to unwanted horizontal scrolling.
 		var rTable = tableView.frame
@@ -43,7 +42,6 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 	
 	@IBAction func addAccount(_ sender: Any) {
-		//tableView.selectRowIndexes([], byExtendingSelection: false)
 		let controller = NSHostingController(rootView: AddAccountsView(delegate: self))
 		controller.rootView.parent = controller
 		presentAsSheet(controller)
@@ -70,7 +68,6 @@ final class AccountsPreferencesViewController: NSViewController {
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 				guard let self = self else { return }
 				AccountManager.shared.deleteAccount(self.sortedAccounts[self.tableView.selectedRow])
-				//self.showController(AccountsAddViewController())
 			}
 		}
 		
@@ -151,64 +148,46 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 		case .onMyMac:
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
-			//accountsAddWindowController = accountsAddLocalWindowController
 			
 		case .cloudKit:
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
 			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
 				if response == NSApplication.ModalResponse.OK {
-					//self.restrictAccounts()
-					//self.tableView.reloadData()
+					self.tableView.reloadData()
 				}
 			}
-			//accountsAddWindowController = accountsAddCloudKitWindowController
 			
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
-			//accountsAddWindowController = accountsFeedbinWindowController
-			
 		case .feedWrangler:
 			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
 			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
-			//accountsAddWindowController = accountsFeedWranglerWindowController
-			
 		case .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = .freshRSS
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-			//accountsAddWindowController = accountsReaderAPIWindowController
-			
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
-			//addAccount.delegate = self
+			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
 			MainThreadOperationQueue.shared.add(addAccount)
-			
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
-			//accountsAddWindowController = accountsNewsBlurWindowController
-
 		case .inoreader:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = .inoreader
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-			//accountsAddWindowController = accountsReaderAPIWindowController
-			
 		case .bazQux:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = .bazQux
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-			//accountsAddWindowController = accountsReaderAPIWindowController
-			
 		case .theOldReader:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = .theOldReader
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-			//accountsAddWindowController = accountsReaderAPIWindowController
-			
 		}
 	}
 	
@@ -264,3 +243,30 @@ private extension AccountsPreferencesViewController {
 	
 }
 
+extension AccountsPreferencesViewController: OAuthAccountAuthorizationOperationDelegate {
+	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
+		// `OAuthAccountAuthorizationOperation` is using `ASWebAuthenticationSession` which bounces the user
+		// to their browser on macOS for authorizing NetNewsWire to access the user's Feedly account.
+		// When this authorization is granted, the browser remains the foreground app which is unfortunate
+		// because the user probably wants to see the result of authorizing NetNewsWire to act on their behalf.
+		NSApp.activate(ignoringOtherApps: true)
+		
+		account.refreshAll { [weak self] result in
+			switch result {
+			case .success:
+				break
+			case .failure(let error):
+				self?.presentError(error)
+			}
+		}
+	}
+	
+	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
+		// `OAuthAccountAuthorizationOperation` is using `ASWebAuthenticationSession` which bounces the user
+		// to their browser on macOS for authorizing NetNewsWire to access the user's Feedly account.
+		NSApp.activate(ignoringOtherApps: true)
+		
+		view.window?.presentError(error)
+	}
+}
