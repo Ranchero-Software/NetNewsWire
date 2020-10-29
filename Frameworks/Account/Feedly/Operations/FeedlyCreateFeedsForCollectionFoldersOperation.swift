@@ -59,6 +59,20 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 
 				// find an existing feed previously added to the account
 				if let feed = account.existingWebFeed(withWebFeedID: collectionFeed.id) {
+					
+					// If the feed was renamed on Feedly, ensure we ingest the new name.
+					if feed.nameForDisplay != collectionFeed.title {
+						feed.name = collectionFeed.title
+						
+						// Let the rest of the app (e.g.: the sidebar) know the feed name changed
+						// `editedName` would post this if its value is changing.
+						// Setting the `name` property has no side effects like this.
+						if feed.editedName != nil {
+							feed.editedName = nil
+						} else {
+							feed.postDisplayNameDidChangeNotification()
+						}
+					}
 					return (feed, folder)
 				} else {
 					// find an existing feed we created below in an earlier value
