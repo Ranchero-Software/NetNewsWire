@@ -95,18 +95,25 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		refreshAccount(account) { result in
 			switch result {
 			case .success():
-				
 				self.sendArticleStatus(for: account) { _ in
 					self.refreshProgress.completeTask()
-					self.refreshArticleStatus(for: account) { _ in
+					self.caller.retrieveItemIDs(type: .allForAccount) { result in
 						self.refreshProgress.completeTask()
-						self.refreshArticles(account) {
-							self.refreshMissingArticles(account) {
-								self.refreshProgress.clear()
-								DispatchQueue.main.async {
-									completion(.success(()))
+						switch result {
+						case .success(let articleIDs):
+							account.markAsRead(Set(articleIDs)) { _ in
+								self.refreshArticleStatus(for: account) { _ in
+									self.refreshProgress.completeTask()
+									self.refreshMissingArticles(account) {
+										self.refreshProgress.clear()
+										DispatchQueue.main.async {
+											completion(.success(()))
+										}
+									}
 								}
 							}
+						case .failure(let error):
+							completion(.failure(error))
 						}
 					}
 				}
@@ -173,10 +180,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Refreshing article statuses...")
+
 		let group = DispatchGroup()
-		
 		group.enter()
-		caller.retrieveUnreadEntries() { result in
+		caller.retrieveItemIDs(type: .unread) { result in
 			switch result {
 			case .success(let articleIDs):
 				self.syncArticleReadState(account: account, articleIDs: articleIDs)
@@ -189,7 +196,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 		
 		group.enter()
-		caller.retrieveStarredEntries() { result in
+		caller.retrieveItemIDs(type: .starred) { result in
 			switch result {
 			case .success(let articleIDs):
 				self.syncArticleStarredState(account: account, articleIDs: articleIDs)
@@ -403,7 +410,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		
 		if let folder = container as? Folder, let feedName = feed.externalID {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
 			caller.createTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
@@ -431,7 +437,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				completion(.success(()))
 			}
 		}
-		
 	}
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -560,36 +565,11 @@ private extension ReaderAPIAccountDelegate {
 					self.syncFolders(account, tags)
 				}
 				self.refreshProgress.completeTask()
-				self.forceExpireFolderFeedRelationship(account, tags)
 				self.refreshFeeds(account, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
 			}
 		}
-	}
-
-	func forceExpireFolderFeedRelationship(_ account: Account, _ tags: [ReaderAPITag]?) {
-		guard let tags = tags else { return }
-
-		let folderNames: [String] =  {
-			if let folders = account.folders {
-				return folders.map { $0.name ?? "" }
-			} else {
-				return [String]()
-			}
-		}()
-
-		let readerFolderNames = tags.compactMap { $0.folderName }
-
-		// The sync service has a tag that we don't have a folder for.  We might not get a new
-		// taggings response for it if it is a folder rename.  Force expire the subscription
-		// so that we will for sure get the new tagging information by pulling all subscriptions.
-		readerFolderNames.forEach { tagName in
-			if !folderNames.contains(tagName) {
-				accountMetadata?.conditionalGetInfo[ReaderAPICaller.ConditionalGetKeys.subscriptions] = nil
-			}
-		}
-
 	}
 
 	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
@@ -879,30 +859,21 @@ private extension ReaderAPIAccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		
 		// Download the initial articles
-		self.caller.retrieveEntries(webFeedID: feed.webFeedID) { result in
+		self.caller.retrieveItemIDs(type: .allForFeed, webFeedID: feed.webFeedID) { result in
 			self.refreshProgress.completeTask()
-			
 			switch result {
-			case .success(let (entries, page)):
-				self.processEntries(account: account, entries: entries) {
-
+			case .success(let articleIDs):
+				account.markAsRead(Set(articleIDs)) { _ in
 					self.refreshProgress.completeTask()
 					self.refreshArticleStatus(for: account) { _ in
-
 						self.refreshProgress.completeTask()
-						self.refreshArticles(account, page: page) {
-
-							self.refreshProgress.completeTask()
-							self.refreshMissingArticles(account) {
-
-								self.refreshProgress.clear()
-								DispatchQueue.main.async {
-									completion(.success(feed))
-								}
-
+						self.refreshMissingArticles(account) {
+							self.refreshProgress.clear()
+							DispatchQueue.main.async {
+								completion(.success(feed))
 							}
-						}
 
+						}
 					}
 
 				}
@@ -912,29 +883,6 @@ private extension ReaderAPIAccountDelegate {
 			
 		}
  
-	}
-	
-	func refreshArticles(_ account: Account, completion: @escaping (() -> Void)) {
-		os_log(.debug, log: log, "Refreshing articles...")
-		
-		caller.retrieveEntries() { result in
-			switch result {
-			case .success(let (entries, page, lastPageNumber)):
-				if let last = lastPageNumber {
-					self.refreshProgress.addToNumberOfTasksAndRemaining(last - 1)
-				}
-				self.processEntries(account: account, entries: entries) {
-					self.refreshProgress.completeTask()
-					self.refreshArticles(account, page: page) {
-						os_log(.debug, log: self.log, "Done refreshing articles.")
-						completion()
-					}
-				}
-			case .failure(let error):
-				os_log(.error, log: self.log, "Refresh articles failed: %@.", error.localizedDescription)
-				completion()
-			}
-		}
 	}
 	
 	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
@@ -981,32 +929,6 @@ private extension ReaderAPIAccountDelegate {
 		}
 	}
 
-	func refreshArticles(_ account: Account, page: String?, completion: @escaping (() -> Void)) {
-		
-		guard let page = page else {
-			completion()
-			return
-		}
-		
-		caller.retrieveEntries(page: page) { result in
-			
-			switch result {
-			case .success(let (entries, nextPage)):
-				
-				self.processEntries(account: account, entries: entries) {
-					self.refreshProgress.completeTask()
-					self.refreshArticles(account, page: nextPage, completion: completion)
-				}
-				
-			case .failure(let error):
-				os_log(.error, log: self.log, "Refresh articles for additional pages failed: %@.", error.localizedDescription)
-				completion()
-			}
-			
-		}
-		
-	}
-	
 	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping VoidCompletionBlock) {
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
 		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }

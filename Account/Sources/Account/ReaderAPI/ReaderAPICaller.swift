@@ -18,23 +18,23 @@ enum CreateReaderAPISubscriptionResult {
 
 final class ReaderAPICaller: NSObject {
 	
-	struct ConditionalGetKeys {
-		static let subscriptions = "subscriptions"
-		static let tags = "tags"
-		static let unreadEntries = "unreadEntries"
-		static let starredEntries = "starredEntries"
+	enum ItemIDType {
+		case unread
+		case starred
+		case allForAccount
+		case allForFeed
 	}
 	
-	enum ReaderState: String {
+	private enum ReaderState: String {
 		case read = "user/-/state/com.google/read"
 		case starred = "user/-/state/com.google/starred"
 	}
 	
-	enum ReaderStreams: String {
+	private enum ReaderStreams: String {
 		case readingList = "user/-/state/com.google/reading-list"
 	}
 	
-	enum ReaderAPIEndpoints: String {
+	private enum ReaderAPIEndpoints: String {
 		case login = "/accounts/ClientLogin"
 		case token = "/reader/api/0/token"
 		case disableTag = "/reader/api/0/disable-tag"
@@ -184,20 +184,16 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
-		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		var request = URLRequest(url: callURL, credentials: credentials)
 		addVariantHeaders(&request)
 
 		transport.send(request: request, resultType: ReaderAPITagContainer.self) { result in
-			
 			switch result {
-			case .success(let (response, wrapper)):
-				self.storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
+			case .success(let (_, wrapper)):
 				completion(.success(wrapper?.tags))
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
 		
 	}
@@ -292,22 +288,17 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
-		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		var request = URLRequest(url: callURL, credentials: credentials)
 		addVariantHeaders(&request)
 
 		transport.send(request: request, resultType: ReaderAPISubscriptionContainer.self) { result in
-			
 			switch result {
-			case .success(let (response, container)):
-				self.storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
+			case .success(let (_, container)):
 				completion(.success(container?.subscriptions))
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
-		
 	}
 	
 	func createSubscription(url: String, name: String?, folder: Folder?, completion: @escaping (Result<CreateReaderAPISubscriptionResult, Error>) -> Void) {
@@ -576,297 +567,188 @@ final class ReaderAPICaller: NSObject {
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
-				let chunkedArticleIds = articleIDs.chunked(into: 200)
-				let group = DispatchGroup()
-				var groupEntries = [ReaderAPIEntry]()
-				var groupError: Error? = nil
-				
-				for articleIDChunk in chunkedArticleIds {
-					let itemFetchParameters = articleIDChunk.map({ articleID -> String in
-						return "i=tag:google.com,2005:reader/item/\(articleID)"
-					}).joined(separator:"&")
-					
-					let postData = "T=\(token)&output=json&\(itemFetchParameters)".data(using: String.Encoding.utf8)
-					
-					group.enter()
-					self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
-						switch result {
-						case .success(let (_, entryWrapper)):
-							guard let entryWrapper = entryWrapper else {
-								completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
-								return
-							}
-							groupEntries.append(contentsOf: entryWrapper.entries)
-							group.leave()
-						case .failure(let error):
-							groupError = error
-							group.leave()
-						}
-					})
-				}
-				
-				group.notify(queue: DispatchQueue.main) {
-					if let error = groupError {
-						completion(.failure(error))
-					} else {
-						completion(.success(groupEntries))
-					}
-				}
-				
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-
-	}
-
-	func retrieveEntries(webFeedID: String, completion: @escaping (Result<([ReaderAPIEntry]?, String?), Error>) -> Void) {
-		
-		let since = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
-		
-		guard let baseURL = APIBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
-		}
-		
-		let url = baseURL
-			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
-			.appendingQueryItems([
-				URLQueryItem(name: "s", value: webFeedID),
-				URLQueryItem(name: "ot", value: String(Int(since.timeIntervalSince1970))),
-				URLQueryItem(name: "output", value: "json")
-			])
-		
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-		
-		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: nil)
-		addVariantHeaders(&request)
-
-		transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
-			
-			switch result {
-			case .success(let (_, unreadEntries)):
-				
-				guard let itemRefs = unreadEntries?.itemRefs else {
-					completion(.success(([], nil)))
-					return
-				}
-				
-				let itemIds = itemRefs.map { (reference) -> String in
+				// Get ids from above into hex representation of value
+				let idsToFetch = articleIDs.map({ articleID -> String in
 					if self.variant == .theOldReader {
-						return reference.itemId
+						return "i=tag:google.com,2005:reader/item/\(articleID)"
 					} else {
-						// Convert the IDs to the (stupid) Google Hex Format
-						let idValue = Int(reference.itemId)!
-						return String(idValue, radix: 16, uppercase: false)
+						let idValue = Int(articleID)!
+						let idHexString = String(idValue, radix: 16, uppercase: false)
+						return "i=tag:google.com,2005:reader/item/\(idHexString)"
 					}
-				}
+				}).joined(separator:"&")
 				
-				self.retrieveEntries(articleIDs: itemIds) { (results) in
-					switch results {
-					case .success(let entries):
-						completion(.success((entries,nil)))
+				let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
+					switch result {
+					case .success(let (_, entryWrapper)):
+						guard let entryWrapper = entryWrapper else {
+							completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
+							return
+						}
+						
+						completion(.success((entryWrapper.entries)))
 					case .failure(let error):
 						completion(.failure(error))
 					}
-				}
+				})
+				
 				
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
-		
-	}
 
-	func retrieveEntries(completion: @escaping (Result<([ReaderAPIEntry]?, String?, Int?), Error>) -> Void) {
-		
+	}
+	
+	func retrieveItemIDs(type: ItemIDType, webFeedID: String? = nil, completion: @escaping ((Result<[String], Error>) -> Void)) {
 		guard let baseURL = APIBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
 		
-		let since: Date = {
-			if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
-				return lastArticleFetch
-			} else {
-				return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
-			}
-		}()
+		var queryItems = [
+			URLQueryItem(name: "n", value: "1000"),
+			URLQueryItem(name: "output", value: "json")
+		]
 		
-		let sinceTimeInterval = since.timeIntervalSince1970
+		switch type {
+		case .allForAccount:
+			let since: Date = {
+				if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
+					return lastArticleFetch
+				} else {
+					return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
+				}
+			}()
+			
+			let sinceTimeInterval = since.timeIntervalSince1970
+			queryItems.append(URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))))
+			queryItems.append(URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue))
+		case .allForFeed:
+			guard let webFeedID = webFeedID else {
+				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+				return
+			}
+			let sinceTimeInterval = (Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()).timeIntervalSince1970
+			queryItems.append(URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))))
+			queryItems.append(URLQueryItem(name: "s", value: webFeedID))
+		case .unread:
+			queryItems.append(URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue))
+			queryItems.append(URLQueryItem(name: "xt", value: ReaderState.read.rawValue))
+		case .starred:
+			queryItems.append(URLQueryItem(name: "s", value: ReaderState.starred.rawValue))
+		}
+		
 		let url = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
-			.appendingQueryItems([
-				URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))),
-				URLQueryItem(name: "n", value: "1000"),
-				URLQueryItem(name: "output", value: "json"),
-				URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue)
-			])
+			.appendingQueryItems(queryItems)
 		
 		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
 		
-		var request = URLRequest(url: callURL, credentials: credentials)
+		var request: URLRequest = URLRequest(url: callURL, credentials: credentials)
 		addVariantHeaders(&request)
 
 		self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
-			
 			switch result {
 			case .success(let (response, entries)):
-				
 				guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
-					completion(.success((nil, nil, nil)))
+					completion(.success([String]()))
 					return
 				}
-				
-				// This needs to be moved when we fix paging for item ids
 				let dateInfo = HTTPDateInfo(urlResponse: response)
+				let itemIDs = entriesItemRefs.compactMap { $0.itemId }
+				self.retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, completion: completion)
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
+	func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?, completion: @escaping ((Result<[String], Error>) -> Void)) {
+		guard let continuation = continuation else {
+			if type == .allForAccount {
 				self.accountMetadata?.lastArticleFetchStartTime = dateInfo?.date
 				self.accountMetadata?.lastArticleFetchEndTime = Date()
-				
-				self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-					switch result {
-					case .success(let token):
-						var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), credentials: self.credentials)
-						self.addVariantHeaders(&request)
-						request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-						request.httpMethod = "POST"
-						
-						let chunkedItemRefs = entriesItemRefs.chunked(into: 200)
-						let group = DispatchGroup()
-						var groupEntries = [ReaderAPIEntry]()
-						var groupError: Error? = nil
-
-						for itemRefsChunk in chunkedItemRefs {
-							let itemFetchParameters = itemRefsChunk.map({ itemRef -> String in
-								if self.variant == .theOldReader {
-									return "i=tag:google.com,2005:reader/item/\(itemRef.itemId)"
-								} else {
-									let idValue = Int(itemRef.itemId)!
-									let idHexString = String(idValue, radix: 16, uppercase: false)
-									return "i=tag:google.com,2005:reader/item/\(idHexString)"
-								}
-							}).joined(separator:"&")
-							
-							let postData = "T=\(token)&output=json&\(itemFetchParameters)".data(using: String.Encoding.utf8)
-
-							group.enter()
-							self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self, completion: { (result) in
-								switch result {
-								case .success(let (_, entryWrapper)):
-									guard let entryWrapper = entryWrapper else {
-										completion(.failure(ReaderAPIAccountDelegateError.invalidResponse))
-										return
-									}
-									groupEntries.append(contentsOf: entryWrapper.entries)
-									group.leave()
-								case .failure(let error):
-									groupError = error
-									group.leave()
-								}
-							})
-						}
-						
-						group.notify(queue: DispatchQueue.main) {
-							if let error = groupError {
-								completion(.failure(error))
-							} else {
-								completion(.success((groupEntries, nil, nil)))
-							}
-						}
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				}
-				
-			case .failure(let error):
-				self.accountMetadata?.lastArticleFetchStartTime = nil
-				completion(.failure(error))
 			}
-			
-		}
-	}
-	
-	func retrieveEntries(page: String, completion: @escaping (Result<([ReaderAPIEntry]?, String?), Error>) -> Void) {
-		
-		guard let url = URL(string: page)?.appendingQueryItem(URLQueryItem(name: "mode", value: "extended")) else {
-			completion(.success((nil, nil)))
-			return
-		}
-		var request = URLRequest(url: url, credentials: credentials)
-		addVariantHeaders(&request)
-
-		transport.send(request: request, resultType: [ReaderAPIEntry].self) { result in
-			
-			switch result {
-			case .success(let (response, entries)):
-				
-				let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
-				completion(.success((entries, pagingInfo.nextPage)))
-
-			case .failure(let error):
-				self.accountMetadata?.lastArticleFetchStartTime = nil
-				completion(.failure(error))
-			}
-			
-		}
-		
-	}
-
-	func retrieveUnreadEntries(completion: @escaping (Result<[String]?, Error>) -> Void) {
-		
-		guard let baseURL = APIBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
+			completion(.success(itemIDs))
 			return
 		}
 		
-		let url = baseURL
-			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
-			.appendingQueryItems([
-				URLQueryItem(name: "s", value: ReaderStreams.readingList.rawValue),
-				URLQueryItem(name: "n", value: "1000"),
-				URLQueryItem(name: "xt", value: ReaderState.read.rawValue),
-				URLQueryItem(name: "output", value: "json")
-			])
+		guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+			return
+		}
 		
-		guard let callURL = url else {
+		var queryItems = urlComponents.queryItems!.filter({ $0.name != "c" })
+		queryItems.append(URLQueryItem(name: "c", value: continuation))
+		urlComponents.queryItems = queryItems
+		
+		guard let callURL = urlComponents.url else {
 			completion(.failure(TransportError.noURL))
 			return
 		}
-
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
-		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
+		
+		var request: URLRequest = URLRequest(url: callURL, credentials: credentials)
 		addVariantHeaders(&request)
 
-		transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
-			
+		self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
 			switch result {
-			case .success(let (response, unreadEntries)):
-				
-				guard let itemRefs = unreadEntries?.itemRefs else {
-					completion(.success([]))
+			case .success(let (_, entries)):
+				guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
+					self.retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, completion: completion)
 					return
 				}
-				
-				let itemIds = itemRefs.map { $0.itemId }
-				
-				self.storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
-				completion(.success(itemIds))
+				var totalItemIDs = itemIDs
+				totalItemIDs.append(contentsOf: entriesItemRefs.compactMap { $0.itemId })
+				self.retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation, completion: completion)
 			case .failure(let error):
 				completion(.failure(error))
 			}
-			
 		}
-		
 	}
 	
-	func updateStateToEntries(entries: [String], state: ReaderState, add: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+	func createUnreadEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		updateStateToEntries(entries: entries, state: .read, add: false, completion: completion)
+	}
+	
+	func deleteUnreadEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		updateStateToEntries(entries: entries, state: .read, add: true, completion: completion)
+	}
+	
+	func createStarredEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		updateStateToEntries(entries: entries, state: .starred, add: true, completion: completion)
+	}
+	
+	func deleteStarredEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
+		updateStateToEntries(entries: entries, state: .starred, add: false, completion: completion)
+	}
+		
+}
+
+// MARK: Private
+
+private extension ReaderAPICaller {
+	
+	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
+		if var conditionalGet = accountMetadata?.conditionalGetInfo {
+			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
+			accountMetadata?.conditionalGetInfo = conditionalGet
+		}
+	}
+	
+	func addVariantHeaders(_ request: inout URLRequest) {
+		if variant == .inoreader {
+			request.addValue(SecretsManager.provider.inoreaderAppId, forHTTPHeaderField: "AppId")
+			request.addValue(SecretsManager.provider.inoreaderAppKey, forHTTPHeaderField: "AppKey")
+		}
+	}
+
+	private func updateStateToEntries(entries: [String], state: ReaderState, add: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard let baseURL = APIBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
@@ -912,85 +794,5 @@ final class ReaderAPICaller: NSObject {
 		}
 	}
 	
-	func createUnreadEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		updateStateToEntries(entries: entries, state: .read, add: false, completion: completion)
-	}
-	
-	func deleteUnreadEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		updateStateToEntries(entries: entries, state: .read, add: true, completion: completion)
 
-	}
-	
-	func createStarredEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		updateStateToEntries(entries: entries, state: .starred, add: true, completion: completion)
-		
-	}
-	
-	func deleteStarredEntries(entries: [String], completion: @escaping (Result<Void, Error>) -> Void) {
-		updateStateToEntries(entries: entries, state: .starred, add: false, completion: completion)
-	}
-	
-	func retrieveStarredEntries(completion: @escaping (Result<[String]?, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
-			completion(.failure(CredentialsError.incompleteCredentials))
-			return
-		}
-		
-		let url = baseURL
-			.appendingPathComponent(ReaderAPIEndpoints.itemIds.rawValue)
-			.appendingQueryItems([
-				URLQueryItem(name: "s", value: ReaderState.starred.rawValue),
-				URLQueryItem(name: "n", value: "1000"),
-				URLQueryItem(name: "output", value: "json")
-			])
-		
-		guard let callURL = url else {
-			completion(.failure(TransportError.noURL))
-			return
-		}
-		
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
-		var request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
-		addVariantHeaders(&request)
-
-		transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self) { result in
-			
-			switch result {
-			case .success(let (response, unreadEntries)):
-				guard let itemRefs = unreadEntries?.itemRefs else {
-					completion(.success([]))
-					return
-				}
-				
-				let itemIds = itemRefs.map { $0.itemId }
-				self.storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
-				completion(.success(itemIds))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
-		
-	}
-	
-}
-
-// MARK: Private
-
-private extension ReaderAPICaller {
-	
-	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
-		if var conditionalGet = accountMetadata?.conditionalGetInfo {
-			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
-			accountMetadata?.conditionalGetInfo = conditionalGet
-		}
-	}
-	
-	func addVariantHeaders(_ request: inout URLRequest) {
-		if variant == .inoreader {
-			request.addValue(SecretsManager.provider.inoreaderAppId, forHTTPHeaderField: "AppId")
-			request.addValue(SecretsManager.provider.inoreaderAppKey, forHTTPHeaderField: "AppKey")
-		}
-	}
-	
 }
