@@ -219,24 +219,27 @@ struct AddAccountsView: View {
 				.padding(.top, 8)
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.selfhosted.sectionContent, id: \.self, content: { account in
-					HStack {
+					HStack(alignment: .top) {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
+							.offset(CGSize(width: 0, height: -4))
 							.padding(.leading, 4)
+						
 
-						Text(account.localizedAccountName())
+						VStack(alignment: .leading, spacing: 4) {
+							Text(account.localizedAccountName())
+							Text("Web and self-hosted accounts sync across all signed-in devices.")
+								.font(.caption)
+								.foregroundColor(.gray)
+						}
 					}.tag(account)
 				})
 			})
 			.offset(x: 7.5, y: 0)
 			
-			Text("Web and self-hosted accounts sync across all signed-in devices.")
-				.font(.caption)
-				.foregroundColor(.gray)
-				.padding(.horizontal)
-				.offset(x: 57)
+			
 		}
 	}
 	
