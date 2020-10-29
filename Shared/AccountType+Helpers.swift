@@ -51,13 +51,7 @@ extension AccountType {
 			return NSLocalizedString("NewsBlur", comment: "Account name")
 		case .theOldReader:
 			return NSLocalizedString("The Old Reader", comment: "Account name")
-		default:
-			return ""
 		}
-		
-		
-		
-		
 		
 	}
 
