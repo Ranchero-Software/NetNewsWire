@@ -21,7 +21,6 @@ class ReaderAPIAccountViewController: UITableViewController {
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
 	
-	
 	weak var account: Account?
 	var accountType: AccountType?
 	weak var delegate: AddAccountDismissDelegate?

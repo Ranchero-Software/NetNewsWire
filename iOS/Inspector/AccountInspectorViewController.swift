@@ -58,6 +58,25 @@ class AccountInspectorViewController: UITableViewController {
 			addViewController.account = account
 			navController.modalPresentationStyle = .currentContext
 			present(navController, animated: true)
+		case .feedWrangler:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedWranglerAccountNavigationViewController") as! UINavigationController
+			let addViewController = navController.topViewController as! FeedWranglerAccountViewController
+			addViewController.account = account
+			navController.modalPresentationStyle = .currentContext
+			present(navController, animated: true)
+		case .newsBlur:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "NewsBlurAccountNavigationViewController") as! UINavigationController
+			let addViewController = navController.topViewController as! NewsBlurAccountViewController
+			addViewController.account = account
+			navController.modalPresentationStyle = .currentContext
+			present(navController, animated: true)
+		case .inoreader, .bazQux, .theOldReader, .freshRSS:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "ReaderAPIAccountNavigationViewController") as! UINavigationController
+			let addViewController = navController.topViewController as! ReaderAPIAccountViewController
+			addViewController.accountType = account.type
+			addViewController.account = account
+			navController.modalPresentationStyle = .currentContext
+			present(navController, animated: true)
 		default:
 			break
 		}
