@@ -216,6 +216,7 @@ struct AddAccountsView: View {
 			Text("Self-hosted")
 				.font(.headline)
 				.padding(.horizontal)
+				.padding(.top, 4)
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.selfhosted.sectionContent, id: \.self, content: { account in
 					HStack {
