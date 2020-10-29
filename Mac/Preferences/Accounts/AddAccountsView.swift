@@ -116,7 +116,7 @@ struct AddAccountsView: View {
 							.frame(width: 80)
 					})
 				}
-			}.padding([.top, .bottom], 4)
+			}.padding(.vertical, 8)
 		}
 		.pickerStyle(RadioGroupPickerStyle())
 		.fixedSize(horizontal: false, vertical: true)
