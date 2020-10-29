@@ -13,7 +13,6 @@ import SafariServices
 
 class SettingsViewController: UITableViewController {
 
-	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 	private weak var opmlAccount: Account?
 	
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
@@ -114,7 +113,7 @@ class SettingsViewController: UITableViewController {
 			return ExtensionPointManager.shared.activeExtensionPoints.count + 1
 		case 3:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
-			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasFeedWithURL(appNewsURLString) {
+			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
@@ -377,7 +376,7 @@ private extension SettingsViewController {
 
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
 		let addViewController = addNavViewController.topViewController as! AddFeedViewController
-		addViewController.initialFeed = appNewsURLString
+		addViewController.initialFeed = AccountManager.netNewsWireNewsURL
 		addViewController.initialFeedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
