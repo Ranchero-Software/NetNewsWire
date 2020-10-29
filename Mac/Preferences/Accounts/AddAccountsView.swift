@@ -245,6 +245,7 @@ struct AddAccountsView: View {
 	}
 	
 	private func isRestricted(_ accountType: AccountType) -> Bool {
+		return false
 		if AppDefaults.shared.isDeveloperBuild && (accountType == .feedly || accountType == .feedWrangler || accountType == .inoreader) {
 			return true
 		}
