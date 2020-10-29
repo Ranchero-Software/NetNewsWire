@@ -93,15 +93,15 @@ class NewsBlurAccountViewController: UITableViewController {
 		startAnimatingActivityIndicator()
 		disableNavigation()
 
-		let credentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
-		Account.validateCredentials(type: .newsBlur, credentials: credentials) { result in
+		let basicCredentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
+		Account.validateCredentials(type: .newsBlur, credentials: basicCredentials) { result in
 
 			self.stopAnimatingActivityIndicator()
 			self.enableNavigation()
 
 			switch result {
-			case .success(let credentials):
-				if let credentials = credentials {
+			case .success(let sessionCredentials):
+				if let sessionCredentials = sessionCredentials {
 					var newAccount = false
 					if self.account == nil {
 						self.account = AccountManager.shared.createAccount(type: .newsBlur)
@@ -112,8 +112,10 @@ class NewsBlurAccountViewController: UITableViewController {
 
 						do {
 							try self.account?.removeCredentials(type: .newsBlurBasic)
+							try self.account?.removeCredentials(type: .newsBlurSessionId)
 						} catch {}
-						try self.account?.storeCredentials(credentials)
+						try self.account?.storeCredentials(basicCredentials)
+						try self.account?.storeCredentials(sessionCredentials)
 
 						if newAccount {
 							self.account?.refreshAll() { result in
