@@ -23,7 +23,7 @@ final class AccountsPreferencesViewController: NSViewController {
 	@IBOutlet weak var detailView: NSView!
 	@IBOutlet weak var deleteButton: NSButton!
 	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
-	
+	var addAccountWindowController: NSWindowController?
 	
 	private var sortedAccounts = [Account]()
 
@@ -153,7 +153,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 		case .onMyMac:
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
-			
+			addAccountWindowController = accountsAddLocalWindowController
 		case .cloudKit:
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
 			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
@@ -161,17 +161,20 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 					self.tableView.reloadData()
 				}
 			}
-			
+			addAccountWindowController = accountsAddCloudKitWindowController
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
+			addAccountWindowController = accountsFeedbinWindowController
 		case .feedWrangler:
 			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
 			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
-		case .freshRSS:
+			addAccountWindowController = accountsFeedWranglerWindowController
+		case .freshRSS, .inoreader, .bazQux, .theOldReader:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = .freshRSS
+			accountsReaderAPIWindowController.accountType = accountType
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			addAccountWindowController = accountsReaderAPIWindowController
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
@@ -181,18 +184,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
-		case .inoreader:
-			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = .inoreader
-			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-		case .bazQux:
-			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = .bazQux
-			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-		case .theOldReader:
-			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = .theOldReader
-			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			addAccountWindowController = accountsNewsBlurWindowController
 		}
 	}
 	
