@@ -194,6 +194,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		removeWebFeedFromCloud(for: account, with: feed, from: container) { result in
 			switch result {
 			case .success:
+				account.clearWebFeedMetadata(feed)
 				container.removeWebFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
