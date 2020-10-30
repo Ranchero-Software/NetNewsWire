@@ -29,7 +29,7 @@ class ExtensionPointDetailViewController: NSViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		guard let extensionPoint = extensionPoint else { return }
-		imageView.image = extensionPoint.templateImage
+		imageView.image = extensionPoint.image
 		titleLabel.stringValue = extensionPoint.title
 		descriptionLabel.attributedStringValue = extensionPoint.description
 	}

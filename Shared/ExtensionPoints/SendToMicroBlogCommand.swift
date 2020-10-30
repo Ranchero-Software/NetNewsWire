@@ -17,7 +17,7 @@ final class SendToMicroBlogCommand: ExtensionPoint, SendToCommand {
 	static var isSinglton = true
 	static var isDeveloperBuildRestricted = false
 	static var title: String =  NSLocalizedString("Micro.blog", comment: "Micro.blog")
-	static var templateImage = AppAssets.extensionPointMicroblog
+	static var image = AppAssets.extensionPointMicroblog
 	static var description: NSAttributedString = {
 		let attrString = SendToMicroBlogCommand.makeAttrString("This extension enables share menu functionality to send selected article text to Micro.blog.  You need the Micro.blog application for this to work.")
 		let range = NSRange(location: 81, length: 10)

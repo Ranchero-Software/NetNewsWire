@@ -92,7 +92,7 @@ struct EnableExtensionPointView: View {
 					ForEach(extensionPointTypeNames, id: \.self, content: { extensionPointTypeName in
 						let extensionPointType = typeFromName(extensionPointTypeName)
 						HStack(alignment: .center) {
-							Image(nsImage: extensionPointType.templateImage)
+							Image(nsImage: extensionPointType.image)
 								.resizable()
 								.aspectRatio(contentMode: .fit)
 								.frame(width: 25, height: 25, alignment: .center)
@@ -129,7 +129,7 @@ struct EnableExtensionPointView: View {
 					ForEach(extensionPointTypeNames, id: \.self, content: { extensionPointTypeName in
 						let extensionPointType = typeFromName(extensionPointTypeName)
 						HStack(alignment: .center) {
-							Image(nsImage: extensionPointType.templateImage)
+							Image(nsImage: extensionPointType.image)
 								.resizable()
 								.aspectRatio(contentMode: .fit)
 								.frame(width: 25, height: 25, alignment: .center)

@@ -33,7 +33,7 @@ class ExtensionPointEnableWindowController: NSWindowController {
 		super.windowDidLoad()
 		guard let extensionPointType = extensionPointType else { return }
 		
-		imageView.image = extensionPointType.templateImage
+		imageView.image = extensionPointType.image
 		titleLabel.stringValue = extensionPointType.title
 		descriptionLabel.attributedStringValue = extensionPointType.description
 	}

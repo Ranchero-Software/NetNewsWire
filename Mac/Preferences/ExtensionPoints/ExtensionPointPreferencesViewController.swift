@@ -87,7 +87,7 @@ extension ExtensionPointPreferencesViewController: NSTableViewDelegate {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? NSTableCellView {
 			let extensionPoint = activeExtensionPoints[row]
 			cell.textField?.stringValue = extensionPoint.title
-			cell.imageView?.image = extensionPoint.templateImage
+			cell.imageView?.image = extensionPoint.image
 			return cell
 		}
 		return nil
