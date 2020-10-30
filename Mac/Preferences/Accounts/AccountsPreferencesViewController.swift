@@ -225,11 +225,7 @@ private extension AccountsPreferencesViewController {
 	}
 	
 	func showController(_ controller: NSViewController) {
-		
-		if let controller = children.first {
-			children.removeAll()
-			controller.view.removeFromSuperview()
-		}
+		hideController()
 		
 		addChild(controller)
 		controller.view.translatesAutoresizingMaskIntoConstraints = false
