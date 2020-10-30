@@ -36,8 +36,10 @@ struct TwitterExtendedMedia: Codable {
 		switch type {
 		case "photo":
 			html += renderPhotoAsHTML()
-		case "video", "animated_gif":
+		case "video":
 			html += renderVideoAsHTML()
+		case "animated_gif":
+			html += renderAnimatedGIFAsHTML()
 		default:
 			break
 		}
@@ -71,6 +73,21 @@ private extension TwitterExtendedMedia {
 		}
 
 		html += "src=\"\(bestVariantURL)\"></video>"
+		return html
+	}
+	
+	func renderAnimatedGIFAsHTML() -> String {
+		guard let bestVariantURL = findBestVariant()?.url else { return "" }
+		
+		var html = "<video class=\"nnwAnimatedGIF\" "
+
+		if let httpsMediaURL = httpsMediaURL {
+			html += "poster=\"\(httpsMediaURL)\" "
+		} else if let mediaURL = mediaURL {
+			html += "poster=\"\(mediaURL)\" "
+		}
+
+		html += "src=\"\(bestVariantURL)\" autoplay muted loop></video>"
 		return html
 	}
 	

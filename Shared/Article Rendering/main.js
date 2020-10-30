@@ -53,7 +53,9 @@ function wrapTables() {
 function inlineVideos() {
 	document.querySelectorAll("video").forEach(element => {
 		element.setAttribute("playsinline", true)
-		element.setAttribute("controls", true)
+		if !element.classList.contains("nnwAnimatedGIF") {
+			element.setAttribute("controls", true)
+		}
 	});
 }
 
