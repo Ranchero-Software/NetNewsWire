@@ -14,7 +14,7 @@ struct EnableExtensionPointView: View {
 	
 	weak var parent: NSHostingController<EnableExtensionPointView>? // required because presentationMode.dismiss() doesn't work
 	weak var enabler: ExtensionPointPreferencesEnabler?
-	@State private var extensionPointTypeName = String(describing: ExtensionPointManager.shared.possibleExtensionPointTypes.first!)
+	@State private var extensionPointTypeName = String(describing: Self.feedProviderExtensionPointTypes.first!)
 	
 	init(enabler: ExtensionPointPreferencesEnabler?) {
 		self.enabler = enabler
@@ -26,9 +26,9 @@ struct EnableExtensionPointView: View {
 				.font(.headline)
 				.padding()
 			
-			sendToCommandExtensionPoints
 			feedProviderExtensionPoints
-			
+			sendToCommandExtensionPoints
+
 			HStack(spacing: 12) {
 				Spacer()
 				if #available(OSX 11.0, *) {
@@ -80,50 +80,13 @@ struct EnableExtensionPointView: View {
 		.padding()
 	}
 	
-	var sendToCommandExtensionPoints: some View {
-		VStack(alignment: .leading) {
-			let extensionPointTypeNames = sendToCommandExtensionPointTypes.map { String(describing: $0) }
-			if extensionPointTypeNames.count > 0 {
-				Text("Third-Party Integration")
-					.font(.headline)
-					.padding(.horizontal)
-				
-				Picker(selection: $extensionPointTypeName, label: Text(""), content: {
-					ForEach(extensionPointTypeNames, id: \.self, content: { extensionPointTypeName in
-						let extensionPointType = typeFromName(extensionPointTypeName)
-						HStack(alignment: .center) {
-							Image(nsImage: extensionPointType.templateImage)
-								.resizable()
-								.aspectRatio(contentMode: .fit)
-								.frame(width: 25, height: 25, alignment: .center)
-								.padding(.leading, 4)
-							
-								
-							Text(extensionPointType.title)
-						}
-						.tag(extensionPointTypeNames)
-					})
-				})
-				.pickerStyle(RadioGroupPickerStyle())
-				.offset(x: 7.5, y: 0)
-				
-				Text("An extension point that enables a share menu item that passes article data to a third-party application.")
-					.foregroundColor(.gray)
-					.font(.caption)
-					.padding(.horizontal)
-			}
-		}
-		
-	}
-	
 	var feedProviderExtensionPoints: some View {
 		VStack(alignment: .leading) {
-			let extensionPointTypeNames = feedProviderExtensionPointTypes.map { String(describing: $0) }
+			let extensionPointTypeNames = Self.feedProviderExtensionPointTypes.map { String(describing: $0) }
 			if extensionPointTypeNames.count > 0 {
 				Text("Feed Provider")
 					.font(.headline)
 					.padding(.horizontal)
-					.padding(.top, 8)
 
 				Picker(selection: $extensionPointTypeName, label: Text(""), content: {
 					ForEach(extensionPointTypeNames, id: \.self, content: { extensionPointTypeName in
@@ -153,11 +116,48 @@ struct EnableExtensionPointView: View {
 		
 	}
 
-	var sendToCommandExtensionPointTypes: [ExtensionPoint.Type] {
+	var sendToCommandExtensionPoints: some View {
+		VStack(alignment: .leading) {
+			let extensionPointTypeNames = Self.sendToCommandExtensionPointTypes.map { String(describing: $0) }
+			if extensionPointTypeNames.count > 0 {
+				Text("Third-Party Integration")
+					.font(.headline)
+					.padding(.horizontal)
+					.padding(.top, 8)
+
+				Picker(selection: $extensionPointTypeName, label: Text(""), content: {
+					ForEach(extensionPointTypeNames, id: \.self, content: { extensionPointTypeName in
+						let extensionPointType = typeFromName(extensionPointTypeName)
+						HStack(alignment: .center) {
+							Image(nsImage: extensionPointType.templateImage)
+								.resizable()
+								.aspectRatio(contentMode: .fit)
+								.frame(width: 25, height: 25, alignment: .center)
+								.padding(.leading, 4)
+							
+								
+							Text(extensionPointType.title)
+						}
+						.tag(extensionPointTypeNames)
+					})
+				})
+				.pickerStyle(RadioGroupPickerStyle())
+				.offset(x: 7.5, y: 0)
+				
+				Text("An extension point that enables a share menu item that passes article data to a third-party application.")
+					.foregroundColor(.gray)
+					.font(.caption)
+					.padding(.horizontal)
+			}
+		}
+		
+	}
+	
+	static var sendToCommandExtensionPointTypes: [ExtensionPoint.Type] {
 		return ExtensionPointManager.shared.availableExtensionPointTypes.filter({ $0 is SendToCommand.Type })
 	}
 
-	var feedProviderExtensionPointTypes: [ExtensionPoint.Type] {
+	static var feedProviderExtensionPointTypes: [ExtensionPoint.Type] {
 		return ExtensionPointManager.shared.availableExtensionPointTypes.filter({ !($0 is SendToCommand.Type) })
 	}
 
