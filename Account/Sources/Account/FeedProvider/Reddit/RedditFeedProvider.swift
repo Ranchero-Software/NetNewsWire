@@ -280,7 +280,7 @@ extension RedditFeedProvider: OAuth2SwiftProvider {
 								 consumerSecret: "",
 								 authorizeUrl: "https://www.reddit.com/api/v1/authorize.compact?",
 								 accessTokenUrl: "https://www.reddit.com/api/v1/access_token",
-								 responseType: "token")
+								 responseType: "code")
 		oauth2.accessTokenBasicAuthentification = true
 		return oauth2
 	}
@@ -293,12 +293,7 @@ extension RedditFeedProvider: OAuth2SwiftProvider {
         let state = generateState(withLength: 20)
 		let scope = "identity mysubreddits read"
         let params = [
-			"client_id" : SecretsManager.provider.redditConsumerKey,
-            "response_type" : "code",
-            "state" : state,
-            "redirect_uri" : "netnewswire://success",
             "duration" : "permanent",
-			"scope" : scope
         ]
 		return (state: state, scope: scope, params: params)
 	}
