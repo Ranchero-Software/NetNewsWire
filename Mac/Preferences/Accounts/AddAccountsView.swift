@@ -31,7 +31,7 @@ private enum AddAccountSections: Int, CaseIterable {
 	var sectionFooter: String {
 		switch self {
 		case .local:
-			return NSLocalizedString("This account does not sync subscriptions across devices.", comment: "Local Account")
+			return NSLocalizedString("Local accounts do not sync subscriptions across devices.", comment: "Local Account")
 		case .icloud:
 			return NSLocalizedString("Use your iCloud account to sync your subscriptions across your iOS and macOS devices.", comment: "iCloud Account")
 		case .web:
@@ -130,6 +130,7 @@ struct AddAccountsView: View {
 			Text("Local")
 				.font(.headline)
 				.padding(.horizontal)
+			
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.local.sectionContent, id: \.self, content: { account in
 					HStack(alignment: .top) {
@@ -137,21 +138,22 @@ struct AddAccountsView: View {
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
-							.offset(CGSize(width: 0, height: -2.5))
+							.offset(CGSize(width: 0, height: -3.5))
 							.padding(.leading, 4)
 						
 							
-						VStack(alignment: .leading, spacing: 4) {
-							Text(account.localizedAccountName())
-							Text(AddAccountSections.local.sectionFooter).foregroundColor(.gray)
-								.font(.caption)
-						}
+						Text(account.localizedAccountName())
 					}
 					.tag(account)
 				})
 			})
 			.pickerStyle(RadioGroupPickerStyle())
 			.offset(x: 7.5, y: 0)
+			
+			Text(AddAccountSections.local.sectionFooter).foregroundColor(.gray)
+				.font(.caption)
+				.padding(.horizontal)
+			
 		}
 		
 	}
@@ -161,6 +163,8 @@ struct AddAccountsView: View {
 			Text("iCloud")
 				.font(.headline)
 				.padding(.horizontal)
+				.padding(.top, 8)
+			
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.icloud.sectionContent, id: \.self, content: { account in
 					HStack(alignment: .top) {
@@ -168,20 +172,20 @@ struct AddAccountsView: View {
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
-							.offset(CGSize(width: 0, height: -5))
+							.offset(CGSize(width: 0, height: -3.5))
 							.padding(.leading, 4)
 						
-						VStack(alignment: .leading, spacing: 4) {
-							Text(account.localizedAccountName())
-							Text(AddAccountSections.icloud.sectionFooter).foregroundColor(.gray)
-								.font(.caption)
-						}
+						Text(account.localizedAccountName())
 					}
 					.tag(account)
 				})
 			})
 			.offset(x: 7.5, y: 0)
 			.disabled(isCloudInUse())
+			
+			Text(AddAccountSections.icloud.sectionFooter).foregroundColor(.gray)
+				.font(.caption)
+				.padding(.horizontal)
 		}
 	}
 	
@@ -190,6 +194,8 @@ struct AddAccountsView: View {
 			Text("Web")
 				.font(.headline)
 				.padding(.horizontal)
+				.padding(.top, 8)
+			
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.web.sectionContent.filter({ isRestricted($0) != true }), id: \.self, content: { account in
 					
@@ -200,15 +206,17 @@ struct AddAccountsView: View {
 							.frame(width: 25, height: 25, alignment: .center)
 							.padding(.leading, 4)
 							
-						VStack(alignment: .leading) {
-							Text(account.localizedAccountName())
-						}
+						Text(account.localizedAccountName())
 					}
 					.tag(account)
 					
 				})
 			})
 			.offset(x: 7.5, y: 0)
+			
+			Text(AddAccountSections.web.sectionFooter).foregroundColor(.gray)
+				.font(.caption)
+				.padding(.horizontal)
 		}
 	}
 	
@@ -218,6 +226,7 @@ struct AddAccountsView: View {
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)
+			
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.selfhosted.sectionContent, id: \.self, content: { account in
 					HStack(alignment: .top) {
@@ -227,20 +236,16 @@ struct AddAccountsView: View {
 							.frame(width: 25, height: 25, alignment: .center)
 							.offset(CGSize(width: 0, height: -4))
 							.padding(.leading, 4)
-						
-
-						VStack(alignment: .leading, spacing: 4) {
-							Text(account.localizedAccountName())
-							Text("Web and self-hosted accounts sync across all signed-in devices.")
-								.font(.caption)
-								.foregroundColor(.gray)
-						}
+			
+						Text(account.localizedAccountName())
 					}.tag(account)
 				})
 			})
 			.offset(x: 7.5, y: 0)
 			
-			
+			Text(AddAccountSections.selfhosted.sectionFooter).foregroundColor(.gray)
+				.font(.caption)
+				.padding(.horizontal)
 		}
 	}
 	
