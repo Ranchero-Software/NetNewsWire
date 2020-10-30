@@ -52,9 +52,9 @@ function wrapTables() {
 // on an iphone when viewing an article.
 function inlineVideos() {
 	document.querySelectorAll("video").forEach(element => {
-		element.setAttribute("playsinline", true)
-		if !element.classList.contains("nnwAnimatedGIF") {
-			element.setAttribute("controls", true)
+		element.setAttribute("playsinline", true);
+		if (!element.classList.contains("nnwAnimatedGIF")) {
+			element.setAttribute("controls", true);
 		}
 	});
 }
