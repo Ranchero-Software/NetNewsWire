@@ -23,6 +23,42 @@ struct RedditPreview: Codable {
 struct RedditPreviewImage: Codable {
 	
 	let source: RedditPreviewImageSource?
+	let variants: RedditPreviewImageVariants?
+
+	enum CodingKeys: String, CodingKey {
+		case source = "source"
+		case variants = "variants"
+	}
+	
+}
+
+struct RedditPreviewImageSource: Codable {
+	
+	let url: String?
+	let width: Int?
+	let height: Int?
+
+	enum CodingKeys: String, CodingKey {
+		case url = "url"
+		case width = "width"
+		case height = "height"
+	}
+	
+}
+
+struct RedditPreviewImageVariants: Codable {
+	
+	let mp4: RedditPreviewImageVariantsMP4?
+
+	enum CodingKeys: String, CodingKey {
+		case mp4 = "mp4"
+	}
+	
+}
+
+struct RedditPreviewImageVariantsMP4: Codable {
+	
+	let source: RedditPreviewImageVariantsMP4Source?
 
 	enum CodingKeys: String, CodingKey {
 		case source = "source"
@@ -30,7 +66,7 @@ struct RedditPreviewImage: Codable {
 	
 }
 
-struct RedditPreviewImageSource: Codable {
+struct RedditPreviewImageVariantsMP4Source: Codable {
 	
 	let url: String?
 	let width: Int?
