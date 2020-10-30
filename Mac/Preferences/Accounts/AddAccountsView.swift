@@ -117,7 +117,9 @@ struct AddAccountsView: View {
 							.frame(width: 80)
 					})
 				}
-			}.padding(.vertical, 8)
+			}
+			.padding(.top, 12)
+			.padding(.bottom, 4)
 		}
 		.pickerStyle(RadioGroupPickerStyle())
 		.fixedSize(horizontal: false, vertical: true)
@@ -133,12 +135,11 @@ struct AddAccountsView: View {
 			
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.local.sectionContent, id: \.self, content: { account in
-					HStack(alignment: .top) {
+					HStack(alignment: .center) {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
-							.offset(CGSize(width: 0, height: -3.5))
 							.padding(.leading, 4)
 						
 							
@@ -167,12 +168,11 @@ struct AddAccountsView: View {
 			
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.icloud.sectionContent, id: \.self, content: { account in
-					HStack(alignment: .top) {
+					HStack(alignment: .center) {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
-							.offset(CGSize(width: 0, height: -3.5))
 							.padding(.leading, 4)
 						
 						Text(account.localizedAccountName())
@@ -229,12 +229,11 @@ struct AddAccountsView: View {
 			
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.selfhosted.sectionContent, id: \.self, content: { account in
-					HStack(alignment: .top) {
+					HStack(alignment: .center) {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
-							.offset(CGSize(width: 0, height: -4))
 							.padding(.leading, 4)
 			
 						Text(account.localizedAccountName())
