@@ -11,7 +11,12 @@ import Account
 import SwiftUI
 import RSCore
 
+// MARK: - AccountsPreferencesAddAccountDelegate
+protocol AccountsPreferencesAddAccountDelegate {
+	func presentSheetForAccount(_ accountType: AccountType)
+}
 
+// MARK: - AccountsPreferencesViewController
 final class AccountsPreferencesViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
@@ -39,6 +44,11 @@ final class AccountsPreferencesViewController: NSViewController {
 		var rTable = tableView.frame
 		rTable.size.width = tableView.superview!.frame.size.width
 		tableView.frame = rTable
+		
+		// Set initial row selection
+		if sortedAccounts.count > 0 {
+			tableView.selectRow(0)
+		}
 	}
 	
 	@IBAction func addAccount(_ sender: Any) {
@@ -119,7 +129,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		let selectedRow = tableView.selectedRow
 		if tableView.selectedRow == -1 {
 			deleteButton.isEnabled = false
-			showController(AccountsAddViewController())
+			hideController()
 			return
 		} else {
 			deleteButton.isEnabled = true
@@ -135,11 +145,6 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		
 	}
 	
-}
-
-// MARK: - AccountsPreferencesAddAccountDelegate
-protocol AccountsPreferencesAddAccountDelegate {
-	func presentSheetForAccount(_ accountType: AccountType)
 }
 
 extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelegate {
@@ -239,6 +244,13 @@ private extension AccountsPreferencesViewController {
 		detailView.addSubview(controller.view)
 		detailView.addFullSizeConstraints(forSubview: controller.view)
 		
+	}
+	
+	func hideController() {
+		if let controller = children.first {
+			children.removeAll()
+			controller.view.removeFromSuperview()
+		}
 	}
 	
 }
