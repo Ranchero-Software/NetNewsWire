@@ -1,8 +1,18 @@
 {
   "images" : [
     {
-      "filename" : "reddit_logo.pdf",
-      "idiom" : "universal"
+      "filename" : "reddit24x24.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "reddit48x48.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
