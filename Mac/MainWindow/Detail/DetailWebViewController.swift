@@ -12,11 +12,6 @@ import RSCore
 import RSWeb
 import Articles
 
-extension Notification.Name {
-	static let appleColorPreferencesChangedNotification = Notification.Name("AppleColorPreferencesChangedNotification")
-	static let appleInterfaceThemeChangedNotification = Notification.Name("AppleInterfaceThemeChangedNotification")
-}
-
 protocol DetailWebViewControllerDelegate: class {
 	func mouseDidEnter(_: DetailWebViewController, link: String)
 	func mouseDidExit(_: DetailWebViewController, link: String)
@@ -125,9 +120,6 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
-		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleColorPreferencesChanged(_:)), name: .appleColorPreferencesChangedNotification, object: nil)
-		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleInterfaceThemeChanged(_:)), name: .appleInterfaceThemeChangedNotification, object: nil)
-
 		webView.loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
 
@@ -143,14 +135,6 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
-	}
-	
-	@objc func appleColorPreferencesChanged(_ note: Notification) {
-		reloadHTML()
-	}
-	
-	@objc func appleInterfaceThemeChanged(_ note: Notification) {
-		reloadHTML()
 	}
 	
 	// MARK: Media Functions
