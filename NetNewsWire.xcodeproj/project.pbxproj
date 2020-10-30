@@ -5618,6 +5618,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51C0519824A7808F00194D5E /* NetNewsWire_multiplatform_macOSapp_target.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Debug;
 		};
@@ -5625,6 +5626,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51C0519824A7808F00194D5E /* NetNewsWire_multiplatform_macOSapp_target.xcconfig */;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Release;
 		};
