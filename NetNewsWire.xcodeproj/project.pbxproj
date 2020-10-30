@@ -105,12 +105,6 @@
 		510C418424E5D1B4008226FD /* ExtensionFeedAddRequestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C8BF23F3866C00032075 /* ExtensionFeedAddRequestFile.swift */; };
 		510C418524E5D1B4008226FD /* ExtensionContainers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87623F22B8200032075 /* ExtensionContainers.swift */; };
 		510C418624E5D1B4008226FD /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
-		510C43ED243C0973009F70C3 /* ExtensionPointAdd.xib in Resources */ = {isa = PBXBuildFile; fileRef = 510C43EC243C0973009F70C3 /* ExtensionPointAdd.xib */; };
-		510C43EE243C0973009F70C3 /* ExtensionPointAdd.xib in Resources */ = {isa = PBXBuildFile; fileRef = 510C43EC243C0973009F70C3 /* ExtensionPointAdd.xib */; };
-		510C43F0243C0A80009F70C3 /* ExtensionPointAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43EF243C0A80009F70C3 /* ExtensionPointAddViewController.swift */; };
-		510C43F1243C0A80009F70C3 /* ExtensionPointAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43EF243C0A80009F70C3 /* ExtensionPointAddViewController.swift */; };
-		510C43F3243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F2243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift */; };
-		510C43F4243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F2243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift */; };
 		510C43F7243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		510C43F8243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */; };
@@ -1495,9 +1489,6 @@
 		510C416524E5CDE3008226FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		510C416624E5CDE3008226FD /* ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
 		510C418724E5D2E3008226FD /* NetNewsWire_shareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_shareextension_target.xcconfig; sourceTree = "<group>"; };
-		510C43EC243C0973009F70C3 /* ExtensionPointAdd.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExtensionPointAdd.xib; sourceTree = "<group>"; };
-		510C43EF243C0A80009F70C3 /* ExtensionPointAddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointAddViewController.swift; sourceTree = "<group>"; };
-		510C43F2243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointAddTableCellView.swift; sourceTree = "<group>"; };
 		510C43F6243D035C009F70C3 /* ExtensionPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPoint.swift; sourceTree = "<group>"; };
 		51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
 		51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointPreferencesViewController.swift; sourceTree = "<group>"; };
@@ -2312,9 +2303,6 @@
 		51107744243BEDD300D97C8C /* ExtensionPoints */ = {
 			isa = PBXGroup;
 			children = (
-				510C43EC243C0973009F70C3 /* ExtensionPointAdd.xib */,
-				510C43F2243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift */,
-				510C43EF243C0A80009F70C3 /* ExtensionPointAddViewController.swift */,
 				515A5167243E66910089E588 /* ExtensionPointEnable.xib */,
 				515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */,
 				51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */,
@@ -4180,7 +4168,6 @@
 				65ED4051235DEF6C0081F399 /* TimelineKeyboardShortcuts.plist in Resources */,
 				65ED4052235DEF6C0081F399 /* template.html in Resources */,
 				65ED4054235DEF6C0081F399 /* Main.storyboard in Resources */,
-				510C43EE243C0973009F70C3 /* ExtensionPointAdd.xib in Resources */,
 				65ED4056235DEF6C0081F399 /* NetNewsWire.sdef in Resources */,
 				65ED4057235DEF6C0081F399 /* AccountsDetail.xib in Resources */,
 				65ED4058235DEF6C0081F399 /* main.js in Resources */,
@@ -4303,7 +4290,6 @@
 				3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
-				510C43ED243C0973009F70C3 /* ExtensionPointAdd.xib in Resources */,
 				51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
 				BDCB516724282C8A00102A80 /* AccountsNewsBlur.xib in Resources */,
 				514A89A2244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
@@ -4918,7 +4904,6 @@
 				65ED401C235DEF6C0081F399 /* FaviconGenerator.swift in Sources */,
 				65ED401D235DEF6C0081F399 /* RefreshInterval.swift in Sources */,
 				65ED401E235DEF6C0081F399 /* TimelineCellData.swift in Sources */,
-				510C43F1243C0A80009F70C3 /* ExtensionPointAddViewController.swift in Sources */,
 				65ED401F235DEF6C0081F399 /* BuiltinSmartFeedInspectorViewController.swift in Sources */,
 				65ED4020235DEF6C0081F399 /* AppDelegate+Scriptability.swift in Sources */,
 				65ED4021235DEF6C0081F399 /* NNW3Document.swift in Sources */,
@@ -4958,7 +4943,6 @@
 				65ED403D235DEF6C0081F399 /* TimelineTableCellView.swift in Sources */,
 				65ED403E235DEF6C0081F399 /* TimelineCellAppearance.swift in Sources */,
 				51C4CFF124D37D1F00AF9874 /* Secrets.swift in Sources */,
-				510C43F4243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift in Sources */,
 				65ED403F235DEF6C0081F399 /* ArticleRenderer.swift in Sources */,
 				65ED4040235DEF6C0081F399 /* GeneralPrefencesViewController.swift in Sources */,
 				179DB1DFBCF9177104B12E0F /* AccountsNewsBlurWindowController.swift in Sources */,
@@ -5203,7 +5187,6 @@
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				510C418024E5D1AE008226FD /* ExtensionFeedAddRequestFile.swift in Sources */,
 				51FE10092346739D0056195D /* ActivityType.swift in Sources */,
-				510C43F3243C11FE009F70C3 /* ExtensionPointAddTableCellView.swift in Sources */,
 				840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */,
 				8426118A1FCB67AA0086A189 /* WebFeedIconDownloader.swift in Sources */,
 				84C9FC7B22629E1200D921D6 /* PreferencesControlsBackgroundView.swift in Sources */,
@@ -5287,7 +5270,6 @@
 				518651B223555EB20078E021 /* NNW3Document.swift in Sources */,
 				D5F4EDB5200744A700B9E363 /* ScriptingObject.swift in Sources */,
 				D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */,
-				510C43F0243C0A80009F70C3 /* ExtensionPointAddViewController.swift in Sources */,
 				849A97781ED9EC04007D329B /* TimelineCellLayout.swift in Sources */,
 				84E8E0EB202F693600562D8F /* DetailWebView.swift in Sources */,
 				849A976C1ED9EBC8007D329B /* TimelineTableRowView.swift in Sources */,
@@ -5618,7 +5600,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51C0519824A7808F00194D5E /* NetNewsWire_multiplatform_macOSapp_target.xcconfig */;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Debug;
 		};
@@ -5626,7 +5607,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51C0519824A7808F00194D5E /* NetNewsWire_multiplatform_macOSapp_target.xcconfig */;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Release;
 		};
