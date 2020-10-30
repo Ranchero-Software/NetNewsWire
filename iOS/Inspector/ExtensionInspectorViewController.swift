@@ -41,7 +41,7 @@ extension ExtensionPointInspectorViewController {
 
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = extensionPoint.templateImage
+			headerView.imageView.image = extensionPoint.image
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)

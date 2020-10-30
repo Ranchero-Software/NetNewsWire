@@ -153,7 +153,7 @@ class SettingsViewController: UITableViewController {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsComboTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 				acctCell.applyThemeProperties()
 				let extensionPoint = extensionPoints[indexPath.row]
-				acctCell.comboImage?.image = extensionPoint.templateImage
+				acctCell.comboImage?.image = extensionPoint.image
 				acctCell.comboNameLabel?.text = extensionPoint.title
 				cell = acctCell
 			}
