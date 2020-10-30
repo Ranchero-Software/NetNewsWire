@@ -56,7 +56,7 @@ class AccountsNewsBlurWindowController: NSWindowController {
 			return
 		}
 		
-		guard !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: usernameTextField.stringValue) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: usernameTextField.stringValue) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
 			return
 		}

@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "inoreader_logo.pdf",
+      "filename" : "inoreader_logo-any.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "inoreader_logo-dark.pdf",
       "idiom" : "universal"
     }
   ],
@@ -11,6 +21,6 @@
   },
   "properties" : {
     "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
+    "template-rendering-intent" : "original"
   }
 }

@@ -1,8 +1,18 @@
 {
   "images" : [
     {
-      "filename" : "micro-dot-blog.pdf",
-      "idiom" : "universal"
+      "filename" : "micro.blog.24.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "micro.blog.48.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
@@ -10,6 +20,6 @@
     "version" : 1
   },
   "properties" : {
-    "template-rendering-intent" : "template"
+    "template-rendering-intent" : "original"
   }
 }

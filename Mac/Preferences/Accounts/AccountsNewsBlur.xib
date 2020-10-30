@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15702" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15702"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -21,7 +22,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="433" height="249"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1792" height="1095"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="433" height="249"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -35,7 +36,7 @@
                                     <constraint firstAttribute="height" constant="36" id="Ern-Kk-8LX"/>
                                     <constraint firstAttribute="width" constant="36" id="PLS-68-NMc"/>
                                 </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="accountNewsBlur" id="y38-YL-woC"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="accountNewsBlur" id="y38-YL-woC"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lti-yM-8LV">
                                 <rect key="frame" x="53" y="0.0" width="137" height="38"/>
@@ -56,7 +57,7 @@
                         </customSpacing>
                     </stackView>
                     <gridView xPlacement="trailing" yPlacement="center" rowAlignment="none" rowSpacing="12" columnSpacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="zBB-JH-huI">
-                        <rect key="frame" x="51" y="61" width="332" height="98"/>
+                        <rect key="frame" x="51" y="60" width="332" height="99"/>
                         <rows>
                             <gridRow id="DRl-lC-vUc"/>
                             <gridRow id="eW8-uH-txq"/>
@@ -69,7 +70,7 @@
                         <gridCells>
                             <gridCell row="DRl-lC-vUc" column="fCQ-jY-Mts" id="4DI-01-jGD">
                                 <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Zy6-9c-8TI">
-                                    <rect key="frame" x="-2" y="80" width="122" height="16"/>
+                                    <rect key="frame" x="-2" y="81" width="122" height="16"/>
                                     <textFieldCell key="cell" lineBreakMode="clipping" title="Username or Email:" id="DqN-SV-v35">
                                         <font key="font" usesAppearanceFont="YES"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -79,7 +80,7 @@
                             </gridCell>
                             <gridCell row="DRl-lC-vUc" column="7CY-bX-6x4" id="Z0b-qS-MUJ">
                                 <textField key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="78p-Cf-f55">
-                                    <rect key="frame" x="132" y="77" width="200" height="21"/>
+                                    <rect key="frame" x="132" y="78" width="200" height="21"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="Qin-jm-4zt"/>
                                     </constraints>
@@ -92,7 +93,7 @@
                             </gridCell>
                             <gridCell row="eW8-uH-txq" column="fCQ-jY-Mts" id="Hqa-3w-cQv">
                                 <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wEx-TM-rPM">
-                                    <rect key="frame" x="54" y="47" width="66" height="16"/>
+                                    <rect key="frame" x="54" y="48" width="66" height="16"/>
                                     <textFieldCell key="cell" lineBreakMode="clipping" title="Password:" id="7g8-Kk-ISg">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -102,7 +103,7 @@
                             </gridCell>
                             <gridCell row="eW8-uH-txq" column="7CY-bX-6x4" id="m16-3v-9pf">
                                 <secureTextField key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JSa-LY-zNQ">
-                                    <rect key="frame" x="132" y="44" width="200" height="21"/>
+                                    <rect key="frame" x="132" y="45" width="200" height="21"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="eal-wa-1nU"/>
                                     </constraints>
@@ -118,7 +119,7 @@
                             </gridCell>
                             <gridCell row="DbI-7g-Xme" column="fCQ-jY-Mts" headOfMergedCell="xX0-vn-AId" xPlacement="leading" id="xX0-vn-AId">
                                 <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="byK-Sd-r7F">
-                                    <rect key="frame" x="-2" y="8" width="104" height="16"/>
+                                    <rect key="frame" x="-2" y="9" width="104" height="16"/>
                                     <textFieldCell key="cell" lineBreakMode="clipping" id="0yh-Ab-UTX">
                                         <font key="font" usesAppearanceFont="YES"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -130,7 +131,7 @@
                         </gridCells>
                     </gridView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9mz-D9-krh">
-                        <rect key="frame" x="340" y="13" width="79" height="32"/>
+                        <rect key="frame" x="347" y="13" width="73" height="32"/>
                         <buttonCell key="cell" type="push" title="Action" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IMO-YT-k9Z">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -143,7 +144,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XAM-Hb-0Hw">
-                        <rect key="frame" x="258" y="13" width="82" height="32"/>
+                        <rect key="frame" x="273" y="13" width="76" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ufs-ar-BAY">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -180,6 +181,6 @@ Gw
         </window>
     </objects>
     <resources>
-        <image name="accountNewsBlur" width="512" height="512"/>
+        <image name="accountNewsBlur" width="25" height="25"/>
     </resources>
 </document>

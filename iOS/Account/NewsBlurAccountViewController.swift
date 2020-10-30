@@ -80,22 +80,28 @@ class NewsBlurAccountViewController: UITableViewController {
 			return
 		}
 
+		// When you fill in the email address via auto-complete it adds extra whitespace
+		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
+
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: trimmedUsername) else {
+			showError(NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error"))
+			return
+		}
+		
 		let password = passwordTextField.text ?? ""
 
 		startAnimatingActivityIndicator()
 		disableNavigation()
 
-		// When you fill in the email address via auto-complete it adds extra whitespace
-		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
-		let credentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
-		Account.validateCredentials(type: .newsBlur, credentials: credentials) { result in
+		let basicCredentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: password)
+		Account.validateCredentials(type: .newsBlur, credentials: basicCredentials) { result in
 
 			self.stopAnimatingActivityIndicator()
 			self.enableNavigation()
 
 			switch result {
-			case .success(let credentials):
-				if let credentials = credentials {
+			case .success(let sessionCredentials):
+				if let sessionCredentials = sessionCredentials {
 					var newAccount = false
 					if self.account == nil {
 						self.account = AccountManager.shared.createAccount(type: .newsBlur)
@@ -106,8 +112,10 @@ class NewsBlurAccountViewController: UITableViewController {
 
 						do {
 							try self.account?.removeCredentials(type: .newsBlurBasic)
+							try self.account?.removeCredentials(type: .newsBlurSessionId)
 						} catch {}
-						try self.account?.storeCredentials(credentials)
+						try self.account?.storeCredentials(basicCredentials)
+						try self.account?.storeCredentials(sessionCredentials)
 
 						if newAccount {
 							self.account?.refreshAll() { result in

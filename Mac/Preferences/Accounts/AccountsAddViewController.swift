@@ -17,9 +17,9 @@ class AccountsAddViewController: NSViewController {
 	private var accountsAddWindowController: NSWindowController?
 	
 	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader, .freshRSS]
 	#else
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
+	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader, .freshRSS]
 	#endif
 	
 	init() {
@@ -171,7 +171,6 @@ extension AccountsAddViewController: AccountsAddTableCellViewDelegate {
 			accountsReaderAPIWindowController.accountType = .theOldReader
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
 			accountsAddWindowController = accountsReaderAPIWindowController
-			
 		}
 		
 	}
@@ -249,10 +248,11 @@ private extension AccountsAddViewController {
 			removeAccountType(.cloudKit)
 			removeAccountType(.feedly)
 			removeAccountType(.feedWrangler)
+			removeAccountType(.inoreader)
 			return
 		}
 
-		if AccountManager.shared.activeAccounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
+		if AccountManager.shared.accounts.firstIndex(where: { $0.type == .cloudKit }) != nil {
 			removeAccountType(.cloudKit)
 		}
 	}

@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "oldreader-icon.pdf",
+      "filename" : "oldreader-icon-any.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "oldreader-icon-dark.pdf",
       "idiom" : "universal"
     }
   ],
@@ -11,6 +21,6 @@
   },
   "properties" : {
     "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
+    "template-rendering-intent" : "original"
   }
 }

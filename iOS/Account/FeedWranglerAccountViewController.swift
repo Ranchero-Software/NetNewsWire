@@ -80,7 +80,7 @@ class FeedWranglerAccountViewController: UITableViewController {
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
 
-		guard !AccountManager.shared.duplicateServiceAccount(type: .feedWrangler, username: trimmedEmail) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedWrangler, username: trimmedEmail) else {
 			showError(NSLocalizedString("There is already a FeedWrangler account with that username created.", comment: "Duplicate Error"))
 			return
 		}

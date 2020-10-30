@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9cW-lu-HoC">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="9cW-lu-HoC">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17502"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -575,19 +575,19 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="iTt-HT-Ane">
-                                            <rect key="frame" x="20" y="11.5" width="217.5" height="32"/>
+                                            <rect key="frame" x="20" y="15" width="147.5" height="25"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="accountLocal" translatesAutoresizingMaskIntoConstraints="NO" id="tb2-dO-AhR">
-                                                    <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="25" height="25"/>
                                                     <color key="tintColor" systemColor="labelColor"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="32" id="0GF-vU-aEc"/>
-                                                        <constraint firstAttribute="width" constant="32" id="xDy-t7-26A"/>
+                                                        <constraint firstAttribute="height" constant="25" id="0GF-vU-aEc"/>
+                                                        <constraint firstAttribute="width" constant="25" id="xDy-t7-26A"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="On My iPhone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="116-rt-msI">
-                                                    <rect key="frame" x="48" y="0.0" width="169.5" height="32"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                    <rect key="frame" x="41" y="0.0" width="106.5" height="25"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -925,7 +925,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Oq6-5f-Oa7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3826" y="158"/>
+            <point key="canvasLocation" x="3071" y="617"/>
         </scene>
         <!--Color Palette-->
         <scene sceneID="1mT-fg-ezs">
@@ -966,10 +966,10 @@
             </objects>
             <point key="canvasLocation" x="3743" y="151"/>
         </scene>
-        <!--Add Extension Point View Controller-->
+        <!--Add Extension-->
         <scene sceneID="e22-Tk-eWN">
             <objects>
-                <tableViewController storyboardIdentifier="AddExtensionPointViewController" id="x52-Ls-0dI" customClass="AddExtensionPointViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="AddExtensionPointViewController" title="Add Extension" id="x52-Ls-0dI" customClass="AddExtensionPointViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="X7z-0u-RKM">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -982,19 +982,19 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="gMc-YX-gQa">
-                                            <rect key="frame" x="20" y="11.5" width="166" height="32"/>
+                                            <rect key="frame" x="20" y="15" width="115" height="25"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="gear" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="fQm-sU-5TF">
-                                                    <rect key="frame" x="0.0" y="0.0" width="32" height="32.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="25" height="25.5"/>
                                                     <color key="tintColor" systemColor="labelColor"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="32" id="QJW-VY-n7f"/>
-                                                        <constraint firstAttribute="width" constant="32" id="T3S-8F-Clj"/>
+                                                        <constraint firstAttribute="height" constant="25" id="QJW-VY-n7f"/>
+                                                        <constraint firstAttribute="width" constant="25" id="T3S-8F-Clj"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Extension" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zuQ-ty-Tf1">
-                                                    <rect key="frame" x="48" y="0.0" width="118" height="32"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                    <rect key="frame" x="41" y="0.0" width="74" height="25"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>

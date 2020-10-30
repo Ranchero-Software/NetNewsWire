@@ -19,7 +19,7 @@ struct ReaderAPIReferenceWrapper: Codable {
 }
 
 struct ReaderAPIReference: Codable {
-	let itemId: String
+	let itemId: String?
 	
 	enum CodingKeys: String, CodingKey {
 		case itemId = "id"

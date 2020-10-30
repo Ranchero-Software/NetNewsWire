@@ -29,10 +29,6 @@ class AddExtensionPointViewController: UITableViewController, AddExtensionPointD
 		return availableExtensionPointTypes.count
 	}
 	
-	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return 52.0
-	}
-	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsExtensionTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 		
@@ -41,6 +37,14 @@ class AddExtensionPointViewController: UITableViewController, AddExtensionPointD
 		cell.comboImage?.image =  extensionPointType.templateImage
 		
 		return cell
+	}
+	
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		return NSLocalizedString("Feed Provider", comment: "Feed Provider Header")
+	}
+	
+	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+		return NSLocalizedString("Feed Providers allow you to subscribe to web site URL's as if they were RSS feeds.", comment: "Feed Provider Footer")
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

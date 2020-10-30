@@ -62,7 +62,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 	
 	var appName: String!
 	
-	private let appNewsURLString = "https://nnw.ranchero.com/feed.json"
 	private let appMovementMonitor = RSAppMovementMonitor()
 	#if !MAC_APP_STORE && !TEST
 	var softwareUpdater: SPUUpdater!

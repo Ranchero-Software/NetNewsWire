@@ -21,7 +21,6 @@ class ReaderAPIAccountViewController: UITableViewController {
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
 	
-	
 	weak var account: Account?
 	var accountType: AccountType?
 	weak var delegate: AddAccountDismissDelegate?
@@ -109,22 +108,26 @@ class ReaderAPIAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func action(_ sender: Any) {
-
-		validateDataEntry()
+		guard validateDataEntry(), let type = accountType else {
+			return
+		}
 		
 		let username = usernameTextField.text!
 		let password = passwordTextField.text!
 		let url = apiURL()!
 		
+		// When you fill in the email address via auto-complete it adds extra whitespace
+		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
+		
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: type, username: trimmedUsername) else {
+			showError(NSLocalizedString("There is already an account of that type with that username created.", comment: "Duplicate Error"))
+			return
+		}
+
 		startAnimatingActivityIndicator()
 		disableNavigation()
 
-		// When you fill in the email address via auto-complete it adds extra whitespace
-		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
 		let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: password)
-		guard let type = accountType else {
-			return
-		}
 		Account.validateCredentials(type: type, credentials: credentials, endpoint: url) { result in
 
 			self.stopAnimatingActivityIndicator()
@@ -201,23 +204,24 @@ class ReaderAPIAccountViewController: UITableViewController {
 		return nil
 	}
   
-	private func validateDataEntry() {
+	private func validateDataEntry() -> Bool {
 		switch accountType {
 		case .freshRSS:
 			if !usernameTextField.hasText || !passwordTextField.hasText || !apiURLTextField.hasText {
 				showError(NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error"))
-				return
+				return false
 			}
 			guard let _ = URL(string: apiURLTextField.text!) else {
 				showError(NSLocalizedString("Invalid API URL.", comment: "Invalid API URL"))
-				return
+				return false
 			}
 		default:
 			if !usernameTextField.hasText || !passwordTextField.hasText {
 				showError(NSLocalizedString("Username and password are required.", comment: "Credentials Error"))
-				return
+				return false
 			}
 		}
+		return true
 	}
 	
 	private func apiURL() -> URL? {
