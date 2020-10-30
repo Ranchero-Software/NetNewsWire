@@ -75,7 +75,7 @@ final class IconView: UIView {
 
 	override func layoutSubviews() {
 		imageView.setFrameIfNotEqual(rectForImageView())
-		if (iconImage != nil && isVerticalBackgroundExposed && !isSymbolImage) || !isDisconcernable {
+		if !isSymbolImage && ((iconImage != nil && isVerticalBackgroundExposed) || !isDisconcernable) {
 			backgroundColor = AppAssets.iconBackgroundColor
 		} else {
 			backgroundColor = nil
