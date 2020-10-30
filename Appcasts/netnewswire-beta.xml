@@ -7,6 +7,16 @@
         <language>en</language>
 
 <item>
+    <title>NetNewsWire 5.1.2b3</title>
+    <description><![CDATA[
+	<p>Fixed bug where Feedbin credentials couldn’t be updated</p>
+    ]]></description>
+    <pubDate>Mon, 29 Oct 2020 19:25:00 -0700</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.2beta3/NetNewsWire5.1.2b3.zip" sparkle:version="3015" sparkle:shortVersionString="5.1.2b3" length="6583415" type="application/zip" />
+    <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
     <title>NetNewsWire 5.1.2b2</title>
     <description><![CDATA[
 <p>Fixed a crashing bug in the timeline</p>
