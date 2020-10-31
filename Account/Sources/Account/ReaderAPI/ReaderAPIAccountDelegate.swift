@@ -561,11 +561,21 @@ private extension ReaderAPIAccountDelegate {
 		caller.retrieveTags { result in
 			switch result {
 			case .success(let tags):
-				BatchUpdate.shared.perform {
-					self.syncFolders(account, tags)
-				}
 				self.refreshProgress.completeTask()
-				self.refreshFeeds(account, completion: completion)
+				self.caller.retrieveSubscriptions { result in
+					self.refreshProgress.completeTask()
+					switch result {
+					case .success(let subscriptions):
+						BatchUpdate.shared.perform {
+							self.syncFolders(account, tags)
+							self.syncFeeds(account, subscriptions)
+							self.syncFeedFolderRelationship(account, subscriptions)
+						}
+						completion(.success(()))
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
 			case .failure(let error):
 				completion(.failure(error))
 			}
@@ -614,22 +624,6 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func refreshFeeds(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		caller.retrieveSubscriptions { result in
-			switch result {
-			case .success(let subscriptions):
-				self.refreshProgress.completeTask()
-				BatchUpdate.shared.perform {
-					self.syncFeeds(account, subscriptions)
-					self.syncFeedFolderRelationship(account, subscriptions)
-				}
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-
 	func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		
 		guard let subscriptions = subscriptions else { return }
