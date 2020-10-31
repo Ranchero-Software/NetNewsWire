@@ -390,8 +390,33 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.clearWebFeedMetadata(feed)
-		deleteSubscription(for: account, with: feed, from: container, completion: completion)
+		guard let subscriptionID = feed.externalID else {
+			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
+			self.refreshProgress.completeTask()
+			switch result {
+			case .success:
+				DispatchQueue.main.async {
+					account.clearWebFeedMetadata(feed)
+					account.removeWebFeed(feed)
+					if let folders = account.folders {
+						for folder in folders {
+							folder.removeWebFeed(feed)
+						}
+					}
+					completion(.success(()))
+				}
+			case .failure(let error):
+				DispatchQueue.main.async {
+					let wrappedError = AccountError.wrappedError(error: error, account: account)
+					completion(.failure(wrappedError))
+				}
+			}
+		}
 	}
 	
 	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -586,7 +611,7 @@ private extension ReaderAPIAccountDelegate {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
 		
-		let folderTags = tags.filter{ $0.type == "folder" }
+		let folderTags = tags.filter{ $0.tagID.contains("/label/") }
 		guard !folderTags.isEmpty else { return }
 		
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", folderTags.count)
@@ -1072,36 +1097,6 @@ private extension ReaderAPIAccountDelegate {
 				account.removeWebFeed(feed)
 			}
 			completion(.success(()))
-		}
-		
-	}
-
-	func deleteSubscription(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		// This error should never happen
-		guard let subscriptionID = feed.externalID else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			return
-		}
-		
-		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					account.removeWebFeed(feed)
-					if let folders = account.folders {
-						for folder in folders {
-							folder.removeWebFeed(feed)
-						}
-					}
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
 		}
 		
 	}
