@@ -18,7 +18,7 @@ protocol ExtensionPoint {
 	static var isSinglton: Bool { get }
 	static var isDeveloperBuildRestricted: Bool { get }
 	static var title: String { get }
-	static var templateImage: RSImage { get }
+	static var image: RSImage { get }
 	static var description: NSAttributedString { get }
 	
 	var title: String { get }
@@ -28,8 +28,8 @@ protocol ExtensionPoint {
 
 extension ExtensionPoint {
 	
-	var templateImage: RSImage {
-		return extensionPointID.extensionPointType.templateImage
+	var image: RSImage {
+		return extensionPointID.extensionPointType.image
 	}
 
 	var description: NSAttributedString {

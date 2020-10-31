@@ -11,14 +11,19 @@ import Account
 import SwiftUI
 import RSCore
 
+// MARK: - AccountsPreferencesAddAccountDelegate
+protocol AccountsPreferencesAddAccountDelegate {
+	func presentSheetForAccount(_ accountType: AccountType)
+}
 
+// MARK: - AccountsPreferencesViewController
 final class AccountsPreferencesViewController: NSViewController {
 
 	@IBOutlet weak var tableView: NSTableView!
 	@IBOutlet weak var detailView: NSView!
 	@IBOutlet weak var deleteButton: NSButton!
 	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
-	
+	var addAccountWindowController: NSWindowController?
 	
 	private var sortedAccounts = [Account]()
 
@@ -39,6 +44,11 @@ final class AccountsPreferencesViewController: NSViewController {
 		var rTable = tableView.frame
 		rTable.size.width = tableView.superview!.frame.size.width
 		tableView.frame = rTable
+		
+		// Set initial row selection
+		if sortedAccounts.count > 0 {
+			tableView.selectRow(0)
+		}
 	}
 	
 	@IBAction func addAccount(_ sender: Any) {
@@ -119,7 +129,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		let selectedRow = tableView.selectedRow
 		if tableView.selectedRow == -1 {
 			deleteButton.isEnabled = false
-			showController(AccountsAddViewController())
+			hideController()
 			return
 		} else {
 			deleteButton.isEnabled = true
@@ -137,18 +147,13 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 	
 }
 
-// MARK: - AccountsPreferencesAddAccountDelegate
-protocol AccountsPreferencesAddAccountDelegate {
-	func presentSheetForAccount(_ accountType: AccountType)
-}
-
 extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelegate {
 	func presentSheetForAccount(_ accountType: AccountType) {
 		switch accountType {
 		case .onMyMac:
 			let accountsAddLocalWindowController = AccountsAddLocalWindowController()
 			accountsAddLocalWindowController.runSheetOnWindow(self.view.window!)
-			
+			addAccountWindowController = accountsAddLocalWindowController
 		case .cloudKit:
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
 			accountsAddCloudKitWindowController.runSheetOnWindow(self.view.window!) { response in
@@ -156,17 +161,20 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 					self.tableView.reloadData()
 				}
 			}
-			
+			addAccountWindowController = accountsAddCloudKitWindowController
 		case .feedbin:
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
+			addAccountWindowController = accountsFeedbinWindowController
 		case .feedWrangler:
 			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
 			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
-		case .freshRSS:
+			addAccountWindowController = accountsFeedWranglerWindowController
+		case .freshRSS, .inoreader, .bazQux, .theOldReader:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = .freshRSS
+			accountsReaderAPIWindowController.accountType = accountType
 			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			addAccountWindowController = accountsReaderAPIWindowController
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
@@ -176,18 +184,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			accountsNewsBlurWindowController.runSheetOnWindow(self.view.window!)
-		case .inoreader:
-			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = .inoreader
-			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-		case .bazQux:
-			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = .bazQux
-			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
-		case .theOldReader:
-			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
-			accountsReaderAPIWindowController.accountType = .theOldReader
-			accountsReaderAPIWindowController.runSheetOnWindow(self.view.window!)
+			addAccountWindowController = accountsNewsBlurWindowController
 		}
 	}
 	
@@ -228,17 +225,20 @@ private extension AccountsPreferencesViewController {
 	}
 	
 	func showController(_ controller: NSViewController) {
-		
-		if let controller = children.first {
-			children.removeAll()
-			controller.view.removeFromSuperview()
-		}
+		hideController()
 		
 		addChild(controller)
 		controller.view.translatesAutoresizingMaskIntoConstraints = false
 		detailView.addSubview(controller.view)
 		detailView.addFullSizeConstraints(forSubview: controller.view)
 		
+	}
+	
+	func hideController() {
+		if let controller = children.first {
+			children.removeAll()
+			controller.view.removeFromSuperview()
+		}
 	}
 	
 }

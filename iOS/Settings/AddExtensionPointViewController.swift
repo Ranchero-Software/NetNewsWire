@@ -34,7 +34,7 @@ class AddExtensionPointViewController: UITableViewController, AddExtensionPointD
 		
 		let extensionPointType = availableExtensionPointTypes[indexPath.row]
 		cell.comboNameLabel?.text = extensionPointType.title
-		cell.comboImage?.image =  extensionPointType.templateImage
+		cell.comboImage?.image =  extensionPointType.image
 		
 		return cell
 	}

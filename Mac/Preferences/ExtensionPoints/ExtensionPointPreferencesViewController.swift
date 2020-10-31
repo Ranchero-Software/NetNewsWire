@@ -7,6 +7,14 @@
 //
 
 import AppKit
+import SwiftUI
+import AuthenticationServices
+import OAuthSwift
+import Secrets
+
+protocol ExtensionPointPreferencesEnabler: class {
+	func enable(_ extensionPointType: ExtensionPoint.Type)
+}
 
 final class ExtensionPointPreferencesViewController: NSViewController {
 
@@ -15,6 +23,8 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 	@IBOutlet weak var deleteButton: NSButton!
 	
 	private var activeExtensionPoints = [ExtensionPoint]()
+	private var callbackURL: URL? = nil
+	private var oauth: OAuthSwift?
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -30,11 +40,17 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 		tableView.frame = rTable
 		
 		showDefaultView()
+
+		// Set initial row selection
+		if activeExtensionPoints.count > 0 {
+			tableView.selectRow(0)
+		}
 	}
 	
 	@IBAction func enableExtensionPoints(_ sender: Any) {
-		tableView.selectRowIndexes([], byExtendingSelection: false)
-		showController(ExtensionPointAddViewController())
+		let controller = NSHostingController(rootView: EnableExtensionPointView(enabler: self))
+		controller.rootView.parent = controller
+		presentAsSheet(controller)
 	}
 	
 	@IBAction func disableExtensionPoint(_ sender: Any) {
@@ -44,8 +60,7 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 		
 		let extensionPoint = activeExtensionPoints[tableView.selectedRow]
 		ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint.extensionPointID)
-
-		showController(ExtensionPointAddViewController())
+		hideController()
 	}
 }
 
@@ -72,7 +87,7 @@ extension ExtensionPointPreferencesViewController: NSTableViewDelegate {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? NSTableCellView {
 			let extensionPoint = activeExtensionPoints[row]
 			cell.textField?.stringValue = extensionPoint.title
-			cell.imageView?.image = extensionPoint.templateImage
+			cell.imageView?.image = extensionPoint.image
 			return cell
 		}
 		return nil
@@ -83,6 +98,7 @@ extension ExtensionPointPreferencesViewController: NSTableViewDelegate {
 		let selectedRow = tableView.selectedRow
 		if tableView.selectedRow == -1 {
 			deleteButton.isEnabled = false
+			hideController()
 			return
 		} else {
 			deleteButton.isEnabled = true
@@ -92,6 +108,62 @@ extension ExtensionPointPreferencesViewController: NSTableViewDelegate {
 		let controller = ExtensionPointDetailViewController(extensionPoint: extensionPoint)
 		showController(controller)
 		
+	}
+	
+}
+
+// MARK: ExtensionPointPreferencesViewController
+
+extension ExtensionPointPreferencesViewController: ExtensionPointPreferencesEnabler {
+	
+	func enable(_ extensionPointType: ExtensionPoint.Type) {
+		if let oauth1 = extensionPointType as? OAuth1SwiftProvider.Type {
+			enableOauth1(oauth1, extensionPointType: extensionPointType)
+		} else if let oauth2 = extensionPointType as? OAuth2SwiftProvider.Type {
+			enableOauth2(oauth2, extensionPointType: extensionPointType)
+		} else {
+			ExtensionPointManager.shared.activateExtensionPoint(extensionPointType) { result in
+				if case .failure(let error) = result {
+					self.presentError(error)
+				}
+			}
+		}
+	}
+	
+}
+
+extension ExtensionPointPreferencesViewController: OAuthSwiftURLHandlerType {
+	
+	public func handle(_ url: URL) {
+		let session = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURL!.scheme, completionHandler: { (url, error) in
+			if let callbackedURL = url {
+				OAuth1Swift.handle(url: callbackedURL)
+			}
+			
+			guard let error = error else { return }
+
+			self.oauth?.cancel()
+			self.oauth = nil
+
+			if case ASWebAuthenticationSessionError.canceledLogin = error {
+				print("Login cancelled.")
+			} else {
+				NSApplication.shared.presentError(error)
+			}
+		})
+		
+		session.presentationContextProvider = self
+		if !session.start() {
+			print("Session failed to start!!!")
+		}
+		
+	}
+}
+
+extension ExtensionPointPreferencesViewController: ASWebAuthenticationPresentationContextProviding {
+	
+	public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+		return view.window!
 	}
 	
 }
@@ -107,20 +179,77 @@ private extension ExtensionPointPreferencesViewController {
 	func showDefaultView() {
 		activeExtensionPoints = Array(ExtensionPointManager.shared.activeExtensionPoints.values).sorted(by: { $0.title < $1.title })
 		tableView.reloadData()
-		showController(ExtensionPointAddViewController())
 	}
 	
 	func showController(_ controller: NSViewController) {
-		
-		if let controller = children.first {
-			children.removeAll()
-			controller.view.removeFromSuperview()
-		}
+		hideController()
 		
 		addChild(controller)
 		controller.view.translatesAutoresizingMaskIntoConstraints = false
 		detailView.addSubview(controller.view)
 		detailView.addFullSizeConstraints(forSubview: controller.view)
+	}
+
+	func hideController() {
+		if let controller = children.first {
+			children.removeAll()
+			controller.view.removeFromSuperview()
+		}
+	}
+
+	func enableOauth1(_ provider: OAuth1SwiftProvider.Type, extensionPointType: ExtensionPoint.Type) {
+		callbackURL = provider.callbackURL
+
+		let oauth1 = provider.oauth1Swift
+		self.oauth = oauth1
+		oauth1.authorizeURLHandler = self
+		
+		oauth1.authorize(withCallbackURL: callbackURL!) { [weak self] result in
+			guard let self = self else { return }
+
+			switch result {
+			case .success(let tokenSuccess):
+				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess) { result in
+					if case .failure(let error) = result {
+						self.presentError(error)
+					}
+				}
+			case .failure(let oauthSwiftError):
+				self.presentError(oauthSwiftError)
+			}
+			
+			self.oauth?.cancel()
+			self.oauth = nil
+		}
+		
+	}
+	
+	func enableOauth2(_ provider: OAuth2SwiftProvider.Type, extensionPointType: ExtensionPoint.Type) {
+		callbackURL = provider.callbackURL
+
+		let oauth2 = provider.oauth2Swift
+		self.oauth = oauth2
+		oauth2.authorizeURLHandler = self
+		
+		let oauth2Vars = provider.oauth2Vars
+		
+		oauth2.authorize(withCallbackURL: callbackURL!, scope: oauth2Vars.scope, state: oauth2Vars.state, parameters: oauth2Vars.params) { [weak self] result in
+			guard let self = self else { return }
+
+			switch result {
+			case .success(let tokenSuccess):
+				ExtensionPointManager.shared.activateExtensionPoint(extensionPointType, tokenSuccess: tokenSuccess) { result in
+					if case .failure(let error) = result {
+						self.presentError(error)
+					}
+				}
+			case .failure(let oauthSwiftError):
+				self.presentError(oauthSwiftError)
+			}
+			
+			self.oauth?.cancel()
+			self.oauth = nil
+		}
 		
 	}
 	

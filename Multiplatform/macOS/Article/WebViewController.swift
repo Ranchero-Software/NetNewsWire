@@ -11,11 +11,6 @@ import Combine
 import RSCore
 import Articles
 
-extension Notification.Name {
-	static let appleColorPreferencesChangedNotification = Notification.Name("AppleColorPreferencesChangedNotification")
-	static let appleInterfaceThemeChangedNotification = Notification.Name("AppleInterfaceThemeChangedNotification")
-}
-
 protocol WebViewControllerDelegate: class {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
@@ -67,8 +62,6 @@ class WebViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleColorPreferencesChanged(_:)), name: .appleColorPreferencesChangedNotification, object: nil)
-		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleInterfaceThemeChanged(_:)), name: .appleInterfaceThemeChangedNotification, object: nil)
 		
 		statusBarView = WebStatusBarView()
 		statusBarView.translatesAutoresizingMaskIntoConstraints = false
@@ -100,14 +93,6 @@ class WebViewController: NSViewController {
 		reloadArticleImage()
 	}
 
-	@objc func appleColorPreferencesChanged(_ note: Notification) {
-		loadWebView()
-	}
-	
-	@objc func appleInterfaceThemeChanged(_ note: Notification) {
-		loadWebView()
-	}
-	
 	// MARK: API
 	
 	func focus() {

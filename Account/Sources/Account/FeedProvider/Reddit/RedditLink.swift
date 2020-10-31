@@ -98,7 +98,7 @@ final class RedditLinkData: Codable {
 		guard let url = url else { return "" }
 		
 		if url.hasSuffix(".gif") {
-			return "<img src=\"\(url)\">"
+			return "<img class=\"nnw-nozoom\" src=\"\(url)\">"
 		}
 		
 		if isVideo ?? false, let videoURL = media?.video?.hlsURL {
@@ -109,12 +109,25 @@ final class RedditLinkData: Codable {
 			if let width = media?.video?.width, let height = media?.video?.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "src=\"\(videoURL)\" autoplay muted loop></video>"
+			html += "src=\"\(videoURL)\"></video>"
+			return html
+		}
+		
+		if let imageVariantURL = preview?.images?.first?.variants?.mp4?.source?.url {
+			var html = "<video class=\"nnwAnimatedGIF\" "
+			if let previewImageURL = preview?.images?.first?.source?.url {
+				html += "poster=\"\(previewImageURL)\" "
+			}
+			if let width = preview?.images?.first?.variants?.mp4?.source?.width, let height = preview?.images?.first?.variants?.mp4?.source?.height {
+				html += "width=\"\(width)\" height=\"\(height)\" "
+			}
+			html += "src=\"\(imageVariantURL)\" autoplay muted loop></video>"
+			html += linkURL(url)
 			return html
 		}
 		
 		if let videoPreviewURL = preview?.videoPreview?.url {
-			var html = "<video "
+			var html = "<video class=\"nnwAnimatedGIF\" "
 			if let previewImageURL = preview?.images?.first?.source?.url {
 				html += "poster=\"\(previewImageURL)\" "
 			}
