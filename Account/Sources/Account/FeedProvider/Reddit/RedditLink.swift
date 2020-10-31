@@ -98,7 +98,7 @@ final class RedditLinkData: Codable {
 		guard let url = url else { return "" }
 		
 		if url.hasSuffix(".gif") {
-			return "<img src=\"\(url)\">"
+			return "<img class=\"nnw-nozoom\" src=\"\(url)\">"
 		}
 		
 		if isVideo ?? false, let videoURL = media?.video?.hlsURL {
