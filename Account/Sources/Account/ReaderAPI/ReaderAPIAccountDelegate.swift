@@ -884,15 +884,23 @@ private extension ReaderAPIAccountDelegate {
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDsResult in
 
 			func process(_ fetchedArticleIDs: Set<String>) {
+				guard !fetchedArticleIDs.isEmpty else {
+					completion()
+					return
+				}
+				
 				os_log(.debug, log: self.log, "Refreshing missing articles...")
 				let group = DispatchGroup()
 
 				let articleIDs = Array(fetchedArticleIDs)
 				let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
+				self.refreshProgress.addToNumberOfTasksAndRemaining(chunkedArticleIDs.count - 1)
+
 				for chunk in chunkedArticleIDs {
 					group.enter()
 					self.caller.retrieveEntries(articleIDs: chunk) { result in
+						self.refreshProgress.completeTask()
 
 						switch result {
 						case .success(let entries):
