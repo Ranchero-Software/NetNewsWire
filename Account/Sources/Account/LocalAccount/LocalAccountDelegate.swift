@@ -312,14 +312,14 @@ private extension LocalAccountDelegate {
 					return
 				}
 				
-				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-				feed.editedName = editedName
-				container.addWebFeed(feed)
-
 				InitialFeedDownloader.download(url) { parsedFeed in
 					self.refreshProgress.completeTask()
 
 					if let parsedFeed = parsedFeed {
+						let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+						feed.editedName = editedName
+						container.addWebFeed(feed)
+
 						account.update(feed, with: parsedFeed, {_ in
 							BatchUpdate.shared.end()
 							completion(.success(feed))

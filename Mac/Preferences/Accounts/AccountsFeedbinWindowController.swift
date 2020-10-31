@@ -58,7 +58,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 			return
 		}
 		
-		guard !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: usernameTextField.stringValue) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: usernameTextField.stringValue) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error")
 			return
 		}
