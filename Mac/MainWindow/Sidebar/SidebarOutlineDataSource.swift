@@ -687,8 +687,14 @@ private extension SidebarOutlineDataSource {
 		}
 		
 		for draggedFeed in draggedFeeds {
-			if dropTargetAccount.hasWebFeed(withURL: draggedFeed.url) {
-				return true
+			if dropTargetAccount.accountID == draggedFeed.accountID {
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					return true
+				}
+			} else {
+				if dropTargetAccount.hasWebFeed(withURL: draggedFeed.url) {
+					return true
+				}
 			}
 		}
 		
