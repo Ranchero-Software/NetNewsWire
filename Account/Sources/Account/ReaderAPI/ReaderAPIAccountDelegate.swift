@@ -263,7 +263,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 						switch result {
 						case .success:
 							DispatchQueue.main.async {
-								self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+								self.clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 							}
 						case .failure(let error):
 							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
@@ -410,14 +410,14 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 	
 	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		if let folder = container as? Folder, let feedName = feed.externalID {
+		if let folder = container as? Folder, let feedExternalID = feed.externalID {
 			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			caller.createTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
+			caller.createTagging(subscriptionID: feedExternalID, tagName: folder.name ?? "") { result in
 				self.refreshProgress.completeTask()
 				switch result {
 				case .success:
 					DispatchQueue.main.async {
-						self.saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: feed.externalID!)
+						self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
 						account.removeWebFeed(feed)
 						folder.addWebFeed(feed)
 						completion(.success(()))
@@ -575,36 +575,39 @@ private extension ReaderAPIAccountDelegate {
 	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
+		
+		let folderTags = tags.filter{ $0.type == "folder" }
+		guard !folderTags.isEmpty else { return }
+		
+		os_log(.debug, log: log, "Syncing folders with %ld tags.", folderTags.count)
 
-		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
-
-		let readerFolderNames = tags.compactMap { $0.folderName }
+		let readerFolderExternalIDs = folderTags.compactMap { $0.tagID }
 
 		// Delete any folders not at Reader
 		if let folders = account.folders {
 			folders.forEach { folder in
-				if !readerFolderNames.contains(folder.name ?? "") {
+				if !readerFolderExternalIDs.contains(folder.externalID ?? "") {
 					for feed in folder.topLevelWebFeeds {
 						account.addWebFeed(feed)
-						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+						clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					}
 					account.removeFolder(folder)
 				}
 			}
 		}
 		
-		let folderNames: [String] =  {
+		let folderExternalIDs: [String] =  {
 			if let folders = account.folders {
-				return folders.map { $0.name ?? "" }
+				return folders.compactMap { $0.externalID }
 			} else {
 				return [String]()
 			}
 		}()
 
 		// Make any folders Reader has, but we don't
-		tags.forEach { tag in
-			if let tagFolderName = tag.folderName, !folderNames.contains(tagFolderName) {
-				let folder = account.ensureFolder(with: tagFolderName)
+		folderTags.forEach { tag in
+			if !folderExternalIDs.contains(tag.tagID) {
+				let folder = account.ensureFolder(with: tag.folderName ?? "None")
 				folder?.externalID = tag.tagID
 			}
 		}
@@ -618,7 +621,7 @@ private extension ReaderAPIAccountDelegate {
 				self.refreshProgress.completeTask()
 				BatchUpdate.shared.perform {
 					self.syncFeeds(account, subscriptions)
-					self.syncTaggings(account, subscriptions)
+					self.syncFeedFolderRelationship(account, subscriptions)
 				}
 				completion(.success(()))
 			case .failure(let error):
@@ -649,6 +652,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		for feed in account.topLevelWebFeeds {
 			if !subFeedIds.contains(feed.webFeedID) {
+				account.clearWebFeedMetadata(feed)
 				account.removeWebFeed(feed)
 			}
 		}
@@ -670,43 +674,38 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 
-	func syncTaggings(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
+	func syncFeedFolderRelationship(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
 		os_log(.debug, log: log, "Syncing taggings with %ld subscriptions.", subscriptions.count)
 		
 		// Set up some structures to make syncing easier
-		let folderDict = nameToFolderDictionary(with: account.folders)
+		let folderDict = externalIDToFolderDictionary(with: account.folders)
 		let taggingsDict = subscriptions.reduce([String: [ReaderAPISubscription]]()) { (dict, subscription) in
 			var taggedFeeds = dict
 			
-			// For each category that this feed belongs to, add the feed to that name in the dict
 			subscription.categories.forEach({ (category) in
-				let categoryName = category.categoryLabel.replacingOccurrences(of: "user/-/label/", with: "")
-				
-				if var taggedFeed = taggedFeeds[categoryName] {
+				if var taggedFeed = taggedFeeds[category.categoryId] {
 					taggedFeed.append(subscription)
-					taggedFeeds[categoryName] = taggedFeed
+					taggedFeeds[category.categoryId] = taggedFeed
 				} else {
-					taggedFeeds[categoryName] = [subscription]
+					taggedFeeds[category.categoryId] = [subscription]
 				}
 			})
 			
 			return taggedFeeds
 		}
 		
-		var taggedFeedIDs = Set<String>()
-
 		// Sync the folders
-		for (folderName, groupedTaggings) in taggingsDict {
-			guard let folder = folderDict[folderName] else { return }
+		for (folderExternalID, groupedTaggings) in taggingsDict {
+			guard let folder = folderDict[folderExternalID] else { return }
 			let taggingFeedIDs = groupedTaggings.map { $0.feedID }
 			
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelWebFeeds {
 				if !taggingFeedIDs.contains(feed.webFeedID) {
 					folder.removeWebFeed(feed)
-					clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+					clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					account.addWebFeed(feed)
 				}
 			}
@@ -720,14 +719,15 @@ private extension ReaderAPIAccountDelegate {
 					guard let feed = account.existingWebFeed(withWebFeedID: taggingFeedID) else {
 						continue
 					}
-					saveFolderRelationship(for: feed, withFolderName: folderName, id: String(subscription.feedID))
+					saveFolderRelationship(for: feed, folderExternalID: folderExternalID, feedExternalID: subscription.feedID)
 					folder.addWebFeed(feed)
-					taggedFeedIDs.insert(taggingFeedID)
 				}
 			}
 			
 		}
 	
+		let taggedFeedIDs = Set(subscriptions.map { String($0.feedID) })
+		
 		// Remove all feeds from the account container that have a tag
 		for feed in account.topLevelWebFeeds {
 			if taggedFeedIDs.contains(feed.webFeedID) {
@@ -736,18 +736,19 @@ private extension ReaderAPIAccountDelegate {
 		}
 	}
 	
-	func nameToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
+	func externalIDToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
 		guard let folders = folders else {
 			return [String: Folder]()
 		}
 
 		var d = [String: Folder]()
+		
 		for folder in folders {
-			let name = folder.name ?? ""
-			if d[name] == nil {
-				d[name] = folder
+			if let externalID = folder.externalID, d[externalID] == nil {
+				d[externalID] = folder
 			}
 		}
+		
 		return d
 	}
 
@@ -784,19 +785,19 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
-		if var folderRelationship = feed.folderRelationship {
-			folderRelationship[folderName] = nil
-			feed.folderRelationship = folderRelationship
-		}
+	func clearFolderRelationship(for feed: WebFeed, folderExternalID: String?) {
+		guard var folderRelationship = feed.folderRelationship, let folderExternalID = folderExternalID else { return }
+		folderRelationship[folderExternalID] = nil
+		feed.folderRelationship = folderRelationship
 	}
 	
-	func saveFolderRelationship(for feed: WebFeed, withFolderName folderName: String, id: String) {
+	func saveFolderRelationship(for feed: WebFeed, folderExternalID: String?, feedExternalID: String) {
+		guard let folderExternalID = folderExternalID else { return }
 		if var folderRelationship = feed.folderRelationship {
-			folderRelationship[folderName] = id
+			folderRelationship[folderExternalID] = feedExternalID
 			feed.folderRelationship = folderRelationship
 		} else {
-			feed.folderRelationship = [folderName: id]
+			feed.folderRelationship = [folderExternalID: feedExternalID]
 		}
 	}
 
@@ -1052,7 +1053,7 @@ private extension ReaderAPIAccountDelegate {
 				switch result {
 				case .success:
 					DispatchQueue.main.async {
-						self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
+						self.clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 						folder.removeWebFeed(feed)
 						account.addFeedIfNotInAnyFolder(feed)
 						completion(.success(()))
