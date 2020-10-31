@@ -29,7 +29,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
 
 	var behaviors: AccountBehaviors {
-		var behaviors: AccountBehaviors = [.disallowOPMLImports]
+		var behaviors: AccountBehaviors = [.disallowOPMLImports, .disallowFeedInMultipleFolders]
 		if variant == .freshRSS {
 			behaviors.append(.disallowFeedInRootFolder)
 		}

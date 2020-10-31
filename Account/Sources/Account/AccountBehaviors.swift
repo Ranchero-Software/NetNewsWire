@@ -29,6 +29,11 @@ public enum AccountBehavior: Equatable {
 	case disallowFeedInRootFolder
 	
 	/**
+	 Account doesn't support a feed being in more than one folder.
+	*/
+	case disallowFeedInMultipleFolders
+	
+	/**
 	Account doesn't support folders
 	*/
 	case disallowFolderManagement

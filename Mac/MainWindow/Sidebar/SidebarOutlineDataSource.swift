@@ -644,6 +644,10 @@ private extension SidebarOutlineDataSource {
 			return true
 		}
 		
+		if violatesDisallowFeedInMultipleFolders(parentNode, draggedFeeds) {
+			return true
+		}
+		
 		return false
 	}
 	
@@ -672,6 +676,20 @@ private extension SidebarOutlineDataSource {
 		
 		if parentNode.representedObject is Account && (NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false) {
 			return true
+		}
+		
+		return false
+	}
+
+	func violatesDisallowFeedInMultipleFolders(_ parentNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+		guard let parentAccount = nodeAccount(parentNode), parentAccount.behaviors.contains(.disallowFeedInMultipleFolders) else {
+			return false
+		}
+		
+		for draggedFeed in draggedFeeds {
+			if parentAccount.hasWebFeed(withURL: draggedFeed.url) {
+				return true
+			}
 		}
 		
 		return false
