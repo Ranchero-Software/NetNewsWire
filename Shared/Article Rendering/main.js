@@ -104,8 +104,13 @@ function stopMediaPlayback() {
 		element.src = iframeSrc;
 	});
 
+	// We pause all videos that have controls.  Video without controls shouldn't
+	// have sound and are actually converted gifs.  Basically if the user can't
+	// start the video again, don't stop it.
 	document.querySelectorAll("video, audio").forEach(element => {
-		element.pause();
+		if (element.hasAttribute("controls")) {
+			element.pause();
+		}
 	});
 }
 
