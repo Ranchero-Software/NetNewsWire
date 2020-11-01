@@ -920,7 +920,7 @@ private extension ReaderAPIAccountDelegate {
 				let group = DispatchGroup()
 
 				let articleIDs = Array(fetchedArticleIDs)
-				let chunkedArticleIDs = articleIDs.chunked(into: 100)
+				let chunkedArticleIDs = articleIDs.chunked(into: 150)
 
 				self.refreshProgress.addToNumberOfTasksAndRemaining(chunkedArticleIDs.count - 1)
 
