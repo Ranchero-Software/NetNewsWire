@@ -186,8 +186,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		caller.retrieveItemIDs(type: .unread) { result in
 			switch result {
 			case .success(let articleIDs):
-				self.syncArticleReadState(account: account, articleIDs: articleIDs)
-				group.leave()
+				self.syncArticleReadState(account: account, articleIDs: articleIDs) {
+					group.leave()
+				}
 			case .failure(let error):
 				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
 				group.leave()
@@ -199,8 +200,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		caller.retrieveItemIDs(type: .starred) { result in
 			switch result {
 			case .success(let articleIDs):
-				self.syncArticleStarredState(account: account, articleIDs: articleIDs)
-				group.leave()
+				self.syncArticleStarredState(account: account, articleIDs: articleIDs) {
+					group.leave()
+				}
 			case .failure(let error):
 				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
 				group.leave()
@@ -1001,7 +1003,7 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func syncArticleReadState(account: Account, articleIDs: [String]?) {
+	func syncArticleReadState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
 			return
 		}
@@ -1016,13 +1018,25 @@ private extension ReaderAPIAccountDelegate {
 						return
 					}
 
+					let group = DispatchGroup()
+					
 					// Mark articles as unread
 					let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-					account.markAsUnread(deltaUnreadArticleIDs)
+					group.enter()
+					account.markAsUnread(deltaUnreadArticleIDs) { _ in
+						group.leave()
+					}
 
 					// Mark articles as read
 					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					account.markAsRead(deltaReadArticleIDs)
+					group.enter()
+					account.markAsRead(deltaReadArticleIDs) { _ in
+						group.leave()
+					}
+					
+					group.notify(queue: DispatchQueue.main) {
+						completion()
+					}
 				}
 			}
 			
@@ -1037,7 +1051,7 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 	
-	func syncArticleStarredState(account: Account, articleIDs: [String]?) {
+	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
 			return
 		}
@@ -1052,13 +1066,25 @@ private extension ReaderAPIAccountDelegate {
 						return
 					}
 
+					let group = DispatchGroup()
+					
 					// Mark articles as starred
 					let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-					account.markAsStarred(deltaStarredArticleIDs)
+					group.enter()
+					account.markAsStarred(deltaStarredArticleIDs) { _ in
+						group.leave()
+					}
 
 					// Mark articles as unstarred
 					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					account.markAsUnstarred(deltaUnstarredArticleIDs)
+					group.enter()
+					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
+						group.leave()
+					}
+
+					group.notify(queue: DispatchQueue.main) {
+						completion()
+					}
 				}
 			}
 			
