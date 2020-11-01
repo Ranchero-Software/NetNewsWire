@@ -299,13 +299,18 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			self.caller.deleteTag(folder: folder) { result in
-				switch result {
-				case .success:
-					account.removeFolder(folder)
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
+			if self.variant == .theOldReader {
+				account.removeFolder(folder)
+				completion(.success(()))
+			} else {
+				self.caller.deleteTag(folder: folder) { result in
+					switch result {
+					case .success:
+						account.removeFolder(folder)
+						completion(.success(()))
+					case .failure(let error):
+						completion(.failure(error))
+					}
 				}
 			}
 		}
@@ -858,7 +863,7 @@ private extension ReaderAPIAccountDelegate {
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameWebFeed(feed, to: name) { result in
+						self.renameWebFeed(for: account, with: feed, to: name) { result in
 							switch result {
 							case .success:
 								self.initialFeedDownload(account: account, feed: feed, completion: completion)

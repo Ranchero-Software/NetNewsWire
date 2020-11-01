@@ -83,6 +83,7 @@ final class ReaderAPICaller: NSObject {
 		
 		var urlHostAllowed = CharacterSet.urlHostAllowed
 		urlHostAllowed.remove("+")
+		urlHostAllowed.remove("&")
 		uriComponentAllowed = urlHostAllowed
 		super.init()
 	}
@@ -387,10 +388,10 @@ final class ReaderAPICaller: NSObject {
 								request.httpMethod = "POST"
 				
 								var postString = "T=\(token)&ac=subscribe&s=\(streamId)"
-								if let folder = folder {
-									postString += "&a=user/-/label/\(folder.nameForDisplay)"
+								if let folderName = self.encodeForURLPath(folder?.nameForDisplay) {
+									postString += "&a=user/-/label/\(folderName)"
 								}
-								if let name = name {
+								if let name = self.encodeForURLPath(name) {
 									postString += "&t=\(name)"
 								}
 								
@@ -508,8 +509,12 @@ final class ReaderAPICaller: NSObject {
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
-				let tagName = "user/-/label/\(tagName)"
-				let postData = "T=\(token)&s=\(subscriptionID)&ac=edit&a=\(tagName)".data(using: String.Encoding.utf8)
+				guard let tagName = self.encodeForURLPath(tagName) else {
+					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+					return
+				}
+				
+				let postData = "T=\(token)&s=\(subscriptionID)&ac=edit&a=user/-/label/\(tagName)".data(using: String.Encoding.utf8)
 				
 				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
 					switch result {
@@ -750,7 +755,8 @@ final class ReaderAPICaller: NSObject {
 
 private extension ReaderAPICaller {
 	
-	func encodeForURLPath(_ pathComponent: String) -> String? {
+	func encodeForURLPath(_ pathComponent: String?) -> String? {
+		guard let pathComponent = pathComponent else { return nil }
 		return pathComponent.addingPercentEncoding(withAllowedCharacters: uriComponentAllowed)
 	}
 	
