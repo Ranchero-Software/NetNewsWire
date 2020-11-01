@@ -235,6 +235,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
+					folder.externalID = "user/-/label/\(name)"
 					folder.name = name
 					completion(.success(()))
 				}
