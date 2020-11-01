@@ -18,6 +18,7 @@ final class MasterFeedTableViewIdentifier: NSObject, NSCopying {
 
 	let isEditable: Bool
 	let isPsuedoFeed: Bool
+	let isAccount: Bool
 	let isFolder: Bool
 	let isWebFeed: Bool
 	
@@ -25,6 +26,19 @@ final class MasterFeedTableViewIdentifier: NSObject, NSCopying {
 	let url: String?
 	let unreadCount: Int
 	let childCount: Int
+	
+	var account: Account? {
+		if isAccount, let containerID = containerID {
+			return AccountManager.shared.existingContainer(with: containerID) as? Account
+		}
+		if isFolder, let parentContainerID = parentContainerID {
+			return AccountManager.shared.existingContainer(with: parentContainerID) as? Account
+		}
+		if isWebFeed, let feedID = feedID {
+			return (AccountManager.shared.existingFeed(with: feedID) as? WebFeed)?.account
+		}
+		return nil
+	}
 	
 	init(node: Node, unreadCount: Int) {
 		let feed = node.representedObject as! Feed
@@ -34,6 +48,7 @@ final class MasterFeedTableViewIdentifier: NSObject, NSCopying {
 		
 		self.isEditable = !(node.representedObject is PseudoFeed)
 		self.isPsuedoFeed = node.representedObject is PseudoFeed
+		self.isAccount = node.representedObject is Account
 		self.isFolder = node.representedObject is Folder
 		self.isWebFeed = node.representedObject is WebFeed
 		self.nameForDisplay = feed.nameForDisplay

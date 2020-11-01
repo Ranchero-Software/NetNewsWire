@@ -22,10 +22,24 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			destIndexPath.section > 0,
 			tableView.hasActiveDrag,
 			let destIdentifier = dataSource.itemIdentifier(for: destIndexPath),
+			let destAccount = destIdentifier.account,
 			let destCell = tableView.cellForRow(at: destIndexPath) else {
 				return UITableViewDropProposal(operation: .forbidden)
 		}
+
+		// Validate account specific behaviors...
+		if destAccount.behaviors.contains(.disallowFeedInRootFolder) && destIdentifier.isAccount {
+			return UITableViewDropProposal(operation: .forbidden)
+		}
 		
+		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
+		   let sourceFeedID = (session.localDragSession?.items.first?.localObject as? MasterFeedTableViewIdentifier)?.feedID,
+		   let sourceWebFeed = AccountManager.shared.existingFeed(with: sourceFeedID) as? WebFeed,
+		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasWebFeed(withURL: sourceWebFeed.url) {
+			return UITableViewDropProposal(operation: .forbidden)
+		}
+
+		// Determine the correct drop proposal
 		if destIdentifier.isFolder {
 			if session.location(in: destCell).y >= 0 {
 				return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)

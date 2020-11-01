@@ -631,47 +631,71 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 
-	func violatesAccountSpecificBehavior(_ parentNode: Node, _ draggedFeed: PasteboardWebFeed) -> Bool {
-		return violatesAccountSpecificBehavior(parentNode, Set([draggedFeed]))
+	func violatesAccountSpecificBehavior(_ dropTargetNode: Node, _ draggedFeed: PasteboardWebFeed) -> Bool {
+		return violatesAccountSpecificBehavior(dropTargetNode, Set([draggedFeed]))
 	}
 	
-	func violatesAccountSpecificBehavior(_ parentNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
-		if violatesDisallowFeedInRootFolder(parentNode) {
+	func violatesAccountSpecificBehavior(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+		if violatesDisallowFeedInRootFolder(dropTargetNode) {
 			return true
 		}
 
-		if violatesDisallowFeedCopyInRootFolder(parentNode, draggedFeeds) {
+		if violatesDisallowFeedCopyInRootFolder(dropTargetNode, draggedFeeds) {
+			return true
+		}
+		
+		if violatesDisallowFeedInMultipleFolders(dropTargetNode, draggedFeeds) {
 			return true
 		}
 		
 		return false
 	}
 	
-	func violatesDisallowFeedInRootFolder(_ parentNode: Node) -> Bool {
-		guard let parentAccount = nodeAccount(parentNode), parentAccount.behaviors.contains(.disallowFeedInRootFolder) else {
+	func violatesDisallowFeedInRootFolder(_ dropTargetNode: Node) -> Bool {
+		guard let parentAccount = nodeAccount(dropTargetNode), parentAccount.behaviors.contains(.disallowFeedInRootFolder) else {
 			return false
 		}
 		
-		if parentNode.representedObject is Account {
+		if dropTargetNode.representedObject is Account {
 			return true
 		}
 		
 		return false
 	}
 
-	func violatesDisallowFeedCopyInRootFolder(_ parentNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
-		guard let parentAccount = nodeAccount(parentNode), parentAccount.behaviors.contains(.disallowFeedCopyInRootFolder) else {
+	func violatesDisallowFeedCopyInRootFolder(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+		guard let dropTargetAccount = nodeAccount(dropTargetNode), dropTargetAccount.behaviors.contains(.disallowFeedCopyInRootFolder) else {
 			return false
 		}
 		
 		for draggedFeed in draggedFeeds {
-			if parentAccount.accountID != draggedFeed.accountID {
+			if dropTargetAccount.accountID != draggedFeed.accountID {
 				return false
 			}
 		}
 		
-		if parentNode.representedObject is Account && (NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false) {
+		if dropTargetNode.representedObject is Account && (NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false) {
 			return true
+		}
+		
+		return false
+	}
+
+	func violatesDisallowFeedInMultipleFolders(_ dropTargetNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>) -> Bool {
+		guard let dropTargetAccount = nodeAccount(dropTargetNode), dropTargetAccount.behaviors.contains(.disallowFeedInMultipleFolders) else {
+			return false
+		}
+		
+		for draggedFeed in draggedFeeds {
+			if dropTargetAccount.accountID == draggedFeed.accountID {
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					return true
+				}
+			} else {
+				if dropTargetAccount.hasWebFeed(withURL: draggedFeed.url) {
+					return true
+				}
+			}
 		}
 		
 		return false
