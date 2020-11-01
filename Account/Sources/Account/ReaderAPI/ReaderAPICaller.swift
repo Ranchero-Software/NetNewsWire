@@ -49,20 +49,22 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	private var transport: Transport!
-	
-	var variant: ReaderAPIVariant = .generic
-	var credentials: Credentials?
+	private let uriComponentAllowed: CharacterSet
+
 	private var accessToken: String?
 	
 	weak var accountMetadata: AccountMetadata?
 
+	var variant: ReaderAPIVariant = .generic
+	var credentials: Credentials?
+
 	var server: String? {
 		get {
-			return APIBaseURL?.host
+			return apiBaseURL?.host
 		}
 	}
 	
-	private var APIBaseURL: URL? {
+	private var apiBaseURL: URL? {
 		get {
 			switch variant {
 			case .generic, .freshRSS:
@@ -77,8 +79,12 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	init(transport: Transport) {
-		super.init()
 		self.transport = transport
+		
+		var urlHostAllowed = CharacterSet.urlHostAllowed
+		urlHostAllowed.remove("+")
+		uriComponentAllowed = urlHostAllowed
+		super.init()
 	}
 	
 	func cancelAll() {
@@ -170,7 +176,7 @@ final class ReaderAPICaller: NSObject {
 	
 	
 	func retrieveTags(completion: @escaping (Result<[ReaderAPITag]?, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -199,7 +205,7 @@ final class ReaderAPICaller: NSObject {
 	}
 
 	func renameTag(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -212,8 +218,13 @@ final class ReaderAPICaller: NSObject {
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
-				let oldTagName = "user/-/label/\(oldName)"
-				let newTagName = "user/-/label/\(newName)"
+				guard let encodedOldName = self.encodeForURLPath(oldName), let encodedNewName = self.encodeForURLPath(newName) else {
+					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+					return
+				}
+				
+				let oldTagName = "user/-/label/\(encodedOldName)"
+				let newTagName = "user/-/label/\(encodedNewName)"
 				let postData = "T=\(token)&s=\(oldTagName)&dest=\(newTagName)".data(using: String.Encoding.utf8)
 				
 				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
@@ -235,7 +246,7 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	func deleteTag(folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -274,7 +285,7 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	func retrieveSubscriptions(completion: @escaping (Result<[ReaderAPISubscription]?, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -302,7 +313,7 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	func createSubscription(url: String, name: String?, folder: Folder?, completion: @escaping (Result<CreateReaderAPISubscriptionResult, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -411,7 +422,7 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	func renameSubscription(subscriptionID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -424,7 +435,12 @@ final class ReaderAPICaller: NSObject {
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
 				
-				let postData = "T=\(token)&s=\(subscriptionID)&ac=edit&t=\(newName)".data(using: String.Encoding.utf8)
+				guard let encodedNewName = self.encodeForURLPath(newName) else {
+					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+					return
+				}
+
+				let postData = "T=\(token)&s=\(subscriptionID)&ac=edit&t=\(encodedNewName)".data(using: String.Encoding.utf8)
 				
 				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
 					switch result {
@@ -445,7 +461,7 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	func deleteSubscription(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -479,7 +495,7 @@ final class ReaderAPICaller: NSObject {
 	
 	func createTagging(subscriptionID: String, tagName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -514,7 +530,7 @@ final class ReaderAPICaller: NSObject {
 	}
 
 	func deleteTagging(subscriptionID: String, tagName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -554,7 +570,7 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -603,7 +619,7 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	func retrieveItemIDs(type: ItemIDType, webFeedID: String? = nil, completion: @escaping ((Result<[String], Error>) -> Void)) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
@@ -734,6 +750,10 @@ final class ReaderAPICaller: NSObject {
 
 private extension ReaderAPICaller {
 	
+	func encodeForURLPath(_ pathComponent: String) -> String? {
+		return pathComponent.addingPercentEncoding(withAllowedCharacters: uriComponentAllowed)
+	}
+	
 	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
 		if var conditionalGet = accountMetadata?.conditionalGetInfo {
 			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
@@ -749,7 +769,7 @@ private extension ReaderAPICaller {
 	}
 
 	private func updateStateToEntries(entries: [String], state: ReaderState, add: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let baseURL = APIBaseURL else {
+		guard let baseURL = apiBaseURL else {
 			completion(.failure(CredentialsError.incompleteCredentials))
 			return
 		}
