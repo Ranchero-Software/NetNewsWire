@@ -294,15 +294,15 @@ protocol SidebarDelegate: class {
 
 	// MARK: - Navigation
 	
-	func canGoToNextUnread() -> Bool {
-		if let _ = nextSelectableRowWithUnreadArticle() {
+	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
+		if let _ = nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) {
 			return true
 		}
 		return false
 	}
 	
-	func goToNextUnread() {
-		guard let row = nextSelectableRowWithUnreadArticle() else {
+	func goToNextUnread(wrappingToTop wrapping: Bool = false) {
+		guard let row = nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) else {
 			assertionFailure("goToNextUnread called before checking if there is a next unread.")
 			return
 		}
@@ -685,26 +685,42 @@ private extension SidebarViewController {
 		return false
 	}
 
-	func nextSelectableRowWithUnreadArticle() -> Int? {
-		// Skip group items, because they should never be selected.
-
-		let selectedRow = outlineView.selectedRow
-		let numberOfRows = outlineView.numberOfRows
-		var row = selectedRow + 1
-		
-		while (row < numberOfRows) {
-			if rowHasAtLeastOneUnreadArticle(row) && !rowIsGroupItem(row) {
-				return row
-			}
-			row += 1
+	func rowIsExpandedFolder(_ row: Int) -> Bool {
+		if let node = nodeForRow(row), outlineView.isItemExpanded(node) {
+			return true
 		}
-		
-		row = 0
-		while (row <= selectedRow) {
-			if rowHasAtLeastOneUnreadArticle(row) && !rowIsGroupItem(row) {
+		return false
+	}
+
+	func shouldSkipRow(_ row: Int) -> Bool {
+		let skipExpandedFolders = UserDefaults.standard.bool(forKey: "JalkutRespectFolderExpansionOnNextUnread")
+
+		// Skip group items, because they should never be selected.
+		// Skip expanded folders only if Jalkut's pref is enabled.
+		if  rowIsGroupItem(row) || (skipExpandedFolders && rowIsExpandedFolder(row)) {
+			return true
+		}
+		return false
+	}
+
+	func nextSelectableRowWithUnreadArticle(wrappingToTop wrapping: Bool = false) -> Int? {
+		let numberOfRows = outlineView.numberOfRows
+		let startRow = outlineView.selectedRow + 1
+
+		let orderedRows: [Int]
+		if startRow == numberOfRows {
+			// Last item is selected, so start at the beginning if we allow wrapping
+			orderedRows = wrapping ? Array(0..<numberOfRows) : []
+		} else {
+			// Start at the selection and wrap around to the beginning
+			orderedRows = Array(startRow..<numberOfRows) + (wrapping ? Array(0..<startRow) : [])
+		}
+
+		for row in orderedRows {
+			// Skip group items, because they should never be selected.
+			if rowHasAtLeastOneUnreadArticle(row) && !shouldSkipRow(row) {
 				return row
 			}
-			row += 1
 		}
 		
 		return nil

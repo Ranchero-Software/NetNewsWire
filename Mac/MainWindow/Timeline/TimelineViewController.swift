@@ -549,7 +549,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.scrollTo(row: ix)
 	}
 	
-	func goToNextUnread() {
+	func goToNextUnread(wrappingToTop wrapping: Bool = false) {
 		guard let ix = indexOfNextUnreadArticle() else {
 			return
 		}
@@ -558,15 +558,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.scrollTo(row: ix)
 	}
 	
-	func canGoToNextUnread() -> Bool {
-		guard let _ = indexOfNextUnreadArticle() else {
+	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
+		guard let _ = indexOfNextUnreadArticle(wrappingToTop: wrapping) else {
 			return false
 		}
 		return true
 	}
 	
-	func indexOfNextUnreadArticle() -> Int? {
-		return articles.rowOfNextUnreadArticle(tableView.selectedRow)
+	func indexOfNextUnreadArticle(wrappingToTop wrapping: Bool = false) -> Int? {
+		return articles.rowOfNextUnreadArticle(tableView.selectedRow, wrappingToTop: wrapping)
 	}
 
 	func focus() {
