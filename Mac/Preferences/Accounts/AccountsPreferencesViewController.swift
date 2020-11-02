@@ -226,7 +226,7 @@ private extension AccountsPreferencesViewController {
 	
 	func showController(_ controller: NSViewController) {
 		hideController()
-		
+	
 		addChild(controller)
 		controller.view.translatesAutoresizingMaskIntoConstraints = false
 		detailView.addSubview(controller.view)
@@ -238,6 +238,21 @@ private extension AccountsPreferencesViewController {
 		if let controller = children.first {
 			children.removeAll()
 			controller.view.removeFromSuperview()
+		}
+		
+		if tableView.selectedRow == -1 {
+			var helpText = ""
+			if sortedAccounts.count == 0 {
+				helpText = NSLocalizedString("Add an account by clicking the + button.", comment: "Add Account Explainer")
+			} else {
+				helpText = NSLocalizedString("Select an account or add a new account by clicking the + button.", comment: "Add Account Explainer")
+			}
+			
+			let textHostingController = NSHostingController(rootView: Text(helpText).multilineTextAlignment(.center))
+			addChild(textHostingController)
+			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+			detailView.addSubview(textHostingController.view)
+			detailView.addFullSizeConstraints(forSubview: textHostingController.view)
 		}
 	}
 	
