@@ -17,7 +17,7 @@ final class SendToMarsEditCommand: ExtensionPoint, SendToCommand {
 	static var title = NSLocalizedString("MarsEdit", comment: "MarsEdit")
 	static var image = AppAssets.extensionPointMarsEdit
 	static var description: NSAttributedString = {
-		let attrString = SendToMarsEditCommand.makeAttrString("This extension enables share menu functionality to send selected article text to MarsEdit.  You need the MarsEdit application for this to work.")
+		let attrString = SendToMarsEditCommand.makeAttrString("This extension enables share menu functionality to send selected article text to MarsEdit. You need the MarsEdit application for this to work.")
 		let range = NSRange(location: 81, length: 8)
 		attrString.beginEditing()
 		attrString.addAttribute(NSAttributedString.Key.link, value: "https://red-sweater.com/marsedit/", range: range)
