@@ -18,13 +18,16 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	}
 	
 	func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-		guard let destIndexPath = destinationIndexPath,
-			destIndexPath.section > 0,
-			tableView.hasActiveDrag,
-			let destIdentifier = dataSource.itemIdentifier(for: destIndexPath),
-			let destAccount = destIdentifier.account,
-			let destCell = tableView.cellForRow(at: destIndexPath) else {
-				return UITableViewDropProposal(operation: .forbidden)
+		guard let destIndexPath = destinationIndexPath,	destIndexPath.section > 0, tableView.hasActiveDrag else {
+			return UITableViewDropProposal(operation: .forbidden)
+		}
+			
+		guard let destIdentifier = dataSource.itemIdentifier(for: destIndexPath) else {
+			return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+		}
+		
+		guard let destAccount = destIdentifier.account,	let destCell = tableView.cellForRow(at: destIndexPath) else {
+			return UITableViewDropProposal(operation: .forbidden)
 		}
 
 		// Validate account specific behaviors...
@@ -90,7 +93,8 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			if let containerID = destIdentifier?.containerID ?? destIdentifier?.parentContainerID {
 				return AccountManager.shared.existingContainer(with: containerID)
 			} else {
-				return nil
+				// If we got here, we are trying to drop on an empty section header.  Go and find the Account for this section
+				return coordinator.rootNode.childAtIndex(destIndexPath.section)?.representedObject as? Account
 			}
 		}()
 		
