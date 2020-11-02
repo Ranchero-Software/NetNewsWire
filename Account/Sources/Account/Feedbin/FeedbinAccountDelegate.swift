@@ -986,27 +986,22 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [FeedbinSubscriptionChoice], completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		var orderFound = 0
 		
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
 			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
-			let specifier = FeedSpecifier(title: choice.name, urlString: choice.url, source: source)
+			orderFound = orderFound + 1
+			let specifier = FeedSpecifier(title: choice.name, urlString: choice.url, source: source, orderFound: orderFound)
 			return specifier
 		}
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
-			if let bestSubscription = choices.filter({ bestSpecifier.urlString == $0.url }).first {
-				createWebFeed(for: account, url: bestSubscription.url, name: name, container: container, completion: completion)
-			} else {
-				DispatchQueue.main.async {
-					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-				}
-			}
+			createWebFeed(for: account, url: bestSpecifier.urlString, name: name, container: container, completion: completion)
 		} else {
 			DispatchQueue.main.async {
 				completion(.failure(FeedbinAccountDelegateError.invalidParameter))
 			}
 		}
-		
 	}
 	
 	func createFeed( account: Account, subscription sub: FeedbinSubscription, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
