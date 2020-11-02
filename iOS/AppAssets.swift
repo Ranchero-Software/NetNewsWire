@@ -154,7 +154,7 @@ struct AppAssets {
 	}()
 	
 	static var masterFolderImage: IconImage = {
-		return IconImage(UIImage(systemName: "folder.fill")!)
+		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true)
 	}()
 	
 	static var moreImage: UIImage = {
@@ -186,7 +186,7 @@ struct AppAssets {
 	}()
 	
 	static var searchFeedImage: IconImage = {
-		return IconImage(UIImage(systemName: "magnifyingglass")!)
+		return IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
 	}()
 	
 	static var secondaryAccentColor: UIColor = {

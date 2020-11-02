@@ -114,11 +114,11 @@ private extension SceneDelegate {
 		DispatchQueue.main.async {
 			switch AppDefaults.userInterfaceColorPalette {
 			case .automatic:
-				self.window!.overrideUserInterfaceStyle = .unspecified
+				self.window?.overrideUserInterfaceStyle = .unspecified
 			case .light:
-				self.window!.overrideUserInterfaceStyle = .light
+				self.window?.overrideUserInterfaceStyle = .light
 			case .dark:
-				self.window!.overrideUserInterfaceStyle = .dark
+				self.window?.overrideUserInterfaceStyle = .dark
 			}
 		}
 	}
