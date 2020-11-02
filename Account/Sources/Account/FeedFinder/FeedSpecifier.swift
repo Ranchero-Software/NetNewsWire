@@ -31,7 +31,7 @@ struct FeedSpecifier: Hashable {
 
 		let mergedTitle = title ?? feedSpecifier.title
 		let mergedSource = source.equalToOrBetterThan(feedSpecifier.source) ? source : feedSpecifier.source
-		let mergedOrderFound = orderFound >= feedSpecifier.orderFound ? orderFound : feedSpecifier.orderFound
+		let mergedOrderFound = orderFound < feedSpecifier.orderFound ? orderFound : feedSpecifier.orderFound
 
 		return FeedSpecifier(title: mergedTitle, urlString: urlString, source: mergedSource, orderFound: mergedOrderFound)
 	}
