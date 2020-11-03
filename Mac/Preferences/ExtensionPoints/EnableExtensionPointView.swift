@@ -48,7 +48,7 @@ struct EnableExtensionPointView: View {
 						Text("Cancel")
 							.frame(width: 80)
 					})
-					.accessibility(label: Text("Add Account"))
+					.accessibility(label: Text("Add Extension"))
 				}
 				if #available(OSX 11.0, *) {
 					Button(action: {
@@ -58,7 +58,7 @@ struct EnableExtensionPointView: View {
 						Text("Continue")
 							.frame(width: 80)
 					})
-					.help("Add Account")
+					.help("Add Extension")
 					.keyboardShortcut(.defaultAction)
 					
 				} else {
