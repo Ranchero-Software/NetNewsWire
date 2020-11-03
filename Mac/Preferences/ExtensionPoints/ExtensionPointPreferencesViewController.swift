@@ -192,7 +192,11 @@ private extension ExtensionPointPreferencesViewController {
 			addChild(textHostingController)
 			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
 			detailView.addSubview(textHostingController.view)
-			detailView.addFullSizeConstraints(forSubview: textHostingController.view)
+			detailView.addConstraints([
+										NSLayoutConstraint(item: textHostingController.view, attribute: .top, relatedBy: .equal, toItem: detailView, attribute: .top, multiplier: 1, constant: 1),
+										NSLayoutConstraint(item: textHostingController.view, attribute: .bottom, relatedBy: .equal, toItem: detailView, attribute: .bottom, multiplier: 1, constant: -deleteButton.frame.height),
+				NSLayoutConstraint(item: textHostingController.view, attribute: .width, relatedBy: .equal, toItem: detailView, attribute: .width, multiplier: 1, constant: 1)
+			])
 		}
 	}
 	
