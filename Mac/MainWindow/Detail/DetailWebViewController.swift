@@ -64,7 +64,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		// Wrap the webview in a box configured with the same background color that the web view uses
 		let box = NSBox(frame: .zero)
 		box.boxType = .custom
-		box.borderType = .noBorder
+		box.isTransparent = true
 		box.titlePosition = .noTitle
 		box.contentViewMargins = .zero
 		box.fillColor = NSColor(named: "webviewBackgroundColor")!
