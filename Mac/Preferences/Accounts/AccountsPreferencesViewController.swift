@@ -226,18 +226,37 @@ private extension AccountsPreferencesViewController {
 	
 	func showController(_ controller: NSViewController) {
 		hideController()
-		
+	
 		addChild(controller)
 		controller.view.translatesAutoresizingMaskIntoConstraints = false
 		detailView.addSubview(controller.view)
 		detailView.addFullSizeConstraints(forSubview: controller.view)
-		
 	}
 	
 	func hideController() {
 		if let controller = children.first {
 			children.removeAll()
 			controller.view.removeFromSuperview()
+		}
+		
+		if tableView.selectedRow == -1 {
+			var helpText = ""
+			if sortedAccounts.count == 0 {
+				helpText = NSLocalizedString("Add an account by clicking the + button.", comment: "Add Account Explainer")
+			} else {
+				helpText = NSLocalizedString("Select an account or add a new account by clicking the + button.", comment: "Add Account Explainer")
+			}
+			
+			let textHostingController = NSHostingController(rootView: Text(helpText).multilineTextAlignment(.center))
+			addChild(textHostingController)
+			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+			detailView.addSubview(textHostingController.view)
+			detailView.addConstraints([
+										NSLayoutConstraint(item: textHostingController.view, attribute: .top, relatedBy: .equal, toItem: detailView, attribute: .top, multiplier: 1, constant: 1),
+										NSLayoutConstraint(item: textHostingController.view, attribute: .bottom, relatedBy: .equal, toItem: detailView, attribute: .bottom, multiplier: 1, constant: -deleteButton.frame.height),
+				NSLayoutConstraint(item: textHostingController.view, attribute: .width, relatedBy: .equal, toItem: detailView, attribute: .width, multiplier: 1, constant: 1)
+			])
+			
 		}
 	}
 	
