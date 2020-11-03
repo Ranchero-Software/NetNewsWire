@@ -14,7 +14,7 @@ struct EnableExtensionPointView: View {
 	
 	weak var parent: NSHostingController<EnableExtensionPointView>? // required because presentationMode.dismiss() doesn't work
 	weak var enabler: ExtensionPointPreferencesEnabler?
-	@State private var extensionPointTypeName = String(describing: Self.feedProviderExtensionPointTypes.first!)
+	@State private var extensionPointTypeName = String(describing: Self.feedProviderExtensionPointTypes.first)
 	
 	init(enabler: ExtensionPointPreferencesEnabler?) {
 		self.enabler = enabler
