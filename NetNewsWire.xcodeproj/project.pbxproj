@@ -495,6 +495,12 @@
 		51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */; };
 		51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D87EE02311D34700E63F03 /* ActivityType.swift */; };
+		51DC07982552083500A3F79F /* ArticleTextSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC07972552083500A3F79F /* ArticleTextSize.swift */; };
+		51DC07992552083500A3F79F /* ArticleTextSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC07972552083500A3F79F /* ArticleTextSize.swift */; };
+		51DC079A2552083500A3F79F /* ArticleTextSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC07972552083500A3F79F /* ArticleTextSize.swift */; };
+		51DC079B2552083500A3F79F /* ArticleTextSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC07972552083500A3F79F /* ArticleTextSize.swift */; };
+		51DC079C2552083500A3F79F /* ArticleTextSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC07972552083500A3F79F /* ArticleTextSize.swift */; };
+		51DC07AC255209E200A3F79F /* ArticleTextSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC07972552083500A3F79F /* ArticleTextSize.swift */; };
 		51DC37072402153E0095D371 /* UpdateSelectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */; };
 		51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */; };
 		51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */; };
@@ -1730,6 +1736,7 @@
 		51CE1C0A23622006005548FC /* RefreshProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
 		51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineDataSource.swift; sourceTree = "<group>"; };
 		51D87EE02311D34700E63F03 /* ActivityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityType.swift; sourceTree = "<group>"; };
+		51DC07972552083500A3F79F /* ArticleTextSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleTextSize.swift; sourceTree = "<group>"; };
 		51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSelectionOperation.swift; sourceTree = "<group>"; };
 		51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedDataSourceOperation.swift; sourceTree = "<group>"; };
 		51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedWebView.swift; sourceTree = "<group>"; };
@@ -2804,11 +2811,12 @@
 		51C452A822650DA100C03939 /* Article Rendering */ = {
 			isa = PBXGroup;
 			children = (
-				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
+				B27EEBDF244D15F2000932E6 /* shared.css */,
+				848362FE2262A30E00DA1D35 /* template.html */,
 				517630032336215100E15FFF /* main.js */,
 				49F40DEF2335B71000552BF4 /* newsfoot.js */,
-				848362FE2262A30E00DA1D35 /* template.html */,
-				B27EEBDF244D15F2000932E6 /* shared.css */,
+				849A977D1ED9EC42007D329B /* ArticleRenderer.swift */,
+				51DC07972552083500A3F79F /* ArticleTextSize.swift */,
 			);
 			path = "Article Rendering";
 			sourceTree = "<group>";
@@ -4424,6 +4432,7 @@
 				511B149A24E5DC5400C919BD /* RefreshInterval.swift in Sources */,
 				510C418324E5D1B4008226FD /* ExtensionContainersFile.swift in Sources */,
 				510C418524E5D1B4008226FD /* ExtensionContainers.swift in Sources */,
+				51DC07AC255209E200A3F79F /* ArticleTextSize.swift in Sources */,
 				511B149824E5DC2300C919BD /* ShareDefaultContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4485,6 +4494,7 @@
 				51E4996A24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
 				51919FF124AB864A00541E64 /* TimelineModel.swift in Sources */,
 				5194736E24BBB937001A2939 /* HiddenModifier.swift in Sources */,
+				51DC079B2552083500A3F79F /* ArticleTextSize.swift in Sources */,
 				51E498F124A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				51E498FF24A808BB00B667CB /* SingleFaviconDownloader.swift in Sources */,
 				51E4997224A8784300B667CB /* DefaultFeedsImporter.swift in Sources */,
@@ -4668,6 +4678,7 @@
 				51E4992224A8095600B667CB /* URL-Extensions.swift in Sources */,
 				51E4990424A808C300B667CB /* WebFeedIconDownloader.swift in Sources */,
 				51E498CB24A8085D00B667CB /* TodayFeedDelegate.swift in Sources */,
+				51DC079C2552083500A3F79F /* ArticleTextSize.swift in Sources */,
 				51B80F1F24BE531200C6C32D /* SharingServiceView.swift in Sources */,
 				17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */,
 				51A8005224CC453C00F41F1D /* ReplaySubject.swift in Sources */,
@@ -4799,6 +4810,7 @@
 				65ED3FC2235DEF6C0081F399 /* Browser.swift in Sources */,
 				65ED3FC3235DEF6C0081F399 /* DetailWebViewController.swift in Sources */,
 				65ED3FC4235DEF6C0081F399 /* OPMLExporter.swift in Sources */,
+				51DC07992552083500A3F79F /* ArticleTextSize.swift in Sources */,
 				65ED3FC5235DEF6C0081F399 /* MainWindowController.swift in Sources */,
 				65ED3FC6235DEF6C0081F399 /* UnreadFeed.swift in Sources */,
 				65ED3FC8235DEF6C0081F399 /* SidebarCellLayout.swift in Sources */,
@@ -5049,6 +5061,7 @@
 				51C452AE2265104D00C03939 /* ArticleStringFormatter.swift in Sources */,
 				512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */,
 				51A9A60A2382FD240033AADF /* PoppableGestureRecognizerDelegate.swift in Sources */,
+				51DC079A2552083500A3F79F /* ArticleTextSize.swift in Sources */,
 				51C4529922650A0000C03939 /* ArticleStylesManager.swift in Sources */,
 				51EF0F802277A8330050506E /* MasterTimelineCellLayout.swift in Sources */,
 				51F85BF722749FA100C787DC /* UIFont-Extensions.swift in Sources */,
@@ -5223,6 +5236,7 @@
 				5144EA382279FC6200D19003 /* AccountsAddLocalWindowController.swift in Sources */,
 				84AD1EAA2031617300BC20B7 /* PasteboardFolder.swift in Sources */,
 				515A5148243E64BA0089E588 /* ExtensionPointEnableWindowController.swift in Sources */,
+				51DC07982552083500A3F79F /* ArticleTextSize.swift in Sources */,
 				5117715524E1EA0F00A2A836 /* ArticleExtractorButton.swift in Sources */,
 				5103A9F724225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */,
 				5144EA51227B8E4500D19003 /* AccountsFeedbinWindowController.swift in Sources */,

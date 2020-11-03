@@ -4,7 +4,7 @@ body {
 	padding-left: 64px;
 	padding-right: 64px;
 	font-family: -apple-system;
-	font-size: 18px;
+	font-size: [[font-size]]px;
 }
 
 :root {
