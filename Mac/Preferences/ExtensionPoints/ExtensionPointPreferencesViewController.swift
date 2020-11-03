@@ -188,6 +188,11 @@ private extension ExtensionPointPreferencesViewController {
 				helpText = NSLocalizedString("Select an extension point or add a new extension point by clicking the + button.", comment: "Extension Explainer")
 			}
 			
+			if let controller = children.first {
+				children.removeAll()
+				controller.view.removeFromSuperview()
+			}
+			
 			let textHostingController = NSHostingController(rootView: Text(helpText).multilineTextAlignment(.center))
 			addChild(textHostingController)
 			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -227,7 +232,11 @@ private extension ExtensionPointPreferencesViewController {
 			addChild(textHostingController)
 			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
 			detailView.addSubview(textHostingController.view)
-			detailView.addFullSizeConstraints(forSubview: textHostingController.view)
+			detailView.addConstraints([
+										NSLayoutConstraint(item: textHostingController.view, attribute: .top, relatedBy: .equal, toItem: detailView, attribute: .top, multiplier: 1, constant: 1),
+										NSLayoutConstraint(item: textHostingController.view, attribute: .bottom, relatedBy: .equal, toItem: detailView, attribute: .bottom, multiplier: 1, constant: -deleteButton.frame.height),
+				NSLayoutConstraint(item: textHostingController.view, attribute: .width, relatedBy: .equal, toItem: detailView, attribute: .width, multiplier: 1, constant: 1)
+			])
 		}
 	}
 
