@@ -72,6 +72,7 @@ final class AppDefaults: ObservableObject {
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead" 
 		
 		// macOS Defaults
+		static let articleTextSize = "articleTextSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let defaultBrowserID = "defaultBrowserID"
 		static let checkForUpdatesAutomatically = "checkForUpdatesAutomatically"
@@ -231,6 +232,16 @@ final class AppDefaults: ObservableObject {
 	
 	@AppStorage(wrappedValue: false, Key.articleFullscreenEnabled, store: store) var articleFullscreenEnabled: Bool
 	
+	@AppStorage(wrappedValue: 3, Key.articleTextSize, store: store) var articleTextSizeTag: Int {
+		didSet {
+			objectWillChange.send()
+		}
+	}
+	
+	var articleTextSize: ArticleTextSize {
+		ArticleTextSize(rawValue: articleTextSizeTag) ?? ArticleTextSize.large
+	}
+
 	// MARK: Refresh
 	var lastRefresh: Date? {
 		set {
