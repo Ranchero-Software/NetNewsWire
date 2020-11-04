@@ -45,10 +45,7 @@ final class AccountsPreferencesViewController: NSViewController {
 		rTable.size.width = tableView.superview!.frame.size.width
 		tableView.frame = rTable
 		
-		// Set initial row selection
-		if sortedAccounts.count > 0 {
-			tableView.selectRow(0)
-		}
+		hideController()
 	}
 	
 	@IBAction func addAccount(_ sender: Any) {
@@ -247,7 +244,8 @@ private extension AccountsPreferencesViewController {
 				helpText = NSLocalizedString("Select an account or add a new account by clicking the + button.", comment: "Add Account Explainer")
 			}
 			
-			let textHostingController = NSHostingController(rootView: Text(helpText).multilineTextAlignment(.center))
+			let textHostingController = NSHostingController(rootView:
+										AddAccountHelpView(delegate: addAccountDelegate, helpText: helpText))
 			addChild(textHostingController)
 			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
 			detailView.addSubview(textHostingController.view)

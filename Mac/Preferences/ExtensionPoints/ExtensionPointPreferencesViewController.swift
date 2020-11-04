@@ -41,10 +41,7 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 		
 		showDefaultView()
 
-		// Set initial row selection
-		if activeExtensionPoints.count > 0 {
-			tableView.selectRow(0)
-		}
+		
 	}
 	
 	@IBAction func enableExtensionPoints(_ sender: Any) {
@@ -183,9 +180,9 @@ private extension ExtensionPointPreferencesViewController {
 		if tableView.selectedRow == -1 {
 			var helpText = ""
 			if activeExtensionPoints.count == 0 {
-				helpText = NSLocalizedString("Add an extension point by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
 			} else {
-				helpText = NSLocalizedString("Select an extension point or add a new extension point by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("Select an extension or add a new extension point by clicking the + button.", comment: "Extension Explainer")
 			}
 			
 			if let controller = children.first {
@@ -193,7 +190,7 @@ private extension ExtensionPointPreferencesViewController {
 				controller.view.removeFromSuperview()
 			}
 			
-			let textHostingController = NSHostingController(rootView: Text(helpText).multilineTextAlignment(.center))
+			let textHostingController = NSHostingController(rootView: EnableExtensionPointHelpView(helpText: helpText, preferencesController: self))
 			addChild(textHostingController)
 			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
 			detailView.addSubview(textHostingController.view)
@@ -223,12 +220,12 @@ private extension ExtensionPointPreferencesViewController {
 		if tableView.selectedRow == -1 {
 			var helpText = ""
 			if activeExtensionPoints.count == 0 {
-				helpText = NSLocalizedString("Add an extension point by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
 			} else {
-				helpText = NSLocalizedString("Select an extension point or add a new extension point by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("Select an extension or add a new extension point by clicking the + button.", comment: "Extension Explainer")
 			}
 			
-			let textHostingController = NSHostingController(rootView: Text(helpText).multilineTextAlignment(.center))
+			let textHostingController = NSHostingController(rootView: EnableExtensionPointHelpView(helpText: helpText, preferencesController: self))
 			addChild(textHostingController)
 			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
 			detailView.addSubview(textHostingController.view)
@@ -297,3 +294,5 @@ private extension ExtensionPointPreferencesViewController {
 	}
 	
 }
+
+

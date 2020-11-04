@@ -14,7 +14,7 @@ struct EnableExtensionPointView: View {
 	
 	weak var parent: NSHostingController<EnableExtensionPointView>? // required because presentationMode.dismiss() doesn't work
 	weak var enabler: ExtensionPointPreferencesEnabler?
-	@State private var extensionPointTypeName = String(describing: Self.feedProviderExtensionPointTypes.first!)
+	@State private var extensionPointTypeName = String(describing: Self.feedProviderExtensionPointTypes.first)
 	
 	init(enabler: ExtensionPointPreferencesEnabler?) {
 		self.enabler = enabler
@@ -48,7 +48,7 @@ struct EnableExtensionPointView: View {
 						Text("Cancel")
 							.frame(width: 80)
 					})
-					.accessibility(label: Text("Add Account"))
+					.accessibility(label: Text("Add Extension"))
 				}
 				if #available(OSX 11.0, *) {
 					Button(action: {
@@ -58,7 +58,7 @@ struct EnableExtensionPointView: View {
 						Text("Continue")
 							.frame(width: 80)
 					})
-					.help("Add Account")
+					.help("Add Extension")
 					.keyboardShortcut(.defaultAction)
 					
 				} else {
@@ -107,7 +107,7 @@ struct EnableExtensionPointView: View {
 				.pickerStyle(RadioGroupPickerStyle())
 				.offset(x: 7.5, y: 0)
 				
-				Text("An extension point that makes websites appear to provide RSS feeds for their content.")
+				Text("An extension that makes websites appear to provide RSS feeds for their content.")
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
@@ -144,7 +144,7 @@ struct EnableExtensionPointView: View {
 				.pickerStyle(RadioGroupPickerStyle())
 				.offset(x: 7.5, y: 0)
 				
-				Text("An extension point that enables a share menu item that passes article data to a third-party application.")
+				Text("An extension that enables a share menu item that passes article data to a third-party application.")
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
@@ -170,3 +170,6 @@ struct EnableExtensionPointView: View {
 		fatalError()
 	}
 }
+
+
+
