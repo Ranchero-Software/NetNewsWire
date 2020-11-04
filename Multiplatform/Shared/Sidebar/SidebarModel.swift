@@ -242,7 +242,7 @@ private extension SidebarModel {
 	/// - Parameter articles: An array of `Article`s.
 	/// - Warning: An `UndoManager` is created here as the `Environment`'s undo manager appears to be `nil`.
 	func markAllAsRead(_ articles: [Article]) {
-		guard let undoManager = undoManager ?? UndoManager(),
+		guard let undoManager = undoManager,
 			  let markAsReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager) else {
 			return
 		}
