@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		1704053424E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
 		1704053524E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
+		1710B9132552354E00679C0D /* AddAccountHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B9122552354E00679C0D /* AddAccountHelpView.swift */; };
+		1710B9142552354E00679C0D /* AddAccountHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B9122552354E00679C0D /* AddAccountHelpView.swift */; };
+		1710B929255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */; };
+		1710B92A255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */; };
 		1717535624BADF33004498C6 /* GeneralPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1717535524BADF33004498C6 /* GeneralPreferencesModel.swift */; };
 		171BCB8C24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
 		171BCB8D24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
@@ -1434,6 +1438,8 @@
 
 /* Begin PBXFileReference section */
 		1704053324E5985A00A00787 /* SceneNavigationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigationModel.swift; sourceTree = "<group>"; };
+		1710B9122552354E00679C0D /* AddAccountHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountHelpView.swift; sourceTree = "<group>"; };
+		1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionPointHelpView.swift; sourceTree = "<group>"; };
 		1717535524BADF33004498C6 /* GeneralPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesModel.swift; sourceTree = "<group>"; };
 		171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixAccountCredentialView.swift; sourceTree = "<group>"; };
 		172199C824AB228900A31D04 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -2304,6 +2310,7 @@
 			isa = PBXGroup;
 			children = (
 				5183CFAE254C78C8006B83A5 /* EnableExtensionPointView.swift */,
+				1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */,
 				515A516D243E7F950089E588 /* ExtensionPointDetail.xib */,
 				515A5170243E802B0089E588 /* ExtensionPointDetailViewController.swift */,
 				515A5147243E64BA0089E588 /* ExtensionPointEnableWindowController.swift */,
@@ -3328,6 +3335,7 @@
 			isa = PBXGroup;
 			children = (
 				178A9F9C2549449F00AB7E9D /* AddAccountsView.swift */,
+				1710B9122552354E00679C0D /* AddAccountHelpView.swift */,
 				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
 				84C9FC7422629E1200D921D6 /* AccountsDetail.xib */,
 				5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */,
@@ -4794,6 +4802,7 @@
 				65ED3FBD235DEF6C0081F399 /* AppDefaults.swift in Sources */,
 				65ED3FBE235DEF6C0081F399 /* Account+Scriptability.swift in Sources */,
 				65ED3FBF235DEF6C0081F399 /* NothingInspectorViewController.swift in Sources */,
+				1710B92A255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */,
 				65ED3FC0235DEF6C0081F399 /* AppNotifications.swift in Sources */,
 				65ED3FC1235DEF6C0081F399 /* TimelineKeyboardDelegate.swift in Sources */,
 				65ED3FC2235DEF6C0081F399 /* Browser.swift in Sources */,
@@ -4863,6 +4872,7 @@
 				65ED3FF7235DEF6C0081F399 /* SearchFeedDelegate.swift in Sources */,
 				65ED3FF8235DEF6C0081F399 /* ErrorHandler.swift in Sources */,
 				65ED3FF9235DEF6C0081F399 /* ActivityManager.swift in Sources */,
+				1710B9142552354E00679C0D /* AddAccountHelpView.swift in Sources */,
 				65ED3FFA235DEF6C0081F399 /* WebFeedInspectorViewController.swift in Sources */,
 				65ED3FFB235DEF6C0081F399 /* AccountsReaderAPIWindowController.swift in Sources */,
 				65ED3FFC235DEF6C0081F399 /* AccountsAddLocalWindowController.swift in Sources */,
@@ -5179,6 +5189,7 @@
 				D5907D7F2004AC00005947E5 /* NSApplication+Scriptability.swift in Sources */,
 				8405DD9C22153BD7008CE1BF /* NSView-Extensions.swift in Sources */,
 				849A979F1ED9F130007D329B /* SidebarCell.swift in Sources */,
+				1710B929255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */,
 				515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */,
 				51E595A5228CC36500FCC42B /* ArticleStatusSyncTimer.swift in Sources */,
 				515A5177243E90200089E588 /* ExtensionPointIdentifer.swift in Sources */,
@@ -5234,6 +5245,7 @@
 				511B9806237DCAC90028BCAA /* UserInfoKey.swift in Sources */,
 				84C9FC7722629E1200D921D6 /* AdvancedPreferencesViewController.swift in Sources */,
 				849EE72120391F560082A1EA /* SharingServicePickerDelegate.swift in Sources */,
+				1710B9132552354E00679C0D /* AddAccountHelpView.swift in Sources */,
 				5108F6B62375E612001ABC45 /* CacheCleaner.swift in Sources */,
 				849A97981ED9EFAA007D329B /* Node-Extensions.swift in Sources */,
 				849EE70F203919360082A1EA /* AppAssets.swift in Sources */,

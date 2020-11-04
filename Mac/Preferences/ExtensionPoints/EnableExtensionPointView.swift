@@ -107,7 +107,7 @@ struct EnableExtensionPointView: View {
 				.pickerStyle(RadioGroupPickerStyle())
 				.offset(x: 7.5, y: 0)
 				
-				Text("An extension point that makes websites appear to provide RSS feeds for their content.")
+				Text("An extension that makes websites appear to provide RSS feeds for their content.")
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
@@ -144,7 +144,7 @@ struct EnableExtensionPointView: View {
 				.pickerStyle(RadioGroupPickerStyle())
 				.offset(x: 7.5, y: 0)
 				
-				Text("An extension point that enables a share menu item that passes article data to a third-party application.")
+				Text("An extension that enables a share menu item that passes article data to a third-party application.")
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
@@ -170,3 +170,6 @@ struct EnableExtensionPointView: View {
 		fatalError()
 	}
 }
+
+
+
