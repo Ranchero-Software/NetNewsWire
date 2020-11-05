@@ -34,6 +34,7 @@ final class FeedbinAPICaller: NSObject {
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
 	private var transport: Transport!
 	private var suspended = false
+	private var lastBackdateStartTime: Date?
 	
 	var credentials: Credentials?
 	weak var accountMetadata: AccountMetadata?
@@ -486,10 +487,26 @@ final class FeedbinAPICaller: NSObject {
 	}
 
 	func retrieveEntries(completion: @escaping (Result<([FeedbinEntry]?, String?, Date?, Int?), Error>) -> Void) {
-		
+
+		// If this is an initial sync, go and grab the previous 3 months of entries.  If not, use the last
+		// article fetch to only get the articles **published** since the last article fetch.
+		//
+		// We do a backdate fetch every launch or every 24 hours.  This will help with
+		// getting **updated** articles that normally wouldn't be found with a regular fetch.
+		// https://github.com/Ranchero-Software/NetNewsWire/issues/2549#issuecomment-722341356
 		let since: Date = {
 			if let lastArticleFetch = accountMetadata?.lastArticleFetchStartTime {
-				return lastArticleFetch
+				if let lastBackdateStartTime = lastBackdateStartTime {
+					if lastBackdateStartTime.byAdding(days: 1) < lastArticleFetch {
+						self.lastBackdateStartTime = lastArticleFetch
+						return lastArticleFetch.bySubtracting(days: 1)
+					} else {
+						return lastArticleFetch
+					}
+				} else {
+					self.lastBackdateStartTime = lastArticleFetch
+					return lastArticleFetch.bySubtracting(days: 1)
+				}
 			} else {
 				return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
 			}
