@@ -96,7 +96,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 			return
 		}
 		
-		let container = selectedContainer()!
+		guard let container = selectedContainer() else { return }
 		AddWebFeedDefaultContainer.saveDefaultContainer(container)
 
 		delegate?.addFeedWindowController(self, userEnteredURL: url, userEnteredTitle: userEnteredTitle, container: container)
@@ -122,7 +122,7 @@ class AddWebFeedWindowController : NSWindowController, AddFeedWindowController {
 private extension AddWebFeedWindowController {
 	
 	private func updateUI() {
-		addButton.isEnabled = urlTextField.stringValue.mayBeURL
+		addButton.isEnabled = urlTextField.stringValue.mayBeURL && selectedContainer() != nil
 	}
 
 	func cancelSheet() {
@@ -130,6 +130,7 @@ private extension AddWebFeedWindowController {
 	}
 
 	func selectedContainer() -> Container? {
+		guard folderPopupButton.selectedItem?.isEnabled ?? false else { return nil }
 		return folderPopupButton.selectedItem?.representedObject as? Container
 	}
 }
