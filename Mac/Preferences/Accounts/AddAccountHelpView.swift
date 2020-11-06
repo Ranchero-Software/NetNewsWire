@@ -15,6 +15,7 @@ struct AddAccountHelpView: View {
 	var delegate: AccountsPreferencesAddAccountDelegate?
 	var helpText: String
 	@State private var hoveringId: String? = nil
+	@State private var iCloudUnavailableError: Bool = false
 	
 	var body: some View {
 		VStack {
@@ -24,7 +25,11 @@ struct AddAccountHelpView: View {
 						.resizable()
 						.frame(width: 20, height: 20, alignment: .center)
 						.onTapGesture {
-							delegate?.presentSheetForAccount(account)
+							if account == .cloudKit && AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit }) {
+								iCloudUnavailableError = true
+							} else {
+								delegate?.presentSheetForAccount(account)
+							}
 							hoveringId = nil
 						}
 						.onHover(perform: { hovering in
@@ -42,7 +47,14 @@ struct AddAccountHelpView: View {
 			Text(helpText)
 				.multilineTextAlignment(.center)
 				.padding(.top, 8)
-				
+			
 		}
+		.alert(isPresented: $iCloudUnavailableError, content: {
+			Alert(title: Text(NSLocalizedString("Error", comment: "Error")),
+				  message: Text(NSLocalizedString("You've already set up an iCloud account.", comment: "Error")),
+				  dismissButton: Alert.Button.cancel({
+					iCloudUnavailableError = false
+				  }))
+		})
 	}
 }

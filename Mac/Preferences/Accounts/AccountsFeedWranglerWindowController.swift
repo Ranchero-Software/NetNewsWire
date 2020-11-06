@@ -12,6 +12,10 @@ import RSWeb
 import Secrets
 
 class AccountsFeedWranglerWindowController: NSWindowController {
+	
+	@IBOutlet weak var signInTextField: NSTextField!
+	@IBOutlet weak var noAccountTextField: NSTextField!
+	@IBOutlet weak var createNewAccountButton: NSButton!
 	@IBOutlet weak var progressIndicator: NSProgressIndicator!
 	@IBOutlet weak var usernameTextField: NSTextField!
 	@IBOutlet weak var passwordTextField: NSSecureTextField!
@@ -30,8 +34,12 @@ class AccountsFeedWranglerWindowController: NSWindowController {
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .basic) {
 			usernameTextField.stringValue = credentials.username
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
+			signInTextField.stringValue = NSLocalizedString("Update your Feed Wrangler account credentials.", comment: "SignIn")
+			noAccountTextField.isHidden = true
+			createNewAccountButton.isHidden = true
 		} else {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
+			signInTextField.stringValue = NSLocalizedString("Sign in to your Feed Wrangler account.", comment: "SignIn")
 		}
 	}
 	
@@ -113,4 +121,9 @@ class AccountsFeedWranglerWindowController: NSWindowController {
 			}
 		}
 	}
+	
+	@IBAction func createAccountWithProvider(_ sender: Any) {
+		NSWorkspace.shared.open(URL(string: "https://feedwrangler.net/users/new")!)
+	}
+	
 }

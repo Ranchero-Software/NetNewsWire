@@ -11,7 +11,12 @@ import SwiftUI
 import RSCore
 
 struct EnableExtensionPointHelpView: View {
-	let imageLiterals = ["extensionPointMarsEdit", "extensionPointMicroblog", "extensionPointReddit", "extensionPointTwitter"]
+
+	var extensionPoints: [ExtensionPoint.Type] {
+		let types = ExtensionPointManager.shared.availableExtensionPointTypes.filter({ $0 is SendToCommand.Type }) +
+			ExtensionPointManager.shared.availableExtensionPointTypes.filter({ !($0 is SendToCommand.Type) })
+		return types
+	}
 	var helpText: String
 	weak var preferencesController: ExtensionPointPreferencesViewController?
 	
@@ -20,23 +25,31 @@ struct EnableExtensionPointHelpView: View {
 	var body: some View {
 		VStack {
 			HStack {
-				ForEach(imageLiterals, id: \.self) { name in
-					Image(name)
+				ForEach(0..<extensionPoints.count, content: { i in
+					Image(nsImage: extensionPoints[i].image)
 						.resizable()
 						.frame(width: 20, height: 20, alignment: .center)
 						.onTapGesture {
-							preferencesController?.enableExtensionPoints(self)
+							preferencesController?.enableExtensionPointFromSelection(extensionPoints[i])
 							hoveringId = nil
 						}
 						.onHover(perform: { hovering in
 							if hovering {
-								hoveringId = name
+								hoveringId = extensionPoints[i].title
 							} else {
 								hoveringId = nil
 							}
 						})
-						.scaleEffect(hoveringId == name ? 1.2 : 1)
-						.shadow(radius: hoveringId == name ? 0.8 : 0)
+						.scaleEffect(hoveringId == extensionPoints[i].title ? 1.2 : 1)
+						.shadow(radius: hoveringId == extensionPoints[i].title ? 0.8 : 0)
+				})
+				
+				if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
+					Image("markUnread")
+						.resizable()
+						.renderingMode(.template)
+						.frame(width: 30, height: 30, alignment: .center)
+						.foregroundColor(.green)
 				}
 			}
 			

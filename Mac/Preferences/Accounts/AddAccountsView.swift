@@ -151,8 +151,6 @@ struct AddAccountsView: View {
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
 							.padding(.leading, 4)
-						
-							
 						Text(account.localizedAccountName())
 					}
 					.tag(account)
