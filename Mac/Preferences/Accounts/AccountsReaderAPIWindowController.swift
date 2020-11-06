@@ -23,6 +23,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	@IBOutlet weak var passwordTextField: NSSecureTextField!
 	@IBOutlet weak var errorMessageLabel: NSTextField!
 	@IBOutlet weak var actionButton: NSButton!
+	@IBOutlet weak var noAccountTextField: NSTextField!
 	
 	var account: Account?
 	var accountType: AccountType?
@@ -38,19 +39,23 @@ class AccountsReaderAPIWindowController: NSWindowController {
 			switch accountType {
 			case .freshRSS:
 				titleImageView.image = AppAssets.accountFreshRSS
-				titleLabel.stringValue = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+				titleLabel.stringValue = NSLocalizedString("Sign in to your FreshRSS account.", comment: "FreshRSS")
+				noAccountTextField.stringValue = NSLocalizedString("Don't have a FreshRSS account?", comment: "No FreshRSS")
 			case .inoreader:
 				titleImageView.image = AppAssets.accountInoreader
-				titleLabel.stringValue = NSLocalizedString("InoReader", comment: "InoReader")
+				titleLabel.stringValue = NSLocalizedString("Sign in to your InoReader account.", comment: "InoReader")
 				gridView.row(at: 2).isHidden = true
+				noAccountTextField.stringValue = NSLocalizedString("Don't have an InoReader account?", comment: "No InoReader")
 			case .bazQux:
 				titleImageView.image = AppAssets.accountBazQux
-				titleLabel.stringValue = NSLocalizedString("BazQux", comment: "BazQux")
+				titleLabel.stringValue = NSLocalizedString("Sign in to your BazQux account.", comment: "BazQux")
 				gridView.row(at: 2).isHidden = true
+				noAccountTextField.stringValue = NSLocalizedString("Don't have a BazQux account?", comment: "No BazQux")
 			case .theOldReader:
 				titleImageView.image = AppAssets.accountTheOldReader
-				titleLabel.stringValue = NSLocalizedString("The Old Reader", comment: "The Old Reader")
+				titleLabel.stringValue = NSLocalizedString("Sign in to your The Old Reader account.", comment: "The Old Reader")
 				gridView.row(at: 2).isHidden = true
+				noAccountTextField.stringValue = NSLocalizedString("Don't have a The Old Reader account?", comment: "No OldReader")
 			default:
 				break
 			}
@@ -172,5 +177,21 @@ class AccountsReaderAPIWindowController: NSWindowController {
 		}
 		
 	}
+	
+	@IBAction func createAccountWithProvider(_ sender: Any) {
+		switch accountType {
+		case .freshRSS:
+			NSWorkspace.shared.open(URL(string: "https://freshrss.org")!)
+		case .inoreader:
+			NSWorkspace.shared.open(URL(string: "https://www.inoreader.com")!)
+		case .bazQux:
+			NSWorkspace.shared.open(URL(string: "https://bazqux.com")!)
+		case .theOldReader:
+			NSWorkspace.shared.open(URL(string: "https://theoldreader.com")!)
+		default:
+			return
+		}
+	}
+	
     
 }

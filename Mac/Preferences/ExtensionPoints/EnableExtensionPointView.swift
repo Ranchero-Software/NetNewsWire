@@ -10,14 +10,17 @@ import AppKit
 import SwiftUI
 import RSCore
 
+
 struct EnableExtensionPointView: View {
 	
 	weak var parent: NSHostingController<EnableExtensionPointView>? // required because presentationMode.dismiss() doesn't work
 	weak var enabler: ExtensionPointPreferencesEnabler?
-	@State private var extensionPointTypeName = String(describing: Self.feedProviderExtensionPointTypes.first)
+	@State private var extensionPointTypeName = String(describing: Self.sendToCommandExtensionPointTypes.first)
+	private var selectedType: ExtensionPoint.Type?
 	
-	init(enabler: ExtensionPointPreferencesEnabler?) {
+	init(enabler: ExtensionPointPreferencesEnabler?, selectedType: ExtensionPoint.Type? ) {
 		self.enabler = enabler
+		self.selectedType = selectedType
 	}
 	
 	var body: some View {
@@ -60,7 +63,7 @@ struct EnableExtensionPointView: View {
 					})
 					.help("Add Extension")
 					.keyboardShortcut(.defaultAction)
-					
+					.disabled(disableContinue())
 				} else {
 					Button(action: {
 						enabler?.enable(typeFromName(extensionPointTypeName))
@@ -69,6 +72,7 @@ struct EnableExtensionPointView: View {
 						Text("Continue")
 							.frame(width: 80)
 					})
+					.disabled(disableContinue())
 				}
 			}
 			.padding(.top, 12)
@@ -78,6 +82,11 @@ struct EnableExtensionPointView: View {
 		.fixedSize(horizontal: false, vertical: true)
 		.frame(width: 420)
 		.padding()
+		.onAppear {
+			if selectedType != nil {
+				extensionPointTypeName = String(describing: selectedType!)
+			}
+		}
 	}
 	
 	var feedProviderExtensionPoints: some View {
@@ -101,7 +110,7 @@ struct EnableExtensionPointView: View {
 								
 							Text(extensionPointType.title)
 						}
-						.tag(extensionPointTypeNames)
+						.tag(extensionPointTypeName)
 					})
 				})
 				.pickerStyle(RadioGroupPickerStyle())
@@ -138,7 +147,7 @@ struct EnableExtensionPointView: View {
 								
 							Text(extensionPointType.title)
 						}
-						.tag(extensionPointTypeNames)
+						.tag(extensionPointTypeName)
 					})
 				})
 				.pickerStyle(RadioGroupPickerStyle())
@@ -168,6 +177,10 @@ struct EnableExtensionPointView: View {
 			}
 		}
 		fatalError()
+	}
+	
+	func disableContinue() -> Bool {
+		ExtensionPointManager.shared.availableExtensionPointTypes.count == 0
 	}
 }
 

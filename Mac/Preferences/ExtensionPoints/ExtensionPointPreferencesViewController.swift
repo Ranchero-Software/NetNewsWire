@@ -45,7 +45,13 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 	}
 	
 	@IBAction func enableExtensionPoints(_ sender: Any) {
-		let controller = NSHostingController(rootView: EnableExtensionPointView(enabler: self))
+		let controller = NSHostingController(rootView: EnableExtensionPointView(enabler: self, selectedType: nil))
+		controller.rootView.parent = controller
+		presentAsSheet(controller)
+	}
+	
+	func enableExtensionPointFromSelection(_ selection: ExtensionPoint.Type) {
+		let controller = NSHostingController(rootView: EnableExtensionPointView(enabler: self, selectedType: selection))
 		controller.rootView.parent = controller
 		presentAsSheet(controller)
 	}
@@ -179,7 +185,10 @@ private extension ExtensionPointPreferencesViewController {
 		
 		if tableView.selectedRow == -1 {
 			var helpText = ""
-			if activeExtensionPoints.count == 0 {
+			if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
+				helpText = NSLocalizedString("You've added all available extension points.", comment: "Extension Explainer")
+			}
+			else if activeExtensionPoints.count == 0 {
 				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
 			} else {
 				helpText = NSLocalizedString("Select an extension or add a new extension point by clicking the + button.", comment: "Extension Explainer")
@@ -219,7 +228,10 @@ private extension ExtensionPointPreferencesViewController {
 		
 		if tableView.selectedRow == -1 {
 			var helpText = ""
-			if activeExtensionPoints.count == 0 {
+			if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
+				helpText = NSLocalizedString("You've added all available extension points.", comment: "Extension Explainer")
+			}
+			else if activeExtensionPoints.count == 0 {
 				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
 			} else {
 				helpText = NSLocalizedString("Select an extension or add a new extension point by clicking the + button.", comment: "Extension Explainer")
