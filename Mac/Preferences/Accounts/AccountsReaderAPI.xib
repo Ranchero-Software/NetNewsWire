@@ -12,6 +12,7 @@
                 <outlet property="actionButton" destination="9mz-D9-krh" id="ozu-6Q-9Lb"/>
                 <outlet property="apiURLLabel" destination="H6f-t4-SMg" id="1ac-qe-jw2"/>
                 <outlet property="apiURLTextField" destination="d7d-ZV-CcZ" id="Af4-uM-Dgd"/>
+                <outlet property="createAccountButton" destination="kUQ-aj-Iu6" id="n9d-n0-mvN"/>
                 <outlet property="errorMessageLabel" destination="Gyz-Mz-v08" id="fwM-K9-xnR"/>
                 <outlet property="gridView" destination="zBB-JH-huI" id="ghz-ki-b0V"/>
                 <outlet property="noAccountTextField" destination="R8e-67-Bwh" id="7oG-ro-jcB"/>

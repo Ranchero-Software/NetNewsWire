@@ -21,6 +21,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 	@IBOutlet weak var usernameTextField: NSTextField!
 	@IBOutlet weak var apiURLTextField: NSTextField!
 	@IBOutlet weak var passwordTextField: NSSecureTextField!
+	@IBOutlet weak var createAccountButton: NSButton!
 	@IBOutlet weak var errorMessageLabel: NSTextField!
 	@IBOutlet weak var actionButton: NSButton!
 	@IBOutlet weak var noAccountTextField: NSTextField!
@@ -40,7 +41,8 @@ class AccountsReaderAPIWindowController: NSWindowController {
 			case .freshRSS:
 				titleImageView.image = AppAssets.accountFreshRSS
 				titleLabel.stringValue = NSLocalizedString("Sign in to your FreshRSS account.", comment: "FreshRSS")
-				noAccountTextField.stringValue = NSLocalizedString("Don't have a FreshRSS account?", comment: "No FreshRSS")
+				noAccountTextField.stringValue = NSLocalizedString("Don't have a FreshRSS instance?", comment: "No FreshRSS")
+				createAccountButton.title = NSLocalizedString("Find out more", comment: "No FreshRSS Button")
 			case .inoreader:
 				titleImageView.image = AppAssets.accountInoreader
 				titleLabel.stringValue = NSLocalizedString("Sign in to your InoReader account.", comment: "InoReader")
