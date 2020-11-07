@@ -6,6 +6,18 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
+
+<item>
+    <title>NetNewsWire 5.1.3b1</title>
+    <description><![CDATA[
+<p>Fixed a crashing bug that could happen with empty titles in the timeline.</p>
+<p>Fixed a crashing bug that could happen when adding a feed.</p>
+    ]]></description>
+    <pubDate>Fri, 06 Nov 2020 17:15:00 -0700</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.3beta1/NetNewsWire5.1.3b1.zip" sparkle:version="3017" sparkle:shortVersionString="5.1.3b1" length="6583350" type="application/zip" />
+    <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
 <item>
     <title>NetNewsWire 5.1.2</title>
     <description><![CDATA[
