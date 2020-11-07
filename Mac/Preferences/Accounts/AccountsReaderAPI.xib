@@ -38,7 +38,7 @@
                         <rect key="frame" x="217" y="229" width="0.0" height="0.0"/>
                     </stackView>
                     <gridView xPlacement="trailing" yPlacement="center" rowAlignment="none" rowSpacing="7" columnSpacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="zBB-JH-huI">
-                        <rect key="frame" x="80" y="105" width="270" height="77"/>
+                        <rect key="frame" x="80" y="99" width="270" height="77"/>
                         <rows>
                             <gridRow id="DRl-lC-vUc"/>
                             <gridRow id="eW8-uH-txq"/>
@@ -195,7 +195,7 @@ Gw
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q5z-LG-0Fm">
-                        <rect key="frame" x="78" y="58" width="337" height="39"/>
+                        <rect key="frame" x="78" y="45" width="337" height="39"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="39" id="Zv4-mj-po0"/>
                             <constraint firstAttribute="width" constant="333" id="xsi-I6-XNM"/>
@@ -220,7 +220,7 @@ Gw
                 </subviews>
                 <constraints>
                     <constraint firstItem="Ssh-Dh-xbg" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="0Fq-9s-pKG"/>
-                    <constraint firstItem="zBB-JH-huI" firstAttribute="top" secondItem="R8e-67-Bwh" secondAttribute="bottom" constant="11" id="2Ve-1M-0xg"/>
+                    <constraint firstItem="zBB-JH-huI" firstAttribute="top" secondItem="R8e-67-Bwh" secondAttribute="bottom" constant="17" id="2Ve-1M-0xg"/>
                     <constraint firstItem="kUQ-aj-Iu6" firstAttribute="centerY" secondItem="R8e-67-Bwh" secondAttribute="centerY" id="2hZ-w7-Lne"/>
                     <constraint firstItem="lti-yM-8LV" firstAttribute="leading" secondItem="Ssh-Dh-xbg" secondAttribute="trailing" constant="10" id="5a7-jI-SC9"/>
                     <constraint firstAttribute="bottom" secondItem="B0W-bh-Evv" secondAttribute="bottom" constant="20" symbolic="YES" id="7OS-Ie-XXN"/>
@@ -230,8 +230,8 @@ Gw
                     <constraint firstItem="9mz-D9-krh" firstAttribute="leading" secondItem="XAM-Hb-0Hw" secondAttribute="trailing" constant="12" symbolic="YES" id="CC8-HR-FDy"/>
                     <constraint firstAttribute="trailing" secondItem="lti-yM-8LV" secondAttribute="trailing" constant="20" symbolic="YES" id="CeA-ET-oeg"/>
                     <constraint firstItem="Ssh-Dh-xbg" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="EKF-Yq-DxZ"/>
+                    <constraint firstItem="q5z-LG-0Fm" firstAttribute="top" secondItem="zBB-JH-huI" secondAttribute="bottom" constant="15" id="Hdb-dd-lM9"/>
                     <constraint firstItem="B0W-bh-Evv" firstAttribute="leading" secondItem="Gyz-Mz-v08" secondAttribute="trailing" constant="10" id="IUE-sL-VHF"/>
-                    <constraint firstItem="q5z-LG-0Fm" firstAttribute="top" secondItem="R8e-67-Bwh" secondAttribute="bottom" constant="96" id="Kai-IT-67g"/>
                     <constraint firstItem="XAM-Hb-0Hw" firstAttribute="centerY" secondItem="9mz-D9-krh" secondAttribute="centerY" id="M2M-fb-kfR"/>
                     <constraint firstItem="zBB-JH-huI" firstAttribute="leading" secondItem="R8e-67-Bwh" secondAttribute="leading" id="Mqa-R7-znW"/>
                     <constraint firstAttribute="bottom" secondItem="9mz-D9-krh" secondAttribute="bottom" constant="20" id="PK2-Ye-400"/>
