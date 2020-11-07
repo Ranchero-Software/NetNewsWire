@@ -41,6 +41,8 @@ class AccountsNewsBlurWindowController: NSWindowController {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your NewsBlur account.", comment: "SignIn")
 		}
+
+		usernameTextField.becomeFirstResponder()
 	}
 
 	// MARK: API

@@ -41,6 +41,8 @@ class AccountsFeedWranglerWindowController: NSWindowController {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your Feed Wrangler account.", comment: "SignIn")
 		}
+
+		usernameTextField.becomeFirstResponder()
 	}
 	
 	// MARK: API

@@ -70,6 +70,8 @@ class AccountsReaderAPIWindowController: NSWindowController {
 		} else {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
 		}
+		
+		usernameTextField.becomeFirstResponder()
 	}
 	
 	// MARK: API
