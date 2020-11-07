@@ -23,7 +23,7 @@ class AccountsAddLocalWindowController: NSWindowController {
 	override func windowDidLoad() {
 		super.windowDidLoad()
 		
-		localAccountNameTextField.stringValue = Account.defaultLocalAccountName
+		localAccountNameTextField.stringValue = NSLocalizedString("Create a local account on your Mac.", comment: "Account Local")
 	}
 	
 	// MARK: API

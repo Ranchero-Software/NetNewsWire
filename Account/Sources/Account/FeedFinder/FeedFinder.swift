@@ -20,7 +20,7 @@ class FeedFinder {
 				if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
 					urlComponents.path = "\(urlComponents.path).json"
 					if let newURLString = urlComponents.url?.absoluteString {
-						let microblogFeedSpecifier = FeedSpecifier(title: nil, urlString: newURLString, source: .HTMLLink)
+						let microblogFeedSpecifier = FeedSpecifier(title: nil, urlString: newURLString, source: .HTMLLink, orderFound: 1)
 						completion(.success(Set([microblogFeedSpecifier])))
 					}
 				} else {
@@ -45,7 +45,7 @@ class FeedFinder {
 			}
 			
 			if FeedFinder.isFeed(data, url.absoluteString) {
-				let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered)
+				let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
 				completion(.success(Set([feedSpecifier])))
 				return
 			}
@@ -120,11 +120,11 @@ private extension FeedFinder {
 			// It’s also fairly common for /index.xml to work.
 			if let url = URL(string: urlString) {
 				let feedURL = url.appendingPathComponent("feed", isDirectory: true)
-				let wordpressFeedSpecifier = FeedSpecifier(title: nil, urlString: feedURL.absoluteString, source: .HTMLLink)
+				let wordpressFeedSpecifier = FeedSpecifier(title: nil, urlString: feedURL.absoluteString, source: .HTMLLink, orderFound: 1)
 				feedSpecifiers.insert(wordpressFeedSpecifier)
 
 				let indexXMLURL = url.appendingPathComponent("index.xml", isDirectory: false)
-				let indexXMLFeedSpecifier = FeedSpecifier(title: nil, urlString: indexXMLURL.absoluteString, source: .HTMLLink)
+				let indexXMLFeedSpecifier = FeedSpecifier(title: nil, urlString: indexXMLURL.absoluteString, source: .HTMLLink, orderFound: 1)
 				feedSpecifiers.insert(indexXMLFeedSpecifier)
 			}
 		}

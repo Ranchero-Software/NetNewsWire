@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "shareExtensionx1.png",
+      "filename" : "Icon-MacOS-32x32@1x.png.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "shareExtensionx2.png",
+      "filename" : "Icon-MacOS-32x32@2x.png.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

@@ -30,6 +30,7 @@ final class AppDefaults {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
+		static let articleTextSize = "articleTextSize"
 		static let refreshInterval = "refreshInterval"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
@@ -242,6 +243,16 @@ final class AppDefaults {
 	
 	var timelineShowsSeparators: Bool {
 		return AppDefaults.bool(for: Key.timelineShowsSeparators)
+	}
+
+	var articleTextSize: ArticleTextSize {
+		get {
+			let rawValue = UserDefaults.standard.integer(forKey: Key.articleTextSize)
+			return ArticleTextSize(rawValue: rawValue) ?? ArticleTextSize.large
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.articleTextSize)
+		}
 	}
 
 	var refreshInterval: RefreshInterval {

@@ -9,11 +9,12 @@
 import SwiftUI
 import Account
 
-private enum AddAccountSections: Int, CaseIterable {
+enum AddAccountSections: Int, CaseIterable {
 	case local = 0
 	case icloud
 	case web
 	case selfhosted
+	case allOrdered
 	
 	var sectionHeader: String {
 		switch self {
@@ -25,6 +26,8 @@ private enum AddAccountSections: Int, CaseIterable {
 			return NSLocalizedString("Web", comment: "Web Account")
 		case .selfhosted:
 			return NSLocalizedString("Self-hosted", comment: "Self hosted Account")
+		case .allOrdered:
+			return ""
 		}
 	}
 	
@@ -38,6 +41,8 @@ private enum AddAccountSections: Int, CaseIterable {
 			return NSLocalizedString("Web accounts sync your subscriptions across all your devices.", comment: "Web Account")
 		case .selfhosted:
 			return NSLocalizedString("Self-hosted accounts sync your subscriptions across all your devices.", comment: "Self hosted Account")
+		case .allOrdered:
+			return ""
 		}
 	}
 	
@@ -51,6 +56,11 @@ private enum AddAccountSections: Int, CaseIterable {
 			return [.bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader]
 		case .selfhosted:
 			return [.freshRSS]
+		case .allOrdered:
+			return AddAccountSections.local.sectionContent +
+			AddAccountSections.icloud.sectionContent +
+				AddAccountSections.web.sectionContent +
+				AddAccountSections.selfhosted.sectionContent
 		}
 	}
 }
@@ -141,8 +151,6 @@ struct AddAccountsView: View {
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 25, height: 25, alignment: .center)
 							.padding(.leading, 4)
-						
-							
 						Text(account.localizedAccountName())
 					}
 					.tag(account)

@@ -337,8 +337,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return proposedDestinationIndexPath
 		}
 		
-		// If this is a folder and isn't expanded or doesn't have any entries, let the users drop on it
-		if destNode.representedObject is Folder && (destNode.numberOfChildNodes == 0 || !coordinator.isExpanded(destNode)) {
+		// If this is a folder, let the users drop on it
+		if destNode.representedObject is Folder {
 			return proposedDestinationIndexPath
 		}
 		

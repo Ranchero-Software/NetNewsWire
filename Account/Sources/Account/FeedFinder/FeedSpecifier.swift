@@ -21,6 +21,7 @@ struct FeedSpecifier: Hashable {
 	public let title: String?
 	public let urlString: String
 	public let source: Source
+	public let orderFound: Int
 	public var score: Int {
 		return calculatedScore()
 	}
@@ -30,8 +31,9 @@ struct FeedSpecifier: Hashable {
 
 		let mergedTitle = title ?? feedSpecifier.title
 		let mergedSource = source.equalToOrBetterThan(feedSpecifier.source) ? source : feedSpecifier.source
+		let mergedOrderFound = orderFound < feedSpecifier.orderFound ? orderFound : feedSpecifier.orderFound
 
-		return FeedSpecifier(title: mergedTitle, urlString: urlString, source: mergedSource)
+		return FeedSpecifier(title: mergedTitle, urlString: urlString, source: mergedSource, orderFound: mergedOrderFound)
 	}
 	
 	public static func bestFeed(in feedSpecifiers: Set<FeedSpecifier>) -> FeedSpecifier? {
@@ -68,6 +70,8 @@ private extension FeedSpecifier {
 		else if source == .HTMLHead {
 			score = score + 50
 		}
+		
+		score = score - ((orderFound - 1) * 5)
 		
 		if urlString.caseInsensitiveContains("comments") {
 			score = score - 10

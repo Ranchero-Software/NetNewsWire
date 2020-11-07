@@ -82,7 +82,7 @@ class FeedbinAccountViewController: UITableViewController {
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
 		
-		guard !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: trimmedEmail) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: trimmedEmail) else {
 			showError(NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error"))
 			return
 		}

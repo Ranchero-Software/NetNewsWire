@@ -235,6 +235,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			switch result {
 			case .success:
 				DispatchQueue.main.async {
+					folder.externalID = "user/-/label/\(name)"
 					folder.name = name
 					completion(.success(()))
 				}
@@ -298,13 +299,18 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			self.caller.deleteTag(folder: folder) { result in
-				switch result {
-				case .success:
-					account.removeFolder(folder)
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
+			if self.variant == .theOldReader {
+				account.removeFolder(folder)
+				completion(.success(()))
+			} else {
+				self.caller.deleteTag(folder: folder) { result in
+					switch result {
+					case .success:
+						account.removeFolder(folder)
+						completion(.success(()))
+					case .failure(let error):
+						completion(.failure(error))
+					}
 				}
 			}
 		}
@@ -821,30 +827,6 @@ private extension ReaderAPIAccountDelegate {
 			feed.folderRelationship = [folderExternalID: feedExternalID]
 		}
 	}
-
-	func decideBestFeedChoice(account: Account, url: String, name: String?, container: Container, choices: [ReaderAPISubscriptionChoice], completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		
-		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
-			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
-			let specifier = FeedSpecifier(title: choice.name, urlString: choice.url, source: source)
-			return specifier
-		}
-
-		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
-			if let bestSubscription = choices.filter({ bestSpecifier.urlString == $0.url }).first {
-				createWebFeed(for: account, url: bestSubscription.url, name: name, container: container, completion: completion)
-			} else {
-				DispatchQueue.main.async {
-					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-				}
-			}
-		} else {
-			DispatchQueue.main.async {
-				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			}
-		}
-		
-	}
 	
 	func createFeed( account: Account, subscription sub: ReaderAPISubscription, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		
@@ -857,7 +839,7 @@ private extension ReaderAPIAccountDelegate {
 				switch result {
 				case .success:
 					if let name = name {
-						account.renameWebFeed(feed, to: name) { result in
+						self.renameWebFeed(for: account, with: feed, to: name) { result in
 							switch result {
 							case .success:
 								self.initialFeedDownload(account: account, feed: feed, completion: completion)

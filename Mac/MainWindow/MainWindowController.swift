@@ -323,13 +323,16 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		NSCursor.setHiddenUntilMouseMoves(true)
 
 		// TODO: handle search mode
-		if timelineViewController.canGoToNextUnread() {
-			goToNextUnreadInTimeline()
+		if timelineViewController.canGoToNextUnread(wrappingToTop: false) {
+			goToNextUnreadInTimeline(wrappingToTop: false)
 		}
-		else if sidebarViewController.canGoToNextUnread() {
-			sidebarViewController.goToNextUnread()
-			if timelineViewController.canGoToNextUnread() {
-				goToNextUnreadInTimeline()
+		else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
+			sidebarViewController.goToNextUnread(wrappingToTop: true)
+
+			// If we ended up on the same timelineViewController, we may need to wrap
+			// around to the top of its contents.
+			if timelineViewController.canGoToNextUnread(wrappingToTop: true) {
+				goToNextUnreadInTimeline(wrappingToTop: true)
 			}
 		}
 	}
@@ -995,13 +998,13 @@ private extension MainWindowController {
 
 	// MARK: - Command Validation
 
-	func canGoToNextUnread() -> Bool {
+	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
 		
 		guard let timelineViewController = currentTimelineViewController, let sidebarViewController = sidebarViewController else {
 			return false
 		}
 		// TODO: handle search mode
-		return timelineViewController.canGoToNextUnread() || sidebarViewController.canGoToNextUnread()
+		return timelineViewController.canGoToNextUnread(wrappingToTop: wrapping) || sidebarViewController.canGoToNextUnread(wrappingToTop: wrapping)
 	}
 	
 	func canMarkAllAsRead() -> Bool {
@@ -1188,14 +1191,14 @@ private extension MainWindowController {
 
 	// MARK: - Misc.
 
-	func goToNextUnreadInTimeline() {
+	func goToNextUnreadInTimeline(wrappingToTop wrapping: Bool) {
 
 		guard let timelineViewController = currentTimelineViewController else {
 			return
 		}
 
-		if timelineViewController.canGoToNextUnread() {
-			timelineViewController.goToNextUnread()
+		if timelineViewController.canGoToNextUnread(wrappingToTop: wrapping) {
+			timelineViewController.goToNextUnread(wrappingToTop: wrapping)
 			makeTimelineViewFirstResponder()
 		}
 	}

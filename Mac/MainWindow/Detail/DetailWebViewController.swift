@@ -39,6 +39,14 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			return nil
 		}
 	}
+	
+	private var articleTextSize = AppDefaults.shared.articleTextSize {
+		didSet {
+			if articleTextSize != oldValue {
+				reloadHTML()
+			}
+		}
+	}
 
 	#if !MAC_APP_STORE
 		private var webInspectorEnabled: Bool {
@@ -64,7 +72,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		// Wrap the webview in a box configured with the same background color that the web view uses
 		let box = NSBox(frame: .zero)
 		box.boxType = .custom
-		box.borderType = .noBorder
+		box.isTransparent = true
 		box.titlePosition = .noTitle
 		box.contentViewMargins = .zero
 		box.fillColor = NSColor(named: "webviewBackgroundColor")!
@@ -118,7 +126,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 		webView.loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
@@ -135,6 +143,10 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
+	}
+	
+	@objc func userDefaultsDidChange(_ note: Notification) {
+		self.articleTextSize = AppDefaults.shared.articleTextSize
 	}
 	
 	// MARK: Media Functions

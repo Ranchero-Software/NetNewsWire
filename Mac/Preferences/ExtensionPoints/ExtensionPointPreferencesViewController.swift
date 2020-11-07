@@ -41,14 +41,17 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 		
 		showDefaultView()
 
-		// Set initial row selection
-		if activeExtensionPoints.count > 0 {
-			tableView.selectRow(0)
-		}
+		
 	}
 	
 	@IBAction func enableExtensionPoints(_ sender: Any) {
-		let controller = NSHostingController(rootView: EnableExtensionPointView(enabler: self))
+		let controller = NSHostingController(rootView: EnableExtensionPointView(enabler: self, selectedType: nil))
+		controller.rootView.parent = controller
+		presentAsSheet(controller)
+	}
+	
+	func enableExtensionPointFromSelection(_ selection: ExtensionPoint.Type) {
+		let controller = NSHostingController(rootView: EnableExtensionPointView(enabler: self, selectedType: selection))
 		controller.rootView.parent = controller
 		presentAsSheet(controller)
 	}
@@ -179,6 +182,33 @@ private extension ExtensionPointPreferencesViewController {
 	func showDefaultView() {
 		activeExtensionPoints = Array(ExtensionPointManager.shared.activeExtensionPoints.values).sorted(by: { $0.title < $1.title })
 		tableView.reloadData()
+		
+		if tableView.selectedRow == -1 {
+			var helpText = ""
+			if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
+				helpText = NSLocalizedString("You've added all available extension points.", comment: "Extension Explainer")
+			}
+			else if activeExtensionPoints.count == 0 {
+				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
+			} else {
+				helpText = NSLocalizedString("Select an extension or add a new extension point by clicking the + button.", comment: "Extension Explainer")
+			}
+			
+			if let controller = children.first {
+				children.removeAll()
+				controller.view.removeFromSuperview()
+			}
+			
+			let textHostingController = NSHostingController(rootView: EnableExtensionPointHelpView(helpText: helpText, preferencesController: self))
+			addChild(textHostingController)
+			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+			detailView.addSubview(textHostingController.view)
+			detailView.addConstraints([
+										NSLayoutConstraint(item: textHostingController.view, attribute: .top, relatedBy: .equal, toItem: detailView, attribute: .top, multiplier: 1, constant: 1),
+										NSLayoutConstraint(item: textHostingController.view, attribute: .bottom, relatedBy: .equal, toItem: detailView, attribute: .bottom, multiplier: 1, constant: -deleteButton.frame.height),
+				NSLayoutConstraint(item: textHostingController.view, attribute: .width, relatedBy: .equal, toItem: detailView, attribute: .width, multiplier: 1, constant: 1)
+			])
+		}
 	}
 	
 	func showController(_ controller: NSViewController) {
@@ -194,6 +224,28 @@ private extension ExtensionPointPreferencesViewController {
 		if let controller = children.first {
 			children.removeAll()
 			controller.view.removeFromSuperview()
+		}
+		
+		if tableView.selectedRow == -1 {
+			var helpText = ""
+			if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
+				helpText = NSLocalizedString("You've added all available extension points.", comment: "Extension Explainer")
+			}
+			else if activeExtensionPoints.count == 0 {
+				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
+			} else {
+				helpText = NSLocalizedString("Select an extension or add a new extension point by clicking the + button.", comment: "Extension Explainer")
+			}
+			
+			let textHostingController = NSHostingController(rootView: EnableExtensionPointHelpView(helpText: helpText, preferencesController: self))
+			addChild(textHostingController)
+			textHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+			detailView.addSubview(textHostingController.view)
+			detailView.addConstraints([
+										NSLayoutConstraint(item: textHostingController.view, attribute: .top, relatedBy: .equal, toItem: detailView, attribute: .top, multiplier: 1, constant: 1),
+										NSLayoutConstraint(item: textHostingController.view, attribute: .bottom, relatedBy: .equal, toItem: detailView, attribute: .bottom, multiplier: 1, constant: -deleteButton.frame.height),
+				NSLayoutConstraint(item: textHostingController.view, attribute: .width, relatedBy: .equal, toItem: detailView, attribute: .width, multiplier: 1, constant: 1)
+			])
 		}
 	}
 
@@ -254,3 +306,5 @@ private extension ExtensionPointPreferencesViewController {
 	}
 	
 }
+
+

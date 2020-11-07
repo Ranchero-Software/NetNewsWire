@@ -10,14 +10,17 @@ import AppKit
 import SwiftUI
 import RSCore
 
+
 struct EnableExtensionPointView: View {
 	
 	weak var parent: NSHostingController<EnableExtensionPointView>? // required because presentationMode.dismiss() doesn't work
 	weak var enabler: ExtensionPointPreferencesEnabler?
-	@State private var extensionPointTypeName = String(describing: Self.feedProviderExtensionPointTypes.first!)
+	@State private var extensionPointTypeName = String(describing: Self.sendToCommandExtensionPointTypes.first)
+	private var selectedType: ExtensionPoint.Type?
 	
-	init(enabler: ExtensionPointPreferencesEnabler?) {
+	init(enabler: ExtensionPointPreferencesEnabler?, selectedType: ExtensionPoint.Type? ) {
 		self.enabler = enabler
+		self.selectedType = selectedType
 	}
 	
 	var body: some View {
@@ -48,7 +51,7 @@ struct EnableExtensionPointView: View {
 						Text("Cancel")
 							.frame(width: 80)
 					})
-					.accessibility(label: Text("Add Account"))
+					.accessibility(label: Text("Add Extension"))
 				}
 				if #available(OSX 11.0, *) {
 					Button(action: {
@@ -58,9 +61,9 @@ struct EnableExtensionPointView: View {
 						Text("Continue")
 							.frame(width: 80)
 					})
-					.help("Add Account")
+					.help("Add Extension")
 					.keyboardShortcut(.defaultAction)
-					
+					.disabled(disableContinue())
 				} else {
 					Button(action: {
 						enabler?.enable(typeFromName(extensionPointTypeName))
@@ -69,6 +72,7 @@ struct EnableExtensionPointView: View {
 						Text("Continue")
 							.frame(width: 80)
 					})
+					.disabled(disableContinue())
 				}
 			}
 			.padding(.top, 12)
@@ -78,6 +82,11 @@ struct EnableExtensionPointView: View {
 		.fixedSize(horizontal: false, vertical: true)
 		.frame(width: 420)
 		.padding()
+		.onAppear {
+			if selectedType != nil {
+				extensionPointTypeName = String(describing: selectedType!)
+			}
+		}
 	}
 	
 	var feedProviderExtensionPoints: some View {
@@ -101,13 +110,13 @@ struct EnableExtensionPointView: View {
 								
 							Text(extensionPointType.title)
 						}
-						.tag(extensionPointTypeNames)
+						.tag(extensionPointTypeName)
 					})
 				})
 				.pickerStyle(RadioGroupPickerStyle())
 				.offset(x: 7.5, y: 0)
 				
-				Text("An extension point that makes websites appear to provide RSS feeds for their content.")
+				Text("An extension that makes websites appear to provide RSS feeds for their content.")
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
@@ -138,13 +147,13 @@ struct EnableExtensionPointView: View {
 								
 							Text(extensionPointType.title)
 						}
-						.tag(extensionPointTypeNames)
+						.tag(extensionPointTypeName)
 					})
 				})
 				.pickerStyle(RadioGroupPickerStyle())
 				.offset(x: 7.5, y: 0)
 				
-				Text("An extension point that enables a share menu item that passes article data to a third-party application.")
+				Text("An extension that enables a share menu item that passes article data to a third-party application.")
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
@@ -169,4 +178,11 @@ struct EnableExtensionPointView: View {
 		}
 		fatalError()
 	}
+	
+	func disableContinue() -> Bool {
+		ExtensionPointManager.shared.availableExtensionPointTypes.count == 0
+	}
 }
+
+
+
