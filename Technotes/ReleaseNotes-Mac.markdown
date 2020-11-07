@@ -1,6 +1,11 @@
 # Mac Release Notes
 
-## 5.1.2 build 3016 - 31 Oct 2010
+### 5.1.3b1 build 3017 - 6 Nov 2020
+
+* Fixed a crashing bug that could happen with empty titles in the timeline
+* Fixed a crashing bug that could happen when adding a feed
+
+## 5.1.2 build 3016 - 31 Oct 2020
 
 * Fixed a crashing bug in the timeline
 * Fixed a background color bug in dark mode in the timeline
