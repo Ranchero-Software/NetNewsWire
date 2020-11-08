@@ -42,6 +42,6 @@ extension NewsBlurFolderChange: NewsBlurDataConvertible {
 			}
 		}()
 
-		return postData.percentEncodedQuery?.data(using: .utf8)
+		return postData.enhancedPercentEncodedQuery?.data(using: .utf8)
 	}
 }
