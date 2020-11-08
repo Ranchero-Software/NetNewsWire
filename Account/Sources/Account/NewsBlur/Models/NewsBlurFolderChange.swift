@@ -42,6 +42,10 @@ extension NewsBlurFolderChange: NewsBlurDataConvertible {
 			}
 		}()
 
-		return postData.percentEncodedQuery?.data(using: .utf8)
+		// `+` is a valid character in query component as per RFC 3986 (https://developer.apple.com/documentation/foundation/nsurlcomponents/1407752-queryitems)
+		// workaround:
+		// - http://www.openradar.me/24076063
+		// - https://stackoverflow.com/a/37314144
+		return postData.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B").replacingOccurrences(of: "%20", with: "+").data(using: .utf8)
 	}
 }
