@@ -31,10 +31,6 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		}
 
 		// Validate account specific behaviors...
-		if destAccount.behaviors.contains(.disallowFeedInRootFolder) && destIdentifier.isAccount {
-			return UITableViewDropProposal(operation: .forbidden)
-		}
-		
 		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
 		   let sourceFeedID = (session.localDragSession?.items.first?.localObject as? MasterFeedTableViewIdentifier)?.feedID,
 		   let sourceWebFeed = AccountManager.shared.existingFeed(with: sourceFeedID) as? WebFeed,
