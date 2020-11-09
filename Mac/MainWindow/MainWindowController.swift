@@ -1299,6 +1299,7 @@ private extension MainWindowController {
 		let button = NSButton()
 		button.bezelStyle = .texturedRounded
 		button.image = image
+		button.imageScaling = .scaleProportionallyDown
 		button.action = Selector((selector))
 		
 		toolbarItem.view = button
