@@ -10,6 +10,7 @@ import UIKit
 import Account
 import Secrets
 import RSWeb
+import SafariServices
 
 class FeedbinAccountViewController: UITableViewController {
 
@@ -137,6 +138,14 @@ class FeedbinAccountViewController: UITableViewController {
 			
 		}
 	}
+	
+	@IBAction func signUpWithProvider(_ sender: Any) {
+		let url = URL(string: "https://feedbin.com/signup")!
+		let safari = SFSafariViewController(url: url)
+		safari.modalPresentationStyle = .currentContext
+		self.present(safari, animated: true, completion: nil)
+	}
+	
 	
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false) 

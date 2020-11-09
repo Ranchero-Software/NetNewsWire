@@ -10,6 +10,7 @@ import UIKit
 import Account
 import Secrets
 import RSWeb
+import SafariServices
 
 class NewsBlurAccountViewController: UITableViewController {
 
@@ -141,6 +142,13 @@ class NewsBlurAccountViewController: UITableViewController {
 			}
 
 		}
+	}
+	
+	@IBAction func signUpWithProvider(_ sender: Any) {
+		let url = URL(string: "https://newsblur.com")!
+		let safari = SFSafariViewController(url: url)
+		safari.modalPresentationStyle = .currentContext
+		self.present(safari, animated: true, completion: nil)
 	}
 
 	@objc func textDidChange(_ note: Notification) {

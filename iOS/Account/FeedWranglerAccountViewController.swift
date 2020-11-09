@@ -10,6 +10,7 @@ import UIKit
 import Account
 import RSWeb
 import Secrets
+import SafariServices
 
 class FeedWranglerAccountViewController: UITableViewController {
 
@@ -136,6 +137,13 @@ class FeedWranglerAccountViewController: UITableViewController {
 			}
 			
 		}
+	}
+	
+	@IBAction func signUpWithProvider(_ sender: Any) {
+		let url = URL(string: "https://feedwrangler.net/users/new")!
+		let safari = SFSafariViewController(url: url)
+		safari.modalPresentationStyle = .currentContext
+		self.present(safari, animated: true, completion: nil)
 	}
 	
 	@objc func textDidChange(_ note: Notification) {
