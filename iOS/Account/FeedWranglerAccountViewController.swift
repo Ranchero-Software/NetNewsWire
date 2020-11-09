@@ -20,13 +20,15 @@ class FeedWranglerAccountViewController: UITableViewController {
 	@IBOutlet weak var passwordTextField: UITextField!
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
+	@IBOutlet weak var footerLabel: UILabel!
 	
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
 
 	override func viewDidLoad() {
         super.viewDidLoad()
-
+		setupFooter()
+		
 		activityIndicator.isHidden = true
 		emailTextField.delegate = self
 		passwordTextField.delegate = self
@@ -43,6 +45,10 @@ class FeedWranglerAccountViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+	}
+	
+	private func setupFooter() {
+		footerLabel.text = NSLocalizedString("Sign in to your Feed Wrangler account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a Feed Wrangler account?", comment: "Feed Wrangler")
 	}
 
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

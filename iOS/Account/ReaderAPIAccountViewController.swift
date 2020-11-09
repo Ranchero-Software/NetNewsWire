@@ -30,6 +30,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
+		setupFooter()
 
 		activityIndicator.isHidden = true
 		usernameTextField.delegate = self
@@ -59,8 +60,6 @@ class ReaderAPIAccountViewController: UITableViewController {
 				title = ""
 			}
 		}
-		
-		setupFooter()
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: usernameTextField)
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)

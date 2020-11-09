@@ -12,15 +12,20 @@ import Account
 class LocalAccountViewController: UITableViewController {
 
 	@IBOutlet weak var nameTextField: UITextField!
+	@IBOutlet weak var footerLabel: UILabel!
 	
 	weak var delegate: AddAccountDismissDelegate?
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		setupFooter()
 		navigationItem.title = Account.defaultLocalAccountName
 		nameTextField.delegate = self
-
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+	}
+	
+	private func setupFooter() {
+		footerLabel.text = NSLocalizedString("Local accounts do not sync your subscriptions across devices.", comment: "Local")
 	}
 
 	@IBAction func cancel(_ sender: Any) {

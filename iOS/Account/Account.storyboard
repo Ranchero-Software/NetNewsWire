@@ -197,6 +197,7 @@ Don't have a Feed Wrangler account?</string>
                         <outlet property="activityIndicator" destination="mVm-hL-hqw" id="8Og-kO-70M"/>
                         <outlet property="cancelBarButtonItem" destination="zbP-iL-kfC" id="TT3-iu-IvG"/>
                         <outlet property="emailTextField" destination="o06-fe-i3S" id="WHW-3E-trH"/>
+                        <outlet property="footerLabel" destination="6Ik-WC-e74" id="KwB-tD-kTN"/>
                         <outlet property="passwordTextField" destination="Z6i-nX-CwJ" id="p36-53-RsD"/>
                         <outlet property="showHideButton" destination="lBg-Pn-8ao" id="GgE-Nx-gFL"/>
                     </connections>
@@ -317,6 +318,7 @@ Don't have a Feed Wrangler account?</string>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="footerLabel" destination="5ce-ZL-glQ" id="V50-Yc-hD6"/>
                         <outlet property="nameTextField" destination="Yl1-R6-xZi" id="jcl-vI-Rde"/>
                     </connections>
                 </tableViewController>
@@ -480,6 +482,7 @@ Don't have a Feedbin account?</string>
                         <outlet property="activityIndicator" destination="YvV-hB-lzT" id="n1F-tV-5ZV"/>
                         <outlet property="cancelBarButtonItem" destination="pfF-Of-5NT" id="Zr3-qD-1Yi"/>
                         <outlet property="emailTextField" destination="vJa-NN-yjR" id="nCF-9W-YsF"/>
+                        <outlet property="footerLabel" destination="sgL-0C-JZa" id="b6I-Mk-2K3"/>
                         <outlet property="passwordTextField" destination="YC2-RH-QoV" id="qaX-0i-7jq"/>
                         <outlet property="showHideButton" destination="TfW-wf-V06" id="PbL-67-Nrg"/>
                     </connections>
@@ -659,6 +662,7 @@ Don't have a NewsBlur account?</string>
                         <outlet property="actionButton" destination="E1I-C4-JdL" id="q2T-4o-c8i"/>
                         <outlet property="activityIndicator" destination="HfW-jV-MjK" id="AIV-uG-9uC"/>
                         <outlet property="cancelBarButtonItem" destination="bl6-Y1-wQ8" id="ohR-gW-5J2"/>
+                        <outlet property="footerLabel" destination="fal-e8-3BB" id="7Fq-Oz-aEx"/>
                         <outlet property="passwordTextField" destination="fct-XR-fEa" id="fGL-4k-gZ6"/>
                         <outlet property="showHideButton" destination="GY9-nr-jFb" id="1p9-9F-GMY"/>
                         <outlet property="usernameTextField" destination="S4v-fs-DIO" id="B7I-yz-M0T"/>
@@ -938,6 +942,9 @@ Don't have a Reader account?</string>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="footerLabel" destination="aFS-Y0-2MH" id="gDw-R1-HSK"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="weY-OS-9NV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
