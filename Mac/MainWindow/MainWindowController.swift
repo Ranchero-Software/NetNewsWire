@@ -814,8 +814,8 @@ extension MainWindowController: NSToolbarDelegate {
 				.refresh,
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
-				.search,
 				.markAllAsRead,
+				.search,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
 				.nextUnread,
@@ -853,8 +853,8 @@ extension MainWindowController: NSToolbarDelegate {
 				.refresh,
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
-				.search,
 				.markAllAsRead,
+				.search,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
 				.nextUnread,
@@ -1299,6 +1299,7 @@ private extension MainWindowController {
 		let button = NSButton()
 		button.bezelStyle = .texturedRounded
 		button.image = image
+		button.imageScaling = .scaleProportionallyDown
 		button.action = Selector((selector))
 		
 		toolbarItem.view = button

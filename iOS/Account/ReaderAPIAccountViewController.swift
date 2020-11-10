@@ -10,6 +10,7 @@ import UIKit
 import Account
 import Secrets
 import RSWeb
+import SafariServices
 
 class ReaderAPIAccountViewController: UITableViewController {
 
@@ -20,6 +21,8 @@ class ReaderAPIAccountViewController: UITableViewController {
 	@IBOutlet weak var apiURLTextField: UITextField!
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
+	@IBOutlet weak var footerLabel: UILabel!
+	@IBOutlet weak var signUpButton: UIButton!
 	
 	weak var account: Account?
 	var accountType: AccountType?
@@ -27,6 +30,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
+		setupFooter()
 
 		activityIndicator.isHidden = true
 		usernameTextField.delegate = self
@@ -63,6 +67,25 @@ class ReaderAPIAccountViewController: UITableViewController {
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 		
     }
+	
+	private func setupFooter() {
+		switch accountType {
+			case .bazQux:
+				footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a BazQux account?", comment: "BazQux")
+				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
+			case .inoreader:
+				footerLabel.text = NSLocalizedString("Sign in to your InoReader account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have an InoReader account?", comment: "InoReader")
+				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "InoReader SignUp"), for: .normal)
+			case .theOldReader:
+				footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a The Old Reader account?", comment: "TOR")
+				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)
+			case .freshRSS:
+				footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have an FreshRSS instance?", comment: "FreshRSS")
+				signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "FreshRSS SignUp"), for: .normal)
+			default:
+				return
+		}
+	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
@@ -224,6 +247,25 @@ class ReaderAPIAccountViewController: UITableViewController {
 		return true
 	}
 	
+	@IBAction func signUpWithProvider(_ sender: Any) {
+		var url: URL!
+		switch accountType {
+			case .bazQux:
+				url = URL(string: "https://bazqux.com")!
+			case .inoreader:
+				url = URL(string: "https://www.inoreader.com")!
+			case .theOldReader:
+				url = URL(string: "https://theoldreader.com")!
+			case .freshRSS:
+				url = URL(string: "https://freshrss.org")!
+			default:
+				return
+		}
+		let safari = SFSafariViewController(url: url)
+		safari.modalPresentationStyle = .currentContext
+		self.present(safari, animated: true, completion: nil)
+	}
+	
 	private func apiURL() -> URL? {
 		switch accountType {
 		case .freshRSS:
@@ -238,6 +280,8 @@ class ReaderAPIAccountViewController: UITableViewController {
 			return nil
 		}
 	}
+	
+	
 	
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false)

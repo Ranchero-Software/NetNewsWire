@@ -41,6 +41,8 @@ class AccountsFeedbinWindowController: NSWindowController {
 			actionButton.title = NSLocalizedString("Create", comment: "Add Account")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your Feedbin account.", comment: "SignIn")
 		}
+
+		usernameTextField.becomeFirstResponder()
 	}
 	
 	// MARK: API

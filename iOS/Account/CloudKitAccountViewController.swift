@@ -12,11 +12,17 @@ import Account
 class CloudKitAccountViewController: UITableViewController {
 
 	weak var delegate: AddAccountDismissDelegate?
-
+	@IBOutlet weak var footerLabel: UILabel!
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
+		setupFooter()
+		
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+	}
+	
+	private func setupFooter() {
+		footerLabel.text = NSLocalizedString("Use your iCloud account to sync your subscriptions across your iOS and macOS devices.", comment: "iCloud")
 	}
 
 	@IBAction func cancel(_ sender: Any) {
