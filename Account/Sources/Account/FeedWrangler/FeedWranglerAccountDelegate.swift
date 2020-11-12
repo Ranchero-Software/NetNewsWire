@@ -96,6 +96,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 												switch result {
 												case .success:
 													DispatchQueue.main.async {
+                                                        account.metadata.lastArticleFetchEndTime = Date()
 														completion(.success(()))
 													}
 												
