@@ -55,19 +55,17 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			case .icloud:
 				return [.cloudKit]
 			case .web:
+				#if DEBUG
 				return [.bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader]
+				#else
+				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
+				#endif
 			case .selfhosted:
 				return [.freshRSS]
 			}
 		}
 	}
 	
-	#if DEBUG
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
-	#else
-	private var addableAccountTypes: [AccountType] = [.onMyMac, .cloudKit, .feedbin, .feedly, .inoreader, .newsBlur, .feedWrangler, .bazQux, .theOldReader, .freshRSS]
-	#endif
-
 	override func viewDidLoad() {
 		super.viewDidLoad()
 	}

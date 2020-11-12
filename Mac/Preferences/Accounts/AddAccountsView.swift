@@ -53,7 +53,11 @@ enum AddAccountSections: Int, CaseIterable {
 		case .icloud:
 			return [.cloudKit]
 		case .web:
+			#if DEBUG
 			return [.bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader]
+			#else
+			return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
+			#endif
 		case .selfhosted:
 			return [.freshRSS]
 		case .allOrdered:
