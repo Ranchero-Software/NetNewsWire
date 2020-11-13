@@ -336,38 +336,41 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 			guard let self = self else { return nil }
 			
-			var actions = [UIAction]()
+			var menuElements = [UIMenuElement]()
+			
+			var markActions = [UIAction]()
 			if let action = self.toggleArticleReadStatusAction(article) {
-				actions.append(action)
+				markActions.append(action)
 			}
-			
-			actions.append(self.toggleArticleStarStatusAction(article))
-
+			markActions.append(self.toggleArticleStarStatusAction(article))
 			if let action = self.markAboveAsReadAction(article, indexPath: indexPath) {
-				actions.append(action)
+				markActions.append(action)
 			}
-
 			if let action = self.markBelowAsReadAction(article, indexPath: indexPath) {
-				actions.append(action)
+				markActions.append(action)
 			}
+			menuElements.append(UIMenu(title: "", options: .displayInline, children: markActions))
 			
+			var secondaryActions = [UIAction]()
 			if let action = self.discloseFeedAction(article) {
-				actions.append(action)
+				secondaryActions.append(action)
 			}
-			
 			if let action = self.markAllInFeedAsReadAction(article, indexPath: indexPath) {
-				actions.append(action)
+				secondaryActions.append(action)
+			}
+			if !secondaryActions.isEmpty {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: secondaryActions))
 			}
 			
 			if let action = self.openInBrowserAction(article) {
-				actions.append(action)
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
 			}
 			
 			if let action = self.shareAction(article, indexPath: indexPath) {
-				actions.append(action)
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
 			}
 			
-			return UIMenu(title: "", children: actions)
+			return UIMenu(title: "", children: menuElements)
 
 		})
 		

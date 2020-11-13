@@ -594,16 +594,17 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 		}
 		
 		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { suggestedActions in
-			let accountInfoAction = self.getAccountInfoAction(account: account)
-			let deactivateAction = self.deactivateAccountAction(account: account)
 
-			var actions = [accountInfoAction, deactivateAction]
+			var menuElements = [UIMenuElement]()
+			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountInfoAction(account: account)]))
 
 			if let markAllAction = self.markAllAsReadAction(account: account, contentView: interaction.view) {
-				actions.insert(markAllAction, at: 1)
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
 
-            return UIMenu(title: "", children: actions)
+			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.deactivateAccountAction(account: account)]))
+			
+            return UIMenu(title: "", children: menuElements)
         }
     }
 	
@@ -891,34 +892,41 @@ private extension MasterFeedViewController {
 			
 			guard let self = self else { return nil }
 			
-			var actions = [UIAction]()
+			var menuElements = [UIMenuElement]()
 			
 			if let inspectorAction = self.getInfoAction(indexPath: indexPath) {
-				actions.append(inspectorAction)
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [inspectorAction]))
 			}
 			
 			if let homePageAction = self.homePageAction(indexPath: indexPath) {
-				actions.append(homePageAction)
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [homePageAction]))
 			}
 			
+			var pageActions = [UIAction]()
 			if let copyFeedPageAction = self.copyFeedPageAction(indexPath: indexPath) {
-				actions.append(copyFeedPageAction)
+				pageActions.append(copyFeedPageAction)
 			}
-			
 			if let copyHomePageAction = self.copyHomePageAction(indexPath: indexPath) {
-				actions.append(copyHomePageAction)
+				pageActions.append(copyHomePageAction)
+			}
+			if !pageActions.isEmpty {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: pageActions))
 			}
 
 			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
-				actions.append(markAllAction)
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
 			
 			if includeDeleteRename {
-				actions.append(self.renameAction(indexPath: indexPath))
-				actions.append(self.deleteAction(indexPath: indexPath))
+				menuElements.append(UIMenu(title: "",
+										   options: .displayInline,
+										   children: [
+											self.renameAction(indexPath: indexPath),
+											self.deleteAction(indexPath: indexPath)
+										   ]))
 			}
 			
-			return UIMenu(title: "", children: actions)
+			return UIMenu(title: "", children: menuElements)
 			
 		})
 		
@@ -929,15 +937,20 @@ private extension MasterFeedViewController {
 
 			guard let self = self else { return nil }
 			
-			var actions = [UIAction]()
-			actions.append(self.deleteAction(indexPath: indexPath))
-			actions.append(self.renameAction(indexPath: indexPath))
+			var menuElements = [UIMenuElement]()
 
 			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
-				actions.append(markAllAction)
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
 			
-			return UIMenu(title: "", children: actions)
+			menuElements.append(UIMenu(title: "",
+									   options: .displayInline,
+									   children: [
+										self.renameAction(indexPath: indexPath),
+										self.deleteAction(indexPath: indexPath)
+									   ]))
+
+			return UIMenu(title: "", children: menuElements)
 
 		})
 	}
