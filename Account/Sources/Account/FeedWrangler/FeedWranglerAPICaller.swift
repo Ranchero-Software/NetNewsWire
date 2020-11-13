@@ -111,13 +111,18 @@ final class FeedWranglerAPICaller: NSObject {
 	}
 	
 	func renameSubscription(feedID: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		let url = FeedWranglerConfig.clientURL
-			.appendingPathComponent("subscriptions/rename_feed")
-			.appendingQueryItems([
-				URLQueryItem(name: "feed_id", value: feedID),
-				URLQueryItem(name: "feed_name", value: newName),
-			])
-		
+        var postData = URLComponents(url: FeedWranglerConfig.clientURL, resolvingAgainstBaseURL: false)
+        postData?.path += "subscriptions/rename_feed"
+        postData?.queryItems = [
+            URLQueryItem(name: "feed_id", value: feedID),
+            URLQueryItem(name: "feed_name", value: newName),
+        ]
+        
+        guard let url = postData?.urlWithEnhancedPercentEncodedQuery else {
+            completion(.failure(FeedWranglerError.general(message: "Could not encode name")))
+            return
+        }
+        
 		standardSend(url: url, resultType: FeedWranglerSubscriptionsRequest.self) { result in
 			switch result {
 			case .success:
@@ -289,4 +294,17 @@ final class FeedWranglerAPICaller: NSObject {
 		transport.send(request: request, resultType: resultType, completion: completion)
 	}
 
+}
+
+private extension URLComponents {
+    
+    var urlWithEnhancedPercentEncodedQuery: URL? {
+        guard let tempQueryItems = self.queryItems, !tempQueryItems.isEmpty else {
+            return self.url
+        }
+        
+        var tempComponents = self
+        tempComponents.percentEncodedQuery = self.enhancedPercentEncodedQuery
+        return tempComponents.url
+    }
 }
