@@ -119,7 +119,8 @@ final class FeedWranglerAPICaller: NSObject {
         ]
         
         guard let url = postData?.urlWithEnhancedPercentEncodedQuery else {
-            fatalError() // something has gone terribly wrong
+            completion(.failure(FeedWranglerError.general(message: "Could not encode name")))
+            return
         }
         
 		standardSend(url: url, resultType: FeedWranglerSubscriptionsRequest.self) { result in
