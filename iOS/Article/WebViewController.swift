@@ -282,25 +282,35 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 	
 		return UIContextMenuConfiguration(identifier: nil, previewProvider: contextMenuPreviewProvider) { [weak self] suggestedActions in
 			guard let self = self else { return nil }
-			var actions = [UIAction]()
+
+			var menus = [UIMenu]()
 			
+			var navActions = [UIAction]()
 			if let action = self.prevArticleAction() {
-				actions.append(action)
+				navActions.append(action)
 			}
 			if let action = self.nextArticleAction() {
-				actions.append(action)
+				navActions.append(action)
 			}
-			if let action = self.toggleReadAction() {
-				actions.append(action)
+			if !navActions.isEmpty {
+				menus.append(UIMenu(title: "", options: .displayInline, children: navActions))
 			}
-			actions.append(self.toggleStarredAction())
-			if let action = self.nextUnreadArticleAction() {
-				actions.append(action)
-			}
-			actions.append(self.toggleArticleExtractorAction())
-			actions.append(self.shareAction())
 			
-			return UIMenu(title: "", children: actions)
+			var toggleActions = [UIAction]()
+			if let action = self.toggleReadAction() {
+				toggleActions.append(action)
+			}
+			toggleActions.append(self.toggleStarredAction())
+			menus.append(UIMenu(title: "", options: .displayInline, children: toggleActions))
+
+			if let action = self.nextUnreadArticleAction() {
+				menus.append(UIMenu(title: "", options: .displayInline, children: [action]))
+			}
+
+			menus.append(UIMenu(title: "", options: .displayInline, children: [self.toggleArticleExtractorAction()]))
+			menus.append(UIMenu(title: "", options: .displayInline, children: [self.shareAction()]))
+			
+			return UIMenu(title: "", children: menus)
         }
     }
 	
