@@ -59,6 +59,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	}
 	
 	func sceneDidEnterBackground(_ scene: UIScene) {
+		if #available(iOS 14, *) {
+			WidgetDataEncoder.encodeWidgetData()
+		}
 		ArticleStringFormatter.emptyCaches()
 		appDelegate.prepareAccountsForBackground()
 	}
@@ -87,6 +90,96 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	func cleanUp(conditional: Bool) {
 		coordinator.cleanUp(conditional: conditional)
+	}
+	
+	// Handle Opening of URLs
+	
+	func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+		DispatchQueue.main.async {
+			for context in URLContexts {
+				// Show Unread View or Article
+				if context.url.absoluteString.contains(WidgetDeepLink.unread.url.absoluteString) {
+					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
+					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+					if id != nil {
+						if AccountManager.shared.isSuspended {
+							AccountManager.shared.resumeAll()
+						}
+						let articles = try! AccountManager.shared.fetchArticles(.unread)
+						let article = articles.filter({ $0.articleID == id }).first
+						
+						if article != nil {
+							self.coordinator.selectAllUnreadFeed()
+							DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+								self.coordinator.selectArticle(article!, animations: [.navigation, .scroll])
+							})
+							return
+						} else {
+							self.coordinator.selectAllUnreadFeed()
+							return
+						}
+					} else {
+						self.coordinator.selectAllUnreadFeed()
+						return
+					}
+				}
+				
+				// Show Today View or Article
+				if context.url.absoluteString.contains(WidgetDeepLink.today.url.absoluteString) {
+					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
+					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+					if id != nil {
+						if AccountManager.shared.isSuspended {
+							AccountManager.shared.resumeAll()
+						}
+						let articles = try! AccountManager.shared.fetchArticles(.today)
+						let article = articles.filter({ $0.articleID == id }).first
+						
+						if article != nil {
+							self.coordinator.selectTodayFeed()
+							DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+								self.coordinator.selectArticle(article!, animations: [.navigation, .scroll])
+							})
+							return
+						} else {
+							self.coordinator.selectTodayFeed()
+							return
+						}
+					} else {
+						self.coordinator.selectTodayFeed()
+						return
+					}
+				}
+				
+				// Show Starred View or Article
+				if context.url.absoluteString.contains(WidgetDeepLink.starred.url.absoluteString) {
+					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
+					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+					if id != nil {
+						if AccountManager.shared.isSuspended {
+							AccountManager.shared.resumeAll()
+						}
+						let articles = try! AccountManager.shared.fetchArticles(.starred)
+						let article = articles.filter({ $0.articleID == id }).first
+						
+						if article != nil {
+							self.coordinator.selectStarredFeed()
+							DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+								self.coordinator.selectArticle(article!, animations: [.navigation, .scroll])
+							})
+							return
+						} else {
+							self.coordinator.selectStarredFeed()
+							return
+						}
+					} else {
+						self.coordinator.selectStarredFeed()
+						return
+					}
+				}
+				
+			}
+		}
 	}
 	
 }
