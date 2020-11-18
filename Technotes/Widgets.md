@@ -19,7 +19,7 @@ The widget timeline is refreshed—via `WidgetCenter.shared.reloadAllTimelines()
 ## Deep Links
 The medium widgets support deep links for each of the articles that are surfaced.
 
-If the user taps on an unread article in the unread widget, the widget opens the parent app with a deep link URL (see `WidgetDeepLink`), for example: `nnw://showunread?id={articeID}`. Once the app is opened, `scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>)` is called and is then determined what should be presented to the user. If there is no `id` parameter, the relevant smart feed controller is displayed.
+If the user taps on an unread article in the unread widget, the widget opens the parent app with a deep link URL (see `WidgetDeepLink`), for example: `nnw://showunread?id={articeID}`. Once the app is opened, `scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>)` is called and it is then determined what should be presented to the user based on the URL. If there is no `id` parameter—the user has tapped on a small widget or a non-linked item in a medium widget—the relevant smart feed controller is displayed.
 
 
 ## Data Models
