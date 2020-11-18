@@ -85,6 +85,7 @@
 		17A1598624E3DEDD005DA32A /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598424E3DEDD005DA32A /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17A1598824E3DEDD005DA32A /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598724E3DEDD005DA32A /* RSParser */; };
 		17A1598924E3DEDD005DA32A /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17A1598724E3DEDD005DA32A /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17D0682C2564F47E00C0B37E /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 17D0682B2564F47E00C0B37E /* Localizable.stringsdict */; };
 		17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
@@ -1523,6 +1524,7 @@
 		1799E6CC24C320D600511E91 /* InspectorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorModel.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
+		17D0682B2564F47E00C0B37E /* Localizable.stringsdict */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; path = Localizable.stringsdict; sourceTree = "<group>"; };
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
 		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
 		17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesModel.swift; sourceTree = "<group>"; };
@@ -2266,6 +2268,7 @@
 		176813F82564BB2C00D98635 /* Widget */ = {
 			isa = PBXGroup;
 			children = (
+				17D0683F2564F7AD00C0B37E /* Helpers */,
 				176814822564C02A00D98635 /* NetNewsWire_iOS_WidgetExtension.entitlements */,
 				176814122564BC8A00D98635 /* WidgetBundle.swift */,
 				1768142C2564BCA800D98635 /* TimelineProvider.swift */,
@@ -2274,6 +2277,7 @@
 				176814792564BE3C00D98635 /* Resources */,
 				176813FB2564BB2D00D98635 /* Assets.xcassets */,
 				176813FD2564BB2D00D98635 /* Info.plist */,
+				17D0682B2564F47E00C0B37E /* Localizable.stringsdict */,
 			);
 			path = Widget;
 			sourceTree = "<group>";
@@ -2383,6 +2387,13 @@
 				FA80C11624B0728000974098 /* AddFolderView.swift */,
 			);
 			path = Add;
+			sourceTree = "<group>";
+		};
+		17D0683F2564F7AD00C0B37E /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		510289CE2451BA1E00426DDF /* Twitter */ = {
@@ -4232,6 +4243,7 @@
 			files = (
 				176813FC2564BB2D00D98635 /* Assets.xcassets in Resources */,
 				1768147B2564BE5400D98635 /* widget-sample.json in Resources */,
+				17D0682C2564F47E00C0B37E /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4475,7 +4487,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 8;
 			files = (
 			);
 			inputFileListPaths = (
@@ -4487,7 +4499,7 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
 		};

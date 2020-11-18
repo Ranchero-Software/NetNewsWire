@@ -1,9 +1,10 @@
 # Widgets on iOS
 
-There are _currently_ four widgets available for iOS:
+There are _currently_ seven widgets available for iOS:
 
-- 1x small widget that displays the current count of each of the Smart Feeds.
+- 1x small widget that displays the current count of each of the Smart Feeds
 - 3x medium widgets—one for each of the smart feeds.
+- 3x large widgets—bigger versions of the medium widgets
 
 ## Widget Data
 The widget does not have access to the parent app's database. To surface data to the widget, a small amount of article data is encoded to JSON (see `WidgetDataEncoder`) and saved to the AppGroup container. 

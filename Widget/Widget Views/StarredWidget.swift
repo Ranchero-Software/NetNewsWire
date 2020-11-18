@@ -16,20 +16,6 @@ struct StarredWidgetView : View {
 	var entry: Provider.Entry
 	
 	var body: some View {
-		switch family {
-		case .systemSmall:
-			mediumWidget
-		case .systemMedium:
-			mediumWidget
-		case .systemLarge:
-			mediumWidget
-		@unknown default:
-			mediumWidget
-		}
-	}
-	
-	@ViewBuilder
-	var mediumWidget: some View {
 		if entry.widgetData.starredArticles.count == 0 {
 			inboxZero
 		}
@@ -49,7 +35,7 @@ struct StarredWidgetView : View {
 						Spacer()
 						HStack {
 							Spacer()
-							unreadCountText
+							countText
 						}
 					}
 				}
@@ -75,43 +61,28 @@ struct StarredWidgetView : View {
 			.cornerRadius(4)
 	}
 	
-	var unreadCountText: some View {
-		if entry.widgetData.currentStarredCount > 3 {
-			let count = entry.widgetData.currentStarredCount - 3
-			let formatter = NumberFormatter()
-			formatter.locale = Locale.current
-			formatter.numberStyle = .decimal
-			let formattedCount = formatter.string(from: NSNumber(value: count))
-			var str = ""
-			if count == 1 {
-				str = "+ \(formattedCount!) more starred article..."
-			} else {
-				str = "+ \(formattedCount!) more starred articles..."
-			}
-			return Text(str)
-				.font(.caption2)
-				.bold()
-				.foregroundColor(.accentColor)
+	var countText: some View {
+		var count = entry.widgetData.currentStarredCount
+		if family == .systemLarge {
+			count = count - 8
 		} else {
-			let formatter = NumberFormatter()
-			formatter.locale = Locale.current
-			formatter.numberStyle = .decimal
-			let formattedCount = formatter.string(from: NSNumber(value: entry.widgetData.currentStarredCount))
-			var str = ""
-			if entry.widgetData.currentStarredCount == 1 {
-				str = "\(formattedCount!) starred article"
-			} else {
-				str = "\(formattedCount!) starred articles"
-			}
-			return Text(str)
-				.font(.caption2)
-				.bold()
-				.foregroundColor(.accentColor)
+			count = count - 3
 		}
+		if count < 0 { count = 0 }
+		let formatString = NSLocalizedString("StarredCount",
+											 comment: "Starred Count Format")
+		let str = String.localizedStringWithFormat(formatString, UInt(count))
+		return Text(str)
+			.font(.caption2)
+			.bold()
+			.foregroundColor(.accentColor)
 	}
 	
 	func maxCount() -> Int {
-		return entry.widgetData.starredArticles.count > 3 ? 3 : entry.widgetData.starredArticles.count
+		if family == .systemLarge {
+			return entry.widgetData.currentStarredCount > 8 ? 8 : entry.widgetData.currentStarredCount
+		}
+		return entry.widgetData.currentStarredCount > 3 ? 3 : entry.widgetData.currentStarredCount
 	}
 	
 	var inboxZero: some View {
@@ -120,8 +91,6 @@ struct StarredWidgetView : View {
 			Text("#StarredZero")
 				.italic()
 				.font(Font.system(.subheadline, design: .serif))
-				.fixedSize(horizontal: false, vertical: true)
-				.padding(.bottom, 4)
 			
 			Spacer()
 			HStack {
@@ -133,7 +102,7 @@ struct StarredWidgetView : View {
 				Text("You've not starred any artices.")
 					.font(.caption2)
 					.foregroundColor(.gray)
-			}.padding(.bottom, 8)
+			}
 		}.padding()
 	}
 	

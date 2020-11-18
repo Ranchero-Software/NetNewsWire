@@ -20,7 +20,6 @@ struct WidgetDataEncoder {
 	
 	static func encodeWidgetData() {
 		os_log(.info, "Starting widget data encoding")
-		let task = UIApplication.shared.beginBackgroundTask(withName: taskIdentifier, expirationHandler: nil)
 		do {
 			// Unread Articles
 			let unreadArticles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished! > $1.datePublished!  })
@@ -33,7 +32,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				unread.append(latestArticle)
-				if unread.count == 3 { break }
+				if unread.count == 8 { break }
 			}
 			
 			// Starred Articles
@@ -47,7 +46,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				starred.append(latestArticle)
-				if starred.count == 3 { break }
+				if starred.count == 8 { break }
 			}
 			
 			// Today Articles
@@ -61,7 +60,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				today.append(latestArticle)
-				if today.count == 3 { break }
+				if today.count == 8 { break }
 			}
 			
 			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
@@ -80,13 +79,11 @@ struct WidgetDataEncoder {
 				try FileManager.default.removeItem(at: dataURL!)
 			}
 			try encodedData.write(to: dataURL!)
-			
+			print(latestData.unreadArticles.count)
 			WidgetCenter.shared.reloadAllTimelines()
 			os_log(.info, "Finished encoding widget data")
-			UIApplication.shared.endBackgroundTask(task)
 		} catch {
 			os_log(.error, "%@", error.localizedDescription)
-			UIApplication.shared.endBackgroundTask(task)
 		}
 	}
 	

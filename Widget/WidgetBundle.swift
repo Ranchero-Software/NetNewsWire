@@ -24,7 +24,7 @@ struct UnreadWidget: Widget {
 		})
 		.configurationDisplayName("Your Unread Articles")
 		.description("A sneak peak at what's left unread.")
-		.supportedFamilies([.systemMedium])
+		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
 }
@@ -42,7 +42,7 @@ struct TodayWidget: Widget {
 		})
 		.configurationDisplayName("Your Today Articles")
 		.description("A sneak peak at recently published articles.")
-		.supportedFamilies([.systemMedium])
+		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
 }
@@ -60,7 +60,7 @@ struct StarredWidget: Widget {
 		})
 		.configurationDisplayName("Your Starred Articles")
 		.description("A sneak peak at your starred articles.")
-		.supportedFamilies([.systemMedium])
+		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
 }

@@ -16,21 +16,7 @@ struct UnreadWidgetView : View {
 	var entry: Provider.Entry
 	
 	var body: some View {
-		switch family {
-		case .systemSmall:
-			mediumWidget
-		case .systemMedium:
-			mediumWidget
-		case .systemLarge:
-			mediumWidget
-		@unknown default:
-			mediumWidget
-		}
-	}
-	
-	@ViewBuilder
-	var mediumWidget: some View {
-		if entry.widgetData.unreadArticles.count == 0 {
+		if entry.widgetData.currentUnreadCount == 0 {
 			inboxZero
 		}
 		else {
@@ -49,13 +35,13 @@ struct UnreadWidgetView : View {
 						Spacer()
 						HStack {
 							Spacer()
-							unreadCountText
+							countText
 						}
 					}
 				}
 			}
 			.padding()
-			.widgetURL(URL(string: "nnw-widget://showunread")!)
+			.widgetURL(WidgetDeepLink.unread.url)
 			
 		}
 	}
@@ -75,42 +61,27 @@ struct UnreadWidgetView : View {
 			.cornerRadius(4)
 	}
 	
-	var unreadCountText: some View {
-		if entry.widgetData.currentUnreadCount > 3 {
-			let count = entry.widgetData.currentUnreadCount - 3
-			let formatter = NumberFormatter()
-			formatter.locale = Locale.current
-			formatter.numberStyle = .decimal
-			let formattedCount = formatter.string(from: NSNumber(value: count))
-			var str = ""
-			if count == 1 {
-				str = "+ \(formattedCount!) more unread article..."
-			} else {
-				str = "+ \(formattedCount!) more unread articles..."
-			}
-			return Text(str)
-				.font(.caption2)
-				.bold()
-				.foregroundColor(.accentColor)
+	var countText: some View {
+		var count = entry.widgetData.currentUnreadCount
+		if family == .systemLarge {
+			count = count - 8
 		} else {
-			let formatter = NumberFormatter()
-			formatter.locale = Locale.current
-			formatter.numberStyle = .decimal
-			let formattedCount = formatter.string(from: NSNumber(value: entry.widgetData.currentUnreadCount))
-			var str = ""
-			if entry.widgetData.currentUnreadCount == 1 {
-				str = "\(formattedCount!) unread article"
-			} else {
-				str = "\(formattedCount!) unread articles"
-			}
-			return Text(str)
-				.font(.caption2)
-				.bold()
-				.foregroundColor(.accentColor)
+			count = count - 3
 		}
+		if count < 0 { count = 0 }
+		let formatString = NSLocalizedString("UnreadCount",
+											 comment: "Unread Count Format")
+		let str = String.localizedStringWithFormat(formatString, UInt(count))
+		return Text(str)
+			.font(.caption2)
+			.bold()
+			.foregroundColor(.accentColor)
 	}
 	
 	func maxCount() -> Int {
+		if family == .systemLarge {
+			return entry.widgetData.unreadArticles.count > 8 ? 8 : entry.widgetData.unreadArticles.count
+		}
 		return entry.widgetData.unreadArticles.count > 3 ? 3 : entry.widgetData.unreadArticles.count
 	}
 	
@@ -120,8 +91,6 @@ struct UnreadWidgetView : View {
 			Text("#UnreadZero")
 				.italic()
 				.font(Font.system(.subheadline, design: .serif))
-				.fixedSize(horizontal: false, vertical: true)
-				.padding(.bottom, 4)
 			
 			Spacer()
 			HStack {
@@ -133,7 +102,7 @@ struct UnreadWidgetView : View {
 				Text("There's nothing to read right now.")
 					.font(.caption2)
 					.foregroundColor(.gray)
-			}.padding(.bottom, 8)
+			}
 		}.padding()
 	}
 	
