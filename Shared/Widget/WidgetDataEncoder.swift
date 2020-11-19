@@ -27,7 +27,7 @@ struct WidgetDataEncoder {
 			for article in unreadArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
-												  articleTitle: article.title?.isEmpty ?? true ? article.summary : ArticleStringFormatter.truncatedTitle(article),
+												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? article.contentHTML?.strippingHTML().trimmingWhitespace : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
@@ -41,7 +41,7 @@ struct WidgetDataEncoder {
 			for article in starredArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
-												  articleTitle: article.title?.isEmpty ?? true ? article.summary : ArticleStringFormatter.truncatedTitle(article),
+												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? article.contentHTML?.strippingHTML().trimmingWhitespace : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
@@ -55,7 +55,7 @@ struct WidgetDataEncoder {
 			for article in todayArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
-												  articleTitle: article.title?.isEmpty ?? true ? article.summary : ArticleStringFormatter.truncatedTitle(article),
+												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? article.contentHTML?.strippingHTML().trimmingWhitespace : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
@@ -79,7 +79,6 @@ struct WidgetDataEncoder {
 				try FileManager.default.removeItem(at: dataURL!)
 			}
 			try encodedData.write(to: dataURL!)
-			print(latestData.unreadArticles.count)
 			WidgetCenter.shared.reloadAllTimelines()
 			os_log(.info, "Finished encoding widget data")
 		} catch {
