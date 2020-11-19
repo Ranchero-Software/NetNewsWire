@@ -50,7 +50,7 @@ struct WidgetDataEncoder {
 			}
 			
 			// Today Articles
-			let todayArticles = try SmartFeedsController.shared.todayFeed.fetchArticles().sorted(by: { $0.datePublished ?? .distantPast > $1.datePublished  ?? .distantPast  })
+			let todayArticles = try SmartFeedsController.shared.todayFeed.fetchUnreadArticles().sorted(by: { $0.datePublished ?? .distantPast > $1.datePublished  ?? .distantPast })
 			var today = [LatestArticle]()
 			for article in todayArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
@@ -64,7 +64,7 @@ struct WidgetDataEncoder {
 			}
 			
 			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
-										currentTodayCount: try! SmartFeedsController.shared.todayFeed.fetchArticles().count,
+										currentTodayCount: try! SmartFeedsController.shared.todayFeed.fetchUnreadArticles().count,
 										currentStarredCount: try! SmartFeedsController.shared.starredFeed.fetchArticles().count,
 										unreadArticles: unread,
 										starredArticles: starred,
