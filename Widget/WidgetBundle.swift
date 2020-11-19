@@ -41,7 +41,7 @@ struct TodayWidget: Widget {
 			
 		})
 		.configurationDisplayName("Your Today Articles")
-		.description("A sneak peak at recently published articles.")
+		.description("A sneak peak at unread recently published articles.")
 		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
