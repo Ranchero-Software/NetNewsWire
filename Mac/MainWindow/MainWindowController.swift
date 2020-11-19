@@ -642,6 +642,7 @@ extension MainWindowController: NSSearchFieldDelegate {
 		let smartFeed = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
 		timelineContainerViewController?.setRepresentedObjects([smartFeed], mode: .search)
 		searchSmartFeed = smartFeed
+		updateWindowTitle()
 	}
 
 	func forceSearchToEnd() {
@@ -651,10 +652,12 @@ extension MainWindowController: NSSearchFieldDelegate {
 		if let searchField = currentSearchField {
 			searchField.stringValue = ""
 		}
+		updateWindowTitle()
 	}
 
 	private func startSearchingIfNeeded() {
 		timelineSourceMode = .search
+		updateWindowTitle()
 	}
 
 	private func stopSearchingIfNeeded() {
@@ -662,6 +665,7 @@ extension MainWindowController: NSSearchFieldDelegate {
 		lastSentSearchString = nil
 		timelineSourceMode = .regular
 		timelineContainerViewController?.setRepresentedObjects(nil, mode: .search)
+		updateWindowTitle()
 	}
 }
 
@@ -1234,6 +1238,15 @@ private extension MainWindowController {
 	}
 
 	func updateWindowTitle() {
+		guard timelineSourceMode != .search else {
+			let localizedLabel = NSLocalizedString("Search: %@", comment: "Search")
+			window?.title = NSString.localizedStringWithFormat(localizedLabel as NSString, searchString ?? "") as String
+			if #available(macOS 11.0, *) {
+				window?.subtitle = ""
+			}
+			return
+		}
+		
 		func setSubtitle(_ count: Int) {
 			let localizedLabel = NSLocalizedString("%d unread", comment: "Unread")
 			let formattedLabel = NSString.localizedStringWithFormat(localizedLabel as NSString, count)
