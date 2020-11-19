@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window!.tintColor = AppAssets.primaryAccentColor
 		updateUserInterfaceStyle()
 		window!.rootViewController = coordinator.start(for: window!.frame.size)
-
+		
 		coordinator.restoreWindowState(session.stateRestorationActivity)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
@@ -43,6 +43,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
 			coordinator.handle(userActivity)
         }
+		
+		if let _ = connectionOptions.urlContexts.first {
+			self.scene(scene, openURLContexts: connectionOptions.urlContexts)
+		}
 		
 		window!.makeKeyAndVisible()
     }
