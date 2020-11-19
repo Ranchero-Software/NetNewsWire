@@ -105,22 +105,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						if AccountManager.shared.isSuspended {
 							AccountManager.shared.resumeAll()
 						}
-						let articles = try! AccountManager.shared.fetchArticles(.unread)
-						let article = articles.filter({ $0.articleID == id }).first
-						
-						if article != nil {
-							self.coordinator.selectAllUnreadFeed()
+						self.coordinator.selectAllUnreadFeed(completion: {
 							DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-								self.coordinator.selectArticle(article!, animations: [.navigation, .scroll])
+								self.coordinator.selectArticleInCurrentFeed(id!)
 							})
-							return
-						} else {
-							self.coordinator.selectAllUnreadFeed()
-							return
-						}
+						})
 					} else {
 						self.coordinator.selectAllUnreadFeed()
-						return
 					}
 				}
 				
@@ -132,22 +123,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						if AccountManager.shared.isSuspended {
 							AccountManager.shared.resumeAll()
 						}
-						let articles = try! AccountManager.shared.fetchArticles(.today)
-						let article = articles.filter({ $0.articleID == id }).first
-						
-						if article != nil {
-							self.coordinator.selectTodayFeed()
+						self.coordinator.selectTodayFeed(completion: {
 							DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-								self.coordinator.selectArticle(article!, animations: [.navigation, .scroll])
+								self.coordinator.selectArticleInCurrentFeed(id!)
 							})
-							return
-						} else {
-							self.coordinator.selectTodayFeed()
-							return
-						}
+						})
 					} else {
 						self.coordinator.selectTodayFeed()
-						return
 					}
 				}
 				
@@ -159,22 +141,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						if AccountManager.shared.isSuspended {
 							AccountManager.shared.resumeAll()
 						}
-						let articles = try! AccountManager.shared.fetchArticles(.starred)
-						let article = articles.filter({ $0.articleID == id }).first
-						
-						if article != nil {
-							self.coordinator.selectStarredFeed()
+						self.coordinator.selectStarredFeed(completion: {
 							DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-								self.coordinator.selectArticle(article!, animations: [.navigation, .scroll])
+								self.coordinator.selectArticleInCurrentFeed(id!)
 							})
-							return
-						} else {
-							self.coordinator.selectStarredFeed()
-							return
-						}
+						})
 					} else {
 						self.coordinator.selectStarredFeed()
-						return
 					}
 				}
 				
