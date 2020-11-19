@@ -815,7 +815,6 @@ extension MainWindowController: NSToolbarDelegate {
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
 				.markAllAsRead,
-				.search,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
 				.nextUnread,
@@ -824,6 +823,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.readerView,
 				.openInBrowser,
 				.share,
+				.search,
 				.cleanUp
 			]
 		} else {
@@ -854,15 +854,15 @@ extension MainWindowController: NSToolbarDelegate {
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
 				.markAllAsRead,
-				.search,
 				.timelineTrackingSeparator,
-				.flexibleSpace,
-				.nextUnread,
 				.markRead,
 				.markStar,
+				.nextUnread,
 				.readerView,
+				.share,
 				.openInBrowser,
-				.share
+				.flexibleSpace,
+				.search
 			]
 		} else {
 			return [
