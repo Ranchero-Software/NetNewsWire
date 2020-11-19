@@ -26,22 +26,15 @@ struct EnableExtensionPointHelpView: View {
 		VStack {
 			HStack {
 				ForEach(0..<extensionPoints.count, content: { i in
-					Image(nsImage: extensionPoints[i].image)
-						.resizable()
-						.frame(width: 20, height: 20, alignment: .center)
-						.onTapGesture {
-							preferencesController?.enableExtensionPointFromSelection(extensionPoints[i])
-							hoveringId = nil
-						}
-						.onHover(perform: { hovering in
-							if hovering {
-								hoveringId = extensionPoints[i].title
-							} else {
-								hoveringId = nil
-							}
-						})
-						.scaleEffect(hoveringId == extensionPoints[i].title ? 1.2 : 1)
-						.shadow(radius: hoveringId == extensionPoints[i].title ? 0.8 : 0)
+					Button(action: {
+						preferencesController?.enableExtensionPointFromSelection(extensionPoints[i])
+						hoveringId = nil
+					}, label: {
+						Image(nsImage: extensionPoints[i].image)
+							.resizable()
+							.frame(width: 20, height: 20, alignment: .center)
+					})
+					.buttonStyle(PlainButtonStyle())
 				})
 				
 				if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
