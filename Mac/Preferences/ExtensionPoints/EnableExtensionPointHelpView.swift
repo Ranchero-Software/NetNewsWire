@@ -20,15 +20,12 @@ struct EnableExtensionPointHelpView: View {
 	var helpText: String
 	weak var preferencesController: ExtensionPointPreferencesViewController?
 	
-	@State private var hoveringId: String?
-	
 	var body: some View {
 		VStack {
 			HStack {
 				ForEach(0..<extensionPoints.count, content: { i in
 					Button(action: {
 						preferencesController?.enableExtensionPointFromSelection(extensionPoints[i])
-						hoveringId = nil
 					}, label: {
 						Image(nsImage: extensionPoints[i].image)
 							.resizable()
