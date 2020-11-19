@@ -57,7 +57,7 @@ class TimelineTableRowView : NSTableRowView {
 	}
 	
 	private func addSeparatorView() {
-		guard let cellView = cellView else { return }
+		guard let cellView = cellView, separator == nil else { return }
 		separator = NSView()
 		separator!.translatesAutoresizingMaskIntoConstraints = false
 		separator!.wantsLayer = true
