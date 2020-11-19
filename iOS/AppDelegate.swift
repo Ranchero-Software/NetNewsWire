@@ -13,6 +13,7 @@ import Account
 import BackgroundTasks
 import os.log
 import Secrets
+import WidgetKit
 
 var appDelegate: AppDelegate!
 
@@ -113,6 +114,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		#if DEBUG
 		syncTimer!.update()
 		#endif
+		
+		if #available(iOS 14, *) {
+			WidgetDataEncoder.encodeWidgetData()
+		}
+		
 		
 		return true
 		
@@ -384,6 +390,9 @@ private extension AppDelegate {
 			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
+					if #available(iOS 14, *) {
+						WidgetDataEncoder.encodeWidgetData()
+					}
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
 					task.setTaskCompleted(success: true)

@@ -1277,6 +1277,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func toggleSidebar() {
 		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .allVisible ? .primaryHidden : .allVisible
 	}
+	
+	func selectArticleInCurrentFeed(_ articleID: String) {
+		if let article = self.articles.first(where: { $0.articleID == articleID }) {
+			self.selectArticle(article)
+		}
+	}
 }
 
 // MARK: UISplitViewControllerDelegate
@@ -2289,12 +2295,6 @@ private extension SceneCoordinator {
 			return true
 		}
 		return false
-	}
-	
-	func selectArticleInCurrentFeed(_ articleID: String) {
-		if let article = self.articles.first(where: { $0.articleID == articleID }) {
-			self.selectArticle(article)
-		}
 	}
 	
 }

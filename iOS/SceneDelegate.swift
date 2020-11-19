@@ -23,10 +23,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		window!.tintColor = AppAssets.primaryAccentColor
 		updateUserInterfaceStyle()
 		window!.rootViewController = coordinator.start(for: window!.frame.size)
-
+		
 		coordinator.restoreWindowState(session.stateRestorationActivity)
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
+		
+		if let _ = connectionOptions.urlContexts.first?.url  {
+			window?.makeKeyAndVisible()
+			self.scene(scene, openURLContexts: connectionOptions.urlContexts)
+			return
+		}
 		
 		if let shortcutItem = connectionOptions.shortcutItem {
 			window!.makeKeyAndVisible()
@@ -42,7 +48,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
         if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
 			coordinator.handle(userActivity)
-        }
+		}
 		
 		window!.makeKeyAndVisible()
     }
@@ -59,6 +65,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	}
 	
 	func sceneDidEnterBackground(_ scene: UIScene) {
+		if #available(iOS 14, *) {
+			WidgetDataEncoder.encodeWidgetData()
+		}
 		ArticleStringFormatter.emptyCaches()
 		appDelegate.prepareAccountsForBackground()
 	}
@@ -87,6 +96,63 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	func cleanUp(conditional: Bool) {
 		coordinator.cleanUp(conditional: conditional)
+	}
+	
+	// Handle Opening of URLs
+	
+	func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+		DispatchQueue.main.async {
+			for context in URLContexts {
+				// Show Unread View or Article
+				if context.url.absoluteString.contains(WidgetDeepLink.unread.url.absoluteString) {
+					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
+					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+					if id != nil {
+						if AccountManager.shared.isSuspended {
+							AccountManager.shared.resumeAll()
+						}
+						self.coordinator.selectFeed(SmartFeedsController.shared.unreadFeed, completion: {
+							self.coordinator.selectArticleInCurrentFeed(id!)
+						})
+					} else {
+						self.coordinator.selectAllUnreadFeed()
+					}
+				}
+				
+				// Show Today View or Article
+				if context.url.absoluteString.contains(WidgetDeepLink.today.url.absoluteString) {
+					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
+					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+					if id != nil {
+						if AccountManager.shared.isSuspended {
+							AccountManager.shared.resumeAll()
+						}
+						self.coordinator.selectFeed(SmartFeedsController.shared.todayFeed, completion: {
+							self.coordinator.selectArticleInCurrentFeed(id!)
+						})
+					} else {
+						self.coordinator.selectTodayFeed()
+					}
+				}
+				
+				// Show Starred View or Article
+				if context.url.absoluteString.contains(WidgetDeepLink.starred.url.absoluteString) {
+					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
+					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+					if id != nil {
+						if AccountManager.shared.isSuspended {
+							AccountManager.shared.resumeAll()
+						}
+						self.coordinator.selectFeed(SmartFeedsController.shared.starredFeed, completion: {
+							self.coordinator.selectArticleInCurrentFeed(id!)
+						})
+					} else {
+						self.coordinator.selectStarredFeed()
+					}
+				}
+				
+			}
+		}
 	}
 	
 }
