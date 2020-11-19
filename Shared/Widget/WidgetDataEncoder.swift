@@ -22,7 +22,7 @@ struct WidgetDataEncoder {
 		os_log(.info, "Starting widget data encoding")
 		do {
 			// Unread Articles
-			let unreadArticles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished! > $1.datePublished!  })
+			let unreadArticles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished ?? .distantPast > $1.datePublished ?? .distantPast  })
 			var unread = [LatestArticle]()
 			for article in unreadArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
@@ -36,7 +36,7 @@ struct WidgetDataEncoder {
 			}
 			
 			// Starred Articles
-			let starredArticles = try SmartFeedsController.shared.starredFeed.fetchArticles().sorted(by: { $0.datePublished! > $1.datePublished!  })
+			let starredArticles = try SmartFeedsController.shared.starredFeed.fetchArticles().sorted(by: { $0.datePublished  ?? .distantPast > $1.datePublished ?? .distantPast  })
 			var starred = [LatestArticle]()
 			for article in starredArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
@@ -50,7 +50,7 @@ struct WidgetDataEncoder {
 			}
 			
 			// Today Articles
-			let todayArticles = try SmartFeedsController.shared.todayFeed.fetchArticles().sorted(by: { $0.datePublished! > $1.datePublished!  })
+			let todayArticles = try SmartFeedsController.shared.todayFeed.fetchArticles().sorted(by: { $0.datePublished ?? .distantPast > $1.datePublished  ?? .distantPast  })
 			var today = [LatestArticle]()
 			for article in todayArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
