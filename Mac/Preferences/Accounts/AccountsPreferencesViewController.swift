@@ -109,13 +109,17 @@ extension AccountsPreferencesViewController: NSTableViewDataSource {
 
 extension AccountsPreferencesViewController: NSTableViewDelegate {
 
-	private static let cellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "AccountCell")
-
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? NSTableCellView {
+		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountCell {
+
 			let account = sortedAccounts[row]
 			cell.textField?.stringValue = account.nameForDisplay
 			cell.imageView?.image = account.smallIcon?.image
+			
+			if account.type == .feedbin {
+				cell.isImageTemplateCapable = false
+			}
+			
 			return cell
 		}
 		return nil

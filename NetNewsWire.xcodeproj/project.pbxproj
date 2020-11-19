@@ -183,6 +183,8 @@
 		51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
 		51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
 		51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51333D392468615D00EB5C91 /* AddRedditFeedSheet.xib */; };
+		51386A8E25673277005F3762 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51386A8D25673276005F3762 /* AccountCell.swift */; };
+		51386A8F25673277005F3762 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51386A8D25673276005F3762 /* AccountCell.swift */; };
 		5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93924D33E5600AFF0FE /* RSTree */; };
 		5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93924D33E5600AFF0FE /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5138E94924D3416D00AFF0FE /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E94824D3416D00AFF0FE /* RSCore */; };
@@ -1579,6 +1581,7 @@
 		51314714235C420900387FDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Intents.strings; sourceTree = "<group>"; };
 		51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRedditFeedWindowController.swift; sourceTree = "<group>"; };
 		51333D3A2468615D00EB5C91 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddRedditFeedSheet.xib; sourceTree = SOURCE_ROOT; };
+		51386A8D25673276005F3762 /* AccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCell.swift; sourceTree = "<group>"; };
 		51392D1A24AC19A000BE0D35 /* SidebarExpandedContainers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarExpandedContainers.swift; sourceTree = "<group>"; };
 		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -3467,9 +3470,11 @@
 		84C9FC6F22629E1200D921D6 /* Accounts */ = {
 			isa = PBXGroup;
 			children = (
-				178A9F9C2549449F00AB7E9D /* AddAccountsView.swift */,
-				1710B9122552354E00679C0D /* AddAccountHelpView.swift */,
-				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
+				51386A8D25673276005F3762 /* AccountCell.swift */,
+				5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */,
+				5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */,
+				5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */,
+				5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */,
 				84C9FC7422629E1200D921D6 /* AccountsDetail.xib */,
 				5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */,
 				5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */,
@@ -3478,12 +3483,11 @@
 				3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */,
 				BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */,
 				179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */,
+				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
 				55E15BC1229D65A900D6602A /* AccountsReaderAPI.xib */,
 				55E15BCA229D65A900D6602A /* AccountsReaderAPIWindowController.swift */,
-				5144EA352279FC3D00D19003 /* AccountsAddLocal.xib */,
-				5144EA372279FC6200D19003 /* AccountsAddLocalWindowController.swift */,
-				5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */,
-				5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */,
+				1710B9122552354E00679C0D /* AddAccountHelpView.swift */,
+				178A9F9C2549449F00AB7E9D /* AddAccountsView.swift */,
 			);
 			path = Accounts;
 			sourceTree = "<group>";
@@ -5065,6 +5069,7 @@
 				65ED3FFB235DEF6C0081F399 /* AccountsReaderAPIWindowController.swift in Sources */,
 				65ED3FFC235DEF6C0081F399 /* AccountsAddLocalWindowController.swift in Sources */,
 				65ED3FFD235DEF6C0081F399 /* PasteboardFolder.swift in Sources */,
+				51386A8F25673277005F3762 /* AccountCell.swift in Sources */,
 				65ED3FFE235DEF6C0081F399 /* AccountsFeedbinWindowController.swift in Sources */,
 				65ED3FFF235DEF6C0081F399 /* SidebarOutlineDataSource.swift in Sources */,
 				65ED4000235DEF6C0081F399 /* SidebarCellAppearance.swift in Sources */,
@@ -5497,6 +5502,7 @@
 				84CAFCA422BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
 				844B5B591FE9FE4F00C7C76A /* SidebarKeyboardDelegate.swift in Sources */,
 				84C9FC7C22629E1200D921D6 /* AccountsPreferencesViewController.swift in Sources */,
+				51386A8E25673277005F3762 /* AccountCell.swift in Sources */,
 				510C418124E5D1AE008226FD /* ExtensionContainers.swift in Sources */,
 				51EC114C2149FE3300B296E3 /* FolderTreeMenu.swift in Sources */,
 				849ADEE42359817E000E1B81 /* NNW3ImportController.swift in Sources */,

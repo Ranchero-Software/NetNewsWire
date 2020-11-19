@@ -469,7 +469,7 @@
                                                             </textFieldCell>
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
-                                                                <tableCellView identifier="Cell" id="h2e-5a-qNO">
+                                                                <tableCellView identifier="Cell" id="h2e-5a-qNO" customClass="AccountCell" customModule="NetNewsWire" customModuleProvider="target">
                                                                     <rect key="frame" x="11" y="1" width="155" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
