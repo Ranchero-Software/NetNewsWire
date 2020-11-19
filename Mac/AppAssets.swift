@@ -257,6 +257,10 @@ struct AppAssets {
 		}
 	}()
 
+	static var timelineSeparatorColor: NSColor = {
+		return NSColor(named: "timelineSeparatorColor")!
+	}()
+	
 	static var timelineStarSelected: RSImage! = {
 		return RSImage(named: "timelineStar")?.tinted(with: .white)
 	}()
