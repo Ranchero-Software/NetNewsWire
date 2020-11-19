@@ -95,11 +95,19 @@ struct AppAssets {
 	}()
 
 	static var filterActive: RSImage = {
-		return RSImage(named: "filterActive")!
+		if #available(macOS 11.0, *) {
+			return NSImage(systemSymbolName: "line.horizontal.3.decrease.circle.fill", accessibilityDescription: nil)!
+		} else {
+			return RSImage(named: "filterActive")!
+		}
 	}()
 
 	static var filterInactive: RSImage = {
-		return RSImage(named: "filterInactive")!
+		if #available(macOS 11.0, *) {
+			return NSImage(systemSymbolName: "line.horizontal.3.decrease.circle", accessibilityDescription: nil)!
+		} else {
+			return RSImage(named: "filterInactive")!
+		}
 	}()
 
 	static var iconLightBackgroundColor: NSColor = {

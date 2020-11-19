@@ -716,6 +716,7 @@ extension NSToolbarItem.Identifier {
 	static let timelineTrackingSeparator = NSToolbarItem.Identifier("timelineTrackingSeparator")
 	static let search = NSToolbarItem.Identifier("search")
 	static let markAllAsRead = NSToolbarItem.Identifier("markAllAsRead")
+	static let toggleReadArticlesFilter = NSToolbarItem.Identifier("toggleReadArticlesFilter")
 	static let nextUnread = NSToolbarItem.Identifier("nextUnread")
 	static let markRead = NSToolbarItem.Identifier("markRead")
 	static let markStar = NSToolbarItem.Identifier("markStar")
@@ -752,6 +753,10 @@ extension MainWindowController: NSToolbarDelegate {
 			case .markAllAsRead:
 				let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
 				return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
+			
+			case .toggleReadArticlesFilter:
+				let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
+				return buildToolbarButton(.toggleReadArticlesFilter, title, AppAssets.filterInactive, "toggleReadArticlesFilter:")
 			
 			case .timelineTrackingSeparator:
 				return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
@@ -815,6 +820,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
 				.markAllAsRead,
+				.toggleReadArticlesFilter,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
 				.nextUnread,
@@ -854,6 +860,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
 				.markAllAsRead,
+				.toggleReadArticlesFilter,
 				.timelineTrackingSeparator,
 				.markRead,
 				.markStar,
@@ -1175,18 +1182,33 @@ private extension MainWindowController {
 	}
 
 	func validateToggleReadArticles(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		guard let menuItem = item as? NSMenuItem else { return false }
-		
 		let showCommand = NSLocalizedString("Show Read Articles", comment: "Command")
 		let hideCommand = NSLocalizedString("Hide Read Articles", comment: "Command")
 
-		if let isReadFiltered = timelineContainerViewController?.isReadFiltered {
-			menuItem.title = isReadFiltered ? showCommand : hideCommand
-			return true
-		} else {
-			menuItem.title = showCommand
+		guard let isReadFiltered = timelineContainerViewController?.isReadFiltered else {
+			(item as? NSMenuItem)?.title = hideCommand
+			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+				toolbarItem.toolTip = hideCommand
+				button.image = AppAssets.filterInactive
+			}
 			return false
 		}
+
+		if isReadFiltered {
+			(item as? NSMenuItem)?.title = showCommand
+			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+				toolbarItem.toolTip = showCommand
+				button.image = AppAssets.filterActive
+			}
+		} else {
+			(item as? NSMenuItem)?.title = hideCommand
+			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+				toolbarItem.toolTip = hideCommand
+				button.image = AppAssets.filterInactive
+			}
+		}
+		
+		return true
 	}
 
 	// MARK: - Misc.
