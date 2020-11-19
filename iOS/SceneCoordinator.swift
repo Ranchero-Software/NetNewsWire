@@ -807,27 +807,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func selectTodayFeed(completion: @escaping () -> () = {}) {
+	func selectTodayFeed() {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.todayFeed) {
 			self.selectFeed(SmartFeedsController.shared.todayFeed, animations: [.navigation, .scroll])
-			completion()
 		}
 	}
 
-	func selectAllUnreadFeed(completion: @escaping () -> () = {}) {
+	func selectAllUnreadFeed() {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
 			self.selectFeed(SmartFeedsController.shared.unreadFeed, animations: [.navigation, .scroll])
-			completion()
 		}
 	}
 
-	func selectStarredFeed(completion: @escaping () -> () = {}) {
+	func selectStarredFeed() {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.starredFeed) {
 			self.selectFeed(SmartFeedsController.shared.starredFeed, animations: [.navigation, .scroll])
-			completion()
 		}
 	}
 
