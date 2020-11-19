@@ -807,24 +807,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func selectTodayFeed() {
+	func selectTodayFeed(completion: (() -> Void)? = nil) {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.todayFeed) {
-			self.selectFeed(SmartFeedsController.shared.todayFeed, animations: [.navigation, .scroll])
+			self.selectFeed(SmartFeedsController.shared.todayFeed, animations: [.navigation, .scroll], completion: completion)
 		}
 	}
 
-	func selectAllUnreadFeed() {
+	func selectAllUnreadFeed(completion: (() -> Void)? = nil) {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
-			self.selectFeed(SmartFeedsController.shared.unreadFeed, animations: [.navigation, .scroll])
+			self.selectFeed(SmartFeedsController.shared.unreadFeed, animations: [.navigation, .scroll], completion: completion)
 		}
 	}
 
-	func selectStarredFeed() {
+	func selectStarredFeed(completion: (() -> Void)? = nil) {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.starredFeed) {
-			self.selectFeed(SmartFeedsController.shared.starredFeed, animations: [.navigation, .scroll])
+			self.selectFeed(SmartFeedsController.shared.starredFeed, animations: [.navigation, .scroll], completion: completion)
 		}
 	}
 

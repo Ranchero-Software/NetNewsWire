@@ -111,9 +111,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						if AccountManager.shared.isSuspended {
 							AccountManager.shared.resumeAll()
 						}
-						self.coordinator.selectFeed(SmartFeedsController.shared.unreadFeed, completion: {
+						self.coordinator.selectAllUnreadFeed() {
 							self.coordinator.selectArticleInCurrentFeed(id!)
-						})
+						}
 					} else {
 						self.coordinator.selectAllUnreadFeed()
 					}
@@ -127,9 +127,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						if AccountManager.shared.isSuspended {
 							AccountManager.shared.resumeAll()
 						}
-						self.coordinator.selectFeed(SmartFeedsController.shared.todayFeed, completion: {
+						self.coordinator.selectTodayFeed() {
 							self.coordinator.selectArticleInCurrentFeed(id!)
-						})
+						}
 					} else {
 						self.coordinator.selectTodayFeed()
 					}
@@ -143,9 +143,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						if AccountManager.shared.isSuspended {
 							AccountManager.shared.resumeAll()
 						}
-						self.coordinator.selectFeed(SmartFeedsController.shared.starredFeed, completion: {
+						self.coordinator.selectStarredFeed() {
 							self.coordinator.selectArticleInCurrentFeed(id!)
-						})
+						}
 					} else {
 						self.coordinator.selectStarredFeed()
 					}
