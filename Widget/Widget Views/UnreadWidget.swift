@@ -27,7 +27,7 @@ struct UnreadWidgetView : View {
 						Spacer()
 						nnwImage
 					}
-					VStack(alignment:.leading, spacing: 4) {
+					VStack(alignment:.leading, spacing: 2) {
 						ForEach(0..<maxCount(), content: { i in
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
 											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)

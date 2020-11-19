@@ -27,7 +27,7 @@ struct TodayWidgetView : View {
 						Spacer()
 						nnwImage
 					}
-					VStack(alignment:.leading, spacing: 4) {
+					VStack(alignment:.leading, spacing: 2) {
 						ForEach(0..<maxCount(), content: { i in
 							ArticleItemView(article: entry.widgetData.todayArticles[i],
 											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)

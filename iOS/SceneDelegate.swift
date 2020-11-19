@@ -44,7 +44,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			coordinator.handle(userActivity)
         }
 		
-		if let _ = connectionOptions.urlContexts.first {
+		if let _ = connectionOptions.urlContexts.first?.url  {
 			self.scene(scene, openURLContexts: connectionOptions.urlContexts)
 		}
 		

@@ -19,16 +19,17 @@ struct ArticleItemView: View {
 				// Feed Icon
 				Image(uiImage: thumbnail(article.feedIcon))
 					.resizable()
-					.frame(width: 20, height: 20, alignment: .top)
+					.frame(width: 25, height: 25)
 					.cornerRadius(4)
 				
 				// Title and Feed Name
 				VStack(alignment: .leading) {
 					Text(article.articleTitle ?? "Untitled")
-						.font(.caption)
+						.font(.footnote)
 						.bold()
 						.lineLimit(1)
 						.foregroundColor(.primary)
+						.padding(.top, -3)
 					
 					HStack {
 						Text(article.feedTitle)
@@ -43,7 +44,7 @@ struct ArticleItemView: View {
 					}
 				}
 			})
-		})
+		}).padding(.bottom, 4)
 	}
 	
 	func thumbnail(_ data: Data?) -> UIImage {
