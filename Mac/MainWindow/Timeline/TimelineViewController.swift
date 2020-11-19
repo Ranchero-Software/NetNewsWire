@@ -209,11 +209,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		
 		if #available(macOS 11.0, *) {
 			tableView.style = .inset
-			tableView.gridStyleMask = .solidHorizontalGridLineMask
-		} else {
-			if AppDefaults.shared.timelineShowsSeparators {
-				tableView.gridStyleMask = .solidHorizontalGridLineMask
-			}
 		}
 		
 		if !didRegisterForNotifications {
