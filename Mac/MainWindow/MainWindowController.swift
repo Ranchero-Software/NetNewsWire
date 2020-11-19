@@ -749,13 +749,6 @@ extension MainWindowController: NSToolbarDelegate {
 				toolbarItem.menu = buildNewSidebarItemMenu()
 				return toolbarItem
 
-			case .search:
-				let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
-				let description = NSLocalizedString("Search", comment: "Search")
-				toolbarItem.toolTip = description
-				toolbarItem.label = description
-				return toolbarItem
-
 			case .markAllAsRead:
 				let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
 				return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
@@ -763,10 +756,6 @@ extension MainWindowController: NSToolbarDelegate {
 			case .timelineTrackingSeparator:
 				return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
-			case .nextUnread:
-				let title = NSLocalizedString("Next Unread", comment: "Next Unread")
-				return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
-			
 			case .markRead:
 				let title = NSLocalizedString("Mark Read", comment: "Mark Read")
 				return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
@@ -774,6 +763,10 @@ extension MainWindowController: NSToolbarDelegate {
 			case .markStar:
 				let title = NSLocalizedString("Star", comment: "Star")
 				return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
+			
+			case .nextUnread:
+				let title = NSLocalizedString("Next Unread", comment: "Next Unread")
+				return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
 			
 			case .readerView:
 				let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
@@ -786,14 +779,21 @@ extension MainWindowController: NSToolbarDelegate {
 				toolbarItem.view = button
 				return toolbarItem
 
-			case .openInBrowser:
-				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
-			
 			case .share:
 				let title = NSLocalizedString("Share", comment: "Share")
 				return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
 			
+			case .openInBrowser:
+				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
+			
+			case .search:
+				let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
+				let description = NSLocalizedString("Search", comment: "Search")
+				toolbarItem.toolTip = description
+				toolbarItem.label = description
+				return toolbarItem
+
 			case .cleanUp:
 				let title = NSLocalizedString("Clean Up", comment: "Clean Up")
 				return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
