@@ -2111,7 +2111,6 @@
 		176813F82564BB2C00D98635 /* Widget */ = {
 			isa = PBXGroup;
 			children = (
-				17D0683F2564F7AD00C0B37E /* Helpers */,
 				176814822564C02A00D98635 /* NetNewsWire_iOS_WidgetExtension.entitlements */,
 				176814122564BC8A00D98635 /* WidgetBundle.swift */,
 				1768142C2564BCA800D98635 /* TimelineProvider.swift */,
@@ -2230,13 +2229,6 @@
 				FA80C11624B0728000974098 /* AddFolderView.swift */,
 			);
 			path = Add;
-			sourceTree = "<group>";
-		};
-		17D0683F2564F7AD00C0B37E /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Helpers;
 			sourceTree = "<group>";
 		};
 		510289CE2451BA1E00426DDF /* Twitter */ = {
