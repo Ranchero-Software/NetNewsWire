@@ -25,6 +25,22 @@ function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height", "position"]));
 }
 
+// Constrain the height of iframes whose heights are a percent of the document body to be at most
+// 50% of the viewport width.
+function constrainBodyRelativeIframes() {
+	let iframes = document.getElementsByTagName("iframe");
+
+	for (iframe of iframes) {
+		if (iframe.offsetParent === document.body) {
+			let heightAttribute = iframe.style.height;
+
+			if (/^\d+%$/.test(heightAttribute)) {
+				iframe.classList.add("nnw-constrained");
+			}
+		}
+	}
+}
+
 // Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute if not already
 function convertImgSrc() {
 	document.querySelectorAll("img").forEach(element => {
@@ -137,6 +153,7 @@ function processPage() {
 	wrapTables();
 	inlineVideos();
 	stripStyles();
+	constrainBodyRelativeIframes();
 	convertImgSrc();
 	flattenPreElements();
 	styleLocalFootnotes();
