@@ -46,7 +46,7 @@ function convertImgSrc() {
 	document.querySelectorAll("img").forEach(element => {
 		if (element.hasAttribute("data-canonical-src")) {
 			element.src = element.getAttribute("data-canonical-src")
-		} else if (!element.src.match(/^[a-z]+\:\/\//i)) {
+		} else if (!/^[a-z]+\:\/\//i.test(element.src)) {
 			element.src = new URL(element.src, document.baseURI).href;
 		}
 	});
