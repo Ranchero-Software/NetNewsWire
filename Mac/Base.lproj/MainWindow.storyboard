@@ -302,20 +302,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="240" height="704"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vEw-8O-WQc">
-                                <rect key="frame" x="0.0" y="0.0" width="240" height="1200"/>
+                            <scrollView autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vEw-8O-WQc">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="996"/>
                                 <clipView key="contentView" drawsBackground="NO" id="WBm-nN-Xa0">
-                                    <rect key="frame" x="1" y="1" width="238" height="1198"/>
+                                    <rect key="frame" x="1" y="1" width="238" height="994"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="28" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="rEJ-0k-dzS" id="Ksh-tg-xwv" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="238" height="1198"/>
+                                        <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="24" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="rEJ-0k-dzS" id="Ksh-tg-xwv" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="238" height="994"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <size key="intercellSpacing" width="3" height="0.0"/>
+                                            <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn width="206" minWidth="16" maxWidth="1000" id="rEJ-0k-dzS">
+                                                <tableColumn width="235" minWidth="16" maxWidth="1000" id="rEJ-0k-dzS">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -328,11 +328,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView identifier="HeaderCell" id="Rcy-nR-n8V">
-                                                            <rect key="frame" x="11" y="0.0" width="215" height="17"/>
+                                                            <rect key="frame" x="1" y="1" width="235" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UYV-gZ-amb">
-                                                                    <rect key="frame" x="0.0" y="1" width="215" height="14"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="235" height="14"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="HEADER CELL" id="6Au-5W-t8n">
                                                                         <font key="font" metaFont="smallSystemBold"/>
@@ -346,7 +346,7 @@
                                                             </connections>
                                                         </tableCellView>
                                                         <tableCellView identifier="DataCell" id="YA6-bT-fhL" customClass="SidebarCell" customModule="NetNewsWire" customModuleProvider="target">
-                                                            <rect key="frame" x="11" y="17" width="215" height="17"/>
+                                                            <rect key="frame" x="1" y="20" width="235" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         </tableCellView>
                                                     </prototypeCellViews>
@@ -362,7 +362,7 @@
                                     <nil key="backgroundColor"/>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="crb-RU-OP7">
-                                    <rect key="frame" x="1" y="383" width="148" height="16"/>
+                                    <rect key="frame" x="1" y="979" width="238" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Bag-2b-CQj">
@@ -461,10 +461,10 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView blendingMode="behindWindow" material="contentBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="PdS-jL-yH1">
-                                <rect key="frame" x="0.0" y="120" width="375" height="26"/>
+                                <rect key="frame" x="0.0" y="172" width="375" height="26"/>
                                 <subviews>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lSU-OC-sEC">
-                                        <rect key="frame" x="8" y="3" width="47" height="19"/>
+                                        <rect key="frame" x="8" y="3" width="51" height="19"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="18" id="DoO-KI-ena"/>
                                         </constraints>
@@ -498,7 +498,7 @@
                                         </popUpButtonCell>
                                     </popUpButton>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iA5-go-AO0">
-                                        <rect key="frame" x="350" y="7" width="13" height="13"/>
+                                        <rect key="frame" x="350" y="6" width="13" height="14"/>
                                         <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="filterInactive" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="j7d-36-DO5">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -519,7 +519,7 @@
                                 </constraints>
                             </visualEffectView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Zpk-pq-9nW" customClass="TimelineContainerView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="120"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="172"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -608,9 +608,9 @@
         <segue reference="WS2-WB-dc4"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="NSAddTemplate" width="14" height="13"/>
-        <image name="NSRefreshTemplate" width="14" height="16"/>
-        <image name="NSShareTemplate" width="15" height="17"/>
+        <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSRefreshTemplate" width="11" height="15"/>
+        <image name="NSShareTemplate" width="11" height="16"/>
         <image name="cleanUp" width="149" height="113"/>
         <image name="filterInactive" width="13" height="13"/>
         <image name="markAllRead" width="22" height="19"/>
