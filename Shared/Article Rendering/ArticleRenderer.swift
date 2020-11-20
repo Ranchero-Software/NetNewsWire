@@ -152,7 +152,19 @@ private extension ArticleRenderer {
 		
 		let title = titleOrTitleLink()
 		d["title"] = title
-
+		
+		if let externalLink = article.externalURL, externalLink != article.preferredLink {
+			var displayLink = externalLink.strippingHTTPOrHTTPSScheme
+			if displayLink.count > 40 {
+				displayLink = displayLink.prefix(40).appending("...")
+			}
+			let regarding = NSLocalizedString("Regarding", comment: "Regarding")
+			let externalLinkString = "\(regarding): <a href=\"\(externalLink)\">\(displayLink)</a>"
+			d["external_link"] = externalLinkString
+		} else {
+			d["external_link"] = ""
+		}
+		
 		d["body"] = body
 
 		var components = URLComponents()
