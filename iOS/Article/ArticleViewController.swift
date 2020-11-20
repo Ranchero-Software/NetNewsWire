@@ -71,10 +71,6 @@ class ArticleViewController: UIViewController {
 	
 	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
-		if searchBar.isFirstResponder {
-			return nil
-		}
-		
 		return keyboardManager.keyCommands
 	}
 	

@@ -17,16 +17,20 @@ enum KeyboardType: String {
 
 class KeyboardManager {
 	
-	private(set) var keyCommands: [UIKeyCommand]
+	private(set) var _keyCommands: [UIKeyCommand]
+	var keyCommands: [UIKeyCommand] {
+		guard !UIResponder.isFirstResponderTextField else { return [UIKeyCommand]() }
+		return _keyCommands
+	}
 		
 	init(type: KeyboardType) {
-		keyCommands = KeyboardManager.globalAuxilaryKeyCommands()
+		_keyCommands = KeyboardManager.globalAuxilaryKeyCommands()
 		
 		switch type {
 		case .sidebar:
-			keyCommands.append(contentsOf: KeyboardManager.hardcodeFeedKeyCommands())
+			_keyCommands.append(contentsOf: KeyboardManager.hardcodeFeedKeyCommands())
 		case .timeline, .detail:
-			keyCommands.append(contentsOf: KeyboardManager.hardcodeArticleKeyCommands())
+			_keyCommands.append(contentsOf: KeyboardManager.hardcodeArticleKeyCommands())
 		default:
 			break
 		}
@@ -34,11 +38,11 @@ class KeyboardManager {
 		let globalFile = Bundle.main.path(forResource: KeyboardType.global.rawValue, ofType: "plist")!
 		let globalEntries = NSArray(contentsOfFile: globalFile)! as! [[String: Any]]
 		let globalCommands = globalEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) }
-		keyCommands.append(contentsOf: globalCommands)
+		_keyCommands.append(contentsOf: globalCommands)
 
 		let specificFile = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
 		let specificEntries = NSArray(contentsOfFile: specificFile)! as! [[String: Any]]
-		keyCommands.append(contentsOf: specificEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) } )
+		_keyCommands.append(contentsOf: specificEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) } )
 	}
 	
 	static func createKeyCommand(title: String, action: String, input: String, modifiers: UIKeyModifierFlags) -> UIKeyCommand {
