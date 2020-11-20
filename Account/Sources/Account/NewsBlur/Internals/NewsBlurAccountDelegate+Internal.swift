@@ -16,6 +16,7 @@ import SyncDatabase
 import os.log
 
 extension NewsBlurAccountDelegate {
+	
 	func refreshFeeds(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		os_log(.debug, log: log, "Refreshing feeds...")
 
@@ -27,8 +28,6 @@ extension NewsBlurAccountDelegate {
 					self.syncFeeds(account, feeds)
 					self.syncFeedFolderRelationship(account, folders)
 				}
-
-				self.refreshProgress.completeTask()
 				completion(.success(()))
 			case .failure(let error):
 				completion(.failure(error))

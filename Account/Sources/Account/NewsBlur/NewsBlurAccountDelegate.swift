@@ -246,7 +246,6 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		caller.retrieveUnreadStoryHashes { result in
 			switch result {
 			case .success(let storyHashes):
-				self.refreshProgress.completeTask()
 
 				if let count = storyHashes?.count, count > 0 {
 					self.refreshProgress.addToNumberOfTasksAndRemaining((count - 1) / 100 + 1)
