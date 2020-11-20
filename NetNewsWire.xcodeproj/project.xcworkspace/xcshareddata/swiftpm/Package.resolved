@@ -92,6 +92,15 @@
         }
       },
       {
+        "package": "RSSparkle",
+        "repositoryURL": "https://github.com/Ranchero-Software/Sparkle-Binary.git",
+        "state": {
+          "branch": "main",
+          "revision": "6b6d1d4b4864af7b56dd6f2ba148d752724e80d7",
+          "version": null
+        }
+      },
+      {
         "package": "Swifter",
         "repositoryURL": "https://github.com/httpswift/swifter.git",
         "state": {
