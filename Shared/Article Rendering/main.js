@@ -25,7 +25,7 @@ function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height", "position"]));
 }
 
-// Constrain the height of iframes whose heights are a percent of the document body to be at most
+// Constrain the height of iframes whose heights are defined relative to the document body to be at most
 // 50% of the viewport width.
 function constrainBodyRelativeIframes() {
 	let iframes = document.getElementsByTagName("iframe");
@@ -34,7 +34,7 @@ function constrainBodyRelativeIframes() {
 		if (iframe.offsetParent === document.body) {
 			let heightAttribute = iframe.style.height;
 
-			if (/^\d+%$/.test(heightAttribute)) {
+			if (/%|vw|vh$/.test(heightAttribute)) {
 				iframe.classList.add("nnw-constrained");
 			}
 		}
