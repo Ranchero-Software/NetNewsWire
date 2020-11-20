@@ -28,7 +28,10 @@ private extension AccountCell {
 		guard isImageTemplateCapable else { return }
 		
 		if backgroundStyle != .normal {
+			guard !(imageView?.image?.isTemplate ?? false) else { return }
+			
 			originalImage = imageView?.image
+			
 			let templateImage = imageView?.image?.copy() as? NSImage
 			templateImage?.isTemplate = true
 			imageView?.image = templateImage
