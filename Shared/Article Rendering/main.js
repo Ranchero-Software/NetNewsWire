@@ -34,7 +34,7 @@ function constrainBodyRelativeIframes() {
 		if (iframe.offsetParent === document.body) {
 			let heightAttribute = iframe.style.height;
 
-			if (/%|vw|vh$/.test(heightAttribute)) {
+			if (/%|vw|vh$/i.test(heightAttribute)) {
 				iframe.classList.add("nnw-constrained");
 			}
 		}
