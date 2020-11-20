@@ -18,10 +18,11 @@ function stripStylesFromElement(element, propertiesToStrip) {
 	}
 }
 
+// Strip inline styles that could harm readability.
 function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
 	// Removing "background" and "font" will also remove properties that would be reflected in them, e.g., "background-color" and "font-family"
-	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height"]));
+	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height", "position"]));
 }
 
 // Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute if not already
