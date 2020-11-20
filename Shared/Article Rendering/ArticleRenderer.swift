@@ -158,7 +158,7 @@ private extension ArticleRenderer {
 			if displayLink.count > 40 {
 				displayLink = displayLink.prefix(40).appending("...")
 			}
-			let regarding = NSLocalizedString("Regarding", comment: "Regarding")
+			let regarding = NSLocalizedString("Link", comment: "Link")
 			let externalLinkString = "\(regarding): <a href=\"\(externalLink)\">\(displayLink)</a>"
 			d["external_link"] = externalLinkString
 		} else {

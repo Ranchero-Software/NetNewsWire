@@ -78,10 +78,6 @@ body > .systemMessage {
 	color: var(--feedlink-color);
 }
 
-.externalLink {
-	font-style: italic;
-}
-
 .avatar img {
 	border-radius: 4px;
 }
@@ -102,7 +98,7 @@ body > .systemMessage {
 }
 
 .articleDateline {
-	margin-bottom: 25px;
+	margin-bottom: 5px;
 	font-weight: bold;
 }
 
@@ -111,7 +107,7 @@ body > .systemMessage {
 }
 
 .articleDatelineTitle {
-	margin-bottom: 25px;
+	margin-bottom: 5px;
 	font-weight: bold;
 }
 
@@ -119,9 +115,16 @@ body > .systemMessage {
 	color: var(--article-title-color);
 }
 
+.externalLink {
+	margin-bottom: 5px;
+	font-style: italic;
+}
+
 .articleBody {
+	margin-top: 20px;
 	line-height: 1.6em;
 }
+
 h1 {
 	line-height: 1.15em;
 	font-weight: bold;
