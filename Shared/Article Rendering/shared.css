@@ -204,6 +204,10 @@ iframe {
 	margin: 0 auto;
 }
 
+iframe.nnw-constrained {
+	max-height: 50vw;
+}
+
 figure {
 	margin-bottom: 1em;
 	margin-top: 1em;
