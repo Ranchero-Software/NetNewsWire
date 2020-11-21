@@ -4201,7 +4201,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#swiftgen run strings -t structured-swift5 \"$PROJECT_DIR/Widget/Resources/en.lproj/Localizable.strings\" \"$PROJECT_DIR/Widget/Resources/Localizable.stringsdict\" --output \"$PROJECT_DIR/Widget/Resources/Localized.swift\";\n";
+			shellScript = "if ! command -v swiftgen &> /dev/null\nthen\n    echo \"swiftgen could not be found\"\n    exit\nfi\n\nswiftgen run strings -t structured-swift5 \"$PROJECT_DIR/Widget/Resources/en.lproj/Localizable.strings\" \"$PROJECT_DIR/Widget/Resources/Localizable.stringsdict\" --output \"$PROJECT_DIR/Widget/Resources/Localized.swift\";\n";
 		};
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
