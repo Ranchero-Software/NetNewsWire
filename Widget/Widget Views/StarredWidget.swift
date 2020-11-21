@@ -86,9 +86,9 @@ struct StarredWidgetView : View {
 	var inboxZero: some View {
 		VStack {
 			Spacer()
-			Text("#StarredZero")
-				.italic()
-				.font(Font.system(.subheadline, design: .serif))
+			Image(systemName: "checkmark.circle")
+				.foregroundColor(.accentColor)
+				.font(.title)
 			
 			Spacer()
 			HStack {
@@ -97,7 +97,7 @@ struct StarredWidgetView : View {
 					.frame(width: 15, height: 15, alignment: .center)
 					.cornerRadius(4)
 				
-				Text("You've not starred any artices.")
+				Text(L10n.starredWidgetNoItems)
 					.font(.caption2)
 					.foregroundColor(.gray)
 			}

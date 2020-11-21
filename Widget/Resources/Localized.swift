@@ -10,6 +10,8 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
+  /// Smartfeeds
+  internal static let smartfeedTitle = L10n.tr("Localizable", "Smartfeed_Title")
   /// A count of your smart feeds.
   internal static let smartFeedSummaryWidgetDescription = L10n.tr("Localizable", "SmartFeedSummary_Widget_Description")
   /// Your Smart Feed Summary

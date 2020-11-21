@@ -27,3 +27,6 @@
 
 /* Starred Widget */
 "Starred_Widget_NoItems" = "You've not starred any artices.";
+
+/* Smart Feed Summary */
+"Smartfeed_Title" = "Smartfeeds";

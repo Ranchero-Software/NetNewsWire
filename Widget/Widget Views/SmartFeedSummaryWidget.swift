@@ -58,7 +58,7 @@ struct SmartFeedSummaryWidgetView: View {
 			Spacer()
 			HStack {
 				Spacer()
-				Text("Smartfeeds").bold().textCase(.uppercase).font(.caption2)
+				Text(L10n.smartfeedTitle).bold().textCase(.uppercase).font(.caption2)
 				Spacer()
 			}
 		}.padding()

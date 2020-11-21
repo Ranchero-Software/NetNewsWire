@@ -42,7 +42,6 @@ struct UnreadWidgetView : View {
 			}
 			.padding()
 			.widgetURL(WidgetDeepLink.unread.url)
-			
 		}
 	}
 	
@@ -86,9 +85,9 @@ struct UnreadWidgetView : View {
 	var inboxZero: some View {
 		VStack {
 			Spacer()
-			Text("#UnreadZero")
-				.italic()
-				.font(Font.system(.subheadline, design: .serif))
+			Image(systemName: "checkmark.circle")
+				.foregroundColor(.accentColor)
+				.font(.title)
 			
 			Spacer()
 			HStack {
