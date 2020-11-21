@@ -69,9 +69,7 @@ struct StarredWidgetView : View {
 			count = count - 3
 		}
 		if count < 0 { count = 0 }
-		let formatString = NSLocalizedString("StarredCount",
-											 comment: "Starred Count Format")
-		let str = String.localizedStringWithFormat(formatString, UInt(count))
+		let str = L10n.starredCount(count)
 		return Text(str)
 			.font(.caption2)
 			.bold()
@@ -88,9 +86,9 @@ struct StarredWidgetView : View {
 	var inboxZero: some View {
 		VStack {
 			Spacer()
-			Text("#StarredZero")
-				.italic()
-				.font(Font.system(.subheadline, design: .serif))
+			Image(systemName: "checkmark.circle")
+				.foregroundColor(.accentColor)
+				.font(.title)
 			
 			Spacer()
 			HStack {
@@ -99,7 +97,7 @@ struct StarredWidgetView : View {
 					.frame(width: 15, height: 15, alignment: .center)
 					.cornerRadius(4)
 				
-				Text("You've not starred any artices.")
+				Text(L10n.starredWidgetNoItems)
 					.font(.caption2)
 					.foregroundColor(.gray)
 			}

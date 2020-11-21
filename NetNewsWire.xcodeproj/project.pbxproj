@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1701E1B52568983D009453D8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1701E1B72568983D009453D8 /* Localizable.strings */; };
+		1701E1E725689D1E009453D8 /* Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1701E1E625689D1E009453D8 /* Localized.swift */; };
 		1704053424E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
 		1704053524E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
 		1710B9132552354E00679C0D /* AddAccountHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B9122552354E00679C0D /* AddAccountHelpView.swift */; };
@@ -1313,6 +1315,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1701E1B62568983D009453D8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		1701E1E625689D1E009453D8 /* Localized.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localized.swift; sourceTree = "<group>"; };
 		1704053324E5985A00A00787 /* SceneNavigationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigationModel.swift; sourceTree = "<group>"; };
 		1710B9122552354E00679C0D /* AddAccountHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountHelpView.swift; sourceTree = "<group>"; };
 		1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionPointHelpView.swift; sourceTree = "<group>"; };
@@ -2119,7 +2123,6 @@
 				176814792564BE3C00D98635 /* Resources */,
 				176813FB2564BB2D00D98635 /* Assets.xcassets */,
 				176813FD2564BB2D00D98635 /* Info.plist */,
-				17D0682B2564F47E00C0B37E /* Localizable.stringsdict */,
 			);
 			path = Widget;
 			sourceTree = "<group>";
@@ -2146,7 +2149,10 @@
 		176814792564BE3C00D98635 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1701E1E625689D1E009453D8 /* Localized.swift */,
 				1768147A2564BE5400D98635 /* widget-sample.json */,
+				1701E1B72568983D009453D8 /* Localizable.strings */,
+				17D0682B2564F47E00C0B37E /* Localizable.stringsdict */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3520,6 +3526,7 @@
 				176813EF2564BB2C00D98635 /* Sources */,
 				176813F02564BB2C00D98635 /* Frameworks */,
 				176813F12564BB2C00D98635 /* Resources */,
+				1701E1BF25689B44009453D8 /* SwiftGen Localization */,
 			);
 			buildRules = (
 			);
@@ -3934,6 +3941,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				176813FC2564BB2D00D98635 /* Assets.xcassets in Resources */,
+				1701E1B52568983D009453D8 /* Localizable.strings in Resources */,
 				1768147B2564BE5400D98635 /* widget-sample.json in Resources */,
 				17D0682C2564F47E00C0B37E /* Localizable.stringsdict in Resources */,
 			);
@@ -4177,6 +4185,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1701E1BF25689B44009453D8 /* SwiftGen Localization */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "SwiftGen Localization";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if ! command -v swiftgen &> /dev/null\nthen\n    echo \"swiftgen could not be found\"\n    exit\nfi\n\nswiftgen run strings -t structured-swift5 \"$PROJECT_DIR/Widget/Resources/en.lproj/Localizable.strings\" \"$PROJECT_DIR/Widget/Resources/Localizable.stringsdict\" --output \"$PROJECT_DIR/Widget/Resources/Localized.swift\";\n";
+		};
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -4288,6 +4314,7 @@
 				1768146C2564BD8100D98635 /* WidgetDeepLinks.swift in Sources */,
 				1768143E2564BCC800D98635 /* TodayWidget.swift in Sources */,
 				1768142D2564BCA800D98635 /* TimelineProvider.swift in Sources */,
+				1701E1E725689D1E009453D8 /* Localized.swift in Sources */,
 				176814652564BD7F00D98635 /* WidgetData.swift in Sources */,
 				1768145E2564BD7B00D98635 /* WidgetDataDecoder.swift in Sources */,
 				176814132564BC8A00D98635 /* WidgetBundle.swift in Sources */,
@@ -5282,6 +5309,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		1701E1B72568983D009453D8 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1701E1B62568983D009453D8 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		510C416224E5CDE3008226FD /* ShareViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

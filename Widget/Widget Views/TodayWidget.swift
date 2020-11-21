@@ -69,9 +69,7 @@ struct TodayWidgetView : View {
 			count = count - 3
 		}
 		if count < 0 { count = 0 }
-		let formatString = NSLocalizedString("TodayCount",
-											 comment: "Today Count Format")
-		let str = String.localizedStringWithFormat(formatString, UInt(count))
+		let str = L10n.todayCount(count)
 		return Text(str)
 			.font(.caption2)
 			.bold()
@@ -88,9 +86,9 @@ struct TodayWidgetView : View {
 	var inboxZero: some View {
 		VStack {
 			Spacer()
-			Text("#TodayZero")
-				.italic()
-				.font(Font.system(.subheadline, design: .serif))
+			Image(systemName: "checkmark.circle")
+				.foregroundColor(.accentColor)
+				.font(.title)
 			
 			Spacer()
 			HStack {
@@ -99,7 +97,7 @@ struct TodayWidgetView : View {
 					.frame(width: 15, height: 15, alignment: .center)
 					.cornerRadius(4)
 				
-				Text("There are no recent articles to read.")
+				Text(L10n.todayWidgetNoItems)
 					.font(.caption2)
 					.foregroundColor(.gray)
 			}
