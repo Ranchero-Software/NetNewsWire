@@ -22,8 +22,8 @@ struct UnreadWidget: Widget {
 				.background(Color("WidgetBackground"))
 			
 		})
-		.configurationDisplayName("Your Unread Articles")
-		.description("A sneak peak at what's left unread.")
+		.configurationDisplayName(L10n.unreadWidgetTitle)
+		.description(L10n.unreadWidgetDescription)
 		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
@@ -40,8 +40,8 @@ struct TodayWidget: Widget {
 				.background(Color("WidgetBackground"))
 			
 		})
-		.configurationDisplayName("Your Today Articles")
-		.description("A sneak peak at unread recently published articles.")
+		.configurationDisplayName(L10n.todayWidgetTitle)
+		.description(L10n.todayWidgetDescription)
 		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
@@ -58,8 +58,8 @@ struct StarredWidget: Widget {
 				.background(Color("WidgetBackground"))
 			
 		})
-		.configurationDisplayName("Your Starred Articles")
-		.description("A sneak peak at your starred articles.")
+		.configurationDisplayName(L10n.starredWidgetTitle)
+		.description(L10n.starredWidgetDescription)
 		.supportedFamilies([.systemMedium, .systemLarge])
 		
 	}
@@ -76,8 +76,8 @@ struct SmartFeedSummaryWidget: Widget {
 				.background(Color("WidgetBackground"))
 			
 		})
-		.configurationDisplayName("Your Smart Feed Summary")
-		.description("A count of your smart feeds.")
+		.configurationDisplayName(L10n.smartFeedSummaryWidgetTitle)
+		.description(L10n.smartFeedSummaryWidgetDescription)
 		.supportedFamilies([.systemSmall])
 		
 	}

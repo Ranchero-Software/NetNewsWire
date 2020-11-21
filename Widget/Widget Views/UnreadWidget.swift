@@ -69,9 +69,7 @@ struct UnreadWidgetView : View {
 			count = count - 3
 		}
 		if count < 0 { count = 0 }
-		let formatString = NSLocalizedString("UnreadCount",
-											 comment: "Unread Count Format")
-		let str = String.localizedStringWithFormat(formatString, UInt(count))
+		let str = L10n.unreadCount(count)
 		return Text(str)
 			.font(.caption2)
 			.bold()
@@ -99,7 +97,7 @@ struct UnreadWidgetView : View {
 					.frame(width: 15, height: 15, alignment: .center)
 					.cornerRadius(4)
 				
-				Text("There's nothing to read right now.")
+				Text(L10n.unreadWidgetNoItems)
 					.font(.caption2)
 					.foregroundColor(.gray)
 			}
