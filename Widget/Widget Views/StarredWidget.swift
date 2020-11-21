@@ -69,7 +69,7 @@ struct StarredWidgetView : View {
 			count = count - 3
 		}
 		if count < 0 { count = 0 }
-		let str = L10n.unreadCount(count)
+		let str = L10n.starredCount(count)
 		return Text(str)
 			.font(.caption2)
 			.bold()
