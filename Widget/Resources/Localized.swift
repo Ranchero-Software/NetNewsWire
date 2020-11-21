@@ -10,13 +10,13 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
-  /// Smartfeeds
-  internal static let smartfeedTitle = L10n.tr("Localizable", "Smartfeed_Title")
-  /// A count of your smart feeds.
+  /// Your smart feeds, summarized.
   internal static let smartFeedSummaryWidgetDescription = L10n.tr("Localizable", "SmartFeedSummary_Widget_Description")
   /// Your Smart Feed Summary
   internal static let smartFeedSummaryWidgetTitle = L10n.tr("Localizable", "SmartFeedSummary_Widget_Title")
-  /// A sneak peak at your starred articles.
+  /// Starred
+  internal static let starred = L10n.tr("Localizable", "Starred")
+  /// A sneak peek at your starred articles.
   internal static let starredWidgetDescription = L10n.tr("Localizable", "Starred_Widget_Description")
   /// You've not starred any artices.
   internal static let starredWidgetNoItems = L10n.tr("Localizable", "Starred_Widget_NoItems")
@@ -26,7 +26,9 @@ internal enum L10n {
   internal static func starredCount(_ p1: Int) -> String {
     return L10n.tr("Localizable", "StarredCount", p1)
   }
-  /// A sneak peak at recently published unread articles.
+  /// Today
+  internal static let today = L10n.tr("Localizable", "Today")
+  /// A sneak peek at recently published unread articles.
   internal static let todayWidgetDescription = L10n.tr("Localizable", "Today_Widget_Description")
   /// There are no recent articles to read.
   internal static let todayWidgetNoItems = L10n.tr("Localizable", "Today_Widget_NoItems")
@@ -36,7 +38,9 @@ internal enum L10n {
   internal static func todayCount(_ p1: Int) -> String {
     return L10n.tr("Localizable", "TodayCount", p1)
   }
-  /// A sneak peak at your unread articles.
+  /// Unread
+  internal static let unread = L10n.tr("Localizable", "Unread")
+  /// A sneak peek at your unread articles.
   internal static let unreadWidgetDescription = L10n.tr("Localizable", "Unread_Widget_Description")
   /// There's nothing to read right now.
   internal static let unreadWidgetNoItems = L10n.tr("Localizable", "Unread_Widget_NoItems")

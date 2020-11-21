@@ -17,7 +17,7 @@
 "Starred_Widget_Description" = "A sneak peek at your starred articles.";
 
 "SmartFeedSummary_Widget_Title" = "Your Smart Feed Summary";
-"SmartFeedSummary_Widget_Description" = "A count of your smart feeds.";
+"SmartFeedSummary_Widget_Description" = "Your smart feeds, summarized.";
 
 /* Unread Widget */
 "Unread_Widget_NoItems" = "There's nothing to read right now.";
@@ -28,5 +28,7 @@
 /* Starred Widget */
 "Starred_Widget_NoItems" = "You've not starred any artices.";
 
-/* Smart Feed Summary */
-"Smartfeed_Title" = "Smart Feeds";
+/* Smart Feed Summary Widget */
+"Unread" = "Unread";
+"Today" = "Today";
+"Starred" = "Starred";

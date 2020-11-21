@@ -73,7 +73,7 @@ struct SmartFeedSummaryWidget: Widget {
 		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
 			SmartFeedSummaryWidgetView(entry: entry)
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
-				.background(Color("WidgetBackground"))
+				.background(Color("AccentColor"))
 			
 		})
 		.configurationDisplayName(L10n.smartFeedSummaryWidgetTitle)

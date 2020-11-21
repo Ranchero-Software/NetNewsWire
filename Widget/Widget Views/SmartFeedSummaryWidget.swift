@@ -32,10 +32,14 @@ struct SmartFeedSummaryWidgetView: View {
 	@ViewBuilder
 	var smallWidget: some View {
 		VStack(alignment: .leading) {
+			Spacer()
 			Link(destination: WidgetDeepLink.today.url, label: {
 				HStack {
 					todayImage
-					Text(formattedCount(entry.widgetData.currentTodayCount) + " Today").font(.caption)
+					VStack(alignment: .leading, spacing: nil, content: {
+						Text(formattedCount(entry.widgetData.currentTodayCount)).font(Font.system(.caption, design: .rounded)).bold()
+						Text(L10n.today).bold().font(.caption).textCase(.uppercase)
+					}).foregroundColor(.white)
 					Spacer()
 				}
 			})
@@ -43,7 +47,10 @@ struct SmartFeedSummaryWidgetView: View {
 			Link(destination: WidgetDeepLink.unread.url, label: {
 				HStack {
 					unreadImage
-					Text(formattedCount(entry.widgetData.currentUnreadCount) + " Unread").font(.caption)
+					VStack(alignment: .leading, spacing: nil, content: {
+						Text(formattedCount(entry.widgetData.currentUnreadCount)).font(Font.system(.caption, design: .rounded)).bold()
+						Text(L10n.unread).bold().font(.caption).textCase(.uppercase)
+					}).foregroundColor(.white)
 					Spacer()
 				}
 			})
@@ -51,16 +58,14 @@ struct SmartFeedSummaryWidgetView: View {
 			Link(destination: WidgetDeepLink.starred.url, label: {
 				HStack {
 					starredImage
-					Text(formattedCount(entry.widgetData.currentStarredCount) + " Starred").font(.caption)
+					VStack(alignment: .leading, spacing: nil, content: {
+						Text(formattedCount(entry.widgetData.currentStarredCount)).font(Font.system(.caption, design: .rounded)).bold()
+						Text(L10n.starred).bold().font(.caption).textCase(.uppercase)
+					}).foregroundColor(.white)
 					Spacer()
 				}
 			})
 			Spacer()
-			HStack {
-				Spacer()
-				Text(L10n.smartfeedTitle).bold().textCase(.uppercase).font(.caption2)
-				Spacer()
-			}
 		}.padding()
 	}
 	
@@ -75,7 +80,7 @@ struct SmartFeedSummaryWidgetView: View {
 		Image(systemName: "largecircle.fill.circle")
 			.resizable()
 			.frame(width: 20, height: 20, alignment: .center)
-			.foregroundColor(.accentColor)
+			.foregroundColor(.white)
 	}
 	
 	var nnwImage: some View {
@@ -89,14 +94,22 @@ struct SmartFeedSummaryWidgetView: View {
 		Image(systemName: "star.fill")
 			.resizable()
 			.frame(width: 20, height: 20, alignment: .center)
-			.foregroundColor(.yellow)
+			.foregroundColor(.white)
 	}
 	
 	var todayImage: some View {
 		Image(systemName: "sun.max.fill")
 			.resizable()
 			.frame(width: 20, height: 20, alignment: .center)
-			.foregroundColor(.orange)
+			.foregroundColor(.white)
 	}
 	
+}
+
+
+struct SmartFeedSummaryWidgetView_Previews: PreviewProvider {
+	
+	static var previews: some View {
+		SmartFeedSummaryWidgetView(entry: Provider.Entry.init(date: Date(), widgetData: WidgetDataDecoder.sampleData()))
+	}
 }
