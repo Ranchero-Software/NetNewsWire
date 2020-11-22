@@ -16,10 +16,8 @@ import Articles
 @available(iOS 14, *)
 struct WidgetDataEncoder {
 	
-	static let taskIdentifier = "com.ranchero.NetNewsWire.WidgetEncode"
-	
 	static func encodeWidgetData() {
-		os_log(.info, "Starting widget data encoding")
+		os_log(.debug, "Starting encoding widget data.")
 		do {
 			// Unread Articles
 			let unreadArticles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished ?? .distantPast > $1.datePublished ?? .distantPast  })
@@ -72,15 +70,18 @@ struct WidgetDataEncoder {
 										lastUpdateTime: Date())
 			
 			let encodedData = try JSONEncoder().encode(latestData)
+			os_log(.debug, "Finished encoding widget data.")
 			let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 			let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 			let dataURL = containerURL?.appendingPathComponent("widget-data.json")
 			if FileManager.default.fileExists(atPath: dataURL!.path) {
 				try FileManager.default.removeItem(at: dataURL!)
+				os_log(.debug, "Removed widget data from container.")
 			}
-			try encodedData.write(to: dataURL!)
-			WidgetCenter.shared.reloadAllTimelines()
-			os_log(.info, "Finished encoding widget data")
+			if FileManager.default.createFile(atPath: dataURL!.path, contents: encodedData, attributes: nil) {
+				os_log(.debug, "Wrote widget data to container.")
+				WidgetCenter.shared.reloadAllTimelines()
+			}
 		} catch {
 			os_log(.error, "%@", error.localizedDescription)
 		}
