@@ -12,14 +12,23 @@ import SwiftUI
 struct Provider: TimelineProvider {
 	
 	func placeholder(in context: Context) -> WidgetTimelineEntry {
-		WidgetTimelineEntry(date: Date(), widgetData: WidgetDataDecoder.sampleData())
+		do {
+			let data = try WidgetDataDecoder.decodeWidgetData()
+			return WidgetTimelineEntry(date: Date(), widgetData: data)
+		} catch {
+			return WidgetTimelineEntry(date: Date(), widgetData: WidgetDataDecoder.sampleData())
+		}
 	}
 	
 	func getSnapshot(in context: Context, completion: @escaping (WidgetTimelineEntry) -> Void) {
 		if context.isPreview {
-			let entry = WidgetTimelineEntry(date: Date(),
-											widgetData: WidgetDataDecoder.sampleData())
-			completion(entry)
+			do {
+				let data = try WidgetDataDecoder.decodeWidgetData()
+				completion(WidgetTimelineEntry(date: Date(), widgetData: data))
+			} catch {
+				completion(WidgetTimelineEntry(date: Date(),
+											   widgetData: WidgetDataDecoder.sampleData()))
+			}
 		} else {
 			do {
 				let widgetData = try WidgetDataDecoder.decodeWidgetData()
@@ -27,7 +36,7 @@ struct Provider: TimelineProvider {
 				completion(entry)
 			} catch {
 				let entry = WidgetTimelineEntry(date: Date(),
-												widgetData: WidgetData(currentUnreadCount: 41, currentTodayCount: 40, currentStarredCount: 12, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date()) )
+												widgetData: WidgetDataDecoder.sampleData())
 				completion(entry)
 			}
 		}
