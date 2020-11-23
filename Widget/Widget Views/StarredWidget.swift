@@ -37,10 +37,10 @@ struct StarredWidgetView : View {
 						ForEach(0..<maxCount(), content: { i in
 							if i != 0 {
 								ArticleItemView(article: entry.widgetData.starredArticles[i],
-												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.todayArticles[i].id).url)
+												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
 									.padding(.vertical, 4)
 							} else {
-								ArticleItemView(article: entry.widgetData.unreadArticles[i],
+								ArticleItemView(article: entry.widgetData.starredArticles[i],
 												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
 									.padding(.bottom, 4)
 							}
