@@ -36,10 +36,10 @@ struct StarredWidgetView : View {
 							if i != 0 {
 								Divider()
 								ArticleItemView(article: entry.widgetData.starredArticles[i],
-												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.todayArticles[i].id).url)
+												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
 									.padding(.vertical, 6)
 							} else {
-								ArticleItemView(article: entry.widgetData.unreadArticles[i],
+								ArticleItemView(article: entry.widgetData.starredArticles[i],
 												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
 									.padding(.bottom, 4)
 							}
