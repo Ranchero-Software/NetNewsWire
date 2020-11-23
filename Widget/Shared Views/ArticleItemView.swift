@@ -44,7 +44,7 @@ struct ArticleItemView: View {
 					}
 				}
 			})
-		}).padding(.bottom, 4)
+		})
 	}
 	
 	func thumbnail(_ data: Data?) -> UIImage {

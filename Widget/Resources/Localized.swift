@@ -10,6 +10,10 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
+  /// Plural format key: "%#@localized_count@"
+  internal static func localizedCount(_ p1: Int) -> String {
+    return L10n.tr("Localizable", "LocalizedCount", p1)
+  }
   /// Your smart feeds, summarized.
   internal static let smartFeedSummaryWidgetDescription = L10n.tr("Localizable", "SmartFeedSummary_Widget_Description")
   /// Your Smart Feed Summary

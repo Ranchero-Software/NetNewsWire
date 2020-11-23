@@ -20,29 +20,36 @@ struct TodayWidgetView : View {
 			inboxZero
 		}
 		else {
-			VStack(alignment: .leading) {
-				HStack(alignment: .top, spacing: 8) {
-					VStack {
+			GeometryReader { metrics in
+				HStack(alignment: .top, spacing: 4) {
+					VStack(alignment: .leading) {
 						todayImage
 						Spacer()
-						nnwImage
+						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(Font.system(.footnote, design: .rounded))
+						Text(L10n.today.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
-					VStack(alignment:.leading, spacing: 2) {
+					.frame(width: metrics.size.width * 0.15)
+					.padding(.trailing, 4)
+					
+					Divider()
+					
+					VStack(alignment:.leading, spacing: 0) {
 						ForEach(0..<maxCount(), content: { i in
-							ArticleItemView(article: entry.widgetData.todayArticles[i],
-											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
+							if i != 0 {
+								ArticleItemView(article: entry.widgetData.todayArticles[i],
+												deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
+									.padding(.vertical, 4)
+							} else {
+								ArticleItemView(article: entry.widgetData.unreadArticles[i],
+												deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
+									.padding(.bottom, 4)
+							}
+							
 						})
 						Spacer()
-						HStack {
-							Spacer()
-							countText
-						}
-					}
-				}
+					}.padding(.leading, 4)
+				}.padding()
 			}
-			.padding()
-			.widgetURL(WidgetDeepLink.today.url)
-			
 		}
 	}
 	
@@ -59,21 +66,6 @@ struct TodayWidgetView : View {
 			.resizable()
 			.frame(width: 25, height: 25, alignment: .center)
 			.cornerRadius(4)
-	}
-	
-	var countText: some View {
-		var count = entry.widgetData.currentTodayCount
-		if family == .systemLarge {
-			count = count - 8
-		} else {
-			count = count - 3
-		}
-		if count < 0 { count = 0 }
-		let str = L10n.todayCount(count)
-		return Text(str)
-			.font(.caption2)
-			.bold()
-			.foregroundColor(.accentColor)
 	}
 	
 	func maxCount() -> Int {

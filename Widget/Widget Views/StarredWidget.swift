@@ -20,28 +20,36 @@ struct StarredWidgetView : View {
 			inboxZero
 		}
 		else {
-			VStack(alignment: .leading) {
-				HStack(alignment: .top, spacing: 8) {
-					VStack {
+			GeometryReader { metrics in
+				HStack(alignment: .top, spacing: 4) {
+					VStack(alignment: .leading) {
 						starredImage
 						Spacer()
-						nnwImage
+						Text(L10n.localizedCount(entry.widgetData.currentStarredCount)).bold().font(Font.system(.footnote, design: .rounded))
+						Text(L10n.starred.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
-					VStack(alignment:.leading, spacing: 2) {
+					.frame(width: metrics.size.width * 0.15)
+					.padding(.trailing, 4)
+					
+					Divider()
+					
+					VStack(alignment:.leading, spacing: 0) {
 						ForEach(0..<maxCount(), content: { i in
-							ArticleItemView(article: entry.widgetData.starredArticles[i],
-											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
+							if i != 0 {
+								ArticleItemView(article: entry.widgetData.starredArticles[i],
+												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.todayArticles[i].id).url)
+									.padding(.vertical, 4)
+							} else {
+								ArticleItemView(article: entry.widgetData.unreadArticles[i],
+												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
+									.padding(.bottom, 4)
+							}
+							
 						})
 						Spacer()
-						HStack {
-							Spacer()
-							countText
-						}
-					}
-				}
+					}.padding(.leading, 4)
+				}.padding()
 			}
-			.padding()
-			.widgetURL(WidgetDeepLink.starred.url)
 			
 		}
 	}
@@ -59,21 +67,6 @@ struct StarredWidgetView : View {
 			.resizable()
 			.frame(width: 25, height: 25, alignment: .center)
 			.cornerRadius(4)
-	}
-	
-	var countText: some View {
-		var count = entry.widgetData.currentStarredCount
-		if family == .systemLarge {
-			count = count - 8
-		} else {
-			count = count - 3
-		}
-		if count < 0 { count = 0 }
-		let str = L10n.starredCount(count)
-		return Text(str)
-			.font(.caption2)
-			.bold()
-			.foregroundColor(.accentColor)
 	}
 	
 	func maxCount() -> Int {
