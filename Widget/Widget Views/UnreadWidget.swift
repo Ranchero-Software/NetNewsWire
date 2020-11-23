@@ -31,14 +31,13 @@ struct UnreadWidgetView : View {
 					.frame(width: metrics.size.width * 0.15)
 					.padding(.trailing, 4)
 					
-					Divider()
-					
 					VStack(alignment:.leading, spacing: 0) {
 						ForEach(0..<maxCount(), content: { i in
 							if i != 0 {
+								Divider()
 								ArticleItemView(article: entry.widgetData.unreadArticles[i],
 												deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-									.padding(.vertical, 4)
+									.padding(.vertical, 6)
 							} else {
 								ArticleItemView(article: entry.widgetData.unreadArticles[i],
 												deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
