@@ -56,5 +56,21 @@
 			<string>+ %u more recent unread articles</string>
 		</dict>
 	</dict>
+	<key>LocalizedCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_count@</string>
+		<key>localized_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>zero</key>
+			<string>0</string>
+			<key>other</key>
+			<string>%u</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
