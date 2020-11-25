@@ -218,8 +218,8 @@ struct AppAssets {
 	}()
 	
 	static var starredFeedImage: IconImage = {
-		let image = UIImage(systemName: "star.fill")!
-		return IconImage(image, isSymbol: true, preferredColor: AppAssets.starColor.cgColor)
+		let image = UIImage(named: "smartFeedStar")!
+		return IconImage(image, isSymbol: true, preferredColor: nil)
 	}()
 
 	static var tickMarkColor: UIColor = {
@@ -232,8 +232,8 @@ struct AppAssets {
 	}()
 	
 	static var todayFeedImage: IconImage = {
-		let image = UIImage(systemName: "sun.max.fill")!
-		return IconImage(image, isSymbol: true, preferredColor: UIColor.systemOrange.cgColor)
+		let image = UIImage(named: "smartFeedToday")!
+		return IconImage(image, isSymbol: true, preferredColor: nil)
 	}()
 
 	static var trashImage: UIImage = {
@@ -241,8 +241,8 @@ struct AppAssets {
 	}()
 	
 	static var unreadFeedImage: IconImage = {
-		let image = UIImage(systemName: "largecircle.fill.circle")!
-		return IconImage(image, isSymbol: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+		let image = UIImage(named: "smartFeedUnread")!
+		return IconImage(image, isSymbol: true, preferredColor: nil)
 	}()
 	
 	static var vibrantTextColor: UIColor = {
