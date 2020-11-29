@@ -25,7 +25,7 @@ struct UnreadWidgetView : View {
 					VStack(alignment: .leading) {
 						unreadImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentUnreadCount)).bold().font(Font.system(.footnote, design: .rounded))
+						Text(L10n.localizedCount(entry.widgetData.currentUnreadCount)).bold().font(Font.system(.footnote, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.unread.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)
@@ -37,7 +37,8 @@ struct UnreadWidgetView : View {
 								Divider()
 								ArticleItemView(article: entry.widgetData.unreadArticles[i],
 												deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-									.padding(.vertical, 6)
+									.padding(.top, 8)
+									.padding(.bottom, 4)
 							} else {
 								ArticleItemView(article: entry.widgetData.unreadArticles[i],
 												deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
@@ -69,7 +70,7 @@ struct UnreadWidgetView : View {
 	
 	func maxCount() -> Int {
 		if family == .systemLarge {
-			return entry.widgetData.unreadArticles.count > 8 ? 8 : entry.widgetData.unreadArticles.count
+			return entry.widgetData.unreadArticles.count > 7 ? 7 : entry.widgetData.unreadArticles.count
 		}
 		return entry.widgetData.unreadArticles.count > 3 ? 3 : entry.widgetData.unreadArticles.count
 	}

@@ -25,7 +25,7 @@ struct StarredWidgetView : View {
 					VStack(alignment: .leading) {
 						starredImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentStarredCount)).bold().font(Font.system(.footnote, design: .rounded))
+						Text(L10n.localizedCount(entry.widgetData.currentStarredCount)).bold().font(Font.system(.footnote, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.starred.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)
@@ -37,7 +37,8 @@ struct StarredWidgetView : View {
 								Divider()
 								ArticleItemView(article: entry.widgetData.starredArticles[i],
 												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-									.padding(.vertical, 6)
+									.padding(.top, 8)
+									.padding(.bottom, 4)
 							} else {
 								ArticleItemView(article: entry.widgetData.starredArticles[i],
 												deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
@@ -70,7 +71,7 @@ struct StarredWidgetView : View {
 	
 	func maxCount() -> Int {
 		if family == .systemLarge {
-			return entry.widgetData.currentStarredCount > 8 ? 8 : entry.widgetData.currentStarredCount
+			return entry.widgetData.currentStarredCount > 7 ? 7 : entry.widgetData.currentStarredCount
 		}
 		return entry.widgetData.currentStarredCount > 3 ? 3 : entry.widgetData.currentStarredCount
 	}
