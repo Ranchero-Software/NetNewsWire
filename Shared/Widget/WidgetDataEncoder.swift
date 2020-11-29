@@ -32,7 +32,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				unread.append(latestArticle)
-				if unread.count == 8 { break }
+				if unread.count == 7 { break }
 			}
 			
 			// Starred Articles
@@ -46,7 +46,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				starred.append(latestArticle)
-				if starred.count == 8 { break }
+				if starred.count == 7 { break }
 			}
 			
 			// Today Articles
@@ -60,7 +60,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				today.append(latestArticle)
-				if today.count == 8 { break }
+				if today.count == 7 { break }
 			}
 			
 			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
