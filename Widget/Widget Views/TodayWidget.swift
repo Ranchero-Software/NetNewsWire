@@ -25,11 +25,12 @@ struct TodayWidgetView : View {
 					VStack(alignment: .leading) {
 						todayImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(Font.system(.footnote, design: .rounded))
+						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(Font.system(.callout, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.today.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)
 					.padding(.trailing, 4)
+					
 					
 					VStack(alignment:.leading, spacing: 0) {
 						ForEach(0..<maxCount(), content: { i in
@@ -37,7 +38,8 @@ struct TodayWidgetView : View {
 								Divider()
 								ArticleItemView(article: entry.widgetData.todayArticles[i],
 												deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-									.padding(.vertical, 6)
+									.padding(.top, 8)
+									.padding(.bottom, 4)
 							} else {
 								ArticleItemView(article: entry.widgetData.unreadArticles[i],
 												deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
@@ -69,7 +71,7 @@ struct TodayWidgetView : View {
 	
 	func maxCount() -> Int {
 		if family == .systemLarge {
-			return entry.widgetData.todayArticles.count > 8 ? 8 : entry.widgetData.todayArticles.count
+			return entry.widgetData.todayArticles.count > 7 ? 7 : entry.widgetData.todayArticles.count
 		}
 		return entry.widgetData.todayArticles.count > 3 ? 3 : entry.widgetData.todayArticles.count
 	}

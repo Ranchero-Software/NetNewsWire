@@ -16,8 +16,10 @@ import Articles
 @available(iOS 14, *)
 struct WidgetDataEncoder {
 	
+	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	
 	static func encodeWidgetData() {
-		os_log(.debug, "Starting encoding widget data.")
+		os_log(.debug, log: log, "Starting encoding widget data.")
 		do {
 			// Unread Articles
 			let unreadArticles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished ?? .distantPast > $1.datePublished ?? .distantPast  })
@@ -30,7 +32,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				unread.append(latestArticle)
-				if unread.count == 8 { break }
+				if unread.count == 7 { break }
 			}
 			
 			// Starred Articles
@@ -44,7 +46,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				starred.append(latestArticle)
-				if starred.count == 8 { break }
+				if starred.count == 7 { break }
 			}
 			
 			// Today Articles
@@ -58,7 +60,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				today.append(latestArticle)
-				if today.count == 8 { break }
+				if today.count == 7 { break }
 			}
 			
 			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
@@ -70,16 +72,16 @@ struct WidgetDataEncoder {
 										lastUpdateTime: Date())
 			
 			let encodedData = try JSONEncoder().encode(latestData)
-			os_log(.debug, "Finished encoding widget data.")
+			os_log(.debug, log: log, "Finished encoding widget data.")
 			let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 			let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 			let dataURL = containerURL?.appendingPathComponent("widget-data.json")
 			if FileManager.default.fileExists(atPath: dataURL!.path) {
 				try FileManager.default.removeItem(at: dataURL!)
-				os_log(.debug, "Removed widget data from container.")
+				os_log(.debug, log: log, "Removed widget data from container.")
 			}
 			if FileManager.default.createFile(atPath: dataURL!.path, contents: encodedData, attributes: nil) {
-				os_log(.debug, "Wrote widget data to container.")
+				os_log(.debug, log: log, "Wrote widget data to container.")
 				WidgetCenter.shared.reloadAllTimelines()
 			}
 		} catch {
