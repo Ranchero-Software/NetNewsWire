@@ -25,7 +25,7 @@ struct UnreadWidgetView : View {
 					VStack(alignment: .leading) {
 						unreadImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentUnreadCount)).bold().font(Font.system(.footnote, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
+						Text(L10n.localizedCount(entry.widgetData.currentUnreadCount)).bold().font(Font.system(.callout, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.unread.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)

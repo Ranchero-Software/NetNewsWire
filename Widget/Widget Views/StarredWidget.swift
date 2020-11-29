@@ -25,7 +25,7 @@ struct StarredWidgetView : View {
 					VStack(alignment: .leading) {
 						starredImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentStarredCount)).bold().font(Font.system(.footnote, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
+						Text(L10n.localizedCount(entry.widgetData.currentStarredCount)).bold().font(Font.system(.callout, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.starred.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)

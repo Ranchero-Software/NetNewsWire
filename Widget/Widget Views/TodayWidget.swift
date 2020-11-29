@@ -25,11 +25,12 @@ struct TodayWidgetView : View {
 					VStack(alignment: .leading) {
 						todayImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(Font.system(.footnote, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
+						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(Font.system(.callout, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.today.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)
 					.padding(.trailing, 4)
+					
 					
 					VStack(alignment:.leading, spacing: 0) {
 						ForEach(0..<maxCount(), content: { i in
