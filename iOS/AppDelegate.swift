@@ -116,7 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		#endif
 		
 		if #available(iOS 14, *) {
-			WidgetDataEncoder.encodeWidgetData()
+			WidgetDataEncoder.encodeWidgetData(refreshTimeline: false)
 		}
 		
 		
