@@ -18,7 +18,7 @@ struct WidgetDataEncoder {
 	
 	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
-	static func encodeWidgetData() {
+	static func encodeWidgetData(refreshTimeline: Bool = true) {
 		os_log(.debug, log: log, "Starting encoding widget data.")
 		do {
 			// Unread Articles
@@ -32,6 +32,7 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				unread.append(latestArticle)
+				
 				if unread.count == 7 { break }
 			}
 			
@@ -82,7 +83,9 @@ struct WidgetDataEncoder {
 			}
 			if FileManager.default.createFile(atPath: dataURL!.path, contents: encodedData, attributes: nil) {
 				os_log(.debug, log: log, "Wrote widget data to container.")
-				WidgetCenter.shared.reloadAllTimelines()
+				if refreshTimeline == true {
+					WidgetCenter.shared.reloadAllTimelines()
+				}
 			}
 		} catch {
 			os_log(.error, "%@", error.localizedDescription)

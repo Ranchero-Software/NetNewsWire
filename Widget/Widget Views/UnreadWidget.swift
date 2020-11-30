@@ -18,6 +18,7 @@ struct UnreadWidgetView : View {
 	var body: some View {
 		if entry.widgetData.currentUnreadCount == 0 {
 			inboxZero
+				.widgetURL(WidgetDeepLink.unread.url)
 		}
 		else {
 			GeometryReader { metrics in
@@ -49,7 +50,7 @@ struct UnreadWidgetView : View {
 						Spacer()
 					}.padding(.leading, 4)
 				}.padding()
-			}
+			}.widgetURL(WidgetDeepLink.unread.url)
 		}
 	}
 	

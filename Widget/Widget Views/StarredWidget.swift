@@ -18,6 +18,7 @@ struct StarredWidgetView : View {
 	var body: some View {
 		if entry.widgetData.starredArticles.count == 0 {
 			inboxZero
+				.widgetURL(WidgetDeepLink.starred.url)
 		}
 		else {
 			GeometryReader { metrics in
@@ -49,7 +50,7 @@ struct StarredWidgetView : View {
 						Spacer()
 					}.padding(.leading, 4)
 				}.padding()
-			}
+			}.widgetURL(WidgetDeepLink.starred.url)
 			
 		}
 	}

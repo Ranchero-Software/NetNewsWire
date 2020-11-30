@@ -18,6 +18,7 @@ struct TodayWidgetView : View {
 	var body: some View {
 		if entry.widgetData.todayArticles.count == 0 {
 			inboxZero
+				.widgetURL(WidgetDeepLink.today.url)
 		}
 		else {
 			GeometryReader { metrics in
@@ -50,7 +51,7 @@ struct TodayWidgetView : View {
 						Spacer()
 					}.padding(.leading, 4)
 				}.padding()
-			}
+			}.widgetURL(WidgetDeepLink.today.url)
 		}
 	}
 	

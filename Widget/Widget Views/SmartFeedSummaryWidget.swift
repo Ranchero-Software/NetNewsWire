@@ -17,16 +17,8 @@ struct SmartFeedSummaryWidgetView: View {
 	var entry: Provider.Entry
 	
 	var body: some View {
-		switch family {
-		case .systemSmall:
-			smallWidget
-		case .systemMedium:
-			smallWidget
-		case .systemLarge:
-			smallWidget
-		@unknown default:
-			smallWidget
-		}
+		smallWidget
+			.widgetURL(WidgetDeepLink.icon.url)
 	}
 	
 	@ViewBuilder
