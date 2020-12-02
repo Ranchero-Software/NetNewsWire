@@ -13,7 +13,7 @@ import Combine
 class AccountsPreferencesModel: ObservableObject {
 	
 	enum AccountConfigurationSheets {
-		case add, credentials, none
+		case addAccountPicker, credentials, none
 	}
 	
 	// Selected Account

@@ -29,7 +29,7 @@ struct AccountsPreferencesView: View {
 				onDismiss: { viewModel.sheetToShow = .none },
 				content: {
 					switch viewModel.sheetToShow {
-					case .add:
+					case .addAccountPicker:
 						AddAccountView()
 					case .credentials:
 						EditAccountCredentialsView(viewModel: viewModel)
@@ -69,7 +69,7 @@ struct AccountsPreferencesView: View {
 			Divider()
 			HStack(alignment: .center, spacing: 4) {
 				Button(action: {
-					viewModel.sheetToShow = .add
+					viewModel.sheetToShow = .addAccountPicker
 				}, label: {
 					Image(systemName: "plus")
 						.font(.title)

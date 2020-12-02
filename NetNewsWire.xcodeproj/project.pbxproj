@@ -36,6 +36,18 @@
 		1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529A24AA1FD200D65E66 /* MacSearchField.swift */; };
 		17386B5E2577BC820014C8B2 /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		17386B6C2577BD820014C8B2 /* RSSparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 17386B6B2577BD820014C8B2 /* RSSparkle */; };
+		17386B7A2577C4BF0014C8B2 /* AddLocalAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17386B792577C4BF0014C8B2 /* AddLocalAccount.swift */; };
+		17386B952577C6240014C8B2 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 17386B942577C6240014C8B2 /* RSCore */; };
+		17386B962577C6240014C8B2 /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17386B942577C6240014C8B2 /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17386B982577C6240014C8B2 /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 17386B972577C6240014C8B2 /* RSTree */; };
+		17386B992577C6240014C8B2 /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17386B972577C6240014C8B2 /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17386B9B2577C6240014C8B2 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 17386B9A2577C6240014C8B2 /* RSWeb */; };
+		17386B9C2577C6240014C8B2 /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17386B9A2577C6240014C8B2 /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17386B9E2577C6240014C8B2 /* RSDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 17386B9D2577C6240014C8B2 /* RSDatabase */; };
+		17386B9F2577C6240014C8B2 /* RSDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17386B9D2577C6240014C8B2 /* RSDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17386BA42577C6240014C8B2 /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 17386BA32577C6240014C8B2 /* RSParser */; };
+		17386BA52577C6240014C8B2 /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17386BA32577C6240014C8B2 /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17386BB62577C7340014C8B2 /* RSCoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 17386BB52577C7340014C8B2 /* RSCoreResources */; };
 		173A64172547BE0900267F6E /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		173A642C2547BE9600267F6E /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		175942AA24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -1228,6 +1240,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				17386BA52577C6240014C8B2 /* RSParser in Embed Frameworks */,
+				17386B9F2577C6240014C8B2 /* RSDatabase in Embed Frameworks */,
+				17386B9C2577C6240014C8B2 /* RSWeb in Embed Frameworks */,
+				17386B962577C6240014C8B2 /* RSCore in Embed Frameworks */,
+				17386B992577C6240014C8B2 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1337,6 +1354,7 @@
 		1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesView.swift; sourceTree = "<group>"; };
 		1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencePanes.swift; sourceTree = "<group>"; };
 		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
+		17386B792577C4BF0014C8B2 /* AddLocalAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocalAccount.swift; sourceTree = "<group>"; };
 		173A64162547BE0900267F6E /* AccountType+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AccountType+Helpers.swift"; sourceTree = "<group>"; };
 		176813B62564B9F800D98635 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
 		176813BD2564BA2800D98635 /* WidgetDataEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataEncoder.swift; sourceTree = "<group>"; };
@@ -1982,10 +2000,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17386BA42577C6240014C8B2 /* RSParser in Frameworks */,
+				17386B952577C6240014C8B2 /* RSCore in Frameworks */,
 				17386B6C2577BD820014C8B2 /* RSSparkle in Frameworks */,
 				516B695B24D2F28600B5702F /* Account in Frameworks */,
+				17386B9B2577C6240014C8B2 /* RSWeb in Frameworks */,
+				17386B9E2577C6240014C8B2 /* RSDatabase in Frameworks */,
+				17386BB62577C7340014C8B2 /* RSCoreResources in Frameworks */,
 				51E498B124A806A400B667CB /* CloudKit.framework in Frameworks */,
 				51E498B324A806AA00B667CB /* WebKit.framework in Frameworks */,
+				17386B982577C6240014C8B2 /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2104,6 +2128,14 @@
 			path = "Preference Panes";
 			sourceTree = "<group>";
 		};
+		17386B812577C4C60014C8B2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				17386B792577C4BF0014C8B2 /* AddLocalAccount.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		176813A22564B9D100D98635 /* Widget */ = {
 			isa = PBXGroup;
 			children = (
@@ -2193,6 +2225,7 @@
 				1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */,
 				1769E32424BC5A65000E1E8E /* AddAccountView.swift */,
 				1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */,
+				17386B812577C4C60014C8B2 /* Views */,
 			);
 			path = "Add Account";
 			sourceTree = "<group>";
@@ -3666,6 +3699,12 @@
 			packageProductDependencies = (
 				516B695A24D2F28600B5702F /* Account */,
 				17386B6B2577BD820014C8B2 /* RSSparkle */,
+				17386B942577C6240014C8B2 /* RSCore */,
+				17386B972577C6240014C8B2 /* RSTree */,
+				17386B9A2577C6240014C8B2 /* RSWeb */,
+				17386B9D2577C6240014C8B2 /* RSDatabase */,
+				17386BA32577C6240014C8B2 /* RSParser */,
+				17386BB52577C7340014C8B2 /* RSCoreResources */,
 			);
 			productName = macOS;
 			productReference = 51C0514424A77DF800194D5E /* NetNewsWire.app */;
@@ -4571,6 +4610,7 @@
 				17E4DBD624BFC53E00FE462A /* AdvancedPreferencesModel.swift in Sources */,
 				5177470724B2910300EB0F74 /* ArticleToolbarModifier.swift in Sources */,
 				FA80C11824B0728000974098 /* AddFolderView.swift in Sources */,
+				17386B7A2577C4BF0014C8B2 /* AddLocalAccount.swift in Sources */,
 				51E4996C24A8762D00B667CB /* ExtractedArticle.swift in Sources */,
 				51E4990824A808C300B667CB /* RSHTMLMetadata+Extension.swift in Sources */,
 				51919FF824AB8B7700541E64 /* TimelineView.swift in Sources */,
@@ -5838,6 +5878,36 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 17192AD82567B3D500AAEACA /* XCRemoteSwiftPackageReference "Sparkle-Binary" */;
 			productName = RSSparkle;
+		};
+		17386B942577C6240014C8B2 /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+		17386B972577C6240014C8B2 /* RSTree */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 510ECA4024D1DCD0001C31A6 /* XCRemoteSwiftPackageReference "RSTree" */;
+			productName = RSTree;
+		};
+		17386B9A2577C6240014C8B2 /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
+			productName = RSWeb;
+		};
+		17386B9D2577C6240014C8B2 /* RSDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF0D24D24E3B000AD99E /* XCRemoteSwiftPackageReference "RSDatabase" */;
+			productName = RSDatabase;
+		};
+		17386BA32577C6240014C8B2 /* RSParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
+			productName = RSParser;
+		};
+		17386BB52577C7340014C8B2 /* RSCoreResources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCoreResources;
 		};
 		17A1597B24E3DEDD005DA32A /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;
