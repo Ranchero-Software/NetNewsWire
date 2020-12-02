@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "feedly-logo-any.pdf",
+      "filename" : "localAccountLight.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "feedly-logo-dark.pdf",
+      "filename" : "localAccountDark-1.pdf",
       "idiom" : "universal"
     }
   ],

@@ -34,6 +34,8 @@
 		1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */; };
 		1729529724AA1CD000D65E66 /* MacPreferencePanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */; };
 		1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529A24AA1FD200D65E66 /* MacSearchField.swift */; };
+		17386B5E2577BC820014C8B2 /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
+		17386B6C2577BD820014C8B2 /* RSSparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 17386B6B2577BD820014C8B2 /* RSSparkle */; };
 		173A64172547BE0900267F6E /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		173A642C2547BE9600267F6E /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		175942AA24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -1980,6 +1982,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17386B6C2577BD820014C8B2 /* RSSparkle in Frameworks */,
 				516B695B24D2F28600B5702F /* Account in Frameworks */,
 				51E498B124A806A400B667CB /* CloudKit.framework in Frameworks */,
 				51E498B324A806AA00B667CB /* WebKit.framework in Frameworks */,
@@ -3662,6 +3665,7 @@
 			name = "Multiplatform macOS";
 			packageProductDependencies = (
 				516B695A24D2F28600B5702F /* Account */,
+				17386B6B2577BD820014C8B2 /* RSSparkle */,
 			);
 			productName = macOS;
 			productReference = 51C0514424A77DF800194D5E /* NetNewsWire.app */;
@@ -4653,6 +4657,7 @@
 				51B54B6724B6A7960014348B /* WebStatusBarView.swift in Sources */,
 				51E4993E24A870F900B667CB /* UserNotificationManager.swift in Sources */,
 				51E4992E24A8676300B667CB /* FetchRequestQueue.swift in Sources */,
+				17386B5E2577BC820014C8B2 /* AccountType+Helpers.swift in Sources */,
 				51E498CF24A8085D00B667CB /* SmartFeed.swift in Sources */,
 				51E4990724A808C300B667CB /* AuthorAvatarDownloader.swift in Sources */,
 				51E4997424A8784400B667CB /* DefaultFeedsImporter.swift in Sources */,
@@ -5825,6 +5830,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		17192AD92567B3D500AAEACA /* RSSparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 17192AD82567B3D500AAEACA /* XCRemoteSwiftPackageReference "Sparkle-Binary" */;
+			productName = RSSparkle;
+		};
+		17386B6B2577BD820014C8B2 /* RSSparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 17192AD82567B3D500AAEACA /* XCRemoteSwiftPackageReference "Sparkle-Binary" */;
 			productName = RSSparkle;

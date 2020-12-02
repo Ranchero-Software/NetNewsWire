@@ -30,9 +30,7 @@ struct AccountsPreferencesView: View {
 				content: {
 					switch viewModel.sheetToShow {
 					case .add:
-						AddAccountView(preferencesModel: viewModel)
-							.frame(width: 300, height: 200)
-							.padding()
+						AddAccountView()
 					case .credentials:
 						EditAccountCredentialsView(viewModel: viewModel)
 					case .none:

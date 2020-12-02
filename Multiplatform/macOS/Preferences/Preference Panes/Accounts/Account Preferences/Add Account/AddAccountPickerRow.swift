@@ -27,6 +27,12 @@ struct AddAccountPickerRow: View {
 					Text(Account.defaultLocalAccountName)
 				case .cloudKit:
 					Text("iCloud")
+				case .inoreader:
+					Text("Inoreader")
+				case .theOldReader:
+					Text("The Old Reader")
+				case .bazQux:
+					Text("BazQux")
 				case .feedbin:
 					Text("Feedbin")
 				case .feedWrangler:

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "feedly-logo-any.pdf",
+      "filename" : "oldreader-icon-any.pdf",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "feedly-logo-dark.pdf",
+      "filename" : "oldreader-icon-dark.pdf",
       "idiom" : "universal"
     }
   ],
@@ -20,6 +20,7 @@
     "version" : 1
   },
   "properties" : {
+    "preserves-vector-representation" : true,
     "template-rendering-intent" : "original"
   }
 }

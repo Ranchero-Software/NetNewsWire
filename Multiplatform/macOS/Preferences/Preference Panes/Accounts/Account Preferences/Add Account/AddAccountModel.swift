@@ -14,11 +14,7 @@ import RSCore
 
 class AddAccountModel: ObservableObject {
 	
-	#if DEBUG
-	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur]
-	#else
-	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly]
-	#endif
+	let addableAccountTypes: [AccountType] = [.onMyMac, .feedbin, .feedly, .feedWrangler, .freshRSS, .cloudKit, .newsBlur, .bazQux, .inoreader, .theOldReader]
 	
 	// Add Accounts
 	@Published var selectedAddAccount: AccountType = .onMyMac
@@ -56,8 +52,8 @@ class AddAccountModel: ObservableObject {
 			authenticateFeedbin()
 		case .feedWrangler:
 			authenticateFeedWrangler()
-		case .freshRSS:
-			authenticateFreshRSS()
+		case .freshRSS, .inoreader, .bazQux, .theOldReader:
+			authenticateReaderAccount(selectedAddAccount)
 		case .feedly:
 			authenticateFeedly()
 		case .newsBlur:
@@ -214,49 +210,94 @@ extension AddAccountModel {
 		
 	}
 	
-	private func authenticateFreshRSS() {
+	private func authenticateReaderAccount(_ accountType: AccountType) {
 		accountIsAuthenticating = true
 		let credentials = Credentials(type: .readerBasic, username: userName, secret: password)
 		
-		Account.validateCredentials(type: .freshRSS, credentials: credentials, endpoint: URL(string: apiUrl)!) { [weak self] result in
-			
-			guard let self = self else { return }
-			
-			self.accountIsAuthenticating = false
-			
-			switch result {
-			case .success(let validatedCredentials):
+		if accountType == .freshRSS {
+			Account.validateCredentials(type: accountType, credentials: credentials, endpoint: URL(string: apiUrl)!) { [weak self] result in
 				
-				guard let validatedCredentials = validatedCredentials else {
-					self.addAccountError = .invalidUsernamePassword
-					return
-				}
+				guard let self = self else { return }
 				
-				let account = AccountManager.shared.createAccount(type: .freshRSS)
+				self.accountIsAuthenticating = false
 				
-				do {
-					try account.removeCredentials(type: .readerBasic)
-					try account.removeCredentials(type: .readerAPIKey)
-					try account.storeCredentials(credentials)
-					try account.storeCredentials(validatedCredentials)
-					self.accountAdded = true
-					account.refreshAll(completion: { result in
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							self.addAccountError = .other(error: error)
-						}
-					})
+				switch result {
+				case .success(let validatedCredentials):
 					
-				} catch {
-					self.addAccountError = .keyChainError
+					guard let validatedCredentials = validatedCredentials else {
+						self.addAccountError = .invalidUsernamePassword
+						return
+					}
+					
+					let account = AccountManager.shared.createAccount(type: .freshRSS)
+					
+					do {
+						try account.removeCredentials(type: .readerBasic)
+						try account.removeCredentials(type: .readerAPIKey)
+						try account.storeCredentials(credentials)
+						try account.storeCredentials(validatedCredentials)
+						self.accountAdded = true
+						account.refreshAll(completion: { result in
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								self.addAccountError = .other(error: error)
+							}
+						})
+						
+					} catch {
+						self.addAccountError = .keyChainError
+					}
+					
+				case .failure:
+					self.addAccountError = .networkError
+				}
+			}
+		}	else {
+				
+				Account.validateCredentials(type: accountType, credentials: credentials) { [weak self] result in
+				
+				guard let self = self else { return }
+				
+				self.accountIsAuthenticating = false
+				
+				switch result {
+				case .success(let validatedCredentials):
+					
+					guard let validatedCredentials = validatedCredentials else {
+						self.addAccountError = .invalidUsernamePassword
+						return
+					}
+					
+					let account = AccountManager.shared.createAccount(type: .freshRSS)
+					
+					do {
+						try account.removeCredentials(type: .readerBasic)
+						try account.removeCredentials(type: .readerAPIKey)
+						try account.storeCredentials(credentials)
+						try account.storeCredentials(validatedCredentials)
+						self.accountAdded = true
+						account.refreshAll(completion: { result in
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								self.addAccountError = .other(error: error)
+							}
+						})
+						
+					} catch {
+						self.addAccountError = .keyChainError
+					}
+					
+				case .failure:
+					self.addAccountError = .networkError
+				}
 				}
 				
-			case .failure:
-				self.addAccountError = .networkError
 			}
-		}
+		
 	}
 	
 	private func authenticateCloudKit() {
