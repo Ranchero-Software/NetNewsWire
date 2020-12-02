@@ -1,5 +1,5 @@
 //
-//  AddLocalAccount.swift
+//  AddLocalAccountView.swift
 //  Multiplatform macOS
 //
 //  Created by Stuart Breckenridge on 02/12/2020.
@@ -10,9 +10,10 @@ import SwiftUI
 import Account
 import RSCore
 
-struct AddLocalAccount: View {
+struct AddLocalAccountView: View {
 	
 	@State private var newAccountName: String = ""
+	@Environment (\.presentationMode) var presentationMode
 	
     var body: some View {
 		VStack {
@@ -36,12 +37,20 @@ struct AddLocalAccount: View {
 					Spacer()
 					HStack(spacing: 8) {
 						Spacer()
-						Button(action: {}, label: {
-							Text("Cancel").frame(width: 60)
+						Button(action: {
+							presentationMode.wrappedValue.dismiss()
+						}, label: {
+							Text("Cancel")
+								.frame(width: 60)
 						}).keyboardShortcut(.cancelAction)
-						
-						Button(action: {}, label: {
-							Text("Create").frame(width: 60)
+
+						Button(action: {
+							let newAccount = AccountManager.shared.createAccount(type: .onMyMac)
+							newAccount.name = newAccountName
+							presentationMode.wrappedValue.dismiss()
+						}, label: {
+							Text("Create")
+								.frame(width: 60)
 						}).keyboardShortcut(.defaultAction)
 					}
 				}
@@ -54,6 +63,6 @@ struct AddLocalAccount: View {
 
 struct AddLocalAccount_Previews: PreviewProvider {
     static var previews: some View {
-        AddLocalAccount()
+        AddLocalAccountView()
     }
 }
