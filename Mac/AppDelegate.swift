@@ -15,6 +15,7 @@ import Account
 import RSCore
 import RSCoreResources
 import Secrets
+import OSLog
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
 // for AppDelegate to comply
@@ -97,7 +98,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
-	private let log = Log()
 	private let appMovementMonitor = RSAppMovementMonitor()
 	#if !MAC_APP_STORE && !TEST
 	private var softwareUpdater: SPUUpdater!
@@ -119,22 +119,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	// MARK: - API
-	func logMessage(_ message: String, type: LogItem.ItemType) {
-
-		#if DEBUG
-		if type == .debug {
-			print("logMessage: \(message) - \(type)")
-		}
-		#endif
-
-		let logItem = LogItem(type: type, message: message)
-		log.add(logItem)
-	}
-
-	func logDebugMessage(_ message: String) {
-		logMessage(message, type: .debug)
-	}
-
 	func showAddFolderSheetOnWindow(_ window: NSWindow) {
 		addFolderWindowController = AddFolderWindowController()
 		addFolderWindowController!.runSheetOnWindow(window)
@@ -199,7 +183,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		AppDefaults.shared.registerDefaults()
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
-			logDebugMessage("Is first run.")
+			os_log(.debug, "Is first run.")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
 
