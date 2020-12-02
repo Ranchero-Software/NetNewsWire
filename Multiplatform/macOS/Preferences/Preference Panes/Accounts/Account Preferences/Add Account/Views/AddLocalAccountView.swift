@@ -58,6 +58,7 @@ struct AddLocalAccountView: View {
 		}
 		.padding()
 		.frame(width: 384, height: 200)
+		.textFieldStyle(RoundedBorderTextFieldStyle())
     }
 }
 

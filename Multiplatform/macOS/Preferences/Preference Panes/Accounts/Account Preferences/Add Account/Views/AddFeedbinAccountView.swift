@@ -39,16 +39,21 @@ struct AddFeedbinAccountView: View {
 					}
 					
 					HStack {
-						VStack(alignment: .trailing, spacing: 12) {
+						VStack(alignment: .trailing, spacing: 14) {
 							Text("Email")
 							Text("Password")
 						}
-						VStack {
+						VStack(spacing: 8) {
 							TextField("me@email.com", text: $username)
 							SecureField("•••••••••••", text: $password)
 						}
 					}
 					
+					Text("Your username and password will be encrypted and stored in Keychain.")
+						.foregroundColor(.secondary)
+						.font(.callout)
+						.lineLimit(2)
+						.padding(.top, 4)
 					
 					Spacer()
 					HStack(spacing: 8) {
@@ -73,7 +78,8 @@ struct AddFeedbinAccountView: View {
 			}
 		}
 		.padding()
-		.frame(width: 384, height: 200)
+		.frame(width: 384, height: 220)
+		.textFieldStyle(RoundedBorderTextFieldStyle())
     }
 }
 
