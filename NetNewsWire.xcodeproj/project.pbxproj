@@ -48,6 +48,7 @@
 		17386BA42577C6240014C8B2 /* RSParser in Frameworks */ = {isa = PBXBuildFile; productRef = 17386BA32577C6240014C8B2 /* RSParser */; };
 		17386BA52577C6240014C8B2 /* RSParser in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17386BA32577C6240014C8B2 /* RSParser */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17386BB62577C7340014C8B2 /* RSCoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 17386BB52577C7340014C8B2 /* RSCoreResources */; };
+		17386BC42577CC600014C8B2 /* AddFeedbinAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17386BC32577CC600014C8B2 /* AddFeedbinAccountView.swift */; };
 		173A64172547BE0900267F6E /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		173A642C2547BE9600267F6E /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		175942AA24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
@@ -1355,6 +1356,7 @@
 		1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencePanes.swift; sourceTree = "<group>"; };
 		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
 		17386B792577C4BF0014C8B2 /* AddLocalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocalAccountView.swift; sourceTree = "<group>"; };
+		17386BC32577CC600014C8B2 /* AddFeedbinAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedbinAccountView.swift; sourceTree = "<group>"; };
 		173A64162547BE0900267F6E /* AccountType+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AccountType+Helpers.swift"; sourceTree = "<group>"; };
 		176813B62564B9F800D98635 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
 		176813BD2564BA2800D98635 /* WidgetDataEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataEncoder.swift; sourceTree = "<group>"; };
@@ -2132,6 +2134,7 @@
 			isa = PBXGroup;
 			children = (
 				17386B792577C4BF0014C8B2 /* AddLocalAccountView.swift */,
+				17386BC32577CC600014C8B2 /* AddFeedbinAccountView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -4601,6 +4604,7 @@
 				51B54AB624B5B33C0014348B /* WebViewController.swift in Sources */,
 				51E4994B24A8734C00B667CB /* SendToMicroBlogCommand.swift in Sources */,
 				51E4996F24A8764C00B667CB /* ActivityType.swift in Sources */,
+				17386BC42577CC600014C8B2 /* AddFeedbinAccountView.swift in Sources */,
 				51E4994E24A8734C00B667CB /* SendToMarsEditCommand.swift in Sources */,
 				51919FB024AA8EFA00541E64 /* SidebarItemView.swift in Sources */,
 				1769E33624BD9621000E1E8E /* EditAccountCredentialsModel.swift in Sources */,
