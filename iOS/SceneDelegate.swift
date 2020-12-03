@@ -66,7 +66,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	func sceneDidEnterBackground(_ scene: UIScene) {
 		if #available(iOS 14, *) {
-			WidgetDataEncoder.encodeWidgetData()
+			try? WidgetDataEncoder.shared.encodeWidgetData()
 		}
 		ArticleStringFormatter.emptyCaches()
 		appDelegate.prepareAccountsForBackground()

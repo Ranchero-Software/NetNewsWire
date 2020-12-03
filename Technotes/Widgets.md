@@ -9,11 +9,10 @@ There are _currently_ seven widgets available for iOS:
 ## Widget Data
 The widget does not have access to the parent app's database. To surface data to the widget, a small amount of article data is encoded to JSON (see `WidgetDataEncoder`) and saved to the AppGroup container. 
 
-Widget data is written at three points:
+Widget data is written at two points:
 
-1. After applicationDidFinishLaunching
-2. As part of a background refresh
-3. When the scene enters the background
+1. As part of a background refresh
+2. When the scene enters the background
 
 The widget timeline is refreshed—via `WidgetCenter.shared.reloadAllTimelines()`—after each of the above.
 

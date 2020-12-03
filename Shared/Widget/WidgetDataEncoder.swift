@@ -13,17 +13,34 @@ import UIKit
 import RSCore
 import Articles
 
-@available(iOS 14, *)
-struct WidgetDataEncoder {
+
+public final class WidgetDataEncoder {
 	
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
-	static func encodeWidgetData(refreshTimeline: Bool = true) {
+	private var backgroundTaskID: UIBackgroundTaskIdentifier!
+	private lazy var appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
+	private lazy var containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
+	private lazy var dataURL = containerURL?.appendingPathComponent("widget-data.json")
+	
+	static let shared = WidgetDataEncoder()
+	private init () {}
+	
+	@available(iOS 14, *)
+	func encodeWidgetData(refreshTimeline: Bool = true) throws {
 		os_log(.debug, log: log, "Starting encoding widget data.")
+		
 		do {
-			// Unread Articles
-			let unreadArticles = try SmartFeedsController.shared.unreadFeed.fetchArticles().sorted(by: { $0.datePublished ?? .distantPast > $1.datePublished ?? .distantPast  })
+			let unreadArticles = Array(try SmartFeedsController.shared.unreadFeed.fetchArticles()).sortedByDate(.orderedDescending)
+			
+			let starredArticles = Array(try SmartFeedsController.shared.starredFeed.fetchArticles()).sortedByDate(.orderedDescending)
+			
+			let todayArticles = Array(try SmartFeedsController.shared.todayFeed.fetchUnreadArticles()).sortedByDate(.orderedDescending)
+			
 			var unread = [LatestArticle]()
+			var today = [LatestArticle]()
+			var starred = [LatestArticle]()
+			
 			for article in unreadArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
@@ -32,13 +49,9 @@ struct WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
 				unread.append(latestArticle)
-				
 				if unread.count == 7 { break }
 			}
 			
-			// Starred Articles
-			let starredArticles = try SmartFeedsController.shared.starredFeed.fetchArticles().sorted(by: { $0.datePublished  ?? .distantPast > $1.datePublished ?? .distantPast  })
-			var starred = [LatestArticle]()
 			for article in starredArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
@@ -50,9 +63,6 @@ struct WidgetDataEncoder {
 				if starred.count == 7 { break }
 			}
 			
-			// Today Articles
-			let todayArticles = try SmartFeedsController.shared.todayFeed.fetchUnreadArticles().sorted(by: { $0.datePublished ?? .distantPast > $1.datePublished  ?? .distantPast })
-			var today = [LatestArticle]()
 			for article in todayArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
@@ -72,26 +82,44 @@ struct WidgetDataEncoder {
 										todayArticles:today,
 										lastUpdateTime: Date())
 			
-			let encodedData = try JSONEncoder().encode(latestData)
-			os_log(.debug, log: log, "Finished encoding widget data.")
-			let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
-			let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
-			let dataURL = containerURL?.appendingPathComponent("widget-data.json")
-			if FileManager.default.fileExists(atPath: dataURL!.path) {
-				try FileManager.default.removeItem(at: dataURL!)
-				os_log(.debug, log: log, "Removed widget data from container.")
-			}
-			if FileManager.default.createFile(atPath: dataURL!.path, contents: encodedData, attributes: nil) {
-				os_log(.debug, log: log, "Wrote widget data to container.")
-				if refreshTimeline == true {
-					WidgetCenter.shared.reloadAllTimelines()
+			
+			DispatchQueue.global().async { [weak self] in
+				guard let self = self else { return }
+				
+				self.backgroundTaskID = UIApplication.shared.beginBackgroundTask (withName: "com.ranchero.NetNewsWire.Encode") {
+					 UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
+					self.backgroundTaskID = .invalid
 				}
+				let encodedData = try? JSONEncoder().encode(latestData)
+				
+				os_log(.debug, log: self.log, "Finished encoding widget data.")
+				
+				if self.fileExists() {
+					try? FileManager.default.removeItem(at: self.dataURL!)
+					os_log(.debug, log: self.log, "Removed widget data from container.")
+				}
+				if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
+					os_log(.debug, log: self.log, "Wrote widget data to container.")
+					if refreshTimeline == true {
+						WidgetCenter.shared.reloadAllTimelines()
+						UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
+						self.backgroundTaskID = .invalid
+					} else {
+						UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
+						self.backgroundTaskID = .invalid
+					}
+				} else {
+					UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
+					self.backgroundTaskID = .invalid
+				}
+				
 			}
-		} catch {
-			os_log(.error, "%@", error.localizedDescription)
 		}
 	}
 	
+	private func fileExists() -> Bool {
+		FileManager.default.fileExists(atPath: dataURL!.path)
+	}
 	
 }
 
