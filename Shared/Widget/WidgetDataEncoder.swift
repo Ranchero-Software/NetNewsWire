@@ -27,7 +27,7 @@ public final class WidgetDataEncoder {
 	private init () {}
 	
 	@available(iOS 14, *)
-	func encodeWidgetData(refreshTimeline: Bool = true) throws {
+	func encodeWidgetData() throws {
 		os_log(.debug, log: log, "Starting encoding widget data.")
 		
 		do {
@@ -100,14 +100,9 @@ public final class WidgetDataEncoder {
 				}
 				if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
 					os_log(.debug, log: self.log, "Wrote widget data to container.")
-					if refreshTimeline == true {
-						WidgetCenter.shared.reloadAllTimelines()
-						UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
-						self.backgroundTaskID = .invalid
-					} else {
-						UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
-						self.backgroundTaskID = .invalid
-					}
+					WidgetCenter.shared.reloadAllTimelines()
+					UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
+					self.backgroundTaskID = .invalid
 				} else {
 					UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
 					self.backgroundTaskID = .invalid
