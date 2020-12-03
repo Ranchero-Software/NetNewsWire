@@ -1099,6 +1099,7 @@
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
 		DF98E29A2578A73A00F18944 /* AddCloudKitAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF98E2992578A73A00F18944 /* AddCloudKitAccountView.swift */; };
+		DF98E2B02578AA5C00F18944 /* AddFeedWranglerAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF98E2AF2578AA5C00F18944 /* AddFeedWranglerAccountView.swift */; };
 		FA80C11724B0728000974098 /* AddFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80C11624B0728000974098 /* AddFolderView.swift */; };
 		FA80C11824B0728000974098 /* AddFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80C11624B0728000974098 /* AddFolderView.swift */; };
 		FA80C13E24B072AA00974098 /* AddFolderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80C13D24B072AA00974098 /* AddFolderModel.swift */; };
@@ -1934,6 +1935,7 @@
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		DF98E2992578A73A00F18944 /* AddCloudKitAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCloudKitAccountView.swift; sourceTree = "<group>"; };
+		DF98E2AF2578AA5C00F18944 /* AddFeedWranglerAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedWranglerAccountView.swift; sourceTree = "<group>"; };
 		FA80C11624B0728000974098 /* AddFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFolderView.swift; sourceTree = "<group>"; };
 		FA80C13D24B072AA00974098 /* AddFolderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFolderModel.swift; sourceTree = "<group>"; };
 		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };
@@ -2136,8 +2138,9 @@
 			isa = PBXGroup;
 			children = (
 				17386B792577C4BF0014C8B2 /* AddLocalAccountView.swift */,
-				17386BC32577CC600014C8B2 /* AddFeedbinAccountView.swift */,
 				DF98E2992578A73A00F18944 /* AddCloudKitAccountView.swift */,
+				17386BC32577CC600014C8B2 /* AddFeedbinAccountView.swift */,
+				DF98E2AF2578AA5C00F18944 /* AddFeedWranglerAccountView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -4641,6 +4644,7 @@
 				51E4990624A808C300B667CB /* ImageDownloader.swift in Sources */,
 				51E4994F24A8734C00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
 				51E498CA24A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
+				DF98E2B02578AA5C00F18944 /* AddFeedWranglerAccountView.swift in Sources */,
 				5177470A24B2F87600EB0F74 /* SidebarListStyleModifier.swift in Sources */,
 				1769E33824BD97CB000E1E8E /* AccountUpdateErrors.swift in Sources */,
 				51E4990524A808C300B667CB /* FeaturedImageDownloader.swift in Sources */,

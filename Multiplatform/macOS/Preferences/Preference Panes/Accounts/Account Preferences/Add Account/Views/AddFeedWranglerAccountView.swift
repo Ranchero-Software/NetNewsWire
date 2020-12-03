@@ -1,38 +1,37 @@
 //
-//  AddFeedbinAccountView.swift
+//  AddFeedWranglerAccountView.swift
 //  Multiplatform macOS
 //
-//  Created by Stuart Breckenridge on 02/12/2020.
+//  Created by Stuart Breckenridge on 03/12/2020.
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
 import SwiftUI
 import Account
-import RSCore
 
-struct AddFeedbinAccountView: View {
-	
+struct AddFeedWranglerAccountView: View {
+    
 	@Environment (\.presentationMode) var presentationMode
 	@State private var username: String = ""
 	@State private var password: String = ""
- 
+	
 	var body: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
-					AccountType.feedbin.image()
+					AccountType.feedWrangler.image()
 						.resizable()
 						.frame(width: 50, height: 50)
 					Spacer()
 				}
 				VStack(alignment: .leading, spacing: 8) {
-					Text("Sign in to your Feedbin account.")
+					Text("Sign in to your Feed Wrangler account.")
 						.font(.headline)
 					HStack {
-						Text("Don't have a Feedbin account?")
+						Text("Don't have a Feed Wrangler account?")
 							.font(.callout)
 						Button(action: {
-							NSWorkspace.shared.open(URL(string: "https://feedbin.com/signup")!)
+							NSWorkspace.shared.open(URL(string: "https://feedwrangler.net/users/new")!)
 						}, label: {
 							Text("Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())
@@ -79,13 +78,13 @@ struct AddFeedbinAccountView: View {
 			}
 		}
 		.padding()
-		.frame(width: 384, height: 220)
+		.frame(width: 400, height: 220)
 		.textFieldStyle(RoundedBorderTextFieldStyle())
     }
 }
 
-struct AddFeedbinAccountView_Previews: PreviewProvider {
+struct AddFeedWranglerAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AddFeedbinAccountView()
+        AddFeedWranglerAccountView()
     }
 }
