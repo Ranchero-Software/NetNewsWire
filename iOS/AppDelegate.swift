@@ -115,11 +115,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		syncTimer!.update()
 		#endif
 		
-		if #available(iOS 14, *) {
-			WidgetDataEncoder.encodeWidgetData(refreshTimeline: false)
-		}
-		
-		
 		return true
 		
 	}
@@ -382,7 +377,7 @@ private extension AppDelegate {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
 					if #available(iOS 14, *) {
-						WidgetDataEncoder.encodeWidgetData()
+						try? WidgetDataEncoder.shared.encodeWidgetData()
 					}
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
