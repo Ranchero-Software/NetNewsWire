@@ -63,7 +63,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 	
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		self.refreshProgress.addToNumberOfTasksAndRemaining(5)
+		self.refreshProgress.addToNumberOfTasksAndRemaining(4)
 
 		refreshFeeds(for: account) { result in
 			self.refreshProgress.completeTask()
@@ -80,31 +80,21 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 							switch result {
 							case .success:
-								self.refreshStories(for: account) { result in
+								self.refreshMissingStories(for: account) { result in
 									self.refreshProgress.completeTask()
 
 									switch result {
 									case .success:
-										self.refreshMissingStories(for: account) { result in
-											self.refreshProgress.completeTask()
-
-											switch result {
-											case .success:
-												DispatchQueue.main.async {
-													completion(.success(()))
-												}
-
-											case .failure(let error):
-												DispatchQueue.main.async {
-													self.refreshProgress.clear()
-													let wrappedError = AccountError.wrappedError(error: error, account: account)
-													completion(.failure(wrappedError))
-												}
-											}
+										DispatchQueue.main.async {
+											completion(.success(()))
 										}
 
 									case .failure(let error):
-										completion(.failure(error))
+										DispatchQueue.main.async {
+											self.refreshProgress.clear()
+											let wrappedError = AccountError.wrappedError(error: error, account: account)
+											completion(.failure(wrappedError))
+										}
 									}
 								}
 
