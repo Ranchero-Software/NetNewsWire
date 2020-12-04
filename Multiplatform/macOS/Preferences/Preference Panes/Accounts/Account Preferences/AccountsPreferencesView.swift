@@ -30,11 +30,26 @@ struct AccountsPreferencesView: View {
 				content: {
 					switch viewModel.sheetToShow {
 					case .addAccountPicker:
-						AddAccountView()
+						AddAccountView(accountToAdd: $viewModel.sheetToShow)
 					case .credentials:
 						EditAccountCredentialsView(viewModel: viewModel)
 					case .none:
 						EmptyView()
+					case .addSelectedAccount(let type):
+						switch type {
+						case .onMyMac:
+							AddLocalAccountView()
+						case .feedbin:
+							AddFeedbinAccountView()
+						case .cloudKit:
+							AddCloudKitAccountView()
+						case .feedWrangler:
+							AddFeedWranglerAccountView()
+						case .newsBlur:
+							AddNewsBlurAccountView()
+						default:
+							AddReaderAPIAccountView(accountType: type)
+						}
 					}
 				})
 		.alert(isPresented: $viewModel.showDeleteConfirmation, content: {

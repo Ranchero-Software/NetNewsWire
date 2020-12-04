@@ -72,6 +72,7 @@ enum AddAccountSections: Int, CaseIterable {
 struct AddAccountView: View {
 	
 	@State private var selectedAccount: AccountType = .onMyMac
+	@Binding public var accountToAdd: AccountConfigurationSheets
 	@Environment(\.presentationMode) var presentationMode
 	
 	var body: some View {
@@ -108,8 +109,10 @@ struct AddAccountView: View {
 				}
 				if #available(OSX 11.0, *) {
 					Button(action: {
-						//
 						presentationMode.wrappedValue.dismiss()
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+							accountToAdd = AccountConfigurationSheets.addSelectedAccount(selectedAccount)
+						})
 					}, label: {
 						Text("Continue")
 							.frame(width: 80)
@@ -120,6 +123,9 @@ struct AddAccountView: View {
 				} else {
 					Button(action: {
 						presentationMode.wrappedValue.dismiss()
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+							accountToAdd = AccountConfigurationSheets.addSelectedAccount(selectedAccount)
+						})
 					}, label: {
 						Text("Continue")
 							.frame(width: 80)

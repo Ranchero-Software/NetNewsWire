@@ -1101,6 +1101,7 @@
 		DF98E29A2578A73A00F18944 /* AddCloudKitAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF98E2992578A73A00F18944 /* AddCloudKitAccountView.swift */; };
 		DF98E2B02578AA5C00F18944 /* AddFeedWranglerAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF98E2AF2578AA5C00F18944 /* AddFeedWranglerAccountView.swift */; };
 		DF98E2BE2578AC0000F18944 /* AddNewsBlurAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF98E2BD2578AC0000F18944 /* AddNewsBlurAccountView.swift */; };
+		DF98E2C62578AD1B00F18944 /* AddReaderAPIAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF98E2C52578AD1B00F18944 /* AddReaderAPIAccountView.swift */; };
 		FA80C11724B0728000974098 /* AddFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80C11624B0728000974098 /* AddFolderView.swift */; };
 		FA80C11824B0728000974098 /* AddFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80C11624B0728000974098 /* AddFolderView.swift */; };
 		FA80C13E24B072AA00974098 /* AddFolderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA80C13D24B072AA00974098 /* AddFolderModel.swift */; };
@@ -1938,6 +1939,7 @@
 		DF98E2992578A73A00F18944 /* AddCloudKitAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCloudKitAccountView.swift; sourceTree = "<group>"; };
 		DF98E2AF2578AA5C00F18944 /* AddFeedWranglerAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedWranglerAccountView.swift; sourceTree = "<group>"; };
 		DF98E2BD2578AC0000F18944 /* AddNewsBlurAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewsBlurAccountView.swift; sourceTree = "<group>"; };
+		DF98E2C52578AD1B00F18944 /* AddReaderAPIAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReaderAPIAccountView.swift; sourceTree = "<group>"; };
 		FA80C11624B0728000974098 /* AddFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFolderView.swift; sourceTree = "<group>"; };
 		FA80C13D24B072AA00974098 /* AddFolderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFolderModel.swift; sourceTree = "<group>"; };
 		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };
@@ -2144,6 +2146,7 @@
 				17386BC32577CC600014C8B2 /* AddFeedbinAccountView.swift */,
 				DF98E2AF2578AA5C00F18944 /* AddFeedWranglerAccountView.swift */,
 				DF98E2BD2578AC0000F18944 /* AddNewsBlurAccountView.swift */,
+				DF98E2C52578AD1B00F18944 /* AddReaderAPIAccountView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -4675,6 +4678,7 @@
 				51E498FC24A808BA00B667CB /* FaviconURLFinder.swift in Sources */,
 				51E4991C24A8092000B667CB /* NSAttributedString+NetNewsWire.swift in Sources */,
 				1769E32B24BCB030000E1E8E /* ConfiguredAccountRow.swift in Sources */,
+				DF98E2C62578AD1B00F18944 /* AddReaderAPIAccountView.swift in Sources */,
 				FF64D0E824AF53EE0084080A /* RefreshProgressModel.swift in Sources */,
 				51E499D924A912C200B667CB /* SceneModel.swift in Sources */,
 				51919FB424AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
