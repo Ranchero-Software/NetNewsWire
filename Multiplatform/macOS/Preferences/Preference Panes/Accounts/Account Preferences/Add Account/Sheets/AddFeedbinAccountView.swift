@@ -30,8 +30,8 @@ struct AddFeedbinAccountView: View {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
 					AccountType.feedbin.image()
-						.resizable()
 						.frame(width: 50, height: 50)
+						
 					Spacer()
 				}
 				VStack(alignment: .leading, spacing: 8) {
