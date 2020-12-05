@@ -13,15 +13,12 @@ import RSWeb
 import Secrets
 
 fileprivate class AddFeedbinViewModel: ObservableObject {
-	
 	@Published var isAuthenticating: Bool = false
 	@Published var accountUpdateError: AccountUpdateErrors = .none
 	@Published var showError: Bool = false
 	@Published var username: String = ""
 	@Published var password: String = ""
-	
 }
-
 
 struct AddFeedbinAccountView: View {
 	
@@ -70,9 +67,9 @@ struct AddFeedbinAccountView: View {
 					Spacer()
 					HStack(spacing: 8) {
 						Spacer()
-						if model.isAuthenticating {
-							ProgressView()
-						}
+						ProgressView()
+							.scaleEffect(CGSize(width: 0.5, height: 0.5))
+							.hidden(!model.isAuthenticating)
 						Button(action: {
 							presentationMode.wrappedValue.dismiss()
 						}, label: {
@@ -88,6 +85,7 @@ struct AddFeedbinAccountView: View {
 						})
 						.keyboardShortcut(.defaultAction)
 						.disabled(model.username.isEmpty || model.password.isEmpty)
+						
 					}
 				}
 			}
@@ -97,6 +95,16 @@ struct AddFeedbinAccountView: View {
 		.textFieldStyle(RoundedBorderTextFieldStyle())
 		.alert(isPresented: $model.showError, content: {
 			Alert(title: Text("Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
+		})
+		.touchBar(content: {
+			if !model.username.isEmpty && !model.password.isEmpty {
+				Button(action: {
+					authenticateFeedbin()
+				}, label: {
+					Text("Create")
+						.frame(width: 60)
+				})
+			}
 		})
     }
 	

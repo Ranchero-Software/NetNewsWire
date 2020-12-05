@@ -8,12 +8,22 @@
 
 import SwiftUI
 import Account
+import RSCore
+import RSWeb
+import Secrets
+
+fileprivate class AddFeedWrangerViewModel: ObservableObject {
+	@Published var isAuthenticating: Bool = false
+	@Published var accountUpdateError: AccountUpdateErrors = .none
+	@Published var showError: Bool = false
+	@Published var username: String = ""
+	@Published var password: String = ""
+}
 
 struct AddFeedWranglerAccountView: View {
     
 	@Environment (\.presentationMode) var presentationMode
-	@State private var username: String = ""
-	@State private var password: String = ""
+	@StateObject private var model = AddFeedWrangerViewModel()
 	
 	var body: some View {
 		VStack {
@@ -43,8 +53,8 @@ struct AddFeedWranglerAccountView: View {
 							Text("Password")
 						}
 						VStack(spacing: 8) {
-							TextField("me@email.com", text: $username)
-							SecureField("•••••••••••", text: $password)
+							TextField("me@email.com", text: $model.username)
+							SecureField("•••••••••••", text: $model.password)
 						}
 					}
 					
@@ -57,7 +67,9 @@ struct AddFeedWranglerAccountView: View {
 					Spacer()
 					HStack(spacing: 8) {
 						Spacer()
-						ProgressView().scaleEffect(CGSize(width: 0.5, height: 0.5))
+						ProgressView()
+							.scaleEffect(CGSize(width: 0.5, height: 0.5))
+							.hidden(!model.isAuthenticating)
 						Button(action: {
 							presentationMode.wrappedValue.dismiss()
 						}, label: {
@@ -66,13 +78,13 @@ struct AddFeedWranglerAccountView: View {
 						}).keyboardShortcut(.cancelAction)
 
 						Button(action: {
-							presentationMode.wrappedValue.dismiss()
+							authenticateFeedWrangler()
 						}, label: {
 							Text("Create")
 								.frame(width: 60)
 						})
 						.keyboardShortcut(.defaultAction)
-						.disabled(username.isEmpty && password.isEmpty)
+						.disabled(model.username.isEmpty || model.password.isEmpty)
 					}
 				}
 			}
@@ -81,6 +93,55 @@ struct AddFeedWranglerAccountView: View {
 		.frame(width: 400, height: 220)
 		.textFieldStyle(RoundedBorderTextFieldStyle())
     }
+	
+	
+	private func authenticateFeedWrangler() {
+		
+		model.isAuthenticating = true
+		let credentials = Credentials(type: .feedWranglerBasic, username: model.username, secret: model.password)
+		
+		Account.validateCredentials(type: .feedWrangler, credentials: credentials) { result in
+			
+			
+			self.model.isAuthenticating = false
+			
+			switch result {
+			case .success(let validatedCredentials):
+				
+				guard let validatedCredentials = validatedCredentials else {
+					self.model.accountUpdateError = .invalidUsernamePassword
+					self.model.showError = true
+					return
+				}
+				
+				let account = AccountManager.shared.createAccount(type: .feedWrangler)
+				
+				do {
+					try account.removeCredentials(type: .feedWranglerBasic)
+					try account.removeCredentials(type: .feedWranglerToken)
+					try account.storeCredentials(credentials)
+					try account.storeCredentials(validatedCredentials)
+					account.refreshAll(completion: { result in
+						switch result {
+						case .success:
+							self.presentationMode.wrappedValue.dismiss()
+						case .failure(let error):
+							self.model.accountUpdateError = .other(error: error)
+							self.model.showError = true
+						}
+					})
+					
+				} catch {
+					self.model.accountUpdateError = .keyChainError
+					self.model.showError = true
+				}
+				
+			case .failure:
+				self.model.accountUpdateError = .networkError
+				self.model.showError = true
+			}
+		}
+	}
 }
 
 struct AddFeedWranglerAccountView_Previews: PreviewProvider {
