@@ -159,8 +159,8 @@ struct AddFeedbinAccountView: View {
 		HStack {
 			Spacer()
 			VStack(spacing: 8) {
-				Text("Sign in to your Feedbin account and sync your subscriptions across your devices. Your username and password and password will be encrypted and stored in Keychain.")
-				Text("Don't have a Feedbin account?")
+				Text("Sign in to your Feedbin account and sync your subscriptions across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
+				Text("Don't have a Feedbin account?").foregroundColor(.secondary)
 				Button(action: {}, label: {
 					Text("Sign Up Here").foregroundColor(.blue).multilineTextAlignment(.center)
 				}).disabled(model.username.isEmpty || model.password.isEmpty)
