@@ -2138,7 +2138,7 @@
 			path = "Preference Panes";
 			sourceTree = "<group>";
 		};
-		17386B812577C4C60014C8B2 /* Views */ = {
+		17386B812577C4C60014C8B2 /* Sheets */ = {
 			isa = PBXGroup;
 			children = (
 				17386B792577C4BF0014C8B2 /* AddLocalAccountView.swift */,
@@ -2148,7 +2148,7 @@
 				DF98E2BD2578AC0000F18944 /* AddNewsBlurAccountView.swift */,
 				DF98E2C52578AD1B00F18944 /* AddReaderAPIAccountView.swift */,
 			);
-			path = Views;
+			path = Sheets;
 			sourceTree = "<group>";
 		};
 		176813A22564B9D100D98635 /* Widget */ = {
@@ -2240,7 +2240,7 @@
 				1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */,
 				1769E32424BC5A65000E1E8E /* AddAccountView.swift */,
 				1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */,
-				17386B812577C4C60014C8B2 /* Views */,
+				17386B812577C4C60014C8B2 /* Sheets */,
 			);
 			path = "Add Account";
 			sourceTree = "<group>";
