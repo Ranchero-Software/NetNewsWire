@@ -21,7 +21,9 @@ struct AddFeedbinAccountView: View {
 		#if os(macOS)
 			macBody
 		#else
+		NavigationView {
 			iosBody
+		}
 		#endif
     }
 	
@@ -29,24 +31,37 @@ struct AddFeedbinAccountView: View {
 	var iosBody: some View {
 		List {
 			Section(header: formHeader, footer: ProgressView()
-						.scaleEffect(CGSize(width: 0.5, height: 0.5))
 						   .hidden(!model.isAuthenticating) , content: {
-				TextField("me@email.com", text: $model.username)
-				SecureField("•••••••••••", text: $model.password)
+				TextField("Email", text: $model.username)
+				SecureField("Password", text: $model.password)
 			})
-		}.navigationBarItems(leading:
+			
+			Section(footer: formFooter, content: {
+				Button(action: {
+					model.authenticateFeedbin()
+				}, label: {
+					Text("Sign In")
+				}).disabled(model.username.isEmpty || model.password.isEmpty)
+			})
+			
+		}
+		.navigationBarItems(leading:
 			Button(action: {
 				presentationMode.wrappedValue.dismiss()
 			}, label: {
 				Text("Dismiss")
-			})
-		, trailing:
-			Button(action: {
-				model.authenticateFeedbin()
-			}, label: {
-				Text("Add")
-			}).disabled(model.username.isEmpty || model.password.isEmpty)
-		)
+			}))
+		.listStyle(InsetGroupedListStyle())
+		.navigationBarTitleDisplayMode(.inline)
+		.navigationTitle(Text("Feedbin"))
+		.alert(isPresented: $model.showError, content: {
+			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel(Text("Dismiss")))
+		})
+		.onReceive(model.$canDismiss, perform: { value in
+			if value == true {
+				presentationMode.wrappedValue.dismiss()
+			}
+		})
 	}
 	#endif
 	
@@ -130,14 +145,31 @@ struct AddFeedbinAccountView: View {
 	
 	var formHeader: some View {
 		HStack {
+			Spacer()
 			VStack(alignment: .center) {
 				AccountType.feedbin.image()
 					.resizable()
 					.frame(width: 50, height: 50)
-				Text("Sign in to your Feedbin account.")
-					.font(.headline)
 			}
-		}
+			Spacer()
+		}.padding(.vertical)
+	}
+	
+	var formFooter: some View {
+		HStack {
+			Spacer()
+			VStack(spacing: 8) {
+				Text("Sign in to your Feedbin account and sync your subscriptions across your devices. Your username and password and password will be encrypted and stored in Keychain.")
+				Text("Don't have a Feedbin account?")
+				Button(action: {}, label: {
+					Text("Sign Up Here").foregroundColor(.blue).multilineTextAlignment(.center)
+				}).disabled(model.username.isEmpty || model.password.isEmpty)
+			}
+			.multilineTextAlignment(.center)
+			.font(.caption2)
+			Spacer()
+			
+		}.padding(.vertical)
 	}
 	
 	

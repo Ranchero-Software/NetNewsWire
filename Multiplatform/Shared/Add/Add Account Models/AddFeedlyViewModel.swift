@@ -19,6 +19,16 @@ class AddFeedlyViewModel: ObservableObject, OAuthAccountAuthorizationOperationDe
 	@Published var username: String = ""
 	@Published var password: String = ""
 	
+	func authenticateFeedly() {
+		isAuthenticating = true
+		let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
+		addAccount.delegate = self
+		#if os(macOS)
+		addAccount.presentationAnchor = NSApplication.shared.windows.last
+		#endif
+		MainThreadOperationQueue.shared.add(addAccount)
+	}
+	
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
 		
 		isAuthenticating = false

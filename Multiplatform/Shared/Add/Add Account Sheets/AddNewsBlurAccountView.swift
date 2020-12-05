@@ -42,7 +42,7 @@ struct AddNewsBlurAccountView: View {
 			})
 		, trailing:
 			Button(action: {
-				authenticateNewsBlur()
+				model.authenticateNewsBlur()
 			}, label: {
 				Text("Add")
 			}).disabled(model.username.isEmpty || model.password.isEmpty)

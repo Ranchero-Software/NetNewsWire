@@ -19,6 +19,21 @@ struct AddReaderAPIAccountView: View {
 	public var accountType: AccountType
 	
 	var body: some View {
+		#if os(macOS)
+		macBody
+		#else
+		iosBody
+		#endif
+	}
+	
+	#if os(iOS)
+	var iosBody: some View {
+		Text("TBC")
+	}
+	#endif
+	
+	#if os(macOS)
+	var macBody: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
@@ -107,6 +122,10 @@ struct AddReaderAPIAccountView: View {
 			}
 		})
 	}
+	#endif
+	
+	
+	
 	
 	func createDisabled() -> Bool {
 		if accountType == .freshRSS {
@@ -121,6 +140,9 @@ struct AddReaderAPIAccountView: View {
 		}
 		return 230
 	}
+	
+	
+	
 	
 	private func signUp() {
 		switch accountType {

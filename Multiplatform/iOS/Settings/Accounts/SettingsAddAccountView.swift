@@ -27,15 +27,21 @@ struct SettingsAddAccountView: View {
 		}
 		.listStyle(InsetGroupedListStyle())
 		.sheet(isPresented: $model.isAddPresented) {
-			switch model.selectedAccountType {
+			switch model.selectedAccountType! {
 			case .onMyMac:
 				AddLocalAccountView()
-			case .feedbin, .feedWrangler, .newsBlur, .freshRSS:
-				SettingsCredentialsAccountView(accountType: model.selectedAccountType!)
+			case .feedbin:
+				AddFeedbinAccountView()
 			case .cloudKit:
-				SettingsCloudKitAccountView()
+				AddCloudKitAccountView()
+			case .feedWrangler:
+				AddFeedWranglerAccountView()
+			case .newsBlur:
+				AddNewsBlurAccountView()
+			case .feedly:
+				AddFeedlyAccountView()
 			default:
-				EmptyView()
+				AddReaderAPIAccountView(accountType: model.selectedAccountType!)
 			}
 		}
 		.navigationBarTitle(Text("Add Account"), displayMode: .inline)

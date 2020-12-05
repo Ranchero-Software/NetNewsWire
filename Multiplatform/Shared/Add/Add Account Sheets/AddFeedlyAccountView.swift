@@ -18,6 +18,26 @@ struct AddFeedlyAccountView: View {
 	@StateObject private var model = AddFeedlyViewModel()
 	
     var body: some View {
+		#if os(macOS)
+		macBody
+		#else
+		NavigationView {
+			iosBody
+		}
+		
+		
+		#endif
+    }
+	
+	
+	#if os(iOS)
+	var iosBody: some View {
+		Text("TBC")
+	}
+	#endif
+	
+	#if os(macOS)
+	var macBody: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
@@ -67,17 +87,10 @@ struct AddFeedlyAccountView: View {
 		.alert(isPresented: $model.showError, content: {
 			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
 		})
-    }
-	
-	private func authenticateFeedly() {
-		model.isAuthenticating = true
-		let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
-		addAccount.delegate = model
-		#if os(macOS)
-		addAccount.presentationAnchor = NSApplication.shared.windows.last
-		#endif
-		MainThreadOperationQueue.shared.add(addAccount)
 	}
+	#endif
+
+	
 }
 
 struct AddFeedlyAccountView_Previews: PreviewProvider {

@@ -19,6 +19,41 @@ struct AddFeedWranglerAccountView: View {
 	@StateObject private var model = AddFeedWranglerViewModel()
 	
 	var body: some View {
+		#if os(macOS)
+		macBody
+		#else
+		iosBody
+		#endif
+    }
+	
+	
+	#if os(iOS)
+	var iosBody: some View {
+		List {
+			Section(header: formHeader, footer: ProgressView()
+						.scaleEffect(CGSize(width: 0.5, height: 0.5))
+						   .hidden(!model.isAuthenticating) , content: {
+				TextField("me@email.com", text: $model.username)
+				SecureField("•••••••••••", text: $model.password)
+			})
+		}.navigationBarItems(leading:
+			Button(action: {
+				presentationMode.wrappedValue.dismiss()
+			}, label: {
+				Text("Dismiss")
+			})
+		, trailing:
+			Button(action: {
+				model.authenticateFeedWrangler()
+			}, label: {
+				Text("Add")
+			}).disabled(model.username.isEmpty || model.password.isEmpty)
+		)
+	}
+	#endif
+	
+	#if os(macOS)
+	var macBody: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
@@ -93,9 +128,26 @@ struct AddFeedWranglerAccountView: View {
 				presentationMode.wrappedValue.dismiss()
 			}
 		})
-    }
-	
-	
+	}
+	#endif
+
+	var formHeader: some View {
+		HStack {
+			VStack(alignment: .center) {
+				AccountType.newsBlur.image()
+					.resizable()
+					.frame(width: 50, height: 50)
+			Text("Sign in to your NewsBlur account.")
+				.font(.headline)
+			
+			Text("This account syncs across your subscriptions across devices.")
+				.foregroundColor(.secondary)
+				.font(.callout)
+				.lineLimit(2)
+				.padding(.top, 4)
+			}
+		}
+	}
 	
 }
 
