@@ -1,5 +1,5 @@
 //
-//  AddNewsBlurAccountView.swift
+//  AddFeedWranglerAccountView.swift
 //  Multiplatform macOS
 //
 //  Created by Stuart Breckenridge on 03/12/2020.
@@ -12,27 +12,29 @@ import RSCore
 import RSWeb
 import Secrets
 
-struct AddNewsBlurAccountView: View {
-	
+
+struct AddFeedWranglerAccountView: View {
+    
 	@Environment (\.presentationMode) var presentationMode
-	@StateObject private var model = AddNewsBlurViewModel()
+	@StateObject private var model = AddFeedWranglerViewModel()
 	
-    var body: some View {
+	var body: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
-					AccountType.newsBlur.image()
+					AccountType.feedWrangler.image()
+						.resizable()
 						.frame(width: 50, height: 50)
 					Spacer()
 				}
 				VStack(alignment: .leading, spacing: 8) {
-					Text("Sign in to your NewsBlur account.")
+					Text("Sign in to your Feed Wrangler account.")
 						.font(.headline)
 					HStack {
-						Text("Don't have a NewsBlur account?")
+						Text("Don't have a Feed Wrangler account?")
 							.font(.callout)
 						Button(action: {
-							NSWorkspace.shared.open(URL(string: "https://newsblur.com")!)
+							NSWorkspace.shared.open(URL(string: "https://feedwrangler.net/users/new")!)
 						}, label: {
 							Text("Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())
@@ -69,7 +71,7 @@ struct AddNewsBlurAccountView: View {
 						}).keyboardShortcut(.cancelAction)
 
 						Button(action: {
-							presentationMode.wrappedValue.dismiss()
+							model.authenticateFeedWrangler()
 						}, label: {
 							Text("Sign In")
 								.frame(width: 60)
@@ -86,57 +88,19 @@ struct AddNewsBlurAccountView: View {
 		.alert(isPresented: $model.showError, content: {
 			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
 		})
+		.onReceive(model.$canDismiss, perform: { value in
+			if value == true {
+				presentationMode.wrappedValue.dismiss()
+			}
+		})
     }
 	
-	private func authenticateNewsBlur() {
-		model.isAuthenticating = true
-		let credentials = Credentials(type: .newsBlurBasic, username: model.username, secret: model.password)
-		
-		Account.validateCredentials(type: .newsBlur, credentials: credentials) { result in
-			
-			self.model.isAuthenticating = false
-			
-			switch result {
-			case .success(let validatedCredentials):
-				
-				guard let validatedCredentials = validatedCredentials else {
-					self.model.accountUpdateError = .invalidUsernamePassword
-					self.model.showError = true
-					return
-				}
-				
-				let account = AccountManager.shared.createAccount(type: .newsBlur)
-				
-				do {
-					try account.removeCredentials(type: .newsBlurBasic)
-					try account.removeCredentials(type: .newsBlurSessionId)
-					try account.storeCredentials(credentials)
-					try account.storeCredentials(validatedCredentials)
-					account.refreshAll(completion: { result in
-						switch result {
-						case .success:
-							self.presentationMode.wrappedValue.dismiss()
-						case .failure(let error):
-							self.model.accountUpdateError = .other(error: error)
-							self.model.showError = true
-						}
-					})
-					
-				} catch {
-					self.model.accountUpdateError = .keyChainError
-					self.model.showError = true
-				}
-				
-			case .failure:
-				self.model.accountUpdateError = .networkError
-				self.model.showError = true
-			}
-		}
-	}
+	
+	
 }
 
-struct AddNewsBlurAccountView_Previews: PreviewProvider {
+struct AddFeedWranglerAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AddNewsBlurAccountView()
+        AddFeedWranglerAccountView()
     }
 }

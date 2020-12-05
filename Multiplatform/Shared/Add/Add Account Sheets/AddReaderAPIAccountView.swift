@@ -84,7 +84,7 @@ struct AddReaderAPIAccountView: View {
 						}).keyboardShortcut(.cancelAction)
 						
 						Button(action: {
-							authenticateReaderAccount()
+							model.authenticateReaderAccount(accountType)
 						}, label: {
 							Text("Sign In")
 								.frame(width: 60)
@@ -100,6 +100,11 @@ struct AddReaderAPIAccountView: View {
 		.textFieldStyle(RoundedBorderTextFieldStyle())
 		.alert(isPresented: $model.showError, content: {
 			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
+		})
+		.onReceive(model.$canDismiss, perform: { value in
+			if value == true {
+				presentationMode.wrappedValue.dismiss()
+			}
 		})
 	}
 	
@@ -140,100 +145,7 @@ struct AddReaderAPIAccountView: View {
 		}
 	}
 	
-	private func authenticateReaderAccount() {
-		model.isAuthenticating = true
-		
-		let credentials = Credentials(type: .readerBasic, username: model.username, secret: model.password)
-		
-		if accountType == .freshRSS {
-			Account.validateCredentials(type: accountType, credentials: credentials, endpoint: URL(string: model.apiUrl)!) { result in
-				
-				self.model.isAuthenticating = false
-				
-				switch result {
-				case .success(let validatedCredentials):
-					
-					guard let validatedCredentials = validatedCredentials else {
-						self.model.accountUpdateError = .invalidUsernamePassword
-						self.model.showError = true
-						return
-					}
-					
-					let account = AccountManager.shared.createAccount(type: .freshRSS)
-					
-					do {
-						try account.removeCredentials(type: .readerBasic)
-						try account.removeCredentials(type: .readerAPIKey)
-						try account.storeCredentials(credentials)
-						try account.storeCredentials(validatedCredentials)
-						account.refreshAll(completion: { result in
-							switch result {
-							case .success:
-								self.presentationMode.wrappedValue.dismiss()
-							case .failure(let error):
-								self.model.accountUpdateError = .other(error: error)
-								self.model.showError = true
-							}
-						})
-						
-					} catch {
-						self.model.accountUpdateError = .keyChainError
-						self.model.showError = true
-					}
-					
-				case .failure:
-					self.model.accountUpdateError = .networkError
-					self.model.showError = true
-				}
-			}
-		}
-		
-		else {
-			
-			Account.validateCredentials(type: accountType, credentials: credentials) { result in
-				
-				self.model.isAuthenticating = false
-				
-				switch result {
-				case .success(let validatedCredentials):
-					
-					guard let validatedCredentials = validatedCredentials else {
-						self.model.accountUpdateError = .invalidUsernamePassword
-						self.model.showError = true
-						return
-					}
-					
-					let account = AccountManager.shared.createAccount(type: .freshRSS)
-					
-					do {
-						try account.removeCredentials(type: .readerBasic)
-						try account.removeCredentials(type: .readerAPIKey)
-						try account.storeCredentials(credentials)
-						try account.storeCredentials(validatedCredentials)
-						account.refreshAll(completion: { result in
-							switch result {
-							case .success:
-								self.presentationMode.wrappedValue.dismiss()
-							case .failure(let error):
-								self.model.accountUpdateError = .other(error: error)
-								self.model.showError = true
-							}
-						})
-						
-					} catch {
-						self.model.accountUpdateError = .keyChainError
-						self.model.showError = true
-					}
-					
-				case .failure:
-					self.model.accountUpdateError = .networkError
-					self.model.showError = true
-				}
-			}
-			
-		}
-		
-	}
+	
 	
 	
 }

@@ -29,7 +29,7 @@ struct SettingsAddAccountView: View {
 		.sheet(isPresented: $model.isAddPresented) {
 			switch model.selectedAccountType {
 			case .onMyMac:
-				SettingsLocalAccountView()
+				AddLocalAccountView()
 			case .feedbin, .feedWrangler, .newsBlur, .freshRSS:
 				SettingsCredentialsAccountView(accountType: model.selectedAccountType!)
 			case .cloudKit:

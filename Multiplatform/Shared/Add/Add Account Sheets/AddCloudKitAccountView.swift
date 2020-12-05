@@ -14,6 +14,46 @@ struct AddCloudKitAccountView: View {
 	@Environment (\.presentationMode) var presentationMode
 	
     var body: some View {
+		
+		#if os(macOS)
+		macBody
+		#else
+		iosBody
+		#endif
+		
+    }
+	
+	#if os(iOS)
+	var iosBody: some View {
+		List {
+			Section(header: formHeader, content: {
+				Button(action: {
+					_ = AccountManager.shared.createAccount(type: .cloudKit)
+					presentationMode.wrappedValue.dismiss()
+				}, label: {
+					Text("Add")
+				})
+			})
+		}.navigationBarItems(leading:
+			Button(action: {
+				presentationMode.wrappedValue.dismiss()
+			}, label: {
+				Text("Dismiss")
+			})
+		 
+		 , trailing:
+			Button(action: {
+				_ = AccountManager.shared.createAccount(type: .cloudKit)
+				presentationMode.wrappedValue.dismiss()
+			}, label: {
+				Text("Add")
+			})
+		)
+	}
+	#endif
+	
+	#if os(macOS)
+	var macBody: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
@@ -43,6 +83,7 @@ struct AddCloudKitAccountView: View {
 						}).keyboardShortcut(.cancelAction)
 
 						Button(action: {
+							_ = AccountManager.shared.createAccount(type: .cloudKit)
 							presentationMode.wrappedValue.dismiss()
 						}, label: {
 							Text("Create")
@@ -56,7 +97,26 @@ struct AddCloudKitAccountView: View {
 		}
 		.padding()
 		.frame(minWidth: 400, maxWidth: 400, maxHeight: 150)
-    }
+	}
+	#endif
+	
+	var formHeader: some View {
+		HStack {
+			VStack(alignment: .center) {
+				AccountType.cloudKit.image()
+					.resizable()
+					.frame(width: 50, height: 50)
+			Text("Sign in to your iCloud account.")
+				.font(.headline)
+			
+			Text("This account syncs across your Mac and iOS devices using your iCloud account.")
+				.foregroundColor(.secondary)
+				.font(.callout)
+				.lineLimit(2)
+				.padding(.top, 4)
+			}
+		}
+	}
 }
 
 struct AddCloudKitAccountView_Previews: PreviewProvider {

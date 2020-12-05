@@ -15,7 +15,41 @@ struct AddLocalAccountView: View {
 	@State private var newAccountName: String = ""
 	@Environment (\.presentationMode) var presentationMode
 	
-    var body: some View {
+	var body: some View {
+		#if os(macOS)
+		macBody
+		#else
+		iosBody
+		#endif
+	}
+	
+	#if os(iOS)
+	var iosBody: some View {
+		List {
+			Section(header: formHeader, content: {
+				TextField("Account Name", text: $newAccountName)
+			})
+		}.navigationBarItems(leading:
+			Button(action: {
+				presentationMode.wrappedValue.dismiss()
+			}, label: {
+				Text("Dismiss")
+			})
+		 
+		 , trailing:
+			Button(action: {
+				let newAccount = AccountManager.shared.createAccount(type: .onMyMac)
+				newAccount.name = newAccountName
+				presentationMode.wrappedValue.dismiss()
+			}, label: {
+				Text("Add")
+			})
+		)
+	}
+	#endif
+	
+	#if os(macOS)
+	var macBody: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
@@ -43,7 +77,7 @@ struct AddLocalAccountView: View {
 							Text("Cancel")
 								.frame(width: 60)
 						}).keyboardShortcut(.cancelAction)
-
+						
 						Button(action: {
 							let newAccount = AccountManager.shared.createAccount(type: .onMyMac)
 							newAccount.name = newAccountName
@@ -59,11 +93,28 @@ struct AddLocalAccountView: View {
 		.padding()
 		.frame(minWidth: 400, maxWidth: 400, minHeight: 230, maxHeight: 260)
 		.textFieldStyle(RoundedBorderTextFieldStyle())
-    }
+	}
+	#endif
+	
+	var formHeader: some View {
+		HStack {
+			VStack(alignment: .center) {
+				AccountType.onMyMac.image()
+					.resizable()
+					.frame(width: 50, height: 50)
+				Text("Create a local account on your Mac.")
+					.font(.headline)
+				Text("Local accounts store their data on your Mac. They do not sync across your devices.")
+					.font(.callout)
+					.foregroundColor(.secondary)
+			}
+		}
+	}
+	
 }
 
 struct AddLocalAccount_Previews: PreviewProvider {
-    static var previews: some View {
-        AddLocalAccountView()
-    }
+	static var previews: some View {
+		AddLocalAccountView()
+	}
 }

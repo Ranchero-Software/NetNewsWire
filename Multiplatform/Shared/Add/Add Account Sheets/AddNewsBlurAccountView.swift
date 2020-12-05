@@ -1,8 +1,8 @@
 //
-//  AddFeedbinAccountView.swift
+//  AddNewsBlurAccountView.swift
 //  Multiplatform macOS
 //
-//  Created by Stuart Breckenridge on 02/12/2020.
+//  Created by Stuart Breckenridge on 03/12/2020.
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
@@ -12,28 +12,61 @@ import RSCore
 import RSWeb
 import Secrets
 
-struct AddFeedbinAccountView: View {
+struct AddNewsBlurAccountView: View {
 	
 	@Environment (\.presentationMode) var presentationMode
-	@StateObject private var model = AddFeedbinViewModel()
- 
-	var body: some View {
+	@StateObject private var model = AddNewsBlurViewModel()
+	
+    var body: some View {
+		#if os(macOS)
+		macBody
+		#else
+		iosBody
+		#endif
+    }
+	
+	#if os(iOS)
+	var iosBody: some View {
+		List {
+			Section(header: formHeader, footer: ProgressView()
+						.scaleEffect(CGSize(width: 0.5, height: 0.5))
+						   .hidden(!model.isAuthenticating) , content: {
+				TextField("me@email.com", text: $model.username)
+				SecureField("•••••••••••", text: $model.password)
+			})
+		}.navigationBarItems(leading:
+			Button(action: {
+				presentationMode.wrappedValue.dismiss()
+			}, label: {
+				Text("Dismiss")
+			})
+		, trailing:
+			Button(action: {
+				authenticateNewsBlur()
+			}, label: {
+				Text("Add")
+			}).disabled(model.username.isEmpty || model.password.isEmpty)
+		)
+	}
+	#endif
+	
+	#if os(macOS)
+	var macBody: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
-					AccountType.feedbin.image()
+					AccountType.newsBlur.image()
 						.frame(width: 50, height: 50)
-						
 					Spacer()
 				}
 				VStack(alignment: .leading, spacing: 8) {
-					Text("Sign in to your Feedbin account.")
+					Text("Sign in to your NewsBlur account.")
 						.font(.headline)
 					HStack {
-						Text("Don't have a Feedbin account?")
+						Text("Don't have a NewsBlur account?")
 							.font(.callout)
 						Button(action: {
-							NSWorkspace.shared.open(URL(string: "https://feedbin.com/signup")!)
+							NSWorkspace.shared.open(URL(string: "https://newsblur.com")!)
 						}, label: {
 							Text("Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())
@@ -70,14 +103,13 @@ struct AddFeedbinAccountView: View {
 						}).keyboardShortcut(.cancelAction)
 
 						Button(action: {
-							authenticateFeedbin()
+							model.authenticateNewsBlur()
 						}, label: {
 							Text("Sign In")
 								.frame(width: 60)
 						})
 						.keyboardShortcut(.defaultAction)
 						.disabled(model.username.isEmpty || model.password.isEmpty)
-						
 					}
 				}
 			}
@@ -88,55 +120,35 @@ struct AddFeedbinAccountView: View {
 		.alert(isPresented: $model.showError, content: {
 			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
 		})
-    }
+		.onReceive(model.$canDismiss, perform: { value in
+			if value == true {
+				presentationMode.wrappedValue.dismiss()
+			}
+		})
+	}
+	#endif
 	
-	private func authenticateFeedbin() {
-		model.isAuthenticating = true
-		let credentials = Credentials(type: .basic, username: model.username, secret: model.password)
-		
-		Account.validateCredentials(type: .feedbin, credentials: credentials) { result in
-			self.model.isAuthenticating = false
+	var formHeader: some View {
+		HStack {
+			VStack(alignment: .center) {
+				AccountType.newsBlur.image()
+					.resizable()
+					.frame(width: 50, height: 50)
+			Text("Sign in to your NewsBlur account.")
+				.font(.headline)
 			
-			switch result {
-			case .success(let validatedCredentials):
-				
-				guard let validatedCredentials = validatedCredentials else {
-					self.model.accountUpdateError = .invalidUsernamePassword
-					self.model.showError = true
-					return
-				}
-				
-				let account = AccountManager.shared.createAccount(type: .feedbin)
-				
-				do {
-					try account.removeCredentials(type: .basic)
-					try account.storeCredentials(validatedCredentials)
-					self.model.isAuthenticating = false
-					account.refreshAll(completion: { result in
-						switch result {
-						case .success:
-							self.presentationMode.wrappedValue.dismiss()
-						case .failure(let error):
-							self.model.accountUpdateError = .other(error: error)
-							self.model.showError = true
-						}
-					})
-					
-				} catch {
-					self.model.accountUpdateError = .keyChainError
-					self.model.showError = true
-				}
-				
-			case .failure:
-				self.model.accountUpdateError = .networkError
-				self.model.showError = true
+			Text("This account syncs across your subscriptions across devices.")
+				.foregroundColor(.secondary)
+				.font(.callout)
+				.lineLimit(2)
+				.padding(.top, 4)
 			}
 		}
 	}
 }
 
-struct AddFeedbinAccountView_Previews: PreviewProvider {
+struct AddNewsBlurAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AddFeedbinAccountView()
+        AddNewsBlurAccountView()
     }
 }
