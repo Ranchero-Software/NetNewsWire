@@ -66,7 +66,7 @@ struct AddNewsBlurAccountView: View {
 						Text("Don't have a NewsBlur account?")
 							.font(.callout)
 						Button(action: {
-							NSWorkspace.shared.open(URL(string: "https://newsblur.com")!)
+							model.presentSignUpOption(.newsBlur)
 						}, label: {
 							Text("Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())

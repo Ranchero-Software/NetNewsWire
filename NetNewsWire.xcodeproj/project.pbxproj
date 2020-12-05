@@ -127,6 +127,8 @@
 		17D0682C2564F47E00C0B37E /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 17D0682B2564F47E00C0B37E /* Localizable.stringsdict */; };
 		17D232A824AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
 		17D232A924AFF10A0005F075 /* AddWebFeedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */; };
+		17D3CEE3257C4D2300E74939 /* AddAccountSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D3CEE2257C4D2300E74939 /* AddAccountSignUp.swift */; };
+		17D3CEE4257C4D2300E74939 /* AddAccountSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D3CEE2257C4D2300E74939 /* AddAccountSignUp.swift */; };
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
@@ -1422,6 +1424,7 @@
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
 		17D0682B2564F47E00C0B37E /* Localizable.stringsdict */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; path = Localizable.stringsdict; sourceTree = "<group>"; };
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
+		17D3CEE2257C4D2300E74939 /* AddAccountSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountSignUp.swift; sourceTree = "<group>"; };
 		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
 		17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesModel.swift; sourceTree = "<group>"; };
 		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
@@ -2139,6 +2142,7 @@
 				1724127F257BBF3E00ACCEBC /* AddFeedWranglerViewModel.swift */,
 				17241287257BBF7000ACCEBC /* AddNewsBlurViewModel.swift */,
 				1724128F257BBFAD00ACCEBC /* AddReaderAPIViewModel.swift */,
+				17D3CEE2257C4D2300E74939 /* AddAccountSignUp.swift */,
 			);
 			path = "Add Account Models";
 			sourceTree = "<group>";
@@ -4553,6 +4557,7 @@
 				5181C66224B0C326002E0F70 /* SettingsModel.swift in Sources */,
 				51E4995324A8734D00B667CB /* RedditFeedProvider-Extensions.swift in Sources */,
 				5177471024B3029400EB0F74 /* ArticleViewController.swift in Sources */,
+				17D3CEE3257C4D2300E74939 /* AddAccountSignUp.swift in Sources */,
 				65082A5224C72B88009FA994 /* SettingsCredentialsAccountModel.swift in Sources */,
 				172199C924AB228900A31D04 /* SettingsView.swift in Sources */,
 				51B8BCC224C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
@@ -4795,6 +4800,7 @@
 				17241249257B8A8A00ACCEBC /* AddFeedlyAccountView.swift in Sources */,
 				51E4992D24A8676300B667CB /* FetchRequestOperation.swift in Sources */,
 				51E4992424A8098400B667CB /* SmartFeedPasteboardWriter.swift in Sources */,
+				17D3CEE4257C4D2300E74939 /* AddAccountSignUp.swift in Sources */,
 				51E4991424A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,
 				51B54A6624B549CB0014348B /* PreloadedWebView.swift in Sources */,
 				51E4991024A808DE00B667CB /* SmallIconProvider.swift in Sources */,

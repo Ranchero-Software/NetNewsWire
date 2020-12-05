@@ -12,7 +12,7 @@ import RSCore
 import RSWeb
 import Secrets
 
-class AddReaderAPIViewModel: ObservableObject {
+class AddReaderAPIViewModel: ObservableObject, AddAccountSignUp {
 	@Published var isAuthenticating: Bool = false
 	@Published var accountUpdateError: AccountUpdateErrors = .none
 	@Published var showError: Bool = false
@@ -20,6 +20,7 @@ class AddReaderAPIViewModel: ObservableObject {
 	@Published var password: String = ""
 	@Published var apiUrl: String = ""
 	@Published var canDismiss: Bool = false
+	@Published var showPassword: Bool = false
 	
 	func authenticateReaderAccount(_ accountType: AccountType) {
 		isAuthenticating = true

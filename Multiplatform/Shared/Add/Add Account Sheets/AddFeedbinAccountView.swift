@@ -30,10 +30,35 @@ struct AddFeedbinAccountView: View {
 	#if os(iOS)
 	var iosBody: some View {
 		List {
-			Section(header: formHeader, footer: ProgressView()
-						   .hidden(!model.isAuthenticating) , content: {
+			Section(header: formHeader, content: {
 				TextField("Email", text: $model.username)
-				SecureField("Password", text: $model.password)
+				if model.showPassword == false {
+					ZStack {
+						HStack {
+							SecureField("Password", text: $model.password)
+							Spacer()
+							Image(systemName: "eye.fill")
+								.foregroundColor(.accentColor)
+								.onTapGesture {
+									model.showPassword = true
+								}
+						}
+					}
+				}
+				else {
+					ZStack {
+						HStack {
+							TextField("Password", text: $model.password)
+							Spacer()
+							Image(systemName: "eye.slash.fill")
+								.foregroundColor(.accentColor)
+								.onTapGesture {
+									model.showPassword = false
+								}
+						}
+					}
+				}
+				
 			})
 			
 			Section(footer: formFooter, content: {
@@ -81,7 +106,7 @@ struct AddFeedbinAccountView: View {
 						Text("Don't have a Feedbin account?")
 							.font(.callout)
 						Button(action: {
-							NSWorkspace.shared.open(URL(string: "https://feedbin.com/signup")!)
+							model.presentSignUpOption(.feedbin)
 						}, label: {
 							Text("Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())
@@ -161,9 +186,12 @@ struct AddFeedbinAccountView: View {
 			VStack(spacing: 8) {
 				Text("Sign in to your Feedbin account and sync your subscriptions across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
 				Text("Don't have a Feedbin account?").foregroundColor(.secondary)
-				Button(action: {}, label: {
+				Button(action: {
+					model.presentSignUpOption(.feedbin)
+				}, label: {
 					Text("Sign Up Here").foregroundColor(.blue).multilineTextAlignment(.center)
-				}).disabled(model.username.isEmpty || model.password.isEmpty)
+				})
+				ProgressView().hidden(!model.isAuthenticating)
 			}
 			.multilineTextAlignment(.center)
 			.font(.caption2)

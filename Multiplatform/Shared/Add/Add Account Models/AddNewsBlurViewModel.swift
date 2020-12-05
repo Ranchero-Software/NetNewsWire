@@ -12,7 +12,7 @@ import RSCore
 import RSWeb
 import Secrets
 
-class AddNewsBlurViewModel: ObservableObject {
+class AddNewsBlurViewModel: ObservableObject, AddAccountSignUp {
 	@Published var isAuthenticating: Bool = false
 	@Published var accountUpdateError: AccountUpdateErrors = .none
 	@Published var showError: Bool = false

@@ -12,12 +12,13 @@ import RSCore
 import RSWeb
 import Secrets
 
-class AddFeedlyViewModel: ObservableObject, OAuthAccountAuthorizationOperationDelegate  {
+class AddFeedlyViewModel: ObservableObject, OAuthAccountAuthorizationOperationDelegate, AddAccountSignUp  {
 	@Published var isAuthenticating: Bool = false
 	@Published var accountUpdateError: AccountUpdateErrors = .none
 	@Published var showError: Bool = false
 	@Published var username: String = ""
 	@Published var password: String = ""
+	@Published var showPassword: Bool = false
 	
 	func authenticateFeedly() {
 		isAuthenticating = true

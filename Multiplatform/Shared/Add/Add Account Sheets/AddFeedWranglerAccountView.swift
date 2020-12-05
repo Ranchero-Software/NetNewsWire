@@ -69,7 +69,7 @@ struct AddFeedWranglerAccountView: View {
 						Text("Don't have a Feed Wrangler account?")
 							.font(.callout)
 						Button(action: {
-							NSWorkspace.shared.open(URL(string: "https://feedwrangler.net/users/new")!)
+							model.presentSignUpOption(.feedWrangler)
 						}, label: {
 							Text("Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())
@@ -137,7 +137,7 @@ struct AddFeedWranglerAccountView: View {
 				AccountType.newsBlur.image()
 					.resizable()
 					.frame(width: 50, height: 50)
-			Text("Sign in to your NewsBlur account.")
+			Text("Sign in to your Feed Wrangler account.")
 				.font(.headline)
 			
 			Text("This account syncs across your subscriptions across devices.")

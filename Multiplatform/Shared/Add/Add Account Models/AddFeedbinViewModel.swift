@@ -12,13 +12,14 @@ import RSCore
 import RSWeb
 import Secrets
 
-class AddFeedbinViewModel: ObservableObject {
+class AddFeedbinViewModel: ObservableObject, AddAccountSignUp {
 	@Published var isAuthenticating: Bool = false
 	@Published var accountUpdateError: AccountUpdateErrors = .none
 	@Published var showError: Bool = false
 	@Published var username: String = ""
 	@Published var password: String = ""
 	@Published var canDismiss: Bool = false
+	@Published var showPassword: Bool = false
 	
 	func authenticateFeedbin() {
 		isAuthenticating = true

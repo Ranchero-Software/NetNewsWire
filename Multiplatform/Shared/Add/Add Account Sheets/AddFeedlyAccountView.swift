@@ -53,7 +53,7 @@ struct AddFeedlyAccountView: View {
 						Text("Don't have a Feedly account?")
 							.font(.callout)
 						Button(action: {
-							NSWorkspace.shared.open(URL(string: "https://feedly.com")!)
+							model.presentSignUpOption(.feedly)
 						}, label: {
 							Text("Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())
@@ -70,7 +70,7 @@ struct AddFeedlyAccountView: View {
 						}).keyboardShortcut(.cancelAction)
 
 						Button(action: {
-							authenticateFeedly()
+							model.authenticateFeedly()
 							presentationMode.wrappedValue.dismiss()
 						}, label: {
 							Text("Sign In")

@@ -53,10 +53,8 @@ struct AddReaderAPIAccountView: View {
 							Text("Don't have an \(accountType.localizedAccountName()) account?")
 								.font(.callout)
 						}
-						
-						
 						Button(action: {
-							signUp()
+							model.presentSignUpOption(accountType)
 						}, label: {
 							Text(accountType == .freshRSS ? "Find out more." : "Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())
@@ -140,36 +138,6 @@ struct AddReaderAPIAccountView: View {
 		}
 		return 230
 	}
-	
-	
-	
-	
-	private func signUp() {
-		switch accountType {
-		case .freshRSS:
-			#if os(macOS)
-			NSWorkspace.shared.open(URL(string: "https://freshrss.org")!)
-			#endif
-		case .inoreader:
-			#if os(macOS)
-			NSWorkspace.shared.open(URL(string: "https://www.inoreader.com")!)
-			#endif
-		case .bazQux:
-			#if os(macOS)
-			NSWorkspace.shared.open(URL(string: "https://bazqux.com")!)
-			#endif
-		case .theOldReader:
-			#if os(macOS)
-			NSWorkspace.shared.open(URL(string: "https://theoldreader.com")!)
-			#endif
-		default:
-			return
-		}
-	}
-	
-	
-	
-	
 }
 
 struct AddReaderAPIAccountView_Previews: PreviewProvider {
