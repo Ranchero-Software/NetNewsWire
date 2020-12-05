@@ -3,7 +3,7 @@
     <channel>
         <title>NetNewsWire Releases</title>
         <link>https://ranchero.com/downloads/netnewswire-release.xml</link>
-        <description>Most recent NetNewsWire releases (not test builds). Well, we’re including test builds up until 5.0 ships, but after that it won’t be test builds.</description>
+        <description>Most recent NetNewsWire releases (not test builds).</description>
         <language>en</language>
 
 <item>
