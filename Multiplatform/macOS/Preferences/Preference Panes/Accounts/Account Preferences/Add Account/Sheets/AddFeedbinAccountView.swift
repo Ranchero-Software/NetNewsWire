@@ -80,7 +80,7 @@ struct AddFeedbinAccountView: View {
 						Button(action: {
 							authenticateFeedbin()
 						}, label: {
-							Text("Create")
+							Text("Sign In")
 								.frame(width: 60)
 						})
 						.keyboardShortcut(.defaultAction)
@@ -91,20 +91,10 @@ struct AddFeedbinAccountView: View {
 			}
 		}
 		.padding()
-		.frame(width: 384, height: 230)
+		.frame(minWidth: 400, maxWidth: 400, minHeight: 230, maxHeight: 260)
 		.textFieldStyle(RoundedBorderTextFieldStyle())
 		.alert(isPresented: $model.showError, content: {
-			Alert(title: Text("Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
-		})
-		.touchBar(content: {
-			if !model.username.isEmpty && !model.password.isEmpty {
-				Button(action: {
-					authenticateFeedbin()
-				}, label: {
-					Text("Create")
-						.frame(width: 60)
-				})
-			}
+			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
 		})
     }
 	

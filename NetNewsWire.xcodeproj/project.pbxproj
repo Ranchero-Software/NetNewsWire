@@ -28,6 +28,7 @@
 		172199C924AB228900A31D04 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199C824AB228900A31D04 /* SettingsView.swift */; };
 		172199ED24AB2E0100A31D04 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199EC24AB2E0100A31D04 /* SafariView.swift */; };
 		172199F124AB716900A31D04 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
+		17241249257B8A8A00ACCEBC /* AddFeedlyAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17241248257B8A8A00ACCEBC /* AddFeedlyAccountView.swift */; };
 		1727B39924C1368D00A4DBDC /* LayoutPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1727B39824C1368D00A4DBDC /* LayoutPreferencesView.swift */; };
 		1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */; };
 		1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */; };
@@ -1353,6 +1354,7 @@
 		172199C824AB228900A31D04 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		172199EC24AB2E0100A31D04 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModifier.swift; sourceTree = "<group>"; };
+		17241248257B8A8A00ACCEBC /* AddFeedlyAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedlyAccountView.swift; sourceTree = "<group>"; };
 		1727B39824C1368D00A4DBDC /* LayoutPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutPreferencesView.swift; sourceTree = "<group>"; };
 		1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesView.swift; sourceTree = "<group>"; };
 		1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesView.swift; sourceTree = "<group>"; };
@@ -2144,6 +2146,7 @@
 				17386B792577C4BF0014C8B2 /* AddLocalAccountView.swift */,
 				DF98E2992578A73A00F18944 /* AddCloudKitAccountView.swift */,
 				17386BC32577CC600014C8B2 /* AddFeedbinAccountView.swift */,
+				17241248257B8A8A00ACCEBC /* AddFeedlyAccountView.swift */,
 				DF98E2AF2578AA5C00F18944 /* AddFeedWranglerAccountView.swift */,
 				DF98E2BD2578AC0000F18944 /* AddNewsBlurAccountView.swift */,
 				DF98E2C52578AD1B00F18944 /* AddReaderAPIAccountView.swift */,
@@ -4743,6 +4746,7 @@
 				1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */,
 				5177470424B2657F00EB0F74 /* TimelineToolbarModifier.swift in Sources */,
 				51A8001324CA0FC700F41F1D /* Sink.swift in Sources */,
+				17241249257B8A8A00ACCEBC /* AddFeedlyAccountView.swift in Sources */,
 				51E4992D24A8676300B667CB /* FetchRequestOperation.swift in Sources */,
 				51E4992424A8098400B667CB /* SmartFeedPasteboardWriter.swift in Sources */,
 				51E4991424A808FF00B667CB /* ArticleStringFormatter.swift in Sources */,

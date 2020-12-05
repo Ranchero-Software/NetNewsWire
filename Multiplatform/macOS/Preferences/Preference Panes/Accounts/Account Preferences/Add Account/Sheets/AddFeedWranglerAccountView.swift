@@ -80,7 +80,7 @@ struct AddFeedWranglerAccountView: View {
 						Button(action: {
 							authenticateFeedWrangler()
 						}, label: {
-							Text("Create")
+							Text("Sign In")
 								.frame(width: 60)
 						})
 						.keyboardShortcut(.defaultAction)
@@ -90,8 +90,11 @@ struct AddFeedWranglerAccountView: View {
 			}
 		}
 		.padding()
-		.frame(width: 400, height: 220)
+		.frame(minWidth: 400, maxWidth: 400, minHeight: 230, maxHeight: 260)
 		.textFieldStyle(RoundedBorderTextFieldStyle())
+		.alert(isPresented: $model.showError, content: {
+			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
+		})
     }
 	
 	

@@ -55,7 +55,7 @@ struct AddCloudKitAccountView: View {
 			}
 		}
 		.padding()
-		.frame(width: 384, height: 150)
+		.frame(minWidth: 400, maxWidth: 400, maxHeight: 150)
     }
 }
 

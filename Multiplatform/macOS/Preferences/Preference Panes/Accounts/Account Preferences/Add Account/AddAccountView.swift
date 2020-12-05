@@ -122,10 +122,9 @@ struct AddAccountView: View {
 					
 				} else {
 					Button(action: {
+						accountToAdd = AccountConfigurationSheets.addSelectedAccount(selectedAccount)
 						presentationMode.wrappedValue.dismiss()
-						DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-							accountToAdd = AccountConfigurationSheets.addSelectedAccount(selectedAccount)
-						})
+						
 					}, label: {
 						Text("Continue")
 							.frame(width: 80)

@@ -47,6 +47,8 @@ struct AccountsPreferencesView: View {
 							AddFeedWranglerAccountView()
 						case .newsBlur:
 							AddNewsBlurAccountView()
+						case .feedly:
+							AddFeedlyAccountView()
 						default:
 							AddReaderAPIAccountView(accountType: type)
 						}
