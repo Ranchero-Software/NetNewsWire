@@ -10,6 +10,8 @@ import AppKit
 
 class TimelineTableRowView : NSTableRowView {
 
+	private var separator: NSView?
+	
 	override var isOpaque: Bool {
 		return true
 	}
@@ -23,6 +25,7 @@ class TimelineTableRowView : NSTableRowView {
 	override var isSelected: Bool {
 		didSet {
 			cellView?.isSelected = isSelected
+			separator?.isHidden = isSelected
 		}
 	}
 	
@@ -34,21 +37,6 @@ class TimelineTableRowView : NSTableRowView {
 		super.init(coder: coder)
 	}
 	
-	override func drawBackground(in dirtyRect: NSRect) {
-		NSColor.alternatingContentBackgroundColors[0].setFill()
-		dirtyRect.fill()
-	}
-
-	override func drawSelection(in dirtyRect: NSRect) {
-		if isEmphasized {
-			NSColor.selectedContentBackgroundColor.setFill()
-			dirtyRect.fill()
-		} else {
-			NSColor.unemphasizedSelectedContentBackgroundColor.setFill()
-			dirtyRect.fill()
-		}
-	}
-	
 	private var cellView: TimelineTableCellView? {
 		for oneSubview in subviews {
 			if let foundView = oneSubview as? TimelineTableCellView {
@@ -58,4 +46,38 @@ class TimelineTableRowView : NSTableRowView {
 		return nil
 	}
 
+	override func viewDidMoveToSuperview() {
+		if #available(macOS 11.0, *) {
+			addSeparatorView()
+		} else {
+			if AppDefaults.shared.timelineShowsSeparators {
+				addSeparatorView()
+			}
+		}
+	}
+	
+	private func addSeparatorView() {
+		guard let cellView = cellView, separator == nil else { return }
+		separator = NSView()
+		separator!.translatesAutoresizingMaskIntoConstraints = false
+		separator!.wantsLayer = true
+		separator!.layer?.backgroundColor = AppAssets.timelineSeparatorColor.cgColor
+		addSubview(separator!)
+		if #available(macOS 11.0, *) {
+			NSLayoutConstraint.activate([
+				separator!.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
+				separator!.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -4),
+				separator!.heightAnchor.constraint(equalToConstant: 1),
+				separator!.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
+			])
+		} else {
+			NSLayoutConstraint.activate([
+				separator!.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 34),
+				separator!.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -28),
+				separator!.heightAnchor.constraint(equalToConstant: 1),
+				separator!.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
+			])
+		}
+	}
+	
 }

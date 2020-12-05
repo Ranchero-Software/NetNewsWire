@@ -389,16 +389,3 @@ private extension AppDefaults {
 		}
 	}
 }
-
-// MARK: -
-extension UserDefaults {
-	/// This property exists so that it can conveniently be observed via KVO
-	@objc var CorreiaSeparators: Bool {
-		get {
-			return bool(forKey: AppDefaults.Key.timelineShowsSeparators)
-		}
-		set {
-			set(newValue, forKey: AppDefaults.Key.timelineShowsSeparators)
-		}
-	}
-}

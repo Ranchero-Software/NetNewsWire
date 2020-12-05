@@ -194,7 +194,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
-		self.startObservingUserDefaults()
 	}
 	
 	override func viewDidLoad() {
@@ -207,6 +206,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 		tableView.keyboardDelegate = keyboardDelegate
+		
+		if #available(macOS 11.0, *) {
+			tableView.style = .inset
+		}
 		
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
@@ -965,18 +968,6 @@ extension TimelineViewController: NSTableViewDelegate {
 // MARK: - Private
 
 private extension TimelineViewController {
-
-	func startObservingUserDefaults() {
-		assert(timelineShowsSeparatorsObserver == nil)
-		timelineShowsSeparatorsObserver = UserDefaults.standard.observe(\UserDefaults.CorreiaSeparators) { [weak self] (_, _) in
-			guard let self = self, self.isViewLoaded else { return }
-			self.tableView.enumerateAvailableRowViews { (rowView, index) in
-				if let cellView = rowView.view(atColumn: 0) as? TimelineTableCellView {
-					cellView.timelineShowsSeparatorsDefaultDidChange()
-				}
-			}
-		}
-	}
 	
 	func fetchAndReplacePreservingSelection() {
 		if let article = oneSelectedArticle, let account = article.account {

@@ -13,6 +13,7 @@ import Account
 import BackgroundTasks
 import os.log
 import Secrets
+import WidgetKit
 
 var appDelegate: AppDelegate!
 
@@ -181,15 +182,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		} else {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 		}
-	}
-	
-	func logMessage(_ message: String, type: LogItem.ItemType) {
-		print("logMessage: \(message) - \(type)")
-		
-	}
-	
-	func logDebugMessage(_ message: String) {
-		logMessage(message, type: .debug)
 	}
 	
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -384,6 +376,9 @@ private extension AppDelegate {
 			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
+					if #available(iOS 14, *) {
+						try? WidgetDataEncoder.shared.encodeWidgetData()
+					}
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
 					task.setTaskCompleted(success: true)

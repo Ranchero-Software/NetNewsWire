@@ -642,6 +642,7 @@ extension MainWindowController: NSSearchFieldDelegate {
 		let smartFeed = SmartFeed(delegate: SearchFeedDelegate(searchString: searchString))
 		timelineContainerViewController?.setRepresentedObjects([smartFeed], mode: .search)
 		searchSmartFeed = smartFeed
+		updateWindowTitle()
 	}
 
 	func forceSearchToEnd() {
@@ -651,10 +652,12 @@ extension MainWindowController: NSSearchFieldDelegate {
 		if let searchField = currentSearchField {
 			searchField.stringValue = ""
 		}
+		updateWindowTitle()
 	}
 
 	private func startSearchingIfNeeded() {
 		timelineSourceMode = .search
+		updateWindowTitle()
 	}
 
 	private func stopSearchingIfNeeded() {
@@ -662,6 +665,7 @@ extension MainWindowController: NSSearchFieldDelegate {
 		lastSentSearchString = nil
 		timelineSourceMode = .regular
 		timelineContainerViewController?.setRepresentedObjects(nil, mode: .search)
+		updateWindowTitle()
 	}
 }
 
@@ -716,6 +720,7 @@ extension NSToolbarItem.Identifier {
 	static let timelineTrackingSeparator = NSToolbarItem.Identifier("timelineTrackingSeparator")
 	static let search = NSToolbarItem.Identifier("search")
 	static let markAllAsRead = NSToolbarItem.Identifier("markAllAsRead")
+	static let toggleReadArticlesFilter = NSToolbarItem.Identifier("toggleReadArticlesFilter")
 	static let nextUnread = NSToolbarItem.Identifier("nextUnread")
 	static let markRead = NSToolbarItem.Identifier("markRead")
 	static let markStar = NSToolbarItem.Identifier("markStar")
@@ -749,24 +754,17 @@ extension MainWindowController: NSToolbarDelegate {
 				toolbarItem.menu = buildNewSidebarItemMenu()
 				return toolbarItem
 
-			case .search:
-				let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
-				let description = NSLocalizedString("Search", comment: "Search")
-				toolbarItem.toolTip = description
-				toolbarItem.label = description
-				return toolbarItem
-
 			case .markAllAsRead:
 				let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
 				return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
 			
+			case .toggleReadArticlesFilter:
+				let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
+				return buildToolbarButton(.toggleReadArticlesFilter, title, AppAssets.filterInactive, "toggleReadArticlesFilter:")
+			
 			case .timelineTrackingSeparator:
 				return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
-			case .nextUnread:
-				let title = NSLocalizedString("Next Unread", comment: "Next Unread")
-				return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
-			
 			case .markRead:
 				let title = NSLocalizedString("Mark Read", comment: "Mark Read")
 				return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
@@ -774,6 +772,10 @@ extension MainWindowController: NSToolbarDelegate {
 			case .markStar:
 				let title = NSLocalizedString("Star", comment: "Star")
 				return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
+			
+			case .nextUnread:
+				let title = NSLocalizedString("Next Unread", comment: "Next Unread")
+				return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
 			
 			case .readerView:
 				let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
@@ -786,14 +788,21 @@ extension MainWindowController: NSToolbarDelegate {
 				toolbarItem.view = button
 				return toolbarItem
 
-			case .openInBrowser:
-				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
-			
 			case .share:
 				let title = NSLocalizedString("Share", comment: "Share")
 				return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
 			
+			case .openInBrowser:
+				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
+			
+			case .search:
+				let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
+				let description = NSLocalizedString("Search", comment: "Search")
+				toolbarItem.toolTip = description
+				toolbarItem.label = description
+				return toolbarItem
+
 			case .cleanUp:
 				let title = NSLocalizedString("Clean Up", comment: "Clean Up")
 				return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
@@ -815,7 +824,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
 				.markAllAsRead,
-				.search,
+				.toggleReadArticlesFilter,
 				.timelineTrackingSeparator,
 				.flexibleSpace,
 				.nextUnread,
@@ -824,6 +833,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.readerView,
 				.openInBrowser,
 				.share,
+				.search,
 				.cleanUp
 			]
 		} else {
@@ -854,15 +864,16 @@ extension MainWindowController: NSToolbarDelegate {
 				.newSidebarItemMenu,
 				.sidebarTrackingSeparator,
 				.markAllAsRead,
-				.search,
+				.toggleReadArticlesFilter,
 				.timelineTrackingSeparator,
-				.flexibleSpace,
-				.nextUnread,
 				.markRead,
 				.markStar,
+				.nextUnread,
 				.readerView,
+				.share,
 				.openInBrowser,
-				.share
+				.flexibleSpace,
+				.search
 			]
 		} else {
 			return [
@@ -1175,18 +1186,33 @@ private extension MainWindowController {
 	}
 
 	func validateToggleReadArticles(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		guard let menuItem = item as? NSMenuItem else { return false }
-		
 		let showCommand = NSLocalizedString("Show Read Articles", comment: "Command")
 		let hideCommand = NSLocalizedString("Hide Read Articles", comment: "Command")
 
-		if let isReadFiltered = timelineContainerViewController?.isReadFiltered {
-			menuItem.title = isReadFiltered ? showCommand : hideCommand
-			return true
-		} else {
-			menuItem.title = showCommand
+		guard let isReadFiltered = timelineContainerViewController?.isReadFiltered else {
+			(item as? NSMenuItem)?.title = hideCommand
+			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+				toolbarItem.toolTip = hideCommand
+				button.image = AppAssets.filterInactive
+			}
 			return false
 		}
+
+		if isReadFiltered {
+			(item as? NSMenuItem)?.title = showCommand
+			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+				toolbarItem.toolTip = showCommand
+				button.image = AppAssets.filterActive
+			}
+		} else {
+			(item as? NSMenuItem)?.title = hideCommand
+			if #available(macOS 11.0, *), let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+				toolbarItem.toolTip = hideCommand
+				button.image = AppAssets.filterInactive
+			}
+		}
+		
+		return true
 	}
 
 	// MARK: - Misc.
@@ -1212,6 +1238,15 @@ private extension MainWindowController {
 	}
 
 	func updateWindowTitle() {
+		guard timelineSourceMode != .search else {
+			let localizedLabel = NSLocalizedString("Search: %@", comment: "Search")
+			window?.title = NSString.localizedStringWithFormat(localizedLabel as NSString, searchString ?? "") as String
+			if #available(macOS 11.0, *) {
+				window?.subtitle = ""
+			}
+			return
+		}
+		
 		func setSubtitle(_ count: Int) {
 			let localizedLabel = NSLocalizedString("%d unread", comment: "Unread")
 			let formattedLabel = NSString.localizedStringWithFormat(localizedLabel as NSString, count)

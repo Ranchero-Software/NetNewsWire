@@ -30,8 +30,6 @@ You can build and test NetNewsWire without a paid developer account.
 
 ```bash
 git clone https://github.com/Ranchero-Software/NetNewsWire.git
-cd NetNewsWire
-git submodule update --init --recursive
 ```
 
 You can locally override the Xcode settings for code signing

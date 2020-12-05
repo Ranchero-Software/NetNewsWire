@@ -25,7 +25,7 @@ struct EnableExtensionPointView: View {
 	
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
-			Text("Choose an extension point to add...")
+			Text("Choose an extension to add...")
 				.font(.headline)
 				.padding()
 			

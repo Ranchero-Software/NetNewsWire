@@ -26,6 +26,7 @@ final class TimelineContainerViewController: NSViewController {
 	
 	@IBOutlet weak var readFilteredButton: NSButton!
 	@IBOutlet var containerView: TimelineContainerView!
+	@IBOutlet weak var sortAndFilterViewHeightConstraint: NSLayoutConstraint!
 
 	var currentTimelineViewController: TimelineViewController? {
 		didSet {
@@ -68,6 +69,10 @@ final class TimelineContainerViewController: NSViewController {
 		makeMenuItemTitleLarger(oldestToNewestMenuItem)
 		makeMenuItemTitleLarger(groupByFeedMenuItem)
 		updateViewOptionsPopUpButton()
+		
+		if #available(macOS 11.0, *) {
+			sortAndFilterViewHeightConstraint.constant = 0
+		}
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
     }

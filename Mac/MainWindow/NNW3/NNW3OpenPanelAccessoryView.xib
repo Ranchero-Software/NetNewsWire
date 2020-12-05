@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15400" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15400"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,10 +19,10 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="gSF-Ze-XcY">
-                    <rect key="frame" x="50" y="20" width="400" height="77"/>
+                    <rect key="frame" x="50" y="20" width="400" height="78"/>
                     <subviews>
                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="wGx-8H-BqE">
-                            <rect key="frame" x="-2" y="29" width="404" height="48"/>
+                            <rect key="frame" x="-2" y="30" width="404" height="48"/>
                             <textFieldCell key="cell" selectable="YES" id="IFj-4w-B03">
                                 <font key="font" metaFont="system"/>
                                 <string key="title">Choose a NetNewsWire 3 “Subscriptions.plist” file.
@@ -33,7 +33,7 @@ Then choose the account to receive your imported subscriptions.</string>
                             </textFieldCell>
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="976-Ry-M6G">
-                            <rect key="frame" x="-2" y="3" width="63" height="16"/>
+                            <rect key="frame" x="-2" y="5" width="63" height="16"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Account:" id="uoh-QY-7LX">
                                 <font key="font" metaFont="systemBold"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -41,10 +41,10 @@ Then choose the account to receive your imported subscriptions.</string>
                             </textFieldCell>
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M8B-pG-mg8" userLabel="Account Popup">
-                            <rect key="frame" x="65" y="-3" width="338" height="25"/>
+                            <rect key="frame" x="64" y="-2" width="340" height="25"/>
                             <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="OAk-KA-y5i" id="ddF-fN-stL">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="system"/>
+                                <font key="font" metaFont="menu"/>
                                 <menu key="menu" id="xya-TQ-koA">
                                     <items>
                                         <menuItem title="Item 1" state="on" id="OAk-KA-y5i"/>
@@ -60,7 +60,7 @@ Then choose the account to receive your imported subscriptions.</string>
                         <constraint firstItem="wGx-8H-BqE" firstAttribute="top" secondItem="gSF-Ze-XcY" secondAttribute="top" id="1du-tK-vXo"/>
                         <constraint firstItem="M8B-pG-mg8" firstAttribute="leading" secondItem="976-Ry-M6G" secondAttribute="trailing" constant="8" symbolic="YES" id="HfV-5e-Qa6"/>
                         <constraint firstAttribute="width" constant="400" id="Pgs-f3-wRX"/>
-                        <constraint firstAttribute="bottom" secondItem="M8B-pG-mg8" secondAttribute="bottom" id="T2s-0I-bPf"/>
+                        <constraint firstAttribute="bottom" secondItem="M8B-pG-mg8" secondAttribute="bottom" constant="2" id="T2s-0I-bPf"/>
                         <constraint firstItem="M8B-pG-mg8" firstAttribute="top" secondItem="wGx-8H-BqE" secondAttribute="bottom" constant="8" symbolic="YES" id="ZmZ-rR-1NZ"/>
                         <constraint firstAttribute="trailing" secondItem="wGx-8H-BqE" secondAttribute="trailing" id="aw0-OW-sHK"/>
                         <constraint firstItem="wGx-8H-BqE" firstAttribute="leading" secondItem="gSF-Ze-XcY" secondAttribute="leading" id="c4P-PJ-vd2"/>

@@ -102,40 +102,38 @@ final class RedditLinkData: Codable {
 		}
 		
 		if isVideo ?? false, let videoURL = media?.video?.hlsURL {
-			var html = "<video "
+			var html = "<figure><video "
 			if let previewImageURL = preview?.images?.first?.source?.url {
 				html += "poster=\"\(previewImageURL)\" "
 			}
 			if let width = media?.video?.width, let height = media?.video?.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "src=\"\(videoURL)\"></video>"
+			html += "src=\"\(videoURL)\"></video></figure>"
 			return html
 		}
 		
 		if let imageVariantURL = preview?.images?.first?.variants?.mp4?.source?.url {
-			var html = "<video class=\"nnwAnimatedGIF\" "
+			var html = "<figure><video class=\"nnwAnimatedGIF\" "
 			if let previewImageURL = preview?.images?.first?.source?.url {
 				html += "poster=\"\(previewImageURL)\" "
 			}
 			if let width = preview?.images?.first?.variants?.mp4?.source?.width, let height = preview?.images?.first?.variants?.mp4?.source?.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "src=\"\(imageVariantURL)\" autoplay muted loop></video>"
-			html += linkURL(url)
+			html += "src=\"\(imageVariantURL)\" autoplay muted loop></video></figure>"
 			return html
 		}
 		
 		if let videoPreviewURL = preview?.videoPreview?.url {
-			var html = "<video class=\"nnwAnimatedGIF\" "
+			var html = "<figure><video class=\"nnwAnimatedGIF\" "
 			if let previewImageURL = preview?.images?.first?.source?.url {
 				html += "poster=\"\(previewImageURL)\" "
 			}
 			if let width = preview?.videoPreview?.width, let height = preview?.videoPreview?.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += "src=\"\(videoPreviewURL)\" autoplay muted loop></video>"
-			html += linkURL(url)
+			html += "src=\"\(videoPreviewURL)\" autoplay muted loop></video></figure>"
 			return html
 		}
 		
@@ -144,15 +142,14 @@ final class RedditLinkData: Codable {
 		}
 		
 		if let imageSource = preview?.images?.first?.source, let imageURL = imageSource.url {
-			var html = "<img src=\"\(imageURL)\" "
+			var html = "<figure><img src=\"\(imageURL)\" "
 			if postHint == "link" {
 				html += "class=\"nnw-nozoom\" "
 			}
 			if let width = imageSource.width, let height = imageSource.height {
 				html += "width=\"\(width)\" height=\"\(height)\" "
 			}
-			html += ">"
-			html += linkURL(url, linkOutOnly: false)
+			html += "></figure>"
 			return html
 		}
 		
@@ -167,25 +164,10 @@ final class RedditLinkData: Codable {
 					html += "></figure>"
 				}
 			}
-			html += linkURL(url, linkOutOnly: false)
 			return html
 		}
 		
-		return linkURL(url)
-	}
-	
-	func linkURL(_ url: String, linkOutOnly: Bool = true) -> String {
-		guard let urlComponents = URLComponents(string: url), let host = urlComponents.host else {
-			return ""
-		}
-		guard !linkOutOnly || (!host.hasSuffix("reddit.com") && !host.hasSuffix("redd.it")) else {
-			return ""
-		}
-		var displayURL = "\(urlComponents.host ?? "")\(urlComponents.path)"
-		if displayURL.count > 30 {
-			displayURL = "\(displayURL.prefix(30))..."
-		}
-		return "<div><a href=\"\(url)\">\(displayURL)</a></div>"
+		return ""
 	}
 	
 }

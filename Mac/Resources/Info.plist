@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AppGroup</key>
+	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire</string>
+	<key>AppIdentifierPrefix</key>
+	<string>$(AppIdentifierPrefix)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -34,6 +38,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>DeveloperEntitlements</key>
+	<string>$(DEVELOPER_ENTITLEMENTS)</string>
+	<key>FeedURLForTestBuilds</key>
+	<string>https://ranchero.com/downloads/netnewswire-beta.xml</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.news</string>
 	<key>LSMinimumSystemVersion</key>
@@ -43,10 +51,6 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSUserActivityTypes</key>
-	<array>
-		<string>ReadArticle</string>
-	</array>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>NetNewsWire communicates with other apps on your Mac when you choose to share an article.</string>
 	<key>NSAppleScriptEnabled</key>
@@ -57,21 +61,17 @@
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>ReadArticle</string>
+	</array>
 	<key>OSAScriptingDefinition</key>
 	<string>NetNewsWire.sdef</string>
-	<key>SUFeedURL</key>
-	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
-	<key>FeedURLForTestBuilds</key>
-	<string>https://ranchero.com/downloads/netnewswire-beta.xml</string>
-	<key>UserAgent</key>
-	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
 	<key>OrganizationIdentifier</key>
 	<string>$(ORGANIZATION_IDENTIFIER)</string>
-	<key>AppGroup</key>
-	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire</string>
-	<key>AppIdentifierPrefix</key>
-	<string>$(AppIdentifierPrefix)</string>
-	<key>DeveloperEntitlements</key>
-	<string>$(DEVELOPER_ENTITLEMENTS)</string>
+	<key>SUFeedURL</key>
+	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
+	<key>UserAgent</key>
+	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
 </dict>
 </plist>

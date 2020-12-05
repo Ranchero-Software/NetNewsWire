@@ -24,8 +24,8 @@ protocol SidebarDelegate: class {
 
 @objc class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
     
-	@IBOutlet var outlineView: SidebarOutlineView!
-
+	@IBOutlet weak var outlineView: NSOutlineView!
+	
 	weak var delegate: SidebarDelegate?
 
 	private let rebuildTreeAndRestoreSelectionQueue = CoalescingQueue(name: "Rebuild Tree Queue", interval: 1.0)

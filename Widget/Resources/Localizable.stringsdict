@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UnreadCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@unread_count@</string>
+		<key>unread_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>zero</key>
+			<string>No more unread articles</string>
+			<key>one</key>
+			<string>+ 1 more unread article</string>
+			<key>other</key>
+			<string>+ %u more unread articles</string>
+		</dict>
+	</dict>
+	<key>StarredCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@starred_count@</string>
+		<key>starred_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>zero</key>
+			<string>No more starred articles</string>
+			<key>one</key>
+			<string>+ 1 more starred article</string>
+			<key>other</key>
+			<string>+ %u more starred articles</string>
+		</dict>
+	</dict>
+	<key>TodayCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@today_count@</string>
+		<key>today_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>zero</key>
+			<string>No more recent articles</string>
+			<key>one</key>
+			<string>+ 1 more recent unread article</string>
+			<key>other</key>
+			<string>+ %u more recent unread articles</string>
+		</dict>
+	</dict>
+	<key>LocalizedCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_count@</string>
+		<key>localized_count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>zero</key>
+			<string>0</string>
+			<key>other</key>
+			<string>%u</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
