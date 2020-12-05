@@ -1,5 +1,5 @@
 //
-//  AddFeedWranglerAccountView.swift
+//  AddNewsBlurAccountView.swift
 //  Multiplatform macOS
 //
 //  Created by Stuart Breckenridge on 03/12/2020.
@@ -12,36 +12,27 @@ import RSCore
 import RSWeb
 import Secrets
 
-fileprivate class AddFeedWrangerViewModel: ObservableObject {
-	@Published var isAuthenticating: Bool = false
-	@Published var accountUpdateError: AccountUpdateErrors = .none
-	@Published var showError: Bool = false
-	@Published var username: String = ""
-	@Published var password: String = ""
-}
-
-struct AddFeedWranglerAccountView: View {
-    
-	@Environment (\.presentationMode) var presentationMode
-	@StateObject private var model = AddFeedWrangerViewModel()
+struct AddNewsBlurAccountView: View {
 	
-	var body: some View {
+	@Environment (\.presentationMode) var presentationMode
+	@StateObject private var model = AddNewsBlurViewModel()
+	
+    var body: some View {
 		VStack {
 			HStack(spacing: 16) {
 				VStack(alignment: .leading) {
-					AccountType.feedWrangler.image()
-						.resizable()
+					AccountType.newsBlur.image()
 						.frame(width: 50, height: 50)
 					Spacer()
 				}
 				VStack(alignment: .leading, spacing: 8) {
-					Text("Sign in to your Feed Wrangler account.")
+					Text("Sign in to your NewsBlur account.")
 						.font(.headline)
 					HStack {
-						Text("Don't have a Feed Wrangler account?")
+						Text("Don't have a NewsBlur account?")
 							.font(.callout)
 						Button(action: {
-							NSWorkspace.shared.open(URL(string: "https://feedwrangler.net/users/new")!)
+							NSWorkspace.shared.open(URL(string: "https://newsblur.com")!)
 						}, label: {
 							Text("Sign up here.").font(.callout)
 						}).buttonStyle(LinkButtonStyle())
@@ -78,7 +69,7 @@ struct AddFeedWranglerAccountView: View {
 						}).keyboardShortcut(.cancelAction)
 
 						Button(action: {
-							authenticateFeedWrangler()
+							presentationMode.wrappedValue.dismiss()
 						}, label: {
 							Text("Sign In")
 								.frame(width: 60)
@@ -97,14 +88,11 @@ struct AddFeedWranglerAccountView: View {
 		})
     }
 	
-	
-	private func authenticateFeedWrangler() {
-		
+	private func authenticateNewsBlur() {
 		model.isAuthenticating = true
-		let credentials = Credentials(type: .feedWranglerBasic, username: model.username, secret: model.password)
+		let credentials = Credentials(type: .newsBlurBasic, username: model.username, secret: model.password)
 		
-		Account.validateCredentials(type: .feedWrangler, credentials: credentials) { result in
-			
+		Account.validateCredentials(type: .newsBlur, credentials: credentials) { result in
 			
 			self.model.isAuthenticating = false
 			
@@ -117,11 +105,11 @@ struct AddFeedWranglerAccountView: View {
 					return
 				}
 				
-				let account = AccountManager.shared.createAccount(type: .feedWrangler)
+				let account = AccountManager.shared.createAccount(type: .newsBlur)
 				
 				do {
-					try account.removeCredentials(type: .feedWranglerBasic)
-					try account.removeCredentials(type: .feedWranglerToken)
+					try account.removeCredentials(type: .newsBlurBasic)
+					try account.removeCredentials(type: .newsBlurSessionId)
 					try account.storeCredentials(credentials)
 					try account.storeCredentials(validatedCredentials)
 					account.refreshAll(completion: { result in
@@ -147,8 +135,8 @@ struct AddFeedWranglerAccountView: View {
 	}
 }
 
-struct AddFeedWranglerAccountView_Previews: PreviewProvider {
+struct AddNewsBlurAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AddFeedWranglerAccountView()
+        AddNewsBlurAccountView()
     }
 }

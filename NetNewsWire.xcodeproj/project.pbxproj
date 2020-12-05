@@ -29,6 +29,11 @@
 		172199ED24AB2E0100A31D04 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199EC24AB2E0100A31D04 /* SafariView.swift */; };
 		172199F124AB716900A31D04 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
 		17241249257B8A8A00ACCEBC /* AddFeedlyAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17241248257B8A8A00ACCEBC /* AddFeedlyAccountView.swift */; };
+		1724126A257BBEBB00ACCEBC /* AddFeedbinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17241269257BBEBB00ACCEBC /* AddFeedbinViewModel.swift */; };
+		17241278257BBEE700ACCEBC /* AddFeedlyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17241277257BBEE700ACCEBC /* AddFeedlyViewModel.swift */; };
+		17241280257BBF3E00ACCEBC /* AddFeedWranglerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1724127F257BBF3E00ACCEBC /* AddFeedWranglerViewModel.swift */; };
+		17241288257BBF7000ACCEBC /* AddNewsBlurViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17241287257BBF7000ACCEBC /* AddNewsBlurViewModel.swift */; };
+		17241290257BBFAD00ACCEBC /* AddReaderAPIViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1724128F257BBFAD00ACCEBC /* AddReaderAPIViewModel.swift */; };
 		1727B39924C1368D00A4DBDC /* LayoutPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1727B39824C1368D00A4DBDC /* LayoutPreferencesView.swift */; };
 		1729529324AA1CAA00D65E66 /* AccountsPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */; };
 		1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */; };
@@ -76,8 +81,6 @@
 		1768147B2564BE5400D98635 /* widget-sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 1768147A2564BE5400D98635 /* widget-sample.json */; };
 		1769E32224BC5925000E1E8E /* AccountsPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */; };
 		1769E32524BC5A65000E1E8E /* AddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32424BC5A65000E1E8E /* AddAccountView.swift */; };
-		1769E32724BC5B6C000E1E8E /* AddAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */; };
-		1769E32924BCAFC7000E1E8E /* AddAccountPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */; };
 		1769E32B24BCB030000E1E8E /* ConfiguredAccountRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */; };
 		1769E32D24BD20A0000E1E8E /* AccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32C24BD20A0000E1E8E /* AccountDetailView.swift */; };
 		1769E33024BD6271000E1E8E /* EditAccountCredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E32F24BD6271000E1E8E /* EditAccountCredentialsView.swift */; };
@@ -1355,6 +1358,11 @@
 		172199EC24AB2E0100A31D04 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModifier.swift; sourceTree = "<group>"; };
 		17241248257B8A8A00ACCEBC /* AddFeedlyAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedlyAccountView.swift; sourceTree = "<group>"; };
+		17241269257BBEBB00ACCEBC /* AddFeedbinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedbinViewModel.swift; sourceTree = "<group>"; };
+		17241277257BBEE700ACCEBC /* AddFeedlyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedlyViewModel.swift; sourceTree = "<group>"; };
+		1724127F257BBF3E00ACCEBC /* AddFeedWranglerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedWranglerViewModel.swift; sourceTree = "<group>"; };
+		17241287257BBF7000ACCEBC /* AddNewsBlurViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewsBlurViewModel.swift; sourceTree = "<group>"; };
+		1724128F257BBFAD00ACCEBC /* AddReaderAPIViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReaderAPIViewModel.swift; sourceTree = "<group>"; };
 		1727B39824C1368D00A4DBDC /* LayoutPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutPreferencesView.swift; sourceTree = "<group>"; };
 		1729529024AA1CAA00D65E66 /* AccountsPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesView.swift; sourceTree = "<group>"; };
 		1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesView.swift; sourceTree = "<group>"; };
@@ -1385,8 +1393,6 @@
 		176814822564C02A00D98635 /* NetNewsWire_iOS_WidgetExtension.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = NetNewsWire_iOS_WidgetExtension.entitlements; sourceTree = "<group>"; };
 		1769E32124BC5925000E1E8E /* AccountsPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsPreferencesModel.swift; sourceTree = "<group>"; };
 		1769E32424BC5A65000E1E8E /* AddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountView.swift; sourceTree = "<group>"; };
-		1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountModel.swift; sourceTree = "<group>"; };
-		1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountPickerRow.swift; sourceTree = "<group>"; };
 		1769E32A24BCB030000E1E8E /* ConfiguredAccountRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfiguredAccountRow.swift; sourceTree = "<group>"; };
 		1769E32C24BD20A0000E1E8E /* AccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailView.swift; sourceTree = "<group>"; };
 		1769E32F24BD6271000E1E8E /* EditAccountCredentialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountCredentialsView.swift; sourceTree = "<group>"; };
@@ -2112,6 +2118,18 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		17241268257BBE7B00ACCEBC /* Add Account Models */ = {
+			isa = PBXGroup;
+			children = (
+				17241269257BBEBB00ACCEBC /* AddFeedbinViewModel.swift */,
+				17241277257BBEE700ACCEBC /* AddFeedlyViewModel.swift */,
+				1724127F257BBF3E00ACCEBC /* AddFeedWranglerViewModel.swift */,
+				17241287257BBF7000ACCEBC /* AddNewsBlurViewModel.swift */,
+				1724128F257BBFAD00ACCEBC /* AddReaderAPIViewModel.swift */,
+			);
+			path = "Add Account Models";
+			sourceTree = "<group>";
+		};
 		1727B37624C1365300A4DBDC /* Viewing */ = {
 			isa = PBXGroup;
 			children = (
@@ -2140,7 +2158,7 @@
 			path = "Preference Panes";
 			sourceTree = "<group>";
 		};
-		17386B812577C4C60014C8B2 /* Sheets */ = {
+		17386B812577C4C60014C8B2 /* Add Account Sheets */ = {
 			isa = PBXGroup;
 			children = (
 				17386B792577C4BF0014C8B2 /* AddLocalAccountView.swift */,
@@ -2151,7 +2169,7 @@
 				DF98E2BD2578AC0000F18944 /* AddNewsBlurAccountView.swift */,
 				DF98E2C52578AD1B00F18944 /* AddReaderAPIAccountView.swift */,
 			);
-			path = Sheets;
+			path = "Add Account Sheets";
 			sourceTree = "<group>";
 		};
 		176813A22564B9D100D98635 /* Widget */ = {
@@ -2240,10 +2258,9 @@
 		1769E32324BC5A50000E1E8E /* Add Account */ = {
 			isa = PBXGroup;
 			children = (
-				1769E32624BC5B6C000E1E8E /* AddAccountModel.swift */,
 				1769E32424BC5A65000E1E8E /* AddAccountView.swift */,
-				1769E32824BCAFC7000E1E8E /* AddAccountPickerRow.swift */,
-				17386B812577C4C60014C8B2 /* Sheets */,
+				17241268257BBE7B00ACCEBC /* Add Account Models */,
+				17386B812577C4C60014C8B2 /* Add Account Sheets */,
 			);
 			path = "Add Account";
 			sourceTree = "<group>";
@@ -4653,13 +4670,13 @@
 				51B80F4224BE588200C6C32D /* SharingServicePickerDelegate.swift in Sources */,
 				51E4990624A808C300B667CB /* ImageDownloader.swift in Sources */,
 				51E4994F24A8734C00B667CB /* TwitterFeedProvider-Extensions.swift in Sources */,
+				17241280257BBF3E00ACCEBC /* AddFeedWranglerViewModel.swift in Sources */,
 				51E498CA24A8085D00B667CB /* SmartFeedDelegate.swift in Sources */,
 				DF98E2B02578AA5C00F18944 /* AddFeedWranglerAccountView.swift in Sources */,
 				5177470A24B2F87600EB0F74 /* SidebarListStyleModifier.swift in Sources */,
 				1769E33824BD97CB000E1E8E /* AccountUpdateErrors.swift in Sources */,
 				51E4990524A808C300B667CB /* FeaturedImageDownloader.swift in Sources */,
 				5181C5AE24AF89B1002E0F70 /* PreferredColorSchemeModifier.swift in Sources */,
-				1769E32924BCAFC7000E1E8E /* AddAccountPickerRow.swift in Sources */,
 				1769E32224BC5925000E1E8E /* AccountsPreferencesModel.swift in Sources */,
 				51E4991624A8090300B667CB /* ArticleUtilities.swift in Sources */,
 				51919FF224AB864A00541E64 /* TimelineModel.swift in Sources */,
@@ -4688,11 +4705,14 @@
 				1769E32524BC5A65000E1E8E /* AddAccountView.swift in Sources */,
 				51E4994A24A8734C00B667CB /* ExtensionPointManager.swift in Sources */,
 				514E6C0324AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */,
+				1724126A257BBEBB00ACCEBC /* AddFeedbinViewModel.swift in Sources */,
 				51B54A6524B549B20014348B /* WrapperScriptMessageHandler.swift in Sources */,
 				51E4996D24A8762D00B667CB /* ArticleExtractor.swift in Sources */,
 				1704053524E5985A00A00787 /* SceneNavigationModel.swift in Sources */,
+				17241278257BBEE700ACCEBC /* AddFeedlyViewModel.swift in Sources */,
 				51E4994024A8713B00B667CB /* AccountRefreshTimer.swift in Sources */,
 				51E49A0424A91FF600B667CB /* SceneNavigationView.swift in Sources */,
+				17241290257BBFAD00ACCEBC /* AddReaderAPIViewModel.swift in Sources */,
 				51E498CC24A8085D00B667CB /* SearchFeedDelegate.swift in Sources */,
 				51E498C824A8085D00B667CB /* SmartFeedsController.swift in Sources */,
 				175942AB24AD533200585066 /* RefreshInterval.swift in Sources */,
@@ -4704,6 +4724,7 @@
 				DF98E29A2578A73A00F18944 /* AddCloudKitAccountView.swift in Sources */,
 				51E498FB24A808BA00B667CB /* FaviconGenerator.swift in Sources */,
 				17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */,
+				17241288257BBF7000ACCEBC /* AddNewsBlurViewModel.swift in Sources */,
 				51E4996724A8760B00B667CB /* ArticleStylesManager.swift in Sources */,
 				1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */,
 				51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
@@ -4742,7 +4763,6 @@
 				514E6C0024AD255D00AC6F6E /* PreviewArticles.swift in Sources */,
 				51C4CFF424D37D1F00AF9874 /* Secrets.swift in Sources */,
 				1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */,
-				1769E32724BC5B6C000E1E8E /* AddAccountModel.swift in Sources */,
 				1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */,
 				5177470424B2657F00EB0F74 /* TimelineToolbarModifier.swift in Sources */,
 				51A8001324CA0FC700F41F1D /* Sink.swift in Sources */,

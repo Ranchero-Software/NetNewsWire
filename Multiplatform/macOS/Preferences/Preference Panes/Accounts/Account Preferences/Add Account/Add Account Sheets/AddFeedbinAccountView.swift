@@ -12,14 +12,6 @@ import RSCore
 import RSWeb
 import Secrets
 
-fileprivate class AddFeedbinViewModel: ObservableObject {
-	@Published var isAuthenticating: Bool = false
-	@Published var accountUpdateError: AccountUpdateErrors = .none
-	@Published var showError: Bool = false
-	@Published var username: String = ""
-	@Published var password: String = ""
-}
-
 struct AddFeedbinAccountView: View {
 	
 	@Environment (\.presentationMode) var presentationMode

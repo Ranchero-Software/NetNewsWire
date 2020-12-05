@@ -12,15 +12,6 @@ import RSCore
 import RSWeb
 import Secrets
 
-fileprivate class AddReaderAPIViewModel: ObservableObject {
-	@Published var isAuthenticating: Bool = false
-	@Published var accountUpdateError: AccountUpdateErrors = .none
-	@Published var showError: Bool = false
-	@Published var username: String = ""
-	@Published var password: String = ""
-	@Published var apiUrl: String = ""
-}
-
 struct AddReaderAPIAccountView: View {
 	
 	@Environment (\.presentationMode) var presentationMode
