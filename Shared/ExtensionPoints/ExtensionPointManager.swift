@@ -57,8 +57,10 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 		var commands = activeExtensionPoints.values.compactMap({ return $0 as? SendToCommand })
 		
 		// These two SendToCommands don't need logins and are always active
+		#if os(macOS)
 		commands.append(SendToMarsEditCommand())
 		commands.append(SendToMicroBlogCommand())
+		#endif
 		
 		return commands
 	}
