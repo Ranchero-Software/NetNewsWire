@@ -143,14 +143,14 @@ private extension SidebarCell {
 		if let iconImage = iconImage, iconImage.isSymbol {
 			if backgroundStyle != .normal {
 				let image = iconImage.image.tinted(with: .white)
-				updatedIconImage = IconImage(image, isSymbol: true)
+				updatedIconImage = IconImage(image, isSymbol: iconImage.isSymbol, isBackgroundSupressed: iconImage.isBackgroundSupressed)
 			} else {
 				if let preferredColor = iconImage.preferredColor {
 					let image = iconImage.image.tinted(with: NSColor(cgColor: preferredColor)!)
-					updatedIconImage = IconImage(image, isSymbol: true)
+					updatedIconImage = IconImage(image, isSymbol: iconImage.isSymbol, isBackgroundSupressed: iconImage.isBackgroundSupressed)
 				} else {
 					let image = iconImage.image.tinted(with: .controlAccentColor)
-					updatedIconImage = IconImage(image, isSymbol: true)
+					updatedIconImage = IconImage(image, isSymbol: iconImage.isSymbol, isBackgroundSupressed: iconImage.isBackgroundSupressed)
 				}
 			}
 		}

@@ -155,7 +155,7 @@ struct AppAssets {
 			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 			let preferredColor = NSColor(named: "AccentColor")!
 			let coloredImage = image.tinted(with: preferredColor)
-			return IconImage(coloredImage, isSymbol: true, preferredColor: preferredColor.cgColor)
+			return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.folderName)!)
 		}
@@ -223,7 +223,7 @@ struct AppAssets {
 	}()
 	
 	static var searchFeedImage: IconImage = {
-		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+		return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSupressed: true)
 	}()
 	
 	@available(macOS 11.0, *)
@@ -251,9 +251,9 @@ struct AppAssets {
 			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 			let preferredColor = NSColor(named: "StarColor")!
 			let coloredImage = image.tinted(with: preferredColor)
-			return IconImage(coloredImage, isSymbol: true, preferredColor: preferredColor.cgColor)
+			return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 		} else {
-			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSupressed: true)
 		}
 	}()
 
@@ -274,9 +274,9 @@ struct AppAssets {
 			let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
 			let preferredColor = NSColor.orange
 			let coloredImage = image.tinted(with: preferredColor)
-			return IconImage(coloredImage, isSymbol: true, preferredColor: preferredColor.cgColor)
+			return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 		} else {
-			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSupressed: true)
 		}
 	}()
 
@@ -285,9 +285,9 @@ struct AppAssets {
 			let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 			let preferredColor = NSColor(named: "AccentColor")!
 			let coloredImage = image.tinted(with: preferredColor)
-			return IconImage(coloredImage, isSymbol: true, preferredColor: preferredColor.cgColor)
+			return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 		} else {
-			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true)
+			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSupressed: true)
 		}
 	}()
 

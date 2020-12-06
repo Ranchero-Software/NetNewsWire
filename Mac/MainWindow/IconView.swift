@@ -84,7 +84,7 @@ final class IconView: NSView {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
-		guard !(iconImage?.isSymbol ?? true) else { return }
+		guard !(iconImage?.isBackgroundSupressed ?? false) else { return }
 		guard hasExposedVerticalBackground || !isDisconcernable else { return }
 
 		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? IconView.darkBackgroundColor : IconView.lightBackgroundColor

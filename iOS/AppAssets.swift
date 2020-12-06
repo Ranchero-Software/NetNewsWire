@@ -154,7 +154,7 @@ struct AppAssets {
 	}()
 	
 	static var masterFolderImage: IconImage = {
-		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true)
+		return IconImage(UIImage(systemName: "folder")!, isSymbol: true, isBackgroundSupressed: true)
 	}()
 	
 	static var moreImage: UIImage = {
@@ -219,7 +219,7 @@ struct AppAssets {
 	
 	static var starredFeedImage: IconImage = {
 		let image = UIImage(named: "smartFeedStar")!
-		return IconImage(image, isSymbol: true, preferredColor: nil)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: nil)
 	}()
 
 	static var tickMarkColor: UIColor = {
@@ -233,7 +233,7 @@ struct AppAssets {
 	
 	static var todayFeedImage: IconImage = {
 		let image = UIImage(named: "smartFeedToday")!
-		return IconImage(image, isSymbol: true, preferredColor: nil)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: nil)
 	}()
 
 	static var trashImage: UIImage = {
@@ -242,7 +242,7 @@ struct AppAssets {
 	
 	static var unreadFeedImage: IconImage = {
 		let image = UIImage(named: "smartFeedUnread")!
-		return IconImage(image, isSymbol: true, preferredColor: nil)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: nil)
 	}()
 	
 	static var vibrantTextColor: UIColor = {

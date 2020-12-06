@@ -55,6 +55,10 @@ final class IconView: UIView {
 		return imageView.image?.isSymbolImage ?? false
 	}
 	
+	private var isBackgroundSuppressed: Bool {
+		return imageView.image?.isBackgroundSuppressed ?? false
+	}
+	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		commonInit()
@@ -75,7 +79,7 @@ final class IconView: UIView {
 
 	override func layoutSubviews() {
 		imageView.setFrameIfNotEqual(rectForImageView())
-		if (iconImage != nil && isVerticalBackgroundExposed && !isSymbolImage) || !isDisconcernable {
+		if (iconImage != nil && isVerticalBackgroundExposed) || !isDisconcernable {
 			backgroundColor = AppAssets.uiIconBackgroundColor
 		} else {
 			backgroundColor = nil
