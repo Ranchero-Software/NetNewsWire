@@ -164,8 +164,8 @@ struct AddAccountsView: View {
 			.offset(x: 7.5, y: 0)
 			
 			Text(AddAccountSections.local.sectionFooter).foregroundColor(.gray)
-				.font(.caption)
 				.padding(.horizontal)
+				.lineLimit(3)
 			
 		}
 		
@@ -196,8 +196,8 @@ struct AddAccountsView: View {
 			.disabled(isCloudInUse())
 			
 			Text(AddAccountSections.icloud.sectionFooter).foregroundColor(.gray)
-				.font(.caption)
 				.padding(.horizontal)
+				.lineLimit(3)
 		}
 	}
 	
@@ -227,8 +227,8 @@ struct AddAccountsView: View {
 			.offset(x: 7.5, y: 0)
 			
 			Text(AddAccountSections.web.sectionFooter).foregroundColor(.gray)
-				.font(.caption)
 				.padding(.horizontal)
+				.lineLimit(3)
 		}
 	}
 	
@@ -255,8 +255,8 @@ struct AddAccountsView: View {
 			.offset(x: 7.5, y: 0)
 			
 			Text(AddAccountSections.selfhosted.sectionFooter).foregroundColor(.gray)
-				.font(.caption)
 				.padding(.horizontal)
+				.lineLimit(3)
 		}
 	}
 	
