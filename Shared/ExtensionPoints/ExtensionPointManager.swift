@@ -54,7 +54,13 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 	}
 	
 	var activeSendToCommands: [SendToCommand] {
-		return activeExtensionPoints.values.compactMap({ return $0 as? SendToCommand })
+		var commands = activeExtensionPoints.values.compactMap({ return $0 as? SendToCommand })
+		
+		// These two SendToCommands don't need logins and are always active
+		commands.append(SendToMarsEditCommand())
+		commands.append(SendToMicroBlogCommand())
+		
+		return commands
 	}
 	
 	var activeFeedProviders: [FeedProvider] {
@@ -70,19 +76,7 @@ final class ExtensionPointManager: FeedProviderManagerDelegate {
 	}
 
 	init() {
-		#if os(macOS)
-		#if DEBUG
-		possibleExtensionPointTypes = [SendToMarsEditCommand.self, SendToMicroBlogCommand.self, TwitterFeedProvider.self, RedditFeedProvider.self]
-		#else
-		possibleExtensionPointTypes = [SendToMarsEditCommand.self, SendToMicroBlogCommand.self, TwitterFeedProvider.self, RedditFeedProvider.self]
-		#endif
-		#else
-		#if DEBUG
 		possibleExtensionPointTypes = [TwitterFeedProvider.self, RedditFeedProvider.self]
-		#else
-		possibleExtensionPointTypes = [TwitterFeedProvider.self, RedditFeedProvider.self]
-		#endif
-		#endif
 		loadExtensionPoints()
 	}
 	
@@ -125,12 +119,6 @@ private extension ExtensionPointManager {
 	
 	func extensionPoint(for extensionPointType: ExtensionPoint.Type, tokenSuccess: OAuthSwift.TokenSuccess?, completion: @escaping (Result<ExtensionPoint, Error>) -> Void) {
 		switch extensionPointType {
-		#if os(macOS)
-		case is SendToMarsEditCommand.Type:
-			completion(.success(SendToMarsEditCommand()))
-		case is SendToMicroBlogCommand.Type:
-			completion(.success(SendToMicroBlogCommand()))
-		#endif
 		case is TwitterFeedProvider.Type:
 			if let tokenSuccess = tokenSuccess, let twitter = TwitterFeedProvider(tokenSuccess: tokenSuccess) {
 				completion(.success(twitter))
@@ -151,22 +139,18 @@ private extension ExtensionPointManager {
 				completion(.failure(ExtensionPointManagerError.unableToCreate))
 			}
 		default:
-			assertionFailure("Unrecognized Extension Point Type.")
+			break
 		}
 	}
 	
 	func extensionPoint(for extensionPointID: ExtensionPointIdentifer) -> ExtensionPoint? {
 		switch extensionPointID {
-		#if os(macOS)
-		case .marsEdit:
-			return SendToMarsEditCommand()
-		case .microblog:
-			return SendToMicroBlogCommand()
-		#endif
 		case .twitter(let screenName):
 			return TwitterFeedProvider(screenName: screenName)
 		case .reddit(let username):
 			return RedditFeedProvider(username: username)
+		default:
+			return nil
 		}
 	}
 	
