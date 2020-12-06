@@ -343,8 +343,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	func createMainWindowController() -> MainWindowController {
 		let controller: MainWindowController
 		if #available(macOS 11.0, *) {
-			let storyboard = NSStoryboard(name: NSStoryboard.Name("MainWindow"), bundle: nil)
-			controller = storyboard.instantiateController(withIdentifier: "UnifiedWindowController") as! MainWindowController
+			controller = windowControllerWithName("UnifiedWindow") as! MainWindowController
 		} else {
 			controller = windowControllerWithName("MainWindow") as! MainWindowController
 		}
