@@ -588,7 +588,14 @@ private extension MasterTimelineViewController {
 		title = coordinator.timelineFeed?.nameForDisplay ?? "Timeline"
 
 		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
-			titleView.iconView.iconImage = coordinator.timelineIconImage
+			let timelineIconImage = coordinator.timelineIconImage
+			titleView.iconView.iconImage = timelineIconImage
+			if let preferredColor = timelineIconImage?.preferredColor {
+				titleView.iconView.tintColor = UIColor(cgColor: preferredColor)
+			} else {
+				titleView.iconView.tintColor = nil
+			}
+			
 			titleView.label.text = coordinator.timelineFeed?.nameForDisplay
 			updateTitleUnreadCount()
 

@@ -39,7 +39,9 @@ final class UnreadFeed: PseudoFeed {
 		}
 	}
 
-	var smallIcon: IconImage? = AppAssets.unreadFeedImage
+	var smallIcon: IconImage? {
+		return AppAssets.unreadFeedImage
+	}
 	
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {

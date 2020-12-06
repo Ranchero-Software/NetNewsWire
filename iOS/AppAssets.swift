@@ -177,9 +177,9 @@ struct AppAssets {
 		return UIImage(systemName: "arrow.turn.down.left")!
 	}()
 	
-	static var primaryAccentColor: UIColor = {
+	static var primaryAccentColor: UIColor {
 		return UIColor(named: "primaryAccentColor")!
-	}()
+	}
 	
 	static var safariImage: UIImage = {
 		return UIImage(systemName: "safari")!
@@ -189,9 +189,9 @@ struct AppAssets {
 		return IconImage(UIImage(systemName: "magnifyingglass")!, isSymbol: true)
 	}()
 	
-	static var secondaryAccentColor: UIColor = {
+	static var secondaryAccentColor: UIColor {
 		return UIColor(named: "secondaryAccentColor")!
-	}()
+	}
 	
 	static var sectionHeaderColor: UIColor = {
 		return UIColor(named: "sectionHeaderColor")!
@@ -217,10 +217,10 @@ struct AppAssets {
 		return UIImage(systemName: "star")!
 	}()
 	
-	static var starredFeedImage: IconImage = {
-		let image = UIImage(named: "smartFeedStar")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: nil)
-	}()
+	static var starredFeedImage: IconImage {
+		let image = UIImage(systemName: "star.fill")!
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.starColor.cgColor)
+	}
 
 	static var tickMarkColor: UIColor = {
 		return UIColor(named: "tickMarkColor")!
@@ -231,19 +231,19 @@ struct AppAssets {
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
 	}()
 	
-	static var todayFeedImage: IconImage = {
-		let image = UIImage(named: "smartFeedToday")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: nil)
-	}()
+	static var todayFeedImage: IconImage {
+		let image = UIImage(systemName: "sun.max.fill")!
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: UIColor.systemOrange.cgColor)
+	}
 
 	static var trashImage: UIImage = {
 		return UIImage(systemName: "trash")!
 	}()
 	
-	static var unreadFeedImage: IconImage = {
-		let image = UIImage(named: "smartFeedUnread")!
-		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: nil)
-	}()
+	static var unreadFeedImage: IconImage {
+		let image = UIImage(systemName: "largecircle.fill.circle")!
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
+	}
 	
 	static var vibrantTextColor: UIColor = {
 		return UIColor(named: "vibrantTextColor")!
