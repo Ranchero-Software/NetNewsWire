@@ -186,12 +186,12 @@ private extension ExtensionPointPreferencesViewController {
 		if tableView.selectedRow == -1 {
 			var helpText = ""
 			if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
-				helpText = NSLocalizedString("You've added all available extension points.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("You've added all available extensions.", comment: "Extension Explainer")
 			}
 			else if activeExtensionPoints.count == 0 {
 				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
 			} else {
-				helpText = NSLocalizedString("Select an extension or add a new extension point by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("Select an extension or add a new extension by clicking the + button.", comment: "Extension Explainer")
 			}
 			
 			if let controller = children.first {
@@ -229,12 +229,12 @@ private extension ExtensionPointPreferencesViewController {
 		if tableView.selectedRow == -1 {
 			var helpText = ""
 			if ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 {
-				helpText = NSLocalizedString("You've added all available extension points.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("You've added all available extensions.", comment: "Extension Explainer")
 			}
 			else if activeExtensionPoints.count == 0 {
 				helpText = NSLocalizedString("Add an extension by clicking the + button.", comment: "Extension Explainer")
 			} else {
-				helpText = NSLocalizedString("Select an extension or add a new extension point by clicking the + button.", comment: "Extension Explainer")
+				helpText = NSLocalizedString("Select an extension or add a new extension by clicking the + button.", comment: "Extension Explainer")
 			}
 			
 			let textHostingController = NSHostingController(rootView: EnableExtensionPointHelpView(helpText: helpText, preferencesController: self))
