@@ -47,12 +47,8 @@ class TimelineTableRowView : NSTableRowView {
 	}
 
 	override func viewDidMoveToSuperview() {
-		if #available(macOS 11.0, *) {
+		if AppDefaults.shared.timelineShowsSeparators {
 			addSeparatorView()
-		} else {
-			if AppDefaults.shared.timelineShowsSeparators {
-				addSeparatorView()
-			}
 		}
 	}
 	
