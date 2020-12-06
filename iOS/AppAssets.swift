@@ -154,7 +154,7 @@ struct AppAssets {
 	}()
 	
 	static var masterFolderImage: IconImage = {
-		return IconImage(UIImage(systemName: "folder")!, isSymbol: true, isBackgroundSupressed: true)
+		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
 	
 	static var moreImage: UIImage = {
