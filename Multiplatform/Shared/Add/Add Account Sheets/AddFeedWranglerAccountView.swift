@@ -34,7 +34,32 @@ struct AddFeedWranglerAccountView: View {
 						.scaleEffect(CGSize(width: 0.5, height: 0.5))
 						   .hidden(!model.isAuthenticating) , content: {
 				TextField("me@email.com", text: $model.username)
-				SecureField("•••••••••••", text: $model.password)
+				if model.showPassword == false {
+					ZStack {
+						HStack {
+							SecureField("Password", text: $model.password)
+							Spacer()
+							Image(systemName: "eye.fill")
+								.foregroundColor(.accentColor)
+								.onTapGesture {
+									model.showPassword = true
+								}
+						}
+					}
+				}
+				else {
+					ZStack {
+						HStack {
+							TextField("Password", text: $model.password)
+							Spacer()
+							Image(systemName: "eye.slash.fill")
+								.foregroundColor(.accentColor)
+								.onTapGesture {
+									model.showPassword = false
+								}
+						}
+					}
+				}
 			})
 		}.navigationBarItems(leading:
 			Button(action: {

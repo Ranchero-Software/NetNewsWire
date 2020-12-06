@@ -19,6 +19,7 @@ class AddNewsBlurViewModel: ObservableObject, AddAccountSignUp {
 	@Published var username: String = ""
 	@Published var password: String = ""
 	@Published var canDismiss: Bool = false
+	@Published var showPassword: Bool = false
 	
 	func authenticateNewsBlur() {
 		isAuthenticating = true

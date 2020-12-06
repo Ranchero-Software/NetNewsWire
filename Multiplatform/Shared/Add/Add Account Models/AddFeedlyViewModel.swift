@@ -18,7 +18,6 @@ class AddFeedlyViewModel: ObservableObject, OAuthAccountAuthorizationOperationDe
 	@Published var showError: Bool = false
 	@Published var username: String = ""
 	@Published var password: String = ""
-	@Published var showPassword: Bool = false
 	
 	func authenticateFeedly() {
 		isAuthenticating = true
