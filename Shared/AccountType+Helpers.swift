@@ -61,32 +61,32 @@ extension AccountType {
 		case .onMyMac:
 			// If it's the multiplatform app, the asset catalog contains assets for 
 			#if os(macOS)
-			return Image("AccountLocal")
+			return Image("accountLocal")
 			#else
 			if UIDevice.current.userInterfaceIdiom == .pad {
-				return Image("AccountLocalPad")
+				return Image("accountLocalPad")
 			} else {
-				return Image("AccountLocalPhone")
+				return Image("accountLocalPhone")
 			}
 			#endif
 		case .bazQux:
-			return Image("AccountBazQux")
+			return Image("accountBazQux")
 		case .cloudKit:
-			return Image("AccountCloudKit")
+			return Image("accountCloudKit")
 		case .feedWrangler:
-			return Image("AccountFeedWrangler")
+			return Image("accountFeedWrangler")
 		case .feedbin:
-			return Image("AccountFeedbin")
+			return Image("accountFeedbin")
 		case .feedly:
-			return Image("AccountFeedly")
+			return Image("accountFeedly")
 		case .freshRSS:
-			return Image("AccountFreshRSS")
+			return Image("accountFreshRSS")
 		case .inoreader:
-			return Image("AccountInoreader")
+			return Image("accountInoreader")
 		case .newsBlur:
-			return Image("AccountNewsBlur")
+			return Image("accountNewsBlur")
 		case .theOldReader:
-			return Image("AccountTheOldReader")
+			return Image("accountTheOldReader")
 		}
 	}
 
