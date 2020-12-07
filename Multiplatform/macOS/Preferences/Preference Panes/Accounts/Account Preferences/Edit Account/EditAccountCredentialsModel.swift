@@ -42,9 +42,15 @@ class EditAccountCredentialsModel: ObservableObject {
 		case .feedly:
 			updateFeedly(account)
 		case .freshRSS:
-			updateFreshRSS(account)
+			updateReaderAccount(account)
 		case .newsBlur:
 			updateNewsblur(account)
+		case .inoreader:
+			updateReaderAccount(account)
+		case .bazQux:
+			updateReaderAccount(account)
+		case .theOldReader:
+			updateReaderAccount(account)
 		}
 	}
 	
@@ -168,11 +174,11 @@ extension EditAccountCredentialsModel {
 		MainThreadOperationQueue.shared.add(updateAccount)
 	}
 	
-	func updateFreshRSS(_ account: Account) {
+	func updateReaderAccount(_ account: Account) {
 		accountIsUpdatingCredentials = true
 		let credentials = Credentials(type: .readerBasic, username: userName, secret: password)
 		
-		Account.validateCredentials(type: .freshRSS, credentials: credentials) { [weak self] result in
+		Account.validateCredentials(type: account.type, credentials: credentials) { [weak self] result in
 			
 			guard let self = self else { return }
 			

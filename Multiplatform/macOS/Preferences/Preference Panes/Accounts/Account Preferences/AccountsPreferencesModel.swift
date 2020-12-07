@@ -10,11 +10,21 @@ import Foundation
 import Account
 import Combine
 
-class AccountsPreferencesModel: ObservableObject {
+public enum AccountConfigurationSheets: Equatable {
+	case addAccountPicker, addSelectedAccount(AccountType), credentials, none
 	
-	enum AccountConfigurationSheets {
-		case add, credentials, none
+	public static func == (lhs: AccountConfigurationSheets, rhs: AccountConfigurationSheets) -> Bool {
+		switch (lhs, rhs) {
+		case (let .addSelectedAccount(lhsType), let .addSelectedAccount(rhsType)):
+			return lhsType == rhsType
+		default:
+			return false
+		}
 	}
+	
+}
+
+public class AccountsPreferencesModel: ObservableObject {
 	
 	// Selected Account
 	public private(set) var account: Account?
@@ -57,7 +67,7 @@ class AccountsPreferencesModel: ObservableObject {
 	@Published var showSheet: Bool = false
 	@Published var sheetToShow: AccountConfigurationSheets = .none {
 		didSet {
-			showSheet = sheetToShow != .none
+			if sheetToShow == .none { showSheet = false } else { showSheet = true }
 		}
 	}
 	@Published var showDeleteConfirmation: Bool = false

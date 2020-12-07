@@ -1,150 +1,274 @@
 //
 //  AddAccountView.swift
-//  Multiplatform macOS
+//  NetNewsWire
 //
-//  Created by Stuart Breckenridge on 13/7/20.
+//  Created by Stuart Breckenridge on 28/10/20.
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
 import SwiftUI
 import Account
 
+enum AddAccountSections: Int, CaseIterable {
+	case local = 0
+	case icloud
+	case web
+	case selfhosted
+	case allOrdered
+	
+	var sectionHeader: String {
+		switch self {
+		case .local:
+			return NSLocalizedString("Local", comment: "Local Account")
+		case .icloud:
+			return NSLocalizedString("iCloud", comment: "iCloud Account")
+		case .web:
+			return NSLocalizedString("Web", comment: "Web Account")
+		case .selfhosted:
+			return NSLocalizedString("Self-hosted", comment: "Self hosted Account")
+		case .allOrdered:
+			return ""
+		}
+	}
+	
+	var sectionFooter: String {
+		switch self {
+		case .local:
+			return NSLocalizedString("Local accounts do not sync subscriptions across devices.", comment: "Local Account")
+		case .icloud:
+			return NSLocalizedString("Use your iCloud account to sync your subscriptions across your iOS and macOS devices.", comment: "iCloud Account")
+		case .web:
+			return NSLocalizedString("Web accounts sync your subscriptions across all your devices.", comment: "Web Account")
+		case .selfhosted:
+			return NSLocalizedString("Self-hosted accounts sync your subscriptions across all your devices.", comment: "Self hosted Account")
+		case .allOrdered:
+			return ""
+		}
+	}
+	
+	var sectionContent: [AccountType] {
+		switch self {
+		case .local:
+			return [.onMyMac]
+		case .icloud:
+			return [.cloudKit]
+		case .web:
+			#if DEBUG
+			return [.bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader]
+			#else
+			return [.bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader]
+			#endif
+		case .selfhosted:
+			return [.freshRSS]
+		case .allOrdered:
+			return AddAccountSections.local.sectionContent +
+			AddAccountSections.icloud.sectionContent +
+				AddAccountSections.web.sectionContent +
+				AddAccountSections.selfhosted.sectionContent
+		}
+	}
+}
+
 struct AddAccountView: View {
 	
-	@Environment(\.presentationMode) private var presentationMode
-	@ObservedObject var preferencesModel: AccountsPreferencesModel
-	@StateObject private var viewModel = AddAccountModel()
-
+	@State private var selectedAccount: AccountType = .onMyMac
+	@Binding public var accountToAdd: AccountConfigurationSheets
+	@Environment(\.presentationMode) var presentationMode
+	
 	var body: some View {
+		VStack(alignment: .leading, spacing: 8) {
+			Text("Choose an account type to add...")
+				.font(.headline)
+				.padding()
 			
-		Form {
-			Text("Add an Account").font(.headline)
+			localAccount
+			icloudAccount
+			webAccounts
+			selfhostedAccounts
 			
-			Picker("Account Type",
-					selection: $viewModel.selectedAddAccount,
-					content: {
-					ForEach(0..<viewModel.addableAccountTypes.count, content: { i in
-						AddAccountPickerRow(accountType: viewModel.addableAccountTypes[i]).tag(viewModel.addableAccountTypes[i])
-					})
-					}).pickerStyle(MenuPickerStyle())
-			
-			switch viewModel.selectedAddAccount {
-				case .onMyMac:
-					addLocalAccountView
-				case .cloudKit:
-					iCloudAccountView
-				case .feedbin:
-					userNameAndPasswordView
-				case .feedWrangler:
-					userNameAndPasswordView
-				case .freshRSS:
-					userNamePasswordAndAPIUrlView
-				case .feedly:
-					oAuthView
-				case .newsBlur:
-					userNameAndPasswordView
-			}
-			
-			Spacer()
-			HStack {
-				if viewModel.accountIsAuthenticating {
-					ProgressView("Adding Account")
-				}
+			HStack(spacing: 12) {
 				Spacer()
-				Button(action: { presentationMode.wrappedValue.dismiss() }, label: {
-					Text("Cancel")
-				})
-				
-				switch viewModel.selectedAddAccount {
-					case .onMyMac:
-						Button("Add Account", action: {
-							viewModel.authenticateAccount()
+				if #available(OSX 11.0, *) {
+					Button(action: {
+						presentationMode.wrappedValue.dismiss()
+					}, label: {
+						Text("Cancel")
+							.frame(width: 80)
+					})
+					.help("Cancel")
+					.keyboardShortcut(.cancelAction)
+					
+				} else {
+					Button(action: {
+						presentationMode.wrappedValue.dismiss()
+					}, label: {
+						Text("Cancel")
+							.frame(width: 80)
+					})
+					.accessibility(label: Text("Add Account"))
+				}
+				if #available(OSX 11.0, *) {
+					Button(action: {
+						presentationMode.wrappedValue.dismiss()
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+							accountToAdd = AccountConfigurationSheets.addSelectedAccount(selectedAccount)
 						})
-					case .feedly:
-						Button("Authenticate", action: {
-							viewModel.authenticateAccount()
-						})
-					case .cloudKit:
-						Button("Add Account", action: {
-							viewModel.authenticateAccount()
-						})
-					case .freshRSS:
-						Button("Add Account", action: {
-							viewModel.authenticateAccount()
-						})
-						.disabled(viewModel.userName.count == 0 || viewModel.password.count == 0 || viewModel.apiUrl.count == 0)
-					default:
-						Button("Add Account", action: {
-							viewModel.authenticateAccount()
-						})
-						.disabled(viewModel.userName.count == 0 || viewModel.password.count == 0)
+					}, label: {
+						Text("Continue")
+							.frame(width: 80)
+					})
+					.help("Add Account")
+					.keyboardShortcut(.defaultAction)
+					
+				} else {
+					Button(action: {
+						accountToAdd = AccountConfigurationSheets.addSelectedAccount(selectedAccount)
+						presentationMode.wrappedValue.dismiss()
+						
+					}, label: {
+						Text("Continue")
+							.frame(width: 80)
+					})
 				}
 			}
+			.padding(.top, 12)
+			.padding(.bottom, 4)
 		}
+		.pickerStyle(RadioGroupPickerStyle())
+		.fixedSize(horizontal: false, vertical: true)
+		.frame(width: 420)
+		.padding()
+	}
+	
+	var localAccount: some View {
+		VStack(alignment: .leading) {
+			Text("Local")
+				.font(.headline)
+				.padding(.horizontal)
 			
+			Picker(selection: $selectedAccount, label: Text(""), content: {
+				ForEach(AddAccountSections.local.sectionContent, id: \.self, content: { account in
+					HStack(alignment: .center) {
+						account.image()
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 25, height: 25, alignment: .center)
+							.padding(.leading, 4)
+						Text(account.localizedAccountName())
+					}
+					.tag(account)
+				})
+			})
+			.pickerStyle(RadioGroupPickerStyle())
+			.offset(x: 7.5, y: 0)
 			
-		.onChange(of: viewModel.selectedAddAccount) { _ in
-			viewModel.resetUserEntries()
+			Text(AddAccountSections.local.sectionFooter).foregroundColor(.gray)
+				.font(.caption)
+				.padding(.horizontal)
+			
 		}
-		.onChange(of: viewModel.accountAdded) { value in
-			if value == true {
-				preferencesModel.showAddAccountView = false
-				presentationMode.wrappedValue.dismiss()
-			}
+		
+	}
+	
+	var icloudAccount: some View {
+		VStack(alignment: .leading) {
+			Text("iCloud")
+				.font(.headline)
+				.padding(.horizontal)
+				.padding(.top, 8)
+			
+			Picker(selection: $selectedAccount, label: Text(""), content: {
+				ForEach(AddAccountSections.icloud.sectionContent, id: \.self, content: { account in
+					HStack(alignment: .center) {
+						account.image()
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 25, height: 25, alignment: .center)
+							.padding(.leading, 4)
+						
+						Text(account.localizedAccountName())
+					}
+					.tag(account)
+				})
+			})
+			.offset(x: 7.5, y: 0)
+			.disabled(isCloudInUse())
+			
+			Text(AddAccountSections.icloud.sectionFooter).foregroundColor(.gray)
+				.font(.caption)
+				.padding(.horizontal)
 		}
-		.alert(isPresented: $viewModel.showError) {
-			Alert(title: Text("Error Adding Account"),
-				  message: Text(viewModel.addAccountError.description),
-				  dismissButton: .default(Text("Dismiss"),
-										  action: {
-											viewModel.addAccountError = .none
-										  }))
+	}
+	
+	var webAccounts: some View {
+		VStack(alignment: .leading) {
+			Text("Web")
+				.font(.headline)
+				.padding(.horizontal)
+				.padding(.top, 8)
+			
+			Picker(selection: $selectedAccount, label: Text(""), content: {
+				ForEach(AddAccountSections.web.sectionContent, id: \.self, content: { account in
+					
+					HStack(alignment: .center) {
+						account.image()
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 25, height: 25, alignment: .center)
+							.padding(.leading, 4)
+							
+						Text(account.localizedAccountName())
+					}
+					.tag(account)
+					
+				})
+			})
+			.offset(x: 7.5, y: 0)
+			
+			Text(AddAccountSections.web.sectionFooter).foregroundColor(.gray)
+				.font(.caption)
+				.padding(.horizontal)
 		}
 	}
 	
-	
-	var addLocalAccountView: some View {
-		Group {
-			TextField("Account Name", text: $viewModel.newLocalAccountName)
-			Text("This account stores all of its data on your device. It does not sync.")
-				.foregroundColor(.secondary)
-				.multilineTextAlignment(.leading)
-		}.textFieldStyle(RoundedBorderTextFieldStyle())
+	var selfhostedAccounts: some View {
+		VStack(alignment: .leading) {
+			Text("Self-hosted")
+				.font(.headline)
+				.padding(.horizontal)
+				.padding(.top, 8)
+			
+			Picker(selection: $selectedAccount, label: Text(""), content: {
+				ForEach(AddAccountSections.selfhosted.sectionContent, id: \.self, content: { account in
+					HStack(alignment: .center) {
+						account.image()
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 25, height: 25, alignment: .center)
+							.padding(.leading, 4)
+			
+						Text(account.localizedAccountName())
+					}.tag(account)
+				})
+			})
+			.offset(x: 7.5, y: 0)
+			
+			Text(AddAccountSections.selfhosted.sectionFooter).foregroundColor(.gray)
+				.font(.caption)
+				.padding(.horizontal)
+		}
 	}
 	
-	var iCloudAccountView: some View {
-		Group {
-			Text("This account syncs across your devices using your iCloud account.")
-				.foregroundColor(.secondary)
-				.multilineTextAlignment(.leading)
-		}.textFieldStyle(RoundedBorderTextFieldStyle())
+	private func isCloudInUse() -> Bool {
+		AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit })
 	}
 	
-	var userNameAndPasswordView: some View {
-		Group {
-			TextField("Email", text: $viewModel.userName)
-			SecureField("Password", text: $viewModel.password)
-		}.textFieldStyle(RoundedBorderTextFieldStyle())
+	private func isRestricted(_ accountType: AccountType) -> Bool {
+		if AppDefaults.shared.isDeveloperBuild && (accountType == .feedly || accountType == .feedWrangler || accountType == .inoreader) {
+			return true
+		}
+		return false
 	}
-	
-	var userNamePasswordAndAPIUrlView: some View {
-		Group {
-			TextField("Email", text: $viewModel.userName)
-			SecureField("Password", text: $viewModel.password)
-			TextField("API URL", text: $viewModel.apiUrl)
-		}.textFieldStyle(RoundedBorderTextFieldStyle())
-	}
-	
-	var oAuthView: some View {
-		Group {
-			Text("Click Authenticate")
-		}.textFieldStyle(RoundedBorderTextFieldStyle())
-	}
-	
-	
 }
-struct AddAccountView_Previews: PreviewProvider {
-	static var previews: some View {
-		AddAccountView(preferencesModel: AccountsPreferencesModel())
-	}
-}
+
+

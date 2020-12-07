@@ -29,14 +29,29 @@ struct AccountsPreferencesView: View {
 				onDismiss: { viewModel.sheetToShow = .none },
 				content: {
 					switch viewModel.sheetToShow {
-					case .add:
-						AddAccountView(preferencesModel: viewModel)
-							.frame(width: 300, height: 200)
-							.padding()
+					case .addAccountPicker:
+						AddAccountView(accountToAdd: $viewModel.sheetToShow)
 					case .credentials:
 						EditAccountCredentialsView(viewModel: viewModel)
 					case .none:
 						EmptyView()
+					case .addSelectedAccount(let type):
+						switch type {
+						case .onMyMac:
+							AddLocalAccountView()
+						case .feedbin:
+							AddFeedbinAccountView()
+						case .cloudKit:
+							AddCloudKitAccountView()
+						case .feedWrangler:
+							AddFeedWranglerAccountView()
+						case .newsBlur:
+							AddNewsBlurAccountView()
+						case .feedly:
+							AddFeedlyAccountView()
+						default:
+							AddReaderAPIAccountView(accountType: type)
+						}
 					}
 				})
 		.alert(isPresented: $viewModel.showDeleteConfirmation, content: {
@@ -71,7 +86,7 @@ struct AccountsPreferencesView: View {
 			Divider()
 			HStack(alignment: .center, spacing: 4) {
 				Button(action: {
-					viewModel.sheetToShow = .add
+					viewModel.sheetToShow = .addAccountPicker
 				}, label: {
 					Image(systemName: "plus")
 						.font(.title)

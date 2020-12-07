@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "accountFeedly.pdf",
+      "filename" : "feedly-logo-any.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "feedly-logo-dark.pdf",
       "idiom" : "universal"
     }
   ],
@@ -10,6 +20,6 @@
     "version" : 1
   },
   "properties" : {
-    "template-rendering-intent" : "template"
+    "template-rendering-intent" : "original"
   }
 }
