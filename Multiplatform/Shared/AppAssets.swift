@@ -19,52 +19,52 @@ struct AppAssets {
 	#endif
 	
 	static var accountBazQux: RSImage! = {
-		return RSImage(named: "accountBazQux")
+		return RSImage(named: "AccountBazQux")
 	}()
 	
 	
 	static var accountLocalMacImage: RSImage! = {
-		return RSImage(named: "accountLocalMac")
+		return RSImage(named: "AccountLocalMac")
 	}()
 
 	static var accountLocalPadImage: RSImage = {
-		return RSImage(named: "accountLocalPad")!
+		return RSImage(named: "AccountLocalPad")!
 	}()
 
 	static var accountLocalPhoneImage: RSImage = {
-		return RSImage(named: "accountLocalPhone")!
+		return RSImage(named: "AccountLocalPhone")!
 	}()
 
 	static var accountCloudKitImage: RSImage = {
-		return RSImage(named: "accountCloudKit")!
+		return RSImage(named: "AccountCloudKit")!
 	}()
 
 	static var accountFeedbinImage: RSImage = {
-		return RSImage(named: "accountFeedbin")!
+		return RSImage(named: "AccountFeedbin")!
 	}()
 
 	static var accountFeedlyImage: RSImage = {
-		return RSImage(named: "accountFeedly")!
+		return RSImage(named: "AccountFeedly")!
 	}()
 	
 	static var accountFeedWranglerImage: RSImage = {
-		return RSImage(named: "accountFeedWrangler")!
+		return RSImage(named: "AccountFeedWrangler")!
 	}()
 
 	static var accountFreshRSSImage: RSImage = {
-		return RSImage(named: "accountFreshRSS")!
+		return RSImage(named: "AccountFreshRSS")!
 	}()
 	
 	static var accountInoreader: RSImage! = {
-		return RSImage(named: "accountInoreader")
+		return RSImage(named: "AccountInoreader")
 	}()
 
 	static var accountNewsBlurImage: RSImage = {
-		return RSImage(named: "accountNewsBlur")!
+		return RSImage(named: "AccountNewsBlur")!
 	}()
 	
 	static var accountTheOldReader: RSImage! = {
-		return RSImage(named: "accountTheOldReader")
+		return RSImage(named: "AccountTheOldReader")
 	}()
 
 	static var addMenuImage: Image = {
