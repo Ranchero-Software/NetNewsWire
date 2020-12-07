@@ -22,13 +22,79 @@ struct AddReaderAPIAccountView: View {
 		#if os(macOS)
 		macBody
 		#else
-		iosBody
+		NavigationView {
+			iosBody
+		}
 		#endif
 	}
 	
 	#if os(iOS)
 	var iosBody: some View {
-		Text("TBC")
+		List {
+			Section(header: formHeader, content: {
+				TextField("Email", text: $model.username)
+				if model.showPassword == false {
+					ZStack {
+						HStack {
+							SecureField("Password", text: $model.password)
+							Spacer()
+							Image(systemName: "eye.fill")
+								.foregroundColor(.accentColor)
+								.onTapGesture {
+									model.showPassword = true
+								}
+						}
+					}
+				}
+				else {
+					ZStack {
+						HStack {
+							TextField("Password", text: $model.password)
+							Spacer()
+							Image(systemName: "eye.slash.fill")
+								.foregroundColor(.accentColor)
+								.onTapGesture {
+									model.showPassword = false
+								}
+						}
+					}
+				}
+				if accountType == .freshRSS {
+					TextField("API URL", text: $model.apiUrl)
+				}
+				
+			})
+			
+			Section(footer: formFooter, content: {
+				Button(action: {
+					model.authenticateReaderAccount(accountType)
+				}, label: {
+					HStack {
+						Spacer()
+						Text("Sign In")
+						Spacer()
+					}
+				}).disabled(createDisabled())
+			})
+			
+		}
+		.navigationBarItems(leading:
+			Button(action: {
+				presentationMode.wrappedValue.dismiss()
+			}, label: {
+				Text("Cancel")
+			}))
+		.listStyle(InsetGroupedListStyle())
+		.navigationBarTitleDisplayMode(.inline)
+		.navigationTitle(Text(accountType.localizedAccountName()))
+		.alert(isPresented: $model.showError, content: {
+			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel(Text("Dismiss")))
+		})
+		.onReceive(model.$canDismiss, perform: { value in
+			if value == true {
+				presentationMode.wrappedValue.dismiss()
+			}
+		})
 	}
 	#endif
 	
@@ -138,10 +204,44 @@ struct AddReaderAPIAccountView: View {
 		}
 		return 230
 	}
+	
+	var formHeader: some View {
+		HStack {
+			Spacer()
+			VStack(alignment: .center) {
+				accountType.image()
+					.resizable()
+					.frame(width: 50, height: 50)
+			}
+			Spacer()
+		}.padding(.vertical)
+	}
+	
+	var formFooter: some View {
+		HStack {
+			Spacer()
+			VStack(spacing: 8) {
+				Text("Sign in to your \(accountType.localizedAccountName()) account and sync your subscriptions across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
+				Text("Don't have a \(accountType.localizedAccountName()) instance?").foregroundColor(.secondary)
+				Button(action: {
+					model.presentSignUpOption(accountType)
+				}, label: {
+					Text("Sign Up Here").foregroundColor(.blue).multilineTextAlignment(.center)
+				})
+				ProgressView().hidden(!model.isAuthenticating)
+			}
+			.multilineTextAlignment(.center)
+			.font(.caption2)
+			Spacer()
+			
+		}.padding(.vertical)
+	}
+	
 }
 
 struct AddReaderAPIAccountView_Previews: PreviewProvider {
 	static var previews: some View {
 		AddReaderAPIAccountView(accountType: .freshRSS)
+		//AddReaderAPIAccountView(accountType: .inoreader)
 	}
 }

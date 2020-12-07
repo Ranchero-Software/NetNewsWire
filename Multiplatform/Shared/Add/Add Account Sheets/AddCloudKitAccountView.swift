@@ -18,7 +18,9 @@ struct AddCloudKitAccountView: View {
 		#if os(macOS)
 		macBody
 		#else
-		iosBody
+		NavigationView {
+			iosBody
+		}
 		#endif
 		
     }
@@ -26,29 +28,28 @@ struct AddCloudKitAccountView: View {
 	#if os(iOS)
 	var iosBody: some View {
 		List {
-			Section(header: formHeader, content: {
+			Section(header: formHeader, footer: formFooter, content: {
 				Button(action: {
 					_ = AccountManager.shared.createAccount(type: .cloudKit)
 					presentationMode.wrappedValue.dismiss()
 				}, label: {
-					Text("Add")
-				})
+					HStack {
+						Spacer()
+						Text("Add Account")
+						Spacer()
+					}
+				}).disabled(AccountManager.shared.activeAccounts.filter({ $0.type == .cloudKit }).count > 0)
 			})
 		}.navigationBarItems(leading:
 			Button(action: {
 				presentationMode.wrappedValue.dismiss()
 			}, label: {
-				Text("Dismiss")
-			})
-		 
-		 , trailing:
-			Button(action: {
-				_ = AccountManager.shared.createAccount(type: .cloudKit)
-				presentationMode.wrappedValue.dismiss()
-			}, label: {
-				Text("Add")
+				Text("Cancel")
 			})
 		)
+		.navigationBarTitleDisplayMode(.inline)
+		.navigationTitle(Text(AccountType.cloudKit.localizedAccountName()))
+		.listStyle(InsetGroupedListStyle())
 	}
 	#endif
 	
@@ -102,20 +103,27 @@ struct AddCloudKitAccountView: View {
 	
 	var formHeader: some View {
 		HStack {
+			Spacer()
 			VStack(alignment: .center) {
 				AccountType.cloudKit.image()
 					.resizable()
 					.frame(width: 50, height: 50)
-			Text("Sign in to your iCloud account.")
-				.font(.headline)
-			
-			Text("This account syncs across your Mac and iOS devices using your iCloud account.")
-				.foregroundColor(.secondary)
-				.font(.callout)
-				.lineLimit(2)
-				.padding(.top, 4)
 			}
-		}
+			Spacer()
+		}.padding(.vertical)
+	}
+	
+	var formFooter: some View {
+		HStack {
+			Spacer()
+			VStack(spacing: 8) {
+				Text("This account syncs across your Mac and iOS devices using your iCloud account.").foregroundColor(.secondary)
+			}
+			.multilineTextAlignment(.center)
+			.font(.caption)
+			Spacer()
+			
+		}.padding(.vertical)
 	}
 }
 

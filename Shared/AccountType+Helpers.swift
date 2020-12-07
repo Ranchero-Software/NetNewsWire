@@ -59,6 +59,9 @@ extension AccountType {
 	func image() -> Image {
 		switch self {
 		case .onMyMac:
+			// If it's the multiplatform app, the asset catalog contains assets for 
+			
+			
 			return Image("accountLocal")
 		case .bazQux:
 			return Image("accountBazQux")

@@ -32,7 +32,29 @@ struct AddFeedlyAccountView: View {
 	
 	#if os(iOS)
 	var iosBody: some View {
-		Text("TBC")
+		List {
+			Section(header: formHeader, footer: formFooter, content: {
+				Button(action: {
+					model.authenticateFeedly()
+				}, label: {
+					HStack {
+						Spacer()
+						Text("Add Account")
+						Spacer()
+					}
+				})
+			})
+		}.navigationBarItems(leading:
+			Button(action: {
+				presentationMode.wrappedValue.dismiss()
+			}, label: {
+				Text("Cancel")
+			})
+		)
+		.navigationBarTitleDisplayMode(.inline)
+		.navigationTitle(Text(AccountType.feedly.localizedAccountName()))
+		.listStyle(InsetGroupedListStyle())
+		
 	}
 	#endif
 	
@@ -90,6 +112,35 @@ struct AddFeedlyAccountView: View {
 	}
 	#endif
 
+	var formHeader: some View {
+		HStack {
+			Spacer()
+			VStack(alignment: .center) {
+				AccountType.feedly.image()
+					.resizable()
+					.frame(width: 50, height: 50)
+			}
+			Spacer()
+		}.padding(.vertical)
+	}
+	
+	var formFooter: some View {
+		HStack {
+			Spacer()
+			VStack(spacing: 8) {
+				Text("Sign in to your Feedly account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have an Feedly account?").foregroundColor(.secondary)
+				Button(action: {
+					model.presentSignUpOption(.feedly)
+				}, label: {
+					Text("Sign Up Here").foregroundColor(.blue).multilineTextAlignment(.center)
+				})
+			}
+			.multilineTextAlignment(.center)
+			.font(.caption)
+			Spacer()
+			
+		}.padding(.vertical)
+	}
 	
 }
 

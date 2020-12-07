@@ -74,7 +74,7 @@ struct AddFeedbinAccountView: View {
 			Button(action: {
 				presentationMode.wrappedValue.dismiss()
 			}, label: {
-				Text("Dismiss")
+				Text("Cancel")
 			}))
 		.listStyle(InsetGroupedListStyle())
 		.navigationBarTitleDisplayMode(.inline)

@@ -25,6 +25,8 @@ class AddFeedlyViewModel: ObservableObject, OAuthAccountAuthorizationOperationDe
 		addAccount.delegate = self
 		#if os(macOS)
 		addAccount.presentationAnchor = NSApplication.shared.windows.last
+		#else
+		addAccount.presentationAnchor = UIApplication.shared.windows.last
 		#endif
 		MainThreadOperationQueue.shared.add(addAccount)
 	}

@@ -22,7 +22,9 @@ struct AddFeedWranglerAccountView: View {
 		#if os(macOS)
 		macBody
 		#else
-		iosBody
+		NavigationView {
+			iosBody
+		}
 		#endif
     }
 	
@@ -30,10 +32,8 @@ struct AddFeedWranglerAccountView: View {
 	#if os(iOS)
 	var iosBody: some View {
 		List {
-			Section(header: formHeader, footer: ProgressView()
-						.scaleEffect(CGSize(width: 0.5, height: 0.5))
-						   .hidden(!model.isAuthenticating) , content: {
-				TextField("me@email.com", text: $model.username)
+			Section(header: formHeader, content: {
+				TextField("Email", text: $model.username)
 				if model.showPassword == false {
 					ZStack {
 						HStack {
@@ -60,20 +60,39 @@ struct AddFeedWranglerAccountView: View {
 						}
 					}
 				}
+				
 			})
-		}.navigationBarItems(leading:
+			
+			Section(footer: formFooter, content: {
+				Button(action: {
+					model.authenticateFeedWrangler()
+				}, label: {
+					HStack {
+						Spacer()
+						Text("Sign In")
+						Spacer()
+					}
+				}).disabled(model.username.isEmpty || model.password.isEmpty)
+			})
+			
+		}
+		.navigationBarItems(leading:
 			Button(action: {
 				presentationMode.wrappedValue.dismiss()
 			}, label: {
-				Text("Dismiss")
-			})
-		, trailing:
-			Button(action: {
-				model.authenticateFeedWrangler()
-			}, label: {
-				Text("Add")
-			}).disabled(model.username.isEmpty || model.password.isEmpty)
-		)
+				Text("Cancel")
+			}))
+		.listStyle(InsetGroupedListStyle())
+		.navigationBarTitleDisplayMode(.inline)
+		.navigationTitle(Text("Feed Wrangler"))
+		.alert(isPresented: $model.showError, content: {
+			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel(Text("Dismiss")))
+		})
+		.onReceive(model.$canDismiss, perform: { value in
+			if value == true {
+				presentationMode.wrappedValue.dismiss()
+			}
+		})
 	}
 	#endif
 	
@@ -158,20 +177,34 @@ struct AddFeedWranglerAccountView: View {
 
 	var formHeader: some View {
 		HStack {
+			Spacer()
 			VStack(alignment: .center) {
-				AccountType.newsBlur.image()
+				AccountType.feedWrangler.image()
 					.resizable()
 					.frame(width: 50, height: 50)
-			Text("Sign in to your Feed Wrangler account.")
-				.font(.headline)
-			
-			Text("This account syncs across your subscriptions across devices.")
-				.foregroundColor(.secondary)
-				.font(.callout)
-				.lineLimit(2)
-				.padding(.top, 4)
 			}
-		}
+			Spacer()
+		}.padding(.vertical)
+	}
+	
+	var formFooter: some View {
+		HStack {
+			Spacer()
+			VStack(spacing: 8) {
+				Text("Sign in to your Feed Wrangler account and sync your subscriptions across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
+				Text("Don't have a Feed Wrangler account?").foregroundColor(.secondary)
+				Button(action: {
+					model.presentSignUpOption(.feedWrangler)
+				}, label: {
+					Text("Sign Up Here").foregroundColor(.blue).multilineTextAlignment(.center)
+				})
+				ProgressView().hidden(!model.isAuthenticating)
+			}
+			.multilineTextAlignment(.center)
+			.font(.caption2)
+			Spacer()
+			
+		}.padding(.vertical)
 	}
 	
 }

@@ -19,7 +19,9 @@ struct AddLocalAccountView: View {
 		#if os(macOS)
 		macBody
 		#else
-		iosBody
+		NavigationView {
+			iosBody
+		}
 		#endif
 	}
 	
@@ -29,22 +31,30 @@ struct AddLocalAccountView: View {
 			Section(header: formHeader, content: {
 				TextField("Account Name", text: $newAccountName)
 			})
+			
+			Section(footer: formFooter, content: {
+				Button(action: {
+					let newAccount = AccountManager.shared.createAccount(type: .onMyMac)
+					newAccount.name = newAccountName
+					presentationMode.wrappedValue.dismiss()
+				}, label: {
+					HStack {
+						Spacer()
+						Text("Add Account")
+						Spacer()
+					}
+				})
+			})
 		}.navigationBarItems(leading:
 			Button(action: {
 				presentationMode.wrappedValue.dismiss()
 			}, label: {
-				Text("Dismiss")
-			})
-		 
-		 , trailing:
-			Button(action: {
-				let newAccount = AccountManager.shared.createAccount(type: .onMyMac)
-				newAccount.name = newAccountName
-				presentationMode.wrappedValue.dismiss()
-			}, label: {
-				Text("Add")
+				Text("Cancel")
 			})
 		)
+		.navigationBarTitleDisplayMode(.inline)
+		.navigationTitle(Text(AccountType.onMyMac.localizedAccountName()))
+		.listStyle(InsetGroupedListStyle())
 	}
 	#endif
 	
@@ -98,17 +108,27 @@ struct AddLocalAccountView: View {
 	
 	var formHeader: some View {
 		HStack {
+			Spacer()
 			VStack(alignment: .center) {
 				AccountType.onMyMac.image()
 					.resizable()
 					.frame(width: 50, height: 50)
-				Text("Create a local account on your Mac.")
-					.font(.headline)
-				Text("Local accounts store their data on your Mac. They do not sync across your devices.")
-					.font(.callout)
-					.foregroundColor(.secondary)
 			}
-		}
+			Spacer()
+		}.padding(.vertical)
+	}
+	
+	var formFooter: some View {
+		HStack {
+			Spacer()
+			VStack(spacing: 8) {
+				Text("Local accounts do not sync your subscriptions across devices.").foregroundColor(.secondary)
+			}
+			.multilineTextAlignment(.center)
+			.font(.caption)
+			Spacer()
+			
+		}.padding(.vertical)
 	}
 	
 }
