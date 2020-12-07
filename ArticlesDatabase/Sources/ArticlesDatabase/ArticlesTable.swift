@@ -753,7 +753,7 @@ private extension ArticlesTable {
 				return
 			}
 			s += word
-			if s != "AND" && s != "OR" {
+			if word != "AND" && word != "OR" {
 				s += "*"
 			}
 			s += " "
