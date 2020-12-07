@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "phone.pdf",
+      "filename" : "iphone-any-slice.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "iphone-dark-slice.pdf",
       "idiom" : "universal"
     }
   ],
@@ -11,6 +21,6 @@
   },
   "properties" : {
     "preserves-vector-representation" : true,
-    "template-rendering-intent" : "template"
+    "template-rendering-intent" : "original"
   }
 }

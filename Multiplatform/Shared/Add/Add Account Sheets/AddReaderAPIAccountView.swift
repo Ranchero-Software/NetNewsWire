@@ -71,7 +71,7 @@ struct AddReaderAPIAccountView: View {
 				}, label: {
 					HStack {
 						Spacer()
-						Text("Sign In")
+						Text("Add Account")
 						Spacer()
 					}
 				}).disabled(createDisabled())

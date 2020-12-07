@@ -24,8 +24,6 @@ struct AddFeedlyAccountView: View {
 		NavigationView {
 			iosBody
 		}
-		
-		
 		#endif
     }
 	

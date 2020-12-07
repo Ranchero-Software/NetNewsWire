@@ -67,7 +67,7 @@ struct AddNewsBlurAccountView: View {
 				}, label: {
 					HStack {
 						Spacer()
-						Text("Sign In")
+						Text("Add Account")
 						Spacer()
 					}
 				}).disabled(model.username.isEmpty || model.password.isEmpty)

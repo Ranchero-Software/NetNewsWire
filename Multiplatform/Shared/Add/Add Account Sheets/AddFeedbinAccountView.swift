@@ -65,7 +65,11 @@ struct AddFeedbinAccountView: View {
 				Button(action: {
 					model.authenticateFeedbin()
 				}, label: {
-					Text("Sign In")
+					HStack {
+						Spacer()
+						Text("Add Account")
+						Spacer()
+					}
 				}).disabled(model.username.isEmpty || model.password.isEmpty)
 			})
 			
