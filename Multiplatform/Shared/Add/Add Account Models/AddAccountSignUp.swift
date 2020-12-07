@@ -49,11 +49,11 @@ extension AddAccountSignUp {
 		case .feedbin:
 			UIApplication.shared.open(URL(string: "https://feedbin.com/signup")!, options: [:], completionHandler: nil)
 		case .feedly:
-			UIApplication.shared.open(URL(string: "https://feedwrangler.net/users/new")!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
+			UIApplication.shared.open(URL(string: "https://feedly.com")!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
 		case .feedWrangler:
-			UIApplication.shared.open(URL(string: "https://freshrss.org")!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
+			UIApplication.shared.open(URL(string: "https://feedwrangler.net/users/new")!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
 		case .freshRSS:
-			UIApplication.shared.open(URL(string: "https://www.inoreader.com")!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
+			UIApplication.shared.open(URL(string: "https://freshrss.org")!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
 		case .inoreader:
 			UIApplication.shared.open(URL(string: "https://www.inoreader.com")!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
 		case .newsBlur:
