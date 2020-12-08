@@ -40,7 +40,6 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 		tableView.frame = rTable
 		
 		showDefaultView()
-
 		
 	}
 	
@@ -62,8 +61,24 @@ final class ExtensionPointPreferencesViewController: NSViewController {
 		}
 		
 		let extensionPoint = activeExtensionPoints[tableView.selectedRow]
-		ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint.extensionPointID)
-		hideController()
+		
+		let alert = NSAlert()
+		alert.alertStyle = .warning
+		let prompt = NSLocalizedString("Deactivate", comment: "Deactivate")
+		alert.messageText = "\(prompt) “\(extensionPoint.title)”?"
+		let extensionPointTypeTitle = extensionPoint.extensionPointID.extensionPointType.title
+		alert.informativeText = NSLocalizedString("Are you sure you want to deactivate the \(extensionPointTypeTitle) extension “\(extensionPoint.title)”?", comment: "Deactivate text")
+		
+		alert.addButton(withTitle: NSLocalizedString("Deactivate", comment: "Deactivate Extension"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Deactivate Extension"))
+			
+		alert.beginSheetModal(for: view.window!) { [weak self] result in
+			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+				ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint.extensionPointID)
+				self?.hideController()
+			}
+		}
+
 	}
 }
 
