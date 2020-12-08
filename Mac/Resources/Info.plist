@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AppGroup</key>
-	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire</string>
+	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen</string>
 	<key>AppIdentifierPrefix</key>
 	<string>$(AppIdentifierPrefix)</string>
 	<key>CFBundleDevelopmentRegion</key>

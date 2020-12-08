@@ -16,7 +16,7 @@
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire</string>
+		<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen</string>
 	</array>
 </dict>
 </plist>
