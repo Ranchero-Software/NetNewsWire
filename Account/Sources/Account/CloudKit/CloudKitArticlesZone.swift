@@ -115,38 +115,35 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 		
-		DispatchQueue.global(qos: .utility).async {
-			
-			for statusUpdate in statusUpdates {
-				switch statusUpdate.record {
-				case .all:
-					modifyRecords.append(self.makeStatusRecord(statusUpdate))
-					modifyRecords.append(self.makeArticleRecord(statusUpdate.article!))
-				case .new:
-					newRecords.append(self.makeStatusRecord(statusUpdate))
-					newRecords.append(self.makeArticleRecord(statusUpdate.article!))
-				case .delete:
-					deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: Self.zoneID))
-				case .statusOnly:
-					modifyRecords.append(self.makeStatusRecord(statusUpdate))
-					deleteRecordIDs.append(CKRecord.ID(recordName: self.articleID(statusUpdate.articleID), zoneID: Self.zoneID))
-				}
+		for statusUpdate in statusUpdates {
+			switch statusUpdate.record {
+			case .all:
+				modifyRecords.append(self.makeStatusRecord(statusUpdate))
+				modifyRecords.append(self.makeArticleRecord(statusUpdate.article!))
+			case .new:
+				newRecords.append(self.makeStatusRecord(statusUpdate))
+				newRecords.append(self.makeArticleRecord(statusUpdate.article!))
+			case .delete:
+				deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: Self.zoneID))
+			case .statusOnly:
+				modifyRecords.append(self.makeStatusRecord(statusUpdate))
+				deleteRecordIDs.append(CKRecord.ID(recordName: self.articleID(statusUpdate.articleID), zoneID: Self.zoneID))
 			}
-			
-			self.modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
-				switch result {
-				case .success:
-					self.saveIfNew(newRecords) { result in
-						switch result {
-						case .success:
-							completion(.success(()))
-						case .failure(let error):
-							completion(.failure(error))
-						}
+		}
+		
+		self.modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
+			switch result {
+			case .success:
+				self.saveIfNew(newRecords) { result in
+					switch result {
+					case .success:
+						completion(.success(()))
+					case .failure(let error):
+						completion(.failure(error))
 					}
-				case .failure(let error):
-					self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
 				}
+			case .failure(let error):
+				self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
 			}
 		}
 	}
