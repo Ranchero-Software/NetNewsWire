@@ -912,7 +912,7 @@ Don't have a Reader account?</string>
                                                         <constraint firstAttribute="height" constant="44" id="dOv-Gz-h7s"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                    <state key="normal" title="Add Account">
+                                                    <state key="normal" title="Use iCloud">
                                                         <color key="titleColor" name="secondaryAccentColor"/>
                                                     </state>
                                                     <connections>
