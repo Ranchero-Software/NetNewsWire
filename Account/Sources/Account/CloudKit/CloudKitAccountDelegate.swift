@@ -198,7 +198,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				container.removeWebFeed(feed)
 				completion(.success(()))
 			case .failure(let error):
-				completion(.failure(error))
+				switch error {
+				case CloudKitZoneError.invalidParameter:
+					// We got into a bad state and should remove the feed to clear up the bad data
+					account.clearWebFeedMetadata(feed)
+					container.removeWebFeed(feed)
+				default:
+					completion(.failure(error))
+				}
 			}
 		}
 	}
@@ -708,6 +715,7 @@ private extension CloudKitAccountDelegate {
 										feed.externalID = externalID
 										self.sendNewArticlesToTheCloud(account, feed, completion: completion)
 									case .failure(let error):
+										container.removeWebFeed(feed)
 										self.refreshProgress.clear()
 										completion(.failure(error))
 									}
