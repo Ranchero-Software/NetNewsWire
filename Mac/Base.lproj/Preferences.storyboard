@@ -255,8 +255,8 @@
         <scene sceneID="z1G-rc-sP5">
             <objects>
                 <viewController storyboardIdentifier="Advanced" id="GNh-Wp-giO" customClass="AdvancedPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="Hij-7D-6Pw">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="279"/>
+                    <view key="view" id="Hij-7D-6Pw">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="267"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="uJD-OF-YVY">
@@ -424,21 +424,21 @@
         <scene sceneID="Rsj-41-ZOj">
             <objects>
                 <viewController storyboardIdentifier="Accounts" id="z5c-Js-Up9" customClass="AccountsPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="GrE-GP-fYK">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="299"/>
+                    <view key="view" id="GrE-GP-fYK">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="315"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="7UM-iq-OLB" customClass="PreferencesTableViewBackgroundView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="20" y="44" width="180" height="344"/>
+                                <rect key="frame" x="20" y="44" width="180" height="251"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="PaF-du-r3c">
-                                        <rect key="frame" x="1" y="0.0" width="178" height="343"/>
+                                        <rect key="frame" x="1" y="1" width="178" height="249"/>
                                         <clipView key="contentView" id="cil-Gq-akO">
-                                            <rect key="frame" x="0.0" y="0.0" width="178" height="343"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="178" height="249"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" viewBased="YES" id="aTp-KR-y6b">
-                                                    <rect key="frame" x="0.0" y="0.0" width="178" height="343"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="178" height="249"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -460,8 +460,8 @@
                                                                     <rect key="frame" x="11" y="1" width="155" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
-                                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="27f-p8-Wnt">
-                                                                            <rect key="frame" x="3" y="0.0" width="17" height="17"/>
+                                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="27f-p8-Wnt">
+                                                                            <rect key="frame" x="6" y="-2" width="16" height="22"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" constant="16" id="ewi-ds-jXB"/>
                                                                                 <constraint firstAttribute="width" constant="16" id="k2v-Dn-07l"/>
@@ -513,7 +513,7 @@
                                     <constraint firstItem="PaF-du-r3c" firstAttribute="leading" secondItem="7UM-iq-OLB" secondAttribute="leading" constant="1" id="Brq-cg-FVo"/>
                                     <constraint firstItem="PaF-du-r3c" firstAttribute="top" secondItem="7UM-iq-OLB" secondAttribute="top" constant="1" id="G3u-Hk-xlH"/>
                                     <constraint firstAttribute="width" constant="180" id="MWF-uR-jbC"/>
-                                    <constraint firstAttribute="bottom" secondItem="PaF-du-r3c" secondAttribute="bottom" id="bjN-h8-jtK"/>
+                                    <constraint firstAttribute="bottom" secondItem="PaF-du-r3c" secondAttribute="bottom" constant="1" id="bjN-h8-jtK"/>
                                     <constraint firstAttribute="trailing" secondItem="PaF-du-r3c" secondAttribute="trailing" constant="1" id="dfm-a5-dYc"/>
                                 </constraints>
                             </customView>
@@ -545,7 +545,7 @@
                                 <rect key="frame" x="83" y="20" width="117" height="24"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Y7D-xQ-wep">
-                                <rect key="frame" x="208" y="20" width="222" height="368"/>
+                                <rect key="frame" x="208" y="20" width="222" height="275"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -576,7 +576,7 @@
                 </viewController>
                 <customObject id="AgZ-2t-A2h" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-558" y="806"/>
+            <point key="canvasLocation" x="-558" y="830"/>
         </scene>
         <!--Container-->
         <scene sceneID="fzS-hg-3TF">
@@ -595,21 +595,21 @@
         <scene sceneID="2Q8-nu-xsg">
             <objects>
                 <viewController storyboardIdentifier="Extensions" id="K4Z-qS-hrR" customClass="ExtensionPointPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="Jpa-aD-PZF">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="299"/>
+                    <view key="view" id="Jpa-aD-PZF">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="315"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="pjs-G4-byk" customClass="PreferencesTableViewBackgroundView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="20" y="44" width="180" height="337"/>
+                                <rect key="frame" x="20" y="44" width="180" height="251"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="29T-r2-ckC">
-                                        <rect key="frame" x="1" y="0.0" width="178" height="336"/>
+                                        <rect key="frame" x="1" y="1" width="178" height="249"/>
                                         <clipView key="contentView" id="dXw-GY-TP8">
-                                            <rect key="frame" x="0.0" y="0.0" width="178" height="336"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="178" height="249"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" viewBased="YES" id="dfn-Vn-oDp">
-                                                    <rect key="frame" x="0.0" y="0.0" width="178" height="336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="178" height="249"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -631,8 +631,8 @@
                                                                     <rect key="frame" x="11" y="1" width="155" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
-                                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kmG-vw-CbN">
-                                                                            <rect key="frame" x="3" y="0.0" width="17" height="17"/>
+                                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kmG-vw-CbN">
+                                                                            <rect key="frame" x="6" y="-2" width="16" height="22"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" constant="16" id="qC6-Mb-6EQ"/>
                                                                                 <constraint firstAttribute="width" constant="16" id="yi0-bd-XJq"/>
@@ -678,7 +678,7 @@
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="180" id="0gU-oR-pQf"/>
-                                    <constraint firstAttribute="bottom" secondItem="29T-r2-ckC" secondAttribute="bottom" id="BMY-9E-vH2"/>
+                                    <constraint firstAttribute="bottom" secondItem="29T-r2-ckC" secondAttribute="bottom" constant="1" id="BMY-9E-vH2"/>
                                     <constraint firstAttribute="trailing" secondItem="29T-r2-ckC" secondAttribute="trailing" constant="1" id="dAW-1i-3iD"/>
                                     <constraint firstItem="29T-r2-ckC" firstAttribute="top" secondItem="pjs-G4-byk" secondAttribute="top" constant="1" id="tAi-6L-Tjj"/>
                                     <constraint firstItem="29T-r2-ckC" firstAttribute="leading" secondItem="pjs-G4-byk" secondAttribute="leading" constant="1" id="wXE-ze-ubv"/>
@@ -712,7 +712,7 @@
                                 <rect key="frame" x="83" y="20" width="117" height="24"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="N1N-pE-gBL">
-                                <rect key="frame" x="208" y="20" width="222" height="361"/>
+                                <rect key="frame" x="208" y="20" width="222" height="275"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -743,7 +743,7 @@
                 </viewController>
                 <customObject id="Cne-wm-w1Q" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-36" y="806"/>
+            <point key="canvasLocation" x="-36" y="826"/>
         </scene>
     </scenes>
     <resources>
