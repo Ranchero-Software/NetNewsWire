@@ -11,7 +11,8 @@ import AppKit
 final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet var nameTextField: NSTextField?
-
+	@IBOutlet weak var smartFeedImageView: NSImageView!
+	
 	private var smartFeed: PseudoFeed? {
 		didSet {
 			updateUI()
@@ -61,8 +62,10 @@ private extension BuiltinSmartFeedInspectorViewController {
 	}
 
 	func updateUI() {
-
 		nameTextField?.stringValue = smartFeed?.nameForDisplay ?? ""
 		windowTitle = smartFeed?.nameForDisplay ?? NSLocalizedString("Smart Feed Inspector", comment: "Smart Feed Inspector window title")
+		if #available(macOS 11.0, *) {
+			smartFeedImageView?.image = smartFeed?.smallIcon?.image
+		}
 	}
 }

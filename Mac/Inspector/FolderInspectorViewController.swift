@@ -13,7 +13,8 @@ import RSCore
 final class FolderInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet var nameTextField: NSTextField?
-
+	@IBOutlet weak var folderImageView: NSImageView!
+	
 	private var folder: Folder? {
 		didSet {
 			if folder != oldValue {
@@ -45,6 +46,13 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 	override func viewDidLoad() {
 		updateUI()
+		
+		if #available(macOS 11.0, *) {
+			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
+			folderImageView.image = image
+			folderImageView.contentTintColor = NSColor.controlAccentColor
+		}
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 	}
 
