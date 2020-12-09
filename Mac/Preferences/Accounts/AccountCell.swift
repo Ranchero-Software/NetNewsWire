@@ -14,6 +14,10 @@ class AccountCell: NSTableCellView {
 	
 	var isImageTemplateCapable = true
 	
+	override func prepareForReuse() {
+		originalImage = nil
+	}
+	
 	override var backgroundStyle: NSView.BackgroundStyle {
 		didSet {
 			updateImage()
