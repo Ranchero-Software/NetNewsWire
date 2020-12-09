@@ -110,6 +110,8 @@ private extension FolderInspectorViewController {
 		account.renameFolder(folder, to: nameTextField.stringValue) { [weak self] result in
 			if case .failure(let error) = result {
 				self?.presentError(error)
+			} else {
+				self?.windowTitle = folder.nameForDisplay
 			}
 		}
 	}

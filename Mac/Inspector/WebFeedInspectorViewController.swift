@@ -220,6 +220,8 @@ private extension WebFeedInspectorViewController {
 		account.renameWebFeed(feed, to: nameTextField.stringValue) { [weak self] result in
 			if case .failure(let error) = result {
 				self?.presentError(error)
+			} else {
+				self?.windowTitle = feed.nameForDisplay
 			}
 		}
 	}
