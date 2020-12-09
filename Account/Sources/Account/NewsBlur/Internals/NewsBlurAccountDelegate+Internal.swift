@@ -146,16 +146,11 @@ extension NewsBlurAccountDelegate {
 
 		// Sync the folders
 		for (folderName, folderRelationships) in newsBlurFolderDict {
-			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
-
-			// Handle account-level folder
-			if folderName == " " {
-				for feed in account.topLevelWebFeeds {
-					if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
-						account.removeWebFeed(feed)
-					}
-				}
+			guard folderName != " " else {
+				continue
 			}
+
+			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
 
 			guard let folder = folderDict[folderName] else { return }
 
@@ -182,6 +177,17 @@ extension NewsBlurAccountDelegate {
 				}
 			}
 		}
+		
+		// Handle the account level feeds
+		if let folderRelationships = newsBlurFolderDict[" "] {
+			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
+			for feed in account.topLevelWebFeeds {
+				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
+					account.removeWebFeed(feed)
+				}
+			}
+		}
+		
 	}
 
 	func clearFolderRelationship(for feed: WebFeed, withFolderName folderName: String) {
