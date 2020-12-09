@@ -280,13 +280,6 @@ private extension ArticleRenderer {
 		var d = [String: String]()
 		let bodyFont = UIFont.preferredFont(forTextStyle: .body)
 		d["font-size"] = String(describing: bodyFont.pointSize)
-		
-		if let components = UIColor(named: "AccentColor")?.cgColor.components {
-			d["accent-r"] = String(Int(round(components[0] * 0xFF)))
-			d["accent-g"] = String(Int(round(components[1] * 0xFF)))
-			d["accent-b"] = String(Int(round(components[2] * 0xFF)))
-		}
-		
 		return d
 	}
 	#else
