@@ -166,7 +166,11 @@ private extension ArticleRenderer {
 		}
 		
 		d["body"] = body
-
+		
+		#if os(macOS)
+		d["text_size_class"] = AppDefaults.shared.articleTextSize.cssClass
+		#endif
+		
 		var components = URLComponents()
 		components.scheme = Self.imageIconScheme
 		components.path = article.articleID
@@ -287,9 +291,7 @@ private extension ArticleRenderer {
 	}
 	#else
 	func styleSubstitutions() -> [String: String] {
-		var d = [String: String]()
-		d["font-size"] = String(describing: AppDefaults.shared.articleTextSize.fontSize)
-		return d
+		return [String: String]()
 	}
 	#endif
 

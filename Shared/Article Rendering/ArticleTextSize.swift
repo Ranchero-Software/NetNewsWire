@@ -15,24 +15,22 @@ enum ArticleTextSize: Int, CaseIterable, Identifiable {
 	case xlarge = 4
 	case xxlarge = 5
 	
-	#if os(macOS)
-	var fontSize: Int {
+	var id: String { description() }
+	
+	var cssClass: String {
 		switch self {
 		case .small:
-			return 14
+			return "smallText"
 		case .medium:
-			return 16
+			return "mediumText"
 		case .large:
-			return 18
+			return "largeText"
 		case .xlarge:
-			return 20
+			return "xLargeText"
 		case .xxlarge:
-			return 22
+			return "xxLargeText"
 		}
 	}
-	#endif
-	
-	var id: String { description() }
 	
 	func description() -> String {
 		switch self {

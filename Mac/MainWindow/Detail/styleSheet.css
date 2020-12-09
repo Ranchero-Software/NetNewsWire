@@ -4,7 +4,26 @@ body {
 	padding-left: 48px;
 	padding-right: 48px;
 	font-family: -apple-system;
-	font-size: [[font-size]]px;
+}
+
+.smallText {
+	font-size: 14px;
+}
+
+.mediumText {
+	font-size: 16px;
+}
+
+.largeText {
+	font-size: 18px;
+}
+
+.xlargeText {
+	font-size: 20px;
+}
+
+.xxlargeText {
+	font-size: 22px;
 }
 
 :root {

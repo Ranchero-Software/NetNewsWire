@@ -40,13 +40,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		}
 	}
 	
-	private var articleTextSize = AppDefaults.shared.articleTextSize {
-		didSet {
-			if articleTextSize != oldValue {
-				reloadHTML()
-			}
-		}
-	}
+	private var articleTextSize = AppDefaults.shared.articleTextSize
 
 	#if !MAC_APP_STORE
 		private var webInspectorEnabled: Bool {
@@ -146,7 +140,10 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 	}
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		self.articleTextSize = AppDefaults.shared.articleTextSize
+		if articleTextSize != AppDefaults.shared.articleTextSize {
+			articleTextSize = AppDefaults.shared.articleTextSize
+			webView.evaluateJavaScript("updateTextSize(\"\(articleTextSize.cssClass)\");")
+		}
 	}
 	
 	// MARK: Media Functions
