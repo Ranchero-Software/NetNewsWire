@@ -205,13 +205,14 @@ public final class TwitterFeedProvider: FeedProvider {
 		var parameters = [String: Any]()
 		var isSearch = false
 		
-		if let sinceToken = webFeed.sinceToken, let sinceID = Int(sinceToken) {
-			parameters["since_id"] = sinceID
-		}
-		
+		parameters["count"] = 20
+
 		switch urlComponents.path {
 		case "", "/", "/home":
 			parameters["count"] = 100
+			if let sinceToken = webFeed.sinceToken, let sinceID = Int(sinceToken) {
+				parameters["since_id"] = sinceID
+			}
 			api = "statuses/home_timeline.json"
 		case "/notifications/mentions":
 			api = "statuses/mentions_timeline.json"
