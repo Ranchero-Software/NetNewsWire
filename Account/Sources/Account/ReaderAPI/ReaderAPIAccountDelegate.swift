@@ -996,6 +996,7 @@ private extension ReaderAPIAccountDelegate {
 	
 	func syncArticleReadState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
+			completion()
 			return
 		}
 
@@ -1044,6 +1045,7 @@ private extension ReaderAPIAccountDelegate {
 	
 	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
+			completion()
 			return
 		}
 
