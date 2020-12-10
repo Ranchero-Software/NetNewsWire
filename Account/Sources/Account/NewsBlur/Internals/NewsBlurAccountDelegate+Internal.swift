@@ -311,8 +311,11 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func syncStoryReadState(account: Account, hashes: [NewsBlurStoryHash]?) {
-		guard let hashes = hashes else { return }
+	func syncStoryReadState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
+		guard let hashes = hashes else {
+			completion()
+			return
+		}
 
 		database.selectPendingReadStatusArticleIDs() { result in
 			func process(_ pendingStoryHashes: Set<String>) {
@@ -325,13 +328,25 @@ extension NewsBlurAccountDelegate {
 						return
 					}
 
+					let group = DispatchGroup()
+					
 					// Mark articles as unread
 					let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-					account.markAsUnread(deltaUnreadArticleIDs)
+					group.enter()
+					account.markAsUnread(deltaUnreadArticleIDs) { _ in
+						group.leave()
+					}
 
 					// Mark articles as read
 					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-					account.markAsRead(deltaReadArticleIDs)
+					group.enter()
+					account.markAsRead(deltaReadArticleIDs) { _ in
+						group.leave()
+					}
+					
+					group.notify(queue: DispatchQueue.main) {
+						completion()
+					}
 				}
 			}
 
@@ -344,8 +359,11 @@ extension NewsBlurAccountDelegate {
 		}
 	}
 
-	func syncStoryStarredState(account: Account, hashes: [NewsBlurStoryHash]?) {
-		guard let hashes = hashes else { return }
+	func syncStoryStarredState(account: Account, hashes: [NewsBlurStoryHash]?, completion: @escaping (() -> Void)) {
+		guard let hashes = hashes else {
+			completion()
+			return
+		}
 
 		database.selectPendingStarredStatusArticleIDs() { result in
 			func process(_ pendingStoryHashes: Set<String>) {
@@ -358,13 +376,25 @@ extension NewsBlurAccountDelegate {
 						return
 					}
 
+					let group = DispatchGroup()
+					
 					// Mark articles as starred
 					let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-					account.markAsStarred(deltaStarredArticleIDs)
+					group.enter()
+					account.markAsStarred(deltaStarredArticleIDs) { _ in
+						group.leave()
+					}
 
 					// Mark articles as unstarred
 					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-					account.markAsUnstarred(deltaUnstarredArticleIDs)
+					group.enter()
+					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
+						group.leave()
+					}
+
+					group.notify(queue: DispatchQueue.main) {
+						completion()
+					}
 				}
 			}
 

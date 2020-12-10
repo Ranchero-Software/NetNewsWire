@@ -197,8 +197,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		caller.retrieveUnreadStoryHashes { result in
 			switch result {
 			case .success(let storyHashes):
-				self.syncStoryReadState(account: account, hashes: storyHashes)
-				group.leave()
+				self.syncStoryReadState(account: account, hashes: storyHashes) {
+					group.leave()
+				}
 			case .failure(let error):
 				errorOccurred = true
 				os_log(.info, log: self.log, "Retrieving unread stories failed: %@.", error.localizedDescription)
@@ -210,8 +211,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		caller.retrieveStarredStoryHashes { result in
 			switch result {
 			case .success(let storyHashes):
-				self.syncStoryStarredState(account: account, hashes: storyHashes)
-				group.leave()
+				self.syncStoryStarredState(account: account, hashes: storyHashes) {
+					group.leave()
+				}
 			case .failure(let error):
 				errorOccurred = true
 				os_log(.info, log: self.log, "Retrieving starred stories failed: %@.", error.localizedDescription)
