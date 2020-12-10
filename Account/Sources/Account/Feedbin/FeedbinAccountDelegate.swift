@@ -189,8 +189,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		caller.retrieveUnreadEntries() { result in
 			switch result {
 			case .success(let articleIDs):
-				self.syncArticleReadState(account: account, articleIDs: articleIDs)
-				group.leave()
+				self.syncArticleReadState(account: account, articleIDs: articleIDs) {
+					group.leave()
+				}
 			case .failure(let error):
 				errorOccurred = true
 				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
@@ -203,8 +204,9 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		caller.retrieveStarredEntries() { result in
 			switch result {
 			case .success(let articleIDs):
-				self.syncArticleStarredState(account: account, articleIDs: articleIDs)
-				group.leave()
+				self.syncArticleStarredState(account: account, articleIDs: articleIDs) {
+					group.leave()
+				}
 			case .failure(let error):
 				errorOccurred = true
 				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
@@ -1245,8 +1247,9 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func syncArticleReadState(account: Account, articleIDs: [Int]?) {
+	func syncArticleReadState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
+			completion()
 			return
 		}
 
@@ -1262,13 +1265,26 @@ private extension FeedbinAccountDelegate {
 						return
 					}
 
+					let group = DispatchGroup()
+					
 					// Mark articles as unread
 					let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-					account.markAsUnread(deltaUnreadArticleIDs)
+					group.enter()
+					account.markAsUnread(deltaUnreadArticleIDs) { _ in
+						group.leave()
+					}
 
 					// Mark articles as read
 					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-					account.markAsRead(deltaReadArticleIDs)
+					group.enter()
+					account.markAsRead(deltaReadArticleIDs) { _ in
+						group.leave()
+					}
+					
+					group.notify(queue: DispatchQueue.main) {
+						completion()
+					}
+					
 				}
 
 			}
@@ -1284,8 +1300,9 @@ private extension FeedbinAccountDelegate {
 		
 	}
 	
-	func syncArticleStarredState(account: Account, articleIDs: [Int]?) {
+	func syncArticleStarredState(account: Account, articleIDs: [Int]?, completion: @escaping (() -> Void)) {
 		guard let articleIDs = articleIDs else {
+			completion()
 			return
 		}
 
@@ -1294,20 +1311,32 @@ private extension FeedbinAccountDelegate {
 			func process(_ pendingArticleIDs: Set<String>) {
 				
 				let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
-				let updatableFeedbinUnreadArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
+				let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
 
 				account.fetchStarredArticleIDs { articleIDsResult in
 					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
 						return
 					}
 
+					let group = DispatchGroup()
+					
 					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-					account.markAsStarred(deltaStarredArticleIDs)
+					let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+					group.enter()
+					account.markAsStarred(deltaStarredArticleIDs) { _ in
+						group.leave()
+					}
 
 					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-					account.markAsUnstarred(deltaUnstarredArticleIDs)
+					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
+					group.enter()
+					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
+						group.leave()
+					}
+
+					group.notify(queue: DispatchQueue.main) {
+						completion()
+					}
 				}
 								
 			}
