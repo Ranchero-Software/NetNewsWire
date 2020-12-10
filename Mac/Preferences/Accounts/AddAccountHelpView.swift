@@ -19,19 +19,21 @@ struct AddAccountHelpView: View {
 	var body: some View {
 		VStack {
 			HStack {
-				ForEach(accountTypes, id: \.self) { account in
-					Button(action: {
-						if account == .cloudKit && AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit }) {
-							iCloudUnavailableError = true
-						} else {
-							delegate?.presentSheetForAccount(account)
-						}
-					}, label: {
-						account.image()
-							.resizable()
-							.frame(width: 20, height: 20, alignment: .center)
-					})
-					.buttonStyle(PlainButtonStyle())
+				ForEach(accountTypes, id: \.self) { accountType in
+					if !(AppDefaults.shared.isDeveloperBuild && accountType.isDeveloperRestricted) {
+						Button(action: {
+							if accountType == .cloudKit && AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit }) {
+								iCloudUnavailableError = true
+							} else {
+								delegate?.presentSheetForAccount(accountType)
+							}
+						}, label: {
+							accountType.image()
+								.resizable()
+								.frame(width: 20, height: 20, alignment: .center)
+						})
+						.buttonStyle(PlainButtonStyle())
+					}
 				}
 			}
 			
@@ -48,4 +50,5 @@ struct AddAccountHelpView: View {
 				  }))
 		})
 	}
+	
 }

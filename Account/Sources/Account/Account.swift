@@ -45,6 +45,11 @@ public enum AccountType: Int, Codable {
 	case inoreader = 21
 	case bazQux = 22
 	case theOldReader = 23
+	
+	public var isDeveloperRestricted: Bool {
+		return self == .cloudKit || self == .feedbin || self == .feedly || self == .feedWrangler || self == .inoreader
+	}
+	
 }
 
 public enum FetchType {

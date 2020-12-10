@@ -86,7 +86,11 @@ struct AddAccountsView: View {
 				.padding()
 			
 			localAccount
-			icloudAccount
+			
+			if !AppDefaults.shared.isDeveloperBuild {
+				icloudAccount
+			}
+			
 			webAccounts
 			selfhostedAccounts
 			
@@ -265,7 +269,7 @@ struct AddAccountsView: View {
 	}
 	
 	private func isRestricted(_ accountType: AccountType) -> Bool {
-		if AppDefaults.shared.isDeveloperBuild && (accountType == .feedly || accountType == .feedWrangler || accountType == .inoreader) {
+		if AppDefaults.shared.isDeveloperBuild && accountType.isDeveloperRestricted {
 			return true
 		}
 		return false
