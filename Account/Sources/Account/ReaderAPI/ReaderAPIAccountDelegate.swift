@@ -15,6 +15,7 @@ import os.log
 import Secrets
 
 public enum ReaderAPIAccountDelegateError: String, Error {
+	case unknown = "An unknown error occurred."
 	case invalidParameter = "There was an invalid parameter passed."
 	case invalidResponse = "There was an invalid response from the server."
 }
@@ -182,6 +183,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		os_log(.debug, log: log, "Refreshing article statuses...")
 
 		let group = DispatchGroup()
+		var errorOccurred = false
+
 		group.enter()
 		caller.retrieveItemIDs(type: .unread) { result in
 			switch result {
@@ -190,6 +193,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					group.leave()
 				}
 			case .failure(let error):
+				errorOccurred = true
 				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
 				group.leave()
 			}
@@ -204,6 +208,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					group.leave()
 				}
 			case .failure(let error):
+				errorOccurred = true
 				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
 				group.leave()
 			}
@@ -212,7 +217,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 		group.notify(queue: DispatchQueue.main) {
 			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			completion(.success(()))
+			if errorOccurred {
+				completion(.failure(ReaderAPIAccountDelegateError.unknown))
+			} else {
+				completion(.success(()))
+			}
 		}
 	}
 	
