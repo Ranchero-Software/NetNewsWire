@@ -27,16 +27,13 @@ body {
 }
 
 :root {
-	--body-color: #444;
-	--body-background-color: -apple-system-text-background;
+	color-scheme: light dark;
 	--accent-color: rgba(8, 106, 238, 1);
 	--block-quote-border-color: rgba(8, 106, 238, .50);
 }
 
 @media(prefers-color-scheme: dark) {
 	:root {
-		--body-color: #d2d2d2;
-		--body-background-color: #2d2d2d;
 		--accent-color: rgba(94, 158, 244, 1);
 		--block-quote-border-color: rgba(94, 158, 244, .50);
 		--header-table-border-color: rgba(255, 255, 255, 0.1);
