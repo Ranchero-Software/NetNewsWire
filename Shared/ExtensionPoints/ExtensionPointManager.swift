@@ -151,8 +151,10 @@ private extension ExtensionPointManager {
 			return TwitterFeedProvider(screenName: screenName)
 		case .reddit(let username):
 			return RedditFeedProvider(username: username)
+		#if os(macOS)
 		default:
 			return nil
+		#endif
 		}
 	}
 	
