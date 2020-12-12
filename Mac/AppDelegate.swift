@@ -16,6 +16,7 @@ import RSCore
 import RSCoreResources
 import Secrets
 import OSLog
+import CrashReporter
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
 // for AppDelegate to comply
@@ -101,11 +102,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private let appMovementMonitor = RSAppMovementMonitor()
 	#if !MAC_APP_STORE && !TEST
 	private var softwareUpdater: SPUUpdater!
+	private var crashReporter: PLCrashReporter!
 	#endif
 
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
+
+		#if !MAC_APP_STORE
+		let crashReporterConfig = PLCrashReporterConfig.defaultConfiguration()
+		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
+		crashReporter.enable()
+		#endif
 
 		SecretsManager.provider = Secrets()
 		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
@@ -257,9 +265,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 
 		#if !MAC_APP_STORE
-			DispatchQueue.main.async {
-				CrashReporter.check(appName: "NetNewsWire")
-			}
+		DispatchQueue.main.async {
+			CrashReporter.check(crashReporter: self.crashReporter)
+		}
 		#endif
 		
 	}
