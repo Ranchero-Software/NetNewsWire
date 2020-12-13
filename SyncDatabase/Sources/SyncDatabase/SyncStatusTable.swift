@@ -114,6 +114,11 @@ struct SyncStatusTable: DatabaseTable {
 	}
 
 	func resetSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
+		guard !articleIDs.isEmpty else {
+			callCompletion(completion, nil)
+			return
+		}
+		
 		queue.runInTransaction { databaseResult in
 
 			func makeDatabaseCall(_ database: FMDatabase) {
@@ -134,6 +139,11 @@ struct SyncStatusTable: DatabaseTable {
 	}
 	
     func deleteSelectedForProcessing(_ articleIDs: [String], completion: DatabaseCompletionBlock? = nil) {
+		guard !articleIDs.isEmpty else {
+			callCompletion(completion, nil)
+			return
+		}
+		
 		queue.runInTransaction { databaseResult in
 
 			func makeDatabaseCall(_ database: FMDatabase) {

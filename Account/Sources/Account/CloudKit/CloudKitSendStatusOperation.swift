@@ -117,7 +117,7 @@ private extension CloudKitSendStatusOperation {
 				articlesZone.modifyArticles(statusUpdates) { result in
 					switch result {
 					case .success:
-						self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
+						self.database.deleteSelectedForProcessing(articleIDs) { _ in
 							// Don't clear the last one since we might have had additional ticks added
 							if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 								self.refreshProgress?.completeTask()
