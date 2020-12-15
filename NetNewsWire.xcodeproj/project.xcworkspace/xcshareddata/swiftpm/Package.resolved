@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/Ranchero-Software/RSCore.git",
         "state": {
           "branch": null,
-          "revision": "1017fe09c61bd9f75aa713381894aef979c994ef",
-          "version": "1.0.0-beta6"
+          "revision": "dce76a4070ed24f148bb1673c308962dbdbf01ef",
+          "version": "1.0.0-beta9"
         }
       },
       {
@@ -96,7 +96,7 @@
         "repositoryURL": "https://github.com/Ranchero-Software/Sparkle-Binary.git",
         "state": {
           "branch": "main",
-          "revision": "6b6d1d4b4864af7b56dd6f2ba148d752724e80d7",
+          "revision": "67cd26321bdf4e77954cf6de7d9e6a20544f2030",
           "version": null
         }
       },
