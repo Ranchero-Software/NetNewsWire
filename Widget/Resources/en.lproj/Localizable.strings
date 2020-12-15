@@ -20,15 +20,18 @@
 "SmartFeedSummary_Widget_Description" = "Your smart feeds, summarized.";
 
 /* Unread Widget */
-"Unread_Widget_NoItems" = "There's nothing to read right now.";
+"Unread_Widget_NoItemsTitle" = "Unread";
+"Unread_Widget_NoItems" = "There are no unread articles left to read.";
 
 /* Today Widget */
-"Today_Widget_NoItems" = "There are no recent articles to read.";
+"Today_Widget_NoItemsTitle" = "Today";
+"Today_Widget_NoItems" = "There are no recent unread articles left to read.";
 
 /* Starred Widget */
-"Starred_Widget_NoItems" = "You've not starred any artices.";
+"Starred_Widget_NoItemsTitle" = "Starred";
+"Starred_Widget_NoItems" = "When you mark articles as Starred, they'll appear here.";
 
 /* Smart Feed Summary Widget */
 "Unread" = "Unread";
-"Today" = "Today";
+"Today" = "Today  ";
 "Starred" = "Starred";

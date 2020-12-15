@@ -26,12 +26,11 @@ struct TodayWidgetView : View {
 					VStack(alignment: .leading) {
 						todayImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(Font.system(.callout, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
+						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(.callout).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.today.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)
 					.padding(.trailing, 4)
-					
 					
 					VStack(alignment:.leading, spacing: 0) {
 						ForEach(0..<maxCount(), content: { i in
@@ -63,13 +62,6 @@ struct TodayWidgetView : View {
 			.foregroundColor(.orange)
 	}
 	
-	var nnwImage: some View {
-		Image("CornerIcon")
-			.resizable()
-			.frame(width: 25, height: 25, alignment: .center)
-			.cornerRadius(4)
-	}
-	
 	func maxCount() -> Int {
 		if family == .systemLarge {
 			return entry.widgetData.todayArticles.count > 7 ? 7 : entry.widgetData.todayArticles.count
@@ -78,24 +70,26 @@ struct TodayWidgetView : View {
 	}
 	
 	var inboxZero: some View {
-		VStack {
+		VStack(alignment: .center) {
 			Spacer()
-			Image(systemName: "checkmark.circle")
-				.foregroundColor(.accentColor)
-				.font(.title)
-			
-			Spacer()
-			HStack {
-				Image("CornerIcon")
-					.resizable()
-					.frame(width: 15, height: 15, alignment: .center)
-					.cornerRadius(4)
+			Image(systemName: "sun.max.fill")
+				.resizable()
+				.aspectRatio(contentMode: .fit)
+				.frame(width: 30)
+				.foregroundColor(.orange)
 				
-				Text(L10n.todayWidgetNoItems)
-					.font(.caption2)
-					.foregroundColor(.gray)
-			}
-		}.padding()
+
+			Text(L10n.todayWidgetNoItemsTitle)
+				.font(.headline)
+				.foregroundColor(.primary)
+			
+			Text(L10n.todayWidgetNoItems)
+				.font(.caption)
+				.foregroundColor(.gray)
+			Spacer()
+		}
+		.multilineTextAlignment(.center)
+		.padding()
 	}
 	
 }
