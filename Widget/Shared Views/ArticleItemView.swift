@@ -19,7 +19,7 @@ struct ArticleItemView: View {
 				// Feed Icon
 				Image(uiImage: thumbnail(article.feedIcon))
 					.resizable()
-					.frame(width: 25, height: 25)
+					.frame(width: 30, height: 30)
 					.cornerRadius(4)
 				
 				// Title and Feed Name

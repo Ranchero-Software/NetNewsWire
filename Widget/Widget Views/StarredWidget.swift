@@ -26,7 +26,7 @@ struct StarredWidgetView : View {
 					VStack(alignment: .leading) {
 						starredImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentStarredCount)).bold().font(Font.system(.callout, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
+						Text(L10n.localizedCount(entry.widgetData.currentStarredCount)).bold().font(.callout).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.starred.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)
@@ -63,13 +63,6 @@ struct StarredWidgetView : View {
 			.foregroundColor(.yellow)
 	}
 	
-	var nnwImage: some View {
-		Image("CornerIcon")
-			.resizable()
-			.frame(width: 25, height: 25, alignment: .center)
-			.cornerRadius(4)
-	}
-	
 	func maxCount() -> Int {
 		if family == .systemLarge {
 			return entry.widgetData.currentStarredCount > 7 ? 7 : entry.widgetData.currentStarredCount
@@ -78,24 +71,26 @@ struct StarredWidgetView : View {
 	}
 	
 	var inboxZero: some View {
-		VStack {
+		VStack(alignment: .center) {
 			Spacer()
-			Image(systemName: "checkmark.circle")
-				.foregroundColor(.accentColor)
-				.font(.title)
-			
-			Spacer()
-			HStack {
-				Image("CornerIcon")
-					.resizable()
-					.frame(width: 15, height: 15, alignment: .center)
-					.cornerRadius(4)
+			Image(systemName: "star.fill")
+				.resizable()
+				.aspectRatio(contentMode: .fit)
+				.frame(width: 30)
+				.foregroundColor(.yellow)
 				
-				Text(L10n.starredWidgetNoItems)
-					.font(.caption2)
-					.foregroundColor(.gray)
-			}
-		}.padding()
+
+			Text(L10n.starredWidgetNoItemsTitle)
+				.font(.headline)
+				.foregroundColor(.primary)
+			
+			Text(L10n.starredWidgetNoItems)
+				.font(.caption)
+				.foregroundColor(.gray)
+			Spacer()
+		}
+		.multilineTextAlignment(.center)
+		.padding()
 	}
 	
 }

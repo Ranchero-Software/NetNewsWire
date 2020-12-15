@@ -22,20 +22,24 @@ internal enum L10n {
   internal static let starred = L10n.tr("Localizable", "Starred")
   /// A sneak peek at your starred articles.
   internal static let starredWidgetDescription = L10n.tr("Localizable", "Starred_Widget_Description")
-  /// You've not starred any artices.
+  /// When you mark articles as Starred, they'll appear here.
   internal static let starredWidgetNoItems = L10n.tr("Localizable", "Starred_Widget_NoItems")
+  /// Starred
+  internal static let starredWidgetNoItemsTitle = L10n.tr("Localizable", "Starred_Widget_NoItemsTitle")
   /// Your Starred Articles
   internal static let starredWidgetTitle = L10n.tr("Localizable", "Starred_Widget_Title")
   /// Plural format key: "%#@starred_count@"
   internal static func starredCount(_ p1: Int) -> String {
     return L10n.tr("Localizable", "StarredCount", p1)
   }
-  /// Today
+  /// Today  
   internal static let today = L10n.tr("Localizable", "Today")
   /// A sneak peek at recently published unread articles.
   internal static let todayWidgetDescription = L10n.tr("Localizable", "Today_Widget_Description")
-  /// There are no recent articles to read.
+  /// There are no recent unread articles left to read.
   internal static let todayWidgetNoItems = L10n.tr("Localizable", "Today_Widget_NoItems")
+  /// Today
+  internal static let todayWidgetNoItemsTitle = L10n.tr("Localizable", "Today_Widget_NoItemsTitle")
   /// Your Today Articles
   internal static let todayWidgetTitle = L10n.tr("Localizable", "Today_Widget_Title")
   /// Plural format key: "%#@today_count@"
@@ -46,8 +50,10 @@ internal enum L10n {
   internal static let unread = L10n.tr("Localizable", "Unread")
   /// A sneak peek at your unread articles.
   internal static let unreadWidgetDescription = L10n.tr("Localizable", "Unread_Widget_Description")
-  /// There's nothing to read right now.
+  /// There are no unread articles left to read.
   internal static let unreadWidgetNoItems = L10n.tr("Localizable", "Unread_Widget_NoItems")
+  /// Unread
+  internal static let unreadWidgetNoItemsTitle = L10n.tr("Localizable", "Unread_Widget_NoItemsTitle")
   /// Your Unread Articles
   internal static let unreadWidgetTitle = L10n.tr("Localizable", "Unread_Widget_Title")
   /// Plural format key: "%#@unread_count@"

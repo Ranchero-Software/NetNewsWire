@@ -26,7 +26,7 @@ struct UnreadWidgetView : View {
 					VStack(alignment: .leading) {
 						unreadImage
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentUnreadCount)).bold().font(Font.system(.callout, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1)
+						Text(L10n.localizedCount(entry.widgetData.currentUnreadCount)).bold().font(.callout).minimumScaleFactor(0.5).lineLimit(1)
 						Text(L10n.unread.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
 					}
 					.frame(width: metrics.size.width * 0.15)
@@ -62,13 +62,6 @@ struct UnreadWidgetView : View {
 			.foregroundColor(.accentColor)
 	}
 	
-	var nnwImage: some View {
-		Image("CornerIcon")
-			.resizable()
-			.frame(width: 25, height: 25, alignment: .center)
-			.cornerRadius(4)
-	}
-	
 	func maxCount() -> Int {
 		if family == .systemLarge {
 			return entry.widgetData.unreadArticles.count > 7 ? 7 : entry.widgetData.unreadArticles.count
@@ -77,24 +70,25 @@ struct UnreadWidgetView : View {
 	}
 	
 	var inboxZero: some View {
-		VStack {
+		VStack(alignment: .center) {
 			Spacer()
-			Image(systemName: "checkmark.circle")
+			Image(systemName: "largecircle.fill.circle")
+				.resizable()
+				.aspectRatio(contentMode: .fit)
 				.foregroundColor(.accentColor)
-				.font(.title)
+				.frame(width: 30)
+
+			Text(L10n.unreadWidgetNoItemsTitle)
+				.font(.headline)
+				.foregroundColor(.primary)
 			
+			Text(L10n.unreadWidgetNoItems)
+				.font(.caption)
+				.foregroundColor(.gray)
 			Spacer()
-			HStack {
-				Image("CornerIcon")
-					.resizable()
-					.frame(width: 15, height: 15, alignment: .center)
-					.cornerRadius(4)
-				
-				Text(L10n.unreadWidgetNoItems)
-					.font(.caption2)
-					.foregroundColor(.gray)
-			}
-		}.padding()
+		}
+		.multilineTextAlignment(.center)
+		.padding()
 	}
 	
 }

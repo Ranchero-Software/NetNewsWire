@@ -89,7 +89,6 @@ struct SmartFeedSummaryWidget: Widget {
 struct NetNewsWireWidgets: WidgetBundle {
 	@WidgetBundleBuilder
 	var body: some Widget {
-		SmartFeedSummaryWidget()
 		UnreadWidget()
 		TodayWidget()
 		StarredWidget()
