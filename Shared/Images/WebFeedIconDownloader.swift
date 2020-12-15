@@ -49,7 +49,7 @@ public final class WebFeedIconDownloader {
 	}
 
 	private var homePagesWithUglyIcons: Set<String> = {
-		return Set(["https://www.macsparky.com/"])
+		return Set(["https://www.macsparky.com/", "https://xkcd.com/"])
 	}()
 	
 	private var urlsInProgress = Set<String>()
