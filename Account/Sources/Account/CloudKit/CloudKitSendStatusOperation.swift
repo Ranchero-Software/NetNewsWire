@@ -117,7 +117,8 @@ private extension CloudKitSendStatusOperation {
 				articlesZone.modifyArticles(statusUpdates) { result in
 					switch result {
 					case .success:
-						self.database.deleteSelectedForProcessing(articleIDs) { _ in
+						
+						func complete() {
 							// Don't clear the last one since we might have had additional ticks added
 							if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
 								self.refreshProgress?.completeTask()
@@ -125,6 +126,15 @@ private extension CloudKitSendStatusOperation {
 							os_log(.debug, log: self.log, "Done sending article status block...")
 							completion()
 						}
+						
+						if statusUpdates.isEmpty {
+							complete()
+						} else {
+							self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
+								complete()
+							}
+						}
+						
 					case .failure(let error):
 						self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
 							self.processAccountError(account, error)
