@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -105,7 +105,7 @@
                             </connections>
                         </barButtonItem>
                         <rightBarButtonItems>
-                            <barButtonItem enabled="NO" title="Add" id="F8z-me-Hnx">
+                            <barButtonItem enabled="NO" title="Add" style="done" id="F8z-me-Hnx">
                                 <connections>
                                     <action selector="add:" destination="7aE-6a-iP7" id="66n-Ea-YXO"/>
                                 </connections>
@@ -365,7 +365,7 @@
                                 <action selector="cancel:" destination="3dI-34-ljo" id="LLG-Xw-5nu"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Add" id="gXG-Xt-d9B">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Add" style="done" id="gXG-Xt-d9B">
                             <connections>
                                 <action selector="add:" destination="3dI-34-ljo" id="d1a-W6-8ST"/>
                             </connections>
