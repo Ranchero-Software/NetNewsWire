@@ -55,6 +55,7 @@ final class LocalAccountDelegate: AccountDelegate {
 		refreshProgress.addToNumberOfTasksAndRemaining(webFeeds.count)
 
 		let group = DispatchGroup()
+		var feedProviderError: Error? = nil
 		
 		for webFeed in webFeeds {
 			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
@@ -68,6 +69,7 @@ final class LocalAccountDelegate: AccountDelegate {
 						}
 					case .failure(let error):
 						os_log(.error, log: self.log, "Feed Provider refresh error: %@.", error.localizedDescription)
+						feedProviderError = error
 						self.refreshProgress.completeTask()
 						group.leave()
 					}
@@ -85,7 +87,11 @@ final class LocalAccountDelegate: AccountDelegate {
 		group.notify(queue: DispatchQueue.main) {
 			self.refreshProgress.clear()
 			account.metadata.lastArticleFetchEndTime = Date()
-			completion(.success(()))
+			if let error = feedProviderError {
+				completion(.failure(error))
+			} else {
+				completion(.success(()))
+			}
 		}
 		
 	}

@@ -17,7 +17,7 @@ public enum TwitterFeedProviderError: LocalizedError {
 	case screenNameNotFound
 	case unknown
 	
-	public var localizedDescription: String {
+	public var errorDescription: String? {
 		switch self {
 		case .rateLimitExceeded:
 			return NSLocalizedString("Twitter API rate limit has been exceeded.  Please wait a short time and try again.", comment: "Rate Limit")
@@ -432,7 +432,12 @@ private extension TwitterFeedProvider {
 				}
 				
 			case .failure(let error):
-				completion(.failure(error))
+				if error.errorCode == -11 {
+					// Eat these errors.  They are old or invalid URL requests.
+					completion(.success([TwitterStatus]()))
+				} else {
+					completion(.failure(error))
+				}
 			}
 		}
 	}

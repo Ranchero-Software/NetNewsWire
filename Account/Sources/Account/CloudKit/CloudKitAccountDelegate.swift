@@ -502,9 +502,14 @@ private extension CloudKitAccountDelegate {
 					switch result {
 					case .success:
 						
-						self.combinedRefresh(account, webFeeds) {
+						self.combinedRefresh(account, webFeeds) { result in
 							self.refreshProgress.clear()
-							account.metadata.lastArticleFetchEndTime = Date()
+							switch result {
+							case .success:
+								account.metadata.lastArticleFetchEndTime = Date()
+							case .failure(let error):
+								fail(error)
+							}
 						}
 
 					case .failure(let error):
@@ -541,10 +546,16 @@ private extension CloudKitAccountDelegate {
 					switch result {
 					case .success:
 						self.refreshProgress.completeTask()
-						self.combinedRefresh(account, webFeeds) {
-							self.sendArticleStatus(for: account, showProgress: true) { _ in
+						self.combinedRefresh(account, webFeeds) { result in
+							switch result {
+							case .success:
+								self.sendArticleStatus(for: account, showProgress: true) { _ in
+									self.refreshProgress.clear()
+									account.metadata.lastArticleFetchEndTime = Date()
+								}
+							case .failure(let error):
 								self.refreshProgress.clear()
-								account.metadata.lastArticleFetchEndTime = Date()
+								fail(error)
 							}
 						}
 					case .failure(let error):
@@ -559,11 +570,12 @@ private extension CloudKitAccountDelegate {
 		
 	}
 
-	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
+	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		var refresherWebFeeds = Set<WebFeed>()
 		let group = DispatchGroup()
-
+		var feedProviderError: Error? = nil
+		
 		for webFeed in webFeeds {
 			if let components = URLComponents(string: webFeed.url), let feedProvider = FeedProviderManager.shared.best(for: components) {
 				group.enter()
@@ -588,6 +600,7 @@ private extension CloudKitAccountDelegate {
 
 					case .failure(let error):
 						os_log(.error, log: self.log, "CloudKit Feed refresh error: %@.", error.localizedDescription)
+						feedProviderError = error
 						self.refreshProgress.completeTask()
 						group.leave()
 					}
@@ -603,7 +616,11 @@ private extension CloudKitAccountDelegate {
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			completion()
+			if let error = feedProviderError {
+				completion(.failure(error))
+			} else {
+				completion(.success(()))
+			}
 		}
 
 	}
