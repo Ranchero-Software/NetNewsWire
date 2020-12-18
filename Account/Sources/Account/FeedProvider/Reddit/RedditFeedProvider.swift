@@ -16,15 +16,15 @@ import RSWeb
 
 public enum RedditFeedProviderError: LocalizedError {
 	case rateLimitExceeded
-	case accessFailure
+	case accessFailure(Error)
 	case unknown
 	
 	public var errorDescription: String? {
 		switch self {
 		case .rateLimitExceeded:
 			return NSLocalizedString("Reddit API rate limit has been exceeded.  Please wait a short time and try again.", comment: "Rate Limit")
-		case .accessFailure:
-			return NSLocalizedString("An attempt to access your Reddit feed(s) failed.  Please deactivate and reactivate the Reddit extension to fix this problem.", comment: "Token Renew")
+		case .accessFailure(let error):
+			return NSLocalizedString("An attempt to access your Reddit feed(s) failed.\n\nIf this problem persists, please deactivate and reactivate the Reddit extension to fix this problem.\n\n\(error.localizedDescription)", comment: "Reddit Access")
 		case .unknown:
 			return NSLocalizedString("A Reddit Feed Provider error has occurred.", comment: "Unknown error")
 		}
@@ -366,8 +366,8 @@ private extension RedditFeedProvider {
 			
 			case .failure(let oathError):
 				self.handleFailure(error: oathError) { error in
-					if let _ = error {
-						completion(.failure(RedditFeedProviderError.accessFailure))
+					if let error = error {
+						completion(.failure(RedditFeedProviderError.accessFailure(error)))
 					} else {
 						self.fetch(api: api, parameters: parameters, resultType: resultType, completion: completion)
 					}
