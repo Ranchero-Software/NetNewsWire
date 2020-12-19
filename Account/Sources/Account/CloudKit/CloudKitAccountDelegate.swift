@@ -547,15 +547,14 @@ private extension CloudKitAccountDelegate {
 					case .success:
 						self.refreshProgress.completeTask()
 						self.combinedRefresh(account, webFeeds) { result in
-							switch result {
-							case .success:
-								self.sendArticleStatus(for: account, showProgress: true) { _ in
-									self.refreshProgress.clear()
-									account.metadata.lastArticleFetchEndTime = Date()
-								}
-							case .failure(let error):
+							self.sendArticleStatus(for: account, showProgress: true) { _ in
 								self.refreshProgress.clear()
-								fail(error)
+								if case .failure(let error) = result {
+									fail(error)
+								} else {
+									account.metadata.lastArticleFetchEndTime = Date()
+									completion(.success(()))
+								}
 							}
 						}
 					case .failure(let error):
