@@ -196,7 +196,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 		alert.messageText = NSLocalizedString("Waiting for access to Feedly",
 											  comment: "Alert title when adding a Feedly account and waiting for authorization from the user.")
 		
-		alert.informativeText = NSLocalizedString("Your default web browser will open the Feedly login for you to authorize access.",
+		alert.informativeText = NSLocalizedString("A web browser will open the Feedly login for you to authorize access.",
 												  comment: "Alert informative text when adding a Feedly account and waiting for authorization from the user.")
 		
 		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"))
