@@ -39,13 +39,14 @@ public enum TwitterFeedType: Int {
 public final class TwitterFeedProvider: FeedProvider {
 
 	private static let homeURL = "https://www.twitter.com"
+	private static let iconURL = "https://abs.twimg.com/favicons/twitter.ico"
 	private static let server = "api.twitter.com"
 	private static let apiBase = "https://api.twitter.com/1.1/"
 	private static let userAgentHeaders = UserAgent.headers() as! [String: String]
 	private static let dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
 	
 	private static let userPaths = ["/home", "/notifications"]
-	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose"]
+	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose", "/notifications/mentions"]
 	
 	private var parsingQueue = DispatchQueue(label: "TwitterFeedProvider parse queue")
 
@@ -130,7 +131,7 @@ public final class TwitterFeedProvider: FeedProvider {
 				}
 			}
 		} else {
-			completion(.failure(TwitterFeedProviderError.screenNameNotFound))
+			completion(.success(Self.iconURL))
 		}
 	}
 
