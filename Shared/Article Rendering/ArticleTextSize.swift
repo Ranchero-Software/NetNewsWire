@@ -41,9 +41,9 @@ enum ArticleTextSize: Int, CaseIterable, Identifiable {
 		case .large:
 			return NSLocalizedString("Large", comment: "Large")
 		case .xlarge:
-			return NSLocalizedString("X-Large", comment: "X-Large")
+			return NSLocalizedString("Extra Large", comment: "X-Large")
 		case .xxlarge:
-			return NSLocalizedString("XX-Large", comment: "XX-Large")
+			return NSLocalizedString("Extra Extra Large", comment: "XX-Large")
 		}
 	}
 	
