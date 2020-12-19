@@ -207,7 +207,11 @@ public final class RedditFeedProvider: FeedProvider, RedditFeedProviderTokenRefr
 					}
 				}
 			case .failure(let error):
-				completion(.failure(error))
+				if (error as? OAuthSwiftError)?.errorCode == -11 {
+					completion(.success(Set<ParsedItem>()))
+				} else {
+					completion(.failure(RedditFeedProviderError.accessFailure(error)))
+				}
 			}
 		}
 	}
@@ -367,7 +371,7 @@ private extension RedditFeedProvider {
 			case .failure(let oathError):
 				self.handleFailure(error: oathError) { error in
 					if let error = error {
-						completion(.failure(RedditFeedProviderError.accessFailure(error)))
+						completion(.failure(error))
 					} else {
 						self.fetch(api: api, parameters: parameters, resultType: resultType, completion: completion)
 					}
