@@ -7,6 +7,7 @@ let package = Package(
     products: [
         .library(
             name: "Account",
+			type: .dynamic,
             targets: ["Account"]),
     ],
     dependencies: [
