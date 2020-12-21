@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>NetNewsWire Betas</title>
+        <link>https://ranchero.com/downloads/netnewswire6-beta.xml</link>
+        <description>Most recent NetNewsWire changes with links to updates.</description>
+        <language>en</language>
+
+<item>
+    <title>NetNewsWire 5.1.3</title>
+    <description><![CDATA[
+<p>Fixed a crashing bug that could happen with empty titles in the timeline.</p>
+<p>Fixed a crashing bug that could happen when adding a feed.</p>
+    ]]></description>
+    <pubDate>Mon, 09 Nov 2020 18:30:00 -0700</pubDate>
+    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.3/NetNewsWire5.1.3.zip" sparkle:version="3018" sparkle:shortVersionString="5.1.3" length="6583350" type="application/zip" />
+    <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+</item>
+
+    </channel>
+</rss>
