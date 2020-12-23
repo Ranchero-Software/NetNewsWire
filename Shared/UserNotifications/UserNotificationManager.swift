@@ -57,6 +57,7 @@ private extension UserNotificationManager {
 		content.summaryArgumentCount = 1
 		content.sound = UNNotificationSound.default
 		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
+		content.categoryIdentifier = "NEW_ARTICLE_NOTIFICATION_CATEGORY"
 		if let attachment = thumbnailAttachment(for: article, webFeed: webFeed) {
 			content.attachments.append(attachment)
 		}
