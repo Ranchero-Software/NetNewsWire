@@ -274,6 +274,19 @@
 		513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 513C5CEA232571C2003D4054 /* MainInterface.storyboard */; };
 		513C5CF0232571C2003D4054 /* NetNewsWire iOS Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		513CCF2524880C1500C55709 /* MasterFeedTableViewIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513CCF08248808BA00C55709 /* MasterFeedTableViewIdentifier.swift */; };
+		513F325C2593ECF40003048F /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 513F325B2593ECF40003048F /* RSCore */; };
+		513F325D2593ECF40003048F /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F325B2593ECF40003048F /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		513F32712593EE6F0003048F /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32702593EE6F0003048F /* Articles */; };
+		513F32722593EE6F0003048F /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32702593EE6F0003048F /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32732593EE6F0003048F /* ArticlesDatabase */; };
+		513F32752593EE6F0003048F /* ArticlesDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32732593EE6F0003048F /* ArticlesDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		513F32772593EE6F0003048F /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32762593EE6F0003048F /* Secrets */; };
+		513F32782593EE6F0003048F /* Secrets in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32762593EE6F0003048F /* Secrets */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32792593EE6F0003048F /* SyncDatabase */; };
+		513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32792593EE6F0003048F /* SyncDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		513F32812593EF180003048F /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 516B695E24D2F33B00B5702F /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		513F32882593EF8F0003048F /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32872593EF8F0003048F /* RSCore */; };
+		513F32892593EF8F0003048F /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32872593EF8F0003048F /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51408B7E24A9EC6F0073CF4E /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */; };
 		51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51408B7D24A9EC6F0073CF4E /* SidebarItem.swift */; };
 		5141E7392373C18B0013FF27 /* WebFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7382373C18B0013FF27 /* WebFeedInspectorViewController.swift */; };
@@ -1232,7 +1245,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+<<<<<<< HEAD
 				17E007FB25936D7B000C23F0 /* RSCore in Embed Frameworks */,
+=======
+				513F325D2593ECF40003048F /* RSCore in Embed Frameworks */,
+>>>>>>> main
 				51BC2F4924D3439E00E90810 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1244,7 +1261,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+<<<<<<< HEAD
 				17E0080325936D89000C23F0 /* RSCore in Embed Frameworks */,
+=======
+				513F32892593EF8F0003048F /* RSCore in Embed Frameworks */,
+>>>>>>> main
 				51BC2F4E24D343AB00E90810 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1280,6 +1301,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+<<<<<<< HEAD
 				17E0082725936E31000C23F0 /* Secrets in Embed Frameworks */,
 				5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */,
 				5138E94A24D3416D00AFF0FE /* RSCore in Embed Frameworks */,
@@ -1290,6 +1312,18 @@
 				5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */,
 				5138E94D24D3417A00AFF0FE /* RSDatabase in Embed Frameworks */,
 				17E0082425936E31000C23F0 /* ArticlesDatabase in Embed Frameworks */,
+=======
+				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
+				5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */,
+				5138E94A24D3416D00AFF0FE /* RSCore in Embed Frameworks */,
+				5138E95924D3419000AFF0FE /* RSWeb in Embed Frameworks */,
+				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
+				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
+				513F32812593EF180003048F /* Account in Embed Frameworks */,
+				5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */,
+				5138E94D24D3417A00AFF0FE /* RSDatabase in Embed Frameworks */,
+				513F32752593EE6F0003048F /* ArticlesDatabase in Embed Frameworks */,
+>>>>>>> main
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2057,7 +2091,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				51BC2F4B24D343A500E90810 /* Account in Frameworks */,
+<<<<<<< HEAD
 				17E0080225936D89000C23F0 /* RSCore in Frameworks */,
+=======
+				513F32882593EF8F0003048F /* RSCore in Frameworks */,
+>>>>>>> main
 				51BC2F4D24D343AB00E90810 /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2067,7 +2105,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
+<<<<<<< HEAD
 				17E007FA25936D7B000C23F0 /* RSCore in Frameworks */,
+=======
+				513F325C2593ECF40003048F /* RSCore in Frameworks */,
+>>>>>>> main
 				51BC2F4824D3439E00E90810 /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2148,11 +2190,19 @@
 				5138E95224D3418100AFF0FE /* RSParser in Frameworks */,
 				5138E94C24D3417A00AFF0FE /* RSDatabase in Frameworks */,
 				51C452B42265141B00C03939 /* WebKit.framework in Frameworks */,
+<<<<<<< HEAD
 				17E0082025936E31000C23F0 /* Articles in Frameworks */,
 				17E0082625936E31000C23F0 /* Secrets in Frameworks */,
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
 				17E0082325936E31000C23F0 /* ArticlesDatabase in Frameworks */,
 				17E0082925936E31000C23F0 /* SyncDatabase in Frameworks */,
+=======
+				513F32712593EE6F0003048F /* Articles in Frameworks */,
+				513F32772593EE6F0003048F /* Secrets in Frameworks */,
+				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
+				513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */,
+				513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */,
+>>>>>>> main
 				5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3733,6 +3783,7 @@
 				51314634235A7BBE00387FDC /* Frameworks */,
 				51314635235A7BBE00387FDC /* Resources */,
 				5102AE7724D17FB50050839C /* Embed Frameworks */,
+				513F328A2593EFCE0003048F /* Delete Unnecessary Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3742,7 +3793,11 @@
 			packageProductDependencies = (
 				51BC2F4A24D343A500E90810 /* Account */,
 				51BC2F4C24D343AB00E90810 /* RSTree */,
+<<<<<<< HEAD
 				17E0080125936D89000C23F0 /* RSCore */,
+=======
+				513F32872593EF8F0003048F /* RSCore */,
+>>>>>>> main
 			);
 			productName = "NetNewsWire iOS Intents Extension";
 			productReference = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */;
@@ -3756,6 +3811,7 @@
 				513C5CE3232571C2003D4054 /* Frameworks */,
 				513C5CE4232571C2003D4054 /* Resources */,
 				5102AE7324D17FAA0050839C /* Embed Frameworks */,
+				513F328B2593F03F0003048F /* Delete Unnecessary Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3765,7 +3821,11 @@
 			packageProductDependencies = (
 				51BC2F3724D3439A00E90810 /* Account */,
 				51BC2F4724D3439E00E90810 /* RSTree */,
+<<<<<<< HEAD
 				17E007F925936D7B000C23F0 /* RSCore */,
+=======
+				513F325B2593ECF40003048F /* RSCore */,
+>>>>>>> main
 			);
 			productName = "NetNewsWire iOS Share Extension";
 			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
@@ -3934,10 +3994,17 @@
 				5138E94B24D3417A00AFF0FE /* RSDatabase */,
 				5138E95124D3418100AFF0FE /* RSParser */,
 				5138E95724D3419000AFF0FE /* RSWeb */,
+<<<<<<< HEAD
 				17E0081F25936E31000C23F0 /* Articles */,
 				17E0082225936E31000C23F0 /* ArticlesDatabase */,
 				17E0082525936E31000C23F0 /* Secrets */,
 				17E0082825936E31000C23F0 /* SyncDatabase */,
+=======
+				513F32702593EE6F0003048F /* Articles */,
+				513F32732593EE6F0003048F /* ArticlesDatabase */,
+				513F32762593EE6F0003048F /* Secrets */,
+				513F32792593EE6F0003048F /* SyncDatabase */,
+>>>>>>> main
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -4411,6 +4478,42 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Delete the framework that Xcode should have never included\n# https://forums.swift.org/t/is-this-an-xcode-bug-or-somehow-related-to-spm/33987\nrm -rf \"${TARGET_BUILD_DIR}/NetNewsWire Share Extension.appex/Contents/Frameworks\"\n";
+		};
+		513F328A2593EFCE0003048F /* Delete Unnecessary Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Delete Unnecessary Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Delete the framework that Xcode should have never included\n# https://forums.swift.org/t/is-this-an-xcode-bug-or-somehow-related-to-spm/33987\nrm -rf \"${TARGET_BUILD_DIR}/NetNewsWire iOS Intents Extension.appex/Frameworks\"\n";
+		};
+		513F328B2593F03F0003048F /* Delete Unnecessary Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Delete Unnecessary Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Delete the framework that Xcode should have never included\n# https://forums.swift.org/t/is-this-an-xcode-bug-or-somehow-related-to-spm/33987\nrm -rf \"${TARGET_BUILD_DIR}/NetNewsWire iOS Share Extension.appex/Frameworks\"\n";
 		};
 		515D50802326D02600EE1167 /* Run Script: Verify No Build Settings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6237,6 +6340,32 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
 			productName = RSWeb;
+		};
+		513F325B2593ECF40003048F /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+		513F32702593EE6F0003048F /* Articles */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Articles;
+		};
+		513F32732593EE6F0003048F /* ArticlesDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ArticlesDatabase;
+		};
+		513F32762593EE6F0003048F /* Secrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Secrets;
+		};
+		513F32792593EE6F0003048F /* SyncDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SyncDatabase;
+		};
+		513F32872593EF8F0003048F /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
 		};
 		514C16CD24D2E63F009A3AFA /* Account */ = {
 			isa = XCSwiftPackageProductDependency;
