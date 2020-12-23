@@ -23,7 +23,7 @@ struct TodayWidgetView : View {
 		else {
 			GeometryReader { metrics in
 				HStack(alignment: .top, spacing: 4) {
-					VStack(alignment: .leading) {
+					VStack(alignment: .leading, spacing: -4) {
 						todayImage
 						Spacer()
 						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(.callout).minimumScaleFactor(0.5).lineLimit(1)

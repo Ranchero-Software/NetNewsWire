@@ -430,12 +430,15 @@ private extension AppDelegate {
 		}
 		account!.markArticles(article!, statusKey: .read, flag: true)
 		self.prepareAccountsForBackground()
-		if !AccountManager.shared.isSuspended {
-			if #available(iOS 14, *) {
-				try? WidgetDataEncoder.shared.encodeWidgetData()
+		account!.syncArticleStatus(completion: { [weak self] _ in
+			if !AccountManager.shared.isSuspended {
+				if #available(iOS 14, *) {
+					try? WidgetDataEncoder.shared.encodeWidgetData()
+				}
+				self?.prepareAccountsForBackground()
+				self?.suspendApplication()
 			}
-			self.suspendApplication()
-		}
+		})
 	}
 	
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
@@ -456,12 +459,14 @@ private extension AppDelegate {
 			return
 		}
 		account!.markArticles(article!, statusKey: .starred, flag: true)
-		self.prepareAccountsForBackground()
-		if !AccountManager.shared.isSuspended {
-			if #available(iOS 14, *) {
-				try? WidgetDataEncoder.shared.encodeWidgetData()
+		account!.syncArticleStatus(completion: { [weak self] _ in
+			if !AccountManager.shared.isSuspended {
+				if #available(iOS 14, *) {
+					try? WidgetDataEncoder.shared.encodeWidgetData()
+				}
+				self?.prepareAccountsForBackground()
+				self?.suspendApplication()
 			}
-			self.suspendApplication()
-		}
+		})
 	}
 }

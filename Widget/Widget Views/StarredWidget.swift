@@ -23,7 +23,7 @@ struct StarredWidgetView : View {
 		else {
 			GeometryReader { metrics in
 				HStack(alignment: .top, spacing: 4) {
-					VStack(alignment: .leading) {
+					VStack(alignment: .leading, spacing: -4) {
 						starredImage
 						Spacer()
 						Text(L10n.localizedCount(entry.widgetData.currentStarredCount)).bold().font(.callout).minimumScaleFactor(0.5).lineLimit(1)
