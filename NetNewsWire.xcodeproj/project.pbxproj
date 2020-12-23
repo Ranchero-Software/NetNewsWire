@@ -1245,11 +1245,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-<<<<<<< HEAD
-				17E007FB25936D7B000C23F0 /* RSCore in Embed Frameworks */,
-=======
 				513F325D2593ECF40003048F /* RSCore in Embed Frameworks */,
->>>>>>> main
 				51BC2F4924D3439E00E90810 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1261,11 +1257,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-<<<<<<< HEAD
-				17E0080325936D89000C23F0 /* RSCore in Embed Frameworks */,
-=======
 				513F32892593EF8F0003048F /* RSCore in Embed Frameworks */,
->>>>>>> main
 				51BC2F4E24D343AB00E90810 /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1301,18 +1293,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-<<<<<<< HEAD
-				17E0082725936E31000C23F0 /* Secrets in Embed Frameworks */,
-				5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */,
-				5138E94A24D3416D00AFF0FE /* RSCore in Embed Frameworks */,
-				5138E95924D3419000AFF0FE /* RSWeb in Embed Frameworks */,
-				17E0082A25936E31000C23F0 /* SyncDatabase in Embed Frameworks */,
-				17E0082125936E31000C23F0 /* Articles in Embed Frameworks */,
-				17E0083025936E70000C23F0 /* Account in Embed Frameworks */,
-				5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */,
-				5138E94D24D3417A00AFF0FE /* RSDatabase in Embed Frameworks */,
-				17E0082425936E31000C23F0 /* ArticlesDatabase in Embed Frameworks */,
-=======
 				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
 				5138E95324D3418100AFF0FE /* RSParser in Embed Frameworks */,
 				5138E94A24D3416D00AFF0FE /* RSCore in Embed Frameworks */,
@@ -1323,7 +1303,6 @@
 				5138E93B24D33E5600AFF0FE /* RSTree in Embed Frameworks */,
 				5138E94D24D3417A00AFF0FE /* RSDatabase in Embed Frameworks */,
 				513F32752593EE6F0003048F /* ArticlesDatabase in Embed Frameworks */,
->>>>>>> main
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2090,12 +2069,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51BC2F4B24D343A500E90810 /* Account in Frameworks */,
-<<<<<<< HEAD
-				17E0080225936D89000C23F0 /* RSCore in Frameworks */,
-=======
 				513F32882593EF8F0003048F /* RSCore in Frameworks */,
->>>>>>> main
 				51BC2F4D24D343AB00E90810 /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2105,11 +2079,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
-<<<<<<< HEAD
-				17E007FA25936D7B000C23F0 /* RSCore in Frameworks */,
-=======
 				513F325C2593ECF40003048F /* RSCore in Frameworks */,
->>>>>>> main
 				51BC2F4824D3439E00E90810 /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2190,19 +2160,11 @@
 				5138E95224D3418100AFF0FE /* RSParser in Frameworks */,
 				5138E94C24D3417A00AFF0FE /* RSDatabase in Frameworks */,
 				51C452B42265141B00C03939 /* WebKit.framework in Frameworks */,
-<<<<<<< HEAD
-				17E0082025936E31000C23F0 /* Articles in Frameworks */,
-				17E0082625936E31000C23F0 /* Secrets in Frameworks */,
-				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
-				17E0082325936E31000C23F0 /* ArticlesDatabase in Frameworks */,
-				17E0082925936E31000C23F0 /* SyncDatabase in Frameworks */,
-=======
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
 				513F32772593EE6F0003048F /* Secrets in Frameworks */,
 				51E4DB082425F9EB0091EB5B /* CloudKit.framework in Frameworks */,
 				513F32742593EE6F0003048F /* ArticlesDatabase in Frameworks */,
 				513F327A2593EE6F0003048F /* SyncDatabase in Frameworks */,
->>>>>>> main
 				5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3793,11 +3755,7 @@
 			packageProductDependencies = (
 				51BC2F4A24D343A500E90810 /* Account */,
 				51BC2F4C24D343AB00E90810 /* RSTree */,
-<<<<<<< HEAD
-				17E0080125936D89000C23F0 /* RSCore */,
-=======
 				513F32872593EF8F0003048F /* RSCore */,
->>>>>>> main
 			);
 			productName = "NetNewsWire iOS Intents Extension";
 			productReference = 51314637235A7BBE00387FDC /* NetNewsWire iOS Intents Extension.appex */;
@@ -3821,11 +3779,7 @@
 			packageProductDependencies = (
 				51BC2F3724D3439A00E90810 /* Account */,
 				51BC2F4724D3439E00E90810 /* RSTree */,
-<<<<<<< HEAD
-				17E007F925936D7B000C23F0 /* RSCore */,
-=======
 				513F325B2593ECF40003048F /* RSCore */,
->>>>>>> main
 			);
 			productName = "NetNewsWire iOS Share Extension";
 			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
@@ -3994,17 +3948,10 @@
 				5138E94B24D3417A00AFF0FE /* RSDatabase */,
 				5138E95124D3418100AFF0FE /* RSParser */,
 				5138E95724D3419000AFF0FE /* RSWeb */,
-<<<<<<< HEAD
-				17E0081F25936E31000C23F0 /* Articles */,
-				17E0082225936E31000C23F0 /* ArticlesDatabase */,
-				17E0082525936E31000C23F0 /* Secrets */,
-				17E0082825936E31000C23F0 /* SyncDatabase */,
-=======
 				513F32702593EE6F0003048F /* Articles */,
 				513F32732593EE6F0003048F /* ArticlesDatabase */,
 				513F32762593EE6F0003048F /* Secrets */,
 				513F32792593EE6F0003048F /* SyncDatabase */,
->>>>>>> main
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
