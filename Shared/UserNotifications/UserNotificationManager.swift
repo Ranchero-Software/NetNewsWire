@@ -73,17 +73,8 @@ private extension UserNotificationManager {
 	/// - Returns: A `UNNotifcationAttachment` if an icon is available. Otherwise nil.
 	/// - Warning: In certain scenarios, this will return the `faviconTemplateImage`.
 	func thumbnailAttachment(for article: Article, webFeed: WebFeed) -> UNNotificationAttachment? {
-		if let image = article.iconImage() {
-			let fm = FileManager.default
-			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-			#if os(macOS)
-			path.appendPathComponent(webFeed.webFeedID + "_smallIcon.tiff")
-			#else
-			path.appendPathComponent(webFeed.webFeedID + "_smallIcon.png")
-			#endif
-			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
-			
-			let thumbnail = try? UNNotificationAttachment(identifier: webFeed.webFeedID, url: path, options: nil)
+		if let imageURL = article.iconImageUrl(webFeed: webFeed) {
+			let thumbnail = try? UNNotificationAttachment(identifier: webFeed.webFeedID, url: imageURL, options: nil)
 			return thumbnail
 		}
 		return nil
