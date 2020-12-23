@@ -191,10 +191,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 		defer { completionHandler() }
 		
-		if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
-			sceneDelegate.handle(response)
+		let userInfo = response.notification.request.content.userInfo
+		
+		switch response.actionIdentifier {
+		case "MARK_AS_READ":
+			handleMarkAsRead(userInfo: userInfo)
+		case "MARK_AS_STARRED":
+			handleMarkAsStarred(userInfo: userInfo)
+		default:
+			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
+				sceneDelegate.handle(response)
+			}
 		}
-        
+		
     }
 	
 }
@@ -396,4 +405,63 @@ private extension AppDelegate {
 		}
 	}
 	
+}
+
+// Handle Notification Actions
+
+private extension AppDelegate {
+	
+	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+				return
+		}
+		resumeDatabaseProcessingIfNecessary()
+		let account = AccountManager.shared.existingAccount(with: accountID)
+		guard account != nil else {
+			os_log(.debug, "No account found from notification.")
+			return
+		}
+		let article = try? account!.fetchArticles(.articleIDs([articleID]))
+		guard article != nil else {
+			os_log(.debug, "No article found from search using %@", articleID)
+			return
+		}
+		account!.markArticles(article!, statusKey: .read, flag: true)
+		self.prepareAccountsForBackground()
+		if !AccountManager.shared.isSuspended {
+			if #available(iOS 14, *) {
+				try? WidgetDataEncoder.shared.encodeWidgetData()
+			}
+			self.suspendApplication()
+		}
+	}
+	
+	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+				return
+		}
+		resumeDatabaseProcessingIfNecessary()
+		let account = AccountManager.shared.existingAccount(with: accountID)
+		guard account != nil else {
+			os_log(.debug, "No account found from notification.")
+			return
+		}
+		let article = try? account!.fetchArticles(.articleIDs([articleID]))
+		guard article != nil else {
+			os_log(.debug, "No article found from search using %@", articleID)
+			return
+		}
+		account!.markArticles(article!, statusKey: .starred, flag: true)
+		self.prepareAccountsForBackground()
+		if !AccountManager.shared.isSuspended {
+			if #available(iOS 14, *) {
+				try? WidgetDataEncoder.shared.encodeWidgetData()
+			}
+			self.suspendApplication()
+		}
+	}
 }
