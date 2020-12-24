@@ -59,7 +59,7 @@ struct StarredWidgetView : View {
 	var starredImage: some View {
 		Image(systemName: "star.fill")
 			.resizable()
-			.frame(width: 25, height: 25, alignment: .center)
+			.frame(width: 30, height: 30, alignment: .center)
 			.cornerRadius(4)
 			.foregroundColor(.yellow)
 	}

@@ -58,7 +58,7 @@ struct TodayWidgetView : View {
 	var todayImage: some View {
 		Image(systemName: "sun.max.fill")
 			.resizable()
-			.frame(width: 25, height: 25, alignment: .center)
+			.frame(width: 30, height: 30, alignment: .center)
 			.cornerRadius(4)
 			.foregroundColor(.orange)
 	}

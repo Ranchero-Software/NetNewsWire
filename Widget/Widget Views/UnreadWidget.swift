@@ -58,7 +58,7 @@ struct UnreadWidgetView : View {
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
 			.resizable()
-			.frame(width: 25, height: 25, alignment: .center)
+			.frame(width: 30, height: 30, alignment: .center)
 			.cornerRadius(4)
 			.foregroundColor(.accentColor)
 	}
