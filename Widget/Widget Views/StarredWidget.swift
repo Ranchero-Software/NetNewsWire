@@ -12,6 +12,7 @@ import SwiftUI
 struct StarredWidgetView : View {
 	
 	@Environment(\.widgetFamily) var family: WidgetFamily
+	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
 	
 	var entry: Provider.Entry
 	
@@ -64,10 +65,15 @@ struct StarredWidgetView : View {
 	}
 	
 	func maxCount() -> Int {
-		if family == .systemLarge {
-			return entry.widgetData.currentStarredCount > 7 ? 7 : entry.widgetData.currentStarredCount
+		var reduceAccessibilityCount: Int = 0
+		if SizeCategories().isSizeCategoryLarge(category: sizeCategory) {
+			reduceAccessibilityCount = 1
 		}
-		return entry.widgetData.currentStarredCount > 3 ? 3 : entry.widgetData.currentStarredCount
+		
+		if family == .systemLarge {
+			return entry.widgetData.currentStarredCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
+		}
+		return entry.widgetData.currentStarredCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
 	}
 	
 	var inboxZero: some View {

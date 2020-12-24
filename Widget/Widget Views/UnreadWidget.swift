@@ -12,6 +12,7 @@ import SwiftUI
 struct UnreadWidgetView : View {
 	
 	@Environment(\.widgetFamily) var family: WidgetFamily
+	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
 	
 	var entry: Provider.Entry
 	
@@ -63,10 +64,15 @@ struct UnreadWidgetView : View {
 	}
 	
 	func maxCount() -> Int {
-		if family == .systemLarge {
-			return entry.widgetData.unreadArticles.count > 7 ? 7 : entry.widgetData.unreadArticles.count
+		var reduceAccessibilityCount: Int = 0
+		if SizeCategories().isSizeCategoryLarge(category: sizeCategory) {
+			reduceAccessibilityCount = 1
 		}
-		return entry.widgetData.unreadArticles.count > 3 ? 3 : entry.widgetData.unreadArticles.count
+		
+		if family == .systemLarge {
+			return entry.widgetData.unreadArticles.count >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
+		}
+		return entry.widgetData.unreadArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
 	}
 	
 	var inboxZero: some View {

@@ -132,6 +132,7 @@
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
+		17E0084625941887000C23F0 /* SizeCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0084525941887000C23F0 /* SizeCategories.swift */; };
 		17E4DBD624BFC53E00FE462A /* AdvancedPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
 		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
@@ -1474,6 +1475,7 @@
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
 		17D3CEE2257C4D2300E74939 /* AddAccountSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountSignUp.swift; sourceTree = "<group>"; };
 		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
+		17E0084525941887000C23F0 /* SizeCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeCategories.swift; sourceTree = "<group>"; };
 		17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesModel.swift; sourceTree = "<group>"; };
 		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
 		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
@@ -2290,6 +2292,7 @@
 			isa = PBXGroup;
 			children = (
 				176814562564BD0600D98635 /* ArticleItemView.swift */,
+				17E0084525941887000C23F0 /* SizeCategories.swift */,
 			);
 			path = "Shared Views";
 			sourceTree = "<group>";
@@ -4545,6 +4548,7 @@
 				176814652564BD7F00D98635 /* WidgetData.swift in Sources */,
 				1768145E2564BD7B00D98635 /* WidgetDataDecoder.swift in Sources */,
 				176814132564BC8A00D98635 /* WidgetBundle.swift in Sources */,
+				17E0084625941887000C23F0 /* SizeCategories.swift in Sources */,
 				176814462564BCD200D98635 /* StarredWidget.swift in Sources */,
 				176814572564BD0600D98635 /* ArticleItemView.swift in Sources */,
 				1768144E2564BCE000D98635 /* SmartFeedSummaryWidget.swift in Sources */,
