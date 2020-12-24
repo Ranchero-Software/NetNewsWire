@@ -12,6 +12,7 @@ import SwiftUI
 struct TodayWidgetView : View {
 	
 	@Environment(\.widgetFamily) var family: WidgetFamily
+	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
 	
 	var entry: Provider.Entry
 	
@@ -57,16 +58,21 @@ struct TodayWidgetView : View {
 	var todayImage: some View {
 		Image(systemName: "sun.max.fill")
 			.resizable()
-			.frame(width: 25, height: 25, alignment: .center)
+			.frame(width: 30, height: 30, alignment: .center)
 			.cornerRadius(4)
 			.foregroundColor(.orange)
 	}
 	
 	func maxCount() -> Int {
-		if family == .systemLarge {
-			return entry.widgetData.todayArticles.count > 7 ? 7 : entry.widgetData.todayArticles.count
+		var reduceAccessibilityCount: Int = 0
+		if SizeCategories().isSizeCategoryLarge(category: sizeCategory) {
+			reduceAccessibilityCount = 1
 		}
-		return entry.widgetData.todayArticles.count > 3 ? 3 : entry.widgetData.todayArticles.count
+		
+		if family == .systemLarge {
+			return entry.widgetData.todayArticles.count >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.todayArticles.count
+		}
+		return entry.widgetData.todayArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.todayArticles.count
 	}
 	
 	var inboxZero: some View {
