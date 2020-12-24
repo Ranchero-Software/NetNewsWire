@@ -1293,11 +1293,15 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				17E0081625936DFF000C23F0 /* Secrets in Embed Frameworks */,
 				17A1598924E3DEDD005DA32A /* RSParser in Embed Frameworks */,
 				17A1598624E3DEDD005DA32A /* RSDatabase in Embed Frameworks */,
 				17A1598324E3DEDD005DA32A /* RSWeb in Embed Frameworks */,
+				17E0081925936DFF000C23F0 /* SyncDatabase in Embed Frameworks */,
+				17E0081025936DF6000C23F0 /* Articles in Embed Frameworks */,
 				17A1597D24E3DEDD005DA32A /* RSCore in Embed Frameworks */,
 				17A1598024E3DEDD005DA32A /* RSTree in Embed Frameworks */,
+				17E0081325936DF6000C23F0 /* ArticlesDatabase in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2046,7 +2050,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51BC2F4B24D343A500E90810 /* Account in Frameworks */,
 				513F32882593EF8F0003048F /* RSCore in Frameworks */,
 				51BC2F4D24D343AB00E90810 /* RSTree in Frameworks */,
 			);
@@ -2079,7 +2082,11 @@
 				17A1597C24E3DEDD005DA32A /* RSCore in Frameworks */,
 				516B695D24D2F28E00B5702F /* Account in Frameworks */,
 				17A1598524E3DEDD005DA32A /* RSDatabase in Frameworks */,
+				17E0080F25936DF6000C23F0 /* Articles in Frameworks */,
+				17E0081525936DFF000C23F0 /* Secrets in Frameworks */,
 				51E4989724A8065700B667CB /* CloudKit.framework in Frameworks */,
+				17E0081225936DF6000C23F0 /* ArticlesDatabase in Frameworks */,
+				17E0081825936DFF000C23F0 /* SyncDatabase in Frameworks */,
 				51E4989924A8067000B667CB /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3799,6 +3806,10 @@
 				17A1598124E3DEDD005DA32A /* RSWeb */,
 				17A1598424E3DEDD005DA32A /* RSDatabase */,
 				17A1598724E3DEDD005DA32A /* RSParser */,
+				17E0080E25936DF6000C23F0 /* Articles */,
+				17E0081125936DF6000C23F0 /* ArticlesDatabase */,
+				17E0081425936DFF000C23F0 /* Secrets */,
+				17E0081725936DFF000C23F0 /* SyncDatabase */,
 			);
 			productName = iOS;
 			productReference = 51C0513D24A77DF800194D5E /* NetNewsWire.app */;
@@ -6161,6 +6172,48 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
 			productName = RSParser;
+		};
+		17E007F925936D7B000C23F0 /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+		17E0080125936D89000C23F0 /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+		17E0080E25936DF6000C23F0 /* Articles */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Articles;
+		};
+		17E0081125936DF6000C23F0 /* ArticlesDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ArticlesDatabase;
+		};
+		17E0081425936DFF000C23F0 /* Secrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Secrets;
+		};
+		17E0081725936DFF000C23F0 /* SyncDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SyncDatabase;
+		};
+		17E0081F25936E31000C23F0 /* Articles */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Articles;
+		};
+		17E0082225936E31000C23F0 /* ArticlesDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ArticlesDatabase;
+		};
+		17E0082525936E31000C23F0 /* Secrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Secrets;
+		};
+		17E0082825936E31000C23F0 /* SyncDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SyncDatabase;
 		};
 		5102AE6824D17F7C0050839C /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;

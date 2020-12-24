@@ -455,7 +455,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
     }
 	
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-		mainWindowController?.handle(response)
+		
+		let userInfo = response.notification.request.content.userInfo
+		
+		switch response.actionIdentifier {
+		case "MARK_AS_READ":
+			handleMarkAsRead(userInfo: userInfo)
+		case "MARK_AS_STARRED":
+			handleMarkAsStarred(userInfo: userInfo)
+		default:
+			mainWindowController?.handle(response)
+		}
 		completionHandler()
     }
 	
@@ -790,4 +800,48 @@ extension AppDelegate: NSWindowRestoration {
 		completionHandler(mainWindow, nil)
 	}
 	
+}
+
+// Handle Notification Actions
+
+private extension AppDelegate {
+	
+	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+				return
+		}
+		
+		let account = AccountManager.shared.existingAccount(with: accountID)
+		guard account != nil else {
+			os_log(.debug, "No account found from notification.")
+			return
+		}
+		let article = try? account!.fetchArticles(.articleIDs([articleID]))
+		guard article != nil else {
+			os_log(.debug, "No article found from search using %@", articleID)
+			return
+		}
+		account!.markArticles(article!, statusKey: .read, flag: true)
+	}
+	
+	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
+				return
+		}
+		let account = AccountManager.shared.existingAccount(with: accountID)
+		guard account != nil else {
+			os_log(.debug, "No account found from notification.")
+			return
+		}
+		let article = try? account!.fetchArticles(.articleIDs([articleID]))
+		guard article != nil else {
+			os_log(.debug, "No article found from search using %@", articleID)
+			return
+		}
+		account!.markArticles(article!, statusKey: .starred, flag: true)
+	}
 }
