@@ -134,6 +134,11 @@
 		17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
 		17E0084625941887000C23F0 /* SizeCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0084525941887000C23F0 /* SizeCategories.swift */; };
 		17E4DBD624BFC53E00FE462A /* AdvancedPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */; };
+		27B86EEB25A53AAB00264340 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; };
+		27B86EEC25A53AAB00264340 /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 17E0080E25936DF6000C23F0 /* Articles */; };
+		27B86EED25A53AAB00264340 /* ArticlesDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 17E0081125936DF6000C23F0 /* ArticlesDatabase */; };
+		27B86EEE25A53AAB00264340 /* Secrets in Frameworks */ = {isa = PBXBuildFile; productRef = 17E0081425936DFF000C23F0 /* Secrets */; };
+		27B86EEF25A53AAB00264340 /* SyncDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 17E0081725936DFF000C23F0 /* SyncDatabase */; };
 		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
 		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
 		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
@@ -515,7 +520,6 @@
 		51BC2F3824D3439A00E90810 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F3724D3439A00E90810 /* Account */; };
 		51BC2F4824D3439E00E90810 /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4724D3439E00E90810 /* RSTree */; };
 		51BC2F4924D3439E00E90810 /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4724D3439E00E90810 /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		51BC2F4B24D343A500E90810 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; };
 		51BC2F4D24D343AB00E90810 /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4C24D343AB00E90810 /* RSTree */; };
 		51BC2F4E24D343AB00E90810 /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4C24D343AB00E90810 /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BC4ADD247277DF000A6ED8 /* URL-Extensions.swift */; };
@@ -1293,15 +1297,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17E0081625936DFF000C23F0 /* Secrets in Embed Frameworks */,
 				17A1598924E3DEDD005DA32A /* RSParser in Embed Frameworks */,
 				17A1598624E3DEDD005DA32A /* RSDatabase in Embed Frameworks */,
 				17A1598324E3DEDD005DA32A /* RSWeb in Embed Frameworks */,
-				17E0081925936DFF000C23F0 /* SyncDatabase in Embed Frameworks */,
-				17E0081025936DF6000C23F0 /* Articles in Embed Frameworks */,
 				17A1597D24E3DEDD005DA32A /* RSCore in Embed Frameworks */,
 				17A1598024E3DEDD005DA32A /* RSTree in Embed Frameworks */,
-				17E0081325936DF6000C23F0 /* ArticlesDatabase in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2050,6 +2050,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27B86EEB25A53AAB00264340 /* Account in Frameworks */,
 				513F32882593EF8F0003048F /* RSCore in Frameworks */,
 				51BC2F4D24D343AB00E90810 /* RSTree in Frameworks */,
 			);
@@ -2082,11 +2083,11 @@
 				17A1597C24E3DEDD005DA32A /* RSCore in Frameworks */,
 				516B695D24D2F28E00B5702F /* Account in Frameworks */,
 				17A1598524E3DEDD005DA32A /* RSDatabase in Frameworks */,
-				17E0080F25936DF6000C23F0 /* Articles in Frameworks */,
-				17E0081525936DFF000C23F0 /* Secrets in Frameworks */,
+				27B86EEC25A53AAB00264340 /* Articles in Frameworks */,
+				27B86EEE25A53AAB00264340 /* Secrets in Frameworks */,
 				51E4989724A8065700B667CB /* CloudKit.framework in Frameworks */,
-				17E0081225936DF6000C23F0 /* ArticlesDatabase in Frameworks */,
-				17E0081825936DFF000C23F0 /* SyncDatabase in Frameworks */,
+				27B86EED25A53AAB00264340 /* ArticlesDatabase in Frameworks */,
+				27B86EEF25A53AAB00264340 /* SyncDatabase in Frameworks */,
 				51E4989924A8067000B667CB /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2181,12 +2182,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		171BCBB124CBD569006E22D9 /* Account Management  */ = {
+		171BCBB124CBD569006E22D9 /* Account Management */ = {
 			isa = PBXGroup;
 			children = (
 				171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */,
 			);
-			path = "Account Management ";
+			path = "Account Management";
 			sourceTree = "<group>";
 		};
 		172199EB24AB228E00A31D04 /* Settings */ = {
@@ -2792,6 +2793,7 @@
 				51E49A0224A91FF600B667CB /* SceneNavigationView.swift */,
 				1704053324E5985A00A00787 /* SceneNavigationModel.swift */,
 				51C0513824A77DF800194D5E /* Assets.xcassets */,
+				171BCBB124CBD569006E22D9 /* Account Management */,
 				17930ED224AF10CD00A9BA52 /* Add */,
 				51A576B924AE617B00078888 /* Article */,
 				51A8001024CA0FAE00F41F1D /* CombineExt */,
@@ -2801,7 +2803,6 @@
 				51E499FB24A9135A00B667CB /* Sidebar */,
 				514E6C0424AD2B0400AC6F6E /* SwiftUI Extensions */,
 				51919FCB24AB855000541E64 /* Timeline */,
-				171BCBB124CBD569006E22D9 /* Account Management  */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -6173,16 +6174,6 @@
 			package = 51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */;
 			productName = RSParser;
 		};
-		17E007F925936D7B000C23F0 /* RSCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
-			productName = RSCore;
-		};
-		17E0080125936D89000C23F0 /* RSCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
-			productName = RSCore;
-		};
 		17E0080E25936DF6000C23F0 /* Articles */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Articles;
@@ -6196,22 +6187,6 @@
 			productName = Secrets;
 		};
 		17E0081725936DFF000C23F0 /* SyncDatabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SyncDatabase;
-		};
-		17E0081F25936E31000C23F0 /* Articles */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Articles;
-		};
-		17E0082225936E31000C23F0 /* ArticlesDatabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ArticlesDatabase;
-		};
-		17E0082525936E31000C23F0 /* Secrets */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Secrets;
-		};
-		17E0082825936E31000C23F0 /* SyncDatabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SyncDatabase;
 		};
