@@ -52,11 +52,11 @@ final class IconView: UIView {
 	}
 
 	private var isSymbolImage: Bool {
-		return imageView.image?.isSymbolImage ?? false
+		return iconImage?.isSymbol ?? false
 	}
 	
 	private var isBackgroundSuppressed: Bool {
-		return imageView.image?.isBackgroundSuppressed ?? false
+		return iconImage?.isBackgroundSupressed ?? false
 	}
 	
 	override init(frame: CGRect) {
