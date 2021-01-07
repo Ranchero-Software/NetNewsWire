@@ -1,7 +1,5 @@
 # ![Icon](Technotes/Images/icon.png) NetNewsWire
 
-[![CI](https://github.com/Ranchero-Software/NetNewsWire/workflows/CI/badge.svg?branch=main)](https://github.com/Ranchero-Software/NetNewsWire/actions?query=workflow%3ACI+branch%3Amain)
-
 It’s a free and open source feed reader for macOS and iOS.
 
 It supports [RSS](http://cyber.harvard.edu/rss/rss.html), [Atom](https://tools.ietf.org/html/rfc4287), [JSON Feed](https://jsonfeed.org/), and [RSS-in-JSON](https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md) formats.
