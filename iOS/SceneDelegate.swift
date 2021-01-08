@@ -100,58 +100,68 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	// Handle Opening of URLs
 	
-	func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+	func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {
+		guard let context = urlContexts.first else { return }
+		
 		DispatchQueue.main.async {
-			for context in URLContexts {
-				// Show Unread View or Article
-				if context.url.absoluteString.contains(WidgetDeepLink.unread.url.absoluteString) {
-					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
-					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
-					if id != nil {
-						if AccountManager.shared.isSuspended {
-							AccountManager.shared.resumeAll()
-						}
-						self.coordinator.selectAllUnreadFeed() {
-							self.coordinator.selectArticleInCurrentFeed(id!)
-						}
-					} else {
-						self.coordinator.selectAllUnreadFeed()
-					}
+			let urlString = context.url.absoluteString
+			
+			// Handle the feed: and feeds: schemes
+			if urlString.starts(with: "feed:") || urlString.starts(with: "feeds:") {
+				let normalizedURLString = urlString.normalizedURL
+				if normalizedURLString.mayBeURL {
+					self.coordinator.showAddWebFeed(initialFeed: normalizedURLString, initialFeedName: nil)
 				}
-				
-				// Show Today View or Article
-				if context.url.absoluteString.contains(WidgetDeepLink.today.url.absoluteString) {
-					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
-					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
-					if id != nil {
-						if AccountManager.shared.isSuspended {
-							AccountManager.shared.resumeAll()
-						}
-						self.coordinator.selectTodayFeed() {
-							self.coordinator.selectArticleInCurrentFeed(id!)
-						}
-					} else {
-						self.coordinator.selectTodayFeed()
-					}
-				}
-				
-				// Show Starred View or Article
-				if context.url.absoluteString.contains(WidgetDeepLink.starred.url.absoluteString) {
-					guard let comps = URLComponents(string: context.url.absoluteString ) else { return  }
-					let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
-					if id != nil {
-						if AccountManager.shared.isSuspended {
-							AccountManager.shared.resumeAll()
-						}
-						self.coordinator.selectStarredFeed() {
-							self.coordinator.selectArticleInCurrentFeed(id!)
-						}
-					} else {
-						self.coordinator.selectStarredFeed()
-					}
-				}
-				
 			}
+			
+			// Show Unread View or Article
+			if urlString.contains(WidgetDeepLink.unread.url.absoluteString) {
+				guard let comps = URLComponents(string: urlString ) else { return  }
+				let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+				if id != nil {
+					if AccountManager.shared.isSuspended {
+						AccountManager.shared.resumeAll()
+					}
+					self.coordinator.selectAllUnreadFeed() {
+						self.coordinator.selectArticleInCurrentFeed(id!)
+					}
+				} else {
+					self.coordinator.selectAllUnreadFeed()
+				}
+			}
+			
+			// Show Today View or Article
+			if urlString.contains(WidgetDeepLink.today.url.absoluteString) {
+				guard let comps = URLComponents(string: urlString ) else { return  }
+				let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+				if id != nil {
+					if AccountManager.shared.isSuspended {
+						AccountManager.shared.resumeAll()
+					}
+					self.coordinator.selectTodayFeed() {
+						self.coordinator.selectArticleInCurrentFeed(id!)
+					}
+				} else {
+					self.coordinator.selectTodayFeed()
+				}
+			}
+			
+			// Show Starred View or Article
+			if urlString.contains(WidgetDeepLink.starred.url.absoluteString) {
+				guard let comps = URLComponents(string: urlString ) else { return  }
+				let id = comps.queryItems?.first(where: { $0.name == "id" })?.value
+				if id != nil {
+					if AccountManager.shared.isSuspended {
+						AccountManager.shared.resumeAll()
+					}
+					self.coordinator.selectStarredFeed() {
+						self.coordinator.selectArticleInCurrentFeed(id!)
+					}
+				} else {
+					self.coordinator.selectStarredFeed()
+				}
+			}
+			
 		}
 	}
 	

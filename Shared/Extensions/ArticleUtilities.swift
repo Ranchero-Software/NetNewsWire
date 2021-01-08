@@ -103,6 +103,22 @@ extension Article {
 		return FaviconGenerator.favicon(webFeed)
 	}
 	
+	func iconImageUrl(webFeed: WebFeed) -> URL? {
+		if let image = iconImage() {
+			let fm = FileManager.default
+			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+			#if os(macOS)
+			path.appendPathComponent(webFeed.webFeedID + "_smallIcon.tiff")
+			#else
+			path.appendPathComponent(webFeed.webFeedID + "_smallIcon.png")
+			#endif
+			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
+			return path
+		} else {
+			return nil
+		}
+	}
+	
 	func byline() -> String {
 		guard let authors = authors ?? webFeed?.authors, !authors.isEmpty else {
 			return ""

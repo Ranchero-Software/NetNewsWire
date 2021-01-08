@@ -12,6 +12,7 @@ import SwiftUI
 struct UnreadWidgetView : View {
 	
 	@Environment(\.widgetFamily) var family: WidgetFamily
+	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
 	
 	var entry: Provider.Entry
 	
@@ -23,7 +24,7 @@ struct UnreadWidgetView : View {
 		else {
 			GeometryReader { metrics in
 				HStack(alignment: .top, spacing: 4) {
-					VStack(alignment: .leading) {
+					VStack(alignment: .leading, spacing: -4) {
 						unreadImage
 						Spacer()
 						Text(L10n.localizedCount(entry.widgetData.currentUnreadCount)).bold().font(.callout).minimumScaleFactor(0.5).lineLimit(1)
@@ -57,16 +58,21 @@ struct UnreadWidgetView : View {
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
 			.resizable()
-			.frame(width: 25, height: 25, alignment: .center)
+			.frame(width: 30, height: 30, alignment: .center)
 			.cornerRadius(4)
 			.foregroundColor(.accentColor)
 	}
 	
 	func maxCount() -> Int {
-		if family == .systemLarge {
-			return entry.widgetData.unreadArticles.count > 7 ? 7 : entry.widgetData.unreadArticles.count
+		var reduceAccessibilityCount: Int = 0
+		if SizeCategories().isSizeCategoryLarge(category: sizeCategory) {
+			reduceAccessibilityCount = 1
 		}
-		return entry.widgetData.unreadArticles.count > 3 ? 3 : entry.widgetData.unreadArticles.count
+		
+		if family == .systemLarge {
+			return entry.widgetData.unreadArticles.count >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
+		}
+		return entry.widgetData.unreadArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
 	}
 	
 	var inboxZero: some View {
