@@ -356,7 +356,7 @@ extension WebViewController: WKNavigationDelegate {
 			} else if components?.scheme == "mailto" {
 				decisionHandler(.cancel)
 				
-				guard let emailAddress = URL(string: (url.emailAddress?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed))!) else {
+				guard let emailAddress = url.percentEncodedEmailAddress else {
 					return
 				}
 				
