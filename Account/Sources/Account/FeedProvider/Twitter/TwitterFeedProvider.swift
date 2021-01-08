@@ -45,7 +45,7 @@ public final class TwitterFeedProvider: FeedProvider {
 	private static let userAgentHeaders = UserAgent.headers() as! [String: String]
 	private static let dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
 	
-	private static let userPaths = ["/home", "/notifications"]
+	private static let userPaths = ["/", "/home", "/notifications"]
 	private static let reservedPaths = ["/search", "/explore", "/messages", "/i", "/compose", "/notifications/mentions"]
 	
 	private var parsingQueue = DispatchQueue(label: "TwitterFeedProvider parse queue")
