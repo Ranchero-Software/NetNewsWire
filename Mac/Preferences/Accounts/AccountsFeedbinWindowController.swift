@@ -93,25 +93,23 @@ class AccountsFeedbinWindowController: NSWindowController {
 					return
 				}
 				
-				var newAccount = false
 				if self.account == nil {
 					self.account = AccountManager.shared.createAccount(type: .feedbin)
-					newAccount = true
 				}
 			
 				do {
 					try self.account?.removeCredentials(type: .basic)
 					try self.account?.storeCredentials(validatedCredentials)
-					if newAccount {
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								NSApplication.shared.presentError(error)
-							}
+
+					self.account?.refreshAll() { result in
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							NSApplication.shared.presentError(error)
 						}
 					}
+					
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")

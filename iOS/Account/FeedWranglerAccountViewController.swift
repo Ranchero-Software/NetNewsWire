@@ -109,10 +109,8 @@ class FeedWranglerAccountViewController: UITableViewController {
 					return
 				}
 				
-				var newAccount = false
 				if self.account == nil {
 					self.account = AccountManager.shared.createAccount(type: .feedWrangler)
-					newAccount = true
 				}
 				
 				do {
@@ -121,14 +119,12 @@ class FeedWranglerAccountViewController: UITableViewController {
 					try self.account?.storeCredentials(credentials)
 					try self.account?.storeCredentials(validatedCredentials)
 					
-					if newAccount {
-						self.account?.refreshAll { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								self.presentError(error)
-							}
+					self.account?.refreshAll { result in
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							self.presentError(error)
 						}
 					}
 					

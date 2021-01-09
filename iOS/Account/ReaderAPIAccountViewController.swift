@@ -159,30 +159,27 @@ class ReaderAPIAccountViewController: UITableViewController {
 			switch result {
 			case .success(let validatedCredentials):
 				if let validatedCredentials = validatedCredentials {
-					var newAccount = false
+
 					if self.account == nil {
 						self.account = AccountManager.shared.createAccount(type: type)
-						newAccount = true
 					}
 
 					do {
 						self.account?.endpointURL = url
 						
-						try self.account?.removeCredentials(type: .readerBasic)
-						try self.account?.removeCredentials(type: .readerAPIKey)
+						try? self.account?.removeCredentials(type: .readerBasic)
+						try? self.account?.removeCredentials(type: .readerAPIKey)
 						try self.account?.storeCredentials(credentials)
 						try self.account?.storeCredentials(validatedCredentials)
 
 						self.dismiss(animated: true, completion: nil)
 						
-						if newAccount {
-							self.account?.refreshAll() { result in
-								switch result {
-								case .success:
-									break
-								case .failure(let error):
-									self.showError(NSLocalizedString(error.localizedDescription, comment: "Accoount Refresh Error"))
-								}
+						self.account?.refreshAll() { result in
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								self.showError(NSLocalizedString(error.localizedDescription, comment: "Accoount Refresh Error"))
 							}
 						}
 						

@@ -144,11 +144,8 @@ class AccountsReaderAPIWindowController: NSWindowController {
 					return
 				}
 				
-				
-				var newAccount = false
 				if self.account == nil {
 					self.account = AccountManager.shared.createAccount(type: self.accountType!)
-					newAccount = true
 				}
 				
 				do {
@@ -159,16 +156,15 @@ class AccountsReaderAPIWindowController: NSWindowController {
 					try self.account?.storeCredentials(credentials)
 					try self.account?.storeCredentials(validatedCredentials)
 					
-					if newAccount {
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								NSApplication.shared.presentError(error)
-							}
+					self.account?.refreshAll() { result in
+						switch result {
+						case .success:
+							break
+						case .failure(let error):
+							NSApplication.shared.presentError(error)
 						}
 					}
+					
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")

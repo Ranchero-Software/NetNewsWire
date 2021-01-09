@@ -106,10 +106,8 @@ class FeedbinAccountViewController: UITableViewController {
 			switch result {
 			case .success(let credentials):
 				if let credentials = credentials {
-					var newAccount = false
 					if self.account == nil {
 						self.account = AccountManager.shared.createAccount(type: .feedbin)
-						newAccount = true
 					}
 					
 					do {
@@ -119,14 +117,12 @@ class FeedbinAccountViewController: UITableViewController {
 						} catch {}
 						try self.account?.storeCredentials(credentials)
 						
-						if newAccount {
-							self.account?.refreshAll() { result in
-								switch result {
-								case .success:
-									break
-								case .failure(let error):
-									self.presentError(error)
-								}
+						self.account?.refreshAll() { result in
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								self.presentError(error)
 							}
 						}
 						

@@ -108,10 +108,9 @@ class NewsBlurAccountViewController: UITableViewController {
 			switch result {
 			case .success(let sessionCredentials):
 				if let sessionCredentials = sessionCredentials {
-					var newAccount = false
+
 					if self.account == nil {
 						self.account = AccountManager.shared.createAccount(type: .newsBlur)
-						newAccount = true
 					}
 
 					do {
@@ -123,14 +122,12 @@ class NewsBlurAccountViewController: UITableViewController {
 						try self.account?.storeCredentials(basicCredentials)
 						try self.account?.storeCredentials(sessionCredentials)
 
-						if newAccount {
-							self.account?.refreshAll() { result in
-								switch result {
-								case .success:
-									break
-								case .failure(let error):
-									self.presentError(error)
-								}
+						self.account?.refreshAll() { result in
+							switch result {
+							case .success:
+								break
+							case .failure(let error):
+								self.presentError(error)
 							}
 						}
 
