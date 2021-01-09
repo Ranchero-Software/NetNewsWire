@@ -315,15 +315,12 @@ extension WebViewController: WKNavigationDelegate {
 			} else if components?.scheme == "mailto" {
 				decisionHandler(.cancel)
 				
-				guard let emailAddress = url.emailAddress else {
+				guard let emailAddress = url.percentEncodedEmailAddress else {
 					return
 				}
 				
-				if MFMailComposeViewController.canSendMail() {
-					let mailComposeViewController = MFMailComposeViewController()
-					mailComposeViewController.setToRecipients([emailAddress])
-					mailComposeViewController.mailComposeDelegate = self
-					self.present(mailComposeViewController, animated: true, completion: {})
+				if UIApplication.shared.canOpenURL(emailAddress) {
+					UIApplication.shared.open(emailAddress, options: [.universalLinksOnly : false], completionHandler: nil)
 				} else {
 					let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
 					alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
@@ -414,15 +411,6 @@ extension WebViewController: UIScrollViewDelegate {
 			guard javascriptScrollY != 33554432 else { return }
 			self.windowScrollY = javascriptScrollY
 		}
-	}
-	
-}
-
-// MARK: MFMailComposeViewControllerDelegate
-extension WebViewController: MFMailComposeViewControllerDelegate {
-	
-	func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-		self.dismiss(animated: true, completion: nil)
 	}
 	
 }

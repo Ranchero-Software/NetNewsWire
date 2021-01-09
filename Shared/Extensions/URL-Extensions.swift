@@ -15,6 +15,11 @@ extension URL {
 		scheme == "mailto" ? URLComponents(url: self, resolvingAgainstBaseURL: false)?.path : nil
 	}
 	
+	/// Percent encoded `mailto` URL for use with `canOpenUrl`. If the URL doesn't contain the `mailto` scheme, this is `nil`.
+	var percentEncodedEmailAddress: URL? {
+		scheme == "mailto" ? self.string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)?.url : nil
+	}
+	
 	/// URL pointing to current app version release notes.
 	static var releaseNotes: URL {
 		let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
