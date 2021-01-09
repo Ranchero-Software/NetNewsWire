@@ -61,6 +61,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 	}
 
+	var isShutDownSyncDone = false
+	
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
@@ -310,6 +312,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	func applicationWillTerminate(_ notification: Notification) {
 		shuttingDown = true
 		saveState()
+		
+		AccountManager.shared.syncArticleStatusAll() {
+			self.isShutDownSyncDone = true
+		}
+		
+		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: .distantFuture) { }
 	}
 
 	// MARK: Notifications
