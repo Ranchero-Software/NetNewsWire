@@ -39,6 +39,7 @@ class ExtensionPointInspectorViewController: UITableViewController {
 			self?.navigationController?.popViewController(animated: true)
 		}
 		alertController.addAction(markAction)
+		alertController.preferredAction = markAction
 		
 		present(alertController, animated: true)
 		

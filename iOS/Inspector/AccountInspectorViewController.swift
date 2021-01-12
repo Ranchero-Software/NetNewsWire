@@ -112,6 +112,7 @@ class AccountInspectorViewController: UITableViewController {
 			}
 		}
 		alertController.addAction(markAction)
+		alertController.preferredAction = markAction
 		
 		present(alertController, animated: true)
 	}

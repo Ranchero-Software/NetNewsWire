@@ -43,6 +43,7 @@ private extension UIViewController {
 			}
 			
 			alertController.addAction(credentialsAction)
+			alertController.preferredAction = credentialsAction
 
 		}
 		

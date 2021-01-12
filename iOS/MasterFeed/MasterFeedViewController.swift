@@ -1219,6 +1219,7 @@ private extension MasterFeedViewController {
 		}
 		
 		alertController.addAction(renameAction)
+		alertController.preferredAction = renameAction
 		
 		alertController.addTextField() { textField in
 			textField.text = name
@@ -1256,6 +1257,7 @@ private extension MasterFeedViewController {
 			self?.delete(indexPath: indexPath, feedID: feedID)
 		}
 		alertController.addAction(deleteAction)
+		alertController.preferredAction = deleteAction
 		
 		self.present(alertController, animated: true)
 	}

@@ -217,6 +217,7 @@ extension WebFeedInspectorViewController {
 		let dismiss = UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil)
 		alert.addAction(openSettings)
 		alert.addAction(dismiss)
+		alert.preferredAction = openSettings
 		return alert
 	}
 	
