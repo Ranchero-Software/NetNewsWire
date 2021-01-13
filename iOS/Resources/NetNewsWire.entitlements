@@ -3,7 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>aps-environment</key>
-	<string>development</string>
+	<string>Production</string>
+	<key>com.apple.developer.icloud-container-environment</key>
+	<string>Production</string>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>iCloud.$(ORGANIZATION_IDENTIFIER).NetNewsWire</string>
