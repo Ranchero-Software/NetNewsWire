@@ -190,40 +190,75 @@ final class FeedWranglerAPICaller: NSObject {
 		}
 	}
 	
-	func retrieveUnreadFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-		let url = FeedWranglerConfig.clientURL
-			.appendingPathComponent("feed_items/list")
-			.appendingQueryItems([
-				URLQueryItem(name: "read", value: "false"),
-				URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
-			])
-		
-		standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
-			switch result {
-			case .success(let (_, results)):
-				completion(.success(results?.feedItems ?? []))
+    func retrieveUnreadFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
+        let url = FeedWranglerConfig.clientURL
+            .appendingPathComponent("feed_items/list")
+            .appendingQueryItems([
+                URLQueryItem(name: "read", value: "false"),
+                URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
+            ])
+        
+        standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
+            switch result {
+            case .success(let (_, results)):
+                completion(.success(results?.feedItems ?? []))
 
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-	
-	func retrieveAllUnreadFeedItems(foundItems: [FeedWranglerFeedItem] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-		retrieveUnreadFeedItems(page: page) { result in
-			switch result {
-			case .success(let newItems):
-				if newItems.count > 0 {
-					self.retrieveAllUnreadFeedItems(foundItems: foundItems + newItems, page: (page + 1), completion: completion)
-				} else {
-					completion(.success(foundItems + newItems))
-				}
-				
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func retrieveAllUnreadFeedItems(foundItems: [FeedWranglerFeedItem] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
+        retrieveUnreadFeedItems(page: page) { result in
+            switch result {
+            case .success(let newItems):
+                if newItems.count > 0 {
+                    self.retrieveAllUnreadFeedItems(foundItems: foundItems + newItems, page: (page + 1), completion: completion)
+                } else {
+                    completion(.success(foundItems + newItems))
+                }
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func retrieveUnreadFeedItemIds(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
+        let url = FeedWranglerConfig.clientURL
+            .appendingPathComponent("feed_items/list_ids")
+            .appendingQueryItems([
+                URLQueryItem(name: "read", value: "false"),
+                URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.idsPageSize)),
+            ])
+        
+        standardSend(url: url, resultType: FeedWranglerFeedItemIdsRequest.self) { result in
+            switch result {
+            case .success(let (_, results)):
+                completion(.success(results?.feedItems ?? []))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func retrieveAllUnreadFeedItemIds(foundItems: [FeedWranglerFeedItemId] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
+        retrieveUnreadFeedItemIds(page: page) { result in
+            switch result {
+            case .success(let newItems):
+                if newItems.count > 0 {
+                    self.retrieveAllUnreadFeedItemIds(foundItems: foundItems + newItems, page: (page + 1), completion: completion)
+                } else {
+                    completion(.success(foundItems + newItems))
+                }
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 	
 	func retrieveStarredFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
 		let url = FeedWranglerConfig.clientURL
@@ -259,6 +294,41 @@ final class FeedWranglerAPICaller: NSObject {
 			}
 		}
 	}
+    
+    func retrieveStarredFeedItemIds(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
+        let url = FeedWranglerConfig.clientURL
+            .appendingPathComponent("feed_items/list_ids")
+            .appendingQueryItems([
+                URLQueryItem(name: "starred", value: "true"),
+                URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.idsPageSize)),
+            ])
+        
+        standardSend(url: url, resultType: FeedWranglerFeedItemIdsRequest.self) { result in
+            switch result {
+            case .success(let (_, results)):
+                completion(.success(results?.feedItems ?? []))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func retrieveAllStarredFeedItemIds(foundItems: [FeedWranglerFeedItemId] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
+        retrieveStarredFeedItemIds(page: page) { result in
+            switch result {
+            case .success(let newItems):
+                if newItems.count > 0 {
+                    self.retrieveAllStarredFeedItemIds(foundItems: foundItems + newItems, page: (page + 1), completion: completion)
+                } else {
+                    completion(.success(foundItems + newItems))
+                }
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 	
 	func updateArticleStatus(_ articleID: String, _ statuses: [SyncStatus], completion: @escaping () -> Void) {
 		
