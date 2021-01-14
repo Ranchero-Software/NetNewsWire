@@ -189,32 +189,21 @@ final class FeedWranglerAPICaller: NSObject {
 			}
 		}
 	}
-    
-    func retrieveUnreadFeedItemIds(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
-        let url = FeedWranglerConfig.clientURL
-            .appendingPathComponent("feed_items/list_ids")
-            .appendingQueryItems([
-                URLQueryItem(name: "read", value: "false"),
-                URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.idsPageSize)),
-            ])
         
-        standardSend(url: url, resultType: FeedWranglerFeedItemIdsRequest.self) { result in
-            switch result {
-            case .success(let (_, results)):
-                completion(.success(results?.feedItems ?? []))
-
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+    func retrieveUnreadFeedItemIds(completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
+        retrieveAllFeedItemIds(filters: [URLQueryItem(name: "read", value: "false")], completion: completion)
     }
     
-    func retrieveAllUnreadFeedItemIds(foundItems: [FeedWranglerFeedItemId] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
-        retrieveUnreadFeedItemIds(page: page) { result in
+    func retrieveStarredFeedItemIds(completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
+        retrieveAllFeedItemIds(filters: [URLQueryItem(name: "starred", value: "true")], completion: completion)
+    }
+    
+    private func retrieveAllFeedItemIds(filters: [URLQueryItem] = [], foundItems: [FeedWranglerFeedItemId] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
+        retrieveFeedItemIds(filters: filters, page: page) { result in
             switch result {
             case .success(let newItems):
                 if newItems.count > 0 {
-                    self.retrieveAllUnreadFeedItemIds(foundItems: foundItems + newItems, page: (page + 1), completion: completion)
+                    self.retrieveAllFeedItemIds(filters: filters, foundItems: foundItems + newItems, page: (page + 1), completion: completion)
                 } else {
                     completion(.success(foundItems + newItems))
                 }
@@ -225,35 +214,16 @@ final class FeedWranglerAPICaller: NSObject {
         }
     }
     
-    func retrieveStarredFeedItemIds(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
+    private func retrieveFeedItemIds(filters: [URLQueryItem] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
         let url = FeedWranglerConfig.clientURL
             .appendingPathComponent("feed_items/list_ids")
-            .appendingQueryItems([
-                URLQueryItem(name: "starred", value: "true"),
-                URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.idsPageSize)),
-            ])
+            .appendingQueryItems(filters + [URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.idsPageSize))])
         
         standardSend(url: url, resultType: FeedWranglerFeedItemIdsRequest.self) { result in
             switch result {
             case .success(let (_, results)):
                 completion(.success(results?.feedItems ?? []))
 
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    func retrieveAllStarredFeedItemIds(foundItems: [FeedWranglerFeedItemId] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
-        retrieveStarredFeedItemIds(page: page) { result in
-            switch result {
-            case .success(let newItems):
-                if newItems.count > 0 {
-                    self.retrieveAllStarredFeedItemIds(foundItems: foundItems + newItems, page: (page + 1), completion: completion)
-                } else {
-                    completion(.success(foundItems + newItems))
-                }
-                
             case .failure(let error):
                 completion(.failure(error))
             }

@@ -249,7 +249,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		caller.retrieveAllUnreadFeedItemIds { result in
+		caller.retrieveUnreadFeedItemIds { result in
 			switch result {
 			case .success(let items):
 				self.syncArticleReadState(account, items)
@@ -263,7 +263,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		
 		// starred
 		group.enter()
-		caller.retrieveAllStarredFeedItemIds { result in
+		caller.retrieveStarredFeedItemIds { result in
 			switch result {
 			case .success(let items):
 				self.syncArticleStarredState(account, items)
