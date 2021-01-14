@@ -189,41 +189,6 @@ final class FeedWranglerAPICaller: NSObject {
 			}
 		}
 	}
-	
-    func retrieveUnreadFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-        let url = FeedWranglerConfig.clientURL
-            .appendingPathComponent("feed_items/list")
-            .appendingQueryItems([
-                URLQueryItem(name: "read", value: "false"),
-                URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
-            ])
-        
-        standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
-            switch result {
-            case .success(let (_, results)):
-                completion(.success(results?.feedItems ?? []))
-
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    func retrieveAllUnreadFeedItems(foundItems: [FeedWranglerFeedItem] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-        retrieveUnreadFeedItems(page: page) { result in
-            switch result {
-            case .success(let newItems):
-                if newItems.count > 0 {
-                    self.retrieveAllUnreadFeedItems(foundItems: foundItems + newItems, page: (page + 1), completion: completion)
-                } else {
-                    completion(.success(foundItems + newItems))
-                }
-                
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
     
     func retrieveUnreadFeedItemIds(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
         let url = FeedWranglerConfig.clientURL
@@ -259,41 +224,6 @@ final class FeedWranglerAPICaller: NSObject {
             }
         }
     }
-	
-	func retrieveStarredFeedItems(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-		let url = FeedWranglerConfig.clientURL
-			.appendingPathComponent("feed_items/list")
-			.appendingQueryItems([
-				URLQueryItem(name: "starred", value: "true"),
-				URLQueryItem(name: "offset", value: String(page * FeedWranglerConfig.pageSize)),
-			])
-		
-		standardSend(url: url, resultType: FeedWranglerFeedItemsRequest.self) { result in
-			switch result {
-			case .success(let (_, results)):
-				completion(.success(results?.feedItems ?? []))
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-	
-	func retrieveAllStarredFeedItems(foundItems: [FeedWranglerFeedItem] = [], page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItem], Error>) -> Void) {
-		retrieveStarredFeedItems(page: page) { result in
-			switch result {
-			case .success(let newItems):
-				if newItems.count > 0 {
-					self.retrieveAllStarredFeedItems(foundItems: foundItems + newItems, page: (page + 1), completion: completion)
-				} else {
-					completion(.success(foundItems + newItems))
-				}
-				
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
     
     func retrieveStarredFeedItemIds(page: Int = 0, completion: @escaping (Result<[FeedWranglerFeedItemId], Error>) -> Void) {
         let url = FeedWranglerConfig.clientURL
