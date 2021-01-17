@@ -1,5 +1,19 @@
 # Mac Release Notes
 
+### 6.0d4 build 6004 - 16 Jan 2021
+
+* Big Sur app icon
+* Big Sur UI (when running on Big Sur)
+* App is now sandboxed
+* Syncing via iCloud
+* Syncing via BazQux, Inoreader, NewsBlur, The Old Reader, and FreshRSS
+* Special support for Twitter and Reddit feeds
+* Share extension, so you can send URLs to NetNewsWire
+* Preference to change article text size
+* Preference to set preferred browser
+* External link, when available, shows in article view
+* High resolution icons in the sidebar (when available)
+
 ## 5.1.3 build 3018 - 9 Nov 2020
 
 * Fixed a crashing bug that could happen with empty titles in the timeline
