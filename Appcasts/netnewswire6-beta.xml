@@ -6,7 +6,17 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
-<item>
+        <item>
+            <title>NetNewsWire 6.0d3</title>
+            <description><![CDATA[
+        <p>Testing Sparkle updating with NetNewsWire 6. Let us know on the #work channel how it goes!</p>
+            ]]></description>
+            <pubDate>Tue, 12 Jan 2021 21:15:00 -0700</pubDate>
+            <enclosure url="https://ranchero.com/downloads/NetNewsWire6.0d3.zip" sparkle:version="6003" sparkle:shortVersionString="6.0d3" length="10371946" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
     <title>NetNewsWire 5.1.3</title>
     <description><![CDATA[
 <p>Fixed a crashing bug that could happen with empty titles in the timeline.</p>
