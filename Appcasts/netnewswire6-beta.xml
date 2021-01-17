@@ -7,6 +7,16 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0d4</title>
+            <description><![CDATA[
+        <p>First public test build.</p>
+            ]]></description>
+            <pubDate>Sat, 16 Jan 2021 17:45:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0d4dev4/NetNewsWire6.0d4.zip" sparkle:version="6004" sparkle:shortVersionString="6.0d4" length="10372343" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.0d3</title>
             <description><![CDATA[
         <p>Testing Sparkle updating with NetNewsWire 6. Let us know on the #work channel how it goes!</p>
