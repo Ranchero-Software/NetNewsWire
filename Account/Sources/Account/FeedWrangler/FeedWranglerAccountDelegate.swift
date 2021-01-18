@@ -249,7 +249,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		caller.retrieveAllUnreadFeedItems { result in
+		caller.retrieveUnreadFeedItemIds { result in
 			switch result {
 			case .success(let items):
 				self.syncArticleReadState(account, items)
@@ -263,7 +263,7 @@ final class FeedWranglerAccountDelegate: AccountDelegate {
 		
 		// starred
 		group.enter()
-		caller.retrieveAllStarredFeedItems { result in
+		caller.retrieveStarredFeedItemIds { result in
 			switch result {
 			case .success(let items):
 				self.syncArticleStarredState(account, items)
@@ -554,7 +554,7 @@ private extension FeedWranglerAccountDelegate {
 		}
 	}
 	
-	func syncArticleReadState(_ account: Account, _ unreadFeedItems: [FeedWranglerFeedItem]) {
+	func syncArticleReadState(_ account: Account, _ unreadFeedItems: [FeedWranglerFeedItemId]) {
 		let unreadServerItemIDs = Set(unreadFeedItems.map { String($0.feedItemID) })
 		account.fetchUnreadArticleIDs { articleIDsResult in
 			guard let unreadLocalItemIDs = try? articleIDsResult.get() else {
@@ -567,7 +567,7 @@ private extension FeedWranglerAccountDelegate {
 		}
 	}
 	
-	func syncArticleStarredState(_ account: Account, _ starredFeedItems: [FeedWranglerFeedItem]) {
+	func syncArticleStarredState(_ account: Account, _ starredFeedItems: [FeedWranglerFeedItemId]) {
 		let starredServerItemIDs = Set(starredFeedItems.map { String($0.feedItemID) })
 		account.fetchStarredArticleIDs { articleIDsResult in
 			guard let starredLocalItemIDs = try? articleIDsResult.get() else {
