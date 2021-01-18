@@ -293,6 +293,21 @@ public final class AccountManager: UnreadCountProvider {
 		
 	}
 
+	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
+		let group = DispatchGroup()
+		
+		activeAccounts.forEach {
+			group.enter()
+			$0.sendArticleStatus() { _ in
+				group.leave()
+			}
+		}
+
+		group.notify(queue: DispatchQueue.global(qos: .background)) {
+			completion?()
+		}
+	}
+
 	public func syncArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 		

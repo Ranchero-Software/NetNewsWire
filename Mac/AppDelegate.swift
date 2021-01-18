@@ -313,11 +313,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		shuttingDown = true
 		saveState()
 		
-		AccountManager.shared.syncArticleStatusAll() {
+		AccountManager.shared.sendArticleStatusAll() {
 			self.isShutDownSyncDone = true
 		}
 		
-		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: .distantFuture) { }
+		let timeout = Date().addingTimeInterval(2)
+		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: .distantFuture) && timeout > Date() { }
 	}
 
 	// MARK: Notifications

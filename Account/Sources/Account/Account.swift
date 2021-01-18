@@ -431,6 +431,17 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.refreshAll(for: self, completion: completion)
 	}
 
+	public func sendArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
+		delegate.sendArticleStatus(for: self) { result in
+			switch result {
+			case .success:
+				completion?(.success(()))
+			case .failure(let error):
+				completion?(.failure(error))
+			}
+		}
+	}
+	
 	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
 		delegate.sendArticleStatus(for: self) { [unowned self] result in
 			switch result {
