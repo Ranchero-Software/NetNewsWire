@@ -42,7 +42,7 @@ public extension URLRequest {
 				URLQueryItem(name: "username", value: credentials.username),
 				URLQueryItem(name: "password", value: credentials.secret),
 			]
-			httpBody = postData.percentEncodedQuery?.data(using: .utf8)
+			httpBody = postData.enhancedPercentEncodedQuery?.data(using: .utf8)
 		case .newsBlurSessionId:
 			setValue("\(NewsBlurAPICaller.SessionIdCookie)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
 			httpShouldHandleCookies = true
@@ -54,7 +54,7 @@ public extension URLRequest {
 				URLQueryItem(name: "Email", value: credentials.username),
 				URLQueryItem(name: "Passwd", value: credentials.secret)
 			]
-			httpBody = postData.percentEncodedQuery?.data(using: .utf8)
+			httpBody = postData.enhancedPercentEncodedQuery?.data(using: .utf8)
 		case .readerAPIKey:
             let auth = "GoogleLogin auth=\(credentials.secret)"
             setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
