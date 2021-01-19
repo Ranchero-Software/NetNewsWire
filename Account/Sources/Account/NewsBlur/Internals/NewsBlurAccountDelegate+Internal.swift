@@ -178,13 +178,18 @@ extension NewsBlurAccountDelegate {
 			}
 		}
 		
-		// Handle the account level feeds
+		// Handle the account level feeds.  If there isn't the special folder, that means all the feeds are
+		// in folders and we need to remove them all from the account level.
 		if let folderRelationships = newsBlurFolderDict[" "] {
 			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
 			for feed in account.topLevelWebFeeds {
 				if !newsBlurFolderFeedIDs.contains(feed.webFeedID) {
 					account.removeWebFeed(feed)
 				}
+			}
+		} else {
+			for feed in account.topLevelWebFeeds {
+				account.removeWebFeed(feed)
 			}
 		}
 		
