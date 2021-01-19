@@ -1,5 +1,5 @@
 //
-//  URLRequest+RSWeb.swift
+//  URLRequest+Account.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 12/27/16.
