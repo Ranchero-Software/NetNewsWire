@@ -235,6 +235,7 @@ public final class WebFeed: Feed, Renamable, Hashable {
 	public func dropConditionalGetInfo() {
 		conditionalGetInfo = nil
 		contentHash = nil
+		sinceToken = nil
 	}
 
 	// MARK: - Hashable

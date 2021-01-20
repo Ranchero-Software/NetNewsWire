@@ -83,7 +83,10 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	
 	func removeWebFeed(_ externalID: String) {
 		if let webFeed = account?.existingWebFeed(withExternalID: externalID), let containers = account?.existingContainers(withWebFeed: webFeed) {
-			containers.forEach { $0.removeWebFeed(webFeed) }
+			containers.forEach {
+				webFeed.dropConditionalGetInfo()
+				$0.removeWebFeed(webFeed)
+			}
 		}
 	}
 	

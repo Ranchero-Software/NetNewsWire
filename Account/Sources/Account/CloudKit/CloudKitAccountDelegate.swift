@@ -242,33 +242,11 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		accountZone.createWebFeed(url: feed.url, name: feed.name, editedName: feed.editedName, homePageURL: feed.homePageURL, container: container) { result in
-			self.refreshProgress.completeTask()
+		createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
 			switch result {
-			case .success(let externalID):
-				feed.externalID = externalID
-				container.addWebFeed(feed)
-				
-				account.fetchArticlesAsync(.webFeed(feed)) { result in
-					switch result {
-					case .success(let articles):
-						self.articlesZone.saveNewArticles(articles) { result in
-							self.refreshProgress.completeTask()
-							if case .failure(let error) = result {
-								os_log(.error, log: self.log, "Restore articles error: %@.", error.localizedDescription)
-							}
-							completion(.success(()))
-						}
-					case .failure(let error):
-						self.refreshProgress.clear()
-						completion(.failure(error))
-					}
-				}
-				
+			case .success:
+				completion(.success(()))
 			case .failure(let error):
-				self.refreshProgress.clear()
-				self.processAccountError(account, error)
 				completion(.failure(error))
 			}
 		}
@@ -864,6 +842,7 @@ private extension CloudKitAccountDelegate {
 					return
 				}
 				self.articlesZone.deleteArticles(webFeedExternalID) { result in
+					feed.dropConditionalGetInfo()
 					self.refreshProgress.completeTask()
 					completion(result)
 				}
