@@ -170,6 +170,7 @@ struct AddAccountsView: View {
 			Text(AddAccountSections.local.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
+				.fixedSize(horizontal: false, vertical: true)
 			
 		}
 		
@@ -202,6 +203,7 @@ struct AddAccountsView: View {
 			Text(AddAccountSections.icloud.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
+				.fixedSize(horizontal: false, vertical: true)
 		}
 	}
 	
@@ -233,6 +235,7 @@ struct AddAccountsView: View {
 			Text(AddAccountSections.web.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
+				.fixedSize(horizontal: false, vertical: true)
 		}
 	}
 	
@@ -261,6 +264,7 @@ struct AddAccountsView: View {
 			Text(AddAccountSections.selfhosted.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
+				.fixedSize(horizontal: false, vertical: true)
 		}
 	}
 	
