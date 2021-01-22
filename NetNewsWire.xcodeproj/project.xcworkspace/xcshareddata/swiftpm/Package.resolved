@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/tid-kijyun/Kanna.git",
         "state": {
           "branch": null,
-          "revision": "4a80ebe93b6966d5083394fcaaaff57a2fcec935",
-          "version": "5.2.3"
+          "revision": "c657fb9f5827ef138068215c76ad0bb62bbc92da",
+          "version": "5.2.4"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/Ranchero-Software/RSParser.git",
         "state": {
           "branch": null,
-          "revision": "a4467cb6ab32d67fa8b09fcef8b234c7f96b7f9c",
-          "version": "2.0.0-beta3"
+          "revision": "fd9b9c974d551a9c94d970da90a42571d234efd6",
+          "version": "2.0.0-beta4"
         }
       },
       {
