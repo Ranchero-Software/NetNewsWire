@@ -1134,14 +1134,6 @@ private extension Account {
 		return articles
 	}
 
-	func fetchUnreadArticlesAsync(for webFeed: WebFeed, completion: @escaping (Set<Article>) -> Void) {
-		//		database.fetchUnreadArticlesAsync(for: Set([feed.feedID])) { [weak self] (articles) in
-		//			self?.validateUnreadCount(feed, articles)
-		//			callback(articles)
-		//		}
-	}
-
-
 	func fetchArticles(forContainer container: Container) throws -> Set<Article> {
 		let feeds = container.flattenedWebFeeds()
 		let articles = try database.fetchArticles(feeds.webFeedIDs())
