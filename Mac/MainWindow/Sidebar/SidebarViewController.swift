@@ -635,20 +635,6 @@ private extension SidebarViewController {
 		delegate?.sidebarInvalidatedRestorationState(self)
 	}
 
-	func updateUnreadCounts(for objects: [AnyObject]) {
-		// On selection, update unread counts for folders and feeds.
-		// For feeds, actually fetch from database.
-
-		for object in objects {
-			if let feed = object as? WebFeed, let account = feed.account {
-				account.updateUnreadCounts(for: Set([feed]))
-			}
-			else if let folder = object as? Folder, let account = folder.account {
-				account.updateUnreadCounts(for: folder.flattenedWebFeeds())
-			}
-		}
-	}
-
 	func nodeForItem(_ item: AnyObject?) -> Node {
 		if item == nil {
 			return treeController.rootNode
