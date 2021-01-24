@@ -96,11 +96,13 @@ class SidebarCell : NSTableCellView {
 	}
 
 	override func layout() {
+		if let cellAppearance = cellAppearance {
+			titleView.font = cellAppearance.textFieldFont
+		}
 		resizeSubviews(withOldSize: NSZeroSize)
 	}
 
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
-
 		guard let cellAppearance = cellAppearance else {
 			return
 		}
