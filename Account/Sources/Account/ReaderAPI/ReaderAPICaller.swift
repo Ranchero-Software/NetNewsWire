@@ -12,7 +12,6 @@ import Secrets
 
 enum CreateReaderAPISubscriptionResult {
 	case created(ReaderAPISubscription)
-	case alreadySubscribed
 	case notFound
 }
 
@@ -375,7 +374,7 @@ final class ReaderAPICaller: NSObject {
 
 						switch subResult?.numResults {
 						case 0:
-							completion(.success(.alreadySubscribed))
+							completion(.success(.notFound))
 						default:
 							guard let streamId = subResult?.streamId else {
 								completion(.failure(AccountError.createErrorNotFound))

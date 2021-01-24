@@ -353,10 +353,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 						switch subResult {
 						case .created(let subscription):
 							self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
-						case .alreadySubscribed:
-							DispatchQueue.main.async {
-								completion(.failure(AccountError.createErrorAlreadySubscribed))
-							}
 						case .notFound:
 							DispatchQueue.main.async {
 								completion(.failure(AccountError.createErrorNotFound))
