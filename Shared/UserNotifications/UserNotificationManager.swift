@@ -90,7 +90,7 @@ private extension UserNotificationManager {
 			  actions: [openAction, readAction, starredAction],
 			  intentIdentifiers: [],
 			  hiddenPreviewsBodyPlaceholder: "",
-			  options: .customDismissAction)
+			  options: [])
 		
 		UNUserNotificationCenter.current().setNotificationCategories([newArticleCategory])
 	}
