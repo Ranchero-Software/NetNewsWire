@@ -182,9 +182,13 @@ final class ReaderAPICaller: NSObject {
 			return
 		}
 		
-		let url = baseURL
+		var url = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.tagList.rawValue)
 			.appendingQueryItem(URLQueryItem(name: "output", value: "json"))
+		
+		if variant == .inoreader {
+			url = url?.appendingQueryItem(URLQueryItem(name: "types", value: "1"))
+		}
 		
 		guard let callURL = url else {
 			completion(.failure(TransportError.noURL))

@@ -628,7 +628,13 @@ private extension ReaderAPIAccountDelegate {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
 		
-		let folderTags = tags.filter{ $0.tagID.contains("/label/") }
+		let folderTags: [ReaderAPITag]
+		if variant == .inoreader {
+			folderTags = tags.filter{ $0.type == "folder" }
+		} else {
+			folderTags = tags.filter{ $0.tagID.contains("/label/") }
+		}
+		
 		guard !folderTags.isEmpty else { return }
 		
 		os_log(.debug, log: log, "Syncing folders with %ld tags.", folderTags.count)
