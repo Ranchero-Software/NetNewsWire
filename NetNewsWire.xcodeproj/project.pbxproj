@@ -6102,7 +6102,7 @@
 			repositoryURL = "https://github.com/Ranchero-Software/RSWeb.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = "1.0.0-beta1";
+				minimumVersion = 1.0.0;
 			};
 		};
 		519CA8E325841DB700EB079A /* XCRemoteSwiftPackageReference "plcrashreporter" */ = {
