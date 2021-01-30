@@ -134,6 +134,8 @@
 		17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
 		17E0084625941887000C23F0 /* SizeCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0084525941887000C23F0 /* SizeCategories.swift */; };
 		17E4DBD624BFC53E00FE462A /* AdvancedPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */; };
+		17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; };
+		17EF6A2225C4E5B4002C9F81 /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		27B86EEB25A53AAB00264340 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; };
 		27B86EEC25A53AAB00264340 /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 17E0080E25936DF6000C23F0 /* Articles */; };
 		27B86EED25A53AAB00264340 /* ArticlesDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 17E0081125936DF6000C23F0 /* ArticlesDatabase */; };
@@ -1232,6 +1234,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		17EF6A1725C4E59D002C9F81 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				17EF6A2225C4E5B4002C9F81 /* RSWeb in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5102AE7324D17FAA0050839C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2045,6 +2058,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */,
 				176813F72564BB2C00D98635 /* SwiftUI.framework in Frameworks */,
 				176813F52564BB2C00D98635 /* WidgetKit.framework in Frameworks */,
 			);
@@ -3705,12 +3719,16 @@
 				176813F02564BB2C00D98635 /* Frameworks */,
 				176813F12564BB2C00D98635 /* Resources */,
 				1701E1BF25689B44009453D8 /* SwiftGen Localization */,
+				17EF6A1725C4E59D002C9F81 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "NetNewsWire iOS Widget Extension";
+			packageProductDependencies = (
+				17EF6A2025C4E5B4002C9F81 /* RSWeb */,
+			);
 			productName = "NetNewsWire WidgetExtension";
 			productReference = 176813F32564BB2C00D98635 /* NetNewsWire iOS Widget Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -6212,6 +6230,11 @@
 		17E0081725936DFF000C23F0 /* SyncDatabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SyncDatabase;
+		};
+		17EF6A2025C4E5B4002C9F81 /* RSWeb */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
+			productName = RSWeb;
 		};
 		5102AE6824D17F7C0050839C /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;

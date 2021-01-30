@@ -23,34 +23,55 @@ struct TodayWidgetView : View {
 		}
 		else {
 			GeometryReader { metrics in
-				HStack(alignment: .top, spacing: 4) {
-					VStack(alignment: .leading, spacing: -4) {
+				HStack {
+					VStack {
 						todayImage
+							.padding(.vertical, 12)
+							.padding(.leading, 8)
 						Spacer()
-						Text(L10n.localizedCount(entry.widgetData.currentTodayCount)).bold().font(.callout).minimumScaleFactor(0.5).lineLimit(1)
-						Text(L10n.today.lowercased()).bold().font(Font.system(.footnote).lowercaseSmallCaps()).minimumScaleFactor(0.5).lineLimit(1)
-					}
-					.frame(width: metrics.size.width * 0.15)
-					.padding(.trailing, 4)
 					
-					VStack(alignment:.leading, spacing: 0) {
-						ForEach(0..<maxCount(), content: { i in
-							if i != 0 {
-								Divider()
-								ArticleItemView(article: entry.widgetData.todayArticles[i],
-												deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-									.padding(.top, 8)
-									.padding(.bottom, 4)
-							} else {
-								ArticleItemView(article: entry.widgetData.unreadArticles[i],
-												deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-									.padding(.bottom, 4)
-							}
-							
-						})
+					}
+				}
+				.frame(width: metrics.size.width * 0.15)
+				
+				Spacer()
+				
+				VStack(alignment:.leading, spacing: 0) {
+					ForEach(0..<maxCount(), content: { i in
+						if i != 0 {
+							Divider()
+							ArticleItemView(article: entry.widgetData.todayArticles[i],
+											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
+								.padding(.top, 8)
+								.padding(.bottom, 4)
+						} else {
+							ArticleItemView(article: entry.widgetData.todayArticles[i],
+											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
+								.padding(.bottom, 4)
+						}
+					})
+					Spacer()
+				}
+				.padding(.leading, metrics.size.width * 0.175)
+				.padding([.bottom, .trailing])
+				.padding(.top, 12)
+				.overlay(
+					 VStack {
 						Spacer()
-					}.padding(.leading, 4)
-				}.padding()
+						HStack {
+							Spacer()
+							if entry.widgetData.currentTodayCount - maxCount() > 0 {
+								Text(L10n.todayCount(entry.widgetData.currentTodayCount - maxCount()))
+									.font(.caption2)
+									.bold()
+									.foregroundColor(.secondary)
+							}
+						}
+					}
+					.padding(.horizontal)
+					.padding(.bottom, 6)
+				)
+			
 			}.widgetURL(WidgetDeepLink.today.url)
 		}
 	}
