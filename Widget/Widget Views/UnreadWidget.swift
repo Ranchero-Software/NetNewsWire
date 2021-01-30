@@ -60,10 +60,12 @@ struct UnreadWidgetView : View {
 						Spacer()
 						HStack {
 							Spacer()
-							Text(L10n.unreadCount(entry.widgetData.currentUnreadCount - maxCount()))
-								.font(.caption2)
-								.bold()
-								.foregroundColor(.secondary)
+							if entry.widgetData.currentUnreadCount - maxCount() > 0 {
+								Text(L10n.unreadCount(entry.widgetData.currentUnreadCount - maxCount()))
+									.font(.caption2)
+									.bold()
+									.foregroundColor(.secondary)
+							}
 						}
 					}
 					.padding(.horizontal)

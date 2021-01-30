@@ -44,7 +44,7 @@ public final class WidgetDataEncoder {
 			for article in unreadArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
-												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? article.contentHTML?.strippingHTML().trimmingWhitespace : ArticleStringFormatter.truncatedTitle(article),
+												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
@@ -55,7 +55,7 @@ public final class WidgetDataEncoder {
 			for article in starredArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
-												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? article.contentHTML?.strippingHTML().trimmingWhitespace : ArticleStringFormatter.truncatedTitle(article),
+												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)
@@ -66,7 +66,7 @@ public final class WidgetDataEncoder {
 			for article in todayArticles {
 				let latestArticle = LatestArticle(id: article.sortableArticleID,
 												  feedTitle: article.sortableName,
-												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? article.contentHTML?.strippingHTML().trimmingWhitespace : ArticleStringFormatter.truncatedTitle(article),
+												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished!.description)

@@ -60,10 +60,12 @@ struct StarredWidgetView : View {
 						Spacer()
 						HStack {
 							Spacer()
-							Text(L10n.starredCount(entry.widgetData.currentStarredCount - maxCount()))
-								.font(.caption2)
-								.bold()
-								.foregroundColor(.secondary)
+							if entry.widgetData.currentStarredCount - maxCount() > 0 {
+								Text(L10n.starredCount(entry.widgetData.currentStarredCount - maxCount()))
+									.font(.caption2)
+									.bold()
+									.foregroundColor(.secondary)
+							}
 						}
 					}
 					.padding(.horizontal)

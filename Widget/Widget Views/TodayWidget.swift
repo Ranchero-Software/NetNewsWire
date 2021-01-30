@@ -60,10 +60,12 @@ struct TodayWidgetView : View {
 						Spacer()
 						HStack {
 							Spacer()
-							Text(L10n.todayCount(entry.widgetData.currentTodayCount - maxCount()))
-								.font(.caption2)
-								.bold()
-								.foregroundColor(.secondary)
+							if entry.widgetData.currentTodayCount - maxCount() > 0 {
+								Text(L10n.todayCount(entry.widgetData.currentTodayCount - maxCount()))
+									.font(.caption2)
+									.bold()
+									.foregroundColor(.secondary)
+							}
 						}
 					}
 					.padding(.horizontal)
