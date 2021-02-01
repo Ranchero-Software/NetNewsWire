@@ -19,7 +19,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	private var refreshProgressView: RefreshProgressView?
 
-	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
+	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem! {
+		didSet {
+			if #available(iOS 14, *) {
+				markAllAsReadButton.primaryAction = nil
+			} else {
+				markAllAsReadButton.action = #selector(MasterTimelineViewController.markAllAsRead(_:))
+			}
+		}
+	}
 
 	private var filterButton: UIBarButtonItem!
 	private var firstUnreadButton: UIBarButtonItem!
@@ -655,6 +663,25 @@ private extension MasterTimelineViewController {
 				setToolbarItems(items, animated: false)
 			}
 		}
+		
+		if #available(iOS 14, *) {
+			let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+			var markAsReadAction: UIAction!
+			
+			if AppDefaults.shared.confirmMarkAllAsRead {
+				markAsReadAction = UIAction(title: title, image: AppAssets.markAllAsReadImage, discoverabilityTitle: "in \(self.title!)") { [weak self] action in
+					self?.coordinator.markAllAsReadInTimeline()
+				}
+				let settingsAction = UIAction(title: NSLocalizedString("Settings", comment: "Settings"), image: UIImage(systemName: "gear")!, discoverabilityTitle: NSLocalizedString("You can turn this confirmation off in Settings.", comment: "You can turn this confirmation off in Settings.")) { [weak self] action in
+					self?.coordinator.showSettings(scrollToArticlesSection: true)
+				}
+				
+				markAllAsReadButton.menu = UIMenu(title: NSLocalizedString(title, comment: title), image: nil, identifier: nil, children: [settingsAction, markAsReadAction])
+			} else {
+				markAllAsReadButton.action = #selector(MasterTimelineViewController.markAllAsRead(_:))
+			}
+		}
+		
 	}
 	
 	func updateTitleUnreadCount() {

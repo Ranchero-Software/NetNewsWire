@@ -47,8 +47,8 @@ struct MarkAsReadAlertController {
 		
 		
 		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
-		let message = NSLocalizedString("You can turn this confirmation off in settings.",
-										comment: "You can turn this confirmation off in settings.")
+		let message = NSLocalizedString("You can turn this confirmation off in Settings.",
+										comment: "You can turn this confirmation off in Settings.")
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let settingsTitle = NSLocalizedString("Open Settings", comment: "Open Settings")
 		
