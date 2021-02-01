@@ -138,9 +138,6 @@
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
                             </userDefinedRuntimeAttributes>
-                            <connections>
-                                <action selector="markAllAsRead:" destination="Kyk-vK-QRX" id="4nd-Gg-APm"/>
-                            </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="53V-wq-bat"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="93y-8j-WBh"/>
