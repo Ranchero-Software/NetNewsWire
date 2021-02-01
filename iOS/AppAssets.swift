@@ -157,6 +157,10 @@ struct AppAssets {
 		return IconImage(UIImage(systemName: "folder.fill")!, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
 	}()
 	
+	static var masterFolderImageNonIcon: UIImage = {
+		return UIImage(systemName: "folder.fill")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
+	}()
+	
 	static var moreImage: UIImage = {
 		return UIImage(systemName: "ellipsis.circle")!
 	}()
@@ -180,6 +184,10 @@ struct AppAssets {
 	static var primaryAccentColor: UIColor {
 		return UIColor(named: "primaryAccentColor")!
 	}
+	
+	static var redditOriginal: UIImage = {
+		return UIImage(named: "redditWhite")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
+	}()
 	
 	static var safariImage: UIImage = {
 		return UIImage(systemName: "safari")!
@@ -240,6 +248,10 @@ struct AppAssets {
 		return UIImage(systemName: "trash")!
 	}()
 	
+	static var twitterOriginal: UIImage = {
+		return UIImage(named: "twitterWhite")!.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)
+	}()
+	
 	static var unreadFeedImage: IconImage {
 		let image = UIImage(systemName: "largecircle.fill.circle")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.secondaryAccentColor.cgColor)
@@ -252,6 +264,7 @@ struct AppAssets {
 	static var controlBackgroundColor: UIColor = {
 		return UIColor(named: "controlBackgroundColor")!
 	}()
+
 
 	static func image(for accountType: AccountType) -> UIImage? {
 		switch accountType {

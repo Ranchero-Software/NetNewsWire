@@ -585,25 +585,22 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		
 		if #available(iOS 14.0, *) {
 			let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
-			let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: UIImage(named: "faviconTemplateImage")?.withRenderingMode(.alwaysOriginal).withTintColor(.gray)) { _ in
+			let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.faviconTemplateImage.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)) { _ in
 				self.coordinator.showAddWebFeed()
 			}
 			
 			let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			let redditImage = UIImage(named: "redditWhite")?.withRenderingMode(.alwaysOriginal).withTintColor(.gray)
-			let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: redditImage) { _ in
+			let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.redditOriginal) { _ in
 				self.coordinator.showAddRedditFeed()
 			}
 			
 			let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
-			let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: UIImage(named: "twitterWhite")?.withRenderingMode(.alwaysOriginal).withTintColor(.gray)) { _ in
+			let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.twitterOriginal) { _ in
 				self.coordinator.showAddTwitterFeed()
 			}
 			
 			let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-			let folderImage = UIImage(systemName: "folder.badge.plus",
-									  withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .black))?.withRenderingMode(.alwaysOriginal).withTintColor(.gray)
-			let addWebFolderAction = UIAction(title: addWebFolderdActionTitle, image: folderImage) { _ in
+			let addWebFolderAction = UIAction(title: addWebFolderdActionTitle, image: AppAssets.masterFolderImageNonIcon) { _ in
 				self.coordinator.showAddFolder()
 			}
 			
