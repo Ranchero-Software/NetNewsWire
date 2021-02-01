@@ -763,13 +763,6 @@ private extension ReaderAPICaller {
 		return pathComponent.addingPercentEncoding(withAllowedCharacters: uriComponentAllowed)
 	}
 	
-	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
-		if var conditionalGet = accountMetadata?.conditionalGetInfo {
-			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
-			accountMetadata?.conditionalGetInfo = conditionalGet
-		}
-	}
-	
 	func addVariantHeaders(_ request: inout URLRequest) {
 		if variant == .inoreader {
 			request.addValue(SecretsManager.provider.inoreaderAppId, forHTTPHeaderField: "AppId")
