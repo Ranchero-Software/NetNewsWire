@@ -70,6 +70,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedSettingDidChange(_:)), name: .WebFeedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(configureContextMenu(_:)), name: .ActiveExtensionPointsDidChange, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -581,8 +582,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		refreshProgressView?.update()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
-		
-		
+
+		configureContextMenu()
+	}
+	
+	@objc
+	func configureContextMenu(_: Any? = nil) {
 		if #available(iOS 14.0, *) {
 			let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
 			let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.faviconTemplateImage.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)) { _ in
@@ -619,7 +624,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			
 			self.addNewItemButton.menu = menu
 		}
-		
 	}
 	
 	func focus() {
