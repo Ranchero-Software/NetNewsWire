@@ -10,6 +10,7 @@ import AppKit
 import Articles
 import Account
 import RSCore
+import UserNotifications
 
 extension Notification.Name {
 	public static let DidUpdateFeedPreferencesFromContextMenu = Notification.Name(rawValue: "DidUpdateFeedPreferencesFromContextMenu")
@@ -108,8 +109,28 @@ extension SidebarViewController {
 			  let feed = item.representedObject as? WebFeed else {
 			return
 		}
-		feed.isNotifyAboutNewArticles?.toggle()
-		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			if settings.authorizationStatus == .denied {
+				self.showNotificationsNotEnabledAlert()
+			} else if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					feed.isNotifyAboutNewArticles?.toggle()
+					NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
+				}
+			} else {
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+					if granted {
+						DispatchQueue.main.async {
+							feed.isNotifyAboutNewArticles?.toggle()
+							NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
+							NSApplication.shared.registerForRemoteNotifications()
+						}
+					} else {
+						self.showNotificationsNotEnabledAlert()
+					}
+				}
+			}
+		}
 	}
 	
 	@objc func toggleArticleExtractorFromContextMenu(_ sender: Any?) {
@@ -119,6 +140,25 @@ extension SidebarViewController {
 		}
 		feed.isArticleExtractorAlwaysOn?.toggle()
 		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
+	}
+	
+	func showNotificationsNotEnabledAlert() {
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.messageText = NSLocalizedString("Notifications are not enabled", comment: "Notifications are not enabled.")
+			alert.informativeText = NSLocalizedString("You can enable NetNewsWire notifications in System Preferences.", comment: "Notifications are not enabled.")
+			alert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
+			alert.addButton(withTitle: NSLocalizedString("Dismiss", comment: "Dismiss"))
+			let userChoice = alert.runModal()
+			if userChoice == .alertFirstButtonReturn {
+				let config = NSWorkspace.OpenConfiguration()
+				config.activates = true
+				// If System Preferences is already open, and no delay is provided here, then it appears in the foreground and immediately disappears.
+				DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.2, execute: {
+					NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!, configuration: config)
+				})
+			}
+		}
 	}
 	
 }
