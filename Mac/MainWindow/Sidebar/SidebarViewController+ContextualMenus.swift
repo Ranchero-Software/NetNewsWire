@@ -114,6 +114,7 @@ extension SidebarViewController {
 				self.showNotificationsNotEnabledAlert()
 			} else if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
+					if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
 					feed.isNotifyAboutNewArticles?.toggle()
 					NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 				}
@@ -121,6 +122,7 @@ extension SidebarViewController {
 				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
 					if granted {
 						DispatchQueue.main.async {
+							if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
 							feed.isNotifyAboutNewArticles?.toggle()
 							NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 							NSApplication.shared.registerForRemoteNotifications()
@@ -138,6 +140,7 @@ extension SidebarViewController {
 			  let feed = item.representedObject as? WebFeed else {
 			return
 		}
+		if feed.isArticleExtractorAlwaysOn == nil { feed.isArticleExtractorAlwaysOn = false }
 		feed.isArticleExtractorAlwaysOn?.toggle()
 		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 	}
