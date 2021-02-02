@@ -11,6 +11,10 @@ import Articles
 import Account
 import RSCore
 
+extension Notification.Name {
+	public static let DidUpdateFeedPreferencesFromContextMenu = Notification.Name(rawValue: "DidUpdateFeedPreferencesFromContextMenu")
+}
+
 extension SidebarViewController {
 
 	func menu(for objects: [Any]?) -> NSMenu? {
@@ -105,6 +109,7 @@ extension SidebarViewController {
 			return
 		}
 		feed.isNotifyAboutNewArticles?.toggle()
+		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 	}
 	
 	@objc func toggleArticleExtractorFromContextMenu(_ sender: Any?) {
@@ -113,6 +118,7 @@ extension SidebarViewController {
 			return
 		}
 		feed.isArticleExtractorAlwaysOn?.toggle()
+		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 	}
 	
 }
@@ -181,21 +187,25 @@ private extension SidebarViewController {
 		}
 		menu.addItem(NSMenuItem.separator())
 		
-		var notificationText: String!
-		if webFeed.isNotifyAboutNewArticles != nil && webFeed.isNotifyAboutNewArticles! {
-			notificationText = NSLocalizedString("Disable New Article Notifications", comment: "Disable Notifications")
-		} else {
-			notificationText = NSLocalizedString("Enable New Article Notifications", comment: "Enable Notifications")
-		}
-		menu.addItem(menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed))
+		let notificationText = NSLocalizedString("Show Notifications for New Articles", comment: "Show Notifications for New Articles")
 		
-		var articleExtractorText: String!
-		if webFeed.isArticleExtractorAlwaysOn != nil && webFeed.isArticleExtractorAlwaysOn! {
-			articleExtractorText = NSLocalizedString("Disable Reader View", comment: "Disable Reader View")
+		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed)
+		if webFeed.isNotifyAboutNewArticles == nil || webFeed.isNotifyAboutNewArticles! == false {
+			notificationMenuItem.state = .off
 		} else {
-			articleExtractorText = NSLocalizedString("Enable Reader View", comment: "Enable Reader View")
+			notificationMenuItem.state = .on
 		}
-		menu.addItem(menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed))
+		menu.addItem(notificationMenuItem)
+		
+		let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
+		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
+		
+		if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
+			articleExtractorMenuItem.state = .off
+		} else {
+			articleExtractorMenuItem.state = .on
+		}
+		menu.addItem(articleExtractorMenuItem)
 		menu.addItem(NSMenuItem.separator())
 		
 		menu.addItem(renameMenuItem(webFeed))
