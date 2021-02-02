@@ -98,6 +98,23 @@ extension SidebarViewController {
 		}
 		window.beginSheet(renameSheet)
 	}
+	
+	@objc func toggleNotificationsFromContextMenu(_ sender: Any?) {
+		guard let item = sender as? NSMenuItem,
+			  let feed = item.representedObject as? WebFeed else {
+			return
+		}
+		feed.isNotifyAboutNewArticles?.toggle()
+	}
+	
+	@objc func toggleArticleExtractorFromContextMenu(_ sender: Any?) {
+		guard let item = sender as? NSMenuItem,
+			  let feed = item.representedObject as? WebFeed else {
+			return
+		}
+		feed.isArticleExtractorAlwaysOn?.toggle()
+	}
+	
 }
 
 extension SidebarViewController: RenameWindowControllerDelegate {
@@ -163,7 +180,24 @@ private extension SidebarViewController {
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
-
+		
+		var notificationText: String!
+		if webFeed.isNotifyAboutNewArticles != nil && webFeed.isNotifyAboutNewArticles! {
+			notificationText = NSLocalizedString("Disable New Article Notifications", comment: "Disable Notifications")
+		} else {
+			notificationText = NSLocalizedString("Enable New Article Notifications", comment: "Enable Notifications")
+		}
+		menu.addItem(menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed))
+		
+		var articleExtractorText: String!
+		if webFeed.isArticleExtractorAlwaysOn != nil && webFeed.isArticleExtractorAlwaysOn! {
+			articleExtractorText = NSLocalizedString("Disable Reader View", comment: "Disable Reader View")
+		} else {
+			articleExtractorText = NSLocalizedString("Enable Reader View", comment: "Enable Reader View")
+		}
+		menu.addItem(menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed))
+		menu.addItem(NSMenuItem.separator())
+		
 		menu.addItem(renameMenuItem(webFeed))
 		menu.addItem(deleteMenuItem([webFeed]))
 
