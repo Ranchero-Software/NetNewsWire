@@ -477,6 +477,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			resetEstimatedRowHeight()
 			reloadAllVisibleCells()
 		}
+		updateToolbar()
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -675,8 +676,8 @@ private extension MasterTimelineViewController {
 				let settingsAction = UIAction(title: NSLocalizedString("Settings", comment: "Settings"), image: UIImage(systemName: "gear")!, discoverabilityTitle: NSLocalizedString("You can turn this confirmation off in Settings.", comment: "You can turn this confirmation off in Settings.")) { [weak self] action in
 					self?.coordinator.showSettings(scrollToArticlesSection: true)
 				}
-				
 				markAllAsReadButton.menu = UIMenu(title: NSLocalizedString(title, comment: title), image: nil, identifier: nil, children: [settingsAction, markAsReadAction])
+				markAllAsReadButton.action = nil
 			} else {
 				markAllAsReadButton.action = #selector(MasterTimelineViewController.markAllAsRead(_:))
 			}
