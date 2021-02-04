@@ -50,6 +50,7 @@ final class WebFeedInspectorViewController: NSViewController, Inspector {
 	override func viewDidLoad() {
 		updateUI()
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: .DidUpdateFeedPreferencesFromContextMenu, object: nil)
 	}
 	
 	override func viewDidAppear() {
@@ -129,7 +130,8 @@ private extension WebFeedInspectorViewController {
 		feed = singleFeed
 	}
 
-	func updateUI() {
+	
+	@objc func updateUI() {
 		updateImage()
 		updateName()
 		updateHomePageURL()

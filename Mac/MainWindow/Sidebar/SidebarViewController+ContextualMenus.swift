@@ -10,6 +10,11 @@ import AppKit
 import Articles
 import Account
 import RSCore
+import UserNotifications
+
+extension Notification.Name {
+	public static let DidUpdateFeedPreferencesFromContextMenu = Notification.Name(rawValue: "DidUpdateFeedPreferencesFromContextMenu")
+}
 
 extension SidebarViewController {
 
@@ -98,6 +103,67 @@ extension SidebarViewController {
 		}
 		window.beginSheet(renameSheet)
 	}
+	
+	@objc func toggleNotificationsFromContextMenu(_ sender: Any?) {
+		guard let item = sender as? NSMenuItem,
+			  let feed = item.representedObject as? WebFeed else {
+			return
+		}
+		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			if settings.authorizationStatus == .denied {
+				self.showNotificationsNotEnabledAlert()
+			} else if settings.authorizationStatus == .authorized {
+				DispatchQueue.main.async {
+					if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
+					feed.isNotifyAboutNewArticles?.toggle()
+					NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
+				}
+			} else {
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+					if granted {
+						DispatchQueue.main.async {
+							if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
+							feed.isNotifyAboutNewArticles?.toggle()
+							NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
+							NSApplication.shared.registerForRemoteNotifications()
+						}
+					} else {
+						self.showNotificationsNotEnabledAlert()
+					}
+				}
+			}
+		}
+	}
+	
+	@objc func toggleArticleExtractorFromContextMenu(_ sender: Any?) {
+		guard let item = sender as? NSMenuItem,
+			  let feed = item.representedObject as? WebFeed else {
+			return
+		}
+		if feed.isArticleExtractorAlwaysOn == nil { feed.isArticleExtractorAlwaysOn = false }
+		feed.isArticleExtractorAlwaysOn?.toggle()
+		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
+	}
+	
+	func showNotificationsNotEnabledAlert() {
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.messageText = NSLocalizedString("Notifications are not enabled", comment: "Notifications are not enabled.")
+			alert.informativeText = NSLocalizedString("You can enable NetNewsWire notifications in System Preferences.", comment: "Notifications are not enabled.")
+			alert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
+			alert.addButton(withTitle: NSLocalizedString("Dismiss", comment: "Dismiss"))
+			let userChoice = alert.runModal()
+			if userChoice == .alertFirstButtonReturn {
+				let config = NSWorkspace.OpenConfiguration()
+				config.activates = true
+				// If System Preferences is already open, and no delay is provided here, then it appears in the foreground and immediately disappears.
+				DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.2, execute: {
+					NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!, configuration: config)
+				})
+			}
+		}
+	}
+	
 }
 
 extension SidebarViewController: RenameWindowControllerDelegate {
@@ -163,7 +229,28 @@ private extension SidebarViewController {
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
-
+		
+		let notificationText = NSLocalizedString("Show Notifications for New Articles", comment: "Show Notifications for New Articles")
+		
+		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed)
+		if webFeed.isNotifyAboutNewArticles == nil || webFeed.isNotifyAboutNewArticles! == false {
+			notificationMenuItem.state = .off
+		} else {
+			notificationMenuItem.state = .on
+		}
+		menu.addItem(notificationMenuItem)
+		
+		let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
+		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
+		
+		if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
+			articleExtractorMenuItem.state = .off
+		} else {
+			articleExtractorMenuItem.state = .on
+		}
+		menu.addItem(articleExtractorMenuItem)
+		menu.addItem(NSMenuItem.separator())
+		
 		menu.addItem(renameMenuItem(webFeed))
 		menu.addItem(deleteMenuItem([webFeed]))
 
