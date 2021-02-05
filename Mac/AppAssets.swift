@@ -185,7 +185,7 @@ struct AppAssets {
 	
 	static var preferencesToolbarExtensionsImage: RSImage = {
 		if #available(macOS 11.0, *) {
-			return NSImage(named: "preferencesToolbarExtensions")!
+			return RSImage(named: "preferencesToolbarExtensions")!
 		} else {
 			return NSImage(contentsOfFile: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/KEXT.icns")!
 		}
