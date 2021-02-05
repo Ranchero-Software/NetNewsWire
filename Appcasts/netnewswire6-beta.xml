@@ -7,6 +7,20 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0a1</title>
+            <description><![CDATA[
+<p>Feeds list: added contextual menu items for always showing reader view and for notifications</p>
+<p>Feeds list: now respects the size chosen in System Preferences > General > Sidebar icon size</p>
+<p>iCloud syncing: don’t inadvertently clear progress indicator when copying a folder and an error was encountered</p>
+<p>Notifications: don’t open app when closing a notification</p>
+            ]]></description>
+            <pubDate>Thu, 04 Feb 2021 20:50:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha1/NetNewsWire6.0a1.zip" sparkle:version="6006" sparkle:shortVersionString="6.0a1" length="10235407" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+
+        <item>
             <title>NetNewsWire 6.0d5</title>
             <description><![CDATA[
                 <p>Added some shadow to the app icon</p>
@@ -21,36 +35,6 @@
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-        <item>
-            <title>NetNewsWire 6.0d4</title>
-            <description><![CDATA[
-        <p>First public test build.</p>
-            ]]></description>
-            <pubDate>Sat, 16 Jan 2021 17:45:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0d4dev4/NetNewsWire6.0d4.zip" sparkle:version="6004" sparkle:shortVersionString="6.0d4" length="10372343" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
-
-        <item>
-            <title>NetNewsWire 6.0d3</title>
-            <description><![CDATA[
-        <p>Testing Sparkle updating with NetNewsWire 6. Let us know on the #work channel how it goes!</p>
-            ]]></description>
-            <pubDate>Tue, 12 Jan 2021 21:15:00 -0700</pubDate>
-            <enclosure url="https://ranchero.com/downloads/NetNewsWire6.0d3.zip" sparkle:version="6003" sparkle:shortVersionString="6.0d3" length="10371946" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
-
-        <item>
-    <title>NetNewsWire 5.1.3</title>
-    <description><![CDATA[
-<p>Fixed a crashing bug that could happen with empty titles in the timeline.</p>
-<p>Fixed a crashing bug that could happen when adding a feed.</p>
-    ]]></description>
-    <pubDate>Mon, 09 Nov 2020 18:30:00 -0700</pubDate>
-    <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-5.1.3/NetNewsWire5.1.3.zip" sparkle:version="3018" sparkle:shortVersionString="5.1.3" length="6583350" type="application/zip" />
-    <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-</item>
 
     </channel>
 </rss>
