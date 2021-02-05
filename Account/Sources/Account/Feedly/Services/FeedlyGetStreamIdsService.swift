@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol FeedlyGetStreamIdsService: class {
+protocol FeedlyGetStreamIdsService: AnyObject {
 	func getStreamIds(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStreamIds, Error>) -> ())
 }

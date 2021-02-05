@@ -10,7 +10,7 @@ import Foundation
 import RSWeb
 import RSCore
 
-protocol FeedlyOperationDelegate: class {
+protocol FeedlyOperationDelegate: AnyObject {
 	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)
 }
 

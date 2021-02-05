@@ -12,7 +12,7 @@ import AuthenticationServices
 import OAuthSwift
 import Secrets
 
-protocol ExtensionPointPreferencesEnabler: class {
+protocol ExtensionPointPreferencesEnabler: AnyObject {
 	func enable(_ extensionPointType: ExtensionPoint.Type)
 }
 

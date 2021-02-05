@@ -15,7 +15,7 @@ enum AddFeedWindowControllerType {
 	case twitterFeed
 }
 
-protocol AddFeedWindowControllerDelegate: class {
+protocol AddFeedWindowControllerDelegate: AnyObject {
 
 	// userEnteredURL will have already been validated and normalized.
 	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL: URL, userEnteredTitle: String?, container: Container)

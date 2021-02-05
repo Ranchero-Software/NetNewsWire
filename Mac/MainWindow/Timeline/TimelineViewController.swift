@@ -12,7 +12,7 @@ import Articles
 import Account
 import os.log
 
-protocol TimelineDelegate: class  {
+protocol TimelineDelegate: AnyObject  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: WebFeed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)

@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol FeedlySearchService: class {
+protocol FeedlySearchService: AnyObject {
 	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping (Result<FeedlyFeedsSearchResponse, Error>) -> ())
 }
 
-protocol FeedlySearchOperationDelegate: class {
+protocol FeedlySearchOperationDelegate: AnyObject {
 	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse)
 }
 

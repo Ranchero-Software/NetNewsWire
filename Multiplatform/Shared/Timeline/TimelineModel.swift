@@ -16,7 +16,7 @@ import RSCore
 import Account
 import Articles
 
-protocol TimelineModelDelegate: class {
+protocol TimelineModelDelegate: AnyObject {
 	var selectedFeedsPublisher: AnyPublisher<[Feed], Never>? { get }
 	func timelineRequestedWebFeedSelection(_: TimelineModel, webFeed: WebFeed)
 }
