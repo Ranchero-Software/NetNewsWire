@@ -1,5 +1,21 @@
 # Mac Release Notes
 
+### 6.0a1 build 6006 - 4 Feb 2021
+
+Feeds list: added contextual menu items for always showing reader view and for notifications
+Feeds list: now respects the size chosen in System Preferences > General > Sidebar icon size
+iCloud syncing: don’t inadvertently clear progress indicator when copying a folder and an error was encountered
+Notifications: don’t open app when closing a notification
+
+### 6.0d5 build 6005 - 22 Jan 2021
+
+Added some shadow to the app icon
+Fixed bug where iCloud account description was truncated in Catalina, in account setup
+Fixed bug with iCloud account where undoing deletes of read feeds left articles deleted
+Fixed bug connecting to Inoreader when username has a + character
+Fixed bug with NewsBlur when all feeds are in folders
+Fixed long beachball on quit that could happen with the iCloud account (due to a long sync)
+
 ### 6.0d4 build 6004 - 16 Jan 2021
 
 * Big Sur app icon
