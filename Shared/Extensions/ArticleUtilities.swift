@@ -107,10 +107,11 @@ extension Article {
 		if let image = iconImage() {
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+			let feedID = webFeed.webFeedID.replacingOccurrences(of: "/", with: "_")
 			#if os(macOS)
-			path.appendPathComponent(webFeed.webFeedID + "_smallIcon.tiff")
+			path.appendPathComponent(feedID + "_smallIcon.tiff")
 			#else
-			path.appendPathComponent(webFeed.webFeedID + "_smallIcon.png")
+			path.appendPathComponent(feedID + "_smallIcon.png")
 			#endif
 			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
 			return path
