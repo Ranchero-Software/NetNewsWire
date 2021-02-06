@@ -1,40 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
     <channel>
-        <title>NetNewsWire Betas</title>
+        <title>NetNewsWire 6 Test Builds</title>
         <link>https://ranchero.com/downloads/netnewswire6-beta.xml</link>
-        <description>Most recent NetNewsWire changes with links to updates.</description>
+        <description>Most recent NetNewsWire 6 changes with links to updates.</description>
         <language>en</language>
+
+        <item>
+            <title>NetNewsWire 6.0a2</title>
+            <description><![CDATA[
+                <p>Fix regression in Preferences toolbar (placement of icons was wrong on Big Sur)</p>
+                <p>Fix regression in Twitter support (it wasn’t working)</p>
+            ]]></description>
+            <pubDate>Sat, 06 Feb 2021 12:00:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha2/NetNewsWire6.0a2.zip" sparkle:version="6007" sparkle:shortVersionString="6.0a2" length="10420177" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
 
         <item>
             <title>NetNewsWire 6.0a1</title>
             <description><![CDATA[
-<p>Feeds list: added contextual menu items for always showing reader view and for notifications</p>
-<p>Feeds list: now respects the size chosen in System Preferences > General > Sidebar icon size</p>
-<p>iCloud syncing: don’t inadvertently clear progress indicator when copying a folder and an error was encountered</p>
-<p>Notifications: don’t open app when closing a notification</p>
+                <p>Feeds list: added contextual menu items for always showing reader view and for notifications</p>
+                <p>Feeds list: now respects the size chosen in System Preferences > General > Sidebar icon size</p>
+                <p>iCloud syncing: don’t inadvertently clear progress indicator when copying a folder and an error was encountered</p>
+                <p>Notifications: don’t open app when closing a notification</p>
             ]]></description>
             <pubDate>Thu, 04 Feb 2021 20:50:00 -0700</pubDate>
             <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha1/NetNewsWire6.0a1.zip" sparkle:version="6006" sparkle:shortVersionString="6.0a1" length="10235407" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
-
-
-        <item>
-            <title>NetNewsWire 6.0d5</title>
-            <description><![CDATA[
-                <p>Added some shadow to the app icon</p>
-                <p>Fixed bug where iCloud account description was truncated in Catalina, in account setup</p>
-                <p>Fixed bug with iCloud account where undoing deletes of read feeds left articles deleted</p>
-                <p>Fixed bug connecting to Inoreader when username has a + character</p>
-                <p>Fixed bug with NewsBlur when all feeds are in folders</p>
-                <p>Fixed long beachball on quit that could happen with the iCloud account (due to a long sync)</p>
-            ]]></description>
-            <pubDate>Sat, 23 Jan 2021 11:55:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0dev5/NetNewsWire6.0d5.zip" sparkle:version="6005" sparkle:shortVersionString="6.0d5" length="10401415" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
-
 
     </channel>
 </rss>
