@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.0a2 build 6007 - 6 Feb 2021
+
+Fix regression in Preferences toolbar (placement of icons was wrong on Big Sur)
+Fix regression in Twitter support (it wasn’t working)
+
 ### 6.0a1 build 6006 - 4 Feb 2021
 
 Feeds list: added contextual menu items for always showing reader view and for notifications
