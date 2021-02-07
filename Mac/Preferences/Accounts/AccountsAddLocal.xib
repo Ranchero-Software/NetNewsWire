@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,7 +19,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="398" height="205"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1792" height="1095"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1536" height="935"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="398" height="205"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -31,7 +31,10 @@
                         <rect key="frame" x="199" y="95" width="0.0" height="21"/>
                     </stackView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xqo-gP-MPl">
-                        <rect key="frame" x="310" y="13" width="75" height="32"/>
+                        <rect key="frame" x="309" y="13" width="76" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="62" id="i5E-OP-URn"/>
+                        </constraints>
                         <buttonCell key="cell" type="push" title="Create" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oih-6c-KbS">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -44,7 +47,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9eG-vV-s8c">
-                        <rect key="frame" x="237" y="13" width="76" height="32"/>
+                        <rect key="frame" x="235" y="13" width="76" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iVd-bO-4LN">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -114,12 +117,13 @@ Gw
                     <constraint firstItem="80D-3X-rL2" firstAttribute="leading" secondItem="ySx-qg-WbT" secondAttribute="trailing" constant="19" id="Kuc-ym-H5a"/>
                     <constraint firstItem="3Kj-Cl-FJQ" firstAttribute="leading" secondItem="ySx-qg-WbT" secondAttribute="trailing" constant="19" id="Pwn-uQ-qtc"/>
                     <constraint firstItem="3Kj-Cl-FJQ" firstAttribute="top" secondItem="80D-3X-rL2" secondAttribute="bottom" constant="8" symbolic="YES" id="Rcn-2y-Jkt"/>
+                    <constraint firstItem="9eG-vV-s8c" firstAttribute="width" secondItem="xqo-gP-MPl" secondAttribute="width" id="RuZ-Jv-xVJ"/>
                     <constraint firstItem="f9b-FM-i8Q" firstAttribute="bottom" secondItem="6Q7-nI-h5u" secondAttribute="bottom" id="Udo-Yg-xOC"/>
                     <constraint firstItem="ySx-qg-WbT" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="cSC-er-N4i"/>
                     <constraint firstItem="ySx-qg-WbT" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="dmH-e1-X3W"/>
                     <constraint firstItem="f9b-FM-i8Q" firstAttribute="top" secondItem="6Q7-nI-h5u" secondAttribute="top" id="neW-V1-13e"/>
                     <constraint firstItem="f9b-FM-i8Q" firstAttribute="leading" secondItem="MWg-UL-xtj" secondAttribute="trailing" constant="8" symbolic="YES" id="p3J-6S-ITL"/>
-                    <constraint firstItem="xqo-gP-MPl" firstAttribute="leading" secondItem="9eG-vV-s8c" secondAttribute="trailing" constant="11" id="p6M-6b-ybu"/>
+                    <constraint firstItem="xqo-gP-MPl" firstAttribute="leading" secondItem="9eG-vV-s8c" secondAttribute="trailing" constant="12" symbolic="YES" id="p6M-6b-ybu"/>
                     <constraint firstItem="f9b-FM-i8Q" firstAttribute="baseline" secondItem="MWg-UL-xtj" secondAttribute="baseline" id="pz0-6G-uO5"/>
                     <constraint firstItem="80D-3X-rL2" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="qaR-ST-LnB"/>
                     <constraint firstItem="uDK-ji-zlT" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="uXu-yF-PBG"/>

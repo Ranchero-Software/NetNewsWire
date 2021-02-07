@@ -101,7 +101,7 @@ struct AddAccountsView: View {
 						parent?.dismiss(nil)
 					}, label: {
 						Text("Cancel")
-							.frame(width: 80)
+							.frame(width: 76)
 					})
 					.help("Cancel")
 					.keyboardShortcut(.cancelAction)
@@ -111,7 +111,7 @@ struct AddAccountsView: View {
 						parent?.dismiss(nil)
 					}, label: {
 						Text("Cancel")
-							.frame(width: 80)
+							.frame(width: 76)
 					})
 					.accessibility(label: Text("Add Account"))
 				}
@@ -121,7 +121,7 @@ struct AddAccountsView: View {
 						parent?.dismiss(nil)
 					}, label: {
 						Text("Continue")
-							.frame(width: 80)
+							.frame(width: 76)
 					})
 					.help("Add Account")
 					.keyboardShortcut(.defaultAction)
@@ -132,7 +132,7 @@ struct AddAccountsView: View {
 						parent?.dismiss(nil)
 					}, label: {
 						Text("Continue")
-							.frame(width: 80)
+							.frame(width: 76)
 					})
 				}
 			}
