@@ -17,9 +17,7 @@ import SyncDatabase
 
 final class CloudKitArticlesZone: CloudKitZone {
 	
-	static var zoneID: CKRecordZone.ID {
-		return CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
-	}
+	var zoneID: CKRecordZone.ID
 	
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 	
@@ -58,6 +56,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	init(container: CKContainer) {
 		self.container = container
 		self.database = container.privateCloudDatabase
+		self.zoneID = CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
 	}
 	
 	func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
@@ -124,10 +123,10 @@ final class CloudKitArticlesZone: CloudKitZone {
 				newRecords.append(self.makeStatusRecord(statusUpdate))
 				newRecords.append(self.makeArticleRecord(statusUpdate.article!))
 			case .delete:
-				deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: Self.zoneID))
+				deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: zoneID))
 			case .statusOnly:
 				modifyRecords.append(self.makeStatusRecord(statusUpdate))
-				deleteRecordIDs.append(CKRecord.ID(recordName: self.articleID(statusUpdate.articleID), zoneID: Self.zoneID))
+				deleteRecordIDs.append(CKRecord.ID(recordName: self.articleID(statusUpdate.articleID), zoneID: zoneID))
 			}
 		}
 		
@@ -176,7 +175,7 @@ private extension CloudKitArticlesZone {
 	}
 	
 	func makeStatusRecord(_ article: Article) -> CKRecord {
-		let recordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: Self.zoneID)
+		let recordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
 		if let webFeedExternalID = article.webFeed?.externalID {
 			record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
@@ -187,7 +186,7 @@ private extension CloudKitArticlesZone {
 	}
 	
 	func makeStatusRecord(_ statusUpdate: CloudKitArticleStatusUpdate) -> CKRecord {
-		let recordID = CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: Self.zoneID)
+		let recordID = CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
 		
 		if let webFeedExternalID = statusUpdate.article?.webFeed?.externalID {
@@ -201,10 +200,10 @@ private extension CloudKitArticlesZone {
 	}
 	
 	func makeArticleRecord(_ article: Article) -> CKRecord {
-		let recordID = CKRecord.ID(recordName: articleID(article.articleID), zoneID: Self.zoneID)
+		let recordID = CKRecord.ID(recordName: articleID(article.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticle.recordType, recordID: recordID)
 
-		let articleStatusRecordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: Self.zoneID)
+		let articleStatusRecordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		record[CloudKitArticle.Fields.articleStatus] = CKRecord.Reference(recordID: articleStatusRecordID, action: .deleteSelf)
 		record[CloudKitArticle.Fields.webFeedURL] = article.webFeed?.url
 		record[CloudKitArticle.Fields.uniqueID] = article.uniqueID
