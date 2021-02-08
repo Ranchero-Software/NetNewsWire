@@ -57,6 +57,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		self.container = container
 		self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
+		migrateChangeToken()
 	}
 	
 	func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
