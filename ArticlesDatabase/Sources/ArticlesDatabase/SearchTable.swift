@@ -17,6 +17,7 @@ final class ArticleSearchInfo: Hashable {
 
 	let articleID: String
 	let title: String?
+    let authorsNames: String?
 	let contentHTML: String?
 	let contentText: String?
 	let summary: String?
@@ -37,9 +38,10 @@ final class ArticleSearchInfo: Hashable {
 		return s.strippingHTML().collapsingWhitespace
 	}()
 
-	init(articleID: String, title: String?, contentHTML: String?, contentText: String?, summary: String?, searchRowID: Int?) {
+    init(articleID: String, title: String?, authorsNames: String?, contentHTML: String?, contentText: String?, summary: String?, searchRowID: Int?) {
 		self.articleID = articleID
 		self.title = title
+        self.authorsNames = authorsNames
 		self.contentHTML = contentHTML
 		self.contentText = contentText
 		self.summary = summary
@@ -47,7 +49,7 @@ final class ArticleSearchInfo: Hashable {
 	}
 
 	convenience init(article: Article) {
-		self.init(articleID: article.articleID, title: article.title, contentHTML: article.contentHTML, contentText: article.contentText, summary: article.summary, searchRowID: nil)
+        self.init(articleID: article.articleID, title: article.title, authorsNames: article.authors?.map({ $0.name }).reduce("", { $0.appending("").appending($1 ?? "") }), contentHTML: article.contentHTML, contentText: article.contentText, summary: article.summary, searchRowID: nil)
 	}
 
 	// MARK: Hashable
@@ -127,7 +129,7 @@ private extension SearchTable {
 	}
 
 	func insert(_ article: ArticleSearchInfo, _ database: FMDatabase) -> Int {
-		let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.title ?? ""]
+        let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.title ?? "", DatabaseKey.authors: article.authorsNames ?? ""]
 		insertRow(rowDictionary, insertType: .normal, in: database)
 		return Int(database.lastInsertRowId())
 	}

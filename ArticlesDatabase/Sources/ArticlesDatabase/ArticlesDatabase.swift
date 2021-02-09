@@ -332,7 +332,7 @@ private extension ArticlesDatabase {
 
 	CREATE INDEX if not EXISTS statuses_starred_index on statuses (starred);
 
-	CREATE VIRTUAL TABLE if not EXISTS search using fts4(title, body);
+	CREATE VIRTUAL TABLE if not EXISTS search using fts4(title, body, authors);
 
 	CREATE TRIGGER if not EXISTS articles_after_delete_trigger_delete_search_text after delete on articles begin delete from search where rowid = OLD.searchRowID; end;
 	"""
