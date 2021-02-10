@@ -11,7 +11,7 @@ let package = Package(
             targets: ["SyncDatabase"]),
     ],
     dependencies: [
-		.package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0-beta1")),
+		.package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0")),
 		.package(url: "../Articles", .upToNextMajor(from: "1.0.0")),
     ],
     targets: [

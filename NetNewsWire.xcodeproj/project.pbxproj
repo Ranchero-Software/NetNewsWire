@@ -6095,8 +6095,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Ranchero-Software/Sparkle-Binary.git";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
 			};
 		};
 		5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */ = {
@@ -6112,7 +6112,7 @@
 			repositoryURL = "https://github.com/Ranchero-Software/RSTree.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = "1.0.0-beta1";
+				minimumVersion = 1.0.0;
 			};
 		};
 		51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */ = {
@@ -6136,7 +6136,7 @@
 			repositoryURL = "https://github.com/Ranchero-Software/RSDatabase.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = "1.0.0-beta1";
+				minimumVersion = 1.0.0;
 			};
 		};
 		51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */ = {
@@ -6144,7 +6144,7 @@
 			repositoryURL = "https://github.com/Ranchero-Software/RSParser.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = "2.0.0-beta1";
+				minimumVersion = 2.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
