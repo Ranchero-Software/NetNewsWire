@@ -49,7 +49,8 @@ final class ArticleSearchInfo: Hashable {
 	}
 
 	convenience init(article: Article) {
-        self.init(articleID: article.articleID, title: article.title, authorsNames: article.authors?.map({ $0.name }).reduce("", { $0.appending("").appending($1 ?? "") }), contentHTML: article.contentHTML, contentText: article.contentText, summary: article.summary, searchRowID: nil)
+        let authorsNames = article.authors?.map({ $0.name }).reduce("", { $0.appending("").appending($1 ?? "") })
+        self.init(articleID: article.articleID, title: article.title, authorsNames: authorsNames, contentHTML: article.contentHTML, contentText: article.contentText, summary: article.summary, searchRowID: nil)
 	}
 
 	// MARK: Hashable

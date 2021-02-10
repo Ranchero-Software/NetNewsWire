@@ -145,12 +145,8 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	// MARK: - Fetching Articles for Indexer
-
-	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {
-		let parameters = articleIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-        // Aggregating authors names in SQL using a subquery with GROUP_CONCAT
-		let sql = """
+    private func articleSearchInfosQuery(with placeholders: String) -> String {
+        return """
         SELECT
             art.articleID,
             art.title,
@@ -165,16 +161,20 @@ final class ArticlesTable: DatabaseTable {
             GROUP BY autl.articleID) as authors
         FROM articles as art
         WHERE articleID in \(placeholders);
-        """;
+        """
+    }
 
-		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
+	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {
+		let parameters = articleIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+        if let resultSet = database.executeQuery(self.articleSearchInfosQuery(with: placeholders), withArgumentsIn: parameters) {
 			return resultSet.mapToSet { (row) -> ArticleSearchInfo? in
 				let articleID = row.string(forColumn: DatabaseKey.articleID)!
 				let title = row.string(forColumn: DatabaseKey.title)
 				let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
 				let contentText = row.string(forColumn: DatabaseKey.contentText)
 				let summary = row.string(forColumn: DatabaseKey.summary)
-                let authors = row.string(forColumn: DatabaseKey.authors)
+                let authorsNames = row.string(forColumn: DatabaseKey.authors)
 
 				let searchRowIDObject = row.object(forColumnName: DatabaseKey.searchRowID)
 				var searchRowID: Int? = nil
@@ -182,7 +182,7 @@ final class ArticlesTable: DatabaseTable {
 					searchRowID = Int(row.longLongInt(forColumn: DatabaseKey.searchRowID))
 				}
 
-				return ArticleSearchInfo(articleID: articleID, title: title, authorsNames: authors, contentHTML: contentHTML, contentText: contentText, summary: summary, searchRowID: searchRowID)
+				return ArticleSearchInfo(articleID: articleID, title: title, authorsNames: authorsNames, contentHTML: contentHTML, contentText: contentText, summary: summary, searchRowID: searchRowID)
 			}
 		}
 		return nil
