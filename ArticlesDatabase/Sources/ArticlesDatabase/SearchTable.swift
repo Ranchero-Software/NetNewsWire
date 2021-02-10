@@ -17,6 +17,7 @@ final class ArticleSearchInfo: Hashable {
 
 	let articleID: String
 	let title: String?
+    let authorsNames: String?
 	let contentHTML: String?
 	let contentText: String?
 	let summary: String?
@@ -37,9 +38,10 @@ final class ArticleSearchInfo: Hashable {
 		return s.strippingHTML().collapsingWhitespace
 	}()
 
-	init(articleID: String, title: String?, contentHTML: String?, contentText: String?, summary: String?, searchRowID: Int?) {
+    init(articleID: String, title: String?, authorsNames: String?, contentHTML: String?, contentText: String?, summary: String?, searchRowID: Int?) {
 		self.articleID = articleID
 		self.title = title
+        self.authorsNames = authorsNames
 		self.contentHTML = contentHTML
 		self.contentText = contentText
 		self.summary = summary
@@ -47,7 +49,8 @@ final class ArticleSearchInfo: Hashable {
 	}
 
 	convenience init(article: Article) {
-		self.init(articleID: article.articleID, title: article.title, contentHTML: article.contentHTML, contentText: article.contentText, summary: article.summary, searchRowID: nil)
+        let authorsNames = article.authors?.map({ $0.name }).reduce("", { $0.appending("").appending($1 ?? "") })
+        self.init(articleID: article.articleID, title: article.title, authorsNames: authorsNames, contentHTML: article.contentHTML, contentText: article.contentText, summary: article.summary, searchRowID: nil)
 	}
 
 	// MARK: Hashable
@@ -59,7 +62,7 @@ final class ArticleSearchInfo: Hashable {
 	// MARK: Equatable
 
 	static func == (lhs: ArticleSearchInfo, rhs: ArticleSearchInfo) -> Bool {
-		return lhs.articleID == rhs.articleID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.searchRowID == rhs.searchRowID
+        return lhs.articleID == rhs.articleID && lhs.title == rhs.title && lhs.authorsNames == rhs.authorsNames && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.searchRowID == rhs.searchRowID
 	}
 }
 
@@ -127,7 +130,7 @@ private extension SearchTable {
 	}
 
 	func insert(_ article: ArticleSearchInfo, _ database: FMDatabase) -> Int {
-		let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.title ?? ""]
+        let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.title ?? "", DatabaseKey.authors: article.authorsNames ?? ""]
 		insertRow(rowDictionary, insertType: .normal, in: database)
 		return Int(database.lastInsertRowId())
 	}
@@ -201,7 +204,7 @@ private extension SearchTable {
 			return nil
 		}
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
-		let sql = "select rowid, title, body from \(name) where rowid in \(placeholders);"
+		let sql = "select rowid, title, body, authors from \(name) where rowid in \(placeholders);"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: searchRowIDs) else {
 			return nil
 		}
