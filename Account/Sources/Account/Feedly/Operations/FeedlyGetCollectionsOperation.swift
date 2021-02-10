@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 
-protocol FeedlyCollectionProviding: class {
+protocol FeedlyCollectionProviding: AnyObject {
 	var collections: [FeedlyCollection] { get }
 }
 

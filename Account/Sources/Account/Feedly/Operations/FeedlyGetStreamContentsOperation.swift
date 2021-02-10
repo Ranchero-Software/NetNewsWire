@@ -19,7 +19,7 @@ protocol FeedlyParsedItemProviding {
 	var parsedEntries: Set<ParsedItem> { get }
 }
 
-protocol FeedlyGetStreamContentsOperationDelegate: class {
+protocol FeedlyGetStreamContentsOperationDelegate: AnyObject {
 	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream)
 }
 
