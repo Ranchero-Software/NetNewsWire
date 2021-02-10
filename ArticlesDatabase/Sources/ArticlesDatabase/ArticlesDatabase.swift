@@ -85,7 +85,7 @@ public final class ArticlesDatabase {
 			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
             if !self.searchTable.containsColumn("authors", in: database) {
-                database.executeStatements("DROP TABLE if EXISTS search;UPDATE articles SET searchRowID = null;")
+                database.executeStatements("DROP TABLE if EXISTS search;")
                 database.executeStatements(ArticlesDatabase.searchTableCreationStatements)
             }
 		}
