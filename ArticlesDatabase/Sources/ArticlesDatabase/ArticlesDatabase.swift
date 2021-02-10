@@ -63,7 +63,6 @@ public final class ArticlesDatabase {
 	}
 
 	private let articlesTable: ArticlesTable
-    private let searchTable: SearchTable
 	private let queue: DatabaseQueue
 	private let operationQueue = MainThreadOperationQueue()
 	private let retentionStyle: RetentionStyle
@@ -72,11 +71,9 @@ public final class ArticlesDatabase {
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
 		self.queue = queue
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue, retentionStyle: retentionStyle)
-        self.searchTable = SearchTable(queue: queue, articlesTable: self.articlesTable)
 		self.retentionStyle = retentionStyle
 
 		try! queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
-        try! queue.runCreateStatements(ArticlesDatabase.searchTableCreationStatements)
 		queue.runInDatabase { databaseResult in
 			let database = databaseResult.database!
 			if !self.articlesTable.containsColumn("searchRowID", in: database) {
@@ -84,10 +81,6 @@ public final class ArticlesDatabase {
 			}
 			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
-            if !self.searchTable.containsColumn("authors", in: database) {
-                database.executeStatements("DROP TABLE if EXISTS search;UPDATE articles SET searchRowID = null;")
-                database.executeStatements(ArticlesDatabase.searchTableCreationStatements)
-            }
 		}
 
 		DispatchQueue.main.async {
@@ -338,13 +331,11 @@ private extension ArticlesDatabase {
 	CREATE INDEX if not EXISTS articles_feedID_datePublished_articleID on articles (feedID, datePublished, articleID);
 
 	CREATE INDEX if not EXISTS statuses_starred_index on statuses (starred);
+
+	CREATE VIRTUAL TABLE if not EXISTS search using fts4(title, body);
+
+	CREATE TRIGGER if not EXISTS articles_after_delete_trigger_delete_search_text after delete on articles begin delete from search where rowid = OLD.searchRowID; end;
 	"""
-
-    static let searchTableCreationStatements = """
-    CREATE VIRTUAL TABLE if not EXISTS search using fts4(title, body, authors);
-
-    CREATE TRIGGER if not EXISTS articles_after_delete_trigger_delete_search_text after delete on articles begin delete from search where rowid = OLD.searchRowID; end;
-    """
 
 	func todayCutoffDate() -> Date {
 		// 24 hours previous. This is used by the Today smart feed, which should not actually empty out at midnight.
