@@ -158,8 +158,8 @@ final class ArticlesTable: DatabaseTable {
             art.contentText,
             art.summary,
             art.searchRowID,
-            (SELECT GROUP_CONCAT(name SEPARATOR ' ')
-            FROM authorLookup as autL
+            (SELECT GROUP_CONCAT(name, ' ')
+            FROM authorsLookup as autL
             JOIN authors as aut ON autL.authorID = aut.authorID
             WHERE art.articleID = autL.articleID
             GROUP BY autl.articleID) as authors

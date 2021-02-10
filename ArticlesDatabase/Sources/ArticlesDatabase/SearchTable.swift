@@ -61,7 +61,7 @@ final class ArticleSearchInfo: Hashable {
 	// MARK: Equatable
 
 	static func == (lhs: ArticleSearchInfo, rhs: ArticleSearchInfo) -> Bool {
-		return lhs.articleID == rhs.articleID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.searchRowID == rhs.searchRowID
+        return lhs.articleID == rhs.articleID && lhs.title == rhs.title && lhs.authorsNames == rhs.authorsNames && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.searchRowID == rhs.searchRowID
 	}
 }
 
@@ -203,7 +203,7 @@ private extension SearchTable {
 			return nil
 		}
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
-		let sql = "select rowid, title, body from \(name) where rowid in \(placeholders);"
+		let sql = "select rowid, title, body, authors from \(name) where rowid in \(placeholders);"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: searchRowIDs) else {
 			return nil
 		}

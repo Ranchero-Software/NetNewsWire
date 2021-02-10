@@ -63,6 +63,7 @@ public final class ArticlesDatabase {
 	}
 
 	private let articlesTable: ArticlesTable
+    private let searchTable: SearchTable
 	private let queue: DatabaseQueue
 	private let operationQueue = MainThreadOperationQueue()
 	private let retentionStyle: RetentionStyle
@@ -71,6 +72,7 @@ public final class ArticlesDatabase {
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
 		self.queue = queue
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue, retentionStyle: retentionStyle)
+        self.searchTable = SearchTable(queue: queue, articlesTable: self.articlesTable)
 		self.retentionStyle = retentionStyle
 
 		try! queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
@@ -81,6 +83,9 @@ public final class ArticlesDatabase {
 			}
 			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
+            if !self.searchTable.containsColumn("authors", in: database) {
+                database.executeStatements("DROP TABLE if EXISTS search;CREATE VIRTUAL TABLE if not EXISTS search using fts4(title, body, authors);UPDATE articles SET searchRowID = null;")
+            }
 		}
 
 		DispatchQueue.main.async {
