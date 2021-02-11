@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol FeedlyEntryIdentifierProviding: class {
+protocol FeedlyEntryIdentifierProviding: AnyObject {
 	var entryIds: Set<String> { get }
 }
 

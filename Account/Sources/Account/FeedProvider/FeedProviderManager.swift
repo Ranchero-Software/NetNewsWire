@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol FeedProviderManagerDelegate: class {
+public protocol FeedProviderManagerDelegate: AnyObject {
 	var activeFeedProviders: [FeedProvider] { get }
 }
 

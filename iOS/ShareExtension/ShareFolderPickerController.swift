@@ -10,7 +10,7 @@ import UIKit
 import Account
 import RSCore
 
-protocol ShareFolderPickerControllerDelegate: class {
+protocol ShareFolderPickerControllerDelegate: AnyObject {
 	func shareFolderPickerDidSelect(_ container: ExtensionContainer)
 }
 

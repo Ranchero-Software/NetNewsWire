@@ -10,7 +10,7 @@ import AppKit
 import Account
 import Articles
 
-protocol TimelineContainerViewControllerDelegate: class {
+protocol TimelineContainerViewControllerDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
 	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed)
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController)

@@ -16,7 +16,7 @@ extension Notification.Name {
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
 
-public protocol Container: class, ContainerIdentifiable {
+public protocol Container: AnyObject, ContainerIdentifiable {
 
 	var account: Account? { get }
 	var topLevelWebFeeds: Set<WebFeed> { get set }

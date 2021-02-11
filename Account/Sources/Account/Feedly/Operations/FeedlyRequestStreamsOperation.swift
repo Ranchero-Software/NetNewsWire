@@ -9,7 +9,7 @@
 import Foundation
 import os.log
 
-protocol FeedlyRequestStreamsOperationDelegate: class {
+protocol FeedlyRequestStreamsOperationDelegate: AnyObject {
 	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue collectionStreamOperation: FeedlyGetStreamContentsOperation)
 }
 

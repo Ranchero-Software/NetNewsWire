@@ -10,7 +10,7 @@ import Foundation
 import RSWeb
 import Articles
 
-protocol WebFeedMetadataDelegate: class {
+protocol WebFeedMetadataDelegate: AnyObject {
 	func valueDidChange(_ feedMetadata: WebFeedMetadata, key: WebFeedMetadata.CodingKeys)
 }
 

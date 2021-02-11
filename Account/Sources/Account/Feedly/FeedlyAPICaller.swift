@@ -10,7 +10,7 @@ import Foundation
 import RSWeb
 import Secrets
 
-protocol FeedlyAPICallerDelegate: class {
+protocol FeedlyAPICallerDelegate: AnyObject {
 	/// Implemented by the `FeedlyAccountDelegate` reauthorize the client with a fresh OAuth token so the client can retry the unauthorized request.
 	/// Pass `true` to the completion handler if the failing request should be retried with a fresh token or `false` if the unauthorized request should complete with the original failure error.
 	func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ())

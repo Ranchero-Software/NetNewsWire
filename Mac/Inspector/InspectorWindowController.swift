@@ -8,7 +8,7 @@
 
 import AppKit
 
-protocol Inspector: class {
+protocol Inspector: AnyObject {
 
 	var objects: [Any]? { get set }
 	var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
