@@ -20,6 +20,7 @@ final class ArticleSearchInfo: Hashable {
 	let contentHTML: String?
 	let contentText: String?
 	let summary: String?
+	let authorsNames: String?
 	let searchRowID: Int?
 	
 	var preferredText: String {
@@ -34,12 +35,19 @@ final class ArticleSearchInfo: Hashable {
 
 	lazy var bodyForIndex: String = {
 		let s = preferredText.rsparser_stringByDecodingHTMLEntities()
-		return s.strippingHTML().collapsingWhitespace
+		let sanitizedBody = s.strippingHTML().collapsingWhitespace
+
+		if let authorsNames = authorsNames {
+			return sanitizedBody.appending(" \(authorsNames)")
+		} else {
+			return sanitizedBody
+		}
 	}()
 
-	init(articleID: String, title: String?, contentHTML: String?, contentText: String?, summary: String?, searchRowID: Int?) {
+	init(articleID: String, title: String?, contentHTML: String?, contentText: String?, summary: String?, authorsNames: String?, searchRowID: Int?) {
 		self.articleID = articleID
 		self.title = title
+		self.authorsNames = authorsNames
 		self.contentHTML = contentHTML
 		self.contentText = contentText
 		self.summary = summary
@@ -47,7 +55,13 @@ final class ArticleSearchInfo: Hashable {
 	}
 
 	convenience init(article: Article) {
-		self.init(articleID: article.articleID, title: article.title, contentHTML: article.contentHTML, contentText: article.contentText, summary: article.summary, searchRowID: nil)
+		let authorsNames: String?
+		if let authors = article.authors {
+			authorsNames = authors.compactMap({ $0.name }).joined(separator: " ")
+		} else {
+			authorsNames = nil
+		}
+		self.init(articleID: article.articleID, title: article.title, contentHTML: article.contentHTML, contentText: article.contentText, summary: article.summary, authorsNames: authorsNames, searchRowID: nil)
 	}
 
 	// MARK: Hashable
@@ -59,7 +73,7 @@ final class ArticleSearchInfo: Hashable {
 	// MARK: Equatable
 
 	static func == (lhs: ArticleSearchInfo, rhs: ArticleSearchInfo) -> Bool {
-		return lhs.articleID == rhs.articleID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.searchRowID == rhs.searchRowID
+		return lhs.articleID == rhs.articleID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.summary == rhs.summary && lhs.authorsNames == rhs.authorsNames && lhs.searchRowID == rhs.searchRowID
 	}
 }
 
