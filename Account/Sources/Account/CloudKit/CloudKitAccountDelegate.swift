@@ -657,7 +657,7 @@ private extension CloudKitAccountDelegate {
 				}
 
 			case .failure:
-				self.refreshProgress.completeTasks(5)
+				self.refreshProgress.completeTasks(4)
 				completion(.failure(AccountError.createErrorNotFound))
 			}
 		}
