@@ -673,14 +673,14 @@ private extension CloudKitAccountDelegate {
 			case .success(let feedSpecifiers):
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
 					BatchUpdate.shared.end()
-					self.refreshProgress.completeTasks(5)
+					self.refreshProgress.completeTasks(4)
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 				
 				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
 					BatchUpdate.shared.end()
-					self.refreshProgress.completeTasks(5)
+					self.refreshProgress.completeTasks(4)
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
 				}
