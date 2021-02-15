@@ -62,14 +62,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
 		if #available(macOS 11.0, *) {
-			DispatchQueue.main.async {
-				let toolbar = NSToolbar(identifier: "MainWindowToolbar")
-				toolbar.allowsUserCustomization = true
-				toolbar.autosavesConfiguration = true
-				toolbar.displayMode = .iconOnly
-				toolbar.delegate = self
-				self.window?.toolbar = toolbar
-			}
+			let toolbar = NSToolbar(identifier: "MainWindowToolbar")
+			toolbar.allowsUserCustomization = true
+			toolbar.autosavesConfiguration = true
+			toolbar.displayMode = .iconOnly
+			toolbar.delegate = self
+			self.window?.toolbar = toolbar
 		} else {
 			if !AppDefaults.shared.showTitleOnMainWindow {
 				window?.titleVisibility = .hidden
