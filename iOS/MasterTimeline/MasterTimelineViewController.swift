@@ -471,13 +471,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc func userDefaultsDidChange(_ note: Notification) {
-		if numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || iconSize != AppDefaults.shared.timelineIconSize {
-			numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-			iconSize = AppDefaults.shared.timelineIconSize
-			resetEstimatedRowHeight()
-			reloadAllVisibleCells()
+		DispatchQueue.main.async {
+			if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
+				self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+				self.iconSize = AppDefaults.shared.timelineIconSize
+				self.resetEstimatedRowHeight()
+				self.reloadAllVisibleCells()
+			}
+			self.updateToolbar()
 		}
-		updateToolbar()
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
