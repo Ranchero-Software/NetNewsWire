@@ -490,10 +490,8 @@ private extension SidebarOutlineDataSource {
 				return
 		}
 		
-		BatchUpdate.shared.start()
 		replicateFolder(sourceFolder, destinationAccount: destinationAccount) {
 			sourceAccount.removeFolder(sourceFolder) { result in
-				BatchUpdate.shared.end()
 				switch result {
 				case .success:
 					break
