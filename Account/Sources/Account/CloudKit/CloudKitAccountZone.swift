@@ -21,9 +21,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 }
 final class CloudKitAccountZone: CloudKitZone {
 
-	static var zoneID: CKRecordZone.ID {
-		return CKRecordZone.ID(zoneName: "Account", ownerName: CKCurrentUserDefaultName)
-	}
+	var zoneID: CKRecordZone.ID
 	
 	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
@@ -53,6 +51,8 @@ final class CloudKitAccountZone: CloudKitZone {
 	init(container: CKContainer) {
         self.container = container
         self.database = container.privateCloudDatabase
+		self.zoneID = CKRecordZone.ID(zoneName: "Account", ownerName: CKCurrentUserDefaultName)
+		migrateChangeToken()
     }
 	
 	func importOPML(rootExternalID: String, items: [RSOPMLItem], completion: @escaping (Result<Void, Error>) -> Void) {
@@ -91,7 +91,7 @@ final class CloudKitAccountZone: CloudKitZone {
     
 	///  Persist a web feed record to iCloud and return the external key
 	func createWebFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
-		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: Self.zoneID)
+		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: recordID)
 		record[CloudKitWebFeed.Fields.url] = url
 		record[CloudKitWebFeed.Fields.name] = name
@@ -125,7 +125,7 @@ final class CloudKitAccountZone: CloudKitZone {
 			return
 		}
 
-		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
+		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: recordID)
 		record[CloudKitWebFeed.Fields.editedName] = editedName
 		
@@ -252,7 +252,7 @@ final class CloudKitAccountZone: CloudKitZone {
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 		
-		database?.perform(ckQuery, inZoneWith: Self.zoneID) { [weak self] records, error in
+		database?.perform(ckQuery, inZoneWith: zoneID) { [weak self] records, error in
 			guard let self = self else { return }
 			
 			switch CloudKitZoneResult.resolve(error) {
@@ -296,7 +296,7 @@ final class CloudKitAccountZone: CloudKitZone {
 			return
 		}
 
-		let recordID = CKRecord.ID(recordName: externalID, zoneID: Self.zoneID)
+		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: recordID)
 		record[CloudKitContainer.Fields.name] = name
 		

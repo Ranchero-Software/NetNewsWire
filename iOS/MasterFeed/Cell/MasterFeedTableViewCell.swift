@@ -11,7 +11,7 @@ import RSCore
 import Account
 import RSTree
 
-protocol MasterFeedTableViewCellDelegate: class {
+protocol MasterFeedTableViewCellDelegate: AnyObject {
 	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 

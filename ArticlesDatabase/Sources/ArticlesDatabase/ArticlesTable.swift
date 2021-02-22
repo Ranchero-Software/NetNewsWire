@@ -145,19 +145,36 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	// MARK: - Fetching Articles for Indexer
+	private func articleSearchInfosQuery(with placeholders: String) -> String {
+		return """
+        SELECT
+            art.articleID,
+            art.title,
+            art.contentHTML,
+            art.contentText,
+            art.summary,
+            art.searchRowID,
+            (SELECT GROUP_CONCAT(name, ' ')
+                FROM authorsLookup as autL
+                JOIN authors as aut ON autL.authorID = aut.authorID
+                WHERE art.articleID = autL.articleID
+                GROUP BY autl.articleID) as authors
+        FROM articles as art
+        WHERE articleID in \(placeholders);
+        """
+	}
 
 	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {
 		let parameters = articleIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-		let sql = "select articleID, title, contentHTML, contentText, summary, searchRowID from articles where articleID in \(placeholders);";
-
-		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
+		if let resultSet = database.executeQuery(self.articleSearchInfosQuery(with: placeholders), withArgumentsIn: parameters) {
 			return resultSet.mapToSet { (row) -> ArticleSearchInfo? in
 				let articleID = row.string(forColumn: DatabaseKey.articleID)!
 				let title = row.string(forColumn: DatabaseKey.title)
 				let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
 				let contentText = row.string(forColumn: DatabaseKey.contentText)
 				let summary = row.string(forColumn: DatabaseKey.summary)
+				let authorsNames = row.string(forColumn: DatabaseKey.authors)
 
 				let searchRowIDObject = row.object(forColumnName: DatabaseKey.searchRowID)
 				var searchRowID: Int? = nil
@@ -165,7 +182,7 @@ final class ArticlesTable: DatabaseTable {
 					searchRowID = Int(row.longLongInt(forColumn: DatabaseKey.searchRowID))
 				}
 
-				return ArticleSearchInfo(articleID: articleID, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, searchRowID: searchRowID)
+				return ArticleSearchInfo(articleID: articleID, title: title, contentHTML: contentHTML, contentText: contentText, summary: summary, authorsNames: authorsNames, searchRowID: searchRowID)
 			}
 		}
 		return nil

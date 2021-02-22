@@ -30,6 +30,6 @@ enum FeedlyMarkAction: String {
 	 }
  }
 
-protocol FeedlyMarkArticlesService: class {
+protocol FeedlyMarkArticlesService: AnyObject {
 	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ())
 }

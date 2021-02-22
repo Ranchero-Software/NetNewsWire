@@ -11,7 +11,7 @@ import RSCore
 import OAuthSwift
 import Secrets
 
-protocol RedditFeedProviderTokenRefreshOperationDelegate: class {
+protocol RedditFeedProviderTokenRefreshOperationDelegate: AnyObject {
 	var username: String? { get }
 	var oauthTokenLastRefresh: Date? { get set }
 	var oauthToken: String { get set }

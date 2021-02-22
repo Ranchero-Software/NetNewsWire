@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,7 +18,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="398" height="135"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1792" height="1095"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1536" height="935"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="398" height="135"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -92,7 +92,7 @@ Gw
                     <constraint firstItem="9eG-vV-s8c" firstAttribute="top" secondItem="3Kj-Cl-FJQ" secondAttribute="bottom" constant="19" id="VYR-uJ-Qmy"/>
                     <constraint firstItem="xqo-gP-MPl" firstAttribute="top" secondItem="3Kj-Cl-FJQ" secondAttribute="bottom" constant="19" id="mg9-pV-zid"/>
                     <constraint firstItem="9eG-vV-s8c" firstAttribute="width" secondItem="xqo-gP-MPl" secondAttribute="width" id="oNb-To-cBK"/>
-                    <constraint firstItem="xqo-gP-MPl" firstAttribute="leading" secondItem="9eG-vV-s8c" secondAttribute="trailing" constant="12" id="p6M-6b-ybu"/>
+                    <constraint firstItem="xqo-gP-MPl" firstAttribute="leading" secondItem="9eG-vV-s8c" secondAttribute="trailing" constant="12" symbolic="YES" id="p6M-6b-ybu"/>
                     <constraint firstItem="uDK-ji-zlT" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="uXu-yF-PBG"/>
                     <constraint firstItem="ySx-qg-WbT" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="14" id="xee-QN-iej"/>
                     <constraint firstAttribute="trailing" secondItem="80D-3X-rL2" secondAttribute="trailing" constant="20" symbolic="YES" id="xzC-kN-UlB"/>

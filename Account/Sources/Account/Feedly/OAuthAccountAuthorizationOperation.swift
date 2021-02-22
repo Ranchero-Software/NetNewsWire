@@ -10,7 +10,7 @@ import Foundation
 import AuthenticationServices
 import RSCore
 
-public protocol OAuthAccountAuthorizationOperationDelegate: class {
+public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account)
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error)
 }

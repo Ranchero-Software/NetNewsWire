@@ -12,7 +12,7 @@ import RSCore
 import Account
 import Articles
 
-protocol SidebarModelDelegate: class {
+protocol SidebarModelDelegate: AnyObject {
 	func unreadCount(for: Feed) -> Int
 }
 

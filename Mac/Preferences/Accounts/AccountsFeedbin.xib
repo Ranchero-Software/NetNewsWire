@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -26,7 +26,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="433" height="249"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1792" height="1095"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1536" height="935"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="433" height="249"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -97,8 +97,11 @@
                         </gridCells>
                     </gridView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9mz-D9-krh">
-                        <rect key="frame" x="347" y="13" width="73" height="32"/>
-                        <buttonCell key="cell" type="push" title="Action" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IMO-YT-k9Z">
+                        <rect key="frame" x="344" y="13" width="76" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="62" id="hU1-wc-ebZ"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Create" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IMO-YT-k9Z">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -110,7 +113,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XAM-Hb-0Hw">
-                        <rect key="frame" x="273" y="13" width="76" height="32"/>
+                        <rect key="frame" x="270" y="13" width="76" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ufs-ar-BAY">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -173,17 +176,14 @@ Gw
                         </connections>
                     </button>
                     <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="B0W-bh-Evv">
-                        <rect key="frame" x="256" y="22" width="16" height="16"/>
+                        <rect key="frame" x="253" y="22" width="16" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="Tcz-vj-cLr"/>
                             <constraint firstAttribute="height" constant="16" id="slt-7y-Jw0"/>
                         </constraints>
                     </progressIndicator>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sPC-hi-ewD">
-                        <rect key="frame" x="27" y="23" width="223" height="14"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="219" id="1jw-Q0-cm5"/>
-                        </constraints>
+                        <rect key="frame" x="78" y="60" width="337" height="14"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" id="sl9-fG-jwg">
                             <font key="font" textStyle="subheadline" name=".SFNS-Regular"/>
                             <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
@@ -197,20 +197,21 @@ Gw
                     <constraint firstItem="gEK-TH-URn" firstAttribute="top" secondItem="lti-yM-8LV" secondAttribute="bottom" constant="5" id="6gj-jv-thI"/>
                     <constraint firstAttribute="trailing" secondItem="lti-yM-8LV" secondAttribute="trailing" constant="20" symbolic="YES" id="Bvl-lx-VMh"/>
                     <constraint firstItem="9mz-D9-krh" firstAttribute="leading" secondItem="XAM-Hb-0Hw" secondAttribute="trailing" constant="12" symbolic="YES" id="CC8-HR-FDy"/>
-                    <constraint firstItem="sPC-hi-ewD" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="29" id="DFv-ba-n2r"/>
                     <constraint firstItem="lti-yM-8LV" firstAttribute="leading" secondItem="Ssh-Dh-xbg" secondAttribute="trailing" constant="10" id="DGC-SC-Klr"/>
-                    <constraint firstItem="sPC-hi-ewD" firstAttribute="centerY" secondItem="XAM-Hb-0Hw" secondAttribute="centerY" id="GAG-BE-Cdn"/>
                     <constraint firstItem="Ssh-Dh-xbg" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="HFJ-XG-KGU"/>
                     <constraint firstItem="XAM-Hb-0Hw" firstAttribute="centerY" secondItem="9mz-D9-krh" secondAttribute="centerY" id="M2M-fb-kfR"/>
                     <constraint firstAttribute="bottom" secondItem="9mz-D9-krh" secondAttribute="bottom" constant="20" id="PK2-Ye-400"/>
+                    <constraint firstAttribute="trailing" secondItem="sPC-hi-ewD" secondAttribute="trailing" constant="20" symbolic="YES" id="Q7Z-cX-m74"/>
                     <constraint firstItem="B0W-bh-Evv" firstAttribute="centerY" secondItem="XAM-Hb-0Hw" secondAttribute="centerY" id="YYi-d9-Ykb"/>
                     <constraint firstItem="lti-yM-8LV" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="a2m-T4-Cvm"/>
                     <constraint firstItem="Ssh-Dh-xbg" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="17" id="er0-pf-nSm"/>
+                    <constraint firstItem="XAM-Hb-0Hw" firstAttribute="width" secondItem="9mz-D9-krh" secondAttribute="width" id="f9X-ws-A5r"/>
                     <constraint firstAttribute="trailing" secondItem="9mz-D9-krh" secondAttribute="trailing" constant="20" id="fVQ-zN-rKd"/>
                     <constraint firstItem="7Ht-Fn-0Ya" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" id="jlY-Jg-KJR"/>
-                    <constraint firstItem="B0W-bh-Evv" firstAttribute="leading" secondItem="sPC-hi-ewD" secondAttribute="trailing" constant="8" symbolic="YES" id="jvz-NC-C9Q"/>
+                    <constraint firstItem="sPC-hi-ewD" firstAttribute="leading" secondItem="X1Z-v1-T5L" secondAttribute="leading" id="k5v-X1-kV0"/>
                     <constraint firstItem="MlB-jN-Ybe" firstAttribute="leading" secondItem="gEK-TH-URn" secondAttribute="trailing" constant="-1" id="o73-Mf-NOJ"/>
                     <constraint firstItem="zBB-JH-huI" firstAttribute="top" secondItem="gEK-TH-URn" secondAttribute="bottom" constant="17" id="rZU-JI-MfQ"/>
+                    <constraint firstItem="sPC-hi-ewD" firstAttribute="top" secondItem="X1Z-v1-T5L" secondAttribute="bottom" constant="8" symbolic="YES" id="reY-pG-5fx"/>
                     <constraint firstItem="7Ht-Fn-0Ya" firstAttribute="centerX" secondItem="se5-gp-TjO" secondAttribute="centerX" constant="16.5" id="tAZ-Te-w3H"/>
                     <constraint firstItem="XAM-Hb-0Hw" firstAttribute="leading" secondItem="B0W-bh-Evv" secondAttribute="trailing" constant="8" symbolic="YES" id="uTp-NW-oDs"/>
                     <constraint firstItem="zBB-JH-huI" firstAttribute="leading" secondItem="Ssh-Dh-xbg" secondAttribute="trailing" constant="10" id="uzf-L9-WGW"/>
@@ -225,7 +226,7 @@ Gw
         </window>
     </objects>
     <resources>
-        <image name="accountFeedbin" width="369" height="343"/>
+        <image name="accountFeedbin" width="25" height="25"/>
         <namedColor name="AccentColor">
             <color red="0.030999999493360519" green="0.41600000858306885" blue="0.93300002813339233" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

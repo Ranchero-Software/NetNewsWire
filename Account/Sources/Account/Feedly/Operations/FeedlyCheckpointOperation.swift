@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol FeedlyCheckpointOperationDelegate: class {
+protocol FeedlyCheckpointOperationDelegate: AnyObject {
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation)
 }
 

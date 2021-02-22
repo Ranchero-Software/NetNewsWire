@@ -11,7 +11,7 @@ import Combine
 import RSCore
 import Articles
 
-protocol WebViewControllerDelegate: class {
+protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
 

@@ -10,7 +10,7 @@ import Foundation
 import RSWeb
 import XCTest
 
-protocol TestTransportMockResponseProviding: class {
+protocol TestTransportMockResponseProviding: AnyObject {
 	func mockResponseFileUrl(for components: URLComponents) -> URL?
 }
 
