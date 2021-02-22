@@ -7,6 +7,19 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0a3</title>
+            <description><![CDATA[
+<p>Use the new URL for the crash report catcher (so that we actually get crash logs again)</p>
+<p>Update other URLs to point to netnewswire.com when correct</p>
+<p>Fix a bug with keyboard shortcuts on Big Sur</p>
+<p>Show folders more quickly in the iCloud account when dragging a folder into that account</p>
+            ]]></description>
+            <pubDate>Sun, 21 Feb 2021 18:55:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha3/NetNewsWire6.0a3.zip" sparkle:version="6008" sparkle:shortVersionString="6.0a3" length="10422867" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.0a2</title>
             <description><![CDATA[
                 <p>Fix regression in Preferences toolbar (placement of icons was wrong on Big Sur)</p>
@@ -17,18 +30,6 @@
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-        <item>
-            <title>NetNewsWire 6.0a1</title>
-            <description><![CDATA[
-                <p>Feeds list: added contextual menu items for always showing reader view and for notifications</p>
-                <p>Feeds list: now respects the size chosen in System Preferences > General > Sidebar icon size</p>
-                <p>iCloud syncing: don’t inadvertently clear progress indicator when copying a folder and an error was encountered</p>
-                <p>Notifications: don’t open app when closing a notification</p>
-            ]]></description>
-            <pubDate>Thu, 04 Feb 2021 20:50:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha1/NetNewsWire6.0a1.zip" sparkle:version="6006" sparkle:shortVersionString="6.0a1" length="10235407" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
 
     </channel>
 </rss>
