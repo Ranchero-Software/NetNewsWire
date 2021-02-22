@@ -1,5 +1,12 @@
 # Mac Release Notes
 
+### 6.0a3 build 6008 - 21 Feb 2021
+
+Use the new URL for the crash report catcher (so that we actually get crash logs again)
+Update other URLs to point to netnewswire.com when correct
+Fix a bug with keyboard shortcuts on Big Sur
+Show folders more quickly in the iCloud account when dragging a folder into that account
+
 ### 6.0a2 build 6007 - 6 Feb 2021
 
 Fix regression in Preferences toolbar (placement of icons was wrong on Big Sur)
