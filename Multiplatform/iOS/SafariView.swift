@@ -58,6 +58,6 @@ struct SafariView: View {
 
 struct SafariView_Previews: PreviewProvider {
     static var previews: some View {
-		SafariView(url: URL(string: "https://ranchero.com/netnewswire/")!)
+		SafariView(url: URL(string: "https://netnewswire.com/")!)
     }
 }

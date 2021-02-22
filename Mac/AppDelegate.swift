@@ -608,7 +608,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func openWebsite(_ sender: Any?) {
 
-		Browser.open("https://ranchero.com/netnewswire/", inBackground: false)
+		Browser.open("https://netnewswire.com/", inBackground: false)
 	}
 	
 	@IBAction func openReleaseNotes(_ sender: Any?) {
@@ -632,7 +632,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func openSlackGroup(_ sender: Any?) {
-		Browser.open("https://ranchero.com/netnewswire/slack", inBackground: false)
+		Browser.open("https://netnewswire.com/slack", inBackground: false)
 	}
 
 	@IBAction func openTechnotes(_ sender: Any?) {
@@ -642,7 +642,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func showHelp(_ sender: Any?) {
 
-		Browser.open("https://ranchero.com/netnewswire/help/mac/5.1/en/", inBackground: false)
+		Browser.open("https://netnewswire.com/help/mac/5.1/en/", inBackground: false)
 	}
 
 	@IBAction func donateToAppCampForGirls(_ sender: Any?) {
@@ -650,7 +650,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func showPrivacyPolicy(_ sender: Any?) {
-		Browser.open("https://ranchero.com/netnewswire/privacypolicy", inBackground: false)
+		Browser.open("https://netnewswire.com/privacypolicy", inBackground: false)
 	}
 
 	@IBAction func gotoToday(_ sender: Any?) {

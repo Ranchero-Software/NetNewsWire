@@ -72,6 +72,6 @@
 	<key>SUFeedURL</key>
 	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
 	<key>UserAgent</key>
-	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
+	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
 </dict>
 </plist>
