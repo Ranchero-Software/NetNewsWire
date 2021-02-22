@@ -12,6 +12,18 @@ import Articles
 import RSCore
 import Account
 
+public enum SidebarOutlineDataSourceError: LocalizedError {
+	case createErrorNotFound([String])
+	
+	public var errorDescription: String? {
+		switch self {
+		case .createErrorNotFound(let feedNames):
+			let message = NSLocalizedString("The following feeds could not be added because they could not be found:\n", comment: "Not found")
+			return "\(message)\(feedNames.joined(separator: ", "))"
+		}
+	}
+}
+
 @objc final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
 
 	let treeController: TreeController
@@ -507,6 +519,7 @@ private extension SidebarOutlineDataSource {
 			switch result {
 			case .success(let destinationFolder):
 				let group = DispatchGroup()
+				var notFoundFeedNames = [String]()
 				for feed in folder.topLevelWebFeeds {
 					if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
 						group.enter()
@@ -527,13 +540,20 @@ private extension SidebarOutlineDataSource {
 							case .success:
 								break
 							case .failure(let error):
-								NSApplication.shared.presentError(error)
+								if let accountError = error as? AccountError, case .createErrorNotFound = accountError {
+									notFoundFeedNames.append(feed.nameForDisplay)
+								} else {
+									NSApplication.shared.presentError(error)
+								}
 							}
 						}
 					}
 				}
 				group.notify(queue: DispatchQueue.main) {
 					completion()
+					if !notFoundFeedNames.isEmpty {
+						NSApplication.shared.presentError(SidebarOutlineDataSourceError.createErrorNotFound(notFoundFeedNames))
+					}
 				}
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
