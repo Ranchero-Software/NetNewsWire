@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 6.0a4 build 6009 - 22 Feb 2021
+
+Fix a bug with keyboard shortcuts on Big Sur (for real this time)
+Change drag-and-drop behavior to default to copy when dragging between accounts
+Show a single error message when dragging feeds into an account and some of the feeds can’t be found
+
 ### 6.0a3 build 6008 - 21 Feb 2021
 
 Use the new URL for the crash report catcher (so that we actually get crash logs again)
