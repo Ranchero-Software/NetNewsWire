@@ -636,7 +636,9 @@ private extension CloudKitAccountDelegate {
 								account.update(urlString, with: parsedItems) { result in
 									switch result {
 									case .success:
-										self.sendNewArticlesToTheCloud(account, feed, completion: completion)
+										self.sendNewArticlesToTheCloud(account, feed)
+										self.refreshProgress.clear()
+										completion(.success(feed))
 									case .failure(let error):
 										self.refreshProgress.completeTasks(2)
 										completion(.failure(error))
@@ -708,7 +710,9 @@ private extension CloudKitAccountDelegate {
 									switch result {
 									case .success(let externalID):
 										feed.externalID = externalID
-										self.sendNewArticlesToTheCloud(account, feed, completion: completion)
+										self.sendNewArticlesToTheCloud(account, feed)
+										self.refreshProgress.clear()
+										completion(.success(feed))
 									case .failure(let error):
 										container.removeWebFeed(feed)
 										self.refreshProgress.completeTasks(2)
@@ -740,7 +744,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func sendNewArticlesToTheCloud(_ account: Account, _ feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func sendNewArticlesToTheCloud(_ account: Account, _ feed: WebFeed) {
 		account.fetchArticlesAsync(.webFeed(feed)) { result in
 			switch result {
 			case .success(let articles):
@@ -749,19 +753,14 @@ private extension CloudKitAccountDelegate {
 					self.sendArticleStatus(for: account, showProgress: true) { result in
 						switch result {
 						case .success:
-							self.articlesZone.fetchChangesInZone() { _ in
-								self.refreshProgress.completeTask()
-								completion(.success(feed))
-							}
+							self.articlesZone.fetchChangesInZone() { _ in }
 						case .failure(let error):
-							self.refreshProgress.clear()
-							completion(.failure(error))
+							os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
 						}
 					}
 				}
 			case .failure(let error):
-				self.refreshProgress.clear()
-				completion(.failure(error))
+				os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
 			}
 		}
 	}
