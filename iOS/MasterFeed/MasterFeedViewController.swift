@@ -147,6 +147,10 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		updateUI()
 	}
 	
+	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+		configureContextMenu()
+	}
+	
 	// MARK: Table View
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -595,12 +599,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 			
 			let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit) { _ in
+			let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
 				self.coordinator.showAddRedditFeed()
 			}
 			
 			let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
-			let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter) { _ in
+			let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter.tinted(color: .label)) { _ in
 				self.coordinator.showAddTwitterFeed()
 			}
 			
@@ -613,7 +617,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			var extensionMenuItems:[UIAction] = []
 			
 			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
+				if !ExtensionPointManager.shared.isRedditEnabled {
 					extensionMenuItems.insert(addRedditFeedAction, at: 0)
 				}
 				if ExtensionPointManager.shared.isTwitterEnabled {
