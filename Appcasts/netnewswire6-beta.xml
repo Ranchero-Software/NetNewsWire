@@ -7,6 +7,19 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0a4</title>
+            <description><![CDATA[
+<p>Fix a bug with keyboard shortcuts on Big Sur (for real this time)</p>
+<p>Change drag-and-drop behavior to default to copy when dragging between accounts</p>
+<p>Show a single error message when dragging feeds into an account and some of the feeds can’t be found</p>
+            ]]></description>
+            <pubDate>Mon, 22 Feb 2021 18:40:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha4/NetNewsWire6.0a4.zip" sparkle:version="6009" sparkle:shortVersionString="6.0a4" length="10422867" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+
+        <item>
             <title>NetNewsWire 6.0a3</title>
             <description><![CDATA[
 <p>Use the new URL for the crash report catcher (so that we actually get crash logs again)</p>
