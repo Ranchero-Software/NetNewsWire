@@ -590,7 +590,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	func configureContextMenu(_: Any? = nil) {
 		if #available(iOS 14.0, *) {
 			let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
-			let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.faviconTemplateImage.withRenderingMode(.alwaysOriginal).withTintColor(.secondaryLabel)) { _ in
+			let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
 				self.coordinator.showAddWebFeed()
 			}
 			
@@ -605,7 +605,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 			
 			let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-			let addWebFolderAction = UIAction(title: addWebFolderdActionTitle, image: AppAssets.masterFolderImageNonIcon) { _ in
+			let addWebFolderAction = UIAction(title: addWebFolderdActionTitle, image: AppAssets.folderOutlinePlus) { _ in
 				self.coordinator.showAddFolder()
 			}
 			

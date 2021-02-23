@@ -133,6 +133,10 @@ struct AppAssets {
 		UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
 	}()
 	
+	static var folderOutlinePlus: UIImage = {
+		UIImage(systemName: "folder.badge.plus")!
+	}()
+	
 	static var fullScreenBackgroundColor: UIColor = {
 		return UIColor(named: "fullScreenBackgroundColor")!
 	}()
@@ -171,6 +175,10 @@ struct AppAssets {
 	
 	static var nextUnreadArticleImage: UIImage = {
 		return UIImage(systemName: "chevron.down.circle")!
+	}()
+	
+	static var plus: UIImage = {
+		UIImage(systemName: "plus")!
 	}()
 	
 	static var prevArticleImage: UIImage = {
