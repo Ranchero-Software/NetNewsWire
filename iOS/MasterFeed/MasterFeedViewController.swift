@@ -611,14 +611,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			menuItems.append(addWebFeedAction)
 			
 			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if !ExtensionPointManager.shared.isRedditEnabled {
+				if ExtensionPointManager.shared.isRedditEnabled {
 					let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
 					let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
 						self.coordinator.showAddRedditFeed()
 					}
 					menuItems.append(addRedditFeedAction)
 				}
-				if !ExtensionPointManager.shared.isTwitterEnabled {
+				if ExtensionPointManager.shared.isTwitterEnabled {
 					let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
 					let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter.tinted(color: .label)) { _ in
 						self.coordinator.showAddTwitterFeed()
