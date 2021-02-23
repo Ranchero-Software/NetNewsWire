@@ -101,6 +101,14 @@ struct AppAssets {
 		return UIImage(named: "disclosure")!
 	}()
 	
+	static var contextMenuReddit: UIImage = {
+		return UIImage(named: "contextMenuReddit")!
+	}()
+	
+	static var contextMenuTwitter: UIImage = {
+		return UIImage(named: "contextMenuTwitter")!
+	}()
+	
 	static var copyImage: UIImage = {
 		return UIImage(systemName: "doc.on.doc")!
 	}()

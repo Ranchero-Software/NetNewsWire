@@ -595,12 +595,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			}
 			
 			let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.redditOriginal) { _ in
+			let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit) { _ in
 				self.coordinator.showAddRedditFeed()
 			}
 			
 			let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
-			let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.twitterOriginal) { _ in
+			let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter) { _ in
 				self.coordinator.showAddTwitterFeed()
 			}
 			
@@ -609,20 +609,23 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				self.coordinator.showAddFolder()
 			}
 			
-			var children = [addWebFolderAction, addWebFeedAction]
-			
+			let defaultMenuItems = [addWebFolderAction, addWebFeedAction]
+			var extensionMenuItems:[UIAction] = []
 			
 			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
 				if ExtensionPointManager.shared.isRedditEnabled {
-					children.insert(addRedditFeedAction, at: 0)
+					extensionMenuItems.insert(addRedditFeedAction, at: 0)
 				}
 				if ExtensionPointManager.shared.isTwitterEnabled {
-					children.insert(addTwitterFeedAction, at: 0)
+					extensionMenuItems.insert(addTwitterFeedAction, at: 0)
 				}
 			}
-			let menu = UIMenu(title: "Add Item", image: nil, identifier: nil, options: [], children: children)
 			
-			self.addNewItemButton.menu = menu
+			let defaultMenu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: defaultMenuItems)
+			let extensionMenu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: extensionMenuItems)
+			let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: [extensionMenu, defaultMenu])
+			
+			self.addNewItemButton.menu = contextMenu
 		}
 	}
 	
