@@ -102,11 +102,11 @@ struct AppAssets {
 	}()
 	
 	static var contextMenuReddit: UIImage = {
-		return UIImage(named: "contextMenuReddit")!
+		return UIImage(named: "contextMenuReddit")!.tinted(color: .label)!
 	}()
 	
 	static var contextMenuTwitter: UIImage = {
-		return UIImage(named: "contextMenuTwitter")!
+		return UIImage(named: "contextMenuTwitter")!.tinted(color: .label)!
 	}()
 	
 	static var copyImage: UIImage = {
