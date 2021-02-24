@@ -47,7 +47,7 @@ public final class WidgetDataEncoder {
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
-												  pubDate: article.datePublished!.description)
+												  pubDate: article.datePublished?.description ?? "")
 				unread.append(latestArticle)
 				if unread.count == 7 { break }
 			}
@@ -58,7 +58,7 @@ public final class WidgetDataEncoder {
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
-												  pubDate: article.datePublished!.description)
+												  pubDate: article.datePublished?.description ?? "")
 				starred.append(latestArticle)
 				if starred.count == 7 { break }
 			}
@@ -69,7 +69,7 @@ public final class WidgetDataEncoder {
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
-												  pubDate: article.datePublished!.description)
+												  pubDate: article.datePublished?.description ?? "")
 				today.append(latestArticle)
 				if today.count == 7 { break }
 			}
