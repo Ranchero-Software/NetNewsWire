@@ -101,6 +101,14 @@ struct AppAssets {
 		return UIImage(named: "disclosure")!
 	}()
 	
+	static var contextMenuReddit: UIImage = {
+		return UIImage(named: "contextMenuReddit")!
+	}()
+	
+	static var contextMenuTwitter: UIImage = {
+		return UIImage(named: "contextMenuTwitter")!
+	}()
+	
 	static var copyImage: UIImage = {
 		return UIImage(systemName: "doc.on.doc")!
 	}()
@@ -131,6 +139,10 @@ struct AppAssets {
 	
 	static var filterActiveImage: UIImage = {
 		UIImage(systemName: "line.horizontal.3.decrease.circle.fill")!
+	}()
+	
+	static var folderOutlinePlus: UIImage = {
+		UIImage(systemName: "folder.badge.plus")!
 	}()
 	
 	static var fullScreenBackgroundColor: UIColor = {
@@ -171,6 +183,10 @@ struct AppAssets {
 	
 	static var nextUnreadArticleImage: UIImage = {
 		return UIImage(systemName: "chevron.down.circle")!
+	}()
+	
+	static var plus: UIImage = {
+		UIImage(systemName: "plus")!
 	}()
 	
 	static var prevArticleImage: UIImage = {
