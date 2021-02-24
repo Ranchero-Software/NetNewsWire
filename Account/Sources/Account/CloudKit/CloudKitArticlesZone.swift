@@ -101,9 +101,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 
 		compressionQueue.async {
-			self.compressArticleRecords(records) { compressedRecords in
-				self.save(compressedRecords, completion: completion)
-			}
+			let compressedRecords = self.compressArticleRecords(records)
+			self.save(compressedRecords, completion: completion)
 		}
 	}
 	
@@ -140,23 +139,21 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 
 		compressionQueue.async {
-			self.compressArticleRecords(modifyRecords) { compressedModifyRecords in
-				self.compressArticleRecords(newRecords) { compressedNewRecords in
-					self.modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
+			let compressedModifyRecords = self.compressArticleRecords(modifyRecords)
+			self.modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
+				switch result {
+				case .success:
+					let compressedNewRecords = self.compressArticleRecords(newRecords)
+					self.saveIfNew(compressedNewRecords) { result in
 						switch result {
 						case .success:
-							self.saveIfNew(compressedNewRecords) { result in
-								switch result {
-								case .success:
-									completion(.success(()))
-								case .failure(let error):
-									completion(.failure(error))
-								}
-							}
+							completion(.success(()))
 						case .failure(let error):
-							self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
+							completion(.failure(error))
 						}
 					}
+				case .failure(let error):
+					self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
 				}
 			}
 		}
@@ -252,7 +249,7 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 
-	func compressArticleRecords(_ records: [CKRecord], completion: ([CKRecord]) -> Void ) {
+	func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
 		var result = [CKRecord]()
 		
 		for record in records {
@@ -262,7 +259,7 @@ private extension CloudKitArticlesZone {
 				if let contentHTML = record[CloudKitArticle.Fields.contentHTML] as? String {
 					let data = Data(contentHTML.utf8) as NSData
 					if let compressedData = try? data.compressed(using: .lzfse) {
-						record[CloudKitArticle.Fields.contentHTMLData] = compressedData
+						record[CloudKitArticle.Fields.contentHTMLData] = compressedData as Data
 						record[CloudKitArticle.Fields.contentHTML] = nil
 					}
 				}
@@ -270,19 +267,17 @@ private extension CloudKitArticlesZone {
 				if let contentText = record[CloudKitArticle.Fields.contentText] as? String {
 					let data = Data(contentText.utf8) as NSData
 					if let compressedData = try? data.compressed(using: .lzfse) {
-						record[CloudKitArticle.Fields.contentTextData] = compressedData
+						record[CloudKitArticle.Fields.contentTextData] = compressedData as Data
 						record[CloudKitArticle.Fields.contentText] = nil
 					}
 				}
 				
-			} else {
-				
-				result.append(record)
-				
 			}
+			
+			result.append(record)
 		}
 		
-		completion(result)
+		return result
 	}
 
 }
