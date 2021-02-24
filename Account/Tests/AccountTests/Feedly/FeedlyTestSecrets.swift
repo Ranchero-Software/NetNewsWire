@@ -17,4 +17,6 @@ struct FeedlyTestSecrets: SecretsProvider {
 	var twitterConsumerKey = ""
 	var twitterConsumerSecret = ""
 	var redditConsumerKey = ""
+	var inoreaderAppId = ""
+	var inoreaderAppKey = ""
 }

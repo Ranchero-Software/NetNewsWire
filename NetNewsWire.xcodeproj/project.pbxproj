@@ -146,6 +146,10 @@
 		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
 		3B826DCD2385C89600FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
 		3B826DCE2385C89600FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
+		4679674625E599C100844E8D /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 4679674525E599C100844E8D /* Articles */; };
+		4679674725E599C100844E8D /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 4679674525E599C100844E8D /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4679674925E599C100844E8D /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4679674825E599C100844E8D /* RSCore */; };
+		4679674A25E599C100844E8D /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 4679674825E599C100844E8D /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		49F40DF82335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		49F40DF92335B71000552BF4 /* newsfoot.js in Resources */ = {isa = PBXBuildFile; fileRef = 49F40DEF2335B71000552BF4 /* newsfoot.js */; };
 		510289CD24519A1D00426DDF /* SelectComboTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */; };
@@ -1245,6 +1249,18 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4679672A25E596BA00844E8D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4679674A25E599C100844E8D /* RSCore in Embed Frameworks */,
+				4679674725E599C100844E8D /* Articles in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5102AE7324D17FAA0050839C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2208,6 +2224,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4679674925E599C100844E8D /* RSCore in Frameworks */,
+				4679674625E599C100844E8D /* Articles in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4029,6 +4047,7 @@
 				849C646E1ED37A5D003D8FC0 /* Frameworks */,
 				849C646F1ED37A5D003D8FC0 /* Resources */,
 				D5907C9B20022EC7005947E5 /* CopyFiles */,
+				4679672A25E596BA00844E8D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -4036,6 +4055,10 @@
 				849C64731ED37A5D003D8FC0 /* PBXTargetDependency */,
 			);
 			name = NetNewsWireTests;
+			packageProductDependencies = (
+				4679674525E599C100844E8D /* Articles */,
+				4679674825E599C100844E8D /* RSCore */,
+			);
 			productName = NetNewsWireTests;
 			productReference = 849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -4046,7 +4069,7 @@
 		849C64581ED37A5D003D8FC0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1220;
+				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
@@ -6235,6 +6258,15 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 51383A3024D1F90E0027E272 /* XCRemoteSwiftPackageReference "RSWeb" */;
 			productName = RSWeb;
+		};
+		4679674525E599C100844E8D /* Articles */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Articles;
+		};
+		4679674825E599C100844E8D /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
 		};
 		5102AE6824D17F7C0050839C /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;
