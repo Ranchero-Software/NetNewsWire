@@ -23,6 +23,7 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	weak var account: Account?
 	var database: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
+	var compressionQueue = DispatchQueue(label: "Articles Zone Delegate Compression Queue")
 	
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
 		self.account = account
@@ -134,7 +135,7 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.enter()
-		DispatchQueue.global(qos: .utility).async {
+		compressionQueue.async {
 			let parsedItems = records.compactMap { self.makeParsedItem($0) }
 			let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
 			
@@ -199,6 +200,20 @@ private extension CloudKitArticlesZoneDelegate {
 			return nil
 		}
 		
+		var contentHTML = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String
+		if let contentHTMLData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTMLData] as? NSData {
+			if let decompressedContentHTMLData = try? contentHTMLData.decompressed(using: .lzfse) {
+				contentHTML = String(data: decompressedContentHTMLData as Data, encoding: .utf8)
+			}
+		}
+		
+		var contentText = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String
+		if let contentTextData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentTextData] as? NSData {
+			if let decompressedContentTextData = try? contentTextData.decompressed(using: .lzfse) {
+				contentText = String(data: decompressedContentTextData as Data, encoding: .utf8)
+			}
+		}
+		
 		let parsedItem = ParsedItem(syncServiceID: nil,
 									uniqueID: uniqueID,
 									feedURL: webFeedURL,
@@ -206,8 +221,8 @@ private extension CloudKitArticlesZoneDelegate {
 									externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
 									title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,
 									language: nil,
-									contentHTML: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String,
-									contentText: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String,
+									contentHTML: contentHTML,
+									contentText: contentText,
 									summary: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.summary] as? String,
 									imageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
 									bannerImageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
