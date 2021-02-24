@@ -6,9 +6,10 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import XCTest
-@testable import NetNewsWire
 import Articles
+import XCTest
+
+@testable import NetNewsWire
 
 class SharingTests: XCTestCase {
 

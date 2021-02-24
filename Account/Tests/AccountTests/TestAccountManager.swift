@@ -32,7 +32,7 @@ class TestAccountManager {
 			abort()
 		}
 		
-		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID, transport: transport)!
+		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID, transport: transport)
 		
 		return account
 		
