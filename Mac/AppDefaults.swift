@@ -44,6 +44,7 @@ final class AppDefaults {
 		static let timelineShowsSeparators = "CorreiaSeparators"
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
+		static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
 
 		#if !MAC_APP_STORE
 			static let webInspectorEnabled = "WebInspectorEnabled"
@@ -200,6 +201,15 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.hideDockUnreadCount, newValue)
+		}
+	}
+
+	var feedDoubleClickMarkAsRead: Bool {
+		get {
+			return AppDefaults.bool(for: Key.feedDoubleClickMarkAsRead)
+		}
+		set {
+			AppDefaults.setBool(for: Key.feedDoubleClickMarkAsRead, newValue)
 		}
 	}
 

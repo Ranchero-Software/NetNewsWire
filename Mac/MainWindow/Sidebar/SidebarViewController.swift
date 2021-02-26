@@ -255,6 +255,11 @@ protocol SidebarDelegate: class {
 		guard outlineView.clickedRow == outlineView.selectedRow else {
 			return
 		}
+		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = try? singleSelectedWebFeed?.fetchUnreadArticles() {
+			if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) {
+				runCommand(markReadCommand)
+			}
+		}
 		openInBrowser(sender)
 	}
 
