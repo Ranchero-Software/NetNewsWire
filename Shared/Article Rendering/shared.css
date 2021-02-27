@@ -230,6 +230,10 @@ sub {
 	top: 0.2rem;
 }
 
+hr {
+	border: 1.5px solid var(--table-cell-border-color);
+}
+
 .iframeWrap {
 	position: relative;
 	display: block;
