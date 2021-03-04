@@ -7,6 +7,20 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0a5</title>
+            <description><![CDATA[
+<p>Performance boost: use compression with content synced in CloudKit</p>
+<p>Fixed bug where detail view title bar could be overlapped by toolbar when in full screen</p>
+<p>Fixed bug where add-feed window could block when syncing CloudKit statuses</p>
+<p>Added hidden pref to mark all as read in a feed when double-clicking on it in the sidebar and opening its home page (defaults write com.ranchero.NetNewsWire-Evergreen GruberFeedDoubleClickMarkAsRead -bool true)</p>
+<p>Switched the crash log catcher URL to our brand-new crash log catcher server</p>
+            ]]></description>
+            <pubDate>Wed, 03 Mar 2021 18:20:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha5/NetNewsWire6.0a5.zip" sparkle:version="6010" sparkle:shortVersionString="6.0a5" length="10439768" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.0a4</title>
             <description><![CDATA[
 <p>Fix a bug with keyboard shortcuts on Big Sur (for real this time)</p>
@@ -15,31 +29,6 @@
             ]]></description>
             <pubDate>Mon, 22 Feb 2021 18:40:00 -0700</pubDate>
             <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha4/NetNewsWire6.0a4.zip" sparkle:version="6009" sparkle:shortVersionString="6.0a4" length="10422867" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
-
-
-        <item>
-            <title>NetNewsWire 6.0a3</title>
-            <description><![CDATA[
-<p>Use the new URL for the crash report catcher (so that we actually get crash logs again)</p>
-<p>Update other URLs to point to netnewswire.com when correct</p>
-<p>Fix a bug with keyboard shortcuts on Big Sur</p>
-<p>Show folders more quickly in the iCloud account when dragging a folder into that account</p>
-            ]]></description>
-            <pubDate>Sun, 21 Feb 2021 18:55:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha3/NetNewsWire6.0a3.zip" sparkle:version="6008" sparkle:shortVersionString="6.0a3" length="10422867" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
-
-        <item>
-            <title>NetNewsWire 6.0a2</title>
-            <description><![CDATA[
-                <p>Fix regression in Preferences toolbar (placement of icons was wrong on Big Sur)</p>
-                <p>Fix regression in Twitter support (it wasn’t working)</p>
-            ]]></description>
-            <pubDate>Sat, 06 Feb 2021 12:00:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha2/NetNewsWire6.0a2.zip" sparkle:version="6007" sparkle:shortVersionString="6.0a2" length="10420177" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
