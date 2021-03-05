@@ -1,5 +1,13 @@
 # Mac Release Notes
 
+### 6.0a5 build 6010 - 3 Mar 2021
+
+Performance boost: use compression with content synced in CloudKit
+Fixed bug where detail view title bar could be overlapped by toolbar when in full screen
+Fixed bug where add-feed window could block when syncing CloudKit statuses
+Added hidden pref to mark all as read in a feed when double-clicking on it in the sidebar and opening its home page (defaults write com.ranchero.NetNewsWire-Evergreen GruberFeedDoubleClickMarkAsRead -bool true)
+Switched the crash log catcher URL to our brand-new crash log catcher server
+
 ### 6.0a4 build 6009 - 22 Feb 2021
 
 Fix a bug with keyboard shortcuts on Big Sur (for real this time)
