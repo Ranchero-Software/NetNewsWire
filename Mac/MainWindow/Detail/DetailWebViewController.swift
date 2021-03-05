@@ -63,16 +63,6 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 	}
 
 	override func loadView() {
-		// Wrap the webview in a box configured with the same background color that the web view uses
-		let box = NSBox(frame: .zero)
-		box.boxType = .custom
-		box.isTransparent = true
-		box.titlePosition = .noTitle
-		box.contentViewMargins = .zero
-		box.fillColor = NSColor(named: "webviewBackgroundColor")!
-
-		view = box
-		
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
@@ -96,7 +86,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			webView.customUserAgent = userAgent
 		}
 
-		box.addSubview(webView)
+		view = webView
 
 		// Use the safe area layout guides if they are available.
 		if #available(OSX 11.0, *) {
