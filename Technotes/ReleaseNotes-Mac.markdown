@@ -1,5 +1,12 @@
 # Mac Release Notes
 
+### 6.0a6 build 6011 - 6 Mar 2021
+
+Article view: make code and preformatted fonts and sizes follow Apple’s precedents more closely
+Article view: removed a stray line next to the timeline/article separator
+Debug menu: add Force Crash command (beware: works in production)
+Debug menu: allow Test Crash Log Sender to work in production
+
 ### 6.0a5 build 6010 - 3 Mar 2021
 
 Performance boost: use compression with content synced in CloudKit
