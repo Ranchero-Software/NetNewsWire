@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17147" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17147"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -516,6 +516,7 @@
                                                 <action selector="debugDropConditionalGetInfo:" target="Voe-Tx-rLC" id="X24-9X-rwG"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Dij-Nu-eot"/>
                                         <menuItem title="Test Crash Reporter Window" id="gVd-kQ-efj">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -528,6 +529,13 @@
                                                 <action selector="debugTestCrashReportSending:" target="Ady-hI-5gd" id="olQ-kb-kkm"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Force Crash" id="gVt-cz-eoJ">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="forceCrash:" target="Ady-hI-5gd" id="a2x-LM-60G"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Nzi-Mb-uxc"/>
                                         <menuItem title="Debug Search" id="9Ot-wC-s5U">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -682,7 +690,7 @@
                     </items>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="-54" y="-144"/>
+            <point key="canvasLocation" x="-277" y="-69"/>
         </scene>
     </scenes>
 </document>

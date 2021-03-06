@@ -715,9 +715,11 @@ extension AppDelegate {
 	}
 
 	@IBAction func debugTestCrashReportSending(_ sender: Any?) {
-		#if DEBUG
-			CrashReporter.sendCrashLogText("This is a test. Hi, Brent.")
-		#endif
+		CrashReporter.sendCrashLogText("This is a test. Hi, Brent.")
+	}
+
+	@IBAction func forceCrash(_ sender: Any?) {
+		fatalError("This is a deliberate crash.")
 	}
 
 	@IBAction func openApplicationSupportFolder(_ sender: Any?) {
