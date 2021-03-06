@@ -17,18 +17,18 @@ final class IconView: UIView {
 
 				if self.traitCollection.userInterfaceStyle == .dark {
 					if self.iconImage?.isDark ?? false {
-						self.isDisconcernable = false
+						self.isDiscernable = false
 						self.setNeedsLayout()
 					} else {
-						self.isDisconcernable = true
+						self.isDiscernable = true
 						self.setNeedsLayout()
 					}
 				} else {
 					if self.iconImage?.isBright ?? false {
-						self.isDisconcernable = false
+						self.isDiscernable = false
 						self.setNeedsLayout()
 					} else {
-						self.isDisconcernable = true
+						self.isDiscernable = true
 						self.setNeedsLayout()
 					}
 				}
@@ -37,7 +37,7 @@ final class IconView: UIView {
 		}
 	}
 
-	private var isDisconcernable = true
+	private var isDiscernable = true
 	
 	private let imageView: UIImageView = {
 		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
@@ -79,7 +79,7 @@ final class IconView: UIView {
 
 	override func layoutSubviews() {
 		imageView.setFrameIfNotEqual(rectForImageView())
-		if !isBackgroundSuppressed && ((iconImage != nil && isVerticalBackgroundExposed) || !isDisconcernable) {
+		if !isBackgroundSuppressed && ((iconImage != nil && isVerticalBackgroundExposed) || !isDiscernable) {
 			backgroundColor = AppAssets.iconBackgroundColor
 		} else {
 			backgroundColor = nil

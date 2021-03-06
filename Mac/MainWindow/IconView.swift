@@ -17,15 +17,15 @@ final class IconView: NSView {
 
 				if NSApplication.shared.effectiveAppearance.isDarkMode {
 					if self.iconImage?.isDark ?? false {
-						self.isDisconcernable = false
+						self.isDiscernable = false
 					} else {
-						self.isDisconcernable = true
+						self.isDiscernable = true
 					}
 				} else {
 					if self.iconImage?.isBright ?? false {
-						self.isDisconcernable = false
+						self.isDiscernable = false
 					} else {
-						self.isDisconcernable = true
+						self.isDiscernable = true
 					}
 				}
 
@@ -35,7 +35,7 @@ final class IconView: NSView {
 		}
 	}
 
-	private var isDisconcernable = true
+	private var isDiscernable = true
 	
 	override var isFlipped: Bool {
 		return true
@@ -85,7 +85,7 @@ final class IconView: NSView {
 
 	override func draw(_ dirtyRect: NSRect) {
 		guard !(iconImage?.isBackgroundSupressed ?? false) else { return }
-		guard hasExposedVerticalBackground || !isDisconcernable else { return }
+		guard hasExposedVerticalBackground || !isDiscernable else { return }
 
 		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? IconView.darkBackgroundColor : IconView.lightBackgroundColor
 		color.set()
