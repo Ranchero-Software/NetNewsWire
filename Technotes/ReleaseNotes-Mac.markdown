@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.0b1 build 6012 - 7 Mar 2021
+
+Article view: fixed several layout edge cases, including with fullscreen
+Timeline: fixed a bug scrolling up via arrow key where a row might not be fully visible when it should be
+
 ### 6.0a6 build 6011 - 6 Mar 2021
 
 Article view: make code and preformatted fonts and sizes follow Apple’s precedents more closely
