@@ -7,6 +7,18 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0b1</title>
+            <description><![CDATA[
+<p>First 6.0 beta release!</p>
+<p>Article view: fixed several layout edge cases, including with fullscreen</p>
+<p>Timeline: fixed a bug scrolling up via arrow key where a row might not be fully visible when it should be</p>
+            ]]></description>
+            <pubDate>Sun, 07 Mar 2021 12:20:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta1/NetNewsWire6.0b1.zip" sparkle:version="6012" sparkle:shortVersionString="6.0b1" length="10452204" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.0a6</title>
             <description><![CDATA[
 <p>Article view: make code and preformatted fonts and sizes follow Apple’s precedents more closely</p>
@@ -19,19 +31,6 @@
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-      <item>
-            <title>NetNewsWire 6.0a5</title>
-            <description><![CDATA[
-<p>Performance boost: use compression with content synced in CloudKit</p>
-<p>Fixed bug where detail view title bar could be overlapped by toolbar when in full screen</p>
-<p>Fixed bug where add-feed window could block when syncing CloudKit statuses</p>
-<p>Added hidden pref to mark all as read in a feed when double-clicking on it in the sidebar and opening its home page (defaults write com.ranchero.NetNewsWire-Evergreen GruberFeedDoubleClickMarkAsRead -bool true)</p>
-<p>Switched the crash log catcher URL to our brand-new crash log catcher server</p>
-            ]]></description>
-            <pubDate>Wed, 03 Mar 2021 18:20:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha5/NetNewsWire6.0a5.zip" sparkle:version="6010" sparkle:shortVersionString="6.0a5" length="10439768" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
 
     </channel>
 </rss>
