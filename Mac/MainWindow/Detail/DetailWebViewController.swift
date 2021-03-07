@@ -90,7 +90,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 		// Use the safe area layout guides if they are available.
 		if #available(OSX 11.0, *) {
-			// These constraints have been removed as they were unsatisfyable after removing NSBox.
+			// These constraints have been removed as they were unsatisfiable after removing NSBox.
 		} else {
 			let constraints = [
 				webView.topAnchor.constraint(equalTo: view.topAnchor),
