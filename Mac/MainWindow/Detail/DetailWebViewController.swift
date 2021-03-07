@@ -145,7 +145,6 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 	/// On macOS 11, when a user exits full screen, the webview's origin.y is offset by a sizeable amount. This function adjusts the height of the window height by 1pt which puts the webview back in the correct place. This is an issue with SwiftUI and AppKit.
 	@objc func bigSurOffsetFix(_ note: Notification) {
 		if #available(macOS 11, *) {
-			// On macOS 11, at the end of a resize down
 			guard var frame = self.view.window?.frame else {
 				return
 			}
