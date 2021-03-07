@@ -90,13 +90,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 
 		// Use the safe area layout guides if they are available.
 		if #available(OSX 11.0, *) {
-			let constraints = [
-				webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-				webView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-				webView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-				webView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-			]
-			NSLayoutConstraint.activate(constraints)
+			// These constraints have been removed as they were unsatisfiable after removing NSBox.
 		} else {
 			let constraints = [
 				webView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -122,6 +116,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(bigSurOffsetFix(_:)), name: NSWindow.didExitFullScreenNotification, object: nil)
 
 		webView.loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
@@ -144,6 +139,17 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		if articleTextSize != AppDefaults.shared.articleTextSize {
 			articleTextSize = AppDefaults.shared.articleTextSize
 			webView.evaluateJavaScript("updateTextSize(\"\(articleTextSize.cssClass)\");")
+		}
+	}
+	
+	/// On macOS 11, when a user exits full screen, the webview's origin.y is offset by a sizeable amount. This function adjusts the height of the window height by 1pt which puts the webview back in the correct place. This is an issue with SwiftUI and AppKit.
+	@objc func bigSurOffsetFix(_ note: Notification) {
+		if #available(macOS 11, *) {
+			guard var frame = self.view.window?.frame else {
+				return
+			}
+			frame.size = NSSize(width: self.view.window!.frame.width, height: self.view.window!.frame.height - 1)
+			self.view.window!.setFrame(frame, display: true)
 		}
 	}
 	
