@@ -116,6 +116,7 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(bigSurOffsetFix(_:)), name: NSWindow.didExitFullScreenNotification, object: nil)
 
 		webView.loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
@@ -138,6 +139,18 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 		if articleTextSize != AppDefaults.shared.articleTextSize {
 			articleTextSize = AppDefaults.shared.articleTextSize
 			webView.evaluateJavaScript("updateTextSize(\"\(articleTextSize.cssClass)\");")
+		}
+	}
+	
+	/// On macOS 11, when a user exits full screen, the webview's origin.y is offset by a sizeable amount. This function adjusts the height of the window height by 1pt which puts the webview back in the correct place. This is an issue with SwiftUI and AppKit.
+	@objc func bigSurOffsetFix(_ note: Notification) {
+		if #available(macOS 11, *) {
+			// On macOS 11, at the end of a resize down
+			guard var frame = self.view.window?.frame else {
+				return
+			}
+			frame.size = NSSize(width: self.view.window!.frame.width, height: self.view.window!.frame.height - 1)
+			self.view.window!.setFrame(frame, display: true)
 		}
 	}
 	
