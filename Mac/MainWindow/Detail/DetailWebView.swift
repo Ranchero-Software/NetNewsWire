@@ -53,6 +53,24 @@ final class DetailWebView: WKWebView {
 	override func viewDidEndLiveResize() {
 		super.viewDidEndLiveResize()
 		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
+		
+		/*
+		On macOS 11, when a user exits full screen
+		or exits zoomed mode by disconnecting an external display
+		the webview's `origin.y` is offset by a sizeable amount.
+		
+		This code adjusts the height of the window by -1pt/+1pt,
+		which puts the webview back in the correct place.
+		*/
+		if #available(macOS 11, *) {
+			guard var frame = window?.frame else {
+				return
+			}
+			frame.size = NSSize(width: window!.frame.width, height: window!.frame.height - 1)
+			window!.setFrame(frame, display: false)
+			frame.size = NSSize(width: window!.frame.width, height: window!.frame.height + 1)
+			window!.setFrame(frame, display: false)
+		}
 	}
 }
 
