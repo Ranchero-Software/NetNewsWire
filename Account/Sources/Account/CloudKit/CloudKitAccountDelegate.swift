@@ -310,20 +310,22 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				}
 				
 				group.notify(queue: DispatchQueue.global(qos: .background)) {
-					guard !errorOccurred else {
-						self.refreshProgress.completeTask()
-						completion(.failure(CloudKitAccountDelegateError.unknown))
-						return
-					}
-					
-					self.accountZone.removeFolder(folder) { result in
-						self.refreshProgress.completeTask()
-						switch result {
-						case .success:
-							account.removeFolder(folder)
-							completion(.success(()))
-						case .failure(let error):
-							completion(.failure(error))
+					DispatchQueue.main.async {
+						guard !errorOccurred else {
+							self.refreshProgress.completeTask()
+							completion(.failure(CloudKitAccountDelegateError.unknown))
+							return
+						}
+						
+						self.accountZone.removeFolder(folder) { result in
+							self.refreshProgress.completeTask()
+							switch result {
+							case .success:
+								account.removeFolder(folder)
+								completion(.success(()))
+							case .failure(let error):
+								completion(.failure(error))
+							}
 						}
 					}
 				}
