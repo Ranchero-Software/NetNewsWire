@@ -143,7 +143,7 @@
 		
 		// Only override the default behaviour when we know we can find the
 		// target element
-		const targetElement = document.querySelector(`[id='${targetId}']`);
+		const targetElement = document.getElementById(targetId);
 		if (targetElement === null) return;
 				
 		ev.preventDefault();
