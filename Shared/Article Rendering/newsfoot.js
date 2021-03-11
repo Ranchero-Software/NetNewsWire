@@ -140,12 +140,17 @@
 			if (targetId) break;
 		}
 		if (targetId === undefined) return;
-
+		
+		// Only override the default behaviour when we know we can find the
+		// target element
+		const targetElement = document.getElementById(targetId);
+		if (targetElement === null) return;
+				
 		ev.preventDefault();
 
 		installContainer(ev.target);
-		const content = document.querySelector(`[id='${targetId}']`).innerHTML;
-		void new Footnote(content, ev.target);
+				
+		void new Footnote(targetElement.innerHTML, ev.target);
     });
 										   
 	// Handle clicks on the footnote reverse link
