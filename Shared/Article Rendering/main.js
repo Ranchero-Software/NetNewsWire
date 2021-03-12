@@ -154,6 +154,13 @@ function styleLocalFootnotes() {
 	}
 }
 
+// convert <img alt="📰" src="[...]" class="wp-smiley"> to a text node containing 📰
+function removeWpSmiley() {
+	for (const img of document.querySelectorAll("img.wp-smiley[alt]")) {
+		 img.parentNode.replaceChild(document.createTextNode(img.alt), img);
+	}
+}
+
 function processPage() {
 	wrapFrames();
 	wrapTables();
@@ -163,5 +170,6 @@ function processPage() {
 	convertImgSrc();
 	flattenPreElements();
 	styleLocalFootnotes();
+	removeWpSmiley()
 	postRenderProcessing();
 }
