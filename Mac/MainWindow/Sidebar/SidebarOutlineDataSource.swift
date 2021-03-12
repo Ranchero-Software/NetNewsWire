@@ -250,11 +250,7 @@ private extension SidebarOutlineDataSource {
 				return .move
 			}
 		} else {
-			if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-				return .move
-			} else {
-				return .copy
-			}
+			return .copy
 		}
 	}
 
@@ -453,11 +449,7 @@ private extension SidebarOutlineDataSource {
 					moveWebFeedInAccount(node: node, to: parentNode)
 				}
 			} else {
-				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					moveWebFeedBetweenAccounts(node: node, to: parentNode)
-				} else {
-					copyWebFeedBetweenAccounts(node: node, to: parentNode)
-				}
+				copyWebFeedBetweenAccounts(node: node, to: parentNode)
 			}
 		}
 		
@@ -579,11 +571,7 @@ private extension SidebarOutlineDataSource {
 		
 		draggedNodes.forEach { node in
 			if !sameAccount(node, parentNode) {
-				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					moveFolderBetweenAccounts(node: node, to: parentNode)
-				} else {
-					copyFolderBetweenAccounts(node: node, to: parentNode)
-				}
+				copyFolderBetweenAccounts(node: node, to: parentNode)
 			}
 		}
 		
