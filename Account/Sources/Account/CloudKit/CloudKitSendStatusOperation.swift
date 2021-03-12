@@ -16,7 +16,7 @@ import SyncDatabase
 class CloudKitSendStatusOperation: MainThreadOperation {
 	
 	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-	private let blockSize = 300
+	private let blockSize = 150
 	
 	// MainThreadOperation
 	public var isCanceled = false
