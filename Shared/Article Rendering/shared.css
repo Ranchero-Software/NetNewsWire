@@ -25,6 +25,8 @@ a:hover {
 	top: 45%;
 	left: 50%;
 	transform: translateX(-55%) translateY(-50%);
+	-webkit-user-select: none;
+	cursor: default;
 }
 
 :root {
