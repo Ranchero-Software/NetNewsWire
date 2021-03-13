@@ -7,6 +7,19 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0b2</title>
+            <description><![CDATA[
+<p>Feeds list: when dragging feeds/folders from one account to another, the operation is now *always* copy, to avoid data loss due to misunderstanding that moving a feed between accounts does not move its read/starred statuses</p>
+<p>iCloud sync: refined logic to improve performance of large uploads</p>
+<p>Fixed a crashing bug that could happen when deleting an iCloud-synced folder</p>
+<p>Fixed a crashing bug, triggered by bad server data, that could happen when validating credentials with syncing systems that use the Reader API</p>
+            ]]></description>
+            <pubDate>Sat, 13 Mar 2021 13:00:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta2/NetNewsWire6.0b2.zip" sparkle:version="6022" sparkle:shortVersionString="6.0b2" length="10449077" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.0b1</title>
             <description><![CDATA[
 <p>First 6.0 beta release!</p>
@@ -17,20 +30,6 @@
             <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta1/NetNewsWire6.0b1.zip" sparkle:version="6012" sparkle:shortVersionString="6.0b1" length="10452204" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
-
-        <item>
-            <title>NetNewsWire 6.0a6</title>
-            <description><![CDATA[
-<p>Article view: make code and preformatted fonts and sizes follow Apple’s precedents more closely</p>
-<p>Article view: removed a stray line next to the timeline/article separator</p>
-<p>Debug menu: add Force Crash command (beware: works in production)</p>
-<p>Debug menu: allow Test Crash Log Sender to work in production</p>
-            ]]></description>
-            <pubDate>Sat, 06 Mar 2021 15:00:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0alpha6/NetNewsWire6.0a6.zip" sparkle:version="6011" sparkle:shortVersionString="6.0a6" length="10447300" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
-
 
     </channel>
 </rss>
