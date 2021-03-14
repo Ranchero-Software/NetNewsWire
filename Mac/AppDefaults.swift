@@ -43,7 +43,6 @@ final class AppDefaults {
 		static let showDebugMenu = "ShowDebugMenu"
 		static let timelineShowsSeparators = "CorreiaSeparators"
 		static let showTitleOnMainWindow = "KafasisTitleMode"
-		static let hideDockUnreadCount = "JustinMillerHideDockUnreadCount"
 		static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
 
 		#if !MAC_APP_STORE
@@ -194,15 +193,6 @@ final class AppDefaults {
 	var showDebugMenu: Bool {
 		return AppDefaults.bool(for: Key.showDebugMenu)
  	}
-
-	var hideDockUnreadCount: Bool {
-		get {
-			return AppDefaults.bool(for: Key.hideDockUnreadCount)
-		}
-		set {
-			AppDefaults.setBool(for: Key.hideDockUnreadCount, newValue)
-		}
-	}
 
 	var feedDoubleClickMarkAsRead: Bool {
 		get {
