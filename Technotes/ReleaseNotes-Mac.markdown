@@ -1,5 +1,12 @@
 # Mac Release Notes
 
+### 6.0b2 build 6022 - 13 Mar 2021
+
+Feeds list: when dragging feeds/folders from one account to another, the operation is now *always* copy, to avoid data loss due to misunderstanding that moving a feed between accounts does not move its read/starred statuses
+iCloud sync: refined logic to improve performance of large uploads
+Fixed a crashing bug that could happen when deleting an iCloud-synced folder
+Fixed a crashing bug, triggered by bad server data, that could happen when validating credentials with syncing systems that use the Reader API
+
 ### 6.0b1 build 6012 - 7 Mar 2021
 
 Article view: fixed several layout edge cases, including with fullscreen
