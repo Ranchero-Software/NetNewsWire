@@ -371,7 +371,7 @@ private extension SidebarOutlineDataSource {
 				}
 			}
 		} else {
-			destinationAccount.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+			destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
 					break
@@ -454,7 +454,7 @@ private extension SidebarOutlineDataSource {
 							}
 						}
 					} else {
-						destinationAccount.createWebFeed(url: feed.url, name: feed.editedName, container: destinationFolder) { result in
+						destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
 							switch result {
 							case .success:
 								break

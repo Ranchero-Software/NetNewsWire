@@ -102,7 +102,7 @@ class ScriptableWebFeed: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
         // suspendExecution(). When we get the callback, we supply the event result and call resumeExecution().
         command.suspendExecution()
         
-		account.createWebFeed(url: url, name: titleFromArgs, container: container) { result in
+		account.createWebFeed(url: url, name: titleFromArgs, container: container, validateFeed: true) { result in
 			switch result {
 			case .success(let feed):
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.webFeed: feed])

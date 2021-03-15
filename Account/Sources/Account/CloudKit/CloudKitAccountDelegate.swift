@@ -157,7 +157,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		guard let url = URL(string: urlString), let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
 			completion(.failure(LocalAccountDelegateError.invalidParameter))
 			return
@@ -242,7 +242,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 	
 	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+		createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
 			switch result {
 			case .success:
 				completion(.success(()))

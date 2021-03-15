@@ -370,7 +370,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 		
 	}
 	
-	func createWebFeed(for account: Account, url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.createSubscription(url: url) { result in
@@ -496,7 +496,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			}
 		} else {
-			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container) { result in
+			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
 				switch result {
 				case .success:
 					completion(.success(()))
@@ -998,7 +998,7 @@ private extension FeedbinAccountDelegate {
 		}
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
-			createWebFeed(for: account, url: bestSpecifier.urlString, name: name, container: container, completion: completion)
+			createWebFeed(for: account, url: bestSpecifier.urlString, name: name, container: container, validateFeed: true, completion: completion)
 		} else {
 			DispatchQueue.main.async {
 				completion(.failure(FeedbinAccountDelegateError.invalidParameter))

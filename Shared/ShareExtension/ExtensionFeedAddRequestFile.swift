@@ -154,7 +154,7 @@ private extension ExtensionFeedAddRequestFile {
 		
 		guard let container = destinationContainer else { return }
 		
-		account.createWebFeed(url: request.feedURL.absoluteString, name: request.name, container: container) { _ in }
+		account.createWebFeed(url: request.feedURL.absoluteString, name: request.name, container: container, validateFeed: true) { _ in }
 	}
 	
 }
