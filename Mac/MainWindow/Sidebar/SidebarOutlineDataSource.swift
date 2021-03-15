@@ -382,60 +382,6 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
-	func moveWebFeedBetweenAccounts(node: Node, to parentNode: Node) {
-		guard let feed = node.representedObject as? WebFeed,
-			let sourceAccount = nodeAccount(node),
-			let sourceContainer = node.parent?.representedObject as? Container,
-			let destinationAccount = nodeAccount(parentNode),
-			let destinationContainer = parentNode.representedObject as? Container else {
-				return
-		}
-		
-		if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-			
-			BatchUpdate.shared.start()
-			destinationAccount.addWebFeed(existingFeed, to: destinationContainer) { result in
-				switch result {
-				case .success:
-					sourceAccount.removeWebFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
-						}
-					}
-				case .failure(let error):
-					BatchUpdate.shared.end()
-					NSApplication.shared.presentError(error)
-				}
-			}
-			
-		} else {
-			
-			BatchUpdate.shared.start()
-			destinationAccount.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
-				switch result {
-				case .success:
-					sourceAccount.removeWebFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
-						}
-					}
-				case .failure(let error):
-					BatchUpdate.shared.end()
-					NSApplication.shared.presentError(error)
-				}
-			}
-			
-		}
-	}
-
 	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> Bool {
 		guard let draggedNodes = draggedNodes else {
 			return false
