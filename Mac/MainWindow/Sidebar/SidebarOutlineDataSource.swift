@@ -435,24 +435,17 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func copyFolderBetweenAccounts(node: Node, to parentNode: Node) {
-		guard let sourceFolder = node.representedObject as? Folder,
+		guard let folder = node.representedObject as? Folder,
 			let destinationAccount = nodeAccount(parentNode) else {
 				return
 		}
-		replicateFolder(sourceFolder, destinationAccount: destinationAccount, completion: {})
-	}
-	
-	func replicateFolder(_ folder: Folder, destinationAccount: Account, completion: @escaping () -> Void) {
+
 		destinationAccount.addFolder(folder.name ?? "") { result in
 			switch result {
 			case .success(let destinationFolder):
-				let group = DispatchGroup()
-				var notFoundFeedNames = [String]()
 				for feed in folder.topLevelWebFeeds {
 					if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-						group.enter()
 						destinationAccount.addWebFeed(existingFeed, to: destinationFolder) { result in
-							group.leave()
 							switch result {
 							case .success:
 								break
@@ -461,31 +454,18 @@ private extension SidebarOutlineDataSource {
 							}
 						}
 					} else {
-						group.enter()
 						destinationAccount.createWebFeed(url: feed.url, name: feed.editedName, container: destinationFolder) { result in
-							group.leave()
 							switch result {
 							case .success:
 								break
 							case .failure(let error):
-								if let accountError = error as? AccountError, case .createErrorNotFound = accountError {
-									notFoundFeedNames.append(feed.nameForDisplay)
-								} else {
-									NSApplication.shared.presentError(error)
-								}
+								NSApplication.shared.presentError(error)
 							}
 						}
 					}
 				}
-				group.notify(queue: DispatchQueue.main) {
-					completion()
-					if !notFoundFeedNames.isEmpty {
-						NSApplication.shared.presentError(SidebarOutlineDataSourceError.createErrorNotFound(notFoundFeedNames))
-					}
-				}
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
-				completion()
 			}
 		}
 
