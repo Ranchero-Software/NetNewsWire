@@ -442,25 +442,6 @@ private extension SidebarOutlineDataSource {
 		replicateFolder(sourceFolder, destinationAccount: destinationAccount, completion: {})
 	}
 	
-	func moveFolderBetweenAccounts(node: Node, to parentNode: Node) {
-		guard let sourceFolder = node.representedObject as? Folder,
-			let sourceAccount = nodeAccount(node),
-			let destinationAccount = nodeAccount(parentNode) else {
-				return
-		}
-		
-		replicateFolder(sourceFolder, destinationAccount: destinationAccount) {
-			sourceAccount.removeFolder(sourceFolder) { result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					NSApplication.shared.presentError(error)
-				}
-			}
-		}
-	}
-	
 	func replicateFolder(_ folder: Folder, destinationAccount: Account, completion: @escaping () -> Void) {
 		destinationAccount.addFolder(folder.name ?? "") { result in
 			switch result {
