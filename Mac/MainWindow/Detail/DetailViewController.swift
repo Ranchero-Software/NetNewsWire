@@ -101,7 +101,7 @@ extension DetailViewController: DetailWebViewControllerDelegate {
 		statusBarView.mouseoverLink = link
 	}
 
-	func mouseDidExit(_ detailWebViewController: DetailWebViewController, link: String) {
+	func mouseDidExit(_ detailWebViewController: DetailWebViewController) {
 		guard detailWebViewController === currentWebViewController else {
 			return
 		}

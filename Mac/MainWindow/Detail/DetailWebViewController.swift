@@ -14,7 +14,7 @@ import Articles
 
 protocol DetailWebViewControllerDelegate: class {
 	func mouseDidEnter(_: DetailWebViewController, link: String)
-	func mouseDidExit(_: DetailWebViewController, link: String)
+	func mouseDidExit(_: DetailWebViewController)
 }
 
 final class DetailWebViewController: NSViewController, WKUIDelegate {
@@ -178,8 +178,8 @@ extension DetailWebViewController: WKScriptMessageHandler {
 		if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
 			delegate?.mouseDidEnter(self, link: link)
 		}
-		else if message.name == MessageName.mouseDidExit, let link = message.body as? String{
-			delegate?.mouseDidExit(self, link: link)
+		else if message.name == MessageName.mouseDidExit {
+			delegate?.mouseDidExit(self)
 		}
 	}
 }
