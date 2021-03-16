@@ -235,6 +235,8 @@ private extension DetailWebViewController {
 	}
 
 	func reloadHTML() {
+		delegate?.mouseDidExit(self)
+		
 		let style = ArticleStylesManager.shared.currentStyle
 		let rendering: ArticleRenderer.Rendering
 
