@@ -169,7 +169,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		if let feedProvider = FeedProviderManager.shared.best(for: urlComponents) {
 			createProviderWebFeed(for: account, urlComponents: urlComponents, editedName: editedName, container: container, feedProvider: feedProvider, completion: completion)
 		} else {
-			createRSSWebFeed(for: account, url: url, editedName: editedName, container: container, completion: completion)
+			createRSSWebFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed, completion: completion)
 		}
 		
 	}
@@ -667,7 +667,7 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 	
-	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		FeedFinder.find(url: url) { result in
 			
@@ -709,7 +709,6 @@ private extension CloudKitAccountDelegate {
 									case .success(let externalID):
 										feed.externalID = externalID
 										self.sendNewArticlesToTheCloud(account, feed)
-										self.refreshProgress.clear()
 										completion(.success(feed))
 									case .failure(let error):
 										container.removeWebFeed(feed)
@@ -733,10 +732,33 @@ private extension CloudKitAccountDelegate {
 				}
 								
 			case .failure:
-				self.refreshProgress.completeTasks(4)
-				completion(.failure(AccountError.createErrorNotFound))
+				self.refreshProgress.completeTasks(3)
+				guard !validateFeed else {
+					self.refreshProgress.completeTask()
+					completion(.failure(AccountError.createErrorNotFound))
+					return
+				}
+
+				let feed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+				container.addWebFeed(feed)
+
+				self.accountZone.createWebFeed(url: url.absoluteString,
+											   name: editedName,
+											   editedName: nil,
+											   homePageURL: nil,
+											   container: container) { result in
+
+					self.refreshProgress.completeTask()
+					switch result {
+					case .success(let externalID):
+						feed.externalID = externalID
+						completion(.success(feed))
+					case .failure(let error):
+						container.removeWebFeed(feed)
+						completion(.failure(error))
+					}
+				}
 			}
-			
 		}
 	}
 
