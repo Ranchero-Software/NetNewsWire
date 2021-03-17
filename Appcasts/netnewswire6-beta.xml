@@ -7,6 +7,21 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0b3</title>
+            <description><![CDATA[
+<p>Article view: fixed bug where URL status field might not disappear when switching articles</p>
+<p>iCloud sync: dragging feeds from elsewhere in the sidebar to the iCloud account won’t trigger the feed-finding process since this is a better experience for migrating</p>
+<p>Syncing: fixed a bug authenticating with some sync services when the user has some special characters in their password</p>
+<p>Preferences: removed checkbox for showing unread count in the Dock — control this instead via System Preferences > Notifications > NetNewsWire > Badge app icon</p>
+            ]]></description>
+            <pubDate>Tue, 16 Mar 2021 22:45:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta3/NetNewsWire6.0b3.zip" sparkle:version="6023" sparkle:shortVersionString="6.0b3" length="10442560" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+
+
+        <item>
             <title>NetNewsWire 6.0b2</title>
             <description><![CDATA[
 <p>Feeds list: when dragging feeds/folders from one account to another, the operation is now *always* copy, to avoid data loss due to misunderstanding that moving a feed between accounts does not move its read/starred statuses</p>
@@ -19,17 +34,6 @@
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-        <item>
-            <title>NetNewsWire 6.0b1</title>
-            <description><![CDATA[
-<p>First 6.0 beta release!</p>
-<p>Article view: fixed several layout edge cases, including with fullscreen</p>
-<p>Timeline: fixed a bug scrolling up via arrow key where a row might not be fully visible when it should be</p>
-            ]]></description>
-            <pubDate>Sun, 07 Mar 2021 12:20:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta1/NetNewsWire6.0b1.zip" sparkle:version="6012" sparkle:shortVersionString="6.0b1" length="10452204" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
 
     </channel>
 </rss>
