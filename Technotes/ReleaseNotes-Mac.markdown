@@ -1,5 +1,13 @@
 # Mac Release Notes
 
+### 6.0b3 build 6023 - 16 Mar 2021
+
+Article view: fixed bug where URL status field might not disappear when switching articles
+iCloud sync: dragging feeds from elsewhere in the sidebar to the iCloud account won’t trigger the feed-finding process since this is a better experience for migrating
+Syncing: fixed a bug authenticating with some sync services when the user has some special characters in their password
+Preferences: removed checkbox for showing unread count in the Dock — control this instead via System Preferences > Notifications > NetNewsWire > Badge app icon
+
+
 ### 6.0b2 build 6022 - 13 Mar 2021
 
 Feeds list: when dragging feeds/folders from one account to another, the operation is now *always* copy, to avoid data loss due to misunderstanding that moving a feed between accounts does not move its read/starred statuses
