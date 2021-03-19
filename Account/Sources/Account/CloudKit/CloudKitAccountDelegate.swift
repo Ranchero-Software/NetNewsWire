@@ -668,6 +668,29 @@ private extension CloudKitAccountDelegate {
 	}
 	
 	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+
+		func addDeadFeed() {
+			let feed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
+			container.addWebFeed(feed)
+
+			self.accountZone.createWebFeed(url: url.absoluteString,
+										   name: editedName,
+										   editedName: nil,
+										   homePageURL: nil,
+										   container: container) { result in
+
+				self.refreshProgress.completeTask()
+				switch result {
+				case .success(let externalID):
+					feed.externalID = externalID
+					completion(.success(feed))
+				case .failure(let error):
+					container.removeWebFeed(feed)
+					completion(.failure(error))
+				}
+			}
+		}
+
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		FeedFinder.find(url: url) { result in
 			
@@ -675,8 +698,13 @@ private extension CloudKitAccountDelegate {
 			switch result {
 			case .success(let feedSpecifiers):
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
-					self.refreshProgress.completeTasks(4)
-					completion(.failure(AccountError.createErrorNotFound))
+					self.refreshProgress.completeTasks(3)
+					if validateFeed {
+						self.refreshProgress.completeTask()
+						completion(.failure(AccountError.createErrorNotFound))
+					} else {
+						addDeadFeed()
+					}
 					return
 				}
 				
@@ -733,30 +761,12 @@ private extension CloudKitAccountDelegate {
 								
 			case .failure:
 				self.refreshProgress.completeTasks(3)
-				guard !validateFeed else {
+				if validateFeed {
 					self.refreshProgress.completeTask()
 					completion(.failure(AccountError.createErrorNotFound))
 					return
-				}
-
-				let feed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-				container.addWebFeed(feed)
-
-				self.accountZone.createWebFeed(url: url.absoluteString,
-											   name: editedName,
-											   editedName: nil,
-											   homePageURL: nil,
-											   container: container) { result in
-
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success(let externalID):
-						feed.externalID = externalID
-						completion(.success(feed))
-					case .failure(let error):
-						container.removeWebFeed(feed)
-						completion(.failure(error))
-					}
+				} else {
+					addDeadFeed()
 				}
 			}
 		}
