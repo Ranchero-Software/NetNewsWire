@@ -246,10 +246,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		UNUserNotificationCenter.current().delegate = self
 		userNotificationManager = UserNotificationManager()
 
+		#if DEBUG
+		refreshTimer!.update()
+		syncTimer!.update()
+		#else
+		DispatchQueue.main.async {
+			self.refreshTimer!.timedRefresh(nil)
+			self.syncTimer!.timedRefresh(nil)
+		}
+		#endif
+		
 		if AppDefaults.shared.showDebugMenu {
- 			refreshTimer!.update()
- 			syncTimer!.update()
-
   			// The Web Inspector uses SPI and can never appear in a MAC_APP_STORE build.
  			#if MAC_APP_STORE
  			let debugMenu = debugMenuItem.submenu!
@@ -260,10 +267,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
  			#endif
  		} else {
 			debugMenuItem.menu?.removeItem(debugMenuItem)
-			DispatchQueue.main.async {
-				self.refreshTimer!.timedRefresh(nil)
-				self.syncTimer!.timedRefresh(nil)
-			}
 		}
 
 		#if !MAC_APP_STORE
