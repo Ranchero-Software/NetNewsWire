@@ -369,7 +369,9 @@ final class FeedlyAPICaller {
 			}
 		}
 		
-		send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+        // `resultType` is optional because the Feedly API has gone from returning an array of removed feeds to returning `null`.
+        // https://developer.feedly.com/v3/collections/#remove-multiple-feeds-from-a-personal-collection
+		send(request: request, resultType: Optional<[FeedlyFeed]>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success((let httpResponse, _)):
 				if httpResponse.statusCode == 200 {
