@@ -1,5 +1,12 @@
 # Mac Release Notes
 
+### 6.0b4 build 6024 - 23 Mar 2021
+
+Feedly: Deleting a feed successfully no longer shows an alert and leaves the feed in the sidebar
+iCloud sync: fixed a bug where, in some circumstances, dragging a feed from elsewhere in the sidebar to the iCloud account could trigger the feed-finder
+NetNewsWire will now refresh on launch if you have the Debug menu enabled
+Article view: footnotes should now work with articles from a Feedly account
+
 ### 6.0b3 build 6023 - 16 Mar 2021
 
 Article view: fixed bug where URL status field might not disappear when switching articles
