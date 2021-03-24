@@ -53,9 +53,9 @@ public enum AccountType: Int, Codable {
 }
 
 public enum FetchType {
-	case starred(Int?)
-	case unread(Int?)
-	case today(Int?)
+    case starred(_: Int? = nil)
+	case unread(_: Int? = nil)
+	case today(_: Int? = nil)
 	case folder(Folder, Bool)
 	case webFeed(WebFeed)
 	case articleIDs(Set<String>)
