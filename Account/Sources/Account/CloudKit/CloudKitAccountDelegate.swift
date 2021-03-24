@@ -199,7 +199,7 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				completion(.success(()))
 			case .failure(let error):
 				switch error {
-				case CloudKitZoneError.invalidParameter:
+				case CloudKitZoneError.corruptAccount:
 					// We got into a bad state and should remove the feed to clear up the bad data
 					account.clearWebFeedMetadata(feed)
 					container.removeWebFeed(feed)
