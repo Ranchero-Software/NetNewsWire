@@ -12,11 +12,13 @@ import os.log
 import UIKit
 import RSCore
 import Articles
+import Account
 
 
 public final class WidgetDataEncoder {
 	
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	private let fetchLimit = 7
 	
 	private var backgroundTaskID: UIBackgroundTaskIdentifier!
 	private lazy var appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
@@ -31,11 +33,9 @@ public final class WidgetDataEncoder {
 		os_log(.debug, log: log, "Starting encoding widget data.")
 		
 		do {
-			let unreadArticles = Array(try SmartFeedsController.shared.unreadFeed.fetchArticles()).sortedByDate(.orderedDescending)
-			
-			let starredArticles = Array(try SmartFeedsController.shared.starredFeed.fetchArticles()).sortedByDate(.orderedDescending)
-			
-			let todayArticles = Array(try SmartFeedsController.shared.todayFeed.fetchUnreadArticles()).sortedByDate(.orderedDescending)
+			let unreadArticles = Array(try AccountManager.shared.fetchArticles(.unread(fetchLimit))).sortedByDate(.orderedDescending)
+			let starredArticles = Array(try AccountManager.shared.fetchArticles(.starred(fetchLimit))).sortedByDate(.orderedDescending)
+			let todayArticles = Array(try AccountManager.shared.fetchArticles(.today(fetchLimit))).sortedByDate(.orderedDescending)
 			
 			var unread = [LatestArticle]()
 			var today = [LatestArticle]()
@@ -74,9 +74,9 @@ public final class WidgetDataEncoder {
 				if today.count == 7 { break }
 			}
 			
-			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
-										currentTodayCount: try! SmartFeedsController.shared.todayFeed.fetchUnreadArticles().count,
-										currentStarredCount: try! SmartFeedsController.shared.starredFeed.fetchArticles().count,
+			let latestData = WidgetData(currentUnreadCount: try! AccountManager.shared.fetchArticles(.unread()).count,
+										currentTodayCount: try! AccountManager.shared.fetchArticles(.today()).count,
+										currentStarredCount: try! AccountManager.shared.fetchArticles(.starred()).count,
 										unreadArticles: unread,
 										starredArticles: starred,
 										todayArticles:today,
