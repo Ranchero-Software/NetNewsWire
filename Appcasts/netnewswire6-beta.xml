@@ -7,6 +7,20 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.0b4</title>
+            <description><![CDATA[
+<p>This is a final candidate release for 6.0</p>
+<p>Feedly: Deleting a feed successfully no longer shows an alert and leaves the feed in the sidebar</p>
+<p>iCloud sync: fixed a bug where, in some circumstances, dragging a feed from elsewhere in the sidebar to the iCloud account could trigger the feed-finder</p>
+<p>NetNewsWire will now refresh on launch if you have the Debug menu enabled</p>
+<p>Article view: footnotes should now work with articles from a Feedly account</p>
+			]]></description>
+            <pubDate>Tue, 23 Mar 2021 19:35:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta4/NetNewsWire6.0b4.zip" sparkle:version="6024" sparkle:shortVersionString="6.0b4" length="10444150" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.0b3</title>
             <description><![CDATA[
 <p>Article view: fixed bug where URL status field might not disappear when switching articles</p>
@@ -19,20 +33,6 @@
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-
-
-        <item>
-            <title>NetNewsWire 6.0b2</title>
-            <description><![CDATA[
-<p>Feeds list: when dragging feeds/folders from one account to another, the operation is now *always* copy, to avoid data loss due to misunderstanding that moving a feed between accounts does not move its read/starred statuses</p>
-<p>iCloud sync: refined logic to improve performance of large uploads</p>
-<p>Fixed a crashing bug that could happen when deleting an iCloud-synced folder</p>
-<p>Fixed a crashing bug, triggered by bad server data, that could happen when validating credentials with syncing systems that use the Reader API</p>
-            ]]></description>
-            <pubDate>Sat, 13 Mar 2021 13:00:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta2/NetNewsWire6.0b2.zip" sparkle:version="6022" sparkle:shortVersionString="6.0b2" length="10449077" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
 
 
     </channel>
