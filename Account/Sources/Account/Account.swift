@@ -1157,7 +1157,13 @@ private extension Account {
 	func fetchUnreadArticles(forContainer container: Container, limit: Int?) throws -> Set<Article> {
 		let feeds = container.flattenedWebFeeds()
 		let articles = try database.fetchUnreadArticles(feeds.webFeedIDs(), limit)
-		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		
+		// We don't validate limit queries because they, by definition, won't correctly match the
+		// complete unread state for the given container.
+		if limit == nil {
+			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		}
+		
 		return articles
 	}
 
@@ -1166,7 +1172,13 @@ private extension Account {
 		database.fetchUnreadArticlesAsync(webFeeds.webFeedIDs(), limit) { [weak self] (articleSetResult) in
 			switch articleSetResult {
 			case .success(let articles):
-				self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
+				
+				// We don't validate limit queries because they, by definition, won't correctly match the
+				// complete unread state for the given container.
+				if limit == nil {
+					self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
+				}
+				
 				completion(.success(articles))
 			case .failure(let databaseError):
 				completion(.failure(databaseError))
