@@ -49,6 +49,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	var refreshTimer: AccountRefreshTimer?
 	var syncTimer: ArticleStatusSyncTimer?
+	var lastRefreshInterval = AppDefaults.shared.refreshInterval
 	
 	var shuttingDown = false {
 		didSet {
@@ -350,7 +351,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
-		refreshTimer?.update()
+		
+		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
+			refreshTimer?.update()
+			lastRefreshInterval = AppDefaults.shared.refreshInterval
+		}
+		
 		updateDockBadge()
 	}
 	
