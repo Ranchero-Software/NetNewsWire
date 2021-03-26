@@ -6,7 +6,19 @@
         <description>Most recent NetNewsWire 6 changes with links to updates.</description>
         <language>en</language>
 
-        <item>
+         <item>
+            <title>NetNewsWire 6.0b5</title>
+            <description><![CDATA[
+<p>Fixed a bug where sometimes the app wouldn’t automatically refresh after the Mac wakes from sleep</p>
+<p>Updated the Help book link to the 6.0 Mac help book website</p>
+<p>App now displays a helpful error message if you don’t have iCloud Drive enabled and were able to successfully add an iCloud Account</p>
+			]]></description>
+            <pubDate>Thu, 25 Mar 2021 18:30:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta5/NetNewsWire6.0b5.zip" sparkle:version="6025" sparkle:shortVersionString="6.0b5" length="10447395" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+       <item>
             <title>NetNewsWire 6.0b4</title>
             <description><![CDATA[
 <p>This is a final candidate release for 6.0</p>
@@ -19,21 +31,6 @@
             <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta4/NetNewsWire6.0b4.zip" sparkle:version="6024" sparkle:shortVersionString="6.0b4" length="10444150" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
-
-        <item>
-            <title>NetNewsWire 6.0b3</title>
-            <description><![CDATA[
-<p>Article view: fixed bug where URL status field might not disappear when switching articles</p>
-<p>iCloud sync: dragging feeds from elsewhere in the sidebar to the iCloud account won’t trigger the feed-finding process since this is a better experience for migrating</p>
-<p>Syncing: fixed a bug authenticating with some sync services when the user has some special characters in their password</p>
-<p>Preferences: removed checkbox for showing unread count in the Dock — control this instead via System Preferences > Notifications > NetNewsWire > Badge app icon</p>
-            ]]></description>
-            <pubDate>Tue, 16 Mar 2021 22:45:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta3/NetNewsWire6.0b3.zip" sparkle:version="6023" sparkle:shortVersionString="6.0b3" length="10442560" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
-
-
 
     </channel>
 </rss>
