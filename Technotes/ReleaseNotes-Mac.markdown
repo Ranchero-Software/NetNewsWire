@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 6.0b5 build 6026 - 25 Mar 2021
+
+Fixed a bug where sometimes the app wouldn’t automatically refresh after the Mac wakes from sleep
+Updated the Help book link to the 6.0 Mac help book website
+App now displays a helpful error message if you don’t have iCloud Drive enabled and were able to successfully add an iCloud Account
+
 ### 6.0b4 build 6024 - 23 Mar 2021
 
 Feedly: Deleting a feed successfully no longer shows an alert and leaves the feed in the sidebar
