@@ -49,7 +49,6 @@ public final class WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished?.description ?? "")
 				unread.append(latestArticle)
-				if unread.count == 7 { break }
 			}
 			
 			for article in starredArticles {
@@ -60,7 +59,6 @@ public final class WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished?.description ?? "")
 				starred.append(latestArticle)
-				if starred.count == 7 { break }
 			}
 			
 			for article in todayArticles {
@@ -71,12 +69,11 @@ public final class WidgetDataEncoder {
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
 												  pubDate: article.datePublished?.description ?? "")
 				today.append(latestArticle)
-				if today.count == 7 { break }
 			}
 			
-			let latestData = WidgetData(currentUnreadCount: try! AccountManager.shared.fetchArticles(.unread()).count,
-										currentTodayCount: try! AccountManager.shared.fetchArticles(.today()).count,
-										currentStarredCount: try! AccountManager.shared.fetchArticles(.starred()).count,
+			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
+										currentTodayCount: SmartFeedsController.shared.todayFeed.unreadCount,
+										currentStarredCount: try! SmartFeedsController.shared.starredFeed.fetchArticles().count,
 										unreadArticles: unread,
 										starredArticles: starred,
 										todayArticles:today,
