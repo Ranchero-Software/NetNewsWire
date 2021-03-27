@@ -6,6 +6,28 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
+         <item>
+            <title>NetNewsWire 6.0</title>
+            <description><![CDATA[
+<p>Big Sur app icon</p>
+<p>Big Sur UI (when running on Big Sur)</p>
+<p>App is now sandboxed</p>
+<p>Apple Silicon native code</p>
+<p>Syncing via iCloud</p>
+<p>Syncing via BazQux, Inoreader, NewsBlur, The Old Reader, and FreshRSS</p>
+<p>Share extension, so you can send URLs to NetNewsWire</p>
+<p>Special support for Twitter and Reddit feeds</p>
+<p>Sidebar contextual menu commands for turning on and off Reader View and for notifications</p>
+<p>High resolution icons in the sidebar (when available)</p>
+<p>External link, when available, shows in article view</p>
+<p>Preference to change article text size</p>
+<p>Preference to set preferred browser</p>
+			]]></description>
+            <pubDate>Sat, 27 Mar 2021 14:30:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0/NetNewsWire6.0.zip" sparkle:version="6026" sparkle:shortVersionString="6.0" length="10447422" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
 <item>
     <title>NetNewsWire 5.1.3</title>
     <description><![CDATA[
