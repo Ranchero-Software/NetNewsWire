@@ -17,9 +17,9 @@ class SettingsModel: ObservableObject {
 		var url: URL? {
 			switch self {
 			case .netNewsWireHelp:
-				return URL(string: "https://ranchero.com/netnewswire/help/ios/5.0/en/")!
+				return URL(string: "https://netnewswire.com/help/ios/5.0/en/")!
 			case .netNewsWire:
-				return URL(string: "https://ranchero.com/netnewswire/")!
+				return URL(string: "https://netnewswire.com/")!
 			case .supportNetNewsWire:
 				return URL(string: "https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/HowToSupportNetNewsWire.markdown")!
 			case .github:
@@ -29,7 +29,7 @@ class SettingsModel: ObservableObject {
 			case .technotes:
 				return URL(string: "https://github.com/brentsimmons/NetNewsWire/tree/main/Technotes")!
 			case .netNewsWireSlack:
-				return URL(string: "https://ranchero.com/netnewswire/slack")!
+				return URL(string: "https://netnewswire.com/slack")!
 			case .releaseNotes:
 				return URL.releaseNotes
 			case .none:

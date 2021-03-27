@@ -1,5 +1,71 @@
 # Mac Release Notes
 
+### 6.0 build 6027 - 26 Mar 2021
+
+No code changes since 6.0b5
+Changed the feed URL for test builds back to the normal test build feed URL
+
+### 6.0b5 build 6026 - 25 Mar 2021
+
+Fixed a bug where sometimes the app wouldn’t automatically refresh after the Mac wakes from sleep
+Updated the Help book link to the 6.0 Mac help book website
+App now displays a helpful error message if you don’t have iCloud Drive enabled and were able to successfully add an iCloud Account
+
+### 6.0b4 build 6024 - 23 Mar 2021
+
+Feedly: Deleting a feed successfully no longer shows an alert and leaves the feed in the sidebar
+iCloud sync: fixed a bug where, in some circumstances, dragging a feed from elsewhere in the sidebar to the iCloud account could trigger the feed-finder
+NetNewsWire will now refresh on launch if you have the Debug menu enabled
+Article view: footnotes should now work with articles from a Feedly account
+
+### 6.0b3 build 6023 - 16 Mar 2021
+
+Article view: fixed bug where URL status field might not disappear when switching articles
+iCloud sync: dragging feeds from elsewhere in the sidebar to the iCloud account won’t trigger the feed-finding process since this is a better experience for migrating
+Syncing: fixed a bug authenticating with some sync services when the user has some special characters in their password
+Preferences: removed checkbox for showing unread count in the Dock — control this instead via System Preferences > Notifications > NetNewsWire > Badge app icon
+
+
+### 6.0b2 build 6022 - 13 Mar 2021
+
+Feeds list: when dragging feeds/folders from one account to another, the operation is now *always* copy, to avoid data loss due to misunderstanding that moving a feed between accounts does not move its read/starred statuses
+iCloud sync: refined logic to improve performance of large uploads
+Fixed a crashing bug that could happen when deleting an iCloud-synced folder
+Fixed a crashing bug, triggered by bad server data, that could happen when validating credentials with syncing systems that use the Reader API
+
+### 6.0b1 build 6012 - 7 Mar 2021
+
+Article view: fixed several layout edge cases, including with fullscreen
+Timeline: fixed a bug scrolling up via arrow key where a row might not be fully visible when it should be
+
+### 6.0a6 build 6011 - 6 Mar 2021
+
+Article view: make code and preformatted fonts and sizes follow Apple’s precedents more closely
+Article view: removed a stray line next to the timeline/article separator
+Debug menu: add Force Crash command (beware: works in production)
+Debug menu: allow Test Crash Log Sender to work in production
+
+### 6.0a5 build 6010 - 3 Mar 2021
+
+Performance boost: use compression with content synced in CloudKit
+Fixed bug where detail view title bar could be overlapped by toolbar when in full screen
+Fixed bug where add-feed window could block when syncing CloudKit statuses
+Added hidden pref to mark all as read in a feed when double-clicking on it in the sidebar and opening its home page (defaults write com.ranchero.NetNewsWire-Evergreen GruberFeedDoubleClickMarkAsRead -bool true)
+Switched the crash log catcher URL to our brand-new crash log catcher server
+
+### 6.0a4 build 6009 - 22 Feb 2021
+
+Fix a bug with keyboard shortcuts on Big Sur (for real this time)
+Change drag-and-drop behavior to default to copy when dragging between accounts
+Show a single error message when dragging feeds into an account and some of the feeds can’t be found
+
+### 6.0a3 build 6008 - 21 Feb 2021
+
+Use the new URL for the crash report catcher (so that we actually get crash logs again)
+Update other URLs to point to netnewswire.com when correct
+Fix a bug with keyboard shortcuts on Big Sur
+Show folders more quickly in the iCloud account when dragging a folder into that account
+
 ### 6.0a2 build 6007 - 6 Feb 2021
 
 Fix regression in Preferences toolbar (placement of icons was wrong on Big Sur)

@@ -4,7 +4,7 @@ It’s a free and open source feed reader for macOS and iOS.
 
 It supports [RSS](http://cyber.harvard.edu/rss/rss.html), [Atom](https://tools.ietf.org/html/rfc4287), [JSON Feed](https://jsonfeed.org/), and [RSS-in-JSON](https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md) formats.
 
-More info: [https://ranchero.com/netnewswire/](https://ranchero.com/netnewswire/)
+More info: [https://netnewswire.com/](https://netnewswire.com/)
 
 Also see the [Technotes](Technotes/) and the [Roadmap](Technotes/Roadmap.md).
 
@@ -14,7 +14,7 @@ Here’s [How to Support NetNewsWire](Technotes/HowToSupportNetNewsWire.markdown
 
 #### Community
 
-[Join the Slack group](https://ranchero.com/netnewswire/slack) to talk with other NetNewsWire users — and to help out, if you’d like to, by testing, coding, writing, providing feedback, or just helping us think things through. Everybody is welcome and encouraged to join.
+[Join the Slack group](https://netnewswire.com/slack) to talk with other NetNewsWire users — and to help out, if you’d like to, by testing, coding, writing, providing feedback, or just helping us think things through. Everybody is welcome and encouraged to join.
 
 Every community member is expected to abide by the code of conduct which is included in the [Contributing](CONTRIBUTING.md) page.
 

@@ -203,13 +203,13 @@ private extension SidebarOutlineDataSource {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
-			return localDragOperation()
+			return localDragOperation(parentNode: parentNode)
 		}
 		let updatedIndex = indexWhereDraggedFeedWouldAppear(dropTargetNode, draggedFeed)
 		if parentNode !== dropTargetNode || index != updatedIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
 		}
-		return localDragOperation()
+		return localDragOperation(parentNode: parentNode)
 	}
 
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -226,14 +226,19 @@ private extension SidebarOutlineDataSource {
 		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
-		return localDragOperation()
+		return localDragOperation(parentNode: parentNode)
 	}
 	
-	func localDragOperation() -> NSDragOperation {
-		if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-			return .copy
+	func localDragOperation(parentNode: Node) -> NSDragOperation {
+		guard let firstDraggedNode = draggedNodes?.first else { return .move }
+		if sameAccount(firstDraggedNode, parentNode) {
+			if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+				return .copy
+			} else {
+				return .move
+			}
 		} else {
-			return .move
+			return .copy
 		}
 	}
 
@@ -282,7 +287,7 @@ private extension SidebarOutlineDataSource {
 		if index != updatedIndex {
 			outlineView.setDropItem(parentNode, dropChildIndex: updatedIndex)
 		}
-		return localDragOperation()
+		return localDragOperation(parentNode: parentNode)
 	}
 	
 	func validateLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -300,7 +305,7 @@ private extension SidebarOutlineDataSource {
 		if index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(parentNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
-		return localDragOperation()
+		return localDragOperation(parentNode: parentNode)
 	}
 	
 	func copyWebFeedInAccount(node: Node, to parentNode: Node) {
@@ -354,7 +359,7 @@ private extension SidebarOutlineDataSource {
 				}
 			}
 		} else {
-			destinationAccount.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+			destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
 					break
@@ -362,60 +367,6 @@ private extension SidebarOutlineDataSource {
 					NSApplication.shared.presentError(error)
 				}
 			}
-		}
-	}
-
-	func moveWebFeedBetweenAccounts(node: Node, to parentNode: Node) {
-		guard let feed = node.representedObject as? WebFeed,
-			let sourceAccount = nodeAccount(node),
-			let sourceContainer = node.parent?.representedObject as? Container,
-			let destinationAccount = nodeAccount(parentNode),
-			let destinationContainer = parentNode.representedObject as? Container else {
-				return
-		}
-		
-		if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-			
-			BatchUpdate.shared.start()
-			destinationAccount.addWebFeed(existingFeed, to: destinationContainer) { result in
-				switch result {
-				case .success:
-					sourceAccount.removeWebFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
-						}
-					}
-				case .failure(let error):
-					BatchUpdate.shared.end()
-					NSApplication.shared.presentError(error)
-				}
-			}
-			
-		} else {
-			
-			BatchUpdate.shared.start()
-			destinationAccount.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
-				switch result {
-				case .success:
-					sourceAccount.removeWebFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
-						}
-					}
-				case .failure(let error):
-					BatchUpdate.shared.end()
-					NSApplication.shared.presentError(error)
-				}
-			}
-			
 		}
 	}
 
@@ -432,11 +383,7 @@ private extension SidebarOutlineDataSource {
 					moveWebFeedInAccount(node: node, to: parentNode)
 				}
 			} else {
-				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyWebFeedBetweenAccounts(node: node, to: parentNode)
-				} else {
-					moveWebFeedBetweenAccounts(node: node, to: parentNode)
-				}
+				copyWebFeedBetweenAccounts(node: node, to: parentNode)
 			}
 		}
 		
@@ -476,42 +423,17 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func copyFolderBetweenAccounts(node: Node, to parentNode: Node) {
-		guard let sourceFolder = node.representedObject as? Folder,
+		guard let folder = node.representedObject as? Folder,
 			let destinationAccount = nodeAccount(parentNode) else {
 				return
 		}
-		replicateFolder(sourceFolder, destinationAccount: destinationAccount, completion: {})
-	}
-	
-	func moveFolderBetweenAccounts(node: Node, to parentNode: Node) {
-		guard let sourceFolder = node.representedObject as? Folder,
-			let sourceAccount = nodeAccount(node),
-			let destinationAccount = nodeAccount(parentNode) else {
-				return
-		}
-		
-		replicateFolder(sourceFolder, destinationAccount: destinationAccount) {
-			sourceAccount.removeFolder(sourceFolder) { result in
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					NSApplication.shared.presentError(error)
-				}
-			}
-		}
-	}
-	
-	func replicateFolder(_ folder: Folder, destinationAccount: Account, completion: @escaping () -> Void) {
+
 		destinationAccount.addFolder(folder.name ?? "") { result in
 			switch result {
 			case .success(let destinationFolder):
-				let group = DispatchGroup()
 				for feed in folder.topLevelWebFeeds {
 					if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
-						group.enter()
 						destinationAccount.addWebFeed(existingFeed, to: destinationFolder) { result in
-							group.leave()
 							switch result {
 							case .success:
 								break
@@ -520,9 +442,7 @@ private extension SidebarOutlineDataSource {
 							}
 						}
 					} else {
-						group.enter()
-						destinationAccount.createWebFeed(url: feed.url, name: feed.editedName, container: destinationFolder) { result in
-							group.leave()
+						destinationAccount.createWebFeed(url: feed.url, name: feed.nameForDisplay, container: destinationFolder, validateFeed: false) { result in
 							switch result {
 							case .success:
 								break
@@ -532,12 +452,8 @@ private extension SidebarOutlineDataSource {
 						}
 					}
 				}
-				group.notify(queue: DispatchQueue.main) {
-					completion()
-				}
 			case .failure(let error):
 				NSApplication.shared.presentError(error)
-				completion()
 			}
 		}
 
@@ -550,11 +466,7 @@ private extension SidebarOutlineDataSource {
 		
 		draggedNodes.forEach { node in
 			if !sameAccount(node, parentNode) {
-				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyFolderBetweenAccounts(node: node, to: parentNode)
-				} else {
-					moveFolderBetweenAccounts(node: node, to: parentNode)
-				}
+				copyFolderBetweenAccounts(node: node, to: parentNode)
 			}
 		}
 		

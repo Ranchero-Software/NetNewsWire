@@ -41,7 +41,7 @@
 	<key>DeveloperEntitlements</key>
 	<string>$(DEVELOPER_ENTITLEMENTS)</string>
 	<key>FeedURLForTestBuilds</key>
-	<string>https://ranchero.com/downloads/netnewswire6-beta.xml</string>
+	<string>https://ranchero.com/downloads/netnewswire-beta.xml</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.news</string>
 	<key>LSMinimumSystemVersion</key>
@@ -72,6 +72,6 @@
 	<key>SUFeedURL</key>
 	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
 	<key>UserAgent</key>
-	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
+	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
 </dict>
 </plist>

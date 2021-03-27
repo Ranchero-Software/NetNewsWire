@@ -14,7 +14,7 @@ import Articles
 
 protocol DetailWebViewControllerDelegate: AnyObject {
 	func mouseDidEnter(_: DetailWebViewController, link: String)
-	func mouseDidExit(_: DetailWebViewController, link: String)
+	func mouseDidExit(_: DetailWebViewController)
 }
 
 final class DetailWebViewController: NSViewController, WKUIDelegate {
@@ -63,16 +63,6 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 	}
 
 	override func loadView() {
-		// Wrap the webview in a box configured with the same background color that the web view uses
-		let box = NSBox(frame: .zero)
-		box.boxType = .custom
-		box.isTransparent = true
-		box.titlePosition = .noTitle
-		box.contentViewMargins = .zero
-		box.fillColor = NSColor(named: "webviewBackgroundColor")!
-
-		view = box
-		
 		let preferences = WKPreferences()
 		preferences.minimumFontSize = 12.0
 		preferences.javaScriptCanOpenWindowsAutomatically = false
@@ -96,17 +86,11 @@ final class DetailWebViewController: NSViewController, WKUIDelegate {
 			webView.customUserAgent = userAgent
 		}
 
-		box.addSubview(webView)
+		view = webView
 
 		// Use the safe area layout guides if they are available.
 		if #available(OSX 11.0, *) {
-			let constraints = [
-				webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-				webView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-				webView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-				webView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-			]
-			NSLayoutConstraint.activate(constraints)
+			// These constraints have been removed as they were unsatisfiable after removing NSBox.
 		} else {
 			let constraints = [
 				webView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -194,8 +178,8 @@ extension DetailWebViewController: WKScriptMessageHandler {
 		if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
 			delegate?.mouseDidEnter(self, link: link)
 		}
-		else if message.name == MessageName.mouseDidExit, let link = message.body as? String{
-			delegate?.mouseDidExit(self, link: link)
+		else if message.name == MessageName.mouseDidExit {
+			delegate?.mouseDidExit(self)
 		}
 	}
 }
@@ -251,6 +235,8 @@ private extension DetailWebViewController {
 	}
 
 	func reloadHTML() {
+		delegate?.mouseDidExit(self)
+		
 		let style = ArticleStylesManager.shared.currentStyle
 		let rendering: ArticleRenderer.Rendering
 

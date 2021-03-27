@@ -49,6 +49,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	var refreshTimer: AccountRefreshTimer?
 	var syncTimer: ArticleStatusSyncTimer?
+	var lastRefreshInterval = AppDefaults.shared.refreshInterval
 	
 	var shuttingDown = false {
 		didSet {
@@ -246,10 +247,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		UNUserNotificationCenter.current().delegate = self
 		userNotificationManager = UserNotificationManager()
 
+		#if DEBUG
+		refreshTimer!.update()
+		syncTimer!.update()
+		#else
+		DispatchQueue.main.async {
+			self.refreshTimer!.timedRefresh(nil)
+			self.syncTimer!.timedRefresh(nil)
+		}
+		#endif
+		
 		if AppDefaults.shared.showDebugMenu {
- 			refreshTimer!.update()
- 			syncTimer!.update()
-
   			// The Web Inspector uses SPI and can never appear in a MAC_APP_STORE build.
  			#if MAC_APP_STORE
  			let debugMenu = debugMenuItem.submenu!
@@ -260,10 +268,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
  			#endif
  		} else {
 			debugMenuItem.menu?.removeItem(debugMenuItem)
-			DispatchQueue.main.async {
-				self.refreshTimer!.timedRefresh(nil)
-				self.syncTimer!.timedRefresh(nil)
-			}
 		}
 
 		#if !MAC_APP_STORE
@@ -347,7 +351,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
-		refreshTimer?.update()
+		
+		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
+			refreshTimer?.update()
+			lastRefreshInterval = AppDefaults.shared.refreshInterval
+		}
+		
 		updateDockBadge()
 	}
 	
@@ -491,7 +500,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	// MARK: - Dock Badge
 	@objc func updateDockBadge() {
-		let label = unreadCount > 0 && !AppDefaults.shared.hideDockUnreadCount ? "\(unreadCount)" : ""
+		let label = unreadCount > 0 ? "\(unreadCount)" : ""
 		NSApplication.shared.dockTile.badgeLabel = label
 	}
 
@@ -608,7 +617,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func openWebsite(_ sender: Any?) {
 
-		Browser.open("https://ranchero.com/netnewswire/", inBackground: false)
+		Browser.open("https://netnewswire.com/", inBackground: false)
 	}
 	
 	@IBAction func openReleaseNotes(_ sender: Any?) {
@@ -632,7 +641,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func openSlackGroup(_ sender: Any?) {
-		Browser.open("https://ranchero.com/netnewswire/slack", inBackground: false)
+		Browser.open("https://netnewswire.com/slack", inBackground: false)
 	}
 
 	@IBAction func openTechnotes(_ sender: Any?) {
@@ -642,7 +651,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func showHelp(_ sender: Any?) {
 
-		Browser.open("https://ranchero.com/netnewswire/help/mac/5.1/en/", inBackground: false)
+		Browser.open("https://netnewswire.com/help/mac/6.0/en/", inBackground: false)
 	}
 
 	@IBAction func donateToAppCampForGirls(_ sender: Any?) {
@@ -650,7 +659,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 
 	@IBAction func showPrivacyPolicy(_ sender: Any?) {
-		Browser.open("https://ranchero.com/netnewswire/privacypolicy", inBackground: false)
+		Browser.open("https://netnewswire.com/privacypolicy", inBackground: false)
 	}
 
 	@IBAction func gotoToday(_ sender: Any?) {
@@ -715,9 +724,11 @@ extension AppDelegate {
 	}
 
 	@IBAction func debugTestCrashReportSending(_ sender: Any?) {
-		#if DEBUG
-			CrashReporter.sendCrashLogText("This is a test. Hi, Brent.")
-		#endif
+		CrashReporter.sendCrashLogText("This is a test. Hi, Brent.")
+	}
+
+	@IBAction func forceCrash(_ sender: Any?) {
+		fatalError("This is a deliberate crash.")
 	}
 
 	@IBAction func openApplicationSupportFolder(_ sender: Any?) {

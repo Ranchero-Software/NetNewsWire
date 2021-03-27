@@ -614,8 +614,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.addWebFeed(for: self, with: feed, to: container, completion: completion)
 	}
 
-	public func createWebFeed(url: String, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		delegate.createWebFeed(for: self, url: url, name: name, container: container, completion: completion)
+	public func createWebFeed(url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+		delegate.createWebFeed(for: self, url: url, name: name, container: container, validateFeed: validateFeed, completion: completion)
 	}
 	
 	func createWebFeed(with name: String?, url: String, webFeedID: String, homePageURL: String?) -> WebFeed {

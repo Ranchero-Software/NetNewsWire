@@ -42,7 +42,7 @@ struct CrashReporter {
 	}
 
 	static func sendCrashLogText(_ crashLogText: String) {
-		var request = URLRequest(url: URL(string: "https://ranchero.com/netnewswire/crashreportcatcher.php")!)
+		var request = URLRequest(url: URL(string: "https://services.netnewswire.com/reportCrash.php")!)
 		request.httpMethod = HTTPMethod.post
 
 		let boundary = "0xKhTmLbOuNdArY"

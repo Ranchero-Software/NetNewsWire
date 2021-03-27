@@ -16,7 +16,6 @@ final class GeneralPreferencesViewController: NSViewController {
 	private var userNotificationSettings: UNNotificationSettings?
 
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
-	@IBOutlet weak var showUnreadCountCheckbox: NSButton!
 
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -51,46 +50,6 @@ final class GeneralPreferencesViewController: NSViewController {
 		updateUI()
 	}
 
-    
-    @IBAction func toggleShowingUnreadCount(_ sender: Any) {
-        guard let checkbox = sender as? NSButton else { return }
-
-		guard userNotificationSettings != nil else {
-			DispatchQueue.main.async {
-				self.showUnreadCountCheckbox.setNextState()
-			}
-			return
-		}
-
-		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			self.updateNotificationSettings()
-
-			if settings.authorizationStatus == .denied {
-				DispatchQueue.main.async {
-					self.showUnreadCountCheckbox.setNextState()
-					self.showNotificationsDeniedError()
-				}
-			} else if settings.authorizationStatus == .authorized {
-				DispatchQueue.main.async {
-					AppDefaults.shared.hideDockUnreadCount = (checkbox.state.rawValue == 0)
-				}
-			} else {
-				UNUserNotificationCenter.current().requestAuthorization(options: [.badge]) { (granted, error) in
-					self.updateNotificationSettings()
-					if granted {
-						DispatchQueue.main.async {
-							AppDefaults.shared.hideDockUnreadCount = checkbox.state.rawValue == 0
-							NSApplication.shared.registerForRemoteNotifications()
-						}
-					} else {
-						DispatchQueue.main.async {
-							self.showUnreadCountCheckbox.setNextState()
-						}
-					}
-				}
-			}
-		}
-    }
 }
 
 // MARK: - Private
@@ -103,7 +62,6 @@ private extension GeneralPreferencesViewController {
 
 	func updateUI() {
 		updateBrowserPopup()
-        updateHideUnreadCountCheckbox()
 	}
 
 	func registerAppWithBundleID(_ bundleID: String) {
@@ -143,10 +101,6 @@ private extension GeneralPreferencesViewController {
 
 		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.shared.defaultBrowserID))
 	}
-
-    func updateHideUnreadCountCheckbox() {
-        showUnreadCountCheckbox.state = AppDefaults.shared.hideDockUnreadCount ? .off : .on
-    }
 
 	func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in

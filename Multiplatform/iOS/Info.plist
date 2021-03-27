@@ -72,7 +72,7 @@
 		<string>remote-notification</string>
 	</array>
 	<key>UserAgent</key>
-	<string>NetNewsWire (RSS Reader; https://ranchero.com/netnewswire/)</string>
+	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
 	<key>OrganizationIdentifier</key>
 	<string>$(ORGANIZATION_IDENTIFIER)</string>
 	<key>DeveloperEntitlements</key>

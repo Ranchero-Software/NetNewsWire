@@ -139,7 +139,6 @@ pre {
 	margin: 0;
 	overflow: auto;
 	overflow-y: hidden;
-
 	word-wrap: normal;
 	word-break: normal;
 }
@@ -147,10 +146,16 @@ pre {
 pre {
 	line-height: 1.4286em;
 }
+
 code, pre {
 	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
-	font-size: .8235em;
+	font-size: 1em;
 	-webkit-hyphens: none;
+}
+
+pre code {
+	letter-spacing: -.027em;
+	font-size: 0.9375em;
 }
 
 .nnw-overflow {

@@ -30,7 +30,7 @@ struct AdvancedPreferencesView: View {
                 HStack {
                     Spacer()
                     Button("Privacy Policy", action: {
-						NSWorkspace.shared.open(URL(string: "https://ranchero.com/netnewswire/privacypolicy")!)
+						NSWorkspace.shared.open(URL(string: "https://netnewswire.com/privacypolicy")!)
 					})
                     Spacer()
                 }
