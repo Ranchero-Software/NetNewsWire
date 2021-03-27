@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.0 build 6027 - 26 Mar 2021
+
+No code changes since 6.0b5
+Changed the feed URL for test builds back to the normal test build feed URL
+
 ### 6.0b5 build 6026 - 25 Mar 2021
 
 Fixed a bug where sometimes the app wouldn’t automatically refresh after the Mac wakes from sleep
