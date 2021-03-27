@@ -7,30 +7,15 @@
         <language>en</language>
 
          <item>
-            <title>NetNewsWire 6.0b5</title>
+            <title>NetNewsWire 6.0</title>
             <description><![CDATA[
-<p>Fixed a bug where sometimes the app wouldn’t automatically refresh after the Mac wakes from sleep</p>
-<p>Updated the Help book link to the 6.0 Mac help book website</p>
-<p>App now displays a helpful error message if you don’t have iCloud Drive enabled and were able to successfully add an iCloud Account</p>
+<p>This is the shipping version of 6.0. It’s the same code as 6.0b5, but now it’s 6.0 🐣🎉</p>
 			]]></description>
-            <pubDate>Thu, 25 Mar 2021 18:30:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta5/NetNewsWire6.0b5.zip" sparkle:version="6025" sparkle:shortVersionString="6.0b5" length="10447395" type="application/zip" />
+            <pubDate>Sat, 27 Mar 2021 14:30:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0/NetNewsWire6.0.zip" sparkle:version="6026" sparkle:shortVersionString="6.0" length="10447422" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-       <item>
-            <title>NetNewsWire 6.0b4</title>
-            <description><![CDATA[
-<p>This is a final candidate release for 6.0</p>
-<p>Feedly: Deleting a feed successfully no longer shows an alert and leaves the feed in the sidebar</p>
-<p>iCloud sync: fixed a bug where, in some circumstances, dragging a feed from elsewhere in the sidebar to the iCloud account could trigger the feed-finder</p>
-<p>NetNewsWire will now refresh on launch if you have the Debug menu enabled</p>
-<p>Article view: footnotes should now work with articles from a Feedly account</p>
-			]]></description>
-            <pubDate>Tue, 23 Mar 2021 19:35:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0beta4/NetNewsWire6.0b4.zip" sparkle:version="6024" sparkle:shortVersionString="6.0b4" length="10444150" type="application/zip" />
-            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
-        </item>
 
     </channel>
 </rss>
