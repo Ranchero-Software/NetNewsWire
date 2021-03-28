@@ -222,14 +222,14 @@ public final class ArticlesDatabase {
 
 	// MARK: - Status
 
-	/// Fetch the articleIDs of unread articles in feeds specified by webFeedIDs.
-	public func fetchUnreadArticleIDsAsync(webFeedIDs: Set<String>, completion: @escaping ArticleIDsCompletionBlock) {
-		articlesTable.fetchUnreadArticleIDsAsync(webFeedIDs, completion)
+	/// Fetch the articleIDs of unread articles.
+	public func fetchUnreadArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
+		articlesTable.fetchUnreadArticleIDsAsync(completion)
 	}
 	
-	/// Fetch the articleIDs of starred articles in feeds specified by webFeedIDs.
-	public func fetchStarredArticleIDsAsync(webFeedIDs: Set<String>, completion: @escaping ArticleIDsCompletionBlock) {
-		articlesTable.fetchStarredArticleIDsAsync(webFeedIDs, completion)
+	/// Fetch the articleIDs of starred articles.
+	public func fetchStarredArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {
+		articlesTable.fetchStarredArticleIDsAsync(completion)
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
