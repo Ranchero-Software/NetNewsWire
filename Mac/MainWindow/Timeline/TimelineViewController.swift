@@ -106,7 +106,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				// When the array is the same — same articles, same order —
 				// but some data in some of the articles may have changed.
 				// Just reload visible cells in this case: don’t call reloadData.
-				articleRowMap = [String: Int]()
+				articleRowMap = [String: [Int]]()
 				reloadVisibleCells()
 				return
 			}
@@ -124,7 +124,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				showFeedNames = .feed
 			}
 
-			articleRowMap = [String: Int]()
+			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
 		}
 	}
@@ -141,7 +141,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
-	private var articleRowMap = [String: Int]() // articleID: rowIndex
+	private var articleRowMap = [String: [Int]]() // articleID: rowIndex
 	private var cellAppearance: TimelineCellAppearance!
 	private var cellAppearanceWithIcon: TimelineCellAppearance!
 	private var showFeedNames: TimelineShowFeedName = .none {
@@ -1057,20 +1057,25 @@ private extension TimelineViewController {
 		restoreSelection(savedSelection)
 	}
 
-	func row(for articleID: String) -> Int? {
+	func rows(for articleID: String) -> [Int]? {
 		updateArticleRowMapIfNeeded()
 		return articleRowMap[articleID]
 	}
 
-	func row(for article: Article) -> Int? {
-		return row(for: article.articleID)
+	func rows(for article: Article) -> [Int]? {
+		return rows(for: article.articleID)
 	}
 
 	func updateArticleRowMap() {
-		var rowMap = [String: Int]()
+		var rowMap = [String: [Int]]()
 		var index = 0
 		articles.forEach { (article) in
-			rowMap[article.articleID] = index
+			if var indexes = rowMap[article.articleID] {
+				indexes.append(index)
+				rowMap[article.articleID] = indexes
+			} else {
+				rowMap[article.articleID] = [index]
+			}
 			index += 1
 		}
 		articleRowMap = rowMap
@@ -1086,11 +1091,11 @@ private extension TimelineViewController {
 		var indexes = IndexSet()
 
 		articleIDs.forEach { (articleID) in
-			guard let oneIndex = row(for: articleID) else {
+			guard let rowsIndex = rows(for: articleID) else {
 				return
 			}
-			if oneIndex != NSNotFound {
-				indexes.insert(oneIndex)
+			for rowIndex in rowsIndex {
+				indexes.insert(rowIndex)
 			}
 		}
 
