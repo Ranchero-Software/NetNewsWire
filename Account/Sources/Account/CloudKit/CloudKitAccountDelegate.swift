@@ -668,7 +668,6 @@ private extension CloudKitAccountDelegate {
 	}
 	
 	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		BatchUpdate.shared.start()
 		refreshProgress.addToNumberOfTasksAndRemaining(5)
 		FeedFinder.find(url: url) { result in
 			
@@ -676,14 +675,12 @@ private extension CloudKitAccountDelegate {
 			switch result {
 			case .success(let feedSpecifiers):
 				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
-					BatchUpdate.shared.end()
 					self.refreshProgress.completeTasks(4)
 					completion(.failure(AccountError.createErrorNotFound))
 					return
 				}
 				
 				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
-					BatchUpdate.shared.end()
 					self.refreshProgress.completeTasks(4)
 					completion(.failure(AccountError.createErrorAlreadySubscribed))
 					return
@@ -700,7 +697,6 @@ private extension CloudKitAccountDelegate {
 						account.update(feed, with: parsedFeed) { result in
 							switch result {
 							case .success:
-								BatchUpdate.shared.end()
 								
 								self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString,
 															   name: parsedFeed.title,
@@ -724,21 +720,21 @@ private extension CloudKitAccountDelegate {
 								}
 
 							case .failure(let error):
-								BatchUpdate.shared.end()
+								container.removeWebFeed(feed)
 								self.refreshProgress.completeTasks(3)
 								completion(.failure(error))
 							}
 							
 						}
 					} else {
-						self.refreshProgress.completeTasks(4)
-						completion(.success(feed))
+						container.removeWebFeed(feed)
+						self.refreshProgress.completeTasks(3)
+						completion(.failure(AccountError.createErrorNotFound))
 					}
 						
 				}
 								
 			case .failure:
-				BatchUpdate.shared.end()
 				self.refreshProgress.completeTasks(4)
 				completion(.failure(AccountError.createErrorNotFound))
 			}
