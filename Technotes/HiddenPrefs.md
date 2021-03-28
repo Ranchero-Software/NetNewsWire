@@ -11,10 +11,14 @@ Hidden preferences tend to be named for a person:
 
 The main window doesn’t display its title, partly because it looks cooler that way and partly because it’s redundant information.
 
-The downside to this is that title-less windows do not allow the toolbar to show button names. (This is an AppKit thing.)
+The downside to this is that title-less windows do not allow the toolbar to show button names on macOS Catalina. (This is an AppKit thing.)
 
 To turn window titles on, set `KafasisTitleMode` to true.
 
-#### Hiding unread count in Dock
+#### Show separators between articles in the timeline
 
-Set `JustinMillerHideDockUnreadCount` to true.
+Set `CorreiaSeparators` to true.
+
+#### Double-click a feed in the sidebar to mark it as read
+
+Set `GruberFeedDoubleClickMarkAsRead` to true.
