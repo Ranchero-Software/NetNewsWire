@@ -14,7 +14,7 @@
 <p>Feedbin: fixed a bug with read/unread status syncing</p>			
 			]]></description>
             <pubDate>Sun, 28 Mar 2021 15:25:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.1b1/NetNewsWire6.0.1b1.zip" sparkle:version="6028" sparkle:shortVersionString="6.0" length="10448146" type="application/zip" />
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.1b1/NetNewsWire6.0.1b1.zip" sparkle:version="6028" sparkle:shortVersionString="6.0.1b1" length="10448146" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
