@@ -731,11 +731,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 
 	public func fetchUnreadArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchUnreadArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), completion: completion)
+		database.fetchUnreadArticleIDsAsync(completion: completion)
 	}
 
 	public func fetchStarredArticleIDs(_ completion: @escaping ArticleIDsCompletionBlock) {
-		database.fetchStarredArticleIDsAsync(webFeedIDs: flattenedWebFeeds().webFeedIDs(), completion: completion)
+		database.fetchStarredArticleIDsAsync(completion: completion)
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
