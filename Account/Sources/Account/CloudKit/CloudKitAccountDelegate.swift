@@ -747,14 +747,16 @@ private extension CloudKitAccountDelegate {
 								}
 
 							case .failure(let error):
+								container.removeWebFeed(feed)
 								self.refreshProgress.completeTasks(3)
 								completion(.failure(error))
 							}
 							
 						}
 					} else {
-						self.refreshProgress.completeTasks(4)
-						completion(.success(feed))
+						self.refreshProgress.completeTasks(3)
+						container.removeWebFeed(feed)
+						completion(.failure(AccountError.createErrorNotFound))
 					}
 						
 				}
