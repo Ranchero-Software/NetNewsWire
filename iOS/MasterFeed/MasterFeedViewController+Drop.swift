@@ -148,7 +148,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		} else {
 			
 			BatchUpdate.shared.start()
-			destinationContainer.account?.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer) { result in
+			destinationContainer.account?.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
 					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in
