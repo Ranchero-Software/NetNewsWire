@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 6.0.1b1 2028 - 28 Mar 2021
+
+Timeline: fix bug updating article display when an article with the same article ID appears more than once (which can happen when a person has multiple accounts)
+iCloud: won’t add feeds that aren’t parseable, which fixes an error upon trying to rename one of these feeds
+Feedbin: fixed a bug with read/unread status syncing
+
 ### 6.0 build 6027 - 26 Mar 2021
 
 No code changes since 6.0b5
