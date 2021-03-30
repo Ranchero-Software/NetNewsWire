@@ -1,6 +1,12 @@
 # Mac Release Notes
 
-### 6.0.1b1 2028 - 28 Mar 2021
+### 6.0.1b2 build 6029 - 29 Mar 2021
+
+Twitter: fixed a date parsing bug that could affect people in some locales, which would prevent Twitter feeds from working for them
+Feeds list: fixed bug where newly added feed would be called Untitled past the time when the app actually knows its name
+Fixed bug where next-unread command wouldn’t wrap around when you got to the bottom of the Feeds list
+
+### 6.0.1b1 build 6028 - 28 Mar 2021
 
 Timeline: fix bug updating article display when an article with the same article ID appears more than once (which can happen when a person has multiple accounts)
 iCloud: won’t add feeds that aren’t parseable, which fixes an error upon trying to rename one of these feeds
