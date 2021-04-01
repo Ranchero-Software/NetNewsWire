@@ -100,6 +100,10 @@ private extension IconView {
 	}
 
 	func rectForImageView() -> NSRect {
+		guard !(iconImage?.isSymbol ?? false) else {
+			return NSMakeRect(0.0, 0.0, bounds.size.width, bounds.size.height)
+		}
+
 		guard let image = iconImage?.image else {
 			return NSRect.zero
 		}
