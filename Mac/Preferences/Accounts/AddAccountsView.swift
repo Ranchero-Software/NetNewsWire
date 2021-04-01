@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Account
+import RSCore
 
 enum AddAccountSections: Int, CaseIterable {
 	case local = 0
@@ -53,11 +54,11 @@ enum AddAccountSections: Int, CaseIterable {
 		case .icloud:
 			return [.cloudKit]
 		case .web:
-			#if DEBUG
-			return [.bazQux, .feedbin, .feedly, .feedWrangler, .inoreader, .newsBlur, .theOldReader]
-			#else
-			return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
-			#endif
+			if AppDefaults.shared.isDeveloperBuild {
+				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader].filter({ $0.isDeveloperRestricted == false })
+			} else {
+				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
+			}
 		case .selfhosted:
 			return [.freshRSS]
 		case .allOrdered:
@@ -67,12 +68,17 @@ enum AddAccountSections: Int, CaseIterable {
 				AddAccountSections.selfhosted.sectionContent
 		}
 	}
+	
+	
+	
+	
 }
 
 struct AddAccountsView: View {
     
 	weak var parent: NSHostingController<AddAccountsView>? // required because presentationMode.dismiss() doesn't work
 	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
+	private let chunkLimit = 4 // use this to control number of accounts in each web account column
 	@State private var selectedAccount: AccountType = .onMyMac
 	
 	init(delegate: AccountsPreferencesAddAccountDelegate?) {
@@ -157,7 +163,7 @@ struct AddAccountsView: View {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
-							.frame(width: 25, height: 25, alignment: .center)
+							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 						Text(account.localizedAccountName())
 					}
@@ -189,7 +195,7 @@ struct AddAccountsView: View {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
-							.frame(width: 25, height: 25, alignment: .center)
+							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 						
 						Text(account.localizedAccountName())
@@ -207,6 +213,7 @@ struct AddAccountsView: View {
 		}
 	}
 	
+	@ViewBuilder
 	var webAccounts: some View {
 		VStack(alignment: .leading) {
 			Text("Web")
@@ -214,22 +221,28 @@ struct AddAccountsView: View {
 				.padding(.horizontal)
 				.padding(.top, 8)
 			
-			Picker(selection: $selectedAccount, label: Text(""), content: {
-				ForEach(AddAccountSections.web.sectionContent.filter({ isRestricted($0) != true }), id: \.self, content: { account in
-					
-					HStack(alignment: .center) {
-						account.image()
-							.resizable()
-							.aspectRatio(contentMode: .fit)
-							.frame(width: 25, height: 25, alignment: .center)
-							.padding(.leading, 4)
-							
-						Text(account.localizedAccountName())
+			HStack {
+				ForEach(0..<chunkedWebAccounts().count, content: { chunk in
+					VStack {
+						Picker(selection: $selectedAccount, label: Text(""), content: {
+							ForEach(chunkedWebAccounts()[chunk], id: \.self, content: { account in
+		
+								HStack(alignment: .center) {
+									account.image()
+										.resizable()
+										.aspectRatio(contentMode: .fit)
+										.frame(width: 20, height: 20, alignment: .center)
+										.padding(.leading, 4)
+									Text(account.localizedAccountName())
+								}
+								.tag(account)
+								
+							})
+						})
+						Spacer()
 					}
-					.tag(account)
-					
 				})
-			})
+			}
 			.offset(x: 7.5, y: 0)
 			
 			Text(AddAccountSections.web.sectionFooter).foregroundColor(.gray)
@@ -252,7 +265,7 @@ struct AddAccountsView: View {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
-							.frame(width: 25, height: 25, alignment: .center)
+							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 			
 						Text(account.localizedAccountName())
@@ -272,12 +285,10 @@ struct AddAccountsView: View {
 		AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit })
 	}
 	
-	private func isRestricted(_ accountType: AccountType) -> Bool {
-		if AppDefaults.shared.isDeveloperBuild && accountType.isDeveloperRestricted {
-			return true
-		}
-		return false
+	private func chunkedWebAccounts() -> [[AccountType]] {
+		AddAccountSections.web.sectionContent.chunked(into: chunkLimit)
 	}
+
 }
 
 
