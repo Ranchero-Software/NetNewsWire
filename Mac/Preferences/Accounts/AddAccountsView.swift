@@ -162,7 +162,7 @@ struct AddAccountsView: View {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
-							.frame(width: 25, height: 25, alignment: .center)
+							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 						Text(account.localizedAccountName())
 					}
@@ -194,7 +194,7 @@ struct AddAccountsView: View {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
-							.frame(width: 25, height: 25, alignment: .center)
+							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 						
 						Text(account.localizedAccountName())
@@ -230,7 +230,7 @@ struct AddAccountsView: View {
 									account.image()
 										.resizable()
 										.aspectRatio(contentMode: .fit)
-										.frame(width: 25, height: 25, alignment: .center)
+										.frame(width: 20, height: 20, alignment: .center)
 										.padding(.leading, 4)
 									Text(account.localizedAccountName())
 								}
@@ -264,7 +264,7 @@ struct AddAccountsView: View {
 						account.image()
 							.resizable()
 							.aspectRatio(contentMode: .fit)
-							.frame(width: 25, height: 25, alignment: .center)
+							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 			
 						Text(account.localizedAccountName())
