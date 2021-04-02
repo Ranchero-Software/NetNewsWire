@@ -6,6 +6,24 @@
         <description>Most recent NetNewsWire releases (not test builds).</description>
         <language>en</language>
 
+          <item>
+            <title>NetNewsWire 6.0.1</title>
+            <description><![CDATA[
+<p>Twitter: fixed a date parsing bug that could affect people in some locales, which would prevent Twitter feeds from working for them</p>
+<p>Preferences: adjusted layout of the add account sheet so that it fits on smaller monitors</p>
+<p>Feeds list: properly scale the smart feed icons when sidebar is set to large size in System Preferences</p>
+<p>Feeds list: fixed bug where newly added feed would be called Untitled past the time when the app actually knows its name</p>
+<p>Timeline: fixed bug where next-unread command wouldn’t wrap around when you got to the bottom of the Feeds list</p>
+<p>Timeline: fixed bug updating article display when an article with the same article ID appears more than once (which can happen when a person has multiple accounts)</p>
+<p>iCloud: won’t add feeds that aren’t parseable, which fixes an error upon trying to rename one of these feeds</p>
+<p>Feedbin: fixed a bug with read/unread status syncing</p>
+			]]></description>
+            <pubDate>Thu, 01 Apr 2021 20:22:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.1/NetNewsWire6.0.1.zip" sparkle:version="6030" sparkle:shortVersionString="6.0.1" length="10448727" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+
          <item>
             <title>NetNewsWire 6.0</title>
             <description><![CDATA[

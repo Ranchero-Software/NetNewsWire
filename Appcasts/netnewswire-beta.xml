@@ -6,40 +6,29 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
-         <item>
-            <title>NetNewsWire 6.0.1b1</title>
+ 
+          <item>
+            <title>NetNewsWire 6.0.1</title>
             <description><![CDATA[
-<p>Timeline: fix bug updating article display when an article with the same article ID appears more than once (which can happen when a person has multiple accounts)</p>
-<p>iCloud: won’t add feeds that aren’t parseable, which fixes an error upon trying to rename one of these feeds</p>
-<p>Feedbin: fixed a bug with read/unread status syncing</p>			
+<p>Adjusted layout of the add account sheet so that it fits on smaller monitors</p>
+<p>Sidebar: properly scale the smart feed icons when sidebar is set to large size in System Preferences			</p>
 			]]></description>
-            <pubDate>Sun, 28 Mar 2021 15:25:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.1b1/NetNewsWire6.0.1b1.zip" sparkle:version="6028" sparkle:shortVersionString="6.0.1b1" length="10448146" type="application/zip" />
+            <pubDate>Thu, 01 Apr 2021 20:22:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.1/NetNewsWire6.0.1.zip" sparkle:version="6030" sparkle:shortVersionString="6.0.1" length="10448727" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
 
-         <item>
-            <title>NetNewsWire 6.0</title>
+        <item>
+            <title>NetNewsWire 6.0.1b2</title>
             <description><![CDATA[
-<p>Big Sur app icon</p>
-<p>Big Sur UI (when running on Big Sur)</p>
-<p>App is now sandboxed</p>
-<p>Apple Silicon native code</p>
-<p>Syncing via iCloud</p>
-<p>Syncing via BazQux, Inoreader, NewsBlur, The Old Reader, and FreshRSS</p>
-<p>Share extension, so you can send URLs to NetNewsWire</p>
-<p>Special support for Twitter and Reddit feeds</p>
-<p>Sidebar contextual menu commands for turning on and off Reader View and for notifications</p>
-<p>High resolution icons in the sidebar (when available)</p>
-<p>External link, when available, shows in article view</p>
-<p>Preference to change article text size</p>
-<p>Preference to set preferred browser</p>
+<p>Twitter: fixed a date parsing bug that could affect people in some locales, which would prevent Twitter feeds from working for them</p>
+<p>Feeds list: fixed bug where newly added feed would be called Untitled past the time when the app actually knows its name</p>
+<p>Fixed bug where next-unread command wouldn’t wrap around when you got to the bottom of the Feeds list</p>
 			]]></description>
-            <pubDate>Sat, 27 Mar 2021 14:30:00 -0700</pubDate>
-            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0/NetNewsWire6.0.zip" sparkle:version="6026" sparkle:shortVersionString="6.0" length="10447422" type="application/zip" />
+            <pubDate>Mon, 29 Mar 2021 20:55:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.1b2/NetNewsWire6.0.1b2.zip" sparkle:version="6029" sparkle:shortVersionString="6.0.1b2" length="10445067" type="application/zip" />
             <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
         </item>
-
 
 
     </channel>
