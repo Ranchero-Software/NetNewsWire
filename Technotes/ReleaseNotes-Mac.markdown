@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.0.1 build 6030 - 1 Apr 2021
+
+Adjusted layout of the add account sheet so that it fits on smaller monitors
+Sidebar: properly scale the smart feed icons when sidebar is set to large size in System Preferences
+
 ### 6.0.1b2 build 6029 - 29 Mar 2021
 
 Twitter: fixed a date parsing bug that could affect people in some locales, which would prevent Twitter feeds from working for them
