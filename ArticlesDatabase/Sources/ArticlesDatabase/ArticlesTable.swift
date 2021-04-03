@@ -435,12 +435,12 @@ final class ArticlesTable: DatabaseTable {
 
 	// MARK: - Statuses
 	
-	func fetchUnreadArticleIDsAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleIDsCompletionBlock) {
-		fetchArticleIDsAsync(.read, false, webFeedIDs, completion)
+	func fetchUnreadArticleIDsAsync(_ completion: @escaping ArticleIDsCompletionBlock) {
+		statusesTable.fetchArticleIDsAsync(.read, false, completion)
 	}
 
-	func fetchStarredArticleIDsAsync(_ webFeedIDs: Set<String>, _ completion: @escaping ArticleIDsCompletionBlock) {
-		fetchArticleIDsAsync(.starred, true, webFeedIDs, completion)
+	func fetchStarredArticleIDsAsync(_ completion: @escaping ArticleIDsCompletionBlock) {
+		statusesTable.fetchArticleIDsAsync(.starred, true, completion)
 	}
 
 	func fetchStarredArticleIDs() throws -> Set<String> {
@@ -783,46 +783,6 @@ private extension ArticlesTable {
 			return Set<Article>()
 		}
 		return articlesWithResultSet(resultSet, database)
-	}
-
-	func fetchArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ value: Bool, _ webFeedIDs: Set<String>, _ completion: @escaping ArticleIDsCompletionBlock) {
-		guard !webFeedIDs.isEmpty else {
-			completion(.success(Set<String>()))
-			return
-		}
-
-		queue.runInDatabase { databaseResult in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
-				var sql = "select articleID from articles natural join statuses where feedID in \(placeholders) and \(statusKey.rawValue)="
-				sql += value ? "1" : "0"
-				sql += ";"
-
-				let parameters = Array(webFeedIDs) as [Any]
-
-				guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
-					DispatchQueue.main.async {
-						completion(.success(Set<String>()))
-					}
-					return
-				}
-
-				let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
-				DispatchQueue.main.async {
-					completion(.success(articleIDs))
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
-			}
-		}
 	}
 
 	func fetchArticles(_ webFeedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {

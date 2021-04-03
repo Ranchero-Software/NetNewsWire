@@ -197,7 +197,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 		
 		if item.action == #selector(nextUnread(_:)) {
-			return canGoToNextUnread()
+			return canGoToNextUnread(wrappingToTop: true)
 		}
 		
 		if item.action == #selector(markAllAsRead(_:)) {

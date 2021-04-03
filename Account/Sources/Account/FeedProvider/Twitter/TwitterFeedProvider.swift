@@ -399,6 +399,7 @@ private extension TwitterFeedProvider {
 				
 				let decoder = JSONDecoder()
 				let dateFormatter = DateFormatter()
+				dateFormatter.locale = Locale.init(identifier: "en_US_POSIX")
 				dateFormatter.dateFormat = Self.dateFormat
 				decoder.dateDecodingStrategy = .formatted(dateFormatter)
 

@@ -77,7 +77,13 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
 
-	public var name: String?
+	public var name: String? {
+		didSet {
+			if name != oldValue {
+				postDisplayNameDidChangeNotification()
+			}
+		}
+	}
 
 	public var authors: Set<Author>? {
 		get {
