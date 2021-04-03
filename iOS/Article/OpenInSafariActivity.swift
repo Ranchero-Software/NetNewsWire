@@ -1,5 +1,5 @@
 //
-//  OpenInSafariActivity.swift
+//  OpenInBrowserActivity.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 1/9/20.
@@ -8,16 +8,16 @@
 
 import UIKit
 
-class OpenInSafariActivity: UIActivity {
+class OpenInBrowserActivity: UIActivity {
 	
 	private var activityItems: [Any]?
 
 	override var activityTitle: String? {
-		return NSLocalizedString("Open in Safari", comment: "Open in Safari")
+		return NSLocalizedString("Open in Browser", comment: "Open in Browser")
 	}
 	
 	override var activityImage: UIImage? {
-		return UIImage(systemName: "safari", withConfiguration: UIImage.SymbolConfiguration(pointSize: 20, weight: .regular))
+		return UIImage(systemName: "globe", withConfiguration: UIImage.SymbolConfiguration(pointSize: 20, weight: .regular))
 	}
 	
 	override var activityType: UIActivity.ActivityType? {
