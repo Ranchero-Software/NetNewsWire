@@ -12,11 +12,13 @@ import os.log
 import UIKit
 import RSCore
 import Articles
+import Account
 
 
 public final class WidgetDataEncoder {
 	
 	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	private let fetchLimit = 7
 	
 	private var backgroundTaskID: UIBackgroundTaskIdentifier!
 	private lazy var appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
@@ -31,11 +33,9 @@ public final class WidgetDataEncoder {
 		os_log(.debug, log: log, "Starting encoding widget data.")
 		
 		do {
-			let unreadArticles = Array(try SmartFeedsController.shared.unreadFeed.fetchArticles()).sortedByDate(.orderedDescending)
-			
-			let starredArticles = Array(try SmartFeedsController.shared.starredFeed.fetchArticles()).sortedByDate(.orderedDescending)
-			
-			let todayArticles = Array(try SmartFeedsController.shared.todayFeed.fetchUnreadArticles()).sortedByDate(.orderedDescending)
+			let unreadArticles = Array(try AccountManager.shared.fetchArticles(.unread(fetchLimit))).sortedByDate(.orderedDescending)
+			let starredArticles = Array(try AccountManager.shared.fetchArticles(.starred(fetchLimit))).sortedByDate(.orderedDescending)
+			let todayArticles = Array(try AccountManager.shared.fetchArticles(.today(fetchLimit))).sortedByDate(.orderedDescending)
 			
 			var unread = [LatestArticle]()
 			var today = [LatestArticle]()
@@ -47,9 +47,8 @@ public final class WidgetDataEncoder {
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
-												  pubDate: article.datePublished!.description)
+												  pubDate: article.datePublished?.description ?? "")
 				unread.append(latestArticle)
-				if unread.count == 7 { break }
 			}
 			
 			for article in starredArticles {
@@ -58,9 +57,8 @@ public final class WidgetDataEncoder {
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
-												  pubDate: article.datePublished!.description)
+												  pubDate: article.datePublished?.description ?? "")
 				starred.append(latestArticle)
-				if starred.count == 7 { break }
 			}
 			
 			for article in todayArticles {
@@ -69,13 +67,12 @@ public final class WidgetDataEncoder {
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
 												  feedIcon: article.iconImage()?.image.dataRepresentation(),
-												  pubDate: article.datePublished!.description)
+												  pubDate: article.datePublished?.description ?? "")
 				today.append(latestArticle)
-				if today.count == 7 { break }
 			}
 			
 			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
-										currentTodayCount: try! SmartFeedsController.shared.todayFeed.fetchUnreadArticles().count,
+										currentTodayCount: SmartFeedsController.shared.todayFeed.unreadCount,
 										currentStarredCount: try! SmartFeedsController.shared.starredFeed.fetchArticles().count,
 										unreadArticles: unread,
 										starredArticles: starred,

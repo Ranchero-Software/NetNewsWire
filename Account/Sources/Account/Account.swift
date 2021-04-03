@@ -53,9 +53,9 @@ public enum AccountType: Int, Codable {
 }
 
 public enum FetchType {
-	case starred
-	case unread
-	case today
+    case starred(_: Int? = nil)
+	case unread(_: Int? = nil)
+	case today(_: Int? = nil)
 	case folder(Folder, Bool)
 	case webFeed(WebFeed)
 	case articleIDs(Set<String>)
@@ -674,12 +674,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		switch fetchType {
-		case .starred:
-			return try fetchStarredArticles()
-		case .unread:
-			return try fetchUnreadArticles()
-		case .today:
-			return try fetchTodayArticles()
+		case .starred(let limit):
+			return try fetchStarredArticles(limit: limit)
+		case .unread(let limit):
+			return try fetchUnreadArticles(limit: limit)
+		case .today(let limit):
+			return try fetchTodayArticles(limit: limit)
 		case .folder(let folder, let readFilter):
 			if readFilter {
 				return try fetchUnreadArticles(folder: folder)
@@ -699,12 +699,12 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func fetchArticlesAsync(_ fetchType: FetchType, _ completion: @escaping ArticleSetResultBlock) {
 		switch fetchType {
-		case .starred:
-			fetchStarredArticlesAsync(completion)
-		case .unread:
-			fetchUnreadArticlesAsync(completion)
-		case .today:
-			fetchTodayArticlesAsync(completion)
+		case .starred(let limit):
+			fetchStarredArticlesAsync(limit: limit, completion)
+		case .unread(let limit):
+			fetchUnreadArticlesAsync(limit: limit, completion)
+		case .today(let limit):
+			fetchTodayArticlesAsync(limit: limit, completion)
 		case .folder(let folder, let readFilter):
 			if readFilter {
 				return fetchUnreadArticlesAsync(folder: folder, completion)
@@ -1046,28 +1046,28 @@ extension Account: WebFeedMetadataDelegate {
 
 private extension Account {
 
-	func fetchStarredArticles() throws -> Set<Article> {
-		return try database.fetchStarredArticles(flattenedWebFeeds().webFeedIDs())
+	func fetchStarredArticles(limit: Int?) throws -> Set<Article> {
+		return try database.fetchStarredArticles(flattenedWebFeeds().webFeedIDs(), limit)
 	}
 
-	func fetchStarredArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		database.fetchedStarredArticlesAsync(flattenedWebFeeds().webFeedIDs(), completion)
+	func fetchStarredArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		database.fetchedStarredArticlesAsync(flattenedWebFeeds().webFeedIDs(), limit, completion)
 	}
 
-	func fetchUnreadArticles() throws -> Set<Article> {
-		return try fetchUnreadArticles(forContainer: self)
+	func fetchUnreadArticles(limit: Int?) throws -> Set<Article> {
+		return try fetchUnreadArticles(forContainer: self, limit: limit)
 	}
 
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		fetchUnreadArticlesAsync(forContainer: self, completion)
+	func fetchUnreadArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		fetchUnreadArticlesAsync(forContainer: self, limit: limit, completion)
 	}
 
-	func fetchTodayArticles() throws -> Set<Article> {
-		return try database.fetchTodayArticles(flattenedWebFeeds().webFeedIDs())
+	func fetchTodayArticles(limit: Int?) throws -> Set<Article> {
+		return try database.fetchTodayArticles(flattenedWebFeeds().webFeedIDs(), limit)
 	}
 
-	func fetchTodayArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		database.fetchTodayArticlesAsync(flattenedWebFeeds().webFeedIDs(), completion)
+	func fetchTodayArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		database.fetchTodayArticlesAsync(flattenedWebFeeds().webFeedIDs(), limit, completion)
 	}
 
 	func fetchArticles(folder: Folder) throws -> Set<Article> {
@@ -1079,11 +1079,11 @@ private extension Account {
 	}
 
 	func fetchUnreadArticles(folder: Folder) throws -> Set<Article> {
-		return try fetchUnreadArticles(forContainer: folder)
+		return try fetchUnreadArticles(forContainer: folder, limit: nil)
 	}
 
 	func fetchUnreadArticlesAsync(folder: Folder, _ completion: @escaping ArticleSetResultBlock) {
-		fetchUnreadArticlesAsync(forContainer: folder, completion)
+		fetchUnreadArticlesAsync(forContainer: folder, limit: nil, completion)
 	}
 
 	func fetchArticles(webFeed: WebFeed) throws -> Set<Article> {
@@ -1129,7 +1129,7 @@ private extension Account {
 	}
 
 	func fetchUnreadArticles(webFeed: WebFeed) throws -> Set<Article> {
-		let articles = try database.fetchUnreadArticles(Set([webFeed.webFeedID]))
+		let articles = try database.fetchUnreadArticles(Set([webFeed.webFeedID]), nil)
 		validateUnreadCount(webFeed, articles)
 		return articles
 	}
@@ -1154,19 +1154,31 @@ private extension Account {
 		}
 	}
 
-	func fetchUnreadArticles(forContainer container: Container) throws -> Set<Article> {
+	func fetchUnreadArticles(forContainer container: Container, limit: Int?) throws -> Set<Article> {
 		let feeds = container.flattenedWebFeeds()
-		let articles = try database.fetchUnreadArticles(feeds.webFeedIDs())
-		validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		let articles = try database.fetchUnreadArticles(feeds.webFeedIDs(), limit)
+		
+		// We don't validate limit queries because they, by definition, won't correctly match the
+		// complete unread state for the given container.
+		if limit == nil {
+			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		}
+		
 		return articles
 	}
 
-	func fetchUnreadArticlesAsync(forContainer container: Container, _ completion: @escaping ArticleSetResultBlock) {
+	func fetchUnreadArticlesAsync(forContainer container: Container, limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		let webFeeds = container.flattenedWebFeeds()
-		database.fetchUnreadArticlesAsync(webFeeds.webFeedIDs()) { [weak self] (articleSetResult) in
+		database.fetchUnreadArticlesAsync(webFeeds.webFeedIDs(), limit) { [weak self] (articleSetResult) in
 			switch articleSetResult {
 			case .success(let articles):
-				self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
+				
+				// We don't validate limit queries because they, by definition, won't correctly match the
+				// complete unread state for the given container.
+				if limit == nil {
+					self?.validateUnreadCountsAfterFetchingUnreadArticles(webFeeds, articles)
+				}
+				
 				completion(.success(articles))
 			case .failure(let databaseError):
 				completion(.failure(databaseError))

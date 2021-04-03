@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view hidden="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="777" width="414" height="36"/>
                                 <color key="backgroundColor" name="barBackgroundColor"/>
                             </view>
@@ -138,6 +138,9 @@
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
                             </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="markAllAsRead:" destination="Kyk-vK-QRX" id="EVp-xb-0lW"/>
+                            </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="53V-wq-bat"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="93y-8j-WBh"/>

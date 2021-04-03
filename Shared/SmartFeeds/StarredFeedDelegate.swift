@@ -21,7 +21,7 @@ struct StarredFeedDelegate: SmartFeedDelegate {
 	}
 
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
-	let fetchType: FetchType = .starred
+	let fetchType: FetchType = .starred(nil)
 	var smallIcon: IconImage? {
 		return AppAssets.starredFeedImage
 	}
