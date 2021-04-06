@@ -312,11 +312,21 @@ struct AppAssets {
 	}()
 
 	static var swipeMarkStarredImage: RSImage = {
-		return RSImage(named: "swipeMarkStarred")!
+		if #available(OSX 11.0, *) {
+			return RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
+				.withSymbolConfiguration(.init(scale: .large))!
+		} else {
+			return RSImage(named: "swipeMarkStarred")!
+		}
 	}()
 
 	static var swipeMarkUnstarredImage: RSImage = {
-		return RSImage(named: "swipeMarkUnstarred")!
+		if #available(OSX 11.0, *) {
+			return RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
+				.withSymbolConfiguration(.init(scale: .large))!
+		} else {
+			return RSImage(named: "swipeMarkUnstarred")!
+		}
 	}()
 	
 	static var starColor: NSColor = {
