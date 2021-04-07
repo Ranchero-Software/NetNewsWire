@@ -292,19 +292,41 @@ struct AppAssets {
 	}()
 
 	static var swipeMarkReadImage: RSImage = {
-		return RSImage(named: "swipeMarkRead")!
+		if #available(OSX 11.0, *) {
+			return RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
+				.withSymbolConfiguration(.init(scale: .large))!
+		} else {
+			// TODO: remove swipeMarkRead asset when dropping support for macOS 10.15
+			return RSImage(named: "swipeMarkRead")!
+		}
 	}()
 
 	static var swipeMarkUnreadImage: RSImage = {
-		return RSImage(named: "swipeMarkUnread")!
+		if #available(OSX 11.0, *) {
+			return RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
+				.withSymbolConfiguration(.init(scale: .large))!
+		} else {
+			// TODO: remove swipeMarkUnread asset when dropping support for macOS 10.15
+			return RSImage(named: "swipeMarkUnread")!
+		}
 	}()
 
 	static var swipeMarkStarredImage: RSImage = {
-		return RSImage(named: "swipeMarkStarred")!
+		if #available(OSX 11.0, *) {
+			return RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
+				.withSymbolConfiguration(.init(scale: .large))!
+		} else {
+			return RSImage(named: "swipeMarkStarred")!
+		}
 	}()
 
 	static var swipeMarkUnstarredImage: RSImage = {
-		return RSImage(named: "swipeMarkUnstarred")!
+		if #available(OSX 11.0, *) {
+			return RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
+				.withSymbolConfiguration(.init(scale: .large))!
+		} else {
+			return RSImage(named: "swipeMarkUnstarred")!
+		}
 	}()
 	
 	static var starColor: NSColor = {

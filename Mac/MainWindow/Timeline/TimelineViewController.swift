@@ -941,7 +941,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 		switch edge {
 			case .leading:
-				let action = NSTableViewRowAction(style: .regular, title: "") { (action, row) in
+				let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (action, row) in
 					self.toggleArticleRead(article);
 					tableView.rowActionsVisible = false
 				}
@@ -949,7 +949,7 @@ extension TimelineViewController: NSTableViewDelegate {
 				return [action]
 
 			case .trailing:
-				let action = NSTableViewRowAction(style: .regular, title: "") { (action, row) in
+				let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (action, row) in
 					self.toggleArticleStarred(article);
 					tableView.rowActionsVisible = false
 				}
