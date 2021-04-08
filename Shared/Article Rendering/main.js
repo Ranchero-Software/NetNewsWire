@@ -72,6 +72,7 @@ function inlineVideos() {
 		element.setAttribute("playsinline", true);
 		if (!element.classList.contains("nnwAnimatedGIF")) {
 			element.setAttribute("controls", true);
+			element.removeAttribute("autoplay");
 		}
 	});
 }
