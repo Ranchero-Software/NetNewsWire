@@ -35,11 +35,21 @@ class ImageViewer {
 
 		var canvas = document.createElement("canvas");
 		var pixelRatio = window.devicePixelRatio;
+		var totalPixels = 0;
 		do {
 			canvas.width = this.img.naturalWidth * pixelRatio;
 			canvas.height = this.img.naturalHeight * pixelRatio;
+			totalPixels = canvas.width * canvas.height;
 			pixelRatio--;
-		} while (pixelRatio > 0 && canvas.width * canvas.height > 16777216)
+		} while (pixelRatio > 0 && totalPixels > 16777216)
+		
+		// If the totalPixels is still too big to draw on a canvas, scale it down
+		if (totalPixels > 16777216) {
+			var adjustment = 1 - ((totalPixels - 16777216) / totalPixels);
+			canvas.width = canvas.width * adjustment;
+		    canvas.height = canvas.height * adjustment;
+		}
+		
 		canvas.getContext("2d").drawImage(this.img, 0, 0, canvas.width, canvas.height);
 		
 		const rect = this.img.getBoundingClientRect();
