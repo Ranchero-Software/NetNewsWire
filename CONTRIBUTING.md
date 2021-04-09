@@ -10,7 +10,7 @@ If you’d like to contribute:
 
 ## Notes
 
-It’s important that the pull request merge cleanly with master.
+It’s important that the pull request merge cleanly with the git branch `main`.
 
 You should have read the [coding guidelines](Technotes/CodingGuidelines.md) first. If your code doesn’t follow the guidelines, we will likely suggest revising it.
 
