@@ -228,8 +228,13 @@ public final class WebFeed: Feed, Renamable, Hashable {
     
     // MARK: - Feed Provider
     public var isFeedProvider: Bool {
-        get {            
-            if FeedProviderManager.shared.best(for: URLComponents(url: URL(string: url)!, resolvingAgainstBaseURL: false)!) == nil {
+        get {
+            guard let webfeedURL = URL(string: url),
+                  let components = URLComponents(url: webfeedURL, resolvingAgainstBaseURL: false) else {
+                return false
+            }
+            
+            if FeedProviderManager.shared.best(for: components) == nil {
                 return false
             }
             return true
