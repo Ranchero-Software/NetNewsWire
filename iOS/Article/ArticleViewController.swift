@@ -92,7 +92,7 @@ class ArticleViewController: UIViewController {
 		
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
-
+		
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
@@ -179,7 +179,11 @@ class ArticleViewController: UIViewController {
 		starBarButtonItem.isEnabled = true
 		
 		let permalinkPresent = article.preferredLink != nil
-		articleExtractorButton.isEnabled = permalinkPresent && !AppDefaults.shared.isDeveloperBuild
+		var isFeedProvider = false
+		if let webfeed = article.webFeed {
+			isFeedProvider = webfeed.isFeedProvider
+		}
+		articleExtractorButton.isEnabled = permalinkPresent && !AppDefaults.shared.isDeveloperBuild && !isFeedProvider
 		actionBarButtonItem.isEnabled = permalinkPresent
 		
 		if article.status.read {

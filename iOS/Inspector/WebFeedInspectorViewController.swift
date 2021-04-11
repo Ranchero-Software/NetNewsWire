@@ -48,7 +48,14 @@ class WebFeedInspectorViewController: UITableViewController {
 		nameTextField.text = webFeed.nameForDisplay
 		
 		notifyAboutNewArticlesSwitch.setOn(webFeed.isNotifyAboutNewArticles ?? false, animated: false)
-		alwaysShowReaderViewSwitch.setOn(webFeed.isArticleExtractorAlwaysOn ?? false, animated: false)
+		
+		if webFeed.isFeedProvider {
+			alwaysShowReaderViewSwitch.isOn = false
+			alwaysShowReaderViewSwitch.isEnabled = false
+		} else {
+			alwaysShowReaderViewSwitch.setOn(webFeed.isArticleExtractorAlwaysOn ?? false, animated: false)
+		}
+		
 
 		homePageLabel.text = webFeed.homePageURL?.decodedURLString
 		feedURLLabel.text = webFeed.url.decodedURLString
