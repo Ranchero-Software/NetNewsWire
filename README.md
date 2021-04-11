@@ -41,7 +41,7 @@ You can do this in one of two ways: using the included `setup.sh` script or by c
 ##### Using `setup.sh`
 
 - Open Terminal and `cd` into the NetNewsWire directory. 
-- Run this command to ensure you have execution rights for the script: `sudo chmod 755 setup.sh`
+- Run this command to ensure you have execution rights for the script: `chmod +x setup.sh`
 - Execute the script with the following command: `./setup.sh` and complete the answers.
 
 ##### Manually 
