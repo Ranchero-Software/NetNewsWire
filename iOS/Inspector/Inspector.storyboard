@@ -153,6 +153,7 @@
                     <navigationItem key="navigationItem" id="Fkf-MF-Fdf"/>
                     <connections>
                         <outlet property="activeSwitch" destination="6YV-K0-yPS" id="d9M-GP-aTR"/>
+                        <outlet property="deleteAccountButton" destination="obv-a5-Pl6" id="idW-gm-BIJ"/>
                         <outlet property="nameTextField" destination="LUW-uv-piz" id="e2P-Hq-guh"/>
                     </connections>
                 </tableViewController>
