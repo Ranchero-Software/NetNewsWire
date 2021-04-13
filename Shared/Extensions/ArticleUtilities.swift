@@ -13,15 +13,24 @@ import Account
 
 // These handle multiple accounts.
 
-func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
+func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 	
 	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 
+	let group = DispatchGroup()
+	
 	for (accountID, accountArticles) in d {
 		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
 			continue
 		}
-		account.markArticles(accountArticles, statusKey: statusKey, flag: flag)
+		group.enter()
+		account.markArticles(accountArticles, statusKey: statusKey, flag: flag) { _ in
+			group.leave()
+		}
+	}
+	
+	group.notify(queue: .main) {
+		completion?()
 	}
 }
 
