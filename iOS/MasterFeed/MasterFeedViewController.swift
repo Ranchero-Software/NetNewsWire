@@ -370,22 +370,28 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 				return IndexPath(row: 0, section: destIndexPath.section)
 			} else {
 				let identifier = makeIdentifier(sortedNodes[index])
-				let candidateIndexPath = dataSource.indexPath(for: identifier)!
-				let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
-				return IndexPath(row: candidateIndexPath.row - movementAdjustment, section: candidateIndexPath.section)
+				if let candidateIndexPath = dataSource.indexPath(for: identifier) {
+					let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
+					return IndexPath(row: candidateIndexPath.row - movementAdjustment, section: candidateIndexPath.section)
+				} else {
+					return sourceIndexPath
+				}
 			}
 			
 		} else {
 			
 			if index >= sortedNodes.count {
 				let identifier = makeIdentifier(sortedNodes[sortedNodes.count - 1])
-				let lastSortedIndexPath = dataSource.indexPath(for: identifier)!
-				let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
-				return IndexPath(row: lastSortedIndexPath.row + movementAdjustment, section: lastSortedIndexPath.section)
+				if let lastSortedIndexPath = dataSource.indexPath(for: identifier) {
+					let movementAdjustment = sourceIndexPath > destIndexPath ? 1 : 0
+					return IndexPath(row: lastSortedIndexPath.row + movementAdjustment, section: lastSortedIndexPath.section)
+				} else {
+					return sourceIndexPath
+				}
 			} else {
 				let movementAdjustment = sourceIndexPath < destIndexPath ? 1 : 0
 				let identifer = makeIdentifier(sortedNodes[index - movementAdjustment])
-				return dataSource.indexPath(for: identifer)!
+				return dataSource.indexPath(for: identifer) ?? sourceIndexPath
 			}
 			
 		}
