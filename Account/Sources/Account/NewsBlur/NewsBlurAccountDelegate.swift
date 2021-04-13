@@ -564,7 +564,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		account.update(articles, statusKey: statusKey, flag: flag) { result in
 			switch result {
 			case .success(let articles):
@@ -575,12 +575,12 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 				self.database.insertStatuses(syncStatuses) { _ in
 					self.database.selectPendingCount { result in
 						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
+							self.sendArticleStatus(for: account, completion: completion)
 						}
 					}
 				}
 			case .failure(let error):
-				os_log(.error, log: self.log, "Error marking article status: %@", error.localizedDescription)
+				completion(.failure(error))
 			}
 		}
 	}

@@ -428,7 +428,7 @@ private extension AppDelegate {
 			os_log(.debug, "No article found from search using %@", articleID)
 			return
 		}
-		account!.markArticles(article!, statusKey: .read, flag: true)
+		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
 		self.prepareAccountsForBackground()
 		account!.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
@@ -458,7 +458,7 @@ private extension AppDelegate {
 			os_log(.debug, "No article found from search using %@", articleID)
 			return
 		}
-		account!.markArticles(article!, statusKey: .starred, flag: true)
+		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
 		account!.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
 				if #available(iOS 14, *) {
