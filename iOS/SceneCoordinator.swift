@@ -997,13 +997,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 	
-	func markAllAsRead(_ articles: [Article]) {
-		markArticlesWithUndo(articles, statusKey: .read, flag: true)
+	func markAllAsRead(_ articles: [Article], completion: (() -> Void)? = nil) {
+		markArticlesWithUndo(articles, statusKey: .read, flag: true, completion: completion)
 	}
 	
-	func markAllAsReadInTimeline() {
-		markAllAsRead(articles)
-		masterNavigationController.popViewController(animated: true)
+	func markAllAsReadInTimeline(completion: (() -> Void)? = nil) {
+		markAllAsRead(articles) {
+			self.masterNavigationController.popViewController(animated: true)
+			completion?()
+		}
 	}
 
 	func canMarkAboveAsRead(for article: Article) -> Bool {
@@ -1372,8 +1374,9 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 
 private extension SceneCoordinator {
 
-	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
+	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
+		guard let undoManager = undoManager,
+			  let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager, completion: completion) else {
 			return
 		}
 		runCommand(markReadCommand)

@@ -209,8 +209,14 @@ final class LocalAccountDelegate: AccountDelegate {
 		completion(.success(()))
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
-		account.update(articles, statusKey: statusKey, flag: flag) { _ in }
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+		account.update(articles, statusKey: statusKey, flag: flag) { result in
+			if case .failure(let error) = result {
+				completion(.failure(error))
+			} else {
+				completion(.success(()))
+			}
+		}
 	}
 
 	func accountDidInitialize(_ account: Account) {

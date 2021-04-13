@@ -536,8 +536,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		addOPMLItems(OPMLNormalizer.normalize(items))		
 	}
 	
-	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) {
-		delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag)
+	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag, completion: completion)
 	}
 
 	func existingContainer(withExternalID externalID: String) -> Container? {
