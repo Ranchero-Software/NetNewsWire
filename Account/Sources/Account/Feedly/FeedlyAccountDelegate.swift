@@ -498,8 +498,9 @@ final class FeedlyAccountDelegate: AccountDelegate {
 				self.database.insertStatuses(syncStatuses) { _ in
 					self.database.selectPendingCount { result in
 						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account, completion: completion)
+							self.sendArticleStatus(for: account) { _ in }
 						}
+						completion(.success(()))
 					}
 				}
 			case .failure(let error):
