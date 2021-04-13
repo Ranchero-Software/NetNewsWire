@@ -59,12 +59,14 @@ struct ArticleItemView: View {
 	func pubDate(_ dateString: String) -> String {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-		let date = dateFormatter.date(from: dateString)
+		guard let date = dateFormatter.date(from: dateString) else {
+			return ""
+		}
 		
 		let displayFormatter = DateFormatter()
 		displayFormatter.dateStyle = .medium
 		displayFormatter.timeStyle = .none
 		
-		return displayFormatter.string(from: date!)
+		return displayFormatter.string(from: date)
 	}
 }
