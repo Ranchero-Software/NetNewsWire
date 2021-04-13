@@ -65,6 +65,10 @@ struct ArticleItemView: View {
 		displayFormatter.dateStyle = .medium
 		displayFormatter.timeStyle = .none
 		
-		return displayFormatter.string(from: date!)
+		guard let dateFromDateFormatter = date else {
+			return ""
+		}
+		
+		return displayFormatter.string(from: dateFromDateFormatter)
 	}
 }
