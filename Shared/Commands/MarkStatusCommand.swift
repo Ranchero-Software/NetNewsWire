@@ -41,12 +41,12 @@ final class MarkStatusCommand: UndoableCommand {
 		self.redoActionName = actionName
     }
 
-	convenience init?(initialArticles: [Article], markingRead: Bool, undoManager: UndoManager) {
-		self.init(initialArticles: initialArticles, statusKey: .read, flag: markingRead, undoManager: undoManager)
+	convenience init?(initialArticles: [Article], markingRead: Bool, undoManager: UndoManager, completion: (() -> Void)? = nil) {
+		self.init(initialArticles: initialArticles, statusKey: .read, flag: markingRead, undoManager: undoManager, completion: completion)
 	}
 
-	convenience init?(initialArticles: [Article], markingStarred: Bool, undoManager: UndoManager) {
-		self.init(initialArticles: initialArticles, statusKey: .starred, flag: markingStarred, undoManager: undoManager)
+	convenience init?(initialArticles: [Article], markingStarred: Bool, undoManager: UndoManager, completion: (() -> Void)? = nil) {
+		self.init(initialArticles: initialArticles, statusKey: .starred, flag: markingStarred, undoManager: undoManager, completion: completion)
 	}
 
     func perform() {
