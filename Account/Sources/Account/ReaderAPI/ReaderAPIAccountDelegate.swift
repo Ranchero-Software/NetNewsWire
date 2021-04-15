@@ -131,6 +131,29 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		
 	}
 
+	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
+		guard variant != .inoreader else {
+			completion?(.success(()))
+			return
+		}
+		
+		sendArticleStatus(for: account) { result in
+			switch result {
+			case .success:
+				self.refreshArticleStatus(for: account) { result in
+					switch result {
+					case .success:
+						completion?(.success(()))
+					case .failure(let error):
+						completion?(.failure(error))
+					}
+				}
+			case .failure(let error):
+				completion?(.failure(error))
+			}
+		}
+	}
+	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		os_log(.debug, log: log, "Sending article statuses...")
 
