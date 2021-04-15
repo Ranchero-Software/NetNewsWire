@@ -443,21 +443,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	}
 	
 	public func syncArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
-		delegate.sendArticleStatus(for: self) { [unowned self] result in
-			switch result {
-			case .success:
-				self.delegate.refreshArticleStatus(for: self) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
-				}
-			case .failure(let error):
-				completion?(.failure(error))
-			}
-		}
+		delegate.syncArticleStatus(for: self, completion: completion)
 	}
 	
 	public func importOPML(_ opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {

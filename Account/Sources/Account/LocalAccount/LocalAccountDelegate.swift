@@ -96,6 +96,10 @@ final class LocalAccountDelegate: AccountDelegate {
 		
 	}
 
+	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
+		completion?(.success(()))
+	}
+	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		completion(.success(()))
 	}
