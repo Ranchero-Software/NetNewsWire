@@ -397,8 +397,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		markAllAsRead(sender)
-		nextUnread(sender)
+		currentTimelineViewController?.markAllAsRead() {
+			self.nextUnread(sender)
+		}
 	}
 
 	@IBAction func markUnreadAndGoToNextUnread(_ sender: Any?) {

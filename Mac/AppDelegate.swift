@@ -843,7 +843,7 @@ private extension AppDelegate {
 			os_log(.debug, "No article found from search using %@", articleID)
 			return
 		}
-		account!.markArticles(article!, statusKey: .read, flag: true)
+		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
 	}
 	
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
@@ -862,6 +862,6 @@ private extension AppDelegate {
 			os_log(.debug, "No article found from search using %@", articleID)
 			return
 		}
-		account!.markArticles(article!, statusKey: .starred, flag: true)
+		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
 	}
 }
