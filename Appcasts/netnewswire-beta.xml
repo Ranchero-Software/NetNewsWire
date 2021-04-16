@@ -8,6 +8,17 @@
 
  
           <item>
+            <title>NetNewsWire 6.0.2b1</title>
+            <description><![CDATA[
+<p>Inoreader sync: fixed (hopefully) cause of rate limit errors — now doing background sync of statuses much less often - note that this fix needs to be rolled out across all NetNewsWire users in order for it to have full effect</p>
+<p>Fixed regression with the L key — now works properly again</p>
+			]]></description>
+            <pubDate>Thu, 15 Apr 2021 19:15:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.2b1/NetNewsWire6.0.2b1.zip" sparkle:version="6031" sparkle:shortVersionString="6.0.2b1" length="10453628" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+          <item>
             <title>NetNewsWire 6.0.1</title>
             <description><![CDATA[
 <p>Adjusted layout of the add account sheet so that it fits on smaller monitors</p>
