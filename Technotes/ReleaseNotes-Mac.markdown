@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.0.2b1 build 6031 - 15 April 2021
+
+Inoreader sync: fixed (hopefully) cause of rate limit errors — now doing background sync of statuses much less often - note that this fix needs to be rolled out across all NetNewsWire users in order for it to have full effect
+Fixed regression with the L key — now works properly again
+
 ### 6.0.1 build 6030 - 1 Apr 2021
 
 Adjusted layout of the add account sheet so that it fits on smaller monitors
