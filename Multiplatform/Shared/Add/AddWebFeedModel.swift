@@ -112,7 +112,7 @@ class AddWebFeedModel: ObservableObject {
 				return
 			}
 			
-			account.createWebFeed(url: url.absoluteString, name: providedName, container: container, completion: { [weak self] result in
+			account.createWebFeed(url: url.absoluteString, name: providedName, container: container, validateFeed: true, completion: { [weak self] result in
 				self?.showProgressIndicator = false
 				switch result {
 				case .success(let feed):
