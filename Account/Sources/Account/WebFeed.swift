@@ -242,7 +242,7 @@ public final class WebFeed: Feed, Renamable, Hashable {
     }
     
     // MARK: - NotificationDisplayName
-    public var notifyNameDisplay: String {
+    public var notificationDisplayName: String {
         #if os(macOS)
         if self.url.contains("twitter.com") {
             return NSLocalizedString("Show notifications for new tweets", comment: "notifyNameDisplay / Twitter")

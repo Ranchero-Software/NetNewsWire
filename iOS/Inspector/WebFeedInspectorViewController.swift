@@ -162,7 +162,7 @@ extension WebFeedInspectorViewController {
 				return cell
 			}
 			label.numberOfLines = 2
-			label.text = webFeed.notifyNameDisplay.capitalized
+			label.text = webFeed.notificationDisplayName.capitalized
 		}
 		return cell
 	}
