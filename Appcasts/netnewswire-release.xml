@@ -6,7 +6,18 @@
         <description>Most recent NetNewsWire releases (not test builds).</description>
         <language>en</language>
 
-          <item>
+           <item>
+            <title>NetNewsWire 6.0.2</title>
+            <description><![CDATA[
+<p>Inoreader sync: fixed (hopefully) cause of rate limit errors — now doing background sync of statuses much less often - note that this fix needs to be rolled out across all NetNewsWire users in order for it to have full effect</p>
+<p>Fixed regression with the L key — now works properly again</p>
+			]]></description>
+            <pubDate>Tue, 20 Apr 2021 17:40:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.2/NetNewsWire6.0.2.zip" sparkle:version="6032" sparkle:shortVersionString="6.0.2" length="10453603" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+         <item>
             <title>NetNewsWire 6.0.1</title>
             <description><![CDATA[
 <p>Twitter: fixed a date parsing bug that could affect people in some locales, which would prevent Twitter feeds from working for them</p>
