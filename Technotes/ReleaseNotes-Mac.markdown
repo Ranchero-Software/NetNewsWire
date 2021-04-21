@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 6.0.2 build 6.32 - 20 April 2021
+
+Same as 6.0.2b1
+
 ### 6.0.2b1 build 6031 - 15 April 2021
 
 Inoreader sync: fixed (hopefully) cause of rate limit errors — now doing background sync of statuses much less often - note that this fix needs to be rolled out across all NetNewsWire users in order for it to have full effect
