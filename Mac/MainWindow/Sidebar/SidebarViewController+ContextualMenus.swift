@@ -230,7 +230,7 @@ private extension SidebarViewController {
 		}
 		menu.addItem(NSMenuItem.separator())
 		
-		let notificationText = NSLocalizedString("Show Notifications for New Articles", comment: "Show Notifications for New Articles")
+		let notificationText = webFeed.notificationDisplayName.capitalized
 		
 		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed)
 		if webFeed.isNotifyAboutNewArticles == nil || webFeed.isNotifyAboutNewArticles! == false {
