@@ -133,7 +133,7 @@ final class NewsBlurAPICaller: NSObject {
 					URLQueryItem(name: "page", value: String(page)),
 					URLQueryItem(name: "order", value: "newest"),
 					URLQueryItem(name: "read_filter", value: "all"),
-					URLQueryItem(name: "include_hidden", value: "true"),
+					URLQueryItem(name: "include_hidden", value: "false"),
 					URLQueryItem(name: "include_story_content", value: "true"),
 				])
 
@@ -150,7 +150,7 @@ final class NewsBlurAPICaller: NSObject {
 	func retrieveStories(hashes: [NewsBlurStoryHash], completion: @escaping (Result<([NewsBlurStory]?, Date?), Error>) -> Void) {
 		let url = baseURL
 				.appendingPathComponent("reader/river_stories")
-				.appendingQueryItem(.init(name: "include_hidden", value: "true"))?
+				.appendingQueryItem(.init(name: "include_hidden", value: "false"))?
 				.appendingQueryItems(hashes.map {
 					URLQueryItem(name: "h", value: $0.hash)
 				})
