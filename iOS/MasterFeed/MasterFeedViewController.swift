@@ -1211,9 +1211,20 @@ private extension MasterFeedViewController {
 		guard let identifier = dataSource.itemIdentifier(for: indexPath), identifier.unreadCount > 0 else {
 			return nil
 		}
-
+		
+		var smartFeed: Feed?
+		if identifier.isPsuedoFeed {
+			if SmartFeedsController.shared.todayFeed.feedID == identifier.feedID {
+				smartFeed = SmartFeedsController.shared.todayFeed
+			} else if SmartFeedsController.shared.unreadFeed.feedID == identifier.feedID {
+				smartFeed = SmartFeedsController.shared.unreadFeed
+			} else if SmartFeedsController.shared.starredFeed.feedID == identifier.feedID  {
+				smartFeed = SmartFeedsController.shared.starredFeed
+			}
+		}
+		
 		guard let feedID = identifier.feedID,
-			  let feed = AccountManager.shared.existingFeed(with: feedID),
+			  let feed = smartFeed ?? AccountManager.shared.existingFeed(with: feedID),
 			  feed.unreadCount > 0,
 			  let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
