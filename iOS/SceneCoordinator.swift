@@ -1238,16 +1238,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showBrowserForArticle(_ article: Article) {
-		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
+		guard let url = article.preferredURL else { return }
 		UIApplication.shared.open(url, options: [:])
 	}
 
 	func showBrowserForCurrentArticle() {
-		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
+		guard let url = currentArticle?.preferredURL else { return }
 		UIApplication.shared.open(url, options: [:])
 	}
 	

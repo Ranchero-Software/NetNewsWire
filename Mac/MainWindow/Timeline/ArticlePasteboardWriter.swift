@@ -38,7 +38,7 @@ extension Article: PasteboardWriterOwner {
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 		var types = [ArticlePasteboardWriter.articleUTIType]
 
-		if let link = article.preferredLink, let _ = URL(string: link) {
+		if let _ = article.preferredURL {
 			types += [.URL]
 		}
 		types += [.string, .html, ArticlePasteboardWriter.articleUTIInternalType]

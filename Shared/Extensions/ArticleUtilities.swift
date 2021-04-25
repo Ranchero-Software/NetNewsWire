@@ -56,6 +56,18 @@ extension Article {
 		return nil
 	}
 	
+	var preferredURL: URL? {
+		guard let link = preferredLink else { return nil }
+		// If required, we replace any space characters to handle malformed links that are otherwise percent
+		// encoded but contain spaces. For performance reasons, only try this if initial URL init fails.
+		if let url = URL(string: link) {
+			return url
+		} else if let url = URL(string: link.replacingOccurrences(of: " ", with: "%20")) {
+			return url
+		}
+		return nil
+	}
+	
 	var body: String? {
 		return contentHTML ?? contentText ?? summary
 	}
