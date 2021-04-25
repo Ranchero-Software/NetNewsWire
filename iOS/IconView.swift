@@ -12,33 +12,24 @@ final class IconView: UIView {
 
 	var iconImage: IconImage? = nil {
 		didSet {
-			if iconImage !== oldValue {
-				imageView.image = iconImage?.image
-
-				if self.traitCollection.userInterfaceStyle == .dark {
-					if self.iconImage?.isDark ?? false {
-						self.isDiscernable = false
-						self.setNeedsLayout()
-					} else {
-						self.isDiscernable = true
-						self.setNeedsLayout()
-					}
-				} else {
-					if self.iconImage?.isBright ?? false {
-						self.isDiscernable = false
-						self.setNeedsLayout()
-					} else {
-						self.isDiscernable = true
-						self.setNeedsLayout()
-					}
-				}
-				self.setNeedsLayout()
+			guard iconImage !== oldValue else {
+				return
 			}
+			imageView.image = iconImage?.image
+			if traitCollection.userInterfaceStyle == .dark {
+				let isDark = iconImage?.isDark ?? false
+				isDiscernable = !isDark
+			}
+			else {
+				let isBright = iconImage?.isBright ?? false
+				isDiscernable = !isBright
+			}
+			setNeedsLayout()
 		}
 	}
 
 	private var isDiscernable = true
-	
+
 	private let imageView: UIImageView = {
 		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
 		imageView.contentMode = .scaleAspectFit
@@ -79,13 +70,8 @@ final class IconView: UIView {
 
 	override func layoutSubviews() {
 		imageView.setFrameIfNotEqual(rectForImageView())
-		if !isBackgroundSuppressed && ((iconImage != nil && isVerticalBackgroundExposed) || !isDiscernable) {
-			backgroundColor = AppAssets.iconBackgroundColor
-		} else {
-			backgroundColor = nil
-		}
+		updateBackgroundColor()
 	}
-
 }
 
 private extension IconView {
@@ -125,4 +111,11 @@ private extension IconView {
 		return CGRect(x: 0.0, y: originY, width: viewSize.width, height: height)
 	}
 
+	private func updateBackgroundColor() {
+		if !isBackgroundSuppressed && ((iconImage != nil && isVerticalBackgroundExposed) || !isDiscernable) {
+			backgroundColor = AppAssets.iconBackgroundColor
+		} else {
+			backgroundColor = nil
+		}
+	}
 }
