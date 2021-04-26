@@ -23,9 +23,9 @@ There will also be a number of repository forks that NetNewWire developers will 
 
 Each release should be tagged using [Semantic Versioning](https://semver.org/).  Candidates will continue to be tagged using the current convention which denotes the difference between developer, alpha and beta releases.  Additionally, we will need to use a convention to avoid tag name collisions between iOS and macOS products.  macOS releases will be suffixed with "mac-" and iOS releases will be suffixed with "ios-".  (See the above diagram for examples.)  
 
-## Submodules
+## Packages
 
-NetNewsWire uses Git submodules to manage project dependencies.  All the submodules are under the same project umbrella as NetNewWire and there are no third party dependencies to manage.  These submodules are mostly stable at this point.  For simplicity sake, all development on the submodules will continue on their repository Main branch.  These submodules won’t be managed as separate projects with separate releases/tags at this time.
+NetNewsWire uses Swift Packages to manage project dependencies.  All the packages are under the same project umbrella as NetNewWire and there are no third party dependencies to manage.  These packages are mostly stable at this point.  For simplicity sake, all development on the packages will continue on their repository Main branch.  These packages won’t be managed as separate projects with separate releases/tags at this time.
 
 ## Summary
 
