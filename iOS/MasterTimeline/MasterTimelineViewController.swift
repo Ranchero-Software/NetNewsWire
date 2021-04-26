@@ -243,8 +243,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Set up the read action
 		let readTitle = article.status.read ?
-			NSLocalizedString("Unread", comment: "Unread") :
-			NSLocalizedString("Read", comment: "Read")
+			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
+			NSLocalizedString("Mark as Read", comment: "Mark as Read")
 		
 		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completion) in
 			self?.coordinator.toggleRead(article)
