@@ -160,7 +160,7 @@ No shipping version gets released without looking for memory leaks.
 
 Write unit tests, especially in the lower-level frameworks, and particularly when fixing a bug.
 
-There is never enough test coverage. There should always be more tests.
+There is never enough test coverage. We don’t write tests for the UI. In other areas, there should always be more tests.
 
 ### Version Control
 
