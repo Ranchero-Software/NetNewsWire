@@ -56,9 +56,7 @@ private extension WebFeedTreeControllerDelegate {
 
 	func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
 		return SmartFeedsController.shared.smartFeeds.compactMap { (feed) -> Node? in
-			if let feedID = feed.feedID, !filterExceptions.contains(feedID) && isReadFiltered && feed.unreadCount == 0 {
-				return nil
-			}
+			// All Smart Feeds should remain visible despite the Hide Read Feeds setting
 			return parentNode.existingOrNewChildNode(with: feed as AnyObject)
 		}
 	}
