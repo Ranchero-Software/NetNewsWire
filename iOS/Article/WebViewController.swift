@@ -235,20 +235,14 @@ class WebViewController: UIViewController {
 	}
 	
 	func showActivityDialog(popOverBarButtonItem: UIBarButtonItem? = nil) {
-		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-
+		guard let url = article?.preferredURL else { return }
 		let activityViewController = UIActivityViewController(url: url, title: article?.title, applicationActivities: [FindInArticleActivity(), OpenInBrowserActivity()])
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
 
 	func openInAppBrowser() {
-		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-
+		guard let url = article?.preferredURL else { return }
 		let vc = SFSafariViewController(url: url)
 		present(vc, animated: true)
 	}

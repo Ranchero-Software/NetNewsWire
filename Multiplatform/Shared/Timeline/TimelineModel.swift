@@ -249,12 +249,11 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	}
 	
 	func openIndicatedArticleInBrowser(_ article: Article) {
-		guard let link = article.preferredLink else { return }
-		
 		#if os(macOS)
+		guard let link = article.preferredLink else { return }
 		Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 		#else
-		guard let url = URL(string: link) else { return }
+		guard let url = article.preferredURL else { return }
 		UIApplication.shared.open(url, options: [:])
 		#endif
 	}
