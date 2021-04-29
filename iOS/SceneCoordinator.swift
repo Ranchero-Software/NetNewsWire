@@ -853,11 +853,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			currentArticleViewController = articleViewController!
 		}
 		
+		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
+		markArticles(Set([article!]), statusKey: .read, flag: true)
+
 		masterTimelineViewController?.updateArticleSelection(animations: animations)
 		currentArticleViewController.article = article
-		
-		markArticles(Set([article!]), statusKey: .read, flag: true)
-		
 	}
 	
 	func beginSearching() {
