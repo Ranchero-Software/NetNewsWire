@@ -53,7 +53,17 @@ final class DetailWebView: WKWebView {
 	override func viewDidEndLiveResize() {
 		super.viewDidEndLiveResize()
 		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
+		bigSurOffsetFix()
+	}
+	
+	override func setFrameSize(_ newSize: NSSize) {
+		super.setFrameSize(newSize)
+		if (!self.inLiveResize) {
+			bigSurOffsetFix()
+		}
+	}
 		
+	private func bigSurOffsetFix() {
 		/*
 		On macOS 11, when a user exits full screen
 		or exits zoomed mode by disconnecting an external display
