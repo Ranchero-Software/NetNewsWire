@@ -188,6 +188,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
+		if item.action == #selector(copyArticleURL(_:)) {
+			return canCopyArticleURL()
+		}
+		
+		if item.action == #selector(copyExternalURL(_:)) {
+			return canCopyExternalURL()
+		}
+		
 		if item.action == #selector(openArticleInBrowser(_:)) {
 			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
 				item.title = Browser.titleForOpenInBrowserInverted
@@ -284,6 +292,18 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			}
 		}
 
+	}
+
+	@IBAction func copyArticleURL(_ sender: Any?) {
+		if let link = currentLink {
+			URLPasteboardWriter.write(urlString: link, to: .general)
+		}
+	}
+
+	@IBAction func copyExternalURL(_ sender: Any?) {
+		if let link = oneSelectedArticle?.externalURL {
+			URLPasteboardWriter.write(urlString: link, to: .general)
+		}
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
@@ -1007,6 +1027,14 @@ private extension MainWindowController {
 	}
 
 	// MARK: - Command Validation
+	
+	func canCopyArticleURL() -> Bool {
+		return currentLink != nil
+	}
+	
+	func canCopyExternalURL() -> Bool {
+		return oneSelectedArticle?.externalURL != nil && oneSelectedArticle?.externalURL != currentLink
+	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
 		
