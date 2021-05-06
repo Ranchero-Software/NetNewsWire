@@ -10,7 +10,7 @@ import Foundation
 import RSParser
 import RSCore
 
-final class FeedbinEntry: Codable {
+final class FeedbinEntry: Decodable {
 
 	let articleID: Int
 	let feedID: Int
@@ -50,14 +50,25 @@ final class FeedbinEntry: Codable {
 	}
 }
 
-struct FeedbinEntryJSONFeed: Codable {
+struct FeedbinEntryJSONFeed: Decodable {
 	let jsonFeedAuthor: FeedbinEntryJSONFeedAuthor?
+	
 	enum CodingKeys: String, CodingKey {
 		case jsonFeedAuthor = "author"
 	}
+	
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		do {
+			jsonFeedAuthor = try container.decode(FeedbinEntryJSONFeedAuthor.self, forKey: .jsonFeedAuthor)
+		} catch {
+			jsonFeedAuthor = nil
+		}
+	}
+
 }
 
-struct FeedbinEntryJSONFeedAuthor: Codable {
+struct FeedbinEntryJSONFeedAuthor: Decodable {
 	let url: String?
 	let avatarURL: String?
 	enum CodingKeys: String, CodingKey {
