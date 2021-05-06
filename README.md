@@ -75,7 +75,6 @@ CODE_SIGN_STYLE = Automatic
 ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
 DEVELOPER_ENTITLEMENTS = -dev
 PROVISIONING_PROFILE_SPECIFIER =
-OTHER_CODE_SIGN_FLAGS = --deep
 ```
 
 Set `DEVELOPMENT_TEAM` to your Apple supplied development team.  You can use Keychain
