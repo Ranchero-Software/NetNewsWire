@@ -886,28 +886,7 @@ extension TimelineViewController: NSTableViewDelegate {
 		if !showIcons {
 			return nil
 		}
-		
-		if let authors = article.authors {
-			for author in authors {
-				if let image = avatarForAuthor(author) {
-					return image
-				}
-			}
-		}
-
-		guard let feed = article.webFeed else {
-			return nil
-		}
-
-		if let feedIcon = appDelegate.webFeedIconDownloader.icon(for: feed) {
-			return feedIcon
-		}
-
-		if let favicon = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
-			return favicon
-		}
-		
-		return FaviconGenerator.favicon(feed)
+		return IconImageCache.shared.imageForArticle(article)
 	}
 
 	private func avatarForAuthor(_ author: Author) -> IconImage? {

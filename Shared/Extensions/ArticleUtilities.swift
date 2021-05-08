@@ -96,32 +96,7 @@ extension Article {
 	}
 
 	func iconImage() -> IconImage? {
-		if let authors = authors, authors.count == 1, let author = authors.first {
-			if let image = appDelegate.authorAvatarDownloader.image(for: author) {
-				return image
-			}
-		}
-		
-		if let authors = webFeed?.authors, authors.count == 1, let author = authors.first {
-			if let image = appDelegate.authorAvatarDownloader.image(for: author) {
-				return image
-			}
-		}
-
-		guard let webFeed = webFeed else {
-			return nil
-		}
-		
-		let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: webFeed)
-		if feedIconImage != nil {
-			return feedIconImage
-		}
-		
-		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
-			return faviconImage
-		}
-		
-		return FaviconGenerator.favicon(webFeed)
+		return IconImageCache.shared.imageForArticle(self)
 	}
 	
 	func iconImageUrl(webFeed: WebFeed) -> URL? {

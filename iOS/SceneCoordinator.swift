@@ -146,22 +146,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	// At some point we should refactor the current Feed IndexPath out and only use the timeline feed
 	private(set) var currentFeedIndexPath: IndexPath?
-	
+
 	var timelineIconImage: IconImage? {
-		if let feed = timelineFeed as? WebFeed {
-			
-			let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: feed)
-			if feedIconImage != nil {
-				return feedIconImage
-			}
-			
-			if let faviconIconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
-				return faviconIconImage
-			}
-			
+		guard let timelineFeed = timelineFeed else {
+			return nil
 		}
-		
-		return (timelineFeed as? SmallIconProvider)?.smallIcon
+		return IconImageCache.shared.imageForFeed(timelineFeed)
 	}
 	
 	private var exceptionArticleFetcher: ArticleFetcher?

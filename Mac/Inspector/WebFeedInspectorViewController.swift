@@ -146,18 +146,7 @@ private extension WebFeedInspectorViewController {
 		guard let feed = feed, let iconView = iconView else {
 			return
 		}
-
-		if let feedIcon = appDelegate.webFeedIconDownloader.icon(for: feed) {
-			iconView.iconImage = feedIcon
-			return
-		}
-
-		if let favicon = appDelegate.faviconDownloader.favicon(for: feed) {
-			iconView.iconImage = favicon
-			return
-		}
-
-		iconView.iconImage = feed.smallIcon
+		iconView.iconImage = IconImageCache.shared.imageForFeed(feed)
 	}
 
 	func updateName() {

@@ -42,11 +42,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		return true
 	}
 
-	private var smartFeedIconImageCache = [FeedIdentifier: IconImage]()
-	private var webFeedIconImageCache = [FeedIdentifier: IconImage]()
-	private var faviconImageCache = [FeedIdentifier: IconImage]()
-	private var smallIconImageCache = [FeedIdentifier: IconImage]()
-
 	override func viewDidLoad() {
 
 		super.viewDidLoad()
@@ -91,12 +86,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-		// Empty IconImage caches
-		smartFeedIconImageCache = [FeedIdentifier: IconImage]()
-		webFeedIconImageCache = [FeedIdentifier: IconImage]()
-		faviconImageCache = [FeedIdentifier: IconImage]()
-		smallIconImageCache = [FeedIdentifier: IconImage]()
-
+		IconImageCache.shared.emptyCache()
 		super.traitCollectionDidChange(previousTraitCollection)
 		reloadAllVisibleCells()
 	}
@@ -858,69 +848,12 @@ private extension MasterFeedViewController {
 	}
 	
 	func configureIcon(_ cell: MasterFeedTableViewCell, _ identifier: MasterFeedTableViewIdentifier) {
-		cell.iconImage = imageFor(identifier)
+		guard let feedID = identifier.feedID else {
+			return
+		}
+		cell.iconImage = IconImageCache.shared.imageFor(feedID)
 	}
 
-	func imageFor(_ identifier: MasterFeedTableViewIdentifier) -> IconImage? {
-		guard let feedID = identifier.feedID else { return nil }
-		
-		if let smartFeed = SmartFeedsController.shared.find(by: feedID) {
-			return imageForSmartFeed(smartFeed, feedID)
-		}
-		
-		guard let feed = AccountManager.shared.existingFeed(with: feedID) else { return nil }
-
-		if let webFeed = feed as? WebFeed, let iconImage = imageForWebFeed(webFeed, feedID) {
-			return iconImage
-		}
-		
-		if let smallIconProvider = feed as? SmallIconProvider, let iconImage = imageForSmallIconProvider(smallIconProvider, feedID) {
-			return iconImage
-		}
-		
-		return nil
-	}
-
-	func imageForSmartFeed(_ smartFeed: PseudoFeed, _ feedID: FeedIdentifier) -> IconImage? {
-		if let iconImage = smartFeedIconImageCache[feedID] {
-			return iconImage
-		}
-		if let iconImage = smartFeed.smallIcon {
-			smartFeedIconImageCache[feedID] = iconImage
-			return iconImage
-		}
-		return nil
-	}
-
-	func imageForWebFeed(_ webFeed: WebFeed, _ feedID: FeedIdentifier) -> IconImage? {
-		if let iconImage = webFeedIconImageCache[feedID] {
-			return iconImage
-		}
-		if let iconImage = appDelegate.webFeedIconDownloader.icon(for: webFeed) {
-			webFeedIconImageCache[feedID] = iconImage
-			return iconImage
-		}
-		if let faviconImage = faviconImageCache[feedID] {
-			return faviconImage
-		}
-		if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
-			faviconImageCache[feedID] = faviconImage
-			return faviconImage
-		}
-		return nil
-	}
-
-	func imageForSmallIconProvider(_ provider: SmallIconProvider, _ feedID: FeedIdentifier) -> IconImage? {
-		if let iconImage = smallIconImageCache[feedID] {
-			return iconImage
-		}
-		if let iconImage = provider.smallIcon {
-			smallIconImageCache[feedID] = iconImage
-			return iconImage
-		}
-		return nil
-	}
-	
 	func nameFor(_ node: Node) -> String {
 		if let displayNameProvider = node.representedObject as? DisplayNameProvider {
 			return displayNameProvider.nameForDisplay
