@@ -1340,13 +1340,12 @@ private extension MasterFeedViewController {
 			ActivityManager.cleanUp(feed)
 		}
 		
-		pushUndoableCommand(deleteCommand)
-		deleteCommand.perform()
-		
 		if indexPath == coordinator.currentFeedIndexPath {
 			coordinator.selectFeed(indexPath: nil)
 		}
 		
+		pushUndoableCommand(deleteCommand)
+		deleteCommand.perform()
 	}
 	
 }
