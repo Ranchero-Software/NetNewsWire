@@ -16,9 +16,9 @@ import RSCore
 private var databaseIDCache = [String: String]()
 private var databaseIDCacheLock = NSLock()
 public func databaseIDWithString(_ s: String) -> String {
-    databaseIdCacheLock.lock()
+    databaseIDCacheLock.lock()
     defer {
-        databaseIdCacheLock.unlock()
+        databaseIDCacheLock.unlock()
     }
 	
 	if let identifier = databaseIDCache[s] {
