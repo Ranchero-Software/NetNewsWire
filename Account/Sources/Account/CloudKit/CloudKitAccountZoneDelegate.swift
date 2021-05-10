@@ -107,7 +107,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			folder?.externalID = record.externalID
 		}
 		
-		guard let folder = folder, let containerExternalID = folder.externalID else { return }
+		guard let container = folder, let containerExternalID = container.externalID else { return }
 		
 		if let newUnclaimedWebFeeds = newUnclaimedWebFeeds[containerExternalID] {
 			for newUnclaimedWebFeed in newUnclaimedWebFeeds {
@@ -116,7 +116,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 										 editedName: newUnclaimedWebFeed.editedName,
 										 homePageURL: newUnclaimedWebFeed.homePageURL,
 										 webFeedExternalID: newUnclaimedWebFeed.webFeedExternalID,
-										 container: folder)
+										 container: container)
 			}
 
 			self.newUnclaimedWebFeeds.removeValue(forKey: containerExternalID)
@@ -124,7 +124,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		
 		if let existingUnclaimedWebFeeds = existingUnclaimedWebFeeds[containerExternalID] {
 			for existingUnclaimedWebFeed in existingUnclaimedWebFeeds {
-				folder.addWebFeed(existingUnclaimedWebFeed)
+				container.addWebFeed(existingUnclaimedWebFeed)
 			}
 			self.existingUnclaimedWebFeeds.removeValue(forKey: containerExternalID)
 		}
