@@ -180,7 +180,11 @@ final class CloudKitAccountZone: CloudKitZone {
 				}
 				
 			case .failure(let error):
-				completion(.failure(error))
+				if let ckError = ((error as? CloudKitError)?.error as? CKError), ckError.code == .unknownItem {
+					completion(.success(true))
+				} else {
+					completion(.failure(error))
+				}
 			}
 		}
 	}
