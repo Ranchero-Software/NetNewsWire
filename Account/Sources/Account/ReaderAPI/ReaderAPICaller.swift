@@ -132,7 +132,11 @@ final class ReaderAPICaller: NSObject {
 				
 				completion(.success(self.credentials))
 			case .failure(let error):
-				completion(.failure(error))
+				if let transportError = error as? TransportError, case .httpError(let code) = transportError, code == 404 {
+					completion(.failure(ReaderAPIAccountDelegateError.urlNotFound))
+				} else {
+					completion(.failure(error))
+				}
 			}
 		}
 		
