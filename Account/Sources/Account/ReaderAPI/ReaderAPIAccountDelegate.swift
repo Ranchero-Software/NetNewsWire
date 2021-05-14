@@ -14,10 +14,24 @@ import SyncDatabase
 import os.log
 import Secrets
 
-public enum ReaderAPIAccountDelegateError: String, Error {
-	case unknown = "An unknown error occurred."
-	case invalidParameter = "There was an invalid parameter passed."
-	case invalidResponse = "There was an invalid response from the server."
+public enum ReaderAPIAccountDelegateError: LocalizedError {
+	case unknown
+	case invalidParameter
+	case invalidResponse
+	case urlNotFound
+	
+	public var errorDescription: String? {
+		switch self {
+		case .unknown:
+			return NSLocalizedString("An unexpected error occurred.", comment: "An unexpected error occurred.")
+		case .invalidParameter:
+			return NSLocalizedString("An invalid parameter was passed.", comment: "An invalid parameter was passed.")
+		case .invalidResponse:
+			return NSLocalizedString("There was an invalid response from the server.", comment: "There was an invalid response from the server.")
+		case .urlNotFound:
+			return NSLocalizedString("The API URL wasn't found.", comment: "The API URL wasn't found.")
+		}
+	}
 }
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
