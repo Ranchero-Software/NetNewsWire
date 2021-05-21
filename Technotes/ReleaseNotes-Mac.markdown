@@ -1,6 +1,16 @@
 # Mac Release Notes
 
-### 6.0.2 build 6.32 - 20 April 2021
+### 6.0.3b1 build 6033 - 20 May 2021
+
+Feedly: handle API change with deleting and don’t show a spurious error
+NewsBlur: don’t fetch articles marked hidden by NewsBlur
+FreshRSS: add API endpoint URL example in setup form
+iCloud: fixed bug not retaining feeds in a folder where the folder hasn’t been synced yet
+Feeds list: smart feeds remain visible despite Hide Read Feeds setting
+Keyboard shortcuts: fixed regression where L key wouldn’t go to next unread when feed is all read
+Twitter extension: fixed weird bug where an extra https:/ could appear in tweet text
+
+### 6.0.2 build 6032 - 20 April 2021
 
 Same as 6.0.2b1
 
