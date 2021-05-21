@@ -8,6 +8,22 @@
 
  
           <item>
+            <title>NetNewsWire 6.0.3b1</title>
+            <description><![CDATA[
+<p>Feedly: handle API change with deleting and don’t show a spurious error</p>
+<p>NewsBlur: don’t fetch articles marked hidden by NewsBlur</p>
+<p>FreshRSS: add API endpoint URL example in setup form</p>
+<p>iCloud: fixed bug not retaining feeds in a folder where the folder hasn’t been synced yet</p>
+<p>Feeds list: smart feeds remain visible despite Hide Read Feeds setting</p>
+<p>Keyboard shortcuts: fixed regression where L key wouldn’t go to next unread when feed is all read</p>
+<p>Twitter extension: fixed weird bug where an extra https:/ could appear in tweet text</p>
+			]]></description>
+            <pubDate>Thu, 20 May 2021 20:00:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.3b1/NetNewsWire6.0.3b1.zip" sparkle:version="6033" sparkle:shortVersionString="6.0.3b1" length="10463681" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+          <item>
             <title>NetNewsWire 6.0.2</title>
             <description><![CDATA[
 <p>Same as 6.0.2b1 — no changes other than version</p>
