@@ -13,7 +13,7 @@ let package = Package(
     dependencies: [
 		.package(url: "https://github.com/Ranchero-Software/RSCore.git", .upToNextMajor(from: "1.0.0")),
 		.package(url: "https://github.com/Ranchero-Software/RSDatabase.git", .upToNextMajor(from: "1.0.0")),
-		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.0")),
+		.package(url: "https://github.com/Ranchero-Software/RSParser.git", .upToNextMajor(from: "2.0.2")),
 		.package(url: "https://github.com/Ranchero-Software/RSWeb.git", .upToNextMajor(from: "1.0.0")),
 		.package(url: "../Articles", .upToNextMajor(from: "1.0.0")),
 		.package(url: "../ArticlesDatabase", .upToNextMajor(from: "1.0.0")),
