@@ -24,7 +24,7 @@ struct SettingsAboutView: View {
 				Section(header: Text("THANKS")) {
 					AttributedStringView(string: self.viewModel.thanks, preferredMaxLayoutWidth: geometry.size.width - 20)
 				}
-				Section(header: Text("DEDICATION"), footer: Text("Copyright © 2002-2020 BrentSimmons").font(.footnote)) {
+				Section(header: Text("DEDICATION"), footer: Text("Copyright © 2002-2021 Brent Simmons").font(.footnote)) {
 					AttributedStringView(string: self.viewModel.dedication, preferredMaxLayoutWidth: geometry.size.width - 20)
 				}
 			}.listStyle(InsetGroupedListStyle())
