@@ -36,12 +36,11 @@ extension Article: PasteboardWriterOwner {
 	// MARK: - NSPasteboardWriting
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-		var types = [ArticlePasteboardWriter.articleUTIType]
+		var types = [.string, .html, ArticlePasteboardWriter.articleUTIInternalType, ArticlePasteboardWriter.articleUTIType]
 
 		if let link = article.preferredLink, let _ = URL(string: link) {
-			types += [.URL]
+			types.append(.URL)
 		}
-		types += [.string, .html, ArticlePasteboardWriter.articleUTIInternalType]
 
 		return types
 	}
@@ -76,32 +75,9 @@ private extension ArticlePasteboardWriter {
 		if let title = article.title {
 			s += "\(title)\n\n"
 		}
-		if let text = article.contentText {
-			s += "\(text)\n\n"
-		}
-		else if let summary = article.summary {
-			s += "\(summary)\n\n"
-		}
-		else if let html = article.contentHTML {
-			let convertedHTML = html.convertingToPlainText()
-			s += "\(convertedHTML)\n\n"
-		}
-
+		
 		if let url = article.url {
-			s += "URL: \(url)\n\n"
-		}
-		if let externalURL = article.externalURL {
-			s += "external URL: \(externalURL)\n\n"
-		}
-
-		s += "Date: \(article.logicalDatePublished)\n\n"
-
-		if let feed = article.webFeed {
-			s += "Feed: \(feed.nameForDisplay)\n"
-			if let homePageURL = feed.homePageURL {
-				s += "Home page: \(homePageURL)\n"
-			}
-			s += "URL: \(feed.url)"
+			s += "\(url)\n\n"
 		}
 
 		return s
