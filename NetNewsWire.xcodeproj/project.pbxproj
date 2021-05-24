@@ -4008,6 +4008,7 @@
 				84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */,
 				84B06F681ED37B9000F0B54B /* Embed Frameworks */,
 				6581C75720CED60100F4AD34 /* Embed App Extensions */,
+				7180F95C265B67B800189094 /* Run Script: Delete Unnecessary Frameworks For Share Extension */,
 				D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */,
 				8423E3E3220158E700C3795B /* Run Script: Code Sign Sparkle */,
 			);
@@ -4538,6 +4539,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
+		};
+		7180F95C265B67B800189094 /* Run Script: Delete Unnecessary Frameworks For Share Extension */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Delete Unnecessary Frameworks For Share Extension";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Delete the framework that Xcode should have never included\n# https://forums.swift.org/t/is-this-an-xcode-bug-or-somehow-related-to-spm/33987\nrm -rf \"${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/NetNewsWire Share Extension.appex/Contents/Frameworks\"\n";
 		};
 		8423E3E3220158E700C3795B /* Run Script: Code Sign Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
