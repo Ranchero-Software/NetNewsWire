@@ -1,5 +1,24 @@
 # Mac Release Notes
 
+### 6.0.3b1 build 6033 - 20 May 2021
+
+Feedly: handle API change with deleting and don’t show a spurious error
+NewsBlur: don’t fetch articles marked hidden by NewsBlur
+FreshRSS: add API endpoint URL example in setup form
+iCloud: fixed bug not retaining feeds in a folder where the folder hasn’t been synced yet
+Feeds list: smart feeds remain visible despite Hide Read Feeds setting
+Keyboard shortcuts: fixed regression where L key wouldn’t go to next unread when feed is all read
+Twitter extension: fixed weird bug where an extra https:/ could appear in tweet text
+
+### 6.0.2 build 6032 - 20 April 2021
+
+Same as 6.0.2b1
+
+### 6.0.2b1 build 6031 - 15 April 2021
+
+Inoreader sync: fixed (hopefully) cause of rate limit errors — now doing background sync of statuses much less often - note that this fix needs to be rolled out across all NetNewsWire users in order for it to have full effect
+Fixed regression with the L key — now works properly again
+
 ### 6.0.1 build 6030 - 1 Apr 2021
 
 Adjusted layout of the add account sheet so that it fits on smaller monitors
