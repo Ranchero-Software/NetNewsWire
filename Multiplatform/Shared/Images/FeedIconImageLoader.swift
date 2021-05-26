@@ -41,20 +41,6 @@ final class FeedIconImageLoader: ObservableObject {
 private extension FeedIconImageLoader {
 	
 	func fetchImage() {
-		if let webFeed = feed as? WebFeed {
-			if let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: webFeed) {
-				image = feedIconImage
-				return
-			}
-			if let faviconImage = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
-				image = faviconImage
-				return
-			}
-		}
-		
-		if let smallIconProvider = feed as? SmallIconProvider {
-			image = smallIconProvider.smallIcon
-		}
+		image = IconImageCache.shared.imageForFeed(feed)
 	}
-	
 }

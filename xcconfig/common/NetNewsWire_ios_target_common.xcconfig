@@ -1,7 +1,7 @@
 
 // High Level Settings common to both the iOS application and any extensions we bundle with it
 MARKETING_VERSION = 6.0
-CURRENT_PROJECT_VERSION = 601
+CURRENT_PROJECT_VERSION = 603
 
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon

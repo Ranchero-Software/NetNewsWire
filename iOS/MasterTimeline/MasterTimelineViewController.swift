@@ -243,8 +243,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Set up the read action
 		let readTitle = article.status.read ?
-			NSLocalizedString("Unread", comment: "Unread") :
-			NSLocalizedString("Read", comment: "Read")
+			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
+			NSLocalizedString("Mark as Read", comment: "Mark as Read")
 		
 		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completion) in
 			self?.coordinator.toggleRead(article)
@@ -889,9 +889,7 @@ private extension MasterTimelineViewController {
 	}
 
 	func openInBrowserAction(_ article: Article) -> UIAction? {
-		guard let preferredLink = article.preferredLink, let _ = URL(string: preferredLink) else {
-			return nil
-		}
+		guard let _ = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
 			self?.coordinator.showBrowserForArticle(article)
@@ -900,9 +898,7 @@ private extension MasterTimelineViewController {
 	}
 
 	func openInBrowserAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let preferredLink = article.preferredLink, let _ = URL(string: preferredLink) else {
-			return nil
-		}
+		guard let _ = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showBrowserForArticle(article)
@@ -923,10 +919,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func shareAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
-			return nil
-		}
-				
+		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
 		let action = UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
@@ -935,10 +928,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func shareAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
-			return nil
-		}
-		
+		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			completion(true)

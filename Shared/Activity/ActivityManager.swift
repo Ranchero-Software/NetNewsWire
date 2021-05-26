@@ -248,12 +248,11 @@ private extension ActivityManager {
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
 		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: feed)
-		if let iconImage = appDelegate.webFeedIconDownloader.icon(for: feed) {
-			attributeSet.thumbnailData = iconImage.image.dataRepresentation()
-		} else if let iconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
+
+		if let iconImage = IconImageCache.shared.imageForFeed(feed) {
 			attributeSet.thumbnailData = iconImage.image.dataRepresentation()
 		}
-		
+
 		selectingActivity!.contentAttributeSet = attributeSet
 		selectingActivity!.needsSave = true
 		

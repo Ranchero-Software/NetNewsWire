@@ -44,7 +44,7 @@ class AddExtensionPointViewController: UITableViewController, AddExtensionPointD
 	}
 	
 	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-		return NSLocalizedString("Feed Providers allow you to subscribe to web site URL's as if they were RSS feeds.", comment: "Feed Provider Footer")
+		return NSLocalizedString("Feed Providers allow you to subscribe to some pages as if they were RSS feeds.", comment: "Feed Provider Footer")
 	}
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

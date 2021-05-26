@@ -79,6 +79,13 @@ class WebViewController: UIViewController {
 
 	}
 
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		// We need to reload the webview on the iPhone when rotation happens to clear out any old bad viewport sizes
+		if traitCollection.userInterfaceIdiom == .phone {
+			loadWebView()
+		}
+	}
+	
 	// MARK: Notifications
 	
 	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
@@ -235,20 +242,14 @@ class WebViewController: UIViewController {
 	}
 	
 	func showActivityDialog(popOverBarButtonItem: UIBarButtonItem? = nil) {
-		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-
+		guard let url = article?.preferredURL else { return }
 		let activityViewController = UIActivityViewController(url: url, title: article?.title, applicationActivities: [FindInArticleActivity(), OpenInBrowserActivity()])
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
 
 	func openInAppBrowser() {
-		guard let preferredLink = article?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
-
+		guard let url = article?.preferredURL else { return }
 		let vc = SFSafariViewController(url: url)
 		present(vc, animated: true)
 	}

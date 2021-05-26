@@ -92,13 +92,13 @@ class AccountInspectorViewController: UITableViewController {
 			return
 		}
 		
-		let title = NSLocalizedString("Delete Account", comment: "Delete Account")
+		let title = NSLocalizedString("Remove Account", comment: "Remove Account")
 		let message: String = {
 			switch account.type {
 			case .feedly:
-				return NSLocalizedString("Are you sure you want to delete this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Log Out and Delete Account")
+				return NSLocalizedString("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Log Out and Remove Account")
 			default:
-				return NSLocalizedString("Are you sure you want to delete this account? This cannot be undone.", comment: "Delete Account")
+				return NSLocalizedString("Are you sure you want to remove this account? This cannot be undone.", comment: "Remove Account")
 			}
 		}()
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -106,7 +106,7 @@ class AccountInspectorViewController: UITableViewController {
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 		alertController.addAction(cancelAction)
 		
-		let markTitle = NSLocalizedString("Delete", comment: "Delete")
+		let markTitle = NSLocalizedString("Remove", comment: "Remove")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
 			guard let self = self, let account = self.account else { return }
 			AccountManager.shared.deleteAccount(account)

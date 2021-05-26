@@ -23,14 +23,8 @@ class WebFeedInspectorViewController: UITableViewController {
 	@IBOutlet weak var feedURLLabel: InteractiveLabel!
 	
 	private var headerView: InspectorIconHeaderView?
-	private var iconImage: IconImage {
-		if let feedIcon = appDelegate.webFeedIconDownloader.icon(for: webFeed) {
-			return feedIcon
-		}
-		if let favicon = appDelegate.faviconDownloader.faviconAsIcon(for: webFeed) {
-			return favicon
-		}
-		return FaviconGenerator.favicon(webFeed)
+	private var iconImage: IconImage? {
+		return IconImageCache.shared.imageForFeed(webFeed)
 	}
 	
 	private let homePageIndexPath = IndexPath(row: 0, section: 1)

@@ -146,22 +146,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	// At some point we should refactor the current Feed IndexPath out and only use the timeline feed
 	private(set) var currentFeedIndexPath: IndexPath?
-	
+
 	var timelineIconImage: IconImage? {
-		if let feed = timelineFeed as? WebFeed {
-			
-			let feedIconImage = appDelegate.webFeedIconDownloader.icon(for: feed)
-			if feedIconImage != nil {
-				return feedIconImage
-			}
-			
-			if let faviconIconImage = appDelegate.faviconDownloader.faviconAsIcon(for: feed) {
-				return faviconIconImage
-			}
-			
+		guard let timelineFeed = timelineFeed else {
+			return nil
 		}
-		
-		return (timelineFeed as? SmallIconProvider)?.smallIcon
+		return IconImageCache.shared.imageForFeed(timelineFeed)
 	}
 	
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -853,11 +843,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			currentArticleViewController = articleViewController!
 		}
 		
+		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
+		markArticles(Set([article!]), statusKey: .read, flag: true)
+
 		masterTimelineViewController?.updateArticleSelection(animations: animations)
 		currentArticleViewController.article = article
-		
-		markArticles(Set([article!]), statusKey: .read, flag: true)
-		
 	}
 	
 	func beginSearching() {
@@ -1238,16 +1228,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func showBrowserForArticle(_ article: Article) {
-		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
+		guard let url = article.preferredURL else { return }
 		UIApplication.shared.open(url, options: [:])
 	}
 
 	func showBrowserForCurrentArticle() {
-		guard let preferredLink = currentArticle?.preferredLink, let url = URL(string: preferredLink) else {
-			return
-		}
+		guard let url = currentArticle?.preferredURL else { return }
 		UIApplication.shared.open(url, options: [:])
 	}
 	

@@ -132,6 +132,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	func applicationWillTerminate(_ application: UIApplication) {
 		shuttingDown = true
 	}
+
+	func applicationDidEnterBackground(_ application: UIApplication) {
+		IconImageCache.shared.emptyCache()
+	}
 	
 	// MARK: Notifications
 	

@@ -157,7 +157,7 @@
     document.addEventListener("click", (ev) =>
     {
 	    if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
-        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, .footnotes .footnote-return")) return;
+        if (!ev.target.matches(".footnotes .reversefootnote, .footnotes .footnoteBackLink, .footnotes .footnote-return, .footnotes a[href*='#fn'], .footnotes a[href^='#']")) return;
 		const id = idFromHash(ev.target);
 		if (!id) return;
 		const fnref = document.getElementById(id);

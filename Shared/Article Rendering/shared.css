@@ -382,7 +382,8 @@ img[src*="share-buttons"] {
 
 .newsfoot-footnote-popover .reversefootnote,
 .newsfoot-footnote-popover .footnoteBackLink,
-.newsfoot-footnote-popover .footnote-return {
+.newsfoot-footnote-popover .footnote-return,
+.newsfoot-footnote-popover a[href*='#fn'] {
 	display: none;
 }
 

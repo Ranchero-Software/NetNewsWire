@@ -768,7 +768,7 @@ private extension SidebarViewController {
 	}
 
 	func imageFor(_ node: Node) -> IconImage? {
-		if let feed = node.representedObject as? WebFeed, let feedIcon = appDelegate.webFeedIconDownloader.icon(for: feed) {
+		if let feed = node.representedObject as? WebFeed, let feedIcon = IconImageCache.shared.imageForFeed(feed) {
 			return feedIcon
 		}
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {

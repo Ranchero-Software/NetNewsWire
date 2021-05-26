@@ -107,7 +107,7 @@ struct ArticleToolbarModifier: ViewModifier {
 					.disabled(sceneModel.shareButtonState == nil)
 					.help("Share")
 					.sheet(isPresented: $showActivityView) {
-						if let article = sceneModel.selectedArticles.first, let link = article.preferredLink, let url = URL(string: link) {
+						if let article = sceneModel.selectedArticles.first, let url = article.preferredURL {
 							ActivityViewController(title: article.title, url: url)
 						}
 					}

@@ -310,7 +310,7 @@ final class FeedlyAPICaller {
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		
-		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
+		send(request: request, resultType: Optional<FeedlyCollection>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
 			switch result {
 			case .success(let (httpResponse, _)):
 				if httpResponse.statusCode == 200 {
