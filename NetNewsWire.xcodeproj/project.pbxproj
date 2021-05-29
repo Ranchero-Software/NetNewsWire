@@ -241,7 +241,6 @@
 		513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513277632590FC640064F1E7 /* SyncDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		513277662590FC780064F1E7 /* Secrets in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51C4CFF524D37DD500AF9874 /* Secrets */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5132778C2590FF1E0064F1E7 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5132778B2590FF1E0064F1E7 /* RSCore */; };
-		5132778D2590FF1E0064F1E7 /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5132778B2590FF1E0064F1E7 /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5132779F2591034D0064F1E7 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5132779E2591034D0064F1E7 /* icon.icns */; };
 		51333D1624685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
 		51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51333D1524685D2E00EB5C91 /* AddRedditFeedWindowController.swift */; };
@@ -1294,7 +1293,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5132778D2590FF1E0064F1E7 /* RSCore in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3765,7 +3763,6 @@
 				510C415924E5CDE3008226FD /* Frameworks */,
 				510C415A24E5CDE3008226FD /* Resources */,
 				513277512590FC000064F1E7 /* Embed Frameworks */,
-				51327793259101E50064F1E7 /* Delete Unnecessary Frameworks */,
 			);
 			buildRules = (
 			);
@@ -4016,6 +4013,7 @@
 				84C987A52000AC9E0066B150 /* Run Script: Automated build numbers */,
 				84B06F681ED37B9000F0B54B /* Embed Frameworks */,
 				6581C75720CED60100F4AD34 /* Embed App Extensions */,
+				7180F95C265B67B800189094 /* Run Script: Delete Unnecessary Frameworks For Share Extension */,
 				D519E77022EE5B4100923F27 /* Run Script: Verify No Build Settings */,
 				8423E3E3220158E700C3795B /* Run Script: Code Sign Sparkle */,
 			);
@@ -4461,24 +4459,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if ! command -v swiftgen &> /dev/null\nthen\n    echo \"swiftgen could not be found\"\n    exit\nfi\n\narch -x86_64 swiftgen run strings -t structured-swift5 \"$PROJECT_DIR/Widget/Resources/en.lproj/Localizable.strings\" \"$PROJECT_DIR/Widget/Resources/Localizable.stringsdict\" --output \"$PROJECT_DIR/Widget/Resources/Localized.swift\";\n";
 		};
-		51327793259101E50064F1E7 /* Delete Unnecessary Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Delete Unnecessary Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Delete the framework that Xcode should have never included\n# https://forums.swift.org/t/is-this-an-xcode-bug-or-somehow-related-to-spm/33987\nrm -rf \"${TARGET_BUILD_DIR}/NetNewsWire Share Extension.appex/Contents/Frameworks\"\n";
-		};
 		513F328A2593EFCE0003048F /* Delete Unnecessary Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -4564,6 +4544,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "xcrun -sdk macosx swiftc -target x86_64-macosx10.11  buildscripts/VerifyNoBuildSettings.swift -o $CONFIGURATION_TEMP_DIR/VerifyNoBS\n$CONFIGURATION_TEMP_DIR/VerifyNoBS ${PROJECT_NAME}.xcodeproj/project.pbxproj\n\nif [ $? -ne 0 ]\nthen\n   echo \"error: Build Setting were found in the project.pbxproj file.  Most likely you didn't intend to change this file and should revert it.\"\n   exit 1\nfi\n";
+		};
+		7180F95C265B67B800189094 /* Run Script: Delete Unnecessary Frameworks For Share Extension */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script: Delete Unnecessary Frameworks For Share Extension";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Delete the framework that Xcode should have never included\n# https://forums.swift.org/t/is-this-an-xcode-bug-or-somehow-related-to-spm/33987\nrm -rf \"${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/NetNewsWire Share Extension.appex/Contents/Frameworks\"\n";
 		};
 		8423E3E3220158E700C3795B /* Run Script: Code Sign Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
