@@ -221,7 +221,7 @@ struct AddReaderAPIAccountView: View {
 		HStack {
 			Spacer()
 			VStack(spacing: 8) {
-				Text("Sign in to your \(accountType.localizedAccountName()) account and sync your subscriptions across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
+				Text("Sign in to your \(accountType.localizedAccountName()) account and sync your feeds across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
 				Text("Don't have a \(accountType.localizedAccountName()) instance?").foregroundColor(.secondary)
 				Button(action: {
 					model.presentSignUpOption(accountType)

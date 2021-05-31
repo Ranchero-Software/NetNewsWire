@@ -38,13 +38,13 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		var sectionFooter: String {
 			switch self {
 			case .local:
-				return NSLocalizedString("Local accounts do not sync your subscriptions across devices.", comment: "Local Account")
+				return NSLocalizedString("Local accounts do not sync your feeds across devices", comment: "Local Account")
 			case .icloud:
-				return NSLocalizedString("Use your iCloud account to sync your subscriptions across your iOS and macOS devices.", comment: "iCloud Account")
+				return NSLocalizedString("Your iCloud account syncs your feeds across your Mac and iOS devices", comment: "iCloud Account")
 			case .web:
-				return NSLocalizedString("Web accounts sync your subscriptions across all your devices.", comment: "Web Account")
+				return NSLocalizedString("Web accounts sync your feeds across all your devices", comment: "Web Account")
 			case .selfhosted:
-				return NSLocalizedString("Self-hosted accounts sync your subscriptions across all your devices.", comment: "Self hosted Account")
+				return NSLocalizedString("Self-hosted accounts sync your feeds across all your devices", comment: "Self hosted Account")
 			}
 		}
 		

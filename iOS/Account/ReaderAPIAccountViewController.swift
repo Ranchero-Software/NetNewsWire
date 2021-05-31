@@ -72,16 +72,16 @@ class ReaderAPIAccountViewController: UITableViewController {
 	private func setupFooter() {
 		switch accountType {
 			case .bazQux:
-				footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a BazQux account?", comment: "BazQux")
+				footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a BazQux account?", comment: "BazQux")
 				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
 			case .inoreader:
-				footerLabel.text = NSLocalizedString("Sign in to your InoReader account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have an InoReader account?", comment: "InoReader")
+				footerLabel.text = NSLocalizedString("Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have an InoReader account?", comment: "InoReader")
 				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "InoReader SignUp"), for: .normal)
 			case .theOldReader:
-				footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a The Old Reader account?", comment: "TOR")
+				footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a The Old Reader account?", comment: "TOR")
 				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)
 			case .freshRSS:
-				footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have an FreshRSS instance?", comment: "FreshRSS")
+				footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have an FreshRSS instance?", comment: "FreshRSS")
 				signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "FreshRSS SignUp"), for: .normal)
 			default:
 				return

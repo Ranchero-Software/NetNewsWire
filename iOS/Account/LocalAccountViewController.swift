@@ -25,7 +25,7 @@ class LocalAccountViewController: UITableViewController {
 	}
 	
 	private func setupFooter() {
-		footerLabel.text = NSLocalizedString("Local accounts do not sync your subscriptions across devices.", comment: "Local")
+		footerLabel.text = NSLocalizedString("Local accounts do not sync your feeds across devices.", comment: "Local")
 	}
 
 	@IBAction func cancel(_ sender: Any) {
