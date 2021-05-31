@@ -48,7 +48,7 @@ class FeedWranglerAccountViewController: UITableViewController {
 	}
 	
 	private func setupFooter() {
-		footerLabel.text = NSLocalizedString("Sign in to your Feed Wrangler account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a Feed Wrangler account?", comment: "Feed Wrangler")
+		footerLabel.text = NSLocalizedString("Sign in to your Feed Wrangler account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feed Wrangler account?", comment: "Feed Wrangler")
 	}
 
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

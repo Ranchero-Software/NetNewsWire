@@ -26,7 +26,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="433" height="249"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1536" height="935"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="433" height="249"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -35,7 +35,7 @@
                         <rect key="frame" x="233" y="229" width="0.0" height="0.0"/>
                     </stackView>
                     <gridView xPlacement="trailing" yPlacement="center" rowAlignment="none" rowSpacing="7" columnSpacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="zBB-JH-huI">
-                        <rect key="frame" x="80" y="127" width="270" height="49"/>
+                        <rect key="frame" x="80" y="126" width="270" height="49"/>
                         <rows>
                             <gridRow id="DRl-lC-vUc"/>
                             <gridRow id="eW8-uH-txq"/>
@@ -97,7 +97,7 @@
                         </gridCells>
                     </gridView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9mz-D9-krh">
-                        <rect key="frame" x="344" y="13" width="76" height="32"/>
+                        <rect key="frame" x="345" y="13" width="74" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="62" id="hU1-wc-ebZ"/>
                         </constraints>
@@ -113,7 +113,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XAM-Hb-0Hw">
-                        <rect key="frame" x="270" y="13" width="76" height="32"/>
+                        <rect key="frame" x="271" y="13" width="74" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ufs-ar-BAY">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -136,39 +136,39 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lti-yM-8LV">
                         <rect key="frame" x="78" y="213" width="337" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Sign in to your Feedbin account." id="ras-dj-nP8">
-                            <font key="font" textStyle="headline" name=".SFNS-Bold"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gEK-TH-URn">
-                        <rect key="frame" x="78" y="193" width="179" height="15"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Don't have a Feedbin account?" id="QF5-gl-fjb">
-                            <font key="font" textStyle="callout" name=".SFNS-Regular"/>
+                        <rect key="frame" x="78" y="192" width="191" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Don’t have a Feedbin account?" id="QF5-gl-fjb">
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X1Z-v1-T5L">
-                        <rect key="frame" x="78" y="82" width="337" height="30"/>
+                        <rect key="frame" x="78" y="81" width="337" height="30"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="30" id="NRl-GS-cHS"/>
                             <constraint firstAttribute="width" constant="333" id="cNd-Nt-bdB"/>
                         </constraints>
                         <textFieldCell key="cell" title="Your username and password will be encrypted and stored in Keychain. " id="HuQ-TS-tS3">
-                            <font key="font" textStyle="callout" name=".SFNS-Regular"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MlB-jN-Ybe">
-                        <rect key="frame" x="254" y="193" width="105" height="15"/>
+                        <rect key="frame" x="266" y="192" width="105" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="105" id="fHd-fN-n8G"/>
                         </constraints>
                         <buttonCell key="cell" type="roundRect" title="Create one here." bezelStyle="roundedRect" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="fx3-Uk-NVw">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" textStyle="callout" name=".SFNS-Regular"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                         </buttonCell>
                         <color key="contentTintColor" name="AccentColor"/>
                         <connections>
@@ -176,16 +176,16 @@ Gw
                         </connections>
                     </button>
                     <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="B0W-bh-Evv">
-                        <rect key="frame" x="253" y="22" width="16" height="16"/>
+                        <rect key="frame" x="253" y="23" width="16" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="Tcz-vj-cLr"/>
                             <constraint firstAttribute="height" constant="16" id="slt-7y-Jw0"/>
                         </constraints>
                     </progressIndicator>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sPC-hi-ewD">
-                        <rect key="frame" x="78" y="60" width="337" height="14"/>
+                        <rect key="frame" x="78" y="57" width="337" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" id="sl9-fG-jwg">
-                            <font key="font" textStyle="subheadline" name=".SFNS-Regular"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>

@@ -16,7 +16,7 @@ struct AdvancedPreferencesView: View {
             Form {
                 Toggle("Check for app updates automatically", isOn: $preferences.checkForUpdatesAutomatically)
                 Toggle("Download Test Builds", isOn: $preferences.downloadTestBuilds)
-				Text("If you’re not sure, don't enable test builds. Test builds may have bugs, which may include crashing bugs and data loss.")
+				Text("If you’re not sure, don’t enable test builds. Test builds may have bugs, which may include crashing bugs and data loss.")
 					.foregroundColor(.secondary)
                 HStack {
                     Spacer()

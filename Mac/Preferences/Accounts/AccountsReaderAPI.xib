@@ -30,7 +30,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="433" height="275"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1536" height="935"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="433" height="275"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -39,7 +39,7 @@
                         <rect key="frame" x="217" y="255" width="0.0" height="0.0"/>
                     </stackView>
                     <gridView xPlacement="trailing" yPlacement="center" rowAlignment="none" rowSpacing="7" columnSpacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="zBB-JH-huI">
-                        <rect key="frame" x="80" y="125" width="270" height="77"/>
+                        <rect key="frame" x="80" y="124" width="270" height="77"/>
                         <rows>
                             <gridRow id="DRl-lC-vUc"/>
                             <gridRow id="eW8-uH-txq"/>
@@ -125,7 +125,7 @@
                         </gridCells>
                     </gridView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9mz-D9-krh">
-                        <rect key="frame" x="347" y="13" width="76" height="32"/>
+                        <rect key="frame" x="348" y="13" width="74" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="62" id="afy-Zh-DIy"/>
                         </constraints>
@@ -141,7 +141,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XAM-Hb-0Hw">
-                        <rect key="frame" x="273" y="13" width="76" height="32"/>
+                        <rect key="frame" x="274" y="13" width="74" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ufs-ar-BAY">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -171,21 +171,21 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lti-yM-8LV">
                         <rect key="frame" x="78" y="239" width="337" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Sign in to a Reader API account." id="ras-dj-nP8">
-                            <font key="font" textStyle="headline" name=".SFNS-Bold"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="R8e-67-Bwh">
-                        <rect key="frame" x="78" y="219" width="174" height="15"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Don't have a Reader account?" id="ker-hu-FEc">
-                            <font key="font" textStyle="callout" name=".SFNS-Regular"/>
+                        <rect key="frame" x="78" y="218" width="186" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Don’t have a Reader account?" id="ker-hu-FEc">
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kUQ-aj-Iu6">
-                        <rect key="frame" x="251" y="220" width="99" height="13"/>
+                        <rect key="frame" x="263" y="220" width="99" height="13"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="13" id="NOr-5b-kRd"/>
                         </constraints>
@@ -199,21 +199,21 @@ Gw
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q5z-LG-0Fm">
-                        <rect key="frame" x="78" y="71" width="337" height="39"/>
+                        <rect key="frame" x="78" y="70" width="337" height="39"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="39" id="Zv4-mj-po0"/>
                             <constraint firstAttribute="width" constant="333" id="xsi-I6-XNM"/>
                         </constraints>
                         <textFieldCell key="cell" title="Your username and password will be encrypted and stored in Keychain. " id="Ec9-bB-tQz">
-                            <font key="font" textStyle="callout" name=".SFNS-Regular"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gyz-Mz-v08">
-                        <rect key="frame" x="78" y="55" width="337" height="14"/>
+                        <rect key="frame" x="78" y="52" width="337" height="16"/>
                         <textFieldCell key="cell" id="AGV-EV-VmY">
-                            <font key="font" textStyle="subheadline" name=".SFNS-Regular"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>

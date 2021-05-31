@@ -113,10 +113,10 @@ struct AddReaderAPIAccountView: View {
 						.font(.headline)
 					HStack {
 						if accountType == .freshRSS {
-							Text("Don't have a \(accountType.localizedAccountName()) instance?")
+							Text("Don’t have a \(accountType.localizedAccountName()) instance?")
 								.font(.callout)
 						} else {
-							Text("Don't have an \(accountType.localizedAccountName()) account?")
+							Text("Don’t have an \(accountType.localizedAccountName()) account?")
 								.font(.callout)
 						}
 						Button(action: {
@@ -222,7 +222,7 @@ struct AddReaderAPIAccountView: View {
 			Spacer()
 			VStack(spacing: 8) {
 				Text("Sign in to your \(accountType.localizedAccountName()) account and sync your feeds across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
-				Text("Don't have a \(accountType.localizedAccountName()) instance?").foregroundColor(.secondary)
+				Text("Don’t have a \(accountType.localizedAccountName()) instance?").foregroundColor(.secondary)
 				Button(action: {
 					model.presentSignUpOption(accountType)
 				}, label: {

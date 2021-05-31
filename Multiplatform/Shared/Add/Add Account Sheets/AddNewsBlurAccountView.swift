@@ -107,7 +107,7 @@ struct AddNewsBlurAccountView: View {
 					Text("Sign in to your NewsBlur account.")
 						.font(.headline)
 					HStack {
-						Text("Don't have a NewsBlur account?")
+						Text("Don’t have a NewsBlur account?")
 							.font(.callout)
 						Button(action: {
 							model.presentSignUpOption(.newsBlur)
@@ -189,7 +189,7 @@ struct AddNewsBlurAccountView: View {
 			Spacer()
 			VStack(spacing: 8) {
 				Text("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
-				Text("Don't have a NewsBlur account?").foregroundColor(.secondary)
+				Text("Don’t have a NewsBlur account?").foregroundColor(.secondary)
 				Button(action: {
 					model.presentSignUpOption(.newsBlur)
 				}, label: {

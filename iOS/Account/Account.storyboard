@@ -56,7 +56,7 @@
                                     <rect key="frame" x="20" y="8" width="373" height="78.5"/>
                                     <string key="text">Sign in to your Feed Wranger account to sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.
 
-Don't have a Feed Wrangler account?</string>
+Don’t have a Feed Wrangler account?</string>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                     <nil key="highlightedColor"/>
@@ -90,7 +90,7 @@ Don't have a Feed Wrangler account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="o06-fe-i3S">
-                                                    <rect key="frame" x="20" y="11" width="520" height="22"/>
+                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -110,12 +110,12 @@ Don't have a Feed Wrangler account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Z6i-nX-CwJ">
-                                                    <rect key="frame" x="20" y="11.5" width="470" height="21"/>
+                                                    <rect key="frame" x="20" y="11.5" width="284" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lBg-Pn-8ao">
-                                                    <rect key="frame" x="498" y="5.5" width="42" height="33"/>
+                                                    <rect key="frame" x="312" y="5.5" width="42" height="33"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Show"/>
                                                     <connections>
@@ -258,7 +258,7 @@ Don't have a Feed Wrangler account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Yl1-R6-xZi">
-                                                    <rect key="frame" x="20" y="11" width="520" height="22"/>
+                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                 </textField>
@@ -341,7 +341,7 @@ Don't have a Feed Wrangler account?</string>
                                     <rect key="frame" x="20" y="8" width="373" height="78.5"/>
                                     <string key="text">Sign in to your Feedbin account to sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.
 
-Don't have a Feedbin account?</string>
+Don’t have a Feedbin account?</string>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                     <nil key="highlightedColor"/>
@@ -375,7 +375,7 @@ Don't have a Feedbin account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vJa-NN-yjR">
-                                                    <rect key="frame" x="20" y="11" width="520" height="22"/>
+                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -395,12 +395,12 @@ Don't have a Feedbin account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YC2-RH-QoV">
-                                                    <rect key="frame" x="20" y="11.5" width="470" height="21"/>
+                                                    <rect key="frame" x="20" y="11.5" width="284" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TfW-wf-V06">
-                                                    <rect key="frame" x="498" y="5.5" width="42" height="33"/>
+                                                    <rect key="frame" x="312" y="5.5" width="42" height="33"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Show"/>
                                                     <connections>
@@ -522,7 +522,7 @@ Don't have a Feedbin account?</string>
                                     <rect key="frame" x="20" y="8" width="373" height="78.5"/>
                                     <string key="text">Sign in to your NewsBlur account to sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.
 
-Don't have a NewsBlur account?</string>
+Don’t have a NewsBlur account?</string>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                     <nil key="highlightedColor"/>
@@ -556,7 +556,7 @@ Don't have a NewsBlur account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Username or Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="S4v-fs-DIO">
-                                                    <rect key="frame" x="20" y="11" width="520" height="22"/>
+                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -576,12 +576,12 @@ Don't have a NewsBlur account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fct-XR-fEa">
-                                                    <rect key="frame" x="20" y="11.5" width="470" height="21"/>
+                                                    <rect key="frame" x="20" y="11.5" width="284" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GY9-nr-jFb">
-                                                    <rect key="frame" x="498" y="5.5" width="42" height="33"/>
+                                                    <rect key="frame" x="312" y="5.5" width="42" height="33"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Show"/>
                                                     <connections>
@@ -687,7 +687,7 @@ Don't have a NewsBlur account?</string>
                                     <rect key="frame" x="20" y="8" width="373" height="46.5"/>
                                     <string key="text">Use your Reader account to sync your feeds across your devices.
 
-Don't have a Reader account?</string>
+Don’t have a Reader account?</string>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                     <nil key="highlightedColor"/>
@@ -721,7 +721,7 @@ Don't have a Reader account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Username or Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CZg-x8-936">
-                                                    <rect key="frame" x="14" y="11" width="533" height="22"/>
+                                                    <rect key="frame" x="14" y="11" width="347" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -741,12 +741,12 @@ Don't have a Reader account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="KgN-kQ-Cyc">
-                                                    <rect key="frame" x="14" y="11.5" width="480" height="21"/>
+                                                    <rect key="frame" x="14" y="11.5" width="294" height="21"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cFF-qt-WLs">
-                                                    <rect key="frame" x="502" y="5.5" width="42" height="33"/>
+                                                    <rect key="frame" x="316" y="5.5" width="42" height="33"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Show"/>
                                                     <connections>
@@ -772,7 +772,7 @@ Don't have a Reader account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="API URL" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iPv-M2-U8Q">
-                                                    <rect key="frame" x="14" y="11" width="530" height="22"/>
+                                                    <rect key="frame" x="14" y="11" width="340" height="22"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="url"/>
                                                 </textField>
@@ -796,7 +796,7 @@ Don't have a Reader account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7L9-X7-1Oc">
-                                                    <rect key="frame" x="10" y="-0.5" width="540" height="44.5"/>
+                                                    <rect key="frame" x="0.0" y="-0.5" width="374" height="44.5"/>
                                                     <state key="normal" title="Action"/>
                                                     <connections>
                                                         <action selector="action:" destination="MzG-hS-TpF" eventType="touchUpInside" id="d10-4f-ZUn"/>
