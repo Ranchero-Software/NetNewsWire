@@ -1,10 +1,19 @@
 # iOS Release Notes
 
+### 6.0 TestFlight build 604 - 31 May 2021
+
+This is a final candidate
+Updated about NetNewsWire section
+Fixed bug where Tweetbot share sheet could be empty
+Feedly: fixed bug where your custom name could get lost after moving a feed to a different folder
+Twitter: fixed bug handling tweets containing characters made up of multiple scalars
+iCloud: added explanation about when sync may be slow
+
 ### 6.0 TestFlight build 603 - 16 May 2021
 
 Feedly: handle Feedly API change with return value on deleting a folder
 NewsBlur: sync no longer includes items marked as hidden on NewsBlur
-FreshRSS: form for adding account now suggests endpoing URL
+FreshRSS: form for adding account now suggests endpoint URL
 FreshRSS: improved the error message for when the API URL can’t be found
 iCloud: retain existing feeds moved to a folder that doesn’t exist yet (sync ordering issue)
 Renamed a Delete Account button to Remove Account
