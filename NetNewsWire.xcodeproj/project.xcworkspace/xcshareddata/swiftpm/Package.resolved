@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/OAuthSwift/OAuthSwift.git",
         "state": {
           "branch": null,
-          "revision": "fde77955e6983fbfaabd491709d52b8a82fda4d0",
-          "version": "2.1.2"
+          "revision": "d85964b96dbce94df961f28b996187c835089903",
+          "version": "2.2.0"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/Ranchero-Software/RSCore.git",
         "state": {
           "branch": null,
-          "revision": "665319af9428455e45c1d043156db85548b73f31",
-          "version": "1.0.5"
+          "revision": "2a13519b4d91843faa6aff4245b0e387dc64eafe",
+          "version": "1.0.6"
         }
       },
       {
