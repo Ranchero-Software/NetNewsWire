@@ -12,8 +12,16 @@ import Articles
 struct ArticleContainerView: View {
 	
 	var body: some View {
-		ArticleView()
-			.modifier(ArticleToolbarModifier())
+		GeometryReader { metrics in
+			ScrollView {
+				ArticleView()
+					.frame(width: metrics.size.width, height: metrics.size.height)
+					.modifier(ArticleToolbarModifier())
+			}
+			
+		}
+		
+		
 	}
 	
 }
