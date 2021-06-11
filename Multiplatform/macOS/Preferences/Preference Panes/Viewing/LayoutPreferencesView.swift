@@ -39,14 +39,17 @@ struct LayoutPreferencesView: View {
 				
 			}
 			
-			timelineRowPreview
-				.frame(width: 300)
-				.padding()
-				.overlay(
-					RoundedRectangle(cornerRadius: 8, style: .continuous)
-						.stroke(Color.gray, lineWidth: 1)
-				)
-				.animation(.default)
+			withAnimation(.linear, {
+				timelineRowPreview
+					.frame(width: 300)
+					.padding()
+					.overlay(
+						RoundedRectangle(cornerRadius: 8, style: .continuous)
+							.stroke(Color.gray, lineWidth: 1)
+					)
+			})
+			
+			
 				
 			Text("PREVIEW")
 				.font(.caption)

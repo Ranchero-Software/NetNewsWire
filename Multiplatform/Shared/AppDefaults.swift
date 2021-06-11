@@ -191,37 +191,18 @@ final class AppDefaults: ObservableObject {
 	}
 	
 	// MARK: Timeline
-	@AppStorage(wrappedValue: false, Key.timelineGroupByFeed, store: store) var timelineGroupByFeed: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.timelineGroupByFeed, store: store) var timelineGroupByFeed: Bool 
 	
-	@AppStorage(wrappedValue: 2.0, Key.timelineNumberOfLines, store: store) var timelineNumberOfLines: Double {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: 2.0, Key.timelineNumberOfLines, store: store) var timelineNumberOfLines: Double
+	
 
-	@AppStorage(wrappedValue: 40.0, Key.timelineIconDimensions, store: store) var timelineIconDimensions: Double {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: 40.0, Key.timelineIconDimensions, store: store) var timelineIconDimensions: Double
 	
 	/// Set to `true` to sort oldest to newest, `false` for newest to oldest. Default is `false`.
-	@AppStorage(wrappedValue: false, Key.timelineSortDirection, store: store) var timelineSortDirection: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.timelineSortDirection, store: store) var timelineSortDirection: Bool
 	
 	// MARK: Sidebar
-	@AppStorage(wrappedValue: true, Key.sidebarConfirmDelete, store: store) var sidebarConfirmDelete: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: true, Key.sidebarConfirmDelete, store: store) var sidebarConfirmDelete: Bool
 	
 	
 	// MARK: Refresh
@@ -232,11 +213,7 @@ final class AppDefaults: ObservableObject {
 	
 	@AppStorage(wrappedValue: false, Key.articleFullscreenEnabled, store: store) var articleFullscreenEnabled: Bool
 	
-	@AppStorage(wrappedValue: 3, Key.articleTextSize, store: store) var articleTextSizeTag: Int {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: 3, Key.articleTextSize, store: store) var articleTextSizeTag: Int
 	
 	var articleTextSize: ArticleTextSize {
 		ArticleTextSize(rawValue: articleTextSizeTag) ?? ArticleTextSize.large
