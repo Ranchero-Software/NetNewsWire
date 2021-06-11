@@ -11,6 +11,8 @@
 		1701E1E725689D1E009453D8 /* Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1701E1E625689D1E009453D8 /* Localized.swift */; };
 		1704053424E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
 		1704053524E5985A00A00787 /* SceneNavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1704053324E5985A00A00787 /* SceneNavigationModel.swift */; };
+		17067B352673897F008E5180 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
+		17067B3626738981008E5180 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
 		1710B9132552354E00679C0D /* AddAccountHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B9122552354E00679C0D /* AddAccountHelpView.swift */; };
 		1710B9142552354E00679C0D /* AddAccountHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B9122552354E00679C0D /* AddAccountHelpView.swift */; };
 		1710B929255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1710B928255246F900679C0D /* EnableExtensionPointHelpView.swift */; };
@@ -4860,6 +4862,7 @@
 				51E498F724A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				175942AA24AD533200585066 /* RefreshInterval.swift in Sources */,
 				51E4993524A867E800B667CB /* AppNotifications.swift in Sources */,
+				17067B3626738981008E5180 /* IconImageCache.swift in Sources */,
 				51C0515E24A77DF800194D5E /* MainApp.swift in Sources */,
 				51919FF724AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4993D24A870F800B667CB /* UserNotificationManager.swift in Sources */,
@@ -4886,6 +4889,7 @@
 				17930ED524AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */,
 				51E4993A24A8708800B667CB /* AppDelegate.swift in Sources */,
 				51E498CE24A8085D00B667CB /* UnreadFeed.swift in Sources */,
+				17067B352673897F008E5180 /* IconImageCache.swift in Sources */,
 				51B8BCC324C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
 				51E498C724A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				5194736F24BBB937001A2939 /* HiddenModifier.swift in Sources */,
