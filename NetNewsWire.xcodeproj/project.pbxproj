@@ -54,7 +54,6 @@
 		1729529424AA1CAA00D65E66 /* AdvancedPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */; };
 		1729529524AA1CAA00D65E66 /* GeneralPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */; };
 		1729529724AA1CD000D65E66 /* MacPreferencePanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */; };
-		1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729529A24AA1FD200D65E66 /* MacSearchField.swift */; };
 		17386B5E2577BC820014C8B2 /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		17386B6C2577BD820014C8B2 /* RSSparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 17386B6B2577BD820014C8B2 /* RSSparkle */; };
 		17386B7A2577C4BF0014C8B2 /* AddLocalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17386B792577C4BF0014C8B2 /* AddLocalAccountView.swift */; };
@@ -1481,7 +1480,6 @@
 		1729529124AA1CAA00D65E66 /* AdvancedPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesView.swift; sourceTree = "<group>"; };
 		1729529224AA1CAA00D65E66 /* GeneralPreferencesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferencesView.swift; sourceTree = "<group>"; };
 		1729529624AA1CD000D65E66 /* MacPreferencePanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MacPreferencePanes.swift; sourceTree = "<group>"; };
-		1729529A24AA1FD200D65E66 /* MacSearchField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchField.swift; sourceTree = "<group>"; };
 		17386B792577C4BF0014C8B2 /* AddLocalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddLocalAccountView.swift; sourceTree = "<group>"; };
 		17386BC32577CC600014C8B2 /* AddFeedbinAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedbinAccountView.swift; sourceTree = "<group>"; };
 		173A64162547BE0900267F6E /* AccountType+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AccountType+Helpers.swift"; sourceTree = "<group>"; };
@@ -2828,7 +2826,6 @@
 				51C0514624A77DF800194D5E /* Info.plist */,
 				51E4993924A8708800B667CB /* AppDelegate.swift */,
 				51B80F4524BF76E700C6C32D /* Browser.swift */,
-				1729529A24AA1FD200D65E66 /* MacSearchField.swift */,
 				5177470C24B2FF3B00EB0F74 /* Article */,
 				1729528F24AA1A4F00D65E66 /* Preferences */,
 			);
@@ -4995,7 +4992,6 @@
 				17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */,
 				17241288257BBF7000ACCEBC /* AddNewsBlurViewModel.swift in Sources */,
 				51E4996724A8760B00B667CB /* ArticleStylesManager.swift in Sources */,
-				1729529B24AA1FD200D65E66 /* MacSearchField.swift in Sources */,
 				51408B7F24A9EC6F0073CF4E /* SidebarItem.swift in Sources */,
 				514E6BDB24ACEA0400AC6F6E /* TimelineItemView.swift in Sources */,
 				51B8BCE724C25F7C00360B00 /* TimelineContextMenu.swift in Sources */,
