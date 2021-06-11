@@ -17,14 +17,14 @@ struct SidebarListStyleModifier: ViewModifier {
 	@ViewBuilder func body(content: Content) -> some View {
 		#if os(macOS)
 		content
-			.listStyle(SidebarListStyle())
+			.listStyle(.sidebar)
 		#else
 		if horizontalSizeClass == .compact {
 			content
-				.listStyle(PlainListStyle())
+				.listStyle(.plain)
 		} else {
 			content
-				.listStyle(SidebarListStyle())
+				.listStyle(.sidebar)
 		}
 		#endif
 		
