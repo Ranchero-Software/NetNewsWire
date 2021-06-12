@@ -14,7 +14,6 @@ struct TimelineView: View {
 	@Binding var isReadFiltered: Bool?
 
 	@EnvironmentObject private var timelineModel: TimelineModel
-	@EnvironmentObject private var sceneModel: SceneModel
 
 	@State private var timelineItemFrames = [String: CGRect]()
 	@State private var searchText: String = ""
