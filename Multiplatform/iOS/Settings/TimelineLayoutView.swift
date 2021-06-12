@@ -23,7 +23,7 @@ struct TimelineLayoutView: View {
 				Section(header: Text("Number of Lines"), content: {
 					numberOfLines
 				})			}
-			.listStyle(InsetGroupedListStyle())
+			.listStyle(.inset)
 			
 			Divider()
 			timelineRowPreview.padding()

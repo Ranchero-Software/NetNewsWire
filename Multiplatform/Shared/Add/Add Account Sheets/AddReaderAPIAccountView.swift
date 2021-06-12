@@ -84,7 +84,7 @@ struct AddReaderAPIAccountView: View {
 			}, label: {
 				Text("Cancel")
 			}))
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(Text(accountType.localizedAccountName()))
 		.alert(isPresented: $model.showError, content: {
@@ -123,7 +123,7 @@ struct AddReaderAPIAccountView: View {
 							model.presentSignUpOption(accountType)
 						}, label: {
 							Text(accountType == .freshRSS ? "Find out more." : "Sign up here.").font(.callout)
-						}).buttonStyle(LinkButtonStyle())
+						}).buttonStyle(.link)
 					}
 					
 					HStack {
@@ -176,7 +176,7 @@ struct AddReaderAPIAccountView: View {
 		}
 		.padding()
 		.frame(width: 400, height: height())
-		.textFieldStyle(RoundedBorderTextFieldStyle())
+		.textFieldStyle(.roundedBorder)
 		.alert(isPresented: $model.showError, content: {
 			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
 		})

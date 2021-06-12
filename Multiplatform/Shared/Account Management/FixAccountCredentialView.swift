@@ -76,7 +76,7 @@ struct FixAccountCredentialView: View {
 					accountFields
 				}
 			}
-			.textFieldStyle(RoundedBorderTextFieldStyle())
+			.textFieldStyle(.roundedBorder)
 			
 			Spacer()
 			HStack{
@@ -99,7 +99,7 @@ struct FixAccountCredentialView: View {
 					accountFields
 				})
 			}
-			.listStyle(InsetGroupedListStyle())
+			.listStyle(.inset)
 			.navigationBarItems(
 				leading:
 					cancelButton

@@ -32,7 +32,7 @@ struct MainApp: App {
 				.environmentObject(defaults)
 				.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
 		}
-		.windowToolbarStyle(UnifiedWindowToolbarStyle())
+		.windowToolbarStyle(.unified)
 		.commands {
 			SidebarCommands()
 			CommandGroup(after: .newItem, addition: {

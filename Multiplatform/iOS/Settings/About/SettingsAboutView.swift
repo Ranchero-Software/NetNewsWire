@@ -27,7 +27,7 @@ struct SettingsAboutView: View {
 				Section(header: Text("DEDICATION"), footer: Text("Copyright © 2002-2021 Brent Simmons").font(.footnote)) {
 					AttributedStringView(string: self.viewModel.dedication, preferredMaxLayoutWidth: geometry.size.width - 20)
 				}
-			}.listStyle(InsetGroupedListStyle())
+			}.listStyle(.inset)
 		}
 		.navigationTitle(Text("About"))
     }

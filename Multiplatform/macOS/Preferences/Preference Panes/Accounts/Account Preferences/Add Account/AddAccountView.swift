@@ -134,7 +134,7 @@ struct AddAccountView: View {
 			.padding(.top, 12)
 			.padding(.bottom, 4)
 		}
-		.pickerStyle(RadioGroupPickerStyle())
+		.pickerStyle(.radioGroup)
 		.fixedSize(horizontal: false, vertical: true)
 		.frame(width: 420)
 		.padding()
@@ -159,7 +159,7 @@ struct AddAccountView: View {
 					.tag(account)
 				})
 			})
-			.pickerStyle(RadioGroupPickerStyle())
+				.pickerStyle(.radioGroup)
 			.offset(x: 7.5, y: 0)
 			
 			Text(AddAccountSections.local.sectionFooter).foregroundColor(.gray)

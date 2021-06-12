@@ -81,7 +81,7 @@ struct AddFolderView: View {
 			LazyVGrid(columns: [GridItem(.fixed(75), spacing: 10, alignment: .trailing),GridItem(.fixed(400), spacing: 0, alignment: .leading) ], alignment: .leading, spacing: 10, pinnedViews: [], content:{
 				Text("Name:").bold()
 				TextField("Name", text: $viewModel.folderName)
-					.textFieldStyle(RoundedBorderTextFieldStyle())
+					.textFieldStyle(.roundedBorder)
 					.help("The name of the folder you want to create")
 				Text("Account:").bold()
 				accountPicker

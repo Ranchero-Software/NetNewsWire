@@ -49,7 +49,7 @@ struct AddCloudKitAccountView: View {
 		)
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(Text(AccountType.cloudKit.localizedAccountName()))
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 	}
 	#endif
 	

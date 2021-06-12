@@ -43,7 +43,7 @@ struct SidebarView: View {
 					}
 				})
 				.padding(.top, 8).padding(.trailing)
-				.buttonStyle(PlainButtonStyle())
+				.buttonStyle(.plain)
 				.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 			}
 			List(selection: $sidebarModel.selectedFeedIdentifiers) {
@@ -227,7 +227,7 @@ struct SidebarView: View {
 							   tag: sidebarItem.feed!.feedID!,
 							   selection: $sidebarModel.selectedFeedIdentifier) {
 					EmptyView()
-				}.buttonStyle(PlainButtonStyle())
+				}.buttonStyle(.plain)
 			}
 			#endif
 		}

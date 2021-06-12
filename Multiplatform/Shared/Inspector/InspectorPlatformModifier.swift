@@ -17,13 +17,13 @@ struct InspectorPlatformModifier: ViewModifier {
 		
 		#if os(macOS)
 		content
-		.textFieldStyle(RoundedBorderTextFieldStyle())
+		.textFieldStyle(.roundedBorder)
 		.frame(width: 300)
 		.padding()
 		#else
 		NavigationView {
 			content
-			.listStyle(InsetGroupedListStyle())
+			.listStyle(.inset)
 			.navigationBarTitle("Inspector", displayMode: .inline)
 			.navigationBarItems(
 				leading:

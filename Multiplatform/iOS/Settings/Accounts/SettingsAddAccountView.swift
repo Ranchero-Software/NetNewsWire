@@ -25,7 +25,7 @@ struct SettingsAddAccountView: View {
 				}
 			}
 		}
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 		.sheet(isPresented: $model.isAddPresented) {
 			switch model.selectedAccountType! {
 			case .onMyMac:

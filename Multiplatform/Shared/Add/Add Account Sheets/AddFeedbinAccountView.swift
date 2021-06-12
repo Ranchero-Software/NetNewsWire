@@ -80,7 +80,7 @@ struct AddFeedbinAccountView: View {
 			}, label: {
 				Text("Cancel")
 			}))
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(Text("Feedbin"))
 		.alert(isPresented: $model.showError, content: {
@@ -113,7 +113,7 @@ struct AddFeedbinAccountView: View {
 							model.presentSignUpOption(.feedbin)
 						}, label: {
 							Text("Sign up here.").font(.callout)
-						}).buttonStyle(LinkButtonStyle())
+						}).buttonStyle(.link)
 					}
 					
 					HStack {
@@ -160,7 +160,7 @@ struct AddFeedbinAccountView: View {
 		}
 		.padding()
 		.frame(minWidth: 400, maxWidth: 400, minHeight: 230, maxHeight: 260)
-		.textFieldStyle(RoundedBorderTextFieldStyle())
+		.textFieldStyle(.roundedBorder)
 		.alert(isPresented: $model.showError, content: {
 			Alert(title: Text("Sign In Error"), message: Text(model.accountUpdateError.description), dismissButton: .cancel())
 		})

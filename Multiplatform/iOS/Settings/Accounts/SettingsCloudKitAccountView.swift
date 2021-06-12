@@ -26,7 +26,7 @@ struct SettingsCloudKitAccountView: View {
 					}
 				}
 			}
-			.listStyle(InsetGroupedListStyle())
+			.listStyle(.inset)
 			.navigationBarTitle(Text(verbatim: "iCloud"), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: { self.dismiss() }) { Text("Cancel") } )
 		}

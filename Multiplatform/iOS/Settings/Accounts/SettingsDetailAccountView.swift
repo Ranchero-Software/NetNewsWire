@@ -74,7 +74,7 @@ struct SettingsDetailAccountView: View {
 				}
 			}
 		}
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 		.navigationBarTitle(Text(verbatim: settingsModel.nameForDisplay), displayMode: .inline)
 	}
 

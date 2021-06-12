@@ -42,7 +42,7 @@ struct EditAccountCredentialsView: View {
 						TextField("API URL", text: $editModel.apiUrl)
 					}
 				}
-			}.textFieldStyle(RoundedBorderTextFieldStyle())
+			}.textFieldStyle(.roundedBorder)
 			
 			Spacer()
 			HStack{

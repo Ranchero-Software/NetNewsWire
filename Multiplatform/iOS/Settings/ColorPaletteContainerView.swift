@@ -23,7 +23,7 @@ struct ColorPaletteContainerView: View {
 				}
 			}
 		}
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 		.navigationBarTitle("Color Palette", displayMode: .inline)
     }
 

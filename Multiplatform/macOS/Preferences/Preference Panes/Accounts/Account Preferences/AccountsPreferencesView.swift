@@ -95,7 +95,7 @@ struct AccountsPreferencesView: View {
 									.foregroundColor(hoverOnAdd ? Color.gray.opacity(0.1) : Color.clear))
 						.padding(4)
 				})
-				.buttonStyle(BorderlessButtonStyle())
+					.buttonStyle(.borderless)
 				.onHover { hovering in
 					hoverOnAdd = hovering
 				}
@@ -111,7 +111,7 @@ struct AccountsPreferencesView: View {
 									.foregroundColor(hoverOnRemove ? Color.gray.opacity(0.1) : Color.clear))
 						.padding(4)
 				})
-				.buttonStyle(BorderlessButtonStyle())
+					.buttonStyle(.borderless)
 				.onHover { hovering in
 					hoverOnRemove = hovering
 				}

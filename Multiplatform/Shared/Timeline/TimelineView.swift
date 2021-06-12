@@ -38,7 +38,7 @@ struct TimelineView: View {
 					})
 					.hidden(isReadFiltered == nil)
 					.padding(.top, 8).padding(.trailing)
-					.buttonStyle(PlainButtonStyle())
+					.buttonStyle(.plain)
 					.help(isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
 				}
 				ScrollViewReader { scrollViewProxy in
@@ -80,7 +80,7 @@ struct TimelineView: View {
 									   tag: timelineItem.article.articleID,
 									   selection: $timelineModel.selectedTimelineItemID) {
 							EmptyView()
-						}.buttonStyle(PlainButtonStyle())
+						}.buttonStyle(.plain)
 					}
 				}
 				.id(timelineModel.listID)

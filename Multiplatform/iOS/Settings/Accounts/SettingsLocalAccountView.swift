@@ -31,7 +31,7 @@ struct SettingsLocalAccountView: View {
 					}
 				}
 			}
-			.listStyle(InsetGroupedListStyle())
+			.listStyle(.inset)
 			.navigationBarTitle(Text(verbatim: Account.defaultLocalAccountName), displayMode: .inline)
 			.navigationBarItems(leading: Button(action: { self.dismiss() }) { Text("Cancel") } )
 		}

@@ -28,7 +28,7 @@ struct SettingsView: View {
 				appearance
 				help
 			}
-			.listStyle(InsetGroupedListStyle())
+			.listStyle(.inset)
 			.navigationBarTitle("Settings", displayMode: .inline)
 			.navigationBarItems(leading:
 				HStack {
@@ -134,7 +134,7 @@ struct SettingsView: View {
 				})
 			})
 		}
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 		.navigationBarTitle("Import Subscriptions", displayMode: .inline)
 	}
 
@@ -151,7 +151,7 @@ struct SettingsView: View {
 				
 			})
 		}
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 		.navigationBarTitle("Export Subscriptions", displayMode: .inline)
 	}
 	

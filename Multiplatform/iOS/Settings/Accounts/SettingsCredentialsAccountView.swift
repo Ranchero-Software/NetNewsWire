@@ -61,7 +61,7 @@ struct SettingsCredentialsAccountView: View {
 					}
 				}
 			}
-			.listStyle(InsetGroupedListStyle())
+			.listStyle(.inset)
 			.disabled(settingsModel.busy)
 			.onReceive(settingsModel.$shouldDismiss, perform: { dismiss in
 				if dismiss == true {

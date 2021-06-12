@@ -51,7 +51,7 @@ struct AddFeedlyAccountView: View {
 		)
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(Text(AccountType.feedly.localizedAccountName()))
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 		
 	}
 	#endif
@@ -76,7 +76,7 @@ struct AddFeedlyAccountView: View {
 							model.presentSignUpOption(.feedly)
 						}, label: {
 							Text("Sign up here.").font(.callout)
-						}).buttonStyle(LinkButtonStyle())
+						}).buttonStyle(.link)
 					}
 					
 					Spacer()

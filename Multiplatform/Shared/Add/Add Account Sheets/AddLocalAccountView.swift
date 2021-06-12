@@ -54,7 +54,7 @@ struct AddLocalAccountView: View {
 		)
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(Text(AccountType.onMyMac.localizedAccountName()))
-		.listStyle(InsetGroupedListStyle())
+		.listStyle(.inset)
 	}
 	#endif
 	
@@ -102,7 +102,7 @@ struct AddLocalAccountView: View {
 		}
 		.padding()
 		.frame(minWidth: 400, maxWidth: 400, minHeight: 230, maxHeight: 260)
-		.textFieldStyle(RoundedBorderTextFieldStyle())
+		.textFieldStyle(.roundedBorder)
 	}
 	#endif
 	
