@@ -19,7 +19,7 @@ struct AddWebFeedView: View {
     var body: some View {
 		#if os(iOS)
 			iosForm
-				.onAppear {
+				.task {
 					viewModel.pasteUrlFromPasteboard()
 				}
 				.onReceive(viewModel.$shouldDismiss, perform: { dismiss in
@@ -29,7 +29,7 @@ struct AddWebFeedView: View {
 				})
 		#else
 			macForm
-				.onAppear {
+				.task {
 					viewModel.pasteUrlFromPasteboard()
 				}.alert(isPresented: $viewModel.showError) {
 					Alert(title: Text("Oops"),

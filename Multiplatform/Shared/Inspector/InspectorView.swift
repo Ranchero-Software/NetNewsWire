@@ -133,7 +133,7 @@ struct InspectorView: View {
 			}.padding([.top, .bottom], 20)
 			#endif
 		}
-		.onAppear {
+		.task {
 			inspectorModel.configure(with: sidebarItem.feed as! WebFeed)
 			feedIconImageLoader.loadImage(for: sidebarItem.feed!)
 		}.onReceive(inspectorModel.$shouldUpdate) { value in
@@ -178,7 +178,7 @@ struct InspectorView: View {
 			}.padding([.top, .bottom])
 			#endif
 		}
-		.onAppear {
+		.task {
 			inspectorModel.configure(with: sidebarItem.represented as! Folder)
 			feedIconImageLoader.loadImage(for: sidebarItem.feed!)
 		}
@@ -225,7 +225,7 @@ struct InspectorView: View {
 			}.padding(.top)
 			#endif
 		}
-		.onAppear {
+		.task {
 			inspectorModel.configure(with: sidebarItem.represented as! Account)
 		}
 		.onReceive(inspectorModel.$shouldUpdate) { value in

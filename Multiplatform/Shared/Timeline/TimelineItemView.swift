@@ -66,7 +66,7 @@ struct TimelineItemView: View {
 			}
 		}
 		.padding(.vertical, verticalPadding)
-		.onAppear {
+		.task {
 			articleIconImageLoader.loadImage(for: timelineItem.article)
 		}
 		.contextMenu {

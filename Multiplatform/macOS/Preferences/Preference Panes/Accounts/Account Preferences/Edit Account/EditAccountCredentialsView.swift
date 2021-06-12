@@ -64,7 +64,7 @@ struct EditAccountCredentialsView: View {
 				}
 				
 			}
-		}.onAppear {
+		}.task {
 			editModel.retrieveCredentials(viewModel.account!)
 		}
 		.onChange(of: editModel.accountCredentialsWereUpdated) { value in

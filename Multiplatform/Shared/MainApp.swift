@@ -27,7 +27,7 @@ struct MainApp: App {
 		WindowGroup {
 			SceneNavigationView()
 				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 300, idealHeight: 700, maxHeight: .infinity)
-				.onAppear { refreshProgress.startup() }
+				.task { refreshProgress.startup() }
 				.environmentObject(refreshProgress)
 				.environmentObject(defaults)
 				.preferredColorScheme(AppDefaults.userInterfaceColorScheme)
@@ -125,7 +125,7 @@ struct MainApp: App {
 		#if os(iOS)
 		WindowGroup {
 			SceneNavigationView()
-				.onAppear { refreshProgress.startup() }
+				.task { refreshProgress.startup() }
 				.environmentObject(refreshProgress)
 				.environmentObject(defaults)
 				.preferredColorScheme(AppDefaults.userInterfaceColorScheme)

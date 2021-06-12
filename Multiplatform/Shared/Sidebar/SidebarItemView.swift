@@ -48,7 +48,7 @@ struct SidebarItemView: View {
 			}
 			#endif
 		}
-		.onAppear {
+		.task {
 			if let feed = sidebarItem.feed {
 				feedIconImageLoader.loadImage(for: feed)
 			}

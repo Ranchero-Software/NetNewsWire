@@ -21,7 +21,7 @@ struct TimelineContainerView: View {
 		TimelineView(timelineItems: $timelineItems, isReadFiltered: $isReadFiltered)
 			.modifier(TimelineToolbarModifier())
 			.environmentObject(sceneModel.timelineModel)
-			.onAppear {
+			.task {
 				sceneModel.timelineModel.undoManager = undoManager
 			}
 			.onReceive(sceneModel.timelineModel.readFilterAndFeedsPublisher!) { (_, filtered) in

@@ -47,7 +47,7 @@
         }
       },
       {
-        "package": "PLCrashReporter",
+        "package": "plcrashreporter",
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
@@ -101,7 +101,7 @@
         }
       },
       {
-        "package": "RSSparkle",
+        "package": "Sparkle-Binary",
         "repositoryURL": "https://github.com/Ranchero-Software/Sparkle-Binary.git",
         "state": {
           "branch": null,
@@ -110,7 +110,7 @@
         }
       },
       {
-        "package": "Swifter",
+        "package": "swifter",
         "repositoryURL": "https://github.com/httpswift/swifter.git",
         "state": {
           "branch": null,

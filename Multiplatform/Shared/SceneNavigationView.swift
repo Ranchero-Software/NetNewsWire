@@ -43,7 +43,7 @@ struct SceneNavigationView: View {
 				.environmentObject(sceneNavigationModel)
 		}
 		.environmentObject(sceneModel)
-		.onAppear {
+		.task {
 			sceneModel.startup()
 		}
 		.onReceive(sceneModel.$accountSyncErrors) { errors in

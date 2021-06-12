@@ -112,7 +112,7 @@ struct SidebarView: View {
 		})
 		#endif
 		
-//		.onAppear {
+//		.task {
 //			expandedContainers.data = expandedContainerData
 //		}
 //		.onReceive(expandedContainers.objectDidChange) {

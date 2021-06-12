@@ -20,7 +20,7 @@ struct SidebarContainerView: View {
 			.modifier(SidebarToolbarModifier())
 			.modifier(SidebarListStyleModifier())
 			.environmentObject(sceneModel.sidebarModel)
-			.onAppear {
+			.task {
 				sceneModel.sidebarModel.undoManager = undoManager
 			}
 			.onReceive(sceneModel.sidebarModel.sidebarItemsPublisher!) { newItems in
