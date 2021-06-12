@@ -21,46 +21,25 @@ struct TimelineView: View {
 	var body: some View {
 		GeometryReader { geometryReaderProxy in
 			#if os(macOS)
-			VStack {
-				HStack {
-					TimelineSortOrderView()
-					Spacer()
-					Button (action: {
-						if let filtered = isReadFiltered {
-							timelineModel.changeReadFilterSubject.send(!filtered)
-						}
-					}, label: {
-						if isReadFiltered ?? false {
-							AppAssets.filterActiveImage
-						} else {
-							AppAssets.filterInactiveImage
-						}
-					})
-					.hidden(isReadFiltered == nil)
-					.padding(.top, 8).padding(.trailing)
-					.buttonStyle(.plain)
-					.help(isReadFiltered ?? false ? "Show Read Articles" : "Filter Read Articles")
+			ScrollViewReader { scrollViewProxy in
+				List(timelineItems.items, selection: $timelineModel.selectedTimelineItemIDs) { timelineItem in
+					let selected = timelineModel.selectedTimelineItemIDs.contains(timelineItem.article.articleID)
+					TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
+						.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
 				}
-				ScrollViewReader { scrollViewProxy in
-					List(timelineItems.items, selection: $timelineModel.selectedTimelineItemIDs) { timelineItem in
-						let selected = timelineModel.selectedTimelineItemIDs.contains(timelineItem.article.articleID)
-						TimelineItemView(selected: selected, width: geometryReaderProxy.size.width, timelineItem: timelineItem)
-							.background(TimelineItemFramePreferenceView(timelineItem: timelineItem))
+				.id(timelineModel.listID)
+				.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
+					for pref in preferences {
+						timelineItemFrames[pref.articleID] = pref.frame
 					}
-					.id(timelineModel.listID)
-					.onPreferenceChange(TimelineItemFramePreferenceKey.self) { preferences in
-						for pref in preferences {
-							timelineItemFrames[pref.articleID] = pref.frame
-						}
-					}
-					.onChange(of: timelineModel.selectedTimelineItemIDs) { selectedArticleIDs in
-						let proxyFrame = geometryReaderProxy.frame(in: .global)
-						for articleID in selectedArticleIDs {
-							if let itemFrame = timelineItemFrames[articleID] {
-								if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 35 {
-									withAnimation {
-										scrollViewProxy.scrollTo(articleID, anchor: .center)
-									}
+				}
+				.onChange(of: timelineModel.selectedTimelineItemIDs) { selectedArticleIDs in
+					let proxyFrame = geometryReaderProxy.frame(in: .global)
+					for articleID in selectedArticleIDs {
+						if let itemFrame = timelineItemFrames[articleID] {
+							if itemFrame.minY < proxyFrame.minY + 3 || itemFrame.maxY > proxyFrame.maxY - 35 {
+								withAnimation {
+									scrollViewProxy.scrollTo(articleID, anchor: .center)
 								}
 							}
 						}
