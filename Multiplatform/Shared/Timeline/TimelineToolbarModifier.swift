@@ -60,14 +60,15 @@ struct TimelineToolbarModifier: ViewModifier {
 					Spacer()
 				}
 				#else
-				ToolbarItem(placement: .navigation) {
-					Button {
-						NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
-					} label: {
-						AppAssets.sidebarToggleImage
-					}
-					.help("Toggle Sidebar")
-				}
+//				ToolbarItem(placement: .navigation) {
+//					Button {
+//						NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+//					} label: {
+//						AppAssets.sidebarToggleImage
+//					}
+//					.help("Toggle Sidebar")
+//					
+//				}
 				
 				ToolbarItem(placement: .automatic) {
 					Button {

@@ -316,15 +316,18 @@ private extension TimelineModel {
 		// Determine unread count from selected feeds
 		selectedFeedsPublisher
 			.map { feeds -> Int in
-				let articleSetArray = feeds.map({ try! $0.fetchUnreadArticles() })
-				var articleIds = Set<String>()
-				for s in articleSetArray {
-					for a in s {
-						articleIds.insert(a.articleID)
+				do {
+					let articleSetArray = try feeds.map({ try $0.fetchUnreadArticles() })
+					var articleIds = Set<String>()
+					for s in articleSetArray {
+						for a in s {
+							articleIds.insert(a.articleID)
+						}
 					}
+					return articleIds.count
+				} catch {
+					return 0
 				}
-				return articleIds.count
-				
 			}.assign(to: &$unreadCount)
 		
 		let toggledReadFilterPublisher = changeReadFilterSubject
