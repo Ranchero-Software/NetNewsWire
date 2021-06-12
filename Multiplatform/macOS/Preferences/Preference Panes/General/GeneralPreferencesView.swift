@@ -23,18 +23,6 @@ struct GeneralPreferencesView: View {
 					})
 				   })
 			
-			Picker("Default RSS reader", selection: $preferences.readerSelection, content: {
-				ForEach(0..<preferences.rssReaders.count, content: { index in
-					if index > 0 && preferences.rssReaders[index].nameMinusAppSuffix.contains("NetNewsWire") {
-						Text(preferences.rssReaders[index].nameMinusAppSuffix.appending(" (old version)"))
-
-					} else {
-						Text(preferences.rssReaders[index].nameMinusAppSuffix)
-							.tag(index)
-					}
-				})
-			})
-			
 			Toggle("Confirm when deleting feeds and folders", isOn: $defaults.sidebarConfirmDelete)
 			
 			Toggle("Open webpages in background in browser", isOn: $defaults.openInBrowserInBackground)

@@ -26,7 +26,7 @@ struct MainApp: App {
 		#if os(macOS)
 		WindowGroup {
 			SceneNavigationView()
-				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 600, idealHeight: 700, maxHeight: .infinity)
+				.frame(minWidth: 600, idealWidth: 1000, maxWidth: .infinity, minHeight: 300, idealHeight: 700, maxHeight: .infinity)
 				.onAppear { refreshProgress.startup() }
 				.environmentObject(refreshProgress)
 				.environmentObject(defaults)
