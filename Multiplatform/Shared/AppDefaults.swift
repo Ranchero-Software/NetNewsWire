@@ -111,22 +111,14 @@ final class AppDefaults: ObservableObject {
 	}
 	
 	// MARK: Refresh Interval
-	@AppStorage(wrappedValue: 4, Key.refreshInterval, store: store) var interval: Int {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: 4, Key.refreshInterval, store: store) var interval: Int
 	
 	var refreshInterval: RefreshInterval {
 		RefreshInterval(rawValue: interval) ?? RefreshInterval.everyHour
 	}
 	
 	// MARK: Dock Badge
-	@AppStorage(wrappedValue: false, Key.hideDockUnreadCount, store: store) var hideDockUnreadCount {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.hideDockUnreadCount, store: store) var hideDockUnreadCount
 	
 	// MARK: Color Palette
 	var userInterfaceColorPalette: UserInterfaceColorPalette {
@@ -231,67 +223,27 @@ final class AppDefaults: ObservableObject {
 	}
 	
 	// MARK: Window State
-	@AppStorage(wrappedValue: false, Key.openInBrowserInBackground, store: store) var openInBrowserInBackground: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.openInBrowserInBackground, store: store) var openInBrowserInBackground: Bool
 	
-	@AppStorage(Key.defaultBrowserID, store: store) var defaultBrowserID: String? {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(Key.defaultBrowserID, store: store) var defaultBrowserID: String?
 	
-	@AppStorage(Key.showTitleOnMainWindow, store: store) var showTitleOnMainWindow: Bool? {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(Key.showTitleOnMainWindow, store: store) var showTitleOnMainWindow: Bool?
 	
-	@AppStorage(wrappedValue: false, Key.showDebugMenu, store: store) var showDebugMenu: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.showDebugMenu, store: store) var showDebugMenu: Bool
 	
-	@AppStorage(wrappedValue: false, Key.timelineShowsSeparators, store: store) var timelineShowsSeparators: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.timelineShowsSeparators, store: store) var timelineShowsSeparators: Bool
 	
 	#if !MAC_APP_STORE
-	@AppStorage(wrappedValue: false, Key.webInspectorEnabled, store: store) var webInspectorEnabled: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.webInspectorEnabled, store: store) var webInspectorEnabled: Bool
 	
-	@AppStorage(wrappedValue: false, Key.webInspectorStartsAttached, store: store) var webInspectorStartsAttached: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.webInspectorStartsAttached, store: store) var webInspectorStartsAttached: Bool
 	#endif
 	
-	@AppStorage(wrappedValue: true, Key.checkForUpdatesAutomatically, store: store) var checkForUpdatesAutomatically: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: true, Key.checkForUpdatesAutomatically, store: store) var checkForUpdatesAutomatically: Bool
 	
-	@AppStorage(wrappedValue: false, Key.downloadTestBuilds, store: store) var downloadTestBuilds: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: false, Key.downloadTestBuilds, store: store) var downloadTestBuilds: Bool
 	
-	@AppStorage(wrappedValue: true, Key.sendCrashLogs, store: store) var sendCrashLogs: Bool {
-		didSet {
-			objectWillChange.send()
-		}
-	}
+	@AppStorage(wrappedValue: true, Key.sendCrashLogs, store: store) var sendCrashLogs: Bool 
 
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
