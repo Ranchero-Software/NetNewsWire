@@ -14,6 +14,7 @@ struct TimelineView: View {
 	@Binding var isReadFiltered: Bool?
 
 	@EnvironmentObject private var timelineModel: TimelineModel
+	@EnvironmentObject private var sceneModel: SceneModel
 
 	@State private var timelineItemFrames = [String: CGRect]()
 	@State private var searchText: String = ""
@@ -47,6 +48,7 @@ struct TimelineView: View {
 				}
 			}
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
+			.navigationSubtitle(Text(verbatim: "\(timelineModel.unreadCount) unread"))
 			.searchable(Text("Search"), text: $searchText, placement: .toolbar)
 			#else
 			ScrollViewReader { scrollViewProxy in

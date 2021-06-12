@@ -25,10 +25,11 @@ class TimelineModel: ObservableObject, UndoableCommandRunner {
 	
 	weak var delegate: TimelineModelDelegate?
 	
-	@Published var nameForDisplay = ""
+	@Published var nameForDisplay = "NetNewsWire"
 	@Published var selectedTimelineItemIDs = Set<String>()  // Don't use directly.  Use selectedTimelineItemsPublisher
 	@Published var selectedTimelineItemID: String? = nil    // Don't use directly.  Use selectedTimelineItemsPublisher
 	@Published var listID = ""
+	@Published var unreadCount = 0
 	
 	var selectedArticles: [Article] {
 		return selectedTimelineItems.map { $0.article }
@@ -289,7 +290,7 @@ private extension TimelineModel {
 			.map { feeds -> String in
 				switch feeds.count {
 				case 0:
-					return ""
+					return "NetNewsWire"
 				case 1:
 					return feeds.first!.nameForDisplay
 				default:
@@ -311,7 +312,21 @@ private extension TimelineModel {
 				self?.selectedTimelineItemID = nil
 			}
 			.store(in: &cancellables)
-
+		
+		// Determine unread count from selected feeds
+		selectedFeedsPublisher
+			.map { feeds -> Int in
+				let articleSetArray = feeds.map({ try! $0.fetchUnreadArticles() })
+				var articleIds = Set<String>()
+				for s in articleSetArray {
+					for a in s {
+						articleIds.insert(a.articleID)
+					}
+				}
+				return articleIds.count
+				
+			}.assign(to: &$unreadCount)
+		
 		let toggledReadFilterPublisher = changeReadFilterSubject
 			.map { Optional($0) }
 			.withLatestFrom(selectedFeedsPublisher, resultSelector: { ($1, $0) })
