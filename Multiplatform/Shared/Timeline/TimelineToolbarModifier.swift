@@ -59,6 +59,29 @@ struct TimelineToolbarModifier: ViewModifier {
 				ToolbarItem(placement: .bottomBar) {
 					Spacer()
 				}
+				#else
+				ToolbarItem(placement: .navigation) {
+					Button {
+						NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+					} label: {
+						AppAssets.sidebarToggleImage
+					}
+					.help("Toggle Sidebar")
+				}
+				
+				ToolbarItem(placement: .automatic) {
+					Button {
+						sceneModel.markAllAsRead()
+					} label: {
+						AppAssets.markAllAsReadImagePNG
+							//.offset(y: 7)
+					}
+					.disabled(sceneModel.markAllAsReadButtonState == nil)
+					.help("Mark All as Read")
+				}
+				
+				
+				
 				#endif
 			}
 	}

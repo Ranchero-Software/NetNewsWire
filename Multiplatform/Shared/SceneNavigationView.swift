@@ -40,6 +40,7 @@ struct SceneNavigationView: View {
 			#endif
 
 			ArticleContainerView()
+				.environmentObject(sceneNavigationModel)
 		}
 		.environmentObject(sceneModel)
 		.onAppear {
@@ -94,119 +95,6 @@ struct SceneNavigationView: View {
 			
 			#endif
 		})
-		.toolbar {
-			
-			#if os(macOS)
-			ToolbarItem(placement: .navigation) {
-				Button {
-					NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
-				} label: {
-					AppAssets.sidebarToggleImage
-				}
-				.help("Toggle Sidebar")
-			}
-			ToolbarItem() {
-				Menu {
-					Button("Add Web Feed", action: { sceneNavigationModel.sheetToShow = .web })
-					Button("Add Reddit Feed", action:  { })
-					Button("Add Twitter Feed", action:  { })
-					Button("Add Folder", action:  { sceneNavigationModel.sheetToShow = .folder})
-				} label : {
-					AppAssets.addMenuImage
-				}
-			}
-			ToolbarItem {
-				Button {
-					AccountManager.shared.refreshAll(completion: nil)
-					
-				} label: {
-					AppAssets.refreshImage
-				}
-				.help("Refresh").padding(.trailing, 40)
-			}
-			ToolbarItem {
-				Button {
-					sceneModel.markAllAsRead()
-				} label: {
-					AppAssets.markAllAsReadImagePNG
-						.offset(y: 7)
-				}
-				.disabled(sceneModel.markAllAsReadButtonState == nil)
-				.help("Mark All as Read")
-			}
-//			ToolbarItem {
-//				MacSearchField()
-//					.frame(width: 200)
-//			}
-			ToolbarItem {
-				Button {
-					sceneModel.goToNextUnread()
-				} label: {
-					AppAssets.nextUnreadArticleImage
-				}
-				.disabled(sceneModel.nextUnreadButtonState == nil)
-				.help("Go to Next Unread").padding(.trailing, 40)
-			}
-			ToolbarItem {
-				Button {
-					sceneModel.toggleReadStatusForSelectedArticles()
-				} label: {
-					if sceneModel.readButtonState ?? false {
-						AppAssets.readClosedImage
-					} else {
-						AppAssets.readOpenImage
-					}
-				}
-				.disabled(sceneModel.readButtonState == nil)
-				.help(sceneModel.readButtonState ?? false ? "Mark as Unread" : "Mark as Read")
-			}
-			ToolbarItem {
-				Button {
-					sceneModel.toggleStarredStatusForSelectedArticles()
-				} label: {
-					if sceneModel.starButtonState ?? false {
-						AppAssets.starClosedImage
-					} else {
-						AppAssets.starOpenImage
-					}
-				}
-				.disabled(sceneModel.starButtonState == nil)
-				.help(sceneModel.starButtonState ?? false ? "Mark as Unstarred" : "Mark as Starred")
-			}
-			ToolbarItem {
-				Button {
-				} label: {
-					AppAssets.articleExtractorOff
-				}
-				.disabled(sceneModel.extractorButtonState == nil)
-				.help("Show Reader View")
-			}
-			ToolbarItem {
-				Button {
-					sceneModel.openSelectedArticleInBrowser()
-				} label: {
-					AppAssets.openInBrowserImage
-				}
-				.disabled(sceneModel.openInBrowserButtonState == nil)
-				.help("Open in Browser")
-			}
-			ToolbarItem {
-				ZStack {
-					if sceneNavigationModel.showShareSheet {
-						SharingServiceView(articles: sceneModel.selectedArticles, showing: $sceneNavigationModel.showShareSheet)
-							.frame(width: 20, height: 20)
-					}
-					Button {
-						sceneNavigationModel.showShareSheet = true
-					} label: {
-						AppAssets.shareImage
-					}
-				}
-				.disabled(sceneModel.shareButtonState == nil)
-				.help("Share")
-			}
-			#endif
-		}
 	}
 
 }

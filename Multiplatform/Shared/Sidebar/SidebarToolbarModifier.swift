@@ -7,12 +7,14 @@
 //
 
 import SwiftUI
+import Account
 
 struct SidebarToolbarModifier: ViewModifier {
     
 	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var defaults: AppDefaults
 	@EnvironmentObject private var sidebarModel: SidebarModel
+	@EnvironmentObject private var sceneNavigationModel: SceneNavigationModel
 	@StateObject private var viewModel = SidebarToolbarModel()
 
 	@ViewBuilder func body(content: Content) -> some View {
@@ -96,6 +98,25 @@ struct SidebarToolbarModifier: ViewModifier {
 			.toolbar {
 				ToolbarItem {
 					Spacer()
+				}
+				ToolbarItem(placement: .automatic) {
+					Button {
+						AccountManager.shared.refreshAll(completion: nil)
+						
+					} label: {
+						AppAssets.refreshImage
+					}
+					.help("Refresh")
+				}
+				ToolbarItem(placement: .automatic) {
+					Menu {
+						Button("Add Web Feed", action: { sceneNavigationModel.sheetToShow = .web })
+						Button("Add Reddit Feed", action:  { })
+						Button("Add Twitter Feed", action:  { })
+						Button("Add Folder", action:  { sceneNavigationModel.sheetToShow = .folder})
+					} label : {
+						AppAssets.addMenuImage
+					}
 				}
 			}
 		#endif

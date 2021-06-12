@@ -11,6 +11,8 @@ import Articles
 
 struct ArticleContainerView: View {
 	
+	@EnvironmentObject private var sceneNavigationModel: SceneNavigationModel
+	
 	var body: some View {
 		GeometryReader { metrics in
 			ScrollView {

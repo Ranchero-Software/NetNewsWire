@@ -16,6 +16,7 @@ struct TimelineView: View {
 	@EnvironmentObject private var timelineModel: TimelineModel
 
 	@State private var timelineItemFrames = [String: CGRect]()
+	@State private var searchText: String = ""
 	
 	var body: some View {
 		GeometryReader { geometryReaderProxy in
@@ -67,6 +68,7 @@ struct TimelineView: View {
 				}
 			}
 			.navigationTitle(Text(verbatim: timelineModel.nameForDisplay))
+			.searchable(Text("Search"), text: $searchText, placement: .toolbar)
 			#else
 			ScrollViewReader { scrollViewProxy in
 				List(timelineItems.items) { timelineItem in
