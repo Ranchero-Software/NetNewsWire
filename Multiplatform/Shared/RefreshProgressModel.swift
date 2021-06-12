@@ -13,7 +13,7 @@ import Account
 
 class RefreshProgressModel: ObservableObject {
 	
-	enum State {
+	enum State: Equatable {
 		case refreshProgress(Float)
 		case lastRefreshDateText(String)
 		case none

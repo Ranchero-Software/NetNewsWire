@@ -16,18 +16,19 @@ struct SidebarView: View {
 	@EnvironmentObject private var refreshProgress: RefreshProgressModel
 	@EnvironmentObject private var sceneModel: SceneModel
 	@EnvironmentObject private var sidebarModel: SidebarModel
-
+	
 	// I had to comment out SceneStorage because it blows up if used on macOS
 	//	@SceneStorage("expandedContainers") private var expandedContainerData = Data()
-
+	
 	private let threshold: CGFloat = 80
 	@State private var previousScrollOffset: CGFloat = 0
 	@State private var scrollOffset: CGFloat = 0
 	@State var pulling: Bool = false
 	@State var refreshing: Bool = false
-
+	@State var refresherHeight: CGFloat = 0.0
+	
 	var body: some View {
-		#if os(macOS)
+#if os(macOS)
 		VStack {
 			HStack {
 				Spacer()
@@ -42,44 +43,67 @@ struct SidebarView: View {
 						AppAssets.filterInactiveImage
 					}
 				})
-				.padding(.top, 8).padding(.trailing)
-				.buttonStyle(.plain)
-				.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
+					.padding(.top, 8).padding(.trailing)
+					.buttonStyle(.plain)
+					.help(sidebarModel.isReadFiltered ? "Show Read Feeds" : "Filter Read Feeds")
 			}
 			List(selection: $sidebarModel.selectedFeedIdentifiers) {
 				rows
 			}
-			if case .refreshProgress(let percent) = refreshProgress.state {
-				HStack(alignment: .center) {
-					Spacer()
+			HStack(alignment: .center) {
+				Spacer()
+				if case .refreshProgress(let percent) = refreshProgress.state {
 					ProgressView(value: percent).frame(width: 100)
-					Spacer()
+						.padding(8)
+						.background(Color(NSColor.windowBackgroundColor))
 				}
-				.padding(8)
-				.background(Color(NSColor.windowBackgroundColor))
-				.frame(height: 30)
-				.animation(.easeInOut(duration: 0.5))
-				.transition(.move(edge: .bottom))
+				Spacer()
 			}
+			.padding(8)
+			.frame(height: refresherHeight)
+			.background(Color(NSColor.windowBackgroundColor))
+			.transition(.move(edge: .bottom))
 		}
+		.onChange(of: refreshProgress.state, perform: { newState in
+			switch newState {
+			case .lastRefreshDateText( _) :
+				withAnimation(.linear(duration: 0.2), {
+					refresherHeight = 0
+				})
+			case .refreshProgress(let prog):
+				if prog == 100 {
+					withAnimation(.linear(duration: 0.2), {
+						refresherHeight = 0
+					})
+				} else {
+					withAnimation(.linear(duration: 0.2), {
+						refresherHeight = 30
+					})
+				}
+			case .none:
+				withAnimation(.linear(duration: 0.2), {
+					refresherHeight = 0
+				})
+			}
+		})
 		.alert(isPresented: $sidebarModel.showDeleteConfirmation, content: {
 			Alert(title: sidebarModel.countOfFeedsToDelete() > 1 ?
-							(Text("Delete multiple items?")) :
-							(Text("Delete \(sidebarModel.namesOfFeedsToDelete())?")),
-						 message: Text("Are you sure you wish to delete \(sidebarModel.namesOfFeedsToDelete())?"),
+				  (Text("Delete multiple items?")) :
+					(Text("Delete \(sidebarModel.namesOfFeedsToDelete())?")),
+				  message: Text("Are you sure you wish to delete \(sidebarModel.namesOfFeedsToDelete())?"),
 				  primaryButton: .destructive(Text("Delete"),
 											  action: {
-												sidebarModel.deleteFromAccount.send(sidebarModel.sidebarItemToDelete!)
-												sidebarModel.sidebarItemToDelete = nil
-												sidebarModel.selectedFeedIdentifiers.removeAll()
-												sidebarModel.showDeleteConfirmation = false
-				  }),
+				sidebarModel.deleteFromAccount.send(sidebarModel.sidebarItemToDelete!)
+				sidebarModel.sidebarItemToDelete = nil
+				sidebarModel.selectedFeedIdentifiers.removeAll()
+				sidebarModel.showDeleteConfirmation = false
+			}),
 				  secondaryButton: .cancel(Text("Cancel"), action: {
-						sidebarModel.sidebarItemToDelete = nil
-						sidebarModel.showDeleteConfirmation = false
-				  }))
+				sidebarModel.sidebarItemToDelete = nil
+				sidebarModel.showDeleteConfirmation = false
+			}))
 		})
-		#else
+#else
 		ZStack(alignment: .top) {
 			List {
 				rows
@@ -95,29 +119,29 @@ struct SidebarView: View {
 		}
 		.alert(isPresented: $sidebarModel.showDeleteConfirmation, content: {
 			Alert(title: sidebarModel.countOfFeedsToDelete() > 1 ?
-							(Text("Delete multiple items?")) :
-							(Text("Delete \(sidebarModel.namesOfFeedsToDelete())?")),
-						 message: Text("Are you sure you wish to delete \(sidebarModel.namesOfFeedsToDelete())?"),
+				  (Text("Delete multiple items?")) :
+					(Text("Delete \(sidebarModel.namesOfFeedsToDelete())?")),
+				  message: Text("Are you sure you wish to delete \(sidebarModel.namesOfFeedsToDelete())?"),
 				  primaryButton: .destructive(Text("Delete"),
 											  action: {
-												sidebarModel.deleteFromAccount.send(sidebarModel.sidebarItemToDelete!)
-												sidebarModel.sidebarItemToDelete = nil
-												sidebarModel.selectedFeedIdentifiers.removeAll()
-												sidebarModel.showDeleteConfirmation = false
-				  }),
+				sidebarModel.deleteFromAccount.send(sidebarModel.sidebarItemToDelete!)
+				sidebarModel.sidebarItemToDelete = nil
+				sidebarModel.selectedFeedIdentifiers.removeAll()
+				sidebarModel.showDeleteConfirmation = false
+			}),
 				  secondaryButton: .cancel(Text("Cancel"), action: {
-						sidebarModel.sidebarItemToDelete = nil
-						sidebarModel.showDeleteConfirmation = false
-				  }))
+				sidebarModel.sidebarItemToDelete = nil
+				sidebarModel.showDeleteConfirmation = false
+			}))
 		})
-		#endif
+#endif
 		
-//		.task {
-//			expandedContainers.data = expandedContainerData
-//		}
-//		.onReceive(expandedContainers.objectDidChange) {
-//			expandedContainerData = expandedContainers.data
-//		}
+		//		.task {
+		//			expandedContainers.data = expandedContainerData
+		//		}
+		//		.onReceive(expandedContainers.objectDidChange) {
+		//			expandedContainerData = expandedContainers.data
+		//		}
 	}
 	
 	func refreshLogic(values: [RefreshKeyTypes.PrefData]) {
@@ -125,13 +149,13 @@ struct SidebarView: View {
 			let movingBounds = values.first { $0.vType == .movingView }?.bounds ?? .zero
 			let fixedBounds = values.first { $0.vType == .fixedView }?.bounds ?? .zero
 			scrollOffset = movingBounds.minY - fixedBounds.minY
-
+			
 			// Crossing the threshold on the way down, we start the refresh process
 			if !pulling && (scrollOffset > threshold && previousScrollOffset <= threshold) {
 				pulling = true
 				AccountManager.shared.refreshAll()
 			}
-
+			
 			// Crossing the threshold on the way UP, we end the refresh
 			if pulling && previousScrollOffset > threshold && scrollOffset <= threshold {
 				pulling = false
@@ -149,25 +173,25 @@ struct SidebarView: View {
 			}
 		}
 	}
-
+	
 	struct RefreshKeyTypes {
 		enum ViewType: Int {
 			case movingView
 			case fixedView
 		}
-
+		
 		struct PrefData: Equatable {
 			let vType: ViewType
 			let bounds: CGRect
 		}
-
+		
 		struct PrefKey: PreferenceKey {
 			static var defaultValue: [PrefData] = []
-
+			
 			static func reduce(value: inout [PrefData], nextValue: () -> [PrefData]) {
 				value.append(contentsOf: nextValue())
 			}
-
+			
 			typealias Value = [PrefData]
 		}
 	}
@@ -190,11 +214,11 @@ struct SidebarView: View {
 						}
 					}
 				} label: {
-					#if os(macOS)
+#if os(macOS)
 					SidebarItemView(sidebarItem: sidebarItem)
 						.padding(.leading, 4)
 						.environmentObject(sidebarModel)
-					#else
+#else
 					if sidebarItem.representedType == .smartFeedController {
 						GeometryReader { proxy in
 							SidebarItemView(sidebarItem: sidebarItem)
@@ -205,22 +229,22 @@ struct SidebarView: View {
 						SidebarItemView(sidebarItem: sidebarItem)
 							.environmentObject(sidebarModel)
 					}
-					#endif
+#endif
 				}
 			}
 		}
 	}
-
+	
 	struct SidebarItemNavigation: View {
 		
 		@EnvironmentObject private var sidebarModel: SidebarModel
 		var sidebarItem: SidebarItem
 		
 		var body: some View {
-			#if os(macOS)
+#if os(macOS)
 			SidebarItemView(sidebarItem: sidebarItem)
 				.tag(sidebarItem.feed!.feedID!)
-			#else
+#else
 			ZStack {
 				SidebarItemView(sidebarItem: sidebarItem)
 				NavigationLink(destination: TimelineContainerView(),
@@ -229,7 +253,7 @@ struct SidebarView: View {
 					EmptyView()
 				}.buttonStyle(.plain)
 			}
-			#endif
+#endif
 		}
 		
 	}
