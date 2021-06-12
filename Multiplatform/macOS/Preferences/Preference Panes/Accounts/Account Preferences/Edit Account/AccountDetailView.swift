@@ -40,7 +40,7 @@ struct AccountDetailView: View {
 	}
 	
 	var editAccountForm: some View {
-		Form(content: {
+		VStack(content: {
 			HStack(alignment: .top) {
 				Text("Type: ")
 					.frame(width: 50)
@@ -53,14 +53,14 @@ struct AccountDetailView: View {
 				Text("Name: ")
 					.frame(width: 50)
 				VStack(alignment: .leading) {
-					TextField(viewModel.account!.name ?? "", text: $viewModel.accountName)
-						.textFieldStyle(RoundedBorderTextFieldStyle())
+					TextField(viewModel.account?.nameForDisplay ?? "", text: $viewModel.accountName)
+						.textFieldStyle(.roundedBorder)
 					Text("The name appears in the sidebar. It can be anything you want. You can even use emoji. 🎸")
 						.foregroundColor(.secondary)
 				}
 			}
 			Spacer()
-			if viewModel.account?.type != .onMyMac {
+			if viewModel.account!.type != .onMyMac || viewModel.account!.type != .cloudKit {
 				HStack {
 					Spacer()
 					Button("Credentials", action: {

@@ -19,7 +19,6 @@ struct AccountsPreferencesView: View {
 		VStack {
 			HStack(alignment: .top, spacing: 10) {
 				listOfAccounts
-				
 				AccountDetailView(viewModel: viewModel)
 				.frame(height: 300, alignment: .leading)
 			}
@@ -66,6 +65,7 @@ struct AccountsPreferencesView: View {
 				  }))
 		})
 	}
+
 	
 	var listOfAccounts: some View {
 		VStack(alignment: .leading) {
