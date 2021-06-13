@@ -27,20 +27,17 @@ struct SceneNavigationView: View {
 			#if os(macOS)
 			SidebarContainerView()
 				.frame(minWidth: 100, idealWidth: 150, maxHeight: .infinity)
+			TimelineContainerView()
+			ArticleContainerView()
+				.environmentObject(sceneNavigationModel)
 			#else
 			SidebarContainerView()
-			#endif
-
-			#if os(iOS)
 			if horizontalSizeClass != .compact {
 				TimelineContainerView()
 			}
-			#else
-			TimelineContainerView()
-			#endif
-
 			ArticleContainerView()
 				.environmentObject(sceneNavigationModel)
+			#endif
 		}
 		.environmentObject(sceneModel)
 		.task {
