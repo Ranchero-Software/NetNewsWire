@@ -12,8 +12,6 @@ import RSWeb
 import Articles
 import ArticlesDatabase
 
-public typealias AsyncRefreshResult = (Bool, [Error]?)
-
 
 // Main thread only.
 
