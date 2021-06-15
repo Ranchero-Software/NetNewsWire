@@ -296,26 +296,21 @@ public final class AccountManager: UnreadCountProvider {
 		
 	}
     
-    
-    /// Asyncronous refresh of all accounts.
-    /// - Parameter withEarlyContinuation: if `true`, the function will return immediately, if `false`, the function will return when the refresh is complete.
-    /// - Returns: `AsyncRefreshResult` -> `(Bool, [Error]?)`. If there are any errors in the refresh, check the `[Error]` array.
     @available(iOS 15, *)
     @available(macOS 12, *)
-    @discardableResult
-    public func refreshAll(withEarlyContinuation: Bool = true) async -> AsyncRefreshResult {
-        await withUnsafeContinuation { continuation in
+    /// Asyncronous refresh of all accounts.
+    /// - Parameter withEarlyContinuation: if `true`, the function will return immediately, if `false`, the function will return when the refresh is complete.
+    public func refreshAll(withEarlyContinuation: Bool = true) async throws {
+        return try await withUnsafeThrowingContinuation { continuation in
             let group = DispatchGroup()
             guard let reachability = try? Reachability(hostname: "apple.com"),
                     reachability.connection != .unavailable else {
-                        continuation.resume(returning: (false, [URLError(.notConnectedToInternet)]))
+                        continuation.resume(throwing: URLError(.notConnectedToInternet))
                         return
             }
             if withEarlyContinuation {
-                continuation.resume(returning: (true, nil))
+                continuation.resume()
             }
-            
-            var syncErrors = [Error]()
             group.enter()
             activeAccounts.forEach({ account in
                 account.refreshAll { result in
@@ -324,7 +319,6 @@ public final class AccountManager: UnreadCountProvider {
                     case .success:
                         break
                     case .failure(let error):
-                        syncErrors.append(error)
                         print(error.localizedDescription)
                     }
                 }
@@ -332,7 +326,7 @@ public final class AccountManager: UnreadCountProvider {
             
             group.notify(queue: DispatchQueue.main) {
                 if withEarlyContinuation == false {
-                    continuation.resume(returning: (true, syncErrors))
+                    continuation.resume()
                 }
             }
         }

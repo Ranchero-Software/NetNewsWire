@@ -109,7 +109,7 @@ struct SidebarView: View {
 		}
 		.navigationTitle(Text("Feeds"))
 		.refreshable {
-			await AccountManager.shared.refreshAll()
+			try? await AccountManager.shared.refreshAll()
 		}
 		.alert(isPresented: $sidebarModel.showDeleteConfirmation, content: {
 			Alert(title: sidebarModel.countOfFeedsToDelete() > 1 ?
