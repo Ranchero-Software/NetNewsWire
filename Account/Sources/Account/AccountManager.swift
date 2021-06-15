@@ -311,8 +311,9 @@ public final class AccountManager: UnreadCountProvider {
             if withEarlyContinuation {
                 continuation.resume()
             }
-            group.enter()
+
             activeAccounts.forEach({ account in
+                group.enter()
                 account.refreshAll { result in
                     group.leave()
                     switch result {
