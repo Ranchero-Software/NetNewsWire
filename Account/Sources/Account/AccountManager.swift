@@ -296,40 +296,11 @@ public final class AccountManager: UnreadCountProvider {
 		
 	}
     
-    @available(iOS 15, *)
-    @available(macOS 12, *)
     /// Asyncronous refresh of all accounts.
-    /// - Parameter withEarlyContinuation: if `true`, the function will return immediately, if `false`, the function will return when the refresh is complete.
-    public func refreshAll(withEarlyContinuation: Bool = true) async throws {
-        return try await withUnsafeThrowingContinuation { continuation in
-            let group = DispatchGroup()
-            guard let reachability = try? Reachability(hostname: "apple.com"),
-                    reachability.connection != .unavailable else {
-                        continuation.resume(throwing: URLError(.notConnectedToInternet))
-                        return
-            }
-            if withEarlyContinuation {
-                continuation.resume()
-            }
-
-            activeAccounts.forEach({ account in
-                group.enter()
-                account.refreshAll { result in
-                    group.leave()
-                    switch result {
-                    case .success:
-                        break
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    }
-                }
-            })
-            
-            group.notify(queue: DispatchQueue.main) {
-                if withEarlyContinuation == false {
-                    continuation.resume()
-                }
-            }
+    @available(macOS 12, iOS 15, *)
+    public func refreshAll() async throws {
+        for account in activeAccounts {
+            try await account.refreshAll()
         }
     }
     

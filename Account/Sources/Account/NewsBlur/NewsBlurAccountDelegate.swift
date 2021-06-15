@@ -113,6 +113,20 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			}
 		}
 	}
+    
+    @available(macOS 12, iOS 15, *)
+    func refreshAll(for account: Account) async throws {
+        return try await withUnsafeThrowingContinuation { continuation in
+            self.refreshAll(for: account) { result in
+                switch result {
+                case .success():
+                    continuation.resume()
+                case .failure(let err):
+                    continuation.resume(throwing: err)
+                }
+            }
+        }
+    }
 
 	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
 		sendArticleStatus(for: account) { result in

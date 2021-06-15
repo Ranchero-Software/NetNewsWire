@@ -430,6 +430,11 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.refreshAll(for: self, completion: completion)
 	}
+    
+    @available(macOS 12, iOS 15, *)
+    public func refreshAll() async throws {
+        try await delegate.refreshAll(for: self)
+    }
 
 	public func sendArticleStatus(completion: ((Result<Void, Error>) -> Void)? = nil) {
 		delegate.sendArticleStatus(for: self) { result in

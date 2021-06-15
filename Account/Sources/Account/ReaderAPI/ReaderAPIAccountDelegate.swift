@@ -627,6 +627,20 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func resume() {
 		database.resume()
 	}
+    
+    @available(macOS 12, iOS 15, *)
+    func refreshAll(for account: Account) async throws {
+        return try await withUnsafeThrowingContinuation { continuation in
+            self.refreshAll(for: account) { result in
+                switch result {
+                case .success():
+                    continuation.resume()
+                case .failure(let err):
+                    continuation.resume(throwing: err)
+                }
+            }
+        }
+    }
 }
 
 // MARK: Private
@@ -657,6 +671,7 @@ private extension ReaderAPIAccountDelegate {
 			}
 		}
 	}
+    
 
 	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
 		guard let tags = tags else { return }

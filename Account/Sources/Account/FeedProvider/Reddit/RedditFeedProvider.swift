@@ -215,6 +215,20 @@ public final class RedditFeedProvider: FeedProvider, RedditFeedProviderTokenRefr
 			}
 		}
 	}
+    
+    @available(macOS 12, iOS 15, *)
+    public func refresh(_ webFeed: WebFeed) async throws -> Set<ParsedItem> {
+        return try await withUnsafeThrowingContinuation { continuation in
+            self.refresh(webFeed) { result in
+                switch result {
+                case .success(let parsedItems):
+                    continuation.resume(returning: parsedItems)
+                case .failure(let err):
+                    continuation.resume(throwing: err)
+                }
+            }
+        }
+    }
 	
 	public static func create(tokenSuccess: OAuthSwift.TokenSuccess, completion: @escaping (Result<RedditFeedProvider, Error>) -> Void) {
 		let oauthToken = tokenSuccess.credential.oauthToken

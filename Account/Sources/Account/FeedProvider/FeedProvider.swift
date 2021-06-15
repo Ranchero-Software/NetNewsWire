@@ -34,5 +34,9 @@ public protocol FeedProvider  {
 	
 	/// Refresh all the article entries (ParsedItems)
 	func refresh(_ webFeed: WebFeed, completion: @escaping (Result<Set<ParsedItem>, Error>) -> Void)
-	
+	 
+    /// Refresh all the article entries (ParsedItems) async
+    @available(macOS 12, iOS 15, *)
+    @discardableResult
+    func refresh(_ webFeed: WebFeed) async throws -> Set<ParsedItem>
 }

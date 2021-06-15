@@ -258,6 +258,20 @@ public final class TwitterFeedProvider: FeedProvider {
 			}
 		}
 	}
+    
+    @available(macOS 12, iOS 15, *)
+    public func refresh(_ webFeed: WebFeed) async throws -> Set<ParsedItem> {
+        return try await withUnsafeThrowingContinuation { continuation in
+            refresh(webFeed) { result in
+                switch result {
+                case .success(let parsedItems):
+                    continuation.resume(returning: parsedItems)
+                case .failure(let err):
+                    continuation.resume(throwing: err)
+                }
+            }
+        }
+    }
 
 	public static func buildURL(_ type: TwitterFeedType, username: String?, screenName: String?, searchField: String?) -> URL? {
 		var components = URLComponents()
