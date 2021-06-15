@@ -180,7 +180,7 @@ struct AppAssets {
 	}
 	
 	static var markAllAsReadImage: Image = {
-		return Image("MarkAllAsRead")
+		return Image("MarkAllAsReadPNG")
 	}()
 	
 	static var markAllAsReadImagePNG: Image = {
