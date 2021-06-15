@@ -111,7 +111,6 @@ final class FeedbinAccountDelegate: AccountDelegate {
 
     @available(macOS 12, iOS 15, *)
     func refreshAll(for account: Account) async throws {
-        os_log("Started refreshing \(account.nameForDisplay)")
         refreshProgress.addToNumberOfTasksAndRemaining(5)
         
         return try await withUnsafeThrowingContinuation { continuation in
@@ -121,16 +120,13 @@ final class FeedbinAccountDelegate: AccountDelegate {
                     self.refreshArticlesAndStatuses(account) { result in
                         switch result {
                         case .success():
-                            os_log("Finished refreshing \(account.nameForDisplay)")
                             continuation.resume()
                         case .failure(let error):
-                            os_log("Finished refreshing \(account.nameForDisplay)")
                             self.refreshProgress.clear()
                             continuation.resume(throwing: error)
                         }
                     }
                 case .failure(let err):
-                    os_log("Finished refreshing \(account.nameForDisplay)")
                     self.refreshProgress.clear()
                     continuation.resume(throwing: err)
                 }

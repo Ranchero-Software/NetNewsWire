@@ -103,6 +103,11 @@
 		1776E88E24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		1776E88F24AC5F8A00E78166 /* AppDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1776E88D24AC5F8A00E78166 /* AppDefaults.swift */; };
 		177A0C2D25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177A0C2C25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift */; };
+		17862DB82678A85300AE62B6 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 516B695C24D2F28E00B5702F /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17862DB92678A85400AE62B6 /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17E0080E25936DF6000C23F0 /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17862DBA2678A85500AE62B6 /* ArticlesDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17E0081125936DF6000C23F0 /* ArticlesDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17862DBB2678A85A00AE62B6 /* Secrets in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17E0081425936DFF000C23F0 /* Secrets */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17862DBC2678A85B00AE62B6 /* SyncDatabase in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17E0081725936DFF000C23F0 /* SyncDatabase */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17897ACA24C281A40014BA03 /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17897AC924C281A40014BA03 /* InspectorView.swift */; };
 		17897ACB24C281A40014BA03 /* InspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17897AC924C281A40014BA03 /* InspectorView.swift */; };
 		178A9F9D2549449F00AB7E9D /* AddAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178A9F9C2549449F00AB7E9D /* AddAccountsView.swift */; };
@@ -1337,10 +1342,15 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				17862DB82678A85300AE62B6 /* Account in Embed Frameworks */,
+				17862DB92678A85400AE62B6 /* Articles in Embed Frameworks */,
 				17A1598924E3DEDD005DA32A /* RSParser in Embed Frameworks */,
+				17862DBB2678A85A00AE62B6 /* Secrets in Embed Frameworks */,
 				17A1598624E3DEDD005DA32A /* RSDatabase in Embed Frameworks */,
+				17862DBA2678A85500AE62B6 /* ArticlesDatabase in Embed Frameworks */,
 				17A1598324E3DEDD005DA32A /* RSWeb in Embed Frameworks */,
 				17A1597D24E3DEDD005DA32A /* RSCore in Embed Frameworks */,
+				17862DBC2678A85B00AE62B6 /* SyncDatabase in Embed Frameworks */,
 				17A1598024E3DEDD005DA32A /* RSTree in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
