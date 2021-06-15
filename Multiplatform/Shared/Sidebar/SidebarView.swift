@@ -104,18 +104,12 @@ struct SidebarView: View {
 			}))
 		})
 #else
-		ZStack(alignment: .top) {
-			List {
-				rows
-			}
-			.background(RefreshFixedView())
-			.navigationTitle(Text("Feeds"))
-			.onPreferenceChange(RefreshKeyTypes.PrefKey.self) { values in
-				refreshLogic(values: values)
-			}
-			if pulling {
-				ProgressView().offset(y: -40)
-			}
+		List {
+			rows
+		}
+		.navigationTitle(Text("Feeds"))
+		.refreshable {
+			await AccountManager.shared.refreshAll()
 		}
 		.alert(isPresented: $sidebarModel.showDeleteConfirmation, content: {
 			Alert(title: sidebarModel.countOfFeedsToDelete() > 1 ?
