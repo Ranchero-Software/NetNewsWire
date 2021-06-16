@@ -5977,7 +5977,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				SWIFT_OBJC_BRIDGING_HEADER = "Shared/1Password/NetNewsWire-iOS-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "iOS/Resources/NetNewsWire-iOS-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -5992,7 +5992,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				SWIFT_OBJC_BRIDGING_HEADER = "Shared/1Password/NetNewsWire-iOS-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "iOS/Resources/NetNewsWire-iOS-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

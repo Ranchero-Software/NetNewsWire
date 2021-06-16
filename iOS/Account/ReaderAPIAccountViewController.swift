@@ -279,9 +279,9 @@ class ReaderAPIAccountViewController: UITableViewController {
 			case .theOldReader:
 				url = "theoldreader.com"
 			case .freshRSS:
-				url = "freshrss.org"
-			default:
 				url = apiURLTextField.text ?? ""
+			default:
+				url = ""
 		}
 		
 		OnePasswordExtension.shared().findLogin(forURLString: url, for: self, sender: nil) { [self] loginDictionary, error in
