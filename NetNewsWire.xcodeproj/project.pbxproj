@@ -2457,7 +2457,6 @@
 			children = (
 				17D7586D2679C21800B17787 /* OnePasswordExtension.h */,
 				17D7586E2679C21800B17787 /* OnePasswordExtension.m */,
-				17D7586C2679C21700B17787 /* NetNewsWire-iOS-Bridging-Header.h */,
 			);
 			path = 1Password;
 			sourceTree = "<group>";
@@ -3606,6 +3605,7 @@
 				51BB7C302335ACDE008E8144 /* page.html */,
 				514219572353C28900E07E2C /* main_ios.js */,
 				51C452B72265178500C03939 /* styleSheet.css */,
+				17D7586C2679C21700B17787 /* NetNewsWire-iOS-Bridging-Header.h */,
 				84C9FC9B2262A1A900D921D6 /* Assets.xcassets */,
 				84C9FC9C2262A1A900D921D6 /* Info.plist */,
 				84BB0F812333426400DED65E /* NetNewsWire.entitlements */,
