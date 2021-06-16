@@ -21,6 +21,11 @@ class FeedWranglerAccountViewController: UITableViewController {
 	@IBOutlet weak var showHideButton: UIButton!
 	@IBOutlet weak var actionButton: UIButton!
 	@IBOutlet weak var footerLabel: UILabel!
+	@IBOutlet weak var onepasswordButton: UIBarButtonItem! {
+		didSet {
+			onepasswordButton.image?.withTintColor(AppAssets.primaryAccentColor)
+		}
+	}
 	
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?
@@ -151,6 +156,17 @@ class FeedWranglerAccountViewController: UITableViewController {
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false)
 	}
+	
+	@IBAction func retrievePasswordDetailsFrom1Password(_ sender: Any) {
+		OnePasswordExtension.shared().findLogin(forURLString: "feedwrangler.com", for: self, sender: nil) { [self] loginDictionary, error in
+			if let loginDictionary = loginDictionary {
+				emailTextField.text = loginDictionary[AppExtensionUsernameKey] as? String
+				passwordTextField.text = loginDictionary[AppExtensionPasswordKey] as? String
+				actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false)
+			}
+		}
+	}
+	
 	
 	private func showError(_ message: String) {
 		presentError(title: NSLocalizedString("Error", comment: "Credentials Error"), message: message)

@@ -57,6 +57,7 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mailto</string>
+		<string>org-appextension-feature-password-management</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

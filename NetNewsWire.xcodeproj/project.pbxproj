@@ -132,6 +132,7 @@
 		17D5F17124B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F17224B0BC6700375168 /* SidebarToolbarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */; };
 		17D5F19524B0C1DD00375168 /* SidebarToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172199F024AB716900A31D04 /* SidebarToolbarModifier.swift */; };
+		17D7586F2679C21800B17787 /* OnePasswordExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D7586E2679C21800B17787 /* OnePasswordExtension.m */; };
 		17E0084625941887000C23F0 /* SizeCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0084525941887000C23F0 /* SizeCategories.swift */; };
 		17E4DBD624BFC53E00FE462A /* AdvancedPreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */; };
 		17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; };
@@ -1522,6 +1523,9 @@
 		17D232A724AFF10A0005F075 /* AddWebFeedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedModel.swift; sourceTree = "<group>"; };
 		17D3CEE2257C4D2300E74939 /* AddAccountSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountSignUp.swift; sourceTree = "<group>"; };
 		17D5F17024B0BC6700375168 /* SidebarToolbarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarToolbarModel.swift; sourceTree = "<group>"; };
+		17D7586C2679C21700B17787 /* NetNewsWire-iOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-iOS-Bridging-Header.h"; sourceTree = "<group>"; };
+		17D7586D2679C21800B17787 /* OnePasswordExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OnePasswordExtension.h; sourceTree = "<group>"; };
+		17D7586E2679C21800B17787 /* OnePasswordExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OnePasswordExtension.m; sourceTree = "<group>"; };
 		17E0084525941887000C23F0 /* SizeCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeCategories.swift; sourceTree = "<group>"; };
 		17E4DBD524BFC53E00FE462A /* AdvancedPreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPreferencesModel.swift; sourceTree = "<group>"; };
 		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
@@ -2446,6 +2450,16 @@
 				17386B812577C4C60014C8B2 /* Add Account Sheets */,
 			);
 			path = Add;
+			sourceTree = "<group>";
+		};
+		17D7586B2679C1DF00B17787 /* 1Password */ = {
+			isa = PBXGroup;
+			children = (
+				17D7586D2679C21800B17787 /* OnePasswordExtension.h */,
+				17D7586E2679C21800B17787 /* OnePasswordExtension.m */,
+				17D7586C2679C21700B17787 /* NetNewsWire-iOS-Bridging-Header.h */,
+			);
+			path = 1Password;
 			sourceTree = "<group>";
 		};
 		510289CE2451BA1E00426DDF /* Twitter */ = {
@@ -3459,6 +3473,7 @@
 				510C43F5243D0325009F70C3 /* ExtensionPoints */,
 				511D43CE231FA51100FB1562 /* Resources */,
 				176813A22564B9D100D98635 /* Widget */,
+				17D7586B2679C1DF00B17787 /* 1Password */,
 				173A64162547BE0900267F6E /* AccountType+Helpers.swift */,
 			);
 			path = Shared;
@@ -4125,6 +4140,7 @@
 					840D617B2029031C009BC708 = {
 						CreatedOnToolsVersion = 9.3;
 						DevelopmentTeam = SHJK2V3AJG;
+						LastSwiftMigration = 1250;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -5382,6 +5398,7 @@
 				8454C3F3263F2D8700E3F9C7 /* IconImageCache.swift in Sources */,
 				B24E9ADE245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */,
 				C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */,
+				17D7586F2679C21800B17787 /* OnePasswordExtension.m in Sources */,
 				51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */,
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
@@ -5955,6 +5972,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SWIFT_OBJC_BRIDGING_HEADER = "Shared/1Password/NetNewsWire-iOS-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -5962,6 +5987,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SWIFT_OBJC_BRIDGING_HEADER = "Shared/1Password/NetNewsWire-iOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
