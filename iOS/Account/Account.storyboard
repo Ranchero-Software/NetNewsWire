@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -53,7 +53,7 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Ik-WC-e74">
-                                    <rect key="frame" x="20" y="8" width="373" height="78.5"/>
+                                    <rect key="frame" x="20" y="8" width="373" height="65.5"/>
                                     <string key="text">Sign in to your Feed Wranger account to sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.
 
 Don't have a Feed Wrangler account?</string>
@@ -62,7 +62,7 @@ Don't have a Feed Wrangler account?</string>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8ez-iV-55B">
-                                    <rect key="frame" x="169.5" y="85" width="75" height="27"/>
+                                    <rect key="frame" x="172" y="72" width="70" height="26"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <state key="normal" title="Sign Up Here"/>
                                     <connections>
@@ -90,7 +90,7 @@ Don't have a Feed Wrangler account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="o06-fe-i3S">
-                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
+                                                    <rect key="frame" x="20" y="13" width="334" height="18.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -110,12 +110,12 @@ Don't have a Feed Wrangler account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Z6i-nX-CwJ">
-                                                    <rect key="frame" x="20" y="11.5" width="284" height="21"/>
+                                                    <rect key="frame" x="20" y="13.5" width="290" height="17"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lBg-Pn-8ao">
-                                                    <rect key="frame" x="312" y="5.5" width="42" height="33"/>
+                                                    <rect key="frame" x="318" y="7.5" width="36" height="29"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Show"/>
                                                     <connections>
@@ -178,19 +178,31 @@ Don't have a Feed Wrangler account?</string>
                                 <action selector="cancel:" destination="fPs-Pp-Qk4" id="C0j-OR-yQ2"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" id="ojY-jN-yDr">
-                            <view key="customView" contentMode="scaleToFill" id="6k3-VP-uPP">
-                                <rect key="frame" x="374" y="12" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="mVm-hL-hqw">
-                                        <rect key="frame" x="36" y="6" width="20" height="20"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Item" image="1password" id="pyb-oi-0r2" userLabel="1Password">
+                                <connections>
+                                    <action selector="retrievePasswordDetailsFrom1Password:" destination="fPs-Pp-Qk4" id="DpE-Cr-s5P"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem id="ojY-jN-yDr">
+                                <view key="customView" contentMode="scaleToFill" id="6k3-VP-uPP">
+                                    <rect key="frame" x="332" y="12" width="20" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="mVm-hL-hqw">
+                                            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstItem="mVm-hL-hqw" firstAttribute="centerX" secondItem="6k3-VP-uPP" secondAttribute="centerX" id="Qcn-ZS-MPs"/>
+                                        <constraint firstItem="mVm-hL-hqw" firstAttribute="height" secondItem="6k3-VP-uPP" secondAttribute="height" id="WXs-IU-eDJ"/>
+                                        <constraint firstItem="mVm-hL-hqw" firstAttribute="centerY" secondItem="6k3-VP-uPP" secondAttribute="centerY" id="b44-z7-NiN"/>
+                                        <constraint firstItem="mVm-hL-hqw" firstAttribute="width" secondItem="6k3-VP-uPP" secondAttribute="width" id="kho-qu-9Yf"/>
+                                    </constraints>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="actionButton" destination="kKc-mk-vsU" id="TXr-cm-Oyp"/>
@@ -198,6 +210,7 @@ Don't have a Feed Wrangler account?</string>
                         <outlet property="cancelBarButtonItem" destination="zbP-iL-kfC" id="TT3-iu-IvG"/>
                         <outlet property="emailTextField" destination="o06-fe-i3S" id="WHW-3E-trH"/>
                         <outlet property="footerLabel" destination="6Ik-WC-e74" id="KwB-tD-kTN"/>
+                        <outlet property="onepasswordButton" destination="pyb-oi-0r2" id="keC-RI-1l5"/>
                         <outlet property="passwordTextField" destination="Z6i-nX-CwJ" id="p36-53-RsD"/>
                         <outlet property="showHideButton" destination="lBg-Pn-8ao" id="GgE-Nx-gFL"/>
                     </connections>
@@ -234,7 +247,7 @@ Don't have a Feed Wrangler account?</string>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Local accounts do not sync your subscriptions across devices." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ce-ZL-glQ">
-                                    <rect key="frame" x="20" y="8" width="373" height="14.5"/>
+                                    <rect key="frame" x="20" y="8" width="373" height="13.5"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                     <nil key="highlightedColor"/>
@@ -258,7 +271,7 @@ Don't have a Feed Wrangler account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Yl1-R6-xZi">
-                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
+                                                    <rect key="frame" x="20" y="13" width="334" height="18.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                 </textField>
@@ -338,7 +351,7 @@ Don't have a Feed Wrangler account?</string>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sgL-0C-JZa">
-                                    <rect key="frame" x="20" y="8" width="373" height="78.5"/>
+                                    <rect key="frame" x="20" y="8" width="373" height="65.5"/>
                                     <string key="text">Sign in to your Feedbin account to sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.
 
 Don't have a Feedbin account?</string>
@@ -347,7 +360,7 @@ Don't have a Feedbin account?</string>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xhf-bK-vzm">
-                                    <rect key="frame" x="169.5" y="85" width="75" height="27"/>
+                                    <rect key="frame" x="172" y="72" width="70" height="26"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <state key="normal" title="Sign Up Here"/>
                                     <connections>
@@ -375,7 +388,7 @@ Don't have a Feedbin account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vJa-NN-yjR">
-                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
+                                                    <rect key="frame" x="20" y="13" width="334" height="18.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -395,12 +408,12 @@ Don't have a Feedbin account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YC2-RH-QoV">
-                                                    <rect key="frame" x="20" y="11.5" width="284" height="21"/>
+                                                    <rect key="frame" x="20" y="13.5" width="290" height="17"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TfW-wf-V06">
-                                                    <rect key="frame" x="312" y="5.5" width="42" height="33"/>
+                                                    <rect key="frame" x="318" y="7.5" width="36" height="29"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Show"/>
                                                     <connections>
@@ -463,19 +476,31 @@ Don't have a Feedbin account?</string>
                                 <action selector="cancel:" destination="ECy-jg-Kyc" id="ZKI-gV-ylg"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" id="Xwp-LO-qff">
-                            <view key="customView" contentMode="scaleToFill" id="cn4-b1-uZa">
-                                <rect key="frame" x="374" y="12" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="YvV-hB-lzT">
-                                        <rect key="frame" x="36" y="6" width="20" height="20"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Item" image="1password" id="VG1-ck-a7f" userLabel="1password">
+                                <connections>
+                                    <action selector="retrievePasswordDetailsFrom1Password:" destination="ECy-jg-Kyc" id="nIB-Y6-hqa"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem id="Xwp-LO-qff">
+                                <view key="customView" contentMode="scaleToFill" id="cn4-b1-uZa">
+                                    <rect key="frame" x="332" y="12" width="20" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="YvV-hB-lzT">
+                                            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstItem="YvV-hB-lzT" firstAttribute="centerY" secondItem="cn4-b1-uZa" secondAttribute="centerY" id="8Lw-iQ-aCu"/>
+                                        <constraint firstItem="YvV-hB-lzT" firstAttribute="centerX" secondItem="cn4-b1-uZa" secondAttribute="centerX" id="KjS-KK-WVn"/>
+                                        <constraint firstItem="YvV-hB-lzT" firstAttribute="width" secondItem="cn4-b1-uZa" secondAttribute="width" id="Ybl-fy-acr"/>
+                                        <constraint firstItem="YvV-hB-lzT" firstAttribute="height" secondItem="cn4-b1-uZa" secondAttribute="height" id="aUy-B8-FqB"/>
+                                    </constraints>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="actionButton" destination="gv7-yG-aE3" id="ENc-5A-hQc"/>
@@ -483,6 +508,7 @@ Don't have a Feedbin account?</string>
                         <outlet property="cancelBarButtonItem" destination="pfF-Of-5NT" id="Zr3-qD-1Yi"/>
                         <outlet property="emailTextField" destination="vJa-NN-yjR" id="nCF-9W-YsF"/>
                         <outlet property="footerLabel" destination="sgL-0C-JZa" id="b6I-Mk-2K3"/>
+                        <outlet property="onepasswordButton" destination="VG1-ck-a7f" id="qJi-3O-8Ru"/>
                         <outlet property="passwordTextField" destination="YC2-RH-QoV" id="qaX-0i-7jq"/>
                         <outlet property="showHideButton" destination="TfW-wf-V06" id="PbL-67-Nrg"/>
                     </connections>
@@ -519,7 +545,7 @@ Don't have a Feedbin account?</string>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fal-e8-3BB">
-                                    <rect key="frame" x="20" y="8" width="373" height="78.5"/>
+                                    <rect key="frame" x="20" y="8" width="373" height="65.5"/>
                                     <string key="text">Sign in to your NewsBlur account to sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.
 
 Don't have a NewsBlur account?</string>
@@ -528,7 +554,7 @@ Don't have a NewsBlur account?</string>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YhB-G0-eeJ">
-                                    <rect key="frame" x="169.5" y="85" width="75" height="27"/>
+                                    <rect key="frame" x="172" y="72" width="70" height="26"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <state key="normal" title="Sign Up Here"/>
                                     <connections>
@@ -556,7 +582,7 @@ Don't have a NewsBlur account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Username or Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="S4v-fs-DIO">
-                                                    <rect key="frame" x="20" y="11" width="334" height="22"/>
+                                                    <rect key="frame" x="20" y="13" width="334" height="18.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -576,12 +602,12 @@ Don't have a NewsBlur account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fct-XR-fEa">
-                                                    <rect key="frame" x="20" y="11.5" width="284" height="21"/>
+                                                    <rect key="frame" x="20" y="13.5" width="290" height="17"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GY9-nr-jFb">
-                                                    <rect key="frame" x="312" y="5.5" width="42" height="33"/>
+                                                    <rect key="frame" x="318" y="7.5" width="36" height="29"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Show"/>
                                                     <connections>
@@ -644,25 +670,38 @@ Don't have a NewsBlur account?</string>
                                 <action selector="cancel:" destination="Cge-ND-NpD" id="9zR-LJ-IWk"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" id="4yi-H0-B9J">
-                            <view key="customView" contentMode="scaleToFill" id="8DU-L0-P6c">
-                                <rect key="frame" x="374" y="12" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="HfW-jV-MjK">
-                                        <rect key="frame" x="36" y="6" width="20" height="20"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Item" image="1password" id="dVp-Gh-NdH">
+                                <connections>
+                                    <action selector="retrievePasswordDetailsFrom1Password:" destination="Cge-ND-NpD" id="1Gz-2G-7js"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem id="4yi-H0-B9J">
+                                <view key="customView" contentMode="scaleToFill" id="8DU-L0-P6c">
+                                    <rect key="frame" x="332" y="12" width="20" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="HfW-jV-MjK">
+                                            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstItem="HfW-jV-MjK" firstAttribute="centerX" secondItem="8DU-L0-P6c" secondAttribute="centerX" id="6ly-W7-21T"/>
+                                        <constraint firstItem="HfW-jV-MjK" firstAttribute="height" secondItem="8DU-L0-P6c" secondAttribute="height" id="Yag-ad-Ypu"/>
+                                        <constraint firstItem="HfW-jV-MjK" firstAttribute="width" secondItem="8DU-L0-P6c" secondAttribute="width" id="mcl-kw-rNk"/>
+                                        <constraint firstItem="HfW-jV-MjK" firstAttribute="centerY" secondItem="8DU-L0-P6c" secondAttribute="centerY" id="w1q-rr-rol"/>
+                                    </constraints>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="actionButton" destination="E1I-C4-JdL" id="q2T-4o-c8i"/>
                         <outlet property="activityIndicator" destination="HfW-jV-MjK" id="AIV-uG-9uC"/>
                         <outlet property="cancelBarButtonItem" destination="bl6-Y1-wQ8" id="ohR-gW-5J2"/>
                         <outlet property="footerLabel" destination="fal-e8-3BB" id="7Fq-Oz-aEx"/>
+                        <outlet property="onepasswordButton" destination="dVp-Gh-NdH" id="lYf-yV-GgW"/>
                         <outlet property="passwordTextField" destination="fct-XR-fEa" id="fGL-4k-gZ6"/>
                         <outlet property="showHideButton" destination="GY9-nr-jFb" id="1p9-9F-GMY"/>
                         <outlet property="usernameTextField" destination="S4v-fs-DIO" id="B7I-yz-M0T"/>
@@ -684,7 +723,7 @@ Don't have a NewsBlur account?</string>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Jj-p8-lYw">
-                                    <rect key="frame" x="20" y="8" width="373" height="62.5"/>
+                                    <rect key="frame" x="20" y="8" width="373" height="52.5"/>
                                     <string key="text">Use your Reader account to sync your subscriptions across your devices.
 
 Don't have a Reader account?</string>
@@ -693,7 +732,7 @@ Don't have a Reader account?</string>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Fq-U4-PS5">
-                                    <rect key="frame" x="169.5" y="69" width="75" height="27"/>
+                                    <rect key="frame" x="172" y="59" width="70" height="26"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <state key="normal" title="Sign Up Here"/>
                                     <connections>
@@ -721,7 +760,7 @@ Don't have a Reader account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Username or Email" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CZg-x8-936">
-                                                    <rect key="frame" x="14" y="11" width="347" height="22"/>
+                                                    <rect key="frame" x="14" y="13" width="347" height="18.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="emailAddress" textContentType="username"/>
                                                 </textField>
@@ -741,12 +780,12 @@ Don't have a Reader account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="KgN-kQ-Cyc">
-                                                    <rect key="frame" x="14" y="11.5" width="294" height="21"/>
+                                                    <rect key="frame" x="14" y="13.5" width="300" height="17"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cFF-qt-WLs">
-                                                    <rect key="frame" x="316" y="5.5" width="42" height="33"/>
+                                                    <rect key="frame" x="322" y="7.5" width="36" height="29"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <state key="normal" title="Show"/>
                                                     <connections>
@@ -772,7 +811,7 @@ Don't have a Reader account?</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="API URL" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iPv-M2-U8Q">
-                                                    <rect key="frame" x="14" y="11" width="340" height="22"/>
+                                                    <rect key="frame" x="14" y="11" width="340" height="18.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="url"/>
                                                 </textField>
@@ -825,19 +864,31 @@ Don't have a Reader account?</string>
                                 <action selector="cancel:" destination="MzG-hS-TpF" id="a49-Fh-i1S"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" id="Ih6-jI-jFg">
-                            <view key="customView" contentMode="scaleToFill" id="gSl-PT-7DH">
-                                <rect key="frame" x="374" y="12" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="pdn-6v-d9a">
-                                        <rect key="frame" x="36" y="6" width="20" height="20"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Item" image="1password" id="MLD-vW-VQN">
+                                <connections>
+                                    <action selector="retrievePasswordDetailsFrom1Password:" destination="MzG-hS-TpF" id="Dy3-1A-JV4"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem id="Ih6-jI-jFg">
+                                <view key="customView" contentMode="scaleToFill" id="gSl-PT-7DH">
+                                    <rect key="frame" x="332" y="12" width="20" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="pdn-6v-d9a">
+                                            <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstItem="pdn-6v-d9a" firstAttribute="width" secondItem="gSl-PT-7DH" secondAttribute="width" id="Bpz-h0-KzN"/>
+                                        <constraint firstItem="pdn-6v-d9a" firstAttribute="centerY" secondItem="gSl-PT-7DH" secondAttribute="centerY" id="L9F-HX-b30"/>
+                                        <constraint firstItem="pdn-6v-d9a" firstAttribute="height" secondItem="gSl-PT-7DH" secondAttribute="height" id="O6T-RS-feo"/>
+                                        <constraint firstItem="pdn-6v-d9a" firstAttribute="centerX" secondItem="gSl-PT-7DH" secondAttribute="centerX" id="ysw-er-kKl"/>
+                                    </constraints>
+                                </view>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="actionButton" destination="7L9-X7-1Oc" id="VnP-sl-Cmd"/>
@@ -845,6 +896,7 @@ Don't have a Reader account?</string>
                         <outlet property="apiURLTextField" destination="iPv-M2-U8Q" id="8kn-Xk-a8w"/>
                         <outlet property="cancelBarButtonItem" destination="n8H-ai-4Df" id="u86-HH-HYC"/>
                         <outlet property="footerLabel" destination="7Jj-p8-lYw" id="Tqv-qR-WBR"/>
+                        <outlet property="onepasswordButton" destination="MLD-vW-VQN" id="y3T-hD-XRD"/>
                         <outlet property="passwordTextField" destination="KgN-kQ-Cyc" id="A0K-JL-CEW"/>
                         <outlet property="showHideButton" destination="cFF-qt-WLs" id="AxI-Gl-NdM"/>
                         <outlet property="signUpButton" destination="3Fq-U4-PS5" id="Wuj-5g-vDH"/>
@@ -883,7 +935,7 @@ Don't have a Reader account?</string>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use your iCloud account to sync your subscriptions across your iOS and macOS devices." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aFS-Y0-2MH">
-                                    <rect key="frame" x="20" y="8" width="373" height="30.5"/>
+                                    <rect key="frame" x="20" y="8" width="373" height="26.5"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                     <nil key="highlightedColor"/>
@@ -968,6 +1020,7 @@ Don't have a Reader account?</string>
         </scene>
     </scenes>
     <resources>
+        <image name="1password" width="23" height="23"/>
         <namedColor name="secondaryAccentColor">
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
