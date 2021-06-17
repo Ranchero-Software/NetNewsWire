@@ -44,6 +44,7 @@ final class AppDefaults {
 		static let timelineShowsSeparators = "CorreiaSeparators"
 		static let showTitleOnMainWindow = "KafasisTitleMode"
 		static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
+		static let suppressSyncOnLaunch = "DevroeSuppressSyncOnLaunch"
 
 		#if !MAC_APP_STORE
 			static let webInspectorEnabled = "WebInspectorEnabled"
@@ -200,6 +201,15 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.feedDoubleClickMarkAsRead, newValue)
+		}
+	}
+
+	var suppressSyncOnLaunch: Bool {
+		get {
+			return AppDefaults.bool(for: Key.suppressSyncOnLaunch)
+		}
+		set {
+			AppDefaults.setBool(for: Key.suppressSyncOnLaunch, newValue)
 		}
 	}
 

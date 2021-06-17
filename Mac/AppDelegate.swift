@@ -251,9 +251,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		refreshTimer!.update()
 		syncTimer!.update()
 		#else
-		DispatchQueue.main.async {
-			self.refreshTimer!.timedRefresh(nil)
-			self.syncTimer!.timedRefresh(nil)
+		if AppDefaults.shared.suppressSyncOnLaunch {
+			refreshTimer!.update()
+			syncTimer!.update()
+		} else {
+			DispatchQueue.main.async {
+				self.refreshTimer!.timedRefresh(nil)
+				self.syncTimer!.timedRefresh(nil)
+			}
 		}
 		#endif
 		
