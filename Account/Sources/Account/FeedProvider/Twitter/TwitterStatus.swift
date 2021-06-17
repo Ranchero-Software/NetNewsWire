@@ -165,6 +165,7 @@ private extension TwitterStatus {
 	func renderAsQuoteHTML(_ quotedStatus: TwitterStatus, topLevel: Bool) -> String {
 		var html = String()
 		html += renderAsTweetHTML(self, topLevel: topLevel)
+		html += extendedEntities?.renderAsHTML() ?? ""
 		html += "<blockquote>"
 		if let userHTML = quotedStatus.user?.renderAsHTML() {
 			html += userHTML
