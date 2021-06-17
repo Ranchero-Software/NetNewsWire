@@ -22,3 +22,7 @@ Set `CorreiaSeparators` to true.
 #### Double-click a feed in the sidebar to mark it as read
 
 Set `GruberFeedDoubleClickMarkAsRead` to true.
+
+#### Suppress the automatic sync on launch
+
+Set `DevroeSuppressSyncOnLaunch` to true.
