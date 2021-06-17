@@ -41,7 +41,7 @@ class AccountsFeedWranglerWindowController: NSWindowController {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your Feed Wrangler account.", comment: "SignIn")
 		}
-
+		enableAutofill()
 		usernameTextField.becomeFirstResponder()
 	}
 	
@@ -124,6 +124,14 @@ class AccountsFeedWranglerWindowController: NSWindowController {
 	
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		NSWorkspace.shared.open(URL(string: "https://feedwrangler.net/users/new")!)
+	}
+	
+	// MARK: Autofill
+	func enableAutofill() {
+		if #available(macOS 11, *) {
+			usernameTextField.contentType = .username
+			passwordTextField.contentType = .password
+		}
 	}
 	
 }

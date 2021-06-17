@@ -284,7 +284,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 				url = ""
 		}
 		
-		OnePasswordExtension.shared().findLogin(forURLString: url, for: self, sender: nil) { [self] loginDictionary, error in
+		OnePasswordExtension.shared().findLogin(forURLString: url, for: self, sender: sender) { [self] loginDictionary, error in
 			if let loginDictionary = loginDictionary {
 				usernameTextField.text = loginDictionary[AppExtensionUsernameKey] as? String
 				passwordTextField.text = loginDictionary[AppExtensionPasswordKey] as? String
