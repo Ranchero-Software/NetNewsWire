@@ -41,7 +41,9 @@ class AccountsFeedbinWindowController: NSWindowController {
 			actionButton.title = NSLocalizedString("Create", comment: "Add Account")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your Feedbin account.", comment: "SignIn")
 		}
-
+		
+		enableAutofill()
+		
 		usernameTextField.becomeFirstResponder()
 	}
 	
@@ -129,5 +131,12 @@ class AccountsFeedbinWindowController: NSWindowController {
 		NSWorkspace.shared.open(URL(string: "https://feedbin.com/signup")!)
 	}
 	
-    
+	// MARK: Autofill
+	func enableAutofill() {
+		if #available(macOS 11, *) {
+			usernameTextField.contentType = .username
+			passwordTextField.contentType = .password
+		}
+	}
+	
 }

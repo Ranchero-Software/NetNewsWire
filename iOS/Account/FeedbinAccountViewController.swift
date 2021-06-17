@@ -81,7 +81,7 @@ class FeedbinAccountViewController: UITableViewController {
 	}
 	
 	@IBAction func retrievePasswordDetailsFrom1Password(_ sender: Any) {
-		OnePasswordExtension.shared().findLogin(forURLString: "feedbin.com", for: self, sender: nil) { [self] loginDictionary, error in
+		OnePasswordExtension.shared().findLogin(forURLString: "feedbin.com", for: self, sender: self) { [self] loginDictionary, error in
 			if let loginDictionary = loginDictionary {
 				emailTextField.text = loginDictionary[AppExtensionUsernameKey] as? String
 				passwordTextField.text = loginDictionary[AppExtensionPasswordKey] as? String

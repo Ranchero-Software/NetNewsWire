@@ -41,7 +41,7 @@ class AccountsNewsBlurWindowController: NSWindowController {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your NewsBlur account.", comment: "SignIn")
 		}
-
+		enableAutofill()
 		usernameTextField.becomeFirstResponder()
 	}
 
@@ -125,6 +125,14 @@ class AccountsNewsBlurWindowController: NSWindowController {
 	
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		NSWorkspace.shared.open(URL(string: "https://newsblur.com")!)
+	}
+	
+	// MARK: Autofill
+	func enableAutofill() {
+		if #available(macOS 11, *) {
+			usernameTextField.contentType = .username
+			passwordTextField.contentType = .password
+		}
 	}
 	
 }
