@@ -9,6 +9,14 @@
 import Foundation
 import Account
 
+enum AccountsAddCloudKitWindowControllerError: LocalizedError {
+	case iCloudDriveMissing
+	
+	var errorDescription: String? {
+		return NSLocalizedString("Unable to add iCloud Account. Please make sure you have iCloud and iCloud enabled in System Preferences.", comment: "Unable to add iCloud Account.")
+	}
+}
+
 class AccountsAddCloudKitWindowController: NSWindowController {
 
 	private weak var hostWindow: NSWindow?
@@ -35,6 +43,11 @@ class AccountsAddCloudKitWindowController: NSWindowController {
 	}
 	
 	@IBAction func create(_ sender: Any) {
+		guard FileManager.default.ubiquityIdentityToken != nil else {
+			NSApplication.shared.presentError(AccountsAddCloudKitWindowControllerError.iCloudDriveMissing)
+			return
+		}
+		
 		let _ = AccountManager.shared.createAccount(type: .cloudKit)
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 	}
