@@ -1232,8 +1232,11 @@ private extension MasterFeedViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? account.fetchArticles(.unread()) {
-					self?.coordinator.markAllAsRead(Array(articles))
+				// If you don't have this delay the screen flashes when it executes this code
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					if let articles = try? account.fetchArticles(.unread()) {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
 				}
 			}
 		}
