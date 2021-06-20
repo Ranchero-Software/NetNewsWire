@@ -11,7 +11,7 @@ let package = Package(
             targets: ["Secrets"]),
     ],
     dependencies: [
-		.package(url: "https://github.com/OAuthSwift/OAuthSwift.git", .upToNextMajor(from: "2.1.2")),
+		.package(url: "https://github.com/OAuthSwift/OAuthSwift.git", .exact("2.1.2")),
     ],
     targets: [
         .target(
