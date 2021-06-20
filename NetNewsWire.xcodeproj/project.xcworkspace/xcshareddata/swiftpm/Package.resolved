@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/OAuthSwift/OAuthSwift.git",
         "state": {
           "branch": null,
-          "revision": "d85964b96dbce94df961f28b996187c835089903",
-          "version": "2.2.0"
+          "revision": "fde77955e6983fbfaabd491709d52b8a82fda4d0",
+          "version": "2.1.2"
         }
       },
       {
