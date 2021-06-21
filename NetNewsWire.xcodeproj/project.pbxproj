@@ -801,6 +801,8 @@
 		65082A2F24C72AC8009FA994 /* SettingsCredentialsAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65082A2E24C72AC8009FA994 /* SettingsCredentialsAccountView.swift */; };
 		65082A5224C72B88009FA994 /* SettingsCredentialsAccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65082A5124C72B88009FA994 /* SettingsCredentialsAccountModel.swift */; };
 		65082A5424C73D2F009FA994 /* AccountCredentialsError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65082A5324C73D2F009FA994 /* AccountCredentialsError.swift */; };
+		6535ECFC2680F9FF00C01CB5 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
+		6535ECFD2680FA0000C01CB5 /* IconImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8454C3F2263F2D8700E3F9C7 /* IconImageCache.swift */; };
 		653813182680E152007A082C /* AccountType+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173A64162547BE0900267F6E /* AccountType+Helpers.swift */; };
 		653813192680E15B007A082C /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		6538131A2680E16C007A082C /* ExportOPMLWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C78912362AB04009A71E4 /* ExportOPMLWindowController.swift */; };
@@ -5035,6 +5037,7 @@
 				51E498F724A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				175942AA24AD533200585066 /* RefreshInterval.swift in Sources */,
 				51E4993524A867E800B667CB /* AppNotifications.swift in Sources */,
+				6535ECFC2680F9FF00C01CB5 /* IconImageCache.swift in Sources */,
 				51C0515E24A77DF800194D5E /* MainApp.swift in Sources */,
 				51919FF724AB8B7700541E64 /* TimelineView.swift in Sources */,
 				51E4993D24A870F800B667CB /* UserNotificationManager.swift in Sources */,
@@ -5061,6 +5064,7 @@
 				17930ED524AF10EE00A9BA52 /* AddWebFeedView.swift in Sources */,
 				51E4993A24A8708800B667CB /* AppDelegate.swift in Sources */,
 				51E498CE24A8085D00B667CB /* UnreadFeed.swift in Sources */,
+				6535ECFD2680FA0000C01CB5 /* IconImageCache.swift in Sources */,
 				51B8BCC324C25C3E00360B00 /* SidebarContextMenu.swift in Sources */,
 				51E498C724A8085D00B667CB /* StarredFeedDelegate.swift in Sources */,
 				5194736F24BBB937001A2939 /* HiddenModifier.swift in Sources */,

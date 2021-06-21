@@ -41,6 +41,7 @@ final class FeedIconImageLoader: ObservableObject {
 private extension FeedIconImageLoader {
 	
 	func fetchImage() {
+		guard let feed = feed else { return }
 		image = IconImageCache.shared.imageForFeed(feed)
 	}
 }
