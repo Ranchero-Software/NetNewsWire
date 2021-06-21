@@ -33,5 +33,5 @@ PROVISIONING_PROFILE_SPECIFIER =
 #include "./common/NetNewsWire_macapp_target_common.xcconfig"
 
 CODE_SIGN_ENTITLEMENTS = Mac/Resources/NetNewsWire.entitlements
-PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen.MAS
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS
 OTHER_SWIFT_FLAGS = -DMAC_APP_STORE $(inherited)
