@@ -1903,7 +1903,7 @@
 		65082A5124C72B88009FA994 /* SettingsCredentialsAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCredentialsAccountModel.swift; sourceTree = "<group>"; };
 		65082A5324C73D2F009FA994 /* AccountCredentialsError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCredentialsError.swift; sourceTree = "<group>"; };
 		653813592680E2DA007A082C /* NetNewsWire Share Extension MAS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire Share Extension MAS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target _macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "NetNewsWire_shareextension_target _macappstore.xcconfig"; sourceTree = "<group>"; };
+		6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target_macappstore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_shareextension_target_macappstore.xcconfig; sourceTree = "<group>"; };
 		653A4E7824BCA5BB00EF2D7F /* SettingsCloudKitAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCloudKitAccountView.swift; sourceTree = "<group>"; };
 		65422D1624B75CD1008A2FA2 /* SettingsAddAccountModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAddAccountModel.swift; sourceTree = "<group>"; };
 		6543108B2322D90900658221 /* common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = common; sourceTree = "<group>"; };
@@ -3779,7 +3779,7 @@
 				D5907CDE2002F0BE005947E5 /* NetNewsWire_project.xcconfig */,
 				65ED4186235E045B0081F399 /* NetNewsWire_safariextension_target_macappstore.xcconfig */,
 				D519E74722EE553300923F27 /* NetNewsWire_safariextension_target.xcconfig */,
-				6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target _macappstore.xcconfig */,
+				6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target_macappstore.xcconfig */,
 				510C418724E5D2E3008226FD /* NetNewsWire_shareextension_target.xcconfig */,
 				D5907CDF2002F0F9005947E5 /* NetNewsWireTests_target.xcconfig */,
 			);
@@ -6049,14 +6049,14 @@
 		};
 		653813572680E2DA007A082C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target _macappstore.xcconfig */;
+			baseConfigurationReference = 6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target_macappstore.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		653813582680E2DA007A082C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target _macappstore.xcconfig */;
+			baseConfigurationReference = 6538135B2680E3A9007A082C /* NetNewsWire_shareextension_target_macappstore.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
