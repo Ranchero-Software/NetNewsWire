@@ -33,6 +33,7 @@
 			<array>
 				<string>feed</string>
 				<string>feeds</string>
+				<string>x-netnewswire-feed</string>
 			</array>
 		</dict>
 	</array>
