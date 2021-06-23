@@ -436,7 +436,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard notification.object is AccountManager else {
 			return
 		}
-		rebuildBackingStores()
+		rebuildBackingStores(initialLoad: true)
 		treeControllerDelegate.resetFilterExceptions()
 	}
 

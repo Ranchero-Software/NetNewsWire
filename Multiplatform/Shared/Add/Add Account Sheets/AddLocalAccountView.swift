@@ -122,7 +122,7 @@ struct AddLocalAccountView: View {
 		HStack {
 			Spacer()
 			VStack(spacing: 8) {
-				Text("Local accounts do not sync your subscriptions across devices.").foregroundColor(.secondary)
+				Text("Local accounts do not sync your feeds across devices.").foregroundColor(.secondary)
 			}
 			.multilineTextAlignment(.center)
 			.font(.caption)

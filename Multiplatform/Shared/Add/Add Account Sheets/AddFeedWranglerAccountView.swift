@@ -110,7 +110,7 @@ struct AddFeedWranglerAccountView: View {
 					Text("Sign in to your Feed Wrangler account.")
 						.font(.headline)
 					HStack {
-						Text("Don't have a Feed Wrangler account?")
+						Text("Don’t have a Feed Wrangler account?")
 							.font(.callout)
 						Button(action: {
 							model.presentSignUpOption(.feedWrangler)
@@ -191,8 +191,8 @@ struct AddFeedWranglerAccountView: View {
 		HStack {
 			Spacer()
 			VStack(spacing: 8) {
-				Text("Sign in to your Feed Wrangler account and sync your subscriptions across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
-				Text("Don't have a Feed Wrangler account?").foregroundColor(.secondary)
+				Text("Sign in to your Feed Wrangler account and sync your feeds across your devices. Your username and password and password will be encrypted and stored in Keychain.").foregroundColor(.secondary)
+				Text("Don’t have a Feed Wrangler account?").foregroundColor(.secondary)
 				Button(action: {
 					model.presentSignUpOption(.feedWrangler)
 				}, label: {

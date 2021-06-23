@@ -26,7 +26,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="433" height="249"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1536" height="935"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="433" height="249"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -35,7 +35,7 @@
                         <rect key="frame" x="217" y="229" width="0.0" height="0.0"/>
                     </stackView>
                     <gridView xPlacement="trailing" yPlacement="center" rowAlignment="none" rowSpacing="7" columnSpacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="zBB-JH-huI">
-                        <rect key="frame" x="80" y="127" width="326" height="49"/>
+                        <rect key="frame" x="80" y="126" width="326" height="49"/>
                         <rows>
                             <gridRow id="DRl-lC-vUc"/>
                             <gridRow id="eW8-uH-txq"/>
@@ -97,7 +97,7 @@
                         </gridCells>
                     </gridView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9mz-D9-krh">
-                        <rect key="frame" x="347" y="13" width="76" height="32"/>
+                        <rect key="frame" x="348" y="13" width="74" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="62" id="stL-0v-emB"/>
                         </constraints>
@@ -113,7 +113,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XAM-Hb-0Hw">
-                        <rect key="frame" x="273" y="13" width="76" height="32"/>
+                        <rect key="frame" x="274" y="13" width="74" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ufs-ar-BAY">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -126,7 +126,7 @@ Gw
                         </connections>
                     </button>
                     <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="B0W-bh-Evv">
-                        <rect key="frame" x="256" y="22" width="16" height="16"/>
+                        <rect key="frame" x="256" y="23" width="16" height="16"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="Cew-Vp-UKw"/>
                             <constraint firstAttribute="width" constant="16" id="P6W-hb-FGm"/>
@@ -143,21 +143,21 @@ Gw
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lti-yM-8LV">
                         <rect key="frame" x="78" y="213" width="330" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Sign in to your NewsBlur account." id="ras-dj-nP8">
-                            <font key="font" textStyle="headline" name=".SFNS-Bold"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yqn-od-aLJ">
-                        <rect key="frame" x="78" y="193" width="187" height="15"/>
-                        <textFieldCell key="cell" lineBreakMode="clipping" title="Don't have a NewsBlur account?" id="fPs-Sh-GEf">
-                            <font key="font" textStyle="callout" name=".SFNS-Regular"/>
+                        <rect key="frame" x="78" y="192" width="200" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Don’t have a NewsBlur account?" id="fPs-Sh-GEf">
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9oE-Gq-qp7">
-                        <rect key="frame" x="264" y="193" width="105" height="15"/>
+                        <rect key="frame" x="277" y="193" width="105" height="15"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="105" id="Z91-fh-Mw5"/>
                         </constraints>
@@ -171,21 +171,21 @@ Gw
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OMB-u7-kzz">
-                        <rect key="frame" x="78" y="73" width="337" height="39"/>
+                        <rect key="frame" x="78" y="72" width="337" height="39"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="333" id="9Bx-xl-Lf4"/>
                             <constraint firstAttribute="height" constant="39" id="dYs-8A-ml0"/>
                         </constraints>
                         <textFieldCell key="cell" title="Your username and password will be encrypted and stored in Keychain. " id="VWI-0W-Duk">
-                            <font key="font" textStyle="callout" name=".SFNS-Regular"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tFv-QN-zMA">
-                        <rect key="frame" x="78" y="60" width="337" height="14"/>
+                        <rect key="frame" x="78" y="57" width="337" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" id="yQ5-2h-Y9i">
-                            <font key="font" textStyle="subheadline" name=".SFNS-Regular"/>
+                            <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -225,7 +225,7 @@ Gw
         </window>
     </objects>
     <resources>
-        <image name="accountNewsBlur" width="50" height="50"/>
+        <image name="accountNewsBlur" width="25" height="25"/>
         <namedColor name="AccentColor">
             <color red="0.030999999493360519" green="0.41600000858306885" blue="0.93300002813339233" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

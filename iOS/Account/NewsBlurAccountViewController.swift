@@ -53,7 +53,7 @@ class NewsBlurAccountViewController: UITableViewController {
 	}
 	
 	private func setupFooter() {
-		footerLabel.text = NSLocalizedString("Sign in to your NewsBlur account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a NewsBlur account?", comment: "NewsBlur")
+		footerLabel.text = NSLocalizedString("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account?", comment: "NewsBlur")
 	}
 
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

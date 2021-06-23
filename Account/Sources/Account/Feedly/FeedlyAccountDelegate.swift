@@ -382,13 +382,14 @@ final class FeedlyAccountDelegate: AccountDelegate {
 			}
 			
 			let resource = FeedlyFeedResourceId(id: feed.webFeedID)
-			let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
-																	 credentials: credentials,
-																	 resource: resource,
-																	 service: caller,
-																	 container: container,
-																	 progress: refreshProgress,
-																	 log: log)
+            let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
+                                                                     credentials: credentials,
+                                                                     resource: resource,
+                                                                     service: caller,
+                                                                     container: container,
+                                                                     progress: refreshProgress,
+                                                                     log: log,
+                                                                     customFeedName: feed.editedName)
 			
 			
 			addExistingFeed.addCompletionHandler = { result in

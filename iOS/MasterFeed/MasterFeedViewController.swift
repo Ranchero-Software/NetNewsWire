@@ -1321,7 +1321,7 @@ private extension MasterFeedViewController {
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 		
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-		let deleteAction = UIAlertAction(title: deleteTitle, style: .default) { [weak self] action in
+		let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] action in
 			self?.delete(indexPath: indexPath, feedID: feedID)
 		}
 		alertController.addAction(deleteAction)

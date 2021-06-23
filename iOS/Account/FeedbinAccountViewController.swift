@@ -59,7 +59,7 @@ class FeedbinAccountViewController: UITableViewController {
 	}
 	
 	private func setupFooter() {
-		footerLabel.text = NSLocalizedString("Sign in to your Feedbin account and sync your subscriptions across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon't have a Feedbin account?", comment: "Feedbin")
+		footerLabel.text = NSLocalizedString("Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account?", comment: "Feedbin")
 	}
 
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
