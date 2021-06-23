@@ -41,10 +41,10 @@ struct GeneralPreferencesView: View {
 			Toggle("Hide Unread Count in Dock", isOn: $defaults.hideDockUnreadCount)
 
 			Picker("Safari Extension:",
-				   selection: $defaults.subscribeToFeedsInNetNewsWire,
+				   selection: $defaults.subscribeToFeedsInDefaultBrowser,
 				   content: {
-					Text("Open feeds in NetNewsWire").tag(true)
-					Text("Open feeds in default news reader").tag(false)
+					Text("Open feeds in NetNewsWire").tag(false)
+					Text("Open feeds in default news reader").tag(true)
 				   }).pickerStyle(RadioGroupPickerStyle())
 		}
 		.frame(width: 400, alignment: .center)

@@ -30,7 +30,7 @@ final class AppDefaults {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
-		static let subscribeToFeedsInNetNewsWire = "subscribeToFeedsInNetNewsWire"
+		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
 		static let articleTextSize = "articleTextSize"
 		static let refreshInterval = "refreshInterval"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
@@ -107,12 +107,12 @@ final class AppDefaults {
 		}
 	}
 
-	var subscribeToFeedsInNetNewsWire: Bool {
+	var subscribeToFeedsInDefaultBrowser: Bool {
 		get {
-			return AppDefaults.bool(for: Key.subscribeToFeedsInNetNewsWire)
+			return AppDefaults.bool(for: Key.subscribeToFeedsInDefaultBrowser)
 		}
 		set {
-			AppDefaults.setBool(for: Key.subscribeToFeedsInNetNewsWire, newValue)
+			AppDefaults.setBool(for: Key.subscribeToFeedsInDefaultBrowser, newValue)
 		}
 	}
 
@@ -297,7 +297,7 @@ final class AppDefaults {
 										Key.detailFontSize: FontSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.timelineGroupByFeed: false,
-										Key.subscribeToFeedsInNetNewsWire: true,
+										Key.subscribeToFeedsInDefaultBrowser: false,
 										"NSScrollViewShouldScrollUnderTitlebar": false,
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.showDebugMenu: showDebugMenu]
