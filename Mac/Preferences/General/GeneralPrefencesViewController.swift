@@ -126,4 +126,12 @@ private extension GeneralPreferencesViewController {
 		}
 	}
 
+	@objc var openFeedsInDefaultNewsReader: Bool {
+		get {
+			return AppDefaults.shared.subscribeToFeedsInDefaultBrowser
+		}
+		set {
+			AppDefaults.shared.subscribeToFeedsInDefaultBrowser = newValue
+		}
+	}
 }

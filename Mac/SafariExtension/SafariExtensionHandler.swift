@@ -45,15 +45,11 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 			if var feedURLString = userInfo?["url"] as? String {
 				var openInDefaultBrowser = false
 
-				// Ask for the user default from NetNewsWire's defaults to determine whether to open the feed URL
-				// using whatever the system configured default is, or to always hard-code it to NetNewsWire itself.
-				if let pluginBundleID = Bundle.main.bundleIdentifier {
-					// By convention we assume that our bundle ID will always be the same as the host app's, with
-					// the addition of ".Subscribe-to-Feed".
-					let hostAppBundleID = pluginBundleID.replacingOccurrences(of: ".Subscribe-to-Feed", with: "")
-
-					if let sharedDefaults = UserDefaults(suiteName: hostAppBundleID) {
-						openInDefaultBrowser = sharedDefaults.bool(forKey: "subscribeToFeedsInDefaultBrowser")
+				// Ask for the user's choice for whether to open the feed URL using whatever the system
+				// configured default is, or to always hard-code it to have NetNewsWire handle it itself.
+				if let appGroupID = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String {
+					if let groupDefaults = UserDefaults(suiteName: appGroupID) {
+						openInDefaultBrowser = groupDefaults.bool(forKey: "subscribeToFeedsInDefaultBrowser")
 					}
 				}
 

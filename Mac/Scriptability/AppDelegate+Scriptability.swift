@@ -40,9 +40,16 @@ extension AppDelegate : AppDelegateAppleEvents {
     
     @objc func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor) {
 
-        guard let urlString = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {
+        guard var urlString = event.paramDescriptor(forKeyword: keyDirectObject)?.stringValue else {
             return
         }
+
+		// Special case URL with specific scheme handler x-netnewswire-feed: intended to ensure we open
+		// it regardless of which news reader may be set as the default
+		let nnwScheme = "x-netnewswire-feed:"
+		if urlString.hasPrefix(nnwScheme) {
+			urlString = urlString.replacingOccurrences(of: nnwScheme, with: "feed:")
+		}
 
         let normalizedURLString = urlString.normalizedURL
         if !normalizedURLString.mayBeURL {
