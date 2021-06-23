@@ -35,6 +35,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
+		
+		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
+		// commands that the system is looking for by going up the responder chain. They will interfere with
+		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
+		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else { return nil }
+		
 		return keyboardManager.keyCommands
 	}
 	
