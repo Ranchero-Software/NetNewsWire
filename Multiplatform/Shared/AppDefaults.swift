@@ -75,7 +75,7 @@ final class AppDefaults: ObservableObject {
 		static let articleTextSize = "articleTextSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let defaultBrowserID = "defaultBrowserID"
-		static let subscribeToFeedsInNetNewsWire = "subscribeToFeedsInNetNewsWire"
+		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
 		static let checkForUpdatesAutomatically = "checkForUpdatesAutomatically"
 		static let downloadTestBuilds = "downloadTestBuild"
 		static let sendCrashLogs = "sendCrashLogs"
@@ -267,7 +267,7 @@ final class AppDefaults: ObservableObject {
 		}
 	}
 
-	@AppStorage(wrappedValue: false, Key.subscribeToFeedsInNetNewsWire, store: store) var subscribeToFeedsInNetNewsWire: Bool {
+	@AppStorage(wrappedValue: false, Key.subscribeToFeedsInDefaultBrowser, store: store) var subscribeToFeedsInDefaultBrowser: Bool {
 		didSet {
 			objectWillChange.send()
 		}

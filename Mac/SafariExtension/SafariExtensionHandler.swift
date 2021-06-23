@@ -43,6 +43,8 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 	override func messageReceived(withName messageName: String, from page: SFSafariPage, userInfo: [String : Any]?) {
 		if (messageName == "subscribeToFeed") {
 			if var feedURLString = userInfo?["url"] as? String {
+				var openInDefaultBrowser = false
+
 				// Ask for the user default from NetNewsWire's defaults to determine whether to open the feed URL
 				// using whatever the system configured default is, or to always hard-code it to NetNewsWire itself.
 				if let pluginBundleID = Bundle.main.bundleIdentifier {
@@ -51,12 +53,14 @@ class SafariExtensionHandler: SFSafariExtensionHandler {
 					let hostAppBundleID = pluginBundleID.replacingOccurrences(of: ".Subscribe-to-Feed", with: "")
 
 					if let sharedDefaults = UserDefaults(suiteName: hostAppBundleID) {
-						let openInNNW = sharedDefaults.bool(forKey: "subscribeToFeedsInNetNewsWire")
-						if openInNNW {
-							feedURLString = feedURLString.replacingOccurrences(of: "feed:", with: "x-netnewswire-feed")
-						}
+						openInDefaultBrowser = sharedDefaults.bool(forKey: "subscribeToFeedsInDefaultBrowser")
 					}
 				}
+
+				if openInDefaultBrowser == false {
+						feedURLString = feedURLString.replacingOccurrences(of: "feed:", with: "x-netnewswire-feed")
+				}
+
 				if let feedURL = URL(string: feedURLString) {
 					NSWorkspace.shared.open(feedURL)
 				}

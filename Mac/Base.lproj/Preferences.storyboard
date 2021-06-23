@@ -190,7 +190,11 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.subscribeToFeedsInNetNewsWire" id="Q15-dB-PCt"/>
+                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.subscribeToFeedsInDefaultBrowser" id="rgT-1E-AoD">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                </dictionary>
+                                            </binding>
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yrc-6Q-kx8">
@@ -200,11 +204,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.subscribeToFeedsInNetNewsWire" id="Ikq-MR-S1U">
-                                                <dictionary key="options">
-                                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                                </dictionary>
-                                            </binding>
+                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.subscribeToFeedsInDefaultBrowser" id="Dnc-co-ppt"/>
                                         </connections>
                                     </button>
                                 </subviews>
