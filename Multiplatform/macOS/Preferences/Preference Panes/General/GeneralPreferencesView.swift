@@ -14,7 +14,7 @@ struct GeneralPreferencesView: View {
 	
 	var body: some View {
 		Form {
-			Picker("Refresh feeds",
+			Picker("Refresh feeds:",
 				   selection: $defaults.interval,
 				   content: {
 					ForEach(RefreshInterval.allCases, content: { interval in
@@ -22,8 +22,8 @@ struct GeneralPreferencesView: View {
 							.tag(interval.rawValue)
 					})
 				   })
-			
-			Picker("Default RSS reader", selection: $preferences.readerSelection, content: {
+
+			Picker("Default RSS reader:", selection: $preferences.readerSelection, content: {
 				ForEach(0..<preferences.rssReaders.count, content: { index in
 					if index > 0 && preferences.rssReaders[index].nameMinusAppSuffix.contains("NetNewsWire") {
 						Text(preferences.rssReaders[index].nameMinusAppSuffix.appending(" (old version)"))
@@ -38,9 +38,14 @@ struct GeneralPreferencesView: View {
 			Toggle("Confirm when deleting feeds and folders", isOn: $defaults.sidebarConfirmDelete)
 			
 			Toggle("Open webpages in background in browser", isOn: $defaults.openInBrowserInBackground)
-			
 			Toggle("Hide Unread Count in Dock", isOn: $defaults.hideDockUnreadCount)
-			
+
+			Picker("Safari Extension:",
+				   selection: $defaults.subscribeToFeedsInNetNewsWire,
+				   content: {
+					Text("Open feeds in NetNewsWire").tag(true)
+					Text("Open feeds in default news reader").tag(false)
+				   }).pickerStyle(RadioGroupPickerStyle())
 		}
 		.frame(width: 400, alignment: .center)
 		.lineLimit(2)

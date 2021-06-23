@@ -30,6 +30,7 @@ final class AppDefaults {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
+		static let subscribeToFeedsInNetNewsWire = "subscribeToFeedsInNetNewsWire"
 		static let articleTextSize = "articleTextSize"
 		static let refreshInterval = "refreshInterval"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
@@ -103,6 +104,15 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.openInBrowserInBackground, newValue)
+		}
+	}
+
+	var subscribeToFeedsInNetNewsWire: Bool {
+		get {
+			return AppDefaults.bool(for: Key.subscribeToFeedsInNetNewsWire)
+		}
+		set {
+			AppDefaults.setBool(for: Key.subscribeToFeedsInNetNewsWire, newValue)
 		}
 	}
 
@@ -287,6 +297,7 @@ final class AppDefaults {
 										Key.detailFontSize: FontSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.timelineGroupByFeed: false,
+										Key.subscribeToFeedsInNetNewsWire: true,
 										"NSScrollViewShouldScrollUnderTitlebar": false,
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.showDebugMenu: showDebugMenu]
