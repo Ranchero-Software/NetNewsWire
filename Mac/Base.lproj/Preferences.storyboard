@@ -190,7 +190,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.subscribeToFeedsInDefaultBrowser" id="rgT-1E-AoD">
+                                            <binding destination="iuH-lz-18x" name="value" keyPath="openFeedsInDefaultNewsReader" id="l1B-rk-qfE">
                                                 <dictionary key="options">
                                                     <string key="NSValueTransformerName">NSNegateBoolean</string>
                                                 </dictionary>
@@ -204,7 +204,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.subscribeToFeedsInDefaultBrowser" id="Dnc-co-ppt"/>
+                                            <binding destination="iuH-lz-18x" name="value" keyPath="openFeedsInDefaultNewsReader" id="QZ4-W8-rPi"/>
                                         </connections>
                                     </button>
                                 </subviews>

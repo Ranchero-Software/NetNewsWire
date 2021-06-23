@@ -8,6 +8,8 @@
 	<string>Subscribe to Feed</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>AppGroup</key>
+	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>

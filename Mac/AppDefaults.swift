@@ -107,12 +107,24 @@ final class AppDefaults {
 		}
 	}
 
+	// Special case for this default: store/retrieve it from the shared app group
+	// defaults, so that it can be resolved by the Safari App Extension.
+	var subscribeToFeedDefaults: UserDefaults {
+		if let appGroupID = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String,
+		   let appGroupDefaults = UserDefaults(suiteName: appGroupID) {
+			return appGroupDefaults
+		}
+		else {
+			return UserDefaults.standard
+		}
+	}
+
 	var subscribeToFeedsInDefaultBrowser: Bool {
 		get {
-			return AppDefaults.bool(for: Key.subscribeToFeedsInDefaultBrowser)
+			return subscribeToFeedDefaults.bool(forKey: Key.subscribeToFeedsInDefaultBrowser)
 		}
 		set {
-			AppDefaults.setBool(for: Key.subscribeToFeedsInDefaultBrowser, newValue)
+			subscribeToFeedDefaults.set(newValue, forKey: Key.subscribeToFeedsInDefaultBrowser)
 		}
 	}
 
@@ -297,7 +309,6 @@ final class AppDefaults {
 										Key.detailFontSize: FontSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.timelineGroupByFeed: false,
-										Key.subscribeToFeedsInDefaultBrowser: false,
 										"NSScrollViewShouldScrollUnderTitlebar": false,
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 										Key.showDebugMenu: showDebugMenu]
