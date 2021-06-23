@@ -229,12 +229,13 @@ private extension MasterTimelineTableViewCell {
 			}
 			unreadIndicatorPropertyAnimator?.startAnimation()
 		} else {
+			unreadIndicatorView.alpha = 1
 			showOrHideView(unreadIndicatorView, cellData.read || cellData.starred)
 		}
 	}
 	
 	func updateStarView() {
-		if !starView.isHidden &&  cellData.read && !cellData.starred {
+		if !starView.isHidden && cellData.read && !cellData.starred {
 			starViewPropertyAnimator = UIViewPropertyAnimator(duration: 0.66, curve: .easeInOut) { [weak self] in
 				self?.starView.alpha = 0
 			}
@@ -245,6 +246,7 @@ private extension MasterTimelineTableViewCell {
 			}
 			starViewPropertyAnimator?.startAnimation()
 		} else {
+			starView.alpha = 1
 			showOrHideView(starView, !cellData.starred)
 		}
 	}
