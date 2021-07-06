@@ -129,6 +129,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	// MARK: Actions
+	
+	@objc func openInBrowser(_ sender: Any?) {
+		coordinator.showBrowserForCurrentArticle()
+	}
+
+	@objc func openInAppBrowser(_ sender: Any?) {
+		coordinator.showInAppBrowser()
+	}
+	
 	@IBAction func toggleFilter(_ sender: Any) {
 		coordinator.toggleReadArticlesFilter()
 	}
