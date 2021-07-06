@@ -74,11 +74,13 @@ private extension CloudKitSendStatusOperation {
 			case .success(let syncStatuses):
 				
 				func stopProcessing() {
-					if self.showProgress {
-						self.refreshProgress?.completeTask()
+					self.database.resetAllSelectedForProcessing { _ in
+						if self.showProgress {
+							self.refreshProgress?.completeTask()
+						}
+						os_log(.debug, log: self.log, "Done sending article statuses.")
+						self.operationDelegate?.operationDidComplete(self)
 					}
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					self.operationDelegate?.operationDidComplete(self)
 				}
 				
 				guard syncStatuses.count > 0 else {
@@ -130,10 +132,10 @@ private extension CloudKitSendStatusOperation {
 				}
 				
 				// If this happens, we have somehow gotten into a state where we have new status records
-				// but the articles didn't come back in the fetch.  Rather than crashing, we stop processing
+				// but the articles didn't come back in the fetch.  Rather than crashing, we continue processing
 				// and hope that it gets cleared up later.
 				guard !statusUpdates.isEmpty else {
-					done(true)
+					done(false)
 					return
 				}
 				
