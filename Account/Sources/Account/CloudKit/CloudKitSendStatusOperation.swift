@@ -74,13 +74,11 @@ private extension CloudKitSendStatusOperation {
 			case .success(let syncStatuses):
 				
 				func stopProcessing() {
-					self.database.resetAllSelectedForProcessing { _ in
-						if self.showProgress {
-							self.refreshProgress?.completeTask()
-						}
-						os_log(.debug, log: self.log, "Done sending article statuses.")
-						self.operationDelegate?.operationDidComplete(self)
+					if self.showProgress {
+						self.refreshProgress?.completeTask()
 					}
+					os_log(.debug, log: self.log, "Done sending article statuses.")
+					self.operationDelegate?.operationDidComplete(self)
 				}
 				
 				guard syncStatuses.count > 0 else {
