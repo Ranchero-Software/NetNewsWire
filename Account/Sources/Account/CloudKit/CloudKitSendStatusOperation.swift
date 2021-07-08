@@ -130,24 +130,26 @@ private extension CloudKitSendStatusOperation {
 				}
 				
 				// If this happens, we have somehow gotten into a state where we have new status records
-				// but the articles didn't come back in the fetch.  Rather than crashing, we continue processing
-				// and hope that it gets cleared up later.
-				guard !statusUpdates.isEmpty else {
-					done(false)
-					return
-				}
-				
-				articlesZone.modifyArticles(statusUpdates) { result in
-					switch result {
-					case .success:
-						self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
-							done(false)
-						}
-					case .failure(let error):
-						self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-							self.processAccountError(account, error)
-							os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
-							completion(true)
+				// but the articles didn't come back in the fetch.  We need to clean up those sync records
+				// and continue processing.
+				if statusUpdates.isEmpty {
+					self.database.deleteSelectedForProcessing(articleIDs) { _ in
+						done(false)
+						return
+					}
+				} else {
+					articlesZone.modifyArticles(statusUpdates) { result in
+						switch result {
+						case .success:
+							self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
+								done(false)
+							}
+						case .failure(let error):
+							self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
+								self.processAccountError(account, error)
+								os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
+								completion(true)
+							}
 						}
 					}
 				}
