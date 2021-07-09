@@ -131,10 +131,10 @@ private extension CloudKitSendStatusOperation {
 				
 				// If this happens, we have somehow gotten into a state where we have new status records
 				// but the articles didn't come back in the fetch.  We need to clean up those sync records
-				// and continue processing.
+				// and stop processing.
 				if statusUpdates.isEmpty {
 					self.database.deleteSelectedForProcessing(articleIDs) { _ in
-						done(false)
+						done(true)
 						return
 					}
 				} else {
