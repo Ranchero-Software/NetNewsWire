@@ -1018,12 +1018,12 @@ private extension ReaderAPIAccountDelegate {
 				return nil
 			}
 
-            var authors: Set<ParsedAuthor>? {
-                guard let name = entry.author else {
-                    return nil
-                }
-                return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
-            }
+			var authors: Set<ParsedAuthor>? {
+				guard let name = entry.author else {
+					return nil
+				}
+				return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
+			}
 			
 			return ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
 							  uniqueID: entry.uniqueID(variant: variant),
@@ -1039,7 +1039,7 @@ private extension ReaderAPIAccountDelegate {
 							  bannerImageURL: nil,
 							  datePublished: entry.parseDatePublished(),
 							  dateModified: nil,
-                              authors: authors,
+							  authors: authors,
 							  tags: nil,
 							  attachments: nil)
 		}

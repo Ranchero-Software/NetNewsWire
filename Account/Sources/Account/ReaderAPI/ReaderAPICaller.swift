@@ -360,16 +360,16 @@ final class ReaderAPICaller: NSObject {
 			case .success(let token):
 				let callURL = baseURL
 					.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue)
-
+				
 				var request = URLRequest(url: callURL, credentials: self.credentials)
 				self.addVariantHeaders(&request)
 				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 				request.httpMethod = "POST"
-                
-                guard let encodedFeedURL = self.encodeForURLPath(url) else {
-                    completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-                    return
-                }
+				
+				guard let encodedFeedURL = self.encodeForURLPath(url) else {
+					completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+					return
+				}
 				let postData = "T=\(token)&quickadd=\(encodedFeedURL)".data(using: String.Encoding.utf8)
 
 				self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIQuickAddResult.self, completion: { (result) in
@@ -442,62 +442,62 @@ final class ReaderAPICaller: NSObject {
 	func createTagging(subscriptionID: String, tagName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		changeSubscription(subscriptionID: subscriptionID, addTagName: tagName, completion: completion)
 	}
-
+	
 	func deleteTagging(subscriptionID: String, tagName: String, completion: @escaping (Result<Void, Error>) -> Void) {
 		changeSubscription(subscriptionID: subscriptionID, removeTagName: tagName, completion: completion)
 	}
-    
-    func moveSubscription(subscriptionID: String, fromTag: String, toTag: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        changeSubscription(subscriptionID: subscriptionID, removeTagName: fromTag, addTagName: toTag, completion: completion)
-    }
-    
-    private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
-        if removeTagName == nil && addTagName == nil && title == nil {
-            completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-            return
-        }
-        
-        guard let baseURL = apiBaseURL else {
-            completion(.failure(CredentialsError.incompleteCredentials))
-            return
-        }
-        
-        self.requestAuthorizationToken(endpoint: baseURL) { (result) in
-            switch result {
-            case .success(let token):
-                var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
-                self.addVariantHeaders(&request)
-                request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-                request.httpMethod = "POST"
-                
-                var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
-                if let fromLabel = self.encodeForURLPath(removeTagName) {
-                    postString += "&r=user/-/label/\(fromLabel)"
-                }
-                if let toLabel = self.encodeForURLPath(addTagName) {
-                    postString += "&a=user/-/label/\(toLabel)"
-                }
-                if let encodedTitle = self.encodeForURLPath(title) {
-                    postString += "&t=\(encodedTitle)"
-                }
-                let postData = postString.data(using: String.Encoding.utf8)
-                
-                self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
-                    switch result {
-                    case .success:
-                        completion(.success(()))
-                        break
-                    case .failure(let error):
-                        completion(.failure(error))
-                        break
-                    }
-                })
-                
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
+	
+	func moveSubscription(subscriptionID: String, fromTag: String, toTag: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		changeSubscription(subscriptionID: subscriptionID, removeTagName: fromTag, addTagName: toTag, completion: completion)
+	}
+	
+	private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
+		if removeTagName == nil && addTagName == nil && title == nil {
+			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+			return
+		}
+		
+		guard let baseURL = apiBaseURL else {
+			completion(.failure(CredentialsError.incompleteCredentials))
+			return
+		}
+		
+		self.requestAuthorizationToken(endpoint: baseURL) { (result) in
+			switch result {
+			case .success(let token):
+				var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), credentials: self.credentials)
+				self.addVariantHeaders(&request)
+				request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+				request.httpMethod = "POST"
+				
+				var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
+				if let fromLabel = self.encodeForURLPath(removeTagName) {
+					postString += "&r=user/-/label/\(fromLabel)"
+				}
+				if let toLabel = self.encodeForURLPath(addTagName) {
+					postString += "&a=user/-/label/\(toLabel)"
+				}
+				if let encodedTitle = self.encodeForURLPath(title) {
+					postString += "&t=\(encodedTitle)"
+				}
+				let postData = postString.data(using: String.Encoding.utf8)
+				
+				self.transport.send(request: request, method: HTTPMethod.post, payload: postData!, completion: { (result) in
+					switch result {
+					case .success:
+						completion(.success(()))
+						break
+					case .failure(let error):
+						completion(.failure(error))
+						break
+					}
+				})
+				
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
 	
 	func retrieveEntries(articleIDs: [String], completion: @escaping (Result<([ReaderAPIEntry]?), Error>) -> Void) {
 		
