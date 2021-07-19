@@ -51,6 +51,7 @@ struct ReaderAPIEntry: Codable {
 
 	let articleID: String
 	let title: String?
+    let author: String?
 
 	let publishedTimestamp: Double?
 	let crawledTimestamp: String?
@@ -64,6 +65,7 @@ struct ReaderAPIEntry: Codable {
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
 		case title = "title"
+        case author = "author"
 		case summary = "summary"
 		case alternates = "alternate"
 		case categories = "categories"
