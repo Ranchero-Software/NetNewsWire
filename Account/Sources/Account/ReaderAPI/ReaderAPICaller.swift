@@ -452,7 +452,7 @@ final class ReaderAPICaller: NSObject {
 	}
 	
 	private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
-		if removeTagName == nil && addTagName == nil && title == nil {
+		guard removeTagName != nil || addTagName != nil || title != nil else {
 			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
 			return
 		}
