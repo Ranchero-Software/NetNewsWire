@@ -473,23 +473,27 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		if from is Account {
 			addWebFeed(for: account, with: feed, to: to, completion: completion)
 		} else {
-            guard let subscriptionId = feed.externalID, let fromTag = (from as? Folder)?.name, let toTag = (to as? Folder)?.name else {
-                completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-                return
-            }
-            
-            refreshProgress.addToNumberOfTasksAndRemaining(1)
-            caller.moveSubscription(subscriptionID: subscriptionId, fromTag: fromTag, toTag: toTag) { result in
-                self.refreshProgress.completeTask()
-                switch result {
-                case .success:
-                    from.removeWebFeed(feed)
-                    to.addWebFeed(feed)
-                    completion(.success(()))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
+			guard
+				let subscriptionId = feed.externalID,
+				let fromTag = (from as? Folder)?.name,
+				let toTag = (to as? Folder)?.name
+			else {
+				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+				return
+			}
+			
+			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			caller.moveSubscription(subscriptionID: subscriptionId, fromTag: fromTag, toTag: toTag) { result in
+				self.refreshProgress.completeTask()
+				switch result {
+				case .success:
+					from.removeWebFeed(feed)
+					to.addWebFeed(feed)
+					completion(.success(()))
+				case .failure(let error):
+					completion(.failure(error))
+				}
+			}
 		}
 	}
 	
