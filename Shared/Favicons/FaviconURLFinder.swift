@@ -42,7 +42,7 @@ struct FaviconURLFinder {
 	///   - urls: An array of favicon URLs as strings.
 	static func findFaviconURLs(with homePageURL: String, _ completion: @escaping (_ urls: [String]?) -> Void) {
 
-		guard let _ = URL(string: homePageURL) else {
+		guard let _ = URL(unicodeString: homePageURL) else {
 			completion(nil)
 			return
 		}

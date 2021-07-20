@@ -200,7 +200,7 @@ private extension FaviconDownloader {
 
 	func findFaviconURLs(with homePageURL: String, _ completion: @escaping ([String]?) -> Void) {
 
-		guard let url = URL(string: homePageURL) else {
+		guard let url = URL(unicodeString: homePageURL) else {
 			completion(nil)
 			return
 		}
