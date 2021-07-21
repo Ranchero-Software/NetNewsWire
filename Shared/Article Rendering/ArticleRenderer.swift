@@ -154,10 +154,7 @@ private extension ArticleRenderer {
 		d["title"] = title
 		
 		if let externalLink = article.externalURL, externalLink != article.preferredLink {
-			var displayLink = externalLink.strippingHTTPOrHTTPSScheme
-			if displayLink.count > 27 {
-				displayLink = displayLink.prefix(27).appending("...")
-			}
+			let displayLink = externalLink.strippingHTTPOrHTTPSScheme
 			let regarding = NSLocalizedString("Link", comment: "Link")
 			let externalLinkString = "\(regarding): <a href=\"\(externalLink)\">\(displayLink)</a>"
 			d["external_link"] = externalLinkString
