@@ -473,10 +473,23 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		if from is Account {
 			addWebFeed(for: account, with: feed, to: to, completion: completion)
 		} else {
-			deleteTagging(for: account, with: feed, from: from) { result in
+			guard
+				let subscriptionId = feed.externalID,
+				let fromTag = (from as? Folder)?.name,
+				let toTag = (to as? Folder)?.name
+			else {
+				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+				return
+			}
+			
+			refreshProgress.addToNumberOfTasksAndRemaining(1)
+			caller.moveSubscription(subscriptionID: subscriptionId, fromTag: fromTag, toTag: toTag) { result in
+				self.refreshProgress.completeTask()
 				switch result {
 				case .success:
-					self.addWebFeed(for: account, with: feed, to: to, completion: completion)
+					from.removeWebFeed(feed)
+					to.addWebFeed(feed)
+					completion(.success(()))
 				case .failure(let error):
 					completion(.failure(error))
 				}
@@ -1008,8 +1021,13 @@ private extension ReaderAPIAccountDelegate {
 			guard let streamID = entry.origin.streamId else {
 				return nil
 			}
-			// let authors = Set([ParsedAuthor(name: entry.authorName, url: entry.jsonFeed?.jsonFeedAuthor?.url, avatarURL: entry.jsonFeed?.jsonFeedAuthor?.avatarURL, emailAddress: nil)])
-			// let feed = account.idToFeedDictionary[entry.origin.streamId!]! // TODO clean this up
+
+			var authors: Set<ParsedAuthor>? {
+				guard let name = entry.author else {
+					return nil
+				}
+				return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
+			}
 			
 			return ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
 							  uniqueID: entry.uniqueID(variant: variant),
@@ -1025,7 +1043,7 @@ private extension ReaderAPIAccountDelegate {
 							  bannerImageURL: nil,
 							  datePublished: entry.parseDatePublished(),
 							  dateModified: nil,
-							  authors: nil,
+							  authors: authors,
 							  tags: nil,
 							  attachments: nil)
 		}
@@ -1132,32 +1150,4 @@ private extension ReaderAPIAccountDelegate {
 		
 	}
 
-	func deleteTagging(for account: Account, with feed: WebFeed, from container: Container?, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		if let folder = container as? Folder, let feedName = feed.externalID {
-			caller.deleteTagging(subscriptionID: feedName, tagName: folder.name ?? "") { result in
-				switch result {
-				case .success:
-					DispatchQueue.main.async {
-						self.clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
-						folder.removeWebFeed(feed)
-						account.addFeedIfNotInAnyFolder(feed)
-						completion(.success(()))
-					}
-				case .failure(let error):
-					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
-						completion(.failure(wrappedError))
-					}
-				}
-			}
-		} else {
-			if let account = container as? Account {
-				account.removeWebFeed(feed)
-			}
-			completion(.success(()))
-		}
-		
-	}
-	
 }
