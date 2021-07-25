@@ -1,11 +1,11 @@
 # Accessibility
 
 Millions of Mac users have some disability or special needs.  They use screen readers and special
-hardware to open up a world that they would otherwise be cut off from.  With a small amount of 
+hardware to open up a world that they would otherwise be cut off from.  With a small amount of
 developer work, we can help these users live better lives.
 
 Because NetNewsWire utilizes standard AppKit controls and views, accessibility is already built in.
-However this is only a starting point.  Any customized controls and views will have accessibility
+However, this is only a starting point.  Any customized controls and views will have accessibility
 work and the application as a whole has to be tested to make sure users can operate if efficiently.
 
 This document lays the groundwork to ensure that NetNewsWire has first class accessibility features.
