@@ -266,6 +266,14 @@ blockquote {
 	border-top: 1px solid var(--header-table-border-color);
 }
 
+/* Hide the external link at the bottom of Daring Fireball posts */
+
+.x-netnewswire-hide {
+	display: none;
+}
+
+/* see removeWpSmiley; this rule is kept in case a wp-smiley is encountered without alt text */
+
 .wp-smiley {
    height: 1em;
    max-height: 1em;
