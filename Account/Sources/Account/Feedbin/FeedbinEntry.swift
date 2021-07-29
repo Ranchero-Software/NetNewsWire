@@ -52,9 +52,11 @@ final class FeedbinEntry: Decodable {
 
 struct FeedbinEntryJSONFeed: Decodable {
 	let jsonFeedAuthor: FeedbinEntryJSONFeedAuthor?
-	
+	let jsonFeedExternalURL: String?
+
 	enum CodingKeys: String, CodingKey {
 		case jsonFeedAuthor = "author"
+		case jsonFeedExternalURL = "external_url"
 	}
 	
 	public init(from decoder: Decoder) throws {
@@ -63,6 +65,11 @@ struct FeedbinEntryJSONFeed: Decodable {
 			jsonFeedAuthor = try container.decode(FeedbinEntryJSONFeedAuthor.self, forKey: .jsonFeedAuthor)
 		} catch {
 			jsonFeedAuthor = nil
+		}
+		do {
+			jsonFeedExternalURL = try container.decode(String.self, forKey: .jsonFeedExternalURL)
+		} catch {
+			jsonFeedExternalURL = nil
 		}
 	}
 
