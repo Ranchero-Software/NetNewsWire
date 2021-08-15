@@ -17,7 +17,7 @@ protocol DetailWebViewControllerDelegate: AnyObject {
 	func mouseDidExit(_: DetailWebViewController)
 }
 
-final class DetailWebViewController: NSViewController, WKUIDelegate {
+final class DetailWebViewController: NSViewController {
 
 	weak var delegate: DetailWebViewControllerDelegate?
 	var webView: DetailWebView!
@@ -184,16 +184,22 @@ extension DetailWebViewController: WKScriptMessageHandler {
 	}
 }
 
-// MARK: - WKNavigationDelegate
+// MARK: - WKNavigationDelegate & WKUIDelegate
 
-extension DetailWebViewController: WKNavigationDelegate {
+extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
+
+	// Bottleneck through which WebView-based URL opens go
+	func openInBrowser(_ url: URL, flags: NSEvent.ModifierFlags) {
+		let invert = flags.contains(.shift) || flags.contains(.command)
+		Browser.open(url.absoluteString, invertPreference: invert)
+	}
+
+	// WKNavigationDelegate
 
 	public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 		if navigationAction.navigationType == .linkActivated {
 			if let url = navigationAction.request.url {
-				let flags = navigationAction.modifierFlags
-				let invert = flags.contains(.shift) || flags.contains(.command)
-				Browser.open(url.absoluteString, invertPreference: invert)
+				self.openInBrowser(url, flags: navigationAction.modifierFlags)
 			}
 			decisionHandler(.cancel)
 			return
@@ -215,6 +221,20 @@ extension DetailWebViewController: WKNavigationDelegate {
 				webView.isHidden = false
 			}
 		}
+	}
+
+	// WKUIDelegate
+	
+	func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+		// This method is reached when WebKit handles a JavaScript based window.open() invocation, for example. One
+		// example where this is used is in YouTube's embedded video player when a user clicks on the video's title
+		// or on the "Watch in YouTube" button. For our purposes we'll handle such window.open calls the same way we
+		// handle clicks on a URL.
+		if let url = navigationAction.request.url {
+			self.openInBrowser(url, flags: navigationAction.modifierFlags)
+		}
+
+		return nil
 	}
 }
 

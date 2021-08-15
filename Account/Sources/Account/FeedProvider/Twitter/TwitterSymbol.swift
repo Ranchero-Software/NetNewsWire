@@ -10,18 +10,18 @@ import Foundation
 
 struct TwitterSymbol: Codable, TwitterEntity {
 	
-	let name: String?
+	let text: String?
 	let indices: [Int]?
 
 	enum CodingKeys: String, CodingKey {
-		case name = "name"
+		case text = "text"
 		case indices = "indices"
 	}
 
 	func renderAsHTML() -> String {
 		var html = String()
-		if let name = name {
-			html += "<a href=\"https://twitter.com/search?q=%24\(name)\">$\(name)</a>"
+		if let text = text {
+			html += "<a href=\"https://twitter.com/search?q=%24\(text)\">$\(text)</a>"
 		}
 		return html
 	}
