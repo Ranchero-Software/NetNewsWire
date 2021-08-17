@@ -115,7 +115,7 @@ private extension TwitterStatus {
 			}
 			
 			if prevIndex < displayEndIndex {
-				html += String(text[prevIndex..<displayEndIndex])
+				html += String(text[prevIndex..<displayEndIndex]).replacingOccurrences(of: "\n", with: "<br>")
 			}
 			
 			return html
