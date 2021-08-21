@@ -136,8 +136,35 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			case .failure(let error):
 				DispatchQueue.main.async {
 					self.refreshProgress.clear()
+					
 					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
+					if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
+						self.caller.credentials = basicCredentials
+						
+						self.caller.validateCredentials(endpoint: endpoint) { result in
+							switch result {
+							case .success(let apiCredentials):
+								if let apiCredentials = apiCredentials {
+									DispatchQueue.main.async {
+										try? account.storeCredentials(apiCredentials)
+										self.caller.credentials = apiCredentials
+										self.refreshAll(for: account, completion: completion)
+									}
+								} else {
+									DispatchQueue.main.async {
+										completion(.failure(wrappedError))
+									}
+								}
+							case .failure:
+								DispatchQueue.main.async {
+									completion(.failure(wrappedError))
+								}
+							}
+						}
+						
+					} else {
+						completion(.failure(wrappedError))
+					}
 				}
 			}
 			
