@@ -10,6 +10,7 @@ import UIKit
 import Account
 import CoreServices
 import SafariServices
+import SwiftUI
 
 class SettingsViewController: UITableViewController {
 
@@ -21,9 +22,13 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
+	@IBOutlet weak var currentBrowserLabel: UILabel!
+	
 	
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
+	
+	let browserManger = BrowserManager.shared
 	
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
@@ -34,6 +39,7 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(activeExtensionPointsDidChange), name: .ActiveExtensionPointsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(browserPreferenceDidChange), name: .browserPreferenceDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -76,6 +82,7 @@ class SettingsViewController: UITableViewController {
 		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
+		currentBrowserLabel.text = browserManger.currentBrowser().displayName
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -118,7 +125,7 @@ class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case 5:
-			return traitCollection.userInterfaceIdiom == .phone ? 2 : 1
+			return traitCollection.userInterfaceIdiom == .phone ? 3 : 2
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -157,7 +164,6 @@ class SettingsViewController: UITableViewController {
 				acctCell.comboNameLabel?.text = extensionPoint.title
 				cell = acctCell
 			}
-		
 		default:
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
 			
@@ -219,6 +225,11 @@ class SettingsViewController: UITableViewController {
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break
+			}
+		case 5:
+			if indexPath.row == 1 {
+				let browser = UIStoryboard.settings.instantiateController(ofType: BrowserConfigurationViewController.self)
+				self.navigationController?.pushViewController(browser, animated: true)
 			}
 		case 6:
 			let colorPalette = UIStoryboard.settings.instantiateController(ofType: ColorPaletteTableViewController.self)
@@ -341,6 +352,10 @@ class SettingsViewController: UITableViewController {
 	}
 	
 	@objc func activeExtensionPointsDidChange() {
+		tableView.reloadData()
+	}
+	
+	@objc func browserPreferenceDidChange() {
 		tableView.reloadData()
 	}
 	

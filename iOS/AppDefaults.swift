@@ -54,6 +54,7 @@ final class AppDefaults {
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
+		static let browserPreference = "browserPreference"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -116,6 +117,18 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.activeExtensionPointIDs)
+		}
+	}
+	
+	var browserPreference: String {
+		get {
+			guard let preference = UserDefaults.standard.string(forKey: Key.browserPreference) else {
+				return "browser.inapp"
+			}
+			return preference
+		}
+		set {
+			UserDefaults.standard.setValue(newValue, forKey: Key.browserPreference)
 		}
 	}
 	
@@ -190,6 +203,20 @@ final class AppDefaults {
 			AppDefaults.setDate(for: Key.lastRefresh, newValue)
 		}
 	}
+	
+	/// The default behaviour is to open links in the in-app browser, as such, `Browsers.inApp.browserID` is the default.
+	
+//	var openLinksPreferredBrowser: String {
+//		get {
+//			if AppDefaults.store.string(forKey: Key.openLinksPreferredBrowser) == nil {
+//				return Browsers.inApp.browserID
+//			} else {
+//				return AppDefaults.store.string(forKey: Key.openLinksPreferredBrowser)!
+//			}
+//		}
+//
+//		set { AppDefaults.store.setValue(newValue, forKey: Key.openLinksPreferredBrowser) }
+//	}
 	
 	var timelineNumberOfLines: Int {
 		get {

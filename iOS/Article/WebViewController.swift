@@ -250,8 +250,12 @@ class WebViewController: UIViewController {
 
 	func openInAppBrowser() {
 		guard let url = article?.preferredURL else { return }
-		let vc = SFSafariViewController(url: url)
-		present(vc, animated: true)
+		if BrowserManager.shared.currentBrowser() == .inApp {
+			let vc = SFSafariViewController(url: url)
+			present(vc, animated: true)
+		} else {
+			BrowserManager.shared.openURL(urlString: url.absoluteString)
+		}
 	}
 }
 
@@ -344,7 +348,12 @@ extension WebViewController: WKNavigationDelegate {
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
 				decisionHandler(.cancel)
-				openURL(url)
+				if BrowserManager.shared.currentBrowser() == .inApp {
+					openURL(url)
+				} else {
+					BrowserManager.shared.openURL(urlString: url.absoluteString)
+				}
+				
 			} else if components?.scheme == "mailto" {
 				decisionHandler(.cancel)
 				

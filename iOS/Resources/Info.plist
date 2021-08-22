@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>OrganizationIdentifier</key>
-	<string>$(ORGANIZATION_IDENTIFIER)</string>
-	<key>DeveloperEntitlements</key>
-	<string>$(DEVELOPER_ENTITLEMENTS)</string>
 	<key>AppGroup</key>
 	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS</string>
 	<key>AppIdentifierPrefix</key>
@@ -54,10 +50,18 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>DeveloperEntitlements</key>
+	<string>$(DEVELOPER_ENTITLEMENTS)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mailto</string>
 		<string>org-appextension-feature-password-management</string>
+		<string>brave</string>
+		<string>touch-http</string>
+		<string>googlechrome</string>
+		<string>microsoft-edge-https</string>
+		<string>firefox</string>
+		<string>ophttps</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -76,6 +80,8 @@
 		<string>Restoration</string>
 		<string>SelectFeed</string>
 	</array>
+	<key>OrganizationIdentifier</key>
+	<string>$(ORGANIZATION_IDENTIFIER)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
