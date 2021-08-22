@@ -14,6 +14,7 @@ Fixed bug where long press could trigger a crash
 Fixed bug where external URLs in Feedbin feeds might be lost
 Fixed bug where favicons wouldn’t be found when a home page URL has non-ASCII characters
 Fixed bug where iCloud syncing could stop prematurely when the sync database has records not in the local database
+Fixed bug where creating a new folder in iCloud and moving feeds to it wouldn’t sync correctly
 
 
 ### 6.0 TestFlight build 604 - 31 May 2021
