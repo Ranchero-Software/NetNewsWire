@@ -204,20 +204,6 @@ final class AppDefaults {
 		}
 	}
 	
-	/// The default behaviour is to open links in the in-app browser, as such, `Browsers.inApp.browserID` is the default.
-	
-//	var openLinksPreferredBrowser: String {
-//		get {
-//			if AppDefaults.store.string(forKey: Key.openLinksPreferredBrowser) == nil {
-//				return Browsers.inApp.browserID
-//			} else {
-//				return AppDefaults.store.string(forKey: Key.openLinksPreferredBrowser)!
-//			}
-//		}
-//
-//		set { AppDefaults.store.setValue(newValue, forKey: Key.openLinksPreferredBrowser) }
-//	}
-	
 	var timelineNumberOfLines: Int {
 		get {
 			return AppDefaults.int(for: Key.timelineNumberOfLines)
