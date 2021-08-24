@@ -445,8 +445,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return	
 		}
 		
-		guard note.object is Feed else { return }
-		
 		queueRebuildBackingStores()
 	}
 
