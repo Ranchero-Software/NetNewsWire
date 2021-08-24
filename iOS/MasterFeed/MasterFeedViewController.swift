@@ -511,33 +511,21 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func expandSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath, let containerID = dataSource.itemIdentifier(for: indexPath)?.containerID {
 			coordinator.expand(containerID)
-			self.applyChanges(animated: true) {
-				self.reloadAllVisibleCells()
-			}
 		}
 	}
 	
 	@objc func collapseSelectedRows(_ sender: Any?) {
 		if let indexPath = coordinator.currentFeedIndexPath, let containerID = dataSource.itemIdentifier(for: indexPath)?.containerID {
 			coordinator.collapse(containerID)
-			self.applyChanges(animated: true) {
-				self.reloadAllVisibleCells()
-			}
 		}
 	}
 	
 	@objc func expandAll(_ sender: Any?) {
 		coordinator.expandAllSectionsAndFolders()
-		self.applyChanges(animated: true) {
-			self.reloadAllVisibleCells()
-		}
 	}
 	
 	@objc func collapseAllExceptForGroupItems(_ sender: Any?) {
 		coordinator.collapseAllFolders()
-		self.applyChanges(animated: true) {
-			self.reloadAllVisibleCells()
-		}
 	}
 
 	@objc func markAllAsRead(_ sender: Any) {
@@ -917,11 +905,9 @@ private extension MasterFeedViewController {
 		if coordinator.isExpanded(sectionNode) {
 			headerView.disclosureExpanded = false
 			coordinator.collapse(sectionNode)
-			self.applyChanges(animated: true)
 		} else {
 			headerView.disclosureExpanded = true
 			coordinator.expand(sectionNode)
-			self.applyChanges(animated: true)
 		}
 	}
 
@@ -930,7 +916,6 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.expand(containerID)
-		applyChanges(animated: true)
 	}
 
 	func collapse(_ cell: MasterFeedTableViewCell) {
@@ -938,7 +923,6 @@ private extension MasterFeedViewController {
 			return
 		}
 		coordinator.collapse(containerID)
-		applyChanges(animated: true)
 	}
 
 	func makeWebFeedContextMenu(identifier: MasterFeedTableViewIdentifier, indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {

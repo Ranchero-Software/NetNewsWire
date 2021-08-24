@@ -72,7 +72,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	
-	private var animatingChanges = false
 	private var expandedTable = Set<ContainerIdentifier>()
 	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
 	private var shadowTable = [[Node]]()
@@ -446,6 +445,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			return	
 		}
 		
+		guard note.object is Feed else { return }
+		
 		queueRebuildBackingStores()
 	}
 
@@ -677,9 +678,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 	func expand(_ containerID: ContainerIdentifier) {
 		markExpanded(containerID)
-		animatingChanges = true
-		rebuildShadowTable()
-		animatingChanges = false
+		rebuildBackingStores()
 	}
 	
 	func expand(_ node: Node) {
@@ -696,16 +695,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 				}
 			}
 		}
-		animatingChanges = true
-		rebuildShadowTable()
-		animatingChanges = false
+		rebuildBackingStores()
 	}
 	
 	func collapse(_ containerID: ContainerIdentifier) {
 		unmarkExpanded(containerID)
-		animatingChanges = true
-		rebuildShadowTable()
-		animatingChanges = false
+		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
 	}
 	
@@ -716,16 +711,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func collapseAllFolders() {
 		for sectionNode in treeController.rootNode.childNodes {
-			unmarkExpanded(sectionNode)
 			for topLevelNode in sectionNode.childNodes {
 				if topLevelNode.representedObject is Folder {
 					unmarkExpanded(topLevelNode)
 				}
 			}
 		}
-		animatingChanges = true
-		rebuildShadowTable()
-		animatingChanges = false
+		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
 	}
 	
@@ -1446,7 +1438,7 @@ private extension SceneCoordinator {
 	}
 	
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
-		if !animatingChanges && !BatchUpdate.shared.isPerforming {
+		if !BatchUpdate.shared.isPerforming {
 			
 			addToFilterExeptionsIfNecessary(timelineFeed)
 			treeController.rebuild()
