@@ -19,7 +19,6 @@ let CurrentArticleStyleDidChangeNotification = "CurrentArticleStyleDidChangeNoti
 
 private let styleKey = "style"
 private let defaultStyleName = "Default"
-private let stylesFolderName = "Styles"
 private let stylesInResourcesFolderName = "Styles"
 private let styleSuffix = ".netnewswirestyle"
 private let nnwStyleSuffix = ".nnwstyle"
@@ -28,8 +27,8 @@ private let styleSuffixes = [styleSuffix, nnwStyleSuffix, cssStyleSuffix];
 
 final class ArticleStylesManager {
 
-	static let shared = ArticleStylesManager()
-	private let folderPath = Platform.dataSubfolder(forApplication: nil, folderName: stylesFolderName)!
+	static var shared: ArticleStylesManager!
+	private let folderPath: String
 
 	var currentStyleName: String {
 		get {
@@ -54,18 +53,17 @@ final class ArticleStylesManager {
 		}
 	}
 
-	init() {
+	init(folderPath: String) {
+		self.folderPath = folderPath
+
+		do {
+			try FileManager.default.createDirectory(atPath: folderPath, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			assertionFailure("Could not create folder for Styles.")
+			abort()
+		}
 
 		UserDefaults.standard.register(defaults: [styleKey: defaultStyleName])
-//
-//		let defaultStylesFolder = (Bundle.main.resourcePath! as NSString).appendingPathComponent(stylesInResourcesFolderName)
-//		do {
-//			try FileManager.default.rs_copyFiles(inFolder: defaultStylesFolder, destination: folderPath)
-//		}
-//		catch {
-//			print(error)
-//		}
-
 		currentStyle = ArticleStyle.defaultStyle
 
 		updateStyleNames()
