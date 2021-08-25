@@ -1229,12 +1229,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	func showBrowserForArticle(_ article: Article) {
 		guard let url = article.preferredURL else { return }
-		if BrowserManager.shared.currentBrowser() == .inApp {
-			UIApplication.shared.open(url, options: [:])
-		} else {
-			BrowserManager.shared.openURL(urlString: url.absoluteString)
-		}
-		
+		UIApplication.shared.open(url, options: [:])
 	}
 
 	func showBrowserForCurrentArticle() {

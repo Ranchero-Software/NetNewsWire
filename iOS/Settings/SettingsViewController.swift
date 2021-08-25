@@ -28,7 +28,7 @@ class SettingsViewController: UITableViewController {
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
 	
-	let browserManger = BrowserManager.shared
+	
 	
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
@@ -82,7 +82,12 @@ class SettingsViewController: UITableViewController {
 		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
-		currentBrowserLabel.text = browserManger.currentBrowser().displayName
+		if AppDefaults.shared.browserPreference == Browser.inApp.browserID {
+			currentBrowserLabel.text = Browser.inApp.displayName
+		} else {
+			currentBrowserLabel.text = Browser.defaultBrowser.displayName
+		}
+		
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)

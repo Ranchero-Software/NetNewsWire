@@ -27,7 +27,7 @@ class BrowserCell: VibrantTableViewCell {
 		browserName.text = browser.displayName
 		self.browser = browser
 		
-		if BrowserManager.shared.currentBrowser().browserID == browser.browserID {
+		if AppDefaults.shared.browserPreference == browser.browserID {
 			accessoryType = .checkmark
 		} else {
 			accessoryType = .none
@@ -35,7 +35,7 @@ class BrowserCell: VibrantTableViewCell {
 	}
 	
 	func updateBrowserSelection() {
-		BrowserManager.shared.currentBrowserPreference = self.browser.browserID
+		AppDefaults.shared.browserPreference = self.browser.browserID
 	}
 
     override func setSelected(_ selected: Bool, animated: Bool) {

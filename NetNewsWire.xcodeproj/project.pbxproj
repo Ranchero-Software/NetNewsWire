@@ -21,6 +21,7 @@
 		17192AE62567B3FE00AAEACA /* org.sparkle-project.InstallerConnection.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 17192AE22567B3FE00AAEACA /* org.sparkle-project.InstallerConnection.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		17192AE72567B3FE00AAEACA /* org.sparkle-project.InstallerLauncher.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 17192AE32567B3FE00AAEACA /* org.sparkle-project.InstallerLauncher.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		17192AE82567B3FE00AAEACA /* org.sparkle-project.InstallerStatus.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 17192AE42567B3FE00AAEACA /* org.sparkle-project.InstallerStatus.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		171BC38126D61F3F0032425C /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC05D2126D3E0770047E788 /* Browser.swift */; };
 		171BCB8C24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
 		171BCB8D24CB08A3006E22D9 /* FixAccountCredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171BCB8B24CB08A3006E22D9 /* FixAccountCredentialView.swift */; };
 		171BCBAF24CBBFD8006E22D9 /* EditAccountCredentialsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1769E33524BD9621000E1E8E /* EditAccountCredentialsModel.swift */; };
@@ -74,7 +75,6 @@
 		175942AB24AD533200585066 /* RefreshInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5183CCE4226F4DFA0010922C /* RefreshInterval.swift */; };
 		175EBD7426D2405A009B5B23 /* BrowserConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175EBD7326D2405A009B5B23 /* BrowserConfigurationViewController.swift */; };
 		175EBD7626D240D8009B5B23 /* BrowserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175EBD7526D240D8009B5B23 /* BrowserCell.swift */; };
-		1760888126D1F04500E853E9 /* BrowserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1760888026D1F04500E853E9 /* BrowserManager.swift */; };
 		176813D02564BA5900D98635 /* WidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176813B62564B9F800D98635 /* WidgetData.swift */; };
 		176813D12564BA5900D98635 /* WidgetDataDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176813C92564BA5400D98635 /* WidgetDataDecoder.swift */; };
 		176813D22564BA5900D98635 /* WidgetDataEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176813BD2564BA2800D98635 /* WidgetDataEncoder.swift */; };
@@ -1558,7 +1558,6 @@
 		173A64162547BE0900267F6E /* AccountType+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AccountType+Helpers.swift"; sourceTree = "<group>"; };
 		175EBD7326D2405A009B5B23 /* BrowserConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserConfigurationViewController.swift; sourceTree = "<group>"; };
 		175EBD7526D240D8009B5B23 /* BrowserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserCell.swift; sourceTree = "<group>"; };
-		1760888026D1F04500E853E9 /* BrowserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserManager.swift; sourceTree = "<group>"; };
 		176813B62564B9F800D98635 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
 		176813BD2564BA2800D98635 /* WidgetDataEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataEncoder.swift; sourceTree = "<group>"; };
 		176813C92564BA5400D98635 /* WidgetDataDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataDecoder.swift; sourceTree = "<group>"; };
@@ -2802,7 +2801,6 @@
 				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
 				519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */,
 				DFC05D2126D3E0770047E788 /* Browser.swift */,
-				1760888026D1F04500E853E9 /* BrowserManager.swift */,
 				175EBD7326D2405A009B5B23 /* BrowserConfigurationViewController.swift */,
 				175EBD7526D240D8009B5B23 /* BrowserCell.swift */,
 				516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */,
@@ -4894,6 +4892,7 @@
 				51B5C8BE23F37B2400032075 /* ShareDefaultContainer.swift in Sources */,
 				51B5C8BA23F368D000032075 /* ExtensionContainersFile.swift in Sources */,
 				51B5C8BB23F368D000032075 /* ExtensionFeedAddRequest.swift in Sources */,
+				171BC38126D61F3F0032425C /* Browser.swift in Sources */,
 				51A9A5E82380CA130033AADF /* ShareFolderPickerCell.swift in Sources */,
 				51A9A5EF2380D63B0033AADF /* IconImage.swift in Sources */,
 				51A9A5ED2380D6000033AADF /* AppAssets.swift in Sources */,
@@ -5616,7 +5615,6 @@
 				516AE9E02372269A007DEEAA /* IconImage.swift in Sources */,
 				519ED456244828C3007F8E94 /* AddExtensionPointViewController.swift in Sources */,
 				51C45268226508F600C03939 /* MasterFeedUnreadCountView.swift in Sources */,
-				1760888126D1F04500E853E9 /* BrowserManager.swift in Sources */,
 				D3A39865246505DF00F9A366 /* FindInArticleActivity.swift in Sources */,
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,
 				51C4529F22650A1900C03939 /* AuthorAvatarDownloader.swift in Sources */,

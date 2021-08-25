@@ -900,7 +900,7 @@ private extension MasterTimelineViewController {
 	func openInBrowserAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let _ = article.preferredURL else { return nil }
 		var displayName: String
-		BrowserManager.shared.currentBrowser() == .inApp ? (displayName = Browser.safari.displayName) : (displayName =  BrowserManager.shared.currentBrowser().displayName)
+		AppDefaults.shared.browserPreference == Browser.inApp.displayName ? (displayName = Browser.inApp.displayName) : (displayName =  Browser.defaultBrowser.displayName)
 		let title = NSLocalizedString("Open in \(displayName)", comment: "Open in Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showBrowserForArticle(article)

@@ -9,8 +9,6 @@
 import UIKit
 
 class BrowserConfigurationViewController: UITableViewController {
-
-	let browserManager = BrowserManager.shared
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,31 +19,23 @@ class BrowserConfigurationViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		if section == 0 { return 1 }
-		if section == 1 { return 1 }
-		return browserManager.availableBrowsers.count - 2
+		return 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		if indexPath.section == 0 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "BrowserCell", for: indexPath) as! BrowserCell
-			cell.configure(with: browserManager.availableBrowsers[indexPath.row])
+			cell.configure(with: Browser.allCases[0])
 			return cell
 		}
 		
 		if indexPath.section == 1 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "BrowserCell", for: indexPath) as! BrowserCell
-			cell.configure(with: browserManager.availableBrowsers[indexPath.row + 1])
-			return cell
-		}
-		
-		if indexPath.section == 2 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "BrowserCell", for: indexPath) as! BrowserCell
-			cell.configure(with: browserManager.availableBrowsers[indexPath.row + 2])
+			cell.configure(with: Browser.allCases[1])
 			return cell
 		}
 		
@@ -76,7 +66,6 @@ class BrowserConfigurationViewController: UITableViewController {
 		if section == 1 {
 			return NSLocalizedString("Links will open in the default system browser configured in Settings.", comment: "Default browser footer.")
 		}
-		
 		
 		return nil
 	}

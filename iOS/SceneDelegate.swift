@@ -77,7 +77,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		appDelegate.prepareAccountsForForeground()
 		coordinator.configurePanelMode(for: window!.frame.size)
 		coordinator.resetFocus()
-		BrowserManager.shared.configureAvailableBrowsers()
 	}
 	
     func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {

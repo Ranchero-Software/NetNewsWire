@@ -123,12 +123,13 @@ final class AppDefaults {
 	var browserPreference: String {
 		get {
 			guard let preference = UserDefaults.standard.string(forKey: Key.browserPreference) else {
-				return "browser.inapp"
+				return Browser.inApp.browserID
 			}
 			return preference
 		}
 		set {
 			UserDefaults.standard.setValue(newValue, forKey: Key.browserPreference)
+			NotificationCenter.default.post(name: .browserPreferenceDidChange, object: nil)
 		}
 	}
 	
