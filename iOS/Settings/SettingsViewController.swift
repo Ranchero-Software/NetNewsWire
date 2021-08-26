@@ -10,6 +10,7 @@ import UIKit
 import Account
 import CoreServices
 import SafariServices
+import SwiftUI
 
 class SettingsViewController: UITableViewController {
 
@@ -21,9 +22,14 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
+	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
+	
+	
 	
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
+	
+	
 	
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
@@ -34,6 +40,7 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(activeExtensionPointsDidChange), name: .ActiveExtensionPointsDidChange, object: nil)
+		
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -76,6 +83,9 @@ class SettingsViewController: UITableViewController {
 		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
+		
+		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
+		
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -118,7 +128,7 @@ class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case 5:
-			return traitCollection.userInterfaceIdiom == .phone ? 2 : 1
+			return traitCollection.userInterfaceIdiom == .phone ? 3 : 2
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -157,7 +167,6 @@ class SettingsViewController: UITableViewController {
 				acctCell.comboNameLabel?.text = extensionPoint.title
 				cell = acctCell
 			}
-		
 		default:
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
 			
@@ -326,6 +335,15 @@ class SettingsViewController: UITableViewController {
 		}
 	}
 	
+	@IBAction func switchBrowserPreference(_ sender: Any) {
+		if openLinksInNetNewsWire.isOn {
+			AppDefaults.shared.useSystemBrowser = false
+		} else {
+			AppDefaults.shared.useSystemBrowser = true
+		}
+	}
+	
+	
 	// MARK: Notifications
 	
 	@objc func contentSizeCategoryDidChange() {
@@ -341,6 +359,10 @@ class SettingsViewController: UITableViewController {
 	}
 	
 	@objc func activeExtensionPointsDidChange() {
+		tableView.reloadData()
+	}
+	
+	@objc func browserPreferenceDidChange() {
 		tableView.reloadData()
 	}
 	

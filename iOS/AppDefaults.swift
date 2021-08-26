@@ -54,6 +54,7 @@ final class AppDefaults {
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
+		static let useSystemBrowser = "useSystemBrowser"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -116,6 +117,15 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.activeExtensionPointIDs)
+		}
+	}
+	
+	var useSystemBrowser: Bool {
+		get {
+			return UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
+		}
+		set {
+			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
 		}
 	}
 	
