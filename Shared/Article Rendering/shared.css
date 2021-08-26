@@ -52,11 +52,6 @@ a:hover {
 	}
 }
 
-body {
-	color: var(--body-color);
-	background-color: var(--body-background-color) !important;
-}
-
 body .headerTable {
 	border-bottom: 1px solid var(--header-table-border-color);
 	color: var(--header-color);
