@@ -176,6 +176,27 @@
 			</dict>
 		</dict>
 	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>nnwstyle</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>NetNewsWire Style</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>nnwstyle.icns</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.ranchero.netnewswire.style</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<true/>
+		</dict>
+	</array>
 	<key>UserAgent</key>
 	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
 </dict>

@@ -74,5 +74,26 @@
 	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
 	<key>UserAgent</key>
 	<string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>nnwstyle</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>NetNewsWire Style</string>
+			<key>CFBundleTypeIconFile</key>
+			<string>nnwstyle.icns</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.ranchero.netnewswire.style</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<true/>
+		</dict>
+	</array>
 </dict>
 </plist>
