@@ -312,7 +312,7 @@
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dhR-L2-PX3" userLabel="Open Links in NetNewsWire">
                                                     <rect key="frame" x="307" y="6" width="51" height="31"/>
-                                                    <color key="onTintColor" name="AccentColor"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchBrowserPreference:" destination="a0p-rk-skQ" eventType="valueChanged" id="hLC-cV-Wjj"/>
                                                     </connections>
@@ -325,7 +325,7 @@
                                                 <constraint firstItem="Wm4-Y1-7nX" firstAttribute="top" secondItem="7nz-0Y-HaW" secondAttribute="top" constant="14" id="SlQ-r5-8Xc"/>
                                                 <constraint firstAttribute="trailing" secondItem="dhR-L2-PX3" secondAttribute="trailing" constant="18" id="WPe-Kt-3Wb"/>
                                                 <constraint firstAttribute="bottom" secondItem="dhR-L2-PX3" secondAttribute="bottom" constant="7" id="o4J-Tv-W2q"/>
-                                                <constraint firstItem="Wm4-Y1-7nX" firstAttribute="leading" secondItem="7nz-0Y-HaW" secondAttribute="leading" constant="20" symbolic="YES" id="wMz-Ae-No9"/>
+                                                <constraint firstItem="Wm4-Y1-7nX" firstAttribute="leading" secondItem="7nz-0Y-HaW" secondAttribute="leadingMargin" id="wMz-Ae-No9"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
@@ -1166,9 +1166,6 @@
     <resources>
         <image name="accountLocal" width="119" height="102"/>
         <image name="gear" catalog="system" width="128" height="119"/>
-        <namedColor name="AccentColor">
-            <color red="0.030999999493360519" green="0.41600000858306885" blue="0.93300002813339233" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
         <namedColor name="primaryAccentColor">
             <color red="0.031372549019607843" green="0.41568627450980394" blue="0.93333333333333335" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

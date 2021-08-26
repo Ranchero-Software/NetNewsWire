@@ -56,12 +56,6 @@
 	<array>
 		<string>mailto</string>
 		<string>org-appextension-feature-password-management</string>
-		<string>brave</string>
-		<string>touch-http</string>
-		<string>googlechrome</string>
-		<string>microsoft-edge-https</string>
-		<string>firefox</string>
-		<string>ophttps</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
