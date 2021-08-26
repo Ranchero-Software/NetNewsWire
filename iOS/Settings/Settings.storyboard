@@ -304,14 +304,14 @@
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Open Links in NetNewsWire" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wm4-Y1-7nX">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Open Links in NetNewsWire" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wm4-Y1-7nX">
                                                     <rect key="frame" x="20" y="14" width="279" height="17"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dhR-L2-PX3" userLabel="Open Links in NetNewsWire">
-                                                    <rect key="frame" x="307" y="6" width="51" height="31"/>
+                                                    <rect key="frame" x="307" y="6.5" width="51" height="31"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchBrowserPreference:" destination="a0p-rk-skQ" eventType="valueChanged" id="hLC-cV-Wjj"/>
@@ -319,12 +319,11 @@
                                                 </switch>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="Wm4-Y1-7nX" secondAttribute="bottom" constant="13" id="8IF-ny-Mf6"/>
                                                 <constraint firstItem="dhR-L2-PX3" firstAttribute="leading" secondItem="Wm4-Y1-7nX" secondAttribute="trailing" constant="8" symbolic="YES" id="9kW-Cm-Jry"/>
-                                                <constraint firstItem="dhR-L2-PX3" firstAttribute="top" secondItem="7nz-0Y-HaW" secondAttribute="top" constant="6" id="D56-9o-tS8"/>
-                                                <constraint firstItem="Wm4-Y1-7nX" firstAttribute="top" secondItem="7nz-0Y-HaW" secondAttribute="top" constant="14" id="SlQ-r5-8Xc"/>
+                                                <constraint firstItem="Wm4-Y1-7nX" firstAttribute="top" secondItem="7nz-0Y-HaW" secondAttribute="topMargin" constant="3" id="SlQ-r5-8Xc"/>
+                                                <constraint firstAttribute="bottom" secondItem="Wm4-Y1-7nX" secondAttribute="bottomMargin" constant="21" id="VUX-rB-00D"/>
                                                 <constraint firstAttribute="trailing" secondItem="dhR-L2-PX3" secondAttribute="trailing" constant="18" id="WPe-Kt-3Wb"/>
-                                                <constraint firstAttribute="bottom" secondItem="dhR-L2-PX3" secondAttribute="bottom" constant="7" id="o4J-Tv-W2q"/>
+                                                <constraint firstItem="dhR-L2-PX3" firstAttribute="centerY" secondItem="7nz-0Y-HaW" secondAttribute="centerY" id="gWw-7Q-XcA"/>
                                                 <constraint firstItem="Wm4-Y1-7nX" firstAttribute="leading" secondItem="7nz-0Y-HaW" secondAttribute="leadingMargin" id="wMz-Ae-No9"/>
                                             </constraints>
                                         </tableViewCellContentView>
