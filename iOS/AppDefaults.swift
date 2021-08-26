@@ -54,7 +54,7 @@ final class AppDefaults {
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
-		static let browserPreference = "browserPreference"
+		static let useSystemBrowser = "useSystemBrowser"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -120,16 +120,12 @@ final class AppDefaults {
 		}
 	}
 	
-	var browserPreference: String {
+	var useSystemBrowser: Bool {
 		get {
-			guard let preference = UserDefaults.standard.string(forKey: Key.browserPreference) else {
-				return Browser.inApp.browserID
-			}
-			return preference
+			return UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
 		}
 		set {
-			UserDefaults.standard.setValue(newValue, forKey: Key.browserPreference)
-			NotificationCenter.default.post(name: .browserPreferenceDidChange, object: nil)
+			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
 		}
 	}
 	

@@ -22,7 +22,8 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
-	@IBOutlet weak var currentBrowserLabel: UILabel!
+	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
+	
 	
 	
 	var scrollToArticlesSection = false
@@ -39,7 +40,7 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(activeExtensionPointsDidChange), name: .ActiveExtensionPointsDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(browserPreferenceDidChange), name: .browserPreferenceDidChange, object: nil)
+		
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -82,11 +83,8 @@ class SettingsViewController: UITableViewController {
 		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
-		if AppDefaults.shared.browserPreference == Browser.inApp.browserID {
-			currentBrowserLabel.text = Browser.inApp.displayName
-		} else {
-			currentBrowserLabel.text = Browser.defaultBrowser.displayName
-		}
+		
+		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
 		
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
@@ -231,11 +229,6 @@ class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case 5:
-			if indexPath.row == 1 {
-				let browser = UIStoryboard.settings.instantiateController(ofType: BrowserConfigurationViewController.self)
-				self.navigationController?.pushViewController(browser, animated: true)
-			}
 		case 6:
 			let colorPalette = UIStoryboard.settings.instantiateController(ofType: ColorPaletteTableViewController.self)
 			self.navigationController?.pushViewController(colorPalette, animated: true)
@@ -341,6 +334,15 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.articleFullscreenAvailable = false
 		}
 	}
+	
+	@IBAction func switchBrowserPreference(_ sender: Any) {
+		if openLinksInNetNewsWire.isOn {
+			AppDefaults.shared.useSystemBrowser = false
+		} else {
+			AppDefaults.shared.useSystemBrowser = true
+		}
+	}
+	
 	
 	// MARK: Notifications
 	
