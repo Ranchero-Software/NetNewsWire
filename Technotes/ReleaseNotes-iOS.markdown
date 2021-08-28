@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.0.1 TestFlight build 608 - 28 Aug 2021
+
+Fixed our top crashing bug — it could happen when updating a table view
+
 ### 6.0.1 TestFlight build 607 - 21 Aug 2021
 
 Fixed bug where BazQux-synced feeds might stop updating
