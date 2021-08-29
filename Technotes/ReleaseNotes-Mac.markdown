@@ -1,5 +1,21 @@
 # Mac Release Notes
 
+### 6.0.3b2 build 6034 - 29 Aug 2021
+
+Feedly: preserve custom feed names with Feedly when moving them between folders
+Preferences: use full-width row style in accounts and extensions panes
+Fixed a crashing bug triggered by running some UI code outside of main thread
+Fixed a crashing bug that could happen when the app tries to find a feed for a website
+FIxed a crashing bug that could happen when rendering tweets
+Changed how images are placed in Twitter articles so that you can better see who Tweeted the image
+Fixed bug where iCloud syncing could stop prematurely when the sync database has records not in the local database
+Fixed bug where favicons wouldn’t be found when a home page URL has non-ASCII characters
+Fixed bug where external URLs in Feedbin feeds might be lost
+Fixed bug where words prepended with $ wouldn’t appear in Twitter feeds
+Fixed bug where newlines would be just a space in Twitter feeds
+Fixed bug where BazQux-synced feeds might stop updating
+
+
 ### 6.0.3b1 build 6033 - 20 May 2021
 
 Feedly: handle API change with deleting and don’t show a spurious error
