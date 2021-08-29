@@ -7,6 +7,27 @@
         <language>en</language>
 
  
+		<item>
+            <title>NetNewsWire 6.0.3b2</title>
+            <description><![CDATA[
+<p>Feedly: preserve custom feed names with Feedly when moving them between folders</p>
+<p>Preferences: use full-width row style in accounts and extensions panes</p>
+<p>Fixed a crashing bug triggered by running some UI code outside of main thread</p>
+<p>Fixed a crashing bug that could happen when the app tries to find a feed for a website</p>
+<p>Fixed a crashing bug that could happen when rendering tweets</p>
+<p>Changed how images are placed in Twitter articles so that you can better see who Tweeted the image</p>
+<p>Fixed bug where iCloud syncing could stop prematurely when the sync database has records not in the local database</p>
+<p>Fixed bug where favicons wouldn’t be found when a home page URL has non-ASCII characters</p>
+<p>Fixed bug where external URLs in Feedbin feeds might be lost</p>
+<p>Fixed bug where words prepended with $ wouldn’t appear in Twitter feeds</p>
+<p>Fixed bug where newlines would be just a space in Twitter feeds</p>
+<p>Fixed bug where BazQux-synced feeds might stop updating</p>
+			]]></description>
+            <pubDate>Sun, 29 Aug 2021 15:25:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.3b2/NetNewsWire6.0.3b2.zip" sparkle:version="6034" sparkle:shortVersionString="6.0.3b2" length="10477006" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
           <item>
             <title>NetNewsWire 6.0.3b1</title>
             <description><![CDATA[
