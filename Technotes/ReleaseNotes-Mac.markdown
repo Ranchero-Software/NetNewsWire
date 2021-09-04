@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 6.0.4 build 6035 - 4 Sep 2021
+
+(Changes from 6.0.3b1 and 6.0.3b2)
+
 ### 6.0.3b2 build 6034 - 29 Aug 2021
 
 Feedly: preserve custom feed names with Feedly when moving them between folders
