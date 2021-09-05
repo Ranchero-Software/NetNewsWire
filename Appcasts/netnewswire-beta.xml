@@ -6,6 +6,16 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
+		<item>
+            <title>NetNewsWire 6.0.3</title>
+            <description><![CDATA[
+<p>Same as 6.0.3b2 except for the version number.</p>
+			]]></description>
+            <pubDate>Sun, 05 Sep 2021 12:20:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.3/NetNewsWire6.0.3.zip" sparkle:version="6035" sparkle:shortVersionString="6.0.3" length="10477066" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
  
 		<item>
             <title>NetNewsWire 6.0.3b2</title>
