@@ -351,8 +351,13 @@ extension WebViewController: WKNavigationDelegate {
 				if AppDefaults.shared.useSystemBrowser {
 					UIApplication.shared.open(url, options: [:])
 				} else {
-					let vc = SFSafariViewController(url: url)
-					self.present(vc, animated: true, completion: nil)
+					UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { didOpen in
+						guard didOpen == false else {
+							return
+						}
+						let vc = SFSafariViewController(url: url)
+						self.present(vc, animated: true)
+					}
 				}
 				
 			} else if components?.scheme == "mailto" {
