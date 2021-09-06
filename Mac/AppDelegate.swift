@@ -328,7 +328,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 		
 		let timeout = Date().addingTimeInterval(2)
-		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: .distantFuture) && timeout > Date() { }
+		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: timeout) && timeout > Date() { }
 	}
 
 	// MARK: Notifications
