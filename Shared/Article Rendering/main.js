@@ -113,7 +113,7 @@ function flattenPreElements() {
 
 function reloadArticleImage(imageSrc) {
 	var image = document.getElementById("nnwImageIcon");
-	image.src = imageSrc;
+	image.src = imageSrc + "?" + new Date().getTime();
 }
 
 function stopMediaPlayback() {
