@@ -543,23 +543,23 @@ private extension WebViewController {
 	func renderPage(_ webView: PreloadedWebView?) {
 		guard let webView = webView else { return }
 		 
-		let style = ArticleStylesManager.shared.currentStyle
+		let theme = ArticleThemesManager.shared.currentTheme
 		let rendering: ArticleRenderer.Rendering
 
 		if let articleExtractor = articleExtractor, articleExtractor.state == .processing {
-			rendering = ArticleRenderer.loadingHTML(style: style)
+			rendering = ArticleRenderer.loadingHTML(theme: theme)
 		} else if let articleExtractor = articleExtractor, articleExtractor.state == .failedToParse, let article = article {
-			rendering = ArticleRenderer.articleHTML(article: article, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
 		} else if let article = article, let extractedArticle = extractedArticle {
 			if isShowingExtractedArticle {
-				rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
+				rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
 			} else {
-				rendering = ArticleRenderer.articleHTML(article: article, style: style)
+				rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
 			}
 		} else if let article = article {
-			rendering = ArticleRenderer.articleHTML(article: article, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
 		} else {
-			rendering = ArticleRenderer.noSelectionHTML(style: style)
+			rendering = ArticleRenderer.noSelectionHTML(theme: theme)
 		}
 		
 		let substitutions = [

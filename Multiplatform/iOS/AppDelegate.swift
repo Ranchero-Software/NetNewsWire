@@ -62,10 +62,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		appDelegate = self
 
 		SecretsManager.provider = Secrets()
-		let documentAccountURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-		let documentAccountsFolder = documentAccountURL.appendingPathComponent("Accounts").absoluteString
+
+		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
 		AccountManager.shared = AccountManager(accountsFolder: documentAccountsFolderPath)
+
+		let documentStylesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
+		let documentStylesFolderPath = String(documentStylesFolder.suffix(from: documentAccountsFolder.index(documentStylesFolder.startIndex, offsetBy: 7)))
+		ArticleThemesManager.shared = ArticleThemesManager(folderPath: documentStylesFolderPath)
+
 		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)

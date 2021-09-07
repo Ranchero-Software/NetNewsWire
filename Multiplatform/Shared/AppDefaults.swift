@@ -28,6 +28,8 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 
 final class AppDefaults: ObservableObject {
 	
+	static let defaultThemeName = "Default"
+
 	#if os(macOS)
 	static let store: UserDefaults = UserDefaults.standard
 	#endif
@@ -61,7 +63,8 @@ final class AppDefaults: ObservableObject {
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let timelineIconDimensions = "timelineIconDimensions"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
-		
+		static let currentThemeName = "currentThemeName"
+
 		// Sidebar Defaults
 		static let sidebarConfirmDelete = "sidebarConfirmDelete"
 
@@ -242,6 +245,8 @@ final class AppDefaults: ObservableObject {
 	var articleTextSize: ArticleTextSize {
 		ArticleTextSize(rawValue: articleTextSizeTag) ?? ArticleTextSize.large
 	}
+	
+	@AppStorage(Key.currentThemeName, store: store) var currentThemeName: String?
 
 	// MARK: Refresh
 	var lastRefresh: Date? {
@@ -334,7 +339,8 @@ final class AppDefaults: ObservableObject {
 										Key.articleFullscreenEnabled: false,
 										Key.confirmMarkAllAsRead: true,
 										"NSScrollViewShouldScrollUnderTitlebar": false,
-										Key.refreshInterval: RefreshInterval.everyHour.rawValue]
+										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+										Key.currentThemeName: Self.defaultThemeName]
 		AppDefaults.store.register(defaults: defaults)
 	}
 	

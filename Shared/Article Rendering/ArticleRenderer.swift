@@ -37,15 +37,15 @@ struct ArticleRenderer {
 	
 	private let article: Article?
 	private let extractedArticle: ExtractedArticle?
-	private let articleStyle: ArticleStyle
+	private let articleTheme: ArticleTheme
 	private let title: String
 	private let body: String
 	private let baseURL: String?
 
-	private init(article: Article?, extractedArticle: ExtractedArticle?, style: ArticleStyle) {
+	private init(article: Article?, extractedArticle: ExtractedArticle?, theme: ArticleTheme) {
 		self.article = article
 		self.extractedArticle = extractedArticle
-		self.articleStyle = style
+		self.articleTheme = theme
 		self.title = article?.sanitizedTitle() ?? ""
 		if let content = extractedArticle?.content {
 			self.body = content
@@ -58,28 +58,28 @@ struct ArticleRenderer {
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, theme: theme)
 		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
-	static func multipleSelectionHTML(style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+	static func multipleSelectionHTML(theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.multipleSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
-	static func loadingHTML(style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+	static func loadingHTML(theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.loadingHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
-	static func noSelectionHTML(style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+	static func noSelectionHTML(theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
 	
-	static func noContentHTML(style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+	static func noContentHTML(theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
 	}
 }
@@ -128,11 +128,11 @@ private extension ArticleRenderer {
 	}()
 
 	func styleString() -> String {
-		return articleStyle.css ?? ArticleRenderer.defaultStyleSheet
+		return articleTheme.css ?? ArticleRenderer.defaultStyleSheet
 	}
 
 	func template() -> String {
-		return articleStyle.template ?? ArticleRenderer.defaultTemplate
+		return articleTheme.template ?? ArticleRenderer.defaultTemplate
 	}
 
 	func titleOrTitleLink() -> String {

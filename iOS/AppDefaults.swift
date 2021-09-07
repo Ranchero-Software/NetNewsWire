@@ -28,6 +28,8 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 
 final class AppDefaults {
 
+	static let defaultThemeName = "Defaults"
+	
 	static let shared = AppDefaults()
 	private init() {}
 	
@@ -55,6 +57,7 @@ final class AppDefaults {
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
+		static let currentThemeName = "currentThemeName"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -220,6 +223,15 @@ final class AppDefaults {
 		}
 	}
 	
+	var currentThemeName: String? {
+		get {
+			return AppDefaults.string(for: Key.currentThemeName)
+		}
+		set {
+			AppDefaults.setString(for: Key.currentThemeName, newValue)
+		}
+	}
+	
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
@@ -229,7 +241,8 @@ final class AppDefaults {
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.articleFullscreenAvailable: false,
 										Key.articleFullscreenEnabled: false,
-										Key.confirmMarkAllAsRead: true]
+										Key.confirmMarkAllAsRead: true,
+										Key.currentThemeName: Self.defaultThemeName]
 		AppDefaults.store.register(defaults: defaults)
 	}
 

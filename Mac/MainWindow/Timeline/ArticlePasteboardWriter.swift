@@ -25,7 +25,7 @@ extension Article: PasteboardWriterOwner {
 	static let articleUTIInternalType = NSPasteboard.PasteboardType(rawValue: articleUTIInternal)
 
 	private lazy var renderedHTML: String = {
-		let rendering = ArticleRenderer.articleHTML(article: article, style: ArticleStylesManager.shared.currentStyle)
+		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
 		return rendering.html
 	}()
 

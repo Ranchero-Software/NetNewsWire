@@ -257,22 +257,22 @@ private extension DetailWebViewController {
 	func reloadHTML() {
 		delegate?.mouseDidExit(self)
 		
-		let style = ArticleStylesManager.shared.currentStyle
+		let theme = ArticleThemesManager.shared.currentTheme
 		let rendering: ArticleRenderer.Rendering
 
 		switch state {
 		case .noSelection:
-			rendering = ArticleRenderer.noSelectionHTML(style: style)
+			rendering = ArticleRenderer.noSelectionHTML(theme: theme)
 		case .multipleSelection:
-			rendering = ArticleRenderer.multipleSelectionHTML(style: style)
+			rendering = ArticleRenderer.multipleSelectionHTML(theme: theme)
 		case .loading:
-			rendering = ArticleRenderer.loadingHTML(style: style)
+			rendering = ArticleRenderer.loadingHTML(theme: theme)
 		case .article(let article):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
 		case .extracted(let article, let extractedArticle):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
 		}
 		
 		let substitutions = [

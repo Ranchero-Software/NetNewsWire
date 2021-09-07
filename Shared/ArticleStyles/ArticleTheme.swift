@@ -1,5 +1,5 @@
 //
-//  ArticleStyle.swift
+//  ArticleTheme.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 9/26/15.
@@ -8,21 +8,18 @@
 
 import Foundation
 
-struct ArticleStyle: Equatable {
+struct ArticleTheme: Equatable {
 
-	static let defaultStyle = ArticleStyle()
+	static let defaultTheme = ArticleTheme()
 	let path: String?
 	let template: String?
 	let css: String?
-	let emptyCSS: String?
+	let systemMessageCSS: String?
 	let info: NSDictionary?
 
 	init() {
-
-		//Default style
-
 		self.path = nil;
-		self.emptyCSS = nil
+		self.systemMessageCSS = nil
 
 		self.info = ["CreatorHomePage": "https://netnewswire.com/", "CreatorName": "Ranchero Software", "Version": "1.0"]
 
@@ -53,8 +50,8 @@ struct ArticleStyle: Equatable {
 			let cssPath = (path as NSString).appendingPathComponent("stylesheet.css")
 			self.css = stringAtPath(cssPath)
 
-			let emptyCSSPath = (path as NSString).appendingPathComponent("stylesheet_empty.css")
-			self.emptyCSS = stringAtPath(emptyCSSPath)
+			let systemMessageCSSPath = (path as NSString).appendingPathComponent("system_message_stylesheet.css")
+			self.systemMessageCSS = stringAtPath(systemMessageCSSPath)
 
 			let templatePath = (path as NSString).appendingPathComponent("template.html")
 			self.template = stringAtPath(templatePath)
@@ -64,7 +61,7 @@ struct ArticleStyle: Equatable {
 
 			self.css = stringAtPath(path)
 			self.template = nil
-			self.emptyCSS = nil
+			self.systemMessageCSS = nil
 			self.info = nil
 		}
 	}

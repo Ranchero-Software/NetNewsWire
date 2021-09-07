@@ -16,6 +16,8 @@ enum FontSize: Int {
 
 final class AppDefaults {
 	
+	static let defaultThemeName = "Default"
+	
 	static var shared = AppDefaults()
 	private init() {}
 
@@ -39,6 +41,7 @@ final class AppDefaults {
 		static let importOPMLAccountID = "importOPMLAccountID"
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 		static let defaultBrowserID = "defaultBrowserID"
+		static let currentThemeName = "currentThemeName"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -209,6 +212,15 @@ final class AppDefaults {
 		}
 	}
 	
+	var currentThemeName: String? {
+		get {
+			return AppDefaults.string(for: Key.currentThemeName)
+		}
+		set {
+			AppDefaults.setString(for: Key.currentThemeName, newValue)
+		}
+	}
+	
 	var showTitleOnMainWindow: Bool {
 		return AppDefaults.bool(for: Key.showTitleOnMainWindow)
 	}
@@ -311,7 +323,8 @@ final class AppDefaults {
 										Key.timelineGroupByFeed: false,
 										"NSScrollViewShouldScrollUnderTitlebar": false,
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
-										Key.showDebugMenu: showDebugMenu]
+										Key.showDebugMenu: showDebugMenu,
+										Key.currentThemeName: Self.defaultThemeName]
 
 		UserDefaults.standard.register(defaults: defaults)
 

@@ -72,6 +72,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
 
 		SecretsManager.provider = Secrets()
 		AccountManager.shared = AccountManager(accountsFolder: Platform.dataSubfolder(forApplication: nil, folderName: "Accounts")!)
+		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
 		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
