@@ -805,7 +805,7 @@ private extension AppDelegate {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
 
-		let localizedMessageText = NSLocalizedString("Install “%@” by %@?", comment: "Theme message text")
+		let localizedMessageText = NSLocalizedString("Install Theme “%@” by %@?", comment: "Theme message text")
 		alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
 		
 		var attrs = [NSAttributedString.Key : Any]()
