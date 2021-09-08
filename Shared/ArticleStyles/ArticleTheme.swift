@@ -43,14 +43,8 @@ struct ArticleTheme: Equatable {
 		self.path = nil;
 		self.info = ["CreatorHomePage": "https://netnewswire.com/", "CreatorName": "Ranchero Software", "Version": "1.0"]
 
-		let sharedCSSPath = Bundle.main.path(forResource: "shared", ofType: "css")!
-		let platformCSSPath = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
-
-		if let sharedCSS = Self.stringAtPath(sharedCSSPath), let platformCSS = Self.stringAtPath(platformCSSPath) {
-			css = sharedCSS + "\n" + platformCSS
-		} else {
-			css = nil
-		}
+		let cssPath = Bundle.main.path(forResource: "stylesheet", ofType: "css")!
+		css = Self.stringAtPath(cssPath)
 
 		let templatePath = Bundle.main.path(forResource: "template", ofType: "html")!
 		template = Self.stringAtPath(templatePath)

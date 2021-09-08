@@ -463,3 +463,135 @@ a.footnote:hover,
 		transition: background-color 200ms ease-out;
 	}
 }
+
+/* iOS Specific */
+@supports (-webkit-touch-callout: none) {
+	
+	body {
+		margin-top: 3px;
+		margin-bottom: 20px;
+		padding-left: 20px;
+		padding-right: 20px;
+
+		word-break: break-word;
+		-webkit-hyphens: auto;
+		-webkit-text-size-adjust: none;
+	}
+
+	:root {
+		color-scheme: light dark;
+		font: -apple-system-body;
+		font-size: [[font-size]]px;
+		--primary-accent-color: #086AEE;
+		--secondary-accent-color: #086AEE;
+		--block-quote-border-color: rgba(8, 106, 238, 0.75);
+	}
+
+	@media(prefers-color-scheme: dark) {
+		:root {
+			--primary-accent-color: #2D80F1;
+			--secondary-accent-color: #5E9EF4;
+			--block-quote-border-color: rgba(94, 158, 244, 0.75);
+			--header-table-border-color: rgba(255, 255, 255, 0.2);
+		}
+	}
+
+	body a, body a:visited {
+		color: var(--secondary-accent-color);
+	}
+	body .header {
+		font: -apple-system-body;
+		font-size: [[font-size]]px;
+	}
+	body .header a:link, body .header a:visited {
+		color: var(--primary-accent-color);
+	}
+
+	.avatar img {
+		border-radius: 4px;
+	}
+
+	pre {
+		border: 1px solid var(--secondary-accent-color);
+		padding: 5px;
+	}
+
+	.nnw-overflow table {
+		border: 1px solid var(--secondary-accent-color);
+	}
+
+	.activityIndicatorWrap {
+		position: relative;
+	}
+
+	.activityIndicator {
+		z-index: 1;
+		width: 64px;
+		height: 64px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+}
+
+/* macOS Specific */
+@supports not (-webkit-touch-callout: none) {
+	
+	body {
+		margin-top: 20px;
+		margin-bottom: 64px;
+		padding-left: 48px;
+		padding-right: 48px;
+		font-family: -apple-system;
+	}
+
+	.smallText {
+		font-size: 14px;
+	}
+
+	.mediumText {
+		font-size: 16px;
+	}
+
+	.largeText {
+		font-size: 18px;
+	}
+
+	.xlargeText {
+		font-size: 20px;
+	}
+
+	.xxlargeText {
+		font-size: 22px;
+	}
+
+	:root {
+		color-scheme: light dark;
+		--accent-color: rgba(8, 106, 238, 1);
+		--block-quote-border-color: rgba(8, 106, 238, .50);
+	}
+
+	@media(prefers-color-scheme: dark) {
+		:root {
+			--accent-color: rgba(94, 158, 244, 1);
+			--block-quote-border-color: rgba(94, 158, 244, .50);
+			--header-table-border-color: rgba(255, 255, 255, 0.1);
+		}
+	}
+
+	body a, body a:visited {
+		color: var(--accent-color);
+	}
+
+	pre {
+		border: 1px solid var(--accent-color);
+		padding: 10px;
+	}
+
+	.nnw-overflow table {
+		border: 1px solid var(--accent-color);
+	}
+
+}
