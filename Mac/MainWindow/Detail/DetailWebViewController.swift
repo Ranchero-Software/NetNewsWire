@@ -116,6 +116,7 @@ final class DetailWebViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
 
 		webView.loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
@@ -139,6 +140,10 @@ final class DetailWebViewController: NSViewController {
 			articleTextSize = AppDefaults.shared.articleTextSize
 			webView.evaluateJavaScript("updateTextSize(\"\(articleTextSize.cssClass)\");")
 		}
+	}
+	
+	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
+		reloadHTML()
 	}
 	
 	// MARK: Media Functions
