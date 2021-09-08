@@ -853,7 +853,7 @@ private extension AppDelegate {
 		alert.alertStyle = .informational
 		alert.messageText = NSLocalizedString("Theme installed", comment: "Theme installed")
 		
-		let localizedInformativeText = NSLocalizedString("The theme “%@” has been installed", comment: "Theme installed")
+		let localizedInformativeText = NSLocalizedString("The theme “%@” has been installed.", comment: "Theme installed")
 		alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, themeName) as String
 		
 		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
