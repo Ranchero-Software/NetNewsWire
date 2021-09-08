@@ -11,10 +11,33 @@ import Foundation
 struct ArticleTheme: Equatable {
 
 	static let defaultTheme = ArticleTheme()
+	static let nnwThemeSuffix = ".nnwtheme"
+
+	private static let defaultThemeName = NSLocalizedString("Default", comment: "Default")
+	private static let unknownValue = NSLocalizedString("Unknown", comment: "Unknown Value")
+
 	let path: String?
 	let template: String?
 	let css: String?
-	let info: NSDictionary?
+	
+	var name: String {
+		guard let path = path else { return Self.defaultThemeName }
+		return Self.themeNameForPath(path)
+	}
+	
+	var creatorHomePage: String {
+		return info?["CreatorHomePage"] as? String ?? Self.unknownValue
+	}
+	
+	var creatorName: String {
+		return info?["CreatorName"] as? String ?? Self.unknownValue
+	}
+	
+	var version: String {
+		return info?["Version"] as? String ?? "0.0"
+	}
+	
+	private let info: NSDictionary?
 
 	init() {
 		self.path = nil;
@@ -23,14 +46,14 @@ struct ArticleTheme: Equatable {
 		let sharedCSSPath = Bundle.main.path(forResource: "shared", ofType: "css")!
 		let platformCSSPath = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
 
-		if let sharedCSS = stringAtPath(sharedCSSPath), let platformCSS = stringAtPath(platformCSSPath) {
+		if let sharedCSS = Self.stringAtPath(sharedCSSPath), let platformCSS = Self.stringAtPath(platformCSSPath) {
 			css = sharedCSS + "\n" + platformCSS
 		} else {
 			css = nil
 		}
 
 		let templatePath = Bundle.main.path(forResource: "template", ofType: "html")!
-		template = stringAtPath(templatePath)
+		template = Self.stringAtPath(templatePath)
 	}
 
 	init(path: String) {
@@ -41,26 +64,40 @@ struct ArticleTheme: Equatable {
 			self.info = NSDictionary(contentsOfFile: infoPath)
 
 			let cssPath = (path as NSString).appendingPathComponent("stylesheet.css")
-			self.css = stringAtPath(cssPath)
+			self.css = Self.stringAtPath(cssPath)
 
 			let templatePath = (path as NSString).appendingPathComponent("template.html")
-			self.template = stringAtPath(templatePath)
+			self.template = Self.stringAtPath(templatePath)
 		} else {
-			self.css = stringAtPath(path)
+			self.css = Self.stringAtPath(path)
 			self.template = nil
 			self.info = nil
 		}
 	}
-}
+	
+	static func stringAtPath(_ f: String) -> String? {
+		if !FileManager.default.fileExists(atPath: f) {
+			return nil
+		}
 
-private func stringAtPath(_ f: String) -> String? {
-
-	if !FileManager.default.fileExists(atPath: f) {
+		if let s = try? NSString(contentsOfFile: f, usedEncoding: nil) as String {
+			return s
+		}
 		return nil
 	}
 
-	if let s = try? NSString(contentsOfFile: f, usedEncoding: nil) as String {
-		return s
+	static func filenameWithThemeSuffixRemoved(_ filename: String) -> String {
+		return filename.stripping(suffix: Self.nnwThemeSuffix)
 	}
-	return nil
+
+	static func themeNameForPath(_ f: String) -> String {
+		let filename = (f as NSString).lastPathComponent
+		return filenameWithThemeSuffixRemoved(filename)
+	}
+
+	static func pathIsPathForThemeName(_ themeName: String, path: String) -> Bool {
+		let filename = (path as NSString).lastPathComponent
+		return filenameWithThemeSuffixRemoved(filename) == themeName
+	}
+	
 }

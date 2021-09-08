@@ -319,6 +319,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
 	}
 	
+	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
+		guard filename.hasSuffix(".nnwtheme") else { return false }
+		importTheme(filename: filename)
+		return true
+	}
+	
 	func applicationWillTerminate(_ notification: Notification) {
 		shuttingDown = true
 		saveState()
@@ -769,7 +775,6 @@ private extension AppDelegate {
 	}
 	
 	func objectsForInspector() -> [Any]? {
-
 		guard let window = NSApplication.shared.mainWindow, let windowController = window.windowController as? MainWindowController else {
 			return nil
 		}
@@ -782,7 +787,6 @@ private extension AppDelegate {
 	}
 
 	func updateSortMenuItems() {
-
 		let sortByNewestOnTop = AppDefaults.shared.timelineSortDirection == .orderedDescending
 		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
 		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
@@ -791,6 +795,48 @@ private extension AppDelegate {
 	func updateGroupByFeedMenuItem() {
 		let groupByFeedEnabled = AppDefaults.shared.timelineGroupByFeed
 		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
+	}
+	
+	func importTheme(filename: String) {
+		guard let window = mainWindowController?.window else { return }
+		
+		let theme = ArticleTheme(path: filename)
+		
+		let alert = NSAlert()
+		alert.alertStyle = .informational
+
+		let localizedMessageText = NSLocalizedString("Install “%@” by %@?", comment: "Theme message text")
+		alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
+		
+		var attrs = [NSAttributedString.Key : Any]()
+		attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+		attrs[.foregroundColor] = NSColor.textColor
+		
+		let titleParagraphStyle = NSMutableParagraphStyle()
+		titleParagraphStyle.alignment = .center
+		attrs[.paragraphStyle] = titleParagraphStyle
+
+		let websiteText = NSMutableAttributedString()
+		websiteText.append(NSAttributedString(string: NSLocalizedString("Author's Website", comment: "Author's Website"), attributes: attrs))
+		websiteText.append(NSAttributedString(string: "\n"))
+
+		attrs[.link] = theme.creatorHomePage
+		websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
+
+		let textView = NSTextView(frame: CGRect(x: 0, y: 0, width: 200, height: 15))
+		textView.isEditable = false
+		textView.drawsBackground = false
+		textView.textStorage?.setAttributedString(websiteText)
+		alert.accessoryView = textView
+		
+		alert.addButton(withTitle: NSLocalizedString("Install Style", comment: "Install Style"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Style"))
+			
+		alert.beginSheetModal(for: window) { [weak self] result in
+			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+				guard let self = self else { return }
+			}
+		}
 	}
 }
 

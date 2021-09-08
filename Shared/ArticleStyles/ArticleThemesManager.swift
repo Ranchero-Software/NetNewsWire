@@ -17,9 +17,6 @@ import RSCore
 let ArticleThemeNamesDidChangeNotification = "ArticleThemeNamesDidChangeNotification"
 let CurrentArticleThemeDidChangeNotification = "CurrentArticleThemeDidChangeNotification"
 
-private let themesInResourcesFolderName = "Themes"
-private let nnwThemeSuffix = ".nnwtheme"
-
 final class ArticleThemesManager {
 
 	static var shared: ArticleThemesManager!
@@ -80,7 +77,7 @@ final class ArticleThemesManager {
 	// MARK : Internal
 
 	private func updateThemeNames() {
-		let updatedThemeNames = allThemePaths(folderPath).map { themeNameForPath($0) }
+		let updatedThemeNames = allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) }
 
 		if updatedThemeNames != themeNames {
 			themeNames = updatedThemeNames
@@ -104,7 +101,6 @@ final class ArticleThemesManager {
 	}
 
 	private func updateCurrentTheme() {
-
 		var themeName = currentThemeName
 		if !themeNames.contains(themeName) {
 			themeName = AppDefaults.defaultThemeName
@@ -121,33 +117,19 @@ final class ArticleThemesManager {
 			currentTheme = articleTheme
 		}
 	}
-}
 
-
-private func allThemePaths(_ folder: String) -> [String] {
-	let filepaths = FileManager.default.filePaths(inFolder: folder)
-	return filepaths?.filter { $0.hasSuffix(nnwThemeSuffix) } ?? []
-}
-
-private func filenameWithThemeSuffixRemoved(_ filename: String) -> String {
-	return filename.stripping(suffix: nnwThemeSuffix)
-}
-
-private func themeNameForPath(_ f: String) -> String {
-	let filename = (f as NSString).lastPathComponent
-	return filenameWithThemeSuffixRemoved(filename)
-}
-
-private func pathIsPathForThemeName(_ themeName: String, path: String) -> Bool {
-	let filename = (path as NSString).lastPathComponent
-	return filenameWithThemeSuffixRemoved(filename) == themeName
-}
-
-private func pathForThemeName(_ themeName: String, folder: String) -> String? {
-	for onePath in allThemePaths(folder) {
-		if pathIsPathForThemeName(themeName, path: onePath) {
-			return onePath
-		}
+	private func allThemePaths(_ folder: String) -> [String] {
+		let filepaths = FileManager.default.filePaths(inFolder: folder)
+		return filepaths?.filter { $0.hasSuffix(ArticleTheme.nnwThemeSuffix) } ?? []
 	}
-	return nil
+
+	private func pathForThemeName(_ themeName: String, folder: String) -> String? {
+		for onePath in allThemePaths(folder) {
+			if ArticleTheme.pathIsPathForThemeName(themeName, path: onePath) {
+				return onePath
+			}
+		}
+		return nil
+	}
+	
 }
