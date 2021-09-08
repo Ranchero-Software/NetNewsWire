@@ -14,13 +14,10 @@ struct ArticleTheme: Equatable {
 	let path: String?
 	let template: String?
 	let css: String?
-	let systemMessageCSS: String?
 	let info: NSDictionary?
 
 	init() {
 		self.path = nil;
-		self.systemMessageCSS = nil
-
 		self.info = ["CreatorHomePage": "https://netnewswire.com/", "CreatorName": "Ranchero Software", "Version": "1.0"]
 
 		let sharedCSSPath = Bundle.main.path(forResource: "shared", ofType: "css")!
@@ -37,31 +34,20 @@ struct ArticleTheme: Equatable {
 	}
 
 	init(path: String) {
-
 		self.path = path
 
-		let isFolder = FileManager.default.isFolder(atPath: path)
-
-		if isFolder {
-
+		if FileManager.default.isFolder(atPath: path) {
 			let infoPath = (path as NSString).appendingPathComponent("Info.plist")
 			self.info = NSDictionary(contentsOfFile: infoPath)
 
 			let cssPath = (path as NSString).appendingPathComponent("stylesheet.css")
 			self.css = stringAtPath(cssPath)
 
-			let systemMessageCSSPath = (path as NSString).appendingPathComponent("system_message_stylesheet.css")
-			self.systemMessageCSS = stringAtPath(systemMessageCSSPath)
-
 			let templatePath = (path as NSString).appendingPathComponent("template.html")
 			self.template = stringAtPath(templatePath)
-		}
-
-		else {
-
+		} else {
 			self.css = stringAtPath(path)
 			self.template = nil
-			self.systemMessageCSS = nil
 			self.info = nil
 		}
 	}
