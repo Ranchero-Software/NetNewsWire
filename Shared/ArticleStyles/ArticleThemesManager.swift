@@ -67,16 +67,33 @@ final class ArticleThemesManager {
 		#endif
 	}
 
+	// MARK: API
+	
+	func importTheme(filename: String) throws {
+		let filenameLastPathComponent = (filename as NSString).lastPathComponent
+		let toFilename = (folderPath as NSString).appendingPathComponent(filenameLastPathComponent)
+		
+		if FileManager.default.fileExists(atPath: toFilename) {
+			try FileManager.default.removeItem(atPath: toFilename)
+		}
+		
+		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
+	}
+	
 	// MARK: Notifications
 
 	@objc dynamic func applicationDidBecomeActive(_ note: Notification) {
 		updateThemeNames()
 		updateCurrentTheme()
 	}
+	
+}
 
-	// MARK : Internal
+// MARK : Private
 
-	private func updateThemeNames() {
+private extension ArticleThemesManager {
+
+	func updateThemeNames() {
 		let updatedThemeNames = allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) }
 
 		if updatedThemeNames != themeNames {
@@ -84,7 +101,7 @@ final class ArticleThemesManager {
 		}
 	}
 
-	private func articleThemeWithThemeName(_ themeName: String) -> ArticleTheme? {
+	func articleThemeWithThemeName(_ themeName: String) -> ArticleTheme? {
 		if themeName == AppDefaults.defaultThemeName {
 			return ArticleTheme.defaultTheme
 		}
@@ -96,11 +113,11 @@ final class ArticleThemesManager {
 		return ArticleTheme(path: path)
 	}
 
-	private func defaultArticleTheme() -> ArticleTheme {
+	func defaultArticleTheme() -> ArticleTheme {
 		return articleThemeWithThemeName(AppDefaults.defaultThemeName)!
 	}
 
-	private func updateCurrentTheme() {
+	func updateCurrentTheme() {
 		var themeName = currentThemeName
 		if !themeNames.contains(themeName) {
 			themeName = AppDefaults.defaultThemeName
@@ -118,12 +135,12 @@ final class ArticleThemesManager {
 		}
 	}
 
-	private func allThemePaths(_ folder: String) -> [String] {
+	func allThemePaths(_ folder: String) -> [String] {
 		let filepaths = FileManager.default.filePaths(inFolder: folder)
 		return filepaths?.filter { $0.hasSuffix(ArticleTheme.nnwThemeSuffix) } ?? []
 	}
 
-	private func pathForThemeName(_ themeName: String, folder: String) -> String? {
+	func pathForThemeName(_ themeName: String, folder: String) -> String? {
 		for onePath in allThemePaths(folder) {
 			if ArticleTheme.pathIsPathForThemeName(themeName, path: onePath) {
 				return onePath

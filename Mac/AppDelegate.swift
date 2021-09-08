@@ -835,9 +835,31 @@ private extension AppDelegate {
 		alert.beginSheetModal(for: window) { [weak self] result in
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
 				guard let self = self else { return }
+				
+				do {
+					try ArticleThemesManager.shared.importTheme(filename: filename)
+					self.confirmImportSuccess(themeName: theme.name)
+				} catch {
+					NSApplication.shared.presentError(error)
+				}
 			}
 		}
 	}
+	
+	func confirmImportSuccess(themeName: String) {
+		guard let window = mainWindowController?.window else { return }
+		
+		let alert = NSAlert()
+		alert.alertStyle = .informational
+		alert.messageText = NSLocalizedString("Theme installed", comment: "Theme installed")
+		
+		let localizedInformativeText = NSLocalizedString("The theme “%@” has been installed", comment: "Theme installed")
+		alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, themeName) as String
+		
+		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+		alert.beginSheetModal(for: window)
+	}
+	
 }
 
 /*
