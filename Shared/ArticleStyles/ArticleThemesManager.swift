@@ -31,6 +31,7 @@ final class ArticleThemesManager {
 		set {
 			if newValue != currentThemeName {
 				AppDefaults.shared.currentThemeName = newValue
+				updateCurrentTheme()
 			}
 		}
 	}
