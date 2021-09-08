@@ -14,8 +14,10 @@ import UIKit
 
 import RSCore
 
-let ArticleThemeNamesDidChangeNotification = "ArticleThemeNamesDidChangeNotification"
-let CurrentArticleThemeDidChangeNotification = "CurrentArticleThemeDidChangeNotification"
+public extension Notification.Name {
+	static let ArticleThemeNamesDidChangeNotification = Notification.Name("ArticleThemeNamesDidChangeNotification")
+	static let CurrentArticleThemeDidChangeNotification = Notification.Name("CurrentArticleThemeDidChangeNotification")
+}
 
 final class ArticleThemesManager {
 
@@ -35,13 +37,13 @@ final class ArticleThemesManager {
 
 	var currentTheme: ArticleTheme {
 		didSet {
-			NotificationCenter.default.post(name: Notification.Name(rawValue: CurrentArticleThemeDidChangeNotification), object: self)
+			NotificationCenter.default.post(name: .CurrentArticleThemeDidChangeNotification, object: self)
 		}
 	}
 
 	var themeNames = [AppDefaults.defaultThemeName] {
 		didSet {
-			NotificationCenter.default.post(name: Notification.Name(rawValue: ArticleThemeNamesDidChangeNotification), object: self)
+			NotificationCenter.default.post(name: .ArticleThemeNamesDidChangeNotification, object: self)
 		}
 	}
 
