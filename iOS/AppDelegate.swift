@@ -68,9 +68,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
 		AccountManager.shared = AccountManager(accountsFolder: documentAccountsFolderPath)
 		
-		let documentStylesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
-		let documentStylesFolderPath = String(documentStylesFolder.suffix(from: documentAccountsFolder.index(documentStylesFolder.startIndex, offsetBy: 7)))
-		ArticleThemesManager.shared = ArticleThemesManager(folderPath: documentStylesFolderPath)
+		let documentThemesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
+		let documentThemesFolderPath = String(documentThemesFolder.suffix(from: documentAccountsFolder.index(documentThemesFolder.startIndex, offsetBy: 7)))
+		ArticleThemesManager.shared = ArticleThemesManager(folderPath: documentThemesFolderPath)
 		
 		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
 		
