@@ -81,6 +81,8 @@ final class ArticleThemesManager {
 		}
 		
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
+		
+		updateThemeNames()
 	}
 	
 	// MARK: Notifications

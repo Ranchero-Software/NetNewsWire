@@ -40,6 +40,10 @@ final class GeneralPreferencesViewController: NSViewController {
 		updateUI()
 	}
 
+	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
+		updateArticleThemePopup()
+	}
+
 	// MARK: - Actions
 
 	@IBAction func articleThemePopUpDidChange(_ sender: Any) {
@@ -67,6 +71,7 @@ private extension GeneralPreferencesViewController {
 
 	func commonInit() {
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 	}
 
 	func updateUI() {
@@ -86,6 +91,9 @@ private extension GeneralPreferencesViewController {
 		}
 		
 		articleThemePopup.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
+		if articleThemePopup.indexOfSelectedItem == -1 {
+			articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)
+		}
 	}
 
 	func updateBrowserPopup() {
