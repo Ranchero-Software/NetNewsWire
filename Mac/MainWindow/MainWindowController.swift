@@ -44,6 +44,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private var timelineContainerViewController: TimelineContainerViewController?
 	private var detailViewController: DetailViewController?
 	private var currentSearchField: NSSearchField? = nil
+	private let articleThemeMenuToolbarItem = NSMenuToolbarItem(itemIdentifier: .articleThemeMenu)
 	private var searchString: String? = nil
 	private var lastSentSearchString: String? = nil
 	private var timelineSourceMode: TimelineSourceMode = .regular {
@@ -98,6 +99,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		
+		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
+		
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
 		}
@@ -148,6 +152,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	
 	@objc func displayNameDidChange(_ note: Notification) {
 		updateWindowTitleIfNecessary(note.object)
+	}
+
+	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
+		buildArticleThemeMenu()
+	}
+
+	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
+		buildArticleThemeMenu()
 	}
 
 	private func updateWindowTitleIfNecessary(_ noteObject: Any?) {
@@ -506,6 +518,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		timelineContainerViewController?.toggleReadFilter()
 	}
 	
+	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
+		ArticleThemesManager.shared.currentThemeName = menuItem.title
+	}
+	
 }
 
 // MARK: NSWindowDelegate
@@ -726,6 +742,7 @@ extension NSToolbarItem.Identifier {
 	static let readerView = NSToolbarItem.Identifier("readerView")
 	static let openInBrowser = NSToolbarItem.Identifier("openInBrowser")
 	static let share = NSToolbarItem.Identifier("share")
+	static let articleThemeMenu = NSToolbarItem.Identifier("articleThemeMenu")
 	static let cleanUp = NSToolbarItem.Identifier("cleanUp")
 }
 
@@ -795,6 +812,14 @@ extension MainWindowController: NSToolbarDelegate {
 				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
 			
+			case .articleThemeMenu:
+				articleThemeMenuToolbarItem.image = AppAssets.articleTheme
+				let description = NSLocalizedString("Article Theme", comment: "Article Theme")
+				articleThemeMenuToolbarItem.toolTip = description
+				articleThemeMenuToolbarItem.label = description
+				buildArticleThemeMenu()
+				return articleThemeMenuToolbarItem
+
 			case .search:
 				let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
 				let description = NSLocalizedString("Search", comment: "Search")
@@ -832,6 +857,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.readerView,
 				.openInBrowser,
 				.share,
+				.articleThemeMenu,
 				.search,
 				.cleanUp
 			]
@@ -1385,6 +1411,28 @@ private extension MainWindowController {
 		menu.addItem(newFolderFeedItem)
 		
 		return menu
+	}
+
+	func buildArticleThemeMenu() {
+		let articleThemeMenu = NSMenu()
+		
+		let defaultThemeItem = NSMenuItem()
+		defaultThemeItem.title = ArticleTheme.defaultTheme.name
+		defaultThemeItem.action = #selector(selectArticleTheme(_:))
+		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+		articleThemeMenu.addItem(defaultThemeItem)
+
+		articleThemeMenu.addItem(NSMenuItem.separator())
+
+		for themeName in ArticleThemesManager.shared.themeNames {
+			let themeItem = NSMenuItem()
+			themeItem.title = themeName
+			themeItem.action = #selector(selectArticleTheme(_:))
+			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+			articleThemeMenu.addItem(themeItem)
+		}
+
+		articleThemeMenuToolbarItem.menu = articleThemeMenu
 	}
 
 }
