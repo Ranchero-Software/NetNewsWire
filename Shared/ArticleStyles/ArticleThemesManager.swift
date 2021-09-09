@@ -72,6 +72,12 @@ final class ArticleThemesManager {
 
 	// MARK: API
 	
+	func themeExists(filename: String) -> Bool {
+		let filenameLastPathComponent = (filename as NSString).lastPathComponent
+		let toFilename = (folderPath as NSString).appendingPathComponent(filenameLastPathComponent)
+		return FileManager.default.fileExists(atPath: toFilename)
+	}
+	
 	func importTheme(filename: String) throws {
 		let filenameLastPathComponent = (filename as NSString).lastPathComponent
 		let toFilename = (folderPath as NSString).appendingPathComponent(filenameLastPathComponent)

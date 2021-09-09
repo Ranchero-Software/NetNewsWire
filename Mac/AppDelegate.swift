@@ -846,16 +846,37 @@ private extension AppDelegate {
 		alert.addButton(withTitle: NSLocalizedString("Install Theme", comment: "Install Theme"))
 		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
 			
-		alert.beginSheetModal(for: window) { [weak self] result in
+		func importTheme() {
+			do {
+				try ArticleThemesManager.shared.importTheme(filename: filename)
+				confirmImportSuccess(themeName: theme.name)
+			} catch {
+				NSApplication.shared.presentError(error)
+			}
+		}
+		
+		alert.beginSheetModal(for: window) { result in
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
-				guard let self = self else { return }
-				
-				do {
-					try ArticleThemesManager.shared.importTheme(filename: filename)
-					self.confirmImportSuccess(themeName: theme.name)
-				} catch {
-					NSApplication.shared.presentError(error)
+
+				if ArticleThemesManager.shared.themeExists(filename: filename) {
+					let alert = NSAlert()
+					alert.alertStyle = .warning
+
+					let localizedMessageText = NSLocalizedString("The theme “%@” already exists. Overwrite it?", comment: "Overwrite theme")
+					alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
+
+					alert.addButton(withTitle: NSLocalizedString("Overwrite", comment: "Overwrite"))
+					alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+					
+					alert.beginSheetModal(for: window) { result in
+						if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+							importTheme()
+						}
+					}
+				} else {
+					importTheme()
 				}
+
 			}
 		}
 	}
