@@ -100,9 +100,9 @@ private extension ArticleThemesManager {
 
 	func updateThemeNames() {
 		let updatedThemeNames = allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) }
-
-		if updatedThemeNames != themeNames {
-			themeNames = updatedThemeNames
+		let sortedThemeNames = updatedThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
+		if sortedThemeNames != themeNames {
+			themeNames = sortedThemeNames
 		}
 	}
 
