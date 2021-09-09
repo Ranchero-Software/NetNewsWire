@@ -829,8 +829,8 @@ private extension AppDelegate {
 		textView.textStorage?.setAttributedString(websiteText)
 		alert.accessoryView = textView
 		
-		alert.addButton(withTitle: NSLocalizedString("Install Style", comment: "Install Style"))
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Style"))
+		alert.addButton(withTitle: NSLocalizedString("Install Theme", comment: "Install Theme"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
 			
 		alert.beginSheetModal(for: window) { [weak self] result in
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
