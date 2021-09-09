@@ -830,7 +830,14 @@ private extension AppDelegate {
 		attrs[.link] = theme.creatorHomePage
 		websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
 
-		let textView = NSTextView(frame: CGRect(x: 0, y: 0, width: 400, height: 15))
+		let textViewWidth: CGFloat
+		if #available(macOS 11.0, *) {
+			textViewWidth = 200
+		} else {
+			textViewWidth = 400
+		}
+
+		let textView = NSTextView(frame: CGRect(x: 0, y: 0, width: textViewWidth, height: 15))
 		textView.isEditable = false
 		textView.drawsBackground = false
 		textView.textStorage?.setAttributedString(websiteText)
