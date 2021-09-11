@@ -43,30 +43,30 @@ struct ArticleTheme: Equatable {
 		self.path = nil;
 		self.info = ["CreatorHomePage": "https://netnewswire.com/", "CreatorName": "Ranchero Software", "Version": "1.0"]
 
-		let cssPath = Bundle.main.path(forResource: "stylesheet", ofType: "css")!
-		css = Self.stringAtPath(cssPath)
+		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
+		let stylesheetPath = Bundle.main.path(forResource: "stylesheet", ofType: "css")!
+		css = Self.stringAtPath(corePath)! + "\n" + Self.stringAtPath(stylesheetPath)!
 
 		let templatePath = Bundle.main.path(forResource: "template", ofType: "html")!
-		template = Self.stringAtPath(templatePath)
+		template = Self.stringAtPath(templatePath)!
 	}
 
 	init(path: String) {
 		self.path = path
 
-		if FileManager.default.isFolder(atPath: path) {
-			let infoPath = (path as NSString).appendingPathComponent("Info.plist")
-			self.info = NSDictionary(contentsOfFile: infoPath)
+		let infoPath = (path as NSString).appendingPathComponent("Info.plist")
+		self.info = NSDictionary(contentsOfFile: infoPath)
 
-			let cssPath = (path as NSString).appendingPathComponent("stylesheet.css")
-			self.css = Self.stringAtPath(cssPath)
-
-			let templatePath = (path as NSString).appendingPathComponent("template.html")
-			self.template = Self.stringAtPath(templatePath)
+		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
+		let stylesheetPath = (path as NSString).appendingPathComponent("stylesheet.css")
+		if let stylesheetCSS = Self.stringAtPath(stylesheetPath) {
+			self.css = Self.stringAtPath(corePath)! + "\n" + stylesheetCSS
 		} else {
-			self.css = Self.stringAtPath(path)
-			self.template = nil
-			self.info = nil
+			self.css = nil
 		}
+
+		let templatePath = (path as NSString).appendingPathComponent("template.html")
+		self.template = Self.stringAtPath(templatePath)
 	}
 	
 	static func stringAtPath(_ f: String) -> String? {

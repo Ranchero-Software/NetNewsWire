@@ -595,6 +595,11 @@
 		51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 51CE1C0823621EDA005548FC /* RefreshProgressView.xib */; };
 		51CE1C0B23622007005548FC /* RefreshProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CE1C0A23622006005548FC /* RefreshProgressView.swift */; };
 		51CE1C712367721A005548FC /* testURLsOfCurrentArticle.applescript in Sources */ = {isa = PBXBuildFile; fileRef = 84F9EADB213660A100CF2DE4 /* testURLsOfCurrentArticle.applescript */; };
+		51D0214626ED617100FF2E0F /* core.css in Resources */ = {isa = PBXBuildFile; fileRef = 51D0214526ED617100FF2E0F /* core.css */; };
+		51D0214726ED617100FF2E0F /* core.css in Resources */ = {isa = PBXBuildFile; fileRef = 51D0214526ED617100FF2E0F /* core.css */; };
+		51D0214826ED617100FF2E0F /* core.css in Resources */ = {isa = PBXBuildFile; fileRef = 51D0214526ED617100FF2E0F /* core.css */; };
+		51D0214926ED617100FF2E0F /* core.css in Resources */ = {isa = PBXBuildFile; fileRef = 51D0214526ED617100FF2E0F /* core.css */; };
+		51D0214A26ED617100FF2E0F /* core.css in Resources */ = {isa = PBXBuildFile; fileRef = 51D0214526ED617100FF2E0F /* core.css */; };
 		51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84702AA31FA27AC0006B8943 /* MarkStatusCommand.swift */; };
 		51D6A5BC23199C85001C27D8 /* MasterTimelineDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */; };
 		51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D87EE02311D34700E63F03 /* ActivityType.swift */; };
@@ -1853,6 +1858,7 @@
 		51CD32C724D2E06C009ABAEF /* Secrets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Secrets; sourceTree = "<group>"; };
 		51CE1C0823621EDA005548FC /* RefreshProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RefreshProgressView.xib; sourceTree = "<group>"; };
 		51CE1C0A23622006005548FC /* RefreshProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshProgressView.swift; sourceTree = "<group>"; };
+		51D0214526ED617100FF2E0F /* core.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = core.css; sourceTree = "<group>"; };
 		51D6A5BB23199C85001C27D8 /* MasterTimelineDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTimelineDataSource.swift; sourceTree = "<group>"; };
 		51D87EE02311D34700E63F03 /* ActivityType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityType.swift; sourceTree = "<group>"; };
 		51DC07972552083500A3F79F /* ArticleTextSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleTextSize.swift; sourceTree = "<group>"; };
@@ -3083,6 +3089,7 @@
 		51C452A822650DA100C03939 /* Article Rendering */ = {
 			isa = PBXGroup;
 			children = (
+				51D0214526ED617100FF2E0F /* core.css */,
 				B27EEBDF244D15F2000932E6 /* stylesheet.css */,
 				848362FE2262A30E00DA1D35 /* template.html */,
 				517630032336215100E15FFF /* main.js */,
@@ -4385,6 +4392,7 @@
 				51E4995E24A875F300B667CB /* newsfoot.js in Resources */,
 				517B2EE424B3E8FE001AC46C /* blank.html in Resources */,
 				5177475C24B39AD500EB0F74 /* Credits.rtf in Resources */,
+				51D0214926ED617100FF2E0F /* core.css in Resources */,
 				51E4995D24A875F300B667CB /* main.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4399,6 +4407,7 @@
 				51C0516324A77DF800194D5E /* Assets.xcassets in Resources */,
 				51E4996524A875F400B667CB /* template.html in Resources */,
 				517B2EE924B3E8FE001AC46C /* main_multiplatform.js in Resources */,
+				51D0214A26ED617100FF2E0F /* core.css in Resources */,
 				517B2EE524B3E8FE001AC46C /* blank.html in Resources */,
 				51E4996324A875F400B667CB /* newsfoot.js in Resources */,
 				51E4996224A875F400B667CB /* main.js in Resources */,
@@ -4445,6 +4454,7 @@
 				65ED405C235DEF6C0081F399 /* ImportOPMLSheet.xib in Resources */,
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
 				514A89A3244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
+				51D0214726ED617100FF2E0F /* core.css in Resources */,
 				5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
 				51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
@@ -4499,6 +4509,7 @@
 				516A09422361248000EAE89B /* Inspector.storyboard in Resources */,
 				1768140B2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig in Resources */,
 				5103A9B424216A4200410853 /* blank.html in Resources */,
+				51D0214826ED617100FF2E0F /* core.css in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */,
 				51F85BEB22724CB600C787DC /* About.rtf in Resources */,
 				516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */,
@@ -4535,6 +4546,7 @@
 				517630042336215100E15FFF /* main.js in Resources */,
 				65ED40A0235DEFF00081F399 /* container-migration.plist in Resources */,
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
+				51D0214626ED617100FF2E0F /* core.css in Resources */,
 				5142194B2353C1CF00E07E2C /* main_mac.js in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
 				B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */,
