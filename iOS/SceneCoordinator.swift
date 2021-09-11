@@ -156,6 +156,21 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var exceptionArticleFetcher: ArticleFetcher?
 	private(set) var timelineFeed: Feed?
 	
+	// We have to defer the selecting of the feed and article due to a behavior (bug?) in iOS 15.
+	// iOS 15 will crash if you are in landscape on an iPad and are restoring article state. We
+	// have no idea why this is, but it happens when you do a select on a UITableView right before
+	// doing a diffable datasource apply.
+	//
+	// Steps to recreate:
+	//
+	// * Try to relaunch the app in the sim.
+	// * Press the Stop button in Xcode
+	// * Wait for all the app suspension activities to complete (widget data, etc)
+	// * Once the article has loaded, navigate to the iPad home screen
+	// * While in landscape, select a feed and then select an article
+	// * Install a fresh build of NNW to an iPad simulator (11 or 12.9' will do) running iPadOS 15
+	private var deferredFeedAndArticleSelect: (feedIndexPath: IndexPath, articleID: String)?
+	
 	var timelineMiddleIndexPath: IndexPath?
 	
 	private(set) var showFeedNames = ShowFeedName.none
@@ -437,6 +452,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		rebuildBackingStores(initialLoad: true)
 		treeControllerDelegate.resetFilterExceptions()
+		
+		if let (feedIndexPath, articleID) = deferredFeedAndArticleSelect {
+			selectFeed(indexPath: feedIndexPath) {
+				self.selectArticleInCurrentFeed(articleID)
+			}
+		}
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -2269,9 +2290,7 @@ private extension SceneCoordinator {
 	
 	func selectFeedAndArticle(feedNode: Node, articleID: String) -> Bool {
 		if let feedIndexPath = indexPathFor(feedNode) {
-			selectFeed(indexPath: feedIndexPath) {
-				self.selectArticleInCurrentFeed(articleID)
-			}
+			deferredFeedAndArticleSelect = (feedIndexPath, articleID)
 			return true
 		}
 		return false
