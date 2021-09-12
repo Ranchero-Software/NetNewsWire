@@ -320,7 +320,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
-		guard filename.hasSuffix(".nnwtheme") else { return false }
+		guard filename.hasSuffix(ArticleTheme.nnwThemeSuffix) else { return false }
 		importTheme(filename: filename)
 		return true
 	}
