@@ -70,7 +70,8 @@ class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		
+		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
+
 		// Configure the tap zones
 		configureTopShowBarsView()
 		configureBottomShowBarsView()
@@ -98,6 +99,10 @@ class WebViewController: UIViewController {
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
+	}
+
+	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
+		loadWebView()
 	}
 
 	// MARK: Actions
