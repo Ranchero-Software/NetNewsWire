@@ -6,12 +6,7 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-#if os(macOS)
-import AppKit
-#else
-import UIKit
-#endif
-
+import Foundation
 import RSCore
 
 public extension Notification.Name {
@@ -19,10 +14,15 @@ public extension Notification.Name {
 	static let CurrentArticleThemeDidChangeNotification = Notification.Name("CurrentArticleThemeDidChangeNotification")
 }
 
-final class ArticleThemesManager {
+final class ArticleThemesManager: NSObject, NSFilePresenter {
 
 	static var shared: ArticleThemesManager!
 	public let folderPath: String
+
+	lazy var presentedItemOperationQueue = OperationQueue.main
+	var presentedItemURL: URL? {
+		return URL(fileURLWithPath: folderPath)
+	}
 
 	var currentThemeName: String {
 		get {
@@ -50,7 +50,10 @@ final class ArticleThemesManager {
 
 	init(folderPath: String) {
 		self.folderPath = folderPath
+		self.currentTheme = ArticleTheme.defaultTheme
 
+		super.init()
+		
 		do {
 			try FileManager.default.createDirectory(atPath: folderPath, withIntermediateDirectories: true, attributes: nil)
 		} catch {
@@ -58,16 +61,15 @@ final class ArticleThemesManager {
 			abort()
 		}
 
-		currentTheme = ArticleTheme.defaultTheme
-
 		updateThemeNames()
 		updateCurrentTheme()
 
-		#if os(macOS)
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: NSApplication.didBecomeActiveNotification, object: nil)
-		#else
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
-		#endif
+		NSFileCoordinator.addFilePresenter(self)
+	}
+	
+	func presentedSubitemDidChange(at url: URL) {
+		updateThemeNames()
+		updateCurrentTheme()
 	}
 
 	// MARK: API
@@ -87,15 +89,6 @@ final class ArticleThemesManager {
 		}
 		
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
-		
-		updateThemeNames()
-	}
-	
-	// MARK: Notifications
-
-	@objc dynamic func applicationDidBecomeActive(_ note: Notification) {
-		updateThemeNames()
-		updateCurrentTheme()
 	}
 	
 }
