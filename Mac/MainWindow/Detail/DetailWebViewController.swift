@@ -55,6 +55,7 @@ final class DetailWebViewController: NSViewController {
 	
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
+	private var windowScrollY: CGFloat?
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	
 	private struct MessageName {
@@ -143,7 +144,10 @@ final class DetailWebViewController: NSViewController {
 	}
 	
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
-		reloadHTML()
+		fetchScrollInfo() { scrollInfo in
+			self.windowScrollY = scrollInfo?.offsetY
+			self.reloadHTML()
+		}
 	}
 	
 	// MARK: Media Functions
@@ -225,6 +229,11 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
 				webView.isHidden = false
 			}
+		}
+		
+		if let windowScrollY = windowScrollY {
+			webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
+			self.windowScrollY = nil
 		}
 	}
 
