@@ -162,6 +162,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				}
 			}
 			
+			let filename = context.url.standardizedFileURL.path
+			if filename.hasSuffix(ArticleTheme.nnwThemeSuffix) {
+				self.coordinator.importTheme(filename: filename)
+			}
+			
 		}
 	}
 	
