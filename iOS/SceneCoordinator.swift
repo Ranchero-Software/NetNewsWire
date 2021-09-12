@@ -2370,8 +2370,8 @@ private extension SceneCoordinator {
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		
-		let cancelTitle = NSLocalizedString("Done", comment: "Done")
-		alertController.addAction(UIAlertAction(title: cancelTitle, style: .default))
+		let doneTitle = NSLocalizedString("Done", comment: "Done")
+		alertController.addAction(UIAlertAction(title: doneTitle, style: .default))
 		
 		rootSplitViewController.present(alertController, animated: true)
 	}
