@@ -19,17 +19,14 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
 	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
+	@IBOutlet weak var articleThemeDetailLabel: UILabel!
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
 	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
 	
-	
-	
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
-	
-	
 	
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
@@ -69,6 +66,8 @@ class SettingsViewController: UITableViewController {
 		} else {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
+		
+		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
@@ -128,7 +127,7 @@ class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case 5:
-			return traitCollection.userInterfaceIdiom == .phone ? 3 : 2
+			return traitCollection.userInterfaceIdiom == .phone ? 4 : 3
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -226,6 +225,14 @@ class SettingsViewController: UITableViewController {
 			case 3:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
+			default:
+				break
+			}
+		case 5:
+			switch indexPath.row {
+			case 0:
+				let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
+				self.navigationController?.pushViewController(articleThemes, animated: true)
 			default:
 				break
 			}

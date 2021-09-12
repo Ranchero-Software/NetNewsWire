@@ -186,6 +186,7 @@
 		510C418624E5D1B4008226FD /* ExtensionFeedAddRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5C87A23F2317700032075 /* ExtensionFeedAddRequest.swift */; };
 		510C43F7243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
 		510C43F8243D035C009F70C3 /* ExtensionPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C43F6243D035C009F70C3 /* ExtensionPoint.swift */; };
+		510FFAB326EEA22C00F32265 /* ArticleThemesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */; };
 		51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */; };
 		51107746243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
 		51107747243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
@@ -1624,6 +1625,7 @@
 		510C416624E5CDE3008226FD /* ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
 		510C418724E5D2E3008226FD /* NetNewsWire_shareextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_shareextension_target.xcconfig; sourceTree = "<group>"; };
 		510C43F6243D035C009F70C3 /* ExtensionPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPoint.swift; sourceTree = "<group>"; };
+		510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemesTableViewController.swift; sourceTree = "<group>"; };
 		51102164233A7D6C0007A5F7 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
 		51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointPreferencesViewController.swift; sourceTree = "<group>"; };
 		5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorIconHeaderView.swift; sourceTree = "<group>"; };
@@ -2797,6 +2799,7 @@
 				51A16992235E10D600EB091F /* AddAccountViewController.swift */,
 				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
 				519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */,
+				510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */,
 				516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */,
 				516A09382360A2AE00EAE89B /* SettingsComboTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsComboTableViewCell.xib */,
@@ -5625,6 +5628,7 @@
 				51627A6723861DA3007B3B4B /* MasterFeedViewController+Drag.swift in Sources */,
 				51FFF0C4235EE8E5002762AA /* VibrantButton.swift in Sources */,
 				51C45259226508D300C03939 /* AppDefaults.swift in Sources */,
+				510FFAB326EEA22C00F32265 /* ArticleThemesTableViewController.swift in Sources */,
 				51CE1C0B23622007005548FC /* RefreshProgressView.swift in Sources */,
 				511D4419231FC02D00FB1562 /* KeyboardManager.swift in Sources */,
 				51A1699D235E10D700EB091F /* SettingsViewController.swift in Sources */,
