@@ -12,6 +12,14 @@ import UIKit
 
 class ArticleThemesTableViewController: UITableViewController {
 
+	override func viewDidLoad() {
+		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+	}
+	
+	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
+		tableView.reloadData()
+	}
+
 	// MARK: - Table view data source
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -48,4 +56,39 @@ class ArticleThemesTableViewController: UITableViewController {
 		navigationController?.popViewController(animated: true)
 	}
 
+	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+		guard indexPath.row != 0,
+			  let cell = tableView.cellForRow(at: indexPath),
+			  let themeName = cell.textLabel?.text else { return nil }
+
+		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in
+			let title = NSLocalizedString("Delete Theme?", comment: "Delete Theme")
+			
+			let localizedMessageText = NSLocalizedString("Are you sure you want to delete the theme “%@”?.", comment: "Delete Theme Message")
+			let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
+
+			let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+			
+			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { action in
+				completion(true)
+			}
+			alertController.addAction(cancelAction)
+
+			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+			let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { action in
+				ArticleThemesManager.shared.deleteTheme(themeName: themeName)
+				completion(true)
+			}
+			alertController.addAction(deleteAction)
+			
+			self?.present(alertController, animated: true)
+		}
+		
+		deleteAction.image = AppAssets.trashImage
+		deleteAction.backgroundColor = UIColor.systemRed
+		
+		return UISwipeActionsConfiguration(actions: [deleteAction])
+	}
 }

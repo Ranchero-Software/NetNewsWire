@@ -105,6 +105,12 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		writeInstalledStyleSheets(installedStyleSheets)
 	}
 	
+	func deleteTheme(themeName: String) {
+		if let filename = pathForThemeName(themeName, folder: folderPath) {
+			try? FileManager.default.removeItem(atPath: filename)
+		}
+	}
+	
 }
 
 // MARK : Private
