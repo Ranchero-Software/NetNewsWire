@@ -22,7 +22,7 @@ public extension Notification.Name {
 final class ArticleThemesManager {
 
 	static var shared: ArticleThemesManager!
-	private let folderPath: String
+	public let folderPath: String
 
 	var currentThemeName: String {
 		get {
