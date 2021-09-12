@@ -60,6 +60,15 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 			assertionFailure("Could not create folder for Themes.")
 			abort()
 		}
+		
+		let themeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
+		let installedStyleSheets = readInstalledStyleSheets() ?? [String: Date]()
+		for themeFilename in themeFilenames {
+			let themeName = ArticleTheme.themeNameForPath(themeFilename)
+			if !installedStyleSheets.keys.contains(themeName) {
+				try? importTheme(filename: themeFilename)
+			}
+		}
 
 		updateThemeNames()
 		updateCurrentTheme()
@@ -89,6 +98,11 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		}
 		
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
+
+		let themeName = ArticleTheme.themeNameForPath(filename)
+		var installedStyleSheets = readInstalledStyleSheets() ?? [String: Date]()
+		installedStyleSheets[themeName] = Date()
+		writeInstalledStyleSheets(installedStyleSheets)
 	}
 	
 }
@@ -151,6 +165,16 @@ private extension ArticleThemesManager {
 			}
 		}
 		return nil
+	}
+	
+	func readInstalledStyleSheets() -> [String: Date]? {
+		let filePath = (folderPath as NSString).appendingPathComponent("InstalledStyleSheets.plist")
+		return NSDictionary(contentsOfFile: filePath) as? [String: Date]
+	}
+	
+	func writeInstalledStyleSheets(_ dict: [String: Date]) {
+		let filePath = (folderPath as NSString).appendingPathComponent("InstalledStyleSheets.plist")
+		(dict as NSDictionary).write(toFile: filePath, atomically: true)
 	}
 	
 }

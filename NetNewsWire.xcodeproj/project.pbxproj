@@ -190,6 +190,11 @@
 		51107746243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
 		51107747243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */; };
 		5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */; };
+		5112435026EE629A002601D2 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5112434F26EE6291002601D2 /* Sepia.nnwtheme */; };
+		5112435126EE629B002601D2 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5112434F26EE6291002601D2 /* Sepia.nnwtheme */; };
+		5112435226EE629C002601D2 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5112434F26EE6291002601D2 /* Sepia.nnwtheme */; };
+		5112435326EE629F002601D2 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5112434F26EE6291002601D2 /* Sepia.nnwtheme */; };
+		5112435426EE629F002601D2 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5112434F26EE6291002601D2 /* Sepia.nnwtheme */; };
 		51126DA4225FDE2F00722696 /* RSImage-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */; };
 		5117715524E1EA0F00A2A836 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5117715424E1EA0F00A2A836 /* ArticleExtractorButton.swift */; };
 		5117715624E1EA0F00A2A836 /* ArticleExtractorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5117715424E1EA0F00A2A836 /* ArticleExtractorButton.swift */; };
@@ -1623,6 +1628,7 @@
 		51107745243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionPointPreferencesViewController.swift; sourceTree = "<group>"; };
 		5110C37C2373A8D100A9C04F /* InspectorIconHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorIconHeaderView.swift; sourceTree = "<group>"; };
 		51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSapp_target.xcconfig; sourceTree = "<group>"; };
+		5112434F26EE6291002601D2 /* Sepia.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Sepia.nnwtheme; sourceTree = "<group>"; };
 		51126DA3225FDE2F00722696 /* RSImage-Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-Extensions.swift"; sourceTree = "<group>"; };
 		5117715424E1EA0F00A2A836 /* ArticleExtractorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractorButton.swift; sourceTree = "<group>"; };
 		511B9805237DCAC90028BCAA /* UserInfoKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoKey.swift; sourceTree = "<group>"; };
@@ -3696,6 +3702,7 @@
 				84C9FC9C2262A1A900D921D6 /* Info.plist */,
 				84BB0F812333426400DED65E /* NetNewsWire.entitlements */,
 				51F805ED24284C1C0022C792 /* NetNewsWire-dev.entitlements */,
+				5112434F26EE6291002601D2 /* Sepia.nnwtheme */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -4385,6 +4392,7 @@
 				51E4995F24A875F300B667CB /* stylesheet.css in Resources */,
 				517B2EE824B3E8FE001AC46C /* main_multiplatform.js in Resources */,
 				51E4997324A8784300B667CB /* DefaultFeeds.opml in Resources */,
+				5112435326EE629F002601D2 /* Sepia.nnwtheme in Resources */,
 				51C0516224A77DF800194D5E /* Assets.xcassets in Resources */,
 				5177475F24B39AD500EB0F74 /* About.rtf in Resources */,
 				51E4996024A875F300B667CB /* template.html in Resources */,
@@ -4403,6 +4411,7 @@
 			files = (
 				517B2EE324B3E8FE001AC46C /* page.html in Resources */,
 				51E4996424A875F400B667CB /* stylesheet.css in Resources */,
+				5112435426EE629F002601D2 /* Sepia.nnwtheme in Resources */,
 				51E4997524A8784400B667CB /* DefaultFeeds.opml in Resources */,
 				51C0516324A77DF800194D5E /* Assets.xcassets in Resources */,
 				51E4996524A875F400B667CB /* template.html in Resources */,
@@ -4444,6 +4453,7 @@
 				65ED4051235DEF6C0081F399 /* TimelineKeyboardShortcuts.plist in Resources */,
 				65ED4052235DEF6C0081F399 /* template.html in Resources */,
 				65ED4054235DEF6C0081F399 /* Main.storyboard in Resources */,
+				5112435126EE629B002601D2 /* Sepia.nnwtheme in Resources */,
 				65ED4056235DEF6C0081F399 /* NetNewsWire.sdef in Resources */,
 				65ED4057235DEF6C0081F399 /* AccountsDetail.xib in Resources */,
 				65ED4058235DEF6C0081F399 /* main.js in Resources */,
@@ -4495,6 +4505,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5112435226EE629C002601D2 /* Sepia.nnwtheme in Resources */,
 				517630052336215100E15FFF /* main.js in Resources */,
 				5148F44B2336DB4700F8CD8B /* MasterTimelineTitleView.xib in Resources */,
 				511D43D0231FA62500FB1562 /* TimelineKeyboardShortcuts.plist in Resources */,
@@ -4543,6 +4554,7 @@
 				848363082262A3DD00DA1D35 /* Main.storyboard in Resources */,
 				84C9FC8F22629E8F00D921D6 /* NetNewsWire.sdef in Resources */,
 				84C9FC7D22629E1200D921D6 /* AccountsDetail.xib in Resources */,
+				5112435026EE629A002601D2 /* Sepia.nnwtheme in Resources */,
 				517630042336215100E15FFF /* main.js in Resources */,
 				65ED40A0235DEFF00081F399 /* container-migration.plist in Resources */,
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
