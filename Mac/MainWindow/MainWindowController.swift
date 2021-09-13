@@ -311,7 +311,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
-		if let link = currentLink {
+		if let link = oneSelectedArticle?.preferredURL?.absoluteString {
 			URLPasteboardWriter.write(urlString: link, to: .general)
 		}
 	}

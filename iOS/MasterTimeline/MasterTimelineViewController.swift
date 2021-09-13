@@ -915,7 +915,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func copyArticleURLAction(_ article: Article) -> UIAction? {
-		guard let preferredLink = article.preferredLink, let url = URL(string: preferredLink) else { return nil }
+		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Copy Article URL", comment: "Copy Article URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
