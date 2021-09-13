@@ -6444,7 +6444,7 @@
 			repositoryURL = "https://github.com/Ranchero-Software/RSParser.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 2.0.3;
 			};
 		};
 		653813412680E2DA007A082C /* XCRemoteSwiftPackageReference "RSCore" */ = {
