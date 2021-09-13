@@ -46,6 +46,11 @@ final class GeneralPreferencesViewController: NSViewController {
 
 	// MARK: - Actions
 
+	@IBAction func showThemesFolder(_ sender: Any) {
+		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
+		NSWorkspace.shared.open(url)
+	}
+	
 	@IBAction func articleThemePopUpDidChange(_ sender: Any) {
 		guard let menuItem = articleThemePopup.selectedItem else {
 			return

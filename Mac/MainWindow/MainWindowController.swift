@@ -18,7 +18,9 @@ enum TimelineSourceMode {
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
-	private var activityManager = ActivityManager()
+    @IBOutlet weak var articleThemePopUpButton: NSPopUpButton?
+    
+    private var activityManager = ActivityManager()
 
 	private var isShowingExtractedArticle = false
 	private var articleExtractor: ArticleExtractor? = nil
@@ -62,6 +64,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
+		updateArticleThemeMenu()
+
 		if #available(macOS 11.0, *) {
 			let toolbar = NSToolbar(identifier: "MainWindowToolbar")
 			toolbar.allowsUserCustomization = true
@@ -155,11 +159,11 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
-		buildArticleThemeMenu()
+		updateArticleThemeMenu()
 	}
 
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
-		buildArticleThemeMenu()
+		updateArticleThemeMenu()
 	}
 
 	private func updateWindowTitleIfNecessary(_ noteObject: Any?) {
@@ -199,6 +203,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	// MARK: - NSUserInterfaceValidations
 	
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		
+		if item.action == #selector(copyArticleURL(_:)) {
+			return canCopyArticleURL()
+		}
+		
+		if item.action == #selector(copyExternalURL(_:)) {
+			return canCopyExternalURL()
+		}
 		
 		if item.action == #selector(openArticleInBrowser(_:)) {
 			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
@@ -296,6 +308,18 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			}
 		}
 
+	}
+
+	@IBAction func copyArticleURL(_ sender: Any?) {
+		if let link = oneSelectedArticle?.preferredURL?.absoluteString {
+			URLPasteboardWriter.write(urlString: link, to: .general)
+		}
+	}
+
+	@IBAction func copyExternalURL(_ sender: Any?) {
+		if let link = oneSelectedArticle?.externalURL {
+			URLPasteboardWriter.write(urlString: link, to: .general)
+		}
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
@@ -817,7 +841,6 @@ extension MainWindowController: NSToolbarDelegate {
 				let description = NSLocalizedString("Article Theme", comment: "Article Theme")
 				articleThemeMenuToolbarItem.toolTip = description
 				articleThemeMenuToolbarItem.label = description
-				buildArticleThemeMenu()
 				return articleThemeMenuToolbarItem
 
 			case .search:
@@ -1033,6 +1056,14 @@ private extension MainWindowController {
 	}
 
 	// MARK: - Command Validation
+	
+	func canCopyArticleURL() -> Bool {
+		return currentLink != nil
+	}
+	
+	func canCopyExternalURL() -> Bool {
+		return oneSelectedArticle?.externalURL != nil && oneSelectedArticle?.externalURL != currentLink
+	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
 		
@@ -1413,7 +1444,7 @@ private extension MainWindowController {
 		return menu
 	}
 
-	func buildArticleThemeMenu() {
+	func updateArticleThemeMenu() {
 		let articleThemeMenu = NSMenu()
 		
 		let defaultThemeItem = NSMenuItem()
@@ -1433,6 +1464,7 @@ private extension MainWindowController {
 		}
 
 		articleThemeMenuToolbarItem.menu = articleThemeMenu
+		articleThemePopUpButton?.menu = articleThemeMenu
 	}
 
 }

@@ -156,6 +156,21 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	private var exceptionArticleFetcher: ArticleFetcher?
 	private(set) var timelineFeed: Feed?
 	
+	// We have to defer the selecting of the feed and article due to a behavior (bug?) in iOS 15.
+	// iOS 15 will crash if you are in landscape on an iPad and are restoring article state. We
+	// have no idea why this is, but it happens when you do a select on a UITableView right before
+	// doing a diffable datasource apply.
+	//
+	// Steps to recreate:
+	//
+	// * Try to relaunch the app in the sim.
+	// * Press the Stop button in Xcode
+	// * Wait for all the app suspension activities to complete (widget data, etc)
+	// * Once the article has loaded, navigate to the iPad home screen
+	// * While in landscape, select a feed and then select an article
+	// * Install a fresh build of NNW to an iPad simulator (11 or 12.9' will do) running iPadOS 15
+	private var deferredFeedAndArticleSelect: (feedIndexPath: IndexPath, articleID: String)?
+	
 	var timelineMiddleIndexPath: IndexPath?
 	
 	private(set) var showFeedNames = ShowFeedName.none
@@ -437,6 +452,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 		rebuildBackingStores(initialLoad: true)
 		treeControllerDelegate.resetFilterExceptions()
+		
+		if let (feedIndexPath, articleID) = deferredFeedAndArticleSelect {
+			selectFeed(indexPath: feedIndexPath) {
+				self.selectArticleInCurrentFeed(articleID)
+			}
+		}
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -1261,6 +1282,72 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 			self.selectArticle(article)
 		}
 	}
+	
+	func importTheme(filename: String) {
+		let theme = ArticleTheme(path: filename)
+		
+		let localizedTitleText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
+		let title = NSString.localizedStringWithFormat(localizedTitleText as NSString, theme.name, theme.creatorName) as String
+
+		let localizedMessageText = NSLocalizedString("Author's Website:\n%@", comment: "Authors website")
+		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.creatorHomePage) as String
+
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
+		
+		if let url = URL(string: theme.creatorHomePage) {
+			let visitSiteTitle = NSLocalizedString("Show Website", comment: "Show Website")
+			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { [weak self] action in
+				UIApplication.shared.open(url)
+				self?.importTheme(filename: filename)
+			}
+			alertController.addAction(visitSiteAction)
+		}
+
+		func importTheme() {
+			do {
+				try ArticleThemesManager.shared.importTheme(filename: filename)
+				confirmImportSuccess(themeName: theme.name)
+			} catch {
+				rootSplitViewController.presentError(error)
+			}
+		}
+
+		let installThemeTitle = NSLocalizedString("Install Theme", comment: "Install Theme")
+		let installThemeAction = UIAlertAction(title: installThemeTitle, style: .default) { [weak self] action in
+
+			if ArticleThemesManager.shared.themeExists(filename: filename) {
+				let title = NSLocalizedString("Duplicate Theme", comment: "Duplicate Theme")
+				let localizedMessageText = NSLocalizedString("The theme “%@” already exists. Overwrite it?", comment: "Overwrite theme")
+				let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
+
+				let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+				alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
+
+				let overwriteAction = UIAlertAction(title: NSLocalizedString("Overwrite", comment: "Overwrite"), style: .default) { action in
+					importTheme()
+				}
+				alertController.addAction(overwriteAction)
+				alertController.preferredAction = overwriteAction
+
+				self?.rootSplitViewController.present(alertController, animated: true)
+			} else {
+				importTheme()
+			}
+			
+		}
+		
+		alertController.addAction(installThemeAction)
+		alertController.preferredAction = installThemeAction
+
+		rootSplitViewController.present(alertController, animated: true)
+
+	}
+	
 }
 
 // MARK: UISplitViewControllerDelegate
@@ -2269,12 +2356,24 @@ private extension SceneCoordinator {
 	
 	func selectFeedAndArticle(feedNode: Node, articleID: String) -> Bool {
 		if let feedIndexPath = indexPathFor(feedNode) {
-			selectFeed(indexPath: feedIndexPath) {
-				self.selectArticleInCurrentFeed(articleID)
-			}
+			deferredFeedAndArticleSelect = (feedIndexPath, articleID)
 			return true
 		}
 		return false
+	}
+	
+	func confirmImportSuccess(themeName: String) {
+		let title = NSLocalizedString("Theme installed", comment: "Theme installed")
+		
+		let localizedMessageText = NSLocalizedString("The theme “%@” has been installed.", comment: "Theme installed")
+		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
+
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		
+		let doneTitle = NSLocalizedString("Done", comment: "Done")
+		alertController.addAction(UIAlertAction(title: doneTitle, style: .default))
+		
+		rootSplitViewController.present(alertController, animated: true)
 	}
 	
 }

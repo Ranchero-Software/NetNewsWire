@@ -6,12 +6,7 @@
 //  Copyright © 2015 Ranchero Software, LLC. All rights reserved.
 //
 
-#if os(macOS)
-import AppKit
-#else
-import UIKit
-#endif
-
+import Foundation
 import RSCore
 
 public extension Notification.Name {
@@ -19,10 +14,15 @@ public extension Notification.Name {
 	static let CurrentArticleThemeDidChangeNotification = Notification.Name("CurrentArticleThemeDidChangeNotification")
 }
 
-final class ArticleThemesManager {
+final class ArticleThemesManager: NSObject, NSFilePresenter {
 
 	static var shared: ArticleThemesManager!
-	private let folderPath: String
+	public let folderPath: String
+
+	lazy var presentedItemOperationQueue = OperationQueue.main
+	var presentedItemURL: URL? {
+		return URL(fileURLWithPath: folderPath)
+	}
 
 	var currentThemeName: String {
 		get {
@@ -50,27 +50,44 @@ final class ArticleThemesManager {
 
 	init(folderPath: String) {
 		self.folderPath = folderPath
+		self.currentTheme = ArticleTheme.defaultTheme
 
+		super.init()
+		
 		do {
 			try FileManager.default.createDirectory(atPath: folderPath, withIntermediateDirectories: true, attributes: nil)
 		} catch {
 			assertionFailure("Could not create folder for Themes.")
 			abort()
 		}
-
-		currentTheme = ArticleTheme.defaultTheme
+		
+		let themeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
+		let installedStyleSheets = readInstalledStyleSheets() ?? [String: Date]()
+		for themeFilename in themeFilenames {
+			let themeName = ArticleTheme.themeNameForPath(themeFilename)
+			if !installedStyleSheets.keys.contains(themeName) {
+				try? importTheme(filename: themeFilename)
+			}
+		}
 
 		updateThemeNames()
 		updateCurrentTheme()
 
-		#if os(macOS)
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: NSApplication.didBecomeActiveNotification, object: nil)
-		#else
-		NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
-		#endif
+		NSFileCoordinator.addFilePresenter(self)
+	}
+	
+	func presentedSubitemDidChange(at url: URL) {
+		updateThemeNames()
+		updateCurrentTheme()
 	}
 
 	// MARK: API
+	
+	func themeExists(filename: String) -> Bool {
+		let filenameLastPathComponent = (filename as NSString).lastPathComponent
+		let toFilename = (folderPath as NSString).appendingPathComponent(filenameLastPathComponent)
+		return FileManager.default.fileExists(atPath: toFilename)
+	}
 	
 	func importTheme(filename: String) throws {
 		let filenameLastPathComponent = (filename as NSString).lastPathComponent
@@ -81,15 +98,17 @@ final class ArticleThemesManager {
 		}
 		
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
-		
-		updateThemeNames()
+
+		let themeName = ArticleTheme.themeNameForPath(filename)
+		var installedStyleSheets = readInstalledStyleSheets() ?? [String: Date]()
+		installedStyleSheets[themeName] = Date()
+		writeInstalledStyleSheets(installedStyleSheets)
 	}
 	
-	// MARK: Notifications
-
-	@objc dynamic func applicationDidBecomeActive(_ note: Notification) {
-		updateThemeNames()
-		updateCurrentTheme()
+	func deleteTheme(themeName: String) {
+		if let filename = pathForThemeName(themeName, folder: folderPath) {
+			try? FileManager.default.removeItem(atPath: filename)
+		}
 	}
 	
 }
@@ -152,6 +171,16 @@ private extension ArticleThemesManager {
 			}
 		}
 		return nil
+	}
+	
+	func readInstalledStyleSheets() -> [String: Date]? {
+		let filePath = (folderPath as NSString).appendingPathComponent("InstalledStyleSheets.plist")
+		return NSDictionary(contentsOfFile: filePath) as? [String: Date]
+	}
+	
+	func writeInstalledStyleSheets(_ dict: [String: Date]) {
+		let filePath = (folderPath as NSString).appendingPathComponent("InstalledStyleSheets.plist")
+		(dict as NSDictionary).write(toFile: filePath, atomically: true)
 	}
 	
 }

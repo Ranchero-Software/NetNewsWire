@@ -320,7 +320,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	}
 	
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
-		guard filename.hasSuffix(".nnwtheme") else { return false }
+		guard filename.hasSuffix(ArticleTheme.nnwThemeSuffix) else { return false }
 		importTheme(filename: filename)
 		return true
 	}
@@ -812,36 +812,71 @@ private extension AppDelegate {
 		attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
 		attrs[.foregroundColor] = NSColor.textColor
 		
-		let titleParagraphStyle = NSMutableParagraphStyle()
-		titleParagraphStyle.alignment = .center
-		attrs[.paragraphStyle] = titleParagraphStyle
+		if #available(macOS 11.0, *) {
+			let titleParagraphStyle = NSMutableParagraphStyle()
+			titleParagraphStyle.alignment = .center
+			attrs[.paragraphStyle] = titleParagraphStyle
+		}
 
 		let websiteText = NSMutableAttributedString()
 		websiteText.append(NSAttributedString(string: NSLocalizedString("Author's Website", comment: "Author's Website"), attributes: attrs))
-		websiteText.append(NSAttributedString(string: "\n"))
+
+		if #available(macOS 11.0, *) {
+			websiteText.append(NSAttributedString(string: "\n"))
+		} else {
+			websiteText.append(NSAttributedString(string: " "))
+		}
 
 		attrs[.link] = theme.creatorHomePage
 		websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
 
-		let textView = NSTextView(frame: CGRect(x: 0, y: 0, width: 200, height: 15))
+		let textViewWidth: CGFloat
+		if #available(macOS 11.0, *) {
+			textViewWidth = 200
+		} else {
+			textViewWidth = 400
+		}
+
+		let textView = NSTextView(frame: CGRect(x: 0, y: 0, width: textViewWidth, height: 15))
 		textView.isEditable = false
 		textView.drawsBackground = false
 		textView.textStorage?.setAttributedString(websiteText)
 		alert.accessoryView = textView
 		
-		alert.addButton(withTitle: NSLocalizedString("Install Style", comment: "Install Style"))
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Style"))
+		alert.addButton(withTitle: NSLocalizedString("Install Theme", comment: "Install Theme"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
 			
-		alert.beginSheetModal(for: window) { [weak self] result in
+		func importTheme() {
+			do {
+				try ArticleThemesManager.shared.importTheme(filename: filename)
+				confirmImportSuccess(themeName: theme.name)
+			} catch {
+				NSApplication.shared.presentError(error)
+			}
+		}
+		
+		alert.beginSheetModal(for: window) { result in
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
-				guard let self = self else { return }
-				
-				do {
-					try ArticleThemesManager.shared.importTheme(filename: filename)
-					self.confirmImportSuccess(themeName: theme.name)
-				} catch {
-					NSApplication.shared.presentError(error)
+
+				if ArticleThemesManager.shared.themeExists(filename: filename) {
+					let alert = NSAlert()
+					alert.alertStyle = .warning
+
+					let localizedMessageText = NSLocalizedString("The theme “%@” already exists. Overwrite it?", comment: "Overwrite theme")
+					alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
+
+					alert.addButton(withTitle: NSLocalizedString("Overwrite", comment: "Overwrite"))
+					alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+					
+					alert.beginSheetModal(for: window) { result in
+						if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+							importTheme()
+						}
+					}
+				} else {
+					importTheme()
 				}
+
 			}
 		}
 	}

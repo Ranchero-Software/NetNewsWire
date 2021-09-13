@@ -1,0 +1,137 @@
+/* This is the activity indicator (currently iOS only) that is used while image zooming */
+
+.activityIndicatorWrap {
+    position: relative;
+}
+
+.activityIndicator {
+    z-index: 1;
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* see removeWpSmiley; this rule is kept in case a wp-smiley is encountered without alt text */
+
+.wp-smiley {
+    height: 1em;
+    max-height: 1em;
+ }
+
+/* Hide the external link at the bottom of Daring Fireball posts */
+
+.x-netnewswire-hide {
+	display: none;
+}
+ 
+/*Block ads and junk*/
+
+iframe[src*="feedads"],
+iframe[src*="doubleclick"],
+iframe[src*="plusone.google"] {
+	display: none !important;
+}
+
+a[href*=".ads."],
+a[href*="feedads"],
+a[href*="doubleclick"],
+a[href*="//ads."],
+a[href*="api.tweetmeme"],
+a[href*="delicious.com/post?"],
+a[href*="digg.com/submit?"],
+a[href*="google.com/bookmarks/mark?"],
+a[href*="posterous.com/share?"],
+a[href*="tumblr.com/share?"],
+a[href*="linkedin.com/shareArticle?"],
+a[href*="facebook.com/share.php?"],
+a[href*="http://twitter.com/home?"],
+a[href*="addtoany.com/share_save"] {
+	display: none !important;
+}
+
+img[src*=".ads."],
+img[src*="//ads."],
+img[src*="doubleclick"],
+img[src*="feedads"],
+img[src*="feedburner"],
+img[src*="feedblitz"],
+img[src*="share-buttons"] {
+	display: none !important;
+}
+
+/* Newsfoot specific styles. Structural styles come first, theme styles second */
+
+.newsfoot-footnote-container {
+	position: relative;
+	display: inline-block;
+	z-index: 9999;
+}
+
+.newsfoot-footnote-popover {
+	position: absolute;
+	display: block;
+	padding: 0em 1em;
+	margin: 1em;
+	top: 0.75em;
+	max-width: none;
+	border-radius: 0.3em;
+	box-sizing: border-box;
+}
+
+.newsfoot-footnote-popover {
+	left: calc(-1 * (50vw - 1em));
+	right: calc(-1 * (50vw - 1em));
+}
+
+.newsfoot-footnote-popover-arrow {
+	content: '';
+	display: block;
+	width: 1em;
+	position: absolute;
+	top: -0.5em;
+	left: calc(50% - 0.5em);
+	height: 1em !important;
+	transform: rotate(45deg);
+	z-index:0;
+}
+
+.newsfoot-footnote-popover-inner {
+	border-radius: calc(0.3em - 1px);
+	padding: 1em;
+	position: relative;
+	z-index: 1;
+}
+
+.newsfoot-footnote-popover-inner :first-child {
+	margin-top: 0;
+}
+.newsfoot-footnote-popover-inner :last-child {
+	margin-bottom: 0;
+}
+
+.newsfoot-footnote-popover .reversefootnote,
+.newsfoot-footnote-popover .footnoteBackLink,
+.newsfoot-footnote-popover .footnote-return,
+.newsfoot-footnote-popover a[href*='#fn'] {
+	display: none;
+}
+
+sup[id^='fn'] {
+	vertical-align: baseline;
+}
+
+a.footnote {
+	display: inline-block;
+	text-decoration: none;
+	padding: 0.05em 0.75em;
+	border-radius: 1em;
+	min-width: 1em;
+	text-align: center;
+	font-size: 0.8em;
+	line-height: 1em;
+	position:relative;
+	top: -0.1em;
+}

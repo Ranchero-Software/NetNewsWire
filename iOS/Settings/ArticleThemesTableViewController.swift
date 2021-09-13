@@ -1,0 +1,94 @@
+//
+//  ArticleThemesTableViewController.swift
+//  NetNewsWire-iOS
+//
+//  Created by Maurice Parker on 9/12/21.
+//  Copyright © 2021 Ranchero Software. All rights reserved.
+//
+
+import Foundation
+
+import UIKit
+
+class ArticleThemesTableViewController: UITableViewController {
+
+	override func viewDidLoad() {
+		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+	}
+	
+	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
+		tableView.reloadData()
+	}
+
+	// MARK: - Table view data source
+
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		return 1
+	}
+
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return ArticleThemesManager.shared.themeNames.count + 1
+	}
+
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+		
+		let themeName: String
+		if indexPath.row == 0 {
+			themeName = ArticleTheme.defaultTheme.name
+		} else {
+			themeName = ArticleThemesManager.shared.themeNames[indexPath.row - 1]
+		}
+		
+		cell.textLabel?.text = themeName
+		if themeName == ArticleThemesManager.shared.currentTheme.name {
+			cell.accessoryType = .checkmark
+		} else {
+			cell.accessoryType = .none
+		}
+		
+		return cell
+	}
+
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		guard let cell = tableView.cellForRow(at: indexPath), let themeName = cell.textLabel?.text else { return }
+		ArticleThemesManager.shared.currentThemeName = themeName
+		navigationController?.popViewController(animated: true)
+	}
+
+	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+		guard indexPath.row != 0,
+			  let cell = tableView.cellForRow(at: indexPath),
+			  let themeName = cell.textLabel?.text else { return nil }
+
+		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in
+			let title = NSLocalizedString("Delete Theme?", comment: "Delete Theme")
+			
+			let localizedMessageText = NSLocalizedString("Are you sure you want to delete the theme “%@”?.", comment: "Delete Theme Message")
+			let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
+
+			let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+			
+			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { action in
+				completion(true)
+			}
+			alertController.addAction(cancelAction)
+
+			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+			let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { action in
+				ArticleThemesManager.shared.deleteTheme(themeName: themeName)
+				completion(true)
+			}
+			alertController.addAction(deleteAction)
+			
+			self?.present(alertController, animated: true)
+		}
+		
+		deleteAction.image = AppAssets.trashImage
+		deleteAction.backgroundColor = UIColor.systemRed
+		
+		return UISwipeActionsConfiguration(actions: [deleteAction])
+	}
+}
