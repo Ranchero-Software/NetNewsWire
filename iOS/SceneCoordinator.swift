@@ -461,8 +461,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		if let (feedIndexPath, articleID, isShowingExtractedArticle, articleWindowScrollY) = deferredFeedAndArticleSelect {
 			selectFeed(indexPath: feedIndexPath) {
-				self.selectArticleInCurrentFeed(articleID)
-				self.articleViewController?.setScrollPosition(isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+				self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			}
 		}
 	}
@@ -836,7 +835,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		}
 	}
 
-	func selectArticle(_ article: Article?, animations: Animations = []) {
+	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		guard article != currentArticle else { return }
 		
 		currentArticle = article
@@ -866,6 +865,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 
 		masterTimelineViewController?.updateArticleSelection(animations: animations)
 		currentArticleViewController.article = article
+		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
+			currentArticleViewController.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
+		}
 	}
 	
 	func beginSearching() {
@@ -1284,9 +1286,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .allVisible ? .primaryHidden : .allVisible
 	}
 	
-	func selectArticleInCurrentFeed(_ articleID: String) {
+	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		if let article = self.articles.first(where: { $0.articleID == articleID }) {
-			self.selectArticle(article)
+			self.selectArticle(article, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 		}
 	}
 	
