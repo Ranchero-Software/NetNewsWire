@@ -109,8 +109,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	var stateRestorationActivity: NSUserActivity {
 		let activity = activityManager.stateRestorationActivity
-		var userInfo = activity.userInfo == nil ? [AnyHashable: Any]() : activity.userInfo
-		userInfo![UserInfoKey.windowState] = windowState()
+		var userInfo = activity.userInfo ?? [AnyHashable: Any]()
+		
+		userInfo[UserInfoKey.windowState] = windowState()
+		
+		let articleState = articleViewController?.currentState
+		userInfo[UserInfoKey.isShowingExtractedArticle] = articleState?.isShowingExtractedArticle ?? false
+		userInfo[UserInfoKey.articleWindowScrollY] = articleState?.windowScrollY ?? 0
+
 		activity.userInfo = userInfo
 		return activity
 	}
@@ -169,7 +175,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	// * Once the article has loaded, navigate to the iPad home screen
 	// * While in landscape, select a feed and then select an article
 	// * Install a fresh build of NNW to an iPad simulator (11 or 12.9' will do) running iPadOS 15
-	private var deferredFeedAndArticleSelect: (feedIndexPath: IndexPath, articleID: String)?
+	private var deferredFeedAndArticleSelect: (feedIndexPath: IndexPath, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int)?
 	
 	var timelineMiddleIndexPath: IndexPath?
 	
@@ -453,9 +459,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		rebuildBackingStores(initialLoad: true)
 		treeControllerDelegate.resetFilterExceptions()
 		
-		if let (feedIndexPath, articleID) = deferredFeedAndArticleSelect {
+		if let (feedIndexPath, articleID, isShowingExtractedArticle, articleWindowScrollY) = deferredFeedAndArticleSelect {
 			selectFeed(indexPath: feedIndexPath) {
 				self.selectArticleInCurrentFeed(articleID)
+				self.articleViewController?.setScrollPosition(isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			}
 		}
 	}
@@ -2254,14 +2261,14 @@ private extension SceneCoordinator {
 		guard let userInfo = userInfo else { return }
 		
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
-			let webFeedID = articlePathUserInfo[ArticlePathKey.webFeedID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String,
-			let accountNode = findAccountNode(accountID: accountID, accountName: accountName),
-			let account = accountNode.representedObject as? Account else {
-				return
-		}
+			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
+			  let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
+			  let webFeedID = articlePathUserInfo[ArticlePathKey.webFeedID] as? String,
+			  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String,
+			  let accountNode = findAccountNode(accountID: accountID, accountName: accountName),
+			  let account = accountNode.representedObject as? Account else {
+				  return
+			  }
 		
 		exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 
@@ -2280,20 +2287,21 @@ private extension SceneCoordinator {
 	
 	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
 		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
-			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
-				return false
-		}
+			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo),
+			  let isShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool,
+			  let articleWindowScrollY = userInfo[UserInfoKey.articleWindowScrollY] as? Int else {
+				  return false
+			  }
 
 		switch feedIdentifier {
 
 		case .smartFeed:
-			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return false }
-			if let indexPath = indexPathFor(smartFeed) {
-				selectFeed(indexPath: indexPath) {
-					self.selectArticleInCurrentFeed(articleID)
+			if let smartFeedNode = nodeFor(feedID: feedIdentifier) {
+				let found = deferSelectFeedAndArticle(feedNode: smartFeedNode, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+				if found {
+					treeControllerDelegate.addFilterException(feedIdentifier)
 				}
-				treeControllerDelegate.addFilterException(feedIdentifier)
-				return true
+				return found
 			}
 		
 		case .script:
@@ -2304,7 +2312,7 @@ private extension SceneCoordinator {
 				let folderNode = findFolderNode(folderName: folderName, beginningAt: accountNode) else {
 					return false
 			}
-			let found = selectFeedAndArticle(feedNode: folderNode, articleID: articleID)
+			let found = deferSelectFeedAndArticle(feedNode: folderNode, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
 			}
@@ -2314,7 +2322,7 @@ private extension SceneCoordinator {
 			guard let accountNode = findAccountNode(accountID: accountID), let webFeedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode) else {
 				return false
 			}
-			let found = selectFeedAndArticle(feedNode: webFeedNode, articleID: articleID)
+			let found = deferSelectFeedAndArticle(feedNode: webFeedNode, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
 				if let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
@@ -2354,9 +2362,9 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-	func selectFeedAndArticle(feedNode: Node, articleID: String) -> Bool {
+	func deferSelectFeedAndArticle(feedNode: Node, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
 		if let feedIndexPath = indexPathFor(feedNode) {
-			deferredFeedAndArticleSelect = (feedIndexPath, articleID)
+			deferredFeedAndArticleSelect = (feedIndexPath, articleID, isShowingExtractedArticle, articleWindowScrollY)
 			return true
 		}
 		return false

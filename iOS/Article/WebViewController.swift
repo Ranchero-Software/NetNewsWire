@@ -63,7 +63,8 @@ class WebViewController: UIViewController {
 	
 	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 0.3)
 	var windowScrollY = 0
-	
+	private var restoreWindowScrollY: Int?
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
@@ -127,6 +128,27 @@ class WebViewController: UIViewController {
 			}
 		}
 		
+	}
+	
+	func setScrollPosition(isShowingExtractedArticle: Bool, articleWindowScrollY: Int) {
+		if isShowingExtractedArticle {
+			switch articleExtractor?.state {
+			case .ready:
+				restoreWindowScrollY = articleWindowScrollY
+				startArticleExtractor()
+			case .complete:
+				windowScrollY = articleWindowScrollY
+				loadWebView()
+			case .processing:
+				restoreWindowScrollY = articleWindowScrollY
+			default:
+				restoreWindowScrollY = articleWindowScrollY
+				startArticleExtractor()
+			}
+		} else {
+			windowScrollY = articleWindowScrollY
+			loadWebView()
+		}
 	}
 	
 	func focus() {
@@ -277,6 +299,9 @@ extension WebViewController: ArticleExtractorDelegate {
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
 		if articleExtractor?.state != .cancelled {
 			self.extractedArticle = extractedArticle
+			if let restoreWindowScrollY = restoreWindowScrollY {
+				windowScrollY = restoreWindowScrollY
+			}
 			isShowingExtractedArticle = true
 			loadWebView()
 			articleExtractorButtonState = .on
@@ -591,6 +616,7 @@ private extension WebViewController {
 	}
 	
 	func startArticleExtractor() {
+		guard articleExtractor == nil else { return }
 		if let link = article?.preferredLink, let extractor = ArticleExtractor(link) {
 			extractor.delegate = self
 			extractor.process()

@@ -311,7 +311,11 @@ class ArticleViewController: UIViewController {
 
 	func openInAppBrowser() {
 		currentWebViewController?.openInAppBrowser()
-	}	
+	}
+	
+	func setScrollPosition(isShowingExtractedArticle: Bool, articleWindowScrollY: Int) {
+		currentWebViewController?.setScrollPosition(isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+	}
 }
 
 // MARK: Find in Article
