@@ -24,6 +24,12 @@ final class DetailWebViewController: NSViewController {
 	var state: DetailState = .noSelection {
 		didSet {
 			if state != oldValue {
+				switch state {
+				case .article(_, let scrollY), .extracted(_, _, let scrollY):
+					windowScrollY = scrollY
+				default:
+					break
+				}
 				reloadHTML()
 			}
 		}
@@ -31,9 +37,9 @@ final class DetailWebViewController: NSViewController {
 	
 	var article: Article? {
 		switch state {
-		case .article(let article):
+		case .article(let article, _):
 			return article
-		case .extracted(let article, _):
+		case .extracted(let article, _, _):
 			return article
 		default:
 			return nil
@@ -55,9 +61,19 @@ final class DetailWebViewController: NSViewController {
 	
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
-	private var windowScrollY: CGFloat?
 	private let keyboardDelegate = DetailKeyboardDelegate()
-	
+	private let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 0.3)
+	private var windowScrollY: CGFloat?
+
+	private var isShowingExtractedArticle: Bool {
+		switch state {
+		case .extracted(_, _, _):
+			return true
+		default:
+			return false
+		}
+	}
+
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
@@ -81,6 +97,7 @@ final class DetailWebViewController: NSViewController {
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self
 		webView.navigationDelegate = self
+		webView.detailDelegate = self
 		webView.keyboardDelegate = keyboardDelegate
 		webView.translatesAutoresizingMaskIntoConstraints = false
 		if let userAgent = UserAgent.fromInfoPlist() {
@@ -177,6 +194,31 @@ final class DetailWebViewController: NSViewController {
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
 	}
+
+	// MARK: State Restoration
+	
+	func saveState(to state: inout [AnyHashable : Any]) {
+		state[UserInfoKey.isShowingExtractedArticle] = isShowingExtractedArticle
+		state[UserInfoKey.articleWindowScrollY] = windowScrollY
+	}
+	
+}
+
+// MARK: DetailWebViewDelegate
+
+extension DetailWebViewController: DetailWebViewDelegate {
+
+	func didScroll(_: DetailWebView) {
+		
+		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+	}
+	
+	@objc func scrollPositionDidChange() {
+		fetchScrollInfo() { scrollInfo in
+			self.windowScrollY = scrollInfo?.offsetY
+		}
+	}
+	
 }
 
 // MARK: - WKScriptMessageHandler
@@ -229,11 +271,11 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
 				webView.isHidden = false
 			}
-		}
-		
-		if let windowScrollY = windowScrollY {
-			webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
-			self.windowScrollY = nil
+		} else {
+			if let windowScrollY = windowScrollY {
+				webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
+				self.windowScrollY = nil
+			}
 		}
 	}
 
@@ -281,10 +323,10 @@ private extension DetailWebViewController {
 			rendering = ArticleRenderer.multipleSelectionHTML(theme: theme)
 		case .loading:
 			rendering = ArticleRenderer.loadingHTML(theme: theme)
-		case .article(let article):
+		case .article(let article, _):
 			detailIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
-		case .extracted(let article, let extractedArticle):
+		case .extracted(let article, let extractedArticle, _):
 			detailIconSchemeHandler.currentArticle = article
 			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
 		}

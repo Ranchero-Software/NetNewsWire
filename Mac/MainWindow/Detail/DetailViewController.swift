@@ -16,8 +16,8 @@ enum DetailState: Equatable {
 	case noSelection
 	case multipleSelection
 	case loading
-	case article(Article)
-	case extracted(Article, ExtractedArticle)
+	case article(Article, CGFloat?)
+	case extracted(Article, ExtractedArticle, CGFloat?)
 }
 
 final class DetailViewController: NSViewController, WKUIDelegate {
@@ -81,11 +81,16 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	// MARK: - Navigation
 	
 	func focus() {
-		
 		guard let window = currentWebViewController.webView.window else {
 			return
 		}
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(currentWebViewController.webView)
+	}
+	
+	// MARK: State Restoration
+	
+	func saveState(to state: inout [AnyHashable : Any]) {
+		currentWebViewController.saveState(to: &state)
 	}
 	
 }

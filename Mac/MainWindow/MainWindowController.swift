@@ -56,6 +56,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 	private var searchSmartFeed: SmartFeed? = nil
+	private var restoreArticleWindowScrollY: CGFloat?
 
 	// MARK: - NSWindowController
 
@@ -410,20 +411,20 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			articleExtractor?.cancel()
 			articleExtractor = nil
 			isShowingExtractedArticle = false
-			detailViewController?.setState(DetailState.article(article), mode: timelineSourceMode)
+			detailViewController?.setState(DetailState.article(article, nil), mode: timelineSourceMode)
 			return
 		}
 		
 		guard !isShowingExtractedArticle else {
 			isShowingExtractedArticle = false
-			detailViewController?.setState(DetailState.article(article), mode: timelineSourceMode)
+			detailViewController?.setState(DetailState.article(article, nil), mode: timelineSourceMode)
 			return
 		}
 		
 		if let articleExtractor = articleExtractor, let extractedArticle = articleExtractor.article {
 			if currentLink == articleExtractor.articleLink {
 				isShowingExtractedArticle = true
-				let detailState = DetailState.extracted(article, extractedArticle)
+				let detailState = DetailState.extracted(article, extractedArticle, nil)
 				detailViewController?.setState(detailState, mode: timelineSourceMode)
 			}
 		} else {
@@ -619,7 +620,8 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {
-					detailState = .article(articles.first!)
+					detailState = .article(articles.first!, restoreArticleWindowScrollY)
+					restoreArticleWindowScrollY = nil
 				}
 			} else {
 				detailState = .multipleSelection
@@ -719,7 +721,8 @@ extension MainWindowController: ArticleExtractorDelegate {
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
 		if let article = oneSelectedArticle, articleExtractor?.state != .cancelled {
 			isShowingExtractedArticle = true
-			let detailState = DetailState.extracted(article, extractedArticle)
+			let detailState = DetailState.extracted(article, extractedArticle, restoreArticleWindowScrollY)
+			restoreArticleWindowScrollY = nil
 			detailViewController?.setState(detailState, mode: timelineSourceMode)
 			makeToolbarValidate()
 		}
@@ -1043,6 +1046,7 @@ private extension MainWindowController {
 		saveSplitViewState(to: &state)
 		sidebarViewController?.saveState(to: &state)
 		timelineContainerViewController?.saveState(to: &state)
+		detailViewController?.saveState(to: &state)
 		return state
 	}
 
@@ -1051,8 +1055,19 @@ private extension MainWindowController {
 			window?.toggleFullScreen(self)
 		}
 		restoreSplitViewState(from: state)
+		
 		sidebarViewController?.restoreState(from: state)
+		
+		let articleWindowScrollY = state[UserInfoKey.articleWindowScrollY] as? CGFloat
+		restoreArticleWindowScrollY = articleWindowScrollY
 		timelineContainerViewController?.restoreState(from: state)
+		
+		let isShowingExtractedArticle = state[UserInfoKey.isShowingExtractedArticle] as? Bool ?? false
+		if isShowingExtractedArticle {
+			restoreArticleWindowScrollY = articleWindowScrollY
+			startArticleExtractorForCurrentLink()
+		}
+		
 	}
 
 	// MARK: - Command Validation
