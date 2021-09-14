@@ -10,13 +10,8 @@ import AppKit
 import WebKit
 import RSCore
 
-protocol DetailWebViewDelegate: AnyObject {
-	func didScroll(_ : DetailWebView)
-}
-
 final class DetailWebView: WKWebView {
 
-	weak var detailDelegate: DetailWebViewDelegate?
 	weak var keyboardDelegate: KeyboardDelegate?
 	
 	override func accessibilityLabel() -> String? {
@@ -66,11 +61,6 @@ final class DetailWebView: WKWebView {
 		if (!inLiveResize) {
 			bigSurOffsetFix()
 		}
-	}
-	
-	override func scrollWheel(with event: NSEvent) {
-		super.scrollWheel(with: event)
-		detailDelegate?.didScroll(self)
 	}
 		
 	private var inBigSurOffsetFix = false

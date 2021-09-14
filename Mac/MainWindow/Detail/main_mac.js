@@ -1,4 +1,9 @@
-// Add the mouse listeners for the above functions
+function scrollDetection() {
+	window.onscroll = function(event) {
+		window.webkit.messageHandlers.windowDidScroll.postMessage(window.scrollY);
+	}
+}
+
 function linkHover() {
 	window.onmouseover = function(event) {
 		var closestAnchor = event.target.closest('a')
@@ -15,5 +20,6 @@ function linkHover() {
 }
 
 function postRenderProcessing() {
-	linkHover()
+	scrollDetection();
+	linkHover();
 }

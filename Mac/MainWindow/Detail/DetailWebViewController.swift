@@ -62,7 +62,6 @@ final class DetailWebViewController: NSViewController {
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
-	private let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 0.3)
 	private var windowScrollY: CGFloat?
 
 	private var isShowingExtractedArticle: Bool {
@@ -77,6 +76,7 @@ final class DetailWebViewController: NSViewController {
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
+		static let windowDidScroll = "windowDidScroll"
 	}
 
 	override func loadView() {
@@ -90,6 +90,7 @@ final class DetailWebViewController: NSViewController {
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
+		userContentController.add(self, name: MessageName.windowDidScroll)
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
 		configuration.userContentController = userContentController
@@ -97,7 +98,6 @@ final class DetailWebViewController: NSViewController {
 		webView = DetailWebView(frame: NSRect.zero, configuration: configuration)
 		webView.uiDelegate = self
 		webView.navigationDelegate = self
-		webView.detailDelegate = self
 		webView.keyboardDelegate = keyboardDelegate
 		webView.translatesAutoresizingMaskIntoConstraints = false
 		if let userAgent = UserAgent.fromInfoPlist() {
@@ -204,32 +204,16 @@ final class DetailWebViewController: NSViewController {
 	
 }
 
-// MARK: DetailWebViewDelegate
-
-extension DetailWebViewController: DetailWebViewDelegate {
-
-	func didScroll(_: DetailWebView) {
-		
-		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
-	}
-	
-	@objc func scrollPositionDidChange() {
-		fetchScrollInfo() { scrollInfo in
-			self.windowScrollY = scrollInfo?.offsetY
-		}
-	}
-	
-}
-
 // MARK: - WKScriptMessageHandler
 
 extension DetailWebViewController: WKScriptMessageHandler {
 
 	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-		if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
+		if message.name == MessageName.windowDidScroll {
+			windowScrollY = message.body as? CGFloat
+		} else if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
 			delegate?.mouseDidEnter(self, link: link)
-		}
-		else if message.name == MessageName.mouseDidExit {
+		} else if message.name == MessageName.mouseDidExit {
 			delegate?.mouseDidExit(self)
 		}
 	}
