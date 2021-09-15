@@ -2613,6 +2613,7 @@
 				844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */,
 				845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */,
 				5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */,
+				5112434F26EE6291002601D2 /* Sepia.nnwtheme */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3705,7 +3706,6 @@
 				84C9FC9C2262A1A900D921D6 /* Info.plist */,
 				84BB0F812333426400DED65E /* NetNewsWire.entitlements */,
 				51F805ED24284C1C0022C792 /* NetNewsWire-dev.entitlements */,
-				5112434F26EE6291002601D2 /* Sepia.nnwtheme */,
 			);
 			path = Resources;
 			sourceTree = "<group>";

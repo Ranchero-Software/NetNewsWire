@@ -10,10 +10,6 @@ body {
 	color: #704214;
 }
 
-a {
-	text-decoration: none;
-}
-
 a:hover {
 	text-decoration: underline;
 }
@@ -51,7 +47,6 @@ a:hover {
 }
 
 body a, body a:visited {
-	text-decoration: underline;
 	color: var(--secondary-accent-color);
 }
 
@@ -77,8 +72,13 @@ body > .systemMessage {
 	color: var(--system-message-color);
 }
 
-.feedlink a:link, .feedlink a:visited {
+.headerContainer a:link, .headerContainer a:visited {
+	text-decoration: none;
 	color: var(--feedlink-color);
+}
+
+.headerContainer a:hover {
+	text-decoration: underline;
 }
 
 .avatar img {
@@ -98,8 +98,13 @@ body > .systemMessage {
 }
 
 .articleTitle a:link, .articleTitle a:visited {
+	text-decoration: none;
 	color: var(--article-title-color);
 	margin-top: 26px;
+}
+
+.articleTitle a:hover {
+	text-decoration: underline;
 }
 
 .articleDateline {
@@ -108,7 +113,12 @@ body > .systemMessage {
 }
 
 .articleDateline a:link, .articleDateline a:visited {
+	text-decoration: none;
 	color: var(--article-date-color);
+}
+
+.articleDateline a:hover {
+	text-decoration: underline;
 }
 
 .articleDatelineTitle {
@@ -117,7 +127,12 @@ body > .systemMessage {
 }
 
 .articleDatelineTitle a:link, .articleDatelineTitle a:visited {
+	text-decoration: none;
 	color: var(--article-title-color);
+}
+
+.articleDatelineTitle a:hover {
+	text-decoration: underline;
 }
 
 .externalLink {
@@ -127,6 +142,14 @@ body > .systemMessage {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.externalLink a:link, .externalLink a:visited {
+	text-decoration: none;
+}
+
+.externalLink a:hover {
+	text-decoration: underline;
 }
 
 .articleBody {
