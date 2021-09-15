@@ -170,7 +170,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	// * Once the article has loaded, navigate to the iPad home screen
 	// * While in landscape, select a feed and then select an article
 	// * Install a fresh build of NNW to an iPad simulator (11 or 12.9' will do) running iPadOS 15
-	private var deferredFeedAndArticleSelect: (feedIndexPath: IndexPath, articleID: String)?
+	private var deferredFeedAndArticleSelect: (feedIdentifier: FeedIdentifier, articleID: String)?
 	
 	var timelineMiddleIndexPath: IndexPath?
 	
@@ -451,14 +451,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard notification.object is AccountManager else {
 			return
 		}
-		rebuildBackingStores(initialLoad: true)
-		treeControllerDelegate.resetFilterExceptions()
 		
-		if let (feedIndexPath, articleID) = deferredFeedAndArticleSelect {
-			selectFeed(indexPath: feedIndexPath) {
-				self.selectArticleInCurrentFeed(articleID)
+		rebuildBackingStores(initialLoad: true, completion:  {
+			if let (feedIdentifier, articleID) = self.deferredFeedAndArticleSelect, let feedNode = self.nodeFor(feedID: feedIdentifier), let feedIndexPath = self.indexPathFor(feedNode) {
+				self.selectFeed(indexPath: feedIndexPath) {
+					self.selectArticleInCurrentFeed(articleID)
+				}
 			}
-		}
+		})
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -2243,25 +2243,18 @@ private extension SceneCoordinator {
 		case .script:
 			return false
 		
-		case .folder(let accountID, let folderName):
-			guard let accountNode = findAccountNode(accountID: accountID),
-				let folderNode = findFolderNode(folderName: folderName, beginningAt: accountNode) else {
-					return false
-			}
-			let found = selectFeedAndArticle(feedNode: folderNode, articleID: articleID)
+		case .folder:
+			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
 			}
 			return found
 		
 		case .webFeed:
-			guard let accountNode = findAccountNode(accountID: accountID), let webFeedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode) else {
-				return false
-			}
-			let found = selectFeedAndArticle(feedNode: webFeedNode, articleID: articleID)
+			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
-				if let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
+				if let webFeedNode = nodeFor(feedID: feedIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
 					treeControllerDelegate.addFilterException(folderFeedID)
 				}
 			}
@@ -2298,12 +2291,18 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-	func selectFeedAndArticle(feedNode: Node, articleID: String) -> Bool {
-		if let feedIndexPath = indexPathFor(feedNode) {
-			deferredFeedAndArticleSelect = (feedIndexPath, articleID)
-			return true
+	func selectFeedAndArticle(feedIdentifier: FeedIdentifier, articleID: String) -> Bool {
+		guard let feedNode = nodeFor(feedID: feedIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
+		
+		if AccountManager.shared.isUnreadCountsInitialized {
+			selectFeed(indexPath: feedIndexPath) {
+				self.selectArticleInCurrentFeed(articleID)
+			}
+		} else {
+			deferredFeedAndArticleSelect = (feedIdentifier, articleID)
 		}
-		return false
+		
+		return true
 	}
 	
 }
