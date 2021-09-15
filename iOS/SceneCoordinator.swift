@@ -175,7 +175,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	// * Once the article has loaded, navigate to the iPad home screen
 	// * While in landscape, select a feed and then select an article
 	// * Install a fresh build of NNW to an iPad simulator (11 or 12.9' will do) running iPadOS 15
-	private var deferredFeedAndArticleSelect: (feedIndexPath: IndexPath, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int)?
+	private var deferredFeedAndArticleSelect: (feedIdentifier: FeedIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int)?
 	
 	var timelineMiddleIndexPath: IndexPath?
 	
@@ -456,14 +456,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		guard notification.object is AccountManager else {
 			return
 		}
-		rebuildBackingStores(initialLoad: true)
-		treeControllerDelegate.resetFilterExceptions()
 		
-		if let (feedIndexPath, articleID, isShowingExtractedArticle, articleWindowScrollY) = deferredFeedAndArticleSelect {
-			selectFeed(indexPath: feedIndexPath) {
-				self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+		rebuildBackingStores(initialLoad: true, completion:  {
+			if let (feedIdentifier, articleID, isShowingExtractedArticle, articleWindowScrollY) = self.deferredFeedAndArticleSelect,
+			   let feedNode = self.nodeFor(feedID: feedIdentifier),
+			   let feedIndexPath = self.indexPathFor(feedNode) {
+				self.selectFeed(indexPath: feedIndexPath) {
+					self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+				}
 			}
-		}
+		})
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -2297,37 +2299,21 @@ private extension SceneCoordinator {
 
 		switch feedIdentifier {
 
-		case .smartFeed:
-			if let smartFeedNode = nodeFor(feedID: feedIdentifier) {
-				let found = deferSelectFeedAndArticle(feedNode: smartFeedNode, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
-				if found {
-					treeControllerDelegate.addFilterException(feedIdentifier)
-				}
-				return found
-			}
-		
 		case .script:
 			return false
-		
-		case .folder(let accountID, let folderName):
-			guard let accountNode = findAccountNode(accountID: accountID),
-				let folderNode = findFolderNode(folderName: folderName, beginningAt: accountNode) else {
-					return false
-			}
-			let found = deferSelectFeedAndArticle(feedNode: folderNode, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+
+		case .smartFeed, .folder:
+			let found = deferSelectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
 			}
 			return found
 		
 		case .webFeed:
-			guard let accountNode = findAccountNode(accountID: accountID), let webFeedNode = findWebFeedNode(webFeedID: webFeedID, beginningAt: accountNode) else {
-				return false
-			}
-			let found = deferSelectFeedAndArticle(feedNode: webFeedNode, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = deferSelectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
-				if let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
+				if let webFeedNode = nodeFor(feedID: feedIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
 					treeControllerDelegate.addFilterException(folderFeedID)
 				}
 			}
@@ -2335,7 +2321,6 @@ private extension SceneCoordinator {
 			
 		}
 		
-		return false
 	}
 	
 	func findAccountNode(accountID: String, accountName: String? = nil) -> Node? {
@@ -2364,12 +2349,18 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-	func deferSelectFeedAndArticle(feedNode: Node, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
-		if let feedIndexPath = indexPathFor(feedNode) {
-			deferredFeedAndArticleSelect = (feedIndexPath, articleID, isShowingExtractedArticle, articleWindowScrollY)
-			return true
+	func deferSelectFeedAndArticle(feedIdentifier: FeedIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+		guard let feedNode = nodeFor(feedID: feedIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
+		
+		if AccountManager.shared.isUnreadCountsInitialized {
+			selectFeed(indexPath: feedIndexPath) {
+				self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			}
+		} else {
+			deferredFeedAndArticleSelect = (feedIdentifier, articleID, isShowingExtractedArticle, articleWindowScrollY)
 		}
-		return false
+		
+		return true
 	}
 	
 	func confirmImportSuccess(themeName: String) {
