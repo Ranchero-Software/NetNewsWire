@@ -172,7 +172,7 @@ private extension ArticleRenderer {
 		components.scheme = Self.imageIconScheme
 		components.path = article.articleID
 		if let imageIconURLString = components.string {
-			d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(imageIconURLString)\" height=48 width=48 /></td>"
+			d["avatar_src"] = imageIconURLString
 		}
 		else {
 			d["avatars"] = ""
