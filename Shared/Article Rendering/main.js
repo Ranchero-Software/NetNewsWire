@@ -132,12 +132,6 @@ function stopMediaPlayback() {
 	});
 }
 
-function updateTextSize(cssClass) {
-	var bodyElement = document.getElementById("bodyContainer");
-	bodyElement.classList.remove("smallText", "mediumText", "largeText", "xLargeText", "xxLargeText");
-	bodyElement.classList.add(cssClass);
-}
-
 function error() {
 	document.body.innerHTML = "error";
 }

@@ -155,16 +155,12 @@ final class DetailWebViewController: NSViewController {
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		if articleTextSize != AppDefaults.shared.articleTextSize {
-			articleTextSize = AppDefaults.shared.articleTextSize
-			webView.evaluateJavaScript("updateTextSize(\"\(articleTextSize.cssClass)\");")
+			reloadHTMLMaintainingScrollPosition()
 		}
 	}
 	
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
-		fetchScrollInfo() { scrollInfo in
-			self.windowScrollY = scrollInfo?.offsetY
-			self.reloadHTML()
-		}
+		reloadHTMLMaintainingScrollPosition()
 	}
 	
 	// MARK: Media Functions
@@ -291,6 +287,13 @@ private extension DetailWebViewController {
 		
 		if let imageSrc = components.string {
 			webView?.evaluateJavaScript("reloadArticleImage(\"\(imageSrc)\")")
+		}
+	}
+	
+	func reloadHTMLMaintainingScrollPosition() {
+		fetchScrollInfo() { scrollInfo in
+			self.windowScrollY = scrollInfo?.offsetY
+			self.reloadHTML()
 		}
 	}
 
