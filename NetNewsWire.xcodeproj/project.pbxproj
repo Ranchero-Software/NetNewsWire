@@ -2797,14 +2797,14 @@
 		5183CCEB227117C70010922C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				51A16990235E10D600EB091F /* Settings.storyboard */,
 				51A16995235E10D600EB091F /* AboutViewController.swift */,
 				51A16992235E10D600EB091F /* AddAccountViewController.swift */,
-				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
 				519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */,
-				510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */,
 				5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */,
+				510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */,
 				516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */,
+				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
+				51A16990235E10D600EB091F /* Settings.storyboard */,
 				516A09382360A2AE00EAE89B /* SettingsComboTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsComboTableViewCell.xib */,
 				516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */,

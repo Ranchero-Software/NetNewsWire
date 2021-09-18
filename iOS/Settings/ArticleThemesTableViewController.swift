@@ -13,11 +13,24 @@ import UIKit
 class ArticleThemesTableViewController: UITableViewController {
 
 	override func viewDidLoad() {
+		let importBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importTheme(_:)));
+		importBarButtonItem.title = NSLocalizedString("Import Theme", comment: "Import Theme");
+		navigationItem.rightBarButtonItem = importBarButtonItem
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 	}
 	
+	// MARK: Notifications
+	
 	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
 		tableView.reloadData()
+	}
+
+	@objc func importTheme(_ sender: Any?) {
+		let docPicker = UIDocumentPickerViewController(documentTypes: ["com.ranchero.netnewswire.theme"], in: .import)
+		docPicker.delegate = self
+		docPicker.modalPresentationStyle = .formSheet
+		self.present(docPicker, animated: true)
 	}
 
 	// MARK: - Table view data source
@@ -91,4 +104,15 @@ class ArticleThemesTableViewController: UITableViewController {
 		
 		return UISwipeActionsConfiguration(actions: [deleteAction])
 	}
+}
+
+// MARK: UIDocumentPickerDelegate
+
+extension ArticleThemesTableViewController: UIDocumentPickerDelegate {
+	
+	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+		guard let url = urls.first else { return }
+		ArticleThemeImporter.importTheme(controller: self, filename: url.standardizedFileURL.path)
+	}
+	
 }
