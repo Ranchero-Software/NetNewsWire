@@ -1295,68 +1295,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func importTheme(filename: String) {
-		let theme = ArticleTheme(path: filename)
-		
-		let localizedTitleText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
-		let title = NSString.localizedStringWithFormat(localizedTitleText as NSString, theme.name, theme.creatorName) as String
-
-		let localizedMessageText = NSLocalizedString("Author's Website:\n%@", comment: "Authors website")
-		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.creatorHomePage) as String
-
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
-		
-		if let url = URL(string: theme.creatorHomePage) {
-			let visitSiteTitle = NSLocalizedString("Show Website", comment: "Show Website")
-			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { [weak self] action in
-				UIApplication.shared.open(url)
-				self?.importTheme(filename: filename)
-			}
-			alertController.addAction(visitSiteAction)
-		}
-
-		func importTheme() {
-			do {
-				try ArticleThemesManager.shared.importTheme(filename: filename)
-				confirmImportSuccess(themeName: theme.name)
-			} catch {
-				rootSplitViewController.presentError(error)
-			}
-		}
-
-		let installThemeTitle = NSLocalizedString("Install Theme", comment: "Install Theme")
-		let installThemeAction = UIAlertAction(title: installThemeTitle, style: .default) { [weak self] action in
-
-			if ArticleThemesManager.shared.themeExists(filename: filename) {
-				let title = NSLocalizedString("Duplicate Theme", comment: "Duplicate Theme")
-				let localizedMessageText = NSLocalizedString("The theme “%@” already exists. Overwrite it?", comment: "Overwrite theme")
-				let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
-
-				let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
-				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-				alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
-
-				let overwriteAction = UIAlertAction(title: NSLocalizedString("Overwrite", comment: "Overwrite"), style: .default) { action in
-					importTheme()
-				}
-				alertController.addAction(overwriteAction)
-				alertController.preferredAction = overwriteAction
-
-				self?.rootSplitViewController.present(alertController, animated: true)
-			} else {
-				importTheme()
-			}
-			
-		}
-		
-		alertController.addAction(installThemeAction)
-		alertController.preferredAction = installThemeAction
-
-		rootSplitViewController.present(alertController, animated: true)
-
+		ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename);
 	}
 	
 }
@@ -2361,20 +2300,6 @@ private extension SceneCoordinator {
 		}
 		
 		return true
-	}
-	
-	func confirmImportSuccess(themeName: String) {
-		let title = NSLocalizedString("Theme installed", comment: "Theme installed")
-		
-		let localizedMessageText = NSLocalizedString("The theme “%@” has been installed.", comment: "Theme installed")
-		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
-
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		
-		let doneTitle = NSLocalizedString("Done", comment: "Done")
-		alertController.addAction(UIAlertAction(title: doneTitle, style: .default))
-		
-		rootSplitViewController.present(alertController, animated: true)
 	}
 	
 }
