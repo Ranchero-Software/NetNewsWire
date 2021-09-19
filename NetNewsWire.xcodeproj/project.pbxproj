@@ -112,6 +112,10 @@
 		1799E6AA24C2F93F00511E91 /* InspectorPlatformModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1799E6A824C2F93F00511E91 /* InspectorPlatformModifier.swift */; };
 		1799E6CD24C320D600511E91 /* InspectorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1799E6CC24C320D600511E91 /* InspectorModel.swift */; };
 		1799E6CE24C320D600511E91 /* InspectorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1799E6CC24C320D600511E91 /* InspectorModel.swift */; };
+		179D280B26F6F93D003B2E0A /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = 179D280A26F6F93D003B2E0A /* Zip */; };
+		179D280D26F73D83003B2E0A /* ArticleThemePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179D280C26F73D83003B2E0A /* ArticleThemePlist.swift */; };
+		179D280E26F73D83003B2E0A /* ArticleThemePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179D280C26F73D83003B2E0A /* ArticleThemePlist.swift */; };
+		179D280F26F73D83003B2E0A /* ArticleThemePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179D280C26F73D83003B2E0A /* ArticleThemePlist.swift */; };
 		179DB1DFBCF9177104B12E0F /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		179DB3CE822BFCC2D774D9F4 /* AccountsNewsBlurWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */; };
 		17A1597C24E3DEDD005DA32A /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 17A1597B24E3DEDD005DA32A /* RSCore */; };
@@ -1591,6 +1595,7 @@
 		17930ED324AF10EE00A9BA52 /* AddWebFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWebFeedView.swift; sourceTree = "<group>"; };
 		1799E6A824C2F93F00511E91 /* InspectorPlatformModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPlatformModifier.swift; sourceTree = "<group>"; };
 		1799E6CC24C320D600511E91 /* InspectorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorModel.swift; sourceTree = "<group>"; };
+		179D280C26F73D83003B2E0A /* ArticleThemePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemePlist.swift; sourceTree = "<group>"; };
 		179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsNewsBlurWindowController.swift; sourceTree = "<group>"; };
 		17B223DB24AC24D2001E4592 /* TimelineLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineLayoutView.swift; sourceTree = "<group>"; };
 		17D0682B2564F47E00C0B37E /* Localizable.stringsdict */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; path = Localizable.stringsdict; sourceTree = "<group>"; };
@@ -2287,6 +2292,7 @@
 			files = (
 				5138E94924D3416D00AFF0FE /* RSCore in Frameworks */,
 				5138E95824D3419000AFF0FE /* RSWeb in Frameworks */,
+				179D280B26F6F93D003B2E0A /* Zip in Frameworks */,
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
 				5138E95224D3418100AFF0FE /* RSParser in Frameworks */,
 				5138E94C24D3417A00AFF0FE /* RSDatabase in Frameworks */,
@@ -3446,6 +3452,7 @@
 			children = (
 				849A97871ED9ECEF007D329B /* ArticleTheme.swift */,
 				849A97881ED9ECEF007D329B /* ArticleThemesManager.swift */,
+				179D280C26F73D83003B2E0A /* ArticleThemePlist.swift */,
 			);
 			name = "Article Styles";
 			path = Shared/ArticleStyles;
@@ -4143,6 +4150,7 @@
 				513F32732593EE6F0003048F /* ArticlesDatabase */,
 				513F32762593EE6F0003048F /* Secrets */,
 				513F32792593EE6F0003048F /* SyncDatabase */,
+				179D280A26F6F93D003B2E0A /* Zip */,
 			);
 			productName = "NetNewsWire-iOS";
 			productReference = 840D617C2029031C009BC708 /* NetNewsWire.app */;
@@ -4315,6 +4323,7 @@
 				51B0DF2324D2C7FA000AD99E /* XCRemoteSwiftPackageReference "RSParser" */,
 				17192AD82567B3D500AAEACA /* XCRemoteSwiftPackageReference "Sparkle-Binary" */,
 				519CA8E325841DB700EB079A /* XCRemoteSwiftPackageReference "plcrashreporter" */,
+				179D280926F6F93D003B2E0A /* XCRemoteSwiftPackageReference "Zip" */,
 			);
 			productRefGroup = 849C64611ED37A5D003D8FC0 /* Products */;
 			projectDirPath = "";
@@ -5058,6 +5067,7 @@
 				51E4991924A8090A00B667CB /* CacheCleaner.swift in Sources */,
 				51E498F724A8085D00B667CB /* SearchTimelineFeedDelegate.swift in Sources */,
 				175942AA24AD533200585066 /* RefreshInterval.swift in Sources */,
+				179D280E26F73D83003B2E0A /* ArticleThemePlist.swift in Sources */,
 				51E4993524A867E800B667CB /* AppNotifications.swift in Sources */,
 				6535ECFC2680F9FF00C01CB5 /* IconImageCache.swift in Sources */,
 				51C0515E24A77DF800194D5E /* MainApp.swift in Sources */,
@@ -5169,6 +5179,7 @@
 				51E499D924A912C200B667CB /* SceneModel.swift in Sources */,
 				51919FB424AAB97900541E64 /* FeedIconImageLoader.swift in Sources */,
 				1769E32524BC5A65000E1E8E /* AddAccountView.swift in Sources */,
+				179D280F26F73D83003B2E0A /* ArticleThemePlist.swift in Sources */,
 				51E4994A24A8734C00B667CB /* ExtensionPointManager.swift in Sources */,
 				514E6C0324AD29A300AC6F6E /* TimelineItemStatusView.swift in Sources */,
 				1724126A257BBEBB00ACCEBC /* AddFeedbinViewModel.swift in Sources */,
@@ -5474,6 +5485,7 @@
 				5186A635235EF3A800C97195 /* VibrantLabel.swift in Sources */,
 				51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */,
 				51B62E68233186730085F949 /* IconView.swift in Sources */,
+				179D280D26F73D83003B2E0A /* ArticleThemePlist.swift in Sources */,
 				51C45296226509D300C03939 /* OPMLExporter.swift in Sources */,
 				51C45291226509C800C03939 /* SmartFeed.swift in Sources */,
 				51C452A722650A3D00C03939 /* RSImage-Extensions.swift in Sources */,
@@ -6399,6 +6411,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		179D280926F6F93D003B2E0A /* XCRemoteSwiftPackageReference "Zip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/Zip.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Ranchero-Software/RSCore.git";
@@ -6497,6 +6517,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
 			productName = RSCoreResources;
+		};
+		179D280A26F6F93D003B2E0A /* Zip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 179D280926F6F93D003B2E0A /* XCRemoteSwiftPackageReference "Zip" */;
+			productName = Zip;
 		};
 		17A1597B24E3DEDD005DA32A /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;
