@@ -765,7 +765,7 @@ extension AppDelegate {
 
 }
 
-private extension AppDelegate {
+internal extension AppDelegate {
 
 	func fireOldTimers() {
 		// It’s possible there’s a refresh timer set to go off in the past.
