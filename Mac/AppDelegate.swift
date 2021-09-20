@@ -125,6 +125,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
 		appDelegate = self
@@ -374,6 +375,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	@objc func didWakeNotification(_ note: Notification) {
 		fireOldTimers()
+	}
+	
+	@objc func importDownloadedTheme(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			let url = userInfo["url"] as? URL else {
+			return
+		}
+		DispatchQueue.main.async {
+			self.importTheme(filename: url.path)
+		}
 	}
 
 	// MARK: Main Window

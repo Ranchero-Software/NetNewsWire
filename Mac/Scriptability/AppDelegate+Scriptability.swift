@@ -56,40 +56,12 @@ extension AppDelegate : AppDelegateAppleEvents {
 			if let themeURL = URL(string: themeURLString) {
 				let request = URLRequest(url: themeURL)
 				let task = URLSession.shared.downloadTask(with: request) { location, response, error in
-					var downloadDirectory = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-					try? FileManager.default.createDirectory(at: downloadDirectory, withIntermediateDirectories: true, attributes: nil)
-					let tmpFileName = UUID().uuidString + ".zip"
-					downloadDirectory.appendPathComponent("\(tmpFileName)")
-					if location == nil {
+					guard let location = location else {
 						return
 					}
 					
 					do {
-						try FileManager.default.moveItem(at: location!, to: downloadDirectory)
-					
-						var unzippedDir = downloadDirectory
-						unzippedDir = unzippedDir.deletingLastPathComponent()
-						unzippedDir.appendPathComponent("newtheme.nnwtheme")
-						
-						try Zip.unzipFile(downloadDirectory, destination: unzippedDir, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil)
-						try FileManager.default.removeItem(at: downloadDirectory)
-						
-						let decoder = PropertyListDecoder()
-						let plistURL = URL(fileURLWithPath: unzippedDir.appendingPathComponent("Info.plist").path)
-						
-						let data = try Data(contentsOf: plistURL)
-						let plist = try decoder.decode(ArticleThemePlist.self, from: data)
-						
-						// rename
-						var renamedUnzippedDir = unzippedDir.deletingLastPathComponent()
-						renamedUnzippedDir.appendPathComponent(plist.name + ".nnwtheme")
-						if FileManager.default.fileExists(atPath: renamedUnzippedDir.path) {
-							try FileManager.default.removeItem(at: renamedUnzippedDir)
-						}
-						try FileManager.default.moveItem(at: unzippedDir, to: renamedUnzippedDir)
-						DispatchQueue.main.async {
-							self.importTheme(filename: renamedUnzippedDir.path)
-						}
+						try ArticleThemeDownloader.handleFile(at: location)
 					} catch {
 						print(error)
 					}

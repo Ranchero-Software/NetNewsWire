@@ -29,6 +29,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 		
+		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
+		
 		if let _ = connectionOptions.urlContexts.first?.url  {
 			window?.makeKeyAndVisible()
 			self.scene(scene, openURLContexts: connectionOptions.urlContexts)
@@ -184,19 +186,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
 					}
 					let task = URLSession.shared.downloadTask(with: request) { [weak self] location, response, error in
-						guard let self = self, let location = location else { return }
-						self.createDownloadDirectoryIfRequired()
+						guard let self = self,
+							  let location = location else { return }
+						
 						do {
-							let movedFileLocation = try self.moveTheme(from: location)
-							let unzippedFileLocation = try self.unzipFile(at: movedFileLocation)
-							let renamedFileLocation = try self.renameFileToThemeName(at: unzippedFileLocation)
-							DispatchQueue.main.async {
-								NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil)
-								self.coordinator.importTheme(filename: renamedFileLocation.path)
-							}
+							try ArticleThemeDownloader.handleFile(at: location)
 						} catch {
 							DispatchQueue.main.async {
-								NotificationCenter.default.post(name: .didEndDownloadingThemeWithError, object: nil, userInfo: ["error" : error])
 								self.showAlert(error)
 							}
 						}
@@ -213,46 +209,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		}
 	}
 	
-	// MARK: - Theme Downloader
-	private func createDownloadDirectoryIfRequired() {
-		let downloadDirectory = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-		try? FileManager.default.createDirectory(at: downloadDirectory, withIntermediateDirectories: true, attributes: nil)
-	}
 	
-	private func moveTheme(from location: URL) throws -> URL {
-		var downloadDirectory = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-		let tmpFileName = UUID().uuidString + ".zip"
-		downloadDirectory.appendPathComponent("\(tmpFileName)")
-		try FileManager.default.moveItem(at: location, to: downloadDirectory)
-		return downloadDirectory
-	}
-	
-	private func unzipFile(at location: URL) throws -> URL {
-		var unzippedDir = location.deletingLastPathComponent()
-		unzippedDir.appendPathComponent("newtheme.nnwtheme")
-		do {
-			try Zip.unzipFile(location, destination: unzippedDir, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil)
-			try FileManager.default.removeItem(at: location)
-			return unzippedDir
-		} catch {
-			try? FileManager.default.removeItem(at: location)
-			throw error
-		}
-	}
-	
-	private func renameFileToThemeName(at location: URL) throws -> URL {
-		let decoder = PropertyListDecoder()
-		let plistURL = URL(fileURLWithPath: location.appendingPathComponent("Info.plist").path)
-		let data = try Data(contentsOf: plistURL)
-		let plist = try decoder.decode(ArticleThemePlist.self, from: data)
-		var renamedUnzippedDir = location.deletingLastPathComponent()
-		renamedUnzippedDir.appendPathComponent(plist.name + ".nnwtheme")
-		if FileManager.default.fileExists(atPath: renamedUnzippedDir.path) {
-			try FileManager.default.removeItem(at: renamedUnzippedDir)
-		}
-		try FileManager.default.moveItem(at: location, to: renamedUnzippedDir)
-		return renamedUnzippedDir
-	}
 	
 	private func showAlert(_ error: Error) {
 		let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"),
@@ -292,6 +249,17 @@ private extension SceneDelegate {
 			case .dark:
 				self.window?.overrideUserInterfaceStyle = .dark
 			}
+		}
+	}
+	
+	@objc func importDownloadedTheme(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			let url = userInfo["url"] as? URL else {
+			return
+		}
+		
+		DispatchQueue.main.async {
+			self.coordinator.importTheme(filename: url.path)
 		}
 	}
 	
