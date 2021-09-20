@@ -60,7 +60,6 @@ extension AppDelegate : AppDelegateAppleEvents {
 					try? FileManager.default.createDirectory(at: downloadDirectory, withIntermediateDirectories: true, attributes: nil)
 					let tmpFileName = UUID().uuidString + ".zip"
 					downloadDirectory.appendPathComponent("\(tmpFileName)")
-					
 					if location == nil {
 						return
 					}

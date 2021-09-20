@@ -11,7 +11,7 @@ import UserNotifications
 import Account
 import Zip
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, URLSessionDownloadDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	var window: UIWindow?
 	var coordinator = SceneCoordinator()
@@ -179,9 +179,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, URLSessionDownloadDeleg
 			if let providedThemeURL = queryItems.first(where: { $0.name == "url" })?.value {
 				if let themeURL = URL(string: providedThemeURL) {
 					let request = URLRequest(url: themeURL)
-					let session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
-					let downloadTask = session.downloadTask(with: request)
-					downloadTask.resume()
+			
+					DispatchQueue.main.async {
+						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
+					}
+					let task = URLSession.shared.downloadTask(with: request) { [weak self] location, response, error in
+						guard let self = self, let location = location else { return }
+						self.createDownloadDirectoryIfRequired()
+						do {
+							let movedFileLocation = try self.moveTheme(from: location)
+							let unzippedFileLocation = try self.unzipFile(at: movedFileLocation)
+							let renamedFileLocation = try self.renameFileToThemeName(at: unzippedFileLocation)
+							DispatchQueue.main.async {
+								NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil)
+								self.coordinator.importTheme(filename: renamedFileLocation.path)
+							}
+						} catch {
+							DispatchQueue.main.async {
+								NotificationCenter.default.post(name: .didEndDownloadingThemeWithError, object: nil, userInfo: ["error" : error])
+								self.showAlert(error)
+							}
+						}
+					}
+					task.resume()
 				} else {
 					print("No theme URL")
 					return
@@ -193,45 +213,49 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, URLSessionDownloadDeleg
 		}
 	}
 	
-	// MARK: - URLSessionDownloadDelegate
-	
-	func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-		var downloadDirectory = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+	// MARK: - Theme Downloader
+	private func createDownloadDirectoryIfRequired() {
+		let downloadDirectory = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
 		try? FileManager.default.createDirectory(at: downloadDirectory, withIntermediateDirectories: true, attributes: nil)
-		let tmpFileName = UUID().uuidString + ".zip"
-		downloadDirectory.appendPathComponent("\(tmpFileName)")
-		
-		do {
-			try FileManager.default.moveItem(at: location, to: downloadDirectory)
-		
-			var unzippedDir = downloadDirectory
-			unzippedDir = unzippedDir.deletingLastPathComponent()
-			unzippedDir.appendPathComponent("newtheme.nnwtheme")
-			
-			try Zip.unzipFile(downloadDirectory, destination: unzippedDir, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil)
-			try FileManager.default.removeItem(at: downloadDirectory)
-			
-			let decoder = PropertyListDecoder()
-			let plistURL = URL(fileURLWithPath: unzippedDir.appendingPathComponent("Info.plist").path)
-			
-			let data = try Data(contentsOf: plistURL)
-			let plist = try decoder.decode(ArticleThemePlist.self, from: data)
-			
-			// rename
-			var renamedUnzippedDir = unzippedDir.deletingLastPathComponent()
-			renamedUnzippedDir.appendPathComponent(plist.name + ".nnwtheme")
-			if FileManager.default.fileExists(atPath: renamedUnzippedDir.path) {
-				try FileManager.default.removeItem(at: renamedUnzippedDir)
-			}
-			try FileManager.default.moveItem(at: unzippedDir, to: renamedUnzippedDir)
-			DispatchQueue.main.async {
-				self.coordinator.importTheme(filename: renamedUnzippedDir.path)
-			}
-		} catch {
-			print(error)
-		}
 	}
 	
+	private func moveTheme(from location: URL) throws -> URL {
+		var downloadDirectory = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+		let tmpFileName = UUID().uuidString + ".zip"
+		downloadDirectory.appendPathComponent("\(tmpFileName)")
+		try FileManager.default.moveItem(at: location, to: downloadDirectory)
+		return downloadDirectory
+	}
+	
+	private func unzipFile(at location: URL) throws -> URL {
+		var unzippedDir = location.deletingLastPathComponent()
+		unzippedDir.appendPathComponent("newtheme.nnwtheme")
+		try Zip.unzipFile(location, destination: unzippedDir, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil)
+		try FileManager.default.removeItem(at: location)
+		return unzippedDir
+	}
+	
+	private func renameFileToThemeName(at location: URL) throws -> URL {
+		let decoder = PropertyListDecoder()
+		let plistURL = URL(fileURLWithPath: location.appendingPathComponent("Info.plist").path)
+		let data = try Data(contentsOf: plistURL)
+		let plist = try decoder.decode(ArticleThemePlist.self, from: data)
+		var renamedUnzippedDir = location.deletingLastPathComponent()
+		renamedUnzippedDir.appendPathComponent(plist.name + ".nnwtheme")
+		if FileManager.default.fileExists(atPath: renamedUnzippedDir.path) {
+			try FileManager.default.removeItem(at: renamedUnzippedDir)
+		}
+		try FileManager.default.moveItem(at: location, to: renamedUnzippedDir)
+		return renamedUnzippedDir
+	}
+	
+	private func showAlert(_ error: Error) {
+		let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"),
+									  message: error.localizedDescription,
+									  preferredStyle: .alert)
+		alert.addAction(UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
+		self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+	}
 }
 
 private extension SceneDelegate {
