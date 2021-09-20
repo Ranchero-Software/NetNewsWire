@@ -17,7 +17,7 @@ public struct ArticleThemePlist: Codable {
 	
 	enum CodingKeys: String, CodingKey {
 		case name = "Name"
-		case themeIdentifier = "ThemeIdentifer" // FIXME: Spelling error!
+		case themeIdentifier = "ThemeIdentifier"
 		case creatorHomePage = "CreatorHomePage"
 		case creatorName = "CreatorName"
 		case version = "Version"
