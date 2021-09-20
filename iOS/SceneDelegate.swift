@@ -230,9 +230,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	private func unzipFile(at location: URL) throws -> URL {
 		var unzippedDir = location.deletingLastPathComponent()
 		unzippedDir.appendPathComponent("newtheme.nnwtheme")
-		try Zip.unzipFile(location, destination: unzippedDir, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil)
-		try FileManager.default.removeItem(at: location)
-		return unzippedDir
+		do {
+			try Zip.unzipFile(location, destination: unzippedDir, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil)
+			try FileManager.default.removeItem(at: location)
+			return unzippedDir
+		} catch {
+			try? FileManager.default.removeItem(at: location)
+			throw error
+		}
 	}
 	
 	private func renameFileToThemeName(at location: URL) throws -> URL {
