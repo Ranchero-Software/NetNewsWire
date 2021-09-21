@@ -323,7 +323,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 	}
 	
 	func start(for size: CGSize) -> UIViewController {
@@ -585,6 +586,27 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		// in the foreground.
 		if !fetchRequestQueue.isAnyCurrentRequest {
 			queueFetchAndMergeArticles()
+		}
+	}
+	
+	@objc func importDownloadedTheme(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			let url = userInfo["url"] as? URL else {
+			return
+		}
+		
+		DispatchQueue.main.async {
+			self.importTheme(filename: url.path)
+		}
+	}
+	
+	@objc func themeDownloadDidFail(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			  let error = userInfo["error"] as? Error else {
+				  return
+			  }
+		DispatchQueue.main.async {
+			self.rootSplitViewController.presentError(error, dismiss: nil)
 		}
 	}
 
@@ -1295,7 +1317,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func importTheme(filename: String) {
-		ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename);
+		do {
+			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename)
+		} catch {
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
+		}
+		
 	}
 	
 }

@@ -31,6 +31,7 @@
 			<string>RSS Feed</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>netnewswire</string>
 				<string>feed</string>
 				<string>feeds</string>
 				<string>x-netnewswire-feed</string>

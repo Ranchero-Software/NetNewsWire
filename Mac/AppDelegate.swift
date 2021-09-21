@@ -125,6 +125,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
 		appDelegate = self
@@ -329,6 +331,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		shuttingDown = true
 		saveState()
 		
+		ArticleThemeDownloader.shared.cleanUp()
+		
 		AccountManager.shared.sendArticleStatusAll() {
 			self.isShutDownSyncDone = true
 		}
@@ -374,6 +378,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	@objc func didWakeNotification(_ note: Notification) {
 		fireOldTimers()
+	}
+	
+	@objc func importDownloadedTheme(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			let url = userInfo["url"] as? URL else {
+			return
+		}
+		DispatchQueue.main.async {
+			self.importTheme(filename: url.path)
+		}
 	}
 
 	// MARK: Main Window
@@ -765,7 +779,7 @@ extension AppDelegate {
 
 }
 
-private extension AppDelegate {
+internal extension AppDelegate {
 
 	func fireOldTimers() {
 		// It’s possible there’s a refresh timer set to go off in the past.
@@ -800,85 +814,91 @@ private extension AppDelegate {
 	func importTheme(filename: String) {
 		guard let window = mainWindowController?.window else { return }
 		
-		let theme = ArticleTheme(path: filename)
-		
-		let alert = NSAlert()
-		alert.alertStyle = .informational
+		do {
+			let theme = try ArticleTheme(path: filename)
+			let alert = NSAlert()
+			alert.alertStyle = .informational
 
-		let localizedMessageText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
-		alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
-		
-		var attrs = [NSAttributedString.Key : Any]()
-		attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
-		attrs[.foregroundColor] = NSColor.textColor
-		
-		if #available(macOS 11.0, *) {
-			let titleParagraphStyle = NSMutableParagraphStyle()
-			titleParagraphStyle.alignment = .center
-			attrs[.paragraphStyle] = titleParagraphStyle
-		}
-
-		let websiteText = NSMutableAttributedString()
-		websiteText.append(NSAttributedString(string: NSLocalizedString("Author's Website", comment: "Author's Website"), attributes: attrs))
-
-		if #available(macOS 11.0, *) {
-			websiteText.append(NSAttributedString(string: "\n"))
-		} else {
-			websiteText.append(NSAttributedString(string: " "))
-		}
-
-		attrs[.link] = theme.creatorHomePage
-		websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
-
-		let textViewWidth: CGFloat
-		if #available(macOS 11.0, *) {
-			textViewWidth = 200
-		} else {
-			textViewWidth = 400
-		}
-
-		let textView = NSTextView(frame: CGRect(x: 0, y: 0, width: textViewWidth, height: 15))
-		textView.isEditable = false
-		textView.drawsBackground = false
-		textView.textStorage?.setAttributedString(websiteText)
-		alert.accessoryView = textView
-		
-		alert.addButton(withTitle: NSLocalizedString("Install Theme", comment: "Install Theme"))
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+			let localizedMessageText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
+			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
 			
-		func importTheme() {
-			do {
-				try ArticleThemesManager.shared.importTheme(filename: filename)
-				confirmImportSuccess(themeName: theme.name)
-			} catch {
-				NSApplication.shared.presentError(error)
+			var attrs = [NSAttributedString.Key : Any]()
+			attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+			attrs[.foregroundColor] = NSColor.textColor
+			
+			if #available(macOS 11.0, *) {
+				let titleParagraphStyle = NSMutableParagraphStyle()
+				titleParagraphStyle.alignment = .center
+				attrs[.paragraphStyle] = titleParagraphStyle
 			}
+
+			let websiteText = NSMutableAttributedString()
+			websiteText.append(NSAttributedString(string: NSLocalizedString("Author's Website", comment: "Author's Website"), attributes: attrs))
+
+			if #available(macOS 11.0, *) {
+				websiteText.append(NSAttributedString(string: "\n"))
+			} else {
+				websiteText.append(NSAttributedString(string: " "))
+			}
+
+			attrs[.link] = theme.creatorHomePage
+			websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
+
+			let textViewWidth: CGFloat
+			if #available(macOS 11.0, *) {
+				textViewWidth = 200
+			} else {
+				textViewWidth = 400
+			}
+
+			let textView = NSTextView(frame: CGRect(x: 0, y: 0, width: textViewWidth, height: 15))
+			textView.isEditable = false
+			textView.drawsBackground = false
+			textView.textStorage?.setAttributedString(websiteText)
+			alert.accessoryView = textView
+			
+			alert.addButton(withTitle: NSLocalizedString("Install Theme", comment: "Install Theme"))
+			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+				
+			func importTheme() {
+				do {
+					try ArticleThemesManager.shared.importTheme(filename: filename)
+					confirmImportSuccess(themeName: theme.name)
+				} catch {
+					NSApplication.shared.presentError(error)
+				}
+			}
+			
+			alert.beginSheetModal(for: window) { result in
+				if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+
+					if ArticleThemesManager.shared.themeExists(filename: filename) {
+						let alert = NSAlert()
+						alert.alertStyle = .warning
+
+						let localizedMessageText = NSLocalizedString("The theme “%@” already exists. Overwrite it?", comment: "Overwrite theme")
+						alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
+
+						alert.addButton(withTitle: NSLocalizedString("Overwrite", comment: "Overwrite"))
+						alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+						
+						alert.beginSheetModal(for: window) { result in
+							if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+								importTheme()
+							}
+						}
+					} else {
+						importTheme()
+					}
+
+				}
+			}
+		} catch {
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
 		}
 		
-		alert.beginSheetModal(for: window) { result in
-			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
-
-				if ArticleThemesManager.shared.themeExists(filename: filename) {
-					let alert = NSAlert()
-					alert.alertStyle = .warning
-
-					let localizedMessageText = NSLocalizedString("The theme “%@” already exists. Overwrite it?", comment: "Overwrite theme")
-					alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
-
-					alert.addButton(withTitle: NSLocalizedString("Overwrite", comment: "Overwrite"))
-					alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
-					
-					alert.beginSheetModal(for: window) { result in
-						if result == NSApplication.ModalResponse.alertFirstButtonReturn {
-							importTheme()
-						}
-					}
-				} else {
-					importTheme()
-				}
-
-			}
-		}
+		
+		
 	}
 	
 	func confirmImportSuccess(themeName: String) {
@@ -893,6 +913,41 @@ private extension AppDelegate {
 		
 		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
 		alert.beginSheetModal(for: window)
+	}
+	
+	@objc func themeImportError(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			  let error = userInfo["error"] as? Error,
+			  let window = mainWindowController?.window else {
+				  return
+			  }
+		
+		var informativeText: String = ""
+		if let decodingError = error as? DecodingError {
+			switch decodingError {
+			case .typeMismatch(let type, _):
+				informativeText = "Type '\(type)' mismatch."
+			case .valueNotFound(let value, _):
+				informativeText = "Value '\(value)' not found."
+			case .keyNotFound(let codingKey, _):
+				informativeText = "Key '\(codingKey.stringValue)' not found."
+			case .dataCorrupted( _):
+				informativeText = error.localizedDescription
+			default:
+				informativeText = error.localizedDescription
+			}
+		} else {
+			informativeText = error.localizedDescription
+		}
+		
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.alertStyle = .warning
+			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
+			alert.informativeText = NSLocalizedString("This theme cannot be imported due to the following error: \(informativeText)", comment: "Theme download error information")
+			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			alert.beginSheetModal(for: window)
+		}
 	}
 	
 }

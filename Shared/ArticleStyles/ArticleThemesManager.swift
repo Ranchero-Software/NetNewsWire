@@ -133,8 +133,13 @@ private extension ArticleThemesManager {
 		guard let path = pathForThemeName(themeName, folder: folderPath) else {
 			return nil
 		}
-
-		return ArticleTheme(path: path)
+		do {
+			return try ArticleTheme(path: path)
+		} catch {
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			return nil
+		}
+		
 	}
 
 	func defaultArticleTheme() -> ArticleTheme {
