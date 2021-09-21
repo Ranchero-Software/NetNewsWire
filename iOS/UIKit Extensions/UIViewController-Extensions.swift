@@ -15,6 +15,23 @@ extension UIViewController {
 	func presentError(_ error: Error, dismiss: (() -> Void)? = nil) {
 		if let accountError = error as? AccountError, accountError.isCredentialsError {
 			presentAccountError(accountError, dismiss: dismiss)
+		} else if let decodingError = error as? DecodingError {
+			let errorTitle = NSLocalizedString("Error", comment: "Error")
+			switch decodingError {
+			case .typeMismatch(let type, _):
+				let str = "Type '\(type)' mismatch."
+				presentError(title: errorTitle, message: str, dismiss: dismiss)
+			case .valueNotFound(let value, _):
+				let str = "Value '\(value)' not found."
+				presentError(title: errorTitle, message: str, dismiss: dismiss)
+			case .keyNotFound(let codingKey, _):
+				let str = "Key '\(codingKey.stringValue)' not found."
+				presentError(title: errorTitle, message: str, dismiss: dismiss)
+			case .dataCorrupted( _):
+				presentError(title: errorTitle, message: error.localizedDescription, dismiss: dismiss)
+			default:
+				presentError(title: errorTitle, message: error.localizedDescription, dismiss: dismiss)
+			}
 		} else {
 			let errorTitle = NSLocalizedString("Error", comment: "Error")
 			presentError(title: errorTitle, message: error.localizedDescription, dismiss: dismiss)

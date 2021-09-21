@@ -9,13 +9,13 @@
 import Foundation
 
 struct ArticleTheme: Equatable {
-
+	
 	static let defaultTheme = ArticleTheme()
 	static let nnwThemeSuffix = ".nnwtheme"
-
+	
 	private static let defaultThemeName = NSLocalizedString("Default", comment: "Default")
 	private static let unknownValue = NSLocalizedString("Unknown", comment: "Unknown Value")
-
+	
 	let path: String?
 	let template: String?
 	let css: String?
@@ -38,25 +38,26 @@ struct ArticleTheme: Equatable {
 	}
 	
 	private let info: ArticleThemePlist?
-
+	
 	init() {
 		self.path = nil;
 		self.info = ArticleThemePlist(name: "Article Theme", themeIdentifier: "com.ranchero.netnewswire.theme.article", creatorHomePage: "https://netnewswire.com/", creatorName: "Ranchero Software", version: 1)
-
+		
 		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
 		let stylesheetPath = Bundle.main.path(forResource: "stylesheet", ofType: "css")!
 		css = Self.stringAtPath(corePath)! + "\n" + Self.stringAtPath(stylesheetPath)!
-
+		
 		let templatePath = Bundle.main.path(forResource: "template", ofType: "html")!
 		template = Self.stringAtPath(templatePath)!
 	}
-
+	
 	init(path: String) throws {
 		self.path = path
-
+		
 		let infoPath = (path as NSString).appendingPathComponent("Info.plist")
 		let data = try Data(contentsOf: URL(fileURLWithPath: infoPath))
 		self.info = try PropertyListDecoder().decode(ArticleThemePlist.self, from: data)
+		
 		
 		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
 		let stylesheetPath = (path as NSString).appendingPathComponent("stylesheet.css")
@@ -65,7 +66,7 @@ struct ArticleTheme: Equatable {
 		} else {
 			self.css = nil
 		}
-
+		
 		let templatePath = (path as NSString).appendingPathComponent("template.html")
 		self.template = Self.stringAtPath(templatePath)
 	}
@@ -74,22 +75,22 @@ struct ArticleTheme: Equatable {
 		if !FileManager.default.fileExists(atPath: f) {
 			return nil
 		}
-
+		
 		if let s = try? NSString(contentsOfFile: f, usedEncoding: nil) as String {
 			return s
 		}
 		return nil
 	}
-
+	
 	static func filenameWithThemeSuffixRemoved(_ filename: String) -> String {
 		return filename.stripping(suffix: Self.nnwThemeSuffix)
 	}
-
+	
 	static func themeNameForPath(_ f: String) -> String {
 		let filename = (f as NSString).lastPathComponent
 		return filenameWithThemeSuffixRemoved(filename)
 	}
-
+	
 	static func pathIsPathForThemeName(_ themeName: String, path: String) -> Bool {
 		let filename = (path as NSString).lastPathComponent
 		return filenameWithThemeSuffixRemoved(filename) == themeName

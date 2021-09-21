@@ -184,7 +184,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
 					}
 					let task = URLSession.shared.downloadTask(with: request) { [weak self] location, response, error in
-						guard let self = self,
+						guard
 							  let location = location else { return }
 						
 						do {

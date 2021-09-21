@@ -6436,8 +6436,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/marmelroy/Zip.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				kind = revision;
+				revision = 059e7346082d02de16220cd79df7db18ddeba8c3;
 			};
 		};
 		5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */ = {

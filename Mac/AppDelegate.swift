@@ -323,7 +323,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
 		guard filename.hasSuffix(ArticleTheme.nnwThemeSuffix) else { return false }
-		try? importTheme(filename: filename)
+		importTheme(filename: filename)
 		return true
 	}
 	
@@ -386,7 +386,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return
 		}
 		DispatchQueue.main.async {
-			try? self.importTheme(filename: url.path)
+			self.importTheme(filename: url.path)
 		}
 	}
 
@@ -921,11 +921,30 @@ internal extension AppDelegate {
 			  let window = mainWindowController?.window else {
 				  return
 			  }
+		
+		var informativeText: String = ""
+		if let decodingError = error as? DecodingError {
+			switch decodingError {
+			case .typeMismatch(let type, _):
+				informativeText = "Type '\(type)' mismatch."
+			case .valueNotFound(let value, _):
+				informativeText = "Value '\(value)' not found."
+			case .keyNotFound(let codingKey, _):
+				informativeText = "Key '\(codingKey.stringValue)' not found."
+			case .dataCorrupted( _):
+				informativeText = error.localizedDescription
+			default:
+				informativeText = error.localizedDescription
+			}
+		} else {
+			informativeText = error.localizedDescription
+		}
+		
 		DispatchQueue.main.async {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
-			alert.informativeText = NSLocalizedString("This theme cannot be imported due to the following error: \(error.localizedDescription)", comment: "Theme download error information")
+			alert.informativeText = NSLocalizedString("This theme cannot be imported due to the following error: \(informativeText)", comment: "Theme download error information")
 			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
 			alert.beginSheetModal(for: window)
 		}
