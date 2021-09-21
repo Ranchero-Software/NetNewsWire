@@ -63,7 +63,7 @@ extension AppDelegate : AppDelegateAppleEvents {
 					do {
 						try ArticleThemeDownloader.shared.handleFile(at: location)
 					} catch {
-						NotificationCenter.default.post(name: .didEndDownloadingThemeWithError, object: nil, userInfo: ["error": error])
+						NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
 					}
 				}
 				task.resume()

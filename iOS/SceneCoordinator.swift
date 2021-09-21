@@ -324,7 +324,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didEndDownloadingThemeWithError, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 	}
 	
 	func start(for size: CGSize) -> UIViewController {
@@ -1317,7 +1317,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 	
 	func importTheme(filename: String) {
-		try? ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename);
+		do {
+			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename)
+		} catch {
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
+		}
+		
 	}
 	
 }
