@@ -134,7 +134,7 @@ private extension ArticleThemesManager {
 			return nil
 		}
 
-		return ArticleTheme(path: path)
+		return try? ArticleTheme(path: path)
 	}
 
 	func defaultArticleTheme() -> ArticleTheme {

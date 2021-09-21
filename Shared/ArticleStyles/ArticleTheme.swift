@@ -26,22 +26,22 @@ struct ArticleTheme: Equatable {
 	}
 	
 	var creatorHomePage: String {
-		return info?["CreatorHomePage"] as? String ?? Self.unknownValue
+		return info?.creatorHomePage ?? Self.unknownValue
 	}
 	
 	var creatorName: String {
-		return info?["CreatorName"] as? String ?? Self.unknownValue
+		return info?.creatorName ?? Self.unknownValue
 	}
 	
 	var version: String {
-		return info?["Version"] as? String ?? "0.0"
+		return String(describing: info?.version ?? 0)
 	}
 	
-	private let info: NSDictionary?
+	private let info: ArticleThemePlist?
 
 	init() {
 		self.path = nil;
-		self.info = ["CreatorHomePage": "https://netnewswire.com/", "CreatorName": "Ranchero Software", "Version": "1.0"]
+		self.info = ArticleThemePlist(name: "Article Theme", themeIdentifier: "com.ranchero.netnewswire.theme.article", creatorHomePage: "https://netnewswire.com/", creatorName: "Ranchero Software", version: 1)
 
 		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
 		let stylesheetPath = Bundle.main.path(forResource: "stylesheet", ofType: "css")!
@@ -51,12 +51,13 @@ struct ArticleTheme: Equatable {
 		template = Self.stringAtPath(templatePath)!
 	}
 
-	init(path: String) {
+	init(path: String) throws {
 		self.path = path
 
 		let infoPath = (path as NSString).appendingPathComponent("Info.plist")
-		self.info = NSDictionary(contentsOfFile: infoPath)
-
+		let data = try Data(contentsOf: URL(fileURLWithPath: infoPath))
+		self.info = try PropertyListDecoder().decode(ArticleThemePlist.self, from: data)
+		
 		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
 		let stylesheetPath = (path as NSString).appendingPathComponent("stylesheet.css")
 		if let stylesheetCSS = Self.stringAtPath(stylesheetPath) {

@@ -9,62 +9,85 @@
 import Foundation
 import Zip
 
-public struct ArticleThemeDownloader {
+public class ArticleThemeDownloader {
 	
-	static func handleFile(at location: URL) throws {
-		#if os(iOS)
+	public enum ArticleThemeDownloaderError: LocalizedError {
+		case noThemeFile
+		
+		public var errorDescription: String? {
+			switch self {
+			case .noThemeFile:
+				return "There is no NetNewsWire theme available."
+			}
+		}
+	}
+	
+	
+	public static let shared = ArticleThemeDownloader()
+	private init() {}
+	
+	public func handleFile(at location: URL) throws {
 		createDownloadDirectoryIfRequired()
-		#endif
 		let movedFileLocation = try moveTheme(from: location)
 		let unzippedFileLocation = try unzipFile(at: movedFileLocation)
-		let renamedFile = try renameFileToThemeName(at: unzippedFileLocation)
-		NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil, userInfo: ["url" : renamedFile])
+		NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil, userInfo: ["url" : unzippedFileLocation])
 	}
 	
-	private static func createDownloadDirectoryIfRequired() {
-		let downloadDirectory = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-		try? FileManager.default.createDirectory(at: downloadDirectory, withIntermediateDirectories: true, attributes: nil)
+	
+	/// Creates `Application Support/NetNewsWire/Downloads` if needed.
+	private func createDownloadDirectoryIfRequired() {
+		try? FileManager.default.createDirectory(at: downloadDirectory(), withIntermediateDirectories: true, attributes: nil)
 	}
 	
-	private static func moveTheme(from location: URL) throws -> URL {
-		#if os(iOS)
-		var downloadDirectory = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-		#else
-		var downloadDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		#endif
-		let tmpFileName = UUID().uuidString + ".zip"
-		downloadDirectory.appendPathComponent("\(tmpFileName)")
-		try FileManager.default.moveItem(at: location, to: downloadDirectory)
-		return downloadDirectory
+	/// Moves the downloaded `.tmp` file to the `downloadDirectory` and renames it a `.zip`
+	/// - Parameter location: The temporary file location.
+	/// - Returns: Destination `URL`.
+	private func moveTheme(from location: URL) throws -> URL {
+		var tmpFileName = location.lastPathComponent
+		tmpFileName = tmpFileName.replacingOccurrences(of: ".tmp", with: ".zip")
+		let fileUrl = downloadDirectory().appendingPathComponent("\(tmpFileName)")
+		try FileManager.default.moveItem(at: location, to: fileUrl)
+		return fileUrl
 	}
 	
-	private static func unzipFile(at location: URL) throws -> URL {
-		var unzippedDir = location.deletingLastPathComponent()
-		unzippedDir.appendPathComponent("newtheme.nnwtheme")
+	/// Unzips the zip file
+	/// - Parameter location: Location of the zip archive.
+	/// - Returns: Enclosed `.nnwtheme` file.
+	private func unzipFile(at location: URL) throws -> URL {
 		do {
-			try Zip.unzipFile(location, destination: unzippedDir, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil)
-			try FileManager.default.removeItem(at: location)
-			return unzippedDir
+			let unzipDirectory = URL(fileURLWithPath: location.path.replacingOccurrences(of: ".zip", with: ""))
+			try Zip.unzipFile(location, destination: unzipDirectory, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil) // Unzips to folder in Application Support/NetNewsWire/Downloads
+			try FileManager.default.removeItem(at: location) // Delete zip in Cache
+			let themeFilePath = FileManager.default.filenames(inFolder: unzipDirectory.path)?.first(where: { $0.contains(".nnwtheme") })
+			if themeFilePath == nil {
+				throw ArticleThemeDownloaderError.noThemeFile
+			}
+			return URL(fileURLWithPath: unzipDirectory.appendingPathComponent(themeFilePath!).path)
 		} catch {
 			try? FileManager.default.removeItem(at: location)
 			throw error
 		}
 	}
 	
-	private static func renameFileToThemeName(at location: URL) throws -> URL {
-		let decoder = PropertyListDecoder()
-		let plistURL = URL(fileURLWithPath: location.appendingPathComponent("Info.plist").path)
-		let data = try Data(contentsOf: plistURL)
-		let plist = try decoder.decode(ArticleThemePlist.self, from: data)
-		var renamedUnzippedDir = location.deletingLastPathComponent()
-		renamedUnzippedDir.appendPathComponent(plist.name + ".nnwtheme")
-		if FileManager.default.fileExists(atPath: renamedUnzippedDir.path) {
-			try FileManager.default.removeItem(at: renamedUnzippedDir)
-		}
-		try FileManager.default.moveItem(at: location, to: renamedUnzippedDir)
-		return renamedUnzippedDir
+	/// The download directory used by the theme downloader: `Application Suppport/NetNewsWire/Downloads`
+	/// - Returns: `URL`
+	private func downloadDirectory() -> URL {
+		FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("NetNewsWire/Downloads", isDirectory: true)
 	}
 	
-	
-	
+	/// Removes downloaded themes, where themes == folders, from `Application Suppport/NetNewsWire/Downloads`.
+	public func cleanUp() {
+		guard let filenames = try? FileManager.default.contentsOfDirectory(atPath: downloadDirectory().path) else {
+			return
+		}
+		for path in filenames {
+			do {
+				if FileManager.default.isFolder(atPath: downloadDirectory().appendingPathComponent(path).path) {
+					try FileManager.default.removeItem(atPath: downloadDirectory().appendingPathComponent(path).path)
+				}
+			} catch {
+				print(error)
+			}
+		}
+	}
 }

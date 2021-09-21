@@ -8,10 +8,9 @@
 
 import Foundation
 
-public struct ArticleThemePlist: Codable {
+public struct ArticleThemePlist: Codable, Equatable {
 	public var name: String
 	public var themeIdentifier: String
-	public var themeDescription: String?
 	public var creatorHomePage: String
 	public var creatorName: String
 	public var version: Int
@@ -19,7 +18,6 @@ public struct ArticleThemePlist: Codable {
 	enum CodingKeys: String, CodingKey {
 		case name = "Name"
 		case themeIdentifier = "ThemeIdentifier"
-		case themeDescription = "ThemeDescription"
 		case creatorHomePage = "CreatorHomePage"
 		case creatorName = "CreatorName"
 		case version = "Version"

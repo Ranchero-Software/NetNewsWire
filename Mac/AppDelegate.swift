@@ -126,6 +126,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didEndDownloadingThemeWithError, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 
 		appDelegate = self
@@ -322,13 +323,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func application(_ sender: NSApplication, openFile filename: String) -> Bool {
 		guard filename.hasSuffix(ArticleTheme.nnwThemeSuffix) else { return false }
-		importTheme(filename: filename)
+		try? importTheme(filename: filename)
 		return true
 	}
 	
 	func applicationWillTerminate(_ notification: Notification) {
 		shuttingDown = true
 		saveState()
+		
+		ArticleThemeDownloader.shared.cleanUp()
 		
 		AccountManager.shared.sendArticleStatusAll() {
 			self.isShutDownSyncDone = true
@@ -383,7 +386,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			return
 		}
 		DispatchQueue.main.async {
-			self.importTheme(filename: url.path)
+			try? self.importTheme(filename: url.path)
 		}
 	}
 
@@ -808,10 +811,10 @@ internal extension AppDelegate {
 		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
 	}
 	
-	func importTheme(filename: String) {
+	func importTheme(filename: String) throws {
 		guard let window = mainWindowController?.window else { return }
 		
-		let theme = ArticleTheme(path: filename)
+		let theme = try ArticleTheme(path: filename)
 		
 		let alert = NSAlert()
 		alert.alertStyle = .informational
@@ -904,6 +907,22 @@ internal extension AppDelegate {
 		
 		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
 		alert.beginSheetModal(for: window)
+	}
+	
+	@objc func themeImportError(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			  let error = userInfo["error"] as? Error,
+			  let window = mainWindowController?.window else {
+				  return
+			  }
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.alertStyle = .warning
+			alert.messageText = NSLocalizedString("Theme Download Error", comment: "Theme download error")
+			alert.informativeText = NSLocalizedString("This theme cannot be downloaded due to the following error: \(error.localizedDescription)", comment: "Theme download error information")
+			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			alert.beginSheetModal(for: window)
+		}
 	}
 	
 }

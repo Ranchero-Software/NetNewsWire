@@ -29,8 +29,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange), name: UserDefaults.didChangeNotification, object: nil)
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
-		
 		if let _ = connectionOptions.urlContexts.first?.url  {
 			window?.makeKeyAndVisible()
 			self.scene(scene, openURLContexts: connectionOptions.urlContexts)
@@ -190,11 +188,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 							  let location = location else { return }
 						
 						do {
-							try ArticleThemeDownloader.handleFile(at: location)
+							try ArticleThemeDownloader.shared.handleFile(at: location)
 						} catch {
-							DispatchQueue.main.async {
-								self.showAlert(error)
-							}
+							NotificationCenter.default.post(name: .didEndDownloadingThemeWithError, object: nil, userInfo: ["error": error])
 						}
 					}
 					task.resume()
@@ -207,16 +203,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			}
 			
 		}
-	}
-	
-	
-	
-	private func showAlert(_ error: Error) {
-		let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"),
-									  message: error.localizedDescription,
-									  preferredStyle: .alert)
-		alert.addAction(UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
-		self.window?.rootViewController?.present(alert, animated: true, completion: nil)
 	}
 }
 
@@ -252,15 +238,6 @@ private extension SceneDelegate {
 		}
 	}
 	
-	@objc func importDownloadedTheme(_ note: Notification) {
-		guard let userInfo = note.userInfo,
-			let url = userInfo["url"] as? URL else {
-			return
-		}
-		
-		DispatchQueue.main.async {
-			self.coordinator.importTheme(filename: url.path)
-		}
-	}
+	
 	
 }
