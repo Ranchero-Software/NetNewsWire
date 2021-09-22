@@ -58,7 +58,7 @@ public class ArticleThemeDownloader {
 			let unzipDirectory = URL(fileURLWithPath: location.path.replacingOccurrences(of: ".zip", with: ""))
 			try Zip.unzipFile(location, destination: unzipDirectory, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil) // Unzips to folder in Application Support/NetNewsWire/Downloads
 			try FileManager.default.removeItem(at: location) // Delete zip in Cache
-			let themeFilePath = FileManager.default.filenames(inFolder: unzipDirectory.path)?.first(where: { $0.contains(".nnwtheme") })
+			let themeFilePath = findThemeFile(in: unzipDirectory.path)
 			if themeFilePath == nil {
 				throw ArticleThemeDownloaderError.noThemeFile
 			}
@@ -67,6 +67,22 @@ public class ArticleThemeDownloader {
 			try? FileManager.default.removeItem(at: location)
 			throw error
 		}
+	}
+	
+	
+	/// Performs a deep search of the unzipped direcotry to find the theme file.
+	/// - Parameter searchPath: directory to search
+	/// - Returns: optional `String`
+	private func findThemeFile(in searchPath: String) -> String? {
+		if let directoryContents = FileManager.default.enumerator(atPath: searchPath) {
+			while let file = directoryContents.nextObject() as? String {
+				if file.hasSuffix(".nnwtheme") {
+					return file
+				}
+			}
+		}
+		
+		return nil
 	}
 	
 	/// The download directory used by the theme downloader: `Application Suppport/NetNewsWire/Downloads`
