@@ -629,6 +629,11 @@
 		51DC37072402153E0095D371 /* UpdateSelectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */; };
 		51DC37092402F1470095D371 /* MasterFeedDataSourceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */; };
 		51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */; };
+		51DEE81226FB9233006DAA56 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */; };
+		51DEE81326FB9233006DAA56 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */; };
+		51DEE81426FB9233006DAA56 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */; };
+		51DEE81526FB9233006DAA56 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */; };
+		51DEE81626FB9233006DAA56 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */; };
 		51E0614525A5A28E00194066 /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 51E0614425A5A28E00194066 /* Articles */; };
 		51E0614625A5A28E00194066 /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51E0614425A5A28E00194066 /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51E0614825A5A28E00194066 /* ArticlesDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51E0614725A5A28E00194066 /* ArticlesDatabase */; };
@@ -1888,6 +1893,7 @@
 		51DC37062402153E0095D371 /* UpdateSelectionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSelectionOperation.swift; sourceTree = "<group>"; };
 		51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedDataSourceOperation.swift; sourceTree = "<group>"; };
 		51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedWebView.swift; sourceTree = "<group>"; };
+		51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Appanoose.nnwtheme; sourceTree = "<group>"; };
 		51E36E70239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedSelectFolderTableViewCell.swift; sourceTree = "<group>"; };
 		51E36E8B239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddFeedSelectFolderTableViewCell.xib; sourceTree = "<group>"; };
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
@@ -2631,6 +2637,7 @@
 				845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */,
 				5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */,
 				5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */,
+				51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -4426,6 +4433,7 @@
 				5177475D24B39AD500EB0F74 /* Dedication.rtf in Resources */,
 				51E4995E24A875F300B667CB /* newsfoot.js in Resources */,
 				517B2EE424B3E8FE001AC46C /* blank.html in Resources */,
+				51DEE81526FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
 				5177475C24B39AD500EB0F74 /* Credits.rtf in Resources */,
 				51D0214926ED617100FF2E0F /* core.css in Resources */,
 				51E4995D24A875F300B667CB /* main.js in Resources */,
@@ -4440,6 +4448,7 @@
 				51E4996424A875F400B667CB /* stylesheet.css in Resources */,
 				5137C2E826F3F52D009EFEDB /* Sepia.nnwtheme in Resources */,
 				51E4997524A8784400B667CB /* DefaultFeeds.opml in Resources */,
+				51DEE81626FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
 				51C0516324A77DF800194D5E /* Assets.xcassets in Resources */,
 				51E4996524A875F400B667CB /* template.html in Resources */,
 				517B2EE924B3E8FE001AC46C /* main_multiplatform.js in Resources */,
@@ -4514,6 +4523,7 @@
 				65ED406C235DEF6C0081F399 /* Credits.rtf in Resources */,
 				65ED406D235DEF6C0081F399 /* Inspector.storyboard in Resources */,
 				65ED406E235DEF6C0081F399 /* AddWebFeedSheet.xib in Resources */,
+				51DEE81326FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
 				B27EEBFA244D15F3000932E6 /* stylesheet.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4565,6 +4575,7 @@
 				51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 				514219582353C28900E07E2C /* main_ios.js in Resources */,
+				51DEE81426FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
 				51E36E8C239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4612,6 +4623,7 @@
 				5103A9982421643300410853 /* blank.html in Resources */,
 				515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */,
 				84BAE64921CEDAF20046DB56 /* CrashReporterWindow.xib in Resources */,
+				51DEE81226FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
 				84C9FC8E22629E8F00D921D6 /* Credits.rtf in Resources */,
 				84BBB12D20142A4700F054F5 /* Inspector.storyboard in Resources */,
 				848363022262A3BD00DA1D35 /* AddWebFeedSheet.xib in Resources */,
