@@ -926,9 +926,9 @@ internal extension AppDelegate {
 			case .typeMismatch(let type, _):
 				informativeText = "the type—'\(type)'—is mismatched."
 			case .valueNotFound(let value, _):
-				informativeText = "the value—'\(value)'—is not found."
+				informativeText = "the value—'\(value)'—is missing in the Info.plist."
 			case .keyNotFound(let codingKey, _):
-				informativeText = "the key—'\(codingKey.stringValue)'—is not found."
+				informativeText = "the key—'\(codingKey.stringValue)'—is missing in the Info.plist."
 			case .dataCorrupted( _):
 				informativeText = error.localizedDescription
 			default:
