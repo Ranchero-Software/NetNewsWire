@@ -62,10 +62,10 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		}
 		
 		let themeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
-		let installedStyleSheets = readInstalledStyleSheets() ?? [String: Date]()
+		let installedThemes = readInstalledThemes() ?? [String: Date]()
 		for themeFilename in themeFilenames {
 			let themeName = ArticleTheme.themeNameForPath(themeFilename)
-			if !installedStyleSheets.keys.contains(themeName) {
+			if !installedThemes.keys.contains(themeName) {
 				try? importTheme(filename: themeFilename)
 			}
 		}
@@ -100,9 +100,9 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
 
 		let themeName = ArticleTheme.themeNameForPath(filename)
-		var installedStyleSheets = readInstalledStyleSheets() ?? [String: Date]()
-		installedStyleSheets[themeName] = Date()
-		writeInstalledStyleSheets(installedStyleSheets)
+		var installedThemes = readInstalledThemes() ?? [String: Date]()
+		installedThemes[themeName] = Date()
+		writeInstalledThemes(installedThemes)
 	}
 	
 	func deleteTheme(themeName: String) {
@@ -178,13 +178,13 @@ private extension ArticleThemesManager {
 		return nil
 	}
 	
-	func readInstalledStyleSheets() -> [String: Date]? {
-		let filePath = (folderPath as NSString).appendingPathComponent("InstalledStyleSheets.plist")
+	func readInstalledThemes() -> [String: Date]? {
+		let filePath = (folderPath as NSString).appendingPathComponent("InstalledThemes.plist")
 		return NSDictionary(contentsOfFile: filePath) as? [String: Date]
 	}
 	
-	func writeInstalledStyleSheets(_ dict: [String: Date]) {
-		let filePath = (folderPath as NSString).appendingPathComponent("InstalledStyleSheets.plist")
+	func writeInstalledThemes(_ dict: [String: Date]) {
+		let filePath = (folderPath as NSString).appendingPathComponent("InstalledThemes.plist")
 		(dict as NSDictionary).write(toFile: filePath, atomically: true)
 	}
 	
