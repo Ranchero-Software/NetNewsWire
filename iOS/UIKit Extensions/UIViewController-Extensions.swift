@@ -19,13 +19,13 @@ extension UIViewController {
 			let errorTitle = NSLocalizedString("Error", comment: "Error")
 			switch decodingError {
 			case .typeMismatch(let type, _):
-				let str = "Type '\(type)' mismatch."
+				let str = "This theme cannot be used because the type—'\(type)'—is mismatched."
 				presentError(title: errorTitle, message: str, dismiss: dismiss)
 			case .valueNotFound(let value, _):
-				let str = "Value '\(value)' not found."
+				let str = "This theme cannot be used because the value—'\(value)'—is not found."
 				presentError(title: errorTitle, message: str, dismiss: dismiss)
 			case .keyNotFound(let codingKey, _):
-				let str = "Key '\(codingKey.stringValue)' not found."
+				let str = "This theme cannot be used because the key—'\(codingKey.stringValue)'—is not found."
 				presentError(title: errorTitle, message: str, dismiss: dismiss)
 			case .dataCorrupted( _):
 				presentError(title: errorTitle, message: error.localizedDescription, dismiss: dismiss)
