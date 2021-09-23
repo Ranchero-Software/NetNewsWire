@@ -107,6 +107,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var softwareUpdater: SPUUpdater!
 	private var crashReporter: PLCrashReporter!
 	#endif
+	
+	private var themeImportPath: String?
 
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
@@ -890,15 +892,11 @@ internal extension AppDelegate {
 					} else {
 						importTheme()
 					}
-
 				}
 			}
 		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error, "path": filename])
 		}
-		
-		
-		
 	}
 	
 	func confirmImportSuccess(themeName: String) {
@@ -921,16 +919,16 @@ internal extension AppDelegate {
 			  let window = mainWindowController?.window else {
 				  return
 			  }
-		
+		themeImportPath = userInfo["path"] as? String
 		var informativeText: String = ""
 		if let decodingError = error as? DecodingError {
 			switch decodingError {
 			case .typeMismatch(let type, _):
-				informativeText = "Type '\(type)' mismatch."
+				informativeText = "the type—'\(type)'—is mismatched."
 			case .valueNotFound(let value, _):
-				informativeText = "Value '\(value)' not found."
+				informativeText = "the value—'\(value)'—is not found."
 			case .keyNotFound(let codingKey, _):
-				informativeText = "Key '\(codingKey.stringValue)' not found."
+				informativeText = "the key—'\(codingKey.stringValue)'—is not found."
 			case .dataCorrupted( _):
 				informativeText = error.localizedDescription
 			default:
@@ -944,9 +942,25 @@ internal extension AppDelegate {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
-			alert.informativeText = NSLocalizedString("This theme cannot be imported due to the following error: \(informativeText)", comment: "Theme download error information")
+			alert.informativeText = NSLocalizedString("This theme cannot be used because \(informativeText)", comment: "Theme download error information")
+			alert.addButton(withTitle: NSLocalizedString("Open Theme Folder", comment: "Open Theme Folder"))
 			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
-			alert.beginSheetModal(for: window)
+			
+			let button = alert.buttons.first
+			button?.target = self
+			button?.action = #selector(self.openThemesFolder(_:))
+			
+			alert.runModal()
+		}
+	}
+	
+	@objc func openThemesFolder(_ sender: Any) {
+		if themeImportPath == nil {
+			let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
+			NSWorkspace.shared.open(url)
+		} else {
+			let url = URL(fileURLWithPath: themeImportPath!)
+			NSWorkspace.shared.open(url.deletingLastPathComponent())
 		}
 	}
 	

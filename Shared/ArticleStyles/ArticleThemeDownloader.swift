@@ -22,7 +22,6 @@ public class ArticleThemeDownloader {
 		}
 	}
 	
-	
 	public static let shared = ArticleThemeDownloader()
 	private init() {}
 	
