@@ -634,6 +634,11 @@
 		51DEE81426FB9233006DAA56 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */; };
 		51DEE81526FB9233006DAA56 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */; };
 		51DEE81626FB9233006DAA56 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */; };
+		51DEE81826FBFF84006DAA56 /* Promenade.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */; };
+		51DEE81926FBFF84006DAA56 /* Promenade.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */; };
+		51DEE81A26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */; };
+		51DEE81B26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */; };
+		51DEE81C26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */; };
 		51E0614525A5A28E00194066 /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 51E0614425A5A28E00194066 /* Articles */; };
 		51E0614625A5A28E00194066 /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51E0614425A5A28E00194066 /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		51E0614825A5A28E00194066 /* ArticlesDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 51E0614725A5A28E00194066 /* ArticlesDatabase */; };
@@ -1894,6 +1899,7 @@
 		51DC37082402F1470095D371 /* MasterFeedDataSourceOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterFeedDataSourceOperation.swift; sourceTree = "<group>"; };
 		51DC370A2405BC9A0095D371 /* PreloadedWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedWebView.swift; sourceTree = "<group>"; };
 		51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Appanoose.nnwtheme; sourceTree = "<group>"; };
+		51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Promenade.nnwtheme; sourceTree = "<group>"; };
 		51E36E70239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFeedSelectFolderTableViewCell.swift; sourceTree = "<group>"; };
 		51E36E8B239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddFeedSelectFolderTableViewCell.xib; sourceTree = "<group>"; };
 		51E3EB32229AB02C00645299 /* ErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
@@ -2636,8 +2642,9 @@
 				844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */,
 				845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */,
 				5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */,
-				5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */,
 				51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */,
+				51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */,
+				5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -4425,6 +4432,7 @@
 				517B2EE224B3E8FE001AC46C /* page.html in Resources */,
 				51E4995F24A875F300B667CB /* stylesheet.css in Resources */,
 				517B2EE824B3E8FE001AC46C /* main_multiplatform.js in Resources */,
+				51DEE81B26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				51E4997324A8784300B667CB /* DefaultFeeds.opml in Resources */,
 				5137C2E726F3F52D009EFEDB /* Sepia.nnwtheme in Resources */,
 				51C0516224A77DF800194D5E /* Assets.xcassets in Resources */,
@@ -4454,6 +4462,7 @@
 				517B2EE924B3E8FE001AC46C /* main_multiplatform.js in Resources */,
 				51D0214A26ED617100FF2E0F /* core.css in Resources */,
 				517B2EE524B3E8FE001AC46C /* blank.html in Resources */,
+				51DEE81C26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				51E4996324A875F400B667CB /* newsfoot.js in Resources */,
 				51E4996224A875F400B667CB /* main.js in Resources */,
 			);
@@ -4498,6 +4507,7 @@
 				65ED405A235DEF6C0081F399 /* main_mac.js in Resources */,
 				65ED405B235DEF6C0081F399 /* KeyboardShortcuts.html in Resources */,
 				65ED405C235DEF6C0081F399 /* ImportOPMLSheet.xib in Resources */,
+				51DEE81926FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
 				514A89A3244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
 				51D0214726ED617100FF2E0F /* core.css in Resources */,
@@ -4555,6 +4565,7 @@
 				516A093723609A3600EAE89B /* SettingsComboTableViewCell.xib in Resources */,
 				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
 				516A09422361248000EAE89B /* Inspector.storyboard in Resources */,
+				51DEE81A26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				1768140B2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig in Resources */,
 				5103A9B424216A4200410853 /* blank.html in Resources */,
 				51D0214826ED617100FF2E0F /* core.css in Resources */,
@@ -4597,6 +4608,7 @@
 				65ED40A0235DEFF00081F399 /* container-migration.plist in Resources */,
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
 				51D0214626ED617100FF2E0F /* core.css in Resources */,
+				51DEE81826FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				5142194B2353C1CF00E07E2C /* main_mac.js in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
 				B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */,
