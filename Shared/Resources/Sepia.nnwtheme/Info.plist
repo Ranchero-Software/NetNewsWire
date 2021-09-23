@@ -4,7 +4,7 @@
 <dict>
 	<key>Name</key>
 	<string>Sepia</string>
-	<key>ThemeIdentifer</key>
+	<key>ThemeIdentifier</key>
 	<string>com.netnewswire.themes.sepia</string>
 	<key>CreatorHomePage</key>
 	<string>http://netnewswire.com/</string>
