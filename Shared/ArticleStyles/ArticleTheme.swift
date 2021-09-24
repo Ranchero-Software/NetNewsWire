@@ -58,7 +58,6 @@ struct ArticleTheme: Equatable {
 		let data = try Data(contentsOf: URL(fileURLWithPath: infoPath))
 		self.info = try PropertyListDecoder().decode(ArticleThemePlist.self, from: data)
 		
-		
 		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
 		let stylesheetPath = (path as NSString).appendingPathComponent("stylesheet.css")
 		if let stylesheetCSS = Self.stringAtPath(stylesheetPath) {
