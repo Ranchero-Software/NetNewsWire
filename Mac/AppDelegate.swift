@@ -910,13 +910,13 @@ internal extension AppDelegate {
 		alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, themeName) as String
 		
 		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+
 		alert.beginSheetModal(for: window)
 	}
 	
 	@objc func themeImportError(_ note: Notification) {
 		guard let userInfo = note.userInfo,
-			  let error = userInfo["error"] as? Error,
-			  let window = mainWindowController?.window else {
+			  let error = userInfo["error"] as? Error else {
 				  return
 			  }
 		themeImportPath = userInfo["path"] as? String
@@ -924,13 +924,23 @@ internal extension AppDelegate {
 		if let decodingError = error as? DecodingError {
 			switch decodingError {
 			case .typeMismatch(let type, _):
-				informativeText = "the type—'\(type)'—is mismatched."
+				let localizedError = NSLocalizedString("This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist", comment: "Type mismatch")
+				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, type as! CVarArg) as String
 			case .valueNotFound(let value, _):
-				informativeText = "the value—'\(value)'—is missing in the Info.plist."
+				let localizedError = NSLocalizedString("This theme cannot be used because the the value—“%@”—is not found in the Info.plist.", comment: "Decoding value missing")
+				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, value as! CVarArg) as String
 			case .keyNotFound(let codingKey, _):
-				informativeText = "the key—'\(codingKey.stringValue)'—is missing in the Info.plist."
-			case .dataCorrupted( _):
-				informativeText = error.localizedDescription
+				let localizedError = NSLocalizedString("This theme cannot be used because the the key—“%@”—is not found in the Info.plist.", comment: "Decoding key missing")
+				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, codingKey.stringValue) as String
+			case .dataCorrupted(let context):
+				guard let error = context.underlyingError as NSError?,
+					  let debugDescription = error.userInfo["NSDebugDescription"] as? String else {
+					informativeText = error.localizedDescription
+					break
+				}
+				let localizedError = NSLocalizedString("This theme cannot be used because of data corruption in the Info.plist: %@.", comment: "Decoding key missing")
+				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, debugDescription) as String
+				
 			default:
 				informativeText = error.localizedDescription
 			}
@@ -942,14 +952,15 @@ internal extension AppDelegate {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
-			alert.informativeText = NSLocalizedString("This theme cannot be used because \(informativeText)", comment: "Theme download error information")
+			alert.informativeText = informativeText
 			alert.addButton(withTitle: NSLocalizedString("Open Theme Folder", comment: "Open Theme Folder"))
 			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
 			
 			let button = alert.buttons.first
 			button?.target = self
 			button?.action = #selector(self.openThemesFolder(_:))
-			
+			alert.buttons[0].keyEquivalent = "\033"
+			alert.buttons[1].keyEquivalent = "\r"
 			alert.runModal()
 		}
 	}
