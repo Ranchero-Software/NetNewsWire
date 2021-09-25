@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.0.2 TestFlight build 610 - 25 Sep 2021
+
+Fixed bug with state restoration on launch (bug introduced in previous TestFlight build)
+
 ### 6.0.1 TestFlight build 608 - 28 Aug 2021
 
 Fixed our top crashing bug — it could happen when updating a table view
