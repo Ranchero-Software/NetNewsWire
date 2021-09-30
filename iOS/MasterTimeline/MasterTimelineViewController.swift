@@ -739,7 +739,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func featuredImageFor(_ article: Article) -> UIImage? {
-		if let url = article.rawImageLink, let data = appDelegate.imageDownloader.image(for: url) {
+		if let link = article.imageLink, let data = appDelegate.imageDownloader.image(for: link) {
 			return RSImage(data: data)
 		}
 		return nil
@@ -924,7 +924,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func copyExternalURLAction(_ article: Article) -> UIAction? {
-		guard let externalLink = article.rawExternalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
+		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
 		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url

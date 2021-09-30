@@ -57,17 +57,17 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
     
     @objc(url)
     var url:String?  {
-        return article.rawLink ?? article.rawExternalLink
+        return article.preferredLink
     }
 
     @objc(permalink)
     var permalink:String?  {
-        return article.rawLink
+        return article.link
     }
 
     @objc(externalUrl)
     var externalUrl:String?  {
-        return article.rawExternalLink
+        return article.externalLink
     }
     
     @objc(title)
@@ -132,7 +132,7 @@ class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectConta
 
     @objc(imageURL)
     var imageURL:String  {
-        return article.rawImageLink ?? ""
+        return article.imageLink ?? ""
     }
     
     @objc(authors)

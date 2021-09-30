@@ -87,11 +87,11 @@ private extension ArticlePasteboardWriter {
 			s += "\(convertedHTML)\n\n"
 		}
 
-		if let rawLink = article.rawLink {
+		if let link = article.link {
 			s += "URL: \(rawLink)\n\n"
 		}
-		if let rawExternalLink = article.rawExternalLink {
-			s += "external URL: \(rawExternalLink)\n\n"
+		if let externalLink = article.externalLink {
+			s += "external URL: \(externalLink)\n\n"
 		}
 
 		s += "Date: \(article.logicalDatePublished)\n\n"

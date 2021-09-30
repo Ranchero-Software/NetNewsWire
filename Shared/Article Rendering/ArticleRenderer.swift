@@ -209,7 +209,7 @@ private extension ArticleRenderer {
 		d["title"] = title
 		d["preferred_link"] = article.preferredLink ?? ""
 		
-		if let externalLink = article.rawExternalLink, externalLink != article.preferredLink {
+		if let externalLink = article.externalLink, externalLink != article.preferredLink {
 			d["external_link_label"] = NSLocalizedString("Link:", comment: "Link")
 			d["external_link_stripped"] = externalLink.strippingHTTPOrHTTPSScheme
 			d["external_link"] = externalLink
@@ -331,7 +331,7 @@ private extension ArticleRenderer {
 private extension Article {
 
 	var baseURL: URL? {
-		var s = rawLink
+		var s = link
 		if s == nil {
 			s = webFeed?.homePageURL
 		}

@@ -318,7 +318,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.rawExternalLink {
+		if let link = oneSelectedArticle?.externalLink {
 			URLPasteboardWriter.write(urlString: link, to: .general)
 		}
 	}
@@ -1077,7 +1077,7 @@ private extension MainWindowController {
 	}
 	
 	func canCopyExternalURL() -> Bool {
-		return oneSelectedArticle?.rawExternalLink != nil && oneSelectedArticle?.rawExternalLink != currentLink
+		return oneSelectedArticle?.externalLink != nil && oneSelectedArticle?.externalLink != currentLink
 	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
