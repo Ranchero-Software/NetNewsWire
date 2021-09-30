@@ -183,7 +183,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					DispatchQueue.main.async {
 						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
 					}
-					let task = URLSession.shared.downloadTask(with: request) { [weak self] location, response, error in
+					let task = URLSession.shared.downloadTask(with: request) { location, response, error in
 						guard
 							  let location = location else { return }
 						

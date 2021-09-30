@@ -70,7 +70,7 @@
                         <barButtonItem systemItem="add" id="PVr-3K-nPg"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Feeds" largeTitleDisplayMode="always" id="lE1-xw-gjH">
-                        <barButtonItem key="rightBarButtonItem" image="line.horizontal.3.decrease.circle" catalog="system" id="Khk-Hd-iNS"/>
+                        <barButtonItem key="rightBarButtonItem" image="line.3.horizontal.decrease.circle" catalog="system" id="Khk-Hd-iNS"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
@@ -114,6 +114,6 @@
     </scenes>
     <resources>
         <image name="gear" catalog="system" width="64" height="58"/>
-        <image name="line.horizontal.3.decrease.circle" catalog="system" width="64" height="60"/>
+        <image name="line.3.horizontal.decrease.circle" catalog="system" width="64" height="60"/>
     </resources>
 </document>
