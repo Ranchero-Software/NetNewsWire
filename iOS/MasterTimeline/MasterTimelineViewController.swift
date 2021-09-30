@@ -545,7 +545,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, link: nil, externalLink: nil, summary: nil, imageLink: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
 		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		
@@ -739,7 +739,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func featuredImageFor(_ article: Article) -> UIImage? {
-		if let url = article.imageURL, let data = appDelegate.imageDownloader.image(for: url) {
+		if let link = article.imageLink, let data = appDelegate.imageDownloader.image(for: link) {
 			return RSImage(data: data)
 		}
 		return nil
@@ -924,7 +924,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func copyExternalURLAction(_ article: Article) -> UIAction? {
-		guard let externalURL = article.externalURL, externalURL != article.preferredLink, let url = URL(string: externalURL) else { return nil }
+		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
 		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url

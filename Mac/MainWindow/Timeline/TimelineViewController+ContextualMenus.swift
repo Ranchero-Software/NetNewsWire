@@ -178,7 +178,7 @@ private extension TimelineViewController {
 			menu.addSeparatorIfNeeded()
 			menu.addItem(copyArticleURLMenuItem(link))
 			
-			if let externalLink = articles.first?.externalURL, externalLink != link {
+			if let externalLink = articles.first?.externalLink, externalLink != link {
 				menu.addItem(copyExternalURLMenuItem(externalLink))
 			}
 		}
