@@ -88,7 +88,7 @@ private extension ArticlePasteboardWriter {
 		}
 
 		if let link = article.link {
-			s += "URL: \(rawLink)\n\n"
+			s += "URL: \(link)\n\n"
 		}
 		if let externalLink = article.externalLink {
 			s += "external URL: \(externalLink)\n\n"
