@@ -19,10 +19,10 @@ public struct Article: Hashable {
 	public let title: String?
 	public let contentHTML: String?
 	public let contentText: String?
-	public let url: String?
-	public let externalURL: String?
+	public let rawLink: String? // We store raw source value, but use computed url or link other than where raw value required.
+    public let rawExternalLink: String? // We store raw source value, but use computed externalURL or externalLink other than where raw value required.
 	public let summary: String?
-	public let imageURL: String?
+	public let rawImageLink: String? // We store raw source value, but use computed imageURL or imageLink other than where raw value required.
 	public let datePublished: Date?
 	public let dateModified: Date?
 	public let authors: Set<Author>?
@@ -35,10 +35,10 @@ public struct Article: Hashable {
 		self.title = title
 		self.contentHTML = contentHTML
 		self.contentText = contentText
-		self.url = url
-		self.externalURL = externalURL
+		self.rawLink = url
+		self.rawExternalLink = externalURL
 		self.summary = summary
-		self.imageURL = imageURL
+		self.rawImageLink = imageURL
 		self.datePublished = datePublished
 		self.dateModified = dateModified
 		self.authors = authors
@@ -65,7 +65,7 @@ public struct Article: Hashable {
 	// MARK: - Equatable
 
 	static public func ==(lhs: Article, rhs: Article) -> Bool {
-		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.webFeedID == rhs.webFeedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.url == rhs.url && lhs.externalURL == rhs.externalURL && lhs.summary == rhs.summary && lhs.imageURL == rhs.imageURL && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
+		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.webFeedID == rhs.webFeedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.rawLink == rhs.rawLink && lhs.rawExternalLink == rhs.rawExternalLink && lhs.summary == rhs.summary && lhs.rawImageLink == rhs.rawImageLink && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
 	}
 }
 

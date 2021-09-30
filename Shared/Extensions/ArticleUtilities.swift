@@ -46,26 +46,48 @@ extension Article {
 		return account?.existingWebFeed(withWebFeedID: webFeedID)
 	}
 	
+	var url: URL? {
+		return URL.reparingIfRequired(rawLink)
+	}
+	
+	var externalURL: URL? {
+		return URL.reparingIfRequired(rawExternalLink)
+	}
+	
+	var imageURL: URL? {
+		return URL.reparingIfRequired(rawImageLink)
+	}
+	
+	var link: String? {
+		// Prefer link from URL, if one can be created, as these are repaired if required.
+		// Provide the raw link if URL creation fails.
+		return url?.absoluteString ?? rawLink
+	}
+	
+	var externalLink: String? {
+		// Prefer link from externalURL, if one can be created, as these are repaired if required.
+		// Provide the raw link if URL creation fails.
+		return externalURL?.absoluteString ?? rawExternalLink
+	}
+
+	var imageLink: String? {
+		// Prefer link from imageURL, if one can be created, as these are repaired if required.
+		// Provide the raw link if URL creation fails.
+		return imageURL?.absoluteString ?? rawImageLink
+	}
+
 	var preferredLink: String? {
-		if let url = url, !url.isEmpty {
-			return url
+		if let link = link, !link.isEmpty {
+			return link
 		}
-		if let externalURL = externalURL, !externalURL.isEmpty {
-			return externalURL
+		if let externalLink = externalLink, !externalLink.isEmpty {
+			return externalLink
 		}
 		return nil
 	}
 	
 	var preferredURL: URL? {
-		guard let link = preferredLink else { return nil }
-		// If required, we replace any space characters to handle malformed links that are otherwise percent
-		// encoded but contain spaces. For performance reasons, only try this if initial URL init fails.
-		if let url = URL(string: link) {
-			return url
-		} else if let url = URL(string: link.replacingOccurrences(of: " ", with: "%20")) {
-			return url
-		}
-		return nil
+		return url ?? externalURL
 	}
 	
 	var body: String? {

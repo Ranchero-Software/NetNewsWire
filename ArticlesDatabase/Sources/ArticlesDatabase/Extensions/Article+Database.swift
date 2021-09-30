@@ -71,7 +71,7 @@ extension Article {
 		if authors.isEmpty {
 			return self
 		}
-		return Article(accountID: self.accountID, articleID: self.articleID, webFeedID: self.webFeedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, url: self.url, externalURL: self.externalURL, summary: self.summary, imageURL: self.imageURL, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
+		return Article(accountID: self.accountID, articleID: self.articleID, webFeedID: self.webFeedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, url: self.rawLink, externalURL: self.rawExternalLink, summary: self.summary, imageURL: self.rawImageLink, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
 	}
 
 	func changesFrom(_ existingArticle: Article) -> DatabaseDictionary? {
@@ -87,10 +87,10 @@ extension Article {
 		addPossibleStringChangeWithKeyPath(\Article.title, existingArticle, DatabaseKey.title, &d)
 		addPossibleStringChangeWithKeyPath(\Article.contentHTML, existingArticle, DatabaseKey.contentHTML, &d)
 		addPossibleStringChangeWithKeyPath(\Article.contentText, existingArticle, DatabaseKey.contentText, &d)
-		addPossibleStringChangeWithKeyPath(\Article.url, existingArticle, DatabaseKey.url, &d)
-		addPossibleStringChangeWithKeyPath(\Article.externalURL, existingArticle, DatabaseKey.externalURL, &d)
+		addPossibleStringChangeWithKeyPath(\Article.rawLink, existingArticle, DatabaseKey.url, &d)
+		addPossibleStringChangeWithKeyPath(\Article.rawExternalLink, existingArticle, DatabaseKey.externalURL, &d)
 		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, &d)
-		addPossibleStringChangeWithKeyPath(\Article.imageURL, existingArticle, DatabaseKey.imageURL, &d)
+		addPossibleStringChangeWithKeyPath(\Article.rawImageLink, existingArticle, DatabaseKey.imageURL, &d)
 
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
@@ -154,17 +154,17 @@ extension Article: DatabaseObject {
 		if let contentText = contentText {
 			d[DatabaseKey.contentText] = contentText
 		}
-		if let url = url {
-			d[DatabaseKey.url] = url
+		if let rawLink = rawLink {
+			d[DatabaseKey.url] = rawLink
 		}
-		if let externalURL = externalURL {
-			d[DatabaseKey.externalURL] = externalURL
+		if let rawExternalLink = rawExternalLink {
+			d[DatabaseKey.externalURL] = rawExternalLink
 		}
 		if let summary = summary {
 			d[DatabaseKey.summary] = summary
 		}
-		if let imageURL = imageURL {
-			d[DatabaseKey.imageURL] = imageURL
+		if let rawImageLink = rawImageLink {
+			d[DatabaseKey.imageURL] = rawImageLink
 		}
 		if let datePublished = datePublished {
 			d[DatabaseKey.datePublished] = datePublished
