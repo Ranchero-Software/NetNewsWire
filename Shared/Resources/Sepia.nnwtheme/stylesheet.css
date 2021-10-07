@@ -46,7 +46,7 @@ a:hover {
 	--block-quote-border-color: rgba(0, 0, 0, 0.3);
 }
 
-body a, body a:visited {
+body a, body a:visited, body a * {
 	color: var(--secondary-accent-color);
 }
 

@@ -456,7 +456,7 @@ a.footnote:hover,
 		}
 	}
 
-	body a, body a:visited {
+	body a, body a:visited, body a * {
 		color: var(--secondary-accent-color);
 	}
 
@@ -522,7 +522,7 @@ a.footnote:hover,
 		}
 	}
 
-	body a, body a:visited {
+	body a, body a:visited, body a * {
 		color: var(--accent-color);
 	}
 
