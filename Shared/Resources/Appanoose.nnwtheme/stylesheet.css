@@ -55,11 +55,13 @@ a:hover {
 
 .nnwDate {
 	white-space: nowrap;
+	color: var(--body-code-color);
 }
 
 .nnwTime {
 	white-space: nowrap;
 	font-size: 66%;
+	color: var(--body-code-color);
 }
 
 .nnwDateTime {
