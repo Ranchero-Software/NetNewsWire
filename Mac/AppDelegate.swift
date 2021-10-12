@@ -933,8 +933,8 @@ internal extension AppDelegate {
 				let localizedError = NSLocalizedString("This theme cannot be used because the the key—“%@”—is not found in the Info.plist.", comment: "Decoding key missing")
 				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, codingKey.stringValue) as String
 			case .dataCorrupted(let context):
-				guard let error = context.underlyingError as NSError?,
-					  let debugDescription = error.userInfo["NSDebugDescription"] as? String else {
+				guard let underlyingError = context.underlyingError as NSError?,
+					  let debugDescription = underlyingError.userInfo["NSDebugDescription"] as? String else {
 					informativeText = error.localizedDescription
 					break
 				}
