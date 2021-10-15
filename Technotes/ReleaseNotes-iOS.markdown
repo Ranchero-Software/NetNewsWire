@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.0.2 Release - 15 Oct 2021
+
+Makes a particular crash on startup, that happens only on iPad, far less likely.
+
 ### 6.0.2 TestFlight build 610 - 25 Sep 2021
 
 Fixed bug with state restoration on launch (bug introduced in previous TestFlight build)
