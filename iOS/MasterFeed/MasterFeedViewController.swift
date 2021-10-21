@@ -119,7 +119,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 
 		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
-		tableView.reloadRows(at: [indexPath], with: .middle)
+		tableView.reloadRows(at: [indexPath], with: .none)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -863,7 +863,7 @@ private extension MasterFeedViewController {
 
 	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
 		guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
-		tableView.reloadRows(at: indexPaths, with: .middle)
+		tableView.reloadRows(at: indexPaths, with: .none)
 	}
 	
 	private func accountForNode(_ node: Node) -> Account? {
