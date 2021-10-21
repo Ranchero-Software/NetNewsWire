@@ -89,7 +89,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 		IconImageCache.shared.emptyCache()
 		super.traitCollectionDidChange(previousTraitCollection)
-//		reloadAllVisibleCells()
+		reloadAllVisibleCells()
 	}
 
 	// MARK: Notifications
