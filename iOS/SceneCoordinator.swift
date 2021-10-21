@@ -19,6 +19,7 @@ enum PanelMode {
 	case three
 	case standard
 }
+
 enum SearchScope: Int {
 	case timeline = 0
 	case global = 1
@@ -30,7 +31,21 @@ enum ShowFeedName {
 	case feed
 }
 
-class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
+struct FeedNode: Hashable {
+	var node: Node
+	var feedID: FeedIdentifier
+	
+	init(_ node: Node) {
+		self.node = node
+		self.feedID = (node.representedObject as! Feed).feedID!
+	}
+	
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(feedID)
+	}
+}
+
+class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
@@ -74,7 +89,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	
 	private var expandedTable = Set<ContainerIdentifier>()
 	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
-	private var shadowTable = [[Node]]()
+	private var shadowTable = [[FeedNode]]()
 	
 	private(set) var preSearchTimelineFeed: Feed?
 	private var lastSearchString = ""
@@ -285,20 +300,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	}
 
 	var isTimelineUnreadAvailable: Bool {
-		return unreadCount > 0
+		return timelineUnreadCount > 0
 	}
 	
 	var isAnyUnreadAvailable: Bool {
 		return appDelegate.unreadCount > 0
 	}
 	
-	var unreadCount: Int = 0 {
-		didSet {
-			if unreadCount != oldValue {
-				postUnreadCountDidChangeNotification()
-			}
-		}
-	}
+	var timelineUnreadCount: Int = 0
 	
 	override init() {
 		treeController = TreeController(delegate: treeControllerDelegate)
@@ -307,7 +316,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
-			shadowTable.append([Node]())
+			shadowTable.append([FeedNode]())
 		}
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
@@ -650,20 +659,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 		
 		refreshTimeline(resetScroll: false)
 	}
-	
-	func shadowNodesFor(section: Int) -> [Node] {
-		return shadowTable[section]
-	}
-	
-	func nodeFor(containerID: ContainerIdentifier) -> Node? {
-		return treeController.rootNode.descendantNode(where: { node in
-			if let container = node.representedObject as? Container {
-				return container.containerID == containerID
-			} else {
-				return false
-			}
-		})
-	}
 
 	func nodeFor(feedID: FeedIdentifier) -> Node? {
 		return treeController.rootNode.descendantNode(where: { node in
@@ -673,6 +668,30 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 				return false
 			}
 		})
+	}
+	
+	func numberOfSections() -> Int {
+		return shadowTable.count
+	}
+	
+	func numberOfRows(in section: Int) -> Int {
+		return shadowTable[section].count
+	}
+	
+	func nodeFor(_ indexPath: IndexPath) -> Node? {
+		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
+			return nil
+		}
+		return shadowTable[indexPath.section][indexPath.row].node
+	}
+	
+	func indexPathFor(_ node: Node) -> IndexPath? {
+		for i in 0..<shadowTable.count {
+			if let row = shadowTable[i].firstIndex(of: FeedNode(node)) {
+				return IndexPath(row: row, section: i)
+			}
+		}
+		return nil
 	}
 	
 	func articleFor(_ articleID: String) -> Article? {
@@ -689,7 +708,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, UnreadCountProvider {
 	func unreadCountFor(_ node: Node) -> Int {
 		// The coordinator supplies the unread count for the currently selected feed
 		if node.representedObject === timelineFeed as AnyObject {
-			return unreadCount
+			return timelineUnreadCount
 		}
 		if let unreadCountProvider = node.representedObject as? UnreadCountProvider {
 			return unreadCountProvider.unreadCount
@@ -1430,7 +1449,7 @@ private extension SceneCoordinator {
 				count += 1
 			}
 		}
-		unreadCount = count
+		timelineUnreadCount = count
 	}
 	
 	func rebuildArticleDictionaries() {
@@ -1483,8 +1502,8 @@ private extension SceneCoordinator {
 	
 	func addShadowTableToFilterExceptions() {
 		for section in shadowTable {
-			for node in section {
-				if let feed = node.representedObject as? Feed, let feedID = feed.feedID {
+			for feedNode in section {
+				if let feed = feedNode.node.representedObject as? Feed, let feedID = feed.feedID {
 					treeControllerDelegate.addFilterException(feedID)
 				}
 			}
@@ -1501,51 +1520,81 @@ private extension SceneCoordinator {
 	
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
 		if !BatchUpdate.shared.isPerforming {
-			
 			addToFilterExeptionsIfNecessary(timelineFeed)
 			treeController.rebuild()
 			treeControllerDelegate.resetFilterExceptions()
 			
 			updateExpandedNodes?()
-			rebuildShadowTable()
-			masterFeedViewController.reloadFeeds(initialLoad: initialLoad, completion: completion)
-			
+			let changes = rebuildShadowTable()
+			masterFeedViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
 		}
 	}
 	
-	func rebuildShadowTable() {
-		shadowTable = [[Node]]()
+	func rebuildShadowTable() -> [ShadowTableChanges] {
+		var newShadowTable = [[FeedNode]]()
 
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
 			
-			var result = [Node]()
+			var result = [FeedNode]()
 			let sectionNode = treeController.rootNode.childAtIndex(i)!
 			
 			if isExpanded(sectionNode) {
 				for node in sectionNode.childNodes {
-					result.append(node)
+					result.append(FeedNode(node))
 					if isExpanded(node) {
 						for child in node.childNodes {
-							result.append(child)
+							result.append(FeedNode(child))
 						}
 					}
 				}
 			}
 			
-			shadowTable.append(result)
-			
+			newShadowTable.append(result)
 		}
 		
 		// If we have a current Feed IndexPath it is no longer valid and needs reset.
 		if currentFeedIndexPath != nil {
 			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
+		
+		// Compute the differences in the shadow tables
+		var changes = [ShadowTableChanges]()
+		
+		for (index, newSectionNodes) in newShadowTable.enumerated() {
+			var moves = Set<ShadowTableChanges.Move>()
+			var inserts = Set<Int>()
+			var deletes = Set<Int>()
+			
+			let diff = newSectionNodes.difference(from: shadowTable[index]).inferringMoves()
+			for change in diff {
+				switch change {
+				case .insert(let offset, _, let associated):
+					if let associated = associated {
+						moves.insert(ShadowTableChanges.Move(associated, offset))
+					} else {
+						inserts.insert(offset)
+					}
+				case .remove(let offset, _, let associated):
+					if let associated = associated {
+						moves.insert(ShadowTableChanges.Move(offset, associated))
+					} else {
+						deletes.insert(offset)
+					}
+				}
+			}
+			
+			changes.append(ShadowTableChanges(section: index, deletes: deletes, inserts: inserts, moves: moves))
+		}
+		
+		shadowTable = newShadowTable
+		
+		return changes
 	}
 	
 	func shadowTableContains(_ feed: Feed) -> Bool {
 		for section in shadowTable {
-			for node in section {
-				if let nodeFeed = node.representedObject as? Feed, nodeFeed.feedID == feed.feedID {
+			for feedNode in section {
+				if let nodeFeed = feedNode.node.representedObject as? Feed, nodeFeed.feedID == feed.feedID {
 					return true
 				}
 			}
@@ -1557,22 +1606,6 @@ private extension SceneCoordinator {
 		if let feed = timelineFeed, !shadowTableContains(feed) {
 			selectFeed(nil, deselectArticle: true)
 		}
-	}
-
-	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].count else {
-			return nil
-		}
-		return shadowTable[indexPath.section][indexPath.row]
-	}
-	
-	func indexPathFor(_ node: Node) -> IndexPath? {
-		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].firstIndex(of: node) {
-				return IndexPath(row: row, section: i)
-			}
-		}
-		return nil
 	}
 
 	func indexPathFor(_ object: AnyObject) -> IndexPath? {

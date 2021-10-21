@@ -688,7 +688,7 @@ private extension MasterTimelineViewController {
 	
 	func updateTitleUnreadCount() {
 		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
-			titleView.unreadCountView.unreadCount = coordinator.unreadCount
+			titleView.unreadCountView.unreadCount = coordinator.timelineUnreadCount
 		}
 	}
 	

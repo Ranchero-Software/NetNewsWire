@@ -22,24 +22,22 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 			
-		guard let destIdentifier = dataSource.itemIdentifier(for: destIndexPath) else {
-			return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
-		}
-		
-		guard let destAccount = destIdentifier.account,	let destCell = tableView.cellForRow(at: destIndexPath) else {
-			return UITableViewDropProposal(operation: .forbidden)
-		}
+		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? Feed,
+			  let destAccount = destFeed.account,
+			  let destCell = tableView.cellForRow(at: destIndexPath) else {
+				  return UITableViewDropProposal(operation: .forbidden)
+			  }
 
 		// Validate account specific behaviors...
 		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
-		   let sourceFeedID = (session.localDragSession?.items.first?.localObject as? MasterFeedTableViewIdentifier)?.feedID,
-		   let sourceWebFeed = AccountManager.shared.existingFeed(with: sourceFeedID) as? WebFeed,
+		   let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
+		   let sourceWebFeed = sourceNode.representedObject as? WebFeed,
 		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasWebFeed(withURL: sourceWebFeed.url) {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 
 		// Determine the correct drop proposal
-		if destIdentifier.isFolder {
+		if destFeed is Folder {
 			if session.location(in: destCell).y >= 0 {
 				return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
 			} else {
@@ -53,30 +51,29 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	
 	func tableView(_ tableView: UITableView, performDropWith dropCoordinator: UITableViewDropCoordinator) {
 		guard let dragItem = dropCoordinator.items.first?.dragItem,
-			let sourceIdentifier = dragItem.localObject as? MasterFeedTableViewIdentifier,
-			let sourceParentContainerID = sourceIdentifier.parentContainerID,
-			let source = AccountManager.shared.existingContainer(with: sourceParentContainerID),
-			let destIndexPath = dropCoordinator.destinationIndexPath else {
-				return
-		}
+			  let dragNode = dragItem.localObject as? Node,
+			  let source = dragNode.parent?.representedObject as? Container,
+			  let destIndexPath = dropCoordinator.destinationIndexPath else {
+				  return
+			  }
 		
 		let isFolderDrop: Bool = {
-			if let propDestIdentifier = dataSource.itemIdentifier(for: destIndexPath), let propCell = tableView.cellForRow(at: destIndexPath) {
-				return propDestIdentifier.isFolder && dropCoordinator.session.location(in: propCell).y >= 0
+			if coordinator.nodeFor(destIndexPath)?.representedObject is Folder, let propCell = tableView.cellForRow(at: destIndexPath) {
+				return dropCoordinator.session.location(in: propCell).y >= 0
 			}
 			return false
 		}()
 		
 		// Based on the drop we have to determine a node to start looking for a parent container.
-		let destIdentifier: MasterFeedTableViewIdentifier? = {
+		let destNode: Node? = {
 			
 			if isFolderDrop {
-				return dataSource.itemIdentifier(for: destIndexPath)
+				return coordinator.nodeFor(destIndexPath)
 			} else {
 				if destIndexPath.row == 0 {
-					return dataSource.itemIdentifier(for: IndexPath(row: 0, section: destIndexPath.section))
+					return coordinator.nodeFor(IndexPath(row: 0, section: destIndexPath.section))
 				} else if destIndexPath.row > 0 {
-					return dataSource.itemIdentifier(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))
+					return coordinator.nodeFor(IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))
 				} else {
 					return nil
 				}
@@ -86,25 +83,21 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 
 		// Now we start looking for the parent container
 		let destinationContainer: Container? = {
-			if let containerID = destIdentifier?.containerID ?? destIdentifier?.parentContainerID {
-				return AccountManager.shared.existingContainer(with: containerID)
+			if let container = (destNode?.representedObject as? Container) ?? (destNode?.parent?.representedObject as? Container) {
+				return container
 			} else {
 				// If we got here, we are trying to drop on an empty section header.  Go and find the Account for this section
 				return coordinator.rootNode.childAtIndex(destIndexPath.section)?.representedObject as? Account
 			}
 		}()
 		
-		guard let destination = destinationContainer else { return }
-		guard case .webFeed(_, let webFeedID) = sourceIdentifier.feedID else { return }
-		guard let webFeed = source.existingWebFeed(withWebFeedID: webFeedID) else { return }
+		guard let destination = destinationContainer, let webFeed = dragNode.representedObject as? WebFeed else { return }
 		
 		if source.account == destination.account {
 			moveWebFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		} else {
 			moveWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		}
-
-
 	}
 
 	func moveWebFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
