@@ -177,21 +177,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var exceptionArticleFetcher: ArticleFetcher?
 	private(set) var timelineFeed: Feed?
 	
-	// We have to defer the selecting of the feed and article due to a behavior (bug?) in iOS 15.
-	// iOS 15 will crash if you are in landscape on an iPad and are restoring article state. We
-	// have no idea why this is, but it happens when you do a select on a UITableView right before
-	// doing a diffable datasource apply.
-	//
-	// Steps to recreate:
-	//
-	// * Try to relaunch the app in the sim.
-	// * Press the Stop button in Xcode
-	// * Wait for all the app suspension activities to complete (widget data, etc)
-	// * Once the article has loaded, navigate to the iPad home screen
-	// * While in landscape, select a feed and then select an article
-	// * Install a fresh build of NNW to an iPad simulator (11 or 12.9' will do) running iPadOS 15
-	private var deferredFeedAndArticleSelect: (feedIdentifier: FeedIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int)?
-	
 	var timelineMiddleIndexPath: IndexPath?
 	
 	private(set) var showFeedNames = ShowFeedName.none
@@ -467,15 +452,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			return
 		}
 		
-		rebuildBackingStores(initialLoad: true, completion:  {
-			if let (feedIdentifier, articleID, isShowingExtractedArticle, articleWindowScrollY) = self.deferredFeedAndArticleSelect,
-			   let feedNode = self.nodeFor(feedID: feedIdentifier),
-			   let feedIndexPath = self.indexPathFor(feedNode) {
-				self.selectFeed(indexPath: feedIndexPath) {
-					self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
-				}
-			}
-		})
+		if isReadFeedsFiltered {
+			rebuildBackingStores()
+		}
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -2324,14 +2303,14 @@ private extension SceneCoordinator {
 			return false
 
 		case .smartFeed, .folder:
-			let found = deferSelectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
 			}
 			return found
 		
 		case .webFeed:
-			let found = deferSelectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(feedIdentifier)
 				if let webFeedNode = nodeFor(feedID: feedIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
@@ -2370,15 +2349,11 @@ private extension SceneCoordinator {
 		return nil
 	}
 	
-	func deferSelectFeedAndArticle(feedIdentifier: FeedIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+	func selectFeedAndArticle(feedIdentifier: FeedIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
 		guard let feedNode = nodeFor(feedID: feedIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
 		
-		if AccountManager.shared.isUnreadCountsInitialized {
-			selectFeed(indexPath: feedIndexPath) {
-				self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
-			}
-		} else {
-			deferredFeedAndArticleSelect = (feedIdentifier, articleID, isShowingExtractedArticle, articleWindowScrollY)
+		selectFeed(indexPath: feedIndexPath) {
+			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 		}
 		
 		return true
