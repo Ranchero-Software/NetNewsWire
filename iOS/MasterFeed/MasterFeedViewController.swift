@@ -572,7 +572,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 
-	func reloadFeeds(initialLoad: Bool, changes: [ShadowTableChanges], completion: (() -> Void)? = nil) {
+	func reloadFeeds(initialLoad: Bool, changes: ShadowTableChanges, completion: (() -> Void)? = nil) {
 		updateUI()
 
 		guard !initialLoad else {
@@ -581,26 +581,36 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		for change in changes {
-			guard !change.isEmpty else { continue }
+		tableView.performBatchUpdates {
+			if let deletes = changes.deletes, !deletes.isEmpty {
+				tableView.deleteSections(IndexSet(deletes), with: .middle)
+			}
 			
-			tableView.performBatchUpdates {
-				if let deletes = change.deleteIndexPaths, !deletes.isEmpty {
-					tableView.deleteRows(at: deletes, with: .middle)
+			if let inserts = changes.inserts, !inserts.isEmpty {
+				tableView.insertSections(IndexSet(inserts), with: .middle)
+			}
+			
+			if let moves = changes.moves, !moves.isEmpty {
+				for move in moves {
+					tableView.moveSection(move.from, toSection: move.to)
 				}
-				
-				if let inserts = change.insertIndexPaths, !inserts.isEmpty {
-					tableView.insertRows(at: inserts, with: .middle)
-				}
-				
-				if let moves = change.moveIndexPaths, !moves.isEmpty {
-					for move in moves {
-						tableView.moveRow(at: move.0, to: move.1)
+			}
+
+			if let rowChanges = changes.rowChanges {
+				for rowChange in rowChanges {
+					if let deletes = rowChange.deleteIndexPaths, !deletes.isEmpty {
+						tableView.deleteRows(at: deletes, with: .middle)
 					}
-				}
-				
-				if let reloads = change.reloadIndexPaths, !reloads.isEmpty {
-					tableView.reloadRows(at: reloads, with: .middle)
+					
+					if let inserts = rowChange.insertIndexPaths, !inserts.isEmpty {
+						tableView.insertRows(at: inserts, with: .middle)
+					}
+					
+					if let moves = rowChange.moveIndexPaths, !moves.isEmpty {
+						for move in moves {
+							tableView.moveRow(at: move.0, to: move.1)
+						}
+					}
 				}
 			}
 		}

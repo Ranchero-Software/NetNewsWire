@@ -2071,6 +2071,7 @@
 				51627A6823861DED007B3B4B /* MasterFeedViewController+Drop.swift */,
 				51CE1C0A23622006005548FC /* RefreshProgressView.swift */,
 				51CE1C0823621EDA005548FC /* RefreshProgressView.xib */,
+				5195C1D92720205F00888867 /* ShadowTableChanges.swift */,
 				51C45260226508F600C03939 /* Cell */,
 			);
 			path = MasterFeed;
@@ -2691,7 +2692,6 @@
 				840D617E2029031C009BC708 /* AppDelegate.swift */,
 				519E743422C663F900A78E47 /* SceneDelegate.swift */,
 				5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */,
-				5195C1D92720205F00888867 /* ShadowTableChanges.swift */,
 				514B7C8223205EFB00BAC947 /* RootSplitViewController.swift */,
 				511D4410231FC02D00FB1562 /* KeyboardManager.swift */,
 				51C45254226507D200C03939 /* AppAssets.swift */,
