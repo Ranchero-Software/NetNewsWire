@@ -87,9 +87,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 	
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+		super.traitCollectionDidChange(previousTraitCollection)
 		if traitCollection.preferredContentSizeCategory != previousTraitCollection?.preferredContentSizeCategory {
 			IconImageCache.shared.emptyCache()
-			super.traitCollectionDidChange(previousTraitCollection)
 			reloadAllVisibleCells()
 		}
 	}
