@@ -816,6 +816,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.activityManager.selecting(feed: feed)
 			self.installTimelineControllerIfNecessary(animated: animations.contains(.navigation))
 			setTimelineFeed(feed, animated: false) {
+				if self.isReadFeedsFiltered {
+					self.rebuildBackingStores()
+				}
 				completion?()
 			}
 			
