@@ -122,6 +122,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 
 		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
 		tableView.reloadRows(at: [indexPath], with: .none)
+		restoreSelectionIfNecessary(adjustScroll: false)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -866,6 +867,7 @@ private extension MasterFeedViewController {
 	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
 		guard let indexPaths = tableView.indexPathsForVisibleRows else { return }
 		tableView.reloadRows(at: indexPaths, with: .none)
+		restoreSelectionIfNecessary(adjustScroll: false)
 	}
 	
 	private func accountForNode(_ node: Node) -> Account? {
