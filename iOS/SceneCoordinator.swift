@@ -511,23 +511,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	@objc func accountStateDidChange(_ note: Notification) {
-		let expandNewlyActivatedAccount = {
-			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
-				account.isActive,
-				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
-					self.markExpanded(node)
-			}
-		}
-
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
 				self.masterTimelineViewController?.reinitializeArticles(resetScroll: false)
-				self.rebuildBackingStores(updateExpandedNodes: expandNewlyActivatedAccount)
+				self.rebuildBackingStores()
 			}
 		} else {
-			self.rebuildBackingStores(updateExpandedNodes: expandNewlyActivatedAccount)
+			self.rebuildBackingStores()
 		}
-		
 	}
 	
 	@objc func userDidAddAccount(_ note: Notification) {
