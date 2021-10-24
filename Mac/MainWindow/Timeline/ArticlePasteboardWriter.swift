@@ -25,7 +25,7 @@ extension Article: PasteboardWriterOwner {
 	static let articleUTIInternalType = NSPasteboard.PasteboardType(rawValue: articleUTIInternal)
 
 	private lazy var renderedHTML: String = {
-		let rendering = ArticleRenderer.articleHTML(article: article, style: ArticleStylesManager.shared.currentStyle)
+		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
 		return rendering.html
 	}()
 
@@ -87,11 +87,11 @@ private extension ArticlePasteboardWriter {
 			s += "\(convertedHTML)\n\n"
 		}
 
-		if let url = article.url {
-			s += "URL: \(url)\n\n"
+		if let link = article.link {
+			s += "URL: \(link)\n\n"
 		}
-		if let externalURL = article.externalURL {
-			s += "external URL: \(externalURL)\n\n"
+		if let externalLink = article.externalLink {
+			s += "external URL: \(externalLink)\n\n"
 		}
 
 		s += "Date: \(article.logicalDatePublished)\n\n"
@@ -151,10 +151,10 @@ private extension ArticlePasteboardWriter {
 		d[Key.title] = article.title ?? nil
 		d[Key.contentHTML] = article.contentHTML ?? nil
 		d[Key.contentText] = article.contentText ?? nil
-		d[Key.url] = article.url ?? nil
-		d[Key.externalURL] = article.externalURL ?? nil
+		d[Key.url] = article.rawLink ?? nil
+		d[Key.externalURL] = article.rawExternalLink ?? nil
 		d[Key.summary] = article.summary ?? nil
-		d[Key.imageURL] = article.imageURL ?? nil
+		d[Key.imageURL] = article.rawImageLink ?? nil
 		d[Key.datePublished] = article.datePublished ?? nil
 		d[Key.dateModified] = article.dateModified ?? nil
 		d[Key.dateArrived] = article.status.dateArrived

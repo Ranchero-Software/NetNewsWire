@@ -113,7 +113,7 @@ function flattenPreElements() {
 
 function reloadArticleImage(imageSrc) {
 	var image = document.getElementById("nnwImageIcon");
-	image.src = imageSrc;
+	image.src = imageSrc + "?" + new Date().getTime();
 }
 
 function stopMediaPlayback() {
@@ -130,12 +130,6 @@ function stopMediaPlayback() {
 			element.pause();
 		}
 	});
-}
-
-function updateTextSize(cssClass) {
-	var bodyElement = document.getElementById("bodyContainer");
-	bodyElement.classList.remove("smallText", "mediumText", "largeText", "xLargeText", "xxLargeText");
-	bodyElement.classList.add(cssClass);
 }
 
 function error() {

@@ -37,15 +37,78 @@ struct ArticleRenderer {
 	
 	private let article: Article?
 	private let extractedArticle: ExtractedArticle?
-	private let articleStyle: ArticleStyle
+	private let articleTheme: ArticleTheme
 	private let title: String
 	private let body: String
 	private let baseURL: String?
+	
+	private static let longDateTimeFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .long
+		formatter.timeStyle = .medium
+		return formatter
+	}()
 
-	private init(article: Article?, extractedArticle: ExtractedArticle?, style: ArticleStyle) {
+	private static let mediumDateTimeFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .medium
+		formatter.timeStyle = .short
+		return formatter
+	}()
+
+	private static let shortDateTimeFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .short
+		formatter.timeStyle = .short
+		return formatter
+	}()
+
+	private static let longDateFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .long
+		formatter.timeStyle = .none
+		return formatter
+	}()
+
+	private static let mediumDateFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .medium
+		formatter.timeStyle = .none
+		return formatter
+	}()
+
+	private static let shortDateFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .short
+		formatter.timeStyle = .none
+		return formatter
+	}()
+
+	private static let longTimeFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .none
+		formatter.timeStyle = .long
+		return formatter
+	}()
+
+	private static let mediumTimeFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .none
+		formatter.timeStyle = .medium
+		return formatter
+	}()
+
+	private static let shortTimeFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .none
+		formatter.timeStyle = .short
+		return formatter
+	}()
+
+	private init(article: Article?, extractedArticle: ExtractedArticle?, theme: ArticleTheme) {
 		self.article = article
 		self.extractedArticle = extractedArticle
-		self.articleStyle = style
+		self.articleTheme = theme
 		self.title = article?.sanitizedTitle() ?? ""
 		if let content = extractedArticle?.content {
 			self.body = content
@@ -58,28 +121,28 @@ struct ArticleRenderer {
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, style: style)
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, theme: theme)
 		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
-	static func multipleSelectionHTML(style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+	static func multipleSelectionHTML(theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.multipleSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
-	static func loadingHTML(style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+	static func loadingHTML(theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.loadingHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
-	static func noSelectionHTML(style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+	static func noSelectionHTML(theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
 	
-	static func noContentHTML(style: ArticleStyle) -> Rendering {
-		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, style: style)
+	static func noContentHTML(theme: ArticleTheme) -> Rendering {
+		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
 	}
 }
@@ -128,18 +191,11 @@ private extension ArticleRenderer {
 	}()
 
 	func styleString() -> String {
-		return articleStyle.css ?? ArticleRenderer.defaultStyleSheet
+		return articleTheme.css ?? ArticleRenderer.defaultStyleSheet
 	}
 
 	func template() -> String {
-		return articleStyle.template ?? ArticleRenderer.defaultTemplate
-	}
-
-	func titleOrTitleLink() -> String {
-		if let link = article?.preferredLink {
-			return title.htmlByAddingLink(link)
-		}
-		return title
+		return articleTheme.template ?? ArticleRenderer.defaultTemplate
 	}
 
 	func articleSubstitutions() -> [String: String] {
@@ -150,15 +206,16 @@ private extension ArticleRenderer {
 			return d
 		}
 		
-		let title = titleOrTitleLink()
 		d["title"] = title
+		d["preferred_link"] = article.preferredLink ?? ""
 		
-		if let externalLink = article.externalURL, externalLink != article.preferredLink {
-			let displayLink = externalLink.strippingHTTPOrHTTPSScheme
-			let regarding = NSLocalizedString("Link", comment: "Link")
-			let externalLinkString = "\(regarding): <a href=\"\(externalLink)\">\(displayLink)</a>"
-			d["external_link"] = externalLinkString
+		if let externalLink = article.externalLink, externalLink != article.preferredLink {
+			d["external_link_label"] = NSLocalizedString("Link:", comment: "Link")
+			d["external_link_stripped"] = externalLink.strippingHTTPOrHTTPSScheme
+			d["external_link"] = externalLink
 		} else {
+			d["external_link_label"] = ""
+			d["external_link_stripped"] = ""
 			d["external_link"] = ""
 		}
 		
@@ -172,10 +229,10 @@ private extension ArticleRenderer {
 		components.scheme = Self.imageIconScheme
 		components.path = article.articleID
 		if let imageIconURLString = components.string {
-			d["avatars"] = "<td class=\"header rightAlign avatar\"><img id=\"nnwImageIcon\" src=\"\(imageIconURLString)\" height=48 width=48 /></td>"
+			d["avatar_src"] = imageIconURLString
 		}
 		else {
-			d["avatars"] = ""
+			d["avatar_src"] = ""
 		}
 		
 		if self.title.isEmpty {
@@ -184,32 +241,21 @@ private extension ArticleRenderer {
 			d["dateline_style"] = "articleDateline"
 		}
 
-		var feedLink = ""
-		if let feedTitle = article.webFeed?.nameForDisplay {
-			feedLink = feedTitle
-			if let feedURL = article.webFeed?.homePageURL {
-				feedLink = feedLink.htmlByAddingLink(feedURL, className: "feedLink")
-			}
-		}
-		d["feedlink"] = feedLink
-
-		let datePublished = article.logicalDatePublished
-		let longDate = dateString(datePublished, .long, .medium)
-		let mediumDate = dateString(datePublished, .medium, .short)
-		let shortDate = dateString(datePublished, .short, .short)
-
-		if let permalink = article.url {
-			d["date_long"] = longDate.htmlByAddingLink(permalink)
-			d["date_medium"] = mediumDate.htmlByAddingLink(permalink)
-			d["date_short"] = shortDate.htmlByAddingLink(permalink)
-		}
-		else {
-			d["date_long"] = longDate
-			d["date_medium"] = mediumDate
-			d["date_short"] = shortDate
-		}
+		d["feed_link_title"] = article.webFeed?.nameForDisplay ?? ""
+		d["feed_link"] = article.webFeed?.homePageURL ?? ""
 
 		d["byline"] = byline()
+
+		let datePublished = article.logicalDatePublished
+		d["datetime_long"] = Self.longDateTimeFormatter.string(from: datePublished)
+		d["datetime_medium"] = Self.mediumDateTimeFormatter.string(from: datePublished)
+		d["datetime_short"] = Self.shortDateTimeFormatter.string(from: datePublished)
+		d["date_long"] = Self.longDateFormatter.string(from: datePublished)
+		d["date_medium"] = Self.mediumDateFormatter.string(from: datePublished)
+		d["date_short"] = Self.shortDateFormatter.string(from: datePublished)
+		d["time_long"] = Self.longTimeFormatter.string(from: datePublished)
+		d["time_medium"] = Self.mediumTimeFormatter.string(from: datePublished)
+		d["time_short"] = Self.shortTimeFormatter.string(from: datePublished)
 
 		return d
 	}
@@ -265,13 +311,6 @@ private extension ArticleRenderer {
 		return byline
 	}
 
-	func dateString(_ date: Date, _ dateStyle: DateFormatter.Style, _ timeStyle: DateFormatter.Style) -> String {
-		let dateFormatter = DateFormatter()
-		dateFormatter.dateStyle = dateStyle
-		dateFormatter.timeStyle = timeStyle
-		return dateFormatter.string(from: date)
-	}
-	
 	#if os(iOS)
 	func styleSubstitutions() -> [String: String] {
 		var d = [String: String]()
@@ -292,7 +331,7 @@ private extension ArticleRenderer {
 private extension Article {
 
 	var baseURL: URL? {
-		var s = url
+		var s = link
 		if s == nil {
 			s = webFeed?.homePageURL
 		}

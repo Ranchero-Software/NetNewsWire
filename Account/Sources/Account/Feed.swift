@@ -17,6 +17,7 @@ public enum ReadFilterType {
 
 public protocol Feed: FeedIdentifiable, ArticleFetcher, DisplayNameProvider, UnreadCountProvider {
 
+	var account: Account? { get }
 	var defaultReadFilterType: ReadFilterType { get }
 	
 }

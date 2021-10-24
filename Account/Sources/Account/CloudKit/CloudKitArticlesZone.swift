@@ -223,10 +223,10 @@ private extension CloudKitArticlesZone {
 		record[CloudKitArticle.Fields.title] = article.title
 		record[CloudKitArticle.Fields.contentHTML] = article.contentHTML
 		record[CloudKitArticle.Fields.contentText] = article.contentText
-		record[CloudKitArticle.Fields.url] = article.url
-		record[CloudKitArticle.Fields.externalURL] = article.externalURL
+		record[CloudKitArticle.Fields.url] = article.rawLink
+		record[CloudKitArticle.Fields.externalURL] = article.rawExternalLink
 		record[CloudKitArticle.Fields.summary] = article.summary
-		record[CloudKitArticle.Fields.imageURL] = article.imageURL
+		record[CloudKitArticle.Fields.imageURL] = article.rawImageLink
 		record[CloudKitArticle.Fields.datePublished] = article.datePublished
 		record[CloudKitArticle.Fields.dateModified] = article.dateModified
 		

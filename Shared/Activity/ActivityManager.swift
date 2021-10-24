@@ -175,13 +175,14 @@ private extension ActivityManager {
 		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo]
 		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 
+		activity.persistentIdentifier = feed.feedID?.description ?? ""
+
 		#if os(iOS)
 		activity.suggestedInvocationPhrase = title
 		activity.isEligibleForPrediction = true
-		activity.persistentIdentifier = feed.feedID?.description ?? ""
 		activity.contentAttributeSet?.relatedUniqueIdentifier = feed.feedID?.description ?? ""
 		#endif
-		
+
 		return activity
 	}
 	
@@ -200,11 +201,12 @@ private extension ActivityManager {
 		
 		activity.isEligibleForHandoff = true
 		
+		activity.persistentIdentifier = ActivityManager.identifer(for: article)
+
 		#if os(iOS)
 		activity.keywords = Set(makeKeywords(article))
 		activity.isEligibleForSearch = true
 		activity.isEligibleForPrediction = false
-		activity.persistentIdentifier = ActivityManager.identifer(for: article)
 		updateReadArticleSearchAttributes(with: article)
 		#endif
 

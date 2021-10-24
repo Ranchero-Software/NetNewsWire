@@ -25,11 +25,11 @@ final class FeaturedImageDownloader {
 
 	func image(for article: Article) -> RSImage? {
 
-		if let url = article.imageURL {
-			return image(forFeaturedImageURL: url)
+		if let imageLink = article.imageLink {
+			return image(forFeaturedImageURL: imageLink)
 		}
-		if let articleURL = article.url {
-			return image(forArticleURL: articleURL)
+		if let link = article.link {
+			return image(forArticleURL: link)
 		}
 		return nil
 	}

@@ -18,6 +18,7 @@
 
 import Foundation
 import Articles
+import Zip
 
 protocol AppDelegateAppleEvents {
     func installAppleEventHandlers()
@@ -44,6 +45,34 @@ extension AppDelegate : AppDelegateAppleEvents {
             return
         }
 
+		// Handle themes
+		if urlString.hasPrefix("netnewswire://theme") {
+			guard let comps = URLComponents(string: urlString),
+				  let queryItems = comps.queryItems,
+				  let themeURLString = queryItems.first(where: { $0.name == "url" })?.value else {
+					  return
+				  }
+			
+			if let themeURL = URL(string: themeURLString) {
+				let request = URLRequest(url: themeURL)
+				let task = URLSession.shared.downloadTask(with: request) { location, response, error in
+					guard let location = location else {
+						return
+					}
+					
+					do {
+						try ArticleThemeDownloader.shared.handleFile(at: location)
+					} catch {
+						NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+					}
+				}
+				task.resume()
+			}
+			return
+		
+		}
+		
+		
 		// Special case URL with specific scheme handler x-netnewswire-feed: intended to ensure we open
 		// it regardless of which news reader may be set as the default
 		let nnwScheme = "x-netnewswire-feed:"

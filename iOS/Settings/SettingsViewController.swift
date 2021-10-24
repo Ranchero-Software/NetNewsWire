@@ -10,6 +10,7 @@ import UIKit
 import Account
 import CoreServices
 import SafariServices
+import SwiftUI
 
 class SettingsViewController: UITableViewController {
 
@@ -18,9 +19,11 @@ class SettingsViewController: UITableViewController {
 	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet weak var groupByFeedSwitch: UISwitch!
 	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
+	@IBOutlet weak var articleThemeDetailLabel: UILabel!
 	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
+	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
 	
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
@@ -34,6 +37,7 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(activeExtensionPointsDidChange), name: .ActiveExtensionPointsDidChange, object: nil)
+		
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -62,6 +66,8 @@ class SettingsViewController: UITableViewController {
 		} else {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
+		
+		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
@@ -76,6 +82,9 @@ class SettingsViewController: UITableViewController {
 		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
+		
+		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
+		
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -118,7 +127,7 @@ class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case 5:
-			return traitCollection.userInterfaceIdiom == .phone ? 2 : 1
+			return traitCollection.userInterfaceIdiom == .phone ? 4 : 3
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -157,7 +166,6 @@ class SettingsViewController: UITableViewController {
 				acctCell.comboNameLabel?.text = extensionPoint.title
 				cell = acctCell
 			}
-		
 		default:
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
 			
@@ -217,6 +225,14 @@ class SettingsViewController: UITableViewController {
 			case 3:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
+			default:
+				break
+			}
+		case 5:
+			switch indexPath.row {
+			case 0:
+				let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
+				self.navigationController?.pushViewController(articleThemes, animated: true)
 			default:
 				break
 			}
@@ -326,6 +342,15 @@ class SettingsViewController: UITableViewController {
 		}
 	}
 	
+	@IBAction func switchBrowserPreference(_ sender: Any) {
+		if openLinksInNetNewsWire.isOn {
+			AppDefaults.shared.useSystemBrowser = false
+		} else {
+			AppDefaults.shared.useSystemBrowser = true
+		}
+	}
+	
+	
 	// MARK: Notifications
 	
 	@objc func contentSizeCategoryDidChange() {
@@ -341,6 +366,10 @@ class SettingsViewController: UITableViewController {
 	}
 	
 	@objc func activeExtensionPointsDidChange() {
+		tableView.reloadData()
+	}
+	
+	@objc func browserPreferenceDidChange() {
 		tableView.reloadData()
 	}
 	

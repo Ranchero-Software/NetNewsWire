@@ -14,6 +14,8 @@ import Account
 
 final class SmartFeed: PseudoFeed {
 
+	var account: Account? = nil
+
 	public var defaultReadFilterType: ReadFilterType {
 		return .none
 	}

@@ -70,6 +70,11 @@ struct AppAssets {
 	}()
 
 	@available(macOS 11.0, *)
+	static var articleTheme: RSImage = {
+		return NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
+	}()
+
+	@available(macOS 11.0, *)
 	static var cleanUpImage: RSImage = {
 		return NSImage(systemSymbolName: "wind", accessibilityDescription: nil)!
 	}()

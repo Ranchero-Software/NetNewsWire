@@ -19,6 +19,8 @@ import ArticlesDatabase
 // This just shows the global unread count, which appDelegate already has. Easy.
 
 final class UnreadFeed: PseudoFeed {
+	
+	var account: Account? = nil
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .alwaysRead

@@ -1,0 +1,56 @@
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function(event) {
+		const externalLink = "[[external_link_stripped]]";
+		if (externalLink == "") {
+			const footer = document.getElementById("nnwFooter");
+			footer.style.display = "none";
+		} else {
+			const feedLink = "[[feed_link]]";
+			if (feedLink.includes("www.reddit.com")) {
+				const knownDomains = ["i.redd.it", "i.imgur.com", "gfycat.com", "v.redd.it", 
+					"redgifs.com", "www.reddit.com", "i.pining.com", "imgur.com"];
+				for (let i = 0; i < knownDomains.length; i++) { 
+					if (externalLink.startsWith(knownDomains[i])) {
+						const footer = document.getElementById("nnwFooter");
+						footer.style.display = "none";
+						break;
+					}
+				}
+			}
+		}
+	})
+</script>
+
+<div class="fontSize [[text_size_class]]">
+	<div class="header">
+		<div>
+			<img class="avatar nnw-nozoom" id="nnwImageIcon" src="[[avatar_src]]" />
+		</div>
+		<div class="attribution singleLine">
+			<div class="singleLine">
+				<a class="feedlink" href="[[feed_link]]">[[feed_link_title]]</a>
+			</div>
+			<div class="byline singleLine">
+				[[byline]]
+			</div>
+		</div>
+		<div>
+			<a href="[[preferred_link]]" class="nnwDateTime">
+				<div class="nnwDate rightAlign">[[date_medium]]</div>
+				<div class="nnwTime rightAlign">[[time_short]]</div>
+			</a>
+		</div>
+	</div>
+
+	<div class="articleTitle"><a href="[[preferred_link]]">[[title]]</a></div>
+
+	<article>
+	<div id="bodyContainer" class="articleBody">[[body]]</div>
+	</article>
+
+	<div id="nnwFooter" class="footer">
+		<div class="externalLink singleLine">[[external_link_label]] 
+			<a href="[[external_link]]">[[external_link_stripped]]</a>
+		</a>
+	</div>
+</div>

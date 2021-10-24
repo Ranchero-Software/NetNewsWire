@@ -59,6 +59,14 @@ class ArticleViewController: UIViewController {
 		}
 	}
 	
+	var restoreScrollPosition: (isShowingExtractedArticle: Bool, articleWindowScrollY: Int)? {
+		didSet {
+			if let rsp = restoreScrollPosition {
+				currentWebViewController?.setScrollPosition(isShowingExtractedArticle: rsp.isShowingExtractedArticle, articleWindowScrollY: rsp.articleWindowScrollY)
+			}
+		}
+	}
+	
 	var currentState: State? {
 		guard let controller = currentWebViewController else { return nil}
 		return State(extractedArticle: controller.extractedArticle,
@@ -125,6 +133,10 @@ class ArticleViewController: UIViewController {
 			controller = createWebViewController(article, updateView: true)
 		}
 		
+		if let rsp = restoreScrollPosition {
+			controller.setScrollPosition(isShowingExtractedArticle: rsp.isShowingExtractedArticle, articleWindowScrollY: rsp.articleWindowScrollY)
+		}
+
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
@@ -311,7 +323,11 @@ class ArticleViewController: UIViewController {
 
 	func openInAppBrowser() {
 		currentWebViewController?.openInAppBrowser()
-	}	
+	}
+	
+	func setScrollPosition(isShowingExtractedArticle: Bool, articleWindowScrollY: Int) {
+		currentWebViewController?.setScrollPosition(isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+	}
 }
 
 // MARK: Find in Article

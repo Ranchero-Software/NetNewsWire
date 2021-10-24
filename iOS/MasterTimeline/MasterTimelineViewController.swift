@@ -33,6 +33,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
+		
+		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
+		// commands that the system is looking for by going up the responder chain. They will interfere with
+		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
+		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else { return nil }
+		
 		return keyboardManager.keyCommands
 	}
 	
@@ -123,6 +129,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	// MARK: Actions
+	
+	@objc func openInBrowser(_ sender: Any?) {
+		coordinator.showBrowserForCurrentArticle()
+	}
+
+	@objc func openInAppBrowser(_ sender: Any?) {
+		coordinator.showInAppBrowser()
+	}
+	
 	@IBAction func toggleFilter(_ sender: Any) {
 		coordinator.toggleReadArticlesFilter()
 	}
@@ -360,6 +375,17 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			}
 			if !secondaryActions.isEmpty {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: secondaryActions))
+			}
+			
+			var copyActions = [UIAction]()
+			if let action = self.copyArticleURLAction(article) {
+				copyActions.append(action)
+			}
+			if let action = self.copyExternalURLAction(article) {
+				copyActions.append(action)
+			}
+			if !copyActions.isEmpty {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: copyActions))
 			}
 			
 			if let action = self.openInBrowserAction(article) {
@@ -662,7 +688,7 @@ private extension MasterTimelineViewController {
 	
 	func updateTitleUnreadCount() {
 		if let titleView = navigationItem.titleView as? MasterTimelineTitleView {
-			titleView.unreadCountView.unreadCount = coordinator.unreadCount
+			titleView.unreadCountView.unreadCount = coordinator.timelineUnreadCount
 		}
 	}
 	
@@ -713,7 +739,7 @@ private extension MasterTimelineViewController {
 	}
 	
 	func featuredImageFor(_ article: Article) -> UIImage? {
-		if let url = article.imageURL, let data = appDelegate.imageDownloader.image(for: url) {
+		if let link = article.imageLink, let data = appDelegate.imageDownloader.image(for: link) {
 			return RSImage(data: data)
 		}
 		return nil
@@ -887,6 +913,25 @@ private extension MasterTimelineViewController {
 		}
 		return action
 	}
+	
+	func copyArticleURLAction(_ article: Article) -> UIAction? {
+		guard let url = article.preferredURL else { return nil }
+		let title = NSLocalizedString("Copy Article URL", comment: "Copy Article URL")
+		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+			UIPasteboard.general.url = url
+		}
+		return action
+	}
+	
+	func copyExternalURLAction(_ article: Article) -> UIAction? {
+		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
+		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
+		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+			UIPasteboard.general.url = url
+		}
+		return action
+	}
+
 
 	func openInBrowserAction(_ article: Article) -> UIAction? {
 		guard let _ = article.preferredURL else { return nil }
@@ -899,6 +944,7 @@ private extension MasterTimelineViewController {
 
 	func openInBrowserAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let _ = article.preferredURL else { return nil }
+
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showBrowserForArticle(article)

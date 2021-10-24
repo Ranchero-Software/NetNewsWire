@@ -63,10 +63,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		appDelegate = self
 
 		SecretsManager.provider = Secrets()
-		let documentAccountURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-		let documentAccountsFolder = documentAccountURL.appendingPathComponent("Accounts").absoluteString
+		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
 		let documentAccountsFolderPath = String(documentAccountsFolder.suffix(from: documentAccountsFolder.index(documentAccountsFolder.startIndex, offsetBy: 7)))
 		AccountManager.shared = AccountManager(accountsFolder: documentAccountsFolderPath)
+		
+		let documentThemesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
+		let documentThemesFolderPath = String(documentThemesFolder.suffix(from: documentAccountsFolder.index(documentThemesFolder.startIndex, offsetBy: 7)))
+		ArticleThemesManager.shared = ArticleThemesManager(folderPath: documentThemesFolderPath)
+		
 		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -333,6 +338,7 @@ private extension AppDelegate {
 		
 		AccountManager.shared.suspendNetworkAll()
 		AccountManager.shared.suspendDatabaseAll()
+		ArticleThemeDownloader.shared.cleanUp()
 
 		CoalescingQueue.standard.performCallsImmediately()
 		for scene in UIApplication.shared.connectedScenes {

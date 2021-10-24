@@ -91,8 +91,8 @@ private extension TwitterStatus {
 					}
 				}
 				
-				let offsetStartIndex = entity.startIndex - unicodeScalarOffset
-				let offsetEndIndex = entity.endIndex - unicodeScalarOffset
+				let offsetStartIndex = unicodeScalarOffset < entity.startIndex ? entity.startIndex - unicodeScalarOffset : entity.startIndex
+				let offsetEndIndex = unicodeScalarOffset < entity.endIndex ? entity.endIndex - unicodeScalarOffset : entity.endIndex
 				
 				let entityStartIndex = text.index(text.startIndex, offsetBy: offsetStartIndex, limitedBy: text.endIndex) ?? text.startIndex
 				let entityEndIndex = text.index(text.startIndex, offsetBy: offsetEndIndex, limitedBy: text.endIndex) ?? text.endIndex
@@ -115,7 +115,7 @@ private extension TwitterStatus {
 			}
 			
 			if prevIndex < displayEndIndex {
-				html += String(text[prevIndex..<displayEndIndex])
+				html += String(text[prevIndex..<displayEndIndex]).replacingOccurrences(of: "\n", with: "<br>")
 			}
 			
 			return html

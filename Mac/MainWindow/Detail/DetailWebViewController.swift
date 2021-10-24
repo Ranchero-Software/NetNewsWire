@@ -24,6 +24,12 @@ final class DetailWebViewController: NSViewController {
 	var state: DetailState = .noSelection {
 		didSet {
 			if state != oldValue {
+				switch state {
+				case .article(_, let scrollY), .extracted(_, _, let scrollY):
+					windowScrollY = scrollY
+				default:
+					break
+				}
 				reloadHTML()
 			}
 		}
@@ -31,9 +37,9 @@ final class DetailWebViewController: NSViewController {
 	
 	var article: Article? {
 		switch state {
-		case .article(let article):
+		case .article(let article, _):
 			return article
-		case .extracted(let article, _):
+		case .extracted(let article, _, _):
 			return article
 		default:
 			return nil
@@ -56,10 +62,21 @@ final class DetailWebViewController: NSViewController {
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
-	
+	private var windowScrollY: CGFloat?
+
+	private var isShowingExtractedArticle: Bool {
+		switch state {
+		case .extracted(_, _, _):
+			return true
+		default:
+			return false
+		}
+	}
+
 	private struct MessageName {
 		static let mouseDidEnter = "mouseDidEnter"
 		static let mouseDidExit = "mouseDidExit"
+		static let windowDidScroll = "windowDidScroll"
 	}
 
 	override func loadView() {
@@ -73,6 +90,7 @@ final class DetailWebViewController: NSViewController {
 		configuration.setURLSchemeHandler(detailIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 
 		let userContentController = WKUserContentController()
+		userContentController.add(self, name: MessageName.windowDidScroll)
 		userContentController.add(self, name: MessageName.mouseDidEnter)
 		userContentController.add(self, name: MessageName.mouseDidExit)
 		configuration.userContentController = userContentController
@@ -116,6 +134,7 @@ final class DetailWebViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
 
 		webView.loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
@@ -136,9 +155,12 @@ final class DetailWebViewController: NSViewController {
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		if articleTextSize != AppDefaults.shared.articleTextSize {
-			articleTextSize = AppDefaults.shared.articleTextSize
-			webView.evaluateJavaScript("updateTextSize(\"\(articleTextSize.cssClass)\");")
+			reloadHTMLMaintainingScrollPosition()
 		}
+	}
+	
+	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
+		reloadHTMLMaintainingScrollPosition()
 	}
 	
 	// MARK: Media Functions
@@ -168,6 +190,14 @@ final class DetailWebViewController: NSViewController {
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
 	}
+
+	// MARK: State Restoration
+	
+	func saveState(to state: inout [AnyHashable : Any]) {
+		state[UserInfoKey.isShowingExtractedArticle] = isShowingExtractedArticle
+		state[UserInfoKey.articleWindowScrollY] = windowScrollY
+	}
+	
 }
 
 // MARK: - WKScriptMessageHandler
@@ -175,10 +205,11 @@ final class DetailWebViewController: NSViewController {
 extension DetailWebViewController: WKScriptMessageHandler {
 
 	func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-		if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
+		if message.name == MessageName.windowDidScroll {
+			windowScrollY = message.body as? CGFloat
+		} else if message.name == MessageName.mouseDidEnter, let link = message.body as? String {
 			delegate?.mouseDidEnter(self, link: link)
-		}
-		else if message.name == MessageName.mouseDidExit {
+		} else if message.name == MessageName.mouseDidExit {
 			delegate?.mouseDidExit(self)
 		}
 	}
@@ -220,6 +251,11 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
 				webView.isHidden = false
 			}
+		} else {
+			if let windowScrollY = windowScrollY {
+				webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
+				self.windowScrollY = nil
+			}
 		}
 	}
 
@@ -253,26 +289,33 @@ private extension DetailWebViewController {
 			webView?.evaluateJavaScript("reloadArticleImage(\"\(imageSrc)\")")
 		}
 	}
+	
+	func reloadHTMLMaintainingScrollPosition() {
+		fetchScrollInfo() { scrollInfo in
+			self.windowScrollY = scrollInfo?.offsetY
+			self.reloadHTML()
+		}
+	}
 
 	func reloadHTML() {
 		delegate?.mouseDidExit(self)
 		
-		let style = ArticleStylesManager.shared.currentStyle
+		let theme = ArticleThemesManager.shared.currentTheme
 		let rendering: ArticleRenderer.Rendering
 
 		switch state {
 		case .noSelection:
-			rendering = ArticleRenderer.noSelectionHTML(style: style)
+			rendering = ArticleRenderer.noSelectionHTML(theme: theme)
 		case .multipleSelection:
-			rendering = ArticleRenderer.multipleSelectionHTML(style: style)
+			rendering = ArticleRenderer.multipleSelectionHTML(theme: theme)
 		case .loading:
-			rendering = ArticleRenderer.loadingHTML(style: style)
-		case .article(let article):
+			rendering = ArticleRenderer.loadingHTML(theme: theme)
+		case .article(let article, _):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, style: style)
-		case .extracted(let article, let extractedArticle):
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
+		case .extracted(let article, let extractedArticle, _):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, style: style)
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
 		}
 		
 		let substitutions = [

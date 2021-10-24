@@ -12,7 +12,7 @@ public protocol FeedIdentifiable {
 	var feedID: FeedIdentifier? { get }
 }
 
-public enum FeedIdentifier: CustomStringConvertible, Hashable {
+public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 	
 	case smartFeed(String) // String is a unique identifier
 	case script(String) // String is a unique identifier
@@ -80,22 +80,4 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable {
 		}
 	}
 
-	// MARK: - Hashable
-
-	public func hash(into hasher: inout Hasher) {
-		switch self {
-		case .smartFeed(let id):
-			hasher.combine("smartFeed")
-			hasher.combine(id)
-		case .script(let id):
-			hasher.combine("smartFeed")
-			hasher.combine(id)
-		case .webFeed(_, let webFeedID):
-			hasher.combine("webFeed")
-			hasher.combine(webFeedID)
-		case .folder(_, let folderName):
-			hasher.combine("folder")
-			hasher.combine(folderName)
-		}
-	}
 }

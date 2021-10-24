@@ -9,15 +9,16 @@
 import UIKit
 import UserNotifications
 import Account
+import Zip
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
-    var window: UIWindow?
+	var window: UIWindow?
 	var coordinator = SceneCoordinator()
 	
-    // UIWindowScene delegate
-    
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+	// UIWindowScene delegate
+	
+	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		
 		window = UIWindow(windowScene: scene as! UIWindowScene)
 		window!.tintColor = AppAssets.primaryAccentColor
@@ -46,12 +47,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			return
 		}
 		
-        if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
+		if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
 			coordinator.handle(userActivity)
 		}
 		
 		window!.makeKeyAndVisible()
-    }
+	}
 	
 	func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
 		appDelegate.resumeDatabaseProcessingIfNecessary()
@@ -79,9 +80,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		coordinator.resetFocus()
 	}
 	
-    func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
+	func stateRestorationActivity(for scene: UIScene) -> NSUserActivity? {
 		return coordinator.stateRestorationActivity
-    }
+	}
 	
 	// API
 	
@@ -89,7 +90,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		appDelegate.resumeDatabaseProcessingIfNecessary()
 		coordinator.handle(response)
 	}
-
+	
 	func suspend() {
 		coordinator.suspend()
 	}
@@ -162,9 +163,47 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				}
 			}
 			
+			let filename = context.url.standardizedFileURL.path
+			if filename.hasSuffix(ArticleTheme.nnwThemeSuffix) {
+				self.coordinator.importTheme(filename: filename)
+				return
+			}
+			
+			// Handle theme URLs: netnewswire://theme/add?url={url}
+			guard let comps = URLComponents(url: context.url, resolvingAgainstBaseURL: false),
+				  "theme" == comps.host,
+				 let queryItems = comps.queryItems else {
+				return
+			}
+			
+			if let providedThemeURL = queryItems.first(where: { $0.name == "url" })?.value {
+				if let themeURL = URL(string: providedThemeURL) {
+					let request = URLRequest(url: themeURL)
+			
+					DispatchQueue.main.async {
+						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
+					}
+					let task = URLSession.shared.downloadTask(with: request) { location, response, error in
+						guard
+							  let location = location else { return }
+						
+						do {
+							try ArticleThemeDownloader.shared.handleFile(at: location)
+						} catch {
+							NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+						}
+					}
+					task.resume()
+				} else {
+					print("No theme URL")
+					return
+				}
+			} else {
+				return
+			}
+			
 		}
 	}
-	
 }
 
 private extension SceneDelegate {
@@ -198,5 +237,7 @@ private extension SceneDelegate {
 			}
 		}
 	}
+	
+	
 	
 }

@@ -15,7 +15,8 @@ final class GeneralPreferencesViewController: NSViewController {
 
 	private var userNotificationSettings: UNNotificationSettings?
 
-	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
+	@IBOutlet weak var articleThemePopup: NSPopUpButton!
+	@IBOutlet weak var defaultBrowserPopup: NSPopUpButton!
 
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -39,15 +40,32 @@ final class GeneralPreferencesViewController: NSViewController {
 		updateUI()
 	}
 
+	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
+		updateArticleThemePopup()
+	}
+
 	// MARK: - Actions
 
+	@IBAction func showThemesFolder(_ sender: Any) {
+		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
+		NSWorkspace.shared.open(url)
+	}
+	
+	@IBAction func articleThemePopUpDidChange(_ sender: Any) {
+		guard let menuItem = articleThemePopup.selectedItem else {
+			return
+		}
+		ArticleThemesManager.shared.currentThemeName = menuItem.title
+		updateArticleThemePopup()
+	}
+	
 	@IBAction func browserPopUpDidChangeValue(_ sender: Any?) {
 		guard let menuItem = defaultBrowserPopup.selectedItem else {
 			return
 		}
 		let bundleID = menuItem.representedObject as? String
 		AppDefaults.shared.defaultBrowserID = bundleID
-		updateUI()
+		updateBrowserPopup()
 	}
 
 }
@@ -58,15 +76,29 @@ private extension GeneralPreferencesViewController {
 
 	func commonInit() {
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 	}
 
 	func updateUI() {
+		updateArticleThemePopup()
 		updateBrowserPopup()
 	}
+	
+	func updateArticleThemePopup() {
+		let menu = articleThemePopup.menu!
+		menu.removeAllItems()
+		
+		menu.addItem(NSMenuItem(title: ArticleTheme.defaultTheme.name, action: nil, keyEquivalent: ""))
+		menu.addItem(NSMenuItem.separator())
 
-	func registerAppWithBundleID(_ bundleID: String) {
-		NSWorkspace.shared.setDefaultAppBundleID(forURLScheme: "feed", to: bundleID)
-		NSWorkspace.shared.setDefaultAppBundleID(forURLScheme: "feeds", to: bundleID)
+		for themeName in ArticleThemesManager.shared.themeNames {
+			menu.addItem(NSMenuItem(title: themeName, action: nil, keyEquivalent: ""))
+		}
+		
+		articleThemePopup.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
+		if articleThemePopup.indexOfSelectedItem == -1 {
+			articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)
+		}
 	}
 
 	func updateBrowserPopup() {

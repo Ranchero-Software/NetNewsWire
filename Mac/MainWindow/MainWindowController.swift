@@ -18,7 +18,9 @@ enum TimelineSourceMode {
 
 class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
-	private var activityManager = ActivityManager()
+    @IBOutlet weak var articleThemePopUpButton: NSPopUpButton?
+    
+    private var activityManager = ActivityManager()
 
 	private var isShowingExtractedArticle = false
 	private var articleExtractor: ArticleExtractor? = nil
@@ -44,6 +46,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	private var timelineContainerViewController: TimelineContainerViewController?
 	private var detailViewController: DetailViewController?
 	private var currentSearchField: NSSearchField? = nil
+	private let articleThemeMenuToolbarItem = NSMenuToolbarItem(itemIdentifier: .articleThemeMenu)
 	private var searchString: String? = nil
 	private var lastSentSearchString: String? = nil
 	private var timelineSourceMode: TimelineSourceMode = .regular {
@@ -53,6 +56,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 	private var searchSmartFeed: SmartFeed? = nil
+	private var restoreArticleWindowScrollY: CGFloat?
 
 	// MARK: - NSWindowController
 
@@ -61,6 +65,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 		
+		updateArticleThemeMenu()
+
 		if #available(macOS 11.0, *) {
 			let toolbar = NSToolbar(identifier: "MainWindowToolbar")
 			toolbar.allowsUserCustomization = true
@@ -97,6 +103,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
 		
 		DispatchQueue.main.async {
 			self.updateWindowTitle()
@@ -150,6 +159,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		updateWindowTitleIfNecessary(note.object)
 	}
 
+	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
+		updateArticleThemeMenu()
+	}
+
+	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
+		updateArticleThemeMenu()
+	}
+
 	private func updateWindowTitleIfNecessary(_ noteObject: Any?) {
 		
 		if let folder = currentFeedOrFolder as? Folder, let noteObject = noteObject as? Folder {
@@ -187,6 +204,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	// MARK: - NSUserInterfaceValidations
 	
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		
+		if item.action == #selector(copyArticleURL(_:)) {
+			return canCopyArticleURL()
+		}
+		
+		if item.action == #selector(copyExternalURL(_:)) {
+			return canCopyExternalURL()
+		}
 		
 		if item.action == #selector(openArticleInBrowser(_:)) {
 			if let item = item as? NSMenuItem, item.keyEquivalentModifierMask.contains(.shift) {
@@ -286,6 +311,18 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	}
 
+	@IBAction func copyArticleURL(_ sender: Any?) {
+		if let link = oneSelectedArticle?.preferredURL?.absoluteString {
+			URLPasteboardWriter.write(urlString: link, to: .general)
+		}
+	}
+
+	@IBAction func copyExternalURL(_ sender: Any?) {
+		if let link = oneSelectedArticle?.externalLink {
+			URLPasteboardWriter.write(urlString: link, to: .general)
+		}
+	}
+
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		if let link = currentLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
@@ -374,20 +411,20 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			articleExtractor?.cancel()
 			articleExtractor = nil
 			isShowingExtractedArticle = false
-			detailViewController?.setState(DetailState.article(article), mode: timelineSourceMode)
+			detailViewController?.setState(DetailState.article(article, nil), mode: timelineSourceMode)
 			return
 		}
 		
 		guard !isShowingExtractedArticle else {
 			isShowingExtractedArticle = false
-			detailViewController?.setState(DetailState.article(article), mode: timelineSourceMode)
+			detailViewController?.setState(DetailState.article(article, nil), mode: timelineSourceMode)
 			return
 		}
 		
 		if let articleExtractor = articleExtractor, let extractedArticle = articleExtractor.article {
 			if currentLink == articleExtractor.articleLink {
 				isShowingExtractedArticle = true
-				let detailState = DetailState.extracted(article, extractedArticle)
+				let detailState = DetailState.extracted(article, extractedArticle, nil)
 				detailViewController?.setState(detailState, mode: timelineSourceMode)
 			}
 		} else {
@@ -506,6 +543,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		timelineContainerViewController?.toggleReadFilter()
 	}
 	
+	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
+		ArticleThemesManager.shared.currentThemeName = menuItem.title
+	}
+	
 }
 
 // MARK: NSWindowDelegate
@@ -579,7 +620,8 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {
-					detailState = .article(articles.first!)
+					detailState = .article(articles.first!, restoreArticleWindowScrollY)
+					restoreArticleWindowScrollY = nil
 				}
 			} else {
 				detailState = .multipleSelection
@@ -679,7 +721,8 @@ extension MainWindowController: ArticleExtractorDelegate {
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
 		if let article = oneSelectedArticle, articleExtractor?.state != .cancelled {
 			isShowingExtractedArticle = true
-			let detailState = DetailState.extracted(article, extractedArticle)
+			let detailState = DetailState.extracted(article, extractedArticle, restoreArticleWindowScrollY)
+			restoreArticleWindowScrollY = nil
 			detailViewController?.setState(detailState, mode: timelineSourceMode)
 			makeToolbarValidate()
 		}
@@ -726,6 +769,7 @@ extension NSToolbarItem.Identifier {
 	static let readerView = NSToolbarItem.Identifier("readerView")
 	static let openInBrowser = NSToolbarItem.Identifier("openInBrowser")
 	static let share = NSToolbarItem.Identifier("share")
+	static let articleThemeMenu = NSToolbarItem.Identifier("articleThemeMenu")
 	static let cleanUp = NSToolbarItem.Identifier("cleanUp")
 }
 
@@ -795,6 +839,13 @@ extension MainWindowController: NSToolbarDelegate {
 				let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 				return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
 			
+			case .articleThemeMenu:
+				articleThemeMenuToolbarItem.image = AppAssets.articleTheme
+				let description = NSLocalizedString("Article Theme", comment: "Article Theme")
+				articleThemeMenuToolbarItem.toolTip = description
+				articleThemeMenuToolbarItem.label = description
+				return articleThemeMenuToolbarItem
+
 			case .search:
 				let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
 				let description = NSLocalizedString("Search", comment: "Search")
@@ -832,6 +883,7 @@ extension MainWindowController: NSToolbarDelegate {
 				.readerView,
 				.openInBrowser,
 				.share,
+				.articleThemeMenu,
 				.search,
 				.cleanUp
 			]
@@ -994,6 +1046,7 @@ private extension MainWindowController {
 		saveSplitViewState(to: &state)
 		sidebarViewController?.saveState(to: &state)
 		timelineContainerViewController?.saveState(to: &state)
+		detailViewController?.saveState(to: &state)
 		return state
 	}
 
@@ -1002,11 +1055,30 @@ private extension MainWindowController {
 			window?.toggleFullScreen(self)
 		}
 		restoreSplitViewState(from: state)
+		
 		sidebarViewController?.restoreState(from: state)
+		
+		let articleWindowScrollY = state[UserInfoKey.articleWindowScrollY] as? CGFloat
+		restoreArticleWindowScrollY = articleWindowScrollY
 		timelineContainerViewController?.restoreState(from: state)
+		
+		let isShowingExtractedArticle = state[UserInfoKey.isShowingExtractedArticle] as? Bool ?? false
+		if isShowingExtractedArticle {
+			restoreArticleWindowScrollY = articleWindowScrollY
+			startArticleExtractorForCurrentLink()
+		}
+		
 	}
 
 	// MARK: - Command Validation
+	
+	func canCopyArticleURL() -> Bool {
+		return currentLink != nil
+	}
+	
+	func canCopyExternalURL() -> Bool {
+		return oneSelectedArticle?.externalLink != nil && oneSelectedArticle?.externalLink != currentLink
+	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
 		
@@ -1365,26 +1437,49 @@ private extension MainWindowController {
 		let menu = NSMenu()
 		
 		let newWebFeedItem = NSMenuItem()
-		newWebFeedItem.title = NSLocalizedString("New Web Feed", comment: "New Web Feed")
+		newWebFeedItem.title = NSLocalizedString("New Web Feed…", comment: "New Web Feed")
 		newWebFeedItem.action = Selector(("showAddWebFeedWindow:"))
 		menu.addItem(newWebFeedItem)
 		
 		let newRedditFeedItem = NSMenuItem()
-		newRedditFeedItem.title = NSLocalizedString("New Reddit Feed", comment: "New Reddit Feed")
+		newRedditFeedItem.title = NSLocalizedString("New Reddit Feed…", comment: "New Reddit Feed")
 		newRedditFeedItem.action = Selector(("showAddRedditFeedWindow:"))
 		menu.addItem(newRedditFeedItem)
 		
 		let newTwitterFeedItem = NSMenuItem()
-		newTwitterFeedItem.title = NSLocalizedString("New Twitter Feed", comment: "New Twitter Feed")
+		newTwitterFeedItem.title = NSLocalizedString("New Twitter Feed…", comment: "New Twitter Feed")
 		newTwitterFeedItem.action = Selector(("showAddTwitterFeedWindow:"))
 		menu.addItem(newTwitterFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()
-		newFolderFeedItem.title = NSLocalizedString("New Folder", comment: "New Folder")
+		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")
 		newFolderFeedItem.action = Selector(("showAddFolderWindow:"))
 		menu.addItem(newFolderFeedItem)
 		
 		return menu
+	}
+
+	func updateArticleThemeMenu() {
+		let articleThemeMenu = NSMenu()
+		
+		let defaultThemeItem = NSMenuItem()
+		defaultThemeItem.title = ArticleTheme.defaultTheme.name
+		defaultThemeItem.action = #selector(selectArticleTheme(_:))
+		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+		articleThemeMenu.addItem(defaultThemeItem)
+
+		articleThemeMenu.addItem(NSMenuItem.separator())
+
+		for themeName in ArticleThemesManager.shared.themeNames {
+			let themeItem = NSMenuItem()
+			themeItem.title = themeName
+			themeItem.action = #selector(selectArticleTheme(_:))
+			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+			articleThemeMenu.addItem(themeItem)
+		}
+
+		articleThemeMenuToolbarItem.menu = articleThemeMenu
+		articleThemePopUpButton?.menu = articleThemeMenu
 	}
 
 }

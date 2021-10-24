@@ -6,7 +6,35 @@
         <description>Most recent NetNewsWire releases (not test builds).</description>
         <language>en</language>
 
-           <item>
+ 		<item>
+            <title>NetNewsWire 6.0.3</title>
+            <description><![CDATA[
+<p>Feedly: preserve custom feed names with Feedly when moving them between folders</p>
+<p>Feedly: handle API change with deleting and don’t show a spurious error</p>
+<p>NewsBlur: don’t fetch articles marked hidden by NewsBlur</p>
+<p>FreshRSS: add API endpoint URL example in setup form</p>
+<p>iCloud: fixed bug not retaining feeds in a folder where the folder hasn’t been synced yet</p>
+<p>iCloud: fixed bug where iCloud syncing could stop prematurely when the sync database has records not in the local database</p>
+<p>BazQux: fixed bug where BazQux-synced feeds might stop updating</p>
+<p>Feedbin: fixed bug where external URLs in Feedbin feeds might be lost</p>
+<p>Twitter extension: fixed weird bug where an extra https:/ could appear in tweet text</p>
+<p>Preferences: use full-width row style in accounts and extensions panes</p>
+<p>Fixed a crashing bug triggered by running some UI code outside of main thread</p>
+<p>Fixed a crashing bug that could happen when the app tries to find a feed for a website</p>
+<p>Fixed a crashing bug that could happen when rendering tweets</p>
+<p>Changed how images are placed in Twitter articles so that you can better see who Tweeted the image</p>
+<p>Fixed bug where favicons wouldn’t be found when a home page URL has non-ASCII characters</p>
+<p>Fixed bug where words prepended with $ wouldn’t appear in Twitter feeds</p>
+<p>Fixed bug where newlines would be just a space in Twitter feeds</p>
+<p>Feeds list: smart feeds remain visible despite Hide Read Feeds setting</p>
+<p>Keyboard shortcuts: fixed regression where L key wouldn’t go to next unread when feed is all read</p>
+			]]></description>
+            <pubDate>Sun, 05 Sep 2021 12:20:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.0.3/NetNewsWire6.0.3.zip" sparkle:version="6035" sparkle:shortVersionString="6.0.3" length="10477066" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+          <item>
             <title>NetNewsWire 6.0.2</title>
             <description><![CDATA[
 <p>Inoreader sync: fixed (hopefully) cause of rate limit errors — now doing background sync of statuses much less often - note that this fix needs to be rolled out across all NetNewsWire users in order for it to have full effect</p>
