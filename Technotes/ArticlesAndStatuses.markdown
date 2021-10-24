@@ -14,7 +14,7 @@ This separation is deliberate. There are two main reasons: syncing, and strange 
 
 When syncing with another service, it’s entirely likely that the service will report article status information in calls that are separate from calls to retrieve articles.
 
-Thus the app might learn about statuses for articles it hasn’t seen yet.
+Thus, the app might learn about statuses for articles it hasn’t seen yet.
 
 This way the app can store those statuses without having to have their corresponding articles. And then, when the app does download those articles, it has their statuses already in the database.
 
