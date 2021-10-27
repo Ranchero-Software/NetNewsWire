@@ -46,6 +46,7 @@ final class AppDefaults {
 		static let firstRunDate = "firstRunDate"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let refreshClearsReadArticles = "refreshClearsReadArticles"
+		static let markArticlesAsReadOnScroll = "markArticlesAsReadOnScroll"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineIconDimension = "timelineIconSize"
 		static let timelineSortDirection = "timelineSortDirection"
@@ -159,6 +160,15 @@ final class AppDefaults {
 		}
 	}
 
+	var markArticlesAsReadOnScroll: Bool {
+		get {
+			return AppDefaults.bool(for: Key.markArticlesAsReadOnScroll)
+		}
+		set {
+			AppDefaults.setBool(for: Key.markArticlesAsReadOnScroll, newValue)
+		}
+	}
+
 	var timelineSortDirection: ComparisonResult {
 		get {
 			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
@@ -236,6 +246,7 @@ final class AppDefaults {
 		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.refreshClearsReadArticles: false,
+										Key.markArticlesAsReadOnScroll: false,
 										Key.timelineNumberOfLines: 2,
 										Key.timelineIconDimension: IconSize.medium.rawValue,
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
