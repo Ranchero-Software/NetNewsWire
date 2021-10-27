@@ -337,6 +337,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	@objc func scrollPositionDidChange(){
+		if !AppDefaults.shared.markArticlesAsReadOnScroll {
+			return
+		}
 		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
 		guard let unreadArticlesScrolledAway = articles.articlesAbove(position: firstVisibleRowIndex).unreadArticles() else { return }
 
