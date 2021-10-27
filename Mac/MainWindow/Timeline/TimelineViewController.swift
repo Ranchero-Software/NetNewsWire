@@ -191,7 +191,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
-	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
