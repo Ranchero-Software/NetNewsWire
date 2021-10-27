@@ -516,6 +516,24 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@objc func scrollPositionDidChange() {
 		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
+			
+		guard let firstVisibleRowIndexPath = tableView.indexPathsForVisibleRows?[0] else { return }
+		
+		guard let firstVisibleArticle = dataSource.itemIdentifier(for: firstVisibleRowIndexPath) else {
+			return
+		}
+
+		guard let unreadArticlesScrolledAway = coordinator.articles.articlesAbove(article: firstVisibleArticle).unreadArticles() else { return }
+
+		coordinator.markAllAsRead(unreadArticlesScrolledAway)
+		
+		for article in unreadArticlesScrolledAway {
+			if let indexPath = dataSource.indexPath(for: article) {
+				if let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
+					configure(cell, article: article)
+				}
+			}
+		}
 	}
 	
 	// MARK: Reloading

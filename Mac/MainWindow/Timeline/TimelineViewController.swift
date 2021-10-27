@@ -191,6 +191,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
+	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
@@ -222,6 +224,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+
+			if let scrollView = self.tableView.enclosingScrollView {
+				scrollView.contentView.postsBoundsChangedNotifications = true
+				
+				NotificationCenter.default.addObserver(self, selector: #selector(scrollViewDidScroll(notification:)), name: NSView.boundsDidChangeNotification, object: scrollView.contentView)
+			}
 
 			didRegisterForNotifications = true
 		}
@@ -322,6 +330,20 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		if let link = oneSelectedArticle?.preferredLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 		}
+	}
+	
+	@objc func scrollViewDidScroll(notification: Notification){
+		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+	}
+	
+	@objc func scrollPositionDidChange(){
+		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
+		guard let unreadArticlesScrolledAway = articles.articlesAbove(position: firstVisibleRowIndex).unreadArticles() else { return }
+
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: unreadArticlesScrolledAway, markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
 	}
 	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
