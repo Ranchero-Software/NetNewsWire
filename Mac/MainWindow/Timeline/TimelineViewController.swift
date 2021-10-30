@@ -138,6 +138,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	var undoableCommands = [UndoableCommand]()
+
+	var articlesWithManuallyChangedReadStatus: Set<Article> = Set()
+
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -341,7 +344,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
-		guard let unreadArticlesScrolledAway = articles.articlesAbove(position: firstVisibleRowIndex).unreadArticles() else { return }
+		let unreadArticlesScrolledAway = articles.articlesAbove(position: firstVisibleRowIndex).filter { !$0.status.read && !articlesWithManuallyChangedReadStatus.contains($0) }
+				
+		if unreadArticlesScrolledAway.isEmpty { return }
 
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: unreadArticlesScrolledAway, markingRead: true, undoManager: undoManager) else {
 			return
@@ -370,6 +375,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		runCommand(markReadCommand)
+		for article in selectedArticles {
+			articlesWithManuallyChangedReadStatus.insert(article)
+		}
 	}
 	
 	@IBAction func markSelectedArticlesAsUnread(_ sender: Any?) {
@@ -377,6 +385,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		runCommand(markUnreadCommand)
+		for article in selectedArticles {
+			articlesWithManuallyChangedReadStatus.insert(article)
+		}
 	}
 
 	@IBAction func copy(_ sender: Any?) {
@@ -928,6 +939,7 @@ extension TimelineViewController: NSTableViewDelegate {
 			return
 		}
 		self.runCommand(markUnreadCommand)
+		articlesWithManuallyChangedReadStatus.insert(article)
 	}
 
 	private func toggleArticleStarred(_ article: Article) {

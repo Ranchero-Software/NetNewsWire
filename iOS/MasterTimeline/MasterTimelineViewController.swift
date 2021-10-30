@@ -527,7 +527,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			return
 		}
 
-		guard let unreadArticlesScrolledAway = coordinator.articles.articlesAbove(article: firstVisibleArticle).unreadArticles() else { return }
+		guard let unreadArticlesScrolledAway = coordinator.articles
+				.articlesAbove(article: firstVisibleArticle)
+				.filter({ !coordinator.articlesWithManuallyChangedReadStatus.contains($0) })
+				.unreadArticles() else { return }
 
 		coordinator.markAllAsRead(unreadArticlesScrolledAway)
 		
