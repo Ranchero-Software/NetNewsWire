@@ -142,6 +142,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var articlesWithManuallyChangedReadStatus: Set<Article> = Set()
 
+	private var isScrolling = false
+	
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -235,6 +237,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				scrollView.contentView.postsBoundsChangedNotifications = true
 				
 				NotificationCenter.default.addObserver(self, selector: #selector(scrollViewDidScroll(notification:)), name: NSView.boundsDidChangeNotification, object: scrollView.contentView)
+				
+				NotificationCenter.default.addObserver(self, selector: #selector(scrollViewWillStartLiveScroll(notification:)), name: NSScrollView.willStartLiveScrollNotification, object: scrollView)
+				NotificationCenter.default.addObserver(self, selector: #selector(scrollViewDidEndLiveScroll(notification:)), name: NSScrollView.didEndLiveScrollNotification, object: scrollView)
+
 			}
 
 			didRegisterForNotifications = true
@@ -341,7 +347,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	@objc func scrollViewDidScroll(notification: Notification){
-		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+		if isScrolling {
+			scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+		}
+	}
+	
+	@objc func scrollViewWillStartLiveScroll(notification: Notification){
+		isScrolling = true
+	}
+	
+	@objc func scrollViewDidEndLiveScroll(notification: Notification){
+		isScrolling = false
 	}
 	
 	@objc func scrollPositionDidChange(){

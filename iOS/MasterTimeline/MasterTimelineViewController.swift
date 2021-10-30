@@ -418,7 +418,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+		if scrollView.isTracking {
+			scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
+		}
 	}
 	
 	// MARK: Notifications
