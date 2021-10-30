@@ -521,6 +521,28 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 			return
 		}
 		
+		// Mark all articles as read when the bottom of the feed is reached
+		if let lastVisibleRowIndexPath = tableView.indexPathsForVisibleRows?.last {
+			let atBottom = dataSource.itemIdentifier(for: lastVisibleRowIndexPath) == coordinator.articles.last
+		
+			if atBottom && coordinator.markBottomArticlesAsReadWorkItem == nil {
+				let task = DispatchWorkItem {
+					let articlesToMarkAsRead = self.coordinator.articles.filter { !$0.status.read && !self.coordinator.articlesWithManuallyChangedReadStatus.contains($0) }
+					
+					if articlesToMarkAsRead.isEmpty { return }
+					self.coordinator.markAllAsRead(articlesToMarkAsRead)
+					self.coordinator.markBottomArticlesAsReadWorkItem = nil
+				}
+				
+				coordinator.markBottomArticlesAsReadWorkItem = task
+				DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+			} else if !atBottom, let task = coordinator.markBottomArticlesAsReadWorkItem {
+				task.cancel()
+				coordinator.markBottomArticlesAsReadWorkItem = nil
+			}
+		}
+		
+		// Mark articles scrolled out of sight at the top as read
 		guard let firstVisibleRowIndexPath = tableView.indexPathsForVisibleRows?[0] else { return }
 		
 		guard let firstVisibleArticle = dataSource.itemIdentifier(for: firstVisibleRowIndexPath) else {
