@@ -70,6 +70,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				if showsSearchResults {
 					fetchAndReplaceArticlesAsync()
 				} else {
+					resetMarkAsReadOnScroll()
 					fetchAndReplaceArticlesSync()
 					if articles.count > 0 {
 						tableView.scrollRowToVisible(0)
@@ -195,6 +196,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
 	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+
+	private var markBottomArticlesAsReadWorkItem: DispatchWorkItem?
 	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
@@ -292,6 +295,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	func restoreState(from state: [AnyHashable : Any]) {
+		resetMarkAsReadOnScroll()
+		
 		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[AnyHashable: AnyHashable]],
 			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
 			return
@@ -343,6 +348,32 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		if !AppDefaults.shared.markArticlesAsReadOnScroll {
 			return
 		}
+		
+		// Mark all articles as read when the bottom of the feed is reached
+		let lastRowIndex = articles.count - 1
+		let atBottom = tableView.rows(in: tableView.visibleRect).contains(lastRowIndex)
+		
+		if atBottom && markBottomArticlesAsReadWorkItem == nil {
+			let task = DispatchWorkItem {
+				let articlesToMarkAsRead = self.articles.filter { !$0.status.read && !self.articlesWithManuallyChangedReadStatus.contains($0) }
+				
+				if articlesToMarkAsRead.isEmpty { return }
+				guard let undoManager = self.undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMarkAsRead, markingRead: true, undoManager: undoManager) else {
+					return
+				}
+				self.runCommand(markReadCommand)
+				self.markBottomArticlesAsReadWorkItem = nil
+			}
+			
+			markBottomArticlesAsReadWorkItem = task
+			DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+		} else if !atBottom, let task = markBottomArticlesAsReadWorkItem {
+			task.cancel()
+			markBottomArticlesAsReadWorkItem = nil
+		}
+		
+		
+		// Mark articles scrolled out of sight at the top as read
 		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
 		let unreadArticlesScrolledAway = articles.articlesAbove(position: firstVisibleRowIndex).filter { !$0.status.read && !articlesWithManuallyChangedReadStatus.contains($0) }
 				
@@ -352,6 +383,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		runCommand(markReadCommand)
+	}
+	
+	func resetMarkAsReadOnScroll() {
+		articlesWithManuallyChangedReadStatus.removeAll()
+		markBottomArticlesAsReadWorkItem?.cancel()
 	}
 	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
