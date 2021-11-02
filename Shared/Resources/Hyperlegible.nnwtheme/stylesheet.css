@@ -42,12 +42,12 @@ a:hover {
 
 :root {
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
-	--header-color: rgba(0, 0, 0, 0.3);
+	--header-color: rgba(8, 106, 238, 1);
 	--body-code-color: #666;
 	--system-message-color: #cbcbcb;
 	--feedlink-color: rgba(255, 0, 0, 0.6);
 	--article-title-color: #333;
-	--article-date-color: rgba(0, 0, 0, 0.3);
+	--article-date-color: rgba(0, 0, 0, 0.5);
 	--table-cell-border-color: lightgray;
 }
 
@@ -487,6 +487,10 @@ a.footnote:hover,
 	}
 
 	body .articleDateline {
+		font-size: 135%;
+	}
+
+	body .externalLink {
 		font-size: 135%;
 	}
 
