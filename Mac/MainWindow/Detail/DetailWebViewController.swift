@@ -155,6 +155,7 @@ final class DetailWebViewController: NSViewController {
 	
 	@objc func userDefaultsDidChange(_ note: Notification) {
 		if articleTextSize != AppDefaults.shared.articleTextSize {
+			articleTextSize = AppDefaults.shared.articleTextSize
 			reloadHTMLMaintainingScrollPosition()
 		}
 	}
