@@ -136,6 +136,9 @@
 		5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */; };
 		5127B238222B4849006D641D /* DetailKeyboardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */; };
 		5127B23A222B4849006D641D /* DetailKeyboardShortcuts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */; };
+		512955E72730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 512955E62730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf */; };
+		512955E82730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 512955E62730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf */; };
+		512955E92730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 512955E62730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf */; };
 		512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */; };
 		512AF9DD236F05230066F8BE /* InteractiveLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512AF9DC236F05230066F8BE /* InteractiveLabel.swift */; };
 		512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */; };
@@ -168,6 +171,9 @@
 		5137C2E526F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
 		5137C2E626F3F52D009EFEDB /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */; };
 		5137C2EA26F63AE6009EFEDB /* ArticleThemeImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */; };
+		51384DED2730CECC00C7997D /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51384DEC2730CECC00C7997D /* Hyperlegible.nnwtheme */; };
+		51384DEE2730CECC00C7997D /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51384DEC2730CECC00C7997D /* Hyperlegible.nnwtheme */; };
+		51384DEF2730CECC00C7997D /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51384DEC2730CECC00C7997D /* Hyperlegible.nnwtheme */; };
 		51386A8E25673277005F3762 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51386A8D25673276005F3762 /* AccountCell.swift */; };
 		51386A8F25673277005F3762 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51386A8D25673276005F3762 /* AccountCell.swift */; };
 		5138E93A24D33E5600AFF0FE /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 5138E93924D33E5600AFF0FE /* RSTree */; };
@@ -1189,6 +1195,7 @@
 		5126EE96226CB48A00C22AFC /* SceneCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneCoordinator.swift; sourceTree = "<group>"; };
 		5127B236222B4849006D641D /* DetailKeyboardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailKeyboardDelegate.swift; sourceTree = "<group>"; };
 		5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DetailKeyboardShortcuts.plist; sourceTree = "<group>"; };
+		512955E62730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AtkinsonHyperlegible-Regular.ttf"; sourceTree = "<group>"; };
 		512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageHeaderView.swift; sourceTree = "<group>"; };
 		512AF9DC236F05230066F8BE /* InteractiveLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveLabel.swift; sourceTree = "<group>"; };
 		512D554323C804DE0023FFFA /* OpenInSafariActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInSafariActivity.swift; sourceTree = "<group>"; };
@@ -1207,6 +1214,7 @@
 		51333D3A2468615D00EB5C91 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Mac/Base.lproj/AddRedditFeedSheet.xib; sourceTree = SOURCE_ROOT; };
 		5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Sepia.nnwtheme; sourceTree = "<group>"; };
 		5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemeImporter.swift; sourceTree = "<group>"; };
+		51384DEC2730CECC00C7997D /* Hyperlegible.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Hyperlegible.nnwtheme; sourceTree = "<group>"; };
 		51386A8D25673276005F3762 /* AccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCell.swift; sourceTree = "<group>"; };
 		513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire iOS Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		513C5CE8232571C2003D4054 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -1856,13 +1864,15 @@
 		511D43CE231FA51100FB1562 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */,
+				51384DEC2730CECC00C7997D /* Hyperlegible.nnwtheme */,
+				51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */,
+				5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */,
+				5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */,
 				844B5B641FEA11F200C7C76A /* GlobalKeyboardShortcuts.plist */,
 				844B5B681FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist */,
 				845479871FEB77C000AD8B59 /* TimelineKeyboardShortcuts.plist */,
-				5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */,
-				51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */,
-				51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */,
-				5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */,
+				512955E62730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3364,6 +3374,7 @@
 				65ED404F235DEF6C0081F399 /* GlobalKeyboardShortcuts.plist in Resources */,
 				65ED4050235DEF6C0081F399 /* DetailKeyboardShortcuts.plist in Resources */,
 				65ED4051235DEF6C0081F399 /* TimelineKeyboardShortcuts.plist in Resources */,
+				512955E82730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf in Resources */,
 				65ED4052235DEF6C0081F399 /* template.html in Resources */,
 				65ED4054235DEF6C0081F399 /* Main.storyboard in Resources */,
 				5137C2E526F3F52D009EFEDB /* Sepia.nnwtheme in Resources */,
@@ -3379,6 +3390,7 @@
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
 				514A89A3244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
 				51D0214726ED617100FF2E0F /* core.css in Resources */,
+				51384DEE2730CECC00C7997D /* Hyperlegible.nnwtheme in Resources */,
 				5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
 				51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
@@ -3429,6 +3441,7 @@
 				511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
 				51BB7C312335ACDE008E8144 /* page.html in Resources */,
+				512955E92730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf in Resources */,
 				512392C324E3451400F11704 /* TwitterAdd.storyboard in Resources */,
 				516A093723609A3600EAE89B /* SettingsComboTableViewCell.xib in Resources */,
 				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
@@ -3442,6 +3455,7 @@
 				516A093B2360A4A000EAE89B /* SettingsTableViewCell.xib in Resources */,
 				511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */,
 				516A09402361240900EAE89B /* Account.storyboard in Resources */,
+				51384DEF2730CECC00C7997D /* Hyperlegible.nnwtheme in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
 				51F85BF12272524100C787DC /* Credits.rtf in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
@@ -3473,6 +3487,7 @@
 				84C9FC7D22629E1200D921D6 /* AccountsDetail.xib in Resources */,
 				5137C2E426F3F52D009EFEDB /* Sepia.nnwtheme in Resources */,
 				517630042336215100E15FFF /* main.js in Resources */,
+				512955E72730BDF10041B863 /* AtkinsonHyperlegible-Regular.ttf in Resources */,
 				65ED40A0235DEFF00081F399 /* container-migration.plist in Resources */,
 				5144EA362279FC3D00D19003 /* AccountsAddLocal.xib in Resources */,
 				51D0214626ED617100FF2E0F /* core.css in Resources */,
@@ -3499,6 +3514,7 @@
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
 				51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
 				BDCB516724282C8A00102A80 /* AccountsNewsBlur.xib in Resources */,
+				51384DED2730CECC00C7997D /* Hyperlegible.nnwtheme in Resources */,
 				514A89A2244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
 				5103A9982421643300410853 /* blank.html in Resources */,
 				515A516E243E7F950089E588 /* ExtensionPointDetail.xib in Resources */,
