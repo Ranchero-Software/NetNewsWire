@@ -237,6 +237,39 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="uZo-ol-UQR" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="641" width="374" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uZo-ol-UQR" id="riE-Jh-UIr">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Mark Articles as Read on Scroll" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7hU-Jg-Gqb">
+                                                    <rect key="frame" x="20" y="11" width="200.5" height="21.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="eIQ-OC-hEm">
+                                                    <rect key="frame" x="307" y="6.5" width="51" height="31"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="switchMarkArticlesAsReadOnScroll:" destination="a0p-rk-skQ" eventType="valueChanged" id="EGi-c5-2ic"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="eIQ-OC-hEm" secondAttribute="trailing" constant="18" id="JEv-k0-ayH"/>
+                                                <constraint firstItem="7hU-Jg-Gqb" firstAttribute="top" secondItem="riE-Jh-UIr" secondAttribute="topMargin" id="P22-FR-r7A"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="7hU-Jg-Gqb" secondAttribute="bottom" id="VRW-kv-1x8"/>
+                                                <constraint firstItem="eIQ-OC-hEm" firstAttribute="top" relation="greaterThanOrEqual" secondItem="riE-Jh-UIr" secondAttribute="top" constant="6" id="leW-2Y-QI0"/>
+                                                <constraint firstItem="7hU-Jg-Gqb" firstAttribute="leading" secondItem="riE-Jh-UIr" secondAttribute="leadingMargin" id="q6H-5f-mWN"/>
+                                                <constraint firstItem="eIQ-OC-hEm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="7hU-Jg-Gqb" secondAttribute="trailing" constant="8" id="qlX-5H-yYc"/>
+                                                <constraint firstItem="eIQ-OC-hEm" firstAttribute="centerY" secondItem="riE-Jh-UIr" secondAttribute="centerY" id="rnd-Gr-Eq2"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="eIQ-OC-hEm" secondAttribute="bottom" constant="6" id="zdI-d8-4Pl"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="8Gj-qz-NMY" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="645.5" width="374" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -617,6 +650,7 @@
                         <outlet property="colorPaletteDetailLabel" destination="16m-Ns-Y8V" id="zdj-Ag-ZUw"/>
                         <outlet property="confirmMarkAllAsReadSwitch" destination="UOo-9z-IuL" id="yLZ-Kf-wDt"/>
                         <outlet property="groupByFeedSwitch" destination="JNi-Wz-RbU" id="TwH-Kd-o6N"/>
+                        <outlet property="markArticlesAsReadOnScrollSwitch" destination="eIQ-OC-hEm" id="f5D-SM-LGr"/>
                         <outlet property="openLinksInNetNewsWire" destination="dhR-L2-PX3" id="z1b-pX-bwG"/>
                         <outlet property="refreshClearsReadArticlesSwitch" destination="duV-CN-JmH" id="xTd-jF-Ei1"/>
                         <outlet property="showFullscreenArticlesSwitch" destination="2Md-2E-7Z4" id="lEN-VP-wEO"/>

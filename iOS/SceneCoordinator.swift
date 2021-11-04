@@ -182,6 +182,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private(set) var showFeedNames = ShowFeedName.none
 	private(set) var showIcons = false
 
+	var articlesWithManuallyChangedReadStatus: Set<Article> = Set()
+	var markBottomArticlesAsReadWorkItem: DispatchWorkItem?
+	
 	var prevFeedIndexPath: IndexPath? {
 		guard let indexPath = currentFeedIndexPath else {
 			return nil
@@ -783,6 +786,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			return
 		}
 		
+		articlesWithManuallyChangedReadStatus.removeAll()
+		markBottomArticlesAsReadWorkItem?.cancel()
+		
 		currentFeedIndexPath = indexPath
 		masterFeedViewController.updateFeedSelection(animations: animations)
 
@@ -1073,24 +1079,28 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func markAsReadForCurrentArticle() {
 		if let article = currentArticle {
 			markArticlesWithUndo([article], statusKey: .read, flag: true)
+			articlesWithManuallyChangedReadStatus.insert(article)
 		}
 	}
 	
 	func markAsUnreadForCurrentArticle() {
 		if let article = currentArticle {
 			markArticlesWithUndo([article], statusKey: .read, flag: false)
+			articlesWithManuallyChangedReadStatus.insert(article)
 		}
 	}
 	
 	func toggleReadForCurrentArticle() {
 		if let article = currentArticle {
 			toggleRead(article)
+			articlesWithManuallyChangedReadStatus.insert(article)
 		}
 	}
 	
 	func toggleRead(_ article: Article) {
 		guard !article.status.read || article.isAvailableToMarkUnread else { return }
 		markArticlesWithUndo([article], statusKey: .read, flag: !article.status.read)
+		articlesWithManuallyChangedReadStatus.insert(article)
 	}
 
 	func toggleStarredForCurrentArticle() {
