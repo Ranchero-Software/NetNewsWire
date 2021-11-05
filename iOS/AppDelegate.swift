@@ -119,7 +119,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		#if DEBUG
 		syncTimer!.update()
 		#endif
-		
+			
 		return true
 		
 	}

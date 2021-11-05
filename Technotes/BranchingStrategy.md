@@ -17,15 +17,15 @@ That is Three-Flow applied to NetNewsWire.  It would be that simple, but we have
 
 Today (6/12/2019) we have 2 branches, main and macOS Candidate, in the main repository which will eventually grow to be 5 branches.
 
-There will also be a number of repository forks that NetNewWire developers will create to do bug fixes and implement new features (not shown here).  Typically contributers will fork the Main branch to thier own repository.  They would then create a feature/bugfix branch on their repository.  Once work on thier forked branch is complete, they will submit a pull request to be merged back into the main repository main.
+There will also be a number of repository forks that NetNewWire developers will create to do bug fixes and implement new features (not shown here).  Typically, contributors will fork the Main branch to their own repository.  They would then create a feature/bugfix branch on their repository.  Once work on their forked branch is complete, they will submit a pull request to be merged back into the main repository main.
 
 ## Tagging
 
-Each release should be tagged using [Semantic Versioning](https://semver.org/).  Candidates will continue to be tagged using the current convention which denotes the difference between developer, alpha and beta releases.  Additionally, we will need to use a convention to avoid tag name collisions between iOS and macOS products.  macOS releases will be suffixed with "mac-" and iOS releases will be suffixed with "ios-".  (See the above diagram for examples.)  
+Each release should be tagged using [Semantic Versioning](https://semver.org/).  Candidates will continue to be tagged using the current convention which denotes the difference between developer, alpha and beta releases.  Additionally, we will need to use a convention to avoid tag name collisions between iOS and macOS products.  macOS releases will be suffixed with "mac-" and iOS releases will be suffixed with "ios-".  (See the above diagram for examples.)
 
 ## Packages
 
-NetNewsWire uses Swift Packages to manage project dependencies.  All the packages are under the same project umbrella as NetNewWire and there are no third party dependencies to manage.  These packages are mostly stable at this point.  For simplicity sake, all development on the packages will continue on their repository Main branch.  These packages won’t be managed as separate projects with separate releases/tags at this time.
+NetNewsWire uses Swift Packages to manage project dependencies.  All the packages are under the same project umbrella as NetNewWire and there are no third-party dependencies to manage.  These packages are mostly stable at this point.  For simplicity’s sake, all development on the packages will continue on their repository Main branch.  These packages won’t be managed as separate projects with separate releases/tags at this time.
 
 ## Summary
 

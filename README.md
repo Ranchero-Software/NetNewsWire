@@ -1,8 +1,8 @@
 # ![Icon](Technotes/Images/icon.png) NetNewsWire
 
-It’s a free and open source feed reader for macOS and iOS.
+It’s a free and open-source feed reader for macOS and iOS.
 
-It supports [RSS](http://cyber.harvard.edu/rss/rss.html), [Atom](https://tools.ietf.org/html/rfc4287), [JSON Feed](https://jsonfeed.org/), and [RSS-in-JSON](https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md) formats.
+It supports [RSS](https://cyber.harvard.edu/rss/rss.html), [Atom](https://datatracker.ietf.org/doc/html/rfc4287), [JSON Feed](https://jsonfeed.org/), and [RSS-in-JSON](https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md) formats.
 
 More info: [https://netnewswire.com/](https://netnewswire.com/)
 
@@ -16,7 +16,7 @@ Here’s [How to Support NetNewsWire](Technotes/HowToSupportNetNewsWire.markdown
 
 [Join the Slack group](https://netnewswire.com/slack) to talk with other NetNewsWire users — and to help out, if you’d like to, by testing, coding, writing, providing feedback, or just helping us think things through. Everybody is welcome and encouraged to join.
 
-Every community member is expected to abide by the code of conduct which is included in the [Contributing](CONTRIBUTING.md) page.
+Every community member is expected to abide by the [code of conduct](CONTRIBUTING.md#code-of-conduct) which is included in the [Contributing](CONTRIBUTING.md) page.
 
 #### Pull Requests
 
@@ -33,10 +33,10 @@ git clone https://github.com/Ranchero-Software/NetNewsWire.git
 You can locally override the Xcode settings for code signing
 by creating a `DeveloperSettings.xcconfig` file locally at the appropriate path.
 This allows for a pristine project with code signing set up with the appropriate
-developer ID and certificates, and for dev to be able to have local settings
+developer ID and certificates, and for developer to be able to have local settings
 without needing to check in anything into source control.
 
-You can do this in one of two ways: using the included `setup.sh` script or by creating the folder structure and file manually. 
+You can do this in one of two ways: using the included `setup.sh` script or by creating the folder structure and file manually.
 
 ##### Using `setup.sh`
 
@@ -46,7 +46,7 @@ You can do this in one of two ways: using the included `setup.sh` script or by c
 
 ##### Manually 
 
-Make a directory SharedXcodeSettings next to where you have this repository.
+Make a directory `SharedXcodeSettings` next to where you have this repository.
 
 The directory structure is:
 
@@ -54,7 +54,7 @@ The directory structure is:
 aDirectory/
   SharedXcodeSettings/
     DeveloperSettings.xcconfig
-  NetNewsWire
+  NetNewsWire/
     NetNewsWire.xcworkspace
 ```
 Example:
@@ -90,4 +90,4 @@ functionality disabled.  This is because we have API keys that can't be stored i
 repository or shared between developers.  Certain account types, like Feedly, aren't
 enabled and the Reader View isn't enabled because of this.
 
-If you have any problems, we will help you out in Slack (see above).
+If you have any problems, we will help you out in Slack ([see above](README.md#Community)).
