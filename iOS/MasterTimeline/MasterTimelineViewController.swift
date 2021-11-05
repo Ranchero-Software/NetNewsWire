@@ -545,7 +545,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 		
 		// Mark articles scrolled out of sight at the top as read
-		guard let firstVisibleRowIndexPath = tableView.indexPathsForVisibleRows?[0] else { return }
+		guard let visibleRowIndexPaths = tableView.indexPathsForVisibleRows, visibleRowIndexPaths.count > 0 else { return }
+		let firstVisibleRowIndexPath = visibleRowIndexPaths[0]
 		
 		guard let firstVisibleArticle = dataSource.itemIdentifier(for: firstVisibleRowIndexPath) else {
 			return
