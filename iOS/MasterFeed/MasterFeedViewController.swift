@@ -75,6 +75,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(configureContextMenu(_:)), name: .ActiveExtensionPointsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(didLaunchFromURLContext), name: .DidLaunchFromExternalAction, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -686,6 +687,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			let vc = SFSafariViewController(url: url)
 			present(vc, animated: true)
 		}
+	}
+	
+	@objc func didLaunchFromURLContext() {
+		guard let presentedController = presentedViewController as? SFSafariViewController else {
+			return
+		}
+		presentedController.dismiss(animated: true, completion: nil)
 	}
 }
 

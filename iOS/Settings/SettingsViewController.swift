@@ -38,6 +38,7 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(activeExtensionPointsDidChange), name: .ActiveExtensionPointsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(didLaunchFromURLContext), name: .DidLaunchFromExternalAction, object: nil)
 		
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
@@ -387,6 +388,10 @@ class SettingsViewController: UITableViewController {
 	
 	@objc func browserPreferenceDidChange() {
 		tableView.reloadData()
+	}
+	
+	@objc func didLaunchFromURLContext() {
+		dismiss(animated: true, completion: nil)
 	}
 	
 }

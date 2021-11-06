@@ -11,6 +11,10 @@ import UserNotifications
 import Account
 import Zip
 
+public extension Notification.Name {
+	static let DidLaunchFromExternalAction = Notification.Name("DidLaunchFromExternalAction")
+}
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	var window: UIWindow?
@@ -105,6 +109,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		guard let context = urlContexts.first else { return }
 		
 		DispatchQueue.main.async {
+			
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+				NotificationCenter.default.post(name: .DidLaunchFromExternalAction, object: nil)
+			}
+			
 			let urlString = context.url.absoluteString
 			
 			// Handle the feed: and feeds: schemes
@@ -201,6 +210,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			} else {
 				return
 			}
+			
 			
 		}
 	}
