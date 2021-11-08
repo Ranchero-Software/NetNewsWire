@@ -399,7 +399,7 @@ private extension AppDelegate {
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
 					if #available(iOS 14, *) {
-						try? WidgetDataEncoder.shared.encodeWidgetData()
+						try? WidgetDataEncoder.shared.encodeWidgetDataSync()
 					}
 					self.suspendApplication()
 					os_log("Account refresh operation completed.", log: self.log, type: .info)
@@ -446,7 +446,7 @@ private extension AppDelegate {
 		account!.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
 				if #available(iOS 14, *) {
-					try? WidgetDataEncoder.shared.encodeWidgetData()
+					try? WidgetDataEncoder.shared.encodeWidgetDataSync()
 				}
 				self?.prepareAccountsForBackground()
 				self?.suspendApplication()
@@ -475,7 +475,7 @@ private extension AppDelegate {
 		account!.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
 				if #available(iOS 14, *) {
-					try? WidgetDataEncoder.shared.encodeWidgetData()
+					try? WidgetDataEncoder.shared.encodeWidgetDataSync()
 				}
 				self?.prepareAccountsForBackground()
 				self?.suspendApplication()
