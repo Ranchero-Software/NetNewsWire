@@ -211,9 +211,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
 				sceneDelegate.handle(response)
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-					NotificationCenter.default.post(name: .DidLaunchFromExternalAction, object: nil)
+					sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
 				})
-				
 			}
 		}
 		

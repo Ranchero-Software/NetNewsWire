@@ -11,10 +11,6 @@ import UserNotifications
 import Account
 import Zip
 
-public extension Notification.Name {
-	static let DidLaunchFromExternalAction = Notification.Name("DidLaunchFromExternalAction")
-}
-
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	
 	var window: UIWindow?
@@ -111,7 +107,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		DispatchQueue.main.async {
 			
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-				NotificationCenter.default.post(name: .DidLaunchFromExternalAction, object: nil)
+				self.coordinator.dismissIfLaunchingFromExternalAction()
 			}
 			
 			let urlString = context.url.absoluteString
