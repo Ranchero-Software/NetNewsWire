@@ -687,6 +687,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			present(vc, animated: true)
 		}
 	}
+
 }
 
 // MARK: UIContextMenuInteractionDelegate
