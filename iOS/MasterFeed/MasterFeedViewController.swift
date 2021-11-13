@@ -121,7 +121,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 
 		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
-		UIView.animate(withDuration: 0.1) {
+		UIView.animate(withDuration: 0.3) {
 			self.tableView.reloadRows(at: [indexPath], with: .none)
 		}
 		restoreSelectionIfNecessary(adjustScroll: false)
