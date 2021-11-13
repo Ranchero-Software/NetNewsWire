@@ -170,6 +170,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		return cell
 	}
 	
+	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+		if coordinator.nodeFor(indexPath)?.representedObject is PseudoFeed {
+			return false
+		} else {
+			return true
+		}
+	}
+	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 
 		guard let nameProvider = coordinator.rootNode.childAtIndex(section)?.representedObject as? DisplayNameProvider else {
