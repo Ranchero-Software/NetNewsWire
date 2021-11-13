@@ -99,11 +99,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateUI()
 
-		guard let representedObject = note.object else {
+		guard let unreadCountProvider = note.object as? UnreadCountProvider else {
 			return
 		}
 		
-		if let account = representedObject as? Account {
+		if let account = unreadCountProvider as? Account {
 			if let node = coordinator.rootNode.childNodeRepresentingObject(account) {
 				let sectionIndex = coordinator.rootNode.indexOfChild(node)!
 				if let headerView = tableView.headerView(forSection: sectionIndex) as? MasterFeedTableViewSectionHeader {
@@ -114,15 +114,16 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 		
 		var node: Node? = nil
-		if let coordinator = representedObject as? SceneCoordinator, let feed = coordinator.timelineFeed {
+		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
 			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
 		} else {
-			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
+			node = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
 		}
 
 		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
-		tableView.reloadRows(at: [indexPath], with: .none)
-		restoreSelectionIfNecessary(adjustScroll: false)
+		if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
+			cell.unreadCount = unreadCountProvider.unreadCount
+		}
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
