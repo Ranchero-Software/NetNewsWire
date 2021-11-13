@@ -44,8 +44,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
-	
-	private var reloadCoalescingQueue = CoalescingQueue(name: "Reload Visible", interval: 0.5)
 
 	override func viewDidLoad() {
 
@@ -115,7 +113,18 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		queueReloadAllVisible()
+		var node: Node? = nil
+		if let coordinator = representedObject as? SceneCoordinator, let feed = coordinator.timelineFeed {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
+		} else {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(representedObject as AnyObject)
+		}
+
+		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
+		UIView.animate(withDuration: 0.1) {
+			self.tableView.reloadRows(at: [indexPath], with: .none)
+		}
+		restoreSelectionIfNecessary(adjustScroll: false)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -687,7 +696,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			present(vc, animated: true)
 		}
 	}
-
+	
 }
 
 // MARK: UIContextMenuInteractionDelegate
@@ -834,14 +843,6 @@ private extension MasterFeedViewController {
 		return ""
 	}
 
-	func queueReloadAllVisible() {
-		reloadCoalescingQueue.add(self, #selector(reloadQueuedAllVisible))
-	}
-	
-	@objc func reloadQueuedAllVisible() {
-		reloadAllVisibleCells()
-	}
-	
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
 		applyToCellsForRepresentedObject(representedObject, configure)
 	}
