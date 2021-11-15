@@ -44,8 +44,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	override var canBecomeFirstResponder: Bool {
 		return true
 	}
-	
-	private var reloadCoalescingQueue = CoalescingQueue(name: "Reload Visible", interval: 0.5)
 
 	override func viewDidLoad() {
 
@@ -101,11 +99,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	@objc func unreadCountDidChange(_ note: Notification) {
 		updateUI()
 
-		guard let representedObject = note.object else {
+		guard let unreadCountProvider = note.object as? UnreadCountProvider else {
 			return
 		}
 		
-		if let account = representedObject as? Account {
+		if let account = unreadCountProvider as? Account {
 			if let node = coordinator.rootNode.childNodeRepresentingObject(account) {
 				let sectionIndex = coordinator.rootNode.indexOfChild(node)!
 				if let headerView = tableView.headerView(forSection: sectionIndex) as? MasterFeedTableViewSectionHeader {
@@ -115,7 +113,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		queueReloadAllVisible()
+		var node: Node? = nil
+		if let coordinator = unreadCountProvider as? SceneCoordinator, let feed = coordinator.timelineFeed {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(feed as AnyObject)
+		} else {
+			node = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
+		}
+
+		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
+		if let cell = tableView.cellForRow(at: indexPath) as? MasterFeedTableViewCell {
+			cell.unreadCount = unreadCountProvider.unreadCount
+		}
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -161,6 +169,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterFeedTableViewCell
 		configure(cell, indexPath)
 		return cell
+	}
+	
+	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+		if coordinator.nodeFor(indexPath)?.representedObject is PseudoFeed {
+			return false
+		} else {
+			return true
+		}
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -687,6 +703,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			present(vc, animated: true)
 		}
 	}
+	
 }
 
 // MARK: UIContextMenuInteractionDelegate
@@ -833,14 +850,6 @@ private extension MasterFeedViewController {
 		return ""
 	}
 
-	func queueReloadAllVisible() {
-		reloadCoalescingQueue.add(self, #selector(reloadQueuedAllVisible))
-	}
-	
-	@objc func reloadQueuedAllVisible() {
-		reloadAllVisibleCells()
-	}
-	
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
 		applyToCellsForRepresentedObject(representedObject, configure)
 	}

@@ -105,6 +105,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		guard let context = urlContexts.first else { return }
 		
 		DispatchQueue.main.async {
+			
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+				self.coordinator.dismissIfLaunchingFromExternalAction()
+			}
+			
 			let urlString = context.url.absoluteString
 			
 			// Handle the feed: and feeds: schemes
@@ -201,6 +206,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			} else {
 				return
 			}
+			
 			
 		}
 	}

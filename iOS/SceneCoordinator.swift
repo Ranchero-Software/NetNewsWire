@@ -1325,6 +1325,23 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		
 	}
 	
+	/// This will dismiss the foremost view controller if the user
+	/// has launched from an external action (i.e., a widget tap, or
+	/// selecting an artice via a notification).
+	///
+	/// The dismiss is only applicable if the view controller is a
+	/// `SFSafariViewController` or `SettingsViewController`,
+	/// otherwise, this function does nothing.
+	func dismissIfLaunchingFromExternalAction() {
+		guard let presentedController = masterFeedViewController.presentedViewController else { return }
+		
+		if presentedController.isKind(of: SFSafariViewController.self) {
+			presentedController.dismiss(animated: true, completion: nil)
+		}
+		guard let settings = presentedController.children.first as? SettingsViewController else { return }
+		settings.dismiss(animated: true, completion: nil)
+	}
+	
 }
 
 // MARK: UISplitViewControllerDelegate

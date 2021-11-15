@@ -13,15 +13,18 @@ struct ArticleItemView: View {
 	
 	var article: LatestArticle
 	var deepLink: URL
+	@State private var iconImage: UIImage?
 	
 	var body: some View {
 		Link(destination: deepLink, label: {
 			HStack(alignment: .top, spacing: nil, content: {
 				// Feed Icon
-				Image(uiImage: thumbnail(article.feedIcon))
-					.resizable()
-					.frame(width: 30, height: 30)
-					.cornerRadius(4)
+				if iconImage != nil {
+					Image(uiImage: iconImage!)
+						.resizable()
+						.frame(width: 30, height: 30)
+						.cornerRadius(4)
+				}
 				
 				// Title and Feed Name
 				VStack(alignment: .leading) {
@@ -45,7 +48,9 @@ struct ArticleItemView: View {
 					}
 				}
 			})
-		})
+		}).onAppear {
+			iconImage = thumbnail(article.feedIcon)
+		}
 	}
 	
 	func thumbnail(_ data: Data?) -> UIImage {
