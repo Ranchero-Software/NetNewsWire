@@ -30,7 +30,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
-
+	
+	private var markAsReadView: MarkAsReadBackgroundView?
+		
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
 		
@@ -79,6 +81,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Configure the table
 		tableView.dataSource = dataSource
+
+		if let loadedMarkAsReadView = Bundle.main.loadNibNamed("MarkAsReadBackgroundView", owner: self, options: nil)?[0] as? MarkAsReadBackgroundView {
+			markAsReadView = loadedMarkAsReadView
+			tableView.backgroundView = loadedMarkAsReadView
+		}
+		
+		
+		
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
@@ -421,6 +431,64 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if scrollView.isTracking {
 			scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 		}
+
+		if !AppDefaults.shared.markArticlesAsReadOnScroll {
+			return
+		}
+		
+		var pullUpHeight = 0.0
+		let bottomBarHeight = scrollView.safeAreaInsets.bottom
+		
+		// Only show if search bar not visibe
+		if searchController.searchBar.frame.height <= 0 {
+			// Table is extended under top and bottom bars
+			let topBarHeight = scrollView.safeAreaInsets.top
+			let visibleFrameHeight = scrollView.frame.size.height - topBarHeight  - bottomBarHeight
+			let currentOffset = scrollView.contentOffset.y + topBarHeight
+			let scrolledOutOfViewWhenBottomIsReached = max(scrollView.contentSize.height - visibleFrameHeight,0)
+			
+			pullUpHeight = max(currentOffset - scrolledOutOfViewWhenBottomIsReached,0)
+			
+		}
+		
+		if let backgroundView = markAsReadView {
+			backgroundView.bottomOffset = bottomBarHeight
+
+			if (backgroundView.isMarkingAsRead) {
+				backgroundView.height = max(pullUpHeight, backgroundView.thresholdHeight)
+			} else {
+				backgroundView.height = pullUpHeight
+			}
+		}
+		
+		
+	}
+	
+	override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+
+		if let backgroundView = markAsReadView, backgroundView.height >= backgroundView.thresholdHeight {
+			scrollView.contentInset.bottom = backgroundView.thresholdHeight
+			backgroundView.isMarkingAsRead = true
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+				scrollView.contentInset.bottom = 0
+				backgroundView.isMarkingAsRead = false
+				
+				guard let unreadArticlesToMarkAsRead = self.coordinator.articles
+						.filter({ !self.coordinator.articlesWithManuallyChangedReadStatus.contains($0) })
+					.unreadArticles() else { return }
+
+				self.coordinator.markAllAsRead(unreadArticlesToMarkAsRead)
+				
+				for article in unreadArticlesToMarkAsRead {
+					if let indexPath = self.dataSource.indexPath(for: article) {
+						if let cell = self.tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
+							self.configure(cell, article: article)
+						}
+					}
+				}
+				
+			}
+		}
 	}
 	
 	// MARK: Notifications
@@ -522,28 +590,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		if !AppDefaults.shared.markArticlesAsReadOnScroll {
 			return
 		}
-		
-		// Mark all articles as read when the bottom of the feed is reached
-		if let lastVisibleRowIndexPath = tableView.indexPathsForVisibleRows?.last {
-			let atBottom = dataSource.itemIdentifier(for: lastVisibleRowIndexPath) == coordinator.articles.last
-		
-			if atBottom && coordinator.markBottomArticlesAsReadWorkItem == nil {
-				let task = DispatchWorkItem {
-					let articlesToMarkAsRead = self.coordinator.articles.filter { !$0.status.read && !self.coordinator.articlesWithManuallyChangedReadStatus.contains($0) }
-					
-					if articlesToMarkAsRead.isEmpty { return }
-					self.coordinator.markAllAsRead(articlesToMarkAsRead)
-					self.coordinator.markBottomArticlesAsReadWorkItem = nil
-				}
 				
-				coordinator.markBottomArticlesAsReadWorkItem = task
-				DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-			} else if !atBottom, let task = coordinator.markBottomArticlesAsReadWorkItem {
-				task.cancel()
-				coordinator.markBottomArticlesAsReadWorkItem = nil
-			}
-		}
-		
 		// Mark articles scrolled out of sight at the top as read
 		guard let visibleRowIndexPaths = tableView.indexPathsForVisibleRows, visibleRowIndexPaths.count > 0 else { return }
 		let firstVisibleRowIndexPath = visibleRowIndexPaths[0]

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="iN0-l3-epB" customClass="MarkAsReadBackgroundView" customModule="NetNewsWire" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gb1-ux-VVv">
+                    <rect key="frame" x="0.0" y="846" width="414" height="50"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pull up further to mark visible articles as read" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A63-gk-wPy">
+                            <rect key="frame" x="35.5" y="14.5" width="343" height="21"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" name="barBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="A63-gk-wPy" firstAttribute="centerX" secondItem="gb1-ux-VVv" secondAttribute="centerX" id="P2N-F5-yKr"/>
+                        <constraint firstItem="A63-gk-wPy" firstAttribute="centerY" secondItem="gb1-ux-VVv" secondAttribute="centerY" id="VBd-oS-bOc"/>
+                        <constraint firstAttribute="height" constant="50" id="ju2-BI-Dfm"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstItem="gb1-ux-VVv" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="6WB-TV-Q6z"/>
+                <constraint firstAttribute="bottom" secondItem="gb1-ux-VVv" secondAttribute="bottom" id="7km-DW-63s"/>
+                <constraint firstAttribute="trailing" secondItem="gb1-ux-VVv" secondAttribute="trailing" id="91a-3G-WdD"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="bottomOffetConstraint" destination="7km-DW-63s" id="f7a-gr-C8B"/>
+                <outlet property="heightConstraint" destination="ju2-BI-Dfm" id="k3d-wU-Emn"/>
+                <outlet property="label" destination="A63-gk-wPy" id="wVJ-Z9-DJI"/>
+                <outlet property="pullUpView" destination="gb1-ux-VVv" id="m2w-Ii-4Yg"/>
+            </connections>
+            <point key="canvasLocation" x="137.68115942028987" y="51.5625"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="barBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </namedColor>
+    </resources>
+</document>
