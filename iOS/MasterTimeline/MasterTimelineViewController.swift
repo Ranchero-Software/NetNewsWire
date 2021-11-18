@@ -82,6 +82,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
+
+		if #available(iOS 15, *) {
+			tableView.isPrefetchingEnabled = false
+		}		
 		
 		if let titleView = Bundle.main.loadNibNamed("MasterTimelineTitleView", owner: self, options: nil)?[0] as? MasterTimelineTitleView {
 			navigationItem.titleView = titleView
