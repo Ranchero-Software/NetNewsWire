@@ -11,7 +11,7 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
+class MasterTimelineViewController: PullUpToMarkAsReadTableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -418,6 +418,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		super.scrollViewDidScroll(scrollView)
+		
 		if scrollView.isTracking {
 			scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 		}
