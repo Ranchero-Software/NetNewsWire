@@ -2245,7 +2245,7 @@ private extension SceneCoordinator {
 			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
 
 			markExpanded(SmartFeedsController.shared)
-			rebuildBackingStores(completion:  {
+			rebuildBackingStores(initialLoad: true, completion:  {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
 					self.selectFeed(indexPath: indexPath) {
@@ -2265,7 +2265,7 @@ private extension SceneCoordinator {
 
 			markExpanded(account)
 			
-			rebuildBackingStores(completion:  {
+			rebuildBackingStores(initialLoad: true, completion:  {
 				self.treeControllerDelegate.resetFilterExceptions()
 				
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
