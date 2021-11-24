@@ -103,6 +103,17 @@ extension Array where Element == Article {
 		return true
 	}
 
+	func articlesBetween(upperArticle: Article, lowerArticle: Article) -> [Article] {
+		guard let upperPosition = firstIndex(of: upperArticle), let lowerPosition = firstIndex(of: lowerArticle) else { return [] }
+		return articlesBetween(upperPosition: upperPosition, lowerPosition: lowerPosition)
+	}
+	
+	func articlesBetween(upperPosition: Int, lowerPosition: Int) -> [Article] {
+		guard upperPosition < count, lowerPosition < count else { return [] }
+		let articlesAbove = self[upperPosition...lowerPosition]
+		return Array(articlesAbove)
+	}
+	
 	func articlesAbove(article: Article) -> [Article] {
 		guard let position = firstIndex(of: article) else {	return [] }
 		return articlesAbove(position: position)

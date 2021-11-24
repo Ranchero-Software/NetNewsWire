@@ -31,6 +31,8 @@ class MasterTimelineViewController: PullUpToMarkAsReadTableViewController, Undoa
 	var undoableCommands = [UndoableCommand]()
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 
+	private var firstVisibleArticleWhenDraggingBegan: Article?
+	
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	override var keyCommands: [UIKeyCommand]? {
 		
@@ -250,6 +252,17 @@ class MasterTimelineViewController: PullUpToMarkAsReadTableViewController, Undoa
 		becomeFirstResponder()
 	}
 
+	// MARK: - PullUpToMarkAsReadTableViewController
+	override func pulledUpToMarkAsRead() {
+		super.pulledUpToMarkAsRead()
+		
+		guard let unreadArticles = coordinator.articles
+				.filter({ !coordinator.articlesWithManuallyChangedReadStatus.contains($0) })
+				.unreadArticles() else { return }
+
+		coordinator.markAllAsRead(unreadArticles)
+	}
+	
 	// MARK: - Table view
 
 	override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -417,6 +430,19 @@ class MasterTimelineViewController: PullUpToMarkAsReadTableViewController, Undoa
 		coordinator.selectArticle(article, animations: [.scroll, .select, .navigation])
 	}
 	
+	override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+		super.scrollViewWillBeginDragging(scrollView)
+		
+		guard let visibleRowIndexPaths = tableView.indexPathsForVisibleRows, visibleRowIndexPaths.count > 0 else { return }
+		let firstVisibleRowIndexPath = visibleRowIndexPaths[0]
+		
+		if scrollView.isTracking {
+			firstVisibleArticleWhenDraggingBegan = dataSource.itemIdentifier(for: firstVisibleRowIndexPath)
+		} else {
+			firstVisibleArticleWhenDraggingBegan = nil
+		}
+	}
+	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		super.scrollViewDidScroll(scrollView)
 		
@@ -525,37 +551,16 @@ class MasterTimelineViewController: PullUpToMarkAsReadTableViewController, Undoa
 			return
 		}
 		
-		// Mark all articles as read when the bottom of the feed is reached
-		if let lastVisibleRowIndexPath = tableView.indexPathsForVisibleRows?.last {
-			let atBottom = dataSource.itemIdentifier(for: lastVisibleRowIndexPath) == coordinator.articles.last
-		
-			if atBottom && coordinator.markBottomArticlesAsReadWorkItem == nil {
-				let task = DispatchWorkItem {
-					let articlesToMarkAsRead = self.coordinator.articles.filter { !$0.status.read && !self.coordinator.articlesWithManuallyChangedReadStatus.contains($0) }
-					
-					if articlesToMarkAsRead.isEmpty { return }
-					self.coordinator.markAllAsRead(articlesToMarkAsRead)
-					self.coordinator.markBottomArticlesAsReadWorkItem = nil
-				}
-				
-				coordinator.markBottomArticlesAsReadWorkItem = task
-				DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-			} else if !atBottom, let task = coordinator.markBottomArticlesAsReadWorkItem {
-				task.cancel()
-				coordinator.markBottomArticlesAsReadWorkItem = nil
-			}
-		}
-		
 		// Mark articles scrolled out of sight at the top as read
 		guard let visibleRowIndexPaths = tableView.indexPathsForVisibleRows, visibleRowIndexPaths.count > 0 else { return }
 		let firstVisibleRowIndexPath = visibleRowIndexPaths[0]
 		
-		guard let firstVisibleArticle = dataSource.itemIdentifier(for: firstVisibleRowIndexPath) else {
+		guard let firstVisibleArticle = dataSource.itemIdentifier(for: firstVisibleRowIndexPath), let firstArticleScrolledAway = firstVisibleArticleWhenDraggingBegan else {
 			return
 		}
 
 		guard let unreadArticlesScrolledAway = coordinator.articles
-				.articlesAbove(article: firstVisibleArticle)
+				.articlesBetween(upperArticle: firstArticleScrolledAway, lowerArticle: firstVisibleArticle)
 				.filter({ !coordinator.articlesWithManuallyChangedReadStatus.contains($0) })
 				.unreadArticles() else { return }
 

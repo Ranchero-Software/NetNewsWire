@@ -183,7 +183,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private(set) var showIcons = false
 
 	var articlesWithManuallyChangedReadStatus: Set<Article> = Set()
-	var markBottomArticlesAsReadWorkItem: DispatchWorkItem?
 	
 	var prevFeedIndexPath: IndexPath? {
 		guard let indexPath = currentFeedIndexPath else {
@@ -785,9 +784,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			completion?()
 			return
 		}
-		
 		articlesWithManuallyChangedReadStatus.removeAll()
-		markBottomArticlesAsReadWorkItem?.cancel()
 		
 		currentFeedIndexPath = indexPath
 		masterFeedViewController.updateFeedSelection(animations: animations)

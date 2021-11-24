@@ -128,7 +128,7 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 			}
 		}
 		
-		markAsRead()
+		pulledUpToMarkAsRead()
 	}
 
 	func stopMarkingAsRead() {
@@ -139,8 +139,8 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 		self.tableView.contentInset = UIEdgeInsets.zero
 	}
 	
-	func markAsRead() {
-		// to override by implementation, which should also call stopMarkingAsRead when done
+	func pulledUpToMarkAsRead() {
+		// to override by implementation, which should also call stopMarkingAsRead when done or call this
 
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 			self.stopMarkingAsRead()
