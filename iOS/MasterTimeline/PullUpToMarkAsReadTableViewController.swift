@@ -48,7 +48,6 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 		textLabel = label
 		markAsReadFooterView.addSubview(label)
 		
-//		self.tableView.addSubview(markAsReadFooterView)
 		let backgroundView = UIView()
 		backgroundView.addSubview(markAsReadFooterView)
 		self.tableView.backgroundView = backgroundView
