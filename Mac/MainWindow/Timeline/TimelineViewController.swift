@@ -141,6 +141,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var undoableCommands = [UndoableCommand]()
 
 	var articlesWithManuallyChangedReadStatus: Set<Article> = Set()
+	private var firstVisibleRowIndexWhenDraggingBegan: Int = 0
 	
 	private var isScrolling = false
 	
@@ -352,6 +353,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	
 	@objc func scrollViewWillStartLiveScroll(notification: Notification){
 		isScrolling = true
+		firstVisibleRowIndexWhenDraggingBegan = tableView.rows(in: tableView.visibleRect).location
 	}
 	
 	@objc func scrollViewDidEndLiveScroll(notification: Notification){
@@ -365,7 +367,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		
 		// Mark articles scrolled out of sight at the top as read
 		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
-		let unreadArticlesScrolledAway = articles.articlesAbove(position: firstVisibleRowIndex).filter { !$0.status.read && !articlesWithManuallyChangedReadStatus.contains($0) }
+		
+		let unreadArticlesScrolledAway = articles.articlesBetween(
+			upperPosition: firstVisibleRowIndexWhenDraggingBegan, lowerPosition: firstVisibleRowIndex).filter { !$0.status.read && !articlesWithManuallyChangedReadStatus.contains($0) }
 				
 		if unreadArticlesScrolledAway.isEmpty { return }
 
