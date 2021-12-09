@@ -19,6 +19,7 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 	public var isDragging = false
 	
 	private var textLabel: UILabel?
+	private var markAsReadFooterView: UIView?
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
@@ -26,15 +27,15 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 	}
 
 	func addPullUpToMarkAsReadFooter() {
-		let markAsReadFooterView = UIView.init(frame: CGRect(
+		let footerView = UIView.init(frame: CGRect(
 			x: 0.0,
 			y: view.frame.size.height - view.safeAreaInsets.bottom - pullUpToMarkAsReadFooterHeight,
 			width: view.frame.size.width,
 			height: pullUpToMarkAsReadFooterHeight
 		))
-		
-		markAsReadFooterView.backgroundColor = UIColor.clear
-		
+		footerView.isHidden = true
+		footerView.backgroundColor = UIColor.clear
+
 		let label = UILabel.init(frame: CGRect(
 			x: 0.0,
 			y: 0.0,
@@ -46,16 +47,20 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 		label.textAlignment = NSTextAlignment.center
 		
 		textLabel = label
-		markAsReadFooterView.addSubview(label)
+		footerView.addSubview(label)
 		
 		let backgroundView = UIView()
-		backgroundView.addSubview(markAsReadFooterView)
+		backgroundView.addSubview(footerView)
 		self.tableView.backgroundView = backgroundView
+		self.markAsReadFooterView = footerView
 	}
 	
 	override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
 		if (!AppDefaults.shared.markArticlesAsReadOnScroll || isMarkingAsRead) {
 			return
+		}
+		if let footerView = markAsReadFooterView {
+			footerView.isHidden = false
 		}
 		isDragging = true
 	}
@@ -81,7 +86,7 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 					right: 0
 				);
 			}
-		} else if (isDragging && scrollView.contentOffset.y > 0) {
+		} else if (isDragging) {
 			// Update the label
 			UIView.animate(withDuration: 0.25) {
 				if (pullUpVisibleHeight > self.pullUpToMarkAsReadFooterHeight) {
@@ -110,6 +115,10 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 		
 		if (pullUpVisibleHeight > pullUpToMarkAsReadFooterHeight) {
 			startMarkingAsRead()
+		} else {
+			if let footerView = markAsReadFooterView {
+				footerView.isHidden = true
+			}
 		}
 	}
 	
@@ -136,6 +145,9 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 			label.text = textPull
 		}
 		self.tableView.contentInset = UIEdgeInsets.zero
+		if let footerView = markAsReadFooterView {
+			footerView.isHidden = true
+		}
 	}
 	
 	func pulledUpToMarkAsRead() {
