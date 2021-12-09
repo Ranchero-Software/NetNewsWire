@@ -54,14 +54,14 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 	}
 	
 	override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-		if (isMarkingAsRead) {
+		if (!AppDefaults.shared.markArticlesAsReadOnScroll || isMarkingAsRead) {
 			return
 		}
 		isDragging = true
 	}
 
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		guard let label = textLabel else {
+		guard AppDefaults.shared.markArticlesAsReadOnScroll, let label = textLabel else {
 			return
 		}
 		let visibleHeight = view.frame.size.height -
@@ -96,7 +96,7 @@ class PullUpToMarkAsReadTableViewController: UITableViewController {
 	}
 	
 	override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-		if (isMarkingAsRead) {
+		if (!AppDefaults.shared.markArticlesAsReadOnScroll || isMarkingAsRead) {
 			return
 		}
 		isDragging = false
