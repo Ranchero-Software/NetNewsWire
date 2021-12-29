@@ -39,6 +39,7 @@ a:hover {
 	--article-title-color: #333;
 	--article-date-color: rgba(0, 0, 0, 0.3);
 	--table-cell-border-color: lightgray;
+	--header-footer-border-color: lightgray;
 }
 
 @media(prefers-color-scheme: dark) {
@@ -50,6 +51,7 @@ a:hover {
 		--article-title-color: #e0e0e0;
 		--article-date-color: rgba(255, 255, 255, 0.5);
 		--table-cell-border-color: dimgray;
+		--header-footer-border-color: dimgray;
 	}
 }
 
@@ -444,7 +446,6 @@ a.footnote:hover,
 		--primary-accent-color: #086AEE;
 		--secondary-accent-color: #086AEE;
 		--block-quote-border-color: rgba(8, 106, 238, 0.50);
-		--header-footer-border-color: rgba(8, 106, 238, 0.75);
 		--secondary-accent-color: #086AEE;
 	}
 
@@ -453,7 +454,6 @@ a.footnote:hover,
 			--primary-accent-color: #2D80F1;
 			--secondary-accent-color: #5E9EF4;
 			--block-quote-border-color: rgba(94, 158, 244, 0.50);
-			--header-footer-border-color: rgba(94, 158, 244, 0.75);
 			--footer-table-border-color: rgba(255, 255, 255, 0.2);
 		}
 	}
@@ -484,8 +484,10 @@ a.footnote:hover,
 	body {
 		margin-top: 20px;
 		margin-bottom: 20px;
-		margin-left: 48px;
-		margin-right: 48px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-left: 48px;
+		padding-right: 48px;
 		font-family: -apple-system;
 	}
 
@@ -513,14 +515,12 @@ a.footnote:hover,
 		color-scheme: light dark;
 		--accent-color: rgba(8, 106, 238, 1);
 		--block-quote-border-color: rgba(8, 106, 238, .50);
-		--header-footer-border-color: rgba(8, 106, 238, 0.75);
 	}
 
 	@media(prefers-color-scheme: dark) {
 		:root {
 			--accent-color: rgba(94, 158, 244, 1);
 			--block-quote-border-color: rgba(94, 158, 244, .50);
-			--header-footer-border-color: rgba(94, 158, 244, 0.75);
 		}
 	}
 
