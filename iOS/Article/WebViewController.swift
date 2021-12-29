@@ -80,13 +80,6 @@ class WebViewController: UIViewController {
 		loadWebView()
 
 	}
-
-	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-		// We need to reload the webview on the iPhone when rotation happens to clear out any old bad viewport sizes
-		if traitCollection.userInterfaceIdiom == .phone {
-			loadWebView()
-		}
-	}
 	
 	// MARK: Notifications
 	
