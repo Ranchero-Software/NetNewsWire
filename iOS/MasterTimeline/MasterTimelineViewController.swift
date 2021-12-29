@@ -418,9 +418,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		if scrollView.isTracking {
-			scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
-		}
+		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
 	
 	// MARK: Notifications
@@ -518,54 +516,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	@objc func scrollPositionDidChange() {
 		coordinator.timelineMiddleIndexPath = tableView.middleVisibleRow()
-
-		if !AppDefaults.shared.markArticlesAsReadOnScroll {
-			return
-		}
-		
-		// Mark all articles as read when the bottom of the feed is reached
-		if let lastVisibleRowIndexPath = tableView.indexPathsForVisibleRows?.last {
-			let atBottom = dataSource.itemIdentifier(for: lastVisibleRowIndexPath) == coordinator.articles.last
-		
-			if atBottom && coordinator.markBottomArticlesAsReadWorkItem == nil {
-				let task = DispatchWorkItem {
-					let articlesToMarkAsRead = self.coordinator.articles.filter { !$0.status.read && !self.coordinator.articlesWithManuallyChangedReadStatus.contains($0) }
-					
-					if articlesToMarkAsRead.isEmpty { return }
-					self.coordinator.markAllAsRead(articlesToMarkAsRead)
-					self.coordinator.markBottomArticlesAsReadWorkItem = nil
-				}
-				
-				coordinator.markBottomArticlesAsReadWorkItem = task
-				DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-			} else if !atBottom, let task = coordinator.markBottomArticlesAsReadWorkItem {
-				task.cancel()
-				coordinator.markBottomArticlesAsReadWorkItem = nil
-			}
-		}
-		
-		// Mark articles scrolled out of sight at the top as read
-		guard let visibleRowIndexPaths = tableView.indexPathsForVisibleRows, visibleRowIndexPaths.count > 0 else { return }
-		let firstVisibleRowIndexPath = visibleRowIndexPaths[0]
-		
-		guard let firstVisibleArticle = dataSource.itemIdentifier(for: firstVisibleRowIndexPath) else {
-			return
-		}
-
-		guard let unreadArticlesScrolledAway = coordinator.articles
-				.articlesAbove(article: firstVisibleArticle)
-				.filter({ !coordinator.articlesWithManuallyChangedReadStatus.contains($0) })
-				.unreadArticles() else { return }
-
-		coordinator.markAllAsRead(unreadArticlesScrolledAway)
-		
-		for article in unreadArticlesScrolledAway {
-			if let indexPath = dataSource.indexPath(for: article) {
-				if let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
-					configure(cell, article: article)
-				}
-			}
-		}
 	}
 	
 	// MARK: Reloading

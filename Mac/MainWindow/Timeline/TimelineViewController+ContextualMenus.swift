@@ -111,9 +111,6 @@ private extension TimelineViewController {
 
 	func markArticles(_ articles: [Article], read: Bool) {
 		markArticles(articles, statusKey: .read, flag: read)
-		for article in articles {
-			articlesWithManuallyChangedReadStatus.insert(article)
-		}
 	}
 
 	func markArticles(_ articles: [Article], starred: Bool) {

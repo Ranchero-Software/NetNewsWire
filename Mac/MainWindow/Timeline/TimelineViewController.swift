@@ -70,7 +70,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				if showsSearchResults {
 					fetchAndReplaceArticlesAsync()
 				} else {
-					resetMarkAsReadOnScroll()
 					fetchAndReplaceArticlesSync()
 					if articles.count > 0 {
 						tableView.scrollRowToVisible(0)
@@ -140,10 +139,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var undoableCommands = [UndoableCommand]()
 
-	var articlesWithManuallyChangedReadStatus: Set<Article> = Set()
-
-	private var isScrolling = false
-	
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -197,10 +192,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
-	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
-
-	private var markBottomArticlesAsReadWorkItem: DispatchWorkItem?
-	
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
@@ -232,17 +223,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-
-			if let scrollView = self.tableView.enclosingScrollView {
-				scrollView.contentView.postsBoundsChangedNotifications = true
-				
-				NotificationCenter.default.addObserver(self, selector: #selector(scrollViewDidScroll(notification:)), name: NSView.boundsDidChangeNotification, object: scrollView.contentView)
-				
-				NotificationCenter.default.addObserver(self, selector: #selector(scrollViewWillStartLiveScroll(notification:)), name: NSScrollView.willStartLiveScrollNotification, object: scrollView)
-				NotificationCenter.default.addObserver(self, selector: #selector(scrollViewDidEndLiveScroll(notification:)), name: NSScrollView.didEndLiveScrollNotification, object: scrollView)
-
-			}
-
 			didRegisterForNotifications = true
 		}
 	}
@@ -301,8 +281,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	
 	func restoreState(from state: [AnyHashable : Any]) {
-		resetMarkAsReadOnScroll()
-		
 		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[AnyHashable: AnyHashable]],
 			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
 			return
@@ -346,66 +324,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 	
-	@objc func scrollViewDidScroll(notification: Notification){
-		if isScrolling {
-			scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
-		}
-	}
-	
-	@objc func scrollViewWillStartLiveScroll(notification: Notification){
-		isScrolling = true
-	}
-	
-	@objc func scrollViewDidEndLiveScroll(notification: Notification){
-		isScrolling = false
-	}
-	
-	@objc func scrollPositionDidChange(){
-		if !AppDefaults.shared.markArticlesAsReadOnScroll {
-			return
-		}
-		
-		// Mark all articles as read when the bottom of the feed is reached
-		let lastRowIndex = articles.count - 1
-		let atBottom = tableView.rows(in: tableView.visibleRect).contains(lastRowIndex)
-		
-		if atBottom && markBottomArticlesAsReadWorkItem == nil {
-			let task = DispatchWorkItem {
-				let articlesToMarkAsRead = self.articles.filter { !$0.status.read && !self.articlesWithManuallyChangedReadStatus.contains($0) }
-				
-				if articlesToMarkAsRead.isEmpty { return }
-				guard let undoManager = self.undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMarkAsRead, markingRead: true, undoManager: undoManager) else {
-					return
-				}
-				self.runCommand(markReadCommand)
-				self.markBottomArticlesAsReadWorkItem = nil
-			}
-			
-			markBottomArticlesAsReadWorkItem = task
-			DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-		} else if !atBottom, let task = markBottomArticlesAsReadWorkItem {
-			task.cancel()
-			markBottomArticlesAsReadWorkItem = nil
-		}
-		
-		
-		// Mark articles scrolled out of sight at the top as read
-		let firstVisibleRowIndex = tableView.rows(in: tableView.visibleRect).location
-		let unreadArticlesScrolledAway = articles.articlesAbove(position: firstVisibleRowIndex).filter { !$0.status.read && !articlesWithManuallyChangedReadStatus.contains($0) }
-				
-		if unreadArticlesScrolledAway.isEmpty { return }
-
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: unreadArticlesScrolledAway, markingRead: true, undoManager: undoManager) else {
-			return
-		}
-		runCommand(markReadCommand)
-	}
-	
-	func resetMarkAsReadOnScroll() {
-		articlesWithManuallyChangedReadStatus.removeAll()
-		markBottomArticlesAsReadWorkItem?.cancel()
-	}
-	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
 		guard !selectedArticles.isEmpty else {
 			return
@@ -427,9 +345,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		runCommand(markReadCommand)
-		for article in selectedArticles {
-			articlesWithManuallyChangedReadStatus.insert(article)
-		}
 	}
 	
 	@IBAction func markSelectedArticlesAsUnread(_ sender: Any?) {
@@ -437,9 +352,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		runCommand(markUnreadCommand)
-		for article in selectedArticles {
-			articlesWithManuallyChangedReadStatus.insert(article)
-		}
 	}
 
 	@IBAction func copy(_ sender: Any?) {
@@ -991,7 +903,6 @@ extension TimelineViewController: NSTableViewDelegate {
 			return
 		}
 		self.runCommand(markUnreadCommand)
-		articlesWithManuallyChangedReadStatus.insert(article)
 	}
 
 	private func toggleArticleStarred(_ article: Article) {
