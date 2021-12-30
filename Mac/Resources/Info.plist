@@ -6,6 +6,8 @@
 	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen</string>
 	<key>AppIdentifierPrefix</key>
 	<string>$(AppIdentifierPrefix)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
