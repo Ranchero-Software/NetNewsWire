@@ -35,7 +35,7 @@ public protocol OAuthAcessTokenRefreshRequesting {
 	
 	/// Access tokens expire. Perform a request for a fresh access token given the long life refresh token received when authorization was granted.
 	/// - Parameter refreshRequest: The refresh token and other information the authorization server requires to grant the client fresh access tokens on the user's behalf.
-	/// - Parameter completion: On success, the access token response appropriate for concrete type's service. Both the access and refresh token should be stored, preferrably on the Keychain. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
+	/// - Parameter completion: On success, the access token response appropriate for concrete type's service. Both the access and refresh token should be stored, preferably on the Keychain. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
 	func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest, completion: @escaping (Result<AccessTokenResponse, Error>) -> ())
 }
 

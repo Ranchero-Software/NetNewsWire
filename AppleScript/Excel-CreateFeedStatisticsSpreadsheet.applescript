@@ -1,6 +1,6 @@
 -- This script creates an Excel spreadsheet with statistics about all the feeds in your NetNewsWire 
 
--- the exportToExcel() function creats a single line of data in a spreadsheet
+-- the exportToExcel() function creates a single line of data in a spreadsheet
 
 to exportToExcel(docname, rowIndex, feedname, numArticles, numStars, numRead)
 	tell application "Microsoft Excel"

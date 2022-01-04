@@ -23,14 +23,14 @@ open class ImageScrollView: UIScrollView {
 	}
 	
 	@objc public enum Offset: Int {
-		case begining
+		case beginning
 		case center
 	}
 	
 	static let kZoomInFactorFromMinWhenDoubleTap: CGFloat = 2
 	
 	@objc open var imageContentMode: ScaleMode = .widthFill
-	@objc open var initialOffset: Offset = .begining
+	@objc open var initialOffset: Offset = .beginning
 	
 	@objc public private(set) var zoomView: UIImageView? = nil
 	
@@ -201,7 +201,7 @@ open class ImageScrollView: UIScrollView {
 		zoomScale = minimumZoomScale
 		
 		switch initialOffset {
-		case .begining:
+		case .beginning:
 			contentOffset =  CGPoint.zero
 		case .center:
 			let xOffset = contentSize.width < bounds.width ? 0 : (contentSize.width - bounds.width)/2

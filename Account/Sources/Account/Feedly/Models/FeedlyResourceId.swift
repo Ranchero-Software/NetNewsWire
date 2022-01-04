@@ -20,7 +20,7 @@ struct FeedlyFeedResourceId: FeedlyResourceId {
 	let id: String
 	
 	/// The location of the kind of resource a concrete type represents.
-	/// If the conrete type cannot strip the resource type from the Id, it should just return the Id
+	/// If the concrete type cannot strip the resource type from the Id, it should just return the Id
 	/// since the Id is a legitimate URL.
 	/// This is basically assuming Feedly prefixes source feed URLs with `feed/`.
 	/// It is not documented as such and could potentially change.

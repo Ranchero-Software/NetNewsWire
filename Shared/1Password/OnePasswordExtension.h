@@ -156,7 +156,7 @@ typedef void (^OnePasswordExtensionItemCompletionBlock)(NSExtensionItem * __null
  
  @param loginDetailsDictionary about the Login to be saved, including old password and the username, are stored in an dictionary and given to the 1Password Extension.
  
- @param passwordGenerationOptions The Password generator options epresented in a dictionary form.
+ @param passwordGenerationOptions The Password generator options represented in a dictionary form.
  
  @param viewController The view controller from which the 1Password Extension is invoked. Usually `self`
  
@@ -189,7 +189,7 @@ typedef void (^OnePasswordExtensionItemCompletionBlock)(NSExtensionItem * __null
 /*!
  Called in the UIActivityViewController completion block to find out whether or not the user selected the 1Password Extension activity.
  
- @param activityType or the bundle identidier of the selected activity in the share sheet.
+ @param activityType or the bundle identifier of the selected activity in the share sheet.
  
  @return isOnePasswordExtensionActivityType Returns YES if the selected activity is the 1Password extension, NO otherwise.
  */

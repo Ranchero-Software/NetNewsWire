@@ -424,7 +424,7 @@ extension WebViewController: WKUIDelegate {
 	
 	func webView(_ webView: WKWebView, contextMenuForElement elementInfo: WKContextMenuElementInfo, willCommitWithAnimator animator: UIContextMenuInteractionCommitAnimating) {
 		// We need to have at least an unimplemented WKUIDelegate assigned to the WKWebView.  This makes the
-		// link preview launch Safari when the link preview is tapped.  In theory, you shoud be able to get
+		// link preview launch Safari when the link preview is tapped.  In theory, you should be able to get
 		// the link from the elementInfo above and transition to SFSafariViewController instead of launching
 		// Safari.  As the time of this writing, the link in elementInfo is always nil.  ¯\_(ツ)_/¯
 	}
