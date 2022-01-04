@@ -13,7 +13,7 @@ extension OAuthAuthorizationClient {
 	
 	static var feedlyCloudClient: OAuthAuthorizationClient {
 		/// Models private NetNewsWire client secrets.
-		/// These placeholders are substitued at build time using a Run Script phase with build settings.
+		/// These placeholders are substituted at build time using a Run Script phase with build settings.
 		/// https://developer.feedly.com/v3/auth/#authenticating-a-user-and-obtaining-an-auth-code
 		return OAuthAuthorizationClient(id: SecretsManager.provider.feedlyClientId,
 										redirectUri: "netnewswire://auth/feedly",

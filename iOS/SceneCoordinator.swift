@@ -1319,7 +1319,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	/// This will dismiss the foremost view controller if the user
 	/// has launched from an external action (i.e., a widget tap, or
-	/// selecting an artice via a notification).
+	/// selecting an article via a notification).
 	///
 	/// The dismiss is only applicable if the view controller is a
 	/// `SFSafariViewController` or `SettingsViewController`,
@@ -1402,7 +1402,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// If we are using a phone and navigate away from the detail, clear up the article resources (including activity).
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
-		// ArticleViewController will be pushed, but we will breifly show the Timeline.  Don't clear things out when that happens.
+		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
 		if viewController === masterTimelineViewController && !isThreePanelMode && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
 			currentArticle = nil
 			masterTimelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])

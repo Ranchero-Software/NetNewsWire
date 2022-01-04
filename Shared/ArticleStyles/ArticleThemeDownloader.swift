@@ -69,7 +69,7 @@ public class ArticleThemeDownloader {
 	}
 	
 	
-	/// Performs a deep search of the unzipped direcotry to find the theme file.
+	/// Performs a deep search of the unzipped directory to find the theme file.
 	/// - Parameter searchPath: directory to search
 	/// - Returns: optional `String`
 	private func findThemeFile(in searchPath: String) -> String? {
@@ -84,13 +84,13 @@ public class ArticleThemeDownloader {
 		return nil
 	}
 	
-	/// The download directory used by the theme downloader: `Application Suppport/NetNewsWire/Downloads`
+	/// The download directory used by the theme downloader: `Application Support/NetNewsWire/Downloads`
 	/// - Returns: `URL`
 	private func downloadDirectory() -> URL {
 		FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("NetNewsWire/Downloads", isDirectory: true)
 	}
 	
-	/// Removes downloaded themes, where themes == folders, from `Application Suppport/NetNewsWire/Downloads`.
+	/// Removes downloaded themes, where themes == folders, from `Application Support/NetNewsWire/Downloads`.
 	public func cleanUp() {
 		guard let filenames = try? FileManager.default.contentsOfDirectory(atPath: downloadDirectory().path) else {
 			return

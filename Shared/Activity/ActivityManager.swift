@@ -112,12 +112,12 @@ class ActivityManager {
 		
 		if let folders = account.folders {
 			for folder in folders {
-				ids.append(identifer(for: folder))
+				ids.append(identifier(for: folder))
 			}
 		}
 		
 		for webFeed in account.flattenedWebFeeds() {
-			ids.append(contentsOf: identifers(for: webFeed))
+			ids.append(contentsOf: identifiers(for: webFeed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
@@ -125,17 +125,17 @@ class ActivityManager {
 	
 	static func cleanUp(_ folder: Folder) {
 		var ids = [String]()
-		ids.append(identifer(for: folder))
+		ids.append(identifier(for: folder))
 		
 		for webFeed in folder.flattenedWebFeeds() {
-			ids.append(contentsOf: identifers(for: webFeed))
+			ids.append(contentsOf: identifiers(for: webFeed))
 		}
 		
 		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: ids)
 	}
 	
 	static func cleanUp(_ webFeed: WebFeed) {
-		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifers(for: webFeed))
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: identifiers(for: webFeed))
 	}
 	#endif
 
@@ -201,7 +201,7 @@ private extension ActivityManager {
 		
 		activity.isEligibleForHandoff = true
 		
-		activity.persistentIdentifier = ActivityManager.identifer(for: article)
+		activity.persistentIdentifier = ActivityManager.identifier(for: article)
 
 		#if os(iOS)
 		activity.keywords = Set(makeKeywords(article))
@@ -222,7 +222,7 @@ private extension ActivityManager {
 		attributeSet.title = ArticleStringFormatter.truncatedTitle(article)
 		attributeSet.contentDescription = article.summary
 		attributeSet.keywords = makeKeywords(article)
-		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: article)
+		attributeSet.relatedUniqueIdentifier = ActivityManager.identifier(for: article)
 
 		if let iconImage = article.iconImage() {
 			attributeSet.thumbnailData = iconImage.image.pngData()
@@ -249,7 +249,7 @@ private extension ActivityManager {
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
-		attributeSet.relatedUniqueIdentifier = ActivityManager.identifer(for: feed)
+		attributeSet.relatedUniqueIdentifier = ActivityManager.identifier(for: feed)
 
 		if let iconImage = IconImageCache.shared.imageForFeed(feed) {
 			attributeSet.thumbnailData = iconImage.image.dataRepresentation()
@@ -273,24 +273,24 @@ private extension ActivityManager {
 		activity.becomeCurrent()
 	}
 	
-	static func identifer(for folder: Folder) -> String {
+	static func identifier(for folder: Folder) -> String {
 		return "account_\(folder.account!.accountID)_folder_\(folder.nameForDisplay)"
 	}
 	
-	static func identifer(for feed: WebFeed) -> String {
+	static func identifier(for feed: WebFeed) -> String {
 		return "account_\(feed.account!.accountID)_feed_\(feed.webFeedID)"
 	}
 	
-	static func identifer(for article: Article) -> String {
+	static func identifier(for article: Article) -> String {
 		return "account_\(article.accountID)_feed_\(article.webFeedID)_article_\(article.articleID)"
 	}
 	
-	static func identifers(for feed: WebFeed) -> [String] {
+	static func identifiers(for feed: WebFeed) -> [String] {
 		var ids = [String]()
-		ids.append(identifer(for: feed))
+		ids.append(identifier(for: feed))
 		if let articles = try? feed.fetchArticles() {
 			for article in articles {
-				ids.append(identifer(for: article))
+				ids.append(identifier(for: article))
 			}
 		}
 

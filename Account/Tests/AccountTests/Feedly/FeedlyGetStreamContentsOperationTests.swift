@@ -61,7 +61,7 @@ class FeedlyGetStreamContentsOperationTests: XCTestCase {
 		service.mockResult = .success(mockStream)
 		service.getStreamContentsExpectation = expectation(description: "Did Call Service")
 		service.parameterTester = { serviceResource, serviceContinuation, serviceNewerThan, serviceUnreadOnly in
-			// Verify these values given to the opeartion are passed to the service.
+			// Verify these values given to the operation are passed to the service.
 			XCTAssertEqual(serviceResource.id, resource.id)
 			XCTAssertEqual(serviceContinuation, continuation)
 			XCTAssertEqual(serviceNewerThan, newerThan)
