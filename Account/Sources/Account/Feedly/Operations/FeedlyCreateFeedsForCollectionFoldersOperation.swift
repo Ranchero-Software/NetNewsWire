@@ -81,7 +81,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 					}
 				}
 
-				// no exsiting feed, create a new one
+				// no existing feed, create a new one
 				let parser = FeedlyFeedParser(feed: collectionFeed)
 				let feed = account.createWebFeed(with: parser.title,
 												 url: parser.url,

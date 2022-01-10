@@ -20,7 +20,7 @@ class AppleScriptXCTestCase: XCTestCase {
 
     /*
         @function doIndividualScript
-        @param filename -- name of a .applescript (sans extention) in the test bundle's
+        @param filename -- name of a .applescript (sans extension) in the test bundle's
                            Resources/TestScripts directory
         @brief  given a file, loads the script and runs it.  Expects a result from running
                 the script of the form

@@ -288,7 +288,7 @@ private extension AppDelegate {
 	
 	func waitToComplete(completion: @escaping (Bool) -> Void) {
 		guard UIApplication.shared.applicationState == .background else {
-			os_log("App came back to forground, no longer waiting.", log: self.log, type: .info)
+			os_log("App came back to foreground, no longer waiting.", log: self.log, type: .info)
 			completion(false)
 			return
 		}

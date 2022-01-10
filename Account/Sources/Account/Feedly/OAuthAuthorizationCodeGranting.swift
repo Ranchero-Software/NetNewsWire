@@ -131,7 +131,7 @@ public struct OAuthAccessTokenRequest: Encodable {
 }
 
 /// Models the minimum subset of properties of a response in section 4.1.4 of the OAuth 2.0 Authorization Framework
-/// Concrete types model other paramters beyond the scope of the OAuth spec.
+/// Concrete types model other parameters beyond the scope of the OAuth spec.
 /// For example, Feedly provides the ID of the user who has consented to the grant.
 /// https://tools.ietf.org/html/rfc6749#section-4.1.4
 public protocol OAuthAccessTokenResponse {

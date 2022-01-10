@@ -16,7 +16,7 @@ public enum AccountError: LocalizedError {
 	case opmlImportInProgress
 	case wrappedError(error: Error, account: Account)
 	
-	public var acount: Account? {
+	public var account: Account? {
 		if case .wrappedError(_, let account) = self {
 			return account
 		} else {

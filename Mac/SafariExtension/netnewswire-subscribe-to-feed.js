@@ -90,7 +90,7 @@ function messageHandler(event) {
 
 		// There is a bug in Safari where the messageHandler is apparently held on to by Safari
 		// even after an extension is disabled. So an effort to "ping" an extension's scripts will
-		// succeed even if its been disabled and the page reloaded. Checking for the existance of
+		// succeed even if its been disabled and the page reloaded. Checking for the existence of
 		// document.location seems to ensure we have enough of a handle still on the document that
 		// we can do something useful with it.
 		var shouldValidate = (document.location != null) && (thisPageLinkObjects.length > 0);

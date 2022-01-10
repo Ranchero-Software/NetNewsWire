@@ -1408,7 +1408,7 @@ private extension MainWindowController {
 		let sidebarWidth: Int = widths[0]
 		let timelineWidth: Int = widths[1]
 
-		// Make sure the detail view has its mimimum thickness, at least.
+		// Make sure the detail view has its minimum thickness, at least.
 		if windowWidth < sidebarWidth + dividerThickness + timelineWidth + dividerThickness + MainWindowController.detailViewMinimumThickness {
 			return
 		}
