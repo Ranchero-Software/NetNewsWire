@@ -814,6 +814,12 @@ extension TimelineViewController: NSTableViewDataSource {
 		}
 		return ArticlePasteboardWriter(article: article)
 	}
+
+	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+		// Keeping -[NSTableViewDelegate tableView:heightOfRow:] implemented fixes
+		// an issue that the bottom inset of NSTableView disappears on macOS Monterey.
+		return tableView.rowHeight
+	}
 }
 
 // MARK: - NSTableViewDelegate
