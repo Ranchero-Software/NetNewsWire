@@ -1,9 +1,13 @@
 # Mac Release Notes
 
+### 6.1b2 build 6101 - 17 Jan 2022
+
+Dealt with provisioning profiles, certificates, and IDs. Made notarization service happy.
+
 ### 6.1b1 build 6100 - 9 Jan 2022
 
 Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences or by adding the theme switcher to the toolbar.
-Copy URLs using repaired rather than raw feed links.
+Copy URLs using repaired, rather than raw, feed links.
 Restore article scroll position on relaunching app.
 Added Copy Article URL and Copy External URL commands to the Edit menu.
 Fixed a bug where using cmd-Q wouldn’t always quit the app as quickly as one might prefer.
