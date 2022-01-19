@@ -1242,6 +1242,8 @@ private extension MainWindowController {
 
 		let widths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
 		state[MainWindowController.mainWindowWidthsStateKey] = widths
+		
+		state[UserInfoKey.isSidebarHidden] = sidebarSplitViewItem?.isCollapsed
 	}
 
 	func restoreSplitViewState(from state: [AnyHashable : Any]) {
@@ -1264,6 +1266,12 @@ private extension MainWindowController {
 
 		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
 		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
+		
+		let isSidebarHidden = state[UserInfoKey.isSidebarHidden] as? Bool ?? false
+		
+		if !(sidebarSplitViewItem?.isCollapsed ?? false) && isSidebarHidden {
+			sidebarSplitViewItem?.isCollapsed = true
+		}
 	}
 
 	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String) -> NSToolbarItem {
