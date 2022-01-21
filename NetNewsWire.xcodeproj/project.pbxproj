@@ -849,6 +849,7 @@
 		D5F4EDB720074D6500B9E363 /* WebFeed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */; };
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
+		DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		FF3ABF13232599810074C542 /* ArticleSorterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF09232599450074C542 /* ArticleSorterTests.swift */; };
 		FF3ABF1523259DDB0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
 		FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
@@ -963,6 +964,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */,
 				513F32892593EF8F0003048F /* RSCore in Embed Frameworks */,
 				51BC2F4E24D343AB00E90810 /* RSTree in Embed Frameworks */,
 			);
