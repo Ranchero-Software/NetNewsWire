@@ -32,7 +32,10 @@ let package = Package(
 				"ArticlesDatabase",
 				"Secrets",
 				"SyncDatabase",
-			]),
+			],
+            linkerSettings: [
+                .unsafeFlags(["-Xlinker", "-no_application_extension"])
+            ]),
         .testTarget(
             name: "AccountTests",
             dependencies: ["Account"],
