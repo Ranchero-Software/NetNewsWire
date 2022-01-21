@@ -9,6 +9,7 @@
 import Foundation
 import CoreServices
 import RSParser
+import UniformTypeIdentifiers
 
 // The favicon URLs may be specified in the head section of the home page.
 
@@ -25,11 +26,11 @@ struct FaviconURLFinder {
 			}
 
 			for type in ignoredTypes {
-				if let mimeTypes = UTTypeCopyAllTagsWithClass(type as CFString, kUTTagClassMIMEType)?.takeRetainedValue() {
-					ignoredMimeTypes.append(contentsOf: mimeTypes as! [String])
+				if let mimeType = UTTypeReference(type)?.preferredMIMEType {
+					ignoredMimeTypes.append(mimeType)
 				}
-				if let extensions = UTTypeCopyAllTagsWithClass(type as CFString, kUTTagClassFilenameExtension)?.takeRetainedValue() {
-					ignoredExtensions.append(contentsOf: extensions as! [String])
+				if let fileNameExtension = UTTypeReference(type)?.preferredFilenameExtension {
+					ignoredExtensions.append(fileNameExtension)
 				}
 			}
 		}
