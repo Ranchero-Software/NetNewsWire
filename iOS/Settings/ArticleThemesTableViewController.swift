@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 
 import UIKit
 
@@ -27,7 +28,7 @@ class ArticleThemesTableViewController: UITableViewController {
 	}
 
 	@objc func importTheme(_ sender: Any?) {
-		let docPicker = UIDocumentPickerViewController(documentTypes: ["com.ranchero.netnewswire.theme"], in: .import)
+		let docPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.nnwTheme], asCopy: true)
 		docPicker.delegate = self
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
