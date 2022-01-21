@@ -2142,7 +2142,7 @@ private extension SceneCoordinator {
 		rootSplitViewController.preferredPrimaryColumnWidthFraction = 0.30
 		
 		subSplitViewController = UISplitViewController()
-		subSplitViewController!.preferredDisplayMode = .allVisible
+		subSplitViewController!.preferredDisplayMode = .oneBesideSecondary
 		subSplitViewController!.viewControllers = [InteractiveNavigationController.template()]
 		subSplitViewController!.preferredPrimaryColumnWidthFraction = 0.4285
 		
