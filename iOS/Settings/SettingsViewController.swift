@@ -11,6 +11,7 @@ import Account
 import CoreServices
 import SafariServices
 import SwiftUI
+import UniformTypeIdentifiers
 
 class SettingsViewController: UITableViewController {
 
@@ -451,16 +452,9 @@ private extension SettingsViewController {
 	
 	func importOPMLDocumentPicker() {
 		
-		let utiArray = UTTypeCreateAllIdentifiersForTag(kUTTagClassFilenameExtension, "opml" as NSString, nil)?.takeRetainedValue() as? [String] ?? [String]()
-
-		var opmlUTIs = utiArray
-			.compactMap({ UTTypeCopyDeclaration($0 as NSString)?.takeUnretainedValue() as? [String: Any] })
-			.reduce([String]()) { (result, dict) in
-				return result + dict.values.compactMap({ $0 as? String })
-			}
-		opmlUTIs.append("public.xml")
+		let utiArray = UTType.types(tag: "opml", tagClass: .filenameExtension, conformingTo: nil)
 		
-		let docPicker = UIDocumentPickerViewController(documentTypes: opmlUTIs, in: .import)
+		let docPicker = UIDocumentPickerViewController(forOpeningContentTypes: utiArray, asCopy: true)
 		docPicker.delegate = self
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
@@ -511,7 +505,7 @@ private extension SettingsViewController {
 			self.presentError(title: "OPML Export Error", message: error.localizedDescription)
 		}
 		
-		let docPicker = UIDocumentPickerViewController(url: tempFile, in: .exportToService)
+		let docPicker = UIDocumentPickerViewController(forExporting: [tempFile], asCopy: true)
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
 	}
