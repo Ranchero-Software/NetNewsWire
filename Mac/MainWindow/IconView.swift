@@ -14,6 +14,9 @@ final class IconView: NSView {
 		didSet {
 			if iconImage !== oldValue {
 				imageView.image = iconImage?.image
+				if let tintColor = iconImage?.preferredColor {
+					imageView.contentTintColor = NSColor(cgColor: tintColor)
+				}
 
 				if NSApplication.shared.effectiveAppearance.isDarkMode {
 					if self.iconImage?.isDark ?? false {
