@@ -47,11 +47,9 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 	override func viewDidLoad() {
 		updateUI()
 		
-		if #available(macOS 11.0, *) {
-			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
-			folderImageView.image = image
-			folderImageView.contentTintColor = NSColor.controlAccentColor
-		}
+		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
+		folderImageView.image = image
+		folderImageView.contentTintColor = NSColor.controlAccentColor
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 	}

@@ -34,46 +34,25 @@ struct EnableExtensionPointView: View {
 
 			HStack(spacing: 12) {
 				Spacer()
-				if #available(OSX 11.0, *) {
-					Button(action: {
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Cancel")
-							.frame(width: 80)
-					})
-					.help("Cancel")
-					.keyboardShortcut(.cancelAction)
-					
-				} else {
-					Button(action: {
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Cancel")
-							.frame(width: 80)
-					})
-					.accessibility(label: Text("Add Extension"))
-				}
-				if #available(OSX 11.0, *) {
-					Button(action: {
-						enabler?.enable(typeFromName(extensionPointTypeName))
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Continue")
-							.frame(width: 80)
-					})
-					.help("Add Extension")
-					.keyboardShortcut(.defaultAction)
-					.disabled(disableContinue())
-				} else {
-					Button(action: {
-						enabler?.enable(typeFromName(extensionPointTypeName))
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Continue")
-							.frame(width: 80)
-					})
-					.disabled(disableContinue())
-				}
+				Button(action: {
+					parent?.dismiss(nil)
+				}, label: {
+					Text("Cancel")
+						.frame(width: 80)
+				})
+				.help("Cancel")
+				.keyboardShortcut(.cancelAction)
+				
+				Button(action: {
+					enabler?.enable(typeFromName(extensionPointTypeName))
+					parent?.dismiss(nil)
+				}, label: {
+					Text("Continue")
+						.frame(width: 80)
+				})
+				.help("Add Extension")
+				.keyboardShortcut(.defaultAction)
+				.disabled(disableContinue())
 			}
 			.padding(.top, 12)
 			.padding(.bottom, 4)
