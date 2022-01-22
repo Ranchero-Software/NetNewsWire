@@ -143,18 +143,17 @@ private extension SidebarCell {
 		var updatedIconImage = iconImage
 		
 		if let iconImage = iconImage, iconImage.isSymbol {
+			var tintColor: CGColor
 			if backgroundStyle != .normal {
-				let image = iconImage.image.tinted(with: .white)
-				updatedIconImage = IconImage(image, isSymbol: iconImage.isSymbol, isBackgroundSupressed: iconImage.isBackgroundSupressed)
+				tintColor = NSColor.white.cgColor
 			} else {
 				if let preferredColor = iconImage.preferredColor {
-					let image = iconImage.image.tinted(with: NSColor(cgColor: preferredColor)!)
-					updatedIconImage = IconImage(image, isSymbol: iconImage.isSymbol, isBackgroundSupressed: iconImage.isBackgroundSupressed)
+					tintColor = preferredColor
 				} else {
-					let image = iconImage.image.tinted(with: .controlAccentColor)
-					updatedIconImage = IconImage(image, isSymbol: iconImage.isSymbol, isBackgroundSupressed: iconImage.isBackgroundSupressed)
+					tintColor = NSColor.controlAccentColor.cgColor
 				}
 			}
+			updatedIconImage = IconImage(iconImage.image, isSymbol: iconImage.isSymbol, isBackgroundSupressed: iconImage.isBackgroundSupressed, preferredColor: tintColor)
 		}
 
 		if let image = updatedIconImage {

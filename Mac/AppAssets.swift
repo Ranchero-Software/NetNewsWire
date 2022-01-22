@@ -159,8 +159,7 @@ struct AppAssets {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 			let preferredColor = NSColor(named: "AccentColor")!
-			let coloredImage = image.tinted(with: preferredColor)
-			return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+			return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.folderName)!)
 		}
@@ -255,8 +254,7 @@ struct AppAssets {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 			let preferredColor = NSColor(named: "StarColor")!
-			let coloredImage = image.tinted(with: preferredColor)
-			return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+			return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSupressed: true)
 		}
@@ -278,8 +276,7 @@ struct AppAssets {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
 			let preferredColor = NSColor.orange
-			let coloredImage = image.tinted(with: preferredColor)
-			return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+			return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSupressed: true)
 		}
@@ -289,8 +286,7 @@ struct AppAssets {
 		if #available(macOS 11.0, *) {
 			let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 			let preferredColor = NSColor(named: "AccentColor")!
-			let coloredImage = image.tinted(with: preferredColor)
-			return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+			return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 		} else {
 			return IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isBackgroundSupressed: true)
 		}
