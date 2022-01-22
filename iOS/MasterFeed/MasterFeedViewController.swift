@@ -19,11 +19,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	private var refreshProgressView: RefreshProgressView?
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
 		didSet {
-			if #available(iOS 14, *) {
-				addNewItemButton.primaryAction = nil
-			} else {
-				addNewItemButton.action = #selector(MasterFeedViewController.add(_:))
-			}
+			addNewItemButton.primaryAction = nil
 		}
 	}
 
@@ -429,59 +425,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		coordinator.toggleReadFeedsFilter()
 	}
 	
-	@IBAction func add(_ sender: UIBarButtonItem) {
-		
-		if #available(iOS 14, *) {
-			
-		} else {
-			let title = NSLocalizedString("Add Item", comment: "Add Item")
-			let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-			
-			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
-			
-			let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
-			let addWebFeedAction = UIAlertAction(title: addWebFeedActionTitle, style: .default) { _ in
-				self.coordinator.showAddWebFeed()
-			}
-			
-			let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-			let addRedditFeedAction = UIAlertAction(title: addRedditFeedActionTitle, style: .default) { _ in
-				self.coordinator.showAddRedditFeed()
-			}
-			
-			let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
-			let addTwitterFeedAction = UIAlertAction(title: addTwitterFeedActionTitle, style: .default) { _ in
-				self.coordinator.showAddTwitterFeed()
-			}
-			
-			let addWebFolderdActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-			let addWebFolderAction = UIAlertAction(title: addWebFolderdActionTitle, style: .default) { _ in
-				self.coordinator.showAddFolder()
-			}
-			
-			alertController.addAction(addWebFeedAction)
-			
-			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
-					alertController.addAction(addRedditFeedAction)
-				}
-				if ExtensionPointManager.shared.isTwitterEnabled {
-					alertController.addAction(addTwitterFeedAction)
-				}
-			}
-			
-			alertController.addAction(addWebFolderAction)
-			alertController.addAction(cancelAction)
-			
-			alertController.popoverPresentationController?.barButtonItem = sender
-
-			present(alertController, animated: true)
-		}
-		
-		
-	}
-	
 	@objc func toggleSectionHeader(_ sender: UITapGestureRecognizer) {
 		guard let headerView = sender.view as? MasterFeedTableViewSectionHeader else {
 			return
@@ -644,52 +587,49 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	
 	@objc
 	func configureContextMenu(_: Any? = nil) {
-		if #available(iOS 14.0, *) {
-			
-			/*
-				Context Menu Order:
-				1. Add Web Feed
-				2. Add Reddit Feed
-				3. Add Twitter Feed
-				4. Add Folder
-			*/
-			
-			var menuItems: [UIAction] = []
-			
-			let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
-			let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
-				self.coordinator.showAddWebFeed()
-			}
-			menuItems.append(addWebFeedAction)
-			
-			if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
-				if ExtensionPointManager.shared.isRedditEnabled {
-					let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
-					let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
-						self.coordinator.showAddRedditFeed()
-					}
-					menuItems.append(addRedditFeedAction)
-				}
-				if ExtensionPointManager.shared.isTwitterEnabled {
-					let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
-					let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter.tinted(color: .label)) { _ in
-						self.coordinator.showAddTwitterFeed()
-					}
-					menuItems.append(addTwitterFeedAction)
-				}
-			}
-						
-			let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-			let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
-				self.coordinator.showAddFolder()
-			}
-			
-			menuItems.append(addWebFolderAction)
-			
-			let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
-			
-			self.addNewItemButton.menu = contextMenu
+		/*
+			Context Menu Order:
+			1. Add Web Feed
+			2. Add Reddit Feed
+			3. Add Twitter Feed
+			4. Add Folder
+		*/
+		
+		var menuItems: [UIAction] = []
+		
+		let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+		let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
+			self.coordinator.showAddWebFeed()
 		}
+		menuItems.append(addWebFeedAction)
+		
+		if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
+			if ExtensionPointManager.shared.isRedditEnabled {
+				let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
+				let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
+					self.coordinator.showAddRedditFeed()
+				}
+				menuItems.append(addRedditFeedAction)
+			}
+			if ExtensionPointManager.shared.isTwitterEnabled {
+				let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
+				let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter.tinted(color: .label)) { _ in
+					self.coordinator.showAddTwitterFeed()
+				}
+				menuItems.append(addTwitterFeedAction)
+			}
+		}
+					
+		let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
+			self.coordinator.showAddFolder()
+		}
+		
+		menuItems.append(addWebFolderAction)
+		
+		let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
+		
+		self.addNewItemButton.menu = contextMenu
 	}
 	
 	func focus() {

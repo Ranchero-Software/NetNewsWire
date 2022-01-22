@@ -101,12 +101,10 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 		
 		// Disable swipe back on iPad Mice
-		if #available(iOS 13.4, *) {
-			guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
-				return
-			}
-			gesture.allowedScrollTypesMask = []
+		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
+			return
 		}
+		gesture.allowedScrollTypesMask = []
 		
 	}
 	
@@ -525,12 +523,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc private func reloadAllVisibleCells() {
-		if #available(iOS 15, *) {
-			reconfigureCells(coordinator.articles)
-		} else {
-			let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
-			reloadCells(visibleArticles)
-		}
+		reconfigureCells(coordinator.articles)
 	}
 	
 	private func reloadCells(_ articles: [Article]) {
