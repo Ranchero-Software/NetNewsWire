@@ -59,21 +59,12 @@ class TimelineTableRowView : NSTableRowView {
 		separator!.wantsLayer = true
 		separator!.layer?.backgroundColor = AppAssets.timelineSeparatorColor.cgColor
 		addSubview(separator!)
-		if #available(macOS 11.0, *) {
-			NSLayoutConstraint.activate([
-				separator!.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
-				separator!.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -4),
-				separator!.heightAnchor.constraint(equalToConstant: 1),
-				separator!.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
-			])
-		} else {
-			NSLayoutConstraint.activate([
-				separator!.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 34),
-				separator!.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -28),
-				separator!.heightAnchor.constraint(equalToConstant: 1),
-				separator!.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
-			])
-		}
+		NSLayoutConstraint.activate([
+			separator!.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
+			separator!.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -4),
+			separator!.heightAnchor.constraint(equalToConstant: 1),
+			separator!.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
+		])
 	}
 	
 }

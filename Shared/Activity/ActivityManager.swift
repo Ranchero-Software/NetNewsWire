@@ -13,6 +13,7 @@ import RSCore
 import Account
 import Articles
 import Intents
+import UniformTypeIdentifiers
 
 class ActivityManager {
 	
@@ -218,7 +219,7 @@ private extension ActivityManager {
 	#if os(iOS)
 	func updateReadArticleSearchAttributes(with article: Article) {
 		
-		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeCompositeContent as String)
+		let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.compositeContent.identifier)
 		attributeSet.title = ArticleStringFormatter.truncatedTitle(article)
 		attributeSet.contentDescription = article.summary
 		attributeSet.keywords = makeKeywords(article)
@@ -246,7 +247,7 @@ private extension ActivityManager {
 	
 	func updateSelectingActivityFeedSearchAttributes(with feed: WebFeed) {
 		
-		let attributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
+		let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.item.identifier)
 		attributeSet.title = feed.nameForDisplay
 		attributeSet.keywords = makeKeywords(feed.nameForDisplay)
 		attributeSet.relatedUniqueIdentifier = ActivityManager.identifier(for: feed)
@@ -265,7 +266,7 @@ private extension ActivityManager {
 		// itself because the relatedUniqueIdentifier on the activity attributeset is populated.
 		if let attributeSet = activity.contentAttributeSet {
 			let identifier = attributeSet.relatedUniqueIdentifier
-			let tempAttributeSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
+			let tempAttributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.item.identifier)
 			let searchableItem = CSSearchableItem(uniqueIdentifier: identifier, domainIdentifier: nil, attributeSet: tempAttributeSet)
 			CSSearchableIndex.default().indexSearchableItems([searchableItem])
 		}

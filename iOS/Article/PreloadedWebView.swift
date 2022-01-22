@@ -17,9 +17,14 @@ class PreloadedWebView: WKWebView {
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false
-		preferences.javaScriptEnabled = true
+		
+		/// The defaults for `preferredContentMode` and `allowsContentJavaScript` are suitable
+		/// and don't need to be explicity set.
+		/// `allowsContentJavaScript` replaces `WKPreferences.javascriptEnbaled`.
+		let webpagePreferences = WKWebpagePreferences()
 
 		let configuration = WKWebViewConfiguration()
+		configuration.defaultWebpagePreferences = webpagePreferences
 		configuration.preferences = preferences
 		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 		configuration.allowsInlineMediaPlayback = true

@@ -35,17 +35,13 @@ class MasterTimelineTitleView: UIView {
 	func buttonize() {
 		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
 		accessibilityTraits = .button
-		if #available(iOS 13.4, *) {
-			addInteraction(pointerInteraction)
-		}
+		addInteraction(pointerInteraction)
 	}
 	
 	func debuttonize() {
 		heightAnchor.constraint(equalToConstant: 40.0).isActive = true
 		accessibilityTraits.remove(.button)
-		if #available(iOS 13.4, *) {
-			removeInteraction(pointerInteraction)
-		}
+		removeInteraction(pointerInteraction)
 	}
 	
 }

@@ -224,7 +224,7 @@ extension NSAttributedString {
 				#if canImport(AppKit)
 				let features: [FontDescriptor.FeatureKey: Any] = [.typeIdentifier: kVerticalPositionType, .selectorIdentifier: forSuperscript ? kSuperiorsSelector : kInferiorsSelector]
 				#else
-				let features: [FontDescriptor.FeatureKey: Any] = [.featureIdentifier: kVerticalPositionType, .typeIdentifier: forSuperscript ? kSuperiorsSelector : kInferiorsSelector]
+				let features: [FontDescriptor.FeatureKey: Any] = [.type: kVerticalPositionType, .selector: forSuperscript ? kSuperiorsSelector : kInferiorsSelector]
 				#endif
 				return features
 			}

@@ -11,6 +11,7 @@ import CoreServices
 import Articles
 import Account
 import RSCore
+import UniformTypeIdentifiers
 
 extension Notification.Name {
 
@@ -61,7 +62,7 @@ final class FaviconDownloader {
 		loadHomePageToFaviconURLCache()
 		loadHomePageURLsWithNoFaviconURLCache()
 
-		FaviconURLFinder.ignoredTypes = [kUTTypeScalableVectorGraphics as String]
+		FaviconURLFinder.ignoredTypes = [UTType.svg.identifier]
 
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 	}

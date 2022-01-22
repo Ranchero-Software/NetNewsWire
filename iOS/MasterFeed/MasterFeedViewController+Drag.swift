@@ -9,6 +9,7 @@
 import UIKit
 import MobileCoreServices
 import Account
+import UniformTypeIdentifiers
 
 extension MasterFeedViewController: UITableViewDragDelegate {
 	
@@ -20,7 +21,7 @@ extension MasterFeedViewController: UITableViewDragDelegate {
 		let data = webFeed.url.data(using: .utf8)
 		let itemProvider = NSItemProvider()
 		  
-		itemProvider.registerDataRepresentation(forTypeIdentifier: kUTTypeURL as String, visibility: .ownProcess) { completion in
+		itemProvider.registerDataRepresentation(forTypeIdentifier: UTType.url.identifier, visibility: .ownProcess) { completion in
 			completion(data, nil)
 			return nil
 		}
