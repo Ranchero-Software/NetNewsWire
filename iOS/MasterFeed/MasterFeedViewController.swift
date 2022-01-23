@@ -739,7 +739,7 @@ private extension MasterFeedViewController {
 		let unreadCountView = MasterFeedUnreadCountView()
 		unreadCountView.unreadCount = 10
 		
-		let layout = MasterFeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: tableView.bounds.size.width, insets: tableView.safeAreaInsets, label: titleLabel, unreadCountView: unreadCountView, showingEditingControl: false, indent: false, shouldShowDisclosure: false, itemIsInFolder: false)
 		tableView.estimatedRowHeight = layout.height
 	}
 	
@@ -763,6 +763,16 @@ private extension MasterFeedViewController {
 		if let feed = node.representedObject as? Feed {
 			cell.name = feed.nameForDisplay
 			cell.unreadCount = feed.unreadCount
+			cell.itemIsInFolder = false
+			if let account = feed.account, let folders = account.folders {
+				for folder in folders {
+					if folder.objectIsChild(node.representedObject) {
+						cell.itemIsInFolder = true
+						break
+					}
+				}
+			}
+			
 		}
 
 		configureIcon(cell, indexPath)

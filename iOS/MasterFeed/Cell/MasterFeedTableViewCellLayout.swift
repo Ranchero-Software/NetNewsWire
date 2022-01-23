@@ -11,13 +11,13 @@ import RSCore
 
 struct MasterFeedTableViewCellLayout {
 
-	private static let indentWidth = CGFloat(integerLiteral: 42)
+	private static let indentWidth = CGFloat(integerLiteral: 15)
 	private static let editingControlIndent = CGFloat(integerLiteral: 40)
 	private static let imageSize = CGSize(width: 24, height: 24)
 	private static let imageMarginRight = CGFloat(integerLiteral: 11)
 	private static let labelMarginRight = CGFloat(integerLiteral: 8)
 	private static let unreadCountMarginRight = CGFloat(integerLiteral: 16)
-	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
+	private static let disclosureButtonSize = CGSize(width: 55, height: 44)
 	private static let verticalPadding = CGFloat(integerLiteral: 11)
 
 	private static let minRowHeight = CGFloat(integerLiteral: 44)
@@ -32,7 +32,7 @@ struct MasterFeedTableViewCellLayout {
 	
 	let height: CGFloat
 	
-	init(cellWidth: CGFloat, insets: UIEdgeInsets, label: UILabel, unreadCountView: MasterFeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool) {
+	init(cellWidth: CGFloat, insets: UIEdgeInsets, label: UILabel, unreadCountView: MasterFeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool, itemIsInFolder: Bool) {
 
 		var initialIndent = insets.left
 		if indent {
@@ -54,7 +54,12 @@ struct MasterFeedTableViewCellLayout {
 			let y = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding) +
 				label.font.lineHeight / 2.0 -
 				MasterFeedTableViewCellLayout.imageSize.height / 2.0
-			rFavicon = CGRect(x: x, y: y, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
+			if itemIsInFolder {
+				rFavicon = CGRect(x: x + MasterFeedTableViewCellLayout.disclosureButtonSize.width - (MasterFeedTableViewCellLayout.imageSize.width / 2), y: y, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
+			} else {
+				rFavicon = CGRect(x: x, y: y, width: MasterFeedTableViewCellLayout.imageSize.width, height: MasterFeedTableViewCellLayout.imageSize.height)
+			}
+			
 		}
 
 		// Unread Count
@@ -68,9 +73,9 @@ struct MasterFeedTableViewCellLayout {
 		}
 		
 		// Title
-		var rLabelx = insets.left + MasterFeedTableViewCellLayout.disclosureButtonSize.width
-		if !shouldShowDisclosure {
-			rLabelx = rLabelx + MasterFeedTableViewCellLayout.imageSize.width + MasterFeedTableViewCellLayout.imageMarginRight
+		var rLabelx = MasterFeedTableViewCellLayout.disclosureButtonSize.width
+		if itemIsInFolder {
+			rLabelx += MasterFeedTableViewCellLayout.disclosureButtonSize.width - (rFavicon.width / 2)
 		}
 		let rLabely = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewCellLayout.verticalPadding)
 		
@@ -126,6 +131,7 @@ struct MasterFeedTableViewCellLayout {
 		//  Separator Insets
 		let separatorInset = MasterFeedTableViewCellLayout.disclosureButtonSize.width
 		separatorRect = CGRect(x: separatorInset, y: cellHeight - 0.5, width: cellWidth - separatorInset, height: 0.5)
+		
 		
 		//  Assign the properties
 		self.height = cellHeight
