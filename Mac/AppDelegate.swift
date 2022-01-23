@@ -679,7 +679,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func showHelp(_ sender: Any?) {
 
-		Browser.open("https://netnewswire.com/help/mac/6.0/en/", inBackground: false)
+		Browser.open("https://netnewswire.com/help/mac/6.1/en/", inBackground: false)
 	}
 
 	@IBAction func donateToAppCampForGirls(_ sender: Any?) {
