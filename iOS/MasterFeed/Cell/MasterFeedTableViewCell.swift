@@ -88,7 +88,7 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		label.allowsDefaultTighteningForTruncation = false
 		label.adjustsFontForContentSizeCategory = true
 		label.lineBreakMode = .byTruncatingTail
-		label.font = .preferredFont(forTextStyle: .body)
+		label.font = .preferredFont(forTextStyle: .body).bold()
 		return label
 	}()
 
@@ -193,7 +193,7 @@ private extension MasterFeedTableViewCell {
 	func addDisclosureView() {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
-		disclosureButton?.setImage(AppAssets.disclosureImage, for: .normal)
+		disclosureButton?.setImage(AppAssets.disclosureImage(size: 16, weight: .regular), for: .normal)
 		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false

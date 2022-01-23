@@ -12,7 +12,7 @@ import RSCore
 struct MasterFeedTableViewSectionHeaderLayout {
 
 	private static let labelMarginRight = CGFloat(integerLiteral: 8)
-	private static let unreadCountMarginRight = CGFloat(integerLiteral: 16)
+	private static let unreadCountMarginRight = CGFloat(integerLiteral: 0)
 	private static let disclosureButtonSize = CGSize(width: 44, height: 44)
 	private static let verticalPadding = CGFloat(integerLiteral: 11)
 
@@ -31,7 +31,7 @@ struct MasterFeedTableViewSectionHeaderLayout {
 		// Disclosure Button
 		var rDisclosure = CGRect.zero
 		rDisclosure.size = MasterFeedTableViewSectionHeaderLayout.disclosureButtonSize
-		rDisclosure.origin.x = bounds.origin.x
+		rDisclosure.origin.x = bounds.maxX - rDisclosure.size.width
 
 		// Unread Count
 		let unreadCountSize = unreadCountView.contentSize
@@ -40,7 +40,7 @@ struct MasterFeedTableViewSectionHeaderLayout {
 		var rUnread = CGRect.zero
 		if !unreadCountIsHidden {
 			rUnread.size = unreadCountSize
-			rUnread.origin.x = bounds.maxX - (MasterFeedTableViewSectionHeaderLayout.unreadCountMarginRight + unreadCountSize.width)
+			rUnread.origin.x = bounds.maxX - (MasterFeedTableViewSectionHeaderLayout.unreadCountMarginRight + unreadCountSize.width + rDisclosure.size.width)
 		}
 		
 		// Max Unread Count
@@ -50,7 +50,7 @@ struct MasterFeedTableViewSectionHeaderLayout {
 		let maxUnreadCountSize = maxUnreadCountView.contentSize
 
 		// Title
-		let rLabelx = insets.left + MasterFeedTableViewSectionHeaderLayout.disclosureButtonSize.width
+		let rLabelx = 15.0
 		let rLabely = UIFontMetrics.default.scaledValue(for: MasterFeedTableViewSectionHeaderLayout.verticalPadding)
 		
 		var labelWidth = CGFloat.zero

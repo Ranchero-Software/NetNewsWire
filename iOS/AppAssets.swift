@@ -98,8 +98,12 @@ struct AppAssets {
 	}()
 	
 	static var disclosureImage: UIImage = {
-		return UIImage(named: "disclosure")!
+		return UIImage(systemName: "chevron.right")!
 	}()
+	
+	static func disclosureImage(size: CGFloat, weight: UIImage.SymbolWeight) -> UIImage {
+		return UIImage(systemName: "chevron.right", withConfiguration: UIImage.SymbolConfiguration(pointSize: size, weight: weight))!
+	}
 	
 	static var contextMenuReddit: UIImage = {
 		return UIImage(named: "contextMenuReddit")!

@@ -77,7 +77,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		label.numberOfLines = 0
 		label.allowsDefaultTighteningForTruncation = false
 		label.adjustsFontForContentSizeCategory = true
-		label.font = .preferredFont(forTextStyle: .body)
+		label.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title2).pointSize, weight: .bold)
 		return label
 	}()
 	
@@ -85,8 +85,8 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
 	private lazy var disclosureButton: UIButton = {
 		let button = NonIntrinsicButton()
-		button.tintColor = UIColor.tertiaryLabel
-		button.setImage(AppAssets.disclosureImage, for: .normal)
+		button.tintColor = AppAssets.primaryAccentColor
+		button.setImage(AppAssets.disclosureImage(size: 14, weight: .bold), for: .normal)
 		button.contentMode = .center
 		button.addInteraction(UIPointerInteraction())
 		button.addTarget(self, action: #selector(toggleDisclosure), for: .touchUpInside)
@@ -95,13 +95,13 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
 	private let topSeparatorView: UIView = {
 		let view = UIView()
-		view.backgroundColor = UIColor.separator
+		view.backgroundColor = UIColor.clear
 		return view
 	}()
 	
 	private let bottomSeparatorView: UIView = {
 		let view = UIView()
-		view.backgroundColor = UIColor.separator
+		view.backgroundColor = UIColor.clear
 		return view
 	}()
 	
@@ -200,7 +200,7 @@ private extension MasterFeedTableViewSectionHeader {
 	
 	func addBackgroundView() {
 		self.backgroundView = UIView(frame: self.bounds)
-		self.backgroundView?.backgroundColor = AppAssets.sectionHeaderColor
+		self.backgroundView?.backgroundColor = .clear
 	}
 	
 }
