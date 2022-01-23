@@ -85,7 +85,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 
 	private lazy var disclosureButton: UIButton = {
 		let button = NonIntrinsicButton()
-		button.tintColor = AppAssets.primaryAccentColor
+		button.tintColor = AppAssets.secondaryAccentColor
 		button.setImage(AppAssets.disclosureImage(size: 14, weight: .bold), for: .normal)
 		button.contentMode = .center
 		button.addInteraction(UIPointerInteraction())

@@ -207,7 +207,7 @@ private extension MasterFeedTableViewCell {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
 		disclosureButton?.setImage(AppAssets.disclosureImage(size: 16, weight: .regular), for: .normal)
-		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
+		disclosureButton?.tintColor = AppAssets.secondaryAccentColor
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false
 		disclosureButton?.addInteraction(UIPointerInteraction())
