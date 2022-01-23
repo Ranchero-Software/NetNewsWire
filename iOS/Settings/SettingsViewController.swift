@@ -243,7 +243,7 @@ class SettingsViewController: UITableViewController {
 		case 7:
 			switch indexPath.row {
 			case 0:
-				openURL("https://netnewswire.com/help/ios/6.0/en/")
+				openURL("https://netnewswire.com/help/ios/6.1/en/")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 1:
 				openURL("https://netnewswire.com/")
