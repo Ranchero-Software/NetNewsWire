@@ -139,7 +139,6 @@ private extension MasterFeedTableViewSectionHeader {
 	}
 	
 	func commonInit() {
-		addSubviewAtInit(unreadCountView)
 		addSubviewAtInit(titleView)
 		addSubviewAtInit(disclosureButton)
 		updateExpandedState(animate: false)
