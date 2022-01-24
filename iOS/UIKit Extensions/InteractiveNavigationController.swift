@@ -46,19 +46,8 @@ private extension InteractiveNavigationController {
 	func configure() {
 		isToolbarHidden = false
 		
-		let navigationStandardAppearance = UINavigationBarAppearance()
-		navigationStandardAppearance.titleTextAttributes = [
-			.foregroundColor: UIColor.label,
-			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .heavy)
-		]
-		navigationStandardAppearance.largeTitleTextAttributes = [
-			.foregroundColor: UIColor.green,
-			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize - 3, weight: .black)
-		]
-		navigationBar.standardAppearance = navigationStandardAppearance
-		
 		let scrollEdgeStandardAppearance = UINavigationBarAppearance()
-		scrollEdgeStandardAppearance.backgroundColor = .systemBackground
+		
 		scrollEdgeStandardAppearance.shadowColor = nil
 		scrollEdgeStandardAppearance.titleTextAttributes = [
 			.foregroundColor: UIColor.label,
@@ -68,11 +57,16 @@ private extension InteractiveNavigationController {
 			.foregroundColor: UIColor.label,
 			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize - 3, weight: .black)
 		]
-		navigationBar.scrollEdgeAppearance = scrollEdgeStandardAppearance
-		
 		navigationBar.tintColor = AppAssets.primaryAccentColor
+		navigationBar.standardAppearance = scrollEdgeStandardAppearance
+		navigationBar.isTranslucent = true
+		navigationBar.scrollEdgeAppearance = nil
+		navigationBar.compactAppearance = nil
+		navigationBar.compactScrollEdgeAppearance = nil
+		
 		
 		let toolbarAppearance = UIToolbarAppearance()
+		toolbarAppearance.shadowColor = nil
 		toolbar.standardAppearance = toolbarAppearance
 		toolbar.compactAppearance = toolbarAppearance
 		toolbar.tintColor = AppAssets.primaryAccentColor
