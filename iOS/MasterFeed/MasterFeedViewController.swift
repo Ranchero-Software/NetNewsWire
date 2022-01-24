@@ -99,13 +99,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return
 		}
 		
-		if let account = unreadCountProvider as? Account {
-			if let node = coordinator.rootNode.childNodeRepresentingObject(account) {
-				let sectionIndex = coordinator.rootNode.indexOfChild(node)!
-				if let headerView = tableView.headerView(forSection: sectionIndex) as? MasterFeedTableViewSectionHeader {
-					headerView.unreadCount = account.unreadCount
-				}
-			}
+		if let _ = unreadCountProvider as? Account {
 			return
 		}
 		
@@ -203,11 +197,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 			return headerView
 		}
 		
-		if let account = sectionNode.representedObject as? Account {
-			headerView.unreadCount = account.unreadCount
-		} else {
-			headerView.unreadCount = 0
-		}
+		
 		
 		headerView.tag = section
 		headerView.disclosureExpanded = coordinator.isExpanded(sectionNode)

@@ -19,12 +19,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	override var accessibilityLabel: String? {
 		set {}
 		get {
-			if unreadCount > 0 {
-				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
-				return "\(name) \(unreadCount) \(unreadLabel) \(expandedStateMessage) "
-			} else {
-				return "\(name) \(expandedStateMessage) "
-			}
+			return "\(name) \(expandedStateMessage)"
 		}
 	}
 
@@ -35,19 +30,6 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 				return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
 			}
 			return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
-		}
-	}
-	
-	var unreadCount: Int {
-		get {
-			return unreadCountView.unreadCount
-		}
-		set {
-			if unreadCountView.unreadCount != newValue {
-				unreadCountView.unreadCount = newValue
-				updateUnreadCountView()
-				setNeedsLayout()
-			}
 		}
 	}
 	
@@ -66,7 +48,6 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	var disclosureExpanded = false {
 		didSet {
 			updateExpandedState(animate: true)
-			updateUnreadCountView()
 		}
 	}
 	
@@ -167,18 +148,6 @@ private extension MasterFeedTableViewSectionHeader {
 					self.bottomSeparatorView.isHidden = true
 				}
 			})
-	}
-	
-	func updateUnreadCountView() {
-		if !disclosureExpanded && unreadCount > 0 {
-			UIView.animate(withDuration: 0.3) {
-				self.unreadCountView.alpha = 1
-			}
-		} else {
-			UIView.animate(withDuration: 0.3) {
-				self.unreadCountView.alpha = 0
-			}
-		}
 	}
 
 	func addSubviewAtInit(_ view: UIView) {
