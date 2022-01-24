@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 6.1 TestFlight build 6101 - 23 Jan 2022
+### 6.1 TestFlight build 6102 - 23 Jan 2022
 
 Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences.
 Copy URLs using repaired, rather than raw, feed links.
