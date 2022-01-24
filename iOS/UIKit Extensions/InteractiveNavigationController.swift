@@ -46,29 +46,43 @@ private extension InteractiveNavigationController {
 	func configure() {
 		isToolbarHidden = false
 		
-		let scrollEdgeStandardAppearance = UINavigationBarAppearance()
-		
-		scrollEdgeStandardAppearance.shadowColor = nil
-		scrollEdgeStandardAppearance.titleTextAttributes = [
+		// Standard appearance with system background
+		let standardAppearance = UINavigationBarAppearance()
+		standardAppearance.backgroundColor = .clear
+		standardAppearance.shadowColor = nil
+		standardAppearance.titleTextAttributes = [
 			.foregroundColor: UIColor.label,
 			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .heavy)
 		]
-		scrollEdgeStandardAppearance.largeTitleTextAttributes = [
+		standardAppearance.largeTitleTextAttributes = [
 			.foregroundColor: UIColor.label,
 			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize - 3, weight: .black)
 		]
-		navigationBar.tintColor = AppAssets.primaryAccentColor
-		navigationBar.standardAppearance = scrollEdgeStandardAppearance
-		navigationBar.isTranslucent = true
-		navigationBar.scrollEdgeAppearance = nil
-		navigationBar.compactAppearance = nil
-		navigationBar.compactScrollEdgeAppearance = nil
+		
+		let scrollEdgeAppearance = UINavigationBarAppearance()
+		scrollEdgeAppearance.backgroundColor = .systemBackground
+		scrollEdgeAppearance.shadowColor = nil
+		scrollEdgeAppearance.titleTextAttributes = [
+			.foregroundColor: UIColor.label,
+			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .heavy)
+		]
+		scrollEdgeAppearance.largeTitleTextAttributes = [
+			.foregroundColor: UIColor.label,
+			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize - 3, weight: .black)
+		]
+		
+		
+		navigationBar.standardAppearance = standardAppearance
+		navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
+		navigationBar.compactAppearance = standardAppearance
+		navigationBar.compactScrollEdgeAppearance = scrollEdgeAppearance
 		
 		
 		let toolbarAppearance = UIToolbarAppearance()
 		toolbarAppearance.shadowColor = nil
 		toolbar.standardAppearance = toolbarAppearance
-		toolbar.compactAppearance = toolbarAppearance
+		toolbar.compactAppearance = nil
+		toolbar.scrollEdgeAppearance = nil
 		toolbar.tintColor = AppAssets.primaryAccentColor
 	}
 
