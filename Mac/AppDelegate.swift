@@ -396,7 +396,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	
 	func createMainWindowController() -> MainWindowController {
 		let controller: MainWindowController
-		controller = windowControllerWithName("UnifiedWindow") as! MainWindowController
+		controller = windowControllerWithName("MainWindow") as! MainWindowController
 		
 		if !(mainWindowController?.isOpen ?? false) {
 			mainWindowControllers.removeAll()
