@@ -1,5 +1,14 @@
 # iOS Release Notes
 
+### 6.1 TestFlight build 6100 - 23 Jan 2022
+
+Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences.
+Copy URLs using repaired, rather than raw, feed links.
+Disallow creation of iCloud account in the app if iCloud and iCloud Drive aren’t both enabled.
+Fixed bug showing quote tweets that only included an image.
+Video autoplay is now disallowed.
+Article view now supports RTL layout.
+
 ### 6.0.1 TestFlight build 608 - 28 Aug 2021
 
 Fixed our top crashing bug — it could happen when updating a table view
