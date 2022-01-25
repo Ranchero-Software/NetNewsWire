@@ -50,27 +50,10 @@ private extension InteractiveNavigationController {
 		let standardAppearance = UINavigationBarAppearance()
 		standardAppearance.backgroundColor = .clear
 		standardAppearance.shadowColor = nil
-		standardAppearance.titleTextAttributes = [
-			.foregroundColor: UIColor.label,
-			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .heavy)
-		]
-		standardAppearance.largeTitleTextAttributes = [
-			.foregroundColor: UIColor.label,
-			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize - 3, weight: .black)
-		]
 		
 		let scrollEdgeAppearance = UINavigationBarAppearance()
 		scrollEdgeAppearance.backgroundColor = .systemBackground
-		scrollEdgeAppearance.shadowColor = nil
-		scrollEdgeAppearance.titleTextAttributes = [
-			.foregroundColor: UIColor.label,
-			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .heavy)
-		]
-		scrollEdgeAppearance.largeTitleTextAttributes = [
-			.foregroundColor: UIColor.label,
-			.font: UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize - 3, weight: .black)
-		]
-		
+		scrollEdgeAppearance.shadowColor = nil		
 		
 		navigationBar.standardAppearance = standardAppearance
 		navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
