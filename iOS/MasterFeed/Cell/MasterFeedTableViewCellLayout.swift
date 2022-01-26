@@ -34,7 +34,6 @@ struct MasterFeedTableViewCellLayout {
 	
 	init(cellWidth: CGFloat, insets: UIEdgeInsets, label: UILabel, unreadCountView: MasterFeedUnreadCountView, showingEditingControl: Bool, indent: Bool, shouldShowDisclosure: Bool, itemIsInFolder: Bool) {
 
-		print(insets)
 		var initialIndent = insets.left
 		if indent {
 			initialIndent += MasterFeedTableViewCellLayout.indentWidth
