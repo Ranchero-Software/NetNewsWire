@@ -45,6 +45,14 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		}
 	}
 	
+	var itemIsInFolder = false {
+		didSet {
+			if itemIsInFolder != oldValue {
+				setNeedsLayout()
+			}
+		}
+	}
+	
 	var isSeparatorShown = true {
 		didSet {
 			if isSeparatorShown != oldValue {
@@ -136,14 +144,19 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable, itemIsInFolder: itemIsInFolder)
 		return CGSize(width: bounds.width, height: layout.height)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable)
+		let layout = MasterFeedTableViewCellLayout(cellWidth: bounds.size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView, showingEditingControl: isShowingEditControl, indent: indentationLevel == 1, shouldShowDisclosure: isDisclosureAvailable, itemIsInFolder: itemIsInFolder)
 		layoutWith(layout)
+		if isDisclosureAvailable {
+			titleView.font = .preferredFont(forTextStyle: .body).bold()
+		} else {
+			titleView.font = .preferredFont(forTextStyle: .body)
+		}
 	}
 	
 	@objc func buttonPressed(_ sender: UIButton) {
@@ -193,8 +206,8 @@ private extension MasterFeedTableViewCell {
 	func addDisclosureView() {
 		disclosureButton = NonIntrinsicButton(type: .roundedRect)
 		disclosureButton!.addTarget(self, action: #selector(buttonPressed(_:)), for: UIControl.Event.touchUpInside)
-		disclosureButton?.setImage(AppAssets.disclosureImage, for: .normal)
-		disclosureButton?.tintColor = AppAssets.controlBackgroundColor
+		disclosureButton?.setImage(AppAssets.disclosureImage(size: 16, weight: .regular), for: .normal)
+		disclosureButton?.tintColor = AppAssets.secondaryAccentColor
 		disclosureButton?.imageView?.contentMode = .center
 		disclosureButton?.imageView?.clipsToBounds = false
 		disclosureButton?.addInteraction(UIPointerInteraction())
