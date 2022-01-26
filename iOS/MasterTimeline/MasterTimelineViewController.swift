@@ -114,10 +114,14 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
+		self.navigationController?.isToolbarHidden = false
+
 		// If the nav bar is hidden, fade it in to avoid it showing stuff as it is getting laid out
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
+		
+		super.viewWillAppear(animated)
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
@@ -600,9 +604,8 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
-	func configureToolbar() {
-		
-		guard !coordinator.isThreePanelMode else {
+	func configureToolbar() {		
+		guard !(splitViewController?.isCollapsed ?? true) else {
 			return
 		}
 		
