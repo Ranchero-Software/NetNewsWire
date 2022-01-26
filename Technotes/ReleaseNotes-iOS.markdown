@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 6.1 TestFlight build 6103 - 25 Jan 2022
+
+Fixed regression with keyboard shortcuts.
+Fixed crashing bug adding an account.
+
 ### 6.1 TestFlight build 6102 - 23 Jan 2022
 
 Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences.
