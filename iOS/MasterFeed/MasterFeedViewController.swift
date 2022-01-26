@@ -78,6 +78,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
+		navigationController?.isToolbarHidden = false		
 		updateUI()
 		super.viewWillAppear(animated)
 	}

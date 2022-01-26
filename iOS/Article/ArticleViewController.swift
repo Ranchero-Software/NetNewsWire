@@ -45,6 +45,8 @@ class ArticleViewController: UIViewController {
 	
 	weak var coordinator: SceneCoordinator!
 	
+	private let poppableDelegate = PoppableGestureRecognizerDelegate()
+
 	var article: Article? {
 		didSet {
 			if let controller = currentWebViewController, controller.article != article {
@@ -101,6 +103,11 @@ class ArticleViewController: UIViewController {
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
 		
+		if let parentNavController = navigationController?.parent as? UINavigationController {
+			poppableDelegate.navigationController = parentNavController
+			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
+		}
+		
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
@@ -154,6 +161,11 @@ class ArticleViewController: UIViewController {
 		
 		updateUI()
 	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		navigationController?.isToolbarHidden = false
+		super.viewWillAppear(animated)
+	}
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
@@ -161,6 +173,7 @@ class ArticleViewController: UIViewController {
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
 		if searchBar != nil && !searchBar.isHidden {
 			endFind()
 		}
