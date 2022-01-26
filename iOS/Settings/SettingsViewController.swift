@@ -139,6 +139,14 @@ class SettingsViewController: UITableViewController {
 
 		let cell: UITableViewCell
 		switch indexPath.section {
+		case 0:
+			let settingsCell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
+			settingsCell.imageView?.image = UIImage(named: "settingsGear")
+			settingsCell.imageView?.layer.masksToBounds = true
+			settingsCell.imageView?.layer.cornerRadius = 4
+			settingsCell.imageView?.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+			cell = settingsCell
+
 		case 1:
 						
 			let sortedAccounts = AccountManager.shared.sortedAccounts
