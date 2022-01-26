@@ -180,8 +180,13 @@ class SettingsViewController: UITableViewController {
 
 		switch indexPath.section {
 		case 0:
-			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
-			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			if indexPath.row == 0 {
+				UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			} else {
+				let controller = UIStoryboard.settings.instantiateController(ofType: NotificationsViewController.self)
+				self.navigationController?.pushViewController(controller, animated: true)
+			}
 		case 1:
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
