@@ -11,7 +11,7 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
+class MasterTimelineViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -26,6 +26,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
+	
+	var mainControllerIdentifer = MainControllerIdentifier.masterTimeline
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
@@ -121,7 +123,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
-		coordinator.isTimelineViewControllerPending = false
 
 		if navigationController?.navigationBar.alpha == 0 {
 			UIView.animate(withDuration: 0.5) {

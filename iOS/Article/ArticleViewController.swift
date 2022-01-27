@@ -12,7 +12,7 @@ import Account
 import Articles
 import SafariServices
 
-class ArticleViewController: UIViewController {
+class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	
 	typealias State = (extractedArticle: ExtractedArticle?,
 		isShowingExtractedArticle: Bool,
@@ -42,6 +42,8 @@ class ArticleViewController: UIViewController {
 		button.setImage(AppAssets.articleExtractorOff, for: .normal)
 		return button
 	}()
+	
+	var mainControllerIdentifer = MainControllerIdentifier.article
 	
 	weak var coordinator: SceneCoordinator!
 	

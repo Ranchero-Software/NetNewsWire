@@ -14,6 +14,17 @@ import RSCore
 import RSTree
 import SafariServices
 
+protocol MainControllerIdentifiable {
+	var mainControllerIdentifer: MainControllerIdentifier { get }
+}
+
+enum MainControllerIdentifier {
+	case none
+	case masterFeed
+	case masterTimeline
+	case article
+}
+
 enum SearchScope: Int {
 	case timeline = 0
 	case global = 1
@@ -51,11 +62,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var activityManager = ActivityManager()
 	
 	private var rootSplitViewController: RootSplitViewController!
-
 	private var masterFeedViewController: MasterFeedViewController!
 	private var masterTimelineViewController: MasterTimelineViewController?
 	private var articleViewController: ArticleViewController?
-	
+
+	private var lastMainControllerToAppear = MainControllerIdentifier.none
+
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 0.5)
 	private var fetchSerialNumber = 0
@@ -72,7 +84,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var savedSearchArticles: ArticleArray? = nil
 	private var savedSearchArticleIds: Set<String>? = nil
 	
-	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
 	
 	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
@@ -1309,8 +1320,16 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 			return
 		}
 
+		defer {
+			if let mainController = viewController as? MainControllerIdentifiable {
+				lastMainControllerToAppear = mainController.mainControllerIdentifer
+			} else if let mainController = (viewController as? UINavigationController)?.topViewController as? MainControllerIdentifiable {
+				lastMainControllerToAppear = mainController.mainControllerIdentifer
+			}
+		}
+
 		// If we are showing the Feeds and only the feeds start clearing stuff
-		if viewController === masterFeedViewController && !isTimelineViewControllerPending {
+		if viewController === masterFeedViewController && lastMainControllerToAppear == .masterTimeline {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil, animations: [.scroll, .select, .navigation])
 			return
@@ -1320,7 +1339,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
-		if viewController === masterTimelineViewController && !isArticleViewControllerPending {
+		if viewController === masterTimelineViewController && lastMainControllerToAppear == .article && !isArticleViewControllerPending {
 			currentArticle = nil
 			masterTimelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])
 			activityManager.invalidateReading()
