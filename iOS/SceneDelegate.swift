@@ -22,7 +22,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		
 		window!.tintColor = AppAssets.primaryAccentColor
 		updateUserInterfaceStyle()
-		UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
 		
 		let rootViewController = window!.rootViewController as! RootSplitViewController
 		coordinator = SceneCoordinator(rootSplitViewController: rootViewController)
