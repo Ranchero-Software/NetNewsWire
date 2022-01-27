@@ -608,7 +608,7 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 private extension MasterTimelineViewController {
 
 	func configureToolbar() {		
-		guard !(splitViewController?.isCollapsed ?? true) else {
+		guard splitViewController?.isCollapsed ?? true else {
 			return
 		}
 		
