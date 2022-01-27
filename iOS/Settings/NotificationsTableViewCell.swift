@@ -10,6 +10,10 @@ import UIKit
 import Account
 import UserNotifications
 
+extension Notification.Name {
+	static let NotificationPreferencesDidUpdate = Notification.Name("NotificationPreferencesDidUpdate")
+}
+
 class NotificationsTableViewCell: UITableViewCell {
 
 	@IBOutlet weak var notificationsSwitch: UISwitch!
@@ -45,11 +49,17 @@ class NotificationsTableViewCell: UITableViewCell {
 		notificationsImageView.layer.cornerRadius = 4
 	}
 	
+	
+	/// Used for notification permissions only.
+	/// - Parameter status: `UNAuthorizationStatus`
 	func configure(_ status: UNAuthorizationStatus) {
-		notificationsSwitch.isOn = (status == .authorized) ? true : false
-		if status == .denied { notificationsSwitch.isEnabled = false }
+		notificationsSwitch.isOn = (status == .authorized || status == .provisional) ? true : false
+		if status == .denied || status == .authorized || status == .provisional { notificationsSwitch.isEnabled = false }
+		if status == .notDetermined {
+			notificationsSwitch.addTarget(self, action: #selector(requestNotificationPermissions(_:)), for: .touchUpInside)
+		}
 		notificationsLabel.text = NSLocalizedString("Enable Notifications", comment: "")
-		notificationsImageView.image = UIImage(systemName: "bell")
+		notificationsImageView.image = UIImage(systemName: "app.badge")
 		notificationsImageView.layer.cornerRadius = 4
 	}
 	
@@ -65,6 +75,14 @@ class NotificationsTableViewCell: UITableViewCell {
 			feed.isNotifyAboutNewArticles!.toggle()
 		}
 	}
+	
+	@objc
+	private func requestNotificationPermissions(_ sender: Any) {
+		UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+			NotificationCenter.default.post(name: .NotificationPreferencesDidUpdate, object: nil)
+		}
+	}
+	
 	
 
 }

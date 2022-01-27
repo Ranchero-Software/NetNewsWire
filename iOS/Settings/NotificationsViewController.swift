@@ -19,26 +19,25 @@ class NotificationsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		self.title = NSLocalizedString("Notifications", comment: "Notifications")
-		notificationsTableView.sectionHeaderTopPadding = 15
+		notificationsTableView.sectionHeaderTopPadding = 25
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .NotificationPreferencesDidUpdate, object: nil)
+		reloadNotificationTableView()
+	}
+	
+	@objc
+	private func reloadNotificationTableView(_ sender: Any? = nil) {
 		UNUserNotificationCenter.current().getNotificationSettings { settings in
 			DispatchQueue.main.async {
 				self.status = settings.authorizationStatus
 				self.notificationsTableView.reloadData()
 			}
 		}
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
-    }
-	
-	@objc
-	private func faviconDidBecomeAvailable(_ sender: Any) {
-		notificationsTableView.reloadData()
 	}
 	
-	@objc
-	private func webFeedIconDidBecomeAvailable(_ sender: Any) {
-		notificationsTableView.reloadData()
-	}
+	
 	
 	private func sortedWebFeedsForAccount(_ account: Account) -> [WebFeed] {
 		return Array(account.flattenedWebFeeds()).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
@@ -76,7 +75,7 @@ extension NotificationsViewController: UITableViewDataSource {
 	
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		if section == 0 { return NSLocalizedString("Enable Notifications", comment: "Enable Notifications") }
+		if section == 0 { return " " }
 		return AccountManager.shared.sortedActiveAccounts[section - 1].nameForDisplay
 	}
 	
@@ -84,6 +83,9 @@ extension NotificationsViewController: UITableViewDataSource {
 		if section == 0 {
 			if status == .denied {
 				return NSLocalizedString("Notification permissions are currently denied. Enable notifications in the Settings app.", comment: "Notifications denied.")
+			}
+			if status == .notDetermined {
+				return NSLocalizedString("Turn on notifications to configure new article notifications.", comment: "Notifications not determined.")
 			}
 		}
 		return nil
