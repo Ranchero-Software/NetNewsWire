@@ -272,15 +272,20 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		self.masterFeedViewController = rootSplitViewController.viewController(for: .primary) as? MasterFeedViewController
 		self.masterFeedViewController.coordinator = self
-		self.masterFeedViewController?.navigationController?.delegate = self
+		if let navController = self.masterFeedViewController?.navigationController {
+			navController.delegate = self
+			configureNavigationController(navController)
+		}
 
 		self.masterTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MasterTimelineViewController
 		self.masterTimelineViewController?.coordinator = self
-		self.masterTimelineViewController?.navigationController?.delegate = self
+		if let navController = self.masterTimelineViewController?.navigationController {
+			navController.delegate = self
+			configureNavigationController(navController)
+		}
 
 		self.articleViewController = rootSplitViewController.viewController(for: .secondary) as? ArticleViewController
 		self.articleViewController?.coordinator = self
-		self.articleViewController?.navigationController?.delegate = self
 
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
@@ -1333,6 +1338,24 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 // MARK: Private
 
 private extension SceneCoordinator {
+	
+	func configureNavigationController(_ navController: UINavigationController) {
+		let navigationStandardAppearance = UINavigationBarAppearance()
+		navigationStandardAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+		navigationStandardAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
+		navController.navigationBar.standardAppearance = navigationStandardAppearance
+		
+		let scrollEdgeStandardAppearance = UINavigationBarAppearance()
+		scrollEdgeStandardAppearance.backgroundColor = .systemBackground
+		navController.navigationBar.scrollEdgeAppearance = scrollEdgeStandardAppearance
+		
+		navController.navigationBar.tintColor = AppAssets.primaryAccentColor
+		
+		let toolbarAppearance = UIToolbarAppearance()
+		navController.toolbar.standardAppearance = toolbarAppearance
+		navController.toolbar.compactAppearance = toolbarAppearance
+		navController.toolbar.tintColor = AppAssets.primaryAccentColor
+	}
 
 	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager,
