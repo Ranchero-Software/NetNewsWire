@@ -297,6 +297,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		self.articleViewController = rootSplitViewController.viewController(for: .secondary) as? ArticleViewController
 		self.articleViewController?.coordinator = self
+		if let navController = self.articleViewController?.navigationController {
+			configureNavigationController(navController)
+		}
 
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
