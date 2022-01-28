@@ -97,7 +97,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 	}
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
-		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView, unreadCountView: unreadCountView)
+		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: size.width, insets: safeAreaInsets, label: titleView)
 		return CGSize(width: bounds.width, height: layout.height)
 		
 	}
@@ -106,8 +106,7 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		super.layoutSubviews()
 		let layout = MasterFeedTableViewSectionHeaderLayout(cellWidth: contentView.bounds.size.width,
 															insets: contentView.safeAreaInsets,
-															label: titleView,
-															unreadCountView: unreadCountView)
+															label: titleView)
 		layoutWith(layout)
 	}
 
@@ -157,7 +156,6 @@ private extension MasterFeedTableViewSectionHeader {
 	
 	func layoutWith(_ layout: MasterFeedTableViewSectionHeaderLayout) {
 		titleView.setFrameIfNotEqual(layout.titleRect)
-		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 		disclosureButton.setFrameIfNotEqual(layout.disclosureButtonRect)
 		
 		let top = CGRect(x: safeAreaInsets.left, y: 0, width: frame.width - safeAreaInsets.right - safeAreaInsets.left, height: 0.33)
