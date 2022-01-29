@@ -49,20 +49,6 @@ class NotificationsTableViewCell: UITableViewCell {
 		notificationsImageView.layer.cornerRadius = 4
 	}
 	
-	
-	/// Used for notification permissions only.
-	/// - Parameter status: `UNAuthorizationStatus`
-	func configure(_ status: UNAuthorizationStatus) {
-		notificationsSwitch.isOn = (status == .authorized || status == .provisional) ? true : false
-		if status == .denied || status == .authorized || status == .provisional { notificationsSwitch.isEnabled = false }
-		if status == .notDetermined {
-			notificationsSwitch.addTarget(self, action: #selector(requestNotificationPermissions(_:)), for: .touchUpInside)
-		}
-		notificationsLabel.text = NSLocalizedString("Enable Notifications", comment: "")
-		notificationsImageView.image = UIImage(systemName: "app.badge")
-		notificationsImageView.layer.cornerRadius = 4
-	}
-	
 	@objc
 	private func toggleWebFeedNotification(_ sender: Any) {
 		guard let feed = feed else {
