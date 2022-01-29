@@ -12,6 +12,7 @@ import CoreServices
 import SafariServices
 import SwiftUI
 import UniformTypeIdentifiers
+import UserNotifications
 
 class SettingsViewController: UITableViewController {
 
@@ -29,6 +30,8 @@ class SettingsViewController: UITableViewController {
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
 	
+	var notificationStatus: UNAuthorizationStatus = .notDetermined
+	
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
 		NotificationCenter.default.removeObserver(tableView!, name: UIContentSizeCategory.didChangeNotification, object: nil)
@@ -38,6 +41,7 @@ class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(activeExtensionPointsDidChange), name: .ActiveExtensionPointsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshNotificationStatus(_:)), name: UIScene.willEnterForegroundNotification, object: nil)
 		
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
@@ -84,9 +88,7 @@ class SettingsViewController: UITableViewController {
 		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
-		
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
-		
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -110,7 +112,17 @@ class SettingsViewController: UITableViewController {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 4), at: .top, animated: true)
 			scrollToArticlesSection = false
 		}
-
+		refreshNotificationStatus()
+	}
+	
+	@objc
+	func refreshNotificationStatus(_ sender: Any? = nil) {
+		UNUserNotificationCenter.current().getNotificationSettings { settings in
+			DispatchQueue.main.async {
+				self.notificationStatus = settings.authorizationStatus
+				self.tableView.reloadData()
+			}
+		}
 	}
 	
 	// MARK: UITableView
@@ -118,6 +130,9 @@ class SettingsViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		
 		switch section {
+		case 0:
+			if notificationStatus == .authorized { return 2 }
+			return 1
 		case 1:
 			return AccountManager.shared.accounts.count + 1
 		case 2:
@@ -180,8 +195,13 @@ class SettingsViewController: UITableViewController {
 
 		switch indexPath.section {
 		case 0:
-			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
-			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			if indexPath.row == 0 {
+				UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			} else {
+				let controller = UIStoryboard.settings.instantiateController(ofType: NotificationsViewController.self)
+				self.navigationController?.pushViewController(controller, animated: true)
+			}
 		case 1:
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
