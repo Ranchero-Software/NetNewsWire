@@ -18,12 +18,14 @@ class NotificationsViewController: UIViewController {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
-		self.title = NSLocalizedString("Notifications", comment: "Notifications")
+		self.title = NSLocalizedString("New Article Notifications", comment: "Notifications")
 		notificationsTableView.sectionHeaderTopPadding = 25
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .NotificationPreferencesDidUpdate, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: UIScene.willEnterForegroundNotification, object: nil)
+		
 		reloadNotificationTableView()
 	}
 	
@@ -37,8 +39,6 @@ class NotificationsViewController: UIViewController {
 		}
 	}
 	
-	
-	
 	private func sortedWebFeedsForAccount(_ account: Account) -> [WebFeed] {
 		return Array(account.flattenedWebFeeds()).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 	}
@@ -49,33 +49,36 @@ class NotificationsViewController: UIViewController {
 extension NotificationsViewController: UITableViewDataSource {
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
-		/// 1 section for enabling notifications
-		/// + number of active accounts
+		if status == .denied { return 1 }
 		return 1 + AccountManager.shared.activeAccounts.count
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		if section == 0 { return 1 }
+		if section == 0 {
+			if status == .denied { return 1 }
+			return 0
+		}
 		return AccountManager.shared.sortedActiveAccounts[section - 1].flattenedWebFeeds().count
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
+		
 		
 		if indexPath.section == 0 {
-			cell.configure(status)
+			let openSettingsCell = tableView.dequeueReusableCell(withIdentifier: "OpenSettingsCell") as! VibrantBasicTableViewCell
+			return openSettingsCell
 		} else {
+			let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
 			let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
 			let feed = sortedWebFeedsForAccount(account)[indexPath.row]
 			cell.configure(feed, status)
+			return cell
 		}
-		
-		return cell
 	}
 	
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		if section == 0 { return " " }
+		if section == 0 { return nil }
 		return AccountManager.shared.sortedActiveAccounts[section - 1].nameForDisplay
 	}
 	
@@ -84,9 +87,6 @@ extension NotificationsViewController: UITableViewDataSource {
 			if status == .denied {
 				return NSLocalizedString("Notification permissions are currently denied. Enable notifications in the Settings app.", comment: "Notifications denied.")
 			}
-			if status == .notDetermined {
-				return NSLocalizedString("Turn on notifications to configure new article notifications.", comment: "Notifications not determined.")
-			}
 		}
 		return nil
 	}
@@ -94,7 +94,10 @@ extension NotificationsViewController: UITableViewDataSource {
 
 extension NotificationsViewController: UITableViewDelegate {
 	
-	
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		tableView.deselectRow(at: indexPath, animated: true)
+		UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
+	}
 	
 	
 }
