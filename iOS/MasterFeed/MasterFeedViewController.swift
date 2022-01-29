@@ -723,7 +723,7 @@ private extension MasterFeedViewController {
 		scrollEdge.shadowImage = UIImage()
 		
 		let standard = UINavigationBarAppearance()
-		standard.shadowColor = nil
+		standard.shadowColor = .opaqueSeparator
 		standard.shadowImage = UIImage()
 		
 		navigationController?.navigationBar.standardAppearance = standard
