@@ -1347,7 +1347,12 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 
 			// Restore any bars hidden by the article controller
 			showStatusBar()
-			navigationController.setNavigationBarHidden(false, animated: true)
+			
+			// We delay the showing of the navigation bars because it freaks out on iOS 15 with the new split view controller
+			// if it is trying to show at the same time as the show timeline animation
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+				navigationController.setNavigationBarHidden(false, animated: true)
+			}
 			navigationController.setToolbarHidden(false, animated: true)
 			return
 		}
