@@ -84,8 +84,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var savedSearchArticles: ArticleArray? = nil
 	private var savedSearchArticleIds: Set<String>? = nil
 	
-	var isArticleViewControllerPending = false
-	
 	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
@@ -1342,7 +1340,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
-		if viewController === masterTimelineViewController && lastMainControllerToAppear == .article && !isArticleViewControllerPending {
+		if viewController === masterTimelineViewController && lastMainControllerToAppear == .article {
 			currentArticle = nil
 			masterTimelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])
 			activityManager.invalidateReading()

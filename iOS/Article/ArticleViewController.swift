@@ -171,7 +171,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
-		coordinator.isArticleViewControllerPending = false
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
