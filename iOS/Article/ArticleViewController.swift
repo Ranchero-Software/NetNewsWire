@@ -149,9 +149,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
-		if AppDefaults.shared.articleFullscreenEnabled {
-			controller.hideBars()
-		}
 		
 		// Search bar
 		searchBar.translatesAutoresizingMaskIntoConstraints = false
@@ -166,6 +163,10 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	
 	override func viewWillAppear(_ animated: Bool) {
 		navigationController?.isToolbarHidden = false
+		if AppDefaults.shared.articleFullscreenEnabled {
+			currentWebViewController?.hideBars()
+		}
+
 		super.viewWillAppear(animated)
 	}
 
