@@ -169,10 +169,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		super.viewWillAppear(animated)
 	}
 
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(true)
-	}
-	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		if searchBar != nil && !searchBar.isHidden {
