@@ -101,6 +101,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		])
 		fullScreenTapZone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapNavigationBar)))
 		navigationItem.titleView = fullScreenTapZone
+		configureNavbar()
 		
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
@@ -228,6 +229,27 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		}
 		
 	}
+	
+	override func contentScrollView(for edge: NSDirectionalRectEdge) -> UIScrollView? {
+		return currentWebViewController?.webView?.scrollView
+	}
+	
+	func configureNavbar() {
+		let scrollEdge = UINavigationBarAppearance()
+		scrollEdge.configureWithOpaqueBackground()
+		scrollEdge.shadowColor = nil
+		scrollEdge.shadowImage = UIImage()
+		
+		let standard = UINavigationBarAppearance()
+		standard.shadowColor = .opaqueSeparator
+		standard.shadowImage = UIImage()
+		
+		navigationController?.navigationBar.standardAppearance = standard
+		navigationController?.navigationBar.compactAppearance = standard
+		navigationController?.navigationBar.scrollEdgeAppearance = scrollEdge
+		navigationController?.navigationBar.compactScrollEdgeAppearance = scrollEdge
+	}
+	
 	
 	// MARK: Notifications
 	

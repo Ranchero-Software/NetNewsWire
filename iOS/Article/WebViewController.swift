@@ -31,7 +31,7 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	private var webView: PreloadedWebView? {
+	var webView: PreloadedWebView? {
 		return view.subviews[0] as? PreloadedWebView
 	}
 	
