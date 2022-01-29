@@ -84,8 +84,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var savedSearchArticles: ArticleArray? = nil
 	private var savedSearchArticleIds: Set<String>? = nil
 	
-	var isArticleViewControllerPending = false
-	
 	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
@@ -297,6 +295,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		self.articleViewController = rootSplitViewController.viewController(for: .secondary) as? ArticleViewController
 		self.articleViewController?.coordinator = self
+		if let navController = self.articleViewController?.navigationController {
+			configureNavigationController(navController)
+		}
 
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
@@ -1339,14 +1340,19 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
-		if viewController === masterTimelineViewController && lastMainControllerToAppear == .article && !isArticleViewControllerPending {
+		if viewController === masterTimelineViewController && lastMainControllerToAppear == .article {
 			currentArticle = nil
 			masterTimelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])
 			activityManager.invalidateReading()
 
 			// Restore any bars hidden by the article controller
 			showStatusBar()
-			navigationController.setNavigationBarHidden(false, animated: true)
+			
+			// We delay the showing of the navigation bars because it freaks out on iOS 15 with the new split view controller
+			// if it is trying to show at the same time as the show timeline animation
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+				navigationController.setNavigationBarHidden(false, animated: true)
+			}
 			navigationController.setToolbarHidden(false, animated: true)
 			return
 		}

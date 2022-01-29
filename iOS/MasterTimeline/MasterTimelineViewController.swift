@@ -17,11 +17,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	private var iconSize = IconSize.medium
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 	
-	private var refreshProgressView: RefreshProgressView?
+	private var filterButton: UIBarButtonItem!
 
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 
-	private var filterButton: UIBarButtonItem!
+	private var refreshProgressView: RefreshProgressView!
+	private var refreshProgressItemButton: UIBarButtonItem!
 	private var firstUnreadButton: UIBarButtonItem!
 
 	private lazy var dataSource = makeDataSource()
@@ -91,9 +92,15 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+
 		
 		configureToolbar()
 		configureNavbar()
+
+		refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView
+		refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView!)
+
+
 		resetUI(resetScroll: true)
 		
 		// Load the table and then scroll to the saved position if available
@@ -609,6 +616,7 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
+
 	func configureToolbar() {		
 		guard splitViewController?.isCollapsed ?? true else {
 			return
@@ -700,16 +708,9 @@ private extension MasterTimelineViewController {
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		
 		if coordinator.isRootSplitCollapsed {
-			if let toolbarItems = toolbarItems, toolbarItems.last != firstUnreadButton {
-				var items = toolbarItems
-				items.append(firstUnreadButton)
-				setToolbarItems(items, animated: false)
-			}
+			setToolbarItems([markAllAsReadButton, .flexibleSpace(), refreshProgressItemButton, .flexibleSpace(), firstUnreadButton], animated: false)
 		} else {
-			if let toolbarItems = toolbarItems, toolbarItems.last == firstUnreadButton {
-				let items = Array(toolbarItems[0..<toolbarItems.count - 1])
-				setToolbarItems(items, animated: false)
-			}
+			setToolbarItems([markAllAsReadButton, .flexibleSpace()], animated: false)
 		}
 	}
 	
