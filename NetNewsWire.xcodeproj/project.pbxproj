@@ -80,6 +80,9 @@
 		5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */; };
 		5103A9F724225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */; };
 		5103A9F824225E4C00410853 /* AccountsAddCloudKitWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */; };
+		51077C5827A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */; };
+		51077C5927A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */; };
+		51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */; };
 		5108F6B62375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */; };
@@ -1161,6 +1164,7 @@
 		5103A9B324216A4200410853 /* blank.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = blank.html; sourceTree = "<group>"; };
 		5103A9DA242258C600410853 /* AccountsAddCloudKit.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsAddCloudKit.xib; sourceTree = "<group>"; };
 		5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddCloudKitWindowController.swift; sourceTree = "<group>"; };
+		51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Hyperlegible.nnwtheme; sourceTree = "<group>"; };
 		5108F6B52375E612001ABC45 /* CacheCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheCleaner.swift; sourceTree = "<group>"; };
 		5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerViewController.swift; sourceTree = "<group>"; };
 		5108F6D32375EEEF001ABC45 /* TimelinePreviewTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelinePreviewTableViewController.swift; sourceTree = "<group>"; };
@@ -1845,6 +1849,7 @@
 			isa = PBXGroup;
 			children = (
 				51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */,
+				51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */,
 				51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */,
 				5137C2E326F3F52D009EFEDB /* Sepia.nnwtheme */,
 				5127B237222B4849006D641D /* DetailKeyboardShortcuts.plist */,
@@ -3386,6 +3391,7 @@
 				65ED406C235DEF6C0081F399 /* Credits.rtf in Resources */,
 				65ED406D235DEF6C0081F399 /* Inspector.storyboard in Resources */,
 				65ED406E235DEF6C0081F399 /* AddWebFeedSheet.xib in Resources */,
+				51077C5927A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				51DEE81326FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
 				B27EEBFA244D15F3000932E6 /* stylesheet.css in Resources */,
 			);
@@ -3417,6 +3423,7 @@
 				512392C324E3451400F11704 /* TwitterAdd.storyboard in Resources */,
 				516A093723609A3600EAE89B /* SettingsComboTableViewCell.xib in Resources */,
 				51F85BF32272531500C787DC /* Dedication.rtf in Resources */,
+				51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				516A09422361248000EAE89B /* Inspector.storyboard in Resources */,
 				51DEE81A26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				1768140B2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig in Resources */,
@@ -3468,6 +3475,7 @@
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				5103A9F4242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
+				51077C5827A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				51C03081257D815A00609262 /* UnifiedWindow.storyboard in Resources */,
 				849C78902362AAFC009A71E4 /* ExportOPMLSheet.xib in Resources */,
