@@ -192,6 +192,15 @@ public final class WebFeed: Feed, Renamable, Hashable {
 		}
 	}
 	
+	public var isSyncingPaused: Bool {
+		get {
+			return metadata.isSyncingPaused ?? false
+		}
+		set {
+			metadata.isSyncingPaused = newValue
+		}
+	}
+	
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
