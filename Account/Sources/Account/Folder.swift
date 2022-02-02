@@ -44,7 +44,7 @@ public final class Folder: Feed, Renamable, Container, Hashable {
 	
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
-	public var pauseSyncing = false
+	public var isSyncingPaused = false
 	public var externalID: String? = nil
 	static var incrementingID = 0
 
@@ -185,8 +185,8 @@ extension Folder: OPMLRepresentable {
 		}()
 		
 		let attrPauseSyncing: String = {
-			if allowCustomAttributes && pauseSyncing {
-				return " nnw_pauseSyncing=\"true\""
+			if allowCustomAttributes && isSyncingPaused {
+				return " nnw_isSyncingPaused=\"true\""
 			} else {
 				return ""
 			}
