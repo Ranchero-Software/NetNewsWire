@@ -85,7 +85,7 @@ class NotificationsViewController: UIViewController {
 						  children: [
 							UIAction(
 								title: NSLocalizedString("Show Feeds with Notifications Enabled", comment: "Feeds with Notifications"),
-								image: UIImage(systemName: "app.badge"),
+								image: AppAssets.appBadgeImage,
 								identifier: nil,
 								discoverabilityTitle: nil,
 								attributes: [],

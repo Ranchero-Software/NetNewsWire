@@ -54,6 +54,10 @@ struct AppAssets {
 	static var accountTheOldReaderImage: UIImage = {
 		return UIImage(named: "accountTheOldReader")!
 	}()
+	
+	static var appBadgeImage: UIImage = {
+		return UIImage(systemName: "app.badge")!
+	}()
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
