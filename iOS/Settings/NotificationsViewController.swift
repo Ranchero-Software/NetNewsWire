@@ -18,15 +18,10 @@ class NotificationsViewController: UIViewController {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
+		notificationsTableView.prefetchDataSource = self
 		self.title = NSLocalizedString("New Article Notifications", comment: "Notifications")
-		notificationsTableView.sectionHeaderTopPadding = 25
-		
-		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .NotificationPreferencesDidUpdate, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: UIScene.willEnterForegroundNotification, object: nil)
-		
 		reloadNotificationTableView()
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: UIScene.willEnterForegroundNotification, object: nil)
 	}
 	
 	@objc
@@ -62,16 +57,13 @@ extension NotificationsViewController: UITableViewDataSource {
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		
-		
 		if indexPath.section == 0 {
 			let openSettingsCell = tableView.dequeueReusableCell(withIdentifier: "OpenSettingsCell") as! VibrantBasicTableViewCell
 			return openSettingsCell
 		} else {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
 			let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
-			let feed = sortedWebFeedsForAccount(account)[indexPath.row]
-			cell.configure(feed, status)
+			cell.configure(sortedWebFeedsForAccount(account)[indexPath.row])
 			return cell
 		}
 	}
@@ -96,8 +88,22 @@ extension NotificationsViewController: UITableViewDelegate {
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		tableView.deselectRow(at: indexPath, animated: true)
-		UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
+		if indexPath.section == 0 {
+			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
+		}
 	}
 	
+}
+
+
+extension NotificationsViewController: UITableViewDataSourcePrefetching {
+	
+	func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+		for path in indexPaths {
+			let account = AccountManager.shared.sortedActiveAccounts[path.section - 1]
+			let feed = sortedWebFeedsForAccount(account)[path.row]
+			let _ = IconImageCache.shared.imageFor(feed.feedID!)
+		}
+	}
 	
 }
