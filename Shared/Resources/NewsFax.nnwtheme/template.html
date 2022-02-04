@@ -1,0 +1,90 @@
+
+<!-- Template Variables
+
+title: The title of the article
+preferred_link: The best link to associate with the article for linking out.
+
+external_link_label: A localized label for the external link.
+external_link_stripped: The external link minus the scheme. Useful for displaying the external link.
+external_link: The external link of the article if there is one provided by the author.
+
+feed_link_title: The name of the feed associated with this article.
+feed_link: The URL of the feed associated with this article.
+byline: HTML that combines all the authors and links to them if available.
+avatar_src: The image source URL for the feed icon / avatar.
+dateline_style: Either "articleDateline" or "articleDatelineTitle" depending on if the title was populated or not.
+
+datetime_long: Long version of a combined publish date and time.
+datetime_medium: Medium length version of a combined publish date and time.
+datetime_short: Short version of a combined publish date and time.
+
+date_long: Long version of the publish date.
+date_medium: Medium version of the publish date.
+date_short: Long version of the publish date.
+
+time_long: Long version of the publish time.
+time_medium: Medium version of the publish time.
+time_short: Long version of the publish time.
+
+text_size_class: The size class that the user has selected in Preferences for article text.
+body: The body of the article.
+
+-->
+
+<div class="feedHeader">
+	<table width="100%">
+		<tr>
+			<th class="newsfax" align="left">NEWSFAX</th>
+			<th class="newsfax-page" align="left"></th>
+			<th></th>
+			<th align="right">[[datetime_short]]</th>
+		</tr>
+		
+	</table>
+	
+	<div class="articleTitle">
+		<h1><a href="[[preferred_link]]">[[title]]</a></h1>
+	</div>
+	<div><a href="[[feed_link]]">[[feed_link_title]]</a></div>
+	<div>[[byline]]</div>
+</div>
+<hr  />
+
+<article>
+<div id="bodyContainer" class="articleBody [[text_size_class]]">[[body]]</div>
+<div class="externalLink"><a href="[[external_link]]">[[external_link]]</a></div>
+
+<table class="newsfax-footer" width="100%">
+	<tr>
+		<th class="newsfax-footer-cell-red"><a href="https://duckduckgo.com/?q=news&t=h_&iar=news&ia=news">Headlines</a></th>
+		<th class="newsfax-footer-cell-green"><a href="https://duckduckgo.com/?q=sports+news&t=h_&ia=web">Sport</a></th>
+		<th class="newsfax-footer-cell-yellow"><a href="https://duckduckgo.com/?q=local+tv&t=h_&ia=places">TV<a></th>
+		<th class="newsfax-footer-cell-blue"><a href="[[feed_link]]">Website</a></th>
+	</tr>
+</table>
+
+</article>
+<script type="text/javascript">
+	/* Generate a random Newsfax page number */
+	function getRandomIntInclusive(min, max) {
+	  min = Math.ceil(min);
+	  max = Math.floor(max);
+	  return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+	}
+	
+	let random = getRandomIntInclusive(100, 999);
+	let newsFaxElement = document.body.getElementsByClassName('newsfax-page')[0];
+	newsFaxElement.innerHTML = "P" + random;
+	
+	
+	/* 
+	The arrow-circle-right SVG is provided by Font Awesome under the Creative Commons Attribution 4.0 International License.
+	For more details view the license here: https://fontawesome.com/license
+	*/
+	let externalLinkElement = document.body.getElementsByClassName('externalLink')[0].querySelectorAll('a')[0];
+	if (externalLinkElement.innerText != '') { 
+		let host = externalLinkElement.hostname;
+		externalLinkElement.innerHTML = host + " " + '->';	
+	}
+</script>
+
