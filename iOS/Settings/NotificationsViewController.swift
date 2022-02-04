@@ -11,16 +11,46 @@ import Account
 import UserNotifications
 
 class NotificationsViewController: UIViewController {
-
+	
 	@IBOutlet weak var notificationsTableView: UITableView!
+	
+	private lazy var searchController: UISearchController = {
+		let searchController = UISearchController(searchResultsController: nil)
+		searchController.searchBar.placeholder = NSLocalizedString("Find a feed", comment: "Find a feed")
+		searchController.searchBar.searchBarStyle = .minimal
+		searchController.delegate = self
+		searchController.searchBar.delegate = self
+		searchController.searchBar.sizeToFit()
+		searchController.obscuresBackgroundDuringPresentation = false
+		searchController.hidesNavigationBarDuringPresentation = false
+		self.definesPresentationContext = true
+		return searchController
+	}()
 	private var status: UNAuthorizationStatus = .notDetermined
+	private var newArticleNotificationFilter: Bool = false {
+		didSet {
+			filterButton.menu = notificationFilterMenu()
+		}
+	}
+	private var filterButton: UIBarButtonItem!
 	
-	
-    override func viewDidLoad() {
-        super.viewDidLoad()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		title = NSLocalizedString("New Article Notifications", comment: "Notifications")
+		
 		notificationsTableView.prefetchDataSource = self
-		self.title = NSLocalizedString("New Article Notifications", comment: "Notifications")
+		navigationItem.searchController = searchController
+		
+		filterButton = UIBarButtonItem(
+			title: nil,
+			image: AppAssets.filterInactiveImage,
+			primaryAction: nil,
+			menu: notificationFilterMenu())
+		
+		navigationItem.rightBarButtonItem = filterButton
+		
 		reloadNotificationTableView()
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: UIScene.willEnterForegroundNotification, object: nil)
 	}
 	
@@ -29,18 +59,65 @@ class NotificationsViewController: UIViewController {
 		UNUserNotificationCenter.current().getNotificationSettings { settings in
 			DispatchQueue.main.async {
 				self.status = settings.authorizationStatus
+				if self.status != .authorized {
+					self.filterButton.isEnabled = false
+					self.newArticleNotificationFilter = false
+				}
 				self.notificationsTableView.reloadData()
 			}
 		}
 	}
 	
+	private func notificationFilterMenu() -> UIMenu {
+		
+		if let filterButton = filterButton {
+			if newArticleNotificationFilter == true {
+				filterButton.image = AppAssets.filterActiveImage
+			} else {
+				filterButton.image = AppAssets.filterInactiveImage
+			}
+		}
+		
+		let menu = UIMenu(title: "",
+						  image: nil,
+						  identifier: nil,
+						  options: [.displayInline],
+						  children: [
+							UIAction(
+								title: NSLocalizedString("Show Feeds with Notifications Enabled", comment: "Feeds with Notifications"),
+								image: UIImage(systemName: "app.badge"),
+								identifier: nil,
+								discoverabilityTitle: nil,
+								attributes: [],
+								state: newArticleNotificationFilter ? .on : .off,
+								handler: { [weak self] _ in
+									self?.newArticleNotificationFilter.toggle()
+									self?.notificationsTableView.reloadData()
+								})])
+		return menu
+	}
+	
+	// MARK: - Feed Filtering
+	
 	private func sortedWebFeedsForAccount(_ account: Account) -> [WebFeed] {
 		return Array(account.flattenedWebFeeds()).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 	}
-    
+	
+	private func filteredWebFeeds(_ searchText: String? = "", account: Account) -> [WebFeed] {
+		sortedWebFeedsForAccount(account).filter { feed in
+			return feed.nameForDisplay.lowercased().contains(searchText!.lowercased())
+		}
+	}
+	
+	private func feedsWithNotificationsEnabled(_ account: Account) -> [WebFeed] {
+		sortedWebFeedsForAccount(account).filter { feed in
+			return feed.isNotifyAboutNewArticles == true
+		}
+	}
+	
 }
 
-// MARK: UITableViewDataSource
+// MARK: - UITableViewDataSource
 extension NotificationsViewController: UITableViewDataSource {
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
@@ -53,7 +130,14 @@ extension NotificationsViewController: UITableViewDataSource {
 			if status == .denied { return 1 }
 			return 0
 		}
-		return AccountManager.shared.sortedActiveAccounts[section - 1].flattenedWebFeeds().count
+		if searchController.isActive {
+			return filteredWebFeeds(searchController.searchBar.text, account: AccountManager.shared.sortedActiveAccounts[section - 1]).count
+		} else if newArticleNotificationFilter == true {
+			return feedsWithNotificationsEnabled(AccountManager.shared.sortedActiveAccounts[section - 1]).count
+		} else {
+			return AccountManager.shared.sortedActiveAccounts[section - 1].flattenedWebFeeds().count
+		}
+		
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -61,13 +145,24 @@ extension NotificationsViewController: UITableViewDataSource {
 			let openSettingsCell = tableView.dequeueReusableCell(withIdentifier: "OpenSettingsCell") as! VibrantBasicTableViewCell
 			return openSettingsCell
 		} else {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
-			let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
-			cell.configure(sortedWebFeedsForAccount(account)[indexPath.row])
-			return cell
+			if searchController.isActive {
+				let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
+				let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
+				cell.configure(filteredWebFeeds(searchController.searchBar.text, account: account)[indexPath.row])
+				return cell
+			} else if newArticleNotificationFilter == true {
+				let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
+				let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
+				cell.configure(feedsWithNotificationsEnabled(account)[indexPath.row])
+				return cell
+			} else {
+				let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
+				let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
+				cell.configure(sortedWebFeedsForAccount(account)[indexPath.row])
+				return cell
+			}
 		}
 	}
-	
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if section == 0 { return nil }
@@ -84,6 +179,8 @@ extension NotificationsViewController: UITableViewDataSource {
 	}
 }
 
+
+// MARK: - UITableViewDelegate
 extension NotificationsViewController: UITableViewDelegate {
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -104,6 +201,33 @@ extension NotificationsViewController: UITableViewDataSourcePrefetching {
 			let feed = sortedWebFeedsForAccount(account)[path.row]
 			let _ = IconImageCache.shared.imageFor(feed.feedID!)
 		}
+	}
+	
+}
+
+
+// MARK: - UISearchControllerDelegate
+extension NotificationsViewController: UISearchControllerDelegate {
+	
+	func didDismissSearchController(_ searchController: UISearchController) {
+		print(#function)
+		searchController.isActive = false
+		notificationsTableView.reloadData()
+	}
+	
+}
+
+// MARK: - UISearchBarDelegate
+extension NotificationsViewController: UISearchBarDelegate {
+	
+	func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+		searchController.isActive = true
+		newArticleNotificationFilter = false
+		notificationsTableView.reloadData()
+	}
+	
+	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+		notificationsTableView.reloadData()
 	}
 	
 }
