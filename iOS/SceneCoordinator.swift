@@ -814,6 +814,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if article == nil {
 			rootSplitViewController.show(.supplementary)
 			masterTimelineViewController?.updateArticleSelection(animations: animations)
+			articleViewController?.article = nil
 			return
 		}
 		
