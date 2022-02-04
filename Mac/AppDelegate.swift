@@ -835,7 +835,7 @@ internal extension AppDelegate {
 			}
 
 			let websiteText = NSMutableAttributedString()
-			websiteText.append(NSAttributedString(string: NSLocalizedString("Author's Website", comment: "Author's Website"), attributes: attrs))
+			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attrs))
 
 			if #available(macOS 11.0, *) {
 				websiteText.append(NSAttributedString(string: "\n"))
