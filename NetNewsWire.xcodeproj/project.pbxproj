@@ -852,6 +852,7 @@
 		D5F4EDB720074D6500B9E363 /* WebFeed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */; };
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
+		DFD6AACC27ADE80900463FAD /* NewsFax.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */; };
 		FF3ABF13232599810074C542 /* ArticleSorterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF09232599450074C542 /* ArticleSorterTests.swift */; };
 		FF3ABF1523259DDB0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
 		FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */; };
@@ -1590,6 +1591,7 @@
 		D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebFeed+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
+		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
 		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };
 		FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorter.swift; sourceTree = "<group>"; };
 		FFD43E372340F320009E5CA3 /* MarkAsReadAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkAsReadAlertController.swift; sourceTree = "<group>"; };
@@ -1848,6 +1850,7 @@
 		511D43CE231FA51100FB1562 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */,
 				51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */,
 				51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */,
 				51DEE81726FBFF84006DAA56 /* Promenade.nnwtheme */,
@@ -3443,6 +3446,7 @@
 				49F40DF92335B71000552BF4 /* newsfoot.js in Resources */,
 				512392C024E33A3C00F11704 /* RedditAdd.storyboard in Resources */,
 				51F85BEF2272520B00C787DC /* Thanks.rtf in Resources */,
+				DFD6AACC27ADE80900463FAD /* NewsFax.nnwtheme in Resources */,
 				51CE1C0923621EDA005548FC /* RefreshProgressView.xib in Resources */,
 				84C9FC9D2262A1A900D921D6 /* Assets.xcassets in Resources */,
 				514219582353C28900E07E2C /* main_ios.js in Resources */,
