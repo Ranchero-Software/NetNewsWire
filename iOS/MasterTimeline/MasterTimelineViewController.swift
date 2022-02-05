@@ -93,9 +93,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 
-		
 		configureToolbar()
-		configureNavbar()
 
 		refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView
 		refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView!)
@@ -631,21 +629,7 @@ private extension MasterTimelineViewController {
 		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
 	
-	func configureNavbar() {
-		let scrollEdge = UINavigationBarAppearance()
-		scrollEdge.configureWithOpaqueBackground()
-		scrollEdge.shadowColor = nil
-		scrollEdge.shadowImage = UIImage()
-		
-		let standard = UINavigationBarAppearance()
-		standard.shadowColor = .opaqueSeparator
-		standard.shadowImage = UIImage()
-		
-		navigationController?.navigationBar.standardAppearance = standard
-		navigationController?.navigationBar.compactAppearance = standard
-		navigationController?.navigationBar.scrollEdgeAppearance = scrollEdge
-		navigationController?.navigationBar.compactScrollEdgeAppearance = scrollEdge
-	}
+
 
 	func resetUI(resetScroll: Bool) {
 		

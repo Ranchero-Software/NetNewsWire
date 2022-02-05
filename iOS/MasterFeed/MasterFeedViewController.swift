@@ -76,7 +76,6 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		
 		configureToolbar()
-		configureNavbar()
 		becomeFirstResponder()
 	}
 
@@ -714,22 +713,6 @@ private extension MasterFeedViewController {
 		self.refreshProgressView = refreshProgressView
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
 		toolbarItems?.insert(refreshProgressItemButton, at: 2)
-	}
-	
-	func configureNavbar() {
-		let scrollEdge = UINavigationBarAppearance()
-		scrollEdge.configureWithOpaqueBackground()
-		scrollEdge.shadowColor = nil
-		scrollEdge.shadowImage = UIImage()
-		
-		let standard = UINavigationBarAppearance()
-		standard.shadowColor = .opaqueSeparator
-		standard.shadowImage = UIImage()
-		
-		navigationController?.navigationBar.standardAppearance = standard
-		navigationController?.navigationBar.compactAppearance = standard
-		navigationController?.navigationBar.scrollEdgeAppearance = scrollEdge
-		navigationController?.navigationBar.compactScrollEdgeAppearance = scrollEdge
 	}
 	
 	func setFilterButtonToActive() {
