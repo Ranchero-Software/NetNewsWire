@@ -43,7 +43,7 @@ class NotificationsViewController: UIViewController {
 		
 		filterButton = UIBarButtonItem(
 			title: nil,
-			image: AppAssets.filterInactiveImage,
+			image: AppAssets.moreImage,
 			primaryAction: nil,
 			menu: notificationFilterMenu())
 		
@@ -70,22 +70,23 @@ class NotificationsViewController: UIViewController {
 	
 	private func notificationFilterMenu() -> UIMenu {
 		
-		if let filterButton = filterButton {
-			if newArticleNotificationFilter == true {
-				filterButton.image = AppAssets.filterActiveImage
+		if filterButton != nil {
+			if newArticleNotificationFilter {
+				filterButton.image = AppAssets.moreImageFill
 			} else {
-				filterButton.image = AppAssets.filterInactiveImage
+				filterButton.image = AppAssets.moreImage
 			}
 		}
 		
-		let menu = UIMenu(title: "",
+		
+		let filterMenu = UIMenu(title: "",
 						  image: nil,
 						  identifier: nil,
 						  options: [.displayInline],
 						  children: [
 							UIAction(
 								title: NSLocalizedString("Show Feeds with Notifications Enabled", comment: "Feeds with Notifications"),
-								image: AppAssets.appBadgeImage,
+								image: nil,
 								identifier: nil,
 								discoverabilityTitle: nil,
 								attributes: [],
@@ -94,7 +95,55 @@ class NotificationsViewController: UIViewController {
 									self?.newArticleNotificationFilter.toggle()
 									self?.notificationsTableView.reloadData()
 								})])
-		return menu
+		
+		
+		var menus = [UIMenuElement]()
+		menus.append(filterMenu)
+		
+		for account in AccountManager.shared.sortedActiveAccounts {
+			let accountMenu = UIMenu(title: account.nameForDisplay, image: nil, identifier: nil, options: .singleSelection, children: [enableAllAction(for: account), disableAllAction(for: account)])
+			menus.append(accountMenu)
+		}
+		
+		let combinedMenu = UIMenu(title: "",
+								  image: nil,
+								  identifier: nil,
+								  options: .displayInline,
+								  children: menus)
+		
+		return combinedMenu
+	}
+	
+	private func enableAllAction(for account: Account) -> UIAction {
+		let action = UIAction(title: NSLocalizedString("Enable All Notifications", comment: "Enable All"),
+							  image: nil,
+							  identifier: nil,
+							  discoverabilityTitle: nil,
+							  attributes: [],
+							  state: .off) { [weak self] _ in
+			for feed in account.flattenedWebFeeds() {
+				feed.isNotifyAboutNewArticles = true
+			}
+			self?.notificationsTableView.reloadData()
+			self?.filterButton.menu = self?.notificationFilterMenu()
+		}
+		return action
+	}
+	
+	private func disableAllAction(for account: Account) -> UIAction {
+		let action = UIAction(title: NSLocalizedString("Disable All Notifications", comment: "Disable All"),
+							  image: nil,
+							  identifier: nil,
+							  discoverabilityTitle: nil,
+							  attributes: [],
+							  state: .off) { [weak self] _ in
+			for feed in account.flattenedWebFeeds() {
+				feed.isNotifyAboutNewArticles = false
+			}
+			self?.notificationsTableView.reloadData()
+			self?.filterButton.menu = self?.notificationFilterMenu()
+		}
+		return action
 	}
 	
 	// MARK: - Feed Filtering

@@ -185,6 +185,10 @@ struct AppAssets {
 		return UIImage(systemName: "ellipsis.circle")!
 	}()
 	
+	static var moreImageFill: UIImage = {
+		return UIImage(systemName: "ellipsis.circle.fill")!
+	}()
+	
 	static var nextArticleImage: UIImage = {
 		return UIImage(systemName: "chevron.down")!
 	}()
