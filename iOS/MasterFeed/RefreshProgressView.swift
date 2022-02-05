@@ -109,12 +109,12 @@ private extension RefreshProgressView {
 				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 				relativeDateTimeFormatter.dateTimeStyle = .named
 				let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
-				let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
+				let localizedRefreshText = NSLocalizedString("UPDATED_AT", comment: "Updated")
 				let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
 				label.text = refreshText
 
 			} else {
-				label.text = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+				label.text = NSLocalizedString("UPDATED_NOW", comment: "Updated Just Now")
 			}
 
 		} else {

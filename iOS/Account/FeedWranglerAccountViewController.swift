@@ -34,11 +34,11 @@ class FeedWranglerAccountViewController: UITableViewController {
 		passwordTextField.delegate = self
 		
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .feedWranglerBasic) {
-			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
+			actionButton.setTitle(NSLocalizedString("UPDATE_CREDENTIALS", comment: "Update Credentials"), for: .normal)
 			emailTextField.text = credentials.username
 			passwordTextField.text = credentials.secret
 		} else {
-			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Update Credentials"), for: .normal)
+			actionButton.setTitle(NSLocalizedString("ADD_ACCOUNT", comment: "Update Credentials"), for: .normal)
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: emailTextField)
@@ -48,7 +48,7 @@ class FeedWranglerAccountViewController: UITableViewController {
 	}
 	
 	private func setupFooter() {
-		footerLabel.text = NSLocalizedString("Sign in to your Feed Wrangler account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feed Wrangler account?", comment: "Feed Wrangler")
+		footerLabel.text = NSLocalizedString("FEED_WRANGLER_SIGN_IN", comment: "Feed Wrangler")
 	}
 
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -72,23 +72,23 @@ class FeedWranglerAccountViewController: UITableViewController {
 	@IBAction func showHidePassword(_ sender: Any) {
 		if passwordTextField.isSecureTextEntry {
 			passwordTextField.isSecureTextEntry = false
-			showHideButton.setTitle(NSLocalizedString("Hide", comment: "Button Label"), for: .normal)
+			showHideButton.setTitle(NSLocalizedString("HIDE", comment: "Button Label"), for: .normal)
 		} else {
 			passwordTextField.isSecureTextEntry = true
-			showHideButton.setTitle(NSLocalizedString("Show", comment: "Button Label"), for: .normal)
+			showHideButton.setTitle(NSLocalizedString("SHOW", comment: "Button Label"), for: .normal)
 		}
 	}
 	
 	@IBAction func action(_ sender: Any) {
 		guard let email = emailTextField.text, let password = passwordTextField.text else {
-			showError(NSLocalizedString("Username & password required.", comment: "Credentials Error"))
+			showError(NSLocalizedString("USERNAME_PASSWORD_REQUIRED", comment: "Credentials Error"))
 			return
 		}
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedEmail = email.trimmingCharacters(in: .whitespaces)
 
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedWrangler, username: trimmedEmail) else {
-			showError(NSLocalizedString("There is already a FeedWrangler account with that username created.", comment: "Duplicate Error"))
+			showError(NSLocalizedString("FEEDWRANGLER_ACCOUNT_EXISTS", comment: "Duplicate Error"))
 			return
 		}
 		
@@ -105,7 +105,7 @@ class FeedWranglerAccountViewController: UITableViewController {
 			switch result {
 			case .success(let validatedCredentials):
 				guard let validatedCredentials = validatedCredentials else {
-					self.showError(NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error"))
+					self.showError(NSLocalizedString("INVALID_EMAIL_OR_PASSWORD", comment: "Credentials Error"))
 					return
 				}
 				
@@ -132,10 +132,10 @@ class FeedWranglerAccountViewController: UITableViewController {
 					self.delegate?.dismiss()
 					
 				} catch {
-					self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+					self.showError(NSLocalizedString("KEYCHAIN_STORE_ERROR", comment: "Credentials Error"))
 				}
 			case .failure:
-				self.showError(NSLocalizedString("Network error. Try again later.", comment: "Credentials Error"))
+				self.showError(NSLocalizedString("NETWORK_ERROR", comment: "Credentials Error"))
 			}
 			
 		}
@@ -154,7 +154,7 @@ class FeedWranglerAccountViewController: UITableViewController {
 	
 	
 	private func showError(_ message: String) {
-		presentError(title: NSLocalizedString("Error", comment: "Credentials Error"), message: message)
+		presentError(title: NSLocalizedString("ERROR", comment: "Credentials Error"), message: message)
 	}
 	
 	private func setNavigationEnabled(to value:Bool){

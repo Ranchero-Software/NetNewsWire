@@ -27,9 +27,9 @@ class MasterFeedTableViewSectionHeader: UITableViewHeaderFooterView {
 		set {}
 		get {
 			if disclosureExpanded {
-				return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
+				return NSLocalizedString("EXPANDED", comment: "Disclosure button expanded state for accessibility")
 			}
-			return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
+			return NSLocalizedString("COLLAPSED", comment: "Disclosure button collapsed state for accessibility")
 		}
 	}
 	

@@ -15,7 +15,7 @@ class ArticleThemesTableViewController: UITableViewController {
 
 	override func viewDidLoad() {
 		let importBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importTheme(_:)));
-		importBarButtonItem.title = NSLocalizedString("Import Theme", comment: "Import Theme");
+		importBarButtonItem.title = NSLocalizedString("IMPORT_THEME", comment: "Import Theme");
 		navigationItem.rightBarButtonItem = importBarButtonItem
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
@@ -75,22 +75,22 @@ class ArticleThemesTableViewController: UITableViewController {
 			  let cell = tableView.cellForRow(at: indexPath),
 			  let themeName = cell.textLabel?.text else { return nil }
 
-		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+		let deleteTitle = NSLocalizedString("DELETE", comment: "Delete")
 		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in
-			let title = NSLocalizedString("Delete Theme?", comment: "Delete Theme")
+			let title = NSLocalizedString("DELETE_THEME", comment: "Delete Theme")
 			
-			let localizedMessageText = NSLocalizedString("Are you sure you want to delete the theme “%@”?.", comment: "Delete Theme Message")
+			let localizedMessageText = NSLocalizedString("DELETE_THEME_CONFIRMATION", comment: "Delete Theme Message")
 			let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
 
 			let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 			
-			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+			let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
 			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { action in
 				completion(true)
 			}
 			alertController.addAction(cancelAction)
 
-			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+			let deleteTitle = NSLocalizedString("DELETE", comment: "Delete")
 			let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { action in
 				ArticleThemesManager.shared.deleteTheme(themeName: themeName)
 				completion(true)

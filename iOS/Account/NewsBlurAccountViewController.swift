@@ -33,12 +33,12 @@ class NewsBlurAccountViewController: UITableViewController {
 		passwordTextField.delegate = self
 
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .newsBlurBasic) {
-			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
+			actionButton.setTitle(NSLocalizedString("UPDATE_CREDENTIALS", comment: "Update Credentials"), for: .normal)
 			actionButton.isEnabled = true
 			usernameTextField.text = credentials.username
 			passwordTextField.text = credentials.secret
 		} else {
-			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Add Account"), for: .normal)
+			actionButton.setTitle(NSLocalizedString("ADD_ACCOUNT", comment: "Add Account"), for: .normal)
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: usernameTextField)
@@ -48,7 +48,7 @@ class NewsBlurAccountViewController: UITableViewController {
 	}
 	
 	private func setupFooter() {
-		footerLabel.text = NSLocalizedString("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account?", comment: "NewsBlur")
+		footerLabel.text = NSLocalizedString("NEWSBLUR_SIGN_IN", comment: "NewsBlur")
 	}
 
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -82,7 +82,7 @@ class NewsBlurAccountViewController: UITableViewController {
 	@IBAction func action(_ sender: Any) {
 
 		guard let username = usernameTextField.text else {
-			showError(NSLocalizedString("Username required.", comment: "Credentials Error"))
+			showError(NSLocalizedString("USERNAME_REQUIRED", comment: "Credentials Error"))
 			return
 		}
 
@@ -90,7 +90,7 @@ class NewsBlurAccountViewController: UITableViewController {
 		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
 
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: trimmedUsername) else {
-			showError(NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error"))
+			showError(NSLocalizedString("NEWSBLUR_ACCOUNT_EXISTS", comment: "Duplicate Error"))
 			return
 		}
 		
@@ -134,10 +134,10 @@ class NewsBlurAccountViewController: UITableViewController {
 						self.dismiss(animated: true, completion: nil)
 						self.delegate?.dismiss()
 					} catch {
-						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+						self.showError(NSLocalizedString("KEYCHAIN_STORE_ERROR", comment: "Credentials Error"))
 					}
 				} else {
-					self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
+					self.showError(NSLocalizedString("INVALID_USERNAME_OR_PASSWORD", comment: "Credentials Error"))
 				}
 			case .failure(let error):
 				self.showError(error.localizedDescription)

@@ -79,9 +79,9 @@ private extension UserNotificationManager {
 	}
 	
 	func registerCategoriesAndActions() {
-		let readAction = UNNotificationAction(identifier: "MARK_AS_READ", title: NSLocalizedString("Mark as Read", comment: "Mark as Read"), options: [])
-		let starredAction = UNNotificationAction(identifier: "MARK_AS_STARRED", title: NSLocalizedString("Mark as Starred", comment: "Mark as Starred"), options: [])
-		let openAction = UNNotificationAction(identifier: "OPEN_ARTICLE", title: NSLocalizedString("Open", comment: "Open"), options: [.foreground])
+		let readAction = UNNotificationAction(identifier: "MARK_AS_READ", title: NSLocalizedString("MARK_AS_READ_TITLECASE", comment: "Mark as Read"), options: [])
+		let starredAction = UNNotificationAction(identifier: "MARK_AS_STARRED", title: NSLocalizedString("MARK_AS_STARRED_TITLECASE", comment: "Mark as Starred"), options: [])
+		let openAction = UNNotificationAction(identifier: "OPEN_ARTICLE", title: NSLocalizedString("OPEN", comment: "Open"), options: [.foreground])
 		
 		let newArticleCategory =
 			  UNNotificationCategory(identifier: "NEW_ARTICLE_NOTIFICATION_CATEGORY",

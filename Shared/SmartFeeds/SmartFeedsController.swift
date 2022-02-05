@@ -17,7 +17,7 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 	}
 
 	public static let shared = SmartFeedsController()
-	let nameForDisplay = NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")
+	let nameForDisplay = NSLocalizedString("SMART_FEEDS", comment: "Smart Feeds group title")
 
 	var smartFeeds = [Feed]()
 	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())

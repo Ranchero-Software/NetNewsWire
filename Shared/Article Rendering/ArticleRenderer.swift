@@ -210,7 +210,7 @@ private extension ArticleRenderer {
 		d["preferred_link"] = article.preferredLink ?? ""
 		
 		if let externalLink = article.externalLink, externalLink != article.preferredLink {
-			d["external_link_label"] = NSLocalizedString("Link:", comment: "Link")
+			d["external_link_label"] = NSLocalizedString("LINK", comment: "Link")
 			d["external_link_stripped"] = externalLink.strippingHTTPOrHTTPSScheme
 			d["external_link"] = externalLink
 		} else {

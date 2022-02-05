@@ -1,0 +1,345 @@
+/* 
+  Localizable.strings
+  NetNewsWire
+
+  Created by Stuart Breckenridge on 05/02/2022.
+  Copyright © 2022 Ranchero Software. All rights reserved.
+*/
+
+// MARK: Usernames and Passwords
+
+"USERNAME_REQUIRED" = "Username required.";
+"USERNAME_PASSWORD_REQUIRED" = "Username and password required.";
+"INVALID_EMAIL_OR_PASSWORD" = "Invalid email/password combination.";
+"INVALID_USERNAME_OR_PASSWORD" = "Invalid username/password combination.";
+
+// MARK: Account Management
+
+"ADD_ACCOUNT" = "Add Account";
+"UPDATE_CREDENTIALS" = "Update Credentials";
+"REMOVE_ACCOUNT" = "Remove Account";
+"REMOVE_FEEDLY_ACCOUNT_CONFIRMATION" = "Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.";
+"READER_ACCOUNT_EXISTS" = "There is already an account of that type with that username created.";
+"REMOVE_ACCOUNT_CONFIRMATION" = "Are you sure you want to remove this account? This cannot be undone.";
+
+// MARK: Account Sign Up
+
+"SIGN_UP_HERE" = "Sign Up Here";
+"FIND_OUT_MORE" = "Find Out More";
+
+// MARK: Account Types
+
+"LOCAL_ACCOUNT" = "Local";
+"ICLOUD_ACCOUNT" = "iCloud";
+"WEB_ACCOUNT" = "Web";
+"SELF_HOSTED_ACCOUNT" = "Self-hosted";
+
+// MARK: Accounts - iCloud
+
+"UNABLE_TO_ADD_ICLOUD_ACCOUNT" = "Unable to add iCloud Account. Please make sure you have iCloud and iCloud enabled in System Preferences.";
+"ICLOUD_EXPLAINER_LONG" = "Feeds in your iCloud account will be synced across your Mac and iOS devices.\n\nImportant note: while NetNewsWire itself is very fast, iCloud syncing is sometimes very slow. This can happen after adding a number of feeds and when setting it up on a new device.\n\nIf that happens to you, it may appear stuck. But don’t worry — it’s not. Just let it run.";
+"ICLOUD_EXPLAINER" = "Your iCloud account syncs your feeds across your Mac and iOS devices";
+
+// MARK: Accounts - FeedWrangler
+
+"FEED_WRANGLER_SIGN_IN" = "Sign in to your Feed Wrangler account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feed Wrangler account?";
+"FEEDWRANGLER_ACCOUNT_EXISTS" = "There is already a FeedWrangler account with that username created.";
+
+// MARK: Accounts - Feedbin
+
+"FEEDBIN_SIGN_IN" = "Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account?";
+"FEEDBIN_ACCOUNT_EXISTS" = "There is already a Feedbin account with that username created.";
+
+// MARK: Accounts - Local
+
+"LOCAL_ACCOUNT_EXPLAINER" = "Local accounts do not sync your feeds across devices.";
+
+// MARK: Accounts - NewsBlur
+
+"NEWSBLUR_SIGN_IN" = "Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account?";
+"NEWSBLUR_ACCOUNT_EXISTS" = "There is already a NewsBlur account with that username created.";
+
+// MARK: Accounts - Self-hosted
+
+"API URL: fresh.rss.net/api/greader.php" = "API URL: fresh.rss.net/api/greader.php";
+"FRESHRSS_SIGN_IN" = "Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?";
+"USERNAME_PASSWORD_API_REQUIRED" = "Username, password, and API URL are required.";
+"INVALID_API_URL" = "Invalid API URL.";
+"SELF_HOSTED_EXPLAINER" = "Self-hosted accounts sync your feeds across all your devices";
+
+// MARK: Accounts - InoReader
+
+"INOREADER_SIGN_IN" = "Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account?";
+
+// MARK: Accounts - BazQux
+
+"BAZQUX_SIGN_IN" = "Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?";
+
+// MARK: Accounts - The Old Reader
+
+"TOR_SIGN_IN" = "Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?";
+
+// MARK: Accounts - Web-Accounts
+
+"WEB_ACCOUNTS_EXPLAINER" = "Web accounts sync your feeds across all your devices";
+
+// MARK: Extensions
+
+"ADD_REDDIT_FEED" = "Add Reddit Feed";
+"ADD_TWITTER_FEED" = "Add Twitter Feed";
+"ADD_EXTENSION" = "Add Extension";
+
+"NEXT" = "Next";
+"ENTER_NAME" = "Enter Name";
+"SCREEN_NAME" = "Screen Name";
+"ENTER_SEARCH" = "Enter Search";
+"TWITTER_SEARCH_PLACEHOLDER" = "Search Term or #hashtag";
+
+"DEACTIVATE_EXTENSION" = "Deactivate Extension";
+"DEACTIVATE_EXTENSION_CONFIRMATION" = "Are you sure you want to deactivate the \(extensionPointTypeTitle) extension “\(extensionPoint.title)”?";
+"DEACTIVATE" = "Deactivate";
+
+"FEED_PROVIDER" = "Feed Provider";
+"FEED_PROVIDER_EXPLAINER" = "Feed Providers allow you to subscribe to some pages as if they were RSS feeds.";
+
+
+// MARK: Appearance
+
+"AUTOMATIC" = "Automatic";
+"LIGHT" = "Light";
+"DARK" = "Dark";
+
+// MARK: Articles
+
+"FIRST_UNREAD" = "First Unread";
+"SEARCH" = "Search";
+"ADD_FEED" = "Add Feed";
+"ERROR_READER_VIEW" = "Error - Reader View";
+"PROCESSING_READER_VIEW" = "Processing - Reader View";
+"SELECTED_READER_VIEW" = "Selected - Reader View";
+"READER_VIEW" = "Reader View";
+"RESULTS_SELECTION_AND_COUNT" = "%d of %d";
+"NO_RESULTS" = "No results";
+"MARK_ARTICLE_UNREAD" = "Mark Article Unread";
+"SELECTED_MARK_ARTICLE_UNREAD" = "Selected - Mark Article Unread";
+"SELECTED_STAR_ARTICLE" = "Selected - Star Article";
+"STAR_ARTICLE" = "Star Article";
+"FIND_IN_ARTICLE" = "Find in Article";
+"CLOSE" = "Close";
+"SHARE" = "Share";
+"EMAIL_UNAVAILABLE_ON_DEVICE" = "This device cannot send emails.";
+"PREVIOUS_ARTICLE" = "Previous Article";
+"NEXT_ARTICLE" = "Next Article";
+"MARK_AS_UNREAD_TITLECASE" = "Mark as Unread";
+"MARK_AS_READ_TITLECASE" = "Mark as Read";
+"MARK_AS_UNSTARRED_TITLECASE" = "Mark as Unstarred";
+"MARK_AS_STARRED_TITLECASE" = "Mark as Starred";
+"NEXT_UNREAD_ARTICLE" = "Next Unread Article";
+"SHOW_FEED_ARTICLE" = "Show Feed Article";
+"SHOW_READER_VIEW" = "Show Reader View";
+
+// MARK: Feed Inspector
+
+"UNTITLED" = "Untitled";
+"ENABLE_NOTIFICATIONS" = "Enable Notifications";
+"ENABLE_NOTIFICATIONS_IN_SETTINGS" = "Notifications need to be enabled in the Settings app.";
+"OPEN_SETTINGS" = "Open Settings";
+
+// MARK: Keyboard
+
+"REFRESH" = "Refresh";
+"NEXT_UNREAD" = "Next Unread";
+"GO_TO_TODAY" = "Go To Today";
+"GO_TO_ALL_UNREAD" = "Go To All Unread";
+"GO_TO_STARRED" = "Go To Starred";
+"GO_TO_SETTINGS" = "Go To Settings";
+"ARTICLE_SEARCH" = "Article Search";
+"MARK_ALL_AS_READ" = "Mark All as Read";
+"CLEAN_UP" = "Clean Up";
+"TOGGLE_READ_FEEDS_FILTER" = "Toggle Read Feeds Filter";
+"TOGGLE_READ_ARTICLES_FILTER" = "Toggle Read Articles Filter";
+"SELECT_NEXT_UP" = "Select Next Up";
+"SELECT_NEXT_DOWN" = "Select Next Down";
+"GET_FEED_INFO" = "Get Feed Info";
+"OPEN_IN_BROWSER" = "Open In Browser";
+"TOGGLE_READ_STATUS" = "Toggle Read Status";
+"MARK_ABOVE_AS_READ" = "Mark Above as Read";
+"MARK_BELOW_AS_READ" = "Mark Below as Read";
+"TOGGLE_STARRED" = "Toggle Starred Status";
+"TOGGLE_SIDEBAR" = "Toggle Sidebar";
+"TOGGLE_READER_VIEW" = "Toggle Reader View";
+
+// MARK: Feeds
+
+"FEEDS" = "Feeds";
+"UNREAD_LOWERCASE" = "unread";
+"COLLAPSE_FOLDER" = "Collapse Folder";
+"EXPAND_FOLDER" = "Expand Folder";
+"EXPANDED" = "Expanded";
+"COLLAPSED" = "Collapsed";
+"DELETE" = "Delete";
+"RENAME" = "Rename";
+"MORE" = "More";
+"ADD_WEB_FEED" = "Add Web Feed";
+"ADD_FOLDER" = "Add Folder";
+"ADD_ITEM" = "Add Item";
+"SELECTED_FILTER_READ_FEEDS" = "Selected - Filter Read Feeds";
+"FILTER_READ_FEEDS" = "Filter Read Feeds";
+"OPEN_HOME_PAGE" = "Open Home Page";
+"COPY_FEED_URL" = "Copy Feed URL";
+"COPY_HOME_PAGE_URL" = "Copy Home Page URL";
+"MARK_ALL_READ_CONFIRMATION" = "Mark All as Read in “%@”";
+"GET_INFO" = "Get Info";
+"RENAME_CONFIRMATION" = "Rename “%@”";
+"NAME" = "Name";
+"DELETE_FOLDER" = "Delete Folder";
+"DELETE_FOLDER_CONFIRMATION" = "Are you sure you want to delete the “%@” folder?";
+"DELETE_FEED" = "Delete Feed";
+"DELETE_FEED_CONFIRMATION" = "Are you sure you want to delete the “%@” feed?";
+"UPDATED_AT" = "Updated %@";
+"UPDATED_NOW" = "Updated Just Now";
+"NO_TEXT" = "(No Text)";
+"STARRED" = "Starred";
+"UNREAD" = "Unread";
+"MARK_AS_READ" = "Mark As Read";
+"TURN_OFF_MARK_AS_READ_CONFIRMATION" = "You can turn this confirmation off in Settings.";
+"SEARCH_ARTICLES" = "Search Articles";
+"HERE" = "Here";
+"ALL_ARTICLES" = "All Articles";
+"UNSTAR" = "Unstar";
+"STAR" = "Star";
+"SELECTED_FILTER_READ_ARTICLES" = "Selected - Filter Read Articles";
+"FILTER_READ_ARTICLES" = "Filter Read Articles";
+"GO_TO_FEED" = "Go to Feed";
+"COPY_ARTICLE_URL" = "Copy Article URL";
+"COPY_EXTERNAL_URL" = "Copy External URL";
+"CANNOT_COMMUNICATE_WITH_NNW" = "Unable to communicate with NetNewsWire.";
+"NEW_WEB_FEED" = "New Web Feed";
+"NEW_FOLDER" = "New Folder";
+
+
+// MARK: Settings - Themes
+
+"INSTALL_THEME_CONFIRMATION" = "Install theme “%@” by %@?";
+"AUTHORS_WEBSITE" = "Author's Website:\n%@";
+"SHOW_WEBSITE" = "Show Website";
+"INSTALL_THEME" = "Install Theme";
+"DUPLICATE_THEME" = "Duplicate Theme";
+"OVERWRITE_THEME_CONFIRMATION" = "The theme “%@” already exists. Overwrite it?";
+"OVERWRITE" = "Overwrite";
+"THEME_INSTALLED" = "Theme installed";
+"THEME_INSTALLED_CONFIRMATION" = "The theme “%@” has been installed.";
+"IMPORT_THEME" = "Import Theme";
+"DELETE_THEME" = "Delete Theme?";
+"DELETE_THEME_CONFIRMATION" = "Are you sure you want to delete the theme “%@”?.";
+"THEME_INFOPLIST_MISMATCH" = "This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist";
+"THEME_INFOPLIST_MISSING_VALUE" = "This theme cannot be used because the the value—“%@”—is not found in the Info.plist.";
+"THEME_INFOPLIST_MISSING_KEY" = "This theme cannot be used because the the key—“%@”—is not found in the Info.plist.";
+"THEME_INFOPLIST_DATA_CORRUPTION" = "This theme cannot be used because of data corruption in the Info.plist. %@.";
+
+/* Settings - OPML */
+
+"IMPORT_FAILED" = "Import Failed";
+"UNABLE_TO_PROCESS_OPML" = "We were unable to process the selected file.  Please ensure that it is a properly formatted OPML file.";
+"NETNEWSWIRE_NEWS" = "NetNewsWire News";
+"ONE_ACTIVE_ACCOUNT" = "You must have at least one active account.";
+"CHOOSE_ACCOUNT_IMPORT" = "Choose an account to receive the imported feeds and folders";
+"CHOOSE_ACCOUNT_EXPORT" = "Choose an account with the subscriptions to export";
+"FOLDER" = "Folder";
+
+"NEW_ARTICLE_NOTIFICATIONS" = "New Article Notifications";
+
+// MARK: Settings - Copyright
+
+"COPYRIGHT" = "Copyright © 2002-%i Brent Simmons";
+
+/* Actions */
+
+"OK" = "OK";
+"HIDE" = "Hide";
+"SHOW" = "Show";
+"CANCEL" = "Cancel";
+"REMOVE" = "Remove";
+"DISMISS" = "Dismiss";
+"DONE" = "Done";
+"OPEN" = "Open";
+
+/* Share Extension */
+
+"FEED_NAME_OPTIONAL" = "Feed Name (Optional)";
+"URL" = "URL";
+
+/* Error Messages */
+
+"KEYCHAIN_STORE_ERROR" = "Keychain error while storing credentials.";
+"NETWORK_ERROR" = "Network error. Try again later.";
+"ERROR" = "Error";
+"ACCOUNT_ERROR" = "Account Error";
+
+// MARK: Local Feed Names
+
+"LOCAL_ACCOUNT_MAC" = "On My Mac";
+"LOCAL_ACCOUNT_PAD" = "On My iPad";
+"LOCAL_ACCOUNT_PHONE" = "On My iPhone";
+
+// MARK: Product Names (no need to localize)
+
+"Reddit" = "Reddit";
+"MarsEdit" = "MarsEdit";
+"Micro.blog" = "Micro.blog";
+"Twitter" = "Twitter";
+"BazQux" = "BazQux";
+"iCloud" = "iCloud";
+"FeedWrangler" = "FeedWrangler";
+"Feedbin" = "Feedbin";
+"Feedly" = "Feedly";
+"FreshRSS" = "FreshRSS";
+"Inoreader" = "Inoreader";
+"NewsBlur" = "NewsBlur";
+"The Old Reader" = "The Old Reader";
+
+"SEE_FIRST_UNREAD_ARTICLE" = "See first unread article";
+"SEE_ARTICLES_IN_FEED" = "See articles in “%@”";
+"LINK" = "Link:";
+
+// MARK: Accessibility
+
+"ACCESSIBILITY_S" = "Small";
+"ACCESSIBILITY_M" = "Medium";
+"ACCESSIBILITY_L" = "Large";
+"ACCESSIBILITY_XL" = "Extra Large";
+"ACCESSIBILITY_XXL" = "Extra Extra Large";
+"DEFAULT" = "Default";
+"UNKNOWN" = "Unknown";
+
+// MARK: Delete Actions
+
+"DELETE_FEEDS" = "Delete Feeds";
+"DELETE_FOLDERS" = "Delete Folders";
+"DELETE_FEEDS_AND_FOLDERS" = "Delete Feeds and Folders";
+
+"MARK_READ" = "Mark Read";
+"MARK_UNREAD" = "Mark Unread";
+"MARK_STARRED" = "Mark Starred";
+"MARK_UNSTARRED" = "Mark Unstarred";
+
+"CANNOT_CREATE_EXTENSION" = "Unable to create extension.";
+
+// MARK: Smart Feeds
+ 
+"SEARCH_FEED_PLACEHOLDER" = "Search: ";
+"SMART_FEEDS" = "Smart Feeds";
+"STARRED" = "Starred";
+"TODAY" = "Today";
+"ALL_UNREAD" = "All Unread";
+
+// MARK: Refresh
+
+"REFRESH_MANUALLY" = "Manually";
+"REFRESH_10_MINUTES" = "Every 10 Minutes";
+"REFRESH_30_MINUTES" = "Every 30 Minutes";
+"REFRESH_HOURLY" = "Every Hour";
+"REFRESH_2_HOURS" = "Every 2 Hours";
+"REFRESH_4_HOURS" = "Every 4 Hours";
+"REFRESH_8_HOURS" = "Every 8 Hours";
+

@@ -21,7 +21,7 @@ public enum ExtensionPointManagerError: LocalizedError {
 	public var localizedDescription: String {
 		switch self {
 		case .unableToCreate:
-			return NSLocalizedString("Unable to create extension.", comment: "Unable to create extension")
+			return NSLocalizedString("CANNOT_CREATE_EXTENSION", comment: "Unable to create extension")
 		}
 	}
 }

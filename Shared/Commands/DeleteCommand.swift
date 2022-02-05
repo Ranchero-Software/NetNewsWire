@@ -259,11 +259,11 @@ private extension Node {
 
 private struct DeleteActionName {
 
-	private static let deleteFeed = NSLocalizedString("Delete Feed", comment: "command")
-	private static let deleteFeeds = NSLocalizedString("Delete Feeds", comment: "command")
-	private static let deleteFolder = NSLocalizedString("Delete Folder", comment: "command")
-	private static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
-	private static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
+	private static let deleteFeed = NSLocalizedString("DELETE_FEED", comment: "command")
+	private static let deleteFeeds = NSLocalizedString("DELETE_FEEDS", comment: "command")
+	private static let deleteFolder = NSLocalizedString("DELETE_FOLDER", comment: "command")
+	private static let deleteFolders = NSLocalizedString("DELETE_FOLDERS", comment: "command")
+	private static let deleteFeedsAndFolders = NSLocalizedString("DELETE_FEEDS_AND_FOLDERS", comment: "command")
 
 	static func name(for nodes: [Node]) -> String? {
 

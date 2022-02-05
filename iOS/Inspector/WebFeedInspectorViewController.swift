@@ -67,7 +67,7 @@ class WebFeedInspectorViewController: UITableViewController {
 	override func viewDidDisappear(_ animated: Bool) {
 		if nameTextField.text != webFeed.nameForDisplay {
 			let nameText = nameTextField.text ?? ""
-			let newName = nameText.isEmpty ? (webFeed.name ?? NSLocalizedString("Untitled", comment: "Feed name")) : nameText
+			let newName = nameText.isEmpty ? (webFeed.name ?? NSLocalizedString("UNTITLED", comment: "Feed name")) : nameText
 			webFeed.rename(to: newName) { _ in }
 		}
 	}
@@ -218,12 +218,12 @@ extension WebFeedInspectorViewController {
 	}
 	
 	func notificationUpdateErrorAlert() -> UIAlertController {
-		let alert = UIAlertController(title: NSLocalizedString("Enable Notifications", comment: "Notifications"),
-									  message: NSLocalizedString("Notifications need to be enabled in the Settings app.", comment: "Notifications need to be enabled in the Settings app."), preferredStyle: .alert)
-		let openSettings = UIAlertAction(title: NSLocalizedString("Open Settings", comment: "Open Settings"), style: .default) { (action) in
+		let alert = UIAlertController(title: NSLocalizedString("ENABLE_NOTIFICATIONS", comment: "Notifications"),
+									  message: NSLocalizedString("ENABLE_NOTIFICATIONS_IN_SETTINGS", comment: "Notifications need to be enabled in the Settings app."), preferredStyle: .alert)
+		let openSettings = UIAlertAction(title: NSLocalizedString("OPEN_SETTINGS", comment: "Open Settings"), style: .default) { (action) in
 			UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
 		}
-		let dismiss = UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil)
+		let dismiss = UIAlertAction(title: NSLocalizedString("DISMISS", comment: "Dismiss"), style: .cancel, handler: nil)
 		alert.addAction(openSettings)
 		alert.addAction(dismiss)
 		alert.preferredAction = openSettings

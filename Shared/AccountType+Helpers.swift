@@ -25,12 +25,12 @@ extension AccountType {
 		case .onMyMac:
 			let defaultName: String
 			#if os(macOS)
-			defaultName = NSLocalizedString("On My Mac", comment: "Account name")
+			defaultName = NSLocalizedString("LOCAL_ACCOUNT_MAC", comment: "Account name")
 			#else
 			if UIDevice.current.userInterfaceIdiom == .pad {
-				defaultName = NSLocalizedString("On My iPad", comment: "Account name")
+				defaultName = NSLocalizedString("LOCAL_ACCOUNT_PAD", comment: "Account name")
 			} else {
-				defaultName = NSLocalizedString("On My iPhone", comment: "Account name")
+				defaultName = NSLocalizedString("LOCAL_ACCOUNT_PHONE", comment: "Account name")
 			}
 			#endif
 			return defaultName

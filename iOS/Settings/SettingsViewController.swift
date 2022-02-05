@@ -159,7 +159,7 @@ class SettingsViewController: UITableViewController {
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
 				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Accounts")
+				cell.textLabel?.text = NSLocalizedString("ADD_ACCOUNT", comment: "Accounts")
 			} else {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsComboTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 				acctCell.applyThemeProperties()
@@ -174,7 +174,7 @@ class SettingsViewController: UITableViewController {
 			let extensionPoints = Array(ExtensionPointManager.shared.activeExtensionPoints.values)
 			if indexPath.row == extensionPoints.count {
 				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-				cell.textLabel?.text = NSLocalizedString("Add Extension", comment: "Extensions")
+				cell.textLabel?.text = NSLocalizedString("ADD_EXTENSION", comment: "Extensions")
 			} else {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsComboTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 				acctCell.applyThemeProperties()
@@ -408,8 +408,8 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 				case .success:
 					break
 				case .failure:
-					let title = NSLocalizedString("Import Failed", comment: "Import Failed")
-					let message = NSLocalizedString("We were unable to process the selected file.  Please ensure that it is a properly formatted OPML file.", comment: "Import Failed Message")
+					let title = NSLocalizedString("IMPORT_FAILED", comment: "Import Failed")
+					let message = NSLocalizedString("UNABLE_TO_PROCESS_OPML", comment: "Import Failed Message")
 					self.presentError(title: title, message: message)
 				}
 			}
@@ -428,7 +428,7 @@ private extension SettingsViewController {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
 		let addViewController = addNavViewController.topViewController as! AddFeedViewController
 		addViewController.initialFeed = AccountManager.netNewsWireNewsURL
-		addViewController.initialFeedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
+		addViewController.initialFeedName = NSLocalizedString("NETNEWSWIRE_NEWS", comment: "NetNewsWire News")
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
 		
@@ -438,7 +438,7 @@ private extension SettingsViewController {
 	func importOPML(sourceView: UIView, sourceRect: CGRect) {
 		switch AccountManager.shared.activeAccounts.count {
 		case 0:
-			presentError(title: "Error", message: NSLocalizedString("You must have at least one active account.", comment: "Missing active account"))
+			presentError(title: "Error", message: NSLocalizedString("ONE_ACTIVE_ACCOUNT", comment: "Missing active account"))
 		case 1:
 			opmlAccount = AccountManager.shared.activeAccounts.first
 			importOPMLDocumentPicker()
@@ -448,7 +448,7 @@ private extension SettingsViewController {
 	}
 	
 	func importOPMLAccountPicker(sourceView: UIView, sourceRect: CGRect) {
-		let title = NSLocalizedString("Choose an account to receive the imported feeds and folders", comment: "Import Account")
+		let title = NSLocalizedString("CHOOSE_ACCOUNT_IMPORT", comment: "Import Account")
 		let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 		
 		if let popoverController = alert.popoverPresentationController {
@@ -464,7 +464,7 @@ private extension SettingsViewController {
 			alert.addAction(action)
 		}
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
 		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		self.present(alert, animated: true)
@@ -490,7 +490,7 @@ private extension SettingsViewController {
 	}
 	
 	func exportOPMLAccountPicker(sourceView: UIView, sourceRect: CGRect) {
-		let title = NSLocalizedString("Choose an account with the subscriptions to export", comment: "Export Account")
+		let title = NSLocalizedString("CHOOSE_ACCOUNT_EXPORT", comment: "Export Account")
 		let alert = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 		
 		if let popoverController = alert.popoverPresentationController {
@@ -506,7 +506,7 @@ private extension SettingsViewController {
 			alert.addAction(action)
 		}
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
 		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		self.present(alert, animated: true)

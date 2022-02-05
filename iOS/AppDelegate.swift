@@ -247,15 +247,15 @@ private extension AppDelegate {
 	}
 	
 	private func initializeHomeScreenQuickActions() {
-		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
+		let unreadTitle = NSLocalizedString("FIRST_UNREAD", comment: "First Unread")
 		let unreadIcon = UIApplicationShortcutIcon(systemImageName: "chevron.down.circle")
 		let unreadItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.FirstUnread", localizedTitle: unreadTitle, localizedSubtitle: nil, icon: unreadIcon, userInfo: nil)
 		
-		let searchTitle = NSLocalizedString("Search", comment: "Search")
+		let searchTitle = NSLocalizedString("SEARCH", comment: "Search")
 		let searchIcon = UIApplicationShortcutIcon(systemImageName: "magnifyingglass")
 		let searchItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowSearch", localizedTitle: searchTitle, localizedSubtitle: nil, icon: searchIcon, userInfo: nil)
 
-		let addTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
+		let addTitle = NSLocalizedString("ADD_FEED", comment: "Add Feed")
 		let addIcon = UIApplicationShortcutIcon(systemImageName: "plus")
 		let addItem = UIApplicationShortcutItem(type: "com.ranchero.NetNewsWire.ShowAdd", localizedTitle: addTitle, localizedSubtitle: nil, icon: addIcon, userInfo: nil)
 

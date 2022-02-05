@@ -60,10 +60,10 @@ import UIKit
 	
 	private func updateUI() {
 		if resultsCount > 0 {
-			let format = NSLocalizedString("%d of %d", comment: "Results selection and count")
+			let format = NSLocalizedString("RESULTS_SELECTION_AND_COUNT", comment: "Results selection and count")
 			resultsLabel.text = String.localizedStringWithFormat(format, selectedResult, resultsCount)
 		} else {
-			resultsLabel.text = NSLocalizedString("No results", comment: "No results")
+			resultsLabel.text = NSLocalizedString("NO_RESULTS", comment: "No results")
 		}
 		
 		nextButton.isEnabled = selectedResult < resultsCount
@@ -101,7 +101,7 @@ private extension ArticleSearchBar {
 		addSubview(background)
 		
 		let doneButton = UIButton()
-		doneButton.setTitle(NSLocalizedString("Done", comment: "Done"), for: .normal)
+		doneButton.setTitle(NSLocalizedString("DONE", comment: "Done"), for: .normal)
 		doneButton.setTitleColor(UIColor.label, for: .normal)
 		doneButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
 		doneButton.isAccessibilityElement = true

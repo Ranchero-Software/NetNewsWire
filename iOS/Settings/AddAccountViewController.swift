@@ -25,26 +25,26 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 		var sectionHeader: String {
 			switch self {
 			case .local:
-				return NSLocalizedString("Local", comment: "Local Account")
+				return NSLocalizedString("LOCAL_ACCOUNT", comment: "Local Account")
 			case .icloud:
-				return NSLocalizedString("iCloud", comment: "iCloud Account")
+				return NSLocalizedString("ICLOUD_ACCOUNT", comment: "iCloud Account")
 			case .web:
-				return NSLocalizedString("Web", comment: "Web Account")
+				return NSLocalizedString("WEB_ACCOUNT", comment: "Web Account")
 			case .selfhosted:
-				return NSLocalizedString("Self-hosted", comment: "Self hosted Account")
+				return NSLocalizedString("SELF_HOSTED_ACCOUNT", comment: "Self hosted Account")
 			}
 		}
 		
 		var sectionFooter: String {
 			switch self {
 			case .local:
-				return NSLocalizedString("Local accounts do not sync your feeds across devices", comment: "Local Account")
+				return NSLocalizedString("LOCAL_ACCOUNT_EXPLAINER", comment: "Local Account")
 			case .icloud:
-				return NSLocalizedString("Your iCloud account syncs your feeds across your Mac and iOS devices", comment: "iCloud Account")
+				return NSLocalizedString("ICLOUD_EXPLAINER", comment: "iCloud Account")
 			case .web:
-				return NSLocalizedString("Web accounts sync your feeds across all your devices", comment: "Web Account")
+				return NSLocalizedString("WEB_ACCOUNTS_EXPLAINER", comment: "Web Account")
 			case .selfhosted:
-				return NSLocalizedString("Self-hosted accounts sync your feeds across all your devices", comment: "Self hosted Account")
+				return NSLocalizedString("SELF_HOSTED_EXPLAINER", comment: "Self hosted Account")
 			}
 		}
 		

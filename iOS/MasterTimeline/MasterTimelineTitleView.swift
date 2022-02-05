@@ -23,7 +23,7 @@ class MasterTimelineTitleView: UIView {
 		set { }
 		get {
 			if let name = label.text {
-				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessiblity")
+				let unreadLabel = NSLocalizedString("UNREAD_LOWERCASE", comment: "Unread label for accessiblity")
 				return "\(name) \(unreadCountView.unreadCount) \(unreadLabel)"
 			}
 			else {

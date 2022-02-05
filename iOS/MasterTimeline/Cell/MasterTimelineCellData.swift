@@ -11,7 +11,7 @@ import Articles
 
 struct MasterTimelineCellData {
 
-	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
+	private static let noText = NSLocalizedString("NO_TEXT", comment: "No Text")
 	
 	let title: String
 	let attributedTitle: NSAttributedString

@@ -24,16 +24,16 @@ class ExtensionPointInspectorViewController: UITableViewController {
 	@IBAction func disable(_ sender: Any) {
 		guard let extensionPoint = extensionPoint else { return	}
 		
-		let title = NSLocalizedString("Deactivate Extension", comment: "Deactivate Extension")
+		let title = NSLocalizedString("DEACTIVATE_EXTENSION", comment: "Deactivate Extension")
 		let extensionPointTypeTitle = extensionPoint.extensionPointID.extensionPointType.title
-		let message = NSLocalizedString("Are you sure you want to deactivate the \(extensionPointTypeTitle) extension “\(extensionPoint.title)”?", comment: "Deactivate text")
+		let message = String(format: NSLocalizedString("DEACTIVATE_EXTENSION_CONFIRMATION", comment: "Deactivate extension confirmation"), extensionPointTypeTitle, extensionPoint.title)
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 		alertController.addAction(cancelAction)
 		
-		let markTitle = NSLocalizedString("Deactivate", comment: "Deactivate")
+		let markTitle = NSLocalizedString("DEACTIVATE", comment: "Deactivate")
 		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
 			ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint.extensionPointID)
 			self?.navigationController?.popViewController(animated: true)

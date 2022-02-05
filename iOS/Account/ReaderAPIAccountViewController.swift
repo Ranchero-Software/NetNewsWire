@@ -38,12 +38,12 @@ class ReaderAPIAccountViewController: UITableViewController {
 		
 		if let unwrappedAcount = account,
 		   let credentials = try? retrieveCredentialsForAccount(for: unwrappedAcount) {
-			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
+			actionButton.setTitle(NSLocalizedString("UPDATE_CREDENTIALS", comment: "Update Credentials"), for: .normal)
 			actionButton.isEnabled = true
 			usernameTextField.text = credentials.username
 			passwordTextField.text = credentials.secret
 		} else {
-			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Add Account"), for: .normal)
+			actionButton.setTitle(NSLocalizedString("ADD_ACCOUNT", comment: "Add Account"), for: .normal)
 		}
 		
 		if let unwrappedAccountType = accountType {
@@ -72,17 +72,17 @@ class ReaderAPIAccountViewController: UITableViewController {
 	private func setupFooter() {
 		switch accountType {
 			case .bazQux:
-				footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
+				footerLabel.text = NSLocalizedString("BAZQUX_SIGN_IN", comment: "BazQux")
+				signUpButton.setTitle(NSLocalizedString("SIGN_UP_HERE", comment: "BazQux SignUp"), for: .normal)
 			case .inoreader:
-				footerLabel.text = NSLocalizedString("Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account?", comment: "InoReader")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "InoReader SignUp"), for: .normal)
+				footerLabel.text = NSLocalizedString("INOREADER_SIGN_IN", comment: "InoReader")
+				signUpButton.setTitle(NSLocalizedString("SIGN_UP_HERE", comment: "InoReader SignUp"), for: .normal)
 			case .theOldReader:
-				footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)
+				footerLabel.text = NSLocalizedString("TOR_SIGN_IN", comment: "TOR")
+				signUpButton.setTitle(NSLocalizedString("SIGN_UP_HERE", comment: "TOR SignUp"), for: .normal)
 			case .freshRSS:
-				footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
-				signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "FreshRSS SignUp"), for: .normal)
+				footerLabel.text = NSLocalizedString("FRESHRSS_SIGN_IN", comment: "FreshRSS")
+				signUpButton.setTitle(NSLocalizedString("FIND_OUT_MORE", comment: "FreshRSS SignUp"), for: .normal)
 			default:
 				return
 		}
@@ -144,7 +144,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
 		
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: type, username: trimmedUsername) else {
-			showError(NSLocalizedString("There is already an account of that type with that username created.", comment: "Duplicate Error"))
+			showError(NSLocalizedString("READER_ACCOUNT_EXISTS", comment: "Duplicate Error"))
 			return
 		}
 
@@ -186,10 +186,10 @@ class ReaderAPIAccountViewController: UITableViewController {
 						
 						self.delegate?.dismiss()
 					} catch {
-						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+						self.showError(NSLocalizedString("KEYCHAIN_STORE_ERROR", comment: "Credentials Error"))
 					}
 				} else {
-					self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
+					self.showError(NSLocalizedString("INVALID_USERNAME_OR_PASSWORD", comment: "Credentials Error"))
 				}
 			case .failure(let error):
 				self.showError(error.localizedDescription)
@@ -229,16 +229,16 @@ class ReaderAPIAccountViewController: UITableViewController {
 		switch accountType {
 		case .freshRSS:
 			if !usernameTextField.hasText || !passwordTextField.hasText || !apiURLTextField.hasText {
-				showError(NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error"))
+				showError(NSLocalizedString("USERNAME_PASSWORD_API_REQUIRED", comment: "Credentials Error"))
 				return false
 			}
 			guard let _ = URL(string: apiURLTextField.text!) else {
-				showError(NSLocalizedString("Invalid API URL.", comment: "Invalid API URL"))
+				showError(NSLocalizedString("INVALID_API_URL", comment: "Invalid API URL"))
 				return false
 			}
 		default:
 			if !usernameTextField.hasText || !passwordTextField.hasText {
-				showError(NSLocalizedString("Username and password are required.", comment: "Credentials Error"))
+				showError(NSLocalizedString("USERNAME_PASSWORD_REQUIRED", comment: "Credentials Error"))
 				return false
 			}
 		}

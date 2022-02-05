@@ -30,7 +30,7 @@ final class UnreadFeed: PseudoFeed {
 		return FeedIdentifier.smartFeed(String(describing: UnreadFeed.self))
 	}
 
-	let nameForDisplay = NSLocalizedString("All Unread", comment: "All Unread pseudo-feed title")
+	let nameForDisplay = NSLocalizedString("ALL_UNREAD", comment: "All Unread pseudo-feed title")
 	let fetchType = FetchType.unread(nil)
 	
 	var unreadCount = 0 {

@@ -70,7 +70,7 @@ class ActivityManager {
 		guard nextUnreadActivity == nil else { return }
 
 		nextUnreadActivity = NSUserActivity(activityType: ActivityType.nextUnread.rawValue)
-		nextUnreadActivity!.title = NSLocalizedString("See first unread article", comment: "First Unread")
+		nextUnreadActivity!.title = NSLocalizedString("SEE_FIRST_UNREAD_ARTICLE", comment: "First Unread")
 		
 		#if os(iOS)
 		nextUnreadActivity!.suggestedInvocationPhrase = nextUnreadActivity!.title
@@ -165,7 +165,7 @@ private extension ActivityManager {
 	func makeSelectFeedActivity(feed: Feed) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.selectFeed.rawValue)
 		
-		let localizedText = NSLocalizedString("See articles in  “%@”", comment: "See articles in Folder")
+		let localizedText = NSLocalizedString("SEE_ARTICLES_IN_FEED", comment: "See articles in Folder")
 		let title = NSString.localizedStringWithFormat(localizedText as NSString, feed.nameForDisplay) as String
 		activity.title = title
 		

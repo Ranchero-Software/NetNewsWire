@@ -13,7 +13,7 @@ enum CloudKitAccountViewControllerError: LocalizedError {
 	case iCloudDriveMissing
 	
 	var errorDescription: String? {
-		return NSLocalizedString("Unable to add iCloud Account. Please make sure you have iCloud and iCloud enabled in System Preferences.", comment: "Unable to add iCloud Account.")
+		return NSLocalizedString("UNABLE_TO_ADD_ICLOUD_ACCOUNT", comment: "Unable to add iCloud Account.")
 	}
 }
 
@@ -30,7 +30,7 @@ class CloudKitAccountViewController: UITableViewController {
 	}
 	
 	private func setupFooter() {
-		footerLabel.text = NSLocalizedString("Feeds in your iCloud account will be synced across your Mac and iOS devices.\n\nImportant note: while NetNewsWire itself is very fast, iCloud syncing is sometimes very slow. This can happen after adding a number of feeds and when setting it up on a new device.\n\nIf that happens to you, it may appear stuck. But don’t worry — it’s not. Just let it run.", comment: "iCloud")
+		footerLabel.text = NSLocalizedString("ICLOUD_EXPLAINER_LONG", comment: "iCloud")
 	}
 
 	@IBAction func cancel(_ sender: Any) {

@@ -44,13 +44,13 @@ class ArticleExtractorButton: UIButton {
 		get {
 			switch buttonState {
 			case .error:
-				return NSLocalizedString("Error - Reader View", comment: "Error - Reader View")
+				return NSLocalizedString("ERROR_READER_VIEW", comment: "Error - Reader View")
 			case .animated:
-				return NSLocalizedString("Processing - Reader View", comment: "Processing - Reader View")
+				return NSLocalizedString("PROCESSING_READER_VIEW", comment: "Processing - Reader View")
 			case .on:
-				return NSLocalizedString("Selected - Reader View", comment: "Selected - Reader View")
+				return NSLocalizedString("SELECTED_READER_VIEW", comment: "Selected - Reader View")
 			case .off:
-				return NSLocalizedString("Reader View", comment: "Reader View")
+				return NSLocalizedString("READER_VIEW", comment: "Reader View")
 			}
 		}
 		set {

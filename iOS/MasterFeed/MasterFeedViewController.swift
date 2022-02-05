@@ -46,6 +46,8 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	override func viewDidLoad() {
 
 		super.viewDidLoad()
+		
+		title = NSLocalizedString("FEEDS", comment: "Feeds")
 
 		if traitCollection.userInterfaceIdiom == .phone {
 			navigationController?.navigationBar.prefersLargeTitles = true
@@ -241,7 +243,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		var actions = [UIContextualAction]()
 		
 		// Set up the delete action
-		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+		let deleteTitle = NSLocalizedString("DELETE", comment: "Delete")
 		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in
 			self?.delete(indexPath: indexPath)
 			completion(true)
@@ -250,7 +252,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		actions.append(deleteAction)
 		
 		// Set up the rename action
-		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
+		let renameTitle = NSLocalizedString("RENAME", comment: "Rename")
 		let renameAction = UIContextualAction(style: .normal, title: renameTitle) { [weak self] (action, view, completion) in
 			self?.rename(indexPath: indexPath)
 			completion(true)
@@ -259,7 +261,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		actions.append(renameAction)
 		
 		if let webFeed = coordinator.nodeFor(indexPath)?.representedObject as? WebFeed {
-			let moreTitle = NSLocalizedString("More", comment: "More")
+			let moreTitle = NSLocalizedString("MORE", comment: "More")
 			let moreAction = UIContextualAction(style: .normal, title: moreTitle) { [weak self] (action, view, completion) in
 				
 				if let self = self {
@@ -290,7 +292,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 						alert.addAction(action)
 					}
 					
-					let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+					let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
 					alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 						completion(true)
 					})
@@ -484,7 +486,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 			return
 		}
 
-		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		let title = NSLocalizedString("MARK_ALL_AS_READ", comment: "Mark All as Read")
 		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 			self?.coordinator.markAllAsReadInTimeline()
 		}
@@ -590,7 +592,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		
 		var menuItems: [UIAction] = []
 		
-		let addWebFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+		let addWebFeedActionTitle = NSLocalizedString("ADD_WEB_FEED", comment: "Add Web Feed")
 		let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
 			self.coordinator.showAddWebFeed()
 		}
@@ -598,14 +600,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		
 		if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
 			if ExtensionPointManager.shared.isRedditEnabled {
-				let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")
+				let addRedditFeedActionTitle = NSLocalizedString("ADD_REDDIT_FEED", comment: "Add Reddit Feed")
 				let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
 					self.coordinator.showAddRedditFeed()
 				}
 				menuItems.append(addRedditFeedAction)
 			}
 			if ExtensionPointManager.shared.isTwitterEnabled {
-				let addTwitterFeedActionTitle = NSLocalizedString("Add Twitter Feed", comment: "Add Twitter Feed")
+				let addTwitterFeedActionTitle = NSLocalizedString("ADD_TWITTER_FEED", comment: "Add Twitter Feed")
 				let addTwitterFeedAction = UIAction(title: addTwitterFeedActionTitle, image: AppAssets.contextMenuTwitter.tinted(color: .label)) { _ in
 					self.coordinator.showAddTwitterFeed()
 				}
@@ -613,14 +615,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 			}
 		}
 					
-		let addWebFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+		let addWebFolderActionTitle = NSLocalizedString("ADD_FOLDER", comment: "Add Folder")
 		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
 			self.coordinator.showAddFolder()
 		}
 		
 		menuItems.append(addWebFolderAction)
 		
-		let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
+		let contextMenu = UIMenu(title: NSLocalizedString("ADD_ITEM", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
 		
 		self.addNewItemButton.menu = contextMenu
 	}
@@ -717,12 +719,12 @@ private extension MasterFeedViewController {
 	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
-		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
+		filterButton?.accLabelText = NSLocalizedString("SELECTED_FILTER_READ_FEEDS", comment: "Selected - Filter Read Feeds")
 	}
 	
 	func setFilterButtonToInactive() {
 		filterButton?.image = AppAssets.filterInactiveImage
-		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
+		filterButton?.accLabelText = NSLocalizedString("FILTER_READ_FEEDS", comment: "Filter Read Feeds")
 	}
 	
 	func resetEstimatedRowHeight() {
@@ -947,7 +949,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 		
-		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
+		let title = NSLocalizedString("OPEN_HOME_PAGE", comment: "Open Home Page")
 		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
 			self?.coordinator.showBrowserForFeed(indexPath)
 		}
@@ -959,7 +961,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
+		let title = NSLocalizedString("OPEN_HOME_PAGE", comment: "Open Home Page")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showBrowserForFeed(indexPath)
 			completion(true)
@@ -973,7 +975,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
+		let title = NSLocalizedString("COPY_FEED_URL", comment: "Copy Feed URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
@@ -986,7 +988,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 
-		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
+		let title = NSLocalizedString("COPY_FEED_URL", comment: "Copy Feed URL")
 		let action = UIAlertAction(title: title, style: .default) { action in
 			UIPasteboard.general.url = url
 			completion(true)
@@ -1001,7 +1003,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
+		let title = NSLocalizedString("COPY_HOME_PAGE_URL", comment: "Copy Home Page URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
@@ -1015,7 +1017,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 
-		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
+		let title = NSLocalizedString("COPY_HOME_PAGE_URL", comment: "Copy Home Page URL")
 		let action = UIAlertAction(title: title, style: .default) { action in
 			UIPasteboard.general.url = url
 			completion(true)
@@ -1030,7 +1032,7 @@ private extension MasterFeedViewController {
 				return nil
 		}
 		
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let localizedMenuText = NSLocalizedString("MARK_ALL_READ_CONFIRMATION", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
@@ -1047,7 +1049,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func deleteAction(indexPath: IndexPath) -> UIAction {
-		let title = NSLocalizedString("Delete", comment: "Delete")
+		let title = NSLocalizedString("DELETE", comment: "Delete")
 		
 		let action = UIAction(title: title, image: AppAssets.trashImage, attributes: .destructive) { [weak self] action in
 			self?.delete(indexPath: indexPath)
@@ -1056,7 +1058,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func renameAction(indexPath: IndexPath) -> UIAction {
-		let title = NSLocalizedString("Rename", comment: "Rename")
+		let title = NSLocalizedString("RENAME", comment: "Rename")
 		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] action in
 			self?.rename(indexPath: indexPath)
 		}
@@ -1068,7 +1070,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 		
-		let title = NSLocalizedString("Get Info", comment: "Get Info")
+		let title = NSLocalizedString("GET_INFO", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: webFeed)
 		}
@@ -1076,7 +1078,7 @@ private extension MasterFeedViewController {
 	}
 
 	func getAccountInfoAction(account: Account) -> UIAction {
-		let title = NSLocalizedString("Get Info", comment: "Get Info")
+		let title = NSLocalizedString("GET_INFO", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
 			self?.coordinator.showAccountInspector(for: account)
 		}
@@ -1084,7 +1086,7 @@ private extension MasterFeedViewController {
 	}
 
 	func deactivateAccountAction(account: Account) -> UIAction {
-		let title = NSLocalizedString("Deactivate", comment: "Deactivate")
+		let title = NSLocalizedString("DEACTIVATE", comment: "Deactivate")
 		let action = UIAction(title: title, image: AppAssets.deactivateImage) { action in
 			account.isActive = false
 		}
@@ -1096,7 +1098,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Get Info", comment: "Get Info")
+		let title = NSLocalizedString("GET_INFO", comment: "Get Info")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: webFeed)
 			completion(true)
@@ -1111,7 +1113,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let localizedMenuText = NSLocalizedString("MARK_ALL_READ_CONFIRMATION", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -1129,7 +1131,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let localizedMenuText = NSLocalizedString("MARK_ALL_READ_CONFIRMATION", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -1149,15 +1151,15 @@ private extension MasterFeedViewController {
 	func rename(indexPath: IndexPath) {
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else { return	}
 
-		let formatString = NSLocalizedString("Rename “%@”", comment: "Rename feed")
+		let formatString = NSLocalizedString("RENAME_CONFIRMATION", comment: "Rename feed")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, feed.nameForDisplay) as String
 		
 		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
 		
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 		
-		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
+		let renameTitle = NSLocalizedString("RENAME", comment: "Rename")
 		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
 			
 			guard let name = alertController.textFields?[0].text, !name.isEmpty else {
@@ -1191,7 +1193,7 @@ private extension MasterFeedViewController {
 		
 		alertController.addTextField() { textField in
 			textField.text = feed.nameForDisplay
-			textField.placeholder = NSLocalizedString("Name", comment: "Name")
+			textField.placeholder = NSLocalizedString("NAME", comment: "Name")
 		}
 		
 		self.present(alertController, animated: true) {
@@ -1206,21 +1208,21 @@ private extension MasterFeedViewController {
 		let title: String
 		let message: String
 		if feed is Folder {
-			title = NSLocalizedString("Delete Folder", comment: "Delete folder")
-			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
+			title = NSLocalizedString("DELETE_FOLDER", comment: "Delete folder")
+			let localizedInformativeText = NSLocalizedString("DELETE_FOLDER_CONFIRMATION", comment: "Folder delete text")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
 		} else  {
-			title = NSLocalizedString("Delete Feed", comment: "Delete feed")
-			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
+			title = NSLocalizedString("DELETE_FEED", comment: "Delete feed")
+			let localizedInformativeText = NSLocalizedString("DELETE_FEED_CONFIRMATION", comment: "Feed delete text")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
 		}
 		
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 		
-		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+		let deleteTitle = NSLocalizedString("DELETE", comment: "Delete")
 		let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] action in
 			self?.performDelete(indexPath: indexPath)
 		}

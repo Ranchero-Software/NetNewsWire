@@ -18,7 +18,7 @@ class NotificationsViewController: UIViewController {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
-		self.title = NSLocalizedString("New Article Notifications", comment: "Notifications")
+		self.title = NSLocalizedString("NEW_ARTICLE_NOTIFICATIONS", comment: "New Article Notifications")
 		notificationsTableView.sectionHeaderTopPadding = 25
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .FaviconDidBecomeAvailable, object: nil)
