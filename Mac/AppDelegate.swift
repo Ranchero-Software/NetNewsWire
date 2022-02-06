@@ -675,7 +675,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	@IBAction func showHelp(_ sender: Any?) {
 
-		Browser.open("https://netnewswire.com/help/mac/6.0/en/", inBackground: false)
+		Browser.open("https://netnewswire.com/help/mac/6.1/en/", inBackground: false)
 	}
 
 	@IBAction func donateToAppCampForGirls(_ sender: Any?) {
@@ -829,7 +829,7 @@ internal extension AppDelegate {
 			attrs[.paragraphStyle] = titleParagraphStyle
 
 			let websiteText = NSMutableAttributedString()
-			websiteText.append(NSAttributedString(string: NSLocalizedString("Author's Website", comment: "Author's Website"), attributes: attrs))
+			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attrs))
 
 			websiteText.append(NSAttributedString(string: "\n"))
 
