@@ -447,7 +447,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
 				if let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
-					configure(cell, article: article)
+					configure(cell, article: article, indexPath: indexPath)
 				}
 			}
 		}
@@ -564,7 +564,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
-		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: false)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
@@ -722,22 +722,23 @@ private extension MasterTimelineViewController {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
 			MasterTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
 				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
-				self?.configure(cell, article: article)
+				self?.configure(cell, article: article, indexPath: indexPath)
 				return cell
 			})
 		dataSource.defaultRowAnimation = .middle
 		return dataSource
     }
 	
-	func configure(_ cell: MasterTimelineTableViewCell, article: Article) {
+	func configure(_ cell: MasterTimelineTableViewCell, article: Article, indexPath: IndexPath) {
 		
 		let iconImage = iconImageFor(article)
 		let featuredImage = featuredImageFor(article)
 		
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let hideSeparater = indexPath.row == coordinator.articles.count - 1
 		
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: hideSeparater)
 	}
 	
 	func iconImageFor(_ article: Article) -> IconImage? {
