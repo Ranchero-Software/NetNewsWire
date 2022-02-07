@@ -614,7 +614,6 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
-
 	func configureToolbar() {		
 		guard splitViewController?.isCollapsed ?? true else {
 			return
@@ -628,8 +627,6 @@ private extension MasterTimelineViewController {
 		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
 		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
-	
-
 
 	func resetUI(resetScroll: Bool) {
 		
