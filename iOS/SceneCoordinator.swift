@@ -1364,14 +1364,20 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 private extension SceneCoordinator {
 	
 	func configureNavigationController(_ navController: UINavigationController) {
-		let navigationStandardAppearance = UINavigationBarAppearance()
-		navigationStandardAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
-		navigationStandardAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
-		navController.navigationBar.standardAppearance = navigationStandardAppearance
 		
-		let scrollEdgeStandardAppearance = UINavigationBarAppearance()
-		scrollEdgeStandardAppearance.backgroundColor = .systemBackground
-		navController.navigationBar.scrollEdgeAppearance = scrollEdgeStandardAppearance
+		let scrollEdge = UINavigationBarAppearance()
+		scrollEdge.configureWithOpaqueBackground()
+		scrollEdge.shadowColor = nil
+		scrollEdge.shadowImage = UIImage()
+		
+		let standard = UINavigationBarAppearance()
+		standard.shadowColor = .opaqueSeparator
+		standard.shadowImage = UIImage()
+		
+		navController.navigationBar.standardAppearance = standard
+		navController.navigationBar.compactAppearance = standard
+		navController.navigationBar.scrollEdgeAppearance = scrollEdge
+		navController.navigationBar.compactScrollEdgeAppearance = scrollEdge
 		
 		navController.navigationBar.tintColor = AppAssets.primaryAccentColor
 		

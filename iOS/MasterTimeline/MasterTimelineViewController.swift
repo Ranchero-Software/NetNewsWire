@@ -92,8 +92,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+
+		configureToolbar()
+
 		refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView
 		refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView!)
+
 
 		resetUI(resetScroll: true)
 		
@@ -609,6 +613,23 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 // MARK: Private
 
 private extension MasterTimelineViewController {
+
+
+	func configureToolbar() {		
+		guard splitViewController?.isCollapsed ?? true else {
+			return
+		}
+		
+		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
+			return
+		}
+
+		self.refreshProgressView = refreshProgressView
+		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
+	}
+	
+
 
 	func resetUI(resetScroll: Bool) {
 		

@@ -229,6 +229,11 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		
 	}
 	
+	override func contentScrollView(for edge: NSDirectionalRectEdge) -> UIScrollView? {
+		return currentWebViewController?.webView?.scrollView
+	}
+	
+	
 	// MARK: Notifications
 	
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
