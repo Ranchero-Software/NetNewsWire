@@ -49,10 +49,6 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		}
 	}
 
-	var themes: [ArticleTheme] {
-		return themeNames.compactMap { articleThemeWithThemeName($0) }
-	}
-	
 	init(folderPath: String) {
 		self.folderPath = folderPath
 		self.currentTheme = ArticleTheme.defaultTheme
@@ -96,32 +92,6 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
 	}
 	
-	func deleteTheme(themeName: String) {
-		if let filename = pathForThemeName(themeName, folder: folderPath) {
-			try? FileManager.default.removeItem(atPath: filename)
-		}
-	}
-	
-}
-
-// MARK : Private
-
-private extension ArticleThemesManager {
-
-	func updateThemeNames() {
-		let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
-		let appThemeNames = Set(appThemeFilenames.map { ArticleTheme.themeNameForPath($0) })
-
-		let installedThemeNames = Set(allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) })
-
-		let allThemeNames = appThemeNames.union(installedThemeNames)
-		
-		let sortedThemeNames = allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
-		if sortedThemeNames != themeNames {
-			themeNames = sortedThemeNames
-		}
-	}
-
 	func articleThemeWithThemeName(_ themeName: String) -> ArticleTheme? {
 		if themeName == AppDefaults.defaultThemeName {
 			return ArticleTheme.defaultTheme
@@ -146,6 +116,32 @@ private extension ArticleThemesManager {
 			return nil
 		}
 		
+	}
+
+	func deleteTheme(themeName: String) {
+		if let filename = pathForThemeName(themeName, folder: folderPath) {
+			try? FileManager.default.removeItem(atPath: filename)
+		}
+	}
+	
+}
+
+// MARK : Private
+
+private extension ArticleThemesManager {
+
+	func updateThemeNames() {
+		let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
+		let appThemeNames = Set(appThemeFilenames.map { ArticleTheme.themeNameForPath($0) })
+
+		let installedThemeNames = Set(allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) })
+
+		let allThemeNames = appThemeNames.union(installedThemeNames)
+		
+		let sortedThemeNames = allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
+		if sortedThemeNames != themeNames {
+			themeNames = sortedThemeNames
+		}
 	}
 
 	func defaultArticleTheme() -> ArticleTheme {
