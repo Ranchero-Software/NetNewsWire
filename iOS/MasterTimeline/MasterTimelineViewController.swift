@@ -537,16 +537,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		reconfigureCells(coordinator.articles)
 	}
 	
-	private func reloadCells(_ articles: [Article]) {
-		var snapshot = dataSource.snapshot()
-		snapshot.reloadItems(articles)
-		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.restoreSelectionIfNecessary(adjustScroll: false)
-		}
-	}
-
 	private func reconfigureCells(_ articles: [Article]) {
-		guard #available(iOS 15, *) else { return }
 		var snapshot = dataSource.snapshot()
 		snapshot.reconfigureItems(articles)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
