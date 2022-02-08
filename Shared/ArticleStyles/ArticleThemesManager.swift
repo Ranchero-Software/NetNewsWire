@@ -31,6 +31,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		set {
 			if newValue != currentThemeName {
 				AppDefaults.shared.currentThemeName = newValue
+				updateThemeNames()
 				updateCurrentTheme()
 			}
 		}
