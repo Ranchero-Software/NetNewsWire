@@ -79,6 +79,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Configure the table
 		tableView.dataSource = dataSource
+		if #available(iOS 15.0, *) {
+			tableView.isPrefetchingEnabled = false
+		}
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
@@ -525,12 +528,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc private func reloadAllVisibleCells() {
-		if #available(iOS 15, *) {
-			reconfigureCells(coordinator.articles)
-		} else {
-			let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
-			reloadCells(visibleArticles)
-		}
+		let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
+		reloadCells(visibleArticles)
 	}
 	
 	private func reloadCells(_ articles: [Article]) {
@@ -541,15 +540,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 
-	private func reconfigureCells(_ articles: [Article]) {
-		guard #available(iOS 15, *) else { return }
-		var snapshot = dataSource.snapshot()
-		snapshot.reconfigureItems(articles)
-		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.restoreSelectionIfNecessary(adjustScroll: false)
-		}
-	}
-	
 	// MARK: Cell Configuring
 
 	private func resetEstimatedRowHeight() {
