@@ -11,7 +11,7 @@ import UIKit
 struct ArticleThemeImporter {
 	
 	static func importTheme(controller: UIViewController, filename: String) throws {
-		let theme = try ArticleTheme(path: filename)
+		let theme = try ArticleTheme(path: filename, isAppTheme: false)
 		
 		let localizedTitleText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
 		let title = NSString.localizedStringWithFormat(localizedTitleText as NSString, theme.name, theme.creatorName) as String
