@@ -38,7 +38,6 @@ class NotificationsViewController: UIViewController {
 		super.viewDidLoad()
 		title = NSLocalizedString("New Article Notifications", comment: "Notifications")
 		
-		notificationsTableView.prefetchDataSource = self
 		navigationItem.searchController = searchController
 		
 		filterButton = UIBarButtonItem(
@@ -51,6 +50,7 @@ class NotificationsViewController: UIViewController {
 		
 		reloadNotificationTableView()
 		
+		NotificationCenter.default.addObserver(self, selector: #selector(updateCellsFrom(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: UIScene.willEnterForegroundNotification, object: nil)
 	}
 	
@@ -65,6 +65,23 @@ class NotificationsViewController: UIViewController {
 				}
 				self.notificationsTableView.reloadData()
 			}
+		}
+	}
+	
+	@objc
+	private func updateCellsFrom(_ notification: Notification) {
+		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
+		print("NotificationTableView: Received WebFeedIcon for \(webFeed.nameForDisplay)")
+		
+		let cell = notificationsTableView.visibleCells.filter({ ($0 as? NotificationsTableViewCell)?.feed == webFeed }).first as? NotificationsTableViewCell
+		if cell != nil {
+			if let indexPath = notificationsTableView.indexPath(for: cell!) {
+				notificationsTableView.reconfigureRows(at: [indexPath])
+				print("NotificationTableView: Reconfigured cell for \(webFeed.nameForDisplay)")
+				return
+			}
+		} else {
+			print("NotificationTableView: Cannot find cell for \(webFeed.nameForDisplay)")
 		}
 	}
 	
@@ -236,19 +253,6 @@ extension NotificationsViewController: UITableViewDelegate {
 		tableView.deselectRow(at: indexPath, animated: true)
 		if indexPath.section == 0 {
 			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
-		}
-	}
-	
-}
-
-
-extension NotificationsViewController: UITableViewDataSourcePrefetching {
-	
-	func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-		for path in indexPaths {
-			let account = AccountManager.shared.sortedActiveAccounts[path.section - 1]
-			let feed = sortedWebFeedsForAccount(account)[path.row]
-			let _ = IconImageCache.shared.imageFor(feed.feedID!)
 		}
 	}
 	

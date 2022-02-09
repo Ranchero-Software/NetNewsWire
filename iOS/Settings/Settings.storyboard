@@ -1194,7 +1194,7 @@
                             <constraint firstItem="dsQ-vy-iVG" firstAttribute="top" secondItem="2EC-mY-aSE" secondAttribute="top" id="3o7-Oa-Qhq"/>
                             <constraint firstItem="dsQ-vy-iVG" firstAttribute="leading" secondItem="32c-qn-nBM" secondAttribute="leading" id="V01-Fb-OvO"/>
                             <constraint firstItem="32c-qn-nBM" firstAttribute="trailing" secondItem="dsQ-vy-iVG" secondAttribute="trailing" id="WTV-jU-eAU"/>
-                            <constraint firstItem="dsQ-vy-iVG" firstAttribute="bottom" secondItem="32c-qn-nBM" secondAttribute="bottom" constant="34" id="nQh-bT-XE2"/>
+                            <constraint firstItem="dsQ-vy-iVG" firstAttribute="bottom" secondItem="2EC-mY-aSE" secondAttribute="bottom" id="nQh-bT-XE2"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="sdU-Jy-5dq"/>

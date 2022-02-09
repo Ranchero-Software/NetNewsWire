@@ -16,7 +16,7 @@ class NotificationsTableViewCell: VibrantBasicTableViewCell {
 	@IBOutlet weak var notificationsSwitch: UISwitch!
 	@IBOutlet weak var notificationsLabel: UILabel!
 	@IBOutlet weak var notificationsImageView: UIImageView!
-	var feed: WebFeed?
+	weak var feed: WebFeed?
 	
 	
     override func awakeFromNib() {
@@ -31,6 +31,7 @@ class NotificationsTableViewCell: VibrantBasicTableViewCell {
     }
 	
 	func configure(_ webFeed: WebFeed) {
+		print("NotificationTableView: configuring cell: \(webFeed.nameForDisplay)")
 		self.feed = webFeed
 		var isOn = false
 		if webFeed.isNotifyAboutNewArticles == nil {
@@ -43,6 +44,7 @@ class NotificationsTableViewCell: VibrantBasicTableViewCell {
 		notificationsLabel.text = webFeed.nameForDisplay
 		notificationsImageView.image = IconImageCache.shared.imageFor(webFeed.feedID!)?.image
 		notificationsImageView.layer.cornerRadius = 4
+		print("NotificationTableView: configured cell: \(webFeed.nameForDisplay)")
 	}
 	
 	@objc
