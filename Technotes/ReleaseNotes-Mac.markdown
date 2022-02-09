@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.1b3 build 6102 - 8 Feb 2022
+
+Two new themes: Hyperlegible and NewsFax
+Change in how built-in themes work: they’re part of the app bundle and they’re not copied into the Themes folder. When a built-in theme changes in a new app release, anyone using that new version gets the changes to the built-in theme
+
 ### 6.1b2 build 6101 - 17 Jan 2022
 
 Dealt with provisioning profiles, certificates, and IDs. Made notarization service happy.
