@@ -54,6 +54,10 @@ struct AppAssets {
 	static var accountTheOldReaderImage: UIImage = {
 		return UIImage(named: "accountTheOldReader")!
 	}()
+	
+	static var appBadgeImage: UIImage = {
+		return UIImage(systemName: "app.badge")!
+	}()
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
@@ -179,6 +183,10 @@ struct AppAssets {
 	
 	static var moreImage: UIImage = {
 		return UIImage(systemName: "ellipsis.circle")!
+	}()
+	
+	static var moreImageFill: UIImage = {
+		return UIImage(systemName: "ellipsis.circle.fill")!
 	}()
 	
 	static var nextArticleImage: UIImage = {

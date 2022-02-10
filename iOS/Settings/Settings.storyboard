@@ -43,8 +43,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="345.5" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="l7X-8L-61m">
-                                                    <rect key="frame" x="20" y="0.0" width="317.5" height="44"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="New Article Notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="l7X-8L-61m">
+                                                    <rect key="frame" x="20" y="0.0" width="317.5" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
@@ -1068,7 +1068,7 @@
         <!--Notifications View Controller-->
         <scene sceneID="Brh-C7-mfB">
             <objects>
-                <viewController storyboardIdentifier="NotificationsViewController" id="vak-Sx-5aB" customClass="NotificationsViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NotificationsViewController" extendedLayoutIncludesOpaqueBars="YES" modalPresentationStyle="overCurrentContext" id="vak-Sx-5aB" customClass="NotificationsViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2EC-mY-aSE">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1147,14 +1147,15 @@
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="32c-qn-nBM"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" systemColor="secondarySystemGroupedBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="dsQ-vy-iVG" firstAttribute="top" secondItem="32c-qn-nBM" secondAttribute="top" constant="-88" id="3o7-Oa-Qhq"/>
+                            <constraint firstItem="dsQ-vy-iVG" firstAttribute="top" secondItem="2EC-mY-aSE" secondAttribute="top" id="3o7-Oa-Qhq"/>
                             <constraint firstItem="dsQ-vy-iVG" firstAttribute="leading" secondItem="32c-qn-nBM" secondAttribute="leading" id="V01-Fb-OvO"/>
                             <constraint firstItem="32c-qn-nBM" firstAttribute="trailing" secondItem="dsQ-vy-iVG" secondAttribute="trailing" id="WTV-jU-eAU"/>
                             <constraint firstItem="dsQ-vy-iVG" firstAttribute="bottom" secondItem="32c-qn-nBM" secondAttribute="bottom" constant="34" id="nQh-bT-XE2"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="sdU-Jy-5dq"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="notificationsTableView" destination="dsQ-vy-iVG" id="Maw-PU-kb4"/>
@@ -1328,6 +1329,9 @@
         </systemColor>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemGroupedBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
