@@ -52,7 +52,7 @@ class NotificationsViewController: UIViewController {
 		reloadNotificationTableView()
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(updateCellsFrom(_:)), name: .WebFeedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadVisibleCells(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadNotificationTableView(_:)), name: UIScene.willEnterForegroundNotification, object: nil)
 	}
 	
@@ -87,8 +87,15 @@ class NotificationsViewController: UIViewController {
 				}
 			}
 		}
-		
 	}
+	
+	@objc
+	private func reloadVisibleCells(_ notification: Notification) {
+		if let visibleIndexPaths = notificationsTableView.indexPathsForVisibleRows {
+			notificationsTableView.reconfigureRows(at: visibleIndexPaths)
+		}
+	}
+	
 	
 	private func notificationFilterMenu() -> UIMenu {
 		
