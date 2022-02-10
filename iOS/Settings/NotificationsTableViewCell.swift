@@ -16,7 +16,7 @@ class NotificationsTableViewCell: VibrantBasicTableViewCell {
 	@IBOutlet weak var notificationsSwitch: UISwitch!
 	@IBOutlet weak var notificationsLabel: UILabel!
 	@IBOutlet weak var notificationsImageView: UIImageView!
-	var feed: WebFeed?
+	weak var feed: WebFeed?
 	
 	
     override func awakeFromNib() {
