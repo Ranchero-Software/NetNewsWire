@@ -138,7 +138,7 @@ class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case 5:
-			return traitCollection.userInterfaceIdiom == .phone ? 4 : 3
+			return 3
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
