@@ -168,15 +168,6 @@ final class AppDefaults {
 		}
 	}
 
-	var articleFullscreenAvailable: Bool {
-		get {
-			return AppDefaults.bool(for: Key.articleFullscreenAvailable)
-		}
-		set {
-			AppDefaults.setBool(for: Key.articleFullscreenAvailable, newValue)
-		}
-	}
-
 	var articleFullscreenEnabled: Bool {
 		get {
 			return AppDefaults.bool(for: Key.articleFullscreenEnabled)

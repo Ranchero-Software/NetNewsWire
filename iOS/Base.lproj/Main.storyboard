@@ -72,6 +72,11 @@
                     </toolbarItems>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="mOI-FS-AaM">
                         <rightBarButtonItems>
+                            <barButtonItem image="textformat.size" catalog="system" id="SoN-ax-tEE">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Appearance"/>
+                                </userDefinedRuntimeAttributes>
+                            </barButtonItem>
                             <barButtonItem title="Next Article" image="chevron.down" catalog="system" id="2qz-M5-Yhk">
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
@@ -96,6 +101,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="actionBarButtonItem" destination="9Ut-5B-JKP" id="9bO-kz-cTz"/>
+                        <outlet property="appearanceBarButtonItem" destination="SoN-ax-tEE" id="UZr-ut-0fn"/>
                         <outlet property="nextArticleBarButtonItem" destination="2qz-M5-Yhk" id="IQd-jx-qEr"/>
                         <outlet property="nextUnreadBarButtonItem" destination="2w5-e9-C2V" id="Ekf-My-AHN"/>
                         <outlet property="prevArticleBarButtonItem" destination="v4j-fq-23N" id="Gny-Oh-cQa"/>
@@ -421,6 +427,7 @@
         <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="115" height="128"/>
         <image name="star" catalog="system" width="128" height="116"/>
+        <image name="textformat.size" catalog="system" width="128" height="80"/>
         <namedColor name="barBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </namedColor>
