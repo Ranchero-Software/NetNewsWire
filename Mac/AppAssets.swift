@@ -150,8 +150,7 @@ struct AppAssets {
 	static var masterFolderImage: IconImage {
 		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!
-		let coloredImage = image.tinted(with: preferredColor)
-		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}
 
 	static var markAllAsReadImage: RSImage = {
@@ -226,8 +225,7 @@ struct AppAssets {
 	static var starredFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "StarColor")!
-		let coloredImage = image.tinted(with: preferredColor)
-		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
 	static var timelineSeparatorColor: NSColor = {
@@ -245,15 +243,13 @@ struct AppAssets {
 	static var todayFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "sun.max.fill", accessibilityDescription: nil)!
 		let preferredColor = NSColor.orange
-		let coloredImage = image.tinted(with: preferredColor)
-		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
 	static var unreadFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!
-		let coloredImage = image.tinted(with: preferredColor)
-		return IconImage(coloredImage, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
 	static var swipeMarkReadImage: RSImage = {

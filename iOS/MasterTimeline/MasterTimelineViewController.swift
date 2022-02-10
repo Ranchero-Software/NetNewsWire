@@ -11,21 +11,24 @@ import RSCore
 import Account
 import Articles
 
-class MasterTimelineViewController: UITableViewController, UndoableCommandRunner {
+class MasterTimelineViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
 	
-	private var refreshProgressView: RefreshProgressView?
+	private var filterButton: UIBarButtonItem!
 
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 
-	private var filterButton: UIBarButtonItem!
+	private var refreshProgressView: RefreshProgressView!
+	private var refreshProgressItemButton: UIBarButtonItem!
 	private var firstUnreadButton: UIBarButtonItem!
 
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
+	
+	var mainControllerIdentifer = MainControllerIdentifier.masterTimeline
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()
@@ -79,6 +82,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Configure the table
 		tableView.dataSource = dataSource
+		if #available(iOS 15.0, *) {
+			tableView.isPrefetchingEnabled = false
+		}
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
 		resetEstimatedRowHeight()
@@ -89,8 +95,13 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		
+
 		configureToolbar()
+
+		refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView
+		refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView!)
+
+
 		resetUI(resetScroll: true)
 		
 		// Load the table and then scroll to the saved position if available
@@ -109,15 +120,18 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
+		navigationController?.isToolbarHidden = false
+
 		// If the nav bar is hidden, fade it in to avoid it showing stuff as it is getting laid out
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
+		
+		super.viewWillAppear(animated)
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
-		coordinator.isTimelineViewControllerPending = false
 
 		if navigationController?.navigationBar.alpha == 0 {
 			UIView.animate(withDuration: 0.5) {
@@ -436,7 +450,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
 				if let cell = tableView.cellForRow(at: indexPath) as? MasterTimelineTableViewCell {
-					configure(cell, article: article)
+					configure(cell, article: article, indexPath: indexPath)
 				}
 			}
 		}
@@ -523,7 +537,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	@objc private func reloadAllVisibleCells() {
-		reconfigureCells(coordinator.articles)
+		let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
+		reloadCells(visibleArticles)
 	}
 	
 	private func reloadCells(_ articles: [Article]) {
@@ -534,15 +549,6 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		}
 	}
 
-	private func reconfigureCells(_ articles: [Article]) {
-		guard #available(iOS 15, *) else { return }
-		var snapshot = dataSource.snapshot()
-		snapshot.reconfigureItems(articles)
-		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.restoreSelectionIfNecessary(adjustScroll: false)
-		}
-	}
-	
 	// MARK: Cell Configuring
 
 	private func resetEstimatedRowHeight() {
@@ -553,7 +559,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
 		
-		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let prototypeCellData = MasterTimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, featuredImage: nil, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: false)
 		
 		if UIApplication.shared.preferredContentSizeCategory.isAccessibilityCategory {
 			let layout = MasterTimelineAccessibilityCellLayout(width: tableView.bounds.width, insets: tableView.safeAreaInsets, cellData: prototypeCellData)
@@ -603,9 +609,8 @@ extension MasterTimelineViewController: UISearchBarDelegate {
 
 private extension MasterTimelineViewController {
 
-	func configureToolbar() {
-		
-		guard !coordinator.isThreePanelMode else {
+	func configureToolbar() {		
+		guard splitViewController?.isCollapsed ?? true else {
 			return
 		}
 		
@@ -679,16 +684,9 @@ private extension MasterTimelineViewController {
 		firstUnreadButton.isEnabled = coordinator.isTimelineUnreadAvailable
 		
 		if coordinator.isRootSplitCollapsed {
-			if let toolbarItems = toolbarItems, toolbarItems.last != firstUnreadButton {
-				var items = toolbarItems
-				items.append(firstUnreadButton)
-				setToolbarItems(items, animated: false)
-			}
+			setToolbarItems([markAllAsReadButton, .flexibleSpace(), refreshProgressItemButton, .flexibleSpace(), firstUnreadButton], animated: false)
 		} else {
-			if let toolbarItems = toolbarItems, toolbarItems.last == firstUnreadButton {
-				let items = Array(toolbarItems[0..<toolbarItems.count - 1])
-				setToolbarItems(items, animated: false)
-			}
+			setToolbarItems([markAllAsReadButton, .flexibleSpace()], animated: false)
 		}
 	}
 	
@@ -719,22 +717,23 @@ private extension MasterTimelineViewController {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
 			MasterTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
 				let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MasterTimelineTableViewCell
-				self?.configure(cell, article: article)
+				self?.configure(cell, article: article, indexPath: indexPath)
 				return cell
 			})
 		dataSource.defaultRowAnimation = .middle
 		return dataSource
     }
 	
-	func configure(_ cell: MasterTimelineTableViewCell, article: Article) {
+	func configure(_ cell: MasterTimelineTableViewCell, article: Article, indexPath: IndexPath) {
 		
 		let iconImage = iconImageFor(article)
 		let featuredImage = featuredImageFor(article)
 		
 		let showFeedNames = coordinator.showFeedNames
 		let showIcon = coordinator.showIcons && iconImage != nil
-		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		let hideSeparater = indexPath.row == coordinator.articles.count - 1
 		
+		cell.cellData = MasterTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, featuredImage: featuredImage, numberOfLines: numberOfTextLines, iconSize: iconSize, hideSeparator: hideSeparater)
 	}
 	
 	func iconImageFor(_ article: Article) -> IconImage? {

@@ -71,9 +71,10 @@ class ArticleThemesTableViewController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-		guard indexPath.row != 0,
-			  let cell = tableView.cellForRow(at: indexPath),
-			  let themeName = cell.textLabel?.text else { return nil }
+		guard let cell = tableView.cellForRow(at: indexPath),
+			  let themeName = cell.textLabel?.text,
+			  let theme = ArticleThemesManager.shared.articleThemeWithThemeName(themeName),
+			  !theme.isAppTheme	else { return nil }
 
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
 		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in

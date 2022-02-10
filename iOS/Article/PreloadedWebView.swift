@@ -19,8 +19,8 @@ class PreloadedWebView: WKWebView {
 		preferences.javaScriptCanOpenWindowsAutomatically = false
 		
 		/// The defaults for `preferredContentMode` and `allowsContentJavaScript` are suitable
-		/// and don't need to be explicity set.
-		/// `allowsContentJavaScript` replaces `WKPreferences.javascriptEnbaled`.
+		/// and don't need to be explicitly set.
+		/// `allowsContentJavaScript` replaces `WKPreferences.javascriptEnabled`.
 		let webpagePreferences = WKWebpagePreferences()
 
 		let configuration = WKWebViewConfiguration()

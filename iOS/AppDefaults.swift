@@ -28,7 +28,7 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 
 final class AppDefaults {
 
-	static let defaultThemeName = "Defaults"
+	static let defaultThemeName = "Default"
 	
 	static let shared = AppDefaults()
 	private init() {}
@@ -165,15 +165,6 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
-		}
-	}
-
-	var articleFullscreenAvailable: Bool {
-		get {
-			return AppDefaults.bool(for: Key.articleFullscreenAvailable)
-		}
-		set {
-			AppDefaults.setBool(for: Key.articleFullscreenAvailable, newValue)
 		}
 	}
 

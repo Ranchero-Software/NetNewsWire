@@ -25,11 +25,6 @@ class RootSplitViewController: UISplitViewController {
 		coordinator.resetFocus()
 	}
 	
-	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-		self.coordinator.configurePanelMode(for: size)
-		super.viewWillTransition(to: size, with: coordinator)
-	}
-	
 	// MARK: Keyboard Shortcuts
 	
 	@objc func scrollOrGoToNextUnread(_ sender: Any?) {

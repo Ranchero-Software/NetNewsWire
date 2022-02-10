@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>Name</key>
-	<string>Appanoose</string>
+	<string>Hyperlegible</string>
 	<key>ThemeIdentifier</key>
-	<string>com.netnewswire.themes.starter</string>
+	<string>com.netnewswire.themes.hyperlegible</string>
 	<key>CreatorHomePage</key>
 	<string>http://netnewswire.com/</string>
 	<key>CreatorName</key>

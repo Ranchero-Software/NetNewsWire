@@ -44,6 +44,7 @@ public final class Folder: Feed, Renamable, Container, Hashable {
 	
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	public let folderID: Int // not saved: per-run only
+	public var isSyncingPaused = false
 	public var externalID: String? = nil
 	static var incrementingID = 0
 
@@ -183,8 +184,16 @@ extension Folder: OPMLRepresentable {
 			}
 		}()
 		
+		let attrPauseSyncing: String = {
+			if allowCustomAttributes && isSyncingPaused {
+				return " nnw_isSyncingPaused=\"true\""
+			} else {
+				return ""
+			}
+		}()
+		
 		let escapedTitle = nameForDisplay.escapingSpecialXMLCharacters
-		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)>\n"
+		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)\(attrPauseSyncing)>\n"
 		s = s.prepending(tabCount: indentLevel)
 
 		var hasAtLeastOneChild = false
