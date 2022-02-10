@@ -31,7 +31,6 @@ class NotificationsTableViewCell: VibrantBasicTableViewCell {
     }
 	
 	func configure(_ webFeed: WebFeed) {
-		print("NotificationTableView: configuring cell: \(webFeed.nameForDisplay)")
 		self.feed = webFeed
 		var isOn = false
 		if webFeed.isNotifyAboutNewArticles == nil {
@@ -44,7 +43,6 @@ class NotificationsTableViewCell: VibrantBasicTableViewCell {
 		notificationsLabel.text = webFeed.nameForDisplay
 		notificationsImageView.image = IconImageCache.shared.imageFor(webFeed.feedID!)?.image
 		notificationsImageView.layer.cornerRadius = 4
-		print("NotificationTableView: configured cell: \(webFeed.nameForDisplay)")
 	}
 	
 	@objc
