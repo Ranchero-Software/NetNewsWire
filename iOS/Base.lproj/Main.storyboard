@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
+                            <view hidden="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="782" width="414" height="31"/>
                                 <color key="backgroundColor" name="barBackgroundColor"/>
                             </view>
@@ -72,11 +72,6 @@
                     </toolbarItems>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="mOI-FS-AaM">
                         <rightBarButtonItems>
-                            <barButtonItem image="textformat.size" catalog="system" id="SoN-ax-tEE">
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Appearance"/>
-                                </userDefinedRuntimeAttributes>
-                            </barButtonItem>
                             <barButtonItem title="Next Article" image="chevron.down" catalog="system" id="2qz-M5-Yhk">
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="accEnabled" value="YES"/>
@@ -94,6 +89,11 @@
                                 <connections>
                                     <action selector="prevArticle:" destination="JEX-9P-axG" id="cMZ-tk-I4W"/>
                                 </connections>
+                            </barButtonItem>
+                            <barButtonItem image="textformat.size" catalog="system" id="SoN-ax-tEE">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Appearance"/>
+                                </userDefinedRuntimeAttributes>
                             </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
