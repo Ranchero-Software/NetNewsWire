@@ -249,6 +249,10 @@ struct AppAssets {
 		let image = UIImage(systemName: "star.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.starColor.cgColor)
 	}
+	
+	static var themeImage: UIImage = {
+		return UIImage(systemName: "doc.richtext")!
+	}()
 
 	static var tickMarkColor: UIColor = {
 		return UIColor(named: "tickMarkColor")!

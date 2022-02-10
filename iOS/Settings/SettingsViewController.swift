@@ -80,12 +80,6 @@ class SettingsViewController: UITableViewController {
 		} else {
 			confirmMarkAllAsReadSwitch.isOn = false
 		}
-
-		if AppDefaults.shared.articleFullscreenAvailable {
-			showFullscreenArticlesSwitch.isOn = true
-		} else {
-			showFullscreenArticlesSwitch.isOn = false
-		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
@@ -144,7 +138,7 @@ class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case 5:
-			return traitCollection.userInterfaceIdiom == .phone ? 4 : 3
+			return 3
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -353,14 +347,6 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.confirmMarkAllAsRead = true
 		} else {
 			AppDefaults.shared.confirmMarkAllAsRead = false
-		}
-	}
-	
-	@IBAction func switchFullscreenArticles(_ sender: Any) {
-		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.shared.articleFullscreenAvailable = true
-		} else {
-			AppDefaults.shared.articleFullscreenAvailable = false
 		}
 	}
 	
