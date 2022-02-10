@@ -40,6 +40,7 @@ class NotificationsViewController: UIViewController {
 		title = NSLocalizedString("New Article Notifications", comment: "Notifications")
 		
 		navigationItem.searchController = searchController
+		notificationsTableView.isPrefetchingEnabled = false
 		
 		filterButton = UIBarButtonItem(
 			title: nil,
@@ -75,18 +76,18 @@ class NotificationsViewController: UIViewController {
 		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
 		
 		if let visibleIndexPaths = notificationsTableView.indexPathsForVisibleRows {
-			prefetchedIndexPaths.formUnion(visibleIndexPaths)
-		}
-		let allIndexPaths = Array(prefetchedIndexPaths)
-		
-		for path in allIndexPaths {
-			if let cell = notificationsTableView.cellForRow(at: path) as? NotificationsTableViewCell {
-				if cell.feed! == webFeed {
-					notificationsTableView.reconfigureRows(at: [path])
-					return
+			for path in visibleIndexPaths {
+				if let cell = notificationsTableView.cellForRow(at: path) as? NotificationsTableViewCell {
+					if cell.feed! == webFeed {
+						notificationsTableView.reconfigureRows(at: [path])
+						
+						return
+					}
 				}
 			}
 		}
+		
+		
 	}
 	
 	@objc
