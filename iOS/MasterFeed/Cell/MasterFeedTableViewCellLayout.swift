@@ -44,7 +44,7 @@ struct MasterFeedTableViewCellLayout {
 		var rDisclosure = CGRect.zero
 		if shouldShowDisclosure {
 			rDisclosure.size = MasterFeedTableViewCellLayout.disclosureButtonSize
-			rDisclosure.origin.x = bounds.origin.x
+			rDisclosure.origin.x = insets.left
 		}
 
 		// Favicon
@@ -73,7 +73,7 @@ struct MasterFeedTableViewCellLayout {
 		}
 		
 		// Title
-		var rLabelx = MasterFeedTableViewCellLayout.disclosureButtonSize.width
+		var rLabelx = MasterFeedTableViewCellLayout.disclosureButtonSize.width + insets.left
 		if itemIsInFolder {
 			rLabelx += MasterFeedTableViewCellLayout.disclosureButtonSize.width - (rFavicon.width / 2)
 		}

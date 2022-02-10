@@ -13,7 +13,7 @@ import RSCore
 import RSTree
 import SafariServices
 
-class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
+class MasterFeedViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	private var refreshProgressView: RefreshProgressView?
@@ -23,9 +23,11 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 		}
 	}
 
-	var undoableCommands = [UndoableCommand]()
-	weak var coordinator: SceneCoordinator!
+	var mainControllerIdentifer = MainControllerIdentifier.masterFeed
 	
+	weak var coordinator: SceneCoordinator!
+	var undoableCommands = [UndoableCommand]()
+
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 		
@@ -78,6 +80,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner {
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
+		navigationController?.isToolbarHidden = false		
 		updateUI()
 		super.viewWillAppear(animated)
 	}

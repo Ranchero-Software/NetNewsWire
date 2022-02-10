@@ -30,6 +30,7 @@ final class WebFeedMetadata: Codable {
 		case sinceToken
 		case externalID = "subscriptionID"
 		case folderRelationship
+		case isSyncingPaused
 	}
 
 	var webFeedID: String {
@@ -133,6 +134,14 @@ final class WebFeedMetadata: Codable {
 		didSet {
 			if folderRelationship != oldValue {
 				valueDidChange(.folderRelationship)
+			}
+		}
+	}
+	
+	var isSyncingPaused: Bool? {
+		didSet {
+			if isSyncingPaused != oldValue {
+				valueDidChange(.isSyncingPaused)
 			}
 		}
 	}

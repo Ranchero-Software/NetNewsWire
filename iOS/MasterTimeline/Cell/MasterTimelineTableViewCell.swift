@@ -82,7 +82,6 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 	}
 
 	override func layoutSubviews() {
-		
 		super.layoutSubviews()
 		
 		let layout = updatedLayout(width: bounds.width)
@@ -94,8 +93,6 @@ class MasterTimelineTableViewCell: VibrantTableViewCell {
 		setFrame(for: summaryView, rect: layout.summaryRect)
 		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
 		dateView.setFrameIfNotEqual(layout.dateRect)
-
-		separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 	}
 	
 	func setIconImage(_ image: IconImage) {
@@ -272,6 +269,14 @@ private extension MasterTimelineTableViewCell {
 		accessibilityLabel = label
 	}
 	
+	func updateSeparator() {
+		if cellData?.hideSeparator ?? false {
+			separatorInset = UIEdgeInsets(top: 0, left: bounds.width + 1, bottom: 0, right: 0)
+		} else {
+			separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+		}
+	}
+	
 	func makeIconEmpty() {
 		if iconView.iconImage != nil {
 			iconView.iconImage = nil
@@ -305,6 +310,7 @@ private extension MasterTimelineTableViewCell {
 		updateStarView()
 		updateIconImage()
 		updateAccessiblityLabel()
+		updateSeparator()
 	}
 	
 }

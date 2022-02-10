@@ -204,6 +204,8 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>NetNewsWire Theme</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>

@@ -12,19 +12,20 @@ import Account
 import Articles
 import SafariServices
 
-class ArticleViewController: UIViewController {
+class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	
 	typealias State = (extractedArticle: ExtractedArticle?,
-		isShowingExtractedArticle: Bool,
-		articleExtractorButtonState: ArticleExtractorButtonState,
-		windowScrollY: Int)
-
+					   isShowingExtractedArticle: Bool,
+					   articleExtractorButtonState: ArticleExtractorButtonState,
+					   windowScrollY: Int)
+	
 	@IBOutlet private weak var nextUnreadBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var prevArticleBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var nextArticleBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var readBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
+	@IBOutlet private weak var appearanceBarButtonItem: UIBarButtonItem!
 	
 	@IBOutlet private var searchBar: ArticleSearchBar!
 	@IBOutlet private var searchBarBottomConstraint: NSLayoutConstraint!
@@ -43,7 +44,11 @@ class ArticleViewController: UIViewController {
 		return button
 	}()
 	
+	var mainControllerIdentifer = MainControllerIdentifier.article
+	
 	weak var coordinator: SceneCoordinator!
+	
+	private let poppableDelegate = PoppableGestureRecognizerDelegate()
 	
 	var article: Article? {
 		didSet {
@@ -84,34 +89,33 @@ class ArticleViewController: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
+		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-
-		let fullScreenTapZone = UIView()
-		NSLayoutConstraint.activate([
-			fullScreenTapZone.widthAnchor.constraint(equalToConstant: 150),
-			fullScreenTapZone.heightAnchor.constraint(equalToConstant: 44)
-		])
-		fullScreenTapZone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapNavigationBar)))
-		navigationItem.titleView = fullScreenTapZone
+		NotificationCenter.default.addObserver(self, selector: #selector(reloadDueToThemeChange(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(configureAppearanceMenu(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 		
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
 		
+		if let parentNavController = navigationController?.parent as? UINavigationController {
+			poppableDelegate.navigationController = parentNavController
+			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
+		}
+		
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
-
+		
 		// This code is to disallow paging if we scroll from the left edge.  If this code is removed
 		// PoppableGestureRecognizerDelegate will allow us to both navigate back and page back at the
 		// same time. That is really weird when it happens.
 		let panGestureRecognizer = UIPanGestureRecognizer()
 		panGestureRecognizer.delegate = self
 		pageViewController.scrollViewInsidePageControl?.addGestureRecognizer(panGestureRecognizer)
-
+		
 		pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(pageViewController.view)
 		addChild(pageViewController!)
@@ -121,7 +125,7 @@ class ArticleViewController: UIViewController {
 			view.topAnchor.constraint(equalTo: pageViewController.view.topAnchor),
 			view.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor)
 		])
-				
+		
 		let controller: WebViewController
 		if let state = restoreState {
 			controller = createWebViewController(article, updateView: false)
@@ -136,13 +140,10 @@ class ArticleViewController: UIViewController {
 		if let rsp = restoreScrollPosition {
 			controller.setScrollPosition(isShowingExtractedArticle: rsp.isShowingExtractedArticle, articleWindowScrollY: rsp.articleWindowScrollY)
 		}
-
+		
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
 		
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
-		if AppDefaults.shared.articleFullscreenEnabled {
-			controller.hideBars()
-		}
 		
 		// Search bar
 		searchBar.translatesAutoresizingMaskIntoConstraints = false
@@ -152,15 +153,21 @@ class ArticleViewController: UIViewController {
 		searchBar.delegate = self
 		view.bringSubviewToFront(searchBar)
 		
+		configureAppearanceMenu()
 		updateUI()
 	}
-
-	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(true)
-		coordinator.isArticleViewControllerPending = false
+	
+	override func viewWillAppear(_ animated: Bool) {
+		navigationController?.isToolbarHidden = false
+		if AppDefaults.shared.articleFullscreenEnabled {
+			currentWebViewController?.hideBars()
+		}
+		
+		super.viewWillAppear(animated)
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
 		if searchBar != nil && !searchBar.isHidden {
 			endFind()
 		}
@@ -181,14 +188,16 @@ class ArticleViewController: UIViewController {
 			readBarButtonItem.isEnabled = false
 			starBarButtonItem.isEnabled = false
 			actionBarButtonItem.isEnabled = false
+			appearanceBarButtonItem.isEnabled = false
 			return
 		}
-
+		
 		nextUnreadBarButtonItem.isEnabled = coordinator.isAnyUnreadAvailable
 		prevArticleBarButtonItem.isEnabled = coordinator.isPrevArticleAvailable
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
+		appearanceBarButtonItem.isEnabled = true
 		
 		let permalinkPresent = article.preferredLink != nil
 		var isFeedProvider = false
@@ -218,6 +227,66 @@ class ArticleViewController: UIViewController {
 		
 	}
 	
+	override func contentScrollView(for edge: NSDirectionalRectEdge) -> UIScrollView? {
+		return currentWebViewController?.webView?.scrollView
+	}
+	
+	@objc
+	func configureAppearanceMenu(_ sender: Any? = nil) {
+		
+		var themeActions = [UIAction]()
+		
+		for themeName in ArticleThemesManager.shared.themeNames {
+			let action = UIAction(title: themeName,
+								  image: nil,
+								  identifier: nil,
+								  discoverabilityTitle: nil,
+								  attributes: [],
+								  state: ArticleThemesManager.shared.currentThemeName == themeName ? .on : .off,
+								  handler: { action in
+				ArticleThemesManager.shared.currentThemeName = themeName
+			})
+			themeActions.append(action)
+		}
+		
+		let defaultThemeAction = UIAction(title: NSLocalizedString("Default", comment: "Default"), image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: ArticleThemesManager.shared.currentThemeName == AppDefaults.defaultThemeName ? .on : .off) { _ in
+			ArticleThemesManager.shared.currentThemeName = AppDefaults.defaultThemeName
+		}
+		themeActions.append(defaultThemeAction)
+		
+		let themeMenu = UIMenu(title: "Theme", image: AppAssets.themeImage, identifier: nil, options: .singleSelection, children: themeActions)
+		themeMenu.subtitle = NSLocalizedString("Change the look of articles.", comment: "Change theme")
+		
+		var children: [UIMenuElement] = [themeMenu]
+		
+		if let currentWebViewController = currentWebViewController {
+			if currentWebViewController.isFullScreenAvailable {
+				let fullScreenAction = UIAction(title: NSLocalizedString("Full Screen", comment: "Full Screen"),
+												image: UIImage(systemName: "arrow.up.backward.and.arrow.down.forward"),
+												identifier: nil,
+												discoverabilityTitle: nil,
+												attributes: [],
+												state: .off) { [weak self] _ in
+					self?.currentWebViewController?.hideBars()
+				}
+				fullScreenAction.subtitle = NSLocalizedString("Tap the top of the screen to exit Full Screen.", comment: "Exit criteria.")
+				children.append(fullScreenAction)
+			}
+		}
+		
+		let appearanceMenu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), image: UIImage(systemName: "textformat.size") , identifier: nil, options: .displayInline, children: children)
+		
+		appearanceBarButtonItem.menu = appearanceMenu
+		
+	}
+	
+	@objc
+	func reloadDueToThemeChange(_ notification: Notification) {
+		currentWebViewController?.fullReload()
+		configureAppearanceMenu()
+	}
+	
+	
 	// MARK: Notifications
 	
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
@@ -235,7 +304,7 @@ class ArticleViewController: UIViewController {
 			updateUI()
 		}
 	}
-
+	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		currentWebViewController?.fullReload()
 	}
@@ -248,15 +317,11 @@ class ArticleViewController: UIViewController {
 	}
 	
 	// MARK: Actions
-
-	@objc func didTapNavigationBar() {
-		currentWebViewController?.hideBars()
-	}
-
+	
 	@objc func showBars(_ sender: Any) {
 		currentWebViewController?.showBars()
 	}
-
+	
 	@IBAction func toggleArticleExtractor(_ sender: Any) {
 		currentWebViewController?.toggleArticleExtractor()
 	}
@@ -284,35 +349,35 @@ class ArticleViewController: UIViewController {
 	@IBAction func showActivityDialog(_ sender: Any) {
 		currentWebViewController?.showActivityDialog(popOverBarButtonItem: actionBarButtonItem)
 	}
-
+	
 	@objc func toggleReaderView(_ sender: Any?) {
 		currentWebViewController?.toggleArticleExtractor()
 	}
 	
 	// MARK: Keyboard Shortcuts
-
+	
 	@objc func navigateToTimeline(_ sender: Any?) {
 		coordinator.navigateToTimeline()
 	}
 	
 	// MARK: API
-
+	
 	func focus() {
 		currentWebViewController?.focus()
 	}
-
+	
 	func canScrollDown() -> Bool {
 		return currentWebViewController?.canScrollDown() ?? false
 	}
-
+	
 	func canScrollUp() -> Bool {
 		return currentWebViewController?.canScrollUp() ?? false
 	}
-
+	
 	func scrollPageDown() {
 		currentWebViewController?.scrollPageDown()
 	}
-
+	
 	func scrollPageUp() {
 		currentWebViewController?.scrollPageUp()
 	}
@@ -320,7 +385,7 @@ class ArticleViewController: UIViewController {
 	func stopArticleExtractorIfProcessing() {
 		currentWebViewController?.stopArticleExtractorIfProcessing()
 	}
-
+	
 	func openInAppBrowser() {
 		currentWebViewController?.openInAppBrowser()
 	}
@@ -387,9 +452,9 @@ extension ArticleViewController {
 	
 	@objc func keyboardWillChangeFrame(_ notification: Notification) {
 		if !searchBar.isHidden,
-			let duration = notification.userInfo?[UIWindow.keyboardAnimationDurationUserInfoKey] as? Double,
-			let curveRaw = notification.userInfo?[UIWindow.keyboardAnimationCurveUserInfoKey] as? UInt,
-			let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
+		   let duration = notification.userInfo?[UIWindow.keyboardAnimationDurationUserInfoKey] as? Double,
+		   let curveRaw = notification.userInfo?[UIWindow.keyboardAnimationCurveUserInfoKey] as? UInt,
+		   let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
 			
 			let curve = UIView.AnimationOptions(rawValue: curveRaw)
 			let newHeight = view.safeAreaLayoutGuide.layoutFrame.maxY - frame.minY
@@ -422,19 +487,19 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 	
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
 		guard let webViewController = viewController as? WebViewController,
-			let currentArticle = webViewController.article,
-			let article = coordinator.findPrevArticle(currentArticle) else {
-			return nil
-		}
+			  let currentArticle = webViewController.article,
+			  let article = coordinator.findPrevArticle(currentArticle) else {
+				  return nil
+			  }
 		return createWebViewController(article)
 	}
 	
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
 		guard let webViewController = viewController as? WebViewController,
-			let currentArticle = webViewController.article,
-			let article = coordinator.findNextArticle(currentArticle) else {
-			return nil
-		}
+			  let currentArticle = webViewController.article,
+			  let article = coordinator.findNextArticle(currentArticle) else {
+				  return nil
+			  }
 		return createWebViewController(article)
 	}
 	
@@ -443,7 +508,7 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 // MARK: UIPageViewControllerDelegate
 
 extension ArticleViewController: UIPageViewControllerDelegate {
-
+	
 	func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
 		guard finished, completed else { return }
 		guard let article = currentWebViewController?.article else { return }
@@ -460,17 +525,17 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 
 extension ArticleViewController: UIGestureRecognizerDelegate {
 	
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
-
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+		return true
+	}
+	
+	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		let point = gestureRecognizer.location(in: nil)
 		if point.x > 40 {
 			return true
 		}
 		return false
-    }
+	}
 	
 }
 

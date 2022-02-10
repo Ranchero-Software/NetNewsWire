@@ -508,6 +508,9 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			} else {
 				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
 					folder.externalID = item.attributes?["nnw_externalID"] as? String
+					if let isSyncingPaused = item.attributes?["nnw_isSyncingPaused"] as? String, isSyncingPaused == "true" {
+						folder.isSyncingPaused = true
+					}
 					item.children?.forEach { itemChild in
 						if let feedSpecifier = itemChild.feedSpecifier {
 							folder.addWebFeed(newWebFeed(with: feedSpecifier))
