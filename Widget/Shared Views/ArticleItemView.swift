@@ -11,6 +11,8 @@ import RSWeb
 
 struct ArticleItemView: View {
 	
+	
+	
 	var article: LatestArticle
 	var deepLink: URL
 	@State private var iconImage: UIImage?
@@ -49,7 +51,13 @@ struct ArticleItemView: View {
 				}
 			})
 		}).onAppear {
-			iconImage = thumbnail(article.feedIcon)
+			guard let feedIconPath = article.feedIconPath else {
+				iconImage = thumbnail(nil)
+				return
+			}
+			let path = URL(fileURLWithPath: feedIconPath)
+			let data = try? Data(contentsOf: path)
+			iconImage = thumbnail(data)
 		}
 	}
 	
@@ -74,4 +82,5 @@ struct ArticleItemView: View {
 		
 		return displayFormatter.string(from: date)
 	}
+	
 }
