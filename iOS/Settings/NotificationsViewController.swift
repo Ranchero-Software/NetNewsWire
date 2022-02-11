@@ -77,7 +77,7 @@ class NotificationsViewController: UIViewController {
 			for path in visibleIndexPaths {
 				if let cell = notificationsTableView.cellForRow(at: path) as? NotificationsTableViewCell {
 					if cell.feed! == webFeed {
-						notificationsTableView.reconfigureRows(at: [path])
+						cell.configure(webFeed)
 						return
 					}
 				}
@@ -87,8 +87,20 @@ class NotificationsViewController: UIViewController {
 	
 	@objc
 	private func reloadVisibleCells(_ notification: Notification) {
-		if let visibleIndexPaths = notificationsTableView.indexPathsForVisibleRows {
-			notificationsTableView.reconfigureRows(at: visibleIndexPaths)
+		guard let faviconURLString = notification.userInfo?["faviconURL"] as? String,
+			  let faviconHost = URL(string: faviconURLString)?.host else {
+				  return
+			  }
+	
+		for cell in notificationsTableView.visibleCells {
+			if let notificationCell = cell as? NotificationsTableViewCell {
+				if let feedURLHost = URL(string: notificationCell.feed!.url)?.host {
+					if faviconHost == feedURLHost {
+						notificationCell.configure(notificationCell.feed!)
+						return
+					}
+				}
+			}
 		}
 	}
 	
