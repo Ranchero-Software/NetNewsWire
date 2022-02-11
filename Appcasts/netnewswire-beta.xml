@@ -7,6 +7,17 @@
         <language>en</language>
 
 		<item>
+            <title>NetNewsWire 6.1b3</title>
+            <description><![CDATA[
+<p>Two new themes: Hyperlegible and NewsFax</p>
+<p>Change in how built-in themes work: they’re part of the app bundle and they’re not copied into the Themes folder. When a built-in theme changes in a new app release, anyone using that new version gets the changes to the built-in theme</p>
+			]]></description>
+            <pubDate>Thu, 10 Feb 2022 21:35:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1b3/NetNewsWire6.1b3.zip" sparkle:version="6102" sparkle:shortVersionString="6.1b3" length="10893987" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+		<item>
             <title>NetNewsWire 6.1b2</title>
             <description><![CDATA[
 <p>Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences or by adding the theme switcher to the toolbar.</p>
