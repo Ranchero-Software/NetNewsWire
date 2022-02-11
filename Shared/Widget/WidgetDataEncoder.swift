@@ -30,7 +30,6 @@ public final class WidgetDataEncoder {
 	private init () {
 		if imageContainer != nil {
 			try? FileManager.default.createDirectory(at: imageContainer!, withIntermediateDirectories: true, attributes: nil)
-			print(imageContainer!)
 		}
 	}
 	
