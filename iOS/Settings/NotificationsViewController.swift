@@ -33,7 +33,6 @@ class NotificationsViewController: UIViewController {
 		}
 	}
 	private var filterButton: UIBarButtonItem!
-	private var prefetchedIndexPaths = Set<IndexPath>()
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -74,26 +73,34 @@ class NotificationsViewController: UIViewController {
 	@objc
 	private func updateCellsFrom(_ notification: Notification) {
 		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else { return }
-		
 		if let visibleIndexPaths = notificationsTableView.indexPathsForVisibleRows {
 			for path in visibleIndexPaths {
 				if let cell = notificationsTableView.cellForRow(at: path) as? NotificationsTableViewCell {
 					if cell.feed! == webFeed {
-						notificationsTableView.reconfigureRows(at: [path])
-						
+						cell.configure(webFeed)
 						return
 					}
 				}
 			}
 		}
-		
-		
 	}
 	
 	@objc
 	private func reloadVisibleCells(_ notification: Notification) {
-		if let visibleIndexPaths = notificationsTableView.indexPathsForVisibleRows {
-			notificationsTableView.reconfigureRows(at: visibleIndexPaths)
+		guard let faviconURLString = notification.userInfo?["faviconURL"] as? String,
+			  let faviconHost = URL(string: faviconURLString)?.host else {
+				  return
+			  }
+	
+		for cell in notificationsTableView.visibleCells {
+			if let notificationCell = cell as? NotificationsTableViewCell {
+				if let feedURLHost = URL(string: notificationCell.feed!.url)?.host {
+					if faviconHost == feedURLHost {
+						notificationCell.configure(notificationCell.feed!)
+						return
+					}
+				}
+			}
 		}
 	}
 	
@@ -228,19 +235,16 @@ extension NotificationsViewController: UITableViewDataSource {
 				let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
 				let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
 				cell.configure(filteredWebFeeds(searchController.searchBar.text, account: account)[indexPath.row])
-				prefetchedIndexPaths.insert(indexPath)
 				return cell
 			} else if newArticleNotificationFilter == true {
 				let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
 				let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
 				cell.configure(feedsWithNotificationsEnabled(account)[indexPath.row])
-				prefetchedIndexPaths.insert(indexPath)
 				return cell
 			} else {
 				let cell = tableView.dequeueReusableCell(withIdentifier: "NotificationsCell") as! NotificationsTableViewCell
 				let account = AccountManager.shared.sortedActiveAccounts[indexPath.section - 1]
 				cell.configure(sortedWebFeedsForAccount(account)[indexPath.row])
-				prefetchedIndexPaths.insert(indexPath)
 				return cell
 			}
 		}
