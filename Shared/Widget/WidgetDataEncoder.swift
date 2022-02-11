@@ -23,13 +23,20 @@ public final class WidgetDataEncoder {
 	private var backgroundTaskID: UIBackgroundTaskIdentifier!
 	private lazy var appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 	private lazy var containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
+	private lazy var imageContainer = containerURL?.appendingPathComponent("widgetImages", isDirectory: true)
 	private lazy var dataURL = containerURL?.appendingPathComponent("widget-data.json")
 	
 	static let shared = WidgetDataEncoder()
-	private init () {}
+	private init () {
+		if imageContainer != nil {
+			try? FileManager.default.createDirectory(at: imageContainer!, withIntermediateDirectories: true, attributes: nil)
+			print(imageContainer!)
+		}
+	}
 	
 	@available(iOS 14, *)
 	func encodeWidgetData() throws {
+		flushSharedContainer()
 		os_log(.debug, log: log, "Starting encoding widget data.")
 		
 		do {
@@ -46,7 +53,7 @@ public final class WidgetDataEncoder {
 												  feedTitle: article.sortableName,
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
-												  feedIcon: article.iconImage()?.image.dataRepresentation(),
+												  feedIconPath: writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
 												  pubDate: article.datePublished?.description ?? "")
 				unread.append(latestArticle)
 			}
@@ -56,7 +63,7 @@ public final class WidgetDataEncoder {
 												  feedTitle: article.sortableName,
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
-												  feedIcon: article.iconImage()?.image.dataRepresentation(),
+												  feedIconPath: writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
 												  pubDate: article.datePublished?.description ?? "")
 				starred.append(latestArticle)
 			}
@@ -66,7 +73,7 @@ public final class WidgetDataEncoder {
 												  feedTitle: article.sortableName,
 												  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
 												  articleSummary: article.summary,
-												  feedIcon: article.iconImage()?.image.dataRepresentation(),
+												  feedIconPath: writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
 												  pubDate: article.datePublished?.description ?? "")
 				today.append(latestArticle)
 			}
@@ -111,6 +118,29 @@ public final class WidgetDataEncoder {
 	
 	private func fileExists() -> Bool {
 		FileManager.default.fileExists(atPath: dataURL!.path)
+	}
+	
+	private func writeImageDataToSharedContainer(_ imageData: Data?) -> String? {
+		if imageData == nil { return nil }
+		// Each image gets a UUID
+		let uuid = UUID().uuidString
+		if let imagePath = imageContainer?.appendingPathComponent(uuid, isDirectory: false) {
+			do {
+				try imageData!.write(to: imagePath)
+				return imagePath.path
+			} catch {
+				return nil
+			}
+		}
+		
+		return nil
+	}
+	
+	private func flushSharedContainer() {
+		if let imageContainer = imageContainer {
+			try? FileManager.default.removeItem(atPath: imageContainer.path)
+			try? FileManager.default.createDirectory(at: imageContainer, withIntermediateDirectories: true, attributes: nil)
+		}
 	}
 	
 }

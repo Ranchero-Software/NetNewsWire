@@ -26,7 +26,7 @@ struct LatestArticle: Codable, Identifiable {
 	let feedTitle: String
 	let articleTitle: String?
 	let articleSummary: String?
-	let feedIcon: Data? // Base64 encoded image data
+	let feedIconPath: String? // Path to image data in shared container.
 	let pubDate: String
 	
 }
