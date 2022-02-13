@@ -260,9 +260,10 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		let defaultThemeAction = UIAction(title: NSLocalizedString("Default", comment: "Default"), image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: ArticleThemesManager.shared.currentThemeName == AppDefaults.defaultThemeName ? .on : .off) { _ in
 			ArticleThemesManager.shared.currentThemeName = AppDefaults.defaultThemeName
 		}
-		themeActions.append(defaultThemeAction)
+		let defaultThemeMenu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [defaultThemeAction])
+		let customThemeMenu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: themeActions)
 		
-		let themeMenu = UIMenu(title: "Theme", image: AppAssets.themeImage, identifier: nil, options: .singleSelection, children: themeActions)
+		let themeMenu = UIMenu(title: "Theme", image: AppAssets.themeImage, identifier: nil, options: .singleSelection, children: [ defaultThemeMenu, customThemeMenu])
 		themeMenu.subtitle = NSLocalizedString("Change the look of articles.", comment: "Change theme")
 		
 		var children: [UIMenuElement] = [themeMenu]
