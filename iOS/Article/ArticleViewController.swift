@@ -295,13 +295,15 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	}
 	
 	public func updateUnreadCountIndicator() {
-		if currentUnreadCount > 0 {
-			let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
-			unreadCountView.unreadCount = currentUnreadCount
-			unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
-			navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
-		} else {
-			navigationItem.leftBarButtonItem = nil
+		if UIDevice.current.userInterfaceIdiom == .phone {
+			if currentUnreadCount > 0 {
+				let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
+				unreadCountView.unreadCount = currentUnreadCount
+				unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
+				navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
+			} else {
+				navigationItem.leftBarButtonItem = nil
+			}
 		}
 	}
 	
