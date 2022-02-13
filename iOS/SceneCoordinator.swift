@@ -822,7 +822,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
-
 		masterTimelineViewController?.updateArticleSelection(animations: animations)
 		articleViewController?.article = article
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
@@ -1404,6 +1403,7 @@ private extension SceneCoordinator {
 			}
 		}
 		timelineUnreadCount = count
+		articleViewController?.currentUnreadCount = timelineUnreadCount
 	}
 	
 	func rebuildArticleDictionaries() {

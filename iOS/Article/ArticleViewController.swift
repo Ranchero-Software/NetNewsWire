@@ -87,6 +87,12 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		return keyboardManager.keyCommands
 	}
 	
+	var currentUnreadCount: Int = 0 {
+		didSet {
+			updateUnreadCountIndicator()
+		}
+	}
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
@@ -227,25 +233,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
 		}
 		
-		configureUnreadCountView()
-		
-	}
-	
-	func configureUnreadCountView() {
-		guard let controllers = poppableDelegate.navigationController?.viewControllers,
-			  controllers.count >= 2 else {  return }
-		for controller in controllers {
-			if let feedController = controller as? MasterFeedViewController {
-				if feedController.coordinator.timelineUnreadCount > 0 {
-					let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
-					unreadCountView.unreadCount = feedController.coordinator.timelineUnreadCount
-					unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
-					navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
-				} else {
-					navigationItem.leftBarButtonItem = nil
-				}
-			}
-		}
 	}
 	
 	override func contentScrollView(for edge: NSDirectionalRectEdge) -> UIScrollView? {
@@ -305,6 +292,17 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	func reloadDueToThemeChange(_ notification: Notification) {
 		currentWebViewController?.fullReload()
 		configureAppearanceMenu()
+	}
+	
+	public func updateUnreadCountIndicator() {
+		if currentUnreadCount > 0 {
+			let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
+			unreadCountView.unreadCount = currentUnreadCount
+			unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
+			navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
+		} else {
+			navigationItem.leftBarButtonItem = nil
+		}
 	}
 	
 	
