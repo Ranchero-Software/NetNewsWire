@@ -87,6 +87,12 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		return keyboardManager.keyCommands
 	}
 	
+	var currentUnreadCount: Int = 0 {
+		didSet {
+			updateUnreadCountIndicator()
+		}
+	}
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
@@ -104,6 +110,8 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 			poppableDelegate.navigationController = parentNavController
 			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
 		}
+		
+		navigationItem.leftItemsSupplementBackButton = true
 		
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
@@ -285,6 +293,20 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		currentWebViewController?.fullReload()
 		configureAppearanceMenu()
 	}
+	
+	public func updateUnreadCountIndicator() {
+		if UIDevice.current.userInterfaceIdiom == .phone {
+			if currentUnreadCount > 0 {
+				let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
+				unreadCountView.unreadCount = currentUnreadCount
+				unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
+				navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
+			} else {
+				navigationItem.leftBarButtonItem = nil
+			}
+		}
+	}
+	
 	
 	
 	// MARK: Notifications
