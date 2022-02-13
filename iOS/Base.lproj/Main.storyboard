@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view hidden="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="782" width="414" height="31"/>
                                 <color key="backgroundColor" name="barBackgroundColor"/>
                             </view>
@@ -90,7 +90,7 @@
                                     <action selector="prevArticle:" destination="JEX-9P-axG" id="cMZ-tk-I4W"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem image="textformat.size" catalog="system" id="SoN-ax-tEE">
+                            <barButtonItem image="ellipsis.circle" catalog="system" id="SoN-ax-tEE">
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Appearance"/>
                                 </userDefinedRuntimeAttributes>
@@ -420,6 +420,7 @@
         <image name="chevron.down.circle" catalog="system" width="128" height="121"/>
         <image name="chevron.up" catalog="system" width="128" height="72"/>
         <image name="circle" catalog="system" width="128" height="121"/>
+        <image name="ellipsis.circle" catalog="system" width="128" height="121"/>
         <image name="gear" catalog="system" width="128" height="119"/>
         <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="121"/>
         <image name="markAllAsRead" width="13" height="20"/>
@@ -427,7 +428,6 @@
         <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <image name="square.and.arrow.up.fill" catalog="system" width="115" height="128"/>
         <image name="star" catalog="system" width="128" height="116"/>
-        <image name="textformat.size" catalog="system" width="128" height="80"/>
         <namedColor name="barBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </namedColor>

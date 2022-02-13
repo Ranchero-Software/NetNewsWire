@@ -51,6 +51,7 @@ final class AppDefaults {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let articleFullscreenAvailable = "articleFullscreenAvailable"
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
+		static let hasUsedFullScreenPreviously = "hasUsedFullScreenPreviously"
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
@@ -120,6 +121,15 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.activeExtensionPointIDs)
+		}
+	}
+	
+	var hasUsedFullScreenPreviously: Bool {
+		get {
+			return UserDefaults.standard.bool(forKey: Key.hasUsedFullScreenPreviously)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.hasUsedFullScreenPreviously)
 		}
 	}
 	
