@@ -263,6 +263,7 @@ figure {
 }
 
 figcaption {
+	margin-top: 0.5em;
 	font-size: 14px;
 	line-height: 1.3em;
 }
