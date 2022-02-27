@@ -1,4 +1,4 @@
-The NewsFax themes uses the ModeSeven font throughout, which is available as Freeware.
+The NewsFax themes uses the ModeSeven font throughout, which is available as Freeware. It also includes additional edits from [schriftgestalt](https://github.com/schriftgestalt).
 
 Find out more [here](https://www.fontspace.com/modeseven-font-f2369).
 
@@ -17,3 +17,4 @@ Teletext font created by James Fidell, and included in xbeeb (a BBC
 Micro emulator for UNIX/X11). The spacing of the original has been 
 preserved, which is why many character shapes are aligned to the right 
 of their cells.
+

@@ -1054,7 +1054,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return timelineFeed == feed
 	}
 
-	func discloseWebFeed(_ webFeed: WebFeed, animations: Animations = [], completion: (() -> Void)? = nil) {
+	func discloseWebFeed(_ webFeed: WebFeed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
 		if isSearching {
 			masterTimelineViewController?.hideSearch()
 		}
@@ -1078,7 +1078,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
 		}
 
-		rebuildBackingStores(completion:  {
+		rebuildBackingStores(initialLoad: initialLoad, completion:  {
 			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(webFeed, animations: animations, completion: completion)
 		})
@@ -2108,7 +2108,7 @@ private extension SceneCoordinator {
 				return
 			}
 			
-			self.discloseWebFeed(webFeed) {
+			self.discloseWebFeed(webFeed, initialLoad: true) {
 				self.masterFeedViewController.focus()
 			}
 		}
