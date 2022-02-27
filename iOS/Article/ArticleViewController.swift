@@ -265,9 +265,8 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		let customThemeMenu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: themeActions)
 		
 		let themeMenu = UIMenu(title: "Theme", image: AppAssets.themeImage, identifier: nil, options: .singleSelection, children: [ defaultThemeMenu, customThemeMenu])
-		themeMenu.subtitle = NSLocalizedString("Change the look of articles.", comment: "Change theme")
 		
-		var children: [UIMenuElement] = [themeMenu]
+		var appearanceChildren: [UIMenuElement] = [themeMenu]
 		
 		if let currentWebViewController = currentWebViewController {
 			if currentWebViewController.isFullScreenAvailable {
@@ -278,17 +277,65 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 												attributes: [],
 												state: .off) { [weak self] _ in
 					self?.currentWebViewController?.hideBars()
+					if AppDefaults.shared.hasUsedFullScreenPreviously == false {
+						let alert = UIAlertController(title: NSLocalizedString("Exit Full Screen", comment: "Full Screen"),
+													  message: NSLocalizedString("To exit Full Screen mode tap the top of the screen.\n\nYou'll only see this message once.", comment: "Full screen explainer."),
+													  preferredStyle: .alert)
+						alert.addAction(UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .default, handler: { _ in
+							AppDefaults.shared.hasUsedFullScreenPreviously = true
+						}))
+						self?.present(alert, animated: true, completion: nil)
+					}
 				}
-				fullScreenAction.subtitle = NSLocalizedString("Tap the top of the screen to exit Full Screen.", comment: "Exit criteria.")
-				children.append(fullScreenAction)
+				appearanceChildren.append(fullScreenAction)
 			}
 		}
 		
-		let appearanceMenu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), image: UIImage(systemName: "textformat.size") , identifier: nil, options: .displayInline, children: children)
+		var feedManagementChildren = [UIMenuElement]()
 		
-		appearanceBarButtonItem.menu = appearanceMenu
+		if let feed = article?.webFeed {
+			let extractorOn = feed.isArticleExtractorAlwaysOn ?? false
+			let readerAction = UIAction(title: NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View"),
+										image: AppAssets.articleExtractorOffSF,
+										identifier: nil,
+										discoverabilityTitle: nil,
+										attributes: [],
+										state: extractorOn ? .on : .off) { [weak self] _ in
+				if feed.isArticleExtractorAlwaysOn == nil {
+					feed.isArticleExtractorAlwaysOn = true
+				} else {
+					feed.isArticleExtractorAlwaysOn?.toggle()
+				}
+				self?.configureAppearanceMenu()
+			}
+			feedManagementChildren.append(readerAction)
+			
+			let notifyOn = feed.isNotifyAboutNewArticles ?? false
+			let notifyAction = UIAction(title: NSLocalizedString("Notify About New Articles", comment: "Notify About New Articles"),
+										image: AppAssets.appBadgeImage,
+										identifier: nil,
+										discoverabilityTitle: nil,
+										attributes: [],
+										state: notifyOn ? .on : .off) { [weak self] _ in
+				if feed.isNotifyAboutNewArticles == nil {
+					feed.isNotifyAboutNewArticles = true
+				} else {
+					feed.isNotifyAboutNewArticles?.toggle()
+				}
+				self?.configureAppearanceMenu()
+			}
+			feedManagementChildren.append(notifyAction)
+		}
+		
+		let appearanceMenu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), image: nil, identifier: nil, options: .displayInline, children: appearanceChildren)
+		let feedMgmtMenu = UIMenu(title: NSLocalizedString("Feed Management", comment: "Feed Management"), image: nil , identifier: nil, options: .displayInline, children: feedManagementChildren)
+		
+		let menu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [appearanceMenu, feedMgmtMenu])
+		
+		appearanceBarButtonItem.menu = menu
 		
 	}
+	
 	
 	@objc
 	func reloadDueToThemeChange(_ notification: Notification) {
