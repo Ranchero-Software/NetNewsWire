@@ -72,6 +72,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		public static let statuses = "statuses" // StatusesDidChange
 		public static let articles = "articles" // StatusesDidChange
 		public static let articleIDs = "articleIDs" // StatusesDidChange
+		public static let statusKey = "statusKey" // StatusesDidChange
+		public static let statusFlag = "statusFlag" // StatusesDidChange
 		public static let webFeeds = "webFeeds" // AccountDidDownloadArticles, StatusesDidChange
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
@@ -845,7 +847,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { result in
 			switch result {
 			case .success(let newArticleStatusIDs):
-				self.noteStatusesForArticleIDsDidChange(articleIDs)
+				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 				completion?(.success(newArticleStatusIDs))
 			case .failure(let databaseError):
 				completion?(.failure(databaseError))
@@ -1267,6 +1269,11 @@ private extension Account {
         
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.articleIDs: articleIDs, UserInfoKey.webFeeds: feeds])
     }
+
+	func noteStatusesForArticleIDsDidChange(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) {
+		fetchAllUnreadCounts()
+		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.articleIDs: articleIDs, UserInfoKey.statusKey: statusKey, UserInfoKey.statusFlag: flag])
+	}
 
 	func noteStatusesForArticleIDsDidChange(_ articleIDs: Set<String>) {
 		fetchAllUnreadCounts()
