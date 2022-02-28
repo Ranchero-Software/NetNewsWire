@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.1b4 build 6103 27 Feb 2022
+
+Fixed a few font and sizing issues
+
+
 ### 6.1b3 build 6102 - 8 Feb 2022
 
 Two new themes: Hyperlegible and NewsFax
