@@ -162,7 +162,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		searchBar.delegate = self
 		view.bringSubviewToFront(searchBar)
 		
-		configureAppearanceMenu()
 		updateUI()
 	}
 	
@@ -233,6 +232,8 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 			starBarButtonItem.image = AppAssets.starOpenImage
 			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
 		}
+		
+		configureAppearanceMenu()
 		
 	}
 	
