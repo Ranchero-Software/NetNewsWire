@@ -1151,7 +1151,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		rebuildBackingStores(initialLoad: initialLoad, completion:  {
 			self.treeControllerDelegate.resetFilterExceptions()
-			self.selectFeed(webFeed, animations: animations, completion: completion)
+			self.selectFeed(nil) {
+				self.selectFeed(webFeed, animations: animations, completion: completion)
+			}
 		})
 		
 	}
