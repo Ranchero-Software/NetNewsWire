@@ -87,8 +87,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	
+	// Which Containers are expanded
 	private var expandedTable = Set<ContainerIdentifier>()
+	
+	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
+	private var lastExpandedTable = Set<ContainerIdentifier>()
+	
+	// Which Feeds have the Read Articles Filter enabled
 	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	
+	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 	
 	private(set) var preSearchTimelineFeed: Feed?
@@ -719,8 +727,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		rebuildBackingStores()
 	}
 	
+	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
+	/// Failure to do so will get the Sidebar into an invalid state.
 	func expand(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		lastExpandedTable.insert(containerID)
 		expand(containerID)
 	}
 	
@@ -742,8 +753,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		clearTimelineIfNoLongerAvailable()
 	}
 	
+	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
+	/// Failure to do so will get the Sidebar into an invalid state.
 	func collapse(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		lastExpandedTable.remove(containerID)
 		collapse(containerID)
 	}
 	
@@ -1548,9 +1562,10 @@ private extension SceneCoordinator {
 			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
 		
-		// Compute the differences in the shadow table rows
+		// Compute the differences in the shadow table rows and the expanded table entries
 		var changes = [ShadowTableChanges.RowChanges]()
-		
+		let expandedTableDifference = lastExpandedTable.symmetricDifference(expandedTable)
+
 		for (section, newSectionRows) in newShadowTable.enumerated() {
 			var moves = Set<ShadowTableChanges.Move>()
 			var inserts = Set<Int>()
@@ -1576,9 +1591,22 @@ private extension SceneCoordinator {
 				}
 			}
 			
-			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, moves: moves))
+			// We need to reload the difference in expanded rows to get the disclosure arrows correct when programmatically changing their state
+			var reloads = Set<Int>()
+			
+			for (index, newFeedNode) in newSectionRows.feedNodes.enumerated() {
+				if let newFeedNodeContainerID = (newFeedNode.node.representedObject as? Container)?.containerID {
+					if expandedTableDifference.contains(newFeedNodeContainerID) {
+						reloads.insert(index)
+					}
+				}
+			}
+			
+			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, reloads: reloads, moves: moves))
 		}
 
+		lastExpandedTable = expandedTable
+		
 		// Compute the difference in the shadow table sections
 		var moves = Set<ShadowTableChanges.Move>()
 		var inserts = Set<Int>()
