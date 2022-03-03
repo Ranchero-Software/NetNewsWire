@@ -408,11 +408,11 @@ private extension AppDelegate {
 					
 		// set expiration handler
 		task.expirationHandler = { [weak task] in
-			DispatchQueue.main.sync {
-				self.suspendApplication()
-			}
 			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
-			task?.setTaskCompleted(success: false)
+			DispatchQueue.main.async {
+				self.suspendApplication()
+				task?.setTaskCompleted(success: false)
+			}
 		}
 	}
 	

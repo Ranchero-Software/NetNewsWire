@@ -25,6 +25,7 @@ struct ShadowTableChanges {
 		var section: Int
 		var deletes: Set<Int>?
 		var inserts: Set<Int>?
+		var reloads: Set<Int>?
 		var moves: Set<ShadowTableChanges.Move>?
 		
 		var isEmpty: Bool {
@@ -41,15 +42,21 @@ struct ShadowTableChanges {
 			return inserts.map { IndexPath(row: $0, section: section) }
 		}
 		
+		var reloadIndexPaths: [IndexPath]? {
+			guard let reloads = reloads else { return nil }
+			return reloads.map { IndexPath(row: $0, section: section) }
+		}
+		
 		var moveIndexPaths: [(IndexPath, IndexPath)]? {
 			guard let moves = moves else { return nil }
 			return moves.map { (IndexPath(row: $0.from, section: section), IndexPath(row: $0.to, section: section)) }
 		}
 		
-		init(section: Int, deletes: Set<Int>?, inserts: Set<Int>?, moves: Set<Move>?) {
+		init(section: Int, deletes: Set<Int>?, inserts: Set<Int>?, reloads: Set<Int>?, moves: Set<Move>?) {
 			self.section = section
 			self.deletes = deletes
 			self.inserts = inserts
+			self.reloads = reloads
 			self.moves = moves
 		}
 		
