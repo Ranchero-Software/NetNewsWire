@@ -234,6 +234,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		}
 		
 		configureAppearanceMenu()
+		configureArticleExtractorMenu()
 		
 	}
 	
@@ -309,6 +310,29 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		
 		appearanceBarButtonItem.image = AppAssets.articleAppearanceImage
 		appearanceBarButtonItem.menu = menu
+	}
+	
+	private func configureArticleExtractorMenu() {
+		if let feed = article?.webFeed {
+			let extractorOn = feed.isArticleExtractorAlwaysOn ?? false
+			let readerAction = UIAction(title: NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View"),
+										image: AppAssets.articleExtractorOffSF,
+										identifier: nil,
+										discoverabilityTitle: nil,
+										attributes: [],
+										state: extractorOn ? .on : .off) { [weak self] _ in
+				if feed.isArticleExtractorAlwaysOn == nil {
+					feed.isArticleExtractorAlwaysOn = true
+					self?.currentWebViewController?.toggleArticleExtractor()
+				} else {
+					feed.isArticleExtractorAlwaysOn?.toggle()
+				}
+				self?.configureArticleExtractorMenu()
+			}
+			let menu = UIMenu(title: feed.nameForDisplay, image: AppAssets.articleExtractorOffSF, identifier: nil, options: .displayInline, children: [readerAction])
+			articleExtractorButton.menu = menu
+			articleExtractorButton.showsMenuAsPrimaryAction = false
+		}
 	}
 	
 	
