@@ -6,7 +6,17 @@
         <description>Most recent NetNewsWire changes with links to updates.</description>
         <language>en</language>
 
-		<item>
+        <item>
+            <title>NetNewsWire 6.1b4</title>
+            <description><![CDATA[
+<p>Fixed a few font and sizing issues.</p>
+            ]]></description>
+            <pubDate>Sun, 27 Feb 2022 21:50:00 -0800</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1b4/NetNewsWire6.1b4.zip" sparkle:version="6103" sparkle:shortVersionString="6.1b4" length="10897726" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.1b3</title>
             <description><![CDATA[
 <p>Two new themes: Hyperlegible and NewsFax</p>
