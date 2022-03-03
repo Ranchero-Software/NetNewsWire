@@ -415,6 +415,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	
 	@IBAction func toggleArticleExtractor(_ sender: Any) {
 		currentWebViewController?.toggleArticleExtractor()
+		configureArticleExtractorMenu()
 	}
 	
 	@IBAction func nextUnread(_ sender: Any) {
