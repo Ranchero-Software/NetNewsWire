@@ -58,6 +58,10 @@ struct AppAssets {
 	static var appBadgeImage: UIImage = {
 		return UIImage(systemName: "app.badge")!
 	}()
+	
+	static var articleAppearanceImage: UIImage = {
+		return UIImage(systemName: "textformat.size")!
+	}()
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!

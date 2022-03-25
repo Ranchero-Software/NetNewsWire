@@ -234,6 +234,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		}
 		
 		configureAppearanceMenu()
+		configureArticleExtractorMenu()
 		
 	}
 	
@@ -241,6 +242,11 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		return currentWebViewController?.webView?.scrollView
 	}
 	
+	
+	/// The appearance menu is different on iPhone and iPad.
+	/// On iPad, it's only the theme selector. On iPhone, the appearance menu
+	/// contains the the theme selector and full screen options.
+	/// - Parameter sender: `Any?`
 	@objc
 	func configureAppearanceMenu(_ sender: Any? = nil) {
 		
@@ -267,6 +273,12 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		
 		let themeMenu = UIMenu(title: "Theme", image: AppAssets.themeImage, identifier: nil, options: .singleSelection, children: [ defaultThemeMenu, customThemeMenu])
 		
+		if UIDevice.current.userInterfaceIdiom == .pad {
+			appearanceBarButtonItem.image = AppAssets.themeImage
+			appearanceBarButtonItem.menu = themeMenu
+			return
+		}
+		
 		var appearanceChildren: [UIMenuElement] = [themeMenu]
 		
 		if let currentWebViewController = currentWebViewController {
@@ -292,8 +304,15 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 			}
 		}
 		
-		var feedManagementChildren = [UIMenuElement]()
+		let appearanceMenu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), image: nil, identifier: nil, options: .displayInline, children: appearanceChildren)
 		
+		let menu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [appearanceMenu])
+		
+		appearanceBarButtonItem.image = AppAssets.articleAppearanceImage
+		appearanceBarButtonItem.menu = menu
+	}
+	
+	private func configureArticleExtractorMenu() {
 		if let feed = article?.webFeed {
 			let extractorOn = feed.isArticleExtractorAlwaysOn ?? false
 			let readerAction = UIAction(title: NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View"),
@@ -304,37 +323,16 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 										state: extractorOn ? .on : .off) { [weak self] _ in
 				if feed.isArticleExtractorAlwaysOn == nil {
 					feed.isArticleExtractorAlwaysOn = true
+					self?.currentWebViewController?.toggleArticleExtractor()
 				} else {
 					feed.isArticleExtractorAlwaysOn?.toggle()
 				}
-				self?.configureAppearanceMenu()
+				self?.configureArticleExtractorMenu()
 			}
-			feedManagementChildren.append(readerAction)
-			
-			let notifyOn = feed.isNotifyAboutNewArticles ?? false
-			let notifyAction = UIAction(title: NSLocalizedString("Notify About New Articles", comment: "Notify About New Articles"),
-										image: AppAssets.appBadgeImage,
-										identifier: nil,
-										discoverabilityTitle: nil,
-										attributes: [],
-										state: notifyOn ? .on : .off) { [weak self] _ in
-				if feed.isNotifyAboutNewArticles == nil {
-					feed.isNotifyAboutNewArticles = true
-				} else {
-					feed.isNotifyAboutNewArticles?.toggle()
-				}
-				self?.configureAppearanceMenu()
-			}
-			feedManagementChildren.append(notifyAction)
+			let menu = UIMenu(title: feed.nameForDisplay, image: AppAssets.articleExtractorOffSF, identifier: nil, options: .displayInline, children: [readerAction])
+			articleExtractorButton.menu = menu
+			articleExtractorButton.showsMenuAsPrimaryAction = false
 		}
-		
-		let appearanceMenu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), image: nil, identifier: nil, options: .displayInline, children: appearanceChildren)
-		let feedMgmtMenu = UIMenu(title: NSLocalizedString("Feed Management", comment: "Feed Management"), image: nil , identifier: nil, options: .displayInline, children: feedManagementChildren)
-		
-		let menu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [appearanceMenu, feedMgmtMenu])
-		
-		appearanceBarButtonItem.menu = menu
-		
 	}
 	
 	
@@ -417,6 +415,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	
 	@IBAction func toggleArticleExtractor(_ sender: Any) {
 		currentWebViewController?.toggleArticleExtractor()
+		configureArticleExtractorMenu()
 	}
 	
 	@IBAction func nextUnread(_ sender: Any) {
