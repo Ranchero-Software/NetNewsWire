@@ -1399,6 +1399,7 @@ private extension SceneCoordinator {
 		let toolbarAppearance = UIToolbarAppearance()
 		navController.toolbar.standardAppearance = toolbarAppearance
 		navController.toolbar.compactAppearance = toolbarAppearance
+		navController.toolbar.scrollEdgeAppearance = toolbarAppearance
 		navController.toolbar.tintColor = AppAssets.primaryAccentColor
 	}
 
