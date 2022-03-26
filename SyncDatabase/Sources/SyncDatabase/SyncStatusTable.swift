@@ -30,8 +30,6 @@ struct SyncStatusTable: DatabaseTable {
 				let updateSQL = "update syncStatus set selected = true"
 				database.executeUpdate(updateSQL, withArgumentsIn: nil)
 
-				database.commit()
-				
 				var selectSQL = "select * from syncStatus where selected == true"
 				if let limit = limit {
 					selectSQL = "\(selectSQL) limit \(limit)"
