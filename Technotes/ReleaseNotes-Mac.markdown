@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.1b5 build 6104 3 April 2022
+
+Updated built-in feeds
+Building on a new Apple Silicon Mac — testing to make sure all’s well
+
 ### 6.1b4 build 6103 27 Feb 2022
 
 Fixed a few font and sizing issues
