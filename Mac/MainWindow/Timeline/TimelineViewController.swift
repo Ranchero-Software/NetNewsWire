@@ -940,7 +940,7 @@ extension TimelineViewController: NSTableViewDelegate {
 				return [action]
 
 			@unknown default:
-				os_log(.error, "Unknown table row edge: %ld", edge.rawValue)
+				print("Unknown table row edge: \(edge.rawValue)")
 		}
 
 		return []
