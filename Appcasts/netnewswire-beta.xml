@@ -7,6 +7,17 @@
         <language>en</language>
 
         <item>
+            <title>NetNewsWire 6.1b5</title>
+            <description><![CDATA[
+                <p>Updated built-in feeds</p>
+                <p>Building on a new Apple Silicon Mac — testing to make sure all’s well</p>
+            ]]></description>
+            <pubDate>Mon, 04 Apr 2022 22:10:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1b5/NetNewsWire6.1b5.zip" sparkle:version="6104" sparkle:shortVersionString="6.1b5" length="10922681" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
+        <item>
             <title>NetNewsWire 6.1b4</title>
             <description><![CDATA[
 <p>Fixed a few font and sizing issues.</p>
