@@ -34,7 +34,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 		assert(Thread.isMainThread)
 		switch result {
 		case .success:
-			os_log("Logged out of %{public}@ account.", "\(account.type)")
+			os_log("Logged out of %{public}@ account.", log: log, "\(account.type)")
 			do {
 				try account.removeCredentials(type: .oauthAccessToken)
 				try account.removeCredentials(type: .oauthRefreshToken)
@@ -44,7 +44,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 			didFinish()
 			
 		case .failure(let error):
-			os_log("Logout failed because %{public}@.", error as NSError)
+			os_log("Logout failed because %{public}@.", log: log, error as NSError)
 			didFinish(with: error)
 		}
 	}

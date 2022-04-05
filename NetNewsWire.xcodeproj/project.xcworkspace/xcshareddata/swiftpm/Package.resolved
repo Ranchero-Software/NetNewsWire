@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
-          "revision": "d747ab5de269cd44022bbe96ff9609d8626694ab",
-          "version": "1.9.0"
+          "revision": "6b27393cad517c067dceea85fadf050e70c4ceaa",
+          "version": "1.10.1"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/Ranchero-Software/Sparkle-Binary.git",
         "state": {
           "branch": null,
-          "revision": "67cd26321bdf4e77954cf6de7d9e6a20544f2030",
-          "version": "2.0.0"
+          "revision": "d1a8b3c98d96c601453f2e4230f1dd65b60d0581",
+          "version": "2.0.1"
         }
       },
       {
