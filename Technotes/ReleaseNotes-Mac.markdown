@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 6.1 build 6105 6 April 2022
+
+Small cosmetic change — better alignment for items in General Preferences pane
+
 ### 6.1b5 build 6104 3 April 2022
 
 Updated built-in feeds
