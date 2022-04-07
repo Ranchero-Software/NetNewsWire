@@ -1,5 +1,23 @@
 # Mac Release Notes
 
+### 6.1 release notes
+
+Changes since 6.0.3:
+
+Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences or by adding the theme switcher to the toolbar
+Copy URLs using repaired, rather than raw, feed links
+Restore article scroll position on relaunching app
+Added Copy Article URL and Copy External URL commands to the Edit menu
+Fixed a bug where using cmd-Q wouldn’t always quit the app as quickly as one might prefer
+Disallow creation of iCloud account in the app if iCloud and iCloud Drive aren’t both enabled
+Fixed bug showing quote tweets that only included an image
+Added a hidden pref to suppress downloading/syncing on start: `defaults write com.ranchero.NetNewsWire-Evergreen DevroeSuppressSyncOnLaunch -bool true`
+Video autoplay is now disallowed
+Article view now supports RTL layout
+Fixed a few font and sizing issues
+Updated built-in feeds
+Better alignment for items in General Preferences pane
+
 ### 6.1 build 6106 6 April 2022
 
 Small cosmetic change — better alignment for items in General Preferences pane
