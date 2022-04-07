@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 6.1 TestFligth build 6104 - 6 April 2022
+
+Building on a new machine and making sure all’s well
+Moved built-in themes to the app bundle so they’re always up to date
+Fixed a crash in the Feeds list related to updating the feed image
+Fixed a layout bug that could happen on returning to the Feeds list
+Fixed a bug where go-to-feed might not properly expand disclosure triangles
+
 ### 6.1 TestFlight build 6103 - 25 Jan 2022
 
 Fixed regression with keyboard shortcuts.
