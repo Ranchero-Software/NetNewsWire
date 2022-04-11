@@ -431,12 +431,12 @@ private extension AppDelegate {
 		resumeDatabaseProcessingIfNecessary()
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+			os_log(.debug, log: self.log, "No account found from notification.")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+			os_log(.debug, log: self.log, "No article found from search using %@", articleID)
 			return
 		}
 		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
@@ -459,12 +459,12 @@ private extension AppDelegate {
 		resumeDatabaseProcessingIfNecessary()
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+			os_log(.debug, log: self.log, "No account found from notification.")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+			os_log(.debug, log: self.log, "No article found from search using %@", articleID)
 			return
 		}
 		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }

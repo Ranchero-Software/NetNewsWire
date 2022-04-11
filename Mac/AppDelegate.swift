@@ -37,6 +37,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		static let mainWindow = "mainWindow"
 	}
 	
+	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
 	var imageDownloader: ImageDownloader!
@@ -199,7 +201,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		AppDefaults.shared.registerDefaults()
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
-			os_log(.debug, "Is first run.")
+			os_log(.debug, log: log, "Is first run.")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
 
@@ -1010,12 +1012,12 @@ private extension AppDelegate {
 		
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+			os_log(.debug, log: log, "No account found from notification.")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+			os_log(.debug, log: log, "No article found from search using %@", articleID)
 			return
 		}
 		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
@@ -1029,12 +1031,12 @@ private extension AppDelegate {
 		}
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, "No account found from notification.")
+			os_log(.debug, log: log, "No account found from notification.")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, "No article found from search using %@", articleID)
+			os_log(.debug, log: log, "No article found from search using %@", articleID)
 			return
 		}
 		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
