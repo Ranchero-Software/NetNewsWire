@@ -54,6 +54,14 @@ struct AppAssets {
 	static var accountTheOldReaderImage: UIImage = {
 		return UIImage(named: "accountTheOldReader")!
 	}()
+	
+	static var appBadgeImage: UIImage = {
+		return UIImage(systemName: "app.badge")!
+	}()
+	
+	static var articleAppearanceImage: UIImage = {
+		return UIImage(systemName: "textformat.size")!
+	}()
 
 	static var articleExtractorError: UIImage = {
 		return UIImage(named: "articleExtractorError")!
@@ -181,6 +189,10 @@ struct AppAssets {
 		return UIImage(systemName: "ellipsis.circle")!
 	}()
 	
+	static var moreImageFill: UIImage = {
+		return UIImage(systemName: "ellipsis.circle.fill")!
+	}()
+	
 	static var nextArticleImage: UIImage = {
 		return UIImage(systemName: "chevron.down")!
 	}()
@@ -249,6 +261,10 @@ struct AppAssets {
 		let image = UIImage(systemName: "star.fill")!
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: AppAssets.starColor.cgColor)
 	}
+	
+	static var themeImage: UIImage = {
+		return UIImage(systemName: "doc.richtext")!
+	}()
 
 	static var tickMarkColor: UIColor = {
 		return UIColor(named: "tickMarkColor")!

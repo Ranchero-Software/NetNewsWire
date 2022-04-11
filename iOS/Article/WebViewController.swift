@@ -31,13 +31,13 @@ class WebViewController: UIViewController {
 	private var topShowBarsViewConstraint: NSLayoutConstraint!
 	private var bottomShowBarsViewConstraint: NSLayoutConstraint!
 	
-	private var webView: PreloadedWebView? {
+	var webView: PreloadedWebView? {
 		return view.subviews[0] as? PreloadedWebView
 	}
 	
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
-	private var isFullScreenAvailable: Bool {
-		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
+	public var isFullScreenAvailable: Bool {
+		return traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?

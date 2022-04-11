@@ -565,6 +565,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 			}
 		}
 		
+		if let rowChanges = changes.rowChanges {
+			for rowChange in rowChanges {
+				if let reloads = rowChange.reloadIndexPaths, !reloads.isEmpty {
+					tableView.reloadRows(at: reloads, with: .none)
+				}
+			}
+		}
+
 		completion?()
 	}
 	

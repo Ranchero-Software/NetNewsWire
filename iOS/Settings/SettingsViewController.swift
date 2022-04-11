@@ -47,6 +47,8 @@ class SettingsViewController: UITableViewController {
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
 		
+		refreshNotificationStatus()
+		
 		tableView.rowHeight = UITableView.automaticDimension
 		tableView.estimatedRowHeight = 44
 	}
@@ -72,19 +74,12 @@ class SettingsViewController: UITableViewController {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
-		
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
 		} else {
 			confirmMarkAllAsReadSwitch.isOn = false
-		}
-
-		if AppDefaults.shared.articleFullscreenAvailable {
-			showFullscreenArticlesSwitch.isOn = true
-		} else {
-			showFullscreenArticlesSwitch.isOn = false
 		}
 		
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
@@ -112,7 +107,6 @@ class SettingsViewController: UITableViewController {
 			tableView.scrollToRow(at: IndexPath(row: 0, section: 4), at: .top, animated: true)
 			scrollToArticlesSection = false
 		}
-		refreshNotificationStatus()
 	}
 	
 	@objc
@@ -144,7 +138,7 @@ class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case 5:
-			return traitCollection.userInterfaceIdiom == .phone ? 4 : 3
+			return 3
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -353,14 +347,6 @@ class SettingsViewController: UITableViewController {
 			AppDefaults.shared.confirmMarkAllAsRead = true
 		} else {
 			AppDefaults.shared.confirmMarkAllAsRead = false
-		}
-	}
-	
-	@IBAction func switchFullscreenArticles(_ sender: Any) {
-		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.shared.articleFullscreenAvailable = true
-		} else {
-			AppDefaults.shared.articleFullscreenAvailable = false
 		}
 	}
 	

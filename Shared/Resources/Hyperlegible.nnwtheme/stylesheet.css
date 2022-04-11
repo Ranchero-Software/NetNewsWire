@@ -382,6 +382,7 @@ a.footnote:hover,
 		padding-left: 20px;
 		padding-right: 20px;
 
+		font-family: 'Atkinson Hyperlegible', -apple-system;
 		font-size: 135%;
 
 		word-break: break-word;

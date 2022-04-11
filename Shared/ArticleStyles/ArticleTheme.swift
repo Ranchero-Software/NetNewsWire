@@ -26,6 +26,7 @@ struct ArticleTheme: Equatable {
 	let path: String?
 	let template: String?
 	let css: String?
+	let isAppTheme: Bool
 	
 	var name: String {
 		guard let path = path else { return Self.defaultThemeName }
@@ -56,9 +57,11 @@ struct ArticleTheme: Equatable {
 		
 		let templatePath = Bundle.main.path(forResource: "template", ofType: "html")!
 		template = Self.stringAtPath(templatePath)!
+		
+		isAppTheme = true
 	}
 	
-	init(path: String) throws {
+	init(path: String, isAppTheme: Bool) throws {
 		self.path = path
 		
 		let infoPath = (path as NSString).appendingPathComponent("Info.plist")
@@ -75,6 +78,8 @@ struct ArticleTheme: Equatable {
 		
 		let templatePath = (path as NSString).appendingPathComponent("template.html")
 		self.template = Self.stringAtPath(templatePath)
+		
+		self.isAppTheme = isAppTheme
 	}
 	
 	static func stringAtPath(_ f: String) -> String? {

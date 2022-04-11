@@ -90,12 +90,18 @@
                                     <action selector="prevArticle:" destination="JEX-9P-axG" id="cMZ-tk-I4W"/>
                                 </connections>
                             </barButtonItem>
+                            <barButtonItem image="ellipsis.circle" catalog="system" id="SoN-ax-tEE">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Appearance"/>
+                                </userDefinedRuntimeAttributes>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="actionBarButtonItem" destination="9Ut-5B-JKP" id="9bO-kz-cTz"/>
+                        <outlet property="appearanceBarButtonItem" destination="SoN-ax-tEE" id="UZr-ut-0fn"/>
                         <outlet property="nextArticleBarButtonItem" destination="2qz-M5-Yhk" id="IQd-jx-qEr"/>
                         <outlet property="nextUnreadBarButtonItem" destination="2w5-e9-C2V" id="Ekf-My-AHN"/>
                         <outlet property="prevArticleBarButtonItem" destination="v4j-fq-23N" id="Gny-Oh-cQa"/>
@@ -172,7 +178,7 @@
         <!--Feeds-->
         <scene sceneID="smW-Zh-WAh">
             <objects>
-                <tableViewController storyboardIdentifier="MasterFeedViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" clearsSelectionOnViewWillAppear="NO" id="7bK-jq-Zjz" customClass="MasterFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="MasterFeedViewController" extendedLayoutIncludesOpaqueBars="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" clearsSelectionOnViewWillAppear="NO" id="7bK-jq-Zjz" customClass="MasterFeedViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="r7i-6Z-zg0">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -414,6 +420,7 @@
         <image name="chevron.down.circle" catalog="system" width="128" height="121"/>
         <image name="chevron.up" catalog="system" width="128" height="72"/>
         <image name="circle" catalog="system" width="128" height="121"/>
+        <image name="ellipsis.circle" catalog="system" width="128" height="121"/>
         <image name="gear" catalog="system" width="128" height="119"/>
         <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="121"/>
         <image name="markAllAsRead" width="13" height="20"/>

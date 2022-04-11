@@ -27,8 +27,9 @@ struct MasterTimelineCellData {
 	let starred: Bool
 	let numberOfLines: Int
 	let iconSize: IconSize
-
-	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: UIImage?, numberOfLines: Int, iconSize: IconSize) {
+	let hideSeparator: Bool
+	
+	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, featuredImage: UIImage?, numberOfLines: Int, iconSize: IconSize, hideSeparator: Bool) {
 
 		self.title = ArticleStringFormatter.truncatedTitle(article)
 		self.attributedTitle = ArticleStringFormatter.attributedTruncatedTitle(article)
@@ -65,6 +66,7 @@ struct MasterTimelineCellData {
 		self.starred = article.status.starred
 		self.numberOfLines = numberOfLines
 		self.iconSize = iconSize
+		self.hideSeparator = hideSeparator
 		
 	}
 
@@ -83,6 +85,7 @@ struct MasterTimelineCellData {
 		self.starred = false
 		self.numberOfLines = 0
 		self.iconSize = .medium
+		self.hideSeparator = false
 	}
 	
 }

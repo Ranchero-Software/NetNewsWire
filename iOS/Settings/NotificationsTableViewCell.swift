@@ -10,16 +10,13 @@ import UIKit
 import Account
 import UserNotifications
 
-extension Notification.Name {
-	static let NotificationPreferencesDidUpdate = Notification.Name("NotificationPreferencesDidUpdate")
-}
 
-class NotificationsTableViewCell: UITableViewCell {
+class NotificationsTableViewCell: VibrantBasicTableViewCell {
 
 	@IBOutlet weak var notificationsSwitch: UISwitch!
 	@IBOutlet weak var notificationsLabel: UILabel!
 	@IBOutlet weak var notificationsImageView: UIImageView!
-	var feed: WebFeed?
+	weak var feed: WebFeed?
 	
 	
     override func awakeFromNib() {
@@ -33,7 +30,7 @@ class NotificationsTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 	
-	func configure(_ webFeed: WebFeed, _ status: UNAuthorizationStatus) {
+	func configure(_ webFeed: WebFeed) {
 		self.feed = webFeed
 		var isOn = false
 		if webFeed.isNotifyAboutNewArticles == nil {
@@ -43,9 +40,8 @@ class NotificationsTableViewCell: UITableViewCell {
 		}
 		notificationsSwitch.isOn = isOn
 		notificationsSwitch.addTarget(self, action: #selector(toggleWebFeedNotification(_:)), for: .touchUpInside)
-		if status == .denied { notificationsSwitch.isEnabled = false }
 		notificationsLabel.text = webFeed.nameForDisplay
-		notificationsImageView.image = webFeed.smallIcon?.image
+		notificationsImageView.image = IconImageCache.shared.imageFor(webFeed.feedID!)?.image
 		notificationsImageView.layer.cornerRadius = 4
 	}
 	
@@ -61,14 +57,5 @@ class NotificationsTableViewCell: UITableViewCell {
 			feed.isNotifyAboutNewArticles!.toggle()
 		}
 	}
-	
-	@objc
-	private func requestNotificationPermissions(_ sender: Any) {
-		UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
-			NotificationCenter.default.post(name: .NotificationPreferencesDidUpdate, object: nil)
-		}
-	}
-	
-	
 
 }

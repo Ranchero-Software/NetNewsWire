@@ -31,6 +31,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		set {
 			if newValue != currentThemeName {
 				AppDefaults.shared.currentThemeName = newValue
+				updateThemeNames()
 				updateCurrentTheme()
 			}
 		}
@@ -61,15 +62,6 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 			abort()
 		}
 		
-		let themeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
-		let installedThemes = readInstalledThemes() ?? [String: Date]()
-		for themeFilename in themeFilenames {
-			let themeName = ArticleTheme.themeNameForPath(themeFilename)
-			if !installedThemes.keys.contains(themeName) {
-				try? importTheme(filename: themeFilename)
-			}
-		}
-
 		updateThemeNames()
 		updateCurrentTheme()
 
@@ -98,13 +90,34 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		}
 		
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
-
-		let themeName = ArticleTheme.themeNameForPath(filename)
-		var installedThemes = readInstalledThemes() ?? [String: Date]()
-		installedThemes[themeName] = Date()
-		writeInstalledThemes(installedThemes)
 	}
 	
+	func articleThemeWithThemeName(_ themeName: String) -> ArticleTheme? {
+		if themeName == AppDefaults.defaultThemeName {
+			return ArticleTheme.defaultTheme
+		}
+		
+		let path: String
+		let isAppTheme: Bool
+		if let appThemePath = Bundle.main.url(forResource: themeName, withExtension: ArticleTheme.nnwThemeSuffix)?.path {
+			path = appThemePath
+			isAppTheme = true
+		} else if let installedPath = pathForThemeName(themeName, folder: folderPath) {
+			path = installedPath
+			isAppTheme = false
+		} else {
+			return nil
+		}
+		
+		do {
+			return try ArticleTheme(path: path, isAppTheme: isAppTheme)
+		} catch {
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			return nil
+		}
+		
+	}
+
 	func deleteTheme(themeName: String) {
 		if let filename = pathForThemeName(themeName, folder: folderPath) {
 			try? FileManager.default.removeItem(atPath: filename)
@@ -118,28 +131,17 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 private extension ArticleThemesManager {
 
 	func updateThemeNames() {
-		let updatedThemeNames = allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) }
-		let sortedThemeNames = updatedThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
+		let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
+		let appThemeNames = Set(appThemeFilenames.map { ArticleTheme.themeNameForPath($0) })
+
+		let installedThemeNames = Set(allThemePaths(folderPath).map { ArticleTheme.themeNameForPath($0) })
+
+		let allThemeNames = appThemeNames.union(installedThemeNames)
+		
+		let sortedThemeNames = allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
 		if sortedThemeNames != themeNames {
 			themeNames = sortedThemeNames
 		}
-	}
-
-	func articleThemeWithThemeName(_ themeName: String) -> ArticleTheme? {
-		if themeName == AppDefaults.defaultThemeName {
-			return ArticleTheme.defaultTheme
-		}
-		
-		guard let path = pathForThemeName(themeName, folder: folderPath) else {
-			return nil
-		}
-		do {
-			return try ArticleTheme(path: path)
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
-			return nil
-		}
-		
 	}
 
 	func defaultArticleTheme() -> ArticleTheme {
@@ -176,16 +178,6 @@ private extension ArticleThemesManager {
 			}
 		}
 		return nil
-	}
-	
-	func readInstalledThemes() -> [String: Date]? {
-		let filePath = (folderPath as NSString).appendingPathComponent("InstalledThemes.plist")
-		return NSDictionary(contentsOfFile: filePath) as? [String: Date]
-	}
-	
-	func writeInstalledThemes(_ dict: [String: Date]) {
-		let filePath = (folderPath as NSString).appendingPathComponent("InstalledThemes.plist")
-		(dict as NSDictionary).write(toFile: filePath, atomically: true)
 	}
 	
 }
