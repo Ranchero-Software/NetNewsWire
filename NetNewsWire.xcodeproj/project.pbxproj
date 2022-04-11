@@ -852,13 +852,10 @@
 		D5F4EDB720074D6500B9E363 /* WebFeed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */; };
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
-<<<<<<< HEAD
 		DFD6AAE427AEB08700463FAD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFD6AAE827AEB08700463FAD /* Localizable.strings */; };
 		DFD6AAE527AEB08700463FAD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFD6AAE827AEB08700463FAD /* Localizable.strings */; };
 		DFD6AAE627AEB08700463FAD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFD6AAE827AEB08700463FAD /* Localizable.strings */; };
-=======
 		DFD6AACF27ADE86E00463FAD /* NewsFax.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */; };
->>>>>>> main
 		DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DFFC199827A0D0D7004B7AEF /* NotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */; };
 		DFFC199A27A0D32A004B7AEF /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */; };
@@ -1599,12 +1596,9 @@
 		D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebFeed+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
-<<<<<<< HEAD
 		DFD6AAE727AEB08700463FAD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-=======
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
 		DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
->>>>>>> main
 		DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
 		DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
 		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };

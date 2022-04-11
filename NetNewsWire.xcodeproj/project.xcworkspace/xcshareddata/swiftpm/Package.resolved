@@ -1,0 +1,133 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "BrightFutures",
+        "repositoryURL": "https://github.com/Thomvis/BrightFutures.git",
+        "state": {
+          "branch": null,
+          "revision": "939858b811026f85e87847a808f0bea2f187e5c4",
+          "version": "8.1.0"
+        }
+      },
+      {
+        "package": "Erik",
+        "repositoryURL": "https://github.com/phimage/Erik.git",
+        "state": {
+          "branch": null,
+          "revision": "109a130e9cdb00789a43a7a625293eeb12d22989",
+          "version": "5.1.0"
+        }
+      },
+      {
+        "package": "FileKit",
+        "repositoryURL": "https://github.com/nvzqz/FileKit.git",
+        "state": {
+          "branch": null,
+          "revision": "826d9161b184509f80d85c28cd612d630646de98",
+          "version": "6.0.0"
+        }
+      },
+      {
+        "package": "Kanna",
+        "repositoryURL": "https://github.com/tid-kijyun/Kanna.git",
+        "state": {
+          "branch": null,
+          "revision": "f9e4922223dd0d3dfbf02ca70812cf5531fc0593",
+          "version": "5.2.7"
+        }
+      },
+      {
+        "package": "OAuthSwift",
+        "repositoryURL": "https://github.com/OAuthSwift/OAuthSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "fde77955e6983fbfaabd491709d52b8a82fda4d0",
+          "version": "2.1.2"
+        }
+      },
+      {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
+        "state": {
+          "branch": null,
+          "revision": "6b27393cad517c067dceea85fadf050e70c4ceaa",
+          "version": "1.10.1"
+        }
+      },
+      {
+        "package": "RSCore",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSCore.git",
+        "state": {
+          "branch": null,
+          "revision": "060b12a3d3b6d27d57b2fae84160bfec91ec7118",
+          "version": "1.0.7"
+        }
+      },
+      {
+        "package": "RSDatabase",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSDatabase.git",
+        "state": {
+          "branch": null,
+          "revision": "a6c5f1622320f745cc9a0a910d1bed1e2eaf15e3",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "RSParser",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSParser.git",
+        "state": {
+          "branch": null,
+          "revision": "d5b50ff78905ebfaf26dd698e0e5d3ed8269dd9b",
+          "version": "2.0.3"
+        }
+      },
+      {
+        "package": "RSTree",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSTree.git",
+        "state": {
+          "branch": null,
+          "revision": "9d051f42cfc4faa991fd79cdb32e4cc8c545e334",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "RSWeb",
+        "repositoryURL": "https://github.com/Ranchero-Software/RSWeb.git",
+        "state": {
+          "branch": null,
+          "revision": "2f7849a9ad2cb461b3d6c9c920e163596e6b5d7b",
+          "version": "1.0.3"
+        }
+      },
+      {
+        "package": "RSSparkle",
+        "repositoryURL": "https://github.com/Ranchero-Software/Sparkle-Binary.git",
+        "state": {
+          "branch": null,
+          "revision": "d1a8b3c98d96c601453f2e4230f1dd65b60d0581",
+          "version": "2.0.1"
+        }
+      },
+      {
+        "package": "Swifter",
+        "repositoryURL": "https://github.com/httpswift/swifter.git",
+        "state": {
+          "branch": null,
+          "revision": "9483a5d459b45c3ffd059f7b55f9638e268632fd",
+          "version": "1.5.0"
+        }
+      },
+      {
+        "package": "Zip",
+        "repositoryURL": "https://github.com/marmelroy/Zip.git",
+        "state": {
+          "branch": null,
+          "revision": "059e7346082d02de16220cd79df7db18ddeba8c3",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

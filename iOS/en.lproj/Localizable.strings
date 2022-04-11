@@ -61,7 +61,7 @@
 
 // MARK: Accounts - Self-hosted
 
-"API URL: fresh.rss.net/api/greader.php" = "API URL: fresh.rss.net/api/greader.php";
+"FRESHRSS_HELPER" = "API URL: fresh.rss.net/api/greader.php";
 "FRESHRSS_SIGN_IN" = "Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?";
 "USERNAME_PASSWORD_API_REQUIRED" = "Username, password, and API URL are required.";
 "INVALID_API_URL" = "Invalid API URL.";
