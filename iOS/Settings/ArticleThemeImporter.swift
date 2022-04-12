@@ -11,21 +11,21 @@ import UIKit
 struct ArticleThemeImporter {
 	
 	static func importTheme(controller: UIViewController, filename: String) throws {
-		let theme = try ArticleTheme(path: filename)
+		let theme = try ArticleTheme(path: filename, isAppTheme: false)
 		
-		let localizedTitleText = NSLocalizedString("INSTALL_THEME_CONFIRMATION", comment: "Theme message text")
+		let localizedTitleText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
 		let title = NSString.localizedStringWithFormat(localizedTitleText as NSString, theme.name, theme.creatorName) as String
 
-		let localizedMessageText = NSLocalizedString("AUTHORS_WEBSITE", comment: "Authors website")
+		let localizedMessageText = NSLocalizedString("Author‘s website:\n%@", comment: "Authors website")
 		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.creatorHomePage) as String
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		
-		let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 		
 		if let url = URL(string: theme.creatorHomePage) {
-			let visitSiteTitle = NSLocalizedString("SHOW_WEBSITE", comment: "Show Website")
+			let visitSiteTitle = NSLocalizedString("Show Website", comment: "Show Website")
 			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { action in
 				UIApplication.shared.open(url)
 				try? Self.importTheme(controller: controller, filename: filename)
@@ -42,20 +42,20 @@ struct ArticleThemeImporter {
 			}
 		}
 
-		let installThemeTitle = NSLocalizedString("INSTALL_THEME", comment: "Install Theme")
+		let installThemeTitle = NSLocalizedString("Install Theme", comment: "Install Theme")
 		let installThemeAction = UIAlertAction(title: installThemeTitle, style: .default) { action in
 
 			if ArticleThemesManager.shared.themeExists(filename: filename) {
-				let title = NSLocalizedString("DUPLICATE_THEME", comment: "Duplicate Theme")
-				let localizedMessageText = NSLocalizedString("OVERWRITE_THEME_CONFIRMATION", comment: "Overwrite theme")
+				let title = NSLocalizedString("Duplicate Theme", comment: "Duplicate Theme")
+				let localizedMessageText = NSLocalizedString("The theme “%@” already exists. Overwrite it?", comment: "Overwrite theme")
 				let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
 
 				let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-				let cancelTitle = NSLocalizedString("CANCEL", comment: "Cancel")
+				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 				alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
-				let overwriteAction = UIAlertAction(title: NSLocalizedString("OVERWRITE", comment: "Overwrite"), style: .default) { action in
+				let overwriteAction = UIAlertAction(title: NSLocalizedString("Overwrite", comment: "Overwrite"), style: .default) { action in
 					importTheme()
 				}
 				alertController.addAction(overwriteAction)
@@ -80,14 +80,14 @@ struct ArticleThemeImporter {
 private extension ArticleThemeImporter {
 	
 	static func confirmImportSuccess(controller: UIViewController, themeName: String) {
-		let title = NSLocalizedString("THEME_INSTALLED", comment: "Theme installed")
+		let title = NSLocalizedString("Theme installed", comment: "Theme installed")
 		
-		let localizedMessageText = NSLocalizedString("THEME_INSTALLED_CONFIRMATION", comment: "Theme installed")
+		let localizedMessageText = NSLocalizedString("The theme “%@” has been installed.", comment: "Theme installed")
 		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		
-		let doneTitle = NSLocalizedString("DONE", comment: "Done")
+		let doneTitle = NSLocalizedString("Done", comment: "Done")
 		alertController.addAction(UIAlertAction(title: doneTitle, style: .default))
 		
 		controller.present(alertController, animated: true)
