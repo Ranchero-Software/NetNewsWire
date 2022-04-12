@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UnreadCount</key>
+	<key>UNREAD_COUNT</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@unread_count@</string>
@@ -20,7 +20,7 @@
 			<string>+ %u more unread articles</string>
 		</dict>
 	</dict>
-	<key>StarredCount</key>
+	<key>STARRED_COUNT</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@starred_count@</string>
@@ -38,7 +38,7 @@
 			<string>+ %u more starred articles</string>
 		</dict>
 	</dict>
-	<key>TodayCount</key>
+	<key>TODAY_COUNT</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@today_count@</string>
@@ -56,7 +56,7 @@
 			<string>+ %u more recent unread articles</string>
 		</dict>
 	</dict>
-	<key>LocalizedCount</key>
+	<key>LOCALIZED_COUNT</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@localized_count@</string>

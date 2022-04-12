@@ -7,31 +7,31 @@
 */
 
 /* Bundle */
-"Unread_Widget_Title" = "Your Unread Articles";
-"Unread_Widget_Description" = "A sneak peek at your unread articles.";
+"UNREAD_WIDGET_TITLE" = "Your Unread Articles";
+"UNREAD_WIDGET_DESCRIPTION" = "A sneak peek at your unread articles.";
 
-"Today_Widget_Title" = "Your Today Articles";
-"Today_Widget_Description" = "A sneak peek at recently published unread articles.";
+"TODAY_WIDGET_TITLE" = "Your Today Articles";
+"TODAY_WIDGET_DESCRIPTION" = "A sneak peek at recently published unread articles.";
 
-"Starred_Widget_Title" = "Your Starred Articles";
-"Starred_Widget_Description" = "A sneak peek at your starred articles.";
+"STARRED_WIDGET_TITLE" = "Your Starred Articles";
+"STARRED_WIDGET_DESCRIPTION" = "A sneak peek at your starred articles.";
 
-"SmartFeedSummary_Widget_Title" = "Your Smart Feed Summary";
-"SmartFeedSummary_Widget_Description" = "Your smart feeds, summarized.";
+"SMARTFEEDSUMMARY_WIDGET_TITLE" = "Your Smart Feed Summary";
+"SMARTFEEDSUMMARY_WIDGET_DESCRIPTION" = "Your smart feeds, summarized.";
 
 /* Unread Widget */
-"Unread_Widget_NoItemsTitle" = "Unread";
-"Unread_Widget_NoItems" = "There are no unread articles left to read.";
+"UNREAD_WIDGET_NOITEMSTITLE" = "Unread";
+"UNREAD_WIDGET_NOITEMS" = "There are no unread articles left to read.";
 
 /* Today Widget */
-"Today_Widget_NoItemsTitle" = "Today";
-"Today_Widget_NoItems" = "There are no recent unread articles left to read.";
+"TODAY_WIDGET_NOITEMSTITLE" = "Today";
+"TODAY_WIDGET_NOITEMS" = "There are no recent unread articles left to read.";
 
 /* Starred Widget */
-"Starred_Widget_NoItemsTitle" = "Starred";
-"Starred_Widget_NoItems" = "When you mark articles as Starred, they'll appear here.";
+"STARRED_WIDGET_NOITEMSTITLE" = "Starred";
+"STARRED_WIDGET_NOITEMS" = "When you mark articles as Starred, they'll appear here.";
 
 /* Smart Feed Summary Widget */
-"Unread" = "Unread";
-"Today" = "Today  ";
-"Starred" = "Starred";
+"UNREAD" = "Unread";
+"TODAY" = "Today  ";
+"STARRED" = "Starred";
