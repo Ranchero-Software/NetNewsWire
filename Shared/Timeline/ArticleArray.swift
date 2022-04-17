@@ -44,10 +44,10 @@ extension Array where Element == Article {
 		return nil
 	}
 
-	func articlesForIndexes(_ indexes: IndexSet) -> Set<Article> {
-		return Set(indexes.compactMap{ (oneIndex) -> Article? in
+	func articlesForIndexes(_ indexes: IndexSet) -> [Article] {
+		return indexes.compactMap{ (oneIndex) -> Article? in
 			return articleAtRow(oneIndex)
-		})
+		}
 	}
 		
 	func sortedByDate(_ sortDirection: ComparisonResult, groupByFeed: Bool = false) -> ArticleArray {

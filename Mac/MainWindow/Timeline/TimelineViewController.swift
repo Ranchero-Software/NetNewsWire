@@ -85,7 +85,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var showsSearchResults = false
 	var selectedArticles: [Article] {
-		return Array(articles.articlesForIndexes(tableView.selectedRowIndexes))
+		return articles.articlesForIndexes(tableView.selectedRowIndexes)
 	}
 
 	var hasAtLeastOneSelectedArticle: Bool {
