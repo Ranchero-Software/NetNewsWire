@@ -67,7 +67,7 @@
 
         <enumeration name="account type" code="enum">
             <enumerator name="onmymac" code="Locl" description="An On my Mac (local) account"/>
-            <enumerator name="bazQux" code="Bzqx" description="A BazQux account"/>
+            <enumerator name="bazqux" code="Bzqx" description="A BazQux account"/>
             <enumerator name="feedly" code="Fdly" description="A Feedly account"/>
             <enumerator name="feedbin" code="Fdbn" description="A Feedbin account"/>
             <enumerator name="feed wrangler" code="FWrg" description="A Feed Wrangler account"/>
