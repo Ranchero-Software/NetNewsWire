@@ -67,11 +67,15 @@
 
         <enumeration name="account type" code="enum">
             <enumerator name="onmymac" code="Locl" description="An On my Mac (local) account"/>
+            <enumerator name="bazqux" code="Bzqx" description="A BazQux account"/>
             <enumerator name="feedly" code="Fdly" description="A Feedly account"/>
             <enumerator name="feedbin" code="Fdbn" description="A Feedbin account"/>
             <enumerator name="feed wrangler" code="FWrg" description="A Feed Wrangler account"/>
+            <enumerator name="fresh rss" code="Frsh" description="A Fresh RSS account"/>
+            <enumerator name="icloud" code="Clkt" description="An iCloud/CloudKit account"/>
+            <enumerator name="inoreader" code="Inrd" description="An Inoreader account"/>
             <enumerator name="newsblur" code="NBlr" description="A Newsblur account"/>
-			<enumerator name="fresh rss" code="Frsh" description="A Fresh RSS account"/>
+            <enumerator name="theoldreader" code="Tord" description="A The Old Reader account"/>
         </enumeration>
 
         <class name="account" code="Acct" plural="accounts" description="An account for subscribing to feeds">
