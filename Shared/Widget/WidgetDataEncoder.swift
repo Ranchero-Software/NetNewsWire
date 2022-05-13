@@ -73,7 +73,7 @@ public final class WidgetDataEncoder {
 			
 			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
 										currentTodayCount: SmartFeedsController.shared.todayFeed.unreadCount,
-										currentStarredCount: try! SmartFeedsController.shared.starredFeed.fetchArticles().count,
+										currentStarredCount: try AccountManager.shared.fetchCountForStarredArticles(),
 										unreadArticles: unread,
 										starredArticles: starred,
 										todayArticles:today,

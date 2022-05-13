@@ -393,6 +393,17 @@ public final class AccountManager: UnreadCountProvider {
 			}
 		}
 	}
+    
+    // MARK: - Fetching Article Counts
+    
+    public func fetchCountForStarredArticles() throws -> Int {
+        precondition(Thread.isMainThread)
+        var count = 0
+        for account in activeAccounts {
+            count += try account.fetchCountForStarredArticles()
+        }
+        return count
+    }
 
 	// MARK: - Caches
 
