@@ -1,5 +1,24 @@
 # Mac Release Notes
 
+### 6.1 build 6106 6 April 2022
+
+Small cosmetic change — better alignment for items in General Preferences pane
+
+### 6.1b5 build 6104 3 April 2022
+
+Updated built-in feeds
+Building on a new Apple Silicon Mac — testing to make sure all’s well
+
+### 6.1b4 build 6103 27 Feb 2022
+
+Fixed a few font and sizing issues
+
+
+### 6.1b3 build 6102 - 8 Feb 2022
+
+Two new themes: Hyperlegible and NewsFax
+Change in how built-in themes work: they’re part of the app bundle and they’re not copied into the Themes folder. When a built-in theme changes in a new app release, anyone using that new version gets the changes to the built-in theme
+
 ### 6.1b2 build 6101 - 17 Jan 2022
 
 Dealt with provisioning profiles, certificates, and IDs. Made notarization service happy.

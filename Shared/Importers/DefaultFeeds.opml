@@ -12,13 +12,13 @@
     <outline text="Manton Reece" title="Manton Reece" type="rss" version="RSS" htmlUrl="https://manton.org/" xmlUrl="https://www.manton.org/feed/json"/>
     <outline text="Julia Evans" title="Julia Evans" type="rss" version="RSS" htmlUrl="https://jvns.ca/" xmlUrl="https://jvns.ca/atom.xml"/>
     <outline text="Jason Kottke" title="Jason Kottke" type="rss" version="RSS" htmlUrl="https://kottke.org/" xmlUrl="http://feeds.kottke.org/json"/>
-    <outline text="Six Colors" title="Six Colors" type="rss" version="RSS" htmlUrl="https://sixcolors.com/" xmlUrl="https://sixcolors.com/feed.json"/>
-    <outline text="Loop Insight" title="Loop Insight" type="rss" version="RSS" htmlUrl="https://www.loopinsight.com/" xmlUrl="https://www.loopinsight.com/feed/"/>
+    <outline text="Six Colors" title="Six Colors" type="rss" version="RSS" htmlUrl="https://sixcolors.com/" xmlUrl="https://feedpress.me/sixcolors?type=xml"/>
+    <outline text="inessential" title="inessential" type="rss" version="RSS" htmlUrl="https://inessential.com/" xmlUrl="https://inessential.com/feed.json"/>
     <outline text="NetNewsWire Blog" title="NetNewsWire Blog" type="rss" version="RSS" htmlUrl="https://nnw.ranchero.com/" xmlUrl="https://nnw.ranchero.com/feed.json"/>
     <outline text="Erica Sadun" title="Erica Sadun" type="rss" version="RSS" htmlUrl="https://ericasadun.com/" xmlUrl="https://ericasadun.com/feed/"/>
     <outline text="One Foot Tsunami" title="One Foot Tsunami" type="rss" version="RSS" htmlUrl="https://onefoottsunami.com/" xmlUrl="https://onefoottsunami.com/feed/json/"/>
     <outline text="Craig Hockenberry" title="Craig Hockenberry" type="rss" version="RSS" htmlUrl="https://furbo.org/" xmlUrl="https://furbo.org/feed/json"/>
-    <outline text="Rose Orchard" title="Rose Orchard" type="rss" version="RSS" htmlUrl="https://rosemaryorchard.com/" xmlUrl="https://rosemaryorchard.com/blog/feed/"/>
+    <outline text="Rose Orchard" title="Rose Orchard" type="rss" version="RSS" htmlUrl="https://rosemaryorchard.com/" xmlUrl="https://rosemaryorchard.com/feed.xml"/>
     <outline text="Michael Tsai" title="Michael Tsai" type="rss" version="RSS" htmlUrl="https://mjtsai.com/blog/" xmlUrl="https://mjtsai.com/blog/feed/"/>
   </body>
 </opml>
