@@ -89,7 +89,7 @@ You can now open the `NetNewsWire.xccodeproj` in Xcode.
 Now you should be able to build without code signing errors and without modifying
 the NetNewsWire Xcode project.  This is a special build of NetNewsWire with some
 functionality disabled.  This is because we have API keys that can't be stored in the
-repository or shared between developers.  Certain account types, like Feedly, aren't
+repository or shared between developers.  Certain account types, like iCloud and Feedly, aren't
 enabled and the Reader View isn't enabled because of this.
 
 If you have any problems, we will help you out in Slack ([see above](README.md#Community)).
