@@ -502,11 +502,17 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func copyFolderBetweenAccounts(node: Node, to parentNode: Node) {
-		guard let folder = node.representedObject as? Folder,
-			let destinationAccount = nodeAccount(parentNode) else {
-				return
+		guard let folder = node.representedObject as? Folder else {
+			return
 		}
-
+		copyFolderBetweenAccounts(folder: folder, to: parentNode)
+	}
+	
+	func copyFolderBetweenAccounts(folder: Folder, to parentNode: Node) {
+		guard let destinationAccount = nodeAccount(parentNode) else {
+			return
+		}
+		
 		destinationAccount.addFolder(folder.name ?? "") { result in
 			switch result {
 			case .success(let destinationFolder):
@@ -535,10 +541,17 @@ private extension SidebarOutlineDataSource {
 				NSApplication.shared.presentError(error)
 			}
 		}
-
 	}
 
 	func acceptLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {
+		if draggedNodes != nil {
+			return acceptLocalFoldersNodeDrop(outlineView, draggedFolders, parentNode, index)
+		} else {
+			return acceptLocalFoldersPasteboardDrop(outlineView, draggedFolders, parentNode, index)
+		}
+	}
+	
+	func acceptLocalFoldersNodeDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {
 		guard let draggedNodes = draggedNodes else {
 			return false
 		}
@@ -546,6 +559,28 @@ private extension SidebarOutlineDataSource {
 		draggedNodes.forEach { node in
 			if !sameAccount(node, parentNode) {
 				copyFolderBetweenAccounts(node: node, to: parentNode)
+			}
+		}
+		
+		return true
+	}
+	
+	func acceptLocalFoldersPasteboardDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {
+		guard draggedFolders.isEmpty == false else {
+			return false
+		}
+
+		draggedFolders.forEach { pasteboardFolder in
+			guard let sourceAccountID = pasteboardFolder.accountID,
+				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
+				  let folderStringID = pasteboardFolder.folderID,
+				  let folderID = Int(folderStringID),
+				  let folder = sourceAccount.existingFolder(withID: folderID)
+			else {
+				return
+			}
+			if !sameAccount(pasteboardFolder, parentNode) {
+				copyFolderBetweenAccounts(folder: folder, to: parentNode)
 			}
 		}
 		
@@ -586,16 +621,28 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func sameAccount(_ pasteboardWebFeed: PasteboardWebFeed, _ parentNode: Node) -> Bool {
-		if let accountID = pasteboardWebFeed.accountID, let parentAccountID = nodeAccountID(parentNode) {
-			if accountID == parentAccountID {
-				return true
-			}
+		if let accountID = pasteboardWebFeed.accountID {
+			return sameAccount(accountID, parentNode)
+		}
+		return false
+	}
+	
+	func sameAccount(_ pasteboardFolder: PasteboardFolder, _ parentNode: Node) -> Bool {
+		if let accountID = pasteboardFolder.accountID {
+			return sameAccount(accountID, parentNode)
 		}
 		return false
 	}
 
 	func sameAccount(_ node: Node, _ parentNode: Node) -> Bool {
-		if let accountID = nodeAccountID(node), let parentAccountID = nodeAccountID(parentNode) {
+		if let accountID = nodeAccountID(node) {
+			return sameAccount(accountID, parentNode)
+		}
+		return false
+	}
+	
+	func sameAccount(_ accountID: String, _ parentNode: Node) -> Bool {
+		if let parentAccountID = nodeAccountID(parentNode) {
 			if accountID == parentAccountID {
 				return true
 			}
