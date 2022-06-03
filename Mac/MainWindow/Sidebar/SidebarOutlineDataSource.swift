@@ -339,7 +339,9 @@ private extension SidebarOutlineDataSource {
 	}
 	
 	func copyWebFeedInAccount(node: Node, to parentNode: Node) {
-		guard let feed = node.representedObject as? WebFeed, let destination = parentNode.representedObject as? Container else {
+		guard let feed = node.representedObject as? WebFeed,
+			  let destination = parentNode.representedObject as? Container
+		else {
 			return
 		}
 		copyWebFeedInAccount(feed, destination)
@@ -384,7 +386,10 @@ private extension SidebarOutlineDataSource {
 			let destinationContainer = parentNode.representedObject as? Container else {
 			return
 		}
-		
+		copyWebFeedBetweenAccounts(feed, destinationAccount, destinationContainer)
+	}
+	
+	func copyWebFeedBetweenAccounts(_ feed: WebFeed, _ destinationAccount: Account, _ destinationContainer: Container) {
 		if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
 			destinationAccount.addWebFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
@@ -440,25 +445,23 @@ private extension SidebarOutlineDataSource {
 		}
 		
 		draggedFeeds.forEach { pasteboardFeed in
+			guard let accountID = pasteboardFeed.accountID,
+				  let account = AccountManager.shared.existingAccount(with: accountID),
+				  let webFeedID = pasteboardFeed.webFeedID,
+				  let feed = account.existingWebFeed(withWebFeedID:  webFeedID),
+				  let destination = parentNode.representedObject as? Container
+			else {
+				return
+			}
+
 			if sameAccount(pasteboardFeed, parentNode) {
-				guard let accountID = pasteboardFeed.accountID,
-					  let account = AccountManager.shared.existingAccount(with: accountID),
-					  let webFeedID = pasteboardFeed.webFeedID,
-					  let feed = account.existingWebFeed(withWebFeedID:  webFeedID),
-					  let destination = parentNode.representedObject as? Container
-				else {
-					return
-				}
-				
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
 					copyWebFeedInAccount(feed, destination)
 				} else {
 					moveWebFeedInAccount(feed, account, destination)
 				}
 			} else {
-				// TODO: handle between accounts
-				print("ERROR \(#file):\(#line)")
-				// copyWebFeedBetweenAccounts(feed, destination)
+				copyWebFeedBetweenAccounts(feed, account, destination)
 			}
 		}
 		
