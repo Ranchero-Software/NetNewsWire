@@ -15,7 +15,7 @@ typealias PasteboardWebFeedDictionary = [String: String]
 
 struct PasteboardWebFeed: Hashable {
 
-	private struct Key {
+	fileprivate struct Key {
 		static let url = "URL"
 		static let homePageURL = "homePageURL"
 		static let name = "name"
@@ -25,6 +25,7 @@ struct PasteboardWebFeed: Hashable {
 		static let accountType = "accountType"
 		static let webFeedID = "webFeedID"
 		static let editedName = "editedName"
+		static let containerName = "containerName"
 	}
 
 	let url: String
@@ -34,9 +35,10 @@ struct PasteboardWebFeed: Hashable {
 	let editedName: String?
 	let accountID: String?
 	let accountType: AccountType?
+	let containerName: String?
 	let isLocalFeed: Bool
 
-	init(url: String, webFeedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?, accountType: AccountType?) {
+	init(url: String, webFeedID: String?, homePageURL: String?, name: String?, editedName: String?, accountID: String?, accountType: AccountType?, containerName: String? = nil) {
 		self.url = url.normalizedURL
 		self.webFeedID = webFeedID
 		self.homePageURL = homePageURL?.normalizedURL
@@ -44,6 +46,7 @@ struct PasteboardWebFeed: Hashable {
 		self.editedName = editedName
 		self.accountID = accountID
 		self.accountType = accountType
+		self.containerName = containerName
 		self.isLocalFeed = accountID != nil
 	}
 
@@ -65,7 +68,8 @@ struct PasteboardWebFeed: Hashable {
 			accountType = AccountType(rawValue: accountTypeInt)
 		}
 		
-		self.init(url: url, webFeedID: webFeedID, homePageURL: homePageURL, name: name, editedName: editedName, accountID: accountID, accountType: accountType)
+		let containerName = dictionary[Key.containerName]
+		self.init(url: url, webFeedID: webFeedID, homePageURL: homePageURL, name: name, editedName: editedName, accountID: accountID, accountType: accountType, containerName: containerName)
 	}
 
 	init?(pasteboardItem: NSPasteboardItem) {
@@ -142,6 +146,9 @@ struct PasteboardWebFeed: Hashable {
 		if let accountType = accountType {
 			d[PasteboardWebFeed.Key.accountType] = String(accountType.rawValue)
 		}
+		if let containerName = containerName {
+			d[PasteboardWebFeed.Key.containerName] = containerName
+		}
 		return d
 	}
 }
@@ -161,6 +168,7 @@ extension WebFeed: @retroactive PasteboardWriterOwner {
 	static let webFeedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.webFeed"
 	static let webFeedUTIInternalType = NSPasteboard.PasteboardType(rawValue: webFeedUTIInternal)
 
+	var containerID: ContainerIdentifier? = nil
 
 	init(webFeed: WebFeed) {
 		self.webFeed = webFeed
@@ -205,6 +213,12 @@ private extension WebFeedPasteboardWriter {
 	}
 
 	var internalDictionary: PasteboardWebFeedDictionary {
-		return pasteboardFeed.internalDictionary()
+		var dictionary = pasteboardFeed.internalDictionary()
+		if dictionary[PasteboardWebFeed.Key.containerName] == nil,
+		   case let .folder(accountID, folderName) = containerID {
+			assert(accountID == dictionary[PasteboardWebFeed.Key.accountID], "unexpected: container account doesn't match account of contained item")
+			dictionary[PasteboardWebFeed.Key.containerName] = folderName
+		}
+		return dictionary
 	}
 }
