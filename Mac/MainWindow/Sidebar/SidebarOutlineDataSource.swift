@@ -203,13 +203,23 @@ private extension SidebarOutlineDataSource {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
-			return localDragOperation(parentNode: parentNode)
+			if draggedNodes?.isEmpty == false {
+				return localDragOperation(parentNode: parentNode)
+			}
+			else {
+				return localDragFeedPasteboardOperation(parentNode: parentNode, Set([draggedFeed]))
+			}
 		}
 		let updatedIndex = indexWhereDraggedFeedWouldAppear(dropTargetNode, draggedFeed)
 		if parentNode !== dropTargetNode || index != updatedIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
 		}
-		return localDragOperation(parentNode: parentNode)
+		if draggedNodes?.isEmpty == false {
+			return localDragOperation(parentNode: parentNode)
+		}
+		else {
+			return localDragFeedPasteboardOperation(parentNode: parentNode, Set([draggedFeed]))
+		}
 	}
 
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -226,19 +236,37 @@ private extension SidebarOutlineDataSource {
 		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
-		return localDragOperation(parentNode: parentNode)
+		if draggedNodes?.isEmpty == false {
+			return localDragOperation(parentNode: parentNode)
+		}
+		else {
+			return localDragFeedPasteboardOperation(parentNode: parentNode, draggedFeeds)
+		}
 	}
 	
 	func localDragOperation(parentNode: Node) -> NSDragOperation {
 		guard let firstDraggedNode = draggedNodes?.first else { return .move }
 		if sameAccount(firstDraggedNode, parentNode) {
-			if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-				return .copy
-			} else {
-				return .move
-			}
+			return dragCopyOrMove()
 		} else {
 			return .copy
+		}
+	}
+	
+	func localDragFeedPasteboardOperation(parentNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>)-> NSDragOperation {
+		guard let firstDraggedFeed = draggedFeeds.first else { return .move }
+		if sameAccount(firstDraggedFeed, parentNode) {
+			return dragCopyOrMove()
+		} else {
+			return .copy
+		}
+	}
+		
+	func dragCopyOrMove() -> NSDragOperation {
+		if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+			return .copy
+		} else {
+			return .move
 		}
 	}
 
@@ -287,6 +315,7 @@ private extension SidebarOutlineDataSource {
 		if index != updatedIndex {
 			outlineView.setDropItem(parentNode, dropChildIndex: updatedIndex)
 		}
+		// TODO: handle local folder drags between windows
 		return localDragOperation(parentNode: parentNode)
 	}
 	
@@ -305,6 +334,7 @@ private extension SidebarOutlineDataSource {
 		if index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(parentNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
+		// TODO: handle local folder drags between windows
 		return localDragOperation(parentNode: parentNode)
 	}
 	
@@ -312,7 +342,10 @@ private extension SidebarOutlineDataSource {
 		guard let feed = node.representedObject as? WebFeed, let destination = parentNode.representedObject as? Container else {
 			return
 		}
-		
+		copyWebFeedInAccount(feed, destination)
+	}
+	
+	func copyWebFeedInAccount(_ feed: WebFeed, _ destination: Container ) {
 		destination.account?.addWebFeed(feed, to: destination) { result in
 			switch result {
 			case .success:
@@ -329,7 +362,10 @@ private extension SidebarOutlineDataSource {
 			let destination = parentNode.representedObject as? Container else {
 			return
 		}
-
+		moveWebFeedInAccount(feed, source, destination)
+	}
+	
+	func moveWebFeedInAccount(_ feed: WebFeed, _ source: Container, _ destination: Container) {
 		BatchUpdate.shared.start()
 		source.account?.moveWebFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
@@ -371,10 +407,18 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> Bool {
+		if draggedNodes != nil {
+			return acceptLocalFeedsNodeDrop(outlineView, parentNode: parentNode, index)
+		} else {
+			return acceptLocalFeedsPastboardDrop(outlineView, draggedFeeds, parentNode, index)
+		}
+	}
+	
+	func acceptLocalFeedsNodeDrop( _ outlineView: NSOutlineView, parentNode: Node, _ index: Int) -> Bool {
 		guard let draggedNodes = draggedNodes else {
 			return false
 		}
-
+		
 		draggedNodes.forEach { node in
 			if sameAccount(node, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
@@ -389,6 +433,38 @@ private extension SidebarOutlineDataSource {
 		
 		return true
 	}
+	
+	func acceptLocalFeedsPastboardDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> Bool {
+		guard draggedFeeds.isEmpty == false else {
+			return false
+		}
+		
+		draggedFeeds.forEach { pasteboardFeed in
+			if sameAccount(pasteboardFeed, parentNode) {
+				guard let accountID = pasteboardFeed.accountID,
+					  let account = AccountManager.shared.existingAccount(with: accountID),
+					  let webFeedID = pasteboardFeed.webFeedID,
+					  let feed = account.existingWebFeed(withWebFeedID:  webFeedID),
+					  let destination = parentNode.representedObject as? Container
+				else {
+					return
+				}
+				
+				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
+					copyWebFeedInAccount(feed, destination)
+				} else {
+					moveWebFeedInAccount(feed, account, destination)
+				}
+			} else {
+				// TODO: handle between accounts
+				print("ERROR \(#file):\(#line)")
+				// copyWebFeedBetweenAccounts(feed, destination)
+			}
+		}
+		
+		return true
+	}
+
 
 	func nodeIsAccountOrFolder(_ node: Node) -> Bool {
 		return node.representedObject is Account || node.representedObject is Folder
@@ -506,6 +582,15 @@ private extension SidebarOutlineDataSource {
 		return false
 	}
 	
+	func sameAccount(_ pasteboardWebFeed: PasteboardWebFeed, _ parentNode: Node) -> Bool {
+		if let accountID = pasteboardWebFeed.accountID, let parentAccountID = nodeAccountID(parentNode) {
+			if accountID == parentAccountID {
+				return true
+			}
+		}
+		return false
+	}
+
 	func sameAccount(_ node: Node, _ parentNode: Node) -> Bool {
 		if let accountID = nodeAccountID(node), let parentAccountID = nodeAccountID(parentNode) {
 			if accountID == parentAccountID {
