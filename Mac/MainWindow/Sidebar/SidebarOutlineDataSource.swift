@@ -315,8 +315,7 @@ private extension SidebarOutlineDataSource {
 		if index != updatedIndex {
 			outlineView.setDropItem(parentNode, dropChildIndex: updatedIndex)
 		}
-		// TODO: handle local folder drags between windows
-		return localDragOperation(parentNode: parentNode)
+		return .copy	// only get here if src & dst are different accounts and can only copy to different account
 	}
 	
 	func validateLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -334,8 +333,7 @@ private extension SidebarOutlineDataSource {
 		if index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(parentNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
-		// TODO: handle local folder drags between windows
-		return localDragOperation(parentNode: parentNode)
+		return .copy	// only get here if src & dst are different accounts and can only copy to different account
 	}
 	
 	func copyWebFeedInAccount(node: Node, to parentNode: Node) {
