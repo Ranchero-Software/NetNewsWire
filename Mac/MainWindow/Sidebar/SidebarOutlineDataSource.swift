@@ -380,14 +380,18 @@ private extension SidebarOutlineDataSource {
 
 	func copyWebFeedBetweenAccounts(node: Node, to parentNode: Node) {
 		guard let feed = node.representedObject as? WebFeed,
-			let destinationAccount = nodeAccount(parentNode),
+			  let sourceAccount = feed.account,
 			let destinationContainer = parentNode.representedObject as? Container else {
 			return
 		}
-		copyWebFeedBetweenAccounts(feed, destinationAccount, destinationContainer)
+		copyWebFeedBetweenAccounts(feed, sourceAccount, destinationContainer)
 	}
 	
-	func copyWebFeedBetweenAccounts(_ feed: WebFeed, _ destinationAccount: Account, _ destinationContainer: Container) {
+	func copyWebFeedBetweenAccounts(_ feed: WebFeed, _ sourceAccount: Account, _ destinationContainer: Container) {
+		guard let destinationAccount = destinationContainer.account  else {
+			return
+		}
+		
 		if let existingFeed = destinationAccount.existingWebFeed(withURL: feed.url) {
 			destinationAccount.addWebFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
@@ -443,23 +447,23 @@ private extension SidebarOutlineDataSource {
 		}
 		
 		draggedFeeds.forEach { pasteboardFeed in
-			guard let accountID = pasteboardFeed.accountID,
-				  let account = AccountManager.shared.existingAccount(with: accountID),
+			guard let sourceAccountID = pasteboardFeed.accountID,
+				  let sourceAccount = AccountManager.shared.existingAccount(with: sourceAccountID),
 				  let webFeedID = pasteboardFeed.webFeedID,
-				  let feed = account.existingWebFeed(withWebFeedID:  webFeedID),
-				  let destination = parentNode.representedObject as? Container
+				  let feed = sourceAccount.existingWebFeed(withWebFeedID:  webFeedID),
+				  let destinationContainer = parentNode.representedObject as? Container
 			else {
 				return
 			}
 
 			if sameAccount(pasteboardFeed, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyWebFeedInAccount(feed, destination)
+					copyWebFeedInAccount(feed, destinationContainer)
 				} else {
-					moveWebFeedInAccount(feed, account, destination)
+					moveWebFeedInAccount(feed, sourceAccount, destinationContainer)
 				}
 			} else {
-				copyWebFeedBetweenAccounts(feed, account, destination)
+				copyWebFeedBetweenAccounts(feed, sourceAccount, destinationContainer)
 			}
 		}
 		
