@@ -16,7 +16,6 @@ import Account
 
 	let treeController: TreeController
 	static let dragOperationNone = NSDragOperation(rawValue: 0)
-	private var draggedNodes: Set<Node>? = nil
 
 	init(treeController: TreeController) {
 		self.treeController = treeController
@@ -48,10 +47,6 @@ import Account
 	}
 
 	// MARK: - Drag and Drop
-
-	func outlineView(_ outlineView: NSOutlineView, draggingSession session: NSDraggingSession, willBeginAt screenPoint: NSPoint, forItems draggedItems: [Any]) {
-		draggedNodes = Set(draggedItems.map { nodeForItem($0) })
-	}
 
 	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
 		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
@@ -203,23 +198,13 @@ private extension SidebarOutlineDataSource {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
-			if draggedNodes?.isEmpty == false {
-				return localDragOperation(parentNode: parentNode)
-			}
-			else {
-				return localDragFeedPasteboardOperation(parentNode: parentNode, Set([draggedFeed]))
-			}
+			return localDragFeedPasteboardOperation(parentNode: parentNode, Set([draggedFeed]))
 		}
 		let updatedIndex = indexWhereDraggedFeedWouldAppear(dropTargetNode, draggedFeed)
 		if parentNode !== dropTargetNode || index != updatedIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
 		}
-		if draggedNodes?.isEmpty == false {
-			return localDragOperation(parentNode: parentNode)
-		}
-		else {
-			return localDragFeedPasteboardOperation(parentNode: parentNode, Set([draggedFeed]))
-		}
+		return localDragFeedPasteboardOperation(parentNode: parentNode, Set([draggedFeed]))
 	}
 
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -236,21 +221,7 @@ private extension SidebarOutlineDataSource {
 		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
-		if draggedNodes?.isEmpty == false {
-			return localDragOperation(parentNode: parentNode)
-		}
-		else {
-			return localDragFeedPasteboardOperation(parentNode: parentNode, draggedFeeds)
-		}
-	}
-	
-	func localDragOperation(parentNode: Node) -> NSDragOperation {
-		guard let firstDraggedNode = draggedNodes?.first else { return .move }
-		if sameAccount(firstDraggedNode, parentNode) {
-			return dragCopyOrMove()
-		} else {
-			return .copy
-		}
+		return localDragFeedPasteboardOperation(parentNode: parentNode, draggedFeeds)
 	}
 	
 	func localDragFeedPasteboardOperation(parentNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>)-> NSDragOperation {
@@ -414,34 +385,6 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func acceptLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> Bool {
-		if draggedNodes != nil {
-			return acceptLocalFeedsNodeDrop(outlineView, parentNode: parentNode, index)
-		} else {
-			return acceptLocalFeedsPastboardDrop(outlineView, draggedFeeds, parentNode, index)
-		}
-	}
-	
-	func acceptLocalFeedsNodeDrop( _ outlineView: NSOutlineView, parentNode: Node, _ index: Int) -> Bool {
-		guard let draggedNodes = draggedNodes else {
-			return false
-		}
-		
-		draggedNodes.forEach { node in
-			if sameAccount(node, parentNode) {
-				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
-					copyWebFeedInAccount(node: node, to: parentNode)
-				} else {
-					moveWebFeedInAccount(node: node, to: parentNode)
-				}
-			} else {
-				copyWebFeedBetweenAccounts(node: node, to: parentNode)
-			}
-		}
-		
-		return true
-	}
-	
-	func acceptLocalFeedsPastboardDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> Bool {
 		guard draggedFeeds.isEmpty == false else {
 			return false
 		}
@@ -546,28 +489,6 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func acceptLocalFoldersDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {
-		if draggedNodes != nil {
-			return acceptLocalFoldersNodeDrop(outlineView, draggedFolders, parentNode, index)
-		} else {
-			return acceptLocalFoldersPasteboardDrop(outlineView, draggedFolders, parentNode, index)
-		}
-	}
-	
-	func acceptLocalFoldersNodeDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {
-		guard let draggedNodes = draggedNodes else {
-			return false
-		}
-		
-		draggedNodes.forEach { node in
-			if !sameAccount(node, parentNode) {
-				copyFolderBetweenAccounts(node: node, to: parentNode)
-			}
-		}
-		
-		return true
-	}
-	
-	func acceptLocalFoldersPasteboardDrop(_ outlineView: NSOutlineView, _ draggedFolders: Set<PasteboardFolder>, _ parentNode: Node, _ index: Int) -> Bool {
 		guard draggedFolders.isEmpty == false else {
 			return false
 		}
