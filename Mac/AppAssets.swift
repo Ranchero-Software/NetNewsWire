@@ -28,10 +28,6 @@ struct AppAssets {
 		return RSImage(named: "accountFeedly")
 	}()
 	
-	static var accountFeedWrangler: RSImage! = {
-		return RSImage(named: "accountFeedWrangler")
-	}()
-	
 	static var accountFreshRSS: RSImage! = {
 		return RSImage(named: "accountFreshRSS")
 	}()
@@ -288,8 +284,6 @@ struct AppAssets {
 			return AppAssets.accountFeedbin
 		case .feedly:
 			return AppAssets.accountFeedly
-		case .feedWrangler:
-			return AppAssets.accountFeedWrangler
 		case .freshRSS:
 			return AppAssets.accountFreshRSS
 		case .inoreader:

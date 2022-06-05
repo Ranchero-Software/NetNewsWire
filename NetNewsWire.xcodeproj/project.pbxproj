@@ -58,11 +58,6 @@
 		17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; };
 		17EF6A2225C4E5B4002C9F81 /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		27B86EEB25A53AAB00264340 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; };
-		3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */; };
-		3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
-		3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
-		3B826DCD2385C89600FC1ADB /* AccountsFeedWrangler.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */; };
-		3B826DCE2385C89600FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */; };
 		4679674625E599C100844E8D /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 4679674525E599C100844E8D /* Articles */; };
 		4679674725E599C100844E8D /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 4679674525E599C100844E8D /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4679674925E599C100844E8D /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4679674825E599C100844E8D /* RSCore */; };
@@ -1157,9 +1152,6 @@
 		17D643B026F8A436008D4C05 /* ArticleThemeDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemeDownloader.swift; sourceTree = "<group>"; };
 		17D7586C2679C21700B17787 /* NetNewsWire-iOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-iOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		17E0084525941887000C23F0 /* SizeCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeCategories.swift; sourceTree = "<group>"; };
-		3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedWranglerAccountViewController.swift; sourceTree = "<group>"; };
-		3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsFeedWrangler.xib; sourceTree = "<group>"; };
-		3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountsFeedWranglerWindowController.swift; sourceTree = "<group>"; };
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
 		510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectComboTableViewCell.swift; sourceTree = "<group>"; };
 		510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TwitterAdd.storyboard; sourceTree = "<group>"; };
@@ -1949,7 +1941,6 @@
 				51A1698F235E10D600EB091F /* LocalAccountViewController.swift */,
 				512DD4C82430086400C17B1F /* CloudKitAccountViewController.swift */,
 				51A16996235E10D700EB091F /* FeedbinAccountViewController.swift */,
-				3B3A328B238B820900314204 /* FeedWranglerAccountViewController.swift */,
 				769F2D3643779DB02786278E /* NewsBlurAccountViewController.swift */,
 				177A0C2C25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift */,
 			);
@@ -2652,8 +2643,6 @@
 				5144EA2E2279FAB600D19003 /* AccountsDetailViewController.swift */,
 				5144EA50227B8E4500D19003 /* AccountsFeedbin.xib */,
 				5144EA4F227B8E4500D19003 /* AccountsFeedbinWindowController.swift */,
-				3B826DB02385C84800FC1ADB /* AccountsFeedWrangler.xib */,
-				3B826DCA2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift */,
 				BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */,
 				179DBBA2B22A659F81EED6F9 /* AccountsNewsBlurWindowController.swift */,
 				84C9FC7222629E1200D921D6 /* AccountsPreferencesViewController.swift */,
@@ -3399,7 +3388,6 @@
 				65ED4067235DEF6C0081F399 /* page.html in Resources */,
 				65ED4068235DEF6C0081F399 /* MainWindow.storyboard in Resources */,
 				BDCB516824282C8A00102A80 /* AccountsNewsBlur.xib in Resources */,
-				3B826DCD2385C89600FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				515A516F243E7F950089E588 /* ExtensionPointDetail.xib in Resources */,
 				65ED4069235DEF6C0081F399 /* AccountsReaderAPI.xib in Resources */,
 				65ED406A235DEF6C0081F399 /* newsfoot.js in Resources */,
@@ -3505,7 +3493,6 @@
 				8405DDA222168920008CE1BF /* TimelineTableView.xib in Resources */,
 				B528F81E23333C7E00E735DD /* page.html in Resources */,
 				8483630E2262A3FE00DA1D35 /* MainWindow.storyboard in Resources */,
-				3B826DCB2385C84800FC1ADB /* AccountsFeedWrangler.xib in Resources */,
 				55E15BCB229D65A900D6602A /* AccountsReaderAPI.xib in Resources */,
 				49F40DF82335B71000552BF4 /* newsfoot.js in Resources */,
 				51333D3B2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
@@ -3921,7 +3908,6 @@
 				65ED3FFF235DEF6C0081F399 /* SidebarOutlineDataSource.swift in Sources */,
 				65ED4000235DEF6C0081F399 /* SidebarCellAppearance.swift in Sources */,
 				65ED4001235DEF6C0081F399 /* StarredFeedDelegate.swift in Sources */,
-				3B826DCE2385C89600FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */,
 				65ED4002235DEF6C0081F399 /* FaviconDownloader.swift in Sources */,
 				65ED4003235DEF6C0081F399 /* AdvancedPreferencesViewController.swift in Sources */,
 				65ED4004235DEF6C0081F399 /* SharingServicePickerDelegate.swift in Sources */,
@@ -4054,7 +4040,6 @@
 				51AB8AB323B7F4C6008F147D /* WebViewController.swift in Sources */,
 				516A09392360A2AE00EAE89B /* SettingsComboTableViewCell.swift in Sources */,
 				176813D22564BA5900D98635 /* WidgetDataEncoder.swift in Sources */,
-				3B3A32A5238B820900314204 /* FeedWranglerAccountViewController.swift in Sources */,
 				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
 				51A1699C235E10D700EB091F /* AddAccountViewController.swift in Sources */,
 				51A16999235E10D700EB091F /* LocalAccountViewController.swift in Sources */,
@@ -4330,7 +4315,6 @@
 				84CAFCAF22BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				8426119E1FCB6ED40086A189 /* HTMLMetadataDownloader.swift in Sources */,
 				849A976E1ED9EBC8007D329B /* TimelineViewController.swift in Sources */,
-				3B826DCC2385C84800FC1ADB /* AccountsFeedWranglerWindowController.swift in Sources */,
 				5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */,
 				5183CCE6226F4E110010922C /* RefreshInterval.swift in Sources */,
 				849A97771ED9EC04007D329B /* TimelineCellData.swift in Sources */,

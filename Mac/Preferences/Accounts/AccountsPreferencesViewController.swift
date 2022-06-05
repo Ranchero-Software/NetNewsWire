@@ -168,10 +168,6 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			let accountsFeedbinWindowController = AccountsFeedbinWindowController()
 			accountsFeedbinWindowController.runSheetOnWindow(self.view.window!)
 			addAccountWindowController = accountsFeedbinWindowController
-		case .feedWrangler:
-			let accountsFeedWranglerWindowController = AccountsFeedWranglerWindowController()
-			accountsFeedWranglerWindowController.runSheetOnWindow(self.view.window!)
-			addAccountWindowController = accountsFeedWranglerWindowController
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsReaderAPIWindowController.accountType = accountType

@@ -8,7 +8,6 @@
 import Foundation
 
 public protocol SecretsProvider {
-	var feedWranglerKey: String { get }
 	var mercuryClientId: String { get }
 	var mercuryClientSecret: String { get }
 	var feedlyClientId: String { get }
