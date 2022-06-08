@@ -211,13 +211,13 @@ private extension SidebarOutlineDataSource {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if parentNode == dropTargetNode && index == NSOutlineViewDropOnItemIndex {
-			return localDragFeedPasteboardOperation(parentNode: parentNode, Set([draggedFeed]))
+			return localDragOperation(parentNode: parentNode, Set([draggedFeed]))
 		}
 		let updatedIndex = indexWhereDraggedFeedWouldAppear(dropTargetNode, draggedFeed)
 		if parentNode !== dropTargetNode || index != updatedIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
 		}
-		return localDragFeedPasteboardOperation(parentNode: parentNode, Set([draggedFeed]))
+		return localDragOperation(parentNode: parentNode, Set([draggedFeed]))
 	}
 
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardWebFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -234,10 +234,10 @@ private extension SidebarOutlineDataSource {
 		if parentNode !== dropTargetNode || index != NSOutlineViewDropOnItemIndex {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: NSOutlineViewDropOnItemIndex)
 		}
-		return localDragFeedPasteboardOperation(parentNode: parentNode, draggedFeeds)
+		return localDragOperation(parentNode: parentNode, draggedFeeds)
 	}
 	
-	func localDragFeedPasteboardOperation(parentNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>)-> NSDragOperation {
+	func localDragOperation(parentNode: Node, _ draggedFeeds: Set<PasteboardWebFeed>)-> NSDragOperation {
 		guard let firstDraggedFeed = draggedFeeds.first else { return .move }
 		if sameAccount(firstDraggedFeed, parentNode) {
 			if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
