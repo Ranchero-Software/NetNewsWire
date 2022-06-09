@@ -211,7 +211,7 @@ class FeedlyTestSupport {
 				XCTAssertEqual(article.uniqueID, item.id)
 				XCTAssertEqual(article.contentHTML, item.content)
 				XCTAssertEqual(article.webFeedID, item.feedId)
-				XCTAssertEqual(article.externalURL, item.externalUrl)
+				XCTAssertEqual(article.rawExternalLink, item.externalUrl)
 			}
 		}
 	}
