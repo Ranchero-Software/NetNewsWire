@@ -299,6 +299,18 @@ protocol SidebarDelegate: AnyObject {
 
 	// MARK: - Navigation
 	
+	func expandCurrentSelectedItems() -> Bool {
+		var expanded = false
+		outlineView.selectedItems.forEach { item in
+			guard outlineView.isExpandable(item), !outlineView.isItemExpanded(item) else {
+				return
+			}
+			outlineView.expandItem(item)
+			expanded = true
+		}
+		return expanded
+	}
+
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
 		if let _ = nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) {
 			return true

@@ -469,6 +469,12 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		currentTimelineViewController?.focus()
 	}
 
+	@IBAction func navigateToTimelineOrExpandSidebarItem(_ sender: Any?) {
+		if let sidebarViewController = sidebarViewController, !sidebarViewController.expandCurrentSelectedItems() {
+			currentTimelineViewController?.focus()
+		}
+	}
+
 	@IBAction func navigateToSidebar(_ sender: Any?) {
 		sidebarViewController?.focus()
 	}
