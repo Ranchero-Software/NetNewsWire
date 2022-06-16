@@ -90,7 +90,7 @@ final class DetailWebView: WKWebView {
 
 		frame.size = NSSize(width: window!.frame.width, height: window!.frame.height - 1)
 		window!.setFrame(frame, display: false)
-		frame.size = NSSize(width: window!.frame.width, height: window!.frame.height + 1)
+		frame.size = NSSize(width: frame.width, height: frame.height + 1)
 		window!.setFrame(frame, display: false)
 	}
 }
