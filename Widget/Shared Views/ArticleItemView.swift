@@ -55,7 +55,7 @@ struct ArticleItemView: View {
 	
 	func thumbnail(from path: String?) -> Image? {
 		guard let imagePath = path,
-			  let url = URL(string: imagePath),
+			  let url = URL(fileURLWithPath: imagePath),
 			  let data = try? Data(contentsOf: url),
 			  let uiImage = UIImage(data: data) else {
 				  return Image(uiImage: UIImage(systemName: "globe")!)
