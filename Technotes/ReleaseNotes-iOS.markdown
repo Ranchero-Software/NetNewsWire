@@ -1,6 +1,11 @@
 # iOS Release Notes
 
-### 6.1 TestFligth build 6104 - 6 April 2022
+### 6.1 TestFlight build 6105 = 6 July 2022
+
+Write widget icons to the shared container
+Make crashes slightly less likely when building up widget data
+
+### 6.1 TestFlight build 6104 - 6 April 2022
 
 Building on a new machine and making sure all’s well
 Moved built-in themes to the app bundle so they’re always up to date
