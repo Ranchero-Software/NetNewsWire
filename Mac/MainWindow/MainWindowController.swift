@@ -276,6 +276,9 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 			return true
 		}
+		if item.action == #selector(performFindPanelAction(_:)) {
+			return self.detailViewController?.currentWebViewController.canFindInArticle ?? false
+		}
 		
 		return true
 	}
@@ -535,6 +538,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	
 	@IBAction func toggleReadArticlesFilter(_ sender: Any?) {
 		timelineContainerViewController?.toggleReadFilter()
+	}
+
+	@IBAction  func performFindPanelAction(_ sender: Any?) {
+		self.detailViewController?.performFindPanelAction(sender)
 	}
 	
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {

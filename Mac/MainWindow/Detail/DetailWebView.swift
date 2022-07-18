@@ -99,6 +99,12 @@ final class DetailWebView: WKWebView {
 			window!.setFrame(frame, display: false)
 		}
 	}
+
+	// MARK: NSTextFinderClient
+
+	// Returning false here prevents the "Replace" checkbox from appearing in the find bar
+	override var isEditable: Bool { return false }
+
 }
 
 // MARK: - Private
