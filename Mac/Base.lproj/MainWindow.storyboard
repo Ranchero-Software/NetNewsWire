@@ -364,14 +364,25 @@
                                     <outlet property="urlLabel" destination="Dim-ed-Dcz" id="8fY-oo-cGT"/>
                                 </connections>
                             </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="lMN-Bl-G9Q" userLabel="Find Bar Container View">
+                                <rect key="frame" x="0.0" y="300" width="730" height="0.0"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" id="C1e-J5-baX"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="xI5-lx-RD8" firstAttribute="leading" secondItem="cJ9-6s-66u" secondAttribute="leading" constant="6" id="5vz-ys-CAo"/>
+                            <constraint firstItem="lMN-Bl-G9Q" firstAttribute="top" secondItem="cJ9-6s-66u" secondAttribute="top" placeholder="YES" id="Qyj-r4-LOb"/>
+                            <constraint firstItem="lMN-Bl-G9Q" firstAttribute="leading" secondItem="cJ9-6s-66u" secondAttribute="leading" id="fjq-7Z-e0q"/>
+                            <constraint firstAttribute="trailing" secondItem="lMN-Bl-G9Q" secondAttribute="trailing" id="oth-5X-F9R"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xI5-lx-RD8" secondAttribute="trailing" constant="6" id="pbD-LN-Gk1"/>
                             <constraint firstAttribute="bottom" secondItem="xI5-lx-RD8" secondAttribute="bottom" constant="2" id="zsv-B0-ChW"/>
                         </constraints>
                         <connections>
                             <outlet property="detailStatusBarView" destination="xI5-lx-RD8" id="yIZ-aP-fKF"/>
+                            <outlet property="findBarContainerView" destination="lMN-Bl-G9Q" id="zMP-iV-uSN"/>
+                            <outlet property="findBarHeightConstraint" destination="C1e-J5-baX" id="Q4g-LU-JWK"/>
                         </connections>
                     </customView>
                     <connections>
