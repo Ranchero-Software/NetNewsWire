@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class DetailContainerView: NSView {
+final class DetailContainerView: NSView, NSTextFinderBarContainer {
 
 	@IBOutlet var detailStatusBarView: DetailStatusBarView!
 
