@@ -1,9 +1,9 @@
 //
-//  WidgetBundle.swift
-//  NetNewsWire Widget Extension
+//  NetNewsWire_Modern_Widget.swift
+//  NetNewsWire Modern Widget
 //
-//  Created by Stuart Breckenridge on 18/11/2020.
-//  Copyright © 2020 Ranchero Software. All rights reserved.
+//  Created by Stuart Breckenridge on 03/08/2022.
+//  Copyright © 2022 Ranchero Software. All rights reserved.
 //
 
 import WidgetKit
@@ -65,13 +65,33 @@ struct StarredWidget: Widget {
 	}
 }
 
-// MARK: - WidgetBundle
-@main
-struct NetNewsWireWidgets: WidgetBundle {
-	@WidgetBundleBuilder
-	var body: some Widget {
-		UnreadWidget()
-		TodayWidget()
-		StarredWidget()
+
+
+struct SmartFeedSummaryWidget: Widget {
+	let kind: String = "com.ranchero.NetNewsWire.SmartFeedSummaryWidget"
+	
+	var body: some WidgetConfiguration {
+		
+		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
+			SmartFeedSummaryWidgetView(entry: entry)
+		})
+		.configurationDisplayName(L10n.smartFeedSummaryWidgetTitle)
+		.description(L10n.smartFeedSummaryWidgetDescription)
+		.supportedFamilies([.accessoryRectangular])
 	}
 }
+
+
+// MARK: - WidgetBundle
+@main
+struct NetNewsWire_Modern_Widget: WidgetBundle {
+	@WidgetBundleBuilder
+	var body: some Widget {
+//		UnreadWidget()
+//		TodayWidget()
+//		StarredWidget()
+		SmartFeedSummaryWidget()
+	}
+}
+
+
