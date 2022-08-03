@@ -15,7 +15,6 @@ import Account
 import RSCore
 import RSCoreResources
 import Secrets
-import OSLog
 import CrashReporter
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
@@ -30,14 +29,12 @@ import Sparkle
 var appDelegate: AppDelegate!
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate
+class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate, Logging
 {
 
 	private struct WindowRestorationIdentifiers {
 		static let mainWindow = "mainWindow"
 	}
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
@@ -194,14 +191,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 				try self.softwareUpdater.start()
 			}
 			catch {
-				NSLog("Failed to start software updater with error: \(error)")
+				logger.error("Failed to start software updater with error: \(error, privacy: .public)")
 			}
 		#endif
 		
 		AppDefaults.shared.registerDefaults()
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
-			os_log(.debug, log: log, "Is first run.")
+			logger.debug("Is first run")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
 
@@ -856,6 +853,7 @@ internal extension AppDelegate {
 					confirmImportSuccess(themeName: theme.name)
 				} catch {
 					NSApplication.shared.presentError(error)
+					logger.error("Error importing theme: \(error.localizedDescription, privacy: .public)")
 				}
 			}
 			
@@ -884,6 +882,7 @@ internal extension AppDelegate {
 			}
 		} catch {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error, "path": filename])
+			logger.error("Error importing theme: \(error.localizedDescription, privacy: .public)")
 		}
 	}
 	
@@ -1012,12 +1011,12 @@ private extension AppDelegate {
 		
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, log: log, "No account found from notification.")
+			logger.debug("No account found from notification.")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, log: log, "No article found from search using %@", articleID)
+			logger.debug("No article found from search using: \(articleID, privacy: .public)")
 			return
 		}
 		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
@@ -1031,12 +1030,12 @@ private extension AppDelegate {
 		}
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, log: log, "No account found from notification.")
+			logger.debug("No account found from notification.")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, log: log, "No article found from search using %@", articleID)
+			logger.debug("No article found from search using: \(articleID, privacy: .public)")
 			return
 		}
 		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }

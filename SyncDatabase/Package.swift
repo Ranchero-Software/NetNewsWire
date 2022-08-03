@@ -18,7 +18,7 @@ dependencies.append(contentsOf: [
 
 let package = Package(
     name: "SyncDatabase",
-	platforms: [.macOS(SupportedPlatform.MacOSVersion.v10_15), .iOS(SupportedPlatform.IOSVersion.v13)],
+    platforms: [.macOS(.v11), .iOS(.v14)],
     products: [
         .library(
             name: "SyncDatabase",

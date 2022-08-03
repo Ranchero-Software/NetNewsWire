@@ -12,7 +12,6 @@ import RSDatabase
 import RSParser
 import RSWeb
 import SyncDatabase
-import os.log
 import Secrets
 
 public enum FeedbinAccountDelegateError: String, Error {
@@ -20,12 +19,11 @@ public enum FeedbinAccountDelegateError: String, Error {
 	case unknown = "An unknown error occurred."
 }
 
-final class FeedbinAccountDelegate: AccountDelegate {
+final class FeedbinAccountDelegate: AccountDelegate, Logging {
 
 	private let database: SyncDatabase
 	
 	private let caller: FeedbinAPICaller
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
 
 	let behaviors: AccountBehaviors = [.disallowFeedCopyInRootFolder]
 	let server: String? = "api.feedbin.com"
@@ -132,7 +130,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
-		os_log(.debug, log: log, "Sending article statuses...")
+        logger.debug("Sending article statuses")
 
 		database.selectForProcessing { result in
 
@@ -178,7 +176,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 
 				group.notify(queue: DispatchQueue.main) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
+                    self.logger.debug("Done sending article statuses.")
 					if errorOccurred {
 						completion(.failure(FeedbinAccountDelegateError.unknown))
 					} else {
@@ -198,7 +196,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 	
 	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
 
-		os_log(.debug, log: log, "Refreshing article statuses...")
+        logger.debug("Refreshing article statuses...")
 		
 		let group = DispatchGroup()
 		var errorOccurred = false
@@ -212,7 +210,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
+                self.logger.error("Retrieving unread entries failed: \(error.localizedDescription, privacy: .public)")
 				group.leave()
 			}
 			
@@ -227,14 +225,14 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
+                self.logger.error("Retrieving starred entries failed: \(error.localizedDescription, privacy: .public)")
 				group.leave()
 			}
 			
 		}
 		
 		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
+            self.logger.debug("Done refreshing article statuses.")
 			if errorOccurred {
 				completion(.failure(FeedbinAccountDelegateError.unknown))
 			} else {
@@ -260,7 +258,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			return
 		}
 		
-		os_log(.debug, log: log, "Begin importing OPML...")
+        logger.debug("Begin importing OPML...")
 		isOPMLImportInProgress = true
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		
@@ -268,7 +266,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 			switch result {
 			case .success(let importResult):
 				if importResult.complete {
-					os_log(.debug, log: self.log, "Import OPML done.")
+                    self.logger.debug("Import OPML done.")
 					self.refreshProgress.completeTask()
 					self.isOPMLImportInProgress = false
 					DispatchQueue.main.async {
@@ -278,7 +276,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 					self.checkImportResult(opmlImportResultID: importResult.importResultID, completion: completion)
 				}
 			case .failure(let error):
-				os_log(.debug, log: self.log, "Import OPML failed.")
+                self.logger.error("Import OPML failed: \(error.localizedDescription, privacy: .public)")
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
@@ -352,7 +350,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 								self.clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 							}
 						case .failure(let error):
-							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+                            self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 				}
@@ -371,7 +369,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 								account.clearWebFeedMetadata(feed)
 							}
 						case .failure(let error):
-							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
+                            self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 					
@@ -541,7 +539,7 @@ final class FeedbinAccountDelegate: AccountDelegate {
 				case .success:
 					break
 				case .failure(let error):
-					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+                    self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
 				}
 			}
 			
@@ -624,13 +622,13 @@ private extension FeedbinAccountDelegate {
 			
 			Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
 				
-				os_log(.debug, log: self.log, "Checking status of OPML import...")
+                self.logger.debug("Checking status of OPML import...")
 				
 				self.caller.retrieveOPMLImportResult(importID: opmlImportResultID) { result in
 					switch result {
 					case .success(let importResult):
 						if let result = importResult, result.complete {
-							os_log(.debug, log: self.log, "Checking status of OPML import successfully completed.")
+                            self.logger.debug("Checking status of OPML import successfully completed.")
 							timer.invalidate()
 							self.refreshProgress.completeTask()
 							self.isOPMLImportInProgress = false
@@ -639,7 +637,7 @@ private extension FeedbinAccountDelegate {
 							}
 						}
 					case .failure(let error):
-						os_log(.debug, log: self.log, "Import OPML check failed.")
+                        self.logger.debug("Import OPML check failed.")
 						timer.invalidate()
 						self.refreshProgress.completeTask()
 						self.isOPMLImportInProgress = false
@@ -772,7 +770,7 @@ private extension FeedbinAccountDelegate {
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
 
-		os_log(.debug, log: log, "Syncing folders with %ld tags.", tags.count)
+        logger.debug("Syncing folders with \(tags.count, privacy: .public) tags.")
 
 		let tagNames = tags.map { $0.name }
 
@@ -811,7 +809,7 @@ private extension FeedbinAccountDelegate {
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
 
-		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
+        logger.debug("Syncing feeds with \(subscriptions.count, privacy: .public) subscriptions.")
 		
 		let subFeedIds = subscriptions.map { String($0.feedID) }
 		
@@ -865,7 +863,7 @@ private extension FeedbinAccountDelegate {
 		guard let taggings = taggings else { return }
 		assert(Thread.isMainThread)
 
-		os_log(.debug, log: log, "Syncing taggings with %ld taggings.", taggings.count)
+        logger.debug("Syncing taggings with \(taggings.count) taggings.")
 		
 		// Set up some structures to make syncing easier
 		let folderDict = nameToFolderDictionary(with: account.folders)
@@ -961,7 +959,7 @@ private extension FeedbinAccountDelegate {
 					group.leave()
 				case .failure(let error):
 					errorOccurred = true
-					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
+                    self.logger.error("Article status sync call failed: \(error.localizedDescription, privacy: .public)")
 					self.database.resetSelectedForProcessing(articleIDGroup.map { String($0) } )
 					group.leave()
 				}
@@ -1122,7 +1120,7 @@ private extension FeedbinAccountDelegate {
 	
 	func refreshArticles(_ account: Account, completion: @escaping VoidResultCompletionBlock) {
 
-		os_log(.debug, log: log, "Refreshing articles...")
+        logger.debug("Refreshing articles...")
 		
 		caller.retrieveEntries() { result in
 			
@@ -1143,7 +1141,7 @@ private extension FeedbinAccountDelegate {
 					}
 
 					self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate) { result in
-						os_log(.debug, log: self.log, "Done refreshing articles.")
+                        self.logger.debug("Done refreshing articles.")
 						switch result {
 						case .success:
 							completion(.success(()))
@@ -1160,7 +1158,7 @@ private extension FeedbinAccountDelegate {
 	}
 	
 	func refreshMissingArticles(_ account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		os_log(.debug, log: log, "Refreshing missing articles...")
+        logger.debug("Refreshing missing articles...")
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 			
@@ -1187,7 +1185,7 @@ private extension FeedbinAccountDelegate {
 
 						case .failure(let error):
 							errorOccurred = true
-							os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
+                            self.logger.error("Refreshing missing articles failed: \(error.localizedDescription, privacy: .public)")
 							group.leave()
 						}
 					}
@@ -1195,7 +1193,7 @@ private extension FeedbinAccountDelegate {
 
 				group.notify(queue: DispatchQueue.main) {
 					self.refreshProgress.completeTask()
-					os_log(.debug, log: self.log, "Done refreshing missing articles.")
+                    self.logger.debug("Done refreshing missing articles.")
 					if errorOccurred {
 						completion(.failure(FeedbinAccountDelegateError.unknown))
 					} else {
@@ -1312,7 +1310,7 @@ private extension FeedbinAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
+                self.logger.error("Sync Articles Read Status failed: \(error.localizedDescription, privacy: .public)")
 			}
 			
 		}
@@ -1364,7 +1362,7 @@ private extension FeedbinAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
+                self.logger.error("Sync Article Starred Status failed: \(error.localizedDescription, privacy: .public)")
 			}
 
 		}

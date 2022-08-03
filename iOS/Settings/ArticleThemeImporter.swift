@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import RSCore
 
-struct ArticleThemeImporter {
+struct ArticleThemeImporter: Logging {
 	
 	static func importTheme(controller: UIViewController, filename: String) throws {
 		let theme = try ArticleTheme(path: filename, isAppTheme: false)
@@ -39,6 +40,7 @@ struct ArticleThemeImporter {
 				confirmImportSuccess(controller: controller, themeName: theme.name)
 			} catch {
 				controller.presentError(error)
+				ArticleThemeImporter.logger.error("Error importing theme: \(error.localizedDescription, privacy: .public)")
 			}
 		}
 

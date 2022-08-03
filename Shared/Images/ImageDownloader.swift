@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 import RSWeb
 
@@ -16,9 +15,7 @@ extension Notification.Name {
 	static let ImageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
 }
 
-final class ImageDownloader {
-
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
+final class ImageDownloader: Logging {
 
 	private let folder: String
 	private var diskCache: BinaryDiskCache
@@ -103,19 +100,19 @@ private extension ImageDownloader {
 			return
 		}
 
-		downloadUsingCache(imageURL) { (data, response, error) in
+		downloadUsingCache(imageURL) { [weak self] (data, response, error) in
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-				self.saveToDisk(url, data)
+				self?.saveToDisk(url, data)
 				completion(data)
 				return
 			}
 
 			if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
-				self.badURLs.insert(url)
+				self?.badURLs.insert(url)
 			}
 			if let error = error {
-				os_log(.info, log: self.log, "Error downloading image at %@: %@.", url, error.localizedDescription)
+				self?.logger.error("Error downloading image at: \(url, privacy: .sensitive): \(error.localizedDescription, privacy: .public)")
 			}
 
 			completion(nil)

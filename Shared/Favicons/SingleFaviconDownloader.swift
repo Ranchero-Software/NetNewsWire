@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 import RSWeb
 
@@ -19,7 +18,7 @@ extension Notification.Name {
 	static let DidLoadFavicon = Notification.Name("DidLoadFaviconNotification")
 }
 
-final class SingleFaviconDownloader {
+final class SingleFaviconDownloader: Logging {
 
 	enum DiskStatus {
 		case unknown, notOnDisk, onDisk
@@ -29,8 +28,6 @@ final class SingleFaviconDownloader {
 	var iconImage: IconImage?
 	let homePageURL: String?
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "SingleFaviconDownloader")
-	
 	private var lastDownloadAttemptDate: Date
 	private var diskStatus = DiskStatus.unknown
 	private var diskCache: BinaryDiskCache
@@ -128,7 +125,9 @@ private extension SingleFaviconDownloader {
 					self.diskStatus = .onDisk
 				}
 			}
-			catch {}
+			catch {
+				self.logger.error("Unable to save to disk: \(error.localizedDescription, privacy: .public)")
+			}
 		}
 	}
 
@@ -139,16 +138,16 @@ private extension SingleFaviconDownloader {
 			return
 		}
 
-		downloadUsingCache(url) { (data, response, error) in
+		downloadUsingCache(url) { [weak self] (data, response, error) in
 
 			if let data = data, !data.isEmpty, let response = response, response.statusIsOK, error == nil {
-				self.saveToDisk(data)
+				self?.saveToDisk(data)
 				RSImage.image(with: data, imageResultBlock: completion)
 				return
 			}
 
 			if let error = error {
-				os_log(.info, log: self.log, "Error downloading image at %@: %@.", url.absoluteString, error.localizedDescription)
+				self?.logger.error("Error downloading image at: \(url.absoluteString, privacy: .sensitive): \(error.localizedDescription, privacy: .public)")
 			}
 
 			completion(nil)

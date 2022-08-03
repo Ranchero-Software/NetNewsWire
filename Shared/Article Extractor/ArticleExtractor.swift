@@ -9,6 +9,7 @@
 import Foundation
 import Account
 import Secrets
+import RSCore
 
 public enum ArticleExtractorState {
     case ready
@@ -23,7 +24,7 @@ protocol ArticleExtractorDelegate {
     func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }
 
-class ArticleExtractor {
+class ArticleExtractor: Logging {
 	
 	private var dataTask: URLSessionDataTask? = nil
     
@@ -91,6 +92,7 @@ class ArticleExtractor {
 					}
                 }
             } catch {
+				self.logger.error("Failed to extract article: \(error.localizedDescription, privacy: .public)")
                 self.state = .failedToParse
                 DispatchQueue.main.async {
                     self.delegate?.articleExtractionDidFail(with: error)

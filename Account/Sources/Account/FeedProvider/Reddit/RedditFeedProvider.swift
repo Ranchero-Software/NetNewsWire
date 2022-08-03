@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import os.log
 import OAuthSwift
 import Secrets
 import RSCore
@@ -39,8 +38,6 @@ public enum RedditFeedType: Int {
 }
 
 public final class RedditFeedProvider: FeedProvider, RedditFeedProviderTokenRefreshOperationDelegate {
-
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "RedditFeedProvider")
 
 	private static let homeURL = "https://www.reddit.com"
 	private static let server = "www.reddit.com"

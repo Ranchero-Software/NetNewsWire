@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
-          "revision": "6b27393cad517c067dceea85fadf050e70c4ceaa",
-          "version": "1.10.1"
+          "revision": "81cdec2b3827feb03286cb297f4c501a8eb98df1",
+          "version": "1.10.2"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/Ranchero-Software/RSCore.git",
         "state": {
           "branch": null,
-          "revision": "4cd6b67ed213c0db9c02c9d8ff968b45fd694970",
-          "version": "1.0.8"
+          "revision": "814adfd956e5bd099b3b81b6680d0a4f6cd56130",
+          "version": "1.0.9"
         }
       },
       {

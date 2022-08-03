@@ -11,14 +11,13 @@ import RSCore
 import RSWeb
 import Account
 import BackgroundTasks
-import os.log
 import Secrets
 import WidgetKit
 
 var appDelegate: AppDelegate!
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider, Logging {
 	
 	private var bgTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 	
@@ -35,8 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 			}
 		}
 	}
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	
 	var userNotificationManager: UserNotificationManager!
 	var faviconDownloader: FaviconDownloader!
@@ -83,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {
-			os_log("Is first run.", log: log, type: .info)
+			logger.info("Is first run.")
 		}
 		
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
@@ -166,7 +163,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	func resumeDatabaseProcessingIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
-			os_log("Application processing resumed.", log: self.log, type: .info)
+			logger.info("Application processing resumed.")
 		}
 	}
 	
@@ -276,7 +273,7 @@ private extension AppDelegate {
 		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
 			guard let self = self else { return }
 			self.completeProcessing(true)
-			os_log("Accounts wait for progress terminated for running too long.", log: self.log, type: .info)
+			self.logger.info("Accounts wait for progress terminated for running too long.")
 		}
 		
 		DispatchQueue.main.async { [weak self] in
@@ -288,18 +285,18 @@ private extension AppDelegate {
 	
 	func waitToComplete(completion: @escaping (Bool) -> Void) {
 		guard UIApplication.shared.applicationState == .background else {
-			os_log("App came back to foreground, no longer waiting.", log: self.log, type: .info)
+			logger.info("App came back to foreground, no longer waiting.")
 			completion(false)
 			return
 		}
 		
 		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning {
-			os_log("Waiting for sync to finish...", log: self.log, type: .info)
+			logger.info("Waiting for sync to finish...")
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)
 			}
 		} else {
-			os_log("Refresh progress complete.", log: self.log, type: .info)
+			logger.info("Refresh progress complete.")
 			completion(true)
 		}
 	}
@@ -324,9 +321,9 @@ private extension AppDelegate {
 			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 		}
 		
-		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
+		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
 			completeProcessing()
-			os_log("Accounts sync processing terminated for running too long.", log: self.log, type: .info)
+			self?.logger.info("Accounts sync processing terminated for running too long.")
 		}
 		
 		DispatchQueue.main.async {
@@ -350,7 +347,7 @@ private extension AppDelegate {
 			}
 		}
 		
-		os_log("Application processing suspended.", log: self.log, type: .info)
+		logger.info("Application processing suspended.")
 	}
 	
 }
@@ -374,11 +371,11 @@ private extension AppDelegate {
 
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
-		bgTaskDispatchQueue.async {
+		bgTaskDispatchQueue.async { [weak self] in
 			do {
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
-				os_log(.error, log: self.log, "Could not schedule app refresh: %@", error.localizedDescription)
+				self?.logger.error("Could not schedule app refresh: \(error.localizedDescription, privacy: .public)")
 			}
 		}
 	}
@@ -390,7 +387,7 @@ private extension AppDelegate {
 		
 		scheduleBackgroundFeedRefresh() // schedule next refresh
 		
-		os_log("Woken to perform account refresh.", log: self.log, type: .info)
+		logger.info("Woken to perform account refresh.")
 
 		DispatchQueue.main.async {
 			if AccountManager.shared.isSuspended {
@@ -400,7 +397,7 @@ private extension AppDelegate {
 				if !AccountManager.shared.isSuspended {
 					try? WidgetDataEncoder.shared.encodeWidgetData()
 					self.suspendApplication()
-					os_log("Account refresh operation completed.", log: self.log, type: .info)
+					self.logger.info("Account refresh operation completed.")
 					task.setTaskCompleted(success: true)
 				}
 			}
@@ -408,7 +405,7 @@ private extension AppDelegate {
 					
 		// set expiration handler
 		task.expirationHandler = { [weak task] in
-			os_log("Accounts refresh processing terminated for running too long.", log: self.log, type: .info)
+			self.logger.info("Accounts refresh processing terminated for running too long.")
 			DispatchQueue.main.async {
 				self.suspendApplication()
 				task?.setTaskCompleted(success: false)
@@ -431,12 +428,12 @@ private extension AppDelegate {
 		resumeDatabaseProcessingIfNecessary()
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, log: self.log, "No account found from notification.")
+			logger.debug("No account found from notification.")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, log: self.log, "No article found from search using %@", articleID)
+			logger.debug("No account found from search using \(articleID, privacy: .public)")
 			return
 		}
 		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
@@ -459,12 +456,12 @@ private extension AppDelegate {
 		resumeDatabaseProcessingIfNecessary()
 		let account = AccountManager.shared.existingAccount(with: accountID)
 		guard account != nil else {
-			os_log(.debug, log: self.log, "No account found from notification.")
+			logger.debug("No account found from notification.")
 			return
 		}
 		let article = try? account!.fetchArticles(.articleIDs([articleID]))
 		guard article != nil else {
-			os_log(.debug, log: self.log, "No article found from search using %@", articleID)
+			logger.debug("No article found from search using \(articleID, privacy: .public)")
 			return
 		}
 		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }

@@ -11,8 +11,9 @@ import Account
 import Secrets
 import RSWeb
 import SafariServices
+import RSCore
 
-class ReaderAPIAccountViewController: UITableViewController {
+class ReaderAPIAccountViewController: UITableViewController, Logging {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
@@ -187,6 +188,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 						self.delegate?.dismiss()
 					} catch {
 						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+						self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public).")
 					}
 				} else {
 					self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))

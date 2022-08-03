@@ -19,9 +19,7 @@ protocol RedditFeedProviderTokenRefreshOperationDelegate: AnyObject {
 	var oauthSwift: OAuth2Swift? { get }
 }
 
-class RedditFeedProviderTokenRefreshOperation: MainThreadOperation {
-
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "RedditFeedProvider")
+class RedditFeedProviderTokenRefreshOperation: MainThreadOperation, Logging {
 
 	public var isCanceled = false
 	public var id: Int?
@@ -49,7 +47,7 @@ class RedditFeedProviderTokenRefreshOperation: MainThreadOperation {
 			return
 		}
 
-		os_log(.debug, log: self.log, "Access token expired, attempting to renew...")
+        logger.debug("Access token expired, attempting to renew...")
 
 		delegate.oauthSwift?.renewAccessToken(withRefreshToken: delegate.oauthRefreshToken) { [weak self] result in
 			guard let self = self else { return }
@@ -61,7 +59,7 @@ class RedditFeedProviderTokenRefreshOperation: MainThreadOperation {
 				do {
 					try RedditFeedProvider.storeCredentials(username: username, oauthToken: delegate.oauthToken, oauthRefreshToken: delegate.oauthRefreshToken)
 					delegate.oauthTokenLastRefresh = Date()
-					os_log(.debug, log: self.log, "Access token renewed.")
+                    self.logger.debug("Access token renewed.")
 				} catch {
 					self.error = error
 					self.operationDelegate?.operationDidComplete(self)

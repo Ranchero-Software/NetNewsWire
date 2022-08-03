@@ -9,9 +9,10 @@
 import AppKit
 import Account
 import RSWeb
+import RSCore
 import Secrets
 
-class AccountsReaderAPIWindowController: NSWindowController {
+class AccountsReaderAPIWindowController: NSWindowController, Logging {
 
 	@IBOutlet weak var titleImageView: NSImageView!
 	@IBOutlet weak var titleLabel: NSTextField!
@@ -170,6 +171,7 @@ class AccountsReaderAPIWindowController: NSWindowController {
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+					self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public)")
 				}
 				
 			case .failure:

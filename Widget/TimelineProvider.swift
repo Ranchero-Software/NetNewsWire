@@ -8,35 +8,41 @@
 
 import WidgetKit
 import SwiftUI
+import RSCore
 
-struct Provider: TimelineProvider {
+struct Provider: TimelineProvider, Logging {
+	
+	let decoder = WidgetDataDecoder()
 	
 	func placeholder(in context: Context) -> WidgetTimelineEntry {
 		do {
-			let data = try WidgetDataDecoder.decodeWidgetData()
+			let data = try decoder.decodeWidgetData()
 			return WidgetTimelineEntry(date: Date(), widgetData: data)
 		} catch {
-			return WidgetTimelineEntry(date: Date(), widgetData: WidgetDataDecoder.sampleData())
+			logger.error("Failed to decode widget data: \(error.localizedDescription, privacy: .public)")
+			return WidgetTimelineEntry(date: Date(), widgetData: decoder.sampleData())
 		}
 	}
 	
 	func getSnapshot(in context: Context, completion: @escaping (WidgetTimelineEntry) -> Void) {
 		if context.isPreview {
 			do {
-				let data = try WidgetDataDecoder.decodeWidgetData()
+				let data = try decoder.decodeWidgetData()
 				completion(WidgetTimelineEntry(date: Date(), widgetData: data))
 			} catch {
+				logger.error("Failed to decode widget data: \(error.localizedDescription, privacy: .public)")
 				completion(WidgetTimelineEntry(date: Date(),
-											   widgetData: WidgetDataDecoder.sampleData()))
+											   widgetData: decoder.sampleData()))
 			}
 		} else {
 			do {
-				let widgetData = try WidgetDataDecoder.decodeWidgetData()
+				let widgetData = try decoder.decodeWidgetData()
 				let entry = WidgetTimelineEntry(date: Date(), widgetData: widgetData)
 				completion(entry)
 			} catch {
+				logger.error("Failed to decode widget data: \(error.localizedDescription, privacy: .public)")
 				let entry = WidgetTimelineEntry(date: Date(),
-												widgetData: WidgetDataDecoder.sampleData())
+												widgetData: decoder.sampleData())
 				completion(entry)
 			}
 		}
@@ -48,9 +54,10 @@ struct Provider: TimelineProvider {
 		var entry: WidgetTimelineEntry
 		
 		do {
-			let widgetData = try WidgetDataDecoder.decodeWidgetData()
+			let widgetData = try decoder.decodeWidgetData()
 			entry = WidgetTimelineEntry(date: date, widgetData: widgetData)
 		} catch {
+			logger.error("Failed to decode widget data: \(error.localizedDescription, privacy: .public)")
 			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date()))
 		}
 		

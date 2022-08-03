@@ -8,8 +8,9 @@
 
 import Foundation
 import Zip
+import RSCore
 
-public class ArticleThemeDownloader {
+public class ArticleThemeDownloader: Logging {
 	
 	public enum ArticleThemeDownloaderError: LocalizedError {
 		case noThemeFile
@@ -63,6 +64,7 @@ public class ArticleThemeDownloader {
 			}
 			return URL(fileURLWithPath: unzipDirectory.appendingPathComponent(themeFilePath!).path)
 		} catch {
+			logger.error("Failed to unzip theme: \(error.localizedDescription, privacy: .public)")
 			try? FileManager.default.removeItem(at: location)
 			throw error
 		}
@@ -101,7 +103,7 @@ public class ArticleThemeDownloader {
 					try FileManager.default.removeItem(atPath: downloadDirectory().appendingPathComponent(path).path)
 				}
 			} catch {
-				print(error)
+				logger.error("Failed to clean up theme download: \(error.localizedDescription, privacy: .public)")
 			}
 		}
 	}

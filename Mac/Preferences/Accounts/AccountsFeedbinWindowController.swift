@@ -8,10 +8,11 @@
 
 import AppKit
 import Account
+import RSCore
 import RSWeb
 import Secrets
 
-class AccountsFeedbinWindowController: NSWindowController {
+class AccountsFeedbinWindowController: NSWindowController, Logging {
 
 	@IBOutlet weak var signInTextField: NSTextField!
 	@IBOutlet weak var noAccountTextField: NSTextField!
@@ -115,6 +116,7 @@ class AccountsFeedbinWindowController: NSWindowController {
 					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+					self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public)")
 				}
 				
 			case .failure:

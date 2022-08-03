@@ -10,8 +10,9 @@ import UIKit
 import UserNotifications
 import Account
 import Zip
+import RSCore
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 	
 	var window: UIWindow?
 	var coordinator: SceneCoordinator!
@@ -184,7 +185,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					DispatchQueue.main.async {
 						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
 					}
-					let task = URLSession.shared.downloadTask(with: request) { location, response, error in
+					let task = URLSession.shared.downloadTask(with: request) { [weak self] location, response, error in
 						guard
 							  let location = location else { return }
 						
@@ -192,6 +193,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 							try ArticleThemeDownloader.shared.handleFile(at: location)
 						} catch {
 							NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+							self?.logger.error("Failed to import theme with error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 					task.resume()

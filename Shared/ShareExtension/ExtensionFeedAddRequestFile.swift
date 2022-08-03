@@ -7,13 +7,11 @@
 //
 
 import Foundation
-import os.log
 import Account
+import RSCore
 
-final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
+final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Logging {
 	
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionFeedAddRequestFile")
-
 	private static var filePath: String = {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
@@ -82,12 +80,12 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 				try data.write(to: url)
 				
 			} catch let error as NSError {
-				os_log(.error, log: Self.log, "Save to disk failed: %@.", error.localizedDescription)
+				logger.error("Save to disk failed: \(error.localizedDescription, privacy: .public)")
 			}
 		})
 		
 		if let error = errorPointer?.pointee {
-			os_log(.error, log: Self.log, "Save to disk coordination failed: %@.", error.localizedDescription)
+			logger.error("Save to disk coordination failed: \(error.localizedDescription, privacy: .public)")
 		}
 	}
 	
@@ -107,7 +105,7 @@ private extension ExtensionFeedAddRequestFile {
 
 		var requests: [ExtensionFeedAddRequest]? = nil
 
-		fileCoordinator.coordinate(writingItemAt: fileURL, options: [.forMerging], error: errorPointer, byAccessor: { url in
+		fileCoordinator.coordinate(writingItemAt: fileURL, options: [.forMerging], error: errorPointer, byAccessor: { [weak self] url in
 			do {
 				
 				if let fileData = try? Data(contentsOf: url),
@@ -119,12 +117,12 @@ private extension ExtensionFeedAddRequestFile {
 				try data.write(to: url)
 				
 			} catch let error as NSError {
-				os_log(.error, log: Self.log, "Save to disk failed: %@.", error.localizedDescription)
+				self?.logger.error("Save to disk failed: \(error.localizedDescription, privacy: .public)")
 			}
 		})
 		
 		if let error = errorPointer?.pointee {
-			os_log(.error, log: Self.log, "Save to disk coordination failed: %@.", error.localizedDescription)
+			logger.error("Save to disk coordination failed: \(error.localizedDescription, privacy: .public)")
 		}
 
 		requests?.forEach { processRequest($0) }

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 import RSParser
 import RSWeb
@@ -16,10 +15,8 @@ import SyncDatabase
 import Articles
 import ArticlesDatabase
 
-class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
+class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-	
 	weak var account: Account?
 	var database: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
@@ -49,12 +46,12 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 						}
 						
 					case .failure(let error):
-						os_log(.error, log: self.log, "Error occurred getting pending starred records: %@", error.localizedDescription)
+                        self.logger.error("Error occurred getting pending starred records: \(error.localizedDescription)")
 						completion(.failure(CloudKitZoneError.unknown))
 					}
 				}
 			case .failure(let error):
-				os_log(.error, log: self.log, "Error occurred getting pending read status records: %@", error.localizedDescription)
+                self.logger.error("Error occurred getting pending read status records: \(error.localizedDescription)")
 				completion(.failure(CloudKitZoneError.unknown))
 			}
 
@@ -102,7 +99,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsUnread(updateableUnreadArticleIDs) { result in
 			if case .failure(let databaseError) = result {
 				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", databaseError.localizedDescription)
+                self.logger.error("Error occurred while storing unread statuses: \(databaseError.localizedDescription)")
 			}
 			group.leave()
 		}
@@ -111,7 +108,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsRead(updateableReadArticleIDs) { result in
 			if case .failure(let databaseError) = result {
 				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", databaseError.localizedDescription)
+                self.logger.error("Error occurred while storing read statuses: \(databaseError.localizedDescription)")
 			}
 			group.leave()
 		}
@@ -120,7 +117,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
 			if case .failure(let databaseError) = result {
 				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", databaseError.localizedDescription)
+                self.logger.error("Error occurred while storing unstarred statuses: \(databaseError.localizedDescription)")
 			}
 			group.leave()
 		}
@@ -129,7 +126,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsStarred(updateableStarredArticleIDs) { result in
 			if case .failure(let databaseError) = result {
 				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", databaseError.localizedDescription)
+                self.logger.error("Error occurred while stroing starred records: \(databaseError.localizedDescription)")
 			}
 			group.leave()
 		}
@@ -155,7 +152,7 @@ private extension CloudKitArticlesZoneDelegate {
 							}
 						case .failure(let databaseError):
 							errorOccurred = true
-							os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
+                            self.logger.error("Error occurred while storing articles: \(databaseError.localizedDescription)")
 							group.leave()
 						}
 					}

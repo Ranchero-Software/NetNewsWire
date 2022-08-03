@@ -102,6 +102,6 @@ struct SmartFeedSummaryWidgetView: View {
 struct SmartFeedSummaryWidgetView_Previews: PreviewProvider {
 	
 	static var previews: some View {
-		SmartFeedSummaryWidgetView(entry: Provider.Entry.init(date: Date(), widgetData: WidgetDataDecoder.sampleData()))
+		SmartFeedSummaryWidgetView(entry: Provider.Entry.init(date: Date(), widgetData: WidgetDataDecoder().sampleData()))
 	}
 }
