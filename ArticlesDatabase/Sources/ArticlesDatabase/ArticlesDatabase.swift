@@ -110,6 +110,10 @@ public final class ArticlesDatabase {
 		return try articlesTable.fetchArticlesSince(webFeedIDs, todayCutoffDate(), limit)
 	}
 
+	public func fetchOlderArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
+		return try articlesTable.fetchArticlesBetween(webFeedIDs, limit, before: todayCutoffDate())
+	}
+
 	public func fetchStarredArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
 		return try articlesTable.fetchStarredArticles(webFeedIDs, limit)
 	}
@@ -142,6 +146,10 @@ public final class ArticlesDatabase {
 
 	public func fetchTodayArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		articlesTable.fetchArticlesSinceAsync(webFeedIDs, todayCutoffDate(), limit, completion)
+	}
+
+	public func fetchOlderArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		articlesTable.fetchArticlesBetweenAsync(webFeedIDs, limit, completion, before: todayCutoffDate())
 	}
 
 	public func fetchedStarredArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
@@ -195,6 +203,14 @@ public final class ArticlesDatabase {
 
 	public func fetchUnreadCount(for webFeedIDs: Set<String>, since: Date, completion: @escaping SingleUnreadCountCompletionBlock) {
 		articlesTable.fetchUnreadCount(webFeedIDs, since, completion)
+	}
+
+	public func fetchUnreadCountForOlder(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {
+		fetchUnreadCountBetween(for: webFeedIDs, before: todayCutoffDate(), completion: completion)
+	}
+
+	public func fetchUnreadCountBetween(for webFeedIDs: Set<String>, since: Date? = nil, before: Date? = nil, completion: @escaping SingleUnreadCountCompletionBlock) {
+		articlesTable.fetchUnreadCountBetween(webFeedIDs: webFeedIDs, since: since, before: before, completion: completion)
 	}
 
 	public func fetchStarredAndUnreadCount(for webFeedIDs: Set<String>, completion: @escaping SingleUnreadCountCompletionBlock) {

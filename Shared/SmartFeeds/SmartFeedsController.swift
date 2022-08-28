@@ -21,11 +21,12 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 
 	var smartFeeds = [Feed]()
 	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
+	let olderFeed = SmartFeed(delegate: OlderFeedDelegate())
 	let unreadFeed = UnreadFeed()
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
 
 	private init() {
-		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
+		self.smartFeeds = [todayFeed, unreadFeed, starredFeed, olderFeed]
 	}
 	
 	func find(by identifier: FeedIdentifier) -> PseudoFeed? {
@@ -34,6 +35,8 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 			switch stringIdentifer {
 			case String(describing: TodayFeedDelegate.self):
 				return todayFeed
+			case String(describing: OlderFeedDelegate.self):
+				return olderFeed
 			case String(describing: UnreadFeed.self):
 				return unreadFeed
 			case String(describing: StarredFeedDelegate.self):

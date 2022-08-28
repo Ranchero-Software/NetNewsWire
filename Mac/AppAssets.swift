@@ -242,6 +242,12 @@ struct AppAssets {
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
+	static var oldFeedImage: IconImage = {
+		let image = NSImage(systemSymbolName: "moon.zzz.fill", accessibilityDescription: nil)!
+		let preferredColor = NSColor.orange
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: preferredColor.cgColor)
+	}()
+
 	static var unreadFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: nil)!
 		let preferredColor = NSColor(named: "AccentColor")!

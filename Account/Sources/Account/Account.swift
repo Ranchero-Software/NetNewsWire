@@ -55,6 +55,7 @@ public enum FetchType {
     case starred(_: Int? = nil)
 	case unread(_: Int? = nil)
 	case today(_: Int? = nil)
+	case older(_: Int? = nil)
 	case folder(Folder, Bool)
 	case webFeed(WebFeed)
 	case articleIDs(Set<String>)
@@ -664,6 +665,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			return try fetchUnreadArticles(limit: limit)
 		case .today(let limit):
 			return try fetchTodayArticles(limit: limit)
+		case .older(let limit):
+			return try fetchOlderArticles(limit: limit)
 		case .folder(let folder, let readFilter):
 			if readFilter {
 				return try fetchUnreadArticles(folder: folder)
@@ -689,6 +692,8 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 			fetchUnreadArticlesAsync(limit: limit, completion)
 		case .today(let limit):
 			fetchTodayArticlesAsync(limit: limit, completion)
+		case .older(let limit):
+			fetchOlderArticlesAsync(limit: limit, completion)
 		case .folder(let folder, let readFilter):
 			if readFilter {
 				return fetchUnreadArticlesAsync(folder: folder, completion)
@@ -708,6 +713,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 
 	public func fetchUnreadCountForToday(_ completion: @escaping SingleUnreadCountCompletionBlock) {
 		database.fetchUnreadCountForToday(for: flattenedWebFeeds().webFeedIDs(), completion: completion)
+	}
+
+	public func fetchUnreadCountForOlder(_ completion: @escaping SingleUnreadCountCompletionBlock) {
+		database.fetchUnreadCountForOlder(for: flattenedWebFeeds().webFeedIDs(), completion: completion)
 	}
 
 	public func fetchUnreadCountForStarredArticles(_ completion: @escaping SingleUnreadCountCompletionBlock) {
@@ -1060,6 +1069,14 @@ private extension Account {
 
 	func fetchArticlesAsync(folder: Folder, _ completion: @escaping ArticleSetResultBlock) {
 		fetchArticlesAsync(forContainer: folder, completion)
+	}
+
+	func fetchOlderArticles(limit: Int?) throws -> Set<Article> {
+		return try database.fetchOlderArticles(flattenedWebFeeds().webFeedIDs(), limit)
+	}
+
+	func fetchOlderArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
+		database.fetchOlderArticlesAsync(flattenedWebFeeds().webFeedIDs(), limit, completion)
 	}
 
 	func fetchUnreadArticles(folder: Folder) throws -> Set<Article> {

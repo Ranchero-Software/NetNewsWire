@@ -103,6 +103,16 @@ final class ArticlesTable: DatabaseTable {
 		fetchArticlesAsync({ self.fetchStarredArticles(webFeedIDs, limit, $0) }, completion)
 	}
 
+	// MARK: - Fetching Articles Between Dates
+
+	func fetchArticlesBetween(_ webFeedIDs: Set<String>, _ limit: Int?, since: Date? = nil, before: Date? = nil) throws -> Set<Article> {
+		return try fetchArticles{ self.fetchArticlesBetween(webFeedIDs, limit, $0, since: since, before: before) }
+	}
+
+	func fetchArticlesBetweenAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock, since: Date? = nil, before: Date? = nil) {
+		fetchArticlesAsync({ self.fetchArticlesBetween(webFeedIDs, limit, $0, since: since, before: before) }, completion)
+	}
+
 	// MARK: - Fetching Search Articles
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
@@ -383,6 +393,52 @@ final class ArticlesTable: DatabaseTable {
 				parameters += Array(webFeedIDs) as [Any]
 				parameters += [since] as [Any]
 				parameters += [since] as [Any]
+
+				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
+
+				DispatchQueue.main.async {
+					completion(.success(unreadCount))
+				}
+			}
+
+			switch databaseResult {
+			case .success(let database):
+				makeDatabaseCalls(database)
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(.failure(databaseError))
+				}
+			}
+		}
+	}
+
+	func fetchUnreadCountBetween(webFeedIDs: Set<String>, since: Date? = nil, before: Date? = nil, completion: @escaping SingleUnreadCountCompletionBlock) {
+		// Get unread count between dates
+		if webFeedIDs.isEmpty {
+			completion(.success(0))
+			return
+		}
+
+		queue.runInDatabase { databaseResult in
+
+			func makeDatabaseCalls(_ database: FMDatabase) {
+				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
+				var sql = "select count(*) from articles natural join statuses where feedID in \(placeholders)"
+
+				var parameters = [Any]()
+				parameters += Array(webFeedIDs) as [Any]
+
+				if since != nil {
+					sql += " and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
+					parameters += [since!] as [Any]
+					parameters += [since!] as [Any]
+				}
+
+				if before != nil {
+					sql += " and (datePublished < ? or (datePublished is null and dateArrived < ?)) and read=0;"
+					parameters += [before!] as [Any]
+					parameters += [before!] as [Any]
+				}
 
 				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
@@ -837,6 +893,34 @@ private extension ArticlesTable {
 		if let limit = limit {
 			whereClause.append(" order by coalesce(datePublished, dateModified, dateArrived) desc limit \(limit)")
 		}
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
+	}
+
+	func fetchArticlesBetween(_ webFeedIDs: Set<String>, _ limit: Int?, _ database: FMDatabase, since: Date? = nil, before: Date? = nil) -> Set<Article> {
+		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and (datePublished > ? || (datePublished is null and dateArrived > ?)
+		//
+		// datePublished may be nil, so we fall back to dateArrived.
+		if webFeedIDs.isEmpty {
+			return Set<Article>()
+		}
+		var parameters = webFeedIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
+		var whereClause = "feedID in \(placeholders)"
+
+		if since != nil {
+			whereClause.append(" and (datePublished > ? or (datePublished is null and dateArrived > ?))")
+			parameters += [since as AnyObject, since as AnyObject]
+		}
+
+		if before != nil {
+			whereClause.append(" and (datePublished < ? or (datePublished is null and dateArrived < ?))")
+			parameters += [before as AnyObject, before as AnyObject]
+		}
+
+		if let limit = limit {
+			whereClause.append(" order by coalesce(datePublished, dateModified, dateArrived) desc limit \(limit)")
+		}
+
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 

@@ -276,6 +276,11 @@ struct AppAssets {
 		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: UIColor.systemOrange.cgColor)
 	}
 
+	static var oldFeedImage: IconImage {
+		let image = UIImage(systemName: "moon.zzz.fill")!
+		return IconImage(image, isSymbol: true, isBackgroundSupressed: true, preferredColor: UIColor.systemPurple.cgColor)
+	}
+
 	static var trashImage: UIImage = {
 		return UIImage(systemName: "trash")!
 	}()

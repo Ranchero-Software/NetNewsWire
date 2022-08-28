@@ -57,6 +57,9 @@
 		17E0084625941887000C23F0 /* SizeCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E0084525941887000C23F0 /* SizeCategories.swift */; };
 		17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; };
 		17EF6A2225C4E5B4002C9F81 /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 17EF6A2025C4E5B4002C9F81 /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1B0D7B0228B9F6B4006B5005 /* OlderFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0D7B0128B9F6B4006B5005 /* OlderFeedDelegate.swift */; };
+		1B0D7B0328B9F7F8006B5005 /* OlderFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0D7B0128B9F6B4006B5005 /* OlderFeedDelegate.swift */; };
+		1B0D7B0428B9F7F9006B5005 /* OlderFeedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0D7B0128B9F6B4006B5005 /* OlderFeedDelegate.swift */; };
 		27B86EEB25A53AAB00264340 /* Account in Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; };
 		4679674625E599C100844E8D /* Articles in Frameworks */ = {isa = PBXBuildFile; productRef = 4679674525E599C100844E8D /* Articles */; };
 		4679674725E599C100844E8D /* Articles in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 4679674525E599C100844E8D /* Articles */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1152,6 +1155,7 @@
 		17D643B026F8A436008D4C05 /* ArticleThemeDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemeDownloader.swift; sourceTree = "<group>"; };
 		17D7586C2679C21700B17787 /* NetNewsWire-iOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NetNewsWire-iOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		17E0084525941887000C23F0 /* SizeCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeCategories.swift; sourceTree = "<group>"; };
+		1B0D7B0128B9F6B4006B5005 /* OlderFeedDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OlderFeedDelegate.swift; sourceTree = "<group>"; };
 		49F40DEF2335B71000552BF4 /* newsfoot.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = newsfoot.js; sourceTree = "<group>"; };
 		510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectComboTableViewCell.swift; sourceTree = "<group>"; };
 		510289CF2451BA3A00426DDF /* TwitterAdd.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TwitterAdd.storyboard; sourceTree = "<group>"; };
@@ -2760,6 +2764,7 @@
 				845EE7C01FC2488C00854A1F /* SmartFeed.swift */,
 				84DEE56422C32CA4005FC42C /* SmartFeedDelegate.swift */,
 				84F2D5361FC22FCB00998D64 /* TodayFeedDelegate.swift */,
+				1B0D7B0128B9F6B4006B5005 /* OlderFeedDelegate.swift */,
 				845EE7B01FC2366500854A1F /* StarredFeedDelegate.swift */,
 				8477ACBD22238E9500DF7F37 /* SearchFeedDelegate.swift */,
 				51938DF1231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift */,
@@ -3961,6 +3966,7 @@
 				178A9F9E2549449F00AB7E9D /* AddAccountsView.swift in Sources */,
 				65ED402D235DEF6C0081F399 /* DetailStatusBarView.swift in Sources */,
 				65ED402E235DEF6C0081F399 /* MainWindowController+Scriptability.swift in Sources */,
+				1B0D7B0428B9F7F9006B5005 /* OlderFeedDelegate.swift in Sources */,
 				65ED402F235DEF6C0081F399 /* PreferencesWindowController.swift in Sources */,
 				65ED4030235DEF6C0081F399 /* SmallIconProvider.swift in Sources */,
 				653813192680E15B007A082C /* CacheCleaner.swift in Sources */,
@@ -4050,6 +4056,7 @@
 				51FA73A52332BE110090D516 /* ArticleExtractor.swift in Sources */,
 				51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */,
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
+				1B0D7B0328B9F7F8006B5005 /* OlderFeedDelegate.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51F9F3F923DFB16300A314FD /* UITableView-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
@@ -4236,6 +4243,7 @@
 				849A97651ED9EB96007D329B /* WebFeedTreeControllerDelegate.swift in Sources */,
 				849A97671ED9EB96007D329B /* UnreadCountView.swift in Sources */,
 				510C418024E5D1AE008226FD /* ExtensionFeedAddRequestFile.swift in Sources */,
+				1B0D7B0228B9F6B4006B5005 /* OlderFeedDelegate.swift in Sources */,
 				51FE10092346739D0056195D /* ActivityType.swift in Sources */,
 				840BEE4121D70E64009BBAFA /* CrashReportWindowController.swift in Sources */,
 				8426118A1FCB67AA0086A189 /* WebFeedIconDownloader.swift in Sources */,
