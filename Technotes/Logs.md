@@ -6,15 +6,13 @@ Example:
 
 ```swift
 
-    import Foundation
-    import RSCore
+import Foundation
+import RSCore
 
-    class Sample: Logging {
+class Sample: Logging {
 
-        init() {
-            logger.debug("Init")
-        }
+    init() {
+        logger.debug("Init")
     }
-
 }
 ```
