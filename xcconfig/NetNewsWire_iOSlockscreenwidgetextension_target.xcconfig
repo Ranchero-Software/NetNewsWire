@@ -35,7 +35,7 @@ PROVISIONING_PROFILE_SPECIFIER =
 #include "./common/NetNewsWire_ios_target_common.xcconfig"
 
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../../Frameworks
-CODE_SIGN_ENTITLEMENTS = NetNewsWireModernWidget/NetNewsWire_Modern_WidgetExtension.entitlements
-INFOPLIST_FILE = NetNewsWireModernWidget/Info.plist
+CODE_SIGN_ENTITLEMENTS = LockScreenWidget/NetNewsWire_Modern_WidgetExtension.entitlements
+INFOPLIST_FILE = LockScreenWidget/Info.plist
 PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS.SpringboardWidgets
 PRODUCT_NAME = $(TARGET_NAME)
