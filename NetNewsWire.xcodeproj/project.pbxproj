@@ -1585,7 +1585,6 @@
 		D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebFeed+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
-		DFCEC228289A163B00251DEB /* NetNewsWire_iOSlockscreenwidgetextension_target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetNewsWire_iOSlockscreenwidgetextension_target.xcconfig; sourceTree = "<group>"; };
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
 		DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
 		DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
@@ -2830,7 +2829,6 @@
 				51314617235A797400387FDC /* NetNewsWire_iOSintentextension_target.xcconfig */,
 				515D4FCE2325B3D000EE1167 /* NetNewsWire_iOSshareextension_target.xcconfig */,
 				1768140A2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig */,
-				DFCEC228289A163B00251DEB /* NetNewsWire_iOSlockscreenwidgetextension_target.xcconfig */,
 				518B2EE92351B4C200400001 /* NetNewsWire_iOSTests_target.xcconfig */,
 				65ED40F2235DF5E00081F399 /* NetNewsWire_macapp_target_macappstore.xcconfig */,
 				D5907CE02002F0FA005947E5 /* NetNewsWire_macapp_target.xcconfig */,
