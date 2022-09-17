@@ -65,13 +65,36 @@ struct StarredWidget: Widget {
 	}
 }
 
+
+@available(iOSApplicationExtension 16.0, *)
+struct SmartFeedSummaryWidget: Widget {
+	let kind: String = "com.ranchero.NetNewsWire.SmartFeedSummaryWidget"
+	
+	var body: some WidgetConfiguration {
+		
+		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
+			SmartFeedSummaryWidgetView(entry: entry)
+		})
+		.configurationDisplayName(L10n.smartFeedSummaryWidgetTitle)
+		.description(L10n.smartFeedSummaryWidgetDescription)
+		.supportedFamilies([.accessoryRectangular])
+	}
+}
+
 // MARK: - WidgetBundle
 @main
 struct NetNewsWireWidgets: WidgetBundle {
 	@WidgetBundleBuilder
 	var body: some Widget {
-		UnreadWidget()
-		TodayWidget()
-		StarredWidget()
+		widgets()
 	}
+	
+	func widgets() -> some Widget {
+		if #available(iOS 16.0, *) {
+			return WidgetBundleBuilder.buildBlock(UnreadWidget(), TodayWidget(), StarredWidget(), SmartFeedSummaryWidget())
+		} else {
+			return WidgetBundleBuilder.buildBlock(UnreadWidget(), TodayWidget(), StarredWidget())
+		}
+	}
+	
 }

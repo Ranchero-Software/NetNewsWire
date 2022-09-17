@@ -85,6 +85,7 @@ struct SmartFeedSummaryWidgetView: View {
 }
 
 
+@available(iOSApplicationExtension 16.0, *)
 struct SmartFeedSummaryWidgetView_Previews: PreviewProvider {
 	
 	static var previews: some View {
