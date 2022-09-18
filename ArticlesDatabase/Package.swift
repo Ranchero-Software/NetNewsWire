@@ -21,7 +21,7 @@ dependencies.append(contentsOf: [
 
 let package = Package(
     name: "ArticlesDatabase",
-	platforms: [.macOS(SupportedPlatform.MacOSVersion.v11), .iOS(SupportedPlatform.IOSVersion.v13)],
+	platforms: [.macOS(SupportedPlatform.MacOSVersion.v11), .iOS(SupportedPlatform.IOSVersion.v14)],
     products: [
         .library(
             name: "ArticlesDatabase",
