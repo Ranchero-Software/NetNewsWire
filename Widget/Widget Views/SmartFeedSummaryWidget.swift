@@ -17,48 +17,37 @@ struct SmartFeedSummaryWidgetView: View {
 	var entry: Provider.Entry
 	
 	var body: some View {
-		smallWidget
+		rectangleWidget
 			.widgetURL(WidgetDeepLink.icon.url)
 	}
 	
 	@ViewBuilder
-	var smallWidget: some View {
-		VStack(alignment: .leading) {
-			Spacer()
-			Link(destination: WidgetDeepLink.today.url, label: {
-				HStack {
-					todayImage
-					VStack(alignment: .leading, spacing: nil, content: {
-						Text(formattedCount(entry.widgetData.currentTodayCount)).font(Font.system(.caption, design: .rounded)).bold()
-						Text(L10n.today).bold().font(.caption).textCase(.uppercase)
-					}).foregroundColor(.white)
-					Spacer()
-				}
-			})
+	var rectangleWidget: some View {
+		VStack(alignment: .leading, spacing: 2) {
+			HStack {
+				todayImage
+				Text(L10n.today).bold().font(.body)
+				Spacer()
+				Text(formattedCount(entry.widgetData.currentTodayCount)).bold()
+				
+			}
 			
-			Link(destination: WidgetDeepLink.unread.url, label: {
-				HStack {
-					unreadImage
-					VStack(alignment: .leading, spacing: nil, content: {
-						Text(formattedCount(entry.widgetData.currentUnreadCount)).font(Font.system(.caption, design: .rounded)).bold()
-						Text(L10n.unread).bold().font(.caption).textCase(.uppercase)
-					}).foregroundColor(.white)
-					Spacer()
-				}
-			})
+			HStack {
+				unreadImage
+				Text(L10n.unread).bold().font(.body)
+				Spacer()
+				Text(formattedCount(entry.widgetData.currentUnreadCount)).bold()
+			}
 			
-			Link(destination: WidgetDeepLink.starred.url, label: {
-				HStack {
-					starredImage
-					VStack(alignment: .leading, spacing: nil, content: {
-						Text(formattedCount(entry.widgetData.currentStarredCount)).font(Font.system(.caption, design: .rounded)).bold()
-						Text(L10n.starred).bold().font(.caption).textCase(.uppercase)
-					}).foregroundColor(.white)
-					Spacer()
-				}
-			})
-			Spacer()
-		}.padding()
+			HStack {
+				starredImage
+				Text(L10n.starred).bold().font(.body)
+				Spacer()
+				Text(formattedCount(entry.widgetData.currentStarredCount)).bold()
+			}
+			
+		}
+		
 	}
 	
 	func formattedCount(_ count: Int) -> String {
@@ -71,37 +60,36 @@ struct SmartFeedSummaryWidgetView: View {
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
 			.resizable()
-			.frame(width: 20, height: 20, alignment: .center)
-			.foregroundColor(.white)
+			.frame(width: 12, height: 12, alignment: .center)
 	}
 	
 	var nnwImage: some View {
 		Image("CornerIcon")
 			.resizable()
-			.frame(width: 20, height: 20, alignment: .center)
+			.frame(width: 10, height: 10, alignment: .center)
 			.cornerRadius(4)
 	}
 	
 	var starredImage: some View {
 		Image(systemName: "star.fill")
 			.resizable()
-			.frame(width: 20, height: 20, alignment: .center)
-			.foregroundColor(.white)
+			.frame(width: 12, height: 12, alignment: .center)
 	}
 	
 	var todayImage: some View {
 		Image(systemName: "sun.max.fill")
 			.resizable()
-			.frame(width: 20, height: 20, alignment: .center)
-			.foregroundColor(.white)
+			.frame(width: 12, height: 12, alignment: .center)
 	}
 	
 }
 
 
+@available(iOSApplicationExtension 16.0, *)
 struct SmartFeedSummaryWidgetView_Previews: PreviewProvider {
 	
 	static var previews: some View {
 		SmartFeedSummaryWidgetView(entry: Provider.Entry.init(date: Date(), widgetData: WidgetDataDecoder.sampleData()))
+			.previewContext(WidgetPreviewContext(family: .accessoryRectangular))
 	}
 }
