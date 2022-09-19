@@ -7,22 +7,21 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 
 public extension Notification.Name {
 	static let AccountsDidFailToSyncWithErrors = Notification.Name("AccountsDidFailToSyncWithErrors")
 }
 
-public struct AccountSyncError {
+public struct AccountSyncError: Logging {
 	
-	private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	public let account: Account
 	public let error: Error
 	
 	init(account: Account, error: Error) {
 		self.account = account
 		self.error = error
-		os_log(.error, log: AccountSyncError.log, "%@", error.localizedDescription)
+        AccountSyncError.logger.error("Account Sync Error: \(error.localizedDescription)")
 	}
 	
 }

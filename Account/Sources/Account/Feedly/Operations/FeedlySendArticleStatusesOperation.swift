@@ -9,24 +9,22 @@
 import Foundation
 import Articles
 import SyncDatabase
-import os.log
+import RSCore
 
 
 /// Take changes to statuses of articles locally and apply them to the corresponding the articles remotely.
-final class FeedlySendArticleStatusesOperation: FeedlyOperation {
+final class FeedlySendArticleStatusesOperation: FeedlyOperation, Logging {
 
 	private let database: SyncDatabase
-	private let log: OSLog
 	private let service: FeedlyMarkArticlesService
 
-	init(database: SyncDatabase, service: FeedlyMarkArticlesService, log: OSLog) {
+	init(database: SyncDatabase, service: FeedlyMarkArticlesService) {
 		self.database = database
 		self.service = service
-		self.log = log
 	}
 	
 	override func run() {
-		os_log(.debug, log: log, "Sending article statuses...")
+        logger.debug("Sending article statuses...")
 
 		database.selectForProcessing { result in
 			if self.isCanceled {
@@ -81,7 +79,7 @@ private extension FeedlySendArticleStatusesOperation {
 		}
 
 		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done sending article statuses.")
+            self.logger.debug("Done sending article statuses.")
 			self.didFinish()
 		}
 	}

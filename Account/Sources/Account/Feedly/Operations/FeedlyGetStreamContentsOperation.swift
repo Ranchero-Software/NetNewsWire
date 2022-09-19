@@ -8,7 +8,7 @@
 
 import Foundation
 import RSParser
-import os.log
+import RSCore
 
 protocol FeedlyEntryProviding {
 	var entries: [FeedlyEntry] { get }
@@ -24,7 +24,7 @@ protocol FeedlyGetStreamContentsOperationDelegate: AnyObject {
 }
 
 /// Get the stream content of a Collection from Feedly.
-final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
+final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding, Logging {
 	
 	struct ResourceProvider: FeedlyResourceProviding {
 		var resource: FeedlyResourceId
@@ -58,7 +58,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 			let entryIds = Set(entries.map { $0.id })
 			let parsedIds = Set(parsed.map { $0.uniqueID })
 			let difference = entryIds.subtracting(parsedIds)
-			os_log(.debug, log: log, "Dropping articles with ids: %{public}@.", difference)
+            logger.debug("Dropping articles with ids: \(difference)")
 		}
 		
 		storedParsedEntries = parsed
@@ -79,22 +79,20 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 	let unreadOnly: Bool?
 	let newerThan: Date?
 	let continuation: String?
-	let log: OSLog
 	
 	weak var streamDelegate: FeedlyGetStreamContentsOperationDelegate?
 
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.account = account
 		self.resourceProvider = ResourceProvider(resource: resource)
 		self.service = service
 		self.continuation = continuation
 		self.unreadOnly = unreadOnly
 		self.newerThan = newerThan
-		self.log = log
 	}
 	
-	convenience init(account: Account, resourceProvider: FeedlyResourceProviding, service: FeedlyGetStreamContentsService, newerThan: Date?, unreadOnly: Bool? = nil, log: OSLog) {
-		self.init(account: account, resource: resourceProvider.resource, service: service, newerThan: newerThan, unreadOnly: unreadOnly, log: log)
+	convenience init(account: Account, resourceProvider: FeedlyResourceProviding, service: FeedlyGetStreamContentsService, newerThan: Date?, unreadOnly: Bool? = nil) {
+		self.init(account: account, resource: resourceProvider.resource, service: service, newerThan: newerThan, unreadOnly: unreadOnly)
 	}
 	
 	override func run() {
@@ -108,7 +106,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 				self.didFinish()
 				
 			case .failure(let error):
-				os_log(.debug, log: self.log, "Unable to get stream contents: %{public}@.", error as NSError)
+                self.logger.error("Unable to get stream contents: \(error.localizedDescription)")
 				self.didFinish(with: error)
 			}
 		}

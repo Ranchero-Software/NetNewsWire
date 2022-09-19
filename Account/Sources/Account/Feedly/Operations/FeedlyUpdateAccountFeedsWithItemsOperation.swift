@@ -8,19 +8,17 @@
 
 import Foundation
 import RSParser
-import os.log
+import RSCore
 
 /// Combine the articles with their feeds for a specific account.
-final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
+final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
 	private let organisedItemsProvider: FeedlyParsedItemsByFeedProviding
-	private let log: OSLog
 
-	init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding, log: OSLog) {
+	init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding) {
 		self.account = account
 		self.organisedItemsProvider = organisedItemsProvider
-		self.log = log
 	}
 	
 	override func run() {
@@ -32,7 +30,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 				return
 			}
 			
-			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", webFeedIDsAndItems.count, self.organisedItemsProvider.parsedItemsByFeedProviderName)
+            self.logger.debug("Updated \(webFeedIDsAndItems.count) feeds for \(self.organisedItemsProvider.parsedItemsByFeedProviderName).")
 			self.didFinish()
 		}
 	}

@@ -8,16 +8,15 @@
 
 import Foundation
 import WidgetKit
-import os.log
 import UIKit
 import RSCore
 import Articles
 import Account
 
 
-public final class WidgetDataEncoder {
+public final class WidgetDataEncoder: Logging {
 	
-	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	
 	private let fetchLimit = 7
 	
 	private var backgroundTaskID: UIBackgroundTaskIdentifier!
@@ -36,7 +35,7 @@ public final class WidgetDataEncoder {
 	@available(iOS 14, *)
 	func encodeWidgetData() throws {
 		flushSharedContainer()
-		os_log(.debug, log: log, "Starting encoding widget data.")
+		logger.debug("Started encoding widget data.")
 		
 		do {
 			let unreadArticles = Array(try AccountManager.shared.fetchArticles(.unread(fetchLimit))).sortedByDate(.orderedDescending)
@@ -95,14 +94,14 @@ public final class WidgetDataEncoder {
 				}
 				let encodedData = try? JSONEncoder().encode(latestData)
 				
-				os_log(.debug, log: self.log, "Finished encoding widget data.")
+				self.logger.debug("Finished encoding widget data.")
 				
 				if self.fileExists() {
 					try? FileManager.default.removeItem(at: self.dataURL!)
-					os_log(.debug, log: self.log, "Removed widget data from container.")
+					self.logger.debug("Removed widget data from container.")
 				}
 				if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
-					os_log(.debug, log: self.log, "Wrote widget data to container.")
+					self.logger.debug("Wrote widget data to container.")
 					WidgetCenter.shared.reloadAllTimelines()
 					UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
 					self.backgroundTaskID = .invalid

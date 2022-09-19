@@ -10,9 +10,10 @@ import UIKit
 import Account
 import Secrets
 import RSWeb
+import RSCore
 import SafariServices
 
-class NewsBlurAccountViewController: UITableViewController {
+class NewsBlurAccountViewController: UITableViewController, Logging {
 
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
@@ -118,7 +119,9 @@ class NewsBlurAccountViewController: UITableViewController {
 						do {
 							try self.account?.removeCredentials(type: .newsBlurBasic)
 							try self.account?.removeCredentials(type: .newsBlurSessionId)
-						} catch {}
+						} catch {
+							self.logger.error("Error removing credentials: \(error.localizedDescription, privacy: .public).")
+						}
 						try self.account?.storeCredentials(basicCredentials)
 						try self.account?.storeCredentials(sessionCredentials)
 
@@ -135,6 +138,7 @@ class NewsBlurAccountViewController: UITableViewController {
 						self.delegate?.dismiss()
 					} catch {
 						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+						self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public).")
 					}
 				} else {
 					self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))

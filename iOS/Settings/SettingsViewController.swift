@@ -13,8 +13,9 @@ import SafariServices
 import SwiftUI
 import UniformTypeIdentifiers
 import UserNotifications
+import RSCore
 
-class SettingsViewController: UITableViewController {
+class SettingsViewController: UITableViewController, Logging {
 
 	private weak var opmlAccount: Account?
 	
@@ -509,6 +510,7 @@ private extension SettingsViewController {
 			try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
 		} catch {
 			self.presentError(title: "OPML Export Error", message: error.localizedDescription)
+			logger.error("OPML Export Error: \(error.localizedDescription, privacy: .public)")
 		}
 		
 		let docPicker = UIDocumentPickerViewController(forExporting: [tempFile], asCopy: true)

@@ -7,15 +7,12 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 import RSParser
 import Account
 
-final class ExtensionContainersFile {
+final class ExtensionContainersFile: Logging {
 	
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "extensionContainersFile")
-
 	private static var filePath: String = {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
@@ -55,7 +52,7 @@ final class ExtensionContainersFile {
 		})
 		
 		if let error = errorPointer?.pointee {
-			os_log(.error, log: log, "Read from disk coordination failed: %@.", error.localizedDescription)
+			logger.error("Read from coordination failed: \(error.localizedDescription, privacy: .public)")
 		}
 
 		return extensionContainers
@@ -88,19 +85,19 @@ private extension ExtensionContainersFile {
 		let fileCoordinator = NSFileCoordinator()
 		let fileURL = URL(fileURLWithPath: ExtensionContainersFile.filePath)
 		
-		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { writeURL in
+		fileCoordinator.coordinate(writingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { [weak self] writeURL in
 			do {
 				let extensionAccounts = AccountManager.shared.sortedActiveAccounts.map { ExtensionAccount(account: $0) }
 				let extensionContainers = ExtensionContainers(accounts: extensionAccounts)
 				let data = try encoder.encode(extensionContainers)
 				try data.write(to: writeURL)
 			} catch let error as NSError {
-				os_log(.error, log: Self.log, "Save to disk failed: %@.", error.localizedDescription)
+				self?.logger.error("Save to disk failed: \(error.localizedDescription, privacy: .public)")
 			}
 		})
 		
 		if let error = errorPointer?.pointee {
-			os_log(.error, log: Self.log, "Save to disk coordination failed: %@.", error.localizedDescription)
+			logger.error("Save to disk coordination failed: \(error.localizedDescription, privacy: .public)")
 		}
 	}
 

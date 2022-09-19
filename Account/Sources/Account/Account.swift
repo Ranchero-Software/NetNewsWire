@@ -17,7 +17,6 @@ import RSParser
 import RSDatabase
 import ArticlesDatabase
 import RSWeb
-import os.log
 import Secrets
 
 // Main thread only.
@@ -91,8 +90,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		
 		return defaultName
 	}()
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "account")
 
 	public var isDeleted = false
 	

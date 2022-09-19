@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 import RSParser
 import Articles
@@ -19,9 +18,7 @@ public enum LocalAccountDelegateError: String, Error {
 	case invalidParameter = "An invalid parameter was used."
 }
 
-final class LocalAccountDelegate: AccountDelegate {
-
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccount")
+final class LocalAccountDelegate: AccountDelegate, Logging {
 
 	weak var account: Account?
 	
@@ -68,7 +65,7 @@ final class LocalAccountDelegate: AccountDelegate {
 							group.leave()
 						}
 					case .failure(let error):
-						os_log(.error, log: self.log, "Feed Provider refresh error: %@.", error.localizedDescription)
+                        self.logger.error("Feed Provided refresh error: \(error.localizedDescription)")
 						feedProviderError = error
 						self.refreshProgress.completeTask()
 						group.leave()

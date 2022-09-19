@@ -7,25 +7,23 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 
 protocol FeedlyFeedsAndFoldersProviding {
 	var feedsAndFolders: [([FeedlyFeed], Folder)] { get }
 }
 
 /// Reflect Collections from Feedly as Folders.
-final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding {
+final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, Logging {
 	
 	let account: Account
 	let collectionsProvider: FeedlyCollectionProviding
-	let log: OSLog
 	
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
 
-	init(account: Account, collectionsProvider: FeedlyCollectionProviding, log: OSLog) {
+	init(account: Account, collectionsProvider: FeedlyCollectionProviding) {
 		self.collectionsProvider = collectionsProvider
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {
@@ -46,8 +44,8 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 			return (collection.feeds, folder)
 		}
 		
-		os_log(.debug, log: log, "Ensured %i folders for %i collections.", feedsAndFolders.count, collections.count)
-		
+        self.logger.debug("Ensured \(self.feedsAndFolders.count) folders for \(collections.count) collections.")
+        
 		// Remove folders without a corresponding collection
 		let collectionFolders = Set(feedsAndFolders.map { $0.1 })
 		let foldersWithoutCollections = localFolders.subtracting(collectionFolders)
@@ -57,7 +55,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 				account.removeFolder(unmatched)
 			}
 			
-			os_log(.debug, log: log, "Removed %i folders: %@", foldersWithoutCollections.count, foldersWithoutCollections.map { $0.externalID ?? $0.nameForDisplay })
+            self.logger.debug("Removed \(foldersWithoutCollections.count) folders: \(foldersWithoutCollections.map({ $0.externalID ?? $0.nameForDisplay }))")
 		}
 	}
 }

@@ -8,10 +8,10 @@
 
 import Foundation
 import UniformTypeIdentifiers
-
+import RSCore
 import UIKit
 
-class ArticleThemesTableViewController: UITableViewController {
+class ArticleThemesTableViewController: UITableViewController, Logging {
 
 	override func viewDidLoad() {
 		let importBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importTheme(_:)));
@@ -118,6 +118,7 @@ extension ArticleThemesTableViewController: UIDocumentPickerDelegate {
 			try ArticleThemeImporter.importTheme(controller: self, filename: url.standardizedFileURL.path)
 		} catch {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			logger.error("Did fail to import theme: \(error.localizedDescription, privacy: .public)")
 		}
 	}
 	

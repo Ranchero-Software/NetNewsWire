@@ -7,13 +7,10 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 
-class CloudKitReceiveStatusOperation: MainThreadOperation {
+class CloudKitReceiveStatusOperation: MainThreadOperation, Logging {
 	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -33,15 +30,15 @@ class CloudKitReceiveStatusOperation: MainThreadOperation {
 			return
 		}
 		
-		os_log(.debug, log: log, "Refreshing article statuses...")
+        logger.debug("Refreshing article statuses...")
 		
  		articlesZone.refreshArticles() { result in
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
+            self.logger.debug("Done refreshing article statuses.")
 			switch result {
 			case .success:
 				self.operationDelegate?.operationDidComplete(self)
 			case .failure(let error):
-				os_log(.error, log: self.log, "Receive status error: %@.", error.localizedDescription)
+                self.logger.debug("Receive status error: \(error.localizedDescription)")
 				self.operationDelegate?.cancelOperation(self)
 			}
 		}

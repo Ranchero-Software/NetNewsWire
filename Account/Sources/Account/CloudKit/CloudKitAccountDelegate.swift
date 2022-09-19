@@ -9,7 +9,6 @@
 import Foundation
 import CloudKit
 import SystemConfiguration
-import os.log
 import SyncDatabase
 import RSCore
 import RSParser
@@ -27,9 +26,7 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 }
 
-final class CloudKitAccountDelegate: AccountDelegate {
-
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+final class CloudKitAccountDelegate: AccountDelegate, Logging {
 
 	private let database: SyncDatabase
 	
@@ -318,10 +315,10 @@ final class CloudKitAccountDelegate: AccountDelegate {
 				
 				for webFeed in webFeeds {
 					group.enter()
-					self.removeWebFeedFromCloud(for: account, with: webFeed, from: folder) { result in
+					self.removeWebFeedFromCloud(for: account, with: webFeed, from: folder) { [weak self] result in
 						group.leave()
 						if case .failure(let error) = result {
-							os_log(.error, log: self.log, "Remove folder, remove webfeed error: %@.", error.localizedDescription)
+                            self?.logger.error("Remove folder, remove webfeed error: \(error.localizedDescription, privacy: .public)")
 							errorOccurred = true
 						}
 					}
@@ -380,14 +377,14 @@ final class CloudKitAccountDelegate: AccountDelegate {
 					folder.topLevelWebFeeds.remove(feed)
 
 					group.enter()
-					self.restoreWebFeed(for: account, feed: feed, container: folder) { result in
-						self.refreshProgress.completeTask()
+					self.restoreWebFeed(for: account, feed: feed, container: folder) { [weak self] result in
+						self?.refreshProgress.completeTask()
 						group.leave()
 						switch result {
 						case .success:
 							break
 						case .failure(let error):
-							os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+                            self?.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 					
@@ -437,13 +434,13 @@ final class CloudKitAccountDelegate: AccountDelegate {
 		
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
-			accountZone.findOrCreateAccount() { result in
+			accountZone.findOrCreateAccount() { [weak self] result in
 				switch result {
 				case .success(let externalID):
 					account.externalID = externalID
-					self.initialRefreshAll(for: account) { _ in }
+					self?.initialRefreshAll(for: account) { _ in }
 				case .failure(let error):
-					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
+                    self?.logger.error("Error adding account container: \(error.localizedDescription, privacy: .public)")
 				}
 			}
 			accountZone.subscribeToZoneChanges()
@@ -589,7 +586,7 @@ private extension CloudKitAccountDelegate {
 									group.leave()
 								}
 							case .failure(let error):
-								os_log(.error, log: self.log, "CloudKit Feed refresh update error: %@.", error.localizedDescription)
+                                self.logger.error("CloudKit Feed refresh update error: \(error.localizedDescription, privacy: .public)")
 								self.refreshProgress.completeTask()
 								group.leave()
 							}
@@ -597,7 +594,7 @@ private extension CloudKitAccountDelegate {
 						}
 
 					case .failure(let error):
-						os_log(.error, log: self.log, "CloudKit Feed refresh error: %@.", error.localizedDescription)
+                        self.logger.error("CloudKit Feed refresh error: \(error.localizedDescription, privacy: .public)")
 						feedProviderError = error
 						self.refreshProgress.completeTask()
 						group.leave()
@@ -804,12 +801,12 @@ private extension CloudKitAccountDelegate {
 						case .success:
 							self.articlesZone.fetchChangesInZone() { _ in }
 						case .failure(let error):
-							os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
+                            self.logger.error("CloudKit Feed send articles error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 				}
 			case .failure(let error):
-				os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
+                self.logger.error("CloudKit Feed send articles error: \(error.localizedDescription, privacy: .public)")
 			}
 		}
 	}

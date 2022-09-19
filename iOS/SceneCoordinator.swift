@@ -50,7 +50,7 @@ struct FeedNode: Hashable {
 	}
 }
 
-class SceneCoordinator: NSObject, UndoableCommandRunner {
+class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
@@ -1272,6 +1272,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename)
 		} catch {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
+			logger.error("Failed to import theme with error: \(error.localizedDescription, privacy: .public)")
 		}
 		
 	}

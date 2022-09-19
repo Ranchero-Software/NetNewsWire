@@ -7,14 +7,10 @@
 //
 
 import Foundation
-
-import os.log
 import RSCore
 
-class CloudKitRemoteNotificationOperation: MainThreadOperation {
+class CloudKitRemoteNotificationOperation: MainThreadOperation, Logging {
 	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-
 	// MainThreadOperation
 	public var isCanceled = false
 	public var id: Int?
@@ -37,12 +33,12 @@ class CloudKitRemoteNotificationOperation: MainThreadOperation {
 			self.operationDelegate?.operationDidComplete(self)
 			return
 		}
-		
-		os_log(.debug, log: log, "Processing remote notification...")
+        
+        logger.debug("Processing remote notification...")
 		
 		accountZone.receiveRemoteNotification(userInfo: userInfo) {
 			articlesZone.receiveRemoteNotification(userInfo: self.userInfo) {
-				os_log(.debug, log: self.log, "Done processing remote notification.")
+                self.logger.debug("Done processing remote notification.")
 				self.operationDelegate?.operationDidComplete(self)
 			}
 		}

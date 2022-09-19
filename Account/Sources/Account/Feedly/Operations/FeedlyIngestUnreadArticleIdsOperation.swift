@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 import RSParser
 import SyncDatabase
 import Secrets
@@ -18,26 +18,24 @@ import Secrets
 /// When all the unread article ids are collected, a status is created for each.
 /// The article ids previously marked as unread but not collected become read.
 /// So this operation has side effects *for the entire account* it operates on.
-final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
+final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
 	private let database: SyncDatabase
 	private var remoteEntryIds = Set<String>()
-	private let log: OSLog
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		let resource = FeedlyCategoryResourceId.Global.all(for: userId)
-		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan, log: log)
+		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.database = database
-		self.log = log
 	}
 	
 	override func run() {
