@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 
 protocol FeedlyRequestStreamsOperationDelegate: AnyObject {
 	func feedlyRequestStreamsOperation(_ operation: FeedlyRequestStreamsOperation, enqueue collectionStreamOperation: FeedlyGetStreamContentsOperation)
@@ -15,24 +15,22 @@ protocol FeedlyRequestStreamsOperationDelegate: AnyObject {
 
 /// Create one stream request operation for one Feedly collection.
 /// This is the start of the process of refreshing the entire contents of a Folder.
-final class FeedlyRequestStreamsOperation: FeedlyOperation {
+final class FeedlyRequestStreamsOperation: FeedlyOperation, Logging {
 	
 	weak var queueDelegate: FeedlyRequestStreamsOperationDelegate?
 	
 	let collectionsProvider: FeedlyCollectionProviding
 	let service: FeedlyGetStreamContentsService
 	let account: Account
-	let log: OSLog
 	let newerThan: Date?
 	let unreadOnly: Bool?
 
-	init(account: Account, collectionsProvider: FeedlyCollectionProviding, newerThan: Date?, unreadOnly: Bool?, service: FeedlyGetStreamContentsService, log: OSLog) {
+	init(account: Account, collectionsProvider: FeedlyCollectionProviding, newerThan: Date?, unreadOnly: Bool?, service: FeedlyGetStreamContentsService) {
 		self.account = account
 		self.service = service
 		self.collectionsProvider = collectionsProvider
 		self.newerThan = newerThan
 		self.unreadOnly = unreadOnly
-		self.log = log
 	}
 	
 	override func run() {
@@ -50,11 +48,10 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation {
 															   resource: resource,
 															   service: service,
 															   newerThan: newerThan,
-															   unreadOnly: unreadOnly,
-															   log: log)
+															   unreadOnly: unreadOnly)
 			queueDelegate?.feedlyRequestStreamsOperation(self, enqueue: operation)
 		}
 		
-		os_log(.debug, log: log, "Requested %i collection streams", collectionsProvider.collections.count)
+        self.logger.debug("Requested \(self.collectionsProvider.collections.count) collections streams.")
 	}
 }

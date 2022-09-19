@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 import Secrets
 
 /// Ensure a status exists for every article id the user might be interested in.
@@ -15,23 +15,21 @@ import Secrets
 /// Typically, it pages through the article ids of the global.all stream.
 /// As the article ids are collected, a default read status is created for each.
 /// So this operation has side effects *for the entire account* it operates on.
-class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
+class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation, Logging {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
-	private let log: OSLog
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService) {
 		self.account = account
 		self.resource = resource
 		self.service = service
-		self.log = log
 	}
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, log: OSLog) {
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService) {
 		let all = FeedlyCategoryResourceId.Global.all(for: userId)
-		self.init(account: account, resource: all, service: service, log: log)
+		self.init(account: account, resource: all, service: service)
 	}
 	
 	override func run() {
@@ -58,7 +56,7 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation {
 				}
 				
 				guard let continuation = streamIds.continuation else {
-					os_log(.debug, log: self.log, "Reached end of stream for %@", self.resource.id)
+                    self.logger.debug("Reached end of stream: \(self.resource.id).")
 					self.didFinish()
 					return
 				}

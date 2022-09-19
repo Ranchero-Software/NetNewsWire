@@ -7,18 +7,16 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 
-final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, Logging {
 
 	private let account: Account
-	private let log: OSLog
 	
 	private(set) var entryIds = Set<String>()
 	
-	init(account: Account, log: OSLog) {
+	init(account: Account) {
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {
@@ -29,6 +27,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 				self.didFinish()
 				
 			case .failure(let error):
+                self.logger.error("Failed to fetch articleIDs: \(error.localizedDescription).")
 				self.didFinish(with: error)
 			}
 		}

@@ -7,32 +7,30 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 import Secrets
 
 /// Single responsibility is to identify articles that have changed since a particular date.
 ///
 /// Typically, it pages through the article ids of the global.all stream.
 /// When all the article ids are collected, it is the responsibility of another operation to download them when appropriate.
-class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
+class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, Logging {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
 	private let service: FeedlyGetStreamIdsService
 	private let newerThan: Date?
-	private let log: OSLog
 	
-	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.newerThan = newerThan
-		self.log = log
 	}
 	
-	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, newerThan: Date?, log: OSLog) {
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, newerThan: Date?) {
 		let all = FeedlyCategoryResourceId.Global.all(for: userId)
-		self.init(account: account, resource: all, service: service, newerThan: newerThan, log: log)
+		self.init(account: account, resource: all, service: service, newerThan: newerThan)
 	}
 	
 	var entryIds: Set<String> {
@@ -47,7 +45,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 	
 	private func getStreamIds(_ continuation: String?) {
 		guard let date = newerThan else {
-			os_log(.debug, log: log, "No date provided so everything must be new (nothing is updated).")
+            logger.debug("No date provided so everything must be new (nothing is updated).")
 			didFinish()
 			return
 		}
@@ -66,7 +64,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 			storedUpdatedArticleIds.formUnion(streamIds.ids)
 			
 			guard let continuation = streamIds.continuation else {
-				os_log(.debug, log: log, "%{public}i articles updated since last successful sync start date.", storedUpdatedArticleIds.count)
+                self.logger.debug("\(self.storedUpdatedArticleIds.count) articles updated since last successful sync start date.")
 				didFinish()
 				return
 			}
@@ -74,6 +72,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 			getStreamIds(continuation)
 			
 		case .failure(let error):
+            self.logger.error("Error getting FeedlyStreamIds: \(error.localizedDescription).")
 			didFinish(with: error)
 		}
 	}
