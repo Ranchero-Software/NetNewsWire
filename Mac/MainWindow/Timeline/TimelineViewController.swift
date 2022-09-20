@@ -10,7 +10,6 @@ import Foundation
 import RSCore
 import Articles
 import Account
-import os.log
 
 protocol TimelineDelegate: AnyObject  {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)

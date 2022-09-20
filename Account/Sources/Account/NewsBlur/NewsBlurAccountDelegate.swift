@@ -12,10 +12,9 @@ import RSDatabase
 import RSParser
 import RSWeb
 import SyncDatabase
-import os.log
 import Secrets
 
-final class NewsBlurAccountDelegate: AccountDelegate {
+final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 	var behaviors: AccountBehaviors = []
 
@@ -31,7 +30,6 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	let caller: NewsBlurAPICaller
-	let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "NewsBlur")
 	let database: SyncDatabase
 
 	init(dataFolder: String, transport: Transport?) {
@@ -133,8 +131,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 	
 	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		os_log(.debug, log: log, "Sending story statuses...")
-
+        logger.debug("Sending story statuses...")
 		database.selectForProcessing { result in
 
 			func processStatuses(_ syncStatuses: [SyncStatus]) {
@@ -187,7 +184,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 				}
 
 				group.notify(queue: DispatchQueue.main) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
+                    self.logger.debug("Done sending article statuses.")
 					if errorOccurred {
 						completion(.failure(NewsBlurError.unknown))
 					} else {
@@ -206,7 +203,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		os_log(.debug, log: log, "Refreshing story statuses...")
+        logger.debug("Refreshing story statuses...")
 
 		let group = DispatchGroup()
 		var errorOccurred = false
@@ -220,7 +217,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving unread stories failed: %@.", error.localizedDescription)
+                self.logger.error("Retrieving unread stories failed: \(error.localizedDescription)")
 				group.leave()
 			}
 		}
@@ -234,13 +231,13 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 				}
 			case .failure(let error):
 				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving starred stories failed: %@.", error.localizedDescription)
+                self.logger.error("Retrieving starred stories failed: \(error.localizedDescription)")
 				group.leave()
 			}
 		}
 
 		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
+            self.logger.debug("Done refreshing article statuses.")
 			if errorOccurred {
 				completion(.failure(NewsBlurError.unknown))
 			} else {
@@ -250,9 +247,9 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func refreshStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		os_log(.debug, log: log, "Refreshing stories...")
-		os_log(.debug, log: log, "Refreshing unread stories...")
-
+        self.logger.debug("Refreshing stories...")
+        self.logger.debug("Refreshing unread stories...")
+        
 		caller.retrieveUnreadStoryHashes { result in
 			switch result {
 			case .success(let storyHashes):
@@ -269,7 +266,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 	}
 
 	func refreshMissingStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		os_log(.debug, log: log, "Refreshing missing stories...")
+        self.logger.debug("Refreshing missing stories...")
 
 		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
 
@@ -296,7 +293,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 							}
 						case .failure(let error):
 							errorOccurred = true
-							os_log(.error, log: self.log, "Refresh missing stories failed: %@.", error.localizedDescription)
+                            self.logger.error("Refreshing missing stories failed: \(error.localizedDescription)")
 							group.leave()
 						}
 					}
@@ -304,7 +301,7 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 				group.notify(queue: DispatchQueue.main) {
 					self.refreshProgress.completeTask()
-					os_log(.debug, log: self.log, "Done refreshing missing stories.")
+                    self.logger.debug("Done refreshing stories.")
 					if errorOccurred {
 						completion(.failure(NewsBlurError.unknown))
 					} else {
@@ -568,12 +565,12 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 						case .success:
 							break
 						case .failure(let error):
-							os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+                            self.logger.error("Restore folder feed error: \(error.localizedDescription)")
 						}
 					}
 				}
 			case .failure(let error):
-				os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+                self.logger.error("Restore folder feed error: \(error.localizedDescription)")
 			}
 		}
 

@@ -265,9 +265,15 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 			themeActions.append(action)
 		}
 		
-		let defaultThemeAction = UIAction(title: NSLocalizedString("Default", comment: "Default"), image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: ArticleThemesManager.shared.currentThemeName == AppDefaults.defaultThemeName ? .on : .off) { _ in
+		let defaultThemeAction = UIAction(title: NSLocalizedString("Default", comment: "Default"),
+										  image: nil,
+										  identifier: nil,
+										  discoverabilityTitle: nil,
+										  attributes: [],
+										  state: ArticleThemesManager.shared.currentThemeName == AppDefaults.defaultThemeName ? .on : .off,
+										  handler: { _ in
 			ArticleThemesManager.shared.currentThemeName = AppDefaults.defaultThemeName
-		}
+		})
 		let defaultThemeMenu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [defaultThemeAction])
 		let customThemeMenu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: themeActions)
 		

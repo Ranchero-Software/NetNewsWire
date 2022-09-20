@@ -7,22 +7,20 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 import RSParser
 
 /// Get full entries for the entry identifiers.
-final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
+final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding, Logging {
 
 	let account: Account
 	let service: FeedlyGetEntriesService
 	let provider: FeedlyEntryIdentifierProviding
-	let log: OSLog
 
-	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding, log: OSLog) {
+	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding) {
 		self.account = account
 		self.service = service
 		self.provider = provider
-		self.log = log
 	}
 	
 	private (set) var entries = [FeedlyEntry]()
@@ -38,13 +36,12 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 			FeedlyEntryParser(entry: $0).parsedItemRepresentation
 		})
 		
-		// TODO: Fix the below. There’s an error on the os.log line: "Expression type '()' is ambiguous without more context"
-//		if parsed.count != entries.count {
-//			let entryIds = Set(entries.map { $0.id })
-//			let parsedIds = Set(parsed.map { $0.uniqueID })
-//			let difference = entryIds.subtracting(parsedIds)
-//			os_log(.debug, log: log, "%{public}@ dropping articles with ids: %{public}@.", self, difference)
-//		}
+		if parsed.count != entries.count {
+			let entryIds = Set(entries.map { $0.id })
+			let parsedIds = Set(parsed.map { $0.uniqueID })
+			let difference = entryIds.subtracting(parsedIds)
+            self.logger.debug("\(String(describing: self)) dropping articles with ids: \(difference)).")
+		}
 		
 		storedParsedEntries = parsed
 		
@@ -63,7 +60,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 				self.didFinish()
 				
 			case .failure(let error):
-				os_log(.debug, log: self.log, "Unable to get entries: %{public}@.", error as NSError)
+                self.logger.error("Unable to get entries: \(error.localizedDescription)")
 				self.didFinish(with: error)
 			}
 		}

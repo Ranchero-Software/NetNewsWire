@@ -18,7 +18,7 @@ extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-final class FaviconDownloader {
+final class FaviconDownloader: Logging {
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -297,6 +297,7 @@ private extension FaviconDownloader {
 			let data = try encoder.encode(homePageToFaviconURLCache)
 			try data.write(to: url)
 		} catch {
+			logger.error("Failed to Save Home Page To Favicon URL Cache: \(error.localizedDescription, privacy: .public)")
 			assertionFailure(error.localizedDescription)
 		}
 	}
@@ -311,6 +312,7 @@ private extension FaviconDownloader {
 			let data = try encoder.encode(Array(homePageURLsWithNoFaviconURLCache))
 			try data.write(to: url)
 		} catch {
+			logger.error("Failed to Save URLs With No Favicon URL Cache: \(error.localizedDescription, privacy: .public)")
 			assertionFailure(error.localizedDescription)
 		}
 	}

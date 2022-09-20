@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import RSCore
 
-struct WidgetDataDecoder {
+struct WidgetDataDecoder: Logging {
 	
-	static func decodeWidgetData() throws -> WidgetData {
+	func decodeWidgetData() throws -> WidgetData {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 		let dataURL = containerURL?.appendingPathComponent("widget-data.json")
@@ -22,13 +23,14 @@ struct WidgetDataDecoder {
 		}
 	}
 	
-	static func sampleData() -> WidgetData {
+	func sampleData() -> WidgetData {
 		let pathToSample = Bundle.main.url(forResource: "widget-sample", withExtension: "json")
 		do {
 			let data = try Data(contentsOf: pathToSample!)
 			let decoded = try JSONDecoder().decode(WidgetData.self, from: data)
 			return decoded
 		} catch {
+			logger.error("Error accessing sample widget data: \(error.localizedDescription, privacy: .public)")
 			return WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date())
 		}
 	}

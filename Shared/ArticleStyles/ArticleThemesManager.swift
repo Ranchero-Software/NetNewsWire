@@ -14,7 +14,7 @@ public extension Notification.Name {
 	static let CurrentArticleThemeDidChangeNotification = Notification.Name("CurrentArticleThemeDidChangeNotification")
 }
 
-final class ArticleThemesManager: NSObject, NSFilePresenter {
+final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 
 	static var shared: ArticleThemesManager!
 	public let folderPath: String
@@ -58,6 +58,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 		do {
 			try FileManager.default.createDirectory(atPath: folderPath, withIntermediateDirectories: true, attributes: nil)
 		} catch {
+			logger.error("Could not create folder for themes: \(error.localizedDescription, privacy: .public)")
 			assertionFailure("Could not create folder for Themes.")
 			abort()
 		}
@@ -113,6 +114,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter {
 			return try ArticleTheme(path: path, isAppTheme: isAppTheme)
 		} catch {
 			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			logger.error("Failed to import theme: \(error.localizedDescription, privacy: .public)")
 			return nil
 		}
 		

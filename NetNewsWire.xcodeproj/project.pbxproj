@@ -36,7 +36,6 @@
 		176814362564BCC000D98635 /* UnreadWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176814352564BCC000D98635 /* UnreadWidget.swift */; };
 		1768143E2564BCC800D98635 /* TodayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768143D2564BCC800D98635 /* TodayWidget.swift */; };
 		176814462564BCD200D98635 /* StarredWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176814452564BCD200D98635 /* StarredWidget.swift */; };
-		1768144E2564BCE000D98635 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
 		176814572564BD0600D98635 /* ArticleItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176814562564BD0600D98635 /* ArticleItemView.swift */; };
 		1768145E2564BD7B00D98635 /* WidgetDataDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176813C92564BA5400D98635 /* WidgetDataDecoder.swift */; };
 		176814652564BD7F00D98635 /* WidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176813B62564B9F800D98635 /* WidgetData.swift */; };
@@ -850,6 +849,7 @@
 		D5F4EDB720074D6500B9E363 /* WebFeed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */; };
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
+		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
 		DFD6AACF27ADE86E00463FAD /* NewsFax.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */; };
 		DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DFFC199827A0D0D7004B7AEF /* NotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */; };
@@ -933,6 +933,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				DF2A8F34289BFBDA002455AD /* RSCore in Embed Frameworks */,
 				17EF6A2225C4E5B4002C9F81 /* RSWeb in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1603,6 +1604,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF2A8F33289BFBD9002455AD /* RSCore in Frameworks */,
 				17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */,
 				176813F72564BB2C00D98635 /* SwiftUI.framework in Frameworks */,
 				176813F52564BB2C00D98635 /* WidgetKit.framework in Frameworks */,
@@ -1770,10 +1772,10 @@
 		176814342564BCB500D98635 /* Widget Views */ = {
 			isa = PBXGroup;
 			children = (
+				1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */,
 				176814352564BCC000D98635 /* UnreadWidget.swift */,
 				1768143D2564BCC800D98635 /* TodayWidget.swift */,
 				176814452564BCD200D98635 /* StarredWidget.swift */,
-				1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */,
 			);
 			path = "Widget Views";
 			sourceTree = "<group>";
@@ -2587,6 +2589,7 @@
 				849A97861ED9ECEF007D329B /* Article Styles */,
 				84DAEE201F86CAE00058304B /* Importers */,
 				8444C9011FED81880051386C /* Exporters */,
+				DF2A8F28289A3EA8002455AD /* Logging */,
 				51FE0FF9234552490056195D /* UserNotifications */,
 				84F2D5341FC22FCB00998D64 /* SmartFeeds */,
 				51B5C85A23F22A7A00032075 /* ShareExtension */,
@@ -2867,6 +2870,13 @@
 			path = Scriptability;
 			sourceTree = "<group>";
 		};
+		DF2A8F28289A3EA8002455AD /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2887,6 +2897,7 @@
 			name = "NetNewsWire iOS Widget Extension";
 			packageProductDependencies = (
 				17EF6A2025C4E5B4002C9F81 /* RSWeb */,
+				DF2A8F32289BFBD9002455AD /* RSCore */,
 			);
 			productName = "NetNewsWire WidgetExtension";
 			productReference = 176813F32564BB2C00D98635 /* NetNewsWire iOS Widget Extension.appex */;
@@ -3181,7 +3192,7 @@
 		849C64581ED37A5D003D8FC0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1240;
+				LastSwiftUpdateCheck = 1400;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
@@ -3720,6 +3731,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */,
 				176814362564BCC000D98635 /* UnreadWidget.swift in Sources */,
 				1768146C2564BD8100D98635 /* WidgetDeepLinks.swift in Sources */,
 				1768143E2564BCC800D98635 /* TodayWidget.swift in Sources */,
@@ -3731,7 +3743,6 @@
 				17E0084625941887000C23F0 /* SizeCategories.swift in Sources */,
 				176814462564BCD200D98635 /* StarredWidget.swift in Sources */,
 				176814572564BD0600D98635 /* ArticleItemView.swift in Sources */,
-				1768144E2564BCE000D98635 /* SmartFeedSummaryWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4713,6 +4724,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 			};
 			name = Debug;
 		};
@@ -4720,6 +4732,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 51121AA12265430A00BC0EC1 /* NetNewsWire_iOSapp_target.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 			};
 			name = Release;
 		};
@@ -5187,6 +5200,11 @@
 		653813402680E2DA007A082C /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 653813412680E2DA007A082C /* XCRemoteSwiftPackageReference "RSCore" */;
+			productName = RSCore;
+		};
+		DF2A8F32289BFBD9002455AD /* RSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5102AE4324D17E820050839C /* XCRemoteSwiftPackageReference "RSCore" */;
 			productName = RSCore;
 		};
 /* End XCSwiftPackageProductDependency section */

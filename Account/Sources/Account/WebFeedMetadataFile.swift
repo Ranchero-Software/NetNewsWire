@@ -7,12 +7,9 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 
-final class WebFeedMetadataFile {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "webFeedMetadataFile")
+final class WebFeedMetadataFile: Logging {
 
 	private let fileURL: URL
 	private let account: Account
@@ -52,8 +49,8 @@ final class WebFeedMetadataFile {
 		do {
 			let data = try encoder.encode(feedMetadata)
 			try data.write(to: fileURL)
-		} catch let error as NSError {
-			os_log(.error, log: log, "Save to disk failed: %@.", error.localizedDescription)
+		} catch let error {
+            logger.error("Save to disk failed: \(error.localizedDescription)")
 		}
 	}
 		

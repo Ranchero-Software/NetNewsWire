@@ -7,19 +7,17 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 
 /// Single responsibility is to accurately reflect Collections and their Feeds as Folders and their Feeds.
-final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
+final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Logging {
 	
 	let account: Account
 	let feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding
-	let log: OSLog
 
-	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding, log: OSLog) {
+	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding) {
 		self.feedsAndFoldersProvider = feedsAndFoldersProvider
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {
@@ -40,7 +38,6 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.webFeedID) }
 			if !feedsToRemove.isEmpty {
 				folder.removeFeeds(feedsToRemove)
-//				os_log(.debug, log: log, "\"%@\" - removed: %@", collection.label, feedsToRemove.map { $0.feedID }, feedsInCollection)
 			}
 			
 		}
@@ -94,7 +91,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 				return (feed, folder)
 			}
 		
-		os_log(.debug, log: log, "Processing %i feeds.", feedsAndFolders.count)
+		logger.debug("Processing \(feedsAndFolders.count) feeds.")
 		feedsAndFolders.forEach { (feed, folder) in
 			if !folder.has(feed) {
 				folder.addWebFeed(feed)
@@ -107,7 +104,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 		account.removeFeeds(feedsWithoutCollections)
 		
 		if !feedsWithoutCollections.isEmpty {
-			os_log(.debug, log: log, "Removed %i feeds", feedsWithoutCollections.count)
+            logger.debug("Removed \(feedsWithoutCollections.count) feeds.")
 		}
 	}
 }

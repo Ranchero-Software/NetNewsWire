@@ -7,13 +7,10 @@
 //
 
 import Foundation
-import os.log
 import RSCore
 import RSParser
 
-final class OPMLFile {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "opmlFile")
+final class OPMLFile: Logging {
 
 	private let fileURL: URL
 	private let account: Account
@@ -50,8 +47,8 @@ final class OPMLFile {
 		
 		do {
 			try opmlDocumentString.write(to: fileURL, atomically: true, encoding: .utf8)
-		} catch let error as NSError {
-			os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
+		} catch let error {
+            logger.error("OPML save to disk failed: \(error.localizedDescription)")
 		}
 	}
 	
@@ -76,7 +73,7 @@ private extension OPMLFile {
 		do {
 			fileData = try Data(contentsOf: fileURL)
 		} catch {
-			os_log(.error, log: log, "OPML read from disk failed: %@.", error.localizedDescription)
+            logger.error("OPML read from disk failed: \(error.localizedDescription)")
 		}
 
 		return fileData
@@ -89,7 +86,7 @@ private extension OPMLFile {
 		do {
 			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 		} catch {
-			os_log(.error, log: log, "OPML Import failed: %@.", error.localizedDescription)
+            logger.error("OPML Import failed: \(error.localizedDescription)")
 			return nil
 		}
 		

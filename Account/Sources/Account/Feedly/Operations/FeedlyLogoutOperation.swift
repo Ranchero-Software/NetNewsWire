@@ -7,26 +7,24 @@
 //
 
 import Foundation
-import os.log
+import RSCore
 
 protocol FeedlyLogoutService {
 	func logout(completion: @escaping (Result<Void, Error>) -> ())
 }
 
-final class FeedlyLogoutOperation: FeedlyOperation {
+final class FeedlyLogoutOperation: FeedlyOperation, Logging {
 
 	let service: FeedlyLogoutService
 	let account: Account
-	let log: OSLog
 	
-	init(account: Account, service: FeedlyLogoutService, log: OSLog) {
+	init(account: Account, service: FeedlyLogoutService) {
 		self.service = service
 		self.account = account
-		self.log = log
 	}
 	
 	override func run() {
-		os_log("Requesting logout of %{public}@ account.", "\(account.type)")
+        self.logger.debug("Requesting logout of \(String(describing: self.account.type)).")
 		service.logout(completion: didCompleteLogout(_:))
 	}
 	
@@ -34,7 +32,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 		assert(Thread.isMainThread)
 		switch result {
 		case .success:
-			os_log("Logged out of %{public}@ account.", log: log, "\(account.type)")
+            self.logger.debug("Logged out of \(String(describing: self.account.type)).")
 			do {
 				try account.removeCredentials(type: .oauthAccessToken)
 				try account.removeCredentials(type: .oauthRefreshToken)
@@ -44,7 +42,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 			didFinish()
 			
 		case .failure(let error):
-			os_log("Logout failed because %{public}@.", log: log, error as NSError)
+            self.logger.error("Logout failed because: \(error.localizedDescription)")
 			didFinish(with: error)
 		}
 	}
