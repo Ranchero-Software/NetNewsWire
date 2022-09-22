@@ -191,7 +191,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 				try self.softwareUpdater.start()
 			}
 			catch {
-				logger.error("Failed to start software updater with error: \(error, privacy: .public)")
+				logger.error("Failed to start software updater with error: \(error.localizedDescription, privacy: .public)")
 			}
 		#endif
 		
