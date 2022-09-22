@@ -215,6 +215,7 @@
 		514C16DE24D2EF15009A3AFA /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16DD24D2EF15009A3AFA /* RSTree */; };
 		514C16DF24D2EF15009A3AFA /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 514C16DD24D2EF15009A3AFA /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		514C16E124D2EF38009A3AFA /* RSCoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 514C16E024D2EF38009A3AFA /* RSCoreResources */; };
+		5153A35428DC5CEB0036C545 /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = DF2A8F32289BFBD9002455AD /* RSCore */; };
 		5154368B229404D1005E1CDF /* FaviconGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51EF0F76227716200050506E /* FaviconGenerator.swift */; };
 		515A50E6243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
 		515A50E7243D07A90089E588 /* ExtensionPointManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A50E5243D07A90089E588 /* ExtensionPointManager.swift */; };
@@ -930,7 +931,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				DF2A8F34289BFBDA002455AD /* RSCore in Embed Frameworks */,
 				17EF6A2225C4E5B4002C9F81 /* RSWeb in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1600,7 +1600,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF2A8F33289BFBD9002455AD /* RSCore in Frameworks */,
+				5153A35428DC5CEB0036C545 /* RSCore in Frameworks */,
 				17EF6A2125C4E5B4002C9F81 /* RSWeb in Frameworks */,
 				176813F72564BB2C00D98635 /* SwiftUI.framework in Frameworks */,
 				176813F52564BB2C00D98635 /* WidgetKit.framework in Frameworks */,
@@ -2585,7 +2585,6 @@
 				849A97861ED9ECEF007D329B /* Article Styles */,
 				84DAEE201F86CAE00058304B /* Importers */,
 				8444C9011FED81880051386C /* Exporters */,
-				DF2A8F28289A3EA8002455AD /* Logging */,
 				51FE0FF9234552490056195D /* UserNotifications */,
 				84F2D5341FC22FCB00998D64 /* SmartFeeds */,
 				51B5C85A23F22A7A00032075 /* ShareExtension */,
@@ -2863,13 +2862,6 @@
 				D57BE6DF204CD35F00D11AAC /* NSScriptCommand+NetNewsWire.swift */,
 			);
 			path = Scriptability;
-			sourceTree = "<group>";
-		};
-		DF2A8F28289A3EA8002455AD /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Logging;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
