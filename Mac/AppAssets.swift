@@ -147,7 +147,7 @@ struct AppAssets {
 	}
 
 	static var markAllAsReadImage: RSImage = {
-		return NSImage(systemSymbolName: "arrow.up.arrow.down.circle", accessibilityDescription: nil)!
+		return RSImage(named: "markAllAsRead")!
 	}()
 
 	static var nextUnreadImage: RSImage = {
