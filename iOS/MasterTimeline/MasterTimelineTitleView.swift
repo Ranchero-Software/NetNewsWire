@@ -14,7 +14,6 @@ class MasterTimelineTitleView: UIView {
 	@IBOutlet weak var label: UILabel!
 	@IBOutlet weak var unreadCountView: MasterTimelineUnreadCountView!
 
-	@available(iOS 13.4, *)
 	private lazy var pointerInteraction: UIPointerInteraction = {
 		UIPointerInteraction(delegate: self)
 	}()
@@ -48,7 +47,6 @@ class MasterTimelineTitleView: UIView {
 
 extension MasterTimelineTitleView: UIPointerInteractionDelegate {
 	
-	@available(iOS 13.4, *)
 	func pointerInteraction(_ interaction: UIPointerInteraction, styleFor region: UIPointerRegion) -> UIPointerStyle? {
 		var rect = self.frame
 		rect.origin.x = rect.origin.x - 10

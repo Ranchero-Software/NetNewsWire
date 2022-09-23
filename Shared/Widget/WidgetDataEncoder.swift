@@ -39,12 +39,10 @@ public final class WidgetDataEncoder: Logging {
 		encodeWidgetDataQueue.performCallsImmediately()
 	}
 
-	@available(iOS 14, *)
 	@objc func statusesDidChange(_ note: Notification) {
 		encodeWidgetDataQueue.add(self, #selector(performEncodeWidgetData))
 	}
 
-	@available(iOS 14, *)
 	@objc private func performEncodeWidgetData() {
 		// We will be on the Main Thread when the encodeIfNecessary function is called. We want
 		// block the main thread in that case so that the widget data is encoded. If it is on
@@ -59,7 +57,6 @@ public final class WidgetDataEncoder: Logging {
 		}
 	}
 	
-	@available(iOS 14, *)
 	private func encodeWidgetData() {
 		flushSharedContainer()
 		logger.debug("Starting encoding widget data.")
