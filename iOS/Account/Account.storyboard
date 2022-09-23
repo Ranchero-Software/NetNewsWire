@@ -13,7 +13,7 @@
             <objects>
                 <navigationController storyboardIdentifier="LocalAccountNavigationViewController" id="TMY-HB-vAu" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="p8g-7e-3f4">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -29,7 +29,7 @@
             <objects>
                 <navigationController storyboardIdentifier="FeedbinAccountNavigationViewController" id="sFg-MZ-PqJ" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="wq6-np-tNn">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -314,7 +314,7 @@ Don’t have a Feedbin account?</string>
             <objects>
                 <navigationController storyboardIdentifier="NewsBlurAccountNavigationViewController" id="eE3-pu-HdL" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Fsp-NG-hoR">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -678,7 +678,7 @@ Don’t have a Reader account?</string>
             <objects>
                 <navigationController storyboardIdentifier="CloudKitAccountNavigationViewController" id="LhW-Dq-qqj" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="MVG-BZ-ALL">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -706,10 +706,21 @@ Don’t have a Reader account?</string>
                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vXG-7q-4qg">
+                                    <rect key="frame" x="75" y="50.5" width="264" height="30"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                    <state key="normal" title="iCloud Syncing Limitations &amp; Solutions"/>
+                                    <connections>
+                                        <action selector="openLimitationsAndSolutions:" destination="qj9-Vr-VIU" eventType="touchUpInside" id="JZ5-hQ-PLl"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
                             <constraints>
+                                <constraint firstItem="vXG-7q-4qg" firstAttribute="centerX" secondItem="iYz-ri-yys" secondAttribute="centerX" id="8Pg-BU-zIj"/>
                                 <constraint firstItem="aFS-Y0-2MH" firstAttribute="leading" secondItem="iYz-ri-yys" secondAttribute="leading" constant="20" symbolic="YES" id="E97-lo-arw"/>
+                                <constraint firstItem="vXG-7q-4qg" firstAttribute="top" secondItem="aFS-Y0-2MH" secondAttribute="bottom" id="TEh-B3-9Ci"/>
                                 <constraint firstAttribute="trailing" secondItem="aFS-Y0-2MH" secondAttribute="trailing" constant="21" id="XUo-oQ-MbK"/>
                                 <constraint firstItem="aFS-Y0-2MH" firstAttribute="top" secondItem="iYz-ri-yys" secondAttribute="top" constant="8" id="xpj-LW-4l7"/>
                             </constraints>
@@ -773,7 +784,7 @@ Don’t have a Reader account?</string>
             <objects>
                 <navigationController storyboardIdentifier="ReaderAPIAccountNavigationViewController" id="Son-xT-GLx" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="sdL-X8-E6K">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>

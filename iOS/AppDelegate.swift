@@ -42,6 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	var webFeedIconDownloader: WebFeedIconDownloader!
 	var extensionContainersFile: ExtensionContainersFile!
 	var extensionFeedAddRequestFile: ExtensionFeedAddRequestFile!
+	var widgetDataEncoder: WidgetDataEncoder!
 	
 	var unreadCount = 0 {
 		didSet {
@@ -111,6 +112,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		extensionContainersFile = ExtensionContainersFile()
 		extensionFeedAddRequestFile = ExtensionFeedAddRequestFile()
 		
+		widgetDataEncoder = WidgetDataEncoder()
+		
 		syncTimer = ArticleStatusSyncTimer()
 		
 		#if DEBUG
@@ -169,6 +172,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func prepareAccountsForBackground() {
 		extensionFeedAddRequestFile.suspend()
+		widgetDataEncoder.encodeIfNecessary()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
@@ -395,7 +399,6 @@ private extension AppDelegate {
 			}
 			AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log) { [unowned self] in
 				if !AccountManager.shared.isSuspended {
-					try? WidgetDataEncoder.shared.encodeWidgetData()
 					self.suspendApplication()
 					self.logger.info("Account refresh operation completed.")
 					task.setTaskCompleted(success: true)
@@ -440,7 +443,6 @@ private extension AppDelegate {
 		self.prepareAccountsForBackground()
 		account!.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
-				try? WidgetDataEncoder.shared.encodeWidgetData()
 				self?.prepareAccountsForBackground()
 				self?.suspendApplication()
 			}
@@ -467,7 +469,6 @@ private extension AppDelegate {
 		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
 		account!.syncArticleStatus(completion: { [weak self] _ in
 			if !AccountManager.shared.isSuspended {
-				try? WidgetDataEncoder.shared.encodeWidgetData()
 				self?.prepareAccountsForBackground()
 				self?.suspendApplication()
 			}

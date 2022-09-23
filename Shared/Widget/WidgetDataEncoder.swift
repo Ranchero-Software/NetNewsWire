@@ -19,23 +19,50 @@ public final class WidgetDataEncoder: Logging {
 	
 	private let fetchLimit = 7
 	
-	private var backgroundTaskID: UIBackgroundTaskIdentifier!
 	private lazy var appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 	private lazy var containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 	private lazy var imageContainer = containerURL?.appendingPathComponent("widgetImages", isDirectory: true)
 	private lazy var dataURL = containerURL?.appendingPathComponent("widget-data.json")
 	
-	static let shared = WidgetDataEncoder()
-	private init () {
+	private let encodeWidgetDataQueue = CoalescingQueue(name: "Encode the Widget Data", interval: 5.0)
+
+	init () {
 		if imageContainer != nil {
 			try? FileManager.default.createDirectory(at: imageContainer!, withIntermediateDirectories: true, attributes: nil)
+		}
+		if #available(iOS 14, *) {
+			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
+		}
+	}
+	
+	func encodeIfNecessary() {
+		encodeWidgetDataQueue.performCallsImmediately()
+	}
+
+	@available(iOS 14, *)
+	@objc func statusesDidChange(_ note: Notification) {
+		encodeWidgetDataQueue.add(self, #selector(performEncodeWidgetData))
+	}
+
+	@available(iOS 14, *)
+	@objc private func performEncodeWidgetData() {
+		// We will be on the Main Thread when the encodeIfNecessary function is called. We want
+		// block the main thread in that case so that the widget data is encoded. If it is on
+		// a background Thread, it was called by the CoalescingQueue. In that case we need to
+		// move it to the Main Thread and want to execute it async.
+		if Thread.isMainThread {
+			encodeWidgetData()
+		} else {
+			DispatchQueue.main.async {
+				self.encodeWidgetData()
+			}
 		}
 	}
 	
 	@available(iOS 14, *)
-	func encodeWidgetData() throws {
+	private func encodeWidgetData() {
 		flushSharedContainer()
-		logger.debug("Started encoding widget data.")
+		logger.debug("Starting encoding widget data.")
 		
 		do {
 			let unreadArticles = Array(try AccountManager.shared.fetchArticles(.unread(fetchLimit))).sortedByDate(.orderedDescending)
@@ -78,7 +105,7 @@ public final class WidgetDataEncoder: Logging {
 			
 			let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
 										currentTodayCount: SmartFeedsController.shared.todayFeed.unreadCount,
-										currentStarredCount: try! SmartFeedsController.shared.starredFeed.fetchArticles().count,
+										currentStarredCount: try AccountManager.shared.fetchCountForStarredArticles(),
 										unreadArticles: unread,
 										starredArticles: starred,
 										todayArticles:today,
@@ -88,10 +115,6 @@ public final class WidgetDataEncoder: Logging {
 			DispatchQueue.global().async { [weak self] in
 				guard let self = self else { return }
 				
-				self.backgroundTaskID = UIApplication.shared.beginBackgroundTask (withName: "com.ranchero.NetNewsWire.Encode") {
-					 UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
-					self.backgroundTaskID = .invalid
-				}
 				let encodedData = try? JSONEncoder().encode(latestData)
 				
 				self.logger.debug("Finished encoding widget data.")
@@ -103,14 +126,11 @@ public final class WidgetDataEncoder: Logging {
 				if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
 					self.logger.debug("Wrote widget data to container.")
 					WidgetCenter.shared.reloadAllTimelines()
-					UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
-					self.backgroundTaskID = .invalid
-				} else {
-					UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
-					self.backgroundTaskID = .invalid
 				}
 				
 			}
+		} catch {
+			logger.error("WidgetDataEncoder failed to write the widget data.")
 		}
 	}
 	

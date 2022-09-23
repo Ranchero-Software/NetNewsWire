@@ -66,7 +66,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 	}
 	
 	func sceneDidEnterBackground(_ scene: UIScene) {
-		try? WidgetDataEncoder.shared.encodeWidgetData()
 		ArticleStringFormatter.emptyCaches()
 		appDelegate.prepareAccountsForBackground()
 	}

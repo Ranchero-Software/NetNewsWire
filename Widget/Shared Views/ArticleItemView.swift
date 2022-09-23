@@ -15,14 +15,14 @@ struct ArticleItemView: View {
 	
 	var article: LatestArticle
 	var deepLink: URL
-	@State private var iconImage: UIImage?
+	@State private var iconImage: Image?
 	
 	var body: some View {
 		Link(destination: deepLink, label: {
 			HStack(alignment: .top, spacing: nil, content: {
 				// Feed Icon
 				if iconImage != nil {
-					Image(uiImage: iconImage!)
+					iconImage!
 						.resizable()
 						.frame(width: 30, height: 30)
 						.cornerRadius(4)
@@ -51,22 +51,23 @@ struct ArticleItemView: View {
 				}
 			})
 		}).onAppear {
-			guard let feedIconPath = article.feedIconPath else {
-				iconImage = thumbnail(nil)
-				return
-			}
-			let path = URL(fileURLWithPath: feedIconPath)
-			let data = try? Data(contentsOf: path)
-			iconImage = thumbnail(data)
+			iconImage = thumbnail(from: article.feedIconPath)
 		}
 	}
 	
-	func thumbnail(_ data: Data?) -> UIImage {
-		if data == nil {
-			return UIImage(systemName: "globe")!
-		} else {
-			return UIImage(data: data!)!
-		}
+	func thumbnail(from path: String?) -> Image? {
+		guard let imagePath = path else {
+            return Image(uiImage: UIImage(systemName: "globe")!)
+        }
+        
+        let url = URL(fileURLWithPath: imagePath)
+        
+        guard let data = try? Data(contentsOf: url),
+              let uiImage = UIImage(data: data) else {
+            return Image(uiImage: UIImage(systemName: "globe")!)
+        }
+        
+        return Image(uiImage: uiImage)
 	}
 	
 	func pubDate(_ dateString: String) -> String {
