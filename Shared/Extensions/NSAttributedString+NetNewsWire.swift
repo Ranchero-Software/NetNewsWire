@@ -99,6 +99,27 @@ extension NSAttributedString {
 		}
 	}
 
+	#if canImport(AppKit)
+	/// Creates an attributed string that is suitable for creating a link using NSTextField
+	///
+	/// - Parameters:
+	///   - linkText: The text of the hypertext link
+	///   - linkURL: The URL that we should go to when the link is clicked
+	public convenience init(linkText: String, linkURL: URL) {
+		let attrString = NSMutableAttributedString(string: linkText)
+		let range = NSRange(location: 0, length: attrString.length)
+		
+		attrString.addAttribute(.font, value: NSFont.systemFont(ofSize: NSFont.systemFontSize), range: range)
+		attrString.addAttribute(.cursor, value: NSCursor.pointingHand, range: range)
+		attrString.addAttribute(.foregroundColor, value: NSColor.linkColor, range: range)
+		attrString.addAttribute(.underlineColor, value: NSColor.clear, range: range)
+
+		attrString.addAttribute(.link, value: linkURL, range: range)
+
+		self.init(attributedString: attrString)
+	}
+	#endif
+
 	/// Returns an attributed string initialized from  HTML text containing basic inline stylistic tags.
 	///
 	/// - Parameters:

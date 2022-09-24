@@ -129,7 +129,7 @@ class AccountInspectorViewController: UITableViewController {
 	}
 	
 	@IBAction func openLimitationsAndSolutions(_ sender: Any) {
-		let vc = SFSafariViewController(url: URL(string: CloudKitWebDocumentation.limitationsAndSolutions)!)
+		let vc = SFSafariViewController(url: CloudKitWebDocumentation.limitationsAndSolutionsURL)
 		vc.modalPresentationStyle = .pageSheet
 		present(vc, animated: true)
 	}

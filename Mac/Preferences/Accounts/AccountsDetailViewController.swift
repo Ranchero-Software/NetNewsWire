@@ -14,6 +14,8 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 	@IBOutlet weak var typeLabel: NSTextField!
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var activeButton: NSButtonCell!
+	@IBOutlet weak var limitationsAndSolutionsRow: NSGridRow!
+	@IBOutlet weak var limitationsAndSolutionsTextField: NSTextField!
 	@IBOutlet weak var credentialsButton: NSButton!
 	
 	private var accountsWindowController: NSWindowController?
@@ -47,6 +49,14 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 		typeLabel.stringValue = account?.defaultName ?? ""
 		nameTextField.stringValue = account?.name ?? ""
 		activeButton.state = account?.isActive ?? false ? .on : .off
+		
+		if account?.type == .cloudKit {
+			let attrString = NSAttributedString(linkText: CloudKitWebDocumentation.limitationsAndSolutionsText, linkURL: CloudKitWebDocumentation.limitationsAndSolutionsURL)
+			limitationsAndSolutionsTextField.attributedStringValue = attrString
+		} else {
+			limitationsAndSolutionsRow.isHidden = true
+		}
+		
 		credentialsButton.isHidden = hidesCredentialsButton
 	}
 	
