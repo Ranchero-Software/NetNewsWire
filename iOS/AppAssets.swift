@@ -162,15 +162,15 @@ struct AppAssets {
 	}()
 	
 	static var markAllAsReadImage: UIImage = {
-		return UIImage(named: "markAllAsRead")!
-	}()
-	
-	static var markBelowAsReadImage: UIImage = {
-		return UIImage(systemName: "arrowtriangle.down.circle")!
+		return UIImage(systemName: "arrow.up.arrow.down.circle")!
 	}()
 	
 	static var markAboveAsReadImage: UIImage = {
-		return UIImage(systemName: "arrowtriangle.up.circle")!
+		return UIImage(systemName: "arrow.up.circle")!
+	}()
+	
+	static var markBelowAsReadImage: UIImage = {
+		return UIImage(systemName: "arrow.down.circle")!
 	}()
 	
 	static var masterFolderImage: IconImage = {
