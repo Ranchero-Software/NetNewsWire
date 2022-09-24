@@ -223,6 +223,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			return canMarkAllAsRead()
 		}
 
+		if item.action == #selector(markAboveAsRead(_:)) {
+			return canMarkAboveAsRead()
+		}
+
+		if item.action == #selector(markBelowAsRead(_:)) {
+			return canMarkBelowAsRead()
+		}
+
 		if item.action == #selector(toggleRead(_:)) {
 			return validateToggleRead(item)
 		}
@@ -371,6 +379,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func markAllAsRead(_ sender: Any?) {
 		currentTimelineViewController?.markAllAsRead()
+	}
+
+	@IBAction func markAboveAsRead(_ sender: Any?) {
+		currentTimelineViewController?.markAboveArticlesRead()
+	}
+
+	@IBAction func markBelowAsRead(_ sender: Any?) {
+		currentTimelineViewController?.markBelowArticlesRead()
 	}
 
 	@IBAction func toggleRead(_ sender: Any?) {
@@ -763,6 +779,8 @@ extension NSToolbarItem.Identifier {
 	static let timelineTrackingSeparator = NSToolbarItem.Identifier("timelineTrackingSeparator")
 	static let search = NSToolbarItem.Identifier("search")
 	static let markAllAsRead = NSToolbarItem.Identifier("markAllAsRead")
+	static let markAboveAsRead = NSToolbarItem.Identifier("markAboveAsRead")
+	static let markBelowAsRead = NSToolbarItem.Identifier("markBelowAsRead")
 	static let toggleReadArticlesFilter = NSToolbarItem.Identifier("toggleReadArticlesFilter")
 	static let nextUnread = NSToolbarItem.Identifier("nextUnread")
 	static let markRead = NSToolbarItem.Identifier("markRead")
@@ -799,6 +817,14 @@ extension MainWindowController: NSToolbarDelegate {
 		case .markAllAsRead:
 			let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
 			return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
+		
+		case .markAboveAsRead:
+			let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+			return buildToolbarButton(.markAboveAsRead, title, AppAssets.markAboveAsReadImage, "markAboveAsRead:")
+		
+		case .markBelowAsRead:
+			let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+			return buildToolbarButton(.markBelowAsRead, title, AppAssets.markBelowAsReadImage, "markBelowAsRead:")
 		
 		case .toggleReadArticlesFilter:
 			let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
@@ -868,6 +894,8 @@ extension MainWindowController: NSToolbarDelegate {
 			.newSidebarItemMenu,
 			.sidebarTrackingSeparator,
 			.markAllAsRead,
+			.markAboveAsRead,
+			.markBelowAsRead,
 			.toggleReadArticlesFilter,
 			.timelineTrackingSeparator,
 			.flexibleSpace,
@@ -1021,7 +1049,6 @@ private extension MainWindowController {
 	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		
 		guard let timelineViewController = currentTimelineViewController, let sidebarViewController = sidebarViewController else {
 			return false
 		}
@@ -1030,8 +1057,15 @@ private extension MainWindowController {
 	}
 	
 	func canMarkAllAsRead() -> Bool {
-		
 		return currentTimelineViewController?.canMarkAllAsRead() ?? false
+	}
+	
+	func canMarkAboveAsRead() -> Bool {
+		return currentTimelineViewController?.canMarkAboveArticlesAsRead() ?? false
+	}
+	
+	func canMarkBelowAsRead() -> Bool {
+		return currentTimelineViewController?.canMarkBelowArticlesAsRead() ?? false
 	}
 	
 	func validateToggleRead(_ item: NSValidatedUserInterfaceItem) -> Bool {

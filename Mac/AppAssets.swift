@@ -150,6 +150,14 @@ struct AppAssets {
 		return NSImage(systemSymbolName: "arrow.up.arrow.down.circle", accessibilityDescription: nil)!
 	}()
 
+	static var markAboveAsReadImage: RSImage = {
+		return NSImage(systemSymbolName: "arrow.up.circle", accessibilityDescription: nil)!
+	}()
+
+	static var markBelowAsReadImage: RSImage = {
+		return NSImage(systemSymbolName: "arrow.down.circle", accessibilityDescription: nil)!
+	}()
+
 	static var nextUnreadImage: RSImage = {
 		return NSImage(systemSymbolName: "chevron.down.circle", accessibilityDescription: nil)!
 	}()
