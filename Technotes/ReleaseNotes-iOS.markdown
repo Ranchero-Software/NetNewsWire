@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1 TestFlight build 6106 = 9 July 2022
+
+Fix a bug where images wouldn’t appear in the widget
+
 ### 6.1 TestFlight build 6105 = 6 July 2022
 
 Write widget icons to the shared container
