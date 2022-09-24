@@ -19,6 +19,8 @@ enum AccountsAddCloudKitWindowControllerError: LocalizedError {
 
 class AccountsAddCloudKitWindowController: NSWindowController {
 
+	@IBOutlet weak var limitationsAndSolutionsTextField: NSTextField!
+
 	private weak var hostWindow: NSWindow?
 
 	convenience init() {
@@ -27,6 +29,9 @@ class AccountsAddCloudKitWindowController: NSWindowController {
 	
 	override func windowDidLoad() {
 		super.windowDidLoad()
+		
+		let attrString = NSAttributedString(linkText: CloudKitWebDocumentation.limitationsAndSolutionsText, linkURL: CloudKitWebDocumentation.limitationsAndSolutionsURL)
+		limitationsAndSolutionsTextField.attributedStringValue = attrString
 	}
 	
 	// MARK: API
