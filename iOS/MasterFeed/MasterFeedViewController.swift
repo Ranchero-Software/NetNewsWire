@@ -905,8 +905,17 @@ private extension MasterFeedViewController {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: pageActions))
 			}
 
+			var markActions = [UIAction]()
 			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
-				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
+				markActions.append(markAllAction)
+			}
+
+			if let catchUpAction = self.catchUpAction(indexPath: indexPath) {
+				markActions.append(catchUpAction)
+			}
+			if !markActions.isEmpty {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: markActions))
+				
 			}
 			
 			if includeDeleteRename {
@@ -1127,6 +1136,26 @@ private extension MasterFeedViewController {
 			  }
 		
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? feed.fetchUnreadArticles() {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
+			}
+		}
+
+		return action
+	}
+
+	func catchUpAction(indexPath: IndexPath) -> UIAction? {
+		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+			  let contentView = self.tableView.cellForRow(at: indexPath)?.contentView,
+			  feed.unreadCount > 0 else {
+				  return nil
+			  }
+		
+		let localizedMenuText = NSLocalizedString("Catch Up in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in

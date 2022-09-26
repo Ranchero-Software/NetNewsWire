@@ -46,23 +46,30 @@ struct MarkAsReadAlertController {
 							  completion: @escaping (UIAlertAction) -> Void) -> UIAlertController where T: MarkAsReadAlertControllerSourceType  {
 		
 		
-		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
-		let message = NSLocalizedString("You can turn this confirmation off in Settings.",
-										comment: "You can turn this confirmation off in Settings.")
+		let title = NSLocalizedString("Mark as Read", comment: "Catch Up")
+		let message = NSLocalizedString("Mark articles as read older than",
+										comment: "Mark articles as read older than")
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		let settingsTitle = NSLocalizedString("Open Settings", comment: "Open Settings")
 		
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 			cancelCompletion?()
 		}
-		let settingsAction = UIAlertAction(title: settingsTitle, style: .default) { _ in
-			coordinator.showSettings(scrollToArticlesSection: true)
-		}
-		let markAction = UIAlertAction(title: confirmTitle, style: .default, handler: completion)
+		let oneDayAction = UIAlertAction(title: "1 Day", style: .default, handler: completion)
+		let twoDaysAction = UIAlertAction(title: "2 Days", style: .default, handler: completion)
+		let threeDaysAction = UIAlertAction(title: "3 Days", style: .default, handler: completion)
+		let oneWeekAction = UIAlertAction(title: "1 Week", style: .default, handler: completion)
+		let twoWeeksAction = UIAlertAction(title: "2 Weeks", style: .default, handler: completion)
+		let oneMonthAction = UIAlertAction(title: "1 Month", style: .default, handler: completion)
+		let oneYearAction = UIAlertAction(title: "1 Year", style: .default, handler: completion)
 		
-		alertController.addAction(markAction)
-		alertController.addAction(settingsAction)
+		alertController.addAction(oneDayAction)
+		alertController.addAction(twoDaysAction)
+		alertController.addAction(threeDaysAction)
+		alertController.addAction(oneWeekAction)
+		alertController.addAction(twoWeeksAction)
+		alertController.addAction(oneMonthAction)
+		alertController.addAction(oneYearAction)
 		alertController.addAction(cancelAction)
 		
 		if let barButtonItem = sourceType as? UIBarButtonItem {

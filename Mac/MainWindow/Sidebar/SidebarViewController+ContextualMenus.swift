@@ -211,7 +211,13 @@ private extension SidebarViewController {
 		let menu = NSMenu(title: "")
 
 		if webFeed.unreadCount > 0 {
-			menu.addItem(markAllReadMenuItem([webFeed]))
+//			menu.addItem(markAllReadMenuItem([webFeed]))
+			let catchUpMenuItem = catchUpMenuItem([webFeed])
+			let catchUpSubMenu = catchUpSubMenu([webFeed])
+			
+			menu.addItem(catchUpMenuItem)
+			menu.setSubmenu(catchUpSubMenu, for: catchUpMenuItem)
+			
 			menu.addItem(NSMenuItem.separator())
 		}
 
@@ -306,6 +312,27 @@ private extension SidebarViewController {
 	func markAllReadMenuItem(_ objects: [Any]) -> NSMenuItem {
 
 		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
+	}
+	
+	func catchUpSubMenu(_ objects: [Any]) -> NSMenu {
+		
+		let menu = NSMenu(title: "Catch up to articles older than...")
+		
+		menu.addItem(menuItem(NSLocalizedString("All", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("Older than 1 day", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("Older than 2 days", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("Older than 3 days", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("Older than 1 week", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("Older than 2 weeks", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("Older than 1 month", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("Older than 1 year", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
+		
+		return menu
+	}
+	
+	func catchUpMenuItem(_ objects: [Any]) -> NSMenuItem {
+		
+		return menuItem(NSLocalizedString("Mark as Read...", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
