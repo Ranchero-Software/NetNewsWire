@@ -329,7 +329,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 										state: extractorOn ? .on : .off) { [weak self] _ in
 				if feed.isArticleExtractorAlwaysOn == nil {
 					feed.isArticleExtractorAlwaysOn = true
-					self?.currentWebViewController?.toggleArticleExtractor()
 				} else {
 					feed.isArticleExtractorAlwaysOn?.toggle()
 				}
