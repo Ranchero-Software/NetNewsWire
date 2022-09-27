@@ -312,10 +312,8 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		
 		let appearanceMenu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), image: nil, identifier: nil, options: .displayInline, children: appearanceChildren)
 		
-		let menu = UIMenu(title: "", image: nil, identifier: nil, options: .displayInline, children: [appearanceMenu])
-		
 		appearanceBarButtonItem.image = AppAssets.articleAppearanceImage
-		appearanceBarButtonItem.menu = menu
+		appearanceBarButtonItem.menu = appearanceMenu
 	}
 	
 	private func configureArticleExtractorMenu() {
