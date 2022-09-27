@@ -310,10 +310,8 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 			}
 		}
 		
-		let appearanceMenu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), image: nil, identifier: nil, options: .displayInline, children: appearanceChildren)
-		
 		appearanceBarButtonItem.image = AppAssets.articleAppearanceImage
-		appearanceBarButtonItem.menu = appearanceMenu
+		appearanceBarButtonItem.menu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), children: appearanceChildren)
 	}
 	
 	private func configureArticleExtractorMenu() {
