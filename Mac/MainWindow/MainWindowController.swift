@@ -57,6 +57,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 	private var searchSmartFeed: SmartFeed? = nil
 	private var restoreArticleWindowScrollY: CGFloat?
+	
+	var shareMenu: NSMenu? {
+		return currentTimelineViewController?.shareMenu
+	}
 
 	// MARK: - NSWindowController
 

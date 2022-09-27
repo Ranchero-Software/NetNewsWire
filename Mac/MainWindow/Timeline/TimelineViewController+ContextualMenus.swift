@@ -13,6 +13,10 @@ import Account
 
 extension TimelineViewController {
 
+	var shareMenu: NSMenu? {
+		return shareMenu(for: selectedArticles)
+	}
+	
 	func contextualMenuForClickedRows() -> NSMenu? {
 
 		let row = tableView.clickedRow
@@ -26,6 +30,7 @@ extension TimelineViewController {
 		}
 		return menu(for: [article])
 	}
+	
 }
 
 // MARK: Contextual Menu Actions

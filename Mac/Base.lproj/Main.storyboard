@@ -65,7 +65,7 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="File" id="dMs-cI-mzQ">
+                            <menuItem title="File" identifier="fileMenu" id="dMs-cI-mzQ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="bib-Uj-vzu">
                                     <items>
@@ -103,6 +103,17 @@
                                             <connections>
                                                 <action selector="refreshAll:" target="Ady-hI-5gd" id="gIc-Zj-9tB"/>
                                             </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="SJz-Y3-zsi"/>
+                                        <menuItem title="Share" identifier="shareMenu" id="jaf-gh-gSi">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Share" id="Dbl-YW-bmb">
+                                                <items>
+                                                    <menuItem title="Item" id="CZA-zr-llF">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="aJh-i4-bef"/>
                                         <menuItem title="Import Subscriptions…" id="rSl-F4-qo7">
@@ -685,7 +696,9 @@
                     <connections>
                         <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                         <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
+                        <outlet property="fileMenuItem" destination="dMs-cI-mzQ" id="PGc-xQ-8CG"/>
                         <outlet property="groupArticlesByFeedMenuItem" destination="Zxm-O6-NRE" id="gwn-VT-2YZ"/>
+                        <outlet property="shareMenuItem" destination="jaf-gh-gSi" id="bqN-eF-bsE"/>
                         <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
                         <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
                     </connections>

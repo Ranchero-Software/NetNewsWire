@@ -63,6 +63,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 
 	var isShutDownSyncDone = false
 	
+	@IBOutlet var shareMenuItem: NSMenuItem!
+	@IBOutlet var fileMenuItem: NSMenuItem!
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
@@ -216,6 +218,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 			let mainWindowController = createAndShowMainWindow()
 			mainWindowController.restoreStateFromUserDefaults()
 		}
+		
+		fileMenuItem.submenu?.delegate = self
+		shareMenuItem.submenu?.delegate = self
 		
 		if isFirstRun {
 			mainWindowController?.window?.center()
@@ -723,6 +728,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		#endif
 	}
 
+}
+
+// MARK: - NSMenuDelegate
+
+extension AppDelegate: NSMenuDelegate {
+
+	public func menuNeedsUpdate(_ menu: NSMenu) {
+		let newShareMenu = mainWindowController?.shareMenu
+		
+		guard menu != fileMenuItem.submenu else {
+			shareMenuItem.isEnabled = newShareMenu != nil
+			return
+		}
+		
+		menu.removeAllItems()
+		if let newShareMenu = newShareMenu {
+			menu.takeItems(from: newShareMenu)
+		}
+	}
+	
 }
 
 // MARK: - Debug Menu
