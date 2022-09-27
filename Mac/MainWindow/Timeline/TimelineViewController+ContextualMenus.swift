@@ -285,7 +285,9 @@ private extension TimelineViewController {
 	}
 	
 	func copyArticleURLsMenuItem(_ urlStrings: [String]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Copy Article URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlStrings)
+		let format = NSLocalizedString("Copy Article URL", comment: "Command")
+		let title = String.localizedStringWithFormat(format, urlStrings.count)
+		return menuItem(title, #selector(copyURLFromContextualMenu(_:)), urlStrings)
 	}
 	
 	func copyExternalURLMenuItem(_ urlString: String) -> NSMenuItem {
