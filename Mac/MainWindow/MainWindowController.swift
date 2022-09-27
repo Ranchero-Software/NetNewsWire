@@ -204,7 +204,15 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
 		if item.action == #selector(copyArticleURL(_:)) {
-			return canCopyArticleURL()
+			let canCopyArticleURL = canCopyArticleURL()
+
+			if let item = item as? NSMenuItem {
+				let format = NSLocalizedString("Copy Article URL", comment: "Copy Article URL");
+
+				item.title = String.localizedStringWithFormat(format, selectedArticles?.count ?? 0)
+			}
+
+			return canCopyArticleURL
 		}
 		
 		if item.action == #selector(copyExternalURL(_:)) {
@@ -321,14 +329,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.preferredURL?.absoluteString {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		if let links = selectedArticles?.compactMap({ $0.preferredLink }) {
+			URLPasteboardWriter.write(urlStrings: links, to: .general)
 		}
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.externalLink {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		if let links = selectedArticles?.compactMap({ $0.preferredLink }) {
+			URLPasteboardWriter.write(urlStrings: links, to: .general)
 		}
 	}
 
@@ -1060,7 +1068,7 @@ private extension MainWindowController {
 	}
 
 	var currentLink: String? {
-		return oneSelectedArticle?.preferredLink
+		return selectedArticles?.first { $0.preferredLink != nil }?.preferredLink
 	}
 
 	// MARK: - State Restoration
