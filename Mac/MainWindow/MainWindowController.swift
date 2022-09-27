@@ -560,6 +560,40 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		self.detailViewController?.performFindPanelAction(sender)
 	}
 	
+	@objc func showArticleExtractorMenu(_ button: NSButton) {
+		guard oneSelectedArticle?.webFeed != nil else {
+			return
+		}
+
+		let menu = NSMenu()
+
+		let alwaysUseReaderViewItem = NSMenuItem()
+		alwaysUseReaderViewItem.title = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
+		alwaysUseReaderViewItem.target = self
+		alwaysUseReaderViewItem.action = #selector(alwaysUseReaderView)
+		alwaysUseReaderViewItem.state = {
+			if oneSelectedArticle?.webFeed?.isArticleExtractorAlwaysOn ?? false {
+				return NSControl.StateValue.on
+			} else {
+				return NSControl.StateValue.off
+			}
+		}()
+		
+		menu.addItem(alwaysUseReaderViewItem)
+
+		menu.popUp(positioning: alwaysUseReaderViewItem, at: button.frame.origin, in: button)
+	}
+
+	@objc func alwaysUseReaderView() {
+		guard let feed = oneSelectedArticle?.webFeed else {
+			return
+		}
+		
+		if feed.isArticleExtractorAlwaysOn == nil { feed.isArticleExtractorAlwaysOn = false }
+		feed.isArticleExtractorAlwaysOn?.toggle()
+		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
+	}
+	
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
 		ArticleThemesManager.shared.currentThemeName = menuItem.title
 	}
@@ -852,7 +886,9 @@ extension MainWindowController: NSToolbarDelegate {
 			toolbarItem.toolTip = description
 			toolbarItem.label = description
 			let button = ArticleExtractorButton()
+			button.target = self
 			button.action = #selector(toggleArticleExtractor(_:))
+			button.rightClickAction = #selector(showArticleExtractorMenu(_:))
 			toolbarItem.view = button
 			return toolbarItem
 

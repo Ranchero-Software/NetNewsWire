@@ -17,6 +17,8 @@ enum ArticleExtractorButtonState {
 
 class ArticleExtractorButton: NSButton {
 	
+	public var rightClickAction: Selector?
+	
 	private var animatedLayer: CALayer?
 	
 	var buttonState: ArticleExtractorButtonState = .off {
@@ -69,6 +71,7 @@ class ArticleExtractorButton: NSButton {
 		image = AppAssets.articleExtractorOff
 		imageScaling = .scaleProportionallyDown
 		widthAnchor.constraint(equalTo: heightAnchor).isActive = true
+		sendAction(on: [.leftMouseDown, .rightMouseDown])
 	}
 	
 	override func layout() {
@@ -78,6 +81,10 @@ class ArticleExtractorButton: NSButton {
 		}
 		stripAnimatedSublayer()
 		addAnimatedSublayer(to: layer!)
+	}
+	
+	override func rightMouseDown(with event: NSEvent) {
+		_ = target?.perform(rightClickAction, with: self)
 	}
 	
 	private func stripAnimatedSublayer() {
