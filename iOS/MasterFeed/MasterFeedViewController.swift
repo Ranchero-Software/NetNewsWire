@@ -909,13 +909,13 @@ private extension MasterFeedViewController {
 			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
 				markActions.append(markAllAction)
 			}
-
-			if let catchUpAction = self.catchUpAction(indexPath: indexPath) {
-				markActions.append(catchUpAction)
-			}
 			if !markActions.isEmpty {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: markActions))
 				
+			}
+			
+			if let catchUpAction = self.catchUpAction(indexPath: indexPath) {
+				menuElements.append(catchUpAction)
 			}
 			
 			if includeDeleteRename {
@@ -1148,26 +1148,84 @@ private extension MasterFeedViewController {
 		return action
 	}
 
-	func catchUpAction(indexPath: IndexPath) -> UIAction? {
+	func catchUpAction(indexPath: IndexPath) -> UIMenu? {
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let contentView = self.tableView.cellForRow(at: indexPath)?.contentView,
 			  feed.unreadCount > 0 else {
 				  return nil
 			  }
 		
-		let localizedMenuText = NSLocalizedString("Catch Up in “%@”", comment: "Command")
+		let localizedMenuText = NSLocalizedString("Mark Older Than as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let oneDayAction = UIAction(title: "1 Day") { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				if let articles = try? feed.fetchUnreadArticles() {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}
+		let twoDayAction = UIAction(title: "2 Days") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? feed.fetchUnreadArticles() {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
+			}
+		}
+		let threeDayAction = UIAction(title: "3 Days") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? feed.fetchUnreadArticles() {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
+			}
+		}
+		let oneWeekAction = UIAction(title: "1 Week") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? feed.fetchUnreadArticles() {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
+			}
+		}
+		let twoWeekAction = UIAction(title: "2 Weeks") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? feed.fetchUnreadArticles() {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
+			}
+		}
+		let oneMonthAction = UIAction(title: "1 Month") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? feed.fetchUnreadArticles() {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
+			}
+		}
+		let oneYearAction = UIAction(title: "1 Year") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? feed.fetchUnreadArticles() {
+					self?.coordinator.markAllAsRead(Array(articles))
+				}
+			}
+		}
+		var markActions = [UIAction]()
+		markActions.append(oneDayAction)
+		markActions.append(twoDayAction)
+		markActions.append(threeDayAction)
+		markActions.append(oneWeekAction)
+		markActions.append(twoWeekAction)
+		markActions.append(oneMonthAction)
+		markActions.append(oneYearAction)
+		let majorMenu = UIMenu(title: title, image: getMarkOlderImageDirection(), children: markActions)
 
-		return action
+		return majorMenu
 	}
-
+	
+	func getMarkOlderImageDirection() -> UIImage {
+		if AppDefaults.shared.timelineSortDirection == .orderedDescending {
+			return AppAssets.markBelowAsReadImage
+		} else {
+			return AppAssets.markAboveAsReadImage
+		}
+	}
 	func markAllAsReadAction(account: Account, contentView: UIView?) -> UIAction? {
 		guard account.unreadCount > 0, let contentView = contentView else {
 			return nil
