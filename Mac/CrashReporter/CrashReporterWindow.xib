@@ -132,7 +132,7 @@ Gw
                             <action selector="dontSendCrashReport:" target="-2" id="r3y-TC-h8U"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f1A-wx-E0W">
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f1A-wx-E0W" customClass="LinkTextField" customModule="NetNewsWire" customModuleProvider="target">
                         <rect key="frame" x="18" y="22" width="88" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" title="Privacy Policy" allowsEditingTextAttributes="YES" id="a10-hs-ajA">

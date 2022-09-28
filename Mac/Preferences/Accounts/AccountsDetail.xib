@@ -108,7 +108,7 @@
                                         </textField>
                                     </gridCell>
                                     <gridCell row="hvR-69-PTb" column="sMM-Ds-SKX" headOfMergedCell="wZu-cQ-qhN" xPlacement="center" id="wZu-cQ-qhN">
-                                        <textField key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8fI-LV-Slc">
+                                        <textField key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8fI-LV-Slc" customClass="LinkTextField" customModule="NetNewsWire" customModuleProvider="target">
                                             <rect key="frame" x="26" y="0.0" width="237" height="16"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" title="iCloud Syncing Limitations &amp; Solutions" allowsEditingTextAttributes="YES" id="0XE-hc-x09">
                                                 <font key="font" metaFont="system"/>

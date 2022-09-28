@@ -80,7 +80,7 @@ Gw
                             <action selector="cancel:" target="-2" id="uDi-hX-dXu"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nDR-Ww-6bA">
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nDR-Ww-6bA" customClass="LinkTextField" customModule="NetNewsWire" customModuleProvider="target">
                         <rect key="frame" x="78" y="56" width="237" height="16"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" title="iCloud Syncing Limitations &amp; Solutions" drawsBackground="YES" allowsEditingTextAttributes="YES" id="rON-0r-jBU">
                             <font key="font" metaFont="system"/>

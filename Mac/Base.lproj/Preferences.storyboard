@@ -427,7 +427,7 @@
                                             </binding>
                                         </connections>
                                     </button>
-                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OSS-A0-uUS">
+                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OSS-A0-uUS" customClass="LinkTextField" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="121" y="1" width="88" height="16"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" title="Privacy Policy" allowsEditingTextAttributes="YES" id="rJu-r1-AW4">
                                             <font key="font" metaFont="system"/>
