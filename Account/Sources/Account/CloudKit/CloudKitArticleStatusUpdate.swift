@@ -31,7 +31,7 @@ struct CloudKitArticleStatusUpdate {
 		let rec = record
 		// This is an invalid status update.  The article is required for new and all
 		if article == nil && (rec == .all || rec == .new) {
-			fatalError()
+			return nil
 		}
 	}
 	
