@@ -682,14 +682,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		Browser.open("https://netnewswire.com/help/mac/6.1/en/", inBackground: false)
 	}
 
-	@IBAction func donateToAppCampForGirls(_ sender: Any?) {
-		Browser.open("https://appcamp4girls.com/contribute/", inBackground: false)
-	}
-
-	@IBAction func showPrivacyPolicy(_ sender: Any?) {
-		Browser.open("https://netnewswire.com/privacypolicy", inBackground: false)
-	}
-
 	@IBAction func gotoToday(_ sender: Any?) {
 
 		createAndShowMainWindowIfNecessary()

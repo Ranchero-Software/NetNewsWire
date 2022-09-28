@@ -18,6 +18,7 @@ final class CrashReportWindowController: NSWindowController {
 		}
 	}
 
+	@IBOutlet var privacyPolicyTextField: NSTextField!
 	@IBOutlet var sendCrashLogButton: NSButton!
 	@IBOutlet var dontSendButton: NSButton!
 
@@ -40,6 +41,7 @@ final class CrashReportWindowController: NSWindowController {
 	override func windowDidLoad() {
 		super.windowDidLoad()
 		window!.center()
+		privacyPolicyTextField.attributedStringValue = AppAssets.privacyPolicyLink
 	}
 
 	// MARK: - Actions

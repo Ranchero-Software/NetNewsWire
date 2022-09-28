@@ -12,6 +12,7 @@ final class AdvancedPreferencesViewController: NSViewController {
 
 	@IBOutlet var releaseBuildsButton: NSButton!
 	@IBOutlet var testBuildsButton: NSButton!
+	@IBOutlet weak var privacyPolicyTextField: NSTextField!
 
 	let releaseBuildsURL = Bundle.main.infoDictionary!["SUFeedURL"]! as! String
 	let testBuildsURL = Bundle.main.infoDictionary!["FeedURLForTestBuilds"]! as! String
@@ -34,6 +35,7 @@ final class AdvancedPreferencesViewController: NSViewController {
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			didRegisterForNotification = true
 		}
+		privacyPolicyTextField.attributedStringValue = AppAssets.privacyPolicyLink
 	}
 
 	@IBAction func updateTypeButtonClicked(_ sender: Any?) {
