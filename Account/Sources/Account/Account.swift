@@ -844,7 +844,7 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		database.markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { result in
 			switch result {
 			case .success(let newArticleStatusIDs):
-				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+				self.noteStatusesForArticleIDsDidChange(articleIDs: newArticleStatusIDs, statusKey: statusKey, flag: flag)
 				completion?(.success(newArticleStatusIDs))
 			case .failure(let databaseError):
 				completion?(.failure(databaseError))
