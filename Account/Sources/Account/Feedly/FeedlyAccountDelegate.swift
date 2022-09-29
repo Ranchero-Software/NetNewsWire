@@ -132,7 +132,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 				self?.accountMetadata?.lastArticleFetchEndTime = Date()
 			}
 			
-            self?.logger.debug("Sync took \(-date.timeIntervalSinceNow) seconds.")
+            self?.logger.debug("Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds.")
 			completion(result)
 		}
 		
@@ -150,12 +150,12 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 					case .success:
 						completion?(.success(()))
 					case .failure(let error):
-                        self.logger.error("Failed to refresh article status for account \(String(describing: account.type)): \(error.localizedDescription, privacy: .public)")
+                        self.logger.error("Failed to refresh article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
 						completion?(.failure(error))
 					}
 				}
 			case .failure(let error):
-                self.logger.error("Failed to send article status for account \(String(describing: account.type)): \(error.localizedDescription, privacy: .public)")
+                self.logger.error("Failed to send article status for account \(String(describing: account.type), privacy: .public): \(error.localizedDescription, privacy: .public)")
 				completion?(.failure(error))
 			}
 		}

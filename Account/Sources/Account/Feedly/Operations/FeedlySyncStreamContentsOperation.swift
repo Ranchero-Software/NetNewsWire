@@ -48,13 +48,13 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 
 	override func didCancel() {
-        self.logger.debug("Cancelling sync stream contents for \(self.resource.id).")
+        self.logger.debug("Cancelling sync stream contents for \(self.resource.id, privacy: .public).")
 		operationQueue.cancelAllOperations()
 		super.didCancel()
 	}
 
 	func enqueueOperations(for continuation: String?) {
-        self.logger.debug("Requesting page for \(self.resource.id).")
+        self.logger.debug("Requesting page for \(self.resource.id, privacy: .public).")
 		let operations = pageOperations(for: continuation)
 		operationQueue.addOperations(operations)
 	}
@@ -87,14 +87,14 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	
 	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
 		guard !isCanceled else {
-            self.logger.debug("Cancelled requesting page for \(self.resource.id).")
+            self.logger.debug("Cancelled requesting page for \(self.resource.id, privacy: .public).")
 			return
 		}
 		
-        self.logger.debug("Ingesting \(stream.items.count) from \(stream.id).")
+        self.logger.debug("Ingesting \(stream.items.count, privacy: .public) from \(stream.id, privacy: .public).")
 		
 		guard isPagingEnabled, let continuation = stream.continuation else {
-            self.logger.debug("Reached end of stream for \(stream.id).")
+            self.logger.debug("Reached end of stream for \(stream.id, privacy: .public).")
 			return
 		}
 		
@@ -102,7 +102,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 	
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-        self.logger.debug("Completed ingesting items from \(self.resource.id).")
+        self.logger.debug("Completed ingesting items from \(self.resource.id, privacy: .public).")
 		didFinish()
 	}
 	

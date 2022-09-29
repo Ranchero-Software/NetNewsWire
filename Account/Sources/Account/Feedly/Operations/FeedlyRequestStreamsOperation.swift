@@ -52,6 +52,6 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation, Logging {
 			queueDelegate?.feedlyRequestStreamsOperation(self, enqueue: operation)
 		}
 		
-        self.logger.debug("Requested \(self.collectionsProvider.collections.count) collections streams.")
+        self.logger.debug("Requested \(self.collectionsProvider.collections.count, privacy: .public) collections streams.")
 	}
 }

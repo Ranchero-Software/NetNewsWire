@@ -56,7 +56,7 @@ class FeedlyIngestStreamArticleIdsOperation: FeedlyOperation, Logging {
 				}
 				
 				guard let continuation = streamIds.continuation else {
-                    self.logger.debug("Reached end of stream: \(self.resource.id).")
+                    self.logger.debug("Reached end of stream: \(self.resource.id, privacy: .public).")
 					self.didFinish()
 					return
 				}

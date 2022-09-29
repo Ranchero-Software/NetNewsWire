@@ -49,7 +49,7 @@ class CloudKitSendStatusOperation: MainThreadOperation, Logging {
 					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
 					self.selectForProcessing()
 				case .failure(let databaseError):
-                    self.logger.error("Send status count pending error: \(databaseError.localizedDescription)")
+                    self.logger.error("Send status count pending error: \(databaseError.localizedDescription, privacy: .public)")
 					self.operationDelegate?.cancelOperation(self)
 				}
 			}
@@ -93,7 +93,7 @@ private extension CloudKitSendStatusOperation {
 				}
 				
 			case .failure(let databaseError):
-                self.logger.error("Send status error: \(databaseError.localizedDescription)")
+                self.logger.error("Send status error: \(databaseError.localizedDescription, privacy: .public)")
 				self.operationDelegate?.cancelOperation(self)
 			}
 		}

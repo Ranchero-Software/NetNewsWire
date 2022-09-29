@@ -39,7 +39,7 @@ extension NewsBlurAccountDelegate {
 		guard let folders = folders else { return }
 		assert(Thread.isMainThread)
 
-        logger.debug("Syncing folders with \(folders.count) folders.")
+        logger.debug("Syncing folders with \(folders.count, privacy: .public) folders.")
 
 		let folderNames = folders.map { $0.name }
 
@@ -77,7 +77,7 @@ extension NewsBlurAccountDelegate {
 		guard let feeds = feeds else { return }
 		assert(Thread.isMainThread)
 
-        logger.debug("Syncing feeds with \(feeds.count) feeds.")
+        logger.debug("Syncing feeds with \(feeds.count, privacy: .public) feeds.")
 
 		let newsBlurFeedIds = feeds.map { String($0.feedID) }
 
@@ -128,7 +128,7 @@ extension NewsBlurAccountDelegate {
 		guard let folders = folders else { return }
 		assert(Thread.isMainThread)
 
-        logger.debug("Syncing folders with \(folders.count) folders.")
+        logger.debug("Syncing folders with \(folders.count, privacy: .public) folders.")
 
 		// Set up some structures to make syncing easier
 		let relationships = folders.map({ $0.asRelationships }).flatMap { $0 }

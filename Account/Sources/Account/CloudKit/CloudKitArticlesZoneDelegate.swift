@@ -99,7 +99,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsUnread(updateableUnreadArticleIDs) { result in
 			if case .failure(let databaseError) = result {
 				errorOccurred = true
-                self.logger.error("Error occurred while storing unread statuses: \(databaseError.localizedDescription)")
+                self.logger.error("Error occurred while storing unread statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
 			group.leave()
 		}
@@ -108,7 +108,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsRead(updateableReadArticleIDs) { result in
 			if case .failure(let databaseError) = result {
 				errorOccurred = true
-                self.logger.error("Error occurred while storing read statuses: \(databaseError.localizedDescription)")
+                self.logger.error("Error occurred while storing read statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
 			group.leave()
 		}
@@ -117,7 +117,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
 			if case .failure(let databaseError) = result {
 				errorOccurred = true
-                self.logger.error("Error occurred while storing unstarred statuses: \(databaseError.localizedDescription)")
+                self.logger.error("Error occurred while storing unstarred statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
 			group.leave()
 		}
@@ -126,7 +126,7 @@ private extension CloudKitArticlesZoneDelegate {
 		account?.markAsStarred(updateableStarredArticleIDs) { result in
 			if case .failure(let databaseError) = result {
 				errorOccurred = true
-                self.logger.error("Error occurred while stroing starred records: \(databaseError.localizedDescription)")
+                self.logger.error("Error occurred while stroing starred records: \(databaseError.localizedDescription, privacy: .public)")
 			}
 			group.leave()
 		}
@@ -152,7 +152,7 @@ private extension CloudKitArticlesZoneDelegate {
 							}
 						case .failure(let databaseError):
 							errorOccurred = true
-                            self.logger.error("Error occurred while storing articles: \(databaseError.localizedDescription)")
+                            self.logger.error("Error occurred while storing articles: \(databaseError.localizedDescription, privacy: .public)")
 							group.leave()
 						}
 					}

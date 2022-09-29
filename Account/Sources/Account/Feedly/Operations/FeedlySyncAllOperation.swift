@@ -127,12 +127,12 @@ final class FeedlySyncAllOperation: FeedlyOperation, Logging {
 	}
 	
 	override func run() {
-        logger.debug("Starting sync \(self.syncUUID.uuidString).")
+        logger.debug("Starting sync \(self.syncUUID.uuidString, privacy: .public).")
 		operationQueue.resume()
 	}
 
 	override func didCancel() {
-        logger.debug("Cancelling sync \(self.syncUUID.uuidString).")
+        logger.debug("Cancelling sync \(self.syncUUID.uuidString, privacy: .public).")
 		self.operationQueue.cancelAllOperations()
 		syncCompletionHandler = nil
 		super.didCancel()
@@ -143,7 +143,7 @@ extension FeedlySyncAllOperation: FeedlyCheckpointOperationDelegate {
 	
 	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
 		assert(Thread.isMainThread)
-        logger.debug("Sync completed: \(self.syncUUID.uuidString).")
+        logger.debug("Sync completed: \(self.syncUUID.uuidString, privacy: .public).")
 		
 		syncCompletionHandler?(.success(()))
 		syncCompletionHandler = nil
@@ -158,7 +158,7 @@ extension FeedlySyncAllOperation: FeedlyOperationDelegate {
 		assert(Thread.isMainThread)
 		
 		// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
-        logger.debug("\(String(describing: operation)) failed with error: \(error.localizedDescription, privacy: .public).")
+        logger.debug("\(String(describing: operation), privacy: .public) failed with error: \(error.localizedDescription, privacy: .public).")
 		
 		syncCompletionHandler?(.failure(error))
 		syncCompletionHandler = nil
