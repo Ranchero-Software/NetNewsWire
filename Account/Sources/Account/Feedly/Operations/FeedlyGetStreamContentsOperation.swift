@@ -106,7 +106,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 				self.didFinish()
 				
 			case .failure(let error):
-                self.logger.error("Unable to get stream contents: \(error.localizedDescription)")
+                self.logger.error("Unable to get stream contents: \(error.localizedDescription, privacy: .public)")
 				self.didFinish(with: error)
 			}
 		}

@@ -60,7 +60,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 				self.didFinish()
 				
 			case .failure(let error):
-                self.logger.error("Unable to get entries: \(error.localizedDescription)")
+                self.logger.error("Unable to get entries: \(error.localizedDescription, privacy: .public)")
 				self.didFinish(with: error)
 			}
 		}

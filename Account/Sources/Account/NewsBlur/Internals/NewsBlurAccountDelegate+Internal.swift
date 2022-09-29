@@ -300,7 +300,7 @@ extension NewsBlurAccountDelegate {
 					group.leave()
 				case .failure(let error):
 					errorOccurred = true
-                    self.logger.error("Story status sync call failed: \(error.localizedDescription)")
+                    self.logger.error("Story status sync call failed: \(error.localizedDescription, privacy: .public)")
 					self.database.resetSelectedForProcessing(storyHashGroup.map { String($0) } )
 					group.leave()
 				}
@@ -359,7 +359,7 @@ extension NewsBlurAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-                self.logger.error("Sync story read status failed: \(error.localizedDescription)")
+                self.logger.error("Sync story read status failed: \(error.localizedDescription, privacy: .public)")
 			}
 		}
 	}
@@ -407,7 +407,7 @@ extension NewsBlurAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-                self.logger.error("Sync story starred status failed: \(error.localizedDescription)")
+                self.logger.error("Sync story starred status failed: \(error.localizedDescription, privacy: .public)")
 			}
 		}
 	}

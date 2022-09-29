@@ -55,7 +55,7 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 				self.didFinish()
 				
 			case .failure(let error):
-                self.logger.error("Unable to get stream ids: \(error.localizedDescription)")
+                self.logger.error("Unable to get stream ids: \(error.localizedDescription, privacy: .public)")
 				self.didFinish(with: error)
 			}
 		}

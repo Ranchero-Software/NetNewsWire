@@ -42,7 +42,7 @@ final class FeedlyLogoutOperation: FeedlyOperation, Logging {
 			didFinish()
 			
 		case .failure(let error):
-            self.logger.error("Logout failed because: \(error.localizedDescription)")
+            self.logger.error("Logout failed because: \(error.localizedDescription, privacy: .public)")
 			didFinish(with: error)
 		}
 	}

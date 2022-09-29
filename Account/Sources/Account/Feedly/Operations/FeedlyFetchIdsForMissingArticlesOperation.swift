@@ -27,7 +27,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 				self.didFinish()
 				
 			case .failure(let error):
-                self.logger.error("Failed to fetch articleIDs: \(error.localizedDescription).")
+                self.logger.error("Failed to fetch articleIDs: \(error.localizedDescription, privacy: .public).")
 				self.didFinish(with: error)
 			}
 		}

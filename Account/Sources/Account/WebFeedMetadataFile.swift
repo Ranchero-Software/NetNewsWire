@@ -50,7 +50,7 @@ final class WebFeedMetadataFile: Logging {
 			let data = try encoder.encode(feedMetadata)
 			try data.write(to: fileURL)
 		} catch let error {
-            logger.error("Save to disk failed: \(error.localizedDescription)")
+            logger.error("Save to disk failed: \(error.localizedDescription, privacy: .public)")
 		}
 	}
 		

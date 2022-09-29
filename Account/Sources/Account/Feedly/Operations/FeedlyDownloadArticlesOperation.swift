@@ -84,7 +84,7 @@ extension FeedlyDownloadArticlesOperation: FeedlyOperationDelegate {
 		assert(Thread.isMainThread)
 		
 		// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
-        self.logger.debug("\(String(describing: operation)) failed with error: \(error.localizedDescription)")
+        self.logger.debug("\(String(describing: operation)) failed with error: \(error.localizedDescription, privacy: .public)")
 		
 		cancel()
 	}

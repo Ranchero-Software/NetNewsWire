@@ -150,12 +150,12 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 					case .success:
 						completion?(.success(()))
 					case .failure(let error):
-                        self.logger.error("Failed to refresh article status for account \(String(describing: account.type)): \(error.localizedDescription)")
+                        self.logger.error("Failed to refresh article status for account \(String(describing: account.type)): \(error.localizedDescription, privacy: .public)")
 						completion?(.failure(error))
 					}
 				}
 			case .failure(let error):
-                self.logger.error("Failed to send article status for account \(String(describing: account.type)): \(error.localizedDescription)")
+                self.logger.error("Failed to send article status for account \(String(describing: account.type)): \(error.localizedDescription, privacy: .public)")
 				completion?(.failure(error))
 			}
 		}
@@ -232,7 +232,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 					completion(.success(()))
 				}
 			case .failure(let error):
-                self.logger.error("Import OPML failed: \(error.localizedDescription)")
+                self.logger.error("Import OPML failed: \(error.localizedDescription, privacy: .public)")
 				self.refreshProgress.completeTask()
 				self.isOPMLImportInProgress = false
 				DispatchQueue.main.async {
@@ -490,7 +490,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 				case .success:
 					break
 				case .failure(let error):
-                    self.logger.error("Restore folder feed error: \(error.localizedDescription)")
+                    self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
 				}
 			}
 			

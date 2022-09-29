@@ -65,7 +65,7 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
 							group.leave()
 						}
 					case .failure(let error):
-                        self.logger.error("Feed Provided refresh error: \(error.localizedDescription)")
+                        self.logger.error("Feed Provided refresh error: \(error.localizedDescription, privacy: .public)")
 						feedProviderError = error
 						self.refreshProgress.completeTask()
 						group.leave()

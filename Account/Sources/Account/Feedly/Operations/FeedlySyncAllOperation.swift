@@ -158,7 +158,7 @@ extension FeedlySyncAllOperation: FeedlyOperationDelegate {
 		assert(Thread.isMainThread)
 		
 		// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
-        logger.debug("\(String(describing: operation)) failed with error: \(error.localizedDescription).")
+        logger.debug("\(String(describing: operation)) failed with error: \(error.localizedDescription, privacy: .public).")
 		
 		syncCompletionHandler?(.failure(error))
 		syncCompletionHandler = nil

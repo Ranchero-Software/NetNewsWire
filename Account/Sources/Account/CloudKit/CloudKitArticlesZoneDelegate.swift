@@ -46,12 +46,12 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 						}
 						
 					case .failure(let error):
-                        self.logger.error("Error occurred getting pending starred records: \(error.localizedDescription)")
+                        self.logger.error("Error occurred getting pending starred records: \(error.localizedDescription, privacy: .public)")
 						completion(.failure(CloudKitZoneError.unknown))
 					}
 				}
 			case .failure(let error):
-                self.logger.error("Error occurred getting pending read status records: \(error.localizedDescription)")
+                self.logger.error("Error occurred getting pending read status records: \(error.localizedDescription, privacy: .public)")
 				completion(.failure(CloudKitZoneError.unknown))
 			}
 

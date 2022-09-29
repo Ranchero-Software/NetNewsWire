@@ -21,7 +21,7 @@ public struct AccountSyncError: Logging {
 	init(account: Account, error: Error) {
 		self.account = account
 		self.error = error
-        AccountSyncError.logger.error("Account Sync Error: \(error.localizedDescription)")
+        AccountSyncError.logger.error("Account Sync Error: \(error.localizedDescription, privacy: .public)")
 	}
 	
 }

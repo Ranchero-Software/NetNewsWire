@@ -72,7 +72,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 			getStreamIds(continuation)
 			
 		case .failure(let error):
-            self.logger.error("Error getting FeedlyStreamIds: \(error.localizedDescription).")
+            self.logger.error("Error getting FeedlyStreamIds: \(error.localizedDescription, privacy: .public).")
 			didFinish(with: error)
 		}
 	}

@@ -35,7 +35,7 @@ final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProv
 				self.didFinish()
 				
 			case .failure(let error):
-                self.logger.error("Unable to request collections: \(error.localizedDescription).")
+                self.logger.error("Unable to request collections: \(error.localizedDescription, privacy: .public).")
 				self.didFinish(with: error)
 			}
 		}

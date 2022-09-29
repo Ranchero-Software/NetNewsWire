@@ -145,7 +145,7 @@ private extension CloudKitSendStatusOperation {
 						case .failure(let error):
 							self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
 								self.processAccountError(account, error)
-                                self.logger.error("Send article status modify articles error: \(error.localizedDescription)")
+                                self.logger.error("Send article status modify articles error: \(error.localizedDescription, privacy: .public)")
 								completion(true)
 							}
 						}
@@ -159,7 +159,7 @@ private extension CloudKitSendStatusOperation {
 				processWithArticles(articles)
 			case .failure(let databaseError):
 				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-                    self.logger.error("Send article status fetch articles error: \(databaseError.localizedDescription)")
+                    self.logger.error("Send article status fetch articles error: \(databaseError.localizedDescription, privacy: .public)")
 					completion(true)
 				}
 			}
