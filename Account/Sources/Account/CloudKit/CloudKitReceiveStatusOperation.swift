@@ -38,7 +38,7 @@ class CloudKitReceiveStatusOperation: MainThreadOperation, Logging {
 			case .success:
 				self.operationDelegate?.operationDidComplete(self)
 			case .failure(let error):
-                self.logger.debug("Receive status error: \(error.localizedDescription, privacy: .public)")
+                self.logger.error("Receive status error: \(error.localizedDescription, privacy: .public)")
 				self.operationDelegate?.cancelOperation(self)
 			}
 		}
