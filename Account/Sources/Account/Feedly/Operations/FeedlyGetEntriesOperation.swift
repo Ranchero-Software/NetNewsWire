@@ -40,7 +40,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 			let entryIds = Set(entries.map { $0.id })
 			let parsedIds = Set(parsed.map { $0.uniqueID })
 			let difference = entryIds.subtracting(parsedIds)
-            self.logger.debug("\(String(describing: self)) dropping articles with ids: \(difference)).")
+            self.logger.debug("\(String(describing: self), privacy: .public) dropping articles with ids: \(difference)).")
 		}
 		
 		storedParsedEntries = parsed
@@ -60,7 +60,7 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 				self.didFinish()
 				
 			case .failure(let error):
-                self.logger.error("Unable to get entries: \(error.localizedDescription)")
+                self.logger.error("Unable to get entries: \(error.localizedDescription, privacy: .public)")
 				self.didFinish(with: error)
 			}
 		}

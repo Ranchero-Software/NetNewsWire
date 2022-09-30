@@ -256,7 +256,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				errorOccurred = true
-                self.logger.info("Retrieving unread entries failed: \(error.localizedDescription)")
+                self.logger.info("Retrieving unread entries failed: \(error.localizedDescription, privacy: .public)")
 				group.leave()
 			}
 			
@@ -271,7 +271,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				errorOccurred = true
-                self.logger.info("Retrieving starred entries failed: \(error.localizedDescription)")
+                self.logger.info("Retrieving starred entries failed: \(error.localizedDescription, privacy: .public)")
 				group.leave()
 			}
 
@@ -340,7 +340,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 								self.clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 							}
 						case .failure(let error):
-                            self.logger.error("Remove feed error: \(error.localizedDescription)")
+                            self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 				}
@@ -359,7 +359,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 								account.clearWebFeedMetadata(feed)
 							}
 						case .failure(let error):
-                            self.logger.error("Remove feed error: \(error.localizedDescription)")
+                            self.logger.error("Remove feed error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 					
@@ -591,7 +591,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 				case .success:
 					break
 				case .failure(let error):
-                    self.logger.error("Restore folder feed error: \(error.localizedDescription)")
+                    self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
 				}
 			}
 			
@@ -709,7 +709,7 @@ private extension ReaderAPIAccountDelegate {
 		
 		guard !folderTags.isEmpty else { return }
 		
-        logger.debug("Syncing folders with \(folderTags.count) tags.")
+        logger.debug("Syncing folders with \(folderTags.count, privacy: .public) tags.")
 
 		let readerFolderExternalIDs = folderTags.compactMap { $0.tagID }
 
@@ -749,7 +749,7 @@ private extension ReaderAPIAccountDelegate {
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
 
-        logger.debug("Syncing feeds with \(subscriptions.count) subscriptions")
+        logger.debug("Syncing feeds with \(subscriptions.count, privacy: .public) subscriptions")
 		
 		let subFeedIds = subscriptions.map { $0.feedID }
 		
@@ -791,7 +791,7 @@ private extension ReaderAPIAccountDelegate {
 	func syncFeedFolderRelationship(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
-        logger.debug("Syncing taggins with \(subscriptions.count) subscriptions.")
+        logger.debug("Syncing taggins with \(subscriptions.count, privacy: .public) subscriptions.")
 		
 		// Set up some structures to make syncing easier
 		let folderDict = externalIDToFolderDictionary(with: account.folders)
@@ -885,7 +885,7 @@ private extension ReaderAPIAccountDelegate {
 					self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
 					group.leave()
 				case .failure(let error):
-                    self.logger.error("Article status sync call failed: \(error.localizedDescription)")
+                    self.logger.error("Article status sync call failed: \(error.localizedDescription, privacy: .public)")
 					self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
 					group.leave()
 				}
@@ -1005,7 +1005,7 @@ private extension ReaderAPIAccountDelegate {
 							}
 
 						case .failure(let error):
-                            self.logger.error("Refresh missing articles failed: \(error.localizedDescription)")
+                            self.logger.error("Refresh missing articles failed: \(error.localizedDescription, privacy: .public)")
 							group.leave()
 						}
 					}
@@ -1119,7 +1119,7 @@ private extension ReaderAPIAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-                self.logger.error("Sync Article Read Status failed: \(error.localizedDescription)")
+                self.logger.error("Sync Article Read Status failed: \(error.localizedDescription, privacy: .public)")
 			}
 			
 		}
@@ -1168,7 +1168,7 @@ private extension ReaderAPIAccountDelegate {
 			case .success(let pendingArticleIDs):
 				process(pendingArticleIDs)
 			case .failure(let error):
-                self.logger.error("Sync Article Starred Status failed: \(error.localizedDescription)")
+                self.logger.error("Sync Article Starred Status failed: \(error.localizedDescription, privacy: .public)")
 			}
 
 		}

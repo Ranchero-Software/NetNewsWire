@@ -30,7 +30,7 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation, Logging
 				return
 			}
 			
-            self.logger.debug("Updated \(webFeedIDsAndItems.count) feeds for \(self.organisedItemsProvider.parsedItemsByFeedProviderName).")
+            self.logger.debug("Updated \(webFeedIDsAndItems.count, privacy: .public) feeds for \(self.organisedItemsProvider.parsedItemsByFeedProviderName, privacy: .public).")
 			self.didFinish()
 		}
 	}

@@ -64,7 +64,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 			storedUpdatedArticleIds.formUnion(streamIds.ids)
 			
 			guard let continuation = streamIds.continuation else {
-                self.logger.debug("\(self.storedUpdatedArticleIds.count) articles updated since last successful sync start date.")
+                self.logger.debug("\(self.storedUpdatedArticleIds.count, privacy: .public) articles updated since last successful sync start date.")
 				didFinish()
 				return
 			}
@@ -72,7 +72,7 @@ class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIdentifie
 			getStreamIds(continuation)
 			
 		case .failure(let error):
-            self.logger.error("Error getting FeedlyStreamIds: \(error.localizedDescription).")
+            self.logger.error("Error getting FeedlyStreamIds: \(error.localizedDescription, privacy: .public).")
 			didFinish(with: error)
 		}
 	}

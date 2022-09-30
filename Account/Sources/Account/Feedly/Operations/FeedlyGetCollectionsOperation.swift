@@ -30,12 +30,12 @@ final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProv
 		service.getCollections { result in
 			switch result {
 			case .success(let collections):
-                self.logger.debug("Receving collections: \(collections.map({ $0.id }))")
+                self.logger.debug("Receving collections: \(collections.map({ $0.id }), privacy: .public)")
 				self.collections = collections
 				self.didFinish()
 				
 			case .failure(let error):
-                self.logger.error("Unable to request collections: \(error.localizedDescription).")
+                self.logger.error("Unable to request collections: \(error.localizedDescription, privacy: .public).")
 				self.didFinish(with: error)
 			}
 		}

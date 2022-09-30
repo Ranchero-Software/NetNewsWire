@@ -91,7 +91,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 				return (feed, folder)
 			}
 		
-		logger.debug("Processing \(feedsAndFolders.count) feeds.")
+		logger.debug("Processing \(feedsAndFolders.count, privacy: .public) feeds.")
 		feedsAndFolders.forEach { (feed, folder) in
 			if !folder.has(feed) {
 				folder.addWebFeed(feed)
@@ -104,7 +104,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, Log
 		account.removeFeeds(feedsWithoutCollections)
 		
 		if !feedsWithoutCollections.isEmpty {
-            logger.debug("Removed \(feedsWithoutCollections.count) feeds.")
+            logger.debug("Removed \(feedsWithoutCollections.count, privacy: .public) feeds.")
 		}
 	}
 }

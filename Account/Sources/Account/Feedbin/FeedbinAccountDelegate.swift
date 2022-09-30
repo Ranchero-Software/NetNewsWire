@@ -863,7 +863,7 @@ private extension FeedbinAccountDelegate {
 		guard let taggings = taggings else { return }
 		assert(Thread.isMainThread)
 
-        logger.debug("Syncing taggings with \(taggings.count) taggings.")
+        logger.debug("Syncing taggings with \(taggings.count, privacy: .public) taggings.")
 		
 		// Set up some structures to make syncing easier
 		let folderDict = nameToFolderDictionary(with: account.folders)

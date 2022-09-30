@@ -217,7 +217,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				errorOccurred = true
-                self.logger.error("Retrieving unread stories failed: \(error.localizedDescription)")
+                self.logger.error("Retrieving unread stories failed: \(error.localizedDescription, privacy: .public)")
 				group.leave()
 			}
 		}
@@ -231,7 +231,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 				}
 			case .failure(let error):
 				errorOccurred = true
-                self.logger.error("Retrieving starred stories failed: \(error.localizedDescription)")
+                self.logger.error("Retrieving starred stories failed: \(error.localizedDescription, privacy: .public)")
 				group.leave()
 			}
 		}
@@ -293,7 +293,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 							}
 						case .failure(let error):
 							errorOccurred = true
-                            self.logger.error("Refreshing missing stories failed: \(error.localizedDescription)")
+                            self.logger.error("Refreshing missing stories failed: \(error.localizedDescription, privacy: .public)")
 							group.leave()
 						}
 					}
@@ -565,12 +565,12 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 						case .success:
 							break
 						case .failure(let error):
-                            self.logger.error("Restore folder feed error: \(error.localizedDescription)")
+                            self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
 						}
 					}
 				}
 			case .failure(let error):
-                self.logger.error("Restore folder feed error: \(error.localizedDescription)")
+                self.logger.error("Restore folder feed error: \(error.localizedDescription, privacy: .public)")
 			}
 		}
 

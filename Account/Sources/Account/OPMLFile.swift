@@ -48,7 +48,7 @@ final class OPMLFile: Logging {
 		do {
 			try opmlDocumentString.write(to: fileURL, atomically: true, encoding: .utf8)
 		} catch let error {
-            logger.error("OPML save to disk failed: \(error.localizedDescription)")
+            logger.error("OPML save to disk failed: \(error.localizedDescription, privacy: .public)")
 		}
 	}
 	
@@ -73,7 +73,7 @@ private extension OPMLFile {
 		do {
 			fileData = try Data(contentsOf: fileURL)
 		} catch {
-            logger.error("OPML read from disk failed: \(error.localizedDescription)")
+            logger.error("OPML read from disk failed: \(error.localizedDescription, privacy: .public)")
 		}
 
 		return fileData
@@ -86,7 +86,7 @@ private extension OPMLFile {
 		do {
 			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 		} catch {
-            logger.error("OPML Import failed: \(error.localizedDescription)")
+            logger.error("OPML Import failed: \(error.localizedDescription, privacy: .public)")
 			return nil
 		}
 		

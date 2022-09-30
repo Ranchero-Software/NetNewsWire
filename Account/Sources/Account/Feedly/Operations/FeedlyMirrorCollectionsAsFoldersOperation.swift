@@ -44,7 +44,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 			return (collection.feeds, folder)
 		}
 		
-        self.logger.debug("Ensured \(self.feedsAndFolders.count) folders for \(collections.count) collections.")
+        self.logger.debug("Ensured \(self.feedsAndFolders.count, privacy: .public) folders for \(collections.count, privacy: .public) collections.")
         
 		// Remove folders without a corresponding collection
 		let collectionFolders = Set(feedsAndFolders.map { $0.1 })
@@ -55,7 +55,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 				account.removeFolder(unmatched)
 			}
 			
-            self.logger.debug("Removed \(foldersWithoutCollections.count) folders: \(foldersWithoutCollections.map({ $0.externalID ?? $0.nameForDisplay }))")
+            self.logger.debug("Removed \(foldersWithoutCollections.count, privacy: .public) folders: \(foldersWithoutCollections.map({ $0.externalID ?? $0.nameForDisplay }), privacy: .public)")
 		}
 	}
 }

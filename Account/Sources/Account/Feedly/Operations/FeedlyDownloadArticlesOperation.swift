@@ -35,7 +35,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation, Logging {
 		var articleIds = missingArticleEntryIdProvider.entryIds
 		articleIds.formUnion(updatedArticleEntryIdProvider.entryIds)
 		
-        self.logger.debug("Requesting \(articleIds.count) articles.")
+        self.logger.debug("Requesting \(articleIds.count, privacy: .public) articles.")
 		
 		let feedlyAPILimitBatchSize = 1000
 		for articleIds in Array(articleIds).chunked(into: feedlyAPILimitBatchSize) {
@@ -65,7 +65,7 @@ class FeedlyDownloadArticlesOperation: FeedlyOperation, Logging {
 	}
 
 	override func didCancel() {
-        logger.debug("Cancelling \(String(describing: self)).")
+        logger.debug("Cancelling \(String(describing: self), privacy: .public).")
 		operationQueue.cancelAllOperations()
 		super.didCancel()
 	}
@@ -84,7 +84,7 @@ extension FeedlyDownloadArticlesOperation: FeedlyOperationDelegate {
 		assert(Thread.isMainThread)
 		
 		// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
-        self.logger.debug("\(String(describing: operation)) failed with error: \(error.localizedDescription)")
+        self.logger.debug("\(String(describing: operation), privacy: .public) failed with error: \(error.localizedDescription, privacy: .public)")
 		
 		cancel()
 	}
