@@ -1349,7 +1349,7 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
 		if viewController === masterTimelineViewController && lastMainControllerToAppear == .article {
-			selectArticle(nil)
+			selectArticle(nil, animations: [.scroll, .select, .navigation])
 
 			// Restore any bars hidden by the article controller
 			showStatusBar()
