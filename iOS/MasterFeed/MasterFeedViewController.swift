@@ -1135,7 +1135,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
+		let localizedMenuText = NSLocalizedString("Mark All as Read", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -1155,7 +1155,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let localizedMenuText = NSLocalizedString("Mark Older Than as Read in “%@”", comment: "Command")
+		let localizedMenuText = NSLocalizedString("Mark Older Than as Read...", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let oneDayAction = UIAction(title: "1 Day") { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
