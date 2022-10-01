@@ -63,7 +63,7 @@ private extension UserNotificationManager {
 		content.body = ArticleStringFormatter.truncatedSummary(article)
 		content.threadIdentifier = webFeed.webFeedID
 		//	https://freesound.org/people/cabled_mess/sounds/350862/
-		content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "notificationSoundBlip.caf"))
+		content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: AppAssets.notificationSoundBlipFileName))
 		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
 		content.categoryIdentifier = "NEW_ARTICLE_NOTIFICATION_CATEGORY"
 		if let attachment = thumbnailAttachment(for: article, webFeed: webFeed) {

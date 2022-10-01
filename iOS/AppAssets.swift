@@ -325,4 +325,8 @@ struct AppAssets {
 		}
 	}
 	
+	static var notificationSoundBlipFileName: String = {
+		return "notificationSoundBlip.caf"
+	}()
+	
 }

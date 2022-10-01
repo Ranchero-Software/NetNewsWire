@@ -1860,6 +1860,7 @@
 		511D43CE231FA51100FB1562 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DDE6A35028E8741F00612823 /* notificationSoundBlip.caf */,
 				DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */,
 				51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */,
 				51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */,
@@ -2742,7 +2743,6 @@
 				514219572353C28900E07E2C /* main_ios.js */,
 				17D7586C2679C21700B17787 /* NetNewsWire-iOS-Bridging-Header.h */,
 				84C9FC9B2262A1A900D921D6 /* Assets.xcassets */,
-				DDE6A35028E8741F00612823 /* notificationSoundBlip.caf */,
 				84C9FC9C2262A1A900D921D6 /* Info.plist */,
 				84BB0F812333426400DED65E /* NetNewsWire.entitlements */,
 				51F805ED24284C1C0022C792 /* NetNewsWire-dev.entitlements */,
