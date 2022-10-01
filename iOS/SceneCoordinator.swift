@@ -289,9 +289,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 
 		self.masterFeedViewController = rootSplitViewController.viewController(for: .primary) as? MasterFeedViewController
 		self.masterFeedViewController.coordinator = self
-
+		self.masterFeedViewController?.navigationController?.delegate = self
+		
 		self.masterTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MasterTimelineViewController
 		self.masterTimelineViewController?.coordinator = self
+		self.masterTimelineViewController?.navigationController?.delegate = self
 
 		self.articleViewController = rootSplitViewController.viewController(for: .secondary) as? ArticleViewController
 		self.articleViewController?.coordinator = self
