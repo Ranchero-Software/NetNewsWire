@@ -1060,7 +1060,7 @@ private extension ReaderAPIAccountDelegate {
 							  uniqueID: entry.uniqueID(variant: variant),
 							  feedURL: streamID,
 							  url: nil,
-							  externalURL: entry.alternates.first?.url,
+							  externalURL: entry.alternates?.first?.url,
 							  title: entry.title,
 							  language: nil,
 							  contentHTML: entry.summary.content,
