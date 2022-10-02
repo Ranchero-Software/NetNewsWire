@@ -283,8 +283,8 @@ class SettingsViewController: UITableViewController, Logging {
 				openURL("https://netnewswire.com/slack")
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 8:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
+				let hosting = UIHostingController(rootView: AboutView())
+				self.navigationController?.pushViewController(hosting, animated: true)
 			default:
 				break
 			}
