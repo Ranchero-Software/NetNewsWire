@@ -86,18 +86,6 @@ class SettingsViewController: UITableViewController, Logging {
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
 
-		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
-		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
-		buildLabel.textColor = UIColor.gray
-		buildLabel.text = "\(Bundle.main.appName) \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
-		buildLabel.sizeToFit()
-		buildLabel.translatesAutoresizingMaskIntoConstraints = false
-		
-		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
-		wrapperView.translatesAutoresizingMaskIntoConstraints = false
-		wrapperView.addSubview(buildLabel)
-		tableView.tableFooterView = wrapperView
-
 	}
 	
 	override func viewDidAppear(_ animated: Bool) {
