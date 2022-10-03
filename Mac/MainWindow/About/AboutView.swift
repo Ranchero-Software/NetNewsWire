@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+public extension Notification.Name {
+	static let AboutSelectionDidChange = Notification.Name(rawValue: "AboutSelectionDidChange")
+}
+
 @available(macOS 12, *)
 struct AboutView: View {
 	

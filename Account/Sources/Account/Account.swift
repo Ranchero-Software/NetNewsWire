@@ -30,7 +30,6 @@ public extension Notification.Name {
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
-    static let AboutSelectionDidChange = Notification.Name(rawValue: "AboutSelectionDidChange")
 }
 
 public enum AccountType: Int, Codable {
