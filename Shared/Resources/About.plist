@@ -2,15 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>AppCredits</key>
+	<key>PrimaryContributors</key>
 	<array>
 		<dict>
-			<key>role</key>
-			<string>Lead Developer</string>
 			<key>name</key>
 			<string>Maurice Parker</string>
 			<key>url</key>
 			<string>https://vincode.io</string>
+			<key>role</key>
+			<string>Lead Developer</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Stuart Breckenridge</string>
+			<key>url</key>
+			<string>https://stuartbreckenridge.net</string>
+			<key>role</key>
+			<string>Contributing Developer</string>
 		</dict>
 		<dict>
 			<key>url</key>
@@ -42,7 +50,7 @@
 			<key>name</key>
 			<string>Nate Weaver</string>
 			<key>role</key>
-			<string>Under-the-hood magic and CSS stylin’s</string>
+			<string>HTML and CSS</string>
 		</dict>
 		<dict>
 			<key>url</key>
@@ -50,7 +58,7 @@
 			<key>name</key>
 			<string>Andrew Brehaut</string>
 			<key>role</key>
-			<string>Newsfoot (JS footnote displayer)</string>
+			<string>Newsfoot Footnotes</string>
 		</dict>
 		<dict>
 			<key>url</key>
@@ -86,12 +94,6 @@
 			<string>Rizwan Mohamed Ibrahim</string>
 			<key>url</key>
 			<string>https://blog.rizwan.dev/</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>Stuart Breckenridge</string>
-			<key>url</key>
-			<string>https://stuartbreckenridge.net</string>
 		</dict>
 		<dict>
 			<key>name</key>

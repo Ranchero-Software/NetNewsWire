@@ -8,33 +8,20 @@
 
 import SwiftUI
 
-struct AboutView: View {
+struct AboutView: View, LoadableAboutData {
     
-	private var about: AboutData!
-	
-	init() {
-		guard let path = Bundle.main.path(forResource: "About", ofType: "plist") else {
-			fatalError("The about plist really should exist.")
-		}
-		let url = URL(fileURLWithPath: path)
-		let data = try! Data(contentsOf: url)
-		about = try! PropertyListDecoder().decode(AboutData.self, from: data)
-	}
-	
 	var body: some View {
 		List {
 			Section(header: aboutHeaderView) {}
-			Section(header: Text("Credits")) {
-				ForEach(0..<about.AppCredits.count, id: \.self) { i in
-					creditView(about.AppCredits[i])
+			Section(header: Text("Primary Contributors")) {
+				ForEach(0..<about.PrimaryContributors.count, id: \.self) { i in
+					contributorView(about.PrimaryContributors[i])
 				}
 			}
 			Section(header: Text("Additional Contributors")) {
 				ForEach(0..<about.AdditionalContributors.count, id: \.self) { i in
 					contributorView(about.AdditionalContributors[i])
-						
 				}
-				
 			}
 			Section(header: Text("Thanks"), footer: thanks, content: {})
 			Section(footer: copyright, content: {})
@@ -54,6 +41,10 @@ struct AboutView: View {
 				
 				Text(Bundle.main.appName)
 					.font(.headline)
+				
+				Text("\(Bundle.main.versionNumber) (\(Bundle.main.buildNumber))")
+					.foregroundColor(.secondary)
+					.font(.callout)
 					
 				Text("By Brent Simmons and the Ranchero Software team.")
 					.font(.subheadline)
@@ -67,12 +58,19 @@ struct AboutView: View {
 		.multilineTextAlignment(.center)
 	}
 	
-	func creditView(_ appCredit: AboutData.AppCredit) -> some View {
+	func contributorView(_ appCredit: AboutData.Contributor) -> some View {
 		HStack {
-			Text(appCredit.role)
-			Spacer()
 			Text(appCredit.name)
-				.foregroundColor(.secondary)
+			Spacer()
+			if let role = appCredit.role {
+				Text(role)
+					.font(.callout)
+					.foregroundColor(.secondary)
+			}
+			if let _ = appCredit.url {
+				Image(systemName: "info.circle")
+					.foregroundColor(.secondary)
+			}
 		}
 		.onTapGesture {
 			guard let url = appCredit.url else { return }
@@ -82,18 +80,6 @@ struct AboutView: View {
 		}
 	}
 	
-	func contributorView(_ contributor: AboutData.Contributor) -> some View {
-		HStack {
-			Text(contributor.name)
-			Spacer()
-		}
-		.onTapGesture {
-			guard let url = contributor.url else { return }
-			if let contributorURL = URL(string: url) {
-				UIApplication.shared.open(contributorURL)
-			}
-		}
-	}
 	
 	var thanks: some View {
 		Text(about.ThanksMarkdown)
@@ -102,7 +88,11 @@ struct AboutView: View {
 	}
 	
 	var copyright: some View {
-		Text(verbatim: "Copyright © Brent Simmons 2002 - \(Calendar.current.component(.year, from: .now))")
+		HStack {
+			Spacer()
+			Text(verbatim: "Copyright © Brent Simmons 2002 - \(Calendar.current.component(.year, from: .now))")
+			Spacer()
+		}	
 	}
 	
 }
