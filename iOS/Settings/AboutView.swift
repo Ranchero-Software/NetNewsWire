@@ -64,8 +64,9 @@ struct AboutView: View, LoadableAboutData {
 			Spacer()
 			if let role = appCredit.role {
 				Text(role)
-					.font(.callout)
+					.font(.footnote)
 					.foregroundColor(.secondary)
+					.multilineTextAlignment(.trailing)
 			}
 			if let _ = appCredit.url {
 				Image(systemName: "info.circle")
