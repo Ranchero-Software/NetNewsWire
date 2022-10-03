@@ -17,7 +17,7 @@ struct CreditsNetNewsWireView: View, LoadableAboutData {
 			Section("Primary Contributors") {
 				GroupBox {
 					ForEach(0..<about.PrimaryContributors.count, id: \.self) { i in
-						creditView(about.PrimaryContributors[i])
+						contributorView(about.PrimaryContributors[i])
 							.padding(.vertical, 2)
 							.listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
 					}
@@ -28,7 +28,7 @@ struct CreditsNetNewsWireView: View, LoadableAboutData {
 			Section("Additional Contributors") {
 				GroupBox {
 					ForEach(0..<about.AdditionalContributors.count, id: \.self) { i in
-						creditView(about.AdditionalContributors[i])
+						contributorView(about.AdditionalContributors[i])
 							.padding(.vertical, 2)
 							.listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
 					}
@@ -51,7 +51,7 @@ struct CreditsNetNewsWireView: View, LoadableAboutData {
 		.padding(.horizontal)
 	}
 	
-	func creditView(_ appCredit: AboutData.Contributor) -> some View {
+	func contributorView(_ appCredit: AboutData.Contributor) -> some View {
 		HStack {
 			Text(appCredit.name)
 			Spacer()
