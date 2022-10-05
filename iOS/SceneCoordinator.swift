@@ -1323,6 +1323,10 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		}
 	}
 	
+	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+		articleViewController?.updateUnreadCountIndicator(forDisplayMode: displayMode)
+	}
+	
 }
 
 // MARK: UINavigationControllerDelegate
