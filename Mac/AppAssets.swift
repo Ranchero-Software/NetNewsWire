@@ -297,7 +297,7 @@ struct AppAssets {
 	
 	static var notificationSoundBlipFileName: String = {
 		//	https://freesound.org/people/cabled_mess/sounds/350862/
-		return "notificationSoundBlip.caf"
+		return "notificationSoundBlip.mp3"
 	}()
 
 	
