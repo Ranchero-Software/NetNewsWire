@@ -87,6 +87,8 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		return keyboardManager.keyCommands
 	}
 	
+	private var lastKnownDisplayMode: UISplitViewController.DisplayMode?
+
 	var currentUnreadCount: Int = 0 {
 		didSet {
 			updateUnreadCountIndicator()
@@ -342,37 +344,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		configureAppearanceMenu()
 	}
 	
-	
-	/// Updates the indicator count in the navigation bar.
-	/// For iPhone, this indicator is visible if the unread count is > 0.
-	/// For iPad, this indicator is visible if it is in `portrait` or `unknown`
-	/// orientation, **and** the unread count is > 0.
-	/// - Parameter sender: `Any` (optional)
-	public func updateUnreadCountIndicator(forDisplayMode displayMode: UISplitViewController.DisplayMode? = nil) {
-		func changeUnreadCountIndicator() {
-			if currentUnreadCount > 0 {
-				let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
-				unreadCountView.unreadCount = currentUnreadCount
-				unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
-				navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
-			} else {
-				navigationItem.leftBarButtonItem = nil
-			}
-		}
-		
-		if UIDevice.current.userInterfaceIdiom == .phone {
-			changeUnreadCountIndicator()
-		} else {
-			if displayMode == nil || displayMode == .secondaryOnly {
-				changeUnreadCountIndicator()
-			} else {
-				navigationItem.leftBarButtonItem = nil
-			}
-		}
-	}
-	
-	
-	
 	// MARK: Notifications
 	
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
@@ -480,6 +451,12 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	func setScrollPosition(isShowingExtractedArticle: Bool, articleWindowScrollY: Int) {
 		currentWebViewController?.setScrollPosition(isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 	}
+	
+	public func splitViewControllerWillChangeTo(displayMode: UISplitViewController.DisplayMode) {
+		lastKnownDisplayMode = displayMode
+		updateUnreadCountIndicator()
+	}
+	
 }
 
 // MARK: Find in Article
@@ -636,6 +613,17 @@ private extension ArticleViewController {
 		controller.delegate = self
 		controller.setArticle(article, updateView: updateView)
 		return controller
+	}
+	
+	func updateUnreadCountIndicator() {
+		if currentUnreadCount > 0 && (traitCollection.userInterfaceIdiom == .phone || lastKnownDisplayMode == .secondaryOnly) {
+			let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
+			unreadCountView.unreadCount = currentUnreadCount
+			unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
+			navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
+		} else  {
+			navigationItem.leftBarButtonItem = nil
+		}
 	}
 	
 }
