@@ -58,7 +58,7 @@ struct ReaderAPIEntry: Codable {
 	let timestampUsec: String?
 	
 	let summary: ReaderAPIArticleSummary
-	let alternates: [ReaderAPIAlternateLocation]
+	let alternates: [ReaderAPIAlternateLocation]?
 	let categories: [String]
 	let origin: ReaderAPIEntryOrigin
 

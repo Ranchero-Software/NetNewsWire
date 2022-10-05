@@ -28,6 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 		coordinator = SceneCoordinator(rootSplitViewController: rootViewController)
 		rootViewController.coordinator = coordinator
 		rootViewController.delegate = coordinator
+		rootViewController.showsSecondaryOnlyButton = true
 		
 		coordinator.restoreWindowState(session.stateRestorationActivity)
 		

@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
+        <capability name="NSView safe area layout guides" minToolsVersion="12.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -294,27 +295,23 @@
                                     <action selector="toggleReadArticlesFilter:" target="Ebq-4s-EwK" id="tcC-72-Npk"/>
                                 </connections>
                             </button>
-                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="7p6-pA-iw6">
-                                <rect key="frame" x="0.0" y="195" width="375" height="5"/>
-                            </box>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Zpk-pq-9nW" customClass="TimelineContainerView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="197"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="198"/>
                             </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="Zpk-pq-9nW" secondAttribute="trailing" id="67d-pI-I9C"/>
+                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="0f9-sc-5AE"/>
                             <constraint firstAttribute="trailing" secondItem="iA5-go-AO0" secondAttribute="trailing" constant="12" id="9Dl-n9-vRI"/>
                             <constraint firstItem="lSU-OC-sEC" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" constant="8" id="Ceb-sA-ECJ"/>
-                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="7p6-pA-iw6" secondAttribute="bottom" id="KCa-8b-a6y"/>
+                            <constraint firstAttribute="trailing" secondItem="Zpk-pq-9nW" secondAttribute="trailing" id="Eod-fp-EiM"/>
                             <constraint firstItem="lSU-OC-sEC" firstAttribute="centerY" secondItem="iA5-go-AO0" secondAttribute="centerY" id="OeL-Zp-iRT"/>
-                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="XF2-31-E1x"/>
-                            <constraint firstAttribute="trailing" secondItem="7p6-pA-iw6" secondAttribute="trailing" id="fG3-fe-Stb"/>
-                            <constraint firstAttribute="bottom" secondItem="Zpk-pq-9nW" secondAttribute="bottom" id="fyv-EG-PC8"/>
-                            <constraint firstItem="7p6-pA-iw6" firstAttribute="leading" secondItem="Dnl-L5-xFP" secondAttribute="leading" id="pZU-jW-B1h"/>
-                            <constraint firstItem="7p6-pA-iw6" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" id="tUm-nX-Jce"/>
+                            <constraint firstAttribute="bottom" secondItem="Zpk-pq-9nW" secondAttribute="bottom" id="RvS-Aa-GdA"/>
+                            <constraint firstItem="Zpk-pq-9nW" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" id="sVz-yt-sFq"/>
                             <constraint firstItem="iA5-go-AO0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lSU-OC-sEC" secondAttribute="trailing" constant="8" id="yCg-gc-exN"/>
                             <constraint firstItem="lSU-OC-sEC" firstAttribute="top" secondItem="Dnl-L5-xFP" secondAttribute="top" constant="3" id="zay-ZJ-od3"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="PqV-qK-ND9"/>
+                        <viewLayoutGuide key="layoutMargins" id="Lb7-Qr-9rC"/>
                     </view>
                     <connections>
                         <outlet property="containerView" destination="Zpk-pq-9nW" id="Kye-yX-Wyn"/>
@@ -332,16 +329,24 @@
                     </connections>
                 </customObject>
             </objects>
-            <point key="canvasLocation" x="62" y="394"/>
+            <point key="canvasLocation" x="61.5" y="394"/>
         </scene>
         <!--Detail View Controller-->
         <scene sceneID="HMt-bN-oMN">
             <objects>
                 <viewController id="Vho-7i-T8m" userLabel="Detail View Controller" customClass="DetailViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <customView key="view" id="cJ9-6s-66u" customClass="DetailContainerView" customModule="NetNewsWire" customModuleProvider="target">
+                    <customView key="view" id="cJ9-6s-66u">
                         <rect key="frame" x="0.0" y="0.0" width="730" height="300"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="EAt-cc-a4X" customClass="DetailContainerView" customModule="NetNewsWire" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="730" height="300"/>
+                                <connections>
+                                    <outlet property="detailStatusBarView" destination="xI5-lx-RD8" id="2lM-To-54v"/>
+                                    <outlet property="findBarContainerView" destination="lMN-Bl-G9Q" id="coK-s3-CKs"/>
+                                    <outlet property="findBarHeightConstraint" destination="C1e-J5-baX" id="dk9-ah-mc0"/>
+                                </connections>
+                            </customView>
                             <customView hidden="YES" alphaValue="0.90000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="NetNewsWire" customModuleProvider="target">
                                 <rect key="frame" x="6" y="2" width="12" height="20"/>
                                 <subviews>
@@ -374,19 +379,20 @@
                         <constraints>
                             <constraint firstItem="xI5-lx-RD8" firstAttribute="leading" secondItem="cJ9-6s-66u" secondAttribute="leading" constant="6" id="5vz-ys-CAo"/>
                             <constraint firstItem="lMN-Bl-G9Q" firstAttribute="top" secondItem="cJ9-6s-66u" secondAttribute="top" placeholder="YES" id="Qyj-r4-LOb"/>
+                            <constraint firstItem="EAt-cc-a4X" firstAttribute="top" secondItem="cJ9-6s-66u" secondAttribute="top" id="Sb7-eK-hUs"/>
+                            <constraint firstItem="EAt-cc-a4X" firstAttribute="bottom" secondItem="cJ9-6s-66u" secondAttribute="bottom" id="dvJ-B7-cYU"/>
                             <constraint firstItem="lMN-Bl-G9Q" firstAttribute="leading" secondItem="cJ9-6s-66u" secondAttribute="leading" id="fjq-7Z-e0q"/>
+                            <constraint firstItem="EAt-cc-a4X" firstAttribute="leading" secondItem="cJ9-6s-66u" secondAttribute="leading" id="mYI-QQ-pG2"/>
                             <constraint firstAttribute="trailing" secondItem="lMN-Bl-G9Q" secondAttribute="trailing" id="oth-5X-F9R"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xI5-lx-RD8" secondAttribute="trailing" constant="6" id="pbD-LN-Gk1"/>
+                            <constraint firstAttribute="trailing" secondItem="EAt-cc-a4X" secondAttribute="trailing" id="yWN-Th-puZ"/>
                             <constraint firstAttribute="bottom" secondItem="xI5-lx-RD8" secondAttribute="bottom" constant="2" id="zsv-B0-ChW"/>
                         </constraints>
-                        <connections>
-                            <outlet property="detailStatusBarView" destination="xI5-lx-RD8" id="yIZ-aP-fKF"/>
-                            <outlet property="findBarContainerView" destination="lMN-Bl-G9Q" id="zMP-iV-uSN"/>
-                            <outlet property="findBarHeightConstraint" destination="C1e-J5-baX" id="Q4g-LU-JWK"/>
-                        </connections>
+                        <viewLayoutGuide key="safeArea" id="kji-Gx-zvn"/>
+                        <viewLayoutGuide key="layoutMargins" id="Nri-tr-pWM"/>
                     </customView>
                     <connections>
-                        <outlet property="containerView" destination="cJ9-6s-66u" id="gXc-Pz-9sQ"/>
+                        <outlet property="containerView" destination="EAt-cc-a4X" id="oqf-yI-VIb"/>
                         <outlet property="statusBarView" destination="xI5-lx-RD8" id="meP-4g-U63"/>
                     </connections>
                 </viewController>
