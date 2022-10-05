@@ -848,6 +848,9 @@
 		D5F4EDB720074D6500B9E363 /* WebFeed+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */; };
 		D5F4EDB920074D7C00B9E363 /* Folder+Scriptability.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */; };
 		DD82AB0A231003F6002269DF /* SharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD82AB09231003F6002269DF /* SharingTests.swift */; };
+		DDF9E1D728EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
+		DDF9E1D828EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
+		DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
 		DF790D6028E9769300455FC7 /* Thanks.md in Resources */ = {isa = PBXBuildFile; fileRef = DF790D5F28E9769300455FC7 /* Thanks.md */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
@@ -1589,6 +1592,7 @@
 		D5F4EDB620074D6500B9E363 /* WebFeed+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebFeed+Scriptability.swift"; sourceTree = "<group>"; };
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
+		DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = notificationSoundBlip.mp3; sourceTree = "<group>"; };
 		DF790D5F28E9769300455FC7 /* Thanks.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Thanks.md; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
@@ -1856,6 +1860,7 @@
 		511D43CE231FA51100FB1562 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */,
 				DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */,
 				51DEE81126FB9233006DAA56 /* Appanoose.nnwtheme */,
 				51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */,
@@ -3386,6 +3391,7 @@
 				65ED405D235DEF6C0081F399 /* SidebarKeyboardShortcuts.plist in Resources */,
 				514A89A3244FD63F0085E65D /* AddTwitterFeedSheet.xib in Resources */,
 				51D0214726ED617100FF2E0F /* core.css in Resources */,
+				DDF9E1D828EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
 				5103A9F5242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				65ED405E235DEF6C0081F399 /* DefaultFeeds.opml in Resources */,
 				51333D3C2468615D00EB5C91 /* AddRedditFeedSheet.xib in Resources */,
@@ -3442,6 +3448,7 @@
 				516A093723609A3600EAE89B /* SettingsComboTableViewCell.xib in Resources */,
 				51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				516A09422361248000EAE89B /* Inspector.storyboard in Resources */,
+				DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
 				51DEE81A26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				1768140B2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig in Resources */,
 				5103A9B424216A4200410853 /* blank.html in Resources */,
@@ -3490,6 +3497,7 @@
 				B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */,
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
+				DDF9E1D728EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
 				5103A9F4242258C600410853 /* AccountsAddCloudKit.xib in Resources */,
 				51077C5827A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				84A3EE5F223B667F00557320 /* DefaultFeeds.opml in Resources */,
