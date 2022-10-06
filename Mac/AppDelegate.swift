@@ -16,6 +16,7 @@ import RSCore
 import RSCoreResources
 import Secrets
 import CrashReporter
+import SwiftUI
 
 // If we're not going to import Sparkle, provide dummy protocols to make it easy
 // for AppDelegate to comply
@@ -718,6 +719,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		#if !MAC_APP_STORE && !TEST
 			self.softwareUpdater.checkForUpdates()
 		#endif
+	}
+	
+	@IBAction func showAbout(_ sender: Any?) {
+		if #available(macOS 12, *) {
+			for window in NSApplication.shared.windows {
+				if window.identifier == .aboutNetNewsWire {
+					window.makeKeyAndOrderFront(nil)
+					return
+				}
+			}
+			let controller = AboutWindowController()
+			controller.window?.makeKeyAndOrderFront(nil)
+		} else {
+			NSApplication.shared.orderFrontStandardAboutPanel(self)
+		}
 	}
 
 }
