@@ -86,7 +86,7 @@ class AboutHostingController: NSHostingController<AnyView>, NSToolbarDelegate {
 		switch itemIdentifier {
 	
 		case .aboutGroup:
-			var toolbarItem = NSToolbarItem(itemIdentifier: .aboutGroup)
+			let toolbarItem = NSToolbarItem(itemIdentifier: .aboutGroup)
 			toolbarItem.view = segmentedControl
 			toolbarItem.autovalidates = true
 			return toolbarItem
@@ -118,7 +118,6 @@ class AboutHostingController: NSHostingController<AnyView>, NSToolbarDelegate {
 	// MARK: - Target/Action
 	@objc
 	func segmentedControlSelectionChanged(_ sender: NSSegmentedControl) {
-		print(#function)
 		if sender.selectedSegment == 0 {
 			rootView = AnyView(AboutNetNewsWireView())
 		} else {
