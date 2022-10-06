@@ -851,7 +851,6 @@
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
 		DF790D6028E9769300455FC7 /* Thanks.md in Resources */ = {isa = PBXBuildFile; fileRef = DF790D5F28E9769300455FC7 /* Thanks.md */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
-		DFC14F0D28EA520E00F6EE86 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F0C28EA520E00F6EE86 /* AboutView.swift */; };
 		DFC14F0F28EA55BD00F6EE86 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */; };
 		DFC14F1028EA5D7C00F6EE86 /* Thanks.md in Resources */ = {isa = PBXBuildFile; fileRef = DF790D5F28E9769300455FC7 /* Thanks.md */; };
 		DFC14F1128EA5D7C00F6EE86 /* About.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFFC4E7528E95F78006B82AF /* About.plist */; };
@@ -1599,7 +1598,6 @@
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		DF790D5F28E9769300455FC7 /* Thanks.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Thanks.md; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
-		DFC14F0C28EA520E00F6EE86 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNetNewsWireView.swift; sourceTree = "<group>"; };
 		DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsNetNewsWireView.swift; sourceTree = "<group>"; };
@@ -2889,10 +2887,9 @@
 		DFC14F0928EA51AB00F6EE86 /* About */ = {
 			isa = PBXGroup;
 			children = (
-				DFC14F0C28EA520E00F6EE86 /* AboutView.swift */,
+				DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */,
 				DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */,
 				DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */,
-				DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */,
 			);
 			path = About;
 			sourceTree = "<group>";
@@ -4343,7 +4340,6 @@
 				84DEE56522C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				845213231FCA5B11003B6E93 /* ImageDownloader.swift in Sources */,
 				51FA73B72332D5F70090D516 /* LegacyArticleExtractorButton.swift in Sources */,
-				DFC14F0D28EA520E00F6EE86 /* AboutView.swift in Sources */,
 				849A97431ED9EAA9007D329B /* AddFolderWindowController.swift in Sources */,
 				8405DDA522168C62008CE1BF /* TimelineContainerViewController.swift in Sources */,
 				844B5B671FEA18E300C7C76A /* MainWIndowKeyboardHandler.swift in Sources */,

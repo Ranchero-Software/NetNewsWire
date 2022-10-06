@@ -729,15 +729,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 					return
 				}
 			}
-			AboutWindowController.default.window?.makeKeyAndOrderFront(nil)
+			let controller = AboutWindowController()
+			controller.window?.makeKeyAndOrderFront(nil)
 		} else {
 			NSApplication.shared.orderFrontStandardAboutPanel(self)
 		}
-	}
-	
-	@objc
-	func segmentedControlSelectionChanged(_ sender: NSSegmentedControl) {
-		NotificationCenter.default.post(name: .AboutSelectionDidChange, object: sender.selectedSegment)
 	}
 
 }

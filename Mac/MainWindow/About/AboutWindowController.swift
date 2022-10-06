@@ -18,63 +18,81 @@ extension NSUserInterfaceItemIdentifier {
 	static let aboutNetNewsWire = NSUserInterfaceItemIdentifier("about.netnewswire")
 }
 
+// MARK: - AboutWindowController
+
 @available(macOS 12, *)
 class AboutWindowController: NSWindowController, NSToolbarDelegate {
 	
-	static var `default`: AboutWindowController {
-		let hostingController = NSHostingController(rootView: AboutView())
+	var hostingController: AboutHostingController
+	
+	override init(window: NSWindow?) {
+		self.hostingController = AboutHostingController(rootView: AnyView(AboutNetNewsWireView()))
+		super.init(window: window)
 		let window = NSWindow(contentViewController: hostingController)
 		window.identifier = .aboutNetNewsWire
-		let controller = AboutWindowController(window: window)
-		controller.configure()
-		return controller
+		window.standardWindowButton(.zoomButton)?.isEnabled = false
+		window.titleVisibility = .hidden
+		self.window = window
+		self.hostingController.configureToolbar()
 	}
 	
-	func configure() {
-		window?.title = NSLocalizedString("About", comment: "About")
-		window?.titleVisibility = .hidden
-		let toolbar = NSToolbar(identifier: NSToolbar.Identifier("netnewswire.about.toolbar"))
-		toolbar.delegate = self
-		window?.toolbar = toolbar
-		window?.toolbarStyle = .unified
-		toolbar.insertItem(withItemIdentifier: .flexibleSpace, at: 0)
-		toolbar.insertItem(withItemIdentifier: .flexibleSpace, at: 2)
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
 	}
 	
 	override func windowDidLoad() {
 		super.windowDidLoad()
 	}
 	
-	@objc
-	func segmentedControlSelectionChanged(_ sender: NSSegmentedControl) {
-		print(sender)
+}
+
+// MARK: - AboutHostingController
+
+@available(macOS 12, *)
+class AboutHostingController: NSHostingController<AnyView>, NSToolbarDelegate {
+	
+	private lazy var segmentedControl: NSSegmentedControl = {
+		let control = NSSegmentedControl(labels: ["About", "Credits"],
+										 trackingMode: .selectOne,
+										 target: self,
+										 action: #selector(segmentedControlSelectionChanged(_:)))
+		control.segmentCount = 2
+		control.setSelected(true, forSegment: 0)
+		return control
+	}()
+	
+	override init(rootView: AnyView) {
+		super.init(rootView: rootView)
 	}
 	
+	@MainActor required dynamic init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+	public func configureToolbar() {
+		let toolbar = NSToolbar(identifier: NSToolbar.Identifier("netnewswire.about.toolbar"))
+		toolbar.delegate = self
+		toolbar.autosavesConfiguration = false
+		toolbar.allowsUserCustomization = false
+		view.window?.toolbar = toolbar
+		view.window?.toolbarStyle = .unified
+		toolbar.insertItem(withItemIdentifier: .flexibleSpace, at: 0)
+		toolbar.insertItem(withItemIdentifier: .flexibleSpace, at: 2)
+	}
 	
 	// MARK: NSToolbarDelegate
 	
 	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-		
 		switch itemIdentifier {
 	
 		case .aboutGroup:
-			let toolbarItem: NSToolbarItem
-			let group = NSToolbarItemGroup(itemIdentifier: itemIdentifier)
-			
-			let segmented = NSSegmentedControl(labels: ["About", "Credits"],
-											   trackingMode: .selectOne,
-											   target: NSApplication.shared.delegate as? AppDelegate,
-											   action: #selector(AppDelegate.segmentedControlSelectionChanged(_:)))
-			segmented.segmentStyle = .texturedRounded
-			segmented.segmentCount = 2
-			segmented.setSelected(true, forSegment: 0)
-			group.view = segmented
-			toolbarItem = group
+			var toolbarItem = NSToolbarItem(itemIdentifier: .aboutGroup)
+			toolbarItem.view = segmentedControl
+			toolbarItem.autovalidates = true
 			return toolbarItem
 		default:
 			return nil
 		}
-		
 	}
 	
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
@@ -94,8 +112,21 @@ class AboutWindowController: NSWindowController, NSToolbarDelegate {
 	}
 	
 	func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		return [.aboutGroup]
+		return []
 	}
 	
+	// MARK: - Target/Action
+	@objc
+	func segmentedControlSelectionChanged(_ sender: NSSegmentedControl) {
+		print(#function)
+		if sender.selectedSegment == 0 {
+			rootView = AnyView(AboutNetNewsWireView())
+		} else {
+			rootView = AnyView(CreditsNetNewsWireView())
+		}
+	}
 	
 }
+
+
+

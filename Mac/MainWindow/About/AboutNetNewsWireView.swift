@@ -43,6 +43,7 @@ struct AboutNetNewsWireView: View {
 			Spacer()
 		}
 		.multilineTextAlignment(.center)
+		.frame(width: 400, height: 400)
 	}
 }
 
