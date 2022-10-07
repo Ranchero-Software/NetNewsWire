@@ -17,7 +17,7 @@ class OpenInBrowserActivity: UIActivity {
 	}
 	
 	override var activityImage: UIImage? {
-		return UIImage(systemName: "globe", withConfiguration: UIImage.SymbolConfiguration(pointSize: 20, weight: .regular))
+		return AppAssets.safariImage
 	}
 	
 	override var activityType: UIActivity.ActivityType? {
