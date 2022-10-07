@@ -862,7 +862,6 @@
 		DFCE4F9228EF26F100405869 /* About.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9028EF26F000405869 /* About.plist */; };
 		DFCE4F9428EF278300405869 /* Thanks.md in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9328EF278300405869 /* Thanks.md */; };
 		DFCE4F9528EF278300405869 /* Thanks.md in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9328EF278300405869 /* Thanks.md */; };
-		DFD6AACF27ADE86E00463FAD /* NewsFax.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */; };
 		DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DFFC199827A0D0D7004B7AEF /* NotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */; };
 		DFFC199A27A0D32A004B7AEF /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */; };
@@ -1607,7 +1606,6 @@
 		DFCE4F9028EF26F000405869 /* About.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = About.plist; sourceTree = "<group>"; };
 		DFCE4F9328EF278300405869 /* Thanks.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Thanks.md; sourceTree = "<group>"; };
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
-		DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
 		DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
 		DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
 		DFFC4E7328E95C01006B82AF /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -1983,14 +1981,6 @@
 				516AE607246AFC9900731738 /* RedditSelectSortTableViewController.swift */,
 			);
 			path = Reddit;
-			sourceTree = "<group>";
-		};
-		5177C21027B07C8400643901 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				DFD6AACD27ADE86E00463FAD /* NewsFax.nnwtheme */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		5183CCEA226F70350010922C /* Timer */ = {
@@ -2528,7 +2518,6 @@
 				51CD32C324D2CD57009ABAEF /* ArticlesDatabase */,
 				51CD32C724D2E06C009ABAEF /* Secrets */,
 				51CD32A824D2CB25009ABAEF /* SyncDatabase */,
-				5177C21027B07C8400643901 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -3419,7 +3408,6 @@
 				65ED405F235DEF6C0081F399 /* Preferences.storyboard in Resources */,
 				65ED4061235DEF6C0081F399 /* Assets.xcassets in Resources */,
 				65ED4063235DEF6C0081F399 /* RenameSheet.xib in Resources */,
-				DFD6AACF27ADE86E00463FAD /* NewsFax.nnwtheme in Resources */,
 				5177C21227B07C9E00643901 /* NewsFax.nnwtheme in Resources */,
 				65ED4064235DEF6C0081F399 /* AddFolderSheet.xib in Resources */,
 				65ED4065235DEF6C0081F399 /* AccountsFeedbin.xib in Resources */,
