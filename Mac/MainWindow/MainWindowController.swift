@@ -341,6 +341,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	func openArticleURLs(_ urlStrings: [String]) {
+		if urlStrings.count > 500 {
+			return
+		}
+
 		func doOpenURLs() {
 			for urlString in urlStrings {
 				Browser.open(urlString, inBackground: false)
