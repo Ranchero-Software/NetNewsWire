@@ -89,34 +89,12 @@ extension TimelineViewController {
 	}
 	
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
-
 		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String] else {
 			return
 		}
 
-		func doOpenURLs() {
-			for urlString in urlStrings {
-				Browser.open(urlString, inBackground: false)
-			}
-		}
-
-		if urlStrings.count > 20 {
-			let alert = NSAlert()
-			let messageFormat = NSLocalizedString("Are you sure you want to open %ld articles in your browser?", comment: "")
-			alert.messageText = String.localizedStringWithFormat(messageFormat, urlStrings.count)
-			alert.addButton(withTitle: NSLocalizedString("Open", comment: ""))
-			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: ""))
-
-			guard let window = self.view.window else { return }
-			
-			alert.beginSheetModal(for: window) { response in
-				if response == .alertFirstButtonReturn {
-					doOpenURLs()
-				}
-			}
-		} else {
-			doOpenURLs()
-		}
+		guard let windowController = self.view.window?.windowController as? MainWindowController else { return }
+		windowController.openArticleURLs(urlStrings)
 	}
 	
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
