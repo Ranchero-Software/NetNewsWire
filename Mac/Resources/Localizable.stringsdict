@@ -11,7 +11,7 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
+			<string>ld</string>
 			<key>other</key>
 			<string>Copy Article URLs</string>
 			<key>one</key>
