@@ -90,10 +90,33 @@ extension TimelineViewController {
 	
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
 
-		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
+		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String] else {
 			return
 		}
-		Browser.open(urlString, inBackground: false)
+
+		func doOpenURLs() {
+			for urlString in urlStrings {
+				Browser.open(urlString, inBackground: false)
+			}
+		}
+
+		if urlStrings.count > 20 {
+			let alert = NSAlert()
+			let messageFormat = NSLocalizedString("Are you sure you want to open %ld articles in your browser?", comment: "")
+			alert.messageText = String.localizedStringWithFormat(messageFormat, urlStrings.count)
+			alert.addButton(withTitle: NSLocalizedString("Open", comment: ""))
+			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: ""))
+
+			guard let window = self.view.window else { return }
+			
+			alert.beginSheetModal(for: window) { response in
+				if response == .alertFirstButtonReturn {
+					doOpenURLs()
+				}
+			}
+		} else {
+			doOpenURLs()
+		}
 	}
 	
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
@@ -176,15 +199,13 @@ private extension TimelineViewController {
 				menu.addItem(markAllMenuItem)
 			}
 		}
-		
-		if articles.count == 1, let link = articles.first!.preferredLink {
-			menu.addSeparatorIfNeeded()
-			menu.addItem(openInBrowserMenuItem(link))
-		}
 
 		let links = articles.compactMap { $0.preferredLink }
 
 		if links.count > 0 {
+			menu.addSeparatorIfNeeded()
+			menu.addItem(openInBrowserMenuItem(links))
+
 			menu.addSeparatorIfNeeded()
 			menu.addItem(copyArticleURLsMenuItem(links))
 
@@ -279,9 +300,9 @@ private extension TimelineViewController {
 		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), articles)
 	}
 	
-	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
+	func openInBrowserMenuItem(_ urlStrings: [String]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString)
+		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
 	}
 	
 	func copyArticleURLsMenuItem(_ urlStrings: [String]) -> NSMenuItem {
