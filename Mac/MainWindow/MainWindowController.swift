@@ -329,8 +329,8 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
-		if let links = selectedArticles?.compactMap({ $0.preferredLink }) {
-			URLPasteboardWriter.write(urlStrings: links, to: .general)
+		if let currentLinks {
+			URLPasteboardWriter.write(urlStrings: currentLinks, to: .general)
 		}
 	}
 
@@ -340,14 +340,14 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-	func openArticleURLs(_ urlStrings: [String]) {
+	func openArticleURLs(_ urlStrings: [String], invertPreference: Bool = false) {
 		if urlStrings.count > 500 {
 			return
 		}
 
 		func doOpenURLs() {
 			for urlString in urlStrings {
-				Browser.open(urlString, inBackground: false)
+				Browser.open(urlString, invertPreference: invertPreference)
 			}
 		}
 
@@ -373,7 +373,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		guard let selectedArticles else { return }
 		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
-		openArticleURLs(urlStrings)
+		openArticleURLs(urlStrings, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -1101,6 +1101,10 @@ private extension MainWindowController {
 		return selectedArticles?.first { $0.preferredLink != nil }?.preferredLink
 	}
 
+	var currentLinks: [String]? {
+		return selectedArticles?.compactMap { $0.preferredLink }
+	}
+
 	// MARK: - State Restoration
 	
 	func savableState() -> [AnyHashable : Any] {
@@ -1136,7 +1140,7 @@ private extension MainWindowController {
 	// MARK: - Command Validation
 	
 	func canCopyArticleURL() -> Bool {
-		return currentLink != nil
+		return currentLinks != nil
 	}
 	
 	func canCopyExternalURL() -> Bool {
