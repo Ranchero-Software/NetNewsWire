@@ -175,7 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func prepareAccountsForBackground() {
 		extensionFeedAddRequestFile.suspend()
-		widgetDataEncoder.encodeIfNecessary()
+		widgetDataEncoder.pause()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
@@ -184,6 +184,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func prepareAccountsForForeground() {
 		extensionFeedAddRequestFile.resume()
+		widgetDataEncoder.resume()
 		syncTimer?.update()
 
 		if let lastRefresh = AppDefaults.shared.lastRefresh {
