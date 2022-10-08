@@ -335,7 +335,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
-		if let links = selectedArticles?.compactMap({ $0.preferredLink }) {
+		if let links = selectedArticles?.compactMap({ $0.externalLink }) {
 			URLPasteboardWriter.write(urlStrings: links, to: .general)
 		}
 	}
