@@ -76,7 +76,13 @@ extension Browser {
 
 extension Browser {
 
-	static func open(_ urlStrings: [String], alertingInWindow window: NSWindow?, invertPreference: Bool = false) {
+	/// Open multiple pages in the default browser, warning if over a certain number of URLs are passed.
+	/// - Parameters:
+	///   - urlStrings: The URL strings to open.
+	///   - window: The window on which to display the "over limit" alert sheet. If `nil`, will be displayed as a
+	///   modal dialog.
+	///   - invertPreference: Whether to invert the user's "Open web pages in background in browser" preference.
+	static func open(_ urlStrings: [String], fromWindow window: NSWindow?, invertPreference: Bool = false) {
 		if urlStrings.count > 500 {
 			return
 		}

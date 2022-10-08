@@ -343,7 +343,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		guard let selectedArticles else { return }
 		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
-		Browser.open(urlStrings, alertingInWindow: window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+		Browser.open(urlStrings, fromWindow: window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {

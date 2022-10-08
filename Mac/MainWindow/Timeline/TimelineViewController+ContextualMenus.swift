@@ -93,7 +93,7 @@ extension TimelineViewController {
 			return
 		}
 
-		Browser.open(urlStrings, alertingInWindow: self.view.window)
+		Browser.open(urlStrings, fromWindow: self.view.window)
 	}
 	
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
