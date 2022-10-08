@@ -73,3 +73,42 @@ extension Browser {
 			NSLocalizedString("Open in Browser in Background", comment: "Open in Browser in Background menu item title")
 	}
 }
+
+extension Browser {
+
+	static func open(_ urlStrings: [String], alertingInWindow window: NSWindow?, invertPreference: Bool = false) {
+		if urlStrings.count > 500 {
+			return
+		}
+
+		func doOpenURLs() {
+			for urlString in urlStrings {
+				Browser.open(urlString, invertPreference: invertPreference)
+			}
+		}
+
+		if urlStrings.count > 20 {
+			let alert = NSAlert()
+			let messageFormat = NSLocalizedString("Are you sure you want to open %ld articles in your browser?", comment: "")
+			alert.messageText = String.localizedStringWithFormat(messageFormat, urlStrings.count)
+			let confirmButtonTitleFormat = NSLocalizedString("Open %ld Articles", comment: "")
+			alert.addButton(withTitle: String.localizedStringWithFormat(confirmButtonTitleFormat, urlStrings.count))
+			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: ""))
+
+			if let window {
+				alert.beginSheetModal(for: window) { response in
+					if response == .alertFirstButtonReturn {
+						doOpenURLs()
+					}
+				}
+			} else {
+				if alert.runModal() == .alertFirstButtonReturn {
+					doOpenURLs()
+				}
+			}
+		} else {
+			doOpenURLs()
+		}
+	}
+
+}

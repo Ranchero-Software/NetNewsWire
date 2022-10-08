@@ -340,40 +340,10 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 		}
 	}
 
-	func openArticleURLs(_ urlStrings: [String], invertPreference: Bool = false) {
-		if urlStrings.count > 500 {
-			return
-		}
-
-		func doOpenURLs() {
-			for urlString in urlStrings {
-				Browser.open(urlString, invertPreference: invertPreference)
-			}
-		}
-
-		if urlStrings.count > 20 {
-			let alert = NSAlert()
-			let messageFormat = NSLocalizedString("Are you sure you want to open %ld articles in your browser?", comment: "")
-			alert.messageText = String.localizedStringWithFormat(messageFormat, urlStrings.count)
-			alert.addButton(withTitle: NSLocalizedString("Open", comment: ""))
-			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: ""))
-
-			guard let window = self.window else { return }
-
-			alert.beginSheetModal(for: window) { response in
-				if response == .alertFirstButtonReturn {
-					doOpenURLs()
-				}
-			}
-		} else {
-			doOpenURLs()
-		}
-	}
-
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		guard let selectedArticles else { return }
 		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
-		openArticleURLs(urlStrings, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+		Browser.open(urlStrings, alertingInWindow: window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
