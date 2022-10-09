@@ -316,7 +316,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
 		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
-		Browser.open(urlStrings, fromWindow: self.view.window)
+		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {

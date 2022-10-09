@@ -93,7 +93,7 @@ extension TimelineViewController {
 			return
 		}
 
-		Browser.open(urlStrings, fromWindow: self.view.window)
+		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 	
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
@@ -182,6 +182,7 @@ private extension TimelineViewController {
 		if links.count > 0 {
 			menu.addSeparatorIfNeeded()
 			menu.addItem(openInBrowserMenuItem(links))
+			menu.addItem(openInBrowserReversedMenuItem(links))
 
 			menu.addSeparatorIfNeeded()
 			menu.addItem(copyArticleURLsMenuItem(links))
@@ -278,8 +279,14 @@ private extension TimelineViewController {
 	}
 	
 	func openInBrowserMenuItem(_ urlStrings: [String]) -> NSMenuItem {
-
 		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
+	}
+
+	func openInBrowserReversedMenuItem(_ urlStrings: [String]) -> NSMenuItem {
+		let item = menuItem(Browser.titleForOpenInBrowserInverted, #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
+		item.keyEquivalentModifierMask = .shift
+		item.isAlternate = true
+		return item;
 	}
 	
 	func copyArticleURLsMenuItem(_ urlStrings: [String]) -> NSMenuItem {
