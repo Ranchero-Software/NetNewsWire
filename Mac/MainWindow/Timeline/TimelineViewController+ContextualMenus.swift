@@ -97,10 +97,11 @@ extension TimelineViewController {
 	}
 	
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String] else {
+		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String?] else {
 			return
 		}
-		URLPasteboardWriter.write(urlStrings: urlStrings, to: .general)
+
+		URLPasteboardWriter.write(urlStrings: urlStrings, alertingInWindow: self.view.window)
 	}
 
 	@objc func performShareServiceFromContextualMenu(_ sender: Any?) {
@@ -177,12 +178,13 @@ private extension TimelineViewController {
 			}
 		}
 
-		let links = articles.compactMap { $0.preferredLink }
+		let links = articles.map { $0.preferredLink }
+		let compactLinks = links.compactMap { $0 }
 
-		if links.count > 0 {
+		if compactLinks.count > 0 {
 			menu.addSeparatorIfNeeded()
-			menu.addItem(openInBrowserMenuItem(links))
-			menu.addItem(openInBrowserReversedMenuItem(links))
+			menu.addItem(openInBrowserMenuItem(compactLinks))
+			menu.addItem(openInBrowserReversedMenuItem(compactLinks))
 
 			menu.addSeparatorIfNeeded()
 			menu.addItem(copyArticleURLsMenuItem(links))
@@ -289,7 +291,7 @@ private extension TimelineViewController {
 		return item;
 	}
 	
-	func copyArticleURLsMenuItem(_ urlStrings: [String]) -> NSMenuItem {
+	func copyArticleURLsMenuItem(_ urlStrings: [String?]) -> NSMenuItem {
 		let format = NSLocalizedString("Copy Article URL", comment: "Command")
 		let title = String.localizedStringWithFormat(format, urlStrings.count)
 		return menuItem(title, #selector(copyURLFromContextualMenu(_:)), urlStrings)

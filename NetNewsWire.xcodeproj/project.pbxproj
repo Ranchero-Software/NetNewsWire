@@ -828,6 +828,8 @@
 		B2B8075E239C49D300F191E0 /* RSImage-AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */; };
 		B2B80778239C4C7000F191E0 /* RSImage-AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */; };
 		B2B80779239C4C7300F191E0 /* RSImage-AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */; };
+		B2C12C6628F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C12C6528F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift */; };
+		B2C12C6728F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C12C6528F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift */; };
 		B528F81E23333C7E00E735DD /* page.html in Resources */ = {isa = PBXBuildFile; fileRef = B528F81D23333C7E00E735DD /* page.html */; };
 		BDCB516724282C8A00102A80 /* AccountsNewsBlur.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */; };
 		BDCB516824282C8A00102A80 /* AccountsNewsBlur.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */; };
@@ -1572,6 +1574,7 @@
 		B24EFD5923310109006C6242 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		B27EEBDF244D15F2000932E6 /* stylesheet.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = stylesheet.css; sourceTree = "<group>"; };
 		B2B8075D239C49D300F191E0 /* RSImage-AppIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RSImage-AppIcons.swift"; sourceTree = "<group>"; };
+		B2C12C6528F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLPasteboardWriter+NetNewsWire.swift"; sourceTree = "<group>"; };
 		B528F81D23333C7E00E735DD /* page.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = page.html; sourceTree = "<group>"; };
 		BDCB514D24282C8A00102A80 /* AccountsNewsBlur.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccountsNewsBlur.xib; sourceTree = "<group>"; };
 		C5A6ED5123C9AF4300AB6BE2 /* TitleActivityItemSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleActivityItemSource.swift; sourceTree = "<group>"; };
@@ -2270,6 +2273,7 @@
 				5117715424E1EA0F00A2A836 /* ArticleExtractorButton.swift */,
 				51FA73B62332D5F70090D516 /* LegacyArticleExtractorButton.swift */,
 				847CD6C9232F4CBF00FAC46D /* IconView.swift */,
+				B2C12C6528F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift */,
 				844B5B6B1FEA224B00C7C76A /* Keyboard */,
 				849A975F1ED9EB95007D329B /* Sidebar */,
 				849A97681ED9EBC8007D329B /* Timeline */,
@@ -3873,6 +3877,7 @@
 				65ED3FD0235DEF6C0081F399 /* Author+Scriptability.swift in Sources */,
 				65ED3FD1235DEF6C0081F399 /* PseudoFeed.swift in Sources */,
 				65ED3FD3235DEF6C0081F399 /* NSScriptCommand+NetNewsWire.swift in Sources */,
+				B2C12C6728F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift in Sources */,
 				65ED3FD4235DEF6C0081F399 /* Article+Scriptability.swift in Sources */,
 				515A5172243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */,
 				65ED3FD5235DEF6C0081F399 /* SmartFeed.swift in Sources */,
@@ -4223,6 +4228,7 @@
 				848B937221C8C5540038DC0D /* CrashReporter.swift in Sources */,
 				515A5171243E802B0089E588 /* ExtensionPointDetailViewController.swift in Sources */,
 				847CD6CA232F4CBF00FAC46D /* IconView.swift in Sources */,
+				B2C12C6628F4C46800373730 /* URLPasteboardWriter+NetNewsWire.swift in Sources */,
 				84BBB12E20142A4700F054F5 /* InspectorWindowController.swift in Sources */,
 				51EF0F7A22771B890050506E /* ColorHash.swift in Sources */,
 				84E46C7D1F75EF7B005ECFB3 /* AppDefaults.swift in Sources */,

@@ -330,7 +330,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
 		if let currentLinks {
-			URLPasteboardWriter.write(urlStrings: currentLinks, to: .general)
+			URLPasteboardWriter.write(urlStrings: currentLinks, alertingInWindow: window)
 		}
 	}
 
@@ -1071,8 +1071,8 @@ private extension MainWindowController {
 		return selectedArticles?.first { $0.preferredLink != nil }?.preferredLink
 	}
 
-	var currentLinks: [String]? {
-		return selectedArticles?.compactMap { $0.preferredLink }
+	var currentLinks: [String?]? {
+		return selectedArticles?.map { $0.preferredLink }
 	}
 
 	// MARK: - State Restoration
@@ -1110,7 +1110,11 @@ private extension MainWindowController {
 	// MARK: - Command Validation
 	
 	func canCopyArticleURL() -> Bool {
-		return currentLinks != nil
+		if let currentLinks, currentLinks.count != 0 {
+			return true
+		}
+
+		return false
 	}
 	
 	func canCopyExternalURL() -> Bool {
