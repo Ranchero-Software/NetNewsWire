@@ -95,11 +95,11 @@ extension Browser {
 
 		if urlStrings.count > 20 {
 			let alert = NSAlert()
-			let messageFormat = NSLocalizedString("Are you sure you want to open %ld articles in your browser?", comment: "")
+			let messageFormat = NSLocalizedString("Are you sure you want to open %ld articles in your browser?", comment: "Open in Browser confirmation alert message format")
 			alert.messageText = String.localizedStringWithFormat(messageFormat, urlStrings.count)
-			let confirmButtonTitleFormat = NSLocalizedString("Open %ld Articles", comment: "")
+			let confirmButtonTitleFormat = NSLocalizedString("Open %ld Articles", comment: "Open URLs in Browser confirm button format")
 			alert.addButton(withTitle: String.localizedStringWithFormat(confirmButtonTitleFormat, urlStrings.count))
-			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: ""))
+			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 			if let window {
 				alert.beginSheetModal(for: window) { response in
