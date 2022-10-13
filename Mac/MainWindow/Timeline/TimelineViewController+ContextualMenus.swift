@@ -101,7 +101,7 @@ extension TimelineViewController {
 			return
 		}
 
-		URLPasteboardWriter.write(urlStrings: urlStrings, alertingInWindow: self.view.window)
+		URLPasteboardWriter.write(urlStrings: urlStrings, alertingIn: self.view.window)
 	}
 
 	@objc func performShareServiceFromContextualMenu(_ sender: Any?) {

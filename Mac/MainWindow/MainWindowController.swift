@@ -330,7 +330,7 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
 		if let currentLinks {
-			URLPasteboardWriter.write(urlStrings: currentLinks, alertingInWindow: window)
+			URLPasteboardWriter.write(urlStrings: currentLinks, alertingIn: window)
 		}
 	}
 

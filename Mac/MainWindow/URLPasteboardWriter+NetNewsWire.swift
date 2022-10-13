@@ -15,7 +15,7 @@ extension URLPasteboardWriter {
 	///   - urlStrings: The URL strings to copy.
 	///   - pasteboard: The pastebaord to copy to.
 	///   - window: The window to use as a sheet parent for the alert. If `nil`, will run the alert modally.
-	static func write(urlStrings: [String?], to pasteboard: NSPasteboard = .general, alertingInWindow window: NSWindow?) {
+	static func write(urlStrings: [String?], to pasteboard: NSPasteboard = .general, alertingIn window: NSWindow?) {
 		URLPasteboardWriter.write(urlStrings: urlStrings.compactMap { $0 }, to: pasteboard)
 
 		if urlStrings.contains(nil), !AppDefaults.shared.hasSeenNotAllArticlesHaveURLsAlert {
