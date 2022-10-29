@@ -386,12 +386,8 @@ extension WebViewController: WKNavigationDelegate {
 			} else if components?.scheme == "mailto" {
 				decisionHandler(.cancel)
 				
-				guard let emailAddress = url.percentEncodedEmailAddress else {
-					return
-				}
-				
-				if UIApplication.shared.canOpenURL(emailAddress) {
-					UIApplication.shared.open(emailAddress, options: [.universalLinksOnly : false], completionHandler: nil)
+				if UIApplication.shared.canOpenURL(url) {
+					UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
 				} else {
 					let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
 					alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
