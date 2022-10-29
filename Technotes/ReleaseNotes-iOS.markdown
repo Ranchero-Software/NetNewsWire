@@ -1,6 +1,22 @@
 # iOS Release Notes
 
-### 6.1 TestFlight build 6105 = 6 July 2022
+### 6.1 TestFlight build 6108 - 28 Oct 2022
+Fixed a bug that could prevent BazQux syncing when an article may not contain all the info we expect
+Fixed a bug that could prevent Feedly syncing when marking a large number of articles as read
+Prevent Widget integration from running while in the background to remove some crashes
+
+### 6.1 TestFlight build 6107 - 28 Sept 2022
+
+Added links to iCloud Syncing Limitations & Solutions on iCloud Account Management UI
+Prevented the Delete option from showing in the Edit menu on the Article View
+Greatly reduced the possibility of a background crash caused by Widget integration
+Fixed Widget article icon lookup bug
+
+### 6.1 TestFlight build 6106 - 9 July 2022
+
+Fix a bug where images wouldn’t appear in the widget
+
+### 6.1 TestFlight build 6105 - 6 July 2022
 
 Write widget icons to the shared container
 Make crashes slightly less likely when building up widget data

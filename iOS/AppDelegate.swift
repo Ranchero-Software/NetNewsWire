@@ -172,10 +172,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func prepareAccountsForBackground() {
 		extensionFeedAddRequestFile.suspend()
-		widgetDataEncoder.encodeIfNecessary()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
+		widgetDataEncoder.encode()
 		waitForSyncTasksToFinish()
 	}
 	
@@ -294,7 +294,7 @@ private extension AppDelegate {
 			return
 		}
 		
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning {
+		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || widgetDataEncoder.isRunning {
 			logger.info("Waiting for sync to finish...")
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)
