@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.1 TestFlight build 6109 - 30 Oct 2022
+Enhanced Widget integration to make counts more accurate
+Enhanced Widget integration to make make it more efficient and save on battery life
+
 ### 6.1 TestFlight build 6108 - 28 Oct 2022
 Fixed a bug that could prevent BazQux syncing when an article may not contain all the info we expect
 Fixed a bug that could prevent Feedly syncing when marking a large number of articles as read
