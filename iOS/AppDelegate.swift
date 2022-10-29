@@ -175,16 +175,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 	
 	func prepareAccountsForBackground() {
 		extensionFeedAddRequestFile.suspend()
-		widgetDataEncoder.pause()
 		syncTimer?.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
+		widgetDataEncoder.encode()
 		waitForSyncTasksToFinish()
 	}
 	
 	func prepareAccountsForForeground() {
 		extensionFeedAddRequestFile.resume()
-		widgetDataEncoder.resume()
 		syncTimer?.update()
 
 		if let lastRefresh = AppDefaults.shared.lastRefresh {
@@ -298,7 +297,7 @@ private extension AppDelegate {
 			return
 		}
 		
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning {
+		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || widgetDataEncoder.isRunning {
 			os_log("Waiting for sync to finish...", log: self.log, type: .info)
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
 				self?.waitToComplete(completion: completion)
