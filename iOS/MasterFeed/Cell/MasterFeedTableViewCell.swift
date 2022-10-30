@@ -171,8 +171,10 @@ class MasterFeedTableViewCell : VibrantTableViewCell {
 		
 		let iconTintColor: UIColor
 		if isHighlighted || isSelected {
+			disclosureButton?.tintColor = AppAssets.vibrantTextColor
 			iconTintColor = AppAssets.vibrantTextColor
 		} else {
+			disclosureButton?.tintColor = AppAssets.secondaryAccentColor
 			if let preferredColor = iconImage?.preferredColor {
 				iconTintColor = UIColor(cgColor: preferredColor)
 			} else {
