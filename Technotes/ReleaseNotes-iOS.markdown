@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 6.1 TestFlight build 6109 - 30 Oct 2022
+### 6.1 TestFlight build 6109 - 31 Oct 2022
 Enhanced Widget integration to make counts more accurate
 Enhanced Widget integration to make make it more efficient and save on battery life
 
