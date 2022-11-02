@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 6.1.1 build 6107 3 Nov 2022
+
+Fixed a bug that could prevent users from accessing BazQux if an article was missing a field
+Fixed an issue that could prevent Feedly users from syncing if they tried to mark too many articles as read at the same time
+
 ### 6.1 build 6106 6 April 2022
 
 Small cosmetic change — better alignment for items in General Preferences pane
