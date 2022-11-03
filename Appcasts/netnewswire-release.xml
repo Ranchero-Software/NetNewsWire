@@ -6,6 +6,28 @@
         <description>Most recent NetNewsWire releases (not test builds).</description>
         <language>en</language>
 
+        <item>
+            <title>NetNewsWire 6.1</title>
+            <description><![CDATA[
+                <p>Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences or by adding the theme switcher to the toolbar</p>
+                <p>Copy URLs using repaired, rather than raw, feed links</p>
+                <p>Restore article scroll position on relaunching app</p>
+                <p>Added Copy Article URL and Copy External URL commands to the Edit menu</p>
+                <p>Fixed a bug where using cmd-Q wouldn’t always quit the app as quickly as one might prefer</p>
+                <p>Disallow creation of iCloud account in the app if iCloud and iCloud Drive aren’t both enabled</p>
+                <p>Fixed bug showing quote tweets that only included an image</p>
+                <p>Added a hidden pref to suppress downloading/syncing on start: `defaults write com.ranchero.NetNewsWire-Evergreen DevroeSuppressSyncOnLaunch -bool true`</p>
+                <p>Video autoplay is now disallowed</p>
+                <p>Article view now supports RTL layout</p>
+                <p>Fixed a few font and sizing issues</p>
+                <p>Updated built-in feeds</p>
+                <p>Better alignment for items in General Preferences pane</p>
+            ]]></description>
+            <pubDate>Thu, 07 Apr 2022 10:05:00 -0700</pubDate>
+            <enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1/NetNewsWire6.1.zip" sparkle:version="6106" sparkle:shortVersionString="6.1" length="10923258" type="application/zip" />
+            <sparkle:minimumSystemVersion>10.15.0</sparkle:minimumSystemVersion>
+        </item>
+
  		<item>
             <title>NetNewsWire 6.0.3</title>
             <description><![CDATA[
