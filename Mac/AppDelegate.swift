@@ -487,14 +487,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		}
 
 		#if !DEBUG
-		if item.action == #selector(debugDropConditionalGetInfo(_:)) ||
-			item.action == #selector(debugTestCrashReporterWindow(_:)) ||
-			item.action == #selector(debugTestCrashReportSending(_:)) ||
-			item.action == #selector(forceCrash(_:)) {
+		if item.action == #selector(debugDropConditionalGetInfo(_:)) {
 			return false
 		}
 		#endif
 		
+		if item.action == #selector(debugTestCrashReporterWindow(_:)) ||
+			item.action == #selector(debugTestCrashReportSending(_:)) ||
+			item.action == #selector(forceCrash(_:)) {
+			let appIDPrefix = Bundle.main.infoDictionary?["AppIdentifierPrefix"] as! String
+			return appIDPrefix == "M8L2WTLA8W."
+		}
+
 		#if !MAC_APP_STORE
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
