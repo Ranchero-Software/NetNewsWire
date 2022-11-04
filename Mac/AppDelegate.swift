@@ -794,7 +794,7 @@ extension AppDelegate {
 
 			let configuration = NSWorkspace.OpenConfiguration()
 			configuration.createsNewApplicationInstance = true
-			NSWorkspace.shared.openApplication(at: appURL, configuration: configuration)
+			NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration)
 			
 			NSApp.terminate(self)
 		}
