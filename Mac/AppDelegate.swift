@@ -771,6 +771,25 @@ extension AppDelegate {
 		#endif
 	}
 
+	@IBAction func debugClearImageCaches(_ sender: Any?) {
+		let alert = NSAlert()
+		alert.alertStyle = .warning
+
+		let localizedMessageText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
+		alert.messageText = NSLocalizedString("Are you sure you want to clear the image caches? This will restart NetNewsWire to begin reloading the remote images.",
+											  comment: "Clear and restart confirmation message.")
+		alert.addButton(withTitle: NSLocalizedString("Clear & Restart", comment: "Clear & Restart"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"))
+		
+		let userChoice = alert.runModal()
+		if userChoice == .alertFirstButtonReturn {
+			CacheCleaner.purge()
+
+			Process.launchedProcess(launchPath: "/usr/bin/open", arguments: ["-b", Bundle.main.bundleIdentifier!])
+			NSApp.terminate(self)
+		}
+	}
+
 	@IBAction func debugTestCrashReporterWindow(_ sender: Any?) {
 		#if DEBUG
 			crashReportWindowController = CrashReportWindowController(crashLogText: "This is a test crash log.")
