@@ -26,14 +26,14 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="URL" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="eRp-AP-WFq">
-                                                    <rect key="frame" x="20" y="4" width="315" height="36"/>
+                                                    <rect key="frame" x="20" y="4" width="295" height="36"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="URL"/>
                                                 </textField>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="eRp-AP-WFq" firstAttribute="top" secondItem="eNS-Rp-w0A" secondAttribute="top" constant="4" id="80p-a2-3NC"/>
-                                                <constraint firstAttribute="trailing" secondItem="eRp-AP-WFq" secondAttribute="trailing" id="Xue-v3-aqR"/>
+                                                <constraint firstAttribute="trailing" secondItem="eRp-AP-WFq" secondAttribute="trailing" constant="20" symbolic="YES" id="Xue-v3-aqR"/>
                                                 <constraint firstItem="eRp-AP-WFq" firstAttribute="leading" secondItem="eNS-Rp-w0A" secondAttribute="leading" constant="20" symbolic="YES" id="bHJ-7l-Pl3"/>
                                                 <constraint firstAttribute="bottom" secondItem="eRp-AP-WFq" secondAttribute="bottom" constant="4" id="fs0-iw-zTo"/>
                                             </constraints>
