@@ -54,10 +54,8 @@ class AddFeedViewController: UITableViewController {
 		activityIndicator.isHidden = true
 		activityIndicator.color = .label
 		
-		if initialFeed == nil, let urlString = UIPasteboard.general.string {
-			if urlString.mayBeURL {
-				initialFeed = urlString.normalizedURL
-			}
+		if initialFeed == nil && UIPasteboard.general.hasURLs, let url = UIPasteboard.general.url {
+			initialFeed = url.absoluteString.normalizedURL
 		}
 		
 		urlTextField.autocorrectionType = .no
