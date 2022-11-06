@@ -1963,8 +1963,10 @@ private extension SceneCoordinator {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
+		
+		emptyTheTimeline()
+		
 		guard let timelineFeed = timelineFeed else {
-			emptyTheTimeline()
 			completion()
 			return
 		}
@@ -1980,7 +1982,6 @@ private extension SceneCoordinator {
 			self?.replaceArticles(with: articles, animated: animated)
 			completion()
 		}
-		
 	}
 
 	func fetchUnsortedArticlesAsync(for representedObjects: [Any], completion: @escaping ArticleSetBlock) {
