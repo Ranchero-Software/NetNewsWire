@@ -135,7 +135,7 @@ private extension ArticleThemesManager {
 
 		let allThemeNames = appThemeNames.union(installedThemeNames)
 		
-		return allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
+		return allThemeNames.sorted(by: { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending })
 	}
 
 	func allThemePaths(_ folder: String) -> [String] {
