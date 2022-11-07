@@ -619,6 +619,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return shadowTable[indexPath.section].feedNodes[indexPath.row].node
 	}
 	
+	func indexPathFor(_ object: AnyObject) -> IndexPath? {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
+			return nil
+		}
+		return indexPathFor(node)
+	}
+	
 	func indexPathFor(_ node: Node) -> IndexPath? {
 		for i in 0..<shadowTable.count {
 			if let row = shadowTable[i].feedNodes.firstIndex(of: FeedNode(node)) {
@@ -1626,13 +1633,6 @@ private extension SceneCoordinator {
 		}
 	}
 
-	func indexPathFor(_ object: AnyObject) -> IndexPath? {
-		guard let node = treeController.rootNode.descendantNodeRepresentingObject(object) else {
-			return nil
-		}
-		return indexPathFor(node)
-	}
-	
 	func setTimelineFeed(_ feed: Feed?, animated: Bool, completion: (() -> Void)? = nil) {
 		timelineFeed = feed
 		

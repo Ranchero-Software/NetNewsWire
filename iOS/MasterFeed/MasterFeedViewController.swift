@@ -71,6 +71,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(configureContextMenu(_:)), name: .ActiveExtensionPointsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
@@ -137,6 +138,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
+	}
+	
+	@objc func displayNameDidChange(_ note: Notification) {
+		guard let object = note.object as? AnyObject else {
+			return
+		}
+		reloadCell(for: object)
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -830,6 +838,12 @@ private extension MasterFeedViewController {
 			}
 			completion(cell as! MasterFeedTableViewCell, indexPath)
 		}
+	}
+	
+	private func reloadCell(for object: AnyObject) {
+		guard let indexPath = coordinator.indexPathFor(object) else { return }
+		tableView.reloadRows(at: [indexPath], with: .none)
+		restoreSelectionIfNecessary(adjustScroll: false)
 	}
 
 	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
