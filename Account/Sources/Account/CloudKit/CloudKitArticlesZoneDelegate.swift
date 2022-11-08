@@ -28,7 +28,7 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 		self.articlesZone = articlesZone
 	}
 	
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+	func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		database.selectPendingReadStatusArticleIDs() { result in
 			switch result {
@@ -39,7 +39,7 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 					case .success(let pendingStarredStatusArticleIDs):
 
 						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-							self.update(records: changed,
+							self.update(records: updated,
 										 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
 										 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
 										 completion: completion)
