@@ -1,6 +1,8 @@
 /* Shared iOS and macOS CSS rules. Platform specific rules are at the bottom of this file. */
 
 body {
+	margin-left: auto;
+	margin-right: auto;
 	word-wrap: break-word;
 	max-width: 44em;
 }
@@ -428,11 +430,10 @@ a.footnote:hover,
 @supports (-webkit-touch-callout: none) {
 	
 	body {
-		margin-top: 3px;
-		margin-bottom: 20px;
-		margin-left: 20px;
-		margin-right: 20px;
-
+		padding-top: 3px;
+		padding-bottom: 20px;
+		padding-left: 20px;
+		padding-right: 20px;
 		word-break: break-word;
 		-webkit-hyphens: auto;
 		-webkit-text-size-adjust: none;
@@ -482,10 +483,8 @@ a.footnote:hover,
 @supports not (-webkit-touch-callout: none) {
 	
 	body {
-		margin-top: 20px;
-		margin-bottom: 20px;
-		margin-left: auto;
-		margin-right: auto;
+		padding-top: 20px;
+		padding-bottom: 20px;
 		padding-left: 48px;
 		padding-right: 48px;
 		font-family: -apple-system;
