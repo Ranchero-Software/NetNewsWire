@@ -219,6 +219,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		
     }
 	
+	func presentThemeImportError(_ error: Error) {
+		let windowScene = {
+			let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+			return scenes.filter { $0.activationState == .foregroundActive }.first ?? scenes.first
+		}()
+		guard let sceneDelegate = windowScene?.delegate as? SceneDelegate else { return }
+		sceneDelegate.presentError(error)
+	}
+	
 }
 
 // MARK: App Initialization

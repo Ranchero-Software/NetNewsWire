@@ -56,15 +56,14 @@ extension AppDelegate : AppDelegateAppleEvents {
 			if let themeURL = URL(string: themeURLString) {
 				let request = URLRequest(url: themeURL)
 				let task = URLSession.shared.downloadTask(with: request) { [weak self] location, response, error in
-					guard let location = location else {
+					guard let self, let location else {
 						return
 					}
 					
 					do {
 						try ArticleThemeDownloader.shared.handleFile(at: location)
 					} catch {
-						NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
-						self?.logger.error("Failed to import theme: \(error.localizedDescription, privacy: .public)")
+						self.presentThemeImportError(error)
 					}
 				}
 				task.resume()

@@ -30,13 +30,24 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 		}
 		set {
 			if newValue != currentThemeName {
-				AppDefaults.shared.currentThemeName = newValue
-				currentTheme = articleThemeWithThemeName(newValue)
+				do {
+					currentTheme = try articleThemeWithThemeName(newValue)
+					AppDefaults.shared.currentThemeName = newValue
+				} catch {
+					logger.error("Unable to set new theme: \(error.localizedDescription, privacy: .public)")
+				}
 			}
 		}
 	}
 
-	lazy var currentTheme = { articleThemeWithThemeName(currentThemeName) }() {
+	lazy var currentTheme = {
+		do {
+			return try articleThemeWithThemeName(currentThemeName)
+		} catch {
+			logger.error("Unable to load theme \(self.currentThemeName): \(error.localizedDescription, privacy: .public)")
+			return ArticleTheme.defaultTheme
+		}
+	}() {
 		didSet {
 			NotificationCenter.default.post(name: .CurrentArticleThemeDidChangeNotification, object: self)
 		}
@@ -66,7 +77,11 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 	
 	func presentedSubitemDidChange(at url: URL) {
 		themeNames = buildThemeNames()
-		currentTheme = articleThemeWithThemeName(currentThemeName)
+		do {
+			currentTheme = try articleThemeWithThemeName(currentThemeName)
+		} catch {
+			appDelegate.presentThemeImportError(error)
+		}
 	}
 
 	// MARK: API
@@ -88,7 +103,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
 	}
 	
-	func articleThemeWithThemeName(_ themeName: String) -> ArticleTheme {
+	func articleThemeWithThemeName(_ themeName: String) throws -> ArticleTheme {
 		if themeName == AppDefaults.defaultThemeName {
 			return ArticleTheme.defaultTheme
 		}
@@ -105,14 +120,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 			return ArticleTheme.defaultTheme
 		}
 		
-		do {
-			return try ArticleTheme(path: path, isAppTheme: isAppTheme)
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
-			logger.error("Failed to import theme: \(error.localizedDescription, privacy: .public)")
-			return ArticleTheme.defaultTheme
-		}
-		
+		return try ArticleTheme(path: path, isAppTheme: isAppTheme)
 	}
 
 	func deleteTheme(themeName: String) {

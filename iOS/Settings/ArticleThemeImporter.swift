@@ -11,8 +11,14 @@ import RSCore
 
 struct ArticleThemeImporter: Logging {
 	
-	static func importTheme(controller: UIViewController, filename: String) throws {
-		let theme = try ArticleTheme(path: filename, isAppTheme: false)
+	static func importTheme(controller: UIViewController, filename: String) {
+		let theme: ArticleTheme
+		do {
+			theme = try ArticleTheme(path: filename, isAppTheme: false)
+		} catch {
+			controller.presentError(error)
+			return
+		}
 		
 		let localizedTitleText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
 		let title = NSString.localizedStringWithFormat(localizedTitleText as NSString, theme.name, theme.creatorName) as String
@@ -29,7 +35,7 @@ struct ArticleThemeImporter: Logging {
 			let visitSiteTitle = NSLocalizedString("Show Website", comment: "Show Website")
 			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { action in
 				UIApplication.shared.open(url)
-				try? Self.importTheme(controller: controller, filename: filename)
+				Self.importTheme(controller: controller, filename: filename)
 			}
 			alertController.addAction(visitSiteAction)
 		}

@@ -326,7 +326,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 	}
 	
 	func restoreWindowState(_ activity: NSUserActivity?) {
@@ -543,16 +542,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
-	@objc func themeDownloadDidFail(_ note: Notification) {
-		guard let userInfo = note.userInfo,
-			  let error = userInfo["error"] as? Error else {
-				  return
-			  }
-		DispatchQueue.main.async {
-			self.rootSplitViewController.presentError(error, dismiss: nil)
-		}
-	}
-
 	// MARK: API
 	
 	func suspend() {
@@ -1275,13 +1264,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func importTheme(filename: String) {
-		do {
-			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename)
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
-			logger.error("Failed to import theme with error: \(error.localizedDescription, privacy: .public)")
-		}
-		
+		ArticleThemeImporter.importTheme(controller: rootSplitViewController, filename: filename)
 	}
 	
 	/// This will dismiss the foremost view controller if the user

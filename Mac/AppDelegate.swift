@@ -110,8 +110,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 	private var crashReporter: PLCrashReporter!
 #endif
 	
-	private var themeImportPath: String?
-	
 	override init() {
 		NSWindow.allowsAutomaticWindowTabbing = false
 		super.init()
@@ -130,7 +128,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 		
 		appDelegate = self
@@ -348,7 +345,51 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: timeout) && timeout > Date() { }
 	}
 	
+	func presentThemeImportError(_ error: Error) {
+		var informativeText: String = ""
+		
+		if let decodingError = error as? DecodingError {
+			switch decodingError {
+			case .typeMismatch(let type, _):
+				let localizedError = NSLocalizedString("This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist", comment: "Type mismatch")
+				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, type as! CVarArg) as String
+			case .valueNotFound(let value, _):
+				let localizedError = NSLocalizedString("This theme cannot be used because the the value—“%@”—is not found in the Info.plist.", comment: "Decoding value missing")
+				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, value as! CVarArg) as String
+			case .keyNotFound(let codingKey, _):
+				let localizedError = NSLocalizedString("This theme cannot be used because the the key—“%@”—is not found in the Info.plist.", comment: "Decoding key missing")
+				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, codingKey.stringValue) as String
+			case .dataCorrupted(let context):
+				guard let underlyingError = context.underlyingError as NSError?,
+					  let debugDescription = underlyingError.userInfo["NSDebugDescription"] as? String else {
+					informativeText = error.localizedDescription
+					break
+				}
+				let localizedError = NSLocalizedString("This theme cannot be used because of data corruption in the Info.plist: %@.", comment: "Decoding key missing")
+				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, debugDescription) as String
+				
+			default:
+				informativeText = error.localizedDescription
+			}
+		} else {
+			informativeText = error.localizedDescription
+		}
+		
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.alertStyle = .warning
+			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme error")
+			alert.informativeText = informativeText
+			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			
+			alert.buttons[0].keyEquivalent = "\r"
+			
+			let response = alert.runModal()
+		}
+	}
+	
 	// MARK: Notifications
+	
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AccountManager {
 			unreadCount = AccountManager.shared.unreadCount
@@ -949,8 +990,7 @@ internal extension AppDelegate {
 				}
 			}
 		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error, "path": filename])
-			logger.error("Error importing theme: \(error.localizedDescription, privacy: .public)")
+			presentThemeImportError(error)
 		}
 	}
 	
@@ -967,67 +1007,6 @@ internal extension AppDelegate {
 		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
 
 		alert.beginSheetModal(for: window)
-	}
-	
-	@objc func themeImportError(_ note: Notification) {
-		guard let userInfo = note.userInfo,
-			  let error = userInfo["error"] as? Error else {
-				  return
-			  }
-		themeImportPath = userInfo["path"] as? String
-		var informativeText: String = ""
-		if let decodingError = error as? DecodingError {
-			switch decodingError {
-			case .typeMismatch(let type, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist", comment: "Type mismatch")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, type as! CVarArg) as String
-			case .valueNotFound(let value, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the value—“%@”—is not found in the Info.plist.", comment: "Decoding value missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, value as! CVarArg) as String
-			case .keyNotFound(let codingKey, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the key—“%@”—is not found in the Info.plist.", comment: "Decoding key missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, codingKey.stringValue) as String
-			case .dataCorrupted(let context):
-				guard let underlyingError = context.underlyingError as NSError?,
-					  let debugDescription = underlyingError.userInfo["NSDebugDescription"] as? String else {
-					informativeText = error.localizedDescription
-					break
-				}
-				let localizedError = NSLocalizedString("This theme cannot be used because of data corruption in the Info.plist: %@.", comment: "Decoding key missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, debugDescription) as String
-				
-			default:
-				informativeText = error.localizedDescription
-			}
-		} else {
-			informativeText = error.localizedDescription
-		}
-		
-		DispatchQueue.main.async {
-			let alert = NSAlert()
-			alert.alertStyle = .warning
-			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
-			alert.informativeText = informativeText
-			alert.addButton(withTitle: NSLocalizedString("Open Theme Folder", comment: "Open Theme Folder"))
-			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
-			
-			let button = alert.buttons.first
-			button?.target = self
-			button?.action = #selector(self.openThemesFolder(_:))
-			alert.buttons[0].keyEquivalent = "\033"
-			alert.buttons[1].keyEquivalent = "\r"
-			alert.runModal()
-		}
-	}
-	
-	@objc func openThemesFolder(_ sender: Any) {
-		if themeImportPath == nil {
-			let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
-			NSWorkspace.shared.open(url)
-		} else {
-			let url = URL(fileURLWithPath: themeImportPath!)
-			NSWorkspace.shared.open(url.deletingLastPathComponent())
-		}
 	}
 	
 }
