@@ -1,10 +1,32 @@
 # iOS Release Notes
 
+### 6.1 Release build 6110 - 8 Nov 2022
+
+Changes since 6.0.1…
+
+Article themes. Several themes ship with the app, and you can create your own. You can change the theme in Preferences.
+Fixed a bug that could prevent BazQux syncing when an article may not contain all the info we expect
+Fixed a bug that could prevent Feedly syncing when marking a large number of articles as read
+Disallow creation of iCloud account in the app if iCloud and iCloud Drive aren’t both enabled
+Added links to iCloud Syncing Limitations & Solutions on iCloud Account Management UI
+Copy URLs using repaired, rather than raw, feed links
+Fixed bug showing quote tweets that only included an image
+Video autoplay is now disallowed
+Article view now supports RTL layout
+Fixed a few crashing bugs
+Fixed a layout bug that could happen on returning to the Feeds list
+Fixed a bug where go-to-feed might not properly expand disclosure triangles
+Prevented the Delete option from showing in the Edit menu on the Article View
+Fixed Widget article icon lookup bug
+
+
 ### 6.1 TestFlight build 6109 - 31 Oct 2022
+
 Enhanced Widget integration to make counts more accurate
 Enhanced Widget integration to make make it more efficient and save on battery life
 
 ### 6.1 TestFlight build 6108 - 28 Oct 2022
+
 Fixed a bug that could prevent BazQux syncing when an article may not contain all the info we expect
 Fixed a bug that could prevent Feedly syncing when marking a large number of articles as read
 Prevent Widget integration from running while in the background to remove some crashes
