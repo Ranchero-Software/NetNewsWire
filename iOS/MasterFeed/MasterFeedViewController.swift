@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 import Account
 import Articles
 import RSCore
@@ -16,13 +17,15 @@ import SafariServices
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
-	private var refreshProgressView: RefreshProgressView?
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
 		didSet {
 			addNewItemButton.primaryAction = nil
 		}
 	}
 
+	let refreshProgressModel = RefreshProgressModel()
+	lazy var progressBarViewController = UIHostingController(rootView: RefreshProgressView(progressBarMode: refreshProgressModel))
+	
 	var mainControllerIdentifer = MainControllerIdentifier.masterFeed
 	
 	weak var coordinator: SceneCoordinator!
@@ -75,8 +78,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		refreshControl!.tintColor = .clear
+
+		progressBarViewController.view.backgroundColor = .clear
+		let refreshProgressItemButton = UIBarButtonItem(customView: progressBarViewController.view)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 		
-		configureToolbar()
 		becomeFirstResponder()
 	}
 
@@ -595,7 +602,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		} else {
 			setFilterButtonToInactive()
 		}
-		refreshProgressView?.update()
+		refreshProgressModel.update()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 
 		configureContextMenu()
@@ -727,16 +734,6 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 // MARK: Private
 
 private extension MasterFeedViewController {
-	
-	func configureToolbar() {
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		toolbarItems?.insert(refreshProgressItemButton, at: 2)
-	}
 	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage

@@ -222,6 +222,8 @@ final class LocalAccountDelegate: AccountDelegate, Logging {
 
 	func accountDidInitialize(_ account: Account) {
 		self.account = account
+		refreshProgress.name = account.nameForDisplay
+		refreshProgress.isPrecise = true
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {

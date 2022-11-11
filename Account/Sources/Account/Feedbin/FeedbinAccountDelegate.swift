@@ -576,6 +576,7 @@ final class FeedbinAccountDelegate: AccountDelegate, Logging {
 
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .basic)
+		refreshProgress.name = account.nameForDisplay
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {

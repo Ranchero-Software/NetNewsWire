@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 import RSCore
 import Account
 import Articles
@@ -21,7 +22,9 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 	@IBOutlet weak var markAllAsReadButton: UIBarButtonItem!
 
-	private var refreshProgressView: RefreshProgressView!
+	let refreshProgressModel = RefreshProgressModel()
+	lazy var progressBarViewController = UIHostingController(rootView: RefreshProgressView(progressBarMode: refreshProgressModel))
+	
 	private var refreshProgressItemButton: UIBarButtonItem!
 	private var firstUnreadButton: UIBarButtonItem!
 
@@ -95,12 +98,12 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		refreshControl!.tintColor = .clear
+
+		progressBarViewController.view.backgroundColor = .clear
+		refreshProgressItemButton = UIBarButtonItem(customView: progressBarViewController.view)
 
 		configureToolbar()
-
-		refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView
-		refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView!)
-
 
 		resetUI(resetScroll: true)
 		
@@ -243,7 +246,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 
 	func updateUI() {
-		refreshProgressView?.update()
+		refreshProgressModel.update()
 		updateTitleUnreadCount()
 		updateToolbar()
 	}
@@ -614,12 +617,6 @@ private extension MasterTimelineViewController {
 			return
 		}
 		
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
 		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 	}
 

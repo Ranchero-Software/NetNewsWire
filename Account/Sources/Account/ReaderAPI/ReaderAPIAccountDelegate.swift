@@ -628,6 +628,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
+		refreshProgress.name = account.nameForDisplay
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {

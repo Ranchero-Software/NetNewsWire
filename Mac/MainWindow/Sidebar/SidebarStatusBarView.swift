@@ -31,8 +31,8 @@ final class SidebarStatusBarView: NSView {
 	}
 
 	override func awakeFromNib() {
-
 		progressIndicator.isHidden = true
+		progressIndicator.usesThreadedAnimation = true
 		progressLabel.isHidden = true
 
 		let progressLabelFontSize = progressLabel.font?.pointSize ?? 13.0
@@ -43,20 +43,18 @@ final class SidebarStatusBarView: NSView {
 	}
 
 	@objc func updateUI() {
-
 		guard let progress = progress else {
 			stopProgressIfNeeded()
 			return
 		}
 
 		updateProgressIndicator(progress)
-		updateProgressLabel(progress)
+		progressLabel.stringValue = progress.label
 	}
 
 	// MARK: Notifications
 
 	@objc dynamic func progressDidChange(_ notification: Notification) {
-
 		progress = AccountManager.shared.combinedRefreshProgress
 	}
 }
@@ -68,10 +66,10 @@ private extension SidebarStatusBarView {
 	static let animationDuration = 0.2
 
 	func stopProgressIfNeeded() {
-
 		if !isAnimatingProgress {
 			return
 		}
+		
 		isAnimatingProgress = false
 		self.progressIndicator.stopAnimation(self)
 		progressIndicator.isHidden = true
@@ -88,10 +86,10 @@ private extension SidebarStatusBarView {
 	}
 
 	func startProgressIfNeeded() {
-
 		if isAnimatingProgress {
 			return
 		}
+		
 		isAnimatingProgress = true
 		progressIndicator.isHidden = false
 		progressLabel.isHidden = false
@@ -108,10 +106,14 @@ private extension SidebarStatusBarView {
 	}
 
 	func updateProgressIndicator(_ progress: CombinedRefreshProgress) {
-
 		if progress.isComplete {
 			stopProgressIfNeeded()
 			return
+		}
+
+		if progressIndicator.isIndeterminate != progress.isIndeterminate {
+			stopProgressIfNeeded()
+			progressIndicator.isIndeterminate = progress.isIndeterminate
 		}
 
 		startProgressIfNeeded()
@@ -127,16 +129,4 @@ private extension SidebarStatusBarView {
 		}
 	}
 
-	func updateProgressLabel(_ progress: CombinedRefreshProgress) {
-
-		if progress.isComplete {
-			progressLabel.stringValue = ""
-			return
-		}
-
-		let formatString = NSLocalizedString("%@ of %@", comment: "Status bar progress")
-		let s = NSString(format: formatString as NSString, NSNumber(value: progress.numberCompleted), NSNumber(value: progress.numberOfTasks))
-
-		progressLabel.stringValue = s as String
-	}
 }

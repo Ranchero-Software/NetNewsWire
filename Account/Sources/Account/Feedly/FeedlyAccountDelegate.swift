@@ -527,6 +527,7 @@ final class FeedlyAccountDelegate: AccountDelegate, Logging {
 	func accountDidInitialize(_ account: Account) {
 		initializedAccount = account
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
+		refreshProgress.name = account.nameForDisplay
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
