@@ -530,7 +530,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 
 	func updateFeedSelection(animations: Animations) {
 		if let indexPath = coordinator.currentFeedIndexPath {
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
+			if indexPath != tableView.indexPathForSelectedRow {
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
+			}
 		} else {
 			if let indexPath = tableView.indexPathForSelectedRow {
 				if animations.contains(.select) {
