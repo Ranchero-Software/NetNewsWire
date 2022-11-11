@@ -13,7 +13,7 @@ enum AccountsAddCloudKitWindowControllerError: LocalizedError {
 	case iCloudDriveMissing
 	
 	var errorDescription: String? {
-		return NSLocalizedString("Unable to add iCloud Account. Please make sure you have iCloud and iCloud enabled in System Preferences.", comment: "Unable to add iCloud Account.")
+		return NSLocalizedString("Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Preferences.", comment: "Unable to add iCloud Account.")
 	}
 }
 
