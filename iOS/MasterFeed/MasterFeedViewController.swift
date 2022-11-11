@@ -81,6 +81,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		refreshControl!.tintColor = .clear
 
 		progressBarViewController.view.backgroundColor = .clear
+		progressBarViewController.view.translatesAutoresizingMaskIntoConstraints = false
 		let refreshProgressItemButton = UIBarButtonItem(customView: progressBarViewController.view)
 		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 		

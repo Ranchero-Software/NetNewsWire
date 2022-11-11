@@ -101,6 +101,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 		refreshControl!.tintColor = .clear
 
 		progressBarViewController.view.backgroundColor = .clear
+		progressBarViewController.view.translatesAutoresizingMaskIntoConstraints = false
 		refreshProgressItemButton = UIBarButtonItem(customView: progressBarViewController.view)
 
 		configureToolbar()
