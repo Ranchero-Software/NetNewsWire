@@ -59,9 +59,9 @@
         "package": "RSCore",
         "repositoryURL": "https://github.com/Ranchero-Software/RSCore.git",
         "state": {
-          "branch": "main",
-          "revision": "8a9c3e46449a9ea2c898aebcb37aad08ceeef7d9",
-          "version": null
+          "branch": null,
+          "revision": "b0d9ac8811cc35f8cce7b099f552bc947bfcddf5",
+          "version": "1.1.0"
         }
       },
       {
