@@ -15,7 +15,7 @@ protocol MasterFeedTableViewCellDelegate: AnyObject {
 	func masterFeedTableViewCellDisclosureDidToggle(_ sender: MasterFeedTableViewCell, expanding: Bool)
 }
 
-class MasterFeedTableViewCell : UITableViewCell {
+class MasterFeedTableViewCell : VibrantTableViewCell {
 
 	weak var delegate: MasterFeedTableViewCellDelegate?
 
@@ -128,12 +128,16 @@ class MasterFeedTableViewCell : UITableViewCell {
 				self.disclosureButton?.accessibilityLabel = NSLocalizedString("Collapse Folder", comment: "Collapse Folder")
 				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 1.570796)
 			} else {
-				self.disclosureButton?.accessibilityLabel = NSLocalizedString("Expand Folder", comment: "Expand Folder") 
+				self.disclosureButton?.accessibilityLabel = NSLocalizedString("Expand Folder", comment: "Expand Folder")
 				self.disclosureButton?.imageView?.transform = CGAffineTransform(rotationAngle: 0)
 			}
 		}
 	}
 	
+	override func applyThemeProperties() {
+		super.applyThemeProperties()
+	}
+
 	override func willTransition(to state: UITableViewCell.StateMask) {
 		super.willTransition(to: state)
 		isShowingEditControl = state.contains(.showingEditControl)
@@ -161,34 +165,34 @@ class MasterFeedTableViewCell : UITableViewCell {
 			delegate?.masterFeedTableViewCellDisclosureDidToggle(self, expanding: isDisclosureExpanded)
 		}
 	}
-//	
-//	override func updateVibrancy(animated: Bool) {
-//		super.updateVibrancy(animated: animated)
-//		
-//		let iconTintColor: UIColor
-//		if isHighlighted || isSelected {
-//			disclosureButton?.tintColor = AppAssets.vibrantTextColor
-//			iconTintColor = AppAssets.vibrantTextColor
-//		} else {
-//			disclosureButton?.tintColor = AppAssets.secondaryAccentColor
-//			if let preferredColor = iconImage?.preferredColor {
-//				iconTintColor = UIColor(cgColor: preferredColor)
-//			} else {
-//				iconTintColor = AppAssets.secondaryAccentColor
-//			}
-//		}
-//		
-//		if animated {
-//			UIView.animate(withDuration: Self.duration) {
-//				self.iconView.tintColor = iconTintColor
-//			}
-//		} else {
-//			self.iconView.tintColor = iconTintColor
-//		}
-//		
-//		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
-//	}
-//	
+	
+	override func updateVibrancy(animated: Bool) {
+		super.updateVibrancy(animated: animated)
+		
+		let iconTintColor: UIColor
+		if isHighlighted || isSelected {
+			disclosureButton?.tintColor = AppAssets.vibrantTextColor
+			iconTintColor = AppAssets.vibrantTextColor
+		} else {
+			disclosureButton?.tintColor = AppAssets.secondaryAccentColor
+			if let preferredColor = iconImage?.preferredColor {
+				iconTintColor = UIColor(cgColor: preferredColor)
+			} else {
+				iconTintColor = AppAssets.secondaryAccentColor
+			}
+		}
+		
+		if animated {
+			UIView.animate(withDuration: Self.duration) {
+				self.iconView.tintColor = iconTintColor
+			}
+		} else {
+			self.iconView.tintColor = iconTintColor
+		}
+		
+		updateLabelVibrancy(titleView, color: labelColor, animated: animated)
+	}
+	
 }
 
 private extension MasterFeedTableViewCell {
