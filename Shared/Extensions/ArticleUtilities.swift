@@ -14,7 +14,6 @@ import Account
 // These handle multiple accounts.
 
 func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
-	
 	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 
 	let group = DispatchGroup()
@@ -24,7 +23,7 @@ func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: 
 			continue
 		}
 		group.enter()
-		account.markArticles(accountArticles, statusKey: statusKey, flag: flag) { _ in
+		account.mark(articles: accountArticles, statusKey: statusKey, flag: flag) { _ in
 			group.leave()
 		}
 	}
