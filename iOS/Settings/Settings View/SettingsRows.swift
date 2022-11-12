@@ -137,7 +137,7 @@ struct SettingsViewRows {
 	/// in to view.
 	static var ExportSubscription: some View {
 		Label {
-			Text("Import Subscriptions")
+			Text("Export Subscriptions")
 		} icon: {
 			Image(systemName: "square.and.arrow.up")
 				.resizable()
