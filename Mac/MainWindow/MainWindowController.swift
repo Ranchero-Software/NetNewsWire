@@ -204,7 +204,15 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
 		if item.action == #selector(copyArticleURL(_:)) {
-			return canCopyArticleURL()
+			let canCopyArticleURL = canCopyArticleURL()
+
+			if let item = item as? NSMenuItem {
+				let format = NSLocalizedString("Copy Article URL", comment: "Copy Article URL");
+
+				item.title = String.localizedStringWithFormat(format, selectedArticles?.count ?? 0)
+			}
+
+			return canCopyArticleURL
 		}
 		
 		if item.action == #selector(copyExternalURL(_:)) {
@@ -321,21 +329,21 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.preferredURL?.absoluteString {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		if let currentLinks {
+			URLPasteboardWriter.write(urlStrings: currentLinks, alertingIn: window)
 		}
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.externalLink {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		if let links = selectedArticles?.compactMap({ $0.externalLink }) {
+			URLPasteboardWriter.write(urlStrings: links, to: .general)
 		}
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
-		if let link = currentLink {
-			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		}		
+		guard let selectedArticles else { return }
+		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
+		Browser.open(urlStrings, fromWindow: window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -1060,7 +1068,11 @@ private extension MainWindowController {
 	}
 
 	var currentLink: String? {
-		return oneSelectedArticle?.preferredLink
+		return selectedArticles?.first { $0.preferredLink != nil }?.preferredLink
+	}
+
+	var currentLinks: [String?]? {
+		return selectedArticles?.map { $0.preferredLink }
 	}
 
 	// MARK: - State Restoration
@@ -1098,7 +1110,11 @@ private extension MainWindowController {
 	// MARK: - Command Validation
 	
 	func canCopyArticleURL() -> Bool {
-		return currentLink != nil
+		if let currentLinks, currentLinks.count != 0 {
+			return true
+		}
+
+		return false
 	}
 	
 	func canCopyExternalURL() -> Bool {

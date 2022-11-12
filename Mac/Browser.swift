@@ -73,3 +73,48 @@ extension Browser {
 			NSLocalizedString("Open in Browser in Background", comment: "Open in Browser in Background menu item title")
 	}
 }
+
+extension Browser {
+
+	/// Open multiple pages in the default browser, warning if over a certain number of URLs are passed.
+	/// - Parameters:
+	///   - urlStrings: The URL strings to open.
+	///   - window: The window on which to display the "over limit" alert sheet. If `nil`, will be displayed as a
+	///   modal dialog.
+	///   - invertPreference: Whether to invert the user's "Open web pages in background in browser" preference.
+	static func open(_ urlStrings: [String], fromWindow window: NSWindow?, invertPreference: Bool = false) {
+		if urlStrings.count > 500 {
+			return
+		}
+
+		func doOpenURLs() {
+			for urlString in urlStrings {
+				Browser.open(urlString, invertPreference: invertPreference)
+			}
+		}
+
+		if urlStrings.count > 20 {
+			let alert = NSAlert()
+			let messageFormat = NSLocalizedString("Are you sure you want to open %ld articles in your browser?", comment: "Open in Browser confirmation alert message format")
+			alert.messageText = String.localizedStringWithFormat(messageFormat, urlStrings.count)
+			let confirmButtonTitleFormat = NSLocalizedString("Open %ld Articles", comment: "Open URLs in Browser confirm button format")
+			alert.addButton(withTitle: String.localizedStringWithFormat(confirmButtonTitleFormat, urlStrings.count))
+			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
+
+			if let window {
+				alert.beginSheetModal(for: window) { response in
+					if response == .alertFirstButtonReturn {
+						doOpenURLs()
+					}
+				}
+			} else {
+				if alert.runModal() == .alertFirstButtonReturn {
+					doOpenURLs()
+				}
+			}
+		} else {
+			doOpenURLs()
+		}
+	}
+
+}

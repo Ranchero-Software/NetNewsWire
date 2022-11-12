@@ -89,18 +89,19 @@ extension TimelineViewController {
 	}
 	
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
-
-		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
+		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String] else {
 			return
 		}
-		Browser.open(urlString, inBackground: false)
+
+		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 	
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
+		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String?] else {
 			return
 		}
-		URLPasteboardWriter.write(urlString: urlString, to: .general)
+
+		URLPasteboardWriter.write(urlStrings: urlStrings, alertingIn: self.view.window)
 	}
 
 	@objc func performShareServiceFromContextualMenu(_ sender: Any?) {
@@ -176,14 +177,19 @@ private extension TimelineViewController {
 				menu.addItem(markAllMenuItem)
 			}
 		}
-		
-		if articles.count == 1, let link = articles.first!.preferredLink {
+
+		let links = articles.map { $0.preferredLink }
+		let compactLinks = links.compactMap { $0 }
+
+		if compactLinks.count > 0 {
 			menu.addSeparatorIfNeeded()
-			menu.addItem(openInBrowserMenuItem(link))
+			menu.addItem(openInBrowserMenuItem(compactLinks))
+			menu.addItem(openInBrowserReversedMenuItem(compactLinks))
+
 			menu.addSeparatorIfNeeded()
-			menu.addItem(copyArticleURLMenuItem(link))
-			
-			if let externalLink = articles.first?.externalLink, externalLink != link {
+			menu.addItem(copyArticleURLsMenuItem(links))
+
+			if let externalLink = articles.first?.externalLink, externalLink != links.first {
 				menu.addItem(copyExternalURLMenuItem(externalLink))
 			}
 		}
@@ -274,13 +280,21 @@ private extension TimelineViewController {
 		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), articles)
 	}
 	
-	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
+	func openInBrowserMenuItem(_ urlStrings: [String]) -> NSMenuItem {
+		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
+	}
 
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString)
+	func openInBrowserReversedMenuItem(_ urlStrings: [String]) -> NSMenuItem {
+		let item = menuItem(Browser.titleForOpenInBrowserInverted, #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
+		item.keyEquivalentModifierMask = .shift
+		item.isAlternate = true
+		return item;
 	}
 	
-	func copyArticleURLMenuItem(_ urlString: String) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Copy Article URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString)
+	func copyArticleURLsMenuItem(_ urlStrings: [String?]) -> NSMenuItem {
+		let format = NSLocalizedString("Copy Article URL", comment: "Command")
+		let title = String.localizedStringWithFormat(format, urlStrings.count)
+		return menuItem(title, #selector(copyURLFromContextualMenu(_:)), urlStrings)
 	}
 	
 	func copyExternalURLMenuItem(_ urlString: String) -> NSMenuItem {
