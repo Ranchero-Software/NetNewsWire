@@ -62,28 +62,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 		migrateChangeToken()
 	}
 	
-	func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
-		fetchChangesInZone() { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				if case CloudKitZoneError.userDeletedZone = error {
-					self.createZoneRecord() { result in
-						switch result {
-						case .success:
-							self.refreshArticles(completion: completion)
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				} else {
-					completion(.failure(error))
-				}
-			}
-		}
-	}
-	
 	func saveNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
 		guard !articles.isEmpty else {
 			completion(.success(()))
