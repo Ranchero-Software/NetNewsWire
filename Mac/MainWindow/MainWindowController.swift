@@ -1434,7 +1434,7 @@ private extension MainWindowController {
 		let defaultThemeItem = NSMenuItem()
 		defaultThemeItem.title = ArticleTheme.defaultTheme.name
 		defaultThemeItem.action = #selector(selectArticleTheme(_:))
-		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentTheme.name ? .on : .off
 		articleThemeMenu.addItem(defaultThemeItem)
 
 		articleThemeMenu.addItem(NSMenuItem.separator())
@@ -1443,7 +1443,7 @@ private extension MainWindowController {
 			let themeItem = NSMenuItem()
 			themeItem.title = themeName
 			themeItem.action = #selector(selectArticleTheme(_:))
-			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentTheme.name ? .on : .off
 			articleThemeMenu.addItem(themeItem)
 		}
 
