@@ -804,7 +804,7 @@ private extension CloudKitAccountDelegate {
 					self.sendArticleStatus(for: account, showProgress: true) { result in
 						switch result {
 						case .success:
-							self.articlesZone.fetchChangesInZone() { _ in }
+							self.refreshArticleStatus(for: account) { _ in }
 						case .failure(let error):
                             self.logger.error("CloudKit Feed send articles error: \(error.localizedDescription, privacy: .public)")
 						}
