@@ -15,50 +15,35 @@ struct SettingsView: View {
 	@State private var showAddAccountView: Bool = false
 	@State private var helpSheet: HelpSheet = .help
 	@State private var showHelpSheet: Bool = false
+	@State private var showAbout: Bool = false
 		
 	var body: some View {
 		NavigationView {
 			List {
-				Section("Notifications, Badge, Data, and More") {
+				
+				// System Settings
+				Section(footer: Text("Configure access to Siri, background app refresh, mobile data, and more.")) {
 					SettingsViewRows.OpenSystemSettings
-					SettingsViewRows.ConfigureNewArticleNotifications
 				}
 				
-				Section(header: SettingsViewHeaders.AddAccountHeader($showAddAccountView)) {
-					SettingsViewRows.ActiveAccounts
-				}
-				
-				Section("Extensions") {
+				Section(footer: Text("Add, delete, or disable accounts and extensions.")) {
+					SettingsViewRows.AddAccount
 					SettingsViewRows.AddExtension
 				}
 				
-				Section("Subscriptions") {
-					SettingsViewRows.ImportSubscription
-					SettingsViewRows.ExportSubscription
-				}
-				
-				Section("Timeline") {
-					SettingsViewRows.SortOldestToNewest($appDefaults.timelineSortDirectionBool)
-					SettingsViewRows.GroupByFeed($appDefaults.timelineGroupByFeed)
-					SettingsViewRows.RefreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
-					SettingsViewRows.TimelineLayout
-				}
-				
-				Section("Articles") {
-					SettingsViewRows.ThemeSelection
-					SettingsViewRows.ConfirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
-					SettingsViewRows.OpenLinksInNetNewsWire($appDefaults.useSystemBrowser)
-					SettingsViewRows.EnableFullScreenArticles($appDefaults.articleFullscreenEnabled)
-				}
-				
-				Section("Appearance") {
+				Section(footer: Text("Configure the look and feel of NetNewsWire.")) {
+					SettingsViewRows.ConfigureNewArticleNotifications
 					SettingsViewRows.ConfigureAppearance
 				}
 				
-				Section("Help") {
+				
+								
+				Section {
 					ForEach(0..<HelpSheet.allCases.count, id: \.self) { i in
 						SettingsViewRows.ShowHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $helpSheet, $showHelpSheet)
 					}
+					SettingsViewRows.AboutNetNewsWire
+
 				}
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))
@@ -70,6 +55,9 @@ struct SettingsView: View {
 			}
 			.sheet(isPresented: $showHelpSheet) {
 				SafariView(url: helpSheet.url)
+			}
+			.sheet(isPresented: $showAbout) {
+				AboutView()
 			}
 		}
 	}

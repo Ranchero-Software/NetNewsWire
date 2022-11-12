@@ -15,7 +15,7 @@ struct SettingsViewHeaders {
 	
 	static func AddAccountHeader(_ showAddAccount: Binding<Bool>) -> some View {
 		HStack {
-			Text("Accounts")
+			//Text("Accounts")
 			Spacer()
 			Button {
 				showAddAccount.wrappedValue.toggle()
@@ -43,12 +43,11 @@ struct SettingsViewRows {
 		Label {
 			Text("Open System Settings")
 		} icon: {
-			Image(systemName: "gear.circle.fill")
+			Image("system.settings")
 				.resizable()
-				.renderingMode(.template)
-				.foregroundColor(.gray)
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 25.0, height: 25.0)
+				.clipShape(RoundedRectangle(cornerRadius: 6))
 		}
 		.onTapGesture {
 			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
@@ -60,14 +59,12 @@ struct SettingsViewRows {
 	static var ConfigureNewArticleNotifications: some View {
 		NavigationLink(destination: NotificationsViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
 			Label {
-				Text("New Article Notifications")
+				Text("Notifications and Sounds")
 			} icon: {
-				Image(systemName: "bell.square.fill")
+				Image("notifications.sounds")
 					.resizable()
-					.renderingMode(.template)
-					.foregroundColor(.red)
-					.aspectRatio(contentMode: .fit)
 					.frame(width: 25.0, height: 25.0)
+					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
 	}
@@ -77,14 +74,12 @@ struct SettingsViewRows {
 	static var AddAccount: some View {
 		NavigationLink(destination: AddAccountViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
 			Label {
-				Text("Add Account")
+				Text("Manage Accounts")
 			} icon: {
-				Image(systemName: "plus.app.fill")
+				Image("app.account")
 					.resizable()
-					.renderingMode(.template)
-					.foregroundColor(Color(uiColor: AppAssets.primaryAccentColor))
-					.aspectRatio(contentMode: .fit)
 					.frame(width: 25.0, height: 25.0)
+					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
 	}
@@ -110,12 +105,12 @@ struct SettingsViewRows {
 	static var AddExtension: some View {
 		NavigationLink(destination: NotificationsViewControllerRepresentable()) {
 			Label {
-				Text("Add Extension")
+				Text("Manage Extensions")
 			} icon: {
-				Image(systemName: "puzzlepiece.extension")
+				Image("app.extension")
 					.resizable()
-					.aspectRatio(contentMode: .fit)
 					.frame(width: 25.0, height: 25.0)
+					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
 	}
@@ -219,14 +214,12 @@ struct SettingsViewRows {
 	static var ConfigureAppearance: some View {
 		NavigationLink(destination: NotificationsViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
 			Label {
-				Text("Configure Appearance")
+				Text("Appearance")
 			} icon: {
-				Image(systemName: "rectangle.trailinghalf.filled")
+				Image("app.appearance")
 					.resizable()
-					.renderingMode(.template)
-					.foregroundColor(.black)
-					.aspectRatio(contentMode: .fit)
 					.frame(width: 25.0, height: 25.0)
+					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
 	}
@@ -251,6 +244,18 @@ struct SettingsViewRows {
 		.onTapGesture {
 			selectedSheet.wrappedValue = sheet
 			show.wrappedValue.toggle()
+		}
+	}
+	
+	static var AboutNetNewsWire: some View {
+		NavigationLink {
+			AboutView()
+		} label: {
+			Label {
+				Text("About NetNewsWire")
+			} icon: {
+				Image(systemName: "questionmark.square.dashed")
+			}
 		}
 	}
 }
