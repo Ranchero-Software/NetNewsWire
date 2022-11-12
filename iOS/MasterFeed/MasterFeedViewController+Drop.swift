@@ -18,16 +18,15 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	}
 	
 	func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-		guard let destIndexPath = destinationIndexPath,	destIndexPath.section > 0, tableView.hasActiveDrag else {
+		guard let destIndexPath = correctDestinationIndexPath(session: session), destIndexPath.section > 0, tableView.hasActiveDrag else {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
-			
+		
 		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? Feed,
-			  let destAccount = destFeed.account,
-			  let destCell = tableView.cellForRow(at: destIndexPath) else {
-				  return UITableViewDropProposal(operation: .forbidden)
-			  }
-
+			  let destAccount = destFeed.account else {
+			return UITableViewDropProposal(operation: .forbidden)
+		}
+		
 		// Validate account specific behaviors...
 		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
 		   let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
@@ -38,11 +37,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 
 		// Determine the correct drop proposal
 		if destFeed is Folder {
-			if session.location(in: destCell).y >= 0 {
-				return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
-			} else {
-				return UITableViewDropProposal(operation: .move, intent: .unspecified)
-			}
+			return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
 		} else {
 			return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
 		}
@@ -53,21 +48,14 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		guard let dragItem = dropCoordinator.items.first?.dragItem,
 			  let dragNode = dragItem.localObject as? Node,
 			  let source = dragNode.parent?.representedObject as? Container,
-			  let destIndexPath = dropCoordinator.destinationIndexPath else {
-				  return
-			  }
-		
-		let isFolderDrop: Bool = {
-			if coordinator.nodeFor(destIndexPath)?.representedObject is Folder, let propCell = tableView.cellForRow(at: destIndexPath) {
-				return dropCoordinator.session.location(in: propCell).y >= 0
-			}
-			return false
-		}()
+			  let destIndexPath = correctDestinationIndexPath(session: dropCoordinator.session) else {
+			return
+		}
 		
 		// Based on the drop we have to determine a node to start looking for a parent container.
 		let destNode: Node? = {
 			
-			if isFolderDrop {
+			if coordinator.nodeFor(destIndexPath)?.representedObject is Folder {
 				return coordinator.nodeFor(destIndexPath)
 			} else {
 				if destIndexPath.row == 0 {
@@ -99,7 +87,22 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			moveWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		}
 	}
+	
+}
 
+private extension MasterFeedViewController {
+
+	func correctDestinationIndexPath(session: UIDropSession) -> IndexPath? {
+		let location = session.location(in: tableView)
+		
+		var correctDestination: IndexPath?
+		tableView.performUsingPresentationValues {
+			correctDestination = tableView.indexPathForRow(at: location)
+		}
+		
+		return correctDestination
+	}
+	
 	func moveWebFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
 		guard sourceContainer !== destinationContainer else { return }
 		
