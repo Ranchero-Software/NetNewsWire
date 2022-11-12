@@ -894,6 +894,7 @@ extension MainWindowController: NSToolbarDelegate {
 			button.action = #selector(toggleArticleExtractor(_:))
 			button.rightClickAction = #selector(showArticleExtractorMenu(_:))
 			toolbarItem.view = button
+			toolbarItem.menuFormRepresentation = NSMenuItem(title: description, action: #selector(toggleArticleExtractor(_:)), keyEquivalent: "")
 			return toolbarItem
 
 		case .share:
@@ -1400,6 +1401,7 @@ private extension MainWindowController {
 			button.imageScaling = .scaleProportionallyDown
 			button.action = Selector((selector))
 			toolbarItem.view = button
+			toolbarItem.menuFormRepresentation = NSMenuItem(title: title, action: Selector((selector)), keyEquivalent: "")
 		} else {
 			toolbarItem.image = image
 			toolbarItem.isBordered = true
