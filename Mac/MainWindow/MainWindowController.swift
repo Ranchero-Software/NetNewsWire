@@ -529,16 +529,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			assertionFailure("Expected toolbarShowShareMenu to be called only by the Share item in the toolbar.")
 			return
 		}
-		guard let view = shareToolbarItem.view else {
-			// TODO: handle menu form representation
-			return
-		}
 
 		let sortedArticles = selectedArticles.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let sharingServicePicker = NSSharingServicePicker(items: items)
 		sharingServicePicker.delegate = sharingServicePickerDelegate
-		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+		
+		if let view = shareToolbarItem.view, view.window != nil {
+			sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+		} else if let view = window?.contentView {
+			sharingServicePicker.show(relativeTo: CGRect(x: view.frame.width / 2.0, y: view.frame.height - 4, width: 1, height: 1), of: view, preferredEdge: .minY)
+		}
 	}
 
 	@IBAction func moveFocusToSearchField(_ sender: Any?) {
@@ -666,6 +667,9 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		articleExtractor = nil
 		isShowingExtractedArticle = false
 		makeToolbarValidate()
+		if #available(macOS 13.0, *) { } else {
+			updateShareToolbarItemMenu()
+		}
 		
 		let detailState: DetailState
 		if let articles = articles {
@@ -894,11 +898,24 @@ extension MainWindowController: NSToolbarDelegate {
 			button.action = #selector(toggleArticleExtractor(_:))
 			button.rightClickAction = #selector(showArticleExtractorMenu(_:))
 			toolbarItem.view = button
+			toolbarItem.menuFormRepresentation = NSMenuItem(title: description, action: #selector(toggleArticleExtractor(_:)), keyEquivalent: "")
 			return toolbarItem
 
 		case .share:
 			let title = NSLocalizedString("Share", comment: "Share")
-			return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
+			let image = AppAssets.shareImage
+			// Should use NSSharingServicePickerToolbarItem here, but it has unexpected behavior on label-only mode.
+			if #available(macOS 13.0, *) {
+				// `item.view` is required for properly positioning the sharing picker.
+				return buildToolbarButton(.share, title, image, "toolbarShowShareMenu:", usesCustomButtonView: true)
+			} else {
+				let item = NSMenuToolbarItem(itemIdentifier: .share)
+				item.image = image
+				item.toolTip = title
+				item.label = title
+				item.showsIndicator = false
+				return item
+			}
 		
 		case .openInBrowser:
 			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
@@ -1386,19 +1403,26 @@ private extension MainWindowController {
 		}
 	}
 
-	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String) -> NSToolbarItem {
+	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String, usesCustomButtonView: Bool = false) -> NSToolbarItem {
 		let toolbarItem = RSToolbarItem(itemIdentifier: itemIdentifier)
 		toolbarItem.autovalidates = true
 		
-		let button = NSButton()
-		button.bezelStyle = .texturedRounded
-		button.image = image
-		button.imageScaling = .scaleProportionallyDown
-		button.action = Selector((selector))
-		
-		toolbarItem.view = button
 		toolbarItem.toolTip = title
 		toolbarItem.label = title
+		
+		if usesCustomButtonView {
+			let button = NSButton()
+			button.bezelStyle = .texturedRounded
+			button.image = image
+			button.imageScaling = .scaleProportionallyDown
+			button.action = Selector((selector))
+			toolbarItem.view = button
+			toolbarItem.menuFormRepresentation = NSMenuItem(title: title, action: Selector((selector)), keyEquivalent: "")
+		} else {
+			toolbarItem.image = image
+			toolbarItem.isBordered = true
+			toolbarItem.action = Selector((selector))
+		}
 		return toolbarItem
 	}
 
@@ -1449,6 +1473,18 @@ private extension MainWindowController {
 
 		articleThemeMenuToolbarItem.menu = articleThemeMenu
 		articleThemePopUpButton?.menu = articleThemeMenu
+	}
+
+	func updateShareToolbarItemMenu() {
+		guard let shareToolbarItem = shareToolbarItem as? NSMenuToolbarItem else {
+			return
+		}
+		if let shareMenu = shareMenu {
+			shareToolbarItem.isEnabled = true
+			shareToolbarItem.menu = shareMenu
+		} else {
+			shareToolbarItem.isEnabled = false
+		}
 	}
 
 }

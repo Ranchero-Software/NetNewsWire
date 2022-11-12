@@ -65,7 +65,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
 				unreadCount = 0
 
-				selectionDidChange(nil)
 				if showsSearchResults {
 					fetchAndReplaceArticlesAsync()
 				} else {
@@ -75,6 +74,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 					}
 					updateUnreadCount()
 				}
+				selectionDidChange(nil)
 			}
 		}
 	}
