@@ -836,43 +836,35 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 	/// Mark articleIDs statuses based on statusKey and flag.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
-	func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: ArticleIDsCompletionBlock? = nil) {
+	func markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {
 		guard !articleIDs.isEmpty else {
-			completion?(.success(Set<String>()))
+			completion?(nil)
 			return
 		}
-		database.markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let newArticleStatusIDs):
-				self.noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
-				completion?(.success(newArticleStatusIDs))
-			case .failure(let databaseError):
-				completion?(.failure(databaseError))
-			}
-		}
+		database.mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag, completion: completion) 
 	}
 
 	/// Mark articleIDs as read. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
-	func markAsRead(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
+	func markAsRead(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .read, flag: true, completion: completion)
 	}
 
 	/// Mark articleIDs as unread. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
-	func markAsUnread(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
+	func markAsUnread(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .read, flag: false, completion: completion)
 	}
 
 	/// Mark articleIDs as starred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
-	func markAsStarred(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
+	func markAsStarred(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .starred, flag: true, completion: completion)
 	}
 
 	/// Mark articleIDs as unstarred. Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
-	func markAsUnstarred(_ articleIDs: Set<String>, completion: ArticleIDsCompletionBlock? = nil) {
+	func markAsUnstarred(_ articleIDs: Set<String>, completion: DatabaseCompletionBlock? = nil) {
 		markAndFetchNew(articleIDs: articleIDs, statusKey: .starred, flag: false, completion: completion)
 	}
 

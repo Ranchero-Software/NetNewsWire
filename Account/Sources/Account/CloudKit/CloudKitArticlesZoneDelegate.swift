@@ -96,8 +96,8 @@ private extension CloudKitArticlesZoneDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
+		account?.markAsUnread(updateableUnreadArticleIDs) { databaseError in
+			if let databaseError = databaseError {
 				errorOccurred = true
                 self.logger.error("Error occurred while storing unread statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
@@ -105,8 +105,8 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.enter()
-		account?.markAsRead(updateableReadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
+		account?.markAsRead(updateableReadArticleIDs) { databaseError in
+			if let databaseError = databaseError {
 				errorOccurred = true
                 self.logger.error("Error occurred while storing read statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
@@ -114,8 +114,8 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.enter()
-		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
+		account?.markAsUnstarred(updateableUnstarredArticleIDs) { databaseError in
+			if let databaseError = databaseError {
 				errorOccurred = true
                 self.logger.error("Error occurred while storing unstarred statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
@@ -123,8 +123,8 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.enter()
-		account?.markAsStarred(updateableStarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
+		account?.markAsStarred(updateableStarredArticleIDs) { databaseError in
+			if let databaseError = databaseError {
 				errorOccurred = true
                 self.logger.error("Error occurred while stroing starred records: \(databaseError.localizedDescription, privacy: .public)")
 			}
