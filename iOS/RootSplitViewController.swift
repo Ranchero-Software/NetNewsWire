@@ -25,6 +25,11 @@ class RootSplitViewController: UISplitViewController {
 		coordinator.resetFocus()
 	}
 	
+	override func show(_ column: UISplitViewController.Column) {
+		guard !coordinator.isNavigationDisabled else { return }
+		super.show(column)
+	}
+	
 	// MARK: Keyboard Shortcuts
 	
 	@objc func scrollOrGoToNextUnread(_ sender: Any?) {
