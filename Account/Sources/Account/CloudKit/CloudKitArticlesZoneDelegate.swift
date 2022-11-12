@@ -37,14 +37,16 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 				self.database.selectPendingStarredStatusArticleIDs() { result in
 					switch result {
 					case .success(let pendingStarredStatusArticleIDs):
-
-						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-							self.update(records: updated,
-										 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-										 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-										 completion: completion)
+						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) { error in
+							if let error = error {
+								completion(.failure(error))
+							} else {
+								self.update(records: updated,
+											pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+											pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+											completion: completion)
+							}
 						}
-						
 					case .failure(let error):
                         self.logger.error("Error occurred getting pending starred records: \(error.localizedDescription, privacy: .public)")
 						completion(.failure(CloudKitZoneError.unknown))
@@ -63,19 +65,27 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 
 private extension CloudKitArticlesZoneDelegate {
 
-	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping () -> Void) {
+	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Error?) -> Void) {
 		let receivedRecordIDs = recordKeys.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticleStatus.recordType }).map({ $0.recordID })
 		let receivedArticleIDs = Set(receivedRecordIDs.map({ stripPrefix($0.externalID) }))
 		let deletableArticleIDs = receivedArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 		
 		guard !deletableArticleIDs.isEmpty else {
-			completion()
+			completion(nil)
 			return
 		}
 		
-		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
-			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
-				completion()
+		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { databaseError in
+			if let  databaseError = databaseError {
+				completion(databaseError)
+			} else {
+				self.account?.delete(articleIDs: deletableArticleIDs) { databaseError in
+					if let  databaseError = databaseError {
+						completion(databaseError)
+					} else {
+						completion(nil)
+					}
+				}
 			}
 		}
 	}
