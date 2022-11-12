@@ -603,6 +603,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return shadowTable[section].feedNodes.count
 	}
 	
+	func nodeFor(_ section: Int) -> Node? {
+		return treeController.rootNode.childAtIndex(section)
+	}
+	
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
 		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
 			return nil

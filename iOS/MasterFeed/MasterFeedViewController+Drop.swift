@@ -18,7 +18,15 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	}
 	
 	func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-		guard let destIndexPath = correctDestinationIndexPath(session: session), destIndexPath.section > 0, tableView.hasActiveDrag else {
+		guard tableView.hasActiveDrag else {
+			return UITableViewDropProposal(operation: .forbidden)
+		}
+		
+		guard let destIndexPath = correctDestinationIndexPath(session: session) else {
+			return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+		}
+		
+		guard destIndexPath.section > 0 else {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 		
@@ -56,7 +64,11 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		let destNode: Node? = {
 			
 			if coordinator.nodeFor(destIndexPath)?.representedObject is Folder {
-				return coordinator.nodeFor(destIndexPath)
+				if dropCoordinator.proposal.intent == .insertAtDestinationIndexPath {
+					return coordinator.nodeFor(destIndexPath.section)
+				} else {
+					return coordinator.nodeFor(destIndexPath)
+				}
 			} else {
 				if destIndexPath.row == 0 {
 					return coordinator.nodeFor(IndexPath(row: 0, section: destIndexPath.section))
