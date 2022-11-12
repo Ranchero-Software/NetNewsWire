@@ -1409,27 +1409,29 @@ private extension FeedbinAccountDelegate {
 			completion(.failure(FeedbinAccountDelegateError.invalidParameter))
 			return
 		}
+
+		func complete() {
+			DispatchQueue.main.async {
+				account.clearWebFeedMetadata(feed)
+				account.removeWebFeed(feed)
+				if let folders = account.folders {
+					for folder in folders {
+						folder.removeWebFeed(feed)
+					}
+				}
+				completion(.success(()))
+			}
+		}
 		
 		refreshProgress.addToNumberOfTasksAndRemaining(1)
 		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
 			self.refreshProgress.completeTask()
 			switch result {
 			case .success:
-				DispatchQueue.main.async {
-					account.clearWebFeedMetadata(feed)
-					account.removeWebFeed(feed)
-					if let folders = account.folders {
-						for folder in folders {
-							folder.removeWebFeed(feed)
-						}
-					}
-					completion(.success(()))
-				}
+				complete()
 			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
+				self.logger.error("Unable to remove feed from Feedbin. Removing locally and continue processing: \(error.localizedDescription, privacy: .public)")
+				complete()
 			}
 		}
 		
