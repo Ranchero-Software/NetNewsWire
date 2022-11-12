@@ -127,6 +127,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		return activity
 	}
 	
+	var isNavigationDisabled = false
+	
 	var isRootSplitCollapsed: Bool {
 		return rootSplitViewController.isCollapsed
 	}
@@ -932,6 +934,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 			return
 		}
 		
+		isNavigationDisabled = true
+		defer {
+			isNavigationDisabled = false
+		}
+		
 		if selectPrevUnreadArticleInTimeline() {
 			return
 		}
@@ -948,6 +955,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 			return
 		}
 		
+		isNavigationDisabled = true
+		defer {
+			isNavigationDisabled = false
+		}
+		
 		if selectNextUnreadArticleInTimeline() {
 			return
 		}
@@ -959,7 +971,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		selectNextUnreadFeed() {
 			self.selectNextUnreadArticleInTimeline()
 		}
-
 	}
 	
 	func scrollOrGoToNextUnread() {
