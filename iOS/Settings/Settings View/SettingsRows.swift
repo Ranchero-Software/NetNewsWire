@@ -213,7 +213,7 @@ struct SettingsViewRows {
 	static var ConfigureAppearance: some View {
 		NavigationLink(destination: AppearanceManagementView()) {
 			Label {
-				Text("Appearance")
+				Text("Display & Behaviors")
 			} icon: {
 				Image("app.appearance")
 					.resizable()
@@ -256,5 +256,12 @@ struct SettingsViewRows {
 				Image(systemName: "questionmark.square.dashed")
 			}
 		}
+	}
+}
+
+
+extension Binding where Value == Bool {
+	func negate() -> Bool {
+		return !(self.wrappedValue)
 	}
 }

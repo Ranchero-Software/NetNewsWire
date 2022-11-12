@@ -14,7 +14,7 @@ struct AppearanceManagementView: View {
 	
 	var body: some View {
 		List {
-			Section("Application Appearance") {
+			Section("Application") {
 				HStack {
 					appLightButton()
 					Spacer()
@@ -25,20 +25,22 @@ struct AppearanceManagementView: View {
 				.listRowBackground(Color.clear)
 			}
 			
-			Section("Timeline Appearance") {
+			Section("Timeline") {
 				SettingsViewRows.SortOldestToNewest($appDefaults.timelineSortDirectionBool)
 				SettingsViewRows.GroupByFeed($appDefaults.timelineGroupByFeed)
 				SettingsViewRows.RefreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
 			}
 			
-			Section("Article Appearance") {
+			Section("Article") {
 				SettingsViewRows.ThemeSelection
 				SettingsViewRows.ConfirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
-				SettingsViewRows.OpenLinksInNetNewsWire($appDefaults.useSystemBrowser)
-				SettingsViewRows.EnableFullScreenArticles($appDefaults.articleFullscreenEnabled)
+				SettingsViewRows.OpenLinksInNetNewsWire(Binding<Bool>(
+					get: { !appDefaults.useSystemBrowser },
+					set: { appDefaults.useSystemBrowser = !$0 }
+				))
 			}
 		}
-		.navigationTitle(Text("Appearance"))
+		.navigationTitle(Text("Display & Behaviors"))
 		.tint(Color(uiColor: AppAssets.primaryAccentColor))
     }
 	
