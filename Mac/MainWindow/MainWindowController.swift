@@ -1386,19 +1386,25 @@ private extension MainWindowController {
 		}
 	}
 
-	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String) -> NSToolbarItem {
+	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String, usesCustomButtonView: Bool = false) -> NSToolbarItem {
 		let toolbarItem = RSToolbarItem(itemIdentifier: itemIdentifier)
 		toolbarItem.autovalidates = true
 		
-		let button = NSButton()
-		button.bezelStyle = .texturedRounded
-		button.image = image
-		button.imageScaling = .scaleProportionallyDown
-		button.action = Selector((selector))
-		
-		toolbarItem.view = button
 		toolbarItem.toolTip = title
 		toolbarItem.label = title
+		
+		if usesCustomButtonView {
+			let button = NSButton()
+			button.bezelStyle = .texturedRounded
+			button.image = image
+			button.imageScaling = .scaleProportionallyDown
+			button.action = Selector((selector))
+			toolbarItem.view = button
+		} else {
+			toolbarItem.image = image
+			toolbarItem.isBordered = true
+			toolbarItem.action = Selector((selector))
+		}
 		return toolbarItem
 	}
 
