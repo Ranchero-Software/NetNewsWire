@@ -1147,14 +1147,11 @@ private extension MainWindowController {
 		
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
+			toolbarItem.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
 		}
 		
 		if let menuItem = item as? NSMenuItem {
 			menuItem.title = commandName
-		}
-		
-		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
 		}
 		
 		return result
@@ -1237,14 +1234,11 @@ private extension MainWindowController {
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
+			toolbarItem.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		}
 
 		if let menuItem = item as? NSMenuItem {
 			menuItem.title = commandName
-		}
-
-		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		}
 
 		return result
@@ -1269,24 +1263,24 @@ private extension MainWindowController {
 
 		guard let isReadFiltered = timelineContainerViewController?.isReadFiltered else {
 			(item as? NSMenuItem)?.title = hideCommand
-			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				toolbarItem.image = AppAssets.filterInactive
 			}
 			return false
 		}
 
 		if isReadFiltered {
 			(item as? NSMenuItem)?.title = showCommand
-			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem {
 				toolbarItem.toolTip = showCommand
-				button.image = AppAssets.filterActive
+				toolbarItem.image = AppAssets.filterActive
 			}
 		} else {
 			(item as? NSMenuItem)?.title = hideCommand
-			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				toolbarItem.image = AppAssets.filterInactive
 			}
 		}
 		
