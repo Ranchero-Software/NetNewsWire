@@ -7,8 +7,37 @@
 //
 
 import UIKit
+import SwiftUI
 import Account
 import UserNotifications
+
+struct NotificationsViewControllerRepresentable: UIViewControllerRepresentable {
+	func makeUIViewController(context: Context) -> NotificationsViewController {
+		let storyboard = UIStoryboard(name: "Settings", bundle: .main)
+		let controller = storyboard.instantiateViewController(withIdentifier: "NotificationsViewController") as! NotificationsViewController
+		
+		context.coordinator.parentObserver = controller.observe(\.parent, changeHandler: { vc, _ in
+			vc.parent?.title = vc.title
+			vc.parent?.navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
+		})
+		
+		return controller
+	}
+	
+	func updateUIViewController(_ uiViewController: NotificationsViewController, context: Context) {
+		//
+	}
+	
+	typealias UIViewControllerType = NotificationsViewController
+	
+	class Coordinator {
+		var parentObserver: NSKeyValueObservation?
+	}
+	
+	func makeCoordinator() -> Self.Coordinator { Coordinator() }
+	
+}
+
 
 class NotificationsViewController: UIViewController {
 	
@@ -89,9 +118,9 @@ class NotificationsViewController: UIViewController {
 	private func reloadVisibleCells(_ notification: Notification) {
 		guard let faviconURLString = notification.userInfo?["faviconURL"] as? String,
 			  let faviconHost = URL(string: faviconURLString)?.host else {
-				  return
-			  }
-	
+			return
+		}
+		
 		for cell in notificationsTableView.visibleCells {
 			if let notificationCell = cell as? NotificationsTableViewCell {
 				if let feedURLHost = URL(string: notificationCell.feed!.url)?.host {
@@ -117,21 +146,21 @@ class NotificationsViewController: UIViewController {
 		
 		
 		let filterMenu = UIMenu(title: "",
-						  image: nil,
-						  identifier: nil,
-						  options: [.displayInline],
-						  children: [
-							UIAction(
-								title: NSLocalizedString("Show Feeds with Notifications Enabled", comment: "Feeds with Notifications"),
 								image: nil,
 								identifier: nil,
-								discoverabilityTitle: nil,
-								attributes: [],
-								state: newArticleNotificationFilter ? .on : .off,
-								handler: { [weak self] _ in
-									self?.newArticleNotificationFilter.toggle()
-									self?.notificationsTableView.reloadData()
-								})])
+								options: [.displayInline],
+								children: [
+									UIAction(
+										title: NSLocalizedString("Show Feeds with Notifications Enabled", comment: "Feeds with Notifications"),
+										image: nil,
+										identifier: nil,
+										discoverabilityTitle: nil,
+										attributes: [],
+										state: newArticleNotificationFilter ? .on : .off,
+										handler: { [weak self] _ in
+											self?.newArticleNotificationFilter.toggle()
+											self?.notificationsTableView.reloadData()
+										})])
 		
 		
 		var menus = [UIMenuElement]()

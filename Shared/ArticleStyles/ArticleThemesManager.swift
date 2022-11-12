@@ -8,13 +8,14 @@
 
 import Foundation
 import RSCore
+import Combine
 
 public extension Notification.Name {
 	static let ArticleThemeNamesDidChangeNotification = Notification.Name("ArticleThemeNamesDidChangeNotification")
 	static let CurrentArticleThemeDidChangeNotification = Notification.Name("CurrentArticleThemeDidChangeNotification")
 }
 
-final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
+final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, ObservableObject {
 
 	static var shared: ArticleThemesManager!
 	public let folderPath: String

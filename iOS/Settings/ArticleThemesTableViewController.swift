@@ -10,6 +10,36 @@ import Foundation
 import UniformTypeIdentifiers
 import RSCore
 import UIKit
+import SwiftUI
+
+struct ArticleThemesViewControllerRepresentable: UIViewControllerRepresentable {
+	func makeUIViewController(context: Context) -> ArticleThemesTableViewController {
+		let storyboard = UIStoryboard(name: "Settings", bundle: .main)
+		let controller = storyboard.instantiateViewController(withIdentifier: "ArticleThemesTableViewController") as! ArticleThemesTableViewController
+		
+		context.coordinator.parentObserver = controller.observe(\.parent, changeHandler: { vc, _ in
+			vc.parent?.title = vc.title
+			vc.parent?.navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
+		})
+		
+		return controller
+	}
+	
+	func updateUIViewController(_ uiViewController: ArticleThemesTableViewController, context: Context) {
+		//
+	}
+	
+	typealias UIViewControllerType = ArticleThemesTableViewController
+	
+	class Coordinator {
+		var parentObserver: NSKeyValueObservation?
+	}
+	
+	func makeCoordinator() -> Self.Coordinator { Coordinator() }
+	
+}
+
+
 
 class ArticleThemesTableViewController: UITableViewController, Logging {
 

@@ -13,6 +13,7 @@ import Articles
 import RSCore
 import RSTree
 import SafariServices
+import SwiftUI
 
 protocol MainControllerIdentifiable {
 	var mainControllerIdentifer: MainControllerIdentifier { get }
@@ -1129,12 +1130,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func showSettings(scrollToArticlesSection: Bool = false) {
-		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
-		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
-		settingsNavController.modalPresentationStyle = .formSheet
-		settingsViewController.presentingParentController = rootSplitViewController
-		rootSplitViewController.present(settingsNavController, animated: true)
+//		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
+//		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
+//		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
+//		settingsNavController.modalPresentationStyle = .formSheet
+//		settingsViewController.presentingParentController = rootSplitViewController
+//		rootSplitViewController.present(settingsNavController, animated: true)
+		let hostedSettings = UIHostingController(rootView: SettingsView())
+		rootSplitViewController.present(hostedSettings, animated: true)
 	}
 	
 	func showAccountInspector(for account: Account) {

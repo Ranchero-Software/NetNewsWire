@@ -860,6 +860,10 @@
 		DFCE4F9228EF26F100405869 /* About.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9028EF26F000405869 /* About.plist */; };
 		DFCE4F9428EF278300405869 /* Thanks.md in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9328EF278300405869 /* Thanks.md */; };
 		DFCE4F9528EF278300405869 /* Thanks.md in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9328EF278300405869 /* Thanks.md */; };
+		DFD406F5291F79C900C02962 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406F4291F79C900C02962 /* SettingsView.swift */; };
+		DFD406F7291FB1A600C02962 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406F6291FB1A600C02962 /* SafariView.swift */; };
+		DFD406FA291FB5E400C02962 /* SettingsRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406F9291FB5E400C02962 /* SettingsRows.swift */; };
+		DFD406FC291FB63B00C02962 /* SettingsHelpSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */; };
 		DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DFFC199827A0D0D7004B7AEF /* NotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */; };
 		DFFC199A27A0D32A004B7AEF /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */; };
@@ -1601,6 +1605,10 @@
 		DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsNetNewsWireView.swift; sourceTree = "<group>"; };
 		DFCE4F9028EF26F000405869 /* About.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = About.plist; sourceTree = "<group>"; };
 		DFCE4F9328EF278300405869 /* Thanks.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Thanks.md; sourceTree = "<group>"; };
+		DFD406F4291F79C900C02962 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		DFD406F6291FB1A600C02962 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
+		DFD406F9291FB5E400C02962 /* SettingsRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRows.swift; sourceTree = "<group>"; };
+		DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpSheets.swift; sourceTree = "<group>"; };
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
 		DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
 		DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
@@ -2000,6 +2008,7 @@
 				516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */,
 				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
 				51A16990235E10D600EB091F /* Settings.storyboard */,
+				DFD406F8291FB5D500C02962 /* Settings View */,
 				516A09382360A2AE00EAE89B /* SettingsComboTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsComboTableViewCell.xib */,
 				516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */,
@@ -2059,6 +2068,7 @@
 				5183CCD9226E31A50010922C /* NonIntrinsicImageView.swift */,
 				5183CCCF226E1E880010922C /* NonIntrinsicLabel.swift */,
 				51A9A6092382FD240033AADF /* PoppableGestureRecognizerDelegate.swift */,
+				DFD406F6291FB1A600C02962 /* SafariView.swift */,
 				51C45250226506F400C03939 /* String-Extensions.swift */,
 				5108F6D723763094001ABC45 /* TickMarkSlider.swift */,
 				C5A6ED6C23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift */,
@@ -2880,6 +2890,16 @@
 				DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */,
 			);
 			path = About;
+			sourceTree = "<group>";
+		};
+		DFD406F8291FB5D500C02962 /* Settings View */ = {
+			isa = PBXGroup;
+			children = (
+				DFD406F4291F79C900C02962 /* SettingsView.swift */,
+				DFD406F9291FB5E400C02962 /* SettingsRows.swift */,
+				DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */,
+			);
+			path = "Settings View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4062,6 +4082,7 @@
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
 				51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */,
 				51AB8AB323B7F4C6008F147D /* WebViewController.swift in Sources */,
+				DFD406F7291FB1A600C02962 /* SafariView.swift in Sources */,
 				516A09392360A2AE00EAE89B /* SettingsComboTableViewCell.swift in Sources */,
 				176813D22564BA5900D98635 /* WidgetDataEncoder.swift in Sources */,
 				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
@@ -4081,6 +4102,7 @@
 				51C4526B226508F600C03939 /* MasterFeedViewController.swift in Sources */,
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
+				DFD406FA291FB5E400C02962 /* SettingsRows.swift in Sources */,
 				5193CD5A245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
@@ -4151,6 +4173,7 @@
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
 				512E094D2268B8AB00BDCFDD /* DeleteCommand.swift in Sources */,
+				DFD406FC291FB63B00C02962 /* SettingsHelpSheets.swift in Sources */,
 				5110C37D2373A8D100A9C04F /* InspectorIconHeaderView.swift in Sources */,
 				51F85BFB2275D85000C787DC /* Array-Extensions.swift in Sources */,
 				515A5180243E90260089E588 /* TwitterFeedProvider-Extensions.swift in Sources */,
@@ -4176,6 +4199,7 @@
 				51DC370B2405BC9A0095D371 /* PreloadedWebView.swift in Sources */,
 				D3555BF524664566005E48C3 /* ArticleSearchBar.swift in Sources */,
 				8454C3F3263F2D8700E3F9C7 /* IconImageCache.swift in Sources */,
+				DFD406F5291F79C900C02962 /* SettingsView.swift in Sources */,
 				B24E9ADE245AB88400DA5718 /* NSAttributedString+NetNewsWire.swift in Sources */,
 				C5A6ED5223C9AF4300AB6BE2 /* TitleActivityItemSource.swift in Sources */,
 				17071EF126F8137400F5E71D /* ArticleTheme+Notifications.swift in Sources */,
