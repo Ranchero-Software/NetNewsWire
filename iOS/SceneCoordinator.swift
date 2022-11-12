@@ -40,9 +40,11 @@ struct FeedNode: Hashable {
 	var node: Node
 	var feedID: FeedIdentifier
 	
-	init(_ node: Node) {
+	init?(_ node: Node) {
+		guard let feed = node.representedObject as? Feed else { return nil }
+		
 		self.node = node
-		self.feedID = (node.representedObject as! Feed).feedID!
+		self.feedID = feed.feedID!
 	}
 	
 	func hash(into hasher: inout Hasher) {
@@ -622,8 +624,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func indexPathFor(_ node: Node) -> IndexPath? {
+		guard let feedNode = FeedNode(node) else { return nil }
+		
 		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].feedNodes.firstIndex(of: FeedNode(node)) {
+			if let row = shadowTable[i].feedNodes.firstIndex(of: feedNode) {
 				return IndexPath(row: row, section: i)
 			}
 		}
@@ -1519,10 +1523,12 @@ private extension SceneCoordinator {
 			
 			if isExpanded(sectionNode) {
 				for node in sectionNode.childNodes {
-					feedNodes.append(FeedNode(node))
+					guard let feedNode = FeedNode(node) else { continue }
+					feedNodes.append(feedNode)
 					if isExpanded(node) {
 						for child in node.childNodes {
-							feedNodes.append(FeedNode(child))
+							guard let childNode = FeedNode(child) else { continue }
+							feedNodes.append(childNode)
 						}
 					}
 				}
