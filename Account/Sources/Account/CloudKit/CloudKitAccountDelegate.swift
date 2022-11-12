@@ -487,7 +487,7 @@ private extension CloudKitAccountDelegate {
 		
 		refreshProgress.isIndeterminate = true
 		refreshProgress.addToNumberOfTasksAndRemaining(3)
-		accountZone.fetchChangesInZone(incremental: false) { result in
+		accountZone.fetchChangesInZone() { result in
 			self.refreshProgress.completeTask()
 
 			let webFeeds = account.flattenedWebFeeds()
@@ -534,7 +534,7 @@ private extension CloudKitAccountDelegate {
 			completion(.failure(error))
 		}
 		
-		accountZone.fetchChangesInZone(incremental: false) { result in
+		accountZone.fetchChangesInZone() { result in
 			switch result {
 			case .success:
 				
