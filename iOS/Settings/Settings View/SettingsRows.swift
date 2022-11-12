@@ -179,13 +179,12 @@ struct SettingsViewRows {
 	
 	static var ThemeSelection: some View {
 		NavigationLink(destination: ArticleThemesViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
-			Label {
-				Text("Article Themes")
-			} icon: {
-				Image(systemName: "textformat")
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 25.0, height: 25.0)
+			HStack {
+				Text("Article Theme")
+				Spacer()
+				Text(ArticleThemesManager.shared.currentTheme.name)
+					.font(.callout)
+					.foregroundColor(.secondary)
 			}
 		}
 	}
@@ -212,7 +211,7 @@ struct SettingsViewRows {
 	/// This row, when tapped, will push the New Article Notifications
 	/// screen in to view.
 	static var ConfigureAppearance: some View {
-		NavigationLink(destination: NotificationsViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
+		NavigationLink(destination: AppearanceManagementView()) {
 			Label {
 				Text("Appearance")
 			} icon: {

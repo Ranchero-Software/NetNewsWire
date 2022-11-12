@@ -32,8 +32,8 @@ struct SettingsView: View {
 				}
 				
 				Section(footer: Text("Configure the look and feel of NetNewsWire.")) {
-					SettingsViewRows.ConfigureNewArticleNotifications
 					SettingsViewRows.ConfigureAppearance
+					SettingsViewRows.ConfigureNewArticleNotifications
 				}
 				
 				

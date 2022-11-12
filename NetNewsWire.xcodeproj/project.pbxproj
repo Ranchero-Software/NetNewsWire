@@ -864,6 +864,7 @@
 		DFD406F7291FB1A600C02962 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406F6291FB1A600C02962 /* SafariView.swift */; };
 		DFD406FA291FB5E400C02962 /* SettingsRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406F9291FB5E400C02962 /* SettingsRows.swift */; };
 		DFD406FC291FB63B00C02962 /* SettingsHelpSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */; };
+		DFD406FF291FDC0C00C02962 /* AppearanceManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406FE291FDC0C00C02962 /* AppearanceManagementView.swift */; };
 		DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DFFC199827A0D0D7004B7AEF /* NotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */; };
 		DFFC199A27A0D32A004B7AEF /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */; };
@@ -1609,6 +1610,7 @@
 		DFD406F6291FB1A600C02962 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		DFD406F9291FB5E400C02962 /* SettingsRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRows.swift; sourceTree = "<group>"; };
 		DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpSheets.swift; sourceTree = "<group>"; };
+		DFD406FE291FDC0C00C02962 /* AppearanceManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceManagementView.swift; sourceTree = "<group>"; };
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
 		DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
 		DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
@@ -2009,6 +2011,7 @@
 				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
 				51A16990235E10D600EB091F /* Settings.storyboard */,
 				DFD406F8291FB5D500C02962 /* Settings View */,
+				DFD406FD291FDBD900C02962 /* Appearance View */,
 				516A09382360A2AE00EAE89B /* SettingsComboTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsComboTableViewCell.xib */,
 				516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */,
@@ -2900,6 +2903,14 @@
 				DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */,
 			);
 			path = "Settings View";
+			sourceTree = "<group>";
+		};
+		DFD406FD291FDBD900C02962 /* Appearance View */ = {
+			isa = PBXGroup;
+			children = (
+				DFD406FE291FDC0C00C02962 /* AppearanceManagementView.swift */,
+			);
+			path = "Appearance View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4058,6 +4069,7 @@
 				B2B80778239C4C7000F191E0 /* RSImage-AppIcons.swift in Sources */,
 				518ED21D23D0F26000E0A862 /* UIViewController-Extensions.swift in Sources */,
 				DFFC199827A0D0D7004B7AEF /* NotificationsViewController.swift in Sources */,
+				DFD406FF291FDC0C00C02962 /* AppearanceManagementView.swift in Sources */,
 				51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */,
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
