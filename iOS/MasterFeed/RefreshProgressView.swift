@@ -23,20 +23,23 @@ struct RefreshProgressView: View {
 	}
 	
 	var body: some View {
-		if refreshProgressModel.isRefreshing {
-			if refreshProgressModel.isIndeterminate {
-				indeterminateProgressView
+		ZStack {
+			if refreshProgressModel.isRefreshing {
+				if refreshProgressModel.isIndeterminate {
+					indeterminateProgressView
+				} else {
+					ProgressView(value: refreshProgressModel.progress)
+						.progressViewStyle(LinearProgressViewStyle())
+						.frame(width: Self.width, height: Self.height)
+				}
 			} else {
-				ProgressView(value: refreshProgressModel.progress)
-					.progressViewStyle(LinearProgressViewStyle())
-					.frame(width: Self.width, height: Self.height)
+				Text(refreshProgressModel.label)
+					.accessibilityLabel(refreshProgressModel.label)
+					.font(.footnote)
+					.foregroundColor(.secondary)
 			}
-		} else {
-			Text(refreshProgressModel.label)
-				.accessibilityLabel(refreshProgressModel.label)
-				.font(.footnote)
-				.foregroundColor(.secondary)
 		}
+		.frame(width: 200, height: 44)
 	}
 	
 	var indeterminateProgressView: some View {
