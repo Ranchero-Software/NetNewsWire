@@ -23,8 +23,6 @@ final class CloudKitAccountZone: CloudKitZone {
 
 	var zoneID: CKRecordZone.ID
 	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-
     weak var container: CKContainer?
     weak var database: CKDatabase?
 	var delegate: CloudKitZoneDelegate?
