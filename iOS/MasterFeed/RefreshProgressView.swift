@@ -53,10 +53,13 @@ struct RefreshProgressView: View {
 					.offset(x: -Self.width * 0.6, y: 0)
 					.offset(x: Self.width * 1.2 * self.offset, y: 0)
 					.animation(.default.repeatForever().speed(0.265), value: self.offset)
-					.onAppear{
+					.onAppear {
 						withAnimation {
 							self.offset = 1
 						}
+					}
+					.onDisappear {
+						self.offset = 0
 					}
 			)
 			.clipShape(Capsule())
