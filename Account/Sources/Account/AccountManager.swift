@@ -70,6 +70,9 @@ public final class AccountManager: UnreadCountProvider {
 				if lastArticleFetchEndTime == nil || lastArticleFetchEndTime! < accountLastArticleFetchEndTime {
 					lastArticleFetchEndTime = accountLastArticleFetchEndTime
 				}
+			} else {
+				lastArticleFetchEndTime = nil
+				break
 			}
 		}
 		return lastArticleFetchEndTime
