@@ -66,7 +66,7 @@ private extension NSUserInterfaceItemIdentifier {
 
 private extension DetailWebView {
 
-	static let menuItemIdentifiersToHide: [NSUserInterfaceItemIdentifier] = [.DetailMenuItemIdentifierReload, .DetailMenuItemIdentifierOpenLink]
+	static let menuItemIdentifiersToHide: [NSUserInterfaceItemIdentifier] = [.DetailMenuItemIdentifierReload]
 	static let menuItemIdentifierMatchStrings = ["newwindow", "download"]
 
 	func shouldHideMenuItem(_ menuItem: NSMenuItem) -> Bool {
