@@ -912,7 +912,6 @@ extension MainWindowController: NSToolbarDelegate {
 		case .share:
 			let title = NSLocalizedString("Share", comment: "Share")
 			let image = AppAssets.shareImage
-			// Should use NSSharingServicePickerToolbarItem here, but it has unexpected behavior on label-only mode.
 			if #available(macOS 13.0, *) {
 				// `item.view` is required for properly positioning the sharing picker.
 				return buildToolbarButton(.share, title, image, "toolbarShowShareMenu:", usesCustomButtonView: true)
