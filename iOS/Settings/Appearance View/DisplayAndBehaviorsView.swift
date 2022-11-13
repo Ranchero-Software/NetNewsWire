@@ -1,5 +1,5 @@
 //
-//  AppearanceManagementView.swift
+//  DisplayAndBehaviorsView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Stuart Breckenridge on 12/11/2022.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct AppearanceManagementView: View {
+struct DisplayAndBehaviorsView: View {
     
 	@StateObject private var appDefaults = AppDefaults.shared
 	
@@ -105,6 +105,6 @@ struct AppearanceManagementView: View {
 
 struct AppearanceManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        AppearanceManagementView()
+        DisplayAndBehaviorsView()
     }
 }
