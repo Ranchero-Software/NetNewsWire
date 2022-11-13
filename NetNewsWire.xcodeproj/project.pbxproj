@@ -849,6 +849,7 @@
 		DDF9E1D728EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
 		DDF9E1D828EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
 		DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
+		DF59F072292085B800ACD33D /* ColorPaletteSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */; };
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DFC14F0F28EA55BD00F6EE86 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */; };
@@ -864,7 +865,7 @@
 		DFD406F7291FB1A600C02962 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406F6291FB1A600C02962 /* SafariView.swift */; };
 		DFD406FA291FB5E400C02962 /* SettingsRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406F9291FB5E400C02962 /* SettingsRows.swift */; };
 		DFD406FC291FB63B00C02962 /* SettingsHelpSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */; };
-		DFD406FF291FDC0C00C02962 /* AppearanceManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406FE291FDC0C00C02962 /* AppearanceManagementView.swift */; };
+		DFD406FF291FDC0C00C02962 /* DisplayAndBehaviorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */; };
 		DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DFFC199827A0D0D7004B7AEF /* NotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */; };
 		DFFC199A27A0D32A004B7AEF /* NotificationsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */; };
@@ -1600,6 +1601,7 @@
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = notificationSoundBlip.mp3; sourceTree = "<group>"; };
+		DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteSelectorView.swift; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNetNewsWireView.swift; sourceTree = "<group>"; };
@@ -1610,7 +1612,7 @@
 		DFD406F6291FB1A600C02962 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		DFD406F9291FB5E400C02962 /* SettingsRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRows.swift; sourceTree = "<group>"; };
 		DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpSheets.swift; sourceTree = "<group>"; };
-		DFD406FE291FDC0C00C02962 /* AppearanceManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceManagementView.swift; sourceTree = "<group>"; };
+		DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayAndBehaviorsView.swift; sourceTree = "<group>"; };
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
 		DFFC199727A0D0D7004B7AEF /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
 		DFFC199927A0D32A004B7AEF /* NotificationsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewCell.swift; sourceTree = "<group>"; };
@@ -2908,7 +2910,8 @@
 		DFD406FD291FDBD900C02962 /* Appearance View */ = {
 			isa = PBXGroup;
 			children = (
-				DFD406FE291FDC0C00C02962 /* AppearanceManagementView.swift */,
+				DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */,
+				DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */,
 			);
 			path = "Appearance View";
 			sourceTree = "<group>";
@@ -4063,13 +4066,14 @@
 				512E08E72268801200BDCFDD /* WebFeedTreeControllerDelegate.swift in Sources */,
 				51C452A422650A2D00C03939 /* ArticleUtilities.swift in Sources */,
 				51EF0F79227716380050506E /* ColorHash.swift in Sources */,
+				DF59F072292085B800ACD33D /* ColorPaletteSelectorView.swift in Sources */,
 				51F9F3FB23DFB25700A314FD /* Animations.swift in Sources */,
 				5195C1DA2720205F00888867 /* ShadowTableChanges.swift in Sources */,
 				5183CCDA226E31A50010922C /* NonIntrinsicImageView.swift in Sources */,
 				B2B80778239C4C7000F191E0 /* RSImage-AppIcons.swift in Sources */,
 				518ED21D23D0F26000E0A862 /* UIViewController-Extensions.swift in Sources */,
 				DFFC199827A0D0D7004B7AEF /* NotificationsViewController.swift in Sources */,
-				DFD406FF291FDC0C00C02962 /* AppearanceManagementView.swift in Sources */,
+				DFD406FF291FDC0C00C02962 /* DisplayAndBehaviorsView.swift in Sources */,
 				51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */,
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,

@@ -211,7 +211,7 @@ struct SettingsViewRows {
 	/// This row, when tapped, will push the New Article Notifications
 	/// screen in to view.
 	static var ConfigureAppearance: some View {
-		NavigationLink(destination: AppearanceManagementView()) {
+		NavigationLink(destination: DisplayAndBehaviorsView()) {
 			Label {
 				Text("Display & Behaviors")
 			} icon: {
