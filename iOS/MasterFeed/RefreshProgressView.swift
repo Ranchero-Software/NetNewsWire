@@ -60,7 +60,7 @@ struct RefreshProgressView: View {
 					}
 			)
 			.clipShape(Capsule())
-			.animation(.default, value: refreshProgressModel.isRefreshing)
+			.animation(.default, value: self.offset)
 			.frame(width: Self.width, height: Self.height)
 	}
 	
