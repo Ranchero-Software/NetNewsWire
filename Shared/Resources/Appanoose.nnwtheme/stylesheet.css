@@ -277,6 +277,10 @@ img, figure, video, div, object {
 	margin: 0 auto;
 }
 
+video {
+	width: 100% !important;
+}
+
 iframe {
 	max-width: 100%;
 	margin: 0 auto;
