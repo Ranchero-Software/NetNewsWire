@@ -72,7 +72,7 @@ struct SettingsViewRows {
 	/// This row, when tapped, will push the the Add Account screen
 	/// in to view.
 	static var AddAccount: some View {
-		NavigationLink(destination: AddAccountViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
+		NavigationLink(destination: AccountsManagementView()) {
 			Label {
 				Text("Manage Accounts")
 			} icon: {

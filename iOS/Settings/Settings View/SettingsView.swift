@@ -41,7 +41,6 @@ struct SettingsView: View {
 						SettingsViewRows.ShowHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $helpSheet, $showHelpSheet)
 					}
 					SettingsViewRows.AboutNetNewsWire
-
 				}
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))
