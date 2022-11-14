@@ -192,6 +192,7 @@
 		513F32882593EF8F0003048F /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 513F32872593EF8F0003048F /* RSCore */; };
 		513F32892593EF8F0003048F /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 513F32872593EF8F0003048F /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5141E7392373C18B0013FF27 /* WebFeedInspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5141E7382373C18B0013FF27 /* WebFeedInspectorViewController.swift */; };
+		514217062921C9DD00963F14 /* Bundle-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF42273625800C787DC /* Bundle-Extensions.swift */; };
 		5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5142192923522B5500E07E2C /* ImageViewController.swift */; };
 		514219372352510100E07E2C /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514219362352510100E07E2C /* ImageScrollView.swift */; };
 		5142194B2353C1CF00E07E2C /* main_mac.js in Resources */ = {isa = PBXBuildFile; fileRef = 5142194A2353C1CF00E07E2C /* main_mac.js */; };
@@ -2055,7 +2056,6 @@
 			children = (
 				51F9F3FA23DFB25700A314FD /* Animations.swift */,
 				51F85BFA2275D85000C787DC /* Array-Extensions.swift */,
-				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
 				51627A92238A3836007B3B4B /* CroppingPreviewParameters.swift */,
 				512AF9C1236ED52C0066F8BE /* ImageHeaderView.swift */,
 				512AF9DC236F05230066F8BE /* InteractiveLabel.swift */,
@@ -2404,6 +2404,7 @@
 				51A66684238075AE00CB272D /* AddWebFeedDefaultContainer.swift */,
 				849A97731ED9EC04007D329B /* ArticleStringFormatter.swift */,
 				849A97581ED9EB0D007D329B /* ArticleUtilities.swift */,
+				51F85BF42273625800C787DC /* Bundle-Extensions.swift */,
 				5108F6B52375E612001ABC45 /* CacheCleaner.swift */,
 				516AE9DE2372269A007DEEAA /* IconImage.swift */,
 				849A97971ED9EFAA007D329B /* Node-Extensions.swift */,
@@ -3933,6 +3934,7 @@
 				65ED3FFA235DEF6C0081F399 /* WebFeedInspectorViewController.swift in Sources */,
 				65ED3FFB235DEF6C0081F399 /* AccountsReaderAPIWindowController.swift in Sources */,
 				65ED3FFC235DEF6C0081F399 /* AccountsAddLocalWindowController.swift in Sources */,
+				514217062921C9DD00963F14 /* Bundle-Extensions.swift in Sources */,
 				65ED3FFD235DEF6C0081F399 /* PasteboardFolder.swift in Sources */,
 				51386A8F25673277005F3762 /* AccountCell.swift in Sources */,
 				65ED3FFE235DEF6C0081F399 /* AccountsFeedbinWindowController.swift in Sources */,
