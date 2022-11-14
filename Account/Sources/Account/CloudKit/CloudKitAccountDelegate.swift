@@ -40,7 +40,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 	
 	private let mainThreadOperationQueue = MainThreadOperationQueue()
 
-	private lazy var refresher: LocalAccountRefresher = {
+	private lazy var standardRefresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()
 		refresher.delegate = self
 		return refresher
@@ -73,6 +73,29 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 		mainThreadOperationQueue.add(op)
 	}
 	
+	func wipeArticlesZoneAndReload(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		guard refreshProgress.isComplete else {
+			completion(.success(()))
+			return
+		}
+
+		articlesZone.deleteZoneRecord { result in
+			switch result {
+			case .success:
+				self.articlesZone.createZoneRecord { result in
+					switch result {
+					case .success:
+						self.reloadArticlesZone(for: account, completion: completion)
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+
 	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		guard refreshProgress.isComplete else {
 			completion(.success(()))
@@ -462,7 +485,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 	// MARK: Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
-		refresher.suspend()
+		standardRefresher.suspend()
 	}
 
 	func suspendDatabase() {
@@ -470,12 +493,64 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 	}
 	
 	func resume() {
-		refresher.resume()
+		standardRefresher.resume()
 		database.resume()
 	}
 }
 
+// MARK: Private
+
 private extension CloudKitAccountDelegate {
+	
+	func reloadArticlesZone(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+		account.fetchArticlesAsync(.starred()) { result in
+			switch result {
+			case .success(let articles):
+				self.upload(articles: articles) { result in
+					switch result {
+					case .success:
+						account.fetchArticlesAsync(.unread()) { result in
+							switch result {
+							case .success(let articles):
+								self.upload(articles: articles) { result in
+									switch result {
+									case .success:
+										let allCloudKitFeeds = account.flattenedWebFeeds()
+										allCloudKitFeeds.forEach{ $0.dropConditionalGetInfo() }
+										
+										let reloadRefresher = LocalAccountRefresher()
+										reloadRefresher.delegate = ReloadAccountRefresherDelegate(self)
+										
+										self.combinedRefresh(account, allCloudKitFeeds, reloadRefresher, completion: completion)
+									case .failure(let error):
+										completion(.failure(error))
+									}
+								}
+							case .failure(let error):
+								completion(.failure(error))
+							}
+						}
+					case .failure(let error):
+						completion(.failure(error))
+					}
+				}
+			case .failure(let error):
+				completion(.failure(error))
+			}
+		}
+	}
+	
+	func upload(articles: Set<Article>, completion: @escaping (Result<Void, Error>) -> Void) {
+		let op = CloudKitUploadArticlesOperation(articlesZone: articlesZone, articles: articles)
+		op.completionBlock = { mainThreadOperaion in
+			if let error = op.error {
+				completion(.failure(error))
+			} else {
+				completion(.success(()))
+			}
+		}
+		mainThreadOperationQueue.add(op)
+	}
 	
 	func initialRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
@@ -501,7 +576,7 @@ private extension CloudKitAccountDelegate {
 					switch result {
 					case .success:
 						
-						self.combinedRefresh(account, webFeeds) { result in
+						self.combinedRefresh(account, webFeeds, self.standardRefresher) { result in
 							self.refreshProgress.clear()
 							switch result {
 							case .success:
@@ -547,7 +622,7 @@ private extension CloudKitAccountDelegate {
 					case .success:
 						self.refreshProgress.completeTask()
 						self.refreshProgress.isIndeterminate = false
-						self.combinedRefresh(account, webFeeds) { result in
+						self.combinedRefresh(account, webFeeds, self.standardRefresher) { result in
 							self.sendArticleStatus(for: account, showProgress: true) { _ in
 								self.refreshProgress.clear()
 								if case .failure(let error) = result {
@@ -570,7 +645,7 @@ private extension CloudKitAccountDelegate {
 		
 	}
 
-	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping (Result<Void, Error>) -> Void) {
+	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, _ refresher: LocalAccountRefresher, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		var refresherWebFeeds = Set<WebFeed>()
 		let group = DispatchGroup()
@@ -923,3 +998,70 @@ extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 	
 }
 
+class ReloadAccountRefresherDelegate: LocalAccountRefresherDelegate, Logging {
+	
+	weak var cloudKitAccountDelegate: CloudKitAccountDelegate?
+	
+	init(_ cloudKitAccountDelegate: CloudKitAccountDelegate) {
+		self.cloudKitAccountDelegate = cloudKitAccountDelegate
+	}
+	
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, requestCompletedFor: WebFeed) {
+	}
+	
+	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges, completion: @escaping () -> Void) {
+		let newArticleCount = articleChanges.newArticles?.count ?? 0
+		let updatedArticleCount = articleChanges.updatedArticles?.count ?? 0
+		let unchangedArticleCount = articleChanges.unchangedArticles?.count ?? 0
+		let incomingArticleCount = articleChanges.incomingArticles?.count ?? 0
+		let deletedArticleCount = articleChanges.deletedArticles?.count ?? 0
+
+		cloudKitAccountDelegate?.logger.debug(
+			"""
+			Uploading \(newArticleCount, privacy: .public) new articles, \(updatedArticleCount, privacy: .public) updated articles, \
+			and \(unchangedArticleCount, privacy: .public) unchanged articles out of \(incomingArticleCount, privacy: .public) total articles \
+			(\(deletedArticleCount, privacy: .public) were deleted and not uploaded.)
+			"""
+		)
+		
+		let group = DispatchGroup()
+		
+		if let newArticles = articleChanges.newArticles {
+			group.enter()
+			cloudKitAccountDelegate?.upload(articles: newArticles) { result in
+				if case .failure(let error) = result {
+					self.logger.error("An error occurred uploading new articles: \(error.localizedDescription, privacy: .public)")
+				}
+				group.leave()
+			}
+		}
+		
+		if let updatedArticles = articleChanges.updatedArticles {
+			group.enter()
+			cloudKitAccountDelegate?.upload(articles: updatedArticles) { result in
+				if case .failure(let error) = result {
+					self.logger.error("An error occurred uploading updated articles: \(error.localizedDescription, privacy: .public)")
+				}
+				group.leave()
+			}
+		}
+		
+		if let unchangedArticles = articleChanges.unchangedArticles {
+			// If the article is unchanged and unread, then we've already uploaded it
+			let unchangedReadArticles = unchangedArticles.filter { $0.status.read }
+			
+			group.enter()
+			cloudKitAccountDelegate?.upload(articles: unchangedReadArticles) { result in
+				if case .failure(let error) = result {
+					self.logger.error("An error occurred uploading already read articles: \(error.localizedDescription, privacy: .public)")
+				}
+				group.leave()
+			}
+		}
+		
+		group.notify(queue: .main) {
+			completion()
+		}
+	}
+	
+}

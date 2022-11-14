@@ -198,7 +198,7 @@ final class ArticlesTable: DatabaseTable {
 	func update(_ parsedItems: Set<ParsedItem>, _ webFeedID: String, _ deleteOlder: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .feedBased)
 		if parsedItems.isEmpty {
-			callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
+			callUpdateArticlesCompletionBlock(nil, nil, nil, nil, completion)
 			return
 		}
 
@@ -222,7 +222,7 @@ final class ArticlesTable: DatabaseTable {
 
 				let incomingArticles = Article.articlesWithParsedItems(parsedItems, webFeedID, self.accountID, statusesDictionary) //2
 				if incomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
+					self.callUpdateArticlesCompletionBlock(nil, nil, nil, nil, completion)
 					return
 				}
 
@@ -243,7 +243,7 @@ final class ArticlesTable: DatabaseTable {
 					articlesToDelete = Set<Article>()
 				}
 
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) //7
+				self.callUpdateArticlesCompletionBlock(incomingArticles, newArticles, updatedArticles, articlesToDelete, completion) //7
 
 				self.addArticlesToCache(newArticles)
 				self.addArticlesToCache(updatedArticles)
@@ -278,7 +278,7 @@ final class ArticlesTable: DatabaseTable {
 	func update(_ webFeedIDsAndItems: [String: Set<ParsedItem>], _ read: Bool, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		precondition(retentionStyle == .syncSystem)
 		if webFeedIDsAndItems.isEmpty {
-			callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
+			callUpdateArticlesCompletionBlock(nil, nil, nil, nil, completion)
 			return
 		}
 
@@ -304,13 +304,13 @@ final class ArticlesTable: DatabaseTable {
 
 				let allIncomingArticles = Article.articlesWithWebFeedIDsAndItems(webFeedIDsAndItems, self.accountID, statusesDictionary) //2
 				if allIncomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
+					self.callUpdateArticlesCompletionBlock(nil, nil, nil, nil, completion)
 					return
 				}
 
 				let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
 				if incomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
+					self.callUpdateArticlesCompletionBlock(nil, nil, nil, nil, completion)
 					return
 				}
 
@@ -321,7 +321,7 @@ final class ArticlesTable: DatabaseTable {
 				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
 				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
 
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, nil, completion) //7
+				self.callUpdateArticlesCompletionBlock(incomingArticles, newArticles, updatedArticles, nil, completion) //7
 
 				self.addArticlesToCache(newArticles)
 				self.addArticlesToCache(updatedArticles)
@@ -914,8 +914,11 @@ private extension ArticlesTable {
 
 	// MARK: - Saving Parsed Items
 	
-	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ deletedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
-		let articleChanges = ArticleChanges(newArticles: newArticles, updatedArticles: updatedArticles, deletedArticles: deletedArticles)
+	func callUpdateArticlesCompletionBlock(_ incomingArticles: Set<Article>?,
+										   _ newArticles: Set<Article>?,
+										   _ updatedArticles: Set<Article>?,
+										   _ deletedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
+		let articleChanges = ArticleChanges(incomingArticles: incomingArticles, newArticles: newArticles, updatedArticles: updatedArticles, deletedArticles: deletedArticles)
 		DispatchQueue.main.async {
 			completion(.success(articleChanges))
 		}

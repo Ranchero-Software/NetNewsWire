@@ -25,17 +25,28 @@ public typealias SingleUnreadCountResult = Result<Int, DatabaseError>
 public typealias SingleUnreadCountCompletionBlock = (SingleUnreadCountResult) -> Void
 
 public struct ArticleChanges {
+	public let incomingArticles: Set<Article>?
 	public let newArticles: Set<Article>?
 	public let updatedArticles: Set<Article>?
 	public let deletedArticles: Set<Article>?
 
+	public var unchangedArticles: Set<Article>? {
+		guard let incomingArticles = incomingArticles else { return nil }
+		return incomingArticles
+			.subtracting(newArticles ?? Set<Article>())
+			.subtracting(updatedArticles ?? Set<Article>())
+			.subtracting(deletedArticles ?? Set<Article>())
+	}
+	
 	public init() {
+		self.incomingArticles = Set<Article>()
 		self.newArticles = Set<Article>()
 		self.updatedArticles = Set<Article>()
 		self.deletedArticles = Set<Article>()
 	}
 	
-	public init(newArticles: Set<Article>?, updatedArticles: Set<Article>?, deletedArticles: Set<Article>?) {
+	public init(incomingArticles: Set<Article>?, newArticles: Set<Article>?, updatedArticles: Set<Article>?, deletedArticles: Set<Article>?) {
+		self.incomingArticles = incomingArticles
 		self.newArticles = newArticles
 		self.updatedArticles = updatedArticles
 		self.deletedArticles = deletedArticles

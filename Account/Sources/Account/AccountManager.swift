@@ -245,6 +245,22 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 
+	public func wipeCloudKitArticlesZoneAndReload(errorHandler: @escaping (Error) -> Void, completion: (() -> Void)? = nil) {
+		guard let cloudKitAccount = activeAccounts.first(where: { $0.type == .cloudKit }) else {
+			completion?()
+			return
+		}
+		
+		cloudKitAccount.wipeCloudKitArticlesZoneAndReload { result in
+			switch result {
+			case .success:
+				completion?()
+			case .failure(let error):
+				errorHandler(error)
+			}
+		}
+	}
+	
 	public func refreshAll(errorHandler: @escaping (Error) -> Void, completion: (() -> Void)? = nil) {
 		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
 

@@ -419,6 +419,15 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.receiveRemoteNotification(for: self, userInfo: userInfo, completion: completion)
 	}
 	
+	public func wipeCloudKitArticlesZoneAndReload(completion: @escaping (Result<Void, Error>) -> Void) {
+		guard let cloudKitAccountDelegate = delegate as? CloudKitAccountDelegate else {
+			completion(.success(()))
+			return
+		}
+		
+		cloudKitAccountDelegate.wipeArticlesZoneAndReload(for: self, completion: completion)
+	}
+
 	public func refreshAll(completion: @escaping (Result<Void, Error>) -> Void) {
 		delegate.refreshAll(for: self, completion: completion)
 	}

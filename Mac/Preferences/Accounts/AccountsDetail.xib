@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21225" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -15,6 +15,7 @@
                 <outlet property="nameTextField" destination="TT0-Kf-YTC" id="oMG-jn-Qn0"/>
                 <outlet property="typeLabel" destination="XYX-iz-hnq" id="SKM-et-3h3"/>
                 <outlet property="view" destination="3ki-rg-6yb" id="ttM-4E-OLN"/>
+                <outlet property="wipeCloudKitArticlesAndReloadButton" destination="56k-80-63v" id="bc2-1h-o2d"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -130,9 +131,22 @@
                                     </connections>
                                 </buttonCell>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="56k-80-63v">
+                                <rect key="frame" x="32" y="38" width="266" height="32"/>
+                                <buttonCell key="cell" type="push" title="Wipe iCloud Articles and Reload Them" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yOR-Lx-8cZ">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="wipeCloudKitArticlesAndReload:" target="-2" id="luN-qw-nZg"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="56k-80-63v" firstAttribute="centerX" secondItem="ft2-Mb-5LD" secondAttribute="centerX" id="GpX-Fs-EEb"/>
+                            <constraint firstItem="56k-80-63v" firstAttribute="top" secondItem="nVy-H3-bFO" secondAttribute="bottom" constant="16" id="JGg-ll-aeC"/>
                             <constraint firstItem="nVy-H3-bFO" firstAttribute="leading" secondItem="ft2-Mb-5LD" secondAttribute="leading" constant="20" symbolic="YES" id="SQe-pg-1hl"/>
+                            <constraint firstItem="gLh-gl-ZGQ" firstAttribute="centerX" secondItem="ft2-Mb-5LD" secondAttribute="centerX" id="VwD-aL-g9a"/>
                             <constraint firstAttribute="trailing" secondItem="nVy-H3-bFO" secondAttribute="trailing" constant="20" symbolic="YES" id="Wsq-ar-poP"/>
                             <constraint firstItem="gLh-gl-ZGQ" firstAttribute="top" secondItem="nVy-H3-bFO" secondAttribute="bottom" constant="8" id="a0S-2S-3dR"/>
                             <constraint firstItem="gLh-gl-ZGQ" firstAttribute="centerX" secondItem="ft2-Mb-5LD" secondAttribute="centerX" id="cW8-YT-BEn"/>

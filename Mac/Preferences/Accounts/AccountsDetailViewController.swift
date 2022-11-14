@@ -17,6 +17,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 	@IBOutlet weak var limitationsAndSolutionsRow: NSGridRow!
 	@IBOutlet weak var limitationsAndSolutionsTextField: NSTextField!
 	@IBOutlet weak var credentialsButton: NSButton!
+	@IBOutlet weak var wipeCloudKitArticlesAndReloadButton: NSButton!
 	
 	private var accountsWindowController: NSWindowController?
 	private var account: Account?
@@ -55,6 +56,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			limitationsAndSolutionsTextField.attributedStringValue = attrString
 		} else {
 			limitationsAndSolutionsRow.isHidden = true
+			wipeCloudKitArticlesAndReloadButton.isHidden = true
 		}
 		
 		credentialsButton.isHidden = hidesCredentialsButton
@@ -98,6 +100,30 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			break
 		}
 		
+	}
+	
+	@IBAction func wipeCloudKitArticlesAndReload(_ sender: Any) {
+		let alert = NSAlert()
+		alert.alertStyle = .warning
+		alert.messageText = NSLocalizedString("Wipe And Reload Articles?", comment: "Wipe And Reload Articles")
+		alert.informativeText = NSLocalizedString("Are you sure you want to wipe and reload the iCloud Articles? Only articles in RSS feeds and Starred articles will be reloaded.",
+												  comment: "Wipe And Reload Articles")
+		
+		alert.addButton(withTitle: NSLocalizedString("Wipe And Reload", comment: "Wipe And Reload"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Delete Account"))
+			
+		alert.beginSheetModal(for: view.window!) { [weak self] result in
+			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
+				guard let self = self else { return }
+
+				self.wipeCloudKitArticlesAndReloadButton.isEnabled = false
+				AccountManager.shared.wipeCloudKitArticlesZoneAndReload(errorHandler: ErrorHandler.present) {
+					self.wipeCloudKitArticlesAndReloadButton.isEnabled = true
+				}
+			}
+		}
+		
+	
 	}
 	
 }
