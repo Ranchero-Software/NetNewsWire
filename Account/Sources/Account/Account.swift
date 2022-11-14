@@ -635,6 +635,10 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		delegate.restoreFolder(for: self, folder: folder, completion: completion)
 	}
 	
+	public func mark(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+		delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag, completion: completion)
+	}
+	
 	func clearWebFeedMetadata(_ feed: WebFeed) {
 		webFeedMetadata[feed.url] = nil
 	}
@@ -829,11 +833,6 @@ public final class Account: DisplayNameProvider, UnreadCountProvider, Container,
 		}
 	}
 	
-	public func mark(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag, completion: completion)
-	}
-
-
 	/// Mark articleIDs statuses based on statusKey and flag.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	func mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: DatabaseCompletionBlock? = nil) {
