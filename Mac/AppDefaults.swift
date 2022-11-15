@@ -35,6 +35,7 @@ final class AppDefaults {
 		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
 		static let articleTextSize = "articleTextSize"
 		static let refreshInterval = "refreshInterval"
+		static let readMarkInterval = "readMarkInterval"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
@@ -319,6 +320,16 @@ final class AppDefaults {
 		}
 	}
 
+	var readMarkInterval: ReadMarkInterval {
+		get {
+			let rawValue = UserDefaults.standard.integer(forKey: Key.readMarkInterval)
+			return ReadMarkInterval(rawValue: rawValue) ?? ReadMarkInterval.immediately
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.readMarkInterval)
+		}
+	}
+	
 	func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
@@ -333,6 +344,7 @@ final class AppDefaults {
 										Key.timelineGroupByFeed: false,
 										"NSScrollViewShouldScrollUnderTitlebar": false,
 										Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+										Key.readMarkInterval: ReadMarkInterval.immediately.rawValue,
 										Key.showDebugMenu: showDebugMenu,
 										Key.currentThemeName: Self.defaultThemeName]
 
