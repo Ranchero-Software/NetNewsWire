@@ -39,12 +39,12 @@ extension TimelineViewController {
 
 	@objc func markArticlesReadFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else { return }
-		markArticles(articles, read: true)
+		markArticles(articles, read: true, directlyMarked: true)
 	}
 
 	@objc func markArticlesUnreadFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else { return }
-		markArticles(articles, read: false)
+		markArticles(articles, read: false, directlyMarked: true)
 	}
 
 	@objc func markAboveArticlesReadFromContextualMenu(_ sender: Any?) {
@@ -59,14 +59,14 @@ extension TimelineViewController {
 
 	@objc func markArticlesStarredFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else { return }
-		markArticles(articles, starred: true)
+		markArticles(articles, starred: true, directlyMarked: true)
 	}
 
 	@objc func markArticlesUnstarredFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else {
 			return
 		}
-		markArticles(articles, starred: false)
+		markArticles(articles, starred: false, directlyMarked: true)
 	}
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
@@ -81,7 +81,11 @@ extension TimelineViewController {
 			return
 		}
 		
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: feedArticles, markingRead: true, undoManager: undoManager) else {
+		guard let undoManager = undoManager,
+			  let markReadCommand = MarkStatusCommand(initialArticles: feedArticles,
+													  markingRead: true,
+													  directlyMarked: false,
+													  undoManager: undoManager) else {
 			return
 		}
 		
@@ -115,16 +119,21 @@ extension TimelineViewController {
 
 private extension TimelineViewController {
 
-	func markArticles(_ articles: [Article], read: Bool) {
-		markArticles(articles, statusKey: .read, flag: read)
+	func markArticles(_ articles: [Article], read: Bool, directlyMarked: Bool) {
+		markArticles(articles, statusKey: .read, flag: read, directlyMarked: directlyMarked)
 	}
 
-	func markArticles(_ articles: [Article], starred: Bool) {
-		markArticles(articles, statusKey: .starred, flag: starred)
+	func markArticles(_ articles: [Article], starred: Bool, directlyMarked: Bool) {
+		markArticles(articles, statusKey: .starred, flag: starred, directlyMarked: directlyMarked)
 	}
 
-	func markArticles(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
-		guard let undoManager = undoManager, let markStatusCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
+	func markArticles(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, directlyMarked: Bool) {
+		guard let undoManager = undoManager,
+				let markStatusCommand = MarkStatusCommand(initialArticles: articles,
+														  statusKey: statusKey,
+														  flag: flag,
+														  directlyMarked: directlyMarked,
+														  undoManager: undoManager) else {
 			return
 		}
 

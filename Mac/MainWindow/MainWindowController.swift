@@ -637,6 +637,10 @@ extension MainWindowController: NSWindowDelegate {
 
 extension MainWindowController: SidebarDelegate {
 
+	var directlyMarkedAsUnreadArticles: Set<Article>? {
+		return timelineContainerViewController?.currentTimelineViewController?.directlyMarkedAsUnreadArticles
+	}
+	
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?) {
 		// Don’t update the timeline if it already has those objects.
 		let representedObjectsAreTheSame = timelineContainerViewController?.regularTimelineViewControllerHasRepresentedObjects(selectedObjects) ?? false

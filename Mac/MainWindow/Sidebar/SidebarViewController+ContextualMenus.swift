@@ -69,8 +69,16 @@ extension SidebarViewController {
 			return
 		}
 		
-		let articles = unreadArticles(for: objects)
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+		var markableArticles = unreadArticles(for: objects)
+		if let directlyMarkedAsUnreadArticles = delegate?.directlyMarkedAsUnreadArticles {
+			markableArticles = markableArticles.subtracting(directlyMarkedAsUnreadArticles)
+		}
+
+		guard let undoManager = undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: markableArticles,
+														markingRead: true,
+														directlyMarked: false,
+														undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)

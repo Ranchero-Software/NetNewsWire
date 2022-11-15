@@ -110,6 +110,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		}
 	}
 	
+	private var directlyMarkedAsUnreadArticles = Set<Article>()
+	
 	var prefersStatusBarHidden = false
 	
 	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
@@ -330,6 +332,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(markStatusCommandDidDirectMarking(_:)), name: .MarkStatusCommandDidDirectMarking, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(markStatusCommandDidUndoDirectMarking(_:)), name: .MarkStatusCommandDidUndoDirectMarking, object: nil)
 	}
 	
 	func restoreWindowState(_ activity: NSUserActivity?) {
@@ -543,6 +547,28 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		
 		DispatchQueue.main.async {
 			self.importTheme(filename: url.path)
+		}
+	}
+	
+	@objc func markStatusCommandDidDirectMarking(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			  let articles = userInfo[Account.UserInfoKey.articles] as? Set<Article>,
+			  let statusKey = userInfo[Account.UserInfoKey.statusKey] as? ArticleStatus.Key,
+			  let flag = userInfo[Account.UserInfoKey.statusFlag] as? Bool else { return }
+		
+		if statusKey == .read && flag == false {
+			directlyMarkedAsUnreadArticles.formUnion(articles)
+		}
+	}
+
+	@objc func markStatusCommandDidUndoDirectMarking(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			  let articles = userInfo[Account.UserInfoKey.articles] as? Set<Article>,
+			  let statusKey = userInfo[Account.UserInfoKey.statusKey] as? ArticleStatus.Key,
+			  let flag = userInfo[Account.UserInfoKey.statusFlag] as? Bool else { return }
+		
+		if statusKey == .read && flag == false {
+			directlyMarkedAsUnreadArticles.subtract(articles)
 		}
 	}
 	
@@ -996,7 +1022,9 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func markAllAsRead(_ articles: [Article], completion: (() -> Void)? = nil) {
-		markArticlesWithUndo(articles, statusKey: .read, flag: true, completion: completion)
+		var markableArticles = Set(articles)
+		markableArticles.subtract(directlyMarkedAsUnreadArticles)
+		markArticlesWithUndo(markableArticles, statusKey: .read, flag: true, directlyMarked: false, completion: completion)
 	}
 	
 	func markAllAsReadInTimeline(completion: (() -> Void)? = nil) {
@@ -1044,13 +1072,13 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	
 	func markAsReadForCurrentArticle() {
 		if let article = currentArticle {
-			markArticlesWithUndo([article], statusKey: .read, flag: true)
+			markArticlesWithUndo([article], statusKey: .read, flag: true, directlyMarked: true)
 		}
 	}
 	
 	func markAsUnreadForCurrentArticle() {
 		if let article = currentArticle {
-			markArticlesWithUndo([article], statusKey: .read, flag: false)
+			markArticlesWithUndo([article], statusKey: .read, flag: false, directlyMarked: true)
 		}
 	}
 	
@@ -1062,7 +1090,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	
 	func toggleRead(_ article: Article) {
 		guard !article.status.read || article.isAvailableToMarkUnread else { return }
-		markArticlesWithUndo([article], statusKey: .read, flag: !article.status.read)
+		markArticlesWithUndo([article], statusKey: .read, flag: !article.status.read, directlyMarked: true)
 	}
 
 	func toggleStarredForCurrentArticle() {
@@ -1072,7 +1100,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func toggleStar(_ article: Article) {
-		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred)
+		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred, directlyMarked: true)
 	}
 
 	func timelineFeedIsEqualTo(_ feed: WebFeed) -> Bool {
@@ -1415,9 +1443,18 @@ private extension SceneCoordinator {
 		navController.toolbar.tintColor = AppAssets.primaryAccentColor
 	}
 
-	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
+	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, directlyMarked: Bool, completion: (() -> Void)? = nil) {
+		markArticlesWithUndo(Set(articles), statusKey: statusKey, flag: flag, directlyMarked: directlyMarked, completion: completion)
+	}
+	
+	func markArticlesWithUndo(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, directlyMarked: Bool, completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager,
-			  let markReadCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager, completion: completion) else {
+			  let markReadCommand = MarkStatusCommand(initialArticles: articles,
+													  statusKey: statusKey,
+													  flag: flag,
+													  directlyMarked: directlyMarked,
+													  undoManager: undoManager,
+													  completion: completion) else {
 			completion?()
 			return
 		}
@@ -1935,6 +1972,7 @@ private extension SceneCoordinator {
 	
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
+			directlyMarkedAsUnreadArticles = Set<Article>()
 			replaceArticles(with: Set<Article>(), animated: false)
 		}
 	}
