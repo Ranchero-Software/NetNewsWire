@@ -86,6 +86,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var selectedArticles: [Article] {
 		return articles.articlesForIndexes(tableView.selectedRowIndexes)
 	}
+	
+	var readMarkTimer: Timer?
 
 	var hasAtLeastOneSelectedArticle: Bool {
 		return tableView.selectedRow != -1
@@ -922,6 +924,9 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	func tableViewSelectionDidChange(_ notification: Notification) {
+		readMarkTimer?.invalidate()
+		readMarkTimer = nil
+		
 		if selectedArticles.isEmpty {
 			selectionDidChange(nil)
 			return
@@ -930,7 +935,9 @@ extension TimelineViewController: NSTableViewDelegate {
 		if selectedArticles.count == 1 {
 			let article = selectedArticles.first!
 			if !article.status.read {
-				markArticles(Set([article]), statusKey: .read, flag: true)
+				readMarkTimer = Timer.scheduledTimer(withTimeInterval: AppDefaults.shared.readMarkInterval.second, repeats: false) { _ in
+					markArticles(Set([article]), statusKey: .read, flag: true)
+				}
 			}
 		}
 
