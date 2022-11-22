@@ -31,7 +31,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		self.articlesZone = articlesZone
 	}
 	
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+	func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 		for deletedRecordKey in deleted {
 			switch deletedRecordKey.recordType {
 			case CloudKitAccountZone.CloudKitWebFeed.recordType:
@@ -43,7 +43,7 @@ class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 			}
 		}
 		
-		for changedRecord in changed {
+		for changedRecord in updated {
 			switch changedRecord.recordType {
 			case CloudKitAccountZone.CloudKitWebFeed.recordType:
 				addOrUpdateWebFeed(changedRecord)

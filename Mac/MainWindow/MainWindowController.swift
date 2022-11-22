@@ -204,7 +204,15 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		
 		if item.action == #selector(copyArticleURL(_:)) {
-			return canCopyArticleURL()
+			let canCopyArticleURL = canCopyArticleURL()
+
+			if let item = item as? NSMenuItem {
+				let format = NSLocalizedString("Copy Article URL", comment: "Copy Article URL");
+
+				item.title = String.localizedStringWithFormat(format, selectedArticles?.count ?? 0)
+			}
+
+			return canCopyArticleURL
 		}
 		
 		if item.action == #selector(copyExternalURL(_:)) {
@@ -321,21 +329,21 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 	}
 
 	@IBAction func copyArticleURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.preferredURL?.absoluteString {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		if let currentLinks {
+			URLPasteboardWriter.write(urlStrings: currentLinks, alertingIn: window)
 		}
 	}
 
 	@IBAction func copyExternalURL(_ sender: Any?) {
-		if let link = oneSelectedArticle?.externalLink {
-			URLPasteboardWriter.write(urlString: link, to: .general)
+		if let links = selectedArticles?.compactMap({ $0.externalLink }) {
+			URLPasteboardWriter.write(urlStrings: links, to: .general)
 		}
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
-		if let link = currentLink {
-			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		}		
+		guard let selectedArticles else { return }
+		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
+		Browser.open(urlStrings, fromWindow: window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -529,16 +537,17 @@ class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 			assertionFailure("Expected toolbarShowShareMenu to be called only by the Share item in the toolbar.")
 			return
 		}
-		guard let view = shareToolbarItem.view else {
-			// TODO: handle menu form representation
-			return
-		}
 
 		let sortedArticles = selectedArticles.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let sharingServicePicker = NSSharingServicePicker(items: items)
 		sharingServicePicker.delegate = sharingServicePickerDelegate
-		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+		
+		if let view = shareToolbarItem.view, view.window != nil {
+			sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+		} else if let view = window?.contentView {
+			sharingServicePicker.show(relativeTo: CGRect(x: view.frame.width / 2.0, y: view.frame.height - 4, width: 1, height: 1), of: view, preferredEdge: .minY)
+		}
 	}
 
 	@IBAction func moveFocusToSearchField(_ sender: Any?) {
@@ -628,6 +637,10 @@ extension MainWindowController: NSWindowDelegate {
 
 extension MainWindowController: SidebarDelegate {
 
+	var directlyMarkedAsUnreadArticles: Set<Article>? {
+		return timelineContainerViewController?.currentTimelineViewController?.directlyMarkedAsUnreadArticles
+	}
+	
 	func sidebarSelectionDidChange(_: SidebarViewController, selectedObjects: [AnyObject]?) {
 		// Don’t update the timeline if it already has those objects.
 		let representedObjectsAreTheSame = timelineContainerViewController?.regularTimelineViewControllerHasRepresentedObjects(selectedObjects) ?? false
@@ -666,6 +679,9 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		articleExtractor = nil
 		isShowingExtractedArticle = false
 		makeToolbarValidate()
+		if #available(macOS 13.0, *) { } else {
+			updateShareToolbarItemMenu()
+		}
 		
 		let detailState: DetailState
 		if let articles = articles {
@@ -894,11 +910,23 @@ extension MainWindowController: NSToolbarDelegate {
 			button.action = #selector(toggleArticleExtractor(_:))
 			button.rightClickAction = #selector(showArticleExtractorMenu(_:))
 			toolbarItem.view = button
+			toolbarItem.menuFormRepresentation = NSMenuItem(title: description, action: #selector(toggleArticleExtractor(_:)), keyEquivalent: "")
 			return toolbarItem
 
 		case .share:
 			let title = NSLocalizedString("Share", comment: "Share")
-			return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
+			let image = AppAssets.shareImage
+			if #available(macOS 13.0, *) {
+				// `item.view` is required for properly positioning the sharing picker.
+				return buildToolbarButton(.share, title, image, "toolbarShowShareMenu:", usesCustomButtonView: true)
+			} else {
+				let item = NSMenuToolbarItem(itemIdentifier: .share)
+				item.image = image
+				item.toolTip = title
+				item.label = title
+				item.showsIndicator = false
+				return item
+			}
 		
 		case .openInBrowser:
 			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
@@ -1043,7 +1071,11 @@ private extension MainWindowController {
 	}
 
 	var currentLink: String? {
-		return oneSelectedArticle?.preferredLink
+		return selectedArticles?.first { $0.preferredLink != nil }?.preferredLink
+	}
+
+	var currentLinks: [String?]? {
+		return selectedArticles?.map { $0.preferredLink }
 	}
 
 	// MARK: - State Restoration
@@ -1081,7 +1113,11 @@ private extension MainWindowController {
 	// MARK: - Command Validation
 	
 	func canCopyArticleURL() -> Bool {
-		return currentLink != nil
+		if let currentLinks, currentLinks.count != 0 {
+			return true
+		}
+
+		return false
 	}
 	
 	func canCopyExternalURL() -> Bool {
@@ -1130,14 +1166,11 @@ private extension MainWindowController {
 		
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
+			toolbarItem.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
 		}
 		
 		if let menuItem = item as? NSMenuItem {
 			menuItem.title = commandName
-		}
-		
-		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
 		}
 		
 		return result
@@ -1220,14 +1253,11 @@ private extension MainWindowController {
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
+			toolbarItem.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		}
 
 		if let menuItem = item as? NSMenuItem {
 			menuItem.title = commandName
-		}
-
-		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		}
 
 		return result
@@ -1252,24 +1282,24 @@ private extension MainWindowController {
 
 		guard let isReadFiltered = timelineContainerViewController?.isReadFiltered else {
 			(item as? NSMenuItem)?.title = hideCommand
-			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				toolbarItem.image = AppAssets.filterInactive
 			}
 			return false
 		}
 
 		if isReadFiltered {
 			(item as? NSMenuItem)?.title = showCommand
-			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem {
 				toolbarItem.toolTip = showCommand
-				button.image = AppAssets.filterActive
+				toolbarItem.image = AppAssets.filterActive
 			}
 		} else {
 			(item as? NSMenuItem)?.title = hideCommand
-			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
+			if let toolbarItem = item as? NSToolbarItem {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				toolbarItem.image = AppAssets.filterInactive
 			}
 		}
 		
@@ -1386,19 +1416,26 @@ private extension MainWindowController {
 		}
 	}
 
-	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String) -> NSToolbarItem {
+	func buildToolbarButton(_ itemIdentifier: NSToolbarItem.Identifier, _ title: String, _ image: NSImage, _ selector: String, usesCustomButtonView: Bool = false) -> NSToolbarItem {
 		let toolbarItem = RSToolbarItem(itemIdentifier: itemIdentifier)
 		toolbarItem.autovalidates = true
 		
-		let button = NSButton()
-		button.bezelStyle = .texturedRounded
-		button.image = image
-		button.imageScaling = .scaleProportionallyDown
-		button.action = Selector((selector))
-		
-		toolbarItem.view = button
 		toolbarItem.toolTip = title
 		toolbarItem.label = title
+		
+		if usesCustomButtonView {
+			let button = NSButton()
+			button.bezelStyle = .texturedRounded
+			button.image = image
+			button.imageScaling = .scaleProportionallyDown
+			button.action = Selector((selector))
+			toolbarItem.view = button
+			toolbarItem.menuFormRepresentation = NSMenuItem(title: title, action: Selector((selector)), keyEquivalent: "")
+		} else {
+			toolbarItem.image = image
+			toolbarItem.isBordered = true
+			toolbarItem.action = Selector((selector))
+		}
 		return toolbarItem
 	}
 
@@ -1434,7 +1471,7 @@ private extension MainWindowController {
 		let defaultThemeItem = NSMenuItem()
 		defaultThemeItem.title = ArticleTheme.defaultTheme.name
 		defaultThemeItem.action = #selector(selectArticleTheme(_:))
-		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentTheme.name ? .on : .off
 		articleThemeMenu.addItem(defaultThemeItem)
 
 		articleThemeMenu.addItem(NSMenuItem.separator())
@@ -1443,12 +1480,24 @@ private extension MainWindowController {
 			let themeItem = NSMenuItem()
 			themeItem.title = themeName
 			themeItem.action = #selector(selectArticleTheme(_:))
-			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentTheme.name ? .on : .off
 			articleThemeMenu.addItem(themeItem)
 		}
 
 		articleThemeMenuToolbarItem.menu = articleThemeMenu
 		articleThemePopUpButton?.menu = articleThemeMenu
+	}
+
+	func updateShareToolbarItemMenu() {
+		guard let shareToolbarItem = shareToolbarItem as? NSMenuToolbarItem else {
+			return
+		}
+		if let shareMenu = shareMenu {
+			shareToolbarItem.isEnabled = true
+			shareToolbarItem.menu = shareMenu
+		} else {
+			shareToolbarItem.isEnabled = false
+		}
 	}
 
 }

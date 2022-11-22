@@ -53,7 +53,6 @@ final class AppDefaults {
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
 		static let hasUsedFullScreenPreviously = "hasUsedFullScreenPreviously"
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
-		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
@@ -193,15 +192,6 @@ final class AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
-		}
-	}
-	
-	var lastRefresh: Date? {
-		get {
-			return AppDefaults.date(for: Key.lastRefresh)
-		}
-		set {
-			AppDefaults.setDate(for: Key.lastRefresh, newValue)
 		}
 	}
 	

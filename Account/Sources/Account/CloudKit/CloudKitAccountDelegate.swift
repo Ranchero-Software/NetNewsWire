@@ -426,6 +426,7 @@ final class CloudKitAccountDelegate: AccountDelegate, Logging {
 
 	func accountDidInitialize(_ account: Account) {
 		self.account = account
+		refreshProgress.name = account.nameForDisplay
 		
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, refreshProgress: refreshProgress, articlesZone: articlesZone)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
@@ -484,6 +485,7 @@ private extension CloudKitAccountDelegate {
 			completion(.failure(error))
 		}
 		
+		refreshProgress.isIndeterminate = true
 		refreshProgress.addToNumberOfTasksAndRemaining(3)
 		accountZone.fetchChangesInZone() { result in
 			self.refreshProgress.completeTask()
@@ -495,6 +497,7 @@ private extension CloudKitAccountDelegate {
 			case .success:
 				self.refreshArticleStatus(for: account) { result in
 					self.refreshProgress.completeTask()
+					self.refreshProgress.isIndeterminate = false
 					switch result {
 					case .success:
 						
@@ -522,6 +525,7 @@ private extension CloudKitAccountDelegate {
 	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		let intialWebFeedsCount = account.flattenedWebFeeds().count
+		refreshProgress.isIndeterminate = true
 		refreshProgress.addToNumberOfTasksAndRemaining(3 + intialWebFeedsCount)
 
 		func fail(_ error: Error) {
@@ -542,6 +546,7 @@ private extension CloudKitAccountDelegate {
 					switch result {
 					case .success:
 						self.refreshProgress.completeTask()
+						self.refreshProgress.isIndeterminate = false
 						self.combinedRefresh(account, webFeeds) { result in
 							self.sendArticleStatus(for: account, showProgress: true) { _ in
 								self.refreshProgress.clear()
@@ -799,7 +804,7 @@ private extension CloudKitAccountDelegate {
 					self.sendArticleStatus(for: account, showProgress: true) { result in
 						switch result {
 						case .success:
-							self.articlesZone.fetchChangesInZone() { _ in }
+							self.refreshArticleStatus(for: account) { _ in }
 						case .failure(let error):
                             self.logger.error("CloudKit Feed send articles error: \(error.localizedDescription, privacy: .public)")
 						}

@@ -28,6 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 		coordinator = SceneCoordinator(rootSplitViewController: rootViewController)
 		rootViewController.coordinator = coordinator
 		rootViewController.delegate = coordinator
+		rootViewController.showsSecondaryOnlyButton = true
 		
 		coordinator.restoreWindowState(session.stateRestorationActivity)
 		
@@ -93,6 +94,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 	
 	func cleanUp(conditional: Bool) {
 		coordinator.cleanUp(conditional: conditional)
+	}
+	
+	func presentError(_ error: Error) {
+		self.window!.rootViewController?.presentError(error)
 	}
 	
 	// Handle Opening of URLs
@@ -185,14 +190,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
 					}
 					let task = URLSession.shared.downloadTask(with: request) { [weak self] location, response, error in
-						guard
-							  let location = location else { return }
+						guard let self, let location else { return }
 						
 						do {
 							try ArticleThemeDownloader.shared.handleFile(at: location)
 						} catch {
-							NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
-							self?.logger.error("Failed to import theme with error: \(error.localizedDescription, privacy: .public)")
+							self.presentError(error)
 						}
 					}
 					task.resume()
@@ -203,7 +206,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 			} else {
 				return
 			}
-			
 			
 		}
 	}

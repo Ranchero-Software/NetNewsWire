@@ -32,7 +32,7 @@ class CloudKitReceiveStatusOperation: MainThreadOperation, Logging {
 		
         logger.debug("Refreshing article statuses...")
 		
- 		articlesZone.refreshArticles() { result in
+ 		articlesZone.fetchChangesInZone() { result in
             self.logger.debug("Done refreshing article statuses.")
 			switch result {
 			case .success:

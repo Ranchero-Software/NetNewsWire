@@ -30,20 +30,30 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 		}
 		set {
 			if newValue != currentThemeName {
-				AppDefaults.shared.currentThemeName = newValue
-				updateThemeNames()
-				updateCurrentTheme()
+				do {
+					currentTheme = try articleThemeWithThemeName(newValue)
+					AppDefaults.shared.currentThemeName = newValue
+				} catch {
+					logger.error("Unable to set new theme: \(error.localizedDescription, privacy: .public)")
+				}
 			}
 		}
 	}
 
-	var currentTheme: ArticleTheme {
+	lazy var currentTheme = {
+		do {
+			return try articleThemeWithThemeName(currentThemeName)
+		} catch {
+			logger.error("Unable to load theme \(self.currentThemeName): \(error.localizedDescription, privacy: .public)")
+			return ArticleTheme.defaultTheme
+		}
+	}() {
 		didSet {
 			NotificationCenter.default.post(name: .CurrentArticleThemeDidChangeNotification, object: self)
 		}
 	}
 
-	var themeNames = [AppDefaults.defaultThemeName] {
+	lazy var themeNames = { buildThemeNames() }() {
 		didSet {
 			NotificationCenter.default.post(name: .ArticleThemeNamesDidChangeNotification, object: self)
 		}
@@ -51,7 +61,6 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 
 	init(folderPath: String) {
 		self.folderPath = folderPath
-		self.currentTheme = ArticleTheme.defaultTheme
 
 		super.init()
 		
@@ -63,15 +72,16 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 			abort()
 		}
 		
-		updateThemeNames()
-		updateCurrentTheme()
-
 		NSFileCoordinator.addFilePresenter(self)
 	}
 	
 	func presentedSubitemDidChange(at url: URL) {
-		updateThemeNames()
-		updateCurrentTheme()
+		themeNames = buildThemeNames()
+		do {
+			currentTheme = try articleThemeWithThemeName(currentThemeName)
+		} catch {
+			appDelegate.presentThemeImportError(error)
+		}
 	}
 
 	// MARK: API
@@ -93,7 +103,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
 	}
 	
-	func articleThemeWithThemeName(_ themeName: String) -> ArticleTheme? {
+	func articleThemeWithThemeName(_ themeName: String) throws -> ArticleTheme {
 		if themeName == AppDefaults.defaultThemeName {
 			return ArticleTheme.defaultTheme
 		}
@@ -107,17 +117,10 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 			path = installedPath
 			isAppTheme = false
 		} else {
-			return nil
+			return ArticleTheme.defaultTheme
 		}
 		
-		do {
-			return try ArticleTheme(path: path, isAppTheme: isAppTheme)
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
-			logger.error("Failed to import theme: \(error.localizedDescription, privacy: .public)")
-			return nil
-		}
-		
+		return try ArticleTheme(path: path, isAppTheme: isAppTheme)
 	}
 
 	func deleteTheme(themeName: String) {
@@ -132,7 +135,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging {
 
 private extension ArticleThemesManager {
 
-	func updateThemeNames() {
+	func buildThemeNames() -> [String] {
 		let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
 		let appThemeNames = Set(appThemeFilenames.map { ArticleTheme.themeNameForPath($0) })
 
@@ -140,32 +143,7 @@ private extension ArticleThemesManager {
 
 		let allThemeNames = appThemeNames.union(installedThemeNames)
 		
-		let sortedThemeNames = allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
-		if sortedThemeNames != themeNames {
-			themeNames = sortedThemeNames
-		}
-	}
-
-	func defaultArticleTheme() -> ArticleTheme {
-		return articleThemeWithThemeName(AppDefaults.defaultThemeName)!
-	}
-
-	func updateCurrentTheme() {
-		var themeName = currentThemeName
-		if !themeNames.contains(themeName) {
-			themeName = AppDefaults.defaultThemeName
-			currentThemeName = AppDefaults.defaultThemeName
-		}
-
-		var articleTheme = articleThemeWithThemeName(themeName)
-		if articleTheme == nil {
-			articleTheme = defaultArticleTheme()
-			currentThemeName = AppDefaults.defaultThemeName
-		}
-
-		if let articleTheme = articleTheme, articleTheme != currentTheme {
-			currentTheme = articleTheme
-		}
+		return allThemeNames.sorted(by: { $0.localizedStandardCompare($1) == .orderedAscending })
 	}
 
 	func allThemePaths(_ folder: String) -> [String] {

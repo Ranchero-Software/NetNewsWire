@@ -15,10 +15,10 @@ struct EnableExtensionPointView: View {
 	
 	weak var parent: NSHostingController<EnableExtensionPointView>? // required because presentationMode.dismiss() doesn't work
 	weak var enabler: ExtensionPointPreferencesEnabler?
-	@State private var extensionPointTypeName = String(describing: Self.sendToCommandExtensionPointTypes.first)
+	@State private var extensionPointTypeName = ""
 	private var selectedType: ExtensionPoint.Type?
 	
-	init(enabler: ExtensionPointPreferencesEnabler?, selectedType: ExtensionPoint.Type? ) {
+	init(enabler: ExtensionPointPreferencesEnabler?, selectedType: ExtensionPoint.Type?) {
 		self.enabler = enabler
 		self.selectedType = selectedType
 	}
@@ -99,6 +99,11 @@ struct EnableExtensionPointView: View {
 					.foregroundColor(.gray)
 					.font(.caption)
 					.padding(.horizontal)
+					.onAppear {
+						if extensionPointTypeName.count == 0 {
+							self.extensionPointTypeName = extensionPointTypeNames.first!
+						}
+					}
 			}
 		}
 		
@@ -159,7 +164,7 @@ struct EnableExtensionPointView: View {
 	}
 	
 	func disableContinue() -> Bool {
-		ExtensionPointManager.shared.availableExtensionPointTypes.count == 0
+		ExtensionPointManager.shared.availableExtensionPointTypes.count == 0 || extensionPointTypeName.count == 0
 	}
 }
 

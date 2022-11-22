@@ -72,9 +72,9 @@ class ArticleThemesTableViewController: UITableViewController, Logging {
 
 	override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
 		guard let cell = tableView.cellForRow(at: indexPath),
-			  let themeName = cell.textLabel?.text,
-			  let theme = ArticleThemesManager.shared.articleThemeWithThemeName(themeName),
-			  !theme.isAppTheme	else { return nil }
+			  let themeName = cell.textLabel?.text else { return nil }
+		
+		guard let theme = try? ArticleThemesManager.shared.articleThemeWithThemeName(themeName), !theme.isAppTheme else { return nil }
 
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
 		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in
@@ -114,12 +114,7 @@ extension ArticleThemesTableViewController: UIDocumentPickerDelegate {
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
 		guard let url = urls.first else { return }
-		do {
-			try ArticleThemeImporter.importTheme(controller: self, filename: url.standardizedFileURL.path)
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
-			logger.error("Did fail to import theme: \(error.localizedDescription, privacy: .public)")
-		}
+		try ArticleThemeImporter.importTheme(controller: self, filename: url.standardizedFileURL.path)
 	}
 	
 }

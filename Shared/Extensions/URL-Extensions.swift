@@ -22,15 +22,17 @@ extension URL {
 	
 	/// URL pointing to current app version release notes.
 	static var releaseNotes: URL {
-		let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
 		var gitHub = "https://github.com/Ranchero-Software/NetNewsWire/releases/tag/"
+		
 		#if os(macOS)
-		gitHub += "mac-\(String(describing: appVersion))"
-		return URL(string: gitHub)!
+		gitHub += "mac-"
 		#else
-		gitHub += "ios-\(String(describing: appVersion))"
-		return URL(string: gitHub)!
+		gitHub += "ios-"
 		#endif
+
+		gitHub += "\(Bundle.main.versionNumber)-\(Bundle.main.buildNumber)"
+
+		return URL(string: gitHub)!
 	}
 	
 	func valueFor(_ parameter: String) -> String? {

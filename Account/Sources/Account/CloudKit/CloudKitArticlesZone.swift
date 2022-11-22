@@ -19,8 +19,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 	
 	var zoneID: CKRecordZone.ID
 	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-	
 	weak var container: CKContainer?
 	weak var database: CKDatabase?
 	var delegate: CloudKitZoneDelegate? = nil
@@ -62,28 +60,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 		self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
 		migrateChangeToken()
-	}
-	
-	func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
-		fetchChangesInZone() { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				if case CloudKitZoneError.userDeletedZone = error {
-					self.createZoneRecord() { result in
-						switch result {
-						case .success:
-							self.refreshArticles(completion: completion)
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				} else {
-					completion(.failure(error))
-				}
-			}
-		}
 	}
 	
 	func saveNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {

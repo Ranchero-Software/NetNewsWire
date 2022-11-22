@@ -603,6 +603,7 @@ final class NewsBlurAccountDelegate: AccountDelegate, Logging {
 
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .newsBlurSessionId)
+		refreshProgress.name = account.nameForDisplay
 	}
 
 	func accountWillBeDeleted(_ account: Account) {

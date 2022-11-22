@@ -11,8 +11,9 @@ import WebKit
 import Account
 import Articles
 import SafariServices
+import RSCore
 
-class ArticleViewController: UIViewController, MainControllerIdentifiable {
+class ArticleViewController: UIViewController, MainControllerIdentifiable, Logging {
 	
 	typealias State = (extractedArticle: ExtractedArticle?,
 					   isShowingExtractedArticle: Bool,
@@ -87,6 +88,8 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		return keyboardManager.keyCommands
 	}
 	
+	private var lastKnownDisplayMode: UISplitViewController.DisplayMode?
+
 	var currentUnreadCount: Int = 0 {
 		didSet {
 			updateUnreadCountIndicator()
@@ -102,7 +105,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(reloadDueToThemeChange(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(configureAppearanceMenu(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(updateUnreadCountIndicator(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
 		
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
@@ -258,7 +260,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 								  identifier: nil,
 								  discoverabilityTitle: nil,
 								  attributes: [],
-								  state: ArticleThemesManager.shared.currentThemeName == themeName ? .on : .off,
+								  state: ArticleThemesManager.shared.currentTheme.name == themeName ? .on : .off,
 								  handler: { action in
 				ArticleThemesManager.shared.currentThemeName = themeName
 			})
@@ -270,7 +272,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 										  identifier: nil,
 										  discoverabilityTitle: nil,
 										  attributes: [],
-										  state: ArticleThemesManager.shared.currentThemeName == AppDefaults.defaultThemeName ? .on : .off,
+										  state: ArticleThemesManager.shared.currentTheme.name == AppDefaults.defaultThemeName ? .on : .off,
 										  handler: { _ in
 			ArticleThemesManager.shared.currentThemeName = AppDefaults.defaultThemeName
 		})
@@ -342,42 +344,6 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 		currentWebViewController?.fullReload()
 		configureAppearanceMenu()
 	}
-	
-	
-	/// Updates the indicator count in the navigation bar.
-	/// For iPhone, this indicator is visible if the unread count is > 0.
-	/// For iPad, this indicator is visible if it is in `portrait` or `unknown`
-	/// orientation, **and** the unread count is > 0.
-	/// - Parameter sender: `Any` (optional)
-	@objc
-	public func updateUnreadCountIndicator(_ sender: Any? = nil) {
-		if UIDevice.current.userInterfaceIdiom == .phone {
-			if currentUnreadCount > 0 {
-				let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
-				unreadCountView.unreadCount = currentUnreadCount
-				unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
-				navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
-			} else {
-				navigationItem.leftBarButtonItem = nil
-			}
-		} else {
-			
-			if UIDevice.current.orientation.isPortrait || !UIDevice.current.orientation.isValidInterfaceOrientation {
-				if currentUnreadCount > 0 {
-					let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
-					unreadCountView.unreadCount = currentUnreadCount
-					unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
-					navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
-				} else {
-					navigationItem.leftBarButtonItem = nil
-				}
-			} else {
-				navigationItem.leftBarButtonItem = nil
-			}
-		}
-	}
-	
-	
 	
 	// MARK: Notifications
 	
@@ -486,6 +452,12 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable {
 	func setScrollPosition(isShowingExtractedArticle: Bool, articleWindowScrollY: Int) {
 		currentWebViewController?.setScrollPosition(isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 	}
+	
+	public func splitViewControllerWillChangeTo(displayMode: UISplitViewController.DisplayMode) {
+		lastKnownDisplayMode = displayMode
+		updateUnreadCountIndicator()
+	}
+	
 }
 
 // MARK: Find in Article
@@ -642,6 +614,17 @@ private extension ArticleViewController {
 		controller.delegate = self
 		controller.setArticle(article, updateView: updateView)
 		return controller
+	}
+	
+	func updateUnreadCountIndicator() {
+		if currentUnreadCount > 0 && (traitCollection.userInterfaceIdiom == .phone || lastKnownDisplayMode == .secondaryOnly) {
+			let unreadCountView = MasterTimelineUnreadCountView(frame: .zero)
+			unreadCountView.unreadCount = currentUnreadCount
+			unreadCountView.setFrameIfNotEqual(CGRect(x: 0, y: 0, width: unreadCountView.intrinsicContentSize.width, height: unreadCountView.intrinsicContentSize.height))
+			navigationItem.leftBarButtonItem = UIBarButtonItem(customView: unreadCountView)
+		} else  {
+			navigationItem.leftBarButtonItem = nil
+		}
 	}
 	
 }

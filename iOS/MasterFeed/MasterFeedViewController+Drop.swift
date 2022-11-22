@@ -18,33 +18,63 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	}
 	
 	func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-		guard let destIndexPath = destinationIndexPath,	destIndexPath.section > 0, tableView.hasActiveDrag else {
+		guard tableView.hasActiveDrag else {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
-			
-		guard let destFeed = coordinator.nodeFor(destIndexPath)?.representedObject as? Feed,
-			  let destAccount = destFeed.account,
-			  let destCell = tableView.cellForRow(at: destIndexPath) else {
-				  return UITableViewDropProposal(operation: .forbidden)
-			  }
+		
+		guard let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
+			  let sourceWebFeed = sourceNode.representedObject as? WebFeed else {
+			return UITableViewDropProposal(operation: .forbidden)
+		}
 
+		var successOperation = UIDropOperation.move
+		
+		if let destinationIndexPath = destinationIndexPath,
+		   let sourceIndexPath = coordinator.indexPathFor(sourceNode),
+		   destinationIndexPath.section != sourceIndexPath.section {
+			successOperation = .copy
+		}
+		
+		guard let correctedIndexPath = correctDestinationIndexPath(session: session) else {
+			// We didn't hit the corrected indexPath, but this at least it gets the section right
+			guard let section = destinationIndexPath?.section,
+				  let account = coordinator.nodeFor(section)?.representedObject as? Account,
+				  !account.hasChildWebFeed(withURL: sourceWebFeed.url) else {
+				return UITableViewDropProposal(operation: .forbidden)
+			}
+			
+			return UITableViewDropProposal(operation: successOperation, intent: .insertAtDestinationIndexPath)
+		}
+		
+		guard correctedIndexPath.section > 0 else {
+			return UITableViewDropProposal(operation: .forbidden)
+		}
+		
+		guard let correctDestNode = coordinator.nodeFor(correctedIndexPath),
+			  let correctDestFeed = correctDestNode.representedObject as? Feed,
+			  let correctDestAccount = correctDestFeed.account else {
+			return UITableViewDropProposal(operation: .forbidden)
+		}
+		
 		// Validate account specific behaviors...
-		if destAccount.behaviors.contains(.disallowFeedInMultipleFolders),
-		   let sourceNode = session.localDragSession?.items.first?.localObject as? Node,
-		   let sourceWebFeed = sourceNode.representedObject as? WebFeed,
-		   sourceWebFeed.account?.accountID != destAccount.accountID && destAccount.hasWebFeed(withURL: sourceWebFeed.url) {
+		if correctDestAccount.behaviors.contains(.disallowFeedInMultipleFolders),
+		   sourceWebFeed.account?.accountID != correctDestAccount.accountID && correctDestAccount.hasWebFeed(withURL: sourceWebFeed.url) {
 			return UITableViewDropProposal(operation: .forbidden)
 		}
 
 		// Determine the correct drop proposal
-		if destFeed is Folder {
-			if session.location(in: destCell).y >= 0 {
-				return UITableViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+		if let correctFolder = correctDestFeed as? Folder {
+			if correctFolder.hasChildWebFeed(withURL: sourceWebFeed.url) {
+				return UITableViewDropProposal(operation: .forbidden)
 			} else {
-				return UITableViewDropProposal(operation: .move, intent: .unspecified)
+				return UITableViewDropProposal(operation: successOperation, intent: .insertIntoDestinationIndexPath)
 			}
 		} else {
-			return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+			if let parentContainer = correctDestNode.parent?.representedObject as? Container, !parentContainer.hasChildWebFeed(withURL: sourceWebFeed.url) {
+				return UITableViewDropProposal(operation: successOperation, intent: .insertAtDestinationIndexPath)
+			} else {
+				return UITableViewDropProposal(operation: .forbidden)
+			}
 		}
 
 	}
@@ -52,33 +82,23 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	func tableView(_ tableView: UITableView, performDropWith dropCoordinator: UITableViewDropCoordinator) {
 		guard let dragItem = dropCoordinator.items.first?.dragItem,
 			  let dragNode = dragItem.localObject as? Node,
-			  let source = dragNode.parent?.representedObject as? Container,
-			  let destIndexPath = dropCoordinator.destinationIndexPath else {
-				  return
-			  }
-		
-		let isFolderDrop: Bool = {
-			if coordinator.nodeFor(destIndexPath)?.representedObject is Folder, let propCell = tableView.cellForRow(at: destIndexPath) {
-				return dropCoordinator.session.location(in: propCell).y >= 0
-			}
-			return false
-		}()
+			  let source = dragNode.parent?.representedObject as? Container else {
+			return
+		}
 		
 		// Based on the drop we have to determine a node to start looking for a parent container.
 		let destNode: Node? = {
+			guard let destIndexPath = correctDestinationIndexPath(session: dropCoordinator.session) else { return nil }
 			
-			if isFolderDrop {
-				return coordinator.nodeFor(destIndexPath)
-			} else {
-				if destIndexPath.row == 0 {
-					return coordinator.nodeFor(IndexPath(row: 0, section: destIndexPath.section))
-				} else if destIndexPath.row > 0 {
-					return coordinator.nodeFor(IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))
+			if coordinator.nodeFor(destIndexPath)?.representedObject is Folder {
+				if dropCoordinator.proposal.intent == .insertAtDestinationIndexPath {
+					return coordinator.nodeFor(destIndexPath.section)
 				} else {
-					return nil
+					return coordinator.nodeFor(destIndexPath)
 				}
+			} else {
+				return nil
 			}
-				
 		}()
 
 		// Now we start looking for the parent container
@@ -86,8 +106,11 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			if let container = (destNode?.representedObject as? Container) ?? (destNode?.parent?.representedObject as? Container) {
 				return container
 			} else {
+				// We didn't hit the corrected indexPath, but this at least gets the section right
+				guard let section = dropCoordinator.destinationIndexPath?.section else { return nil }
+				
 				// If we got here, we are trying to drop on an empty section header.  Go and find the Account for this section
-				return coordinator.rootNode.childAtIndex(destIndexPath.section)?.representedObject as? Account
+				return coordinator.nodeFor(section)?.representedObject as? Account
 			}
 		}()
 		
@@ -96,10 +119,25 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		if source.account == destination.account {
 			moveWebFeedInAccount(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		} else {
-			moveWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
+			copyWebFeedBetweenAccounts(feed: webFeed, sourceContainer: source, destinationContainer: destination)
 		}
 	}
+	
+}
 
+private extension MasterFeedViewController {
+
+	func correctDestinationIndexPath(session: UIDropSession) -> IndexPath? {
+		let location = session.location(in: tableView)
+		
+		var correctDestination: IndexPath?
+		tableView.performUsingPresentationValues {
+			correctDestination = tableView.indexPathForRow(at: location)
+		}
+		
+		return correctDestination
+	}
+	
 	func moveWebFeedInAccount(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
 		guard sourceContainer !== destinationContainer else { return }
 		
@@ -115,7 +153,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 		}
 	}
 	
-	func moveWebFeedBetweenAccounts(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
+	func copyWebFeedBetweenAccounts(feed: WebFeed, sourceContainer: Container, destinationContainer: Container) {
 		
 		if let existingFeed = destinationContainer.account?.existingWebFeed(withURL: feed.url) {
 			
@@ -123,15 +161,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			destinationContainer.account?.addWebFeed(existingFeed, to: destinationContainer) { result in
 				switch result {
 				case .success:
-					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							self.presentError(error)
-						}
-					}
+					BatchUpdate.shared.end()
 				case .failure(let error):
 					BatchUpdate.shared.end()
 					self.presentError(error)
@@ -144,15 +174,7 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 			destinationContainer.account?.createWebFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				switch result {
 				case .success:
-					sourceContainer.account?.removeWebFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							self.presentError(error)
-						}
-					}
+					BatchUpdate.shared.end()
 				case .failure(let error):
 					BatchUpdate.shared.end()
 					self.presentError(error)
@@ -163,4 +185,12 @@ extension MasterFeedViewController: UITableViewDropDelegate {
 	}
 
 
+}
+
+private extension Container {
+	
+	func hasChildWebFeed(withURL url: String) -> Bool {
+		return topLevelWebFeeds.contains(where: { $0.url == url })
+	}
+	
 }

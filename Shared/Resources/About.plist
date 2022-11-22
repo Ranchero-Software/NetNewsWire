@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PrimaryContributors</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>Maurice Parker</string>
+			<key>url</key>
+			<string>https://vincode.io</string>
+			<key>role</key>
+			<string>Lead Developer</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Stuart Breckenridge</string>
+			<key>url</key>
+			<string>https://stuartbreckenridge.net</string>
+			<key>role</key>
+			<string>Contributing Developer</string>
+		</dict>
+		<dict>
+			<key>url</key>
+			<string>https://twitter.com/BradEllis</string>
+			<key>name</key>
+			<string>Brad Ellis</string>
+			<key>role</key>
+			<string>App Icon</string>
+		</dict>
+		<dict>
+			<key>url</key>
+			<string>https://twitter.com/kielgillard</string>
+			<key>name</key>
+			<string>Kiel Gillard</string>
+			<key>role</key>
+			<string>Feedly Syncing</string>
+		</dict>
+		<dict>
+			<key>url</key>
+			<string>https://twitter.com/quanganhdo</string>
+			<key>name</key>
+			<string>Anh Do</string>
+			<key>role</key>
+			<string>NewsBlur Syncing</string>
+		</dict>
+		<dict>
+			<key>url</key>
+			<string>https://github.com/wevah</string>
+			<key>name</key>
+			<string>Nate Weaver</string>
+			<key>role</key>
+			<string>Under-the-hood magic and CSS stylin’s</string>
+		</dict>
+		<dict>
+			<key>url</key>
+			<string>https://github.com/brehaut/</string>
+			<key>name</key>
+			<string>Andrew Brehaut</string>
+			<key>role</key>
+			<string>Newsfoot Footnotes</string>
+		</dict>
+		<dict>
+			<key>url</key>
+			<string>https://nostodnayr.net</string>
+			<key>name</key>
+			<string>Ryan Dotson</string>
+			<key>role</key>
+			<string>Help Book</string>
+		</dict>
+	</array>
+	<key>AdditionalContributors</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>Daniel Jalkut</string>
+			<key>url</key>
+			<string>https://github.com/danielpunkass</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Joe Heck</string>
+			<key>url</key>
+			<string>https://rhonabwy.com</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Olof Hellman</string>
+			<key>url</key>
+			<string>https://github.com/olofhellman</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Rizwan Mohamed Ibrahim</string>
+			<key>url</key>
+			<string>https://blog.rizwan.dev/</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Phil Viso</string>
+			<key>url</key>
+			<string>https://twitter.com/philviso</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>...and many more</string>
+			<key>url</key>
+			<string>https://github.com/Ranchero-Software/NetNewsWire/graphs/contributors</string>
+		</dict>
+	</array>
+</dict>
+</plist>

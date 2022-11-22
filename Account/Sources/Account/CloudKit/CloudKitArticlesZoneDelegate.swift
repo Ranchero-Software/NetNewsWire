@@ -28,7 +28,7 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 		self.articlesZone = articlesZone
 	}
 	
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
+	func cloudKitWasChanged(updated: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
 		
 		database.selectPendingReadStatusArticleIDs() { result in
 			switch result {
@@ -37,14 +37,16 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 				self.database.selectPendingStarredStatusArticleIDs() { result in
 					switch result {
 					case .success(let pendingStarredStatusArticleIDs):
-
-						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-							self.update(records: changed,
-										 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-										 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-										 completion: completion)
+						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) { error in
+							if let error = error {
+								completion(.failure(error))
+							} else {
+								self.update(records: updated,
+											pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+											pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
+											completion: completion)
+							}
 						}
-						
 					case .failure(let error):
                         self.logger.error("Error occurred getting pending starred records: \(error.localizedDescription, privacy: .public)")
 						completion(.failure(CloudKitZoneError.unknown))
@@ -63,19 +65,27 @@ class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate, Logging {
 
 private extension CloudKitArticlesZoneDelegate {
 
-	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping () -> Void) {
+	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Error?) -> Void) {
 		let receivedRecordIDs = recordKeys.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticleStatus.recordType }).map({ $0.recordID })
 		let receivedArticleIDs = Set(receivedRecordIDs.map({ stripPrefix($0.externalID) }))
 		let deletableArticleIDs = receivedArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 		
 		guard !deletableArticleIDs.isEmpty else {
-			completion()
+			completion(nil)
 			return
 		}
 		
-		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
-			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
-				completion()
+		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { databaseError in
+			if let  databaseError = databaseError {
+				completion(databaseError)
+			} else {
+				self.account?.delete(articleIDs: deletableArticleIDs) { databaseError in
+					if let  databaseError = databaseError {
+						completion(databaseError)
+					} else {
+						completion(nil)
+					}
+				}
 			}
 		}
 	}
@@ -96,8 +106,8 @@ private extension CloudKitArticlesZoneDelegate {
 		let group = DispatchGroup()
 		
 		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
+		account?.markAsUnread(updateableUnreadArticleIDs) { databaseError in
+			if let databaseError = databaseError {
 				errorOccurred = true
                 self.logger.error("Error occurred while storing unread statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
@@ -105,8 +115,8 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.enter()
-		account?.markAsRead(updateableReadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
+		account?.markAsRead(updateableReadArticleIDs) { databaseError in
+			if let databaseError = databaseError {
 				errorOccurred = true
                 self.logger.error("Error occurred while storing read statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
@@ -114,8 +124,8 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.enter()
-		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
+		account?.markAsUnstarred(updateableUnstarredArticleIDs) { databaseError in
+			if let databaseError = databaseError {
 				errorOccurred = true
                 self.logger.error("Error occurred while storing unstarred statuses: \(databaseError.localizedDescription, privacy: .public)")
 			}
@@ -123,8 +133,8 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 		
 		group.enter()
-		account?.markAsStarred(updateableStarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
+		account?.markAsStarred(updateableStarredArticleIDs) { databaseError in
+			if let databaseError = databaseError {
 				errorOccurred = true
                 self.logger.error("Error occurred while stroing starred records: \(databaseError.localizedDescription, privacy: .public)")
 			}

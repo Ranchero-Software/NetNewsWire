@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 import Account
 import Articles
 import RSCore
@@ -16,13 +17,15 @@ import SafariServices
 class MasterFeedViewController: UITableViewController, UndoableCommandRunner, MainControllerIdentifiable {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
-	private var refreshProgressView: RefreshProgressView?
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
 		didSet {
 			addNewItemButton.primaryAction = nil
 		}
 	}
 
+	let refreshProgressModel = RefreshProgressModel()
+	lazy var progressBarViewController = UIHostingController(rootView: RefreshProgressView(progressBarMode: refreshProgressModel))
+	
 	var mainControllerIdentifer = MainControllerIdentifier.masterFeed
 	
 	weak var coordinator: SceneCoordinator!
@@ -71,11 +74,17 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(configureContextMenu(_:)), name: .ActiveExtensionPointsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		refreshControl = UIRefreshControl()
 		refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		refreshControl!.tintColor = .clear
+
+		progressBarViewController.view.backgroundColor = .clear
+		progressBarViewController.view.translatesAutoresizingMaskIntoConstraints = false
+		let refreshProgressItemButton = UIBarButtonItem(customView: progressBarViewController.view)
+		toolbarItems?.insert(refreshProgressItemButton, at: 2)
 		
-		configureToolbar()
 		becomeFirstResponder()
 	}
 
@@ -137,6 +146,13 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		if key == WebFeed.WebFeedSettingKey.homePageURL || key == WebFeed.WebFeedSettingKey.faviconURL {
 			configureCellsForRepresentedObject(webFeed)
 		}
+	}
+	
+	@objc func displayNameDidChange(_ note: Notification) {
+		guard let object = note.object as? AnyObject else {
+			return
+		}
+		reloadCell(for: object)
 	}
 	
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -515,7 +531,9 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 
 	func updateFeedSelection(animations: Animations) {
 		if let indexPath = coordinator.currentFeedIndexPath {
-			tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
+			if indexPath != tableView.indexPathForSelectedRow {
+				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
+			}
 		} else {
 			if let indexPath = tableView.indexPathForSelectedRow {
 				if animations.contains(.select) {
@@ -587,7 +605,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		} else {
 			setFilterButtonToInactive()
 		}
-		refreshProgressView?.update()
+		refreshProgressModel.update()
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 
 		configureContextMenu()
@@ -720,16 +738,6 @@ extension MasterFeedViewController: MasterFeedTableViewCellDelegate {
 
 private extension MasterFeedViewController {
 	
-	func configureToolbar() {
-		guard let refreshProgressView = Bundle.main.loadNibNamed("RefreshProgressView", owner: self, options: nil)?[0] as? RefreshProgressView else {
-			return
-		}
-
-		self.refreshProgressView = refreshProgressView
-		let refreshProgressItemButton = UIBarButtonItem(customView: refreshProgressView)
-		toolbarItems?.insert(refreshProgressItemButton, at: 2)
-	}
-	
 	func setFilterButtonToActive() {
 		filterButton?.image = AppAssets.filterActiveImage
 		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
@@ -830,6 +838,12 @@ private extension MasterFeedViewController {
 			}
 			completion(cell as! MasterFeedTableViewCell, indexPath)
 		}
+	}
+	
+	private func reloadCell(for object: AnyObject) {
+		guard let indexPath = coordinator.indexPathFor(object) else { return }
+		tableView.reloadRows(at: [indexPath], with: .none)
+		restoreSelectionIfNecessary(adjustScroll: false)
 	}
 
 	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
@@ -1050,8 +1064,7 @@ private extension MasterFeedViewController {
 				return nil
 		}
 		
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
+		let title = NSLocalizedString("Mark All as Read", comment: "Command")
 		let cancel = {
 			completion(true)
 		}
@@ -1131,8 +1144,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let localizedMenuText = NSLocalizedString("Mark All as Read", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let title = NSLocalizedString("Mark All as Read", comment: "Command")
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				if let articles = try? feed.fetchUnreadArticles() {
@@ -1233,8 +1245,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
+		let title = NSLocalizedString("Mark All as Read", comment: "Command")
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code

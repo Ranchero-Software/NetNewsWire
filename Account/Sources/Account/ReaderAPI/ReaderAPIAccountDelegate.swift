@@ -628,6 +628,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate, Logging {
 
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
+		refreshProgress.name = account.nameForDisplay
 	}
 	
 	func accountWillBeDeleted(_ account: Account) {
@@ -1058,7 +1059,7 @@ private extension ReaderAPIAccountDelegate {
 							  uniqueID: entry.uniqueID(variant: variant),
 							  feedURL: streamID,
 							  url: nil,
-							  externalURL: entry.alternates.first?.url,
+							  externalURL: entry.alternates?.first?.url,
 							  title: entry.title,
 							  language: nil,
 							  contentHTML: entry.summary.content,
