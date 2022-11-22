@@ -75,9 +75,13 @@ final class ArticlesTable: DatabaseTable {
 	}
 
 	// MARK: - Fetching Unread Articles
-
+	
 	func fetchUnreadArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
 		return try fetchArticles{ self.fetchUnreadArticles(webFeedIDs, limit, $0) }
+	}
+
+	func fetchUnreadArticlesBetween(_ webFeedIDs: Set<String>, _ limit: Int?, _ before: Date?, _ after: Date?) throws -> Set<Article> {
+		return try fetchArticles{ self.fetchUnreadArticlesBetween(webFeedIDs, limit, $0, before, after) }
 	}
 
 	func fetchUnreadArticlesAsync(_ webFeedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
@@ -841,6 +845,23 @@ private extension ArticlesTable {
 		var whereClause = "feedID in \(placeholders) and read=0"
 		if let limit = limit {
 			whereClause.append(" order by coalesce(datePublished, dateModified, dateArrived) desc limit \(limit)")
+		}
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
+	}
+
+	func fetchUnreadArticlesBetween(_ webFeedIDs: Set<String>, _ limit: Int?, _ database: FMDatabase, _ before: Date?, _ after: Date?) -> Set<Article> {
+		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and read=0
+		if webFeedIDs.isEmpty {
+			return Set<Article>()
+		}
+		let parameters = webFeedIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
+		var whereClause = "feedID in \(placeholders) and read=0"
+		if let limit = limit {
+			whereClause.append(" order by coalesce(datePublished, dateModified, dateArrived) desc limit \(limit)")
+		}
+		if let before = before {
+			whereClause.append(" and dateArrived <= \(before)")
 		}
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}

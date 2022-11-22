@@ -15,6 +15,7 @@ public protocol ArticleFetcher {
 	func fetchArticles() throws -> Set<Article>
 	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
 	func fetchUnreadArticles() throws -> Set<Article>
+	func fetchUnreadArticlesBetween(before: Date?, after: Date?) throws -> Set<Article>
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock)
 }
 
@@ -35,6 +36,10 @@ extension WebFeed: ArticleFetcher {
 
 	public func fetchUnreadArticles() throws -> Set<Article> {
 		return try fetchArticles().unreadArticles()
+	}
+	
+	public func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
+		return try fetchArticles().unreadArticlesBetween(before: before, after: after)
 	}
 
 	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
@@ -79,6 +84,10 @@ extension Folder: ArticleFetcher {
 			return Set<Article>()
 		}
 		return try account.fetchArticles(.folder(self, true))
+	}
+
+	public func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
+		return try fetchArticles().unreadArticlesBetween(before: before, after: after)
 	}
 
 	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {

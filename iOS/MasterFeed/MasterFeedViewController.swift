@@ -905,16 +905,12 @@ private extension MasterFeedViewController {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: pageActions))
 			}
 
-			var markActions = [UIAction]()
 			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
-				markActions.append(markAllAction)
-			}
-			if !markActions.isEmpty {
-				menuElements.append(UIMenu(title: "", options: .displayInline, children: markActions))
-				
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
+
 			}
 			
-			if let catchUpAction = self.catchUpAction(indexPath: indexPath) {
+			if let catchUpAction = self.catchUpActionMenu(indexPath: indexPath) {
 				menuElements.append(catchUpAction)
 			}
 			
@@ -1148,60 +1144,66 @@ private extension MasterFeedViewController {
 		return action
 	}
 
-	func catchUpAction(indexPath: IndexPath) -> UIMenu? {
+	func catchUpActionMenu(indexPath: IndexPath) -> UIMenu? {
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
 			  let contentView = self.tableView.cellForRow(at: indexPath)?.contentView,
 			  feed.unreadCount > 0 else {
 				  return nil
 			  }
 		
-		let localizedMenuText = NSLocalizedString("Mark Older Than as Read...", comment: "Command")
-		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
+		let title = NSLocalizedString("Mark Older Than as Read...", comment: "Command")
 		let oneDayAction = UIAction(title: "1 Day") { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Day as Read", sourceType: contentView) { [weak self] in
+				let cutoff = Calendar.current.date(byAdding: .day, value: -1, to: Date())
+				if let articles = try? feed.fetchUnreadArticlesBetween(before: cutoff, after: nil) {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}
 		let twoDayAction = UIAction(title: "2 Days") { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 2 Days as Read", sourceType: contentView) { [weak self] in
+				let cutoff = Calendar.current.date(byAdding: .day, value: -2, to: Date())
+				if let articles = try? feed.fetchUnreadArticlesBetween(before: cutoff, after: nil) {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}
 		let threeDayAction = UIAction(title: "3 Days") { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 3 Days as Read", sourceType: contentView) { [weak self] in
+				let cutoff = Calendar.current.date(byAdding: .day, value: -3, to: Date())
+				if let articles = try? feed.fetchUnreadArticlesBetween(before: cutoff, after: nil) {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}
 		let oneWeekAction = UIAction(title: "1 Week") { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Week as Read", sourceType: contentView) { [weak self] in
+				let cutoff = Calendar.current.date(byAdding: .weekOfYear, value: -1, to: Date())
+				if let articles = try? feed.fetchUnreadArticlesBetween(before: cutoff, after: nil) {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}
 		let twoWeekAction = UIAction(title: "2 Weeks") { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 2 Weeks as Read", sourceType: contentView) { [weak self] in
+				let cutoff = Calendar.current.date(byAdding: .weekOfYear, value: -2, to: Date())
+				if let articles = try? feed.fetchUnreadArticlesBetween(before: cutoff, after: nil) {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}
 		let oneMonthAction = UIAction(title: "1 Month") { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Month as Read", sourceType: contentView) { [weak self] in
+				let cutoff = Calendar.current.date(byAdding: .month, value: -1, to: Date())
+				if let articles = try? feed.fetchUnreadArticlesBetween(before: cutoff, after: nil) {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}
 		let oneYearAction = UIAction(title: "1 Year") { [weak self] action in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? feed.fetchUnreadArticles() {
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Year as Read", sourceType: contentView) { [weak self] in
+				let cutoff = Calendar.current.date(byAdding: .year, value: -1, to: Date())
+				if let articles = try? feed.fetchUnreadArticlesBetween(before: cutoff, after: nil) {
 					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}

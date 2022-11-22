@@ -106,6 +106,10 @@ public final class ArticlesDatabase {
 		return try articlesTable.fetchUnreadArticles(webFeedIDs, limit)
 	}
 
+	public func fetchUnreadArticlesBetween(_ webFeedIDs: Set<String>, _ limit: Int?, _ before: Date?, _ after: Date?) throws -> Set<Article> {
+		return try articlesTable.fetchUnreadArticlesBetween(webFeedIDs, limit, before, after)
+	}
+
 	public func fetchTodayArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
 		return try articlesTable.fetchArticlesSince(webFeedIDs, todayCutoffDate(), limit)
 	}

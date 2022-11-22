@@ -1043,6 +1043,10 @@ private extension Account {
 		return try fetchUnreadArticles(forContainer: self, limit: limit)
 	}
 
+	func fetchUnreadArticlesBetween(limit: Int?, before: Date?, after: Date?) throws -> Set<Article> {
+		return try fetchUnreadArticlesBetween(forContainer: self, limit: limit, before: before, after: after)
+	}
+
 	func fetchUnreadArticlesAsync(limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
 		fetchUnreadArticlesAsync(forContainer: self, limit: limit, completion)
 	}
@@ -1142,6 +1146,19 @@ private extension Account {
 	func fetchUnreadArticles(forContainer container: Container, limit: Int?) throws -> Set<Article> {
 		let feeds = container.flattenedWebFeeds()
 		let articles = try database.fetchUnreadArticles(feeds.webFeedIDs(), limit)
+		
+		// We don't validate limit queries because they, by definition, won't correctly match the
+		// complete unread state for the given container.
+		if limit == nil {
+			validateUnreadCountsAfterFetchingUnreadArticles(feeds, articles)
+		}
+		
+		return articles
+	}
+
+	func fetchUnreadArticlesBetween(forContainer container: Container, limit: Int?, before: Date?, after: Date?) throws -> Set<Article> {
+		let feeds = container.flattenedWebFeeds()
+		let articles = try database.fetchUnreadArticlesBetween(feeds.webFeedIDs(), limit, before, after)
 		
 		// We don't validate limit queries because they, by definition, won't correctly match the
 		// complete unread state for the given container.

@@ -31,6 +31,10 @@ public struct SingleArticleFetcher: ArticleFetcher {
 	public func fetchUnreadArticles() throws -> Set<Article> {
 		return try account.fetchArticles(.articleIDs(Set([articleID])))
 	}
+
+	public func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
+		return try account.fetchArticles(.articleIDs(Set([articleID])))
+	}
 	
 	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		return account.fetchArticlesAsync(.articleIDs(Set([articleID])), completion)
