@@ -629,6 +629,12 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		}
 		menuItems.append(addWebFeedAction)
 		
+		let addMastodonUserTitle = NSLocalizedString("Add Mastodon", comment: "Add Mastodon")
+		let addMastodonUserAction = UIAction(title: addMastodonUserTitle, image: DerivedFeed.mastodon.rsImageIcon) { _ in
+			self.coordinator.showAddMastodonFeed()
+		}
+		menuItems.append(addMastodonUserAction)
+		
 		if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
 			if ExtensionPointManager.shared.isRedditEnabled {
 				let addRedditFeedActionTitle = NSLocalizedString("Add Reddit Feed", comment: "Add Reddit Feed")

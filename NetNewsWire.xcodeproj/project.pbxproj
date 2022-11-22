@@ -854,12 +854,18 @@
 		DDF9E1D828EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
 		DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
+		DF64AAD82922616300C3BF29 /* AddMastodonUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF64AAD72922616300C3BF29 /* AddMastodonUserView.swift */; };
+		DF64AADA292261CA00C3BF29 /* DerivedFeedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF64AAD9292261CA00C3BF29 /* DerivedFeedTypes.swift */; };
+		DF64AADB292261CA00C3BF29 /* DerivedFeedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF64AAD9292261CA00C3BF29 /* DerivedFeedTypes.swift */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DFC14F0F28EA55BD00F6EE86 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */; };
 		DFC14F1228EA5DC500F6EE86 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DFC14F1328EA677C00F6EE86 /* Bundle-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF42273625800C787DC /* Bundle-Extensions.swift */; };
 		DFC14F1528EB177000F6EE86 /* AboutNetNewsWireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */; };
 		DFC14F1728EB17A800F6EE86 /* CreditsNetNewsWireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */; };
+		DFCAA6DB292C463A007BFE80 /* AddMastodonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCAA6DA292C463A007BFE80 /* AddMastodonViewModel.swift */; };
+		DFCAA6DD292C5A1C007BFE80 /* FeedFolderResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCAA6DC292C5A1C007BFE80 /* FeedFolderResolver.swift */; };
+		DFCAA6E0292C6405007BFE80 /* AddFeed+Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCAA6DF292C6405007BFE80 /* AddFeed+Errors.swift */; };
 		DFCE4F9128EF26F100405869 /* About.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9028EF26F000405869 /* About.plist */; };
 		DFCE4F9228EF26F100405869 /* About.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9028EF26F000405869 /* About.plist */; };
 		DFCE4F9428EF278300405869 /* Thanks.md in Resources */ = {isa = PBXBuildFile; fileRef = DFCE4F9328EF278300405869 /* Thanks.md */; };
@@ -1601,10 +1607,15 @@
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = notificationSoundBlip.mp3; sourceTree = "<group>"; };
+		DF64AAD72922616300C3BF29 /* AddMastodonUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMastodonUserView.swift; sourceTree = "<group>"; };
+		DF64AAD9292261CA00C3BF29 /* DerivedFeedTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivedFeedTypes.swift; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNetNewsWireView.swift; sourceTree = "<group>"; };
 		DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsNetNewsWireView.swift; sourceTree = "<group>"; };
+		DFCAA6DA292C463A007BFE80 /* AddMastodonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMastodonViewModel.swift; sourceTree = "<group>"; };
+		DFCAA6DC292C5A1C007BFE80 /* FeedFolderResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedFolderResolver.swift; sourceTree = "<group>"; };
+		DFCAA6DF292C6405007BFE80 /* AddFeed+Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddFeed+Errors.swift"; sourceTree = "<group>"; };
 		DFCE4F9028EF26F000405869 /* About.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = About.plist; sourceTree = "<group>"; };
 		DFCE4F9328EF278300405869 /* Thanks.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Thanks.md; sourceTree = "<group>"; };
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
@@ -2165,10 +2176,12 @@
 				51E36E70239D6610006F47A5 /* AddFeedSelectFolderTableViewCell.swift */,
 				51C452842265093600C03939 /* AddFeedViewController.swift */,
 				51C4528B2265095F00C03939 /* AddFolderViewController.swift */,
+				DFCAA6D9292C4625007BFE80 /* Mastodon */,
 				510289CC24519A1D00426DDF /* SelectComboTableViewCell.swift */,
 				51E36E8B239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib */,
 				516AE5DD246AF2DD00731738 /* Reddit */,
 				510289CE2451BA1E00426DDF /* Twitter */,
+				DFCAA6DE292C63B7007BFE80 /* Shared */,
 			);
 			path = Add;
 			sourceTree = "<group>";
@@ -2617,6 +2630,7 @@
 				511D43CE231FA51100FB1562 /* Resources */,
 				176813A22564B9D100D98635 /* Widget */,
 				173A64162547BE0900267F6E /* AccountType+Helpers.swift */,
+				DF64AAD9292261CA00C3BF29 /* DerivedFeedTypes.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2888,6 +2902,24 @@
 				DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */,
 			);
 			path = About;
+			sourceTree = "<group>";
+		};
+		DFCAA6D9292C4625007BFE80 /* Mastodon */ = {
+			isa = PBXGroup;
+			children = (
+				DF64AAD72922616300C3BF29 /* AddMastodonUserView.swift */,
+				DFCAA6DA292C463A007BFE80 /* AddMastodonViewModel.swift */,
+			);
+			path = Mastodon;
+			sourceTree = "<group>";
+		};
+		DFCAA6DE292C63B7007BFE80 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				DFCAA6DC292C5A1C007BFE80 /* FeedFolderResolver.swift */,
+				DFCAA6DF292C6405007BFE80 /* AddFeed+Errors.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4055,6 +4087,7 @@
 				5186A635235EF3A800C97195 /* VibrantLabel.swift in Sources */,
 				51F85BF92274AA7B00C787DC /* UIBarButtonItem-Extensions.swift in Sources */,
 				51B62E68233186730085F949 /* IconView.swift in Sources */,
+				DFCAA6DB292C463A007BFE80 /* AddMastodonViewModel.swift in Sources */,
 				179D280D26F73D83003B2E0A /* ArticleThemePlist.swift in Sources */,
 				51C45296226509D300C03939 /* OPMLExporter.swift in Sources */,
 				51C45291226509C800C03939 /* SmartFeed.swift in Sources */,
@@ -4085,6 +4118,7 @@
 				51FA73A52332BE110090D516 /* ArticleExtractor.swift in Sources */,
 				51314704235C41FC00387FDC /* Intents.intentdefinition in Sources */,
 				FF3ABF162325AF5D0074C542 /* ArticleSorter.swift in Sources */,
+				DF64AAD82922616300C3BF29 /* AddMastodonUserView.swift in Sources */,
 				51C4525C226508DF00C03939 /* String-Extensions.swift in Sources */,
 				51F9F3F923DFB16300A314FD /* UITableView-Extensions.swift in Sources */,
 				51C452792265091600C03939 /* MasterTimelineTableViewCell.swift in Sources */,
@@ -4122,6 +4156,7 @@
 				5183CCE5226F4DFA0010922C /* RefreshInterval.swift in Sources */,
 				51C4529D22650A1000C03939 /* FaviconURLFinder.swift in Sources */,
 				5142192A23522B5500E07E2C /* ImageViewController.swift in Sources */,
+				DFCAA6E0292C6405007BFE80 /* AddFeed+Errors.swift in Sources */,
 				516244E3241E19F000B61C47 /* ColorPaletteTableViewController.swift in Sources */,
 				51C45258226508CF00C03939 /* AppAssets.swift in Sources */,
 				51FA73A82332BE880090D516 /* ExtractedArticle.swift in Sources */,
@@ -4158,6 +4193,7 @@
 				512392C124E33A3C00F11704 /* RedditSelectTypeTableViewController.swift in Sources */,
 				515A5181243E90260089E588 /* ExtensionPointIdentifer.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
+				DFCAA6DD292C5A1C007BFE80 /* FeedFolderResolver.swift in Sources */,
 				512392C624E3451400F11704 /* TwitterSelectAccountTableViewController.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,
 				51C45297226509E300C03939 /* DefaultFeedsImporter.swift in Sources */,
@@ -4169,6 +4205,7 @@
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
 				51A1699B235E10D700EB091F /* AccountInspectorViewController.swift in Sources */,
 				512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */,
+				DF64AADB292261CA00C3BF29 /* DerivedFeedTypes.swift in Sources */,
 				512392C224E33A3C00F11704 /* RedditEnterDetailTableViewController.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5195C1DC2720BD3000888867 /* MasterFeedRowIdentifier.swift in Sources */,
@@ -4295,6 +4332,7 @@
 				D5907DB22004BB37005947E5 /* ScriptingObjectContainer.swift in Sources */,
 				51BC4AFF247277E0000A6ED8 /* URL-Extensions.swift in Sources */,
 				849A978A1ED9ECEF007D329B /* ArticleThemesManager.swift in Sources */,
+				DF64AADA292261CA00C3BF29 /* DerivedFeedTypes.swift in Sources */,
 				8405DD8A2213E0E3008CE1BF /* DetailContainerView.swift in Sources */,
 				51107746243BEE2500D97C8C /* ExtensionPointPreferencesViewController.swift in Sources */,
 				519B8D332143397200FA689C /* SharingServiceDelegate.swift in Sources */,

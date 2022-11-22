@@ -13,6 +13,7 @@ import Articles
 import RSCore
 import RSTree
 import SafariServices
+import SwiftUI
 
 protocol MainControllerIdentifiable {
 	var mainControllerIdentifer: MainControllerIdentifier { get }
@@ -1202,6 +1203,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
 		masterFeedViewController.present(addNavViewController, animated: true)
+	}
+	
+	func showAddMastodonFeed() {
+		let hostingController = UIHostingController(rootView: AddMastodonUserView())
+		hostingController.modalPresentationStyle = .formSheet
+		masterFeedViewController.present(hostingController, animated: true)
 	}
 	
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
