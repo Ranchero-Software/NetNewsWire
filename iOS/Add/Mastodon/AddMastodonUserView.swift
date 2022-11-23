@@ -55,6 +55,9 @@ struct AddMastodonUserView: View {
 						Button {
 							Task {
 								do {
+									userNameIsFocused = false
+									domainIsFocused = false
+									tagIsFocused = false
 									try await addMastodonModel.addMastodonFeedToAccount()
 									dismiss()
 								} catch {
