@@ -32,6 +32,7 @@ struct DisplayAndBehaviorsView: View {
 					get: { !appDefaults.useSystemBrowser },
 					set: { appDefaults.useSystemBrowser = !$0 }
 				))
+				// TODO: Add Reader Mode Defaults here. See #3684.
 			}
 		}
 		.navigationTitle(Text("Display & Behaviors"))

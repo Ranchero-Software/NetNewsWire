@@ -14,20 +14,13 @@ struct AccountsManagementView: View {
     
 	@State private var showAddAccountSheet: Bool = false
 	var cancellables = Set<AnyCancellable>()
-	@State private var updated: Bool = false
-	
+	@State private var sortedAccounts = [Account]()
 	
 	var body: some View {
 		List {
-			ForEach(AccountManager.shared.sortedActiveAccounts, id: \.accountID) { account in
-				Section(footer: accountFooterText(account)) {
+			ForEach(sortedAccounts, id: \.self) { account in
+				Section(header: Text("")) {
 					accountRow(account)
-				}
-			}
-			
-			Section(header: Text("Inactive Accounts"), footer: inactiveFooterText) {
-				ForEach(0..<AccountManager.shared.sortedAccounts.filter({ $0.isActive == false }).count, id: \.self) { i in
-					accountRow(AccountManager.shared.sortedAccounts.filter({ $0.isActive == false })[i])
 				}
 			}
 		}
@@ -44,8 +37,12 @@ struct AccountsManagementView: View {
 			}
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .AccountStateDidChange)) { _ in
-			updated.toggle()
+			sortedAccounts = AccountManager.shared.sortedAccounts
 		}
+		.onAppear {
+			sortedAccounts = AccountManager.shared.sortedAccounts
+		}
+		
     }
 	
 	var addAccountButton: some View {
@@ -69,7 +66,7 @@ struct AccountsManagementView: View {
 	}
 	
 	func accountRow(_ account: Account) -> some View {
-		Group {
+		VStack(alignment: .leading) {
 			HStack {
 				Image(uiImage: account.smallIcon!.image)
 					.resizable()
@@ -77,14 +74,32 @@ struct AccountsManagementView: View {
 				TextField(text: Binding(get: { account.nameForDisplay }, set: { account.name = $0 })) {
 					Text(account.nameForDisplay)
 				}.foregroundColor(.secondary)
+				Spacer()
+				Toggle(isOn: Binding<Bool>(
+					get: { account.isActive },
+					set: { account.isActive = $0 }
+				)) {
+					Text("")
+				}
 			}
-			Toggle(isOn: Binding<Bool>(
-				get: { account.isActive },
-				set: { account.isActive = $0 }
-			)) {
-				Text("Active")
+			if account.type != .onMyMac {
+				Divider()
+					.edgesIgnoringSafeArea(.all)
+				HStack {
+					Spacer()
+					Button {
+						// Remove account
+					} label: {
+						Text("Remove Account")
+							.foregroundColor(.red)
+							.bold()
+					}
+					
+					Spacer()
+				}
 			}
 		}
+		
 	}
 	
 	var inactiveFooterText: some View {

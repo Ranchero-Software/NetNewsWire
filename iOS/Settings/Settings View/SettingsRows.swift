@@ -8,6 +8,10 @@
 
 import SwiftUI
 import Account
+import UniformTypeIdentifiers
+
+
+
 
 // MARK: - Headers
 
@@ -57,9 +61,9 @@ struct SettingsViewRows {
 	/// This row, when tapped, will push the New Article Notifications
 	/// screen in to view.
 	static var ConfigureNewArticleNotifications: some View {
-		NavigationLink(destination: NotificationsViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
+		NavigationLink(destination: NewArticleNotificationsView()) {
 			Label {
-				Text("Notifications and Sounds")
+				Text("New Article Notifications")
 			} icon: {
 				Image("notifications.sounds")
 					.resizable()
@@ -115,29 +119,47 @@ struct SettingsViewRows {
 		}
 	}
 	
-	/// This row, when tapped, will push the the Import subscriptions screen
-	/// in to view.
-	static var ImportSubscription: some View {
-		Label {
-			Text("Import Subscriptions")
-		} icon: {
-			Image(systemName: "square.and.arrow.down")
-				.resizable()
-				.aspectRatio(contentMode: .fit)
-				.frame(width: 25.0, height: 25.0)
-		}
-	}
-	
-	/// This row, when tapped, will push the the Export subscriptions screen
-	/// in to view.
-	static var ExportSubscription: some View {
-		Label {
-			Text("Export Subscriptions")
-		} icon: {
-			Image(systemName: "square.and.arrow.up")
-				.resizable()
-				.aspectRatio(contentMode: .fit)
-				.frame(width: 25.0, height: 25.0)
+	/// This row, when tapped, will present an Import/Export
+	/// menu.
+	static func ImportExportOPML(showImportView: Binding<Bool>, showExportView: Binding<Bool>, importAccount: Binding<Account?>, exportDocument: Binding<OPMLDocument?>) -> some View {
+		Menu {
+			Menu {
+				ForEach(AccountManager.shared.sortedActiveAccounts, id: \.self) { account in
+					Button(account.nameForDisplay) {
+						importAccount.wrappedValue = account
+						showImportView.wrappedValue = true
+					}
+				}
+			} label: {
+				Label("Import Subscriptions To...", systemImage: "arrow.down.doc")
+			}
+			Divider()
+			Menu {
+				ForEach(AccountManager.shared.sortedAccounts, id: \.self) { account in
+					Button(account.nameForDisplay) {
+						do {
+							let document = try OPMLDocument(account)
+							exportDocument.wrappedValue = document
+							showExportView.wrappedValue = true
+						} catch {
+							print(error.localizedDescription)
+						}
+					}
+				}
+			} label: {
+				Label("Export Subscriptions From...", systemImage: "arrow.up.doc")
+			}
+		} label: {
+			Label {
+				Text("Import/Export Subscriptions")
+					.foregroundColor(.primary)
+				
+			} icon: {
+				Image("app.opml")
+					.resizable()
+					.frame(width: 25.0, height: 25.0)
+					.clipShape(RoundedRectangle(cornerRadius: 6))
+			}
 		}
 	}
 	
@@ -197,6 +219,8 @@ struct SettingsViewRows {
 		Toggle("Open Links in NetNewsWire", isOn: preference)
 	}
 	
+	// TODO: Add Reader Mode Defaults here. See #3684.
+	
 	static func EnableFullScreenArticles(_ preference: Binding<Bool>) -> some View {
 		Toggle(isOn: preference) {
 			VStack(alignment: .leading, spacing: 4) {
@@ -253,7 +277,12 @@ struct SettingsViewRows {
 			Label {
 				Text("About NetNewsWire")
 			} icon: {
-				Image(systemName: "questionmark.square.dashed")
+				Image(systemName: "info.circle")
+					.resizable()
+					.renderingMode(.template)
+					.foregroundColor(Color(uiColor: .tertiaryLabel))
+					.aspectRatio(contentMode: .fit)
+					.frame(width: 25.0, height: 25.0)
 			}
 		}
 	}

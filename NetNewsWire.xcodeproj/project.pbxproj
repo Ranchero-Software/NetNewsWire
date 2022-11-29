@@ -849,6 +849,11 @@
 		DDF9E1D728EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
 		DDF9E1D828EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
 		DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
+		DF3630EB2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
+		DF3630EC2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
+		DF3630ED2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
+		DF3630EF293618A900326FB8 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EE293618A900326FB8 /* SettingsViewModel.swift */; };
+		DF394F0029357A180081EB6E /* NewArticleNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */; };
 		DF59F072292085B800ACD33D /* ColorPaletteSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */; };
 		DF59F0742920DB5100ACD33D /* AccountsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */; };
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
@@ -1602,6 +1607,9 @@
 		D5F4EDB820074D7C00B9E363 /* Folder+Scriptability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+Scriptability.swift"; sourceTree = "<group>"; };
 		DD82AB09231003F6002269DF /* SharingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTests.swift; sourceTree = "<group>"; };
 		DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = notificationSoundBlip.mp3; sourceTree = "<group>"; };
+		DF3630EA2936183D00326FB8 /* OPMLDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLDocument.swift; sourceTree = "<group>"; };
+		DF3630EE293618A900326FB8 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArticleNotificationsView.swift; sourceTree = "<group>"; };
 		DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteSelectorView.swift; sourceTree = "<group>"; };
 		DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsManagementView.swift; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
@@ -2015,8 +2023,9 @@
 				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
 				51A16990235E10D600EB091F /* Settings.storyboard */,
 				DFD406F8291FB5D500C02962 /* Settings View */,
-				DFD406FD291FDBD900C02962 /* Appearance View */,
-				DF59F0752920E42000ACD33D /* Account Management View */,
+				DFD406FD291FDBD900C02962 /* Appearance Views */,
+				DF59F0752920E42000ACD33D /* Account Management Views */,
+				DF3630E92936038400326FB8 /* New Article Notifications Views */,
 				516A09382360A2AE00EAE89B /* SettingsComboTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsComboTableViewCell.xib */,
 				516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */,
@@ -2775,6 +2784,7 @@
 			children = (
 				849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */,
 				84A3EE52223B667F00557320 /* DefaultFeeds.opml */,
+				DF3630EA2936183D00326FB8 /* OPMLDocument.swift */,
 			);
 			path = Importers;
 			sourceTree = "<group>";
@@ -2890,12 +2900,20 @@
 			path = Scriptability;
 			sourceTree = "<group>";
 		};
-		DF59F0752920E42000ACD33D /* Account Management View */ = {
+		DF3630E92936038400326FB8 /* New Article Notifications Views */ = {
+			isa = PBXGroup;
+			children = (
+				DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */,
+			);
+			path = "New Article Notifications Views";
+			sourceTree = "<group>";
+		};
+		DF59F0752920E42000ACD33D /* Account Management Views */ = {
 			isa = PBXGroup;
 			children = (
 				DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */,
 			);
-			path = "Account Management View";
+			path = "Account Management Views";
 			sourceTree = "<group>";
 		};
 		DFC14F0928EA51AB00F6EE86 /* About */ = {
@@ -2912,19 +2930,20 @@
 			isa = PBXGroup;
 			children = (
 				DFD406F4291F79C900C02962 /* SettingsView.swift */,
+				DF3630EE293618A900326FB8 /* SettingsViewModel.swift */,
 				DFD406F9291FB5E400C02962 /* SettingsRows.swift */,
 				DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */,
 			);
 			path = "Settings View";
 			sourceTree = "<group>";
 		};
-		DFD406FD291FDBD900C02962 /* Appearance View */ = {
+		DFD406FD291FDBD900C02962 /* Appearance Views */ = {
 			isa = PBXGroup;
 			children = (
 				DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */,
 				DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */,
 			);
-			path = "Appearance View";
+			path = "Appearance Views";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -3892,6 +3911,7 @@
 				65ED3FBD235DEF6C0081F399 /* AppDefaults.swift in Sources */,
 				65ED3FBE235DEF6C0081F399 /* Account+Scriptability.swift in Sources */,
 				65ED3FBF235DEF6C0081F399 /* NothingInspectorViewController.swift in Sources */,
+				DF3630EC2936183D00326FB8 /* OPMLDocument.swift in Sources */,
 				1710B92A255246F900679C0D /* EnableExtensionPointHelpView.swift in Sources */,
 				51927A0528E28D1C000AE856 /* MainWindow.swift in Sources */,
 				65ED3FC0235DEF6C0081F399 /* AppNotifications.swift in Sources */,
@@ -4110,6 +4130,7 @@
 				51C452A522650A2D00C03939 /* SmallIconProvider.swift in Sources */,
 				51AB8AB323B7F4C6008F147D /* WebViewController.swift in Sources */,
 				DFD406F7291FB1A600C02962 /* SafariView.swift in Sources */,
+				DF3630ED2936183D00326FB8 /* OPMLDocument.swift in Sources */,
 				516A09392360A2AE00EAE89B /* SettingsComboTableViewCell.swift in Sources */,
 				176813D22564BA5900D98635 /* WidgetDataEncoder.swift in Sources */,
 				51D5948722668EFA00DFC836 /* MarkStatusCommand.swift in Sources */,
@@ -4140,6 +4161,7 @@
 				DF790D6228E990A900455FC7 /* AboutData.swift in Sources */,
 				177A0C2D25454AAB00D7EAF6 /* ReaderAPIAccountViewController.swift in Sources */,
 				51C452A622650A3500C03939 /* Node-Extensions.swift in Sources */,
+				DF394F0029357A180081EB6E /* NewArticleNotificationsView.swift in Sources */,
 				51C45294226509C800C03939 /* SearchFeedDelegate.swift in Sources */,
 				5F323809231DF9F000706F6B /* VibrantTableViewCell.swift in Sources */,
 				51FE10042345529D0056195D /* UserNotificationManager.swift in Sources */,
@@ -4212,6 +4234,7 @@
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5195C1DC2720BD3000888867 /* MasterFeedRowIdentifier.swift in Sources */,
 				5108F6D823763094001ABC45 /* TickMarkSlider.swift in Sources */,
+				DF3630EF293618A900326FB8 /* SettingsViewModel.swift in Sources */,
 				51C452882265093600C03939 /* AddFeedViewController.swift in Sources */,
 				51B5C8C023F3866C00032075 /* ExtensionFeedAddRequestFile.swift in Sources */,
 				51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */,
@@ -4414,6 +4437,7 @@
 				51FA73A72332BE880090D516 /* ExtractedArticle.swift in Sources */,
 				84B99C9D1FAE83C600ECDEDB /* DeleteCommand.swift in Sources */,
 				849A97541ED9EAC0007D329B /* AddWebFeedWindowController.swift in Sources */,
+				DF3630EB2936183D00326FB8 /* OPMLDocument.swift in Sources */,
 				5144EA40227A37EC00D19003 /* ImportOPMLWindowController.swift in Sources */,
 				178A9F9D2549449F00AB7E9D /* AddAccountsView.swift in Sources */,
 				51C4CFF024D37D1F00AF9874 /* Secrets.swift in Sources */,
