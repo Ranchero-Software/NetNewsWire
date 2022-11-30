@@ -28,7 +28,7 @@ struct SettingsView: View {
 				// Account/Extensions/OPML Management
 				Section(header: Text("Accounts & Extensions"), footer: Text("Add, delete, enable, or disable accounts and extensions.")) {
 					SettingsViewRows.AddAccount
-					SettingsViewRows.AddExtension
+					SettingsViewRows.ManageExtensions
 					SettingsViewRows.ImportExportOPML(showImportView: $viewModel.showImportView, showExportView: $viewModel.showExportView, importAccount: $viewModel.importAccount, exportDocument: $viewModel.exportDocument)
 				}
 				

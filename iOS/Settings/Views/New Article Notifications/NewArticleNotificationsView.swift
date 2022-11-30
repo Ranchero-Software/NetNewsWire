@@ -29,6 +29,7 @@ struct NewArticleNotificationsView: View {
 				activeAccounts = AccountManager.shared.sortedActiveAccounts
 			}
 		}
+		.tint(Color(uiColor: AppAssets.primaryAccentColor))
     }
 	
 	

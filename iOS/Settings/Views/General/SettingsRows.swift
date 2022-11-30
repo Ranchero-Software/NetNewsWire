@@ -11,38 +11,11 @@ import Account
 import UniformTypeIdentifiers
 
 
-
-
-// MARK: - Headers
-
-struct SettingsViewHeaders {
-	
-	static func AddAccountHeader(_ showAddAccount: Binding<Bool>) -> some View {
-		HStack {
-			//Text("Accounts")
-			Spacer()
-			Button {
-				showAddAccount.wrappedValue.toggle()
-			} label: {
-				Text("Add")
-					.font(.caption)
-					.bold()
-				Image(systemName: "plus")
-					.font(.caption)
-			}
-			.buttonBorderShape(.capsule)
-			.buttonStyle(.bordered)
-			.padding(.trailing, -15) // moves to trailing edge
-		}
-	}
-	
-}
-
 // MARK: - Rows
 
 struct SettingsViewRows {
 	
-	/// This row, when tapped, will open system settings.
+	/// This row, when tapped, will open iOS System Settings.
 	static var OpenSystemSettings: some View {
 		Label {
 			Text("Open System Settings")
@@ -88,26 +61,10 @@ struct SettingsViewRows {
 		}
 	}
 	
-	/// This `view` creates a `Label` for each active `Account`.
-	/// Each `Label`, when tapped, will present the configurator for
-	/// the  `Account`.
-	static var ActiveAccounts: some View {
-		ForEach(AccountManager.shared.sortedActiveAccounts, id: \.self) { account in
-			Label {
-				Text(account.nameForDisplay)
-			} icon: {
-				Image(uiImage: AppAssets.image(for: account.type)!)
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 25.0, height: 25.0)
-			}
-		}
-	}
-	
-	/// This row, when tapped, will push the the Add Extension screen
+	/// This row, when tapped, will push the the Manage Extension screen
 	/// in to view.
-	static var AddExtension: some View {
-		NavigationLink(destination: NotificationsViewControllerRepresentable()) {
+	static var ManageExtensions: some View {
+		NavigationLink(destination: ExtensionsManagementView()) {
 			Label {
 				Text("Manage Extensions")
 			} icon: {
@@ -199,6 +156,8 @@ struct SettingsViewRows {
 		}
 	}
 	
+	/// This row, when tapped, will push the the Theme Selector screen
+	/// in to view.
 	static var ThemeSelection: some View {
 		NavigationLink(destination: ArticleThemesViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
 			HStack {
@@ -220,7 +179,6 @@ struct SettingsViewRows {
 	}
 	
 	// TODO: Add Reader Mode Defaults here. See #3684.
-	
 	static func EnableFullScreenArticles(_ preference: Binding<Bool>) -> some View {
 		Toggle(isOn: preference) {
 			VStack(alignment: .leading, spacing: 4) {

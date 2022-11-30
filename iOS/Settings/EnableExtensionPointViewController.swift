@@ -11,6 +11,25 @@ import AuthenticationServices
 import Account
 import OAuthSwift
 import Secrets
+import SwiftUI
+
+struct EnableExtensionPointViewWrapper: UIViewControllerRepresentable {
+	
+	var extensionPoint: ExtensionPoint.Type?
+	
+	func makeUIViewController(context: Context) -> EnableExtensionPointViewController {
+		let controller = UIStoryboard.settings.instantiateViewController(withIdentifier: "EnableExtensionPointViewController") as! EnableExtensionPointViewController
+		controller.extensionPointType = extensionPoint
+		return controller
+	}
+	
+	func updateUIViewController(_ uiViewController: EnableExtensionPointViewController, context: Context) {
+		
+	}
+	
+	typealias UIViewControllerType = EnableExtensionPointViewController
+	
+}
 
 class EnableExtensionPointViewController: UITableViewController {
 

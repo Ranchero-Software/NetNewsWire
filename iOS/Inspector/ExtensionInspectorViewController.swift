@@ -7,6 +7,27 @@
 //
 
 import UIKit
+import SwiftUI
+
+struct ExtensionPointInspectorWrapper: UIViewControllerRepresentable {
+	
+	var extensionPoint: ExtensionPoint?
+	
+	func makeUIViewController(context: Context) -> ExtensionPointInspectorViewController {
+		let controller = UIStoryboard.inspector.instantiateViewController(withIdentifier: "ExtensionPointInspectorViewController") as! ExtensionPointInspectorViewController
+		controller.extensionPoint = extensionPoint
+		return controller
+	}
+	
+	func updateUIViewController(_ uiViewController: ExtensionPointInspectorViewController, context: Context) {
+		//
+	}
+	
+	typealias UIViewControllerType = ExtensionPointInspectorViewController
+	
+	
+}
+
 
 class ExtensionPointInspectorViewController: UITableViewController {
 

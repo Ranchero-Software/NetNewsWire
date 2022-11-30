@@ -857,6 +857,7 @@
 		DF59F072292085B800ACD33D /* ColorPaletteSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */; };
 		DF59F0742920DB5100ACD33D /* AccountsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */; };
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
+		DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DFC14F0F28EA55BD00F6EE86 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */; };
 		DFC14F1228EA5DC500F6EE86 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
@@ -1612,6 +1613,7 @@
 		DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArticleNotificationsView.swift; sourceTree = "<group>"; };
 		DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteSelectorView.swift; sourceTree = "<group>"; };
 		DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsManagementView.swift; sourceTree = "<group>"; };
+		DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsManagementView.swift; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNetNewsWireView.swift; sourceTree = "<group>"; };
@@ -2014,7 +2016,7 @@
 		5183CCEB227117C70010922C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				DFFC4E7328E95C01006B82AF /* AboutView.swift */,
+				DFD406F8291FB5D500C02962 /* Views */,
 				51A16992235E10D600EB091F /* AddAccountViewController.swift */,
 				519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */,
 				5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */,
@@ -2022,10 +2024,6 @@
 				516244E2241E19F000B61C47 /* ColorPaletteTableViewController.swift */,
 				519ED47924482AEB007F8E94 /* EnableExtensionPointViewController.swift */,
 				51A16990235E10D600EB091F /* Settings.storyboard */,
-				DFD406F8291FB5D500C02962 /* Settings View */,
-				DFD406FD291FDBD900C02962 /* Appearance Views */,
-				DF59F0752920E42000ACD33D /* Account Management Views */,
-				DF3630E92936038400326FB8 /* New Article Notifications Views */,
 				516A09382360A2AE00EAE89B /* SettingsComboTableViewCell.swift */,
 				516A091D23609A3600EAE89B /* SettingsComboTableViewCell.xib */,
 				516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */,
@@ -2900,20 +2898,40 @@
 			path = Scriptability;
 			sourceTree = "<group>";
 		};
-		DF3630E92936038400326FB8 /* New Article Notifications Views */ = {
+		DF3630E92936038400326FB8 /* New Article Notifications */ = {
 			isa = PBXGroup;
 			children = (
 				DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */,
 			);
-			path = "New Article Notifications Views";
+			path = "New Article Notifications";
 			sourceTree = "<group>";
 		};
-		DF59F0752920E42000ACD33D /* Account Management Views */ = {
+		DF59F0752920E42000ACD33D /* Account and Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */,
+				DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */,
 			);
-			path = "Account Management Views";
+			path = "Account and Extensions";
+			sourceTree = "<group>";
+		};
+		DF766FEA2936337A006FBBE2 /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				DFFC4E7328E95C01006B82AF /* AboutView.swift */,
+				DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */,
+			);
+			path = Help;
+			sourceTree = "<group>";
+		};
+		DF766FEB2936344D006FBBE2 /* General */ = {
+			isa = PBXGroup;
+			children = (
+				DFD406F4291F79C900C02962 /* SettingsView.swift */,
+				DF3630EE293618A900326FB8 /* SettingsViewModel.swift */,
+				DFD406F9291FB5E400C02962 /* SettingsRows.swift */,
+			);
+			path = General;
 			sourceTree = "<group>";
 		};
 		DFC14F0928EA51AB00F6EE86 /* About */ = {
@@ -2926,24 +2944,25 @@
 			path = About;
 			sourceTree = "<group>";
 		};
-		DFD406F8291FB5D500C02962 /* Settings View */ = {
+		DFD406F8291FB5D500C02962 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DFD406F4291F79C900C02962 /* SettingsView.swift */,
-				DF3630EE293618A900326FB8 /* SettingsViewModel.swift */,
-				DFD406F9291FB5E400C02962 /* SettingsRows.swift */,
-				DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */,
+				DF766FEB2936344D006FBBE2 /* General */,
+				DFD406FD291FDBD900C02962 /* Appearance */,
+				DF59F0752920E42000ACD33D /* Account and Extensions */,
+				DF3630E92936038400326FB8 /* New Article Notifications */,
+				DF766FEA2936337A006FBBE2 /* Help */,
 			);
-			path = "Settings View";
+			path = Views;
 			sourceTree = "<group>";
 		};
-		DFD406FD291FDBD900C02962 /* Appearance Views */ = {
+		DFD406FD291FDBD900C02962 /* Appearance */ = {
 			isa = PBXGroup;
 			children = (
 				DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */,
 				DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */,
 			);
-			path = "Appearance Views";
+			path = Appearance;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4217,6 +4236,7 @@
 				512AF9C2236ED52C0066F8BE /* ImageHeaderView.swift in Sources */,
 				512392C124E33A3C00F11704 /* RedditSelectTypeTableViewController.swift in Sources */,
 				515A5181243E90260089E588 /* ExtensionPointIdentifer.swift in Sources */,
+				DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */,
 				51C45290226509C100C03939 /* PseudoFeed.swift in Sources */,
 				512392C624E3451400F11704 /* TwitterSelectAccountTableViewController.swift in Sources */,
 				51C452A922650DC600C03939 /* ArticleRenderer.swift in Sources */,

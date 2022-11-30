@@ -28,6 +28,5 @@ public final class SettingsViewModel: ObservableObject {
 	@Published public var showImportSuccess: Bool = false
 	@Published public var showExportSuccess: Bool = false
 	@Published public var exportDocument: OPMLDocument?
-	
 
 }

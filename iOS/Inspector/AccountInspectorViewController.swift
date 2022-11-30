@@ -9,6 +9,26 @@
 import UIKit
 import SafariServices
 import Account
+import SwiftUI
+
+struct AccountInspectorWrapper: UIViewControllerRepresentable {
+	
+	var account: Account
+	
+	func makeUIViewController(context: Context) -> AccountInspectorViewController {
+		let controller = UIStoryboard.inspector.instantiateViewController(withIdentifier: "AccountInspectorViewController") as! AccountInspectorViewController
+		controller.account = account
+		return controller
+	}
+	
+	func updateUIViewController(_ uiViewController: AccountInspectorViewController, context: Context) {
+		//
+	}
+	
+	typealias UIViewControllerType = AccountInspectorViewController
+	
+}
+
 
 class AccountInspectorViewController: UITableViewController {
 
