@@ -888,8 +888,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		if let oldTimelineFeed = preSearchTimelineFeed {
 			emptyTheTimeline()
 			timelineFeed = oldTimelineFeed
-			masterTimelineViewController?.reinitializeArticles(resetScroll: true)
 			replaceArticles(with: savedSearchArticles!, animated: true)
+			masterTimelineViewController?.reinitializeArticles(resetScroll: true)
 		} else {
 			setTimelineFeed(nil, animated: true)
 		}
