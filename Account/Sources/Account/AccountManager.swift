@@ -268,34 +268,6 @@ public final class AccountManager: UnreadCountProvider {
 		}
 	}
 	
-	public func refreshAll(completion: (() -> Void)? = nil) {
-		guard let reachability = try? Reachability(hostname: "apple.com"), reachability.connection != .unavailable else { return }
-
-		var syncErrors = [AccountSyncError]()
-		let group = DispatchGroup()
-		
-		activeAccounts.forEach { account in
-			group.enter()
-			account.refreshAll() { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					syncErrors.append(AccountSyncError(account: account, error: error))
-				}
-			}
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			if syncErrors.count > 0 {
-				NotificationCenter.default.post(Notification(name: .AccountsDidFailToSyncWithErrors, object: self, userInfo: [Account.UserInfoKey.syncErrors: syncErrors]))
-			}
-			completion?()
-		}
-		
-	}
-
 	public func sendArticleStatusAll(completion: (() -> Void)? = nil) {
 		let group = DispatchGroup()
 		
