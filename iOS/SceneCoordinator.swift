@@ -636,7 +636,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
+		guard indexPath.section > -1 &&
+				indexPath.row > -1 &&
+				indexPath.section < shadowTable.count &&
+				indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
 			return nil
 		}
 		return shadowTable[indexPath.section].feedNodes[indexPath.row].node
