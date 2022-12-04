@@ -51,7 +51,6 @@ struct SettingsView: View {
 				}
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))
-			.navigationViewStyle(.stack)
 			.listStyle(.insetGrouped)
 			.navigationTitle(Text("Settings"))
 			.navigationBarTitleDisplayMode(.inline)
@@ -119,6 +118,6 @@ struct SettingsView: View {
 			} message: {
 				Text(viewModel.importExportError?.localizedDescription ?? "Import/Export Error")
 			}
-		}
+		}.navigationViewStyle(.stack)
 	}
 }
