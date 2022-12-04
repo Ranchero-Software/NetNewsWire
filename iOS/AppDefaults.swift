@@ -55,7 +55,6 @@ final class AppDefaults: ObservableObject {
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
 		static let hasUsedFullScreenPreviously = "hasUsedFullScreenPreviously"
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
-		static let lastRefresh = "lastRefresh"
 		static let addWebFeedAccountID = "addWebFeedAccountID"
 		static let addWebFeedFolderName = "addWebFeedFolderName"
 		static let addFolderAccountID = "addFolderAccountID"
@@ -223,17 +222,6 @@ final class AppDefaults: ObservableObject {
 		}
 		set {
 			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
-			AppDefaults.shared.objectWillChange.send()
-		}
-	}
-	
-	var lastRefresh: Date? {
-		get {
-			return AppDefaults.date(for: Key.lastRefresh)
-		}
-		set {
-			AppDefaults.setDate(for: Key.lastRefresh, newValue)
-			AppDefaults.shared.objectWillChange.send()
 		}
 	}
 	

@@ -39,12 +39,12 @@ extension TimelineViewController {
 
 	@objc func markArticlesReadFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else { return }
-		markArticles(articles, read: true)
+		markArticles(articles, read: true, directlyMarked: true)
 	}
 
 	@objc func markArticlesUnreadFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else { return }
-		markArticles(articles, read: false)
+		markArticles(articles, read: false, directlyMarked: true)
 	}
 
 	@objc func markAboveArticlesReadFromContextualMenu(_ sender: Any?) {
@@ -59,14 +59,14 @@ extension TimelineViewController {
 
 	@objc func markArticlesStarredFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else { return }
-		markArticles(articles, starred: true)
+		markArticles(articles, starred: true, directlyMarked: true)
 	}
 
 	@objc func markArticlesUnstarredFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else {
 			return
 		}
-		markArticles(articles, starred: false)
+		markArticles(articles, starred: false, directlyMarked: true)
 	}
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
@@ -81,7 +81,11 @@ extension TimelineViewController {
 			return
 		}
 		
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: feedArticles, markingRead: true, undoManager: undoManager) else {
+		guard let undoManager = undoManager,
+			  let markReadCommand = MarkStatusCommand(initialArticles: feedArticles,
+													  markingRead: true,
+													  directlyMarked: false,
+													  undoManager: undoManager) else {
 			return
 		}
 		
@@ -89,18 +93,19 @@ extension TimelineViewController {
 	}
 	
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
-
-		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
+		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String] else {
 			return
 		}
-		Browser.open(urlString, inBackground: false)
+
+		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 	
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
+		guard let menuItem = sender as? NSMenuItem, let urlStrings = menuItem.representedObject as? [String?] else {
 			return
 		}
-		URLPasteboardWriter.write(urlString: urlString, to: .general)
+
+		URLPasteboardWriter.write(urlStrings: urlStrings, alertingIn: self.view.window)
 	}
 
 	@objc func performShareServiceFromContextualMenu(_ sender: Any?) {
@@ -114,16 +119,21 @@ extension TimelineViewController {
 
 private extension TimelineViewController {
 
-	func markArticles(_ articles: [Article], read: Bool) {
-		markArticles(articles, statusKey: .read, flag: read)
+	func markArticles(_ articles: [Article], read: Bool, directlyMarked: Bool) {
+		markArticles(articles, statusKey: .read, flag: read, directlyMarked: directlyMarked)
 	}
 
-	func markArticles(_ articles: [Article], starred: Bool) {
-		markArticles(articles, statusKey: .starred, flag: starred)
+	func markArticles(_ articles: [Article], starred: Bool, directlyMarked: Bool) {
+		markArticles(articles, statusKey: .starred, flag: starred, directlyMarked: directlyMarked)
 	}
 
-	func markArticles(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool) {
-		guard let undoManager = undoManager, let markStatusCommand = MarkStatusCommand(initialArticles: articles, statusKey: statusKey, flag: flag, undoManager: undoManager) else {
+	func markArticles(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, directlyMarked: Bool) {
+		guard let undoManager = undoManager,
+				let markStatusCommand = MarkStatusCommand(initialArticles: articles,
+														  statusKey: statusKey,
+														  flag: flag,
+														  directlyMarked: directlyMarked,
+														  undoManager: undoManager) else {
 			return
 		}
 
@@ -176,14 +186,19 @@ private extension TimelineViewController {
 				menu.addItem(markAllMenuItem)
 			}
 		}
-		
-		if articles.count == 1, let link = articles.first!.preferredLink {
+
+		let links = articles.map { $0.preferredLink }
+		let compactLinks = links.compactMap { $0 }
+
+		if compactLinks.count > 0 {
 			menu.addSeparatorIfNeeded()
-			menu.addItem(openInBrowserMenuItem(link))
+			menu.addItem(openInBrowserMenuItem(compactLinks))
+			menu.addItem(openInBrowserReversedMenuItem(compactLinks))
+
 			menu.addSeparatorIfNeeded()
-			menu.addItem(copyArticleURLMenuItem(link))
-			
-			if let externalLink = articles.first?.externalLink, externalLink != link {
+			menu.addItem(copyArticleURLsMenuItem(links))
+
+			if let externalLink = articles.first?.externalLink, externalLink != links.first {
 				menu.addItem(copyExternalURLMenuItem(externalLink))
 			}
 		}
@@ -274,13 +289,21 @@ private extension TimelineViewController {
 		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), articles)
 	}
 	
-	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
+	func openInBrowserMenuItem(_ urlStrings: [String]) -> NSMenuItem {
+		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
+	}
 
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString)
+	func openInBrowserReversedMenuItem(_ urlStrings: [String]) -> NSMenuItem {
+		let item = menuItem(Browser.titleForOpenInBrowserInverted, #selector(openInBrowserFromContextualMenu(_:)), urlStrings)
+		item.keyEquivalentModifierMask = .shift
+		item.isAlternate = true
+		return item;
 	}
 	
-	func copyArticleURLMenuItem(_ urlString: String) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Copy Article URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString)
+	func copyArticleURLsMenuItem(_ urlStrings: [String?]) -> NSMenuItem {
+		let format = NSLocalizedString("Copy Article URL", comment: "Command")
+		let title = String.localizedStringWithFormat(format, urlStrings.count)
+		return menuItem(title, #selector(copyURLFromContextualMenu(_:)), urlStrings)
 	}
 	
 	func copyExternalURLMenuItem(_ urlString: String) -> NSMenuItem {

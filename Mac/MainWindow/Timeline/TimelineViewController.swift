@@ -65,7 +65,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
 				unreadCount = 0
 
-				selectionDidChange(nil)
 				if showsSearchResults {
 					fetchAndReplaceArticlesAsync()
 				} else {
@@ -75,6 +74,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 					}
 					updateUnreadCount()
 				}
+				selectionDidChange(nil)
 			}
 		}
 	}
@@ -123,10 +123,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				showFeedNames = .feed
 			}
 
+			directlyMarkedAsUnreadArticles = Set<Article>()
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
 		}
 	}
+	
+	var directlyMarkedAsUnreadArticles = Set<Article>()
 
 	var unreadCount: Int = 0 {
 		didSet {
@@ -219,6 +222,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(markStatusCommandDidDirectMarking(_:)), name: .MarkStatusCommandDidDirectMarking, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(markStatusCommandDidUndoDirectMarking(_:)), name: .MarkStatusCommandDidUndoDirectMarking, object: nil)
 			didRegisterForNotifications = true
 		}
 	}
@@ -230,7 +235,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - API
 	
 	func markAllAsRead(completion: (() -> Void)? = nil) {
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager, completion: completion) else {
+		let markableArticles = Set(articles).subtracting(directlyMarkedAsUnreadArticles)
+		guard let undoManager = undoManager,
+			  let markReadCommand = MarkStatusCommand(initialArticles: markableArticles,
+													  markingRead: true,
+													  directlyMarked: false,
+													  undoManager: undoManager,
+													  completion: completion) else {
 			return
 		}
 		runCommand(markReadCommand)
@@ -315,9 +326,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
-		if let link = oneSelectedArticle?.preferredLink {
-			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		}
+		let urlStrings = selectedArticles.compactMap { $0.preferredLink }
+		Browser.open(urlStrings, fromWindow: self.view.window, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 	}
 	
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
@@ -337,14 +347,22 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@IBAction func markSelectedArticlesAsRead(_ sender: Any?) {
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: true, undoManager: undoManager) else {
+		guard let undoManager = undoManager,
+			  let markReadCommand = MarkStatusCommand(initialArticles: selectedArticles,
+													  markingRead: true,
+													  directlyMarked: true,
+													  undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)
 	}
 	
 	@IBAction func markSelectedArticlesAsUnread(_ sender: Any?) {
-		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
+		guard let undoManager = undoManager,
+			  let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles,
+														markingRead: false,
+														directlyMarked: true,
+														undoManager: undoManager) else {
 			return
 		}
 		runCommand(markUnreadCommand)
@@ -412,7 +430,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		
-		guard let undoManager = undoManager, let markStarredCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: markingRead, undoManager: undoManager) else {
+		guard let undoManager = undoManager,
+				let markStarredCommand = MarkStatusCommand(initialArticles: selectedArticles,
+														   markingRead: markingRead,
+														   directlyMarked: true,
+														   undoManager: undoManager) else {
 			return
 		}
 		
@@ -435,7 +457,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 
-		guard let undoManager = undoManager, let markStarredCommand = MarkStatusCommand(initialArticles: selectedArticles, markingStarred: starring, undoManager: undoManager) else {
+		guard let undoManager = undoManager,
+			  let markStarredCommand = MarkStatusCommand(initialArticles: selectedArticles,
+														 markingStarred: starring,
+														 directlyMarked: true,
+														 undoManager: undoManager) else {
 			return
 		}
 		runCommand(markStarredCommand)
@@ -502,7 +528,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+		let markableArticles = Set(articlesToMark).subtracting(directlyMarkedAsUnreadArticles)
+		guard let undoManager = undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: markableArticles,
+														markingRead: true,
+														directlyMarked: false,
+														undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)
@@ -510,9 +541,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	func markAboveArticlesRead(_ selectedArticles: [Article]) {
 		guard let first = selectedArticles.first else { return }
+
 		let articlesToMark = articles.articlesAbove(article: first)
 		guard !articlesToMark.isEmpty else { return }
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+
+		let markableArticles = Set(articlesToMark).subtracting(directlyMarkedAsUnreadArticles)
+		guard let undoManager = undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: markableArticles,
+														markingRead: true,
+														directlyMarked: false,
+														undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)
@@ -520,9 +558,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	func markBelowArticlesRead(_ selectedArticles: [Article]) {
 		guard let last = selectedArticles.last else { return }
+		
 		let articlesToMark = articles.articlesBelow(article: last)
 		guard !articlesToMark.isEmpty else { return }
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articlesToMark, markingRead: true, undoManager: undoManager) else {
+		
+		let markableArticles = Set(articlesToMark).subtracting(directlyMarkedAsUnreadArticles)
+		guard let undoManager = undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: markableArticles,
+														markingRead: true,
+														directlyMarked: false,
+														undoManager: undoManager) else {
 			return
 		}
 		runCommand(markReadCommand)
@@ -666,6 +711,28 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}
 	
+	@objc func markStatusCommandDidDirectMarking(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			  let articles = userInfo[Account.UserInfoKey.articles] as? Set<Article>,
+			  let statusKey = userInfo[Account.UserInfoKey.statusKey] as? ArticleStatus.Key,
+			  let flag = userInfo[Account.UserInfoKey.statusFlag] as? Bool else { return }
+		
+		if statusKey == .read && flag == false {
+			directlyMarkedAsUnreadArticles.formUnion(articles)
+		}
+	}
+
+	@objc func markStatusCommandDidUndoDirectMarking(_ note: Notification) {
+		guard let userInfo = note.userInfo,
+			  let articles = userInfo[Account.UserInfoKey.articles] as? Set<Article>,
+			  let statusKey = userInfo[Account.UserInfoKey.statusKey] as? ArticleStatus.Key,
+			  let flag = userInfo[Account.UserInfoKey.statusFlag] as? Bool else { return }
+		
+		if statusKey == .read && flag == false {
+			directlyMarkedAsUnreadArticles.subtract(articles)
+		}
+	}
+
 	// MARK: - Reloading Data
 
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
@@ -779,8 +846,7 @@ extension TimelineViewController: NSUserInterfaceValidations {
 				item.title = Browser.titleForOpenInBrowserInverted
 			}
 
-			let currentLink = oneSelectedArticle?.preferredLink
-			return currentLink != nil
+			return selectedArticles.first { $0.preferredLink != nil } != nil
 		}
 
 		if item.action == #selector(copy(_:)) {
@@ -901,14 +967,22 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private func toggleArticleRead(_ article: Article) {
-		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: [article], markingRead: !article.status.read, undoManager: undoManager) else {
+		guard let undoManager = undoManager,
+			  let markUnreadCommand = MarkStatusCommand(initialArticles: [article],
+														markingRead: !article.status.read,
+														directlyMarked: true,
+														undoManager: undoManager) else {
 			return
 		}
 		self.runCommand(markUnreadCommand)
 	}
-
+	
 	private func toggleArticleStarred(_ article: Article) {
-		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: [article], markingStarred: !article.status.starred, undoManager: undoManager) else {
+		guard let undoManager = undoManager,
+			  let markUnreadCommand = MarkStatusCommand(initialArticles: [article],
+														markingStarred: !article.status.starred,
+														directlyMarked: true,
+														undoManager: undoManager) else {
 			return
 		}
 		self.runCommand(markUnreadCommand)

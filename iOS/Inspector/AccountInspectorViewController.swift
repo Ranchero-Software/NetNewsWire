@@ -37,7 +37,7 @@ class AccountInspectorViewController: UITableViewController {
 	@IBOutlet weak var nameTextField: UITextField!
 	@IBOutlet weak var activeSwitch: UISwitch!
 	@IBOutlet weak var deleteAccountButton: VibrantButton!
-	@IBOutlet weak var limitationsAndSolutionsButton: UIButton!
+	@IBOutlet weak var limitationsAndSolutionsView: UIView!
 	
 	var isModal = false
 	weak var account: Account?
@@ -59,7 +59,7 @@ class AccountInspectorViewController: UITableViewController {
 		}
 		
 		if account.type != .cloudKit {
-			limitationsAndSolutionsButton.isHidden = true
+			limitationsAndSolutionsView.isHidden = true
 		}
 		
 		if isModal {

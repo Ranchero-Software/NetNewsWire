@@ -10,6 +10,7 @@ import UIKit
 import RSCore
 import RSWeb
 import Account
+import Articles
 import BackgroundTasks
 import Secrets
 import WidgetKit
@@ -73,7 +74,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		FeedProviderManager.shared.delegate = ExtensionPointManager.shared
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
 	}
 	
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -150,10 +150,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		}
 	}
 	
-	@objc func accountRefreshDidFinish(_ note: Notification) {
-		AppDefaults.shared.lastRefresh = Date()
-	}
-	
 	// MARK: - API
 	
 	func manualRefresh(errorHandler: @escaping (Error) -> ()) {
@@ -183,7 +179,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 		extensionFeedAddRequestFile.resume()
 		syncTimer?.update()
 
-		if let lastRefresh = AppDefaults.shared.lastRefresh {
+		if let lastRefresh = AccountManager.shared.lastArticleFetchEndTime {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			} else {
@@ -432,55 +428,40 @@ private extension AppDelegate {
 private extension AppDelegate {
 	
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		resumeDatabaseProcessingIfNecessary()
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			logger.debug("No account found from notification.")
-			return
-		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			logger.debug("No account found from search using \(articleID, privacy: .public)")
-			return
-		}
-		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
-		self.prepareAccountsForBackground()
-		account!.syncArticleStatus(completion: { [weak self] _ in
-			if !AccountManager.shared.isSuspended {
-				self?.prepareAccountsForBackground()
-				self?.suspendApplication()
-			}
-		})
+		markArticle(userInfo: userInfo, statusKey: .read)
 	}
 	
 	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+		markArticle(userInfo: userInfo, statusKey: .starred)
+	}
+	
+	func markArticle(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
 		}
+		
 		resumeDatabaseProcessingIfNecessary()
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
+
+		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
 			logger.debug("No account found from notification.")
 			return
 		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
+
+		guard let articles = try? account.fetchArticles(.articleIDs([articleID])), !articles.isEmpty else {
 			logger.debug("No article found from search using \(articleID, privacy: .public)")
 			return
 		}
-		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
-		account!.syncArticleStatus(completion: { [weak self] _ in
-			if !AccountManager.shared.isSuspended {
-				self?.prepareAccountsForBackground()
-				self?.suspendApplication()
-			}
-		})
+		
+		account.mark(articles: articles, statusKey: statusKey, flag: true) { [weak self] _ in
+			account.syncArticleStatus(completion: { [weak self] _ in
+				if !AccountManager.shared.isSuspended {
+					self?.prepareAccountsForBackground()
+					self?.suspendApplication()
+				}
+			})
+		}
 	}
+	
 }

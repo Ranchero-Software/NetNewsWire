@@ -241,7 +241,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		refreshTimer = AccountRefreshTimer()
 		syncTimer = ArticleStatusSyncTimer()
 		
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .badge]) { (granted, error) in }
+		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in }
 		
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			if settings.authorizationStatus == .authorized {
@@ -1050,41 +1050,31 @@ extension AppDelegate: NSWindowRestoration {
 private extension AppDelegate {
 	
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
+		markArticle(userInfo: userInfo, statusKey: .read)
+	}
+	
+	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
+		markArticle(userInfo: userInfo, statusKey: .starred)
+	}
+	
+	func markArticle(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return
 		}
 		
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
+		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
 			logger.debug("No account found from notification.")
 			return
 		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
+		
+		guard let articles = try? account.fetchArticles(.articleIDs([articleID])), !articles.isEmpty else {
 			logger.debug("No article found from search using: \(articleID, privacy: .public)")
 			return
 		}
-		account!.markArticles(article!, statusKey: .read, flag: true) { _ in }
+		
+		account.mark(articles: articles, statusKey: statusKey, flag: true) { _ in }
 	}
 	
-	func handleMarkAsStarred(userInfo: [AnyHashable: Any]) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
-			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
-				return
-		}
-		let account = AccountManager.shared.existingAccount(with: accountID)
-		guard account != nil else {
-			logger.debug("No account found from notification.")
-			return
-		}
-		let article = try? account!.fetchArticles(.articleIDs([articleID]))
-		guard article != nil else {
-			logger.debug("No article found from search using: \(articleID, privacy: .public)")
-			return
-		}
-		account!.markArticles(article!, statusKey: .starred, flag: true) { _ in }
-	}
 }

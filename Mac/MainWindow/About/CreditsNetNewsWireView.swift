@@ -49,6 +49,7 @@ struct CreditsNetNewsWireView: View, LoadableAboutData {
 				.frame(height: 12)
 		}
 		.padding(.horizontal)
+		.frame(width: 400, height: 400)
 	}
 	
 	func contributorView(_ appCredit: AboutData.Contributor) -> some View {
