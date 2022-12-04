@@ -12,7 +12,7 @@ import RSCore
 import UIKit
 import SwiftUI
 
-struct ArticleThemesViewControllerRepresentable: UIViewControllerRepresentable {
+struct ArticleThemesWrapper: UIViewControllerRepresentable {
 	func makeUIViewController(context: Context) -> ArticleThemesTableViewController {
 		let storyboard = UIStoryboard(name: "Settings", bundle: .main)
 		let controller = storyboard.instantiateViewController(withIdentifier: "ArticleThemesTableViewController") as! ArticleThemesTableViewController

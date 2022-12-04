@@ -15,6 +15,8 @@ struct SettingsView: View {
 	
 	@StateObject private var appDefaults = AppDefaults.shared
 	@StateObject private var viewModel = SettingsViewModel()
+	
+	@Binding var isConfigureAppearanceShown: Bool
 		
 	var body: some View {
 		NavigationView {
@@ -34,7 +36,7 @@ struct SettingsView: View {
 				
 				// Appearance
 				Section(header: Text("Appearance"), footer: Text("Manage the look, feel, and behavior of NetNewsWire.")) {
-					SettingsViewRows.ConfigureAppearance
+					SettingsViewRows.ConfigureAppearance($isConfigureAppearanceShown)
 					if viewModel.notificationPermissions == .authorized {
 						SettingsViewRows.ConfigureNewArticleNotifications
 					}
@@ -49,6 +51,7 @@ struct SettingsView: View {
 				}
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))
+			.navigationViewStyle(.stack)
 			.listStyle(.insetGrouped)
 			.navigationTitle(Text("Settings"))
 			.navigationBarTitleDisplayMode(.inline)

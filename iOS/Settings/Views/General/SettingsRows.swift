@@ -144,22 +144,15 @@ struct SettingsViewRows {
 	/// This row, when tapped, will push the the Timeline Layout screen
 	/// in to view.
 	static var TimelineLayout: some View {
-		NavigationLink(destination: NotificationsViewControllerRepresentable()) {
-			Label {
-				Text("Timeline Layout")
-			} icon: {
-				Image(systemName: "slider.vertical.3")
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 25.0, height: 25.0)
-			}
+		NavigationLink(destination: TimelineCustomizerWrapper().edgesIgnoringSafeArea(.all).navigationTitle(Text("Timeline Layout"))) {
+			Text("Timeline Layout")
 		}
 	}
 	
 	/// This row, when tapped, will push the the Theme Selector screen
 	/// in to view.
 	static var ThemeSelection: some View {
-		NavigationLink(destination: ArticleThemesViewControllerRepresentable().edgesIgnoringSafeArea(.all)) {
+		NavigationLink(destination: ArticleThemesWrapper().edgesIgnoringSafeArea(.all)) {
 			HStack {
 				Text("Article Theme")
 				Spacer()
@@ -192,8 +185,8 @@ struct SettingsViewRows {
 	
 	/// This row, when tapped, will push the New Article Notifications
 	/// screen in to view.
-	static var ConfigureAppearance: some View {
-		NavigationLink(destination: DisplayAndBehaviorsView()) {
+	static func ConfigureAppearance(_ isShown: Binding<Bool>) -> some View {
+		NavigationLink(destination: DisplayAndBehaviorsView(), isActive: isShown) {
 			Label {
 				Text("Display & Behaviors")
 			} icon: {

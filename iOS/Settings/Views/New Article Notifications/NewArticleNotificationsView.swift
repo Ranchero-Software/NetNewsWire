@@ -50,7 +50,6 @@ struct NewArticleNotificationsView: View {
 				get: { webfeed.isNotifyAboutNewArticles ?? false },
 				set: { webfeed.isNotifyAboutNewArticles = $0 }))
 		}
-		
 	}
 }
 

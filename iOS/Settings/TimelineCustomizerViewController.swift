@@ -7,6 +7,22 @@
 //
 
 import UIKit
+import SwiftUI
+import RSCore
+
+struct TimelineCustomizerWrapper: UIViewControllerRepresentable {
+	public func makeUIViewController(context: Context) -> TimelineCustomizerViewController {
+		let controller = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerViewController.self)
+		return controller
+	}
+	
+	public func updateUIViewController(_ uiViewController: TimelineCustomizerViewController, context: Context) {
+		//
+	}
+	
+	public typealias UIViewControllerType = TimelineCustomizerViewController
+}
+
 
 class TimelineCustomizerViewController: UIViewController {
 

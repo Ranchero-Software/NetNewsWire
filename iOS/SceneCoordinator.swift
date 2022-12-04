@@ -1130,13 +1130,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func showSettings(scrollToArticlesSection: Bool = false) {
-//		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-//		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
-//		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
-//		settingsNavController.modalPresentationStyle = .formSheet
-//		settingsViewController.presentingParentController = rootSplitViewController
-//		rootSplitViewController.present(settingsNavController, animated: true)
-		let hostedSettings = UIHostingController(rootView: SettingsView())
+		var s = scrollToArticlesSection
+		let hostedSettings = UIHostingController(rootView: SettingsView(isConfigureAppearanceShown: Binding(get: { s }, set: { s = $0 })))
 		rootSplitViewController.present(hostedSettings, animated: true)
 	}
 	

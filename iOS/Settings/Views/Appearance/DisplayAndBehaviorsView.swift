@@ -23,6 +23,7 @@ struct DisplayAndBehaviorsView: View {
 				SettingsViewRows.SortOldestToNewest($appDefaults.timelineSortDirectionBool)
 				SettingsViewRows.GroupByFeed($appDefaults.timelineGroupByFeed)
 				SettingsViewRows.RefreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
+				SettingsViewRows.TimelineLayout
 			}
 			
 			Section("Article") {
