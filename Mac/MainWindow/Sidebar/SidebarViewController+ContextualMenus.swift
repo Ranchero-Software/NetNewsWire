@@ -352,9 +352,16 @@ private extension SidebarViewController {
 
 		if smartFeed.unreadCount > 0 {
 			menu.addItem(markAllReadMenuItem([smartFeed]))
+
+			// Doesn't make sense to mark articles newer than a day with catch up with first option being older than a day
+			if let maybeSmartFeed = smartFeed as? SmartFeed {
+				if maybeSmartFeed.delegate is TodayFeedDelegate {
+					return menu
+				}
+			}
+
 			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
 			let catchUpSubMenu = catchUpSubMenu([smartFeed])
-
 			menu.addItem(catchUpMenuItem)
 			menu.setSubmenu(catchUpSubMenu, for: catchUpMenuItem)
 		}
