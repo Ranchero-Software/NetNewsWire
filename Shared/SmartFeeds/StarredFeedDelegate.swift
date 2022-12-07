@@ -29,4 +29,9 @@ struct StarredFeedDelegate: SmartFeedDelegate {
 	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
 		account.fetchUnreadCountForStarredArticles(completion)
 	}
+
+	func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
+		// TODO FILTER BY STARRED
+		return try AccountManager.shared.fetchUnreadArticlesBetween(limit: nil, before: before, after: after)
+	}
 }

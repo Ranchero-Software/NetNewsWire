@@ -79,19 +79,6 @@ public extension Set where Element == Article {
 		let articles = self.filter { !$0.status.read }
 		return Set(articles)
 	}
-	
-	func unreadArticlesBetween(before: Date? = nil, after: Date? = nil) -> Set<Article> {
-		var articles = self.filter { !$0.status.read }
-		if before != nil {
-			// TODO: Address datePublished nil
-			articles = articles.filter { $0.datePublished != nil && $0.datePublished! <= before! }
-		}
-		if after != nil {
-			// TODO: Address datePublished nil
-			articles = articles.filter { $0.datePublished != nil && $0.datePublished! >= after! }
-		}
-		return Set(articles)
-	}
 
 	func contains(accountID: String, articleID: String) -> Bool {
 		return contains(where: { $0.accountID == accountID && $0.articleID == articleID})

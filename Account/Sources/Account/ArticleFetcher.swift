@@ -37,9 +37,9 @@ extension WebFeed: ArticleFetcher {
 	public func fetchUnreadArticles() throws -> Set<Article> {
 		return try fetchArticles().unreadArticles()
 	}
-	
+
 	public func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
-		return try fetchArticles().unreadArticlesBetween(before: before, after: after)
+		return try account?.fetchUnreadArticlesBetween(webFeeds: [self], limit: nil, before: before, after: after) ?? Set<Article>()
 	}
 
 	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
@@ -87,7 +87,11 @@ extension Folder: ArticleFetcher {
 	}
 
 	public func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
-		return try fetchArticles().unreadArticlesBetween(before: before, after: after)
+		guard let account = account else {
+			assertionFailure("Expected folder.account, but got nil.")
+			return Set<Article>()
+		}
+		return try account.fetchUnreadArticlesBetween(folder: self, limit: nil, before: before, after: after)
 	}
 
 	public func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {

@@ -70,12 +70,16 @@ final class ArticlesTable: DatabaseTable {
 		return try fetchArticles{ self.fetchArticles(articleIDs: articleIDs, $0) }
 	}
 
+	func fetchArticlesBetween(articleIDs: Set<String>, before: Date?, after: Date?) throws -> Set<Article> {
+		return try fetchArticles{ self.fetchArticlesBetween(articleIDs: articleIDs, before: before, after: after, $0) }
+	}
+
 	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
 		return fetchArticlesAsync({ self.fetchArticles(articleIDs: articleIDs, $0) }, completion)
 	}
 
 	// MARK: - Fetching Unread Articles
-	
+
 	func fetchUnreadArticles(_ webFeedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
 		return try fetchArticles{ self.fetchUnreadArticles(webFeedIDs, limit, $0) }
 	}
@@ -854,14 +858,21 @@ private extension ArticlesTable {
 		if webFeedIDs.isEmpty {
 			return Set<Article>()
 		}
-		let parameters = webFeedIDs.map { $0 as AnyObject }
+		var parameters = webFeedIDs.map { $0 as AnyObject }
+
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(webFeedIDs.count))!
 		var whereClause = "feedID in \(placeholders) and read=0"
+
+		if let before = before {
+			whereClause.append(" and (datePublished < ? or (datePublished is null and dateArrived < ?))")
+			parameters = parameters + [before as AnyObject, before as AnyObject]
+		}
+		if let after = after {
+			whereClause.append(" and (datePublished > ? or (datePublished is null and dateArrived > ?))")
+			parameters = parameters + [after as AnyObject, after as AnyObject]
+		}
 		if let limit = limit {
 			whereClause.append(" order by coalesce(datePublished, dateModified, dateArrived) desc limit \(limit)")
-		}
-		if let before = before {
-			whereClause.append(" and dateArrived <= \(before)")
 		}
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
@@ -877,6 +888,26 @@ private extension ArticlesTable {
 		let parameters = articleIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 		let whereClause = "articleID in \(placeholders)"
+		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
+	}
+
+	func fetchArticlesBetween(articleIDs: Set<String>, before: Date?, after: Date?, _ database: FMDatabase) -> Set<Article> {
+		if articleIDs.isEmpty {
+			return Set<Article>()
+		}
+		var parameters = articleIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+		var whereClause = "articleID in \(placeholders)"
+
+		if let before = before {
+			whereClause.append(" and (datePublished < ? or (datePublished is null and dateArrived < ?))")
+			parameters = parameters + [before as AnyObject, before as AnyObject]
+		}
+		if let after = after {
+			whereClause.append(" and (datePublished > ? or (datePublished is null and dateArrived > ?))")
+			parameters = parameters + [after as AnyObject, after as AnyObject]
+		}
+
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 

@@ -46,7 +46,7 @@ final class SmartFeed: PseudoFeed {
 	}
 	#endif
 
-	private let delegate: SmartFeedDelegate
+	public let delegate: SmartFeedDelegate
 	private var unreadCounts = [String: Int]()
 
 	init(delegate: SmartFeedDelegate) {

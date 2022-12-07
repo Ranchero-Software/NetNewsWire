@@ -84,6 +84,56 @@ extension SidebarViewController {
 		runCommand(markReadCommand)
 	}
 
+
+	@objc func markObjectsReadOlderThanOneDayFromContextualMenu(_ sender: Any?) {
+		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .day, value: -1, to: Date()), after: nil, sender: sender)
+	}
+
+	@objc func markObjectsReadOlderThanTwoDaysFromContextualMenu(_ sender: Any?) {
+		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .day, value: -2, to: Date()), after: nil, sender: sender)
+	}
+
+	@objc func markObjectsReadOlderThanThreeDaysFromContextualMenu(_ sender: Any?) {
+		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .year, value: -3, to: Date()), after: nil, sender: sender)
+	}
+
+	@objc func markObjectsReadOlderThanOneWeekFromContextualMenu(_ sender: Any?) {
+		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .weekOfYear, value: -1, to: Date()), after: nil, sender: sender)
+	}
+
+	@objc func markObjectsReadOlderThanTwoWeeksFromContextualMenu(_ sender: Any?) {
+		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .weekOfYear, value: -2, to: Date()), after: nil, sender: sender)
+	}
+
+	@objc func markObjectsReadOlderThanOneMonthFromContextualMenu(_ sender: Any?) {
+		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .month, value: -1, to: Date()), after: nil, sender: sender)
+	}
+
+	@objc func markObjectsReadOlderThanOneYearFromContextualMenu(_ sender: Any?) {
+		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .year, value: -1, to: Date()), after: nil, sender: sender)
+	}
+
+	func markObjectsReadBetweenDatesFromContextualMenu(before: Date?, after: Date?, sender: Any?) {
+
+		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [Any] else {
+			return
+		}
+
+		var markableArticles = unreadArticlesBetween(for: objects, before: before, after: after)
+		if let directlyMarkedAsUnreadArticles = delegate?.directlyMarkedAsUnreadArticles {
+			markableArticles = markableArticles.subtracting(directlyMarkedAsUnreadArticles)
+		}
+
+		guard let undoManager = undoManager,
+				let markReadCommand = MarkStatusCommand(initialArticles: markableArticles,
+														markingRead: true,
+														directlyMarked: false,
+														undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+
 	@objc func deleteFromContextualMenu(_ sender: Any?) {
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [AnyObject] else {
 			return
@@ -219,13 +269,13 @@ private extension SidebarViewController {
 		let menu = NSMenu(title: "")
 
 		if webFeed.unreadCount > 0 {
-//			menu.addItem(markAllReadMenuItem([webFeed]))
-			let catchUpMenuItem = catchUpMenuItem([webFeed])
+			menu.addItem(markAllReadMenuItem([webFeed]))
+			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
 			let catchUpSubMenu = catchUpSubMenu([webFeed])
-			
+
 			menu.addItem(catchUpMenuItem)
 			menu.setSubmenu(catchUpSubMenu, for: catchUpMenuItem)
-			
+
 			menu.addItem(NSMenuItem.separator())
 		}
 
@@ -282,6 +332,11 @@ private extension SidebarViewController {
 
 		if folder.unreadCount > 0 {
 			menu.addItem(markAllReadMenuItem([folder]))
+			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
+			let catchUpSubMenu = catchUpSubMenu([folder])
+
+			menu.addItem(catchUpMenuItem)
+			menu.setSubmenu(catchUpSubMenu, for: catchUpMenuItem)
 			menu.addItem(NSMenuItem.separator())
 		}
 
@@ -297,6 +352,11 @@ private extension SidebarViewController {
 
 		if smartFeed.unreadCount > 0 {
 			menu.addItem(markAllReadMenuItem([smartFeed]))
+			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
+			let catchUpSubMenu = catchUpSubMenu([smartFeed])
+
+			menu.addItem(catchUpMenuItem)
+			menu.setSubmenu(catchUpSubMenu, for: catchUpMenuItem)
 		}
 		return menu.numberOfItems > 0 ? menu : nil
 	}
@@ -307,6 +367,11 @@ private extension SidebarViewController {
 
 		if anyObjectInArrayHasNonZeroUnreadCount(objects) {
 			menu.addItem(markAllReadMenuItem(objects))
+			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
+			let catchUpSubMenu = catchUpSubMenu(objects)
+
+			menu.addItem(catchUpMenuItem)
+			menu.setSubmenu(catchUpSubMenu, for: catchUpMenuItem)
 		}
 
 		if allObjectsAreFeedsAndOrFolders(objects) {
@@ -321,26 +386,19 @@ private extension SidebarViewController {
 
 		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
 	}
-	
+
 	func catchUpSubMenu(_ objects: [Any]) -> NSMenu {
-		
 		let menu = NSMenu(title: "Catch up to articles older than...")
-		
-		menu.addItem(menuItem(NSLocalizedString("All", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("Older than 1 day", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("Older than 2 days", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("Older than 3 days", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("Older than 1 week", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("Older than 2 weeks", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("Older than 1 month", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("Older than 1 year", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects))
-		
+
+		menu.addItem(menuItem(NSLocalizedString("1 day", comment: "Command"), #selector(markObjectsReadOlderThanOneDayFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("2 days", comment: "Command"), #selector(markObjectsReadOlderThanTwoDaysFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("3 days", comment: "Command"), #selector(markObjectsReadOlderThanThreeDaysFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("1 week", comment: "Command"), #selector(markObjectsReadOlderThanOneWeekFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("2 weeks", comment: "Command"), #selector(markObjectsReadOlderThanTwoWeeksFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("1 month", comment: "Command"), #selector(markObjectsReadOlderThanOneMonthFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("1 year", comment: "Command"), #selector(markObjectsReadOlderThanOneYearFromContextualMenu(_:)), objects))
+
 		return menu
-	}
-	
-	func catchUpMenuItem(_ objects: [Any]) -> NSMenuItem {
-		
-		return menuItem(NSLocalizedString("Mark as Read...", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
@@ -394,6 +452,19 @@ private extension SidebarViewController {
 		for object in objects {
 			if let articleFetcher = object as? ArticleFetcher {
 				if let unreadArticles = try? articleFetcher.fetchUnreadArticles() {
+					articles.formUnion(unreadArticles)
+				}
+			}
+		}
+		return articles
+	}
+
+	func unreadArticlesBetween(for objects: [Any], before: Date?, after: Date?) -> Set<Article> {
+
+		var articles = Set<Article>()
+		for object in objects {
+			if let articleFetcher = object as? ArticleFetcher {
+				if let unreadArticles = try? articleFetcher.fetchUnreadArticlesBetween(before: before, after: after) {
 					articles.formUnion(unreadArticles)
 				}
 			}

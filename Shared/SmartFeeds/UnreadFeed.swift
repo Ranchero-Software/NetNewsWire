@@ -73,13 +73,13 @@ extension UnreadFeed: ArticleFetcher {
 	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
 		fetchUnreadArticlesAsync(completion)
 	}
-	
+
 	func fetchUnreadArticles() throws -> Set<Article> {
 		return try AccountManager.shared.fetchArticles(fetchType)
 	}
-	
+
 	func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
-		return try AccountManager.shared.fetchArticles(fetchType)
+		return try AccountManager.shared.fetchUnreadArticlesBetween(limit: nil, before: before, after: after)
 	}
 
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {

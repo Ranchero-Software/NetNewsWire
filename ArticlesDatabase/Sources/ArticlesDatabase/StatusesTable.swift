@@ -166,41 +166,6 @@ final class StatusesTable: DatabaseTable {
 		}
 	}
 	
-	func fetchArticleIDsArrivedBetweenDates(beforeDate: Date?, afterDate: Date?, completion: @escaping ArticleIDsCompletionBlock) {
-		queue.runInDatabase { databaseResult in
-			
-			var error: DatabaseError?
-			var articleIDs = Set<String>()
-			
-			var sql = "select artcileID from statuses s"
-			
-			func makeDatabaseCall(_ database: FMDatabase) {
-				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
-				if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
-					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
-				}
-			}
-			
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCall(database)
-			case .failure(let databaseError):
-				error = databaseError
-			}
-			
-			if let error = error {
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-			else {
-				DispatchQueue.main.async {
-					completion(.success(articleIDs))
-				}
-			}
-		}
-	}
-	
 	func fetchArticleIDs(_ sql: String) throws -> Set<String> {
 		var error: DatabaseError?
 		var articleIDs = Set<String>()

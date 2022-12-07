@@ -35,4 +35,9 @@ struct SearchTimelineFeedDelegate: SmartFeedDelegate {
 	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
 		// TODO: after 5.0
 	}
+
+	func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
+		// TODO FILTER BY SEARCH
+		return try AccountManager.shared.fetchUnreadArticlesBetween(limit: nil, before: before, after: after)
+	}
 }

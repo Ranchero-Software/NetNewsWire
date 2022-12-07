@@ -32,7 +32,7 @@ extension SmartFeedDelegate {
 	}
 
 	func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
-		return try fetchArticles().unreadArticlesBetween(before: before, after: after)
+		return try AccountManager.shared.fetchUnreadArticlesBetween(limit: nil, before: before, after: after)
 	}
 
 	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {

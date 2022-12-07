@@ -693,6 +693,9 @@ extension MasterFeedViewController: UIContextMenuInteractionDelegate {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
 
+			if let catchUpAction = self.catchUpActionMenu(account: account, contentView: interaction.view) {
+				menuElements.append(catchUpAction)
+			}
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.deactivateAccountAction(account: account)]))
 			
             return UIMenu(title: "", children: menuElements)
@@ -923,7 +926,7 @@ private extension MasterFeedViewController {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 
 			}
-			
+
 			if let catchUpAction = self.catchUpActionMenu(indexPath: indexPath) {
 				menuElements.append(catchUpAction)
 			}
@@ -953,6 +956,10 @@ private extension MasterFeedViewController {
 			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
+
+			if let catchUpAction = self.catchUpActionMenu(indexPath: indexPath) {
+				menuElements.append(catchUpAction)
+			}
 			
 			menuElements.append(UIMenu(title: "",
 									   options: .displayInline,
@@ -966,13 +973,22 @@ private extension MasterFeedViewController {
 		})
 	}
 
-	func makePseudoFeedContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration? {
-		guard let markAllAction = self.markAllAsReadAction(indexPath: indexPath) else {
-			return nil
-		}
+	func makePseudoFeedContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
+		return UIContextMenuConfiguration(identifier: MasterFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
 
-		return UIContextMenuConfiguration(identifier: MasterFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { suggestedActions in
-			return UIMenu(title: "", children: [markAllAction])
+			guard let self = self else { return nil }
+
+			var menuElements = [UIMenuElement]()
+
+			if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
+			}
+
+			if let catchUpAction = self.catchUpActionMenu(indexPath: indexPath) {
+				menuElements.append(catchUpAction)
+			}
+
+			return UIMenu(title: "", children: menuElements)
 		})
 	}
 
@@ -1162,7 +1178,14 @@ private extension MasterFeedViewController {
 			  feed.unreadCount > 0 else {
 				  return nil
 			  }
-		
+
+		// Doesn't make sense to mark articles newer than a day with catch up with first option being older than a day
+		if let maybeSmartFeed = feed as? SmartFeed {
+			if maybeSmartFeed.delegate is TodayFeedDelegate {
+				return nil
+			}
+		}
+
 		let title = NSLocalizedString("Mark Older Than as Read...", comment: "Command")
 		let oneDayAction = UIAction(title: "1 Day") { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Day as Read", sourceType: contentView) { [weak self] in
@@ -1232,7 +1255,7 @@ private extension MasterFeedViewController {
 
 		return majorMenu
 	}
-	
+
 	func getMarkOlderImageDirection() -> UIImage {
 		if AppDefaults.shared.timelineSortDirection == .orderedDescending {
 			return AppAssets.markBelowAsReadImage
@@ -1258,6 +1281,102 @@ private extension MasterFeedViewController {
 		}
 
 		return action
+	}
+
+	func catchUpActionMenu(account: Account, contentView: UIView?) -> UIMenu? {
+		guard account.unreadCount > 0, let contentView = contentView else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Older Than as Read...", comment: "Command")
+		let oneDayAction = UIAction(title: "1 Day") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Day as Read", sourceType: contentView) { [weak self] in
+				// If you don't have this delay the screen flashes when it executes this code
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					let cutoff = Calendar.current.date(byAdding: .day, value: -1, to: Date())
+					if let articles = try? account.fetchUnreadArticlesBetween(limit: nil, before: cutoff, after: nil) {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+				}
+			}
+		}
+		let twoDayAction = UIAction(title: "2 Days") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 2 Days as Read", sourceType: contentView) { [weak self] in
+				// If you don't have this delay the screen flashes when it executes this code
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					let cutoff = Calendar.current.date(byAdding: .day, value: -2, to: Date())
+					if let articles = try? account.fetchUnreadArticlesBetween(limit: nil, before: cutoff, after: nil) {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+				}
+			}
+		}
+		let threeDayAction = UIAction(title: "3 Days") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 3 Days as Read", sourceType: contentView) { [weak self] in
+				// If you don't have this delay the screen flashes when it executes this code
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					let cutoff = Calendar.current.date(byAdding: .day, value: -3, to: Date())
+					if let articles = try? account.fetchUnreadArticlesBetween(limit: nil, before: cutoff, after: nil) {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+				}
+			}
+		}
+		let oneWeekAction = UIAction(title: "1 Week") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Week as Read", sourceType: contentView) { [weak self] in
+				// If you don't have this delay the screen flashes when it executes this code
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					let cutoff = Calendar.current.date(byAdding: .weekOfYear, value: -1, to: Date())
+					if let articles = try? account.fetchUnreadArticlesBetween(limit: nil, before: cutoff, after: nil) {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+				}
+			}
+		}
+		let twoWeekAction = UIAction(title: "2 Weeks") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 2 Weeks as Read", sourceType: contentView) { [weak self] in
+				// If you don't have this delay the screen flashes when it executes this code
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					let cutoff = Calendar.current.date(byAdding: .weekOfYear, value: -2, to: Date())
+					if let articles = try? account.fetchUnreadArticlesBetween(limit: nil, before: cutoff, after: nil) {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+				}
+			}
+		}
+		let oneMonthAction = UIAction(title: "1 Month") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Month as Read", sourceType: contentView) { [weak self] in
+				// If you don't have this delay the screen flashes when it executes this code
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					let cutoff = Calendar.current.date(byAdding: .month, value: -1, to: Date())
+					if let articles = try? account.fetchUnreadArticlesBetween(limit: nil, before: cutoff, after: nil) {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+				}
+			}
+		}
+		let oneYearAction = UIAction(title: "1 Year") { [weak self] action in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Year as Read", sourceType: contentView) { [weak self] in
+				// If you don't have this delay the screen flashes when it executes this code
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					let cutoff = Calendar.current.date(byAdding: .year, value: -1, to: Date())
+					if let articles = try? account.fetchUnreadArticlesBetween(limit: nil, before: cutoff, after: nil) {
+						self?.coordinator.markAllAsRead(Array(articles))
+					}
+				}
+			}
+		}
+		var markActions = [UIAction]()
+		markActions.append(oneDayAction)
+		markActions.append(twoDayAction)
+		markActions.append(threeDayAction)
+		markActions.append(oneWeekAction)
+		markActions.append(twoWeekAction)
+		markActions.append(oneMonthAction)
+		markActions.append(oneYearAction)
+		let majorMenu = UIMenu(title: title, image: getMarkOlderImageDirection(), children: markActions)
+
+		return majorMenu
 	}
 
 
