@@ -94,7 +94,7 @@ extension SidebarViewController {
 	}
 
 	@objc func markObjectsReadOlderThanThreeDaysFromContextualMenu(_ sender: Any?) {
-		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .year, value: -3, to: Date()), after: nil, sender: sender)
+		return markObjectsReadBetweenDatesFromContextualMenu(before: Calendar.current.date(byAdding: .day, value: -3, to: Date()), after: nil, sender: sender)
 	}
 
 	@objc func markObjectsReadOlderThanOneWeekFromContextualMenu(_ sender: Any?) {

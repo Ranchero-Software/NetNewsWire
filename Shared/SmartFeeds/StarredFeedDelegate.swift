@@ -31,7 +31,6 @@ struct StarredFeedDelegate: SmartFeedDelegate {
 	}
 
 	func fetchUnreadArticlesBetween(before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
-		// TODO FILTER BY STARRED
-		return try AccountManager.shared.fetchUnreadArticlesBetween(limit: nil, before: before, after: after)
+		return try AccountManager.shared.fetchUnreadArticlesBetween(limit: nil, before: before, after: after).filter({ $0.status.starred })
 	}
 }
