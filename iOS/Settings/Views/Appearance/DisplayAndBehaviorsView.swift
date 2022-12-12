@@ -20,16 +20,16 @@ struct DisplayAndBehaviorsView: View {
 			}
 			
 			Section("Timeline") {
-				SettingsViewRows.SortOldestToNewest($appDefaults.timelineSortDirectionBool)
-				SettingsViewRows.GroupByFeed($appDefaults.timelineGroupByFeed)
-				SettingsViewRows.RefreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
-				SettingsViewRows.TimelineLayout
+				SettingsViewRows.sortOldestToNewest($appDefaults.timelineSortDirectionBool)
+				SettingsViewRows.groupByFeed($appDefaults.timelineGroupByFeed)
+				SettingsViewRows.refreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
+				SettingsViewRows.timelineLayout
 			}
 			
 			Section("Article") {
-				SettingsViewRows.ThemeSelection
-				SettingsViewRows.ConfirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
-				SettingsViewRows.OpenLinksInNetNewsWire(Binding<Bool>(
+				SettingsViewRows.themeSelection
+				SettingsViewRows.confirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
+				SettingsViewRows.openLinksInNetNewsWire(Binding<Bool>(
 					get: { !appDefaults.useSystemBrowser },
 					set: { appDefaults.useSystemBrowser = !$0 }
 				))

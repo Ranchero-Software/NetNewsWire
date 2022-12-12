@@ -24,30 +24,30 @@ struct SettingsView: View {
 				
 				// Device Permissions
 				Section(header: Text("Device Permissions"), footer: Text("Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.")) {
-					SettingsViewRows.OpenSystemSettings
+					SettingsViewRows.openSystemSettings
 				}
 				
 				// Account/Extensions/OPML Management
 				Section(header: Text("Accounts & Extensions"), footer: Text("Add, delete, enable, or disable accounts and extensions.")) {
-					SettingsViewRows.AddAccount
-					SettingsViewRows.ManageExtensions
-					SettingsViewRows.ImportExportOPML(showImportView: $viewModel.showImportView, showExportView: $viewModel.showExportView, importAccount: $viewModel.importAccount, exportDocument: $viewModel.exportDocument)
+					SettingsViewRows.addAccount
+					SettingsViewRows.manageExtensions
+					SettingsViewRows.importExportOPML(showImportView: $viewModel.showImportView, showExportView: $viewModel.showExportView, importAccount: $viewModel.importAccount, exportDocument: $viewModel.exportDocument)
 				}
 				
 				// Appearance
 				Section(header: Text("Appearance"), footer: Text("Manage the look, feel, and behavior of NetNewsWire.")) {
-					SettingsViewRows.ConfigureAppearance($isConfigureAppearanceShown)
+					SettingsViewRows.configureAppearance($isConfigureAppearanceShown)
 					if viewModel.notificationPermissions == .authorized {
-						SettingsViewRows.ConfigureNewArticleNotifications
+						SettingsViewRows.configureNewArticleNotifications
 					}
 				}
 				
 				// Help
 				Section {
 					ForEach(0..<HelpSheet.allCases.count, id: \.self) { i in
-						SettingsViewRows.ShowHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $viewModel.helpSheet, $viewModel.showHelpSheet)
+						SettingsViewRows.showHelpSheet(sheet: HelpSheet.allCases[i], selectedSheet: $viewModel.helpSheet, $viewModel.showHelpSheet)
 					}
-					SettingsViewRows.AboutNetNewsWire
+					SettingsViewRows.aboutNetNewsWire
 				}
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))
