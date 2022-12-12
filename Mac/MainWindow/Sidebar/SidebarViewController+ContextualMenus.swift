@@ -270,7 +270,7 @@ private extension SidebarViewController {
 
 		if webFeed.unreadCount > 0 {
 			menu.addItem(markAllReadMenuItem([webFeed]))
-			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
+			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark as Read Older Than", comment: "Command Submenu"), action: nil, keyEquivalent: "")
 			let catchUpSubMenu = catchUpSubMenu([webFeed])
 
 			menu.addItem(catchUpMenuItem)
@@ -332,7 +332,7 @@ private extension SidebarViewController {
 
 		if folder.unreadCount > 0 {
 			menu.addItem(markAllReadMenuItem([folder]))
-			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
+			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark as Read Older Than", comment: "Command Submenu"), action: nil, keyEquivalent: "")
 			let catchUpSubMenu = catchUpSubMenu([folder])
 
 			menu.addItem(catchUpMenuItem)
@@ -360,7 +360,7 @@ private extension SidebarViewController {
 				}
 			}
 
-			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
+			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark as Read Older Than", comment: "Command Submenu"), action: nil, keyEquivalent: "")
 			let catchUpSubMenu = catchUpSubMenu([smartFeed])
 			menu.addItem(catchUpMenuItem)
 			menu.setSubmenu(catchUpSubMenu, for: catchUpMenuItem)
@@ -374,7 +374,7 @@ private extension SidebarViewController {
 
 		if anyObjectInArrayHasNonZeroUnreadCount(objects) {
 			menu.addItem(markAllReadMenuItem(objects))
-			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark Older Than as Read...", comment: "Command Submenu"), action: nil, keyEquivalent: "")
+			let catchUpMenuItem = NSMenuItem(title: NSLocalizedString("Mark as Read Older Than", comment: "Command Submenu"), action: nil, keyEquivalent: "")
 			let catchUpSubMenu = catchUpSubMenu(objects)
 
 			menu.addItem(catchUpMenuItem)

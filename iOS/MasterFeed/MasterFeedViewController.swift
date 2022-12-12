@@ -1186,7 +1186,7 @@ private extension MasterFeedViewController {
 			}
 		}
 
-		let title = NSLocalizedString("Mark Older Than as Read...", comment: "Command")
+		let title = NSLocalizedString("Mark as Read Older Than", comment: "Command")
 		let oneDayAction = UIAction(title: "1 Day") { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Day as Read", sourceType: contentView) { [weak self] in
 				let cutoff = Calendar.current.date(byAdding: .day, value: -1, to: Date())
@@ -1288,7 +1288,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Mark Older Than as Read...", comment: "Command")
+		let title = NSLocalizedString("Mark as Read Older Than", comment: "Command")
 		let oneDayAction = UIAction(title: "1 Day") { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: "Mark Older Than 1 Day as Read", sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
