@@ -368,6 +368,16 @@ public final class AccountManager: UnreadCountProvider {
 			}
 		}
 	}
+
+	public func fetchUnreadArticlesBetween(limit: Int? = nil, before: Date? = nil, after: Date? = nil) throws -> Set<Article> {
+		precondition(Thread.isMainThread)
+
+		var articles = Set<Article>()
+		for account in activeAccounts {
+			articles.formUnion(try account.fetchUnreadArticlesBetween(limit: limit, before: before, after: after))
+		}
+		return articles
+	}
     
     // MARK: - Fetching Article Counts
     
