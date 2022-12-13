@@ -5,15 +5,15 @@
 	<key>INEnums</key>
 	<array/>
 	<key>INIntentDefinitionModelVersion</key>
-	<string>1.1</string>
+	<string>1.2</string>
 	<key>INIntentDefinitionNamespace</key>
 	<string>U6u7RF</string>
 	<key>INIntentDefinitionSystemVersion</key>
-	<string>19D76</string>
+	<string>22A400</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>11B53</string>
+	<string>14B47b</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>11.2.1</string>
+	<string>14.1</string>
 	<key>INIntents</key>
 	<array>
 		<dict>
@@ -32,21 +32,10 @@
 			<key>INIntentKeyParameter</key>
 			<string>url</string>
 			<key>INIntentLastParameterTag</key>
-			<integer>4</integer>
+			<integer>5</integer>
 			<key>INIntentManagedParameterCombinations</key>
 			<dict>
-				<key>url,accountName</key>
-				<dict>
-					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
-					<true/>
-					<key>INIntentParameterCombinationTitle</key>
-					<string>Add ${url} to ${accountName}</string>
-					<key>INIntentParameterCombinationTitleID</key>
-					<string>kaKsEY</string>
-					<key>INIntentParameterCombinationUpdatesLinked</key>
-					<true/>
-				</dict>
-				<key>url,accountName,folderName</key>
+				<key>url,accountName,folderName,title</key>
 				<dict>
 					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
 					<true/>
@@ -57,12 +46,25 @@
 					<key>INIntentParameterCombinationUpdatesLinked</key>
 					<true/>
 				</dict>
+				<key>url,accountName,title</key>
+				<dict>
+					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
+					<true/>
+					<key>INIntentParameterCombinationTitle</key>
+					<string>Add ${url} to ${accountName}</string>
+					<key>INIntentParameterCombinationTitleID</key>
+					<string>kaKsEY</string>
+					<key>INIntentParameterCombinationUpdatesLinked</key>
+					<true/>
+				</dict>
 			</dict>
 			<key>INIntentName</key>
 			<string>AddWebFeed</string>
 			<key>INIntentParameters</key>
 			<array>
 				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
 					<key>INIntentParameterDisplayName</key>
 					<string>URL</string>
 					<key>INIntentParameterDisplayNameID</key>
@@ -105,6 +107,52 @@
 					</array>
 				</dict>
 				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Title</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>Ac5RHN</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>2</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataCapitalization</key>
+						<string>Words</string>
+						<key>INIntentParameterMetadataDefaultValueID</key>
+						<string>SVcvQb</string>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>title</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Configuration</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogFormatString</key>
+							<string>What is the ${title}of the feed?</string>
+							<key>INIntentParameterPromptDialogFormatStringID</key>
+							<string>IGNcSh</string>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+					</array>
+					<key>INIntentParameterSupportsResolution</key>
+					<true/>
+					<key>INIntentParameterTag</key>
+					<integer>5</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
 					<key>INIntentParameterCustomDisambiguation</key>
 					<true/>
 					<key>INIntentParameterDisplayName</key>
@@ -112,7 +160,7 @@
 					<key>INIntentParameterDisplayNameID</key>
 					<string>CSrgUY</string>
 					<key>INIntentParameterDisplayPriority</key>
-					<integer>2</integer>
+					<integer>3</integer>
 					<key>INIntentParameterMetadata</key>
 					<dict>
 						<key>INIntentParameterMetadataCapitalization</key>
@@ -137,14 +185,6 @@
 							<string>IbqUVS</string>
 							<key>INIntentParameterPromptDialogType</key>
 							<string>DisambiguationIntroduction</string>
-						</dict>
-						<dict>
-							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>Which one?</string>
-							<key>INIntentParameterPromptDialogFormatStringID</key>
-							<string>fWs3li</string>
-							<key>INIntentParameterPromptDialogType</key>
-							<string>DisambiguationSelection</string>
 						</dict>
 						<dict>
 							<key>INIntentParameterPromptDialogCustom</key>
@@ -190,6 +230,8 @@
 					</array>
 				</dict>
 				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
 					<key>INIntentParameterCustomDisambiguation</key>
 					<true/>
 					<key>INIntentParameterDisplayName</key>
@@ -197,7 +239,7 @@
 					<key>INIntentParameterDisplayNameID</key>
 					<string>zXhMPF</string>
 					<key>INIntentParameterDisplayPriority</key>
-					<integer>3</integer>
+					<integer>4</integer>
 					<key>INIntentParameterMetadata</key>
 					<dict>
 						<key>INIntentParameterMetadataCapitalization</key>
@@ -222,14 +264,6 @@
 							<string>5CYbGL</string>
 							<key>INIntentParameterPromptDialogType</key>
 							<string>DisambiguationIntroduction</string>
-						</dict>
-						<dict>
-							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>Which one?</string>
-							<key>INIntentParameterPromptDialogFormatStringID</key>
-							<string>gEzXaM</string>
-							<key>INIntentParameterPromptDialogType</key>
-							<string>DisambiguationSelection</string>
 						</dict>
 						<dict>
 							<key>INIntentParameterPromptDialogCustom</key>

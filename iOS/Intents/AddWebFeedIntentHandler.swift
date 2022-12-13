@@ -35,16 +35,24 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		completion(.success(with: url))
 	}
 	
-	public func provideAccountNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
+	public func resolveTitle(for intent: AddWebFeedIntent, with completion: @escaping (INStringResolutionResult) -> Void) {
+		guard let title = intent.title else {
+			completion(INStringResolutionResult.notRequired())
+			return
+		}
+		completion(.success(with: title))
+	}
+	
+	public func provideAccountNameOptionsCollection(for intent: AddWebFeedIntent, with completion: @escaping (INObjectCollection<NSString>?, Error?) -> Void) {
 		guard let extensionContainers = ExtensionContainersFile.read() else {
 			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
 			return
 		}
 
 		let accountNames = extensionContainers.accounts.map { $0.name }
-		completion(accountNames, nil)
+		completion(INObjectCollection(items: accountNames as [NSString]), nil)
 	}
-	
+
 	public func resolveAccountName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedAccountNameResolutionResult) -> Void) {
 		guard let accountName = intent.accountName else {
 			completion(AddWebFeedAccountNameResolutionResult.notRequired())
@@ -78,6 +86,21 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		completion(folderNames, nil)
 	}
 	
+	public func provideFolderNameOptionsCollection(for intent: AddWebFeedIntent, with completion: @escaping (INObjectCollection<NSString>?, Error?) -> Void) {
+		guard let extensionContainers = ExtensionContainersFile.read() else {
+			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
+			return
+		}
+
+		guard let accountName = intent.accountName, let account = extensionContainers.findAccount(forName: accountName) else {
+			completion(INObjectCollection(items: [NSString]()), nil)
+			return
+		}
+
+		let folderNames = account.folders.map { $0.name }
+		completion(INObjectCollection(items: folderNames as [NSString]), nil)
+	}
+
 	public func resolveFolderName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedFolderNameResolutionResult) -> Void) {
 		guard let accountName = intent.accountName, let folderName = intent.folderName else {
 			completion(AddWebFeedFolderNameResolutionResult.notRequired())
@@ -135,7 +158,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 			return
 		}
 
-		let request = ExtensionFeedAddRequest(name: nil, feedURL: url, destinationContainerID: containerID)
+		let request = ExtensionFeedAddRequest(name: intent.title, feedURL: url, destinationContainerID: containerID)
 		ExtensionFeedAddRequestFile.save(request)
 		completion(AddWebFeedIntentResponse(code: .success, userActivity: nil))
 	}
