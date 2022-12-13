@@ -76,43 +76,37 @@ struct SettingsViewRows {
 		}
 	}
 	
-	/// This row, when tapped, will present an Import/Export
-	/// menu.
-	static func importExportOPML(showImportView: Binding<Bool>, showExportView: Binding<Bool>, importAccount: Binding<Account?>, exportDocument: Binding<OPMLDocument?>) -> some View {
-		Menu {
-			Menu {
-				ForEach(AccountManager.shared.sortedActiveAccounts, id: \.self) { account in
-					Button(account.nameForDisplay) {
-						importAccount.wrappedValue = account
-						showImportView.wrappedValue = true
-					}
-				}
-			} label: {
-				Label("Import Subscriptions To...", systemImage: "arrow.down.doc")
-			}
-			Divider()
-			Menu {
-				ForEach(AccountManager.shared.sortedAccounts, id: \.self) { account in
-					Button(account.nameForDisplay) {
-						do {
-							let document = try OPMLDocument(account)
-							exportDocument.wrappedValue = document
-							showExportView.wrappedValue = true
-						} catch {
-							print(error.localizedDescription)
-						}
-					}
-				}
-			} label: {
-				Label("Export Subscriptions From...", systemImage: "arrow.up.doc")
-			}
+	/// This row, when tapped, will present the Import
+	/// Subscriptions Action Sheet.
+	static func importOPML(showImportActionSheet: Binding<Bool>) -> some View {
+		Button {
+			showImportActionSheet.wrappedValue.toggle()
 		} label: {
 			Label {
-				Text("Import/Export Subscriptions")
+				Text("Import Subscriptions")
 					.foregroundColor(.primary)
 				
 			} icon: {
-				Image("app.opml")
+				Image("app.import.opml")
+					.resizable()
+					.frame(width: 25.0, height: 25.0)
+					.clipShape(RoundedRectangle(cornerRadius: 6))
+			}
+		}
+	}
+	
+	/// This row, when tapped, will present the Export
+	/// Subscriptions Action Sheet.
+	static func exportOPML(showExportActionSheet: Binding<Bool>) -> some View {
+		Button {
+			showExportActionSheet.wrappedValue.toggle()
+		} label: {
+			Label {
+				Text("Export Subscriptions")
+					.foregroundColor(.primary)
+				
+			} icon: {
+				Image("app.export.opml")
 					.resizable()
 					.frame(width: 25.0, height: 25.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))

@@ -23,6 +23,8 @@ public final class SettingsViewModel: ObservableObject {
 	@Published public var exportAccount: Account? = nil
 	@Published public var showImportView: Bool = false
 	@Published public var showExportView: Bool = false
+	@Published public var showImportActionSheet: Bool = false
+	@Published public var showExportActionSheet: Bool = false
 	@Published public var showImportExportError: Bool = false
 	@Published public var importExportError: Error?
 	@Published public var showImportSuccess: Bool = false

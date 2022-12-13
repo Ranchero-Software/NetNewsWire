@@ -31,7 +31,30 @@ struct SettingsView: View {
 				Section(header: Text("Accounts & Extensions"), footer: Text("Add, delete, enable, or disable accounts and extensions.")) {
 					SettingsViewRows.addAccount
 					SettingsViewRows.manageExtensions
-					SettingsViewRows.importExportOPML(showImportView: $viewModel.showImportView, showExportView: $viewModel.showExportView, importAccount: $viewModel.importAccount, exportDocument: $viewModel.exportDocument)
+					SettingsViewRows.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
+						.confirmationDialog("Choose an account to receive the imported feeds and folders", isPresented: $viewModel.showImportActionSheet, titleVisibility: .visible) {
+							ForEach(AccountManager.shared.sortedActiveAccounts, id: \.self) { account in
+								Button(account.nameForDisplay) {
+									viewModel.importAccount = account
+									viewModel.showImportView = true
+								}
+							}
+						}
+					SettingsViewRows.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
+						.confirmationDialog("Choose an account with the subscriptions to export", isPresented: $viewModel.showExportActionSheet, titleVisibility: .visible) {
+							ForEach(AccountManager.shared.sortedAccounts, id: \.self) { account in
+								Button(account.nameForDisplay) {
+									do {
+										let document = try OPMLDocument(account)
+										viewModel.exportDocument = document
+										viewModel.showExportView = true
+									} catch {
+										viewModel.importExportError = error
+										viewModel.showImportExportError = true
+									}
+								}
+							}
+						}
 				}
 				
 				// Appearance

@@ -21,6 +21,7 @@ struct AddAccountViewControllerRepresentable: UIViewControllerRepresentable {
 			vc.parent?.navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
 		})
 		
+		
 		return controller
 	}
 	

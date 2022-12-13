@@ -13,12 +13,27 @@ import Combine
 struct AddAccountWrapper: UIViewControllerRepresentable {
 	func makeUIViewController(context: Context) -> AddAccountViewController {
 		let controller = UIStoryboard.settings.instantiateViewController(withIdentifier: "AddAccountViewController") as! AddAccountViewController
+		
+		
+		context.coordinator.parentObserver = controller.observe(\.parent, changeHandler: { vc, _ in
+			vc.parent?.title = vc.title
+			vc.parent?.navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .done, primaryAction: UIAction(title: NSLocalizedString("Done", comment: "Done"), image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { _ in
+				controller.dismiss(animated: true	)
+			}), menu: nil)
+		})
+		
 		return controller
 	}
 	
 	func updateUIViewController(_ uiViewController: AddAccountViewController, context: Context) {
 		//
 	}
+	
+	class Coordinator {
+		var parentObserver: NSKeyValueObservation?
+	}
+	
+	func makeCoordinator() -> Self.Coordinator { Coordinator() }
 	
 	typealias UIViewControllerType = AddAccountViewController
 	
@@ -29,14 +44,16 @@ struct AccountsManagementView: View {
 	@State private var showAddAccountSheet: Bool = false
 	var cancellables = Set<AnyCancellable>()
 	@State private var sortedAccounts = [Account]()
+	@State private var accountToRemove: Account?
+	@State private var showRemoveAccountAlert: Bool = false
 	
 	var body: some View {
 		List {
 			ForEach(sortedAccounts, id: \.self) { account in
-				accountRow(account)
+				accountRow(account, showRemoveAccountAlert: $showRemoveAccountAlert, accountToRemove: $accountToRemove)
 			}
 		}
-		.navigationTitle(Text("Accounts"))
+		.navigationTitle(Text("Manage Accounts"))
 		.tint(Color(uiColor: AppAssets.primaryAccentColor))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
@@ -63,11 +80,19 @@ struct AccountsManagementView: View {
 			refreshAccounts()
 		}
 		.sheet(isPresented: $showAddAccountSheet) {
-			NavigationView {
-				AddAccountWrapper()
-					.navigationTitle("Add Account")
-					.navigationBarTitleDisplayMode(.inline)
-					.edgesIgnoringSafeArea(.all)
+			AddAccountListView()
+		}
+		.alert("Remove “\(accountToRemove?.nameForDisplay ?? "")”?", isPresented: $showRemoveAccountAlert) {
+			Button(role: .destructive) {
+				AccountManager.shared.deleteAccount(accountToRemove!)
+			} label: {
+				Text("Remove")
+			}
+			
+			Button(role: .cancel) {
+				accountToRemove = nil
+			} label: {
+				Text("Cancel")
 			}
 		}
     }
@@ -77,7 +102,7 @@ struct AccountsManagementView: View {
 		sortedAccounts = AccountManager.shared.sortedAccounts
 	}
 	
-	func accountRow(_ account: Account) -> some View {
+	func accountRow(_ account: Account, showRemoveAccountAlert: Binding<Bool>, accountToRemove: Binding<Account?>) -> some View {
 		NavigationLink {
 			AccountInspectorWrapper(account: account)
 				.edgesIgnoringSafeArea(.all)
@@ -86,6 +111,15 @@ struct AccountsManagementView: View {
 				.resizable()
 				.frame(width: 25, height: 25)
 			Text(account.nameForDisplay)
+		}.swipeActions(edge: .trailing, allowsFullSwipe: false) {
+			if account.type != .onMyMac {
+				Button(role: .destructive) {
+					accountToRemove.wrappedValue = account
+					showRemoveAccountAlert.wrappedValue = true
+				} label: {
+					Label("Remove Account", systemImage: "trash")
+				}.tint(.red)
+			}
 		}
 	}
 	
