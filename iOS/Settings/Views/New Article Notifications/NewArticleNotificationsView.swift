@@ -62,7 +62,6 @@ fileprivate struct WebFeedToggle: View {
 	@ObservedObject var webfeed: WebFeed
 	
 	var body: some View {
-		//let _ = Self._printChanges()
 		Toggle(isOn: Binding(
 			get: { webfeed.isNotifyAboutNewArticles ?? false },
 			set: { webfeed.isNotifyAboutNewArticles = $0 })) {
