@@ -28,6 +28,9 @@ struct NewArticleNotificationsView: View {
 			.onReceive(NotificationCenter.default.publisher(for: .WebFeedIconDidBecomeAvailable)) { _ in
 				activeAccounts = AccountManager.shared.sortedActiveAccounts
 			}
+			.onReceive(NotificationCenter.default.publisher(for: .FaviconDidBecomeAvailable)) { _ in
+				activeAccounts = AccountManager.shared.sortedActiveAccounts
+			}
 		}
 		.tint(Color(uiColor: AppAssets.primaryAccentColor))
     }
@@ -45,6 +48,7 @@ struct NewArticleNotificationsView: View {
 				.cornerRadius(4)
 			
 			Text(webfeed.nameForDisplay)
+				.fixedSize()
 			Spacer()
 			Toggle("", isOn: Binding(
 				get: { webfeed.isNotifyAboutNewArticles ?? false },
