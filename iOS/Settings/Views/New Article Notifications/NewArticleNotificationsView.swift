@@ -46,11 +46,7 @@ struct NewArticleNotificationsView: View {
 				.resizable()
 				.frame(width: 25, height: 25)
 				.cornerRadius(4)
-			
-			Text(webfeed.nameForDisplay)
-				.fixedSize()
-			Spacer()
-			Toggle("", isOn: Binding(
+			Toggle(webfeed.nameForDisplay, isOn: Binding(
 				get: { webfeed.isNotifyAboutNewArticles ?? false },
 				set: { webfeed.isNotifyAboutNewArticles = $0 }))
 		}
