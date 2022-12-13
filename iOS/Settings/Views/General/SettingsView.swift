@@ -13,6 +13,7 @@ import UserNotifications
 
 struct SettingsView: View {
 	
+	@Environment(\.dismiss) var dismiss
 	@StateObject private var appDefaults = AppDefaults.shared
 	@StateObject private var viewModel = SettingsViewModel()
 	
@@ -100,6 +101,9 @@ struct SettingsView: View {
 					}
 				}
 			}
+			.onReceive(NotificationCenter.default.publisher(for: .LaunchedFromExternalAction), perform: { _ in
+				dismiss()
+			})
 			.fileImporter(isPresented: $viewModel.showImportView, allowedContentTypes: OPMLDocument.readableContentTypes) { result in
 				switch result {
 				case .success(let url):

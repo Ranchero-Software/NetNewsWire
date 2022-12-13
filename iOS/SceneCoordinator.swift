@@ -1326,8 +1326,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else { return }
-		settings.dismiss(animated: true, completion: nil)
+		
+		// There's no obvious way to detect if the presented controller
+		// is the SwiftUI UIHostingController<SettingsView>. Posting a notification
+		// which it can react to seems to be the simplest solution.
+		NotificationCenter.default.post(name: .LaunchedFromExternalAction, object: nil)
 	}
 	
 }
