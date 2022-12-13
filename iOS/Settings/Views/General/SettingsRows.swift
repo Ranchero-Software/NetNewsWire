@@ -23,7 +23,7 @@ struct SettingsViewRows {
 			Image("system.settings")
 				.resizable()
 				.aspectRatio(contentMode: .fit)
-				.frame(width: 25.0, height: 25.0)
+				.frame(width: 30.0, height: 30.0)
 				.clipShape(RoundedRectangle(cornerRadius: 6))
 		}
 		.onTapGesture {
@@ -40,7 +40,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("notifications.sounds")
 					.resizable()
-					.frame(width: 25.0, height: 25.0)
+					.frame(width: 30.0, height: 30.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -55,7 +55,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.account")
 					.resizable()
-					.frame(width: 25.0, height: 25.0)
+					.frame(width: 30.0, height: 30.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -70,7 +70,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.extension")
 					.resizable()
-					.frame(width: 25.0, height: 25.0)
+					.frame(width: 30.0, height: 30.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -89,7 +89,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.import.opml")
 					.resizable()
-					.frame(width: 25.0, height: 25.0)
+					.frame(width: 30.0, height: 30.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -108,7 +108,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.export.opml")
 					.resizable()
-					.frame(width: 25.0, height: 25.0)
+					.frame(width: 30.0, height: 30.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -186,7 +186,7 @@ struct SettingsViewRows {
 			} icon: {
 				Image("app.appearance")
 					.resizable()
-					.frame(width: 25.0, height: 25.0)
+					.frame(width: 30.0, height: 30.0)
 					.clipShape(RoundedRectangle(cornerRadius: 6))
 			}
 		}
@@ -207,7 +207,7 @@ struct SettingsViewRows {
 				.renderingMode(.template)
 				.foregroundColor(Color(uiColor: .tertiaryLabel))
 				.aspectRatio(contentMode: .fit)
-				.frame(width: 25.0, height: 25.0)
+				.frame(width: 30.0, height: 30.0)
 		}
 		.onTapGesture {
 			selectedSheet.wrappedValue = sheet
@@ -227,7 +227,7 @@ struct SettingsViewRows {
 					.renderingMode(.template)
 					.foregroundColor(Color(uiColor: .tertiaryLabel))
 					.aspectRatio(contentMode: .fit)
-					.frame(width: 25.0, height: 25.0)
+					.frame(width: 30.0, height: 30.0)
 			}
 		}
 	}
