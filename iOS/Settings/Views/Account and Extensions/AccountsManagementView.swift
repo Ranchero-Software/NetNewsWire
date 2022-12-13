@@ -82,7 +82,8 @@ struct AccountsManagementView: View {
 		.sheet(isPresented: $showAddAccountSheet) {
 			AddAccountListView()
 		}
-		.alert("Remove “\(accountToRemove?.nameForDisplay ?? "")”?", isPresented: $showRemoveAccountAlert) {
+		.alert("Remove “\(accountToRemove?.nameForDisplay ?? "")”?",
+			   isPresented: $showRemoveAccountAlert) {
 			Button(role: .destructive) {
 				AccountManager.shared.deleteAccount(accountToRemove!)
 			} label: {
@@ -94,7 +95,20 @@ struct AccountsManagementView: View {
 			} label: {
 				Text("Cancel")
 			}
+		} message: {
+			switch accountToRemove {
+			case .none:
+			    Text("")
+			case .some(let wrapped):
+				switch wrapped.type {
+				case .feedly:
+					Text("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.")
+				default:
+					Text("Are you sure you want to remove this account? This cannot be undone.")
+				}
+			}
 		}
+
     }
 	
 	func refreshAccounts() {
@@ -112,7 +126,7 @@ struct AccountsManagementView: View {
 				.frame(width: 25, height: 25)
 			Text(account.nameForDisplay)
 		}.swipeActions(edge: .trailing, allowsFullSwipe: false) {
-			if account.type != .onMyMac {
+			if account != AccountManager.shared.defaultAccount {
 				Button(role: .destructive) {
 					accountToRemove.wrappedValue = account
 					showRemoveAccountAlert.wrappedValue = true
