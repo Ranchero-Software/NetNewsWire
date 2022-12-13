@@ -646,46 +646,10 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="rK6-cL-4Vj"/>
-                                        <menuItem title="Website" id="q2Z-9K-GBd">
+                                        <menuItem title="NetNewsWire Website" id="q2Z-9K-GBd">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="openWebsite:" target="Ady-hI-5gd" id="rmL-lt-p8g"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Release Notes" id="b5s-xg-B1w" userLabel="Release Notes">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="openReleaseNotes:" target="Ady-hI-5gd" id="7LS-uW-Yp0"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="How To Support NetNewsWire" id="kfC-NQ-g3E">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="openHowToSupport:" target="Ady-hI-5gd" id="SIw-Ug-A4D"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="GitHub Repository" id="QfD-Xw-sdF">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="openRepository:" target="Ady-hI-5gd" id="7xZ-V2-iPD"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Bug Tracker" id="mE2-pM-rQF">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="openBugTracker:" target="Ady-hI-5gd" id="fZQ-ng-gIm"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Technotes" id="Ou5-Cc-iCb">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="openTechnotes:" target="Ady-hI-5gd" id="M7A-Qg-mH8"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Slack Group" id="4eb-qF-n9S">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="openSlackGroup:" target="Ady-hI-5gd" id="YX2-gA-pgV"/>
                                             </connections>
                                         </menuItem>
                                     </items>

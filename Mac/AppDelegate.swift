@@ -703,35 +703,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, 
 		Browser.open("https://netnewswire.com/", inBackground: false)
 	}
 	
-	@IBAction func openReleaseNotes(_ sender: Any?) {
-		Browser.open(URL.releaseNotes.absoluteString, inBackground: false)
-	}
-	
-
-	@IBAction func openHowToSupport(_ sender: Any?) {
-		
-		Browser.open("https://github.com/brentsimmons/NetNewsWire/blob/main/Technotes/HowToSupportNetNewsWire.markdown", inBackground: false)
-	}
-	
-	@IBAction func openRepository(_ sender: Any?) {
-
-		Browser.open("https://github.com/brentsimmons/NetNewsWire", inBackground: false)
-	}
-
-	@IBAction func openBugTracker(_ sender: Any?) {
-
-		Browser.open("https://github.com/brentsimmons/NetNewsWire/issues", inBackground: false)
-	}
-
-	@IBAction func openSlackGroup(_ sender: Any?) {
-		Browser.open("https://netnewswire.com/slack", inBackground: false)
-	}
-
-	@IBAction func openTechnotes(_ sender: Any?) {
-
-		Browser.open("https://github.com/brentsimmons/NetNewsWire/tree/main/Technotes", inBackground: false)
-	}
-
 	@IBAction func showHelp(_ sender: Any?) {
 
 		Browser.open("https://netnewswire.com/help/mac/6.1/en/", inBackground: false)
