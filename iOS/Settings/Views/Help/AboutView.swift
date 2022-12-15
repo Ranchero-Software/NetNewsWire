@@ -13,21 +13,21 @@ struct AboutView: View, LoadableAboutData {
 	var body: some View {
 		List {
 			Section(header: aboutHeaderView) {}
-			Section(header: Text("Primary Contributors")) {
+			Section(header: Text("PRIMARY_CONTRIBUTORS", tableName: "Settings")) {
 				ForEach(0..<about.PrimaryContributors.count, id: \.self) { i in
 					contributorView(about.PrimaryContributors[i])
 				}
 			}
-			Section(header: Text("Additional Contributors")) {
+			Section(header: Text("ADDITIONAL_CONTRIBUTORS", tableName: "Settings")) {
 				ForEach(0..<about.AdditionalContributors.count, id: \.self) { i in
 					contributorView(about.AdditionalContributors[i])
 				}
 			}
-			Section(header: Text("Thanks"), footer: thanks, content: {})
+			Section(header: Text("THANKS", tableName: "Settings"), footer: thanks, content: {})
 			Section(footer: copyright, content: {})
 		}
 		.listStyle(.insetGrouped)
-		.navigationTitle(Text("About"))
+		.navigationTitle(Text("ABOUT", tableName: "Settings"))
 		.navigationBarTitleDisplayMode(.inline)
     }
 	
@@ -46,7 +46,7 @@ struct AboutView: View, LoadableAboutData {
 					.foregroundColor(.secondary)
 					.font(.callout)
 					
-				Text("By Brent Simmons and the Ranchero Software team.")
+				Text("BYLINE", tableName: "Settings")
 					.font(.subheadline)
 				
 				Text("[netnewswire.com](https://netnewswire.com)")

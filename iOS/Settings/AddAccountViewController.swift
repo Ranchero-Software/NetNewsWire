@@ -11,39 +11,11 @@ import UIKit
 import SwiftUI
 import RSCore
 
-struct AddAccountViewControllerRepresentable: UIViewControllerRepresentable {
-	func makeUIViewController(context: Context) -> AddAccountViewController {
-		let storyboard = UIStoryboard(name: "Settings", bundle: .main)
-		let controller = storyboard.instantiateViewController(withIdentifier: "AddAccountViewController") as! AddAccountViewController
-		
-		context.coordinator.parentObserver = controller.observe(\.parent, changeHandler: { vc, _ in
-			vc.parent?.title = vc.title
-			vc.parent?.navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
-		})
-		
-		
-		return controller
-	}
-	
-	func updateUIViewController(_ uiViewController: AddAccountViewController, context: Context) {
-		//
-	}
-	
-	typealias UIViewControllerType = AddAccountViewController
-	
-	class Coordinator {
-		var parentObserver: NSKeyValueObservation?
-	}
-	
-	func makeCoordinator() -> Self.Coordinator { Coordinator() }
-	
-}
-
-
 protocol AddAccountDismissDelegate: UIViewController {
 	func dismiss()
 }
 
+@available(*, deprecated, message: "Use AddAccountView")
 class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	private enum AddAccountSections: Int, CaseIterable {

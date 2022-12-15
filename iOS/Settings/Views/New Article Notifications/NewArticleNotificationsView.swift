@@ -15,7 +15,6 @@ struct NewArticleNotificationsView: View, Logging {
 	
 	@State private var activeAccounts = AccountManager.shared.sortedActiveAccounts
     
-	
 	var body: some View {
 		List(activeAccounts, id: \.accountID) { account in
 			Section(header: Text(account.nameForDisplay)) {
@@ -24,7 +23,7 @@ struct NewArticleNotificationsView: View, Logging {
 						.id(feed.webFeedID)
 				}
 			}
-			.navigationTitle(Text("New Article Notifications"))
+			.navigationTitle(Text("NEW_ARTICLE_NOTIFICATIONS_TITLE", tableName: "Settings"))
 			.navigationBarTitleDisplayMode(.inline)
 			
 		}

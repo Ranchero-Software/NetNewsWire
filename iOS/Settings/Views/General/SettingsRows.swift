@@ -18,7 +18,7 @@ struct SettingsViewRows {
 	/// This row, when tapped, will open iOS System Settings.
 	static var openSystemSettings: some View {
 		Label {
-			Text("Open System Settings")
+			Text("OPEN_SYSTEM_SETTINGS", tableName: "Settings")
 		} icon: {
 			Image("system.settings")
 				.resizable()
@@ -36,7 +36,7 @@ struct SettingsViewRows {
 	static var configureNewArticleNotifications: some View {
 		NavigationLink(destination: NewArticleNotificationsView()) {
 			Label {
-				Text("New Article Notifications")
+				Text("NEW_ARTICLE_NOTIFICATIONS", tableName: "Settings")
 			} icon: {
 				Image("notifications.sounds")
 					.resizable()
@@ -51,7 +51,7 @@ struct SettingsViewRows {
 	static var addAccount: some View {
 		NavigationLink(destination: AccountsManagementView()) {
 			Label {
-				Text("Manage Accounts")
+				Text("MANAGE_ACCOUNTS", tableName: "Settings")
 			} icon: {
 				Image("app.account")
 					.resizable()
@@ -66,7 +66,7 @@ struct SettingsViewRows {
 	static var manageExtensions: some View {
 		NavigationLink(destination: ExtensionsManagementView()) {
 			Label {
-				Text("Manage Extensions")
+				Text("MANAGE_EXTENSIONS", tableName: "Settings")
 			} icon: {
 				Image("app.extension")
 					.resizable()
@@ -83,7 +83,7 @@ struct SettingsViewRows {
 			showImportActionSheet.wrappedValue.toggle()
 		} label: {
 			Label {
-				Text("Import Subscriptions")
+				Text("IMPORT_SUBSCRIPTIONS", tableName: "Settings")
 					.foregroundColor(.primary)
 				
 			} icon: {
@@ -102,7 +102,7 @@ struct SettingsViewRows {
 			showExportActionSheet.wrappedValue.toggle()
 		} label: {
 			Label {
-				Text("Export Subscriptions")
+				Text("EXPORT_SUBSCRIPTIONS", tableName: "Settings")
 					.foregroundColor(.primary)
 				
 			} icon: {
@@ -118,28 +118,34 @@ struct SettingsViewRows {
 	/// - Parameter preference: `Binding<Bool>`
 	/// - Returns: `Toggle`
 	static func sortOldestToNewest(_ preference: Binding<Bool>) -> some View {
-		Toggle("Sort Oldest to Newest", isOn: preference)
+		Toggle(isOn: preference) {
+			Text("SORT_OLDEST_NEWEST", tableName: "Settings")
+		}
 	}
 	
 	/// Returns a `Toggle` which triggers changes to the user's grouping preference.
 	/// - Parameter preference: `Binding<Bool>`
 	/// - Returns: `Toggle`
 	static func groupByFeed(_ preference: Binding<Bool>) -> some View {
-		Toggle("Group by Feed", isOn: preference)
+		Toggle(isOn: preference) {
+			Text("GROUP_BY_FEED", tableName: "Settings")
+		}
 	}
 	
 	/// Returns a `Toggle` which triggers changes to the user's refresh to clear preferences.
 	/// - Parameter preference: `Binding<Bool>`
 	/// - Returns: `Toggle`
 	static func refreshToClearReadArticles(_ preference: Binding<Bool>) -> some View {
-		Toggle("Refresh To Clear Read Articles", isOn: preference)
+		Toggle(isOn: preference) {
+			Text("REFRESH_TO_CLEAR_READ_ARTICLES", tableName: "Settings")
+		}
 	}
 	
 	/// This row, when tapped, will push the the Timeline Layout screen
 	/// in to view.
 	static var timelineLayout: some View {
-		NavigationLink(destination: TimelineCustomizerWrapper().edgesIgnoringSafeArea(.all).navigationTitle(Text("Timeline Layout"))) {
-			Text("Timeline Layout")
+		NavigationLink(destination: TimelineCustomizerWrapper().edgesIgnoringSafeArea(.all).navigationTitle(Text("TIMELINE_LAYOUT", tableName: "Settings"))) {
+			Text("TIMELINE_LAYOUT", tableName: "Settings")
 		}
 	}
 	
@@ -148,7 +154,7 @@ struct SettingsViewRows {
 	static var themeSelection: some View {
 		NavigationLink(destination: ArticleThemesWrapper().edgesIgnoringSafeArea(.all)) {
 			HStack {
-				Text("Article Theme")
+				Text("ARTICLE_THEME", tableName: "Settings")
 				Spacer()
 				Text(ArticleThemesManager.shared.currentTheme.name)
 					.font(.callout)
@@ -158,31 +164,25 @@ struct SettingsViewRows {
 	}
 	
 	static func confirmMarkAllAsRead(_ preference: Binding<Bool>) -> some View {
-		Toggle("Confirm Mark All as Read", isOn: preference)
+		Toggle(isOn: preference) {
+			Text("CONFIRM_MARK_ALL_AS_READ", tableName: "Settings")
+		}
 	}
 	
 	static func openLinksInNetNewsWire(_ preference: Binding<Bool>) -> some View {
-		Toggle("Open Links in NetNewsWire", isOn: preference)
+		Toggle(isOn: preference) {
+			Text("OPEN_LINKS_IN_APP", tableName: "Settings")
+		}
 	}
 	
 	// TODO: Add Reader Mode Defaults here. See #3684.
-	static func enableFullScreenArticles(_ preference: Binding<Bool>) -> some View {
-		Toggle(isOn: preference) {
-			VStack(alignment: .leading, spacing: 4) {
-				Text("Enable Full Screen Articles")
-				Text("Tap the article top bar to enter Full Screen. Tap the top or bottom to exit.")
-					.font(.caption)
-					.foregroundColor(.gray)
-			}
-		}
-	}
 	
 	/// This row, when tapped, will push the New Article Notifications
 	/// screen in to view.
 	static func configureAppearance(_ isShown: Binding<Bool>) -> some View {
 		NavigationLink(destination: DisplayAndBehaviorsView(), isActive: isShown) {
 			Label {
-				Text("Display & Behaviors")
+				Text("DISPLAY_BEHAVIORS_HEADER", tableName: "Settings")
 			} icon: {
 				Image("app.appearance")
 					.resizable()
@@ -220,7 +220,7 @@ struct SettingsViewRows {
 			AboutView()
 		} label: {
 			Label {
-				Text("About NetNewsWire")
+				Text("ABOUT", tableName: "Settings")
 			} icon: {
 				Image(systemName: "info.circle")
 					.resizable()

@@ -14,19 +14,19 @@ struct DisplayAndBehaviorsView: View {
 	
 	var body: some View {
 		List {
-			Section("Application") {
+			Section(header: Text("APPLICATION_HEADER", tableName: "Settings")) {
 				ColorPaletteSelectorView()
 				.listRowBackground(Color.clear)
 			}
 			
-			Section("Timeline") {
+			Section(header: Text("TIMELINE_HEADER", tableName: "Settings")) {
 				SettingsViewRows.sortOldestToNewest($appDefaults.timelineSortDirectionBool)
 				SettingsViewRows.groupByFeed($appDefaults.timelineGroupByFeed)
 				SettingsViewRows.refreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
 				SettingsViewRows.timelineLayout
 			}
 			
-			Section("Article") {
+			Section(header: Text("ARTICLE_HEADER", tableName: "Settings")) {
 				SettingsViewRows.themeSelection
 				SettingsViewRows.confirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
 				SettingsViewRows.openLinksInNetNewsWire(Binding<Bool>(

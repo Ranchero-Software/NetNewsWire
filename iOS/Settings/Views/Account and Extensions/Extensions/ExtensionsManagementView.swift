@@ -20,7 +20,7 @@ struct ExtensionsManagementView: View {
 		List {
 			activeExtensionsSection
 		}
-		.navigationTitle(Text("Manage Extensions"))
+		.navigationTitle(Text("MANAGE_EXTENSIONS", tableName: "Settings"))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
@@ -33,15 +33,23 @@ struct ExtensionsManagementView: View {
 		.sheet(isPresented: $showAddExtensionView) {
 			AddExtensionListView()
 		}
-		.alert("Deactivate Extension", isPresented: $showDeactivateAlert) {
-			Button("Deactivate", role: .destructive) {
+		.alert(Text("DEACTIVATE_EXTENSION_TITLE", tableName: "Settings"),
+			   isPresented: $showDeactivateAlert) {
+			
+			Button(role: .destructive) {
 				ExtensionPointManager.shared.deactivateExtensionPoint(extensionToDeactivate!.value.extensionPointID)
+			} label: {
+				Text("DEACTIVATE", tableName: "Settings")
 			}
-			Button("Dismiss", role: .cancel) {
+
+			Button(role: .cancel) {
 				extensionToDeactivate = nil
+			} label: {
+				Text("DISMISS", tableName: "Settings")
 			}
+
 		} message: {
-			Text("Deactivate “\(extensionToDeactivate?.value.title ?? "")”?")
+			Text("DEACTIVATE_EXTENSION \(extensionToDeactivate?.value.title ?? "")", tableName: "Settings")
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange)) { _ in
 			availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
@@ -50,7 +58,7 @@ struct ExtensionsManagementView: View {
     }
 	
 	private var activeExtensionsSection: some View {
-		Section(header: Text("Active Extensions")) {
+		Section(header: Text("ACTIVE_EXTENSIONS", tableName: "Settings")) {
 			ForEach(0..<ExtensionPointManager.shared.activeExtensionPoints.count, id: \.self) { i in
 				let point = Array(ExtensionPointManager.shared.activeExtensionPoints)[i]
 				NavigationLink {
@@ -68,7 +76,7 @@ struct ExtensionsManagementView: View {
 						extensionToDeactivate = point
 						showDeactivateAlert = true
 					} label: {
-						Text("Deactivate")
+						Text("DEACTIVATE", tableName: "Settings")
 						Image(systemName: "poweroff")
 					}.tint(.red)
 				}

@@ -851,18 +851,19 @@
 		DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */; };
 		DF32ABE829493193008E3A12 /* SettingsComboTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF32ABE629493192008E3A12 /* SettingsComboTableViewCell.swift */; };
 		DF32ABE929493193008E3A12 /* SettingsComboTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DF32ABE729493193008E3A12 /* SettingsComboTableViewCell.xib */; };
+		DF32ABEB29494CF1008E3A12 /* Settings.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF32ABEA29494CF0008E3A12 /* Settings.strings */; };
 		DF3630EB2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630EC2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630ED2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630EF293618A900326FB8 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EE293618A900326FB8 /* SettingsViewModel.swift */; };
 		DF394F0029357A180081EB6E /* NewArticleNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */; };
-		DF47CDB02947F77200FCD57E /* AddAccountListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47CDAF2947F77200FCD57E /* AddAccountListView.swift */; };
 		DF47CDB2294803AB00FCD57E /* AddExtensionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */; };
 		DF59F072292085B800ACD33D /* ColorPaletteSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */; };
 		DF59F0742920DB5100ACD33D /* AccountsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */; };
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
 		DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
+		DFB3497A294A962D00BC81AD /* AddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34979294A962D00BC81AD /* AddAccountView.swift */; };
 		DFC14F0F28EA55BD00F6EE86 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */; };
 		DFC14F1228EA5DC500F6EE86 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DFC14F1328EA677C00F6EE86 /* Bundle-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF42273625800C787DC /* Bundle-Extensions.swift */; };
@@ -1610,15 +1611,16 @@
 		DDF9E1D628EDF2FC000BC355 /* notificationSoundBlip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = notificationSoundBlip.mp3; sourceTree = "<group>"; };
 		DF32ABE629493192008E3A12 /* SettingsComboTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsComboTableViewCell.swift; sourceTree = "<group>"; };
 		DF32ABE729493193008E3A12 /* SettingsComboTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsComboTableViewCell.xib; sourceTree = "<group>"; };
+		DF32ABEA29494CF0008E3A12 /* Settings.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Settings.strings; sourceTree = "<group>"; };
 		DF3630EA2936183D00326FB8 /* OPMLDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLDocument.swift; sourceTree = "<group>"; };
 		DF3630EE293618A900326FB8 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArticleNotificationsView.swift; sourceTree = "<group>"; };
-		DF47CDAF2947F77200FCD57E /* AddAccountListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountListView.swift; sourceTree = "<group>"; };
 		DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExtensionListView.swift; sourceTree = "<group>"; };
 		DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteSelectorView.swift; sourceTree = "<group>"; };
 		DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsManagementView.swift; sourceTree = "<group>"; };
 		DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsManagementView.swift; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
+		DFB34979294A962D00BC81AD /* AddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountView.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNetNewsWireView.swift; sourceTree = "<group>"; };
 		DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsNetNewsWireView.swift; sourceTree = "<group>"; };
@@ -2018,6 +2020,7 @@
 		5183CCEB227117C70010922C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				DF32ABEA29494CF0008E3A12 /* Settings.strings */,
 				DFD406F8291FB5D500C02962 /* Views */,
 				51A16992235E10D600EB091F /* AddAccountViewController.swift */,
 				519ED455244828C3007F8E94 /* AddExtensionPointViewController.swift */,
@@ -2909,10 +2912,8 @@
 		DF59F0752920E42000ACD33D /* Account and Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */,
-				DF47CDAF2947F77200FCD57E /* AddAccountListView.swift */,
-				DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */,
-				DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */,
+				DFB3497B294AA95200BC81AD /* Accounts */,
+				DFB3497C294AA95A00BC81AD /* Extensions */,
 			);
 			path = "Account and Extensions";
 			sourceTree = "<group>";
@@ -2934,6 +2935,24 @@
 				DFD406F9291FB5E400C02962 /* SettingsRows.swift */,
 			);
 			path = General;
+			sourceTree = "<group>";
+		};
+		DFB3497B294AA95200BC81AD /* Accounts */ = {
+			isa = PBXGroup;
+			children = (
+				DFB34979294A962D00BC81AD /* AddAccountView.swift */,
+				DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */,
+			);
+			path = Accounts;
+			sourceTree = "<group>";
+		};
+		DFB3497C294AA95A00BC81AD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */,
+				DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		DFC14F0928EA51AB00F6EE86 /* About */ = {
@@ -3536,6 +3555,7 @@
 				51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				516A09422361248000EAE89B /* Inspector.storyboard in Resources */,
 				DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
+				DF32ABEB29494CF1008E3A12 /* Settings.strings in Resources */,
 				51DEE81A26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				1768140B2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig in Resources */,
 				5103A9B424216A4200410853 /* blank.html in Resources */,
@@ -4147,6 +4167,7 @@
 				519ED47A24482AEB007F8E94 /* EnableExtensionPointViewController.swift in Sources */,
 				51C4528F226509BD00C03939 /* UnreadFeed.swift in Sources */,
 				51FD413B2342BD0500880194 /* MasterTimelineUnreadCountView.swift in Sources */,
+				DFB3497A294A962D00BC81AD /* AddAccountView.swift in Sources */,
 				513146B2235A81A400387FDC /* AddWebFeedIntentHandler.swift in Sources */,
 				51D87EE12311D34700E63F03 /* ActivityType.swift in Sources */,
 				51C452772265091600C03939 /* MultilineUILabelSizer.swift in Sources */,
@@ -4259,7 +4280,6 @@
 				5108F6D823763094001ABC45 /* TickMarkSlider.swift in Sources */,
 				DF3630EF293618A900326FB8 /* SettingsViewModel.swift in Sources */,
 				51C452882265093600C03939 /* AddFeedViewController.swift in Sources */,
-				DF47CDB02947F77200FCD57E /* AddAccountListView.swift in Sources */,
 				51B5C8C023F3866C00032075 /* ExtensionFeedAddRequestFile.swift in Sources */,
 				51A169A0235E10D700EB091F /* FeedbinAccountViewController.swift in Sources */,
 				51934CCE2310792F006127BE /* ActivityManager.swift in Sources */,

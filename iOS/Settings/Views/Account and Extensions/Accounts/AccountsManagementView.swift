@@ -10,50 +10,30 @@ import SwiftUI
 import Account
 import Combine
 
-struct AddAccountWrapper: UIViewControllerRepresentable {
-	func makeUIViewController(context: Context) -> AddAccountViewController {
-		let controller = UIStoryboard.settings.instantiateViewController(withIdentifier: "AddAccountViewController") as! AddAccountViewController
-		
-		
-		context.coordinator.parentObserver = controller.observe(\.parent, changeHandler: { vc, _ in
-			vc.parent?.title = vc.title
-			vc.parent?.navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .done, primaryAction: UIAction(title: NSLocalizedString("Done", comment: "Done"), image: nil, identifier: nil, discoverabilityTitle: nil, attributes: [], state: .off, handler: { _ in
-				controller.dismiss(animated: true	)
-			}), menu: nil)
-		})
-		
-		return controller
-	}
-	
-	func updateUIViewController(_ uiViewController: AddAccountViewController, context: Context) {
-		//
-	}
-	
-	class Coordinator {
-		var parentObserver: NSKeyValueObservation?
-	}
-	
-	func makeCoordinator() -> Self.Coordinator { Coordinator() }
-	
-	typealias UIViewControllerType = AddAccountViewController
-	
-}
-
 struct AccountsManagementView: View {
     
 	@State private var showAddAccountSheet: Bool = false
-	var cancellables = Set<AnyCancellable>()
-	@State private var sortedAccounts = [Account]()
+	@State private var sortedActiveAccounts = [Account]()
+	@State private var sortedInactiveAccounts = [Account]()
 	@State private var accountToRemove: Account?
 	@State private var showRemoveAccountAlert: Bool = false
 	
 	var body: some View {
 		List {
-			ForEach(sortedAccounts, id: \.self) { account in
-				accountRow(account, showRemoveAccountAlert: $showRemoveAccountAlert, accountToRemove: $accountToRemove)
+			Section(header: Text("ACTIVE_ACCOUNTS_HEADER", tableName: "Settings")) {
+				ForEach(sortedActiveAccounts, id: \.self) { account in
+					accountRow(account, showRemoveAccountAlert: $showRemoveAccountAlert, accountToRemove: $accountToRemove)
+				}
 			}
+			
+			Section(header: Text("INACTIVE_ACCOUNTS_HEADER", tableName: "Settings")) {
+				ForEach(sortedInactiveAccounts, id: \.self) { account in
+					accountRow(account, showRemoveAccountAlert: $showRemoveAccountAlert, accountToRemove: $accountToRemove)
+				}
+			}
+			
 		}
-		.navigationTitle(Text("Manage Accounts"))
+		.navigationTitle(Text("MANAGE_ACCOUNTS", tableName: "Settings"))
 		.tint(Color(uiColor: AppAssets.primaryAccentColor))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
@@ -80,20 +60,20 @@ struct AccountsManagementView: View {
 			refreshAccounts()
 		}
 		.sheet(isPresented: $showAddAccountSheet) {
-			AddAccountListView()
+			AddAccountView()
 		}
-		.alert("Remove “\(accountToRemove?.nameForDisplay ?? "")”?",
+		.alert(Text("ACCOUNT_REMOVE \(accountToRemove?.nameForDisplay ?? "")", tableName: "Settings"),
 			   isPresented: $showRemoveAccountAlert) {
 			Button(role: .destructive) {
 				AccountManager.shared.deleteAccount(accountToRemove!)
 			} label: {
-				Text("Remove")
+				Text("REMOVE", tableName: "Settings")
 			}
 			
 			Button(role: .cancel) {
 				accountToRemove = nil
 			} label: {
-				Text("Cancel")
+				Text("CANCEL", tableName: "Settings")
 			}
 		} message: {
 			switch accountToRemove {
@@ -102,18 +82,17 @@ struct AccountsManagementView: View {
 			case .some(let wrapped):
 				switch wrapped.type {
 				case .feedly:
-					Text("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.")
+					Text("REMOVE_FEEDLY_CONFIRMATION", tableName: "Settings")
 				default:
-					Text("Are you sure you want to remove this account? This cannot be undone.")
+					Text("REMOVE_ACCOUNT_CONFIRMATION", tableName: "Settings")
 				}
 			}
 		}
-
     }
 	
 	func refreshAccounts() {
-		sortedAccounts = []
-		sortedAccounts = AccountManager.shared.sortedAccounts
+		sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
+		sortedInactiveAccounts = AccountManager.shared.sortedAccounts.filter({ $0.isActive == false })
 	}
 	
 	func accountRow(_ account: Account, showRemoveAccountAlert: Binding<Bool>, accountToRemove: Binding<Account?>) -> some View {
@@ -123,6 +102,7 @@ struct AccountsManagementView: View {
 		} label: {
 			Image(uiImage: account.smallIcon!.image)
 				.resizable()
+				.aspectRatio(contentMode: .fit)
 				.frame(width: 25, height: 25)
 			Text(account.nameForDisplay)
 		}.swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -131,7 +111,11 @@ struct AccountsManagementView: View {
 					accountToRemove.wrappedValue = account
 					showRemoveAccountAlert.wrappedValue = true
 				} label: {
-					Label("Remove Account", systemImage: "trash")
+					Label {
+						Text("REMOVE_ACCOUNT", tableName: "Settings")
+					} icon: {
+						Image(systemName: "trash")
+					}
 				}.tint(.red)
 			}
 		}
@@ -139,7 +123,7 @@ struct AccountsManagementView: View {
 	
 	var inactiveFooterText: some View {
 		if AccountManager.shared.sortedAccounts.filter({ $0.isActive == false }).count == 0 {
-			return Text("There are no inactive accounts.")
+			return Text("NO_INACTIVE_ACCOUNT_FOOTER", tableName: "Settings")
 		} else {
 			return Text("")
 		}

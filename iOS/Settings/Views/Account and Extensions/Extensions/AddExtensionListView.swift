@@ -17,7 +17,8 @@ struct AddExtensionListView: View {
 	var body: some View {
 		NavigationView {
 			List {
-				Section(header: Text("Feed Provider"),footer: Text("Feed Providers allow you to subscribe to some pages as if they were RSS Feeds.")) {
+				Section(header: Text("FEED_PROVIDER_HEADER", tableName: "Settings"),
+						footer: Text("FEED_PROVIDER_FOOTER", tableName: "Settings")) {
 					ForEach(0..<availableExtensionPointTypes.count, id: \.self) { i in
 						NavigationLink {
 							EnableExtensionPointViewWrapper(extensionPoint: availableExtensionPointTypes[i])
@@ -34,13 +35,13 @@ struct AddExtensionListView: View {
 				}
 			}
 			.navigationBarTitleDisplayMode(.inline)
-			.navigationTitle("Add Extension")
+			.navigationTitle(Text("ADD_EXTENSIONS_TITLE", tableName: "Settings"))
 			.toolbar {
 				ToolbarItem(placement: .navigationBarTrailing) {
-					Button {
+					Button(role: .cancel) {
 						dismiss()
 					} label: {
-						Text("Done")
+						Text("DONE", tableName: "Settings")
 					}
 				}
 			}
