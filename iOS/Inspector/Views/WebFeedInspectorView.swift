@@ -34,7 +34,7 @@ struct WebFeedInspectorView: View {
 
 				if webFeed.isFeedProvider == false {
 					Toggle(isOn: Binding(
-						get: {  webFeed.isArticleExtractorAlwaysOn ?? false },
+						get: { webFeed.isArticleExtractorAlwaysOn ?? false },
 						set: { webFeed.isArticleExtractorAlwaysOn = $0 })) {
 						Text("ALWAYS_SHOW_READER_VIEW", tableName: "Inspector")
 					}
