@@ -61,7 +61,6 @@ struct WebFeedInspectorView: View {
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(webFeed.nameForDisplay)
 		.sheet(isPresented: $showHomePage, onDismiss: nil) {
-			//SwiftUISafariView(url: URL(string: webFeed.homePageURL!)!)
 			SafariView(url: URL(string: webFeed.homePageURL!)!)
 		}
     }
