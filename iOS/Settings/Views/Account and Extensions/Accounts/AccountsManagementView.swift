@@ -73,7 +73,7 @@ struct AccountsManagementView: View {
 			Button(role: .cancel) {
 				accountToRemove = nil
 			} label: {
-				Text("CANCEL", tableName: "Settings")
+				Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
 			}
 		} message: {
 			switch accountToRemove {
@@ -91,14 +91,15 @@ struct AccountsManagementView: View {
     }
 	
 	func refreshAccounts() {
+		sortedActiveAccounts = []
+		sortedInactiveAccounts = []
 		sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
 		sortedInactiveAccounts = AccountManager.shared.sortedAccounts.filter({ $0.isActive == false })
 	}
 	
 	func accountRow(_ account: Account, showRemoveAccountAlert: Binding<Bool>, accountToRemove: Binding<Account?>) -> some View {
 		NavigationLink {
-			AccountInspectorWrapper(account: account)
-				.edgesIgnoringSafeArea(.all)
+			AccountInspectorView(account: account)
 		} label: {
 			Image(uiImage: account.smallIcon!.image)
 				.resizable()
@@ -112,7 +113,7 @@ struct AccountsManagementView: View {
 					showRemoveAccountAlert.wrappedValue = true
 				} label: {
 					Label {
-						Text("REMOVE_ACCOUNT", tableName: "Settings")
+						Text("REMOVE_ACCOUNT_TITLE", tableName: "Settings")
 					} icon: {
 						Image(systemName: "trash")
 					}

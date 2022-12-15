@@ -1167,14 +1167,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func showAccountInspector(for account: Account) {
-		let accountInspectorNavController =
-			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
-		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
-		accountInspectorNavController.modalPresentationStyle = .formSheet
-		accountInspectorNavController.preferredContentSize = AccountInspectorViewController.preferredContentSizeForFormSheetDisplay
-		accountInspectorController.isModal = true
-		accountInspectorController.account = account
-		rootSplitViewController.present(accountInspectorNavController, animated: true)
+		let hosting = UIHostingController(rootView: InjectedNavigationView(injectedView: AccountInspectorView(account: account)))
+		rootSplitViewController.present(hosting, animated: true, completion: nil)
+		
+//		let accountInspectorNavController =
+//			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
+//		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
+//		accountInspectorNavController.modalPresentationStyle = .formSheet
+//		accountInspectorNavController.preferredContentSize = AccountInspectorViewController.preferredContentSizeForFormSheetDisplay
+//		accountInspectorController.isModal = true
+//		accountInspectorController.account = account
+//		rootSplitViewController.present(accountInspectorNavController, animated: true)
 	}
 	
 	func showFeedInspector() {
@@ -1187,13 +1190,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	}
 	
 	func showFeedInspector(for feed: WebFeed) {
-		let feedInspectorNavController =
-			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
-		let feedInspectorController = feedInspectorNavController.topViewController as! WebFeedInspectorViewController
-		feedInspectorNavController.modalPresentationStyle = .formSheet
-		feedInspectorNavController.preferredContentSize = WebFeedInspectorViewController.preferredContentSizeForFormSheetDisplay
-		feedInspectorController.webFeed = feed
-		rootSplitViewController.present(feedInspectorNavController, animated: true)
+
+		let hosting = UIHostingController(rootView: InjectedNavigationView(injectedView: WebFeedInspectorView(webFeed: feed)))
+		
+		rootSplitViewController.present(hosting, animated: true)
 	}
 	
 	func showAddWebFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {

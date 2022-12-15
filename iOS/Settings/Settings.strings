@@ -46,7 +46,6 @@
 "OPEN_LINKS_IN_APP" = "Open Links in NetNewsWire";
 
 /* Account Management */
-
 "ADD_ACCOUNT" = "Add Account";
 "NO_INACTIVE_ACCOUNT_FOOTER" = "There are no inactive accounts.";
 "ACCOUNT_REMOVE %@" = "Are you sure you want to remove “%@”?";
@@ -56,21 +55,18 @@
 "INACTIVE_ACCOUNTS_HEADER" = "Inactive Accounts";
 
 /* Extension Management */
-
 "DEACTIVATE" = "Deactivate";
 "DEACTIVATE_EXTENSION_TITLE" = "Deactivate Extension";
-"DEACTIVATE_EXTENSION %@" = "Deactivate “%@”";
+"DEACTIVATE_EXTENSION %@" = "Are you sure you want to deactivate the “%@” extension?";
 "ACTIVE_EXTENSIONS" = "Active Extensions";
 "FEED_PROVIDER_HEADER" = "Feed Provider";
 "FEED_PROVIDER_FOOTER" = "Feed Providers allow you to subscribe to some pages as if they were RSS Feeds.";
 "ADD_EXTENSIONS_TITLE" = "Add Extension";
  
 /* New Article Notifications */
-
 "NEW_ARTICLE_NOTIFICATIONS_TITLE" = "New Article Notifications";
 
 /* About */
-
 "ABOUT_TITLE" = "About";
 "PRIMARY_CONTRIBUTORS" = "Primary Contributors";
 "ADDITIONAL_CONTRIBUTORS" = "Additional Contributors";
@@ -89,7 +85,6 @@
 
 
 /* Alerts */
-
 "IMPORT_OPML_CONFIRMATION" = "Choose an account to receive the imported feeds and folders";
 "IMPORT_OPML_SUCCESS_TITLE" = "Imported Successfully";
 "IMPORT_OPML_SUCCESS_MESSAGE %@" = "Subscriptions have been imported to your %@ account.";
@@ -98,5 +93,3 @@
 "EXPORT_OPML_SUCCESS_MESSAGE" = "Your OPML file has been successfully exported.";
 "ERROR_TITLE" = "Error";
 "REMOVE" = "Remove";
-"CANCEL" = "Cancel";
-"DONE" = "Done";

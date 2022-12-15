@@ -1,0 +1,10 @@
+/* 
+  Buttons.strings
+  NetNewsWire
+
+  Created by Stuart Breckenridge on 15/12/2022.
+  Copyright © 2022 Ranchero Software. All rights reserved.
+*/
+
+"CANCEL_BUTTON_TITLE" = "Cancel";
+"DONE_BUTTON_TITLE" = "Done";

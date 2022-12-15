@@ -1,0 +1,23 @@
+/* 
+  Inspector.strings
+  NetNewsWire
+
+  Created by Stuart Breckenridge on 15/12/2022.
+  Copyright © 2022 Ranchero Software. All rights reserved.
+*/
+
+/* Account Inspector */
+"ACCOUNT_NAME_FIELD" = "Account Name";
+"ACTIVE" = "Active";
+"CLOUDKIT_LIMITATIONS_TITLE" = "[iCloud Syncing Limitations & Solutions](https://netnewswire.com/help/iCloud)";
+"REMOVE_ACCOUNT_TITLE" = "Remove Account";
+"REMOVE_ACCOUNT_BUTTON_TITLE" = "Remove Account";
+"REMOVE_FEEDLY_MESSAGE" = "Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.";
+"REMOVE_ACCOUNT_MESSAGE" = "Are you sure you want to remove this account? This cannot be undone.";
+"REMOVE_ACCOUNT_TITLE" = "Remove Account";
+
+
+"NOTIFY_ABOUT_NEW_ARTICLES" = "Notify About New Articles";
+"ALWAYS_SHOW_READER_VIEW" = "Always Show Reader View";
+"HOME_PAGE" = "Home Page";
+"FEED_URL" = "Feed URL";

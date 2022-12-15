@@ -45,7 +45,7 @@ struct ExtensionsManagementView: View {
 			Button(role: .cancel) {
 				extensionToDeactivate = nil
 			} label: {
-				Text("DISMISS", tableName: "Settings")
+				Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
 			}
 
 		} message: {
@@ -62,9 +62,7 @@ struct ExtensionsManagementView: View {
 			ForEach(0..<ExtensionPointManager.shared.activeExtensionPoints.count, id: \.self) { i in
 				let point = Array(ExtensionPointManager.shared.activeExtensionPoints)[i]
 				NavigationLink {
-					ExtensionPointInspectorWrapper(extensionPoint: point.value)
-						.navigationBarTitle(Text(point.value.title))
-						.edgesIgnoringSafeArea(.all)
+					ExtensionInspectorView(extensionPoint: point.value)
 				} label: {
 					Image(uiImage: point.value.image)
 						.resizable()
@@ -77,7 +75,7 @@ struct ExtensionsManagementView: View {
 						showDeactivateAlert = true
 					} label: {
 						Text("DEACTIVATE", tableName: "Settings")
-						Image(systemName: "poweroff")
+						Image(systemName: "minus.circle")
 					}.tint(.red)
 				}
 			}

@@ -37,11 +37,11 @@ struct AddExtensionListView: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.navigationTitle(Text("ADD_EXTENSIONS_TITLE", tableName: "Settings"))
 			.toolbar {
-				ToolbarItem(placement: .navigationBarTrailing) {
+				ToolbarItem(placement: .navigationBarLeading) {
 					Button(role: .cancel) {
 						dismiss()
 					} label: {
-						Text("DONE", tableName: "Settings")
+						Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
 					}
 				}
 			}

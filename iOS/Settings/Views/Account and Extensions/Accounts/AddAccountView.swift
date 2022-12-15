@@ -76,11 +76,11 @@ struct AddAccountView: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.listItemTint(.primary)
 			.toolbar {
-				ToolbarItem(placement: .navigationBarTrailing) {
+				ToolbarItem(placement: .navigationBarLeading) {
 					Button(role: .cancel) {
 						dismiss()
 					} label: {
-						Text("DONE", tableName: "Settings")
+						Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
 					}
 				}
 			}
