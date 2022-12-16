@@ -1,5 +1,5 @@
 //
-//  AddAccountView.swift
+//  AddAccountListView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Stuart Breckenridge on 15/12/2022.
@@ -10,7 +10,7 @@ import SwiftUI
 import Account
 import RSCore
 
-public final class AddAcccountViewModel: ObservableObject, OAuthAccountAuthorizationOperationDelegate {
+public final class AddAccountListViewModel: ObservableObject, OAuthAccountAuthorizationOperationDelegate {
 	
 	@Published public var showAddAccountSheet: (Bool, accountType: AccountType) = (false, .onMyMac)
 	public var webAccountTypes: [AccountType] {
@@ -58,10 +58,10 @@ public final class AddAcccountViewModel: ObservableObject, OAuthAccountAuthoriza
 	}
 }
 
-struct AddAccountView: View {
+struct AddAccountListView: View {
     
 	@Environment(\.dismiss) var dismiss
-	@StateObject private var viewModel = AddAcccountViewModel()
+	@StateObject private var viewModel = AddAccountListViewModel()
 	
 	
 	var body: some View {
@@ -89,9 +89,9 @@ struct AddAccountView: View {
 				case .onMyMac:
 					Text("ON MY MAC")
 				case .cloudKit:
-					Text("CLOUDKIT")
-				case .freshRSS:
-					Text("SELF_HOSTED")
+					iCloudAccountView()
+				case .freshRSS, .inoreader, .bazQux, .theOldReader:
+					ReaderAPIAccountView(accountType: viewModel.showAddAccountSheet.accountType, account: nil)
 				default:
 					Text(viewModel.showAddAccountSheet.accountType.localizedAccountName())
 				}

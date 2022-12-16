@@ -31,7 +31,6 @@ struct AccountsManagementView: View {
 					accountRow(account, showRemoveAccountAlert: $showRemoveAccountAlert, accountToRemove: $accountToRemove)
 				}
 			}
-			
 		}
 		.navigationTitle(Text("MANAGE_ACCOUNTS", tableName: "Settings"))
 		.tint(Color(uiColor: AppAssets.primaryAccentColor))
@@ -60,14 +59,14 @@ struct AccountsManagementView: View {
 			refreshAccounts()
 		}
 		.sheet(isPresented: $showAddAccountSheet) {
-			AddAccountView()
+			AddAccountListView()
 		}
 		.alert(Text("ACCOUNT_REMOVE \(accountToRemove?.nameForDisplay ?? "")", tableName: "Settings"),
 			   isPresented: $showRemoveAccountAlert) {
 			Button(role: .destructive) {
 				AccountManager.shared.deleteAccount(accountToRemove!)
 			} label: {
-				Text("REMOVE", tableName: "Settings")
+				Text("REMOVE_BUTTON_TITLE", tableName: "Buttons")
 			}
 			
 			Button(role: .cancel) {
@@ -113,7 +112,7 @@ struct AccountsManagementView: View {
 					showRemoveAccountAlert.wrappedValue = true
 				} label: {
 					Label {
-						Text("REMOVE_ACCOUNT_TITLE", tableName: "Settings")
+						Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
 					} icon: {
 						Image(systemName: "trash")
 					}

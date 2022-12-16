@@ -71,7 +71,7 @@ struct WebFeedInspectorView: View {
 			Image(uiImage: webFeed.smallIcon!.image)
 				.resizable()
 				.aspectRatio(contentMode: .fit)
-				.frame(width: 30, height: 30)
+				.frame(width: 48, height: 48)
 			Spacer()
 		}
 	}

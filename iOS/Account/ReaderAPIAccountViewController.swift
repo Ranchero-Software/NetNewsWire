@@ -27,7 +27,7 @@ class ReaderAPIAccountViewController: UITableViewController, Logging {
 	
 	weak var account: Account?
 	var accountType: AccountType?
-	weak var delegate: AddAccountDismissDelegate?
+	//weak var delegate: AddAccountDismissDelegate?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -185,7 +185,7 @@ class ReaderAPIAccountViewController: UITableViewController, Logging {
 							}
 						}
 						
-						self.delegate?.dismiss()
+						//self.delegate?.dismiss()
 					} catch {
 						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
 						self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public).")

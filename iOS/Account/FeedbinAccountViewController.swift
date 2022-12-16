@@ -24,7 +24,7 @@ class FeedbinAccountViewController: UITableViewController, Logging {
 	@IBOutlet weak var footerLabel: UILabel!
 	
 	weak var account: Account?
-	weak var delegate: AddAccountDismissDelegate?
+	//weak var delegate: AddAccountDismissDelegate?
 
 	override func viewDidLoad() {
         super.viewDidLoad()
@@ -132,7 +132,7 @@ class FeedbinAccountViewController: UITableViewController, Logging {
 						}
 						
 						self.dismiss(animated: true, completion: nil)
-						self.delegate?.dismiss()
+						//self.delegate?.dismiss()
 					} catch {
 						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
 						self.logger.error("Keychain error while storing credentials: \(error.localizedDescription, privacy: .public).")

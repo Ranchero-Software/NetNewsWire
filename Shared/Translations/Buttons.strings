@@ -7,4 +7,11 @@
 */
 
 "CANCEL_BUTTON_TITLE" = "Cancel";
+"DISMISS_BUTTON_TITLE" = "Dismiss";
 "DONE_BUTTON_TITLE" = "Done";
+"REMOVE_ACCOUNT_BUTTON_TITLE" = "Remove Account";
+"DEACTIVATE_BUTTON_TITLE" = "Deactivate";
+"CREDENTIALS_BUTTON_TITLE" = "Credentials";
+"ADD_ACCOUNT_BUTTON_TITLE" = "Add Account";
+"UPDATE_CREDENTIALS_BUTTON_TITLE" = "Update Credentials";
+"USE_CLOUDKIT_BUTTON_TITLE" = "Use iCloud";

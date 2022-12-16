@@ -32,7 +32,7 @@ struct ExtensionInspectorView: View {
 					Button(role: .destructive) {
 						ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint!.extensionPointID)
 					} label: {
-						Text("DEACTIVATE", tableName: "Settings")
+						Text("DEACTIVATE_BUTTON_TITLE", tableName: "Buttons")
 					}
 
 					Button(role: .cancel) {
@@ -59,7 +59,7 @@ struct ExtensionInspectorView: View {
 			Image(uiImage: extensionPoint!.image)
 				.resizable()
 				.aspectRatio(contentMode: .fit)
-				.frame(width: 30, height: 30)
+				.frame(width: 48, height: 48)
 			Spacer()
 		}
 	}

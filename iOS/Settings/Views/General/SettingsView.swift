@@ -86,7 +86,7 @@ struct SettingsView: View {
 			.navigationTitle(Text("SETTINGS_TITLE", tableName: "Settings"))
 			.navigationBarTitleDisplayMode(.inline)
 			.sheet(isPresented: $viewModel.showAddAccountView) {
-				AddAccountView()
+				AddAccountListView()
 			}
 			.sheet(isPresented: $viewModel.showHelpSheet) {
 				SafariView(url: viewModel.helpSheet.url)

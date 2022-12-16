@@ -1,0 +1,20 @@
+/* 
+  Account.strings
+  NetNewsWire
+
+  Created by Stuart Breckenridge on 16/12/2022.
+  Copyright © 2022 Ranchero Software. All rights reserved.
+*/
+
+/* Account Names */
+"CLOUDKIT" = "iCloud";
+
+
+/* Explainers */
+"BAZQUX_FOOTER_EXPLAINER" = "Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account? [Sign Up Here](https://bazqux.com)";
+"INOREADER_FOOTER_EXPLAINER" = "Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? [Sign Up Here](https://www.inoreader.com)";
+"OLDREADER_FOOTER_EXPLAINER" = "Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? [Sign Up Here](https://theoldreader.com)";
+"FRESHRSS_FOOTER_EXPLAINER" = "Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance? [Sign Up Here](https://freshrss.org)";
+"CLOUDKIT_FOOTER_EXPLAINER" = "NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices.";
+
+

@@ -20,7 +20,7 @@ enum CloudKitAccountViewControllerError: LocalizedError {
 
 class CloudKitAccountViewController: UITableViewController {
 
-	weak var delegate: AddAccountDismissDelegate?
+	//weak var delegate: AddAccountDismissDelegate?
 	@IBOutlet weak var footerLabel: UILabel!
 	
 	override func viewDidLoad() {
@@ -36,7 +36,7 @@ class CloudKitAccountViewController: UITableViewController {
 
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
-		delegate?.dismiss()
+		//delegate?.dismiss()
 	}
 	
 	@IBAction func add(_ sender: Any) {
@@ -47,7 +47,7 @@ class CloudKitAccountViewController: UITableViewController {
 		
 		let _ = AccountManager.shared.createAccount(type: .cloudKit)
 		dismiss(animated: true, completion: nil)
-		delegate?.dismiss()
+		//delegate?.dismiss()
 	}
 	
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
