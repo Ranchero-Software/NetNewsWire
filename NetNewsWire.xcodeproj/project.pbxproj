@@ -864,12 +864,13 @@
 		DFB3498A294B45AC00BC81AD /* ExtensionInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */; };
 		DFB3498C294B4CA700BC81AD /* WebFeedInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */; };
 		DFB34993294C0B7400BC81AD /* Account.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34992294C0B7400BC81AD /* Account.strings */; };
-		DFB34994294C0E3900BC81AD /* ReaderAPIAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34990294C0B2200BC81AD /* ReaderAPIAccountView.swift */; };
+		DFB34994294C0E3900BC81AD /* ReaderAPIAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */; };
 		DFB34996294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */; };
 		DFB34997294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */; };
 		DFB34999294C4F1D00BC81AD /* Errors.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34998294C4F1D00BC81AD /* Errors.strings */; };
 		DFB3499A294C4F1D00BC81AD /* Errors.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34998294C4F1D00BC81AD /* Errors.strings */; };
-		DFB3499E294C5D5000BC81AD /* iCloudAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3499D294C5D5000BC81AD /* iCloudAccountView.swift */; };
+		DFB3499E294C5D5000BC81AD /* CloudKitAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3499D294C5D5000BC81AD /* CloudKitAddAccountView.swift */; };
+		DFB349A0294E87B700BC81AD /* LocalAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */; };
 		DFC14F0F28EA55BD00F6EE86 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */; };
 		DFC14F1228EA5DC500F6EE86 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DFC14F1328EA677C00F6EE86 /* Bundle-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF42273625800C787DC /* Bundle-Extensions.swift */; };
@@ -1626,11 +1627,12 @@
 		DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectedNavigationView.swift; sourceTree = "<group>"; };
 		DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInspectorView.swift; sourceTree = "<group>"; };
 		DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedInspectorView.swift; sourceTree = "<group>"; };
-		DFB34990294C0B2200BC81AD /* ReaderAPIAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderAPIAccountView.swift; sourceTree = "<group>"; };
+		DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderAPIAddAccountView.swift; sourceTree = "<group>"; };
 		DFB34992294C0B7400BC81AD /* Account.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Account.strings; sourceTree = "<group>"; };
 		DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedNetNewsWireError.swift; sourceTree = "<group>"; };
 		DFB34998294C4F1D00BC81AD /* Errors.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Errors.strings; sourceTree = "<group>"; };
-		DFB3499D294C5D5000BC81AD /* iCloudAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudAccountView.swift; sourceTree = "<group>"; };
+		DFB3499D294C5D5000BC81AD /* CloudKitAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAddAccountView.swift; sourceTree = "<group>"; };
+		DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAddAccountView.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNetNewsWireView.swift; sourceTree = "<group>"; };
 		DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsNetNewsWireView.swift; sourceTree = "<group>"; };
@@ -3003,8 +3005,9 @@
 		DFB3498F294C0B0D00BC81AD /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DFB34990294C0B2200BC81AD /* ReaderAPIAccountView.swift */,
-				DFB3499D294C5D5000BC81AD /* iCloudAccountView.swift */,
+				DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */,
+				DFB3499D294C5D5000BC81AD /* CloudKitAddAccountView.swift */,
+				DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -4251,8 +4254,9 @@
 				5126EE97226CB48A00C22AFC /* SceneCoordinator.swift in Sources */,
 				84CAFCB022BC8C35007694F0 /* FetchRequestOperation.swift in Sources */,
 				DFD406FA291FB5E400C02962 /* SettingsRows.swift in Sources */,
-				DFB3499E294C5D5000BC81AD /* iCloudAccountView.swift in Sources */,
+				DFB3499E294C5D5000BC81AD /* CloudKitAddAccountView.swift in Sources */,
 				DFB3498C294B4CA700BC81AD /* WebFeedInspectorView.swift in Sources */,
+				DFB349A0294E87B700BC81AD /* LocalAddAccountView.swift in Sources */,
 				5193CD5A245E44A90092735E /* RedditFeedProvider-Extensions.swift in Sources */,
 				51EF0F77227716200050506E /* FaviconGenerator.swift in Sources */,
 				51938DF3231AFC660055A1A0 /* SearchTimelineFeedDelegate.swift in Sources */,
@@ -4331,7 +4335,7 @@
 				51EF0F7E2277A57D0050506E /* MasterTimelineAccessibilityCellLayout.swift in Sources */,
 				512D554423C804DE0023FFFA /* OpenInSafariActivity.swift in Sources */,
 				DF47CDB2294803AB00FCD57E /* AddExtensionListView.swift in Sources */,
-				DFB34994294C0E3900BC81AD /* ReaderAPIAccountView.swift in Sources */,
+				DFB34994294C0E3900BC81AD /* ReaderAPIAddAccountView.swift in Sources */,
 				512392C224E33A3C00F11704 /* RedditEnterDetailTableViewController.swift in Sources */,
 				51C452762265091600C03939 /* MasterTimelineViewController.swift in Sources */,
 				5195C1DC2720BD3000888867 /* MasterFeedRowIdentifier.swift in Sources */,

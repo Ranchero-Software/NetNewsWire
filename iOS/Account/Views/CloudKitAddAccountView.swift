@@ -1,5 +1,5 @@
 //
-//  iCloudAccountView.swift
+//  CloudKitAddAccountView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Stuart Breckenridge on 16/12/2022.
@@ -9,7 +9,7 @@
 import SwiftUI
 import Account
 
-struct iCloudAccountView: View {
+struct CloudKitAddAccountView: View {
     
 	@Environment(\.dismiss) private var dismiss
 	@State private var addAccountError: (LocalizedError?, Bool) = (nil, false)
@@ -18,13 +18,16 @@ struct iCloudAccountView: View {
 		NavigationView {
 			Form {
 				Section(header: cloudKitHeader) {}
-				Section {
-					createCloudKitAccount
-				}
+				Section { createCloudKitAccount }
 				Section(footer: cloudKitExplainer) {}
 			}
 			.navigationTitle(Text("CLOUDKIT", tableName: "Account"))
 			.navigationBarTitleDisplayMode(.inline)
+			.toolbar {
+				ToolbarItem(placement: .navigationBarLeading) {
+					Button(action: { dismiss() }, label: { Text("CANCEL_BUTTON_TITLE", tableName: "Buttons") })
+				}
+			}
 			.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $addAccountError.1) {
 				Button(action: {}, label: { Text("DISMISS_BUTTON_TITLE", tableName: "Buttons") })
 			} message: {
@@ -78,6 +81,6 @@ struct iCloudAccountView: View {
 
 struct iCloudAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        iCloudAccountView()
+        CloudKitAddAccountView()
     }
 }

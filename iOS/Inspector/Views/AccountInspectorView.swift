@@ -44,7 +44,11 @@ struct AccountInspectorView: View {
 		.sheet(isPresented: $showAccountCredentialsSheet) {
 			switch account.type {
 			case .theOldReader, .bazQux, .inoreader, .freshRSS:
-				ReaderAPIAccountView(accountType: account.type, account: account)
+				ReaderAPIAddAccountView(accountType: account.type, account: account)
+			case .feedbin:
+				Text("FEEDBIN")
+			case .newsBlur:
+				Text("NEWSBLUR")
 			default:
 				EmptyView()
 			}

@@ -13,7 +13,7 @@ import RSWeb
 import SafariServices
 import RSCore
 
-struct ReaderAPIAccountView: View {
+struct ReaderAPIAddAccountView: View {
 	
 	@Environment(\.dismiss) var dismiss
 	
@@ -249,6 +249,6 @@ struct ReaderAPIAccountView: View {
 
 struct ReaderAPIAccountView_Previews: PreviewProvider {
 	static var previews: some View {
-		ReaderAPIAccountView()
+		ReaderAPIAddAccountView()
 	}
 }

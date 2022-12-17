@@ -87,11 +87,11 @@ struct AddAccountListView: View {
 			.sheet(isPresented: $viewModel.showAddAccountSheet.0) {
 				switch viewModel.showAddAccountSheet.accountType {
 				case .onMyMac:
-					Text("ON MY MAC")
+					LocalAddAccountView()
 				case .cloudKit:
-					iCloudAccountView()
+					CloudKitAddAccountView()
 				case .freshRSS, .inoreader, .bazQux, .theOldReader:
-					ReaderAPIAccountView(accountType: viewModel.showAddAccountSheet.accountType, account: nil)
+					ReaderAPIAddAccountView(accountType: viewModel.showAddAccountSheet.accountType, account: nil)
 				default:
 					Text(viewModel.showAddAccountSheet.accountType.localizedAccountName())
 				}
@@ -199,7 +199,6 @@ struct AddAccountListView: View {
 			Text("ADD_SELFHOSTED_ACCOUNT_FOOTER", tableName: "Settings")
 		}
 	}
-	
 	
 	private func interactionDisabled(for accountType: AccountType) -> Bool {
 		if accountType == .cloudKit {

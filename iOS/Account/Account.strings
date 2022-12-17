@@ -7,10 +7,14 @@
 */
 
 /* Account Names */
+"ACCOUNT_NAME" = "Name";
 "CLOUDKIT" = "iCloud";
+"LOCAL_ACCOUNT_NAME_PHONE" = "On My iPhone";
+"LOCAL_ACCOUNT_NAME_PAD" = "On My iPad";
 
 
 /* Explainers */
+"LOCAL_FOOTER_EXPLAINER" = "Local accounts do not sync your feeds across devices";
 "BAZQUX_FOOTER_EXPLAINER" = "Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account? [Sign Up Here](https://bazqux.com)";
 "INOREADER_FOOTER_EXPLAINER" = "Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? [Sign Up Here](https://www.inoreader.com)";
 "OLDREADER_FOOTER_EXPLAINER" = "Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? [Sign Up Here](https://theoldreader.com)";
