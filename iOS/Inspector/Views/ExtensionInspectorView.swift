@@ -50,8 +50,8 @@ struct ExtensionInspectorView: View {
 		}
 		.navigationTitle(Text(extensionPoint?.title ?? ""))
 		.edgesIgnoringSafeArea(.bottom)
+		.dismissOnExternalContextLaunch()
     }
-	
 	
 	var extensionHeader: some View {
 		HStack {

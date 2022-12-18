@@ -29,14 +29,16 @@ struct ReaderAPIAddAccountView: View {
 	var body: some View {
 		NavigationView {
 			Form {
-				Section(header: readerAccountImage) {}
+				if accountType != nil {
+					AccountSectionHeader(accountType: accountType!)
+				}
 				accountDetailsSection
 				Section(footer: readerAccountExplainer) {}
 			}
 			.navigationTitle(Text(accountType?.localizedAccountName() ?? ""))
 			.navigationBarTitleDisplayMode(.inline)
 			.task {
-				try? retrieveAccountCredentials()
+				retrieveAccountCredentials()
 			}
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
@@ -55,10 +57,8 @@ struct ReaderAPIAddAccountView: View {
 			} message: {
 				Text(accountSetupError.0?.localizedDescription ?? "")
 			}
-			.onReceive(NotificationCenter.default.publisher(for: .UserDidAddAccount)) { _ in
-				dismiss()
-			}
-			.edgesIgnoringSafeArea(.bottom) // Fix to make sure view is not offset from the top when presented
+			.dismissOnExternalContextLaunch()
+			.dismissOnAccountAdd()
 		}
 	}
 	
@@ -78,47 +78,19 @@ struct ReaderAPIAddAccountView: View {
 		}
 	}
 	
-	var readerAccountImage: some View {
-		HStack {
-			Spacer()
-			if accountType == nil { Text("") }
-			switch accountType! {
-			case .bazQux:
-				Image(uiImage: AppAssets.accountBazQuxImage)
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 48, height: 48)
-			case .inoreader:
-				Image(uiImage: AppAssets.accountInoreaderImage)
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 48, height: 48)
-			case .theOldReader:
-				Image(uiImage: AppAssets.accountTheOldReaderImage)
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 48, height: 48)
-			case .freshRSS:
-				Image(uiImage: AppAssets.accountFreshRSSImage)
-					.resizable()
-					.aspectRatio(contentMode: .fit)
-					.frame(width: 48, height: 48)
-			default:
-				Text("")
-			}
-			Spacer()
-		}
-	}
+	
 	
 	var accountDetailsSection: some View {
 		Group {
 			Section {
 				TextField("Username", text: $accountUserName)
 					.autocorrectionDisabled()
+					.autocapitalization(.none)
 				SecureField("Password", text: $accountSecret)
 				if accountType == .freshRSS && accountCredentials == nil {
 					TextField("FreshRSS URL", text: $accountAPIUrl, prompt: Text("fresh.rss.net/api/greader.php"))
 						.autocorrectionDisabled()
+						.autocapitalization(.none)
 				}
 			}
 			
@@ -127,6 +99,7 @@ struct ReaderAPIAddAccountView: View {
 					Task {
 						do {
 							try await executeAccountCredentials()
+							dismiss()
 						} catch {
 							accountSetupError = (error, true)
 						}
@@ -150,7 +123,7 @@ struct ReaderAPIAddAccountView: View {
 	
 	// MARK: - API
 	
-	private func retrieveAccountCredentials() throws {
+	private func retrieveAccountCredentials() {
 		if let account = account {
 			do {
 				if let creds = try account.retrieveCredentials(type: .readerBasic) {

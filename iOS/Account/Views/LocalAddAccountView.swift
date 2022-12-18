@@ -17,7 +17,7 @@ struct LocalAddAccountView: View {
 	var body: some View {
 		NavigationView {
 			Form {
-				Section(header: accountHeaderView) {}
+				AccountSectionHeader(accountType: .onMyMac)
 				Section { accountNameSection }
 				Section { addAccountButton }
 				Section(footer: accountFooterView) {}
@@ -29,9 +29,8 @@ struct LocalAddAccountView: View {
 			}
 			.navigationTitle(deviceAccountName())
 			.navigationBarTitleDisplayMode(.inline)
-			.onReceive(NotificationCenter.default.publisher(for: .UserDidAddAccount)) { _ in
-				dismiss()
-			}
+			.dismissOnExternalContextLaunch()
+			.dismissOnAccountAdd()
 		}
     }
 	
@@ -39,6 +38,8 @@ struct LocalAddAccountView: View {
 		TextField("Name",
 				  text: $accountName,
 				  prompt: Text("ACCOUNT_NAME", tableName: "Account"))
+		.autocorrectionDisabled()
+		.autocapitalization(.none)
 	}
 	
 	var addAccountButton: some View {
@@ -51,17 +52,6 @@ struct LocalAddAccountView: View {
 				Text("ADD_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
 				Spacer()
 			}
-		}
-	}
-	
-	var accountHeaderView: some View {
-		HStack {
-			Spacer()
-			Image(uiImage: accountImage())
-				.resizable()
-				.aspectRatio(contentMode: .fit)
-				.frame(width: 48, height: 48)
-			Spacer()
 		}
 	}
 	

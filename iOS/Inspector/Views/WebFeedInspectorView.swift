@@ -63,6 +63,7 @@ struct WebFeedInspectorView: View {
 		.sheet(isPresented: $showHomePage, onDismiss: nil) {
 			SafariView(url: URL(string: webFeed.homePageURL!)!)
 		}
+		.dismissOnExternalContextLaunch()
     }
 	
 	var webFeedHeaderView: some View {

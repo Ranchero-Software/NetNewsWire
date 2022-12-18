@@ -66,7 +66,7 @@ struct AccountsManagementView: View {
 			Button(role: .destructive) {
 				AccountManager.shared.deleteAccount(accountToRemove!)
 			} label: {
-				Text("REMOVE_BUTTON_TITLE", tableName: "Buttons")
+				Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
 			}
 			
 			Button(role: .cancel) {

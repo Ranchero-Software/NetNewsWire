@@ -90,15 +90,15 @@ struct AddAccountListView: View {
 					LocalAddAccountView()
 				case .cloudKit:
 					CloudKitAddAccountView()
+				case .newsBlur:
+					NewsBlurAddAccountView()
 				case .freshRSS, .inoreader, .bazQux, .theOldReader:
 					ReaderAPIAddAccountView(accountType: viewModel.showAddAccountSheet.accountType, account: nil)
 				default:
 					Text(viewModel.showAddAccountSheet.accountType.localizedAccountName())
 				}
 			}
-			.onReceive(NotificationCenter.default.publisher(for: .UserDidAddAccount)) { _ in
-				dismiss()
-			}
+			.dismissOnAccountAdd()
 		}
     }
 	

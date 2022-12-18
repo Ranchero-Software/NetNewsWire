@@ -17,7 +17,7 @@ struct CloudKitAddAccountView: View {
 	var body: some View {
 		NavigationView {
 			Form {
-				Section(header: cloudKitHeader) {}
+				AccountSectionHeader(accountType: .cloudKit)
 				Section { createCloudKitAccount }
 				Section(footer: cloudKitExplainer) {}
 			}
@@ -33,22 +33,10 @@ struct CloudKitAddAccountView: View {
 			} message: {
 				Text(addAccountError.0?.localizedDescription ?? "Unknown Error")
 			}
-			.onReceive(NotificationCenter.default.publisher(for: .UserDidAddAccount)) { _ in
-				dismiss()
-			}
+			.dismissOnExternalContextLaunch()
+			.dismissOnAccountAdd()
 		}
     }
-	
-	var cloudKitHeader: some View {
-		HStack {
-			Spacer()
-			Image(uiImage: AppAssets.accountCloudKitImage)
-				.resizable()
-				.aspectRatio(contentMode: .fit)
-				.frame(width: 48, height: 48)
-			Spacer()
-		}
-	}
 	
 	var createCloudKitAccount: some View {
 		Button {

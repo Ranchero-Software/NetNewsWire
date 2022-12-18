@@ -20,7 +20,7 @@ struct AccountInspectorView: View {
 	
 	var body: some View {
 		Form {
-			Section(header: accountHeaderView){}
+			AccountSectionHeader(accountType: account.type)
 			accountNameAndActiveSection
 			
 			if 	account.type != .onMyMac &&
@@ -46,13 +46,14 @@ struct AccountInspectorView: View {
 			case .theOldReader, .bazQux, .inoreader, .freshRSS:
 				ReaderAPIAddAccountView(accountType: account.type, account: account)
 			case .feedbin:
-				Text("FEEDBIN")
+				FeedbinAddAccountView(account: account)
 			case .newsBlur:
-				Text("NEWSBLUR")
+				NewsBlurAddAccountView(account: account)
 			default:
 				EmptyView()
 			}
 		}
+		.dismissOnExternalContextLaunch()
     }
 	
 	var accountHeaderView: some View {
@@ -135,7 +136,7 @@ struct AccountInspectorView: View {
 	var cloudKitLimitations: some View {
 		HStack {
 			Spacer()
-			Text("CLOUDKIT_LIMITATIONS_TITLE", tableName: "Inspector")
+			Text("CLOUDKIT_LIMITATIONS_LINK", tableName: "Inspector")
 			Spacer()
 		}
 	}

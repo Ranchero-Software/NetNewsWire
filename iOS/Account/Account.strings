@@ -6,11 +6,14 @@
   Copyright © 2022 Ranchero Software. All rights reserved.
 */
 
-/* Account Names */
+/* Account Section */
 "ACCOUNT_NAME" = "Name";
 "CLOUDKIT" = "iCloud";
 "LOCAL_ACCOUNT_NAME_PHONE" = "On My iPhone";
 "LOCAL_ACCOUNT_NAME_PAD" = "On My iPad";
+"ACCOUNT_EMAIL_ADDRESS_PROMPT" = "Email Address";
+"ACCOUNT_USERNAME_PROMPT" = "Username";
+"ACCOUNT_PASSWORD_PROMPT" = "Password";
 
 
 /* Explainers */
@@ -20,5 +23,7 @@
 "OLDREADER_FOOTER_EXPLAINER" = "Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? [Sign Up Here](https://theoldreader.com)";
 "FRESHRSS_FOOTER_EXPLAINER" = "Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance? [Sign Up Here](https://freshrss.org)";
 "CLOUDKIT_FOOTER_EXPLAINER" = "NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices.";
+"FEEDBIN_FOOTER_EXPLAINER" = "Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account? [Sign Up Here](https://feedbin.com/signup)";
+"NEWSBLUR_FOOTER_EXPLAINER" = "Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account? [Sign Up Here](https://newsblur.com)";
 
 

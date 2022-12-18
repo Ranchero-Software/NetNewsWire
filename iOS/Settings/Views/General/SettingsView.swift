@@ -108,9 +108,7 @@ struct SettingsView: View {
 					}
 				}
 			}
-			.onReceive(NotificationCenter.default.publisher(for: .LaunchedFromExternalAction), perform: { _ in
-				dismiss()
-			})
+			.dismissOnExternalContextLaunch()
 			.fileImporter(isPresented: $viewModel.showImportView, allowedContentTypes: OPMLDocument.readableContentTypes) { result in
 				switch result {
 				case .success(let url):

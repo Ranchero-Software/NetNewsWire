@@ -9,4 +9,6 @@
 "ERROR_TITLE" = "Error";
 "DUPLICATE_ACCOUNT_ERROR" = "There is already an account of that type with that username created.";
 "CLOUDKIT_NOT_ENABLED_ERROR" = "Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.";
-
+"USERNAME_AND_PASSWORD_REQUIRED" = "Username and password required.";
+"INVALID_USERNAME_PASSWORD" = "Invalid email or password combination.";
+"KEYCHAIN_ERROR" = "Keychain error while storing credentials.";

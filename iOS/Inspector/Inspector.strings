@@ -9,7 +9,7 @@
 /* Account Inspector */
 "ACCOUNT_NAME_FIELD" = "Account Name";
 "ACTIVE" = "Active";
-"CLOUDKIT_LIMITATIONS_TITLE" = "[iCloud Syncing Limitations & Solutions](https://netnewswire.com/help/iCloud)";
+"CLOUDKIT_LIMITATIONS_LINK" = "[iCloud Syncing Limitations & Solutions](https://netnewswire.com/help/iCloud)";
 "REMOVE_ACCOUNT_TITLE" = "Remove Account";
 "REMOVE_FEEDLY_MESSAGE" = "Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.";
 "REMOVE_ACCOUNT_MESSAGE" = "Are you sure you want to remove this account? This cannot be undone.";
