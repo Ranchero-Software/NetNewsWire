@@ -10,76 +10,92 @@ import SwiftUI
 import Account
 import Combine
 
+public final class AccountManagementViewModel: ObservableObject {
+	
+	@Published var sortedActiveAccounts = [Account]()
+	@Published var sortedInactiveAccounts = [Account]()
+	@Published var showAccountDeletionAlert: Bool = false
+	@Published var showAddAccountSheet: Bool = false
+	public var accountToDelete: Account? = nil
+	
+	init() {
+		refreshAccounts()
+		
+		NotificationCenter.default.addObserver(forName: .AccountStateDidChange, object: nil, queue: .main) { [weak self] _ in
+			self?.refreshAccounts()
+		}
+		
+		NotificationCenter.default.addObserver(forName: .UserDidAddAccount, object: nil, queue: .main) { [weak self] _ in
+			self?.refreshAccounts()
+		}
+		
+		NotificationCenter.default.addObserver(forName: .UserDidDeleteAccount, object: nil, queue: .main) { [weak self] _ in
+			self?.refreshAccounts()
+		}
+		
+		NotificationCenter.default.addObserver(forName: .DisplayNameDidChange, object: nil, queue: .main) { [weak self] _ in
+			self?.refreshAccounts()
+		}
+	}
+	
+	private func refreshAccounts() {
+		sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
+		sortedInactiveAccounts = AccountManager.shared.sortedAccounts.filter({ $0.isActive == false })
+	}
+	
+}
+
+
 struct AccountsManagementView: View {
     
-	@State private var showAddAccountSheet: Bool = false
-	@State private var sortedActiveAccounts = [Account]()
-	@State private var sortedInactiveAccounts = [Account]()
-	@State private var accountToRemove: Account?
-	@State private var showRemoveAccountAlert: Bool = false
+	@StateObject private var viewModel = AccountManagementViewModel()
 	
 	var body: some View {
 		List {
 			Section(header: Text("ACTIVE_ACCOUNTS_HEADER", tableName: "Settings")) {
-				ForEach(sortedActiveAccounts, id: \.self) { account in
-					accountRow(account, showRemoveAccountAlert: $showRemoveAccountAlert, accountToRemove: $accountToRemove)
+				ForEach(viewModel.sortedActiveAccounts, id: \.self) { account in
+					accountRow(account)
 				}
 			}
 			
 			Section(header: Text("INACTIVE_ACCOUNTS_HEADER", tableName: "Settings")) {
-				ForEach(sortedInactiveAccounts, id: \.self) { account in
-					accountRow(account, showRemoveAccountAlert: $showRemoveAccountAlert, accountToRemove: $accountToRemove)
+				ForEach(viewModel.sortedInactiveAccounts, id: \.self) { account in
+					accountRow(account)
 				}
 			}
 		}
 		.navigationTitle(Text("MANAGE_ACCOUNTS", tableName: "Settings"))
-		.tint(Color(uiColor: AppAssets.primaryAccentColor))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
-					showAddAccountSheet = true
+					viewModel.showAddAccountSheet = true
 				} label: {
 					Image(systemName: "plus")
 				}
 			}
 		}
-		.onReceive(NotificationCenter.default.publisher(for: .AccountStateDidChange)) { _ in
-			refreshAccounts()
-		}
-		.onReceive(NotificationCenter.default.publisher(for: .UserDidAddAccount)) { _ in
-			refreshAccounts()
-		}
-		.onReceive(NotificationCenter.default.publisher(for: .UserDidDeleteAccount)) { _ in
-			refreshAccounts()
-		}
-		.onReceive(NotificationCenter.default.publisher(for: .DisplayNameDidChange)) { _ in
-			refreshAccounts()
-		}
-		.task(priority: .userInitiated) {
-			refreshAccounts()
-		}
-		.sheet(isPresented: $showAddAccountSheet) {
+		.sheet(isPresented: $viewModel.showAddAccountSheet) {
 			AddAccountListView()
 		}
-		.alert(Text("ACCOUNT_REMOVE \(accountToRemove?.nameForDisplay ?? "")", tableName: "Settings"),
-			   isPresented: $showRemoveAccountAlert) {
+		.alert(Text("ACCOUNT_REMOVE \(viewModel.accountToDelete?.nameForDisplay ?? "")", tableName: "Settings"),
+			   isPresented: $viewModel.showAccountDeletionAlert) {
 			Button(role: .destructive) {
-				AccountManager.shared.deleteAccount(accountToRemove!)
+				AccountManager.shared.deleteAccount(viewModel.accountToDelete!)
 			} label: {
 				Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
 			}
 			
 			Button(role: .cancel) {
-				accountToRemove = nil
+				//
 			} label: {
 				Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
 			}
 		} message: {
-			switch accountToRemove {
+			switch viewModel.accountToDelete {
 			case .none:
 			    Text("")
-			case .some(let wrapped):
-				switch wrapped.type {
+			case .some(let account):
+				switch account.type {
 				case .feedly:
 					Text("REMOVE_FEEDLY_CONFIRMATION", tableName: "Settings")
 				default:
@@ -89,14 +105,7 @@ struct AccountsManagementView: View {
 		}
     }
 	
-	func refreshAccounts() {
-		sortedActiveAccounts = []
-		sortedInactiveAccounts = []
-		sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
-		sortedInactiveAccounts = AccountManager.shared.sortedAccounts.filter({ $0.isActive == false })
-	}
-	
-	func accountRow(_ account: Account, showRemoveAccountAlert: Binding<Bool>, accountToRemove: Binding<Account?>) -> some View {
+	func accountRow(_ account: Account) -> some View {
 		NavigationLink {
 			AccountInspectorView(account: account)
 		} label: {
@@ -109,15 +118,15 @@ struct AccountsManagementView: View {
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
 			if account != AccountManager.shared.defaultAccount {
 				Button(role: .destructive) {
-					accountToRemove.wrappedValue = account
-					showRemoveAccountAlert.wrappedValue = true
+					viewModel.accountToDelete = account
+					viewModel.showAccountDeletionAlert = true
 				} label: {
 					Label {
 						Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
 					} icon: {
 						Image(systemName: "trash")
 					}
-				}.tint(.red)
+				}
 			}
 			Button {
 				withAnimation {

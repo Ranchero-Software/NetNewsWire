@@ -101,7 +101,7 @@ struct FeedbinAddAccountView: View {
 	}
 	
 	var feedbinAccountExplainer: some View {
-		Text("FEEDBIN_FOOTER_EXPLAINER", tableName: "Account").multilineTextAlignment(.center)
+		Text(account == nil ? "FEEDBIN_FOOTER_EXPLAINER" : "", tableName: "Account").multilineTextAlignment(.center)
 	}
 	
 	private func retrieveCredentials() {

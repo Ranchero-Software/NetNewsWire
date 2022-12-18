@@ -63,6 +63,7 @@ struct WebFeedInspectorView: View {
 		.sheet(isPresented: $showHomePage, onDismiss: nil) {
 			SafariView(url: URL(string: webFeed.homePageURL!)!)
 		}
+		.tint(Color(uiColor: AppAssets.primaryAccentColor))
 		.dismissOnExternalContextLaunch()
     }
 	
@@ -73,6 +74,7 @@ struct WebFeedInspectorView: View {
 				.resizable()
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 48, height: 48)
+				.clipShape(RoundedRectangle(cornerRadius: 4))
 			Spacer()
 		}
 	}

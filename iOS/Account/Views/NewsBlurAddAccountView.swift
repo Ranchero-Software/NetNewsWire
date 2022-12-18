@@ -118,7 +118,7 @@ struct NewsBlurAddAccountView: View, Logging {
 	}
 	
 	var newsBlurAccountExplainer: some View {
-		Text("NEWSBLUR_FOOTER_EXPLAINER", tableName: "Account").multilineTextAlignment(.center)
+		Text(account == nil ? "NEWSBLUR_FOOTER_EXPLAINER" : "", tableName: "Account").multilineTextAlignment(.center)
 	}
 	
 	private func executeAccountCredentials() async throws {
