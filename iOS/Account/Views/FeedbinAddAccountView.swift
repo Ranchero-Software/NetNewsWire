@@ -54,6 +54,7 @@ struct FeedbinAddAccountView: View {
 			}
 			.navigationTitle(Text(account?.type.localizedAccountName() ?? ""))
 			.navigationBarTitleDisplayMode(.inline)
+			.interactiveDismissDisabled(showProgressIndicator)
 			.dismissOnExternalContextLaunch()
 			.dismissOnAccountAdd()
 		}
@@ -73,8 +74,14 @@ struct FeedbinAddAccountView: View {
 			Button {
 				Task {
 					do {
-						try await executeAccountCredentials()
-						dismiss()
+						if account == nil {
+							// Create a new account
+							try await executeAccountCredentials()
+						} else {
+							// Updating account credentials
+							try await executeAccountCredentials()
+							dismiss()
+						}
 					} catch {
 						accountError = (error, true)
 					}

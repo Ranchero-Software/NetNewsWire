@@ -12,7 +12,7 @@ import Secrets
 import RSWeb
 import RSCore
 
-struct NewsBlurAddAccountView: View {
+struct NewsBlurAddAccountView: View, Logging {
     
 	@Environment(\.dismiss) private var dismiss
 	@State var account: Account? = nil
@@ -52,6 +52,7 @@ struct NewsBlurAddAccountView: View {
 			} message: {
 				Text(accountError.0?.localizedDescription ?? "")
 			}
+			.interactiveDismissDisabled(showProgressIndicator)
 			.dismissOnExternalContextLaunch()
 			.dismissOnAccountAdd()
 		}
@@ -78,7 +79,7 @@ struct NewsBlurAddAccountView: View {
 	
 	var accountDetails: some View {
 		Section {
-			TextField("Email", text: $accountUserName, prompt: Text("ACCOUNT_USERNAME_PROMPT", tableName: "Account"))
+			TextField("Email", text: $accountUserName, prompt: Text("ACCOUNT_USERNAME_OR_EMAIL_PROMPT", tableName: "Account"))
 				.autocorrectionDisabled()
 				.autocapitalization(.none)
 			SecureField("Password", text: $accountPassword, prompt: Text("ACCOUNT_PASSWORD_PROMPT", tableName: "Account"))
@@ -90,8 +91,14 @@ struct NewsBlurAddAccountView: View {
 			Button {
 				Task {
 					do {
-						try await executeAccountCredentials()
-						dismiss()
+						if account == nil {
+							// Create a new account
+							try await executeAccountCredentials()
+						} else {
+							// Updating account credentials
+							try await executeAccountCredentials()
+							dismiss()
+						}
 					} catch {
 						accountError = (error, true)
 					}
@@ -115,27 +122,33 @@ struct NewsBlurAddAccountView: View {
 	}
 	
 	private func executeAccountCredentials() async throws {
-		let trimmedEmailAddress = accountUserName.trimmingWhitespace
+		let trimmedUsername = accountUserName.trimmingWhitespace
 		
-		guard (account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: trimmedEmailAddress)) else {
+		guard (account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: trimmedUsername)) else {
 			throw LocalizedNetNewsWireError.duplicateAccount
 		}
 		showProgressIndicator = true
 		
-		let basicCredentials = Credentials(type: .newsBlurBasic, username: trimmedEmailAddress, secret: accountPassword)
+		let basicCredentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: accountPassword)
 		
 		return try await withCheckedThrowingContinuation { continuation in
 			Account.validateCredentials(type: .newsBlur, credentials: basicCredentials) { result in
 				switch result {
 				case .success(let credentials):
 					if let sessionsCredentials = credentials {
+						
 						if self.account == nil {
 							self.account = AccountManager.shared.createAccount(type: .newsBlur)
 						}
 						
 						do {
-							try self.account?.removeCredentials(type: .newsBlurBasic)
-							try self.account?.removeCredentials(type: .newsBlurSessionId)
+							do {
+								try self.account?.removeCredentials(type: .newsBlurBasic)
+								try self.account?.removeCredentials(type: .newsBlurSessionId)
+							} catch {
+								NewsBlurAddAccountView.logger.error("\(error.localizedDescription)")
+							}
+						
 							try self.account?.storeCredentials(basicCredentials)
 							try self.account?.storeCredentials(sessionsCredentials)
 							
@@ -144,22 +157,27 @@ struct NewsBlurAddAccountView: View {
 								case .success(_):
 									showProgressIndicator = false
 									continuation.resume()
+									return
 								case .failure(let failure):
 									showProgressIndicator = false
 									continuation.resume(throwing: failure)
+									return
 								}
 							})
 						} catch {
 							showProgressIndicator = false
 							continuation.resume(throwing: LocalizedNetNewsWireError.keychainError)
+							return
 						}
 					} else {
 						showProgressIndicator = false
 						continuation.resume(throwing: LocalizedNetNewsWireError.invalidUsernameOrPassword)
+						return
 					}
 				case .failure(let failure):
 					showProgressIndicator = false
 					continuation.resume(throwing: failure)
+					return
 				}
 			}
 		}

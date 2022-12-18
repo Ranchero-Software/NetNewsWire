@@ -1169,15 +1169,6 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 	func showAccountInspector(for account: Account) {
 		let hosting = UIHostingController(rootView: InjectedNavigationView(injectedView: AccountInspectorView(account: account)))
 		rootSplitViewController.present(hosting, animated: true, completion: nil)
-		
-//		let accountInspectorNavController =
-//			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
-//		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
-//		accountInspectorNavController.modalPresentationStyle = .formSheet
-//		accountInspectorNavController.preferredContentSize = AccountInspectorViewController.preferredContentSizeForFormSheetDisplay
-//		accountInspectorController.isModal = true
-//		accountInspectorController.account = account
-//		rootSplitViewController.present(accountInspectorNavController, animated: true)
 	}
 	
 	func showFeedInspector() {

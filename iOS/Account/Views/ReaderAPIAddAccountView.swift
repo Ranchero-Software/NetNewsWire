@@ -24,7 +24,7 @@ struct ReaderAPIAddAccountView: View {
 	@State private var accountSecret: String = ""
 	@State private var accountAPIUrl: String = ""
 	@State private var showProgressIndicator: Bool = false
-	@State private var accountSetupError: (Error?, Bool) = (nil, false)
+	@State private var accountError: (Error?, Bool) = (nil, false)
 	
 	var body: some View {
 		NavigationView {
@@ -32,7 +32,7 @@ struct ReaderAPIAddAccountView: View {
 				if accountType != nil {
 					AccountSectionHeader(accountType: accountType!)
 				}
-				accountDetailsSection
+				accountDetails
 				Section(footer: readerAccountExplainer) {}
 			}
 			.navigationTitle(Text(accountType?.localizedAccountName() ?? ""))
@@ -43,20 +43,22 @@ struct ReaderAPIAddAccountView: View {
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
 					Button(action: { dismiss() }, label: { Text("CANCEL_BUTTON_TITLE", tableName: "Buttons") })
+						.disabled(showProgressIndicator)
 				}
 				ToolbarItem(placement: .navigationBarTrailing) {
 					if showProgressIndicator { ProgressView() }
 				}
 			}
-			.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $accountSetupError.1) {
+			.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $accountError.1) {
 				Button(role: .cancel) {
 					//
 				} label: {
 					Text("DISMISS_BUTTON_TITLE", tableName: "Buttons")
 				}
 			} message: {
-				Text(accountSetupError.0?.localizedDescription ?? "")
+				Text(accountError.0?.localizedDescription ?? "")
 			}
+			.interactiveDismissDisabled(showProgressIndicator)
 			.dismissOnExternalContextLaunch()
 			.dismissOnAccountAdd()
 		}
@@ -80,7 +82,7 @@ struct ReaderAPIAddAccountView: View {
 	
 	
 	
-	var accountDetailsSection: some View {
+	var accountDetails: some View {
 		Group {
 			Section {
 				TextField("Username", text: $accountUserName)
@@ -93,32 +95,39 @@ struct ReaderAPIAddAccountView: View {
 						.autocapitalization(.none)
 				}
 			}
-			
-			Section {
-				Button {
-					Task {
-						do {
+		}
+	}
+	
+	var accountButton: some View {
+		Section {
+			Button {
+				Task {
+					do {
+						if account == nil {
+							// Create a new account
+							try await executeAccountCredentials()
+						} else {
+							// Updating account credentials
 							try await executeAccountCredentials()
 							dismiss()
-						} catch {
-							accountSetupError = (error, true)
 						}
-					}
-				} label: {
-					HStack {
-						Spacer()
-						if accountCredentials == nil {
-							Text("ADD_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
-						} else {
-							Text("UPDATE_CREDENTIALS_BUTTON_TITLE", tableName: "Buttons")
-						}
-						Spacer()
+					} catch {
+						accountError = (error, true)
 					}
 				}
-				.disabled(!validateCredentials())
+			} label: {
+				HStack {
+					Spacer()
+					if accountCredentials == nil {
+						Text("ADD_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
+					} else {
+						Text("UPDATE_CREDENTIALS_BUTTON_TITLE", tableName: "Buttons")
+					}
+					Spacer()
+				}
 			}
+			.disabled(!validateCredentials())
 		}
-		
 	}
 	
 	// MARK: - API
@@ -132,7 +141,7 @@ struct ReaderAPIAddAccountView: View {
 					accountSecret = creds.secret
 				}
 			} catch {
-				accountSetupError = (error, true)
+				accountError = (error, true)
 			}
 		}
 	}
@@ -152,7 +161,6 @@ struct ReaderAPIAddAccountView: View {
 		return true
 	}
 	
-	@MainActor
 	private func executeAccountCredentials() async throws {
 		
 		let trimmedAccountUserName = accountUserName.trimmingWhitespace
@@ -185,19 +193,23 @@ struct ReaderAPIAddAccountView: View {
 								case .success:
 									showProgressIndicator = false
 									continuation.resume()
+									return
 								case .failure(let error):
 									showProgressIndicator = false
 									continuation.resume(throwing: error)
+									return
 								}
 							})
 						} catch {
 							showProgressIndicator = false
-							continuation.resume(throwing: error)
+							continuation.resume(throwing: LocalizedNetNewsWireError.keychainError)
+							return
 						}
 					}
 				case .failure(let failure):
 					showProgressIndicator = false
 					continuation.resume(throwing: failure)
+					return
 				}
 			}
 		}

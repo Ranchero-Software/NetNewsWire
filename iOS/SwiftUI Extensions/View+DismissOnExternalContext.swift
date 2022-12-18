@@ -23,6 +23,10 @@ struct DismissOnExternalContext: ViewModifier {
 }
 
 extension View {
+	
+	/// This function dismisses a view when the user launches from
+	/// an external action, for example, opening the app from the widget.
+	/// - Returns: `View`
 	func dismissOnExternalContextLaunch() -> some View {
 		modifier(DismissOnExternalContext())
 	}

@@ -22,6 +22,9 @@ struct DismissOnAccountAdd: ViewModifier {
 }
 
 extension View {
+	
+	/// Convenience modifier to dismiss a view when an account has been added.
+	/// - Returns: `View`
 	func dismissOnAccountAdd() -> some View {
 		modifier(DismissOnAccountAdd())
 	}

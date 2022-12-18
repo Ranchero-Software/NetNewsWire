@@ -105,7 +105,9 @@ struct AccountsManagementView: View {
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 25, height: 25)
 			Text(account.nameForDisplay)
-		}.swipeActions(edge: .trailing, allowsFullSwipe: false) {
+		}
+		.transition(.move(edge: .top))
+		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
 			if account != AccountManager.shared.defaultAccount {
 				Button(role: .destructive) {
 					accountToRemove.wrappedValue = account
@@ -118,17 +120,19 @@ struct AccountsManagementView: View {
 					}
 				}.tint(.red)
 			}
+			Button {
+				withAnimation {
+					account.isActive.toggle()
+				}
+			} label: {
+				if account.isActive {
+					Image(systemName: "minus.circle")
+				} else {
+					Image(systemName: "togglepower")
+				}
+			}.tint(account.isActive ? .yellow : Color(uiColor: AppAssets.primaryAccentColor))
 		}
 	}
-	
-	var inactiveFooterText: some View {
-		if AccountManager.shared.sortedAccounts.filter({ $0.isActive == false }).count == 0 {
-			return Text("NO_INACTIVE_ACCOUNT_FOOTER", tableName: "Settings")
-		} else {
-			return Text("")
-		}
-	}
-	
 }
 
 struct AddAccountView_Previews: PreviewProvider {

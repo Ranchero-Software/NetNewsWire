@@ -12,7 +12,7 @@ import Account
 struct CloudKitAddAccountView: View {
     
 	@Environment(\.dismiss) private var dismiss
-	@State private var addAccountError: (LocalizedError?, Bool) = (nil, false)
+	@State private var accountError: (Error?, Bool) = (nil, false)
 	
 	var body: some View {
 		NavigationView {
@@ -28,10 +28,10 @@ struct CloudKitAddAccountView: View {
 					Button(action: { dismiss() }, label: { Text("CANCEL_BUTTON_TITLE", tableName: "Buttons") })
 				}
 			}
-			.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $addAccountError.1) {
+			.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $accountError.1) {
 				Button(action: {}, label: { Text("DISMISS_BUTTON_TITLE", tableName: "Buttons") })
 			} message: {
-				Text(addAccountError.0?.localizedDescription ?? "Unknown Error")
+				Text(accountError.0?.localizedDescription ?? "Unknown Error")
 			}
 			.dismissOnExternalContextLaunch()
 			.dismissOnAccountAdd()
@@ -41,7 +41,7 @@ struct CloudKitAddAccountView: View {
 	var createCloudKitAccount: some View {
 		Button {
 			guard FileManager.default.ubiquityIdentityToken != nil else {
-				addAccountError = (LocalizedNetNewsWireError.iCloudDriveMissing, true)
+				accountError = (LocalizedNetNewsWireError.iCloudDriveMissing, true)
 				return
 			}
 			let _ = AccountManager.shared.createAccount(type: .cloudKit)
