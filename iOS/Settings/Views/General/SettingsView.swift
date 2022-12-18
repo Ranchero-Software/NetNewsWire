@@ -148,7 +148,7 @@ struct SettingsView: View {
 				   isPresented: $viewModel.showExportSuccess,
 				   actions: {},
 				   message: { Text("EXPORT_OPML_SUCCESS_MESSAGE", tableName: "Settings") })
-			.alert(Text("ERROR_TITLE", tableName: "Settings"),
+			.alert(Text("ERROR_TITLE", tableName: "Errors"),
 				   isPresented: $viewModel.showImportExportError,
 				   actions: {},
 				   message: { Text(viewModel.importExportError?.localizedDescription ?? "Import/Export Error") } )
