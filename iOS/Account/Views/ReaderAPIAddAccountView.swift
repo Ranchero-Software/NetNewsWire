@@ -33,6 +33,7 @@ struct ReaderAPIAddAccountView: View {
 					AccountSectionHeader(accountType: accountType!)
 				}
 				accountDetails
+				accountButton
 				Section(footer: readerAccountExplainer) {}
 			}
 			.navigationTitle(Text(accountType?.localizedAccountName() ?? ""))
@@ -83,17 +84,17 @@ struct ReaderAPIAddAccountView: View {
 	
 	
 	var accountDetails: some View {
-		Group {
-			Section {
-				TextField("Username", text: $accountUserName)
+		Section {
+			TextField("Username", text: $accountUserName)
+				.autocorrectionDisabled()
+				.autocapitalization(.none)
+				.textContentType(.username)
+			SecureField("Password", text: $accountSecret)
+				.textContentType(.password)
+			if accountType == .freshRSS && accountCredentials == nil {
+				TextField("FreshRSS URL", text: $accountAPIUrl, prompt: Text("fresh.rss.net/api/greader.php"))
 					.autocorrectionDisabled()
 					.autocapitalization(.none)
-				SecureField("Password", text: $accountSecret)
-				if accountType == .freshRSS && accountCredentials == nil {
-					TextField("FreshRSS URL", text: $accountAPIUrl, prompt: Text("fresh.rss.net/api/greader.php"))
-						.autocorrectionDisabled()
-						.autocapitalization(.none)
-				}
 			}
 		}
 	}

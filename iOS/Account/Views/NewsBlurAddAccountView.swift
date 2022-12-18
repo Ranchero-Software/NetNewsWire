@@ -82,7 +82,9 @@ struct NewsBlurAddAccountView: View, Logging {
 			TextField("Email", text: $accountUserName, prompt: Text("ACCOUNT_USERNAME_OR_EMAIL_PROMPT", tableName: "Account"))
 				.autocorrectionDisabled()
 				.autocapitalization(.none)
+				.textContentType(.username)
 			SecureField("Password", text: $accountPassword, prompt: Text("ACCOUNT_PASSWORD_PROMPT", tableName: "Account"))
+				.textContentType(.password)
 		}
 	}
 	

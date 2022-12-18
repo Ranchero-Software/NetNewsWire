@@ -65,7 +65,9 @@ struct FeedbinAddAccountView: View {
 			TextField("Email", text: $accountEmail, prompt: Text("ACCOUNT_EMAIL_ADDRESS_PROMPT", tableName: "Account"))
 				.autocorrectionDisabled()
 				.autocapitalization(.none)
+				.textContentType(.username)
 			SecureField("Password", text: $accountPassword, prompt: Text("ACCOUNT_PASSWORD_PROMPT", tableName: "Account"))
+				.textContentType(.password)
 		}
 	}
 	
