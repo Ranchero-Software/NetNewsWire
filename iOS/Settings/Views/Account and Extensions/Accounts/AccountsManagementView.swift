@@ -14,6 +14,7 @@ public final class AccountManagementViewModel: ObservableObject {
 	
 	@Published var sortedActiveAccounts = [Account]()
 	@Published var sortedInactiveAccounts = [Account]()
+	@Published var accountsForDeletion = [Account]()
 	@Published var showAccountDeletionAlert: Bool = false
 	@Published var showAddAccountSheet: Bool = false
 	public var accountToDelete: Account? = nil
@@ -38,11 +39,26 @@ public final class AccountManagementViewModel: ObservableObject {
 		}
 	}
 	
+	func temporarilyDeleteAccount(_ account: Account) {
+		if account.isActive {
+			sortedActiveAccounts.removeAll(where: { $0.accountID == account.accountID })
+		} else {
+			sortedInactiveAccounts.removeAll(where: { $0.accountID == account.accountID })
+		}
+		accountToDelete = account
+		showAccountDeletionAlert = true
+	}
+	
+	func restoreAccount(_ account: Account) {
+		accountToDelete = nil
+		self.refreshAccounts()
+	}
+	
 	private func refreshAccounts() {
 		sortedActiveAccounts = AccountManager.shared.sortedActiveAccounts
 		sortedInactiveAccounts = AccountManager.shared.sortedAccounts.filter({ $0.isActive == false })
 	}
-	
+		
 }
 
 
@@ -86,7 +102,7 @@ struct AccountsManagementView: View {
 			}
 			
 			Button(role: .cancel) {
-				//
+				viewModel.restoreAccount(viewModel.accountToDelete!)
 			} label: {
 				Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
 			}
@@ -118,8 +134,7 @@ struct AccountsManagementView: View {
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
 			if account != AccountManager.shared.defaultAccount {
 				Button(role: .destructive) {
-					viewModel.accountToDelete = account
-					viewModel.showAccountDeletionAlert = true
+					viewModel.temporarilyDeleteAccount(account)
 				} label: {
 					Label {
 						Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
