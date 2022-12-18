@@ -85,6 +85,11 @@ struct SettingsView: View {
 			.listStyle(.insetGrouped)
 			.navigationTitle(Text("SETTINGS_TITLE", tableName: "Settings"))
 			.navigationBarTitleDisplayMode(.inline)
+			.toolbar {
+				ToolbarItem(placement: .navigationBarLeading, content: {
+					Button(action: { dismiss() }, label: { Text("DONE_BUTTON_TITLE", tableName: "Buttons") })
+				})
+			}
 			.sheet(isPresented: $viewModel.showAddAccountView) {
 				AddAccountListView()
 			}
