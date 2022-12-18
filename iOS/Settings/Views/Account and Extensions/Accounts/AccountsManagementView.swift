@@ -106,7 +106,6 @@ struct AccountsManagementView: View {
 				.frame(width: 25, height: 25)
 			Text(account.nameForDisplay)
 		}
-		.transition(.move(edge: .top))
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
 			if account != AccountManager.shared.defaultAccount {
 				Button(role: .destructive) {
