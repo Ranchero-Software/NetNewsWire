@@ -15,7 +15,8 @@ public final class AddAccountListViewModel: ObservableObject, OAuthAccountAuthor
 	@Published public var showAddAccountSheet: (Bool, accountType: AccountType) = (false, .onMyMac)
 	public var webAccountTypes: [AccountType] {
 		if AppDefaults.shared.isDeveloperBuild {
-			return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader].filter({ $0.isDeveloperRestricted == false })
+			return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
+				//.filter({ $0.isDeveloperRestricted == false })
 		} else {
 			return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
 		}

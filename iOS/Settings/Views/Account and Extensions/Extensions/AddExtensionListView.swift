@@ -21,8 +21,7 @@ struct AddExtensionListView: View {
 						footer: Text("FEED_PROVIDER_FOOTER", tableName: "Settings")) {
 					ForEach(0..<availableExtensionPointTypes.count, id: \.self) { i in
 						NavigationLink {
-							EnableExtensionPointViewWrapper(extensionPoint: availableExtensionPointTypes[i])
-								.edgesIgnoringSafeArea(.all)
+							EnableExtensionPointView(extensionPoint: availableExtensionPointTypes[i])
 						} label: {
 							Image(uiImage: availableExtensionPointTypes[i].image)
 								.resizable()

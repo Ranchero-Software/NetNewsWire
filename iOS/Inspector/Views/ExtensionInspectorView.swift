@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ExtensionInspectorView: View {
     
+	@Environment(\.dismiss) var dismiss
 	@State private var showDeactivateConfirmation: Bool = false
 	var extensionPoint: ExtensionPoint?
 	
@@ -25,14 +26,15 @@ struct ExtensionInspectorView: View {
 				Button(role: .destructive) {
 					showDeactivateConfirmation = true
 				} label: {
-					Text("DEACTIVATE_EXTENSION_TITLE", tableName: "Settings")
+					Text("DEACTIVATE_EXTENSION_BUTTON_TITLE", tableName: "Buttons")
 				}
 				.confirmationDialog(Text("DEACTIVATE_EXTENSION_TITLE", tableName: "Settings") , isPresented: $showDeactivateConfirmation, titleVisibility: .visible) {
 					
 					Button(role: .destructive) {
 						ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint!.extensionPointID)
+						dismiss()
 					} label: {
-						Text("DEACTIVATE_BUTTON_TITLE", tableName: "Buttons")
+						Text("DEACTIVATE_EXTENSION_BUTTON_TITLE", tableName: "Buttons")
 					}
 
 					Button(role: .cancel) {
