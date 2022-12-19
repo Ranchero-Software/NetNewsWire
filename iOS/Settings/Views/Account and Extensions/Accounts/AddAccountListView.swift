@@ -16,7 +16,7 @@ public final class AddAccountListViewModel: ObservableObject, OAuthAccountAuthor
 	public var webAccountTypes: [AccountType] {
 		if AppDefaults.shared.isDeveloperBuild {
 			return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
-				//.filter({ $0.isDeveloperRestricted == false })
+				.filter({ $0.isDeveloperRestricted == false })
 		} else {
 			return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
 		}
