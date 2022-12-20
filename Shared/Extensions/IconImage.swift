@@ -162,7 +162,7 @@ extension CGImage {
 }
 
 
-enum IconSize: Int, CaseIterable {
+enum IconSize: Int, CaseIterable, CustomStringConvertible {
 	case small = 1
 	case medium = 2
 	case large = 3
@@ -179,6 +179,17 @@ enum IconSize: Int, CaseIterable {
 			return CGSize(width: IconSize.mediumDimension, height: IconSize.mediumDimension)
 		case .large:
 			return CGSize(width: IconSize.largeDimension, height: IconSize.largeDimension)
+		}
+	}
+	
+	var description: String {
+		switch self {
+		case .small:
+			return "Small"
+		case .medium:
+			return "Medium"
+		case .large:
+			return "Large"
 		}
 	}
 

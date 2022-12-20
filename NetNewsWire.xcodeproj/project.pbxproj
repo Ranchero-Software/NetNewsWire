@@ -2644,7 +2644,7 @@
 				511D43CE231FA51100FB1562 /* Resources */,
 				176813A22564B9D100D98635 /* Widget */,
 				173A64162547BE0900267F6E /* AccountType+Helpers.swift */,
-				DFB34985294B3B0800BC81AD /* Translations */,
+				DFB34985294B3B0800BC81AD /* Localizations */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -2983,14 +2983,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		DFB34985294B3B0800BC81AD /* Translations */ = {
+		DFB34985294B3B0800BC81AD /* Localizations */ = {
 			isa = PBXGroup;
 			children = (
 				DFB34983294B3AFF00BC81AD /* Buttons.strings */,
 				DFB34998294C4F1D00BC81AD /* Errors.strings */,
 				DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */,
 			);
-			path = Translations;
+			path = Localizations;
 			sourceTree = "<group>";
 		};
 		DFB34986294B446300BC81AD /* SwiftUI Extensions */ = {
