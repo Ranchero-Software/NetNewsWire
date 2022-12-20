@@ -34,6 +34,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 				do {
 					currentTheme = try articleThemeWithThemeName(newValue)
 					AppDefaults.shared.currentThemeName = newValue
+					objectWillChange.send()
 				} catch {
 					logger.error("Unable to set new theme: \(error.localizedDescription, privacy: .public)")
 				}
@@ -51,12 +52,14 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 	}() {
 		didSet {
 			NotificationCenter.default.post(name: .CurrentArticleThemeDidChangeNotification, object: self)
+			objectWillChange.send()
 		}
 	}
 
 	lazy var themeNames = { buildThemeNames() }() {
 		didSet {
 			NotificationCenter.default.post(name: .ArticleThemeNamesDidChangeNotification, object: self)
+			objectWillChange.send()
 		}
 	}
 
@@ -102,6 +105,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 		}
 		
 		try FileManager.default.copyItem(atPath: filename, toPath: toFilename)
+		objectWillChange.send()
 	}
 	
 	func articleThemeWithThemeName(_ themeName: String) throws -> ArticleTheme {
@@ -127,6 +131,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 	func deleteTheme(themeName: String) {
 		if let filename = pathForThemeName(themeName, folder: folderPath) {
 			try? FileManager.default.removeItem(atPath: filename)
+			objectWillChange.send()
 		}
 	}
 	

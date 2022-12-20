@@ -154,7 +154,7 @@ struct SettingsViewRows {
 	/// This row, when tapped, will push the the Theme Selector screen
 	/// in to view.
 	static var themeSelection: some View {
-		NavigationLink(destination: ArticleThemesWrapper().edgesIgnoringSafeArea(.all)) {
+		NavigationLink(destination: ArticleThemeManagerView()) {
 			HStack {
 				Text("ARTICLE_THEME", tableName: "Settings")
 				Spacer()

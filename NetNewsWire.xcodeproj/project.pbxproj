@@ -871,6 +871,10 @@
 		DFB349A0294E87B700BC81AD /* LocalAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */; };
 		DFB349A2294E90B500BC81AD /* FeedbinAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB349A1294E90B500BC81AD /* FeedbinAddAccountView.swift */; };
 		DFB349A4294E914D00BC81AD /* AccountSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB349A3294E914D00BC81AD /* AccountSectionHeader.swift */; };
+		DFBB4EAC2951BC0200639228 /* NNWThemeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */; };
+		DFBB4EAD2951BC0200639228 /* NNWThemeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */; };
+		DFBB4EAE2951BC0200639228 /* NNWThemeDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */; };
+		DFBB4EB02951BCAC00639228 /* ArticleThemeManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4EAF2951BCAC00639228 /* ArticleThemeManagerView.swift */; };
 		DFC14F0F28EA55BD00F6EE86 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */; };
 		DFC14F1228EA5DC500F6EE86 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DFC14F1328EA677C00F6EE86 /* Bundle-Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F85BF42273625800C787DC /* Bundle-Extensions.swift */; };
@@ -1633,6 +1637,8 @@
 		DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAddAccountView.swift; sourceTree = "<group>"; };
 		DFB349A1294E90B500BC81AD /* FeedbinAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAddAccountView.swift; sourceTree = "<group>"; };
 		DFB349A3294E914D00BC81AD /* AccountSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSectionHeader.swift; sourceTree = "<group>"; };
+		DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NNWThemeDocument.swift; sourceTree = "<group>"; };
+		DFBB4EAF2951BCAC00639228 /* ArticleThemeManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemeManagerView.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		DFC14F1428EB177000F6EE86 /* AboutNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNetNewsWireView.swift; sourceTree = "<group>"; };
 		DFC14F1628EB17A800F6EE86 /* CreditsNetNewsWireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsNetNewsWireView.swift; sourceTree = "<group>"; };
@@ -1923,7 +1929,9 @@
 		5123DB95233EC69300282CC9 /* Inspector */ = {
 			isa = PBXGroup;
 			children = (
-				DFB3497D294B076C00BC81AD /* Views */,
+				DFB3497F294B085100BC81AD /* AccountInspectorView.swift */,
+				DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */,
+				DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */,
 			);
 			path = Inspector;
 			sourceTree = "<group>";
@@ -1993,7 +2001,11 @@
 		516A093E236123A800EAE89B /* Account */ = {
 			isa = PBXGroup;
 			children = (
-				DFB3498F294C0B0D00BC81AD /* Views */,
+				DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */,
+				DFB3499D294C5D5000BC81AD /* CloudKitAddAccountView.swift */,
+				DFB349A1294E90B500BC81AD /* FeedbinAddAccountView.swift */,
+				DF28B44E294ED92F00C4D8CA /* NewsBlurAddAccountView.swift */,
+				DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -2023,7 +2035,11 @@
 		5183CCEB227117C70010922C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				DFD406F8291FB5D500C02962 /* Views */,
+				DF766FEB2936344D006FBBE2 /* General */,
+				DFD406FD291FDBD900C02962 /* Appearance */,
+				DF59F0752920E42000ACD33D /* Account and Extensions */,
+				DF3630E92936038400326FB8 /* New Article Notifications */,
+				DF766FEA2936337A006FBBE2 /* Help */,
 				5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */,
 				510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */,
 				51A16990235E10D600EB091F /* Settings.storyboard */,
@@ -2786,6 +2802,7 @@
 				849A97591ED9EB0D007D329B /* DefaultFeedsImporter.swift */,
 				84A3EE52223B667F00557320 /* DefaultFeeds.opml */,
 				DF3630EA2936183D00326FB8 /* OPMLDocument.swift */,
+				DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */,
 			);
 			path = Importers;
 			sourceTree = "<group>";
@@ -2957,16 +2974,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		DFB3497D294B076C00BC81AD /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				DFB3497F294B085100BC81AD /* AccountInspectorView.swift */,
-				DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */,
-				DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
 		DFB3497E294B07D900BC81AD /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -2999,18 +3006,6 @@
 			path = "SwiftUI Extensions";
 			sourceTree = "<group>";
 		};
-		DFB3498F294C0B0D00BC81AD /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */,
-				DFB3499D294C5D5000BC81AD /* CloudKitAddAccountView.swift */,
-				DFB349A1294E90B500BC81AD /* FeedbinAddAccountView.swift */,
-				DF28B44E294ED92F00C4D8CA /* NewsBlurAddAccountView.swift */,
-				DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
 		DFC14F0928EA51AB00F6EE86 /* About */ = {
 			isa = PBXGroup;
 			children = (
@@ -3021,24 +3016,13 @@
 			path = About;
 			sourceTree = "<group>";
 		};
-		DFD406F8291FB5D500C02962 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				DF766FEB2936344D006FBBE2 /* General */,
-				DFD406FD291FDBD900C02962 /* Appearance */,
-				DF59F0752920E42000ACD33D /* Account and Extensions */,
-				DF3630E92936038400326FB8 /* New Article Notifications */,
-				DF766FEA2936337A006FBBE2 /* Help */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
 		DFD406FD291FDBD900C02962 /* Appearance */ = {
 			isa = PBXGroup;
 			children = (
 				DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */,
 				DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */,
 				DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */,
+				DFBB4EAF2951BCAC00639228 /* ArticleThemeManagerView.swift */,
 			);
 			path = Appearance;
 			sourceTree = "<group>";
@@ -4042,6 +4026,7 @@
 				65ED3FD5235DEF6C0081F399 /* SmartFeed.swift in Sources */,
 				51333D1724685D2E00EB5C91 /* AddRedditFeedWindowController.swift in Sources */,
 				65ED3FD6235DEF6C0081F399 /* MarkStatusCommand.swift in Sources */,
+				DFBB4EAD2951BC0200639228 /* NNWThemeDocument.swift in Sources */,
 				5183CFB0254C78C8006B83A5 /* EnableExtensionPointView.swift in Sources */,
 				65ED3FD7235DEF6C0081F399 /* NSApplication+Scriptability.swift in Sources */,
 				65ED3FD8235DEF6C0081F399 /* NSView-Extensions.swift in Sources */,
@@ -4211,6 +4196,7 @@
 				518ED21D23D0F26000E0A862 /* UIViewController-Extensions.swift in Sources */,
 				DFD406FF291FDC0C00C02962 /* DisplayAndBehaviorsView.swift in Sources */,
 				51A9A5F52380F6A60033AADF /* ModalNavigationController.swift in Sources */,
+				DFBB4EAE2951BC0200639228 /* NNWThemeDocument.swift in Sources */,
 				51EAED96231363EF00A9EEE3 /* NonIntrinsicButton.swift in Sources */,
 				51C4527B2265091600C03939 /* MasterUnreadIndicatorView.swift in Sources */,
 				5186A635235EF3A800C97195 /* VibrantLabel.swift in Sources */,
@@ -4295,6 +4281,7 @@
 				51E4398023805EBC00015C31 /* AddComboTableViewCell.swift in Sources */,
 				51C4529A22650A0400C03939 /* ArticleTheme.swift in Sources */,
 				51C4527F2265092C00C03939 /* ArticleViewController.swift in Sources */,
+				DFBB4EB02951BCAC00639228 /* ArticleThemeManagerView.swift in Sources */,
 				51C4526A226508F600C03939 /* MasterFeedTableViewCellLayout.swift in Sources */,
 				51C452AE2265104D00C03939 /* ArticleStringFormatter.swift in Sources */,
 				512E08E62268800D00BDCFDD /* FolderTreeControllerDelegate.swift in Sources */,
@@ -4490,6 +4477,7 @@
 				845A29241FC9255E007B49E3 /* SidebarCellAppearance.swift in Sources */,
 				515A5107243D0CCD0089E588 /* TwitterFeedProvider-Extensions.swift in Sources */,
 				845EE7B11FC2366500854A1F /* StarredFeedDelegate.swift in Sources */,
+				DFBB4EAC2951BC0200639228 /* NNWThemeDocument.swift in Sources */,
 				DFC14F1228EA5DC500F6EE86 /* AboutData.swift in Sources */,
 				848F6AE51FC29CFB002D422E /* FaviconDownloader.swift in Sources */,
 				511B9806237DCAC90028BCAA /* UserInfoKey.swift in Sources */,

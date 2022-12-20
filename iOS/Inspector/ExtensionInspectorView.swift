@@ -17,7 +17,7 @@ struct ExtensionInspectorView: View {
 	var body: some View {
 		Form {
 			Section(header: extensionHeader) {}
-			Section(footer:  Text(extensionPoint?.description.string ?? ""), content: {
+			Section(footer:  extensionExplainer, content: {
 				//
 			})
 			
@@ -64,6 +64,11 @@ struct ExtensionInspectorView: View {
 				.frame(width: 48, height: 48)
 			Spacer()
 		}
+	}
+	
+	var extensionExplainer: some View {
+		Text(extensionPoint?.description.string ?? "")
+			.multilineTextAlignment(.center)
 	}
 }
 
