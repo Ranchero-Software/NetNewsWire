@@ -53,7 +53,8 @@ struct ArticleThemeManagerView: View {
 				showImportErrorAlert = (failure, true)
 			}
 		}
-		.alert(Text("DELETE_THEME_ALERT_TITLE_\(showDeleteConfirmation.0)", tableName: "Settings"), isPresented: $showDeleteConfirmation.1, actions: {
+		.alert(Text("DELETE_THEME_ALERT_TITLE_\(showDeleteConfirmation.0)", tableName: "Settings"),
+			   isPresented: $showDeleteConfirmation.1, actions: {
 			Button(role: .destructive) {
 				themeManager.deleteTheme(themeName: showDeleteConfirmation.0)
 			} label: {

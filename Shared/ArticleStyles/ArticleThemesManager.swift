@@ -93,7 +93,6 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 	func themeExists(filename: String) -> Bool {
 		let filenameLastPathComponent = (filename as NSString).lastPathComponent
 		let toFilename = (folderPath as NSString).appendingPathComponent(filenameLastPathComponent)
-		logger.debug("\(filenameLastPathComponent), \(toFilename)")
 		return FileManager.default.fileExists(atPath: toFilename)
 	}
 	
