@@ -12,3 +12,4 @@
 "USERNAME_AND_PASSWORD_REQUIRED" = "Username and password required.";
 "INVALID_USERNAME_PASSWORD" = "Invalid email or password combination.";
 "KEYCHAIN_ERROR" = "Keychain error while storing credentials.";
+"DUPLICATE_DEFAULT_THEME" = "You cannot import a theme that shares the same name as a provided theme.";

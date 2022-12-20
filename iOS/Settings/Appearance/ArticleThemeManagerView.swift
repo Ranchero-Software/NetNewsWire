@@ -44,7 +44,7 @@ struct ArticleThemeManagerView: View {
 			switch result {
 			case .success(let success):
 				do {
-					let theme = try ArticleTheme(path: success.path, isAppTheme: true)
+					let theme = try ArticleTheme(path: success.path, isAppTheme: false)
 					showImportConfirmationAlert = (theme, true)
 				} catch {
 					showImportErrorAlert = (error, true)
@@ -55,7 +55,7 @@ struct ArticleThemeManagerView: View {
 		}
 		.alert(Text("DELETE_THEME_ALERT_TITLE_\(showDeleteConfirmation.0)", tableName: "Settings"), isPresented: $showDeleteConfirmation.1, actions: {
 			Button(role: .destructive) {
-				ArticleThemesManager.shared.deleteTheme(themeName: showDeleteConfirmation.0)
+				themeManager.deleteTheme(themeName: showDeleteConfirmation.0)
 			} label: {
 				Text("DELETE_THEME_BUTTON_TITLE", tableName: "Buttons")
 			}
@@ -73,14 +73,27 @@ struct ArticleThemeManagerView: View {
 			   actions: {
 					Button {
 						do {
-							try ArticleThemesManager.shared.importTheme(filename: showImportConfirmationAlert.0!.path!)
-							showImportSuccessAlert = true
+							if themeManager.themeExists(filename: showImportConfirmationAlert.0!.path!) {
+								if try! themeManager.articleThemeWithThemeName(showImportConfirmationAlert.0!.name).isAppTheme {
+									showImportErrorAlert = (LocalizedNetNewsWireError.duplicateDefaultTheme, true)
+								} else {
+									try themeManager.importTheme(filename: showImportConfirmationAlert.0!.path!)
+									showImportSuccessAlert = true
+								}
+							} else {
+								try themeManager.importTheme(filename: showImportConfirmationAlert.0!.path!)
+								showImportSuccessAlert = true
+							}
 						} catch {
 							showImportErrorAlert = (error, true)
 						}
-						
 					} label: {
-						Text("IMPORT_THEME_BUTTON_TITLE", tableName: "Buttons")
+						let exists = themeManager.themeExists(filename: showImportConfirmationAlert.0?.path ?? "")
+						if exists == true {
+							Text("IMPORT_AND_OVERWRITE_THEME_BUTTON_TITLE", tableName: "Buttons")
+						} else {
+							Text("IMPORT_THEME_BUTTON_TITLE", tableName: "Buttons")
+						}
 					}
 					
 					Button(role: .cancel) {
@@ -89,7 +102,12 @@ struct ArticleThemeManagerView: View {
 						Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
 					}
 		}, message: {
-			Text("IMPORT_THEME_CONFIRMATION_MESSAGE_\(showImportConfirmationAlert.0?.name ?? "")_\(showImportConfirmationAlert.0?.creatorName ?? "")", tableName: "Settings")
+			let exists = themeManager.themeExists(filename: showImportConfirmationAlert.0?.path ?? "")
+			if exists {
+				Text("IMPORT_AND_OVERWRITE_THEME_CONFIRMATION_MESSAGE_\(showImportConfirmationAlert.0?.name ?? "")", tableName: "Settings")
+			} else {
+				Text("IMPORT_THEME_CONFIRMATION_MESSAGE_\(showImportConfirmationAlert.0?.name ?? "")_\(showImportConfirmationAlert.0?.creatorName ?? "")", tableName: "Settings")
+			}
 		})
 		.alert(Text("IMPORT_THEME_SUCCESS_TITLE", tableName: "Settings"),
 			   isPresented: $showImportSuccessAlert,
@@ -102,32 +120,52 @@ struct ArticleThemeManagerView: View {
 		}, message: {
 			Text("IMPORT_THEME_SUCCESS_MESSAGE_\(showImportConfirmationAlert.0?.name ?? "")", tableName: "Settings")
 		})
+		.alert(Text("ERROR_TITLE", tableName: "Errors"),
+			   isPresented: $showImportErrorAlert.1,
+			   actions: {
+					Button(role: .cancel) {
+						
+					} label: {
+						Text("DISMISS_BUTTON_TITLE", tableName: "Buttons")
+					}
+		}, message: {
+			Text("\(showImportErrorAlert.0?.localizedDescription ?? "")")
+		})
     }
 	
 	func articleThemeRow(_ theme: String) -> some View {
 		Button {
-			ArticleThemesManager.shared.currentThemeName = theme
+			themeManager.currentThemeName = theme
 		} label: {
 			HStack {
-				Text(theme)
-					.foregroundColor(.primary)
+				VStack(alignment: .leading) {
+					Text(theme)
+						.foregroundColor(.primary)
+					if let articleTheme = try? themeManager.articleThemeWithThemeName(theme) {
+						Text("ARTICLE_THEME_CREATOR_\(articleTheme.creatorName)", tableName: "Settings")
+							.font(.caption)
+							.foregroundColor(.secondary)
+					}
+				}
 				Spacer()
-				if ArticleThemesManager.shared.currentThemeName == theme {
+				if themeManager.currentThemeName == theme {
 					Image(systemName: "checkmark")
 						.foregroundColor(Color(uiColor: AppAssets.primaryAccentColor))
 				}
 			}
 		}
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
-			if theme == "Default" || ArticleThemesManager.shared.currentThemeName == theme {  }
-			else {
-				Button {
-					showDeleteConfirmation = (theme, true)
-				} label: {
-					Text("DELETE_BUTTON_TITLE", tableName: "Buttons")
-					Image(systemName: "trash")
+			if theme == themeManager.currentThemeName { }
+			if let currentTheme = try? themeManager.articleThemeWithThemeName(theme) {
+				if currentTheme.isAppTheme { } else {
+					Button {
+						showDeleteConfirmation = (theme, true)
+					} label: {
+						Text("DELETE_BUTTON_TITLE", tableName: "Buttons")
+						Image(systemName: "trash")
+					}
+					.tint(.red)
 				}
-				.tint(.red)
 			}
 		}
 	}

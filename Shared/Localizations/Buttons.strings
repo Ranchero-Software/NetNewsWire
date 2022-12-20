@@ -19,3 +19,4 @@
 "USE_CLOUDKIT_BUTTON_TITLE" = "Use iCloud";
 "DELETE_THEME_BUTTON_TITLE" = "Delete Theme";
 "IMPORT_THEME_BUTTON_TITLE" = "Import Theme";
+"IMPORT_AND_OVERWRITE_THEME_BUTTON_TITLE" = "Overwrite Existing Theme";

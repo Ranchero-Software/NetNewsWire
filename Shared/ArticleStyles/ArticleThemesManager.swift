@@ -93,6 +93,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 	func themeExists(filename: String) -> Bool {
 		let filenameLastPathComponent = (filename as NSString).lastPathComponent
 		let toFilename = (folderPath as NSString).appendingPathComponent(filenameLastPathComponent)
+		logger.debug("\(filenameLastPathComponent), \(toFilename)")
 		return FileManager.default.fileExists(atPath: toFilename)
 	}
 	
@@ -130,8 +131,12 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Logging, Observable
 
 	func deleteTheme(themeName: String) {
 		if let filename = pathForThemeName(themeName, folder: folderPath) {
-			try? FileManager.default.removeItem(atPath: filename)
-			objectWillChange.send()
+			do {
+				try FileManager.default.removeItem(atPath: filename)
+			} catch {
+				logger.error("\(error.localizedDescription)")
+			}
+			 
 		}
 	}
 	

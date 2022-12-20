@@ -24,6 +24,8 @@ public enum LocalizedNetNewsWireError: LocalizedError {
 	case invalidUsernameOrPassword
 	
 	case keychainError
+	
+	case duplicateDefaultTheme
 
 	public var errorDescription: String? {
 		switch self {
@@ -37,6 +39,8 @@ public enum LocalizedNetNewsWireError: LocalizedError {
 			return Bundle.main.localizedString(forKey: "INVALID_USERNAME_PASSWORD", value: nil, table: "Errors")
 		case .keychainError:
 			return Bundle.main.localizedString(forKey: "KEYCHAIN_ERROR", value: nil, table: "Errors")
+		case .duplicateDefaultTheme:
+			return Bundle.main.localizedString(forKey: "DUPLICATE_DEFAULT_THEME", value: nil, table: "Errors")
 		}
 	}
 }

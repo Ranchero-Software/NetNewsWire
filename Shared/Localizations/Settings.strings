@@ -46,10 +46,12 @@
 "INSTALLED_THEMES" = "Installed Themes";
 "ARTICLE_THEMES_TITLE" = "Article Themes";
 "ARTICLE_THEME" = "Article Theme";
+"ARTICLE_THEME_CREATOR_%@" = "by %@";
 "IMPORT_THEME_CONFIRMATION_TITLE" = "Import Theme";
 "IMPORT_THEME_CONFIRMATION_MESSAGE_%@_%@" = "Are you sure you want to import “%@” by %@?";
+"IMPORT_AND_OVERWRITE_THEME_CONFIRMATION_MESSAGE_%@" = "The theme “%@” already exists. Do you want to overwrite it?";
 "IMPORT_THEME_SUCCESS_TITLE" = "Import Successful";
-"IMPORT_THEME_SUCCESS_MESSAGE_%@" = "“%@” has been imported successfully.";
+"IMPORT_THEME_SUCCESS_MESSAGE_%@" = "The theme “%@” has been imported.";
 "DELETE_THEME_ALERT_TITLE_%@" = "Are you sure you want to delete “%@”?";
 "DELETE_THEME_ALERT_MESSAGE" = "Are you sure you want to delete this theme? This action is not reversible.";
 "CONFIRM_MARK_ALL_AS_READ" = "Confirm Mark All as Read";
