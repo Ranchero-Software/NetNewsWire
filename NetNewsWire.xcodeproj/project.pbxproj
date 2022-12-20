@@ -78,8 +78,6 @@
 		51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */; };
 		5108F6B62375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
 		5108F6B72375E612001ABC45 /* CacheCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6B52375E612001ABC45 /* CacheCleaner.swift */; };
-		5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */; };
-		5108F6D42375EEEF001ABC45 /* TimelinePreviewTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D32375EEEF001ABC45 /* TimelinePreviewTableViewController.swift */; };
 		5108F6D823763094001ABC45 /* TickMarkSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5108F6D723763094001ABC45 /* TickMarkSlider.swift */; };
 		510C416124E5CDE3008226FD /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510C416024E5CDE3008226FD /* ShareViewController.swift */; };
 		510C416424E5CDE3008226FD /* ShareViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 510C416224E5CDE3008226FD /* ShareViewController.xib */; };
@@ -1200,8 +1198,6 @@
 		5103A9F624225E4C00410853 /* AccountsAddCloudKitWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsAddCloudKitWindowController.swift; sourceTree = "<group>"; };
 		51077C5727A86D16000C71DB /* Hyperlegible.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Hyperlegible.nnwtheme; sourceTree = "<group>"; };
 		5108F6B52375E612001ABC45 /* CacheCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheCleaner.swift; sourceTree = "<group>"; };
-		5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerViewController.swift; sourceTree = "<group>"; };
-		5108F6D32375EEEF001ABC45 /* TimelinePreviewTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelinePreviewTableViewController.swift; sourceTree = "<group>"; };
 		5108F6D723763094001ABC45 /* TickMarkSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TickMarkSlider.swift; sourceTree = "<group>"; };
 		510C415C24E5CDE3008226FD /* NetNewsWire Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "NetNewsWire Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		510C416024E5CDE3008226FD /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -1927,7 +1923,6 @@
 		5123DB95233EC69300282CC9 /* Inspector */ = {
 			isa = PBXGroup;
 			children = (
-				DFB34981294B0B9B00BC81AD /* Inspector.strings */,
 				DFB3497D294B076C00BC81AD /* Views */,
 			);
 			path = Inspector;
@@ -1998,7 +1993,6 @@
 		516A093E236123A800EAE89B /* Account */ = {
 			isa = PBXGroup;
 			children = (
-				DFB34992294C0B7400BC81AD /* Account.strings */,
 				DFB3498F294C0B0D00BC81AD /* Views */,
 			);
 			path = Account;
@@ -2029,7 +2023,6 @@
 		5183CCEB227117C70010922C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				DF32ABEA29494CF0008E3A12 /* Settings.strings */,
 				DFD406F8291FB5D500C02962 /* Views */,
 				5137C2E926F63AE6009EFEDB /* ArticleThemeImporter.swift */,
 				510FFAB226EEA22C00F32265 /* ArticleThemesTableViewController.swift */,
@@ -2037,8 +2030,6 @@
 				DF32ABE629493192008E3A12 /* SettingsComboTableViewCell.swift */,
 				DF32ABE729493193008E3A12 /* SettingsComboTableViewCell.xib */,
 				516A093A2360A4A000EAE89B /* SettingsTableViewCell.xib */,
-				5108F6D12375EED2001ABC45 /* TimelineCustomizerViewController.swift */,
-				5108F6D32375EEEF001ABC45 /* TimelinePreviewTableViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2986,8 +2977,11 @@
 		DFB34985294B3B0800BC81AD /* Localizations */ = {
 			isa = PBXGroup;
 			children = (
+				DFB34992294C0B7400BC81AD /* Account.strings */,
 				DFB34983294B3AFF00BC81AD /* Buttons.strings */,
 				DFB34998294C4F1D00BC81AD /* Errors.strings */,
+				DFB34981294B0B9B00BC81AD /* Inspector.strings */,
+				DF32ABEA29494CF0008E3A12 /* Settings.strings */,
 				DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */,
 			);
 			path = Localizations;
@@ -4316,7 +4310,6 @@
 				51B5C87D23F2346200032075 /* ExtensionContainersFile.swift in Sources */,
 				51102165233A7D6C0007A5F7 /* ArticleExtractorButton.swift in Sources */,
 				C5A6ED6D23C9B0C800AB6BE2 /* UIActivityViewController-Extensions.swift in Sources */,
-				5108F6D42375EEEF001ABC45 /* TimelinePreviewTableViewController.swift in Sources */,
 				84CAFCA522BC8C08007694F0 /* FetchRequestQueue.swift in Sources */,
 				512392BE24E33A3C00F11704 /* RedditSelectAccountTableViewController.swift in Sources */,
 				515A517B243E90260089E588 /* ExtensionPoint.swift in Sources */,
@@ -4381,7 +4374,6 @@
 				5183CCD0226E1E880010922C /* NonIntrinsicLabel.swift in Sources */,
 				5137C2EA26F63AE6009EFEDB /* ArticleThemeImporter.swift in Sources */,
 				51C4529F22650A1900C03939 /* AuthorAvatarDownloader.swift in Sources */,
-				5108F6D22375EED2001ABC45 /* TimelineCustomizerViewController.swift in Sources */,
 				519E743D22C663F900A78E47 /* SceneDelegate.swift in Sources */,
 				FFD43E412340F488009E5CA3 /* MarkAsReadAlertController.swift in Sources */,
 				51C452A322650A1E00C03939 /* HTMLMetadataDownloader.swift in Sources */,

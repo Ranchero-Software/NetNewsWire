@@ -46,6 +46,9 @@
 "ARTICLE_THEME" = "Article Theme";
 "CONFIRM_MARK_ALL_AS_READ" = "Confirm Mark All as Read";
 "OPEN_LINKS_IN_APP" = "Open Links in NetNewsWire";
+"SMALL_ICON_SIZE" = "Small";
+"MEDIUM_ICON_SIZE" = "Medium";
+"LARGE_ICON_SIZE" = "Large";
 
 /* Account Management */
 "ADD_ACCOUNT" = "Add Account";

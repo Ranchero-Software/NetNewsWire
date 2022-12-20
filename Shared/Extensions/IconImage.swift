@@ -185,11 +185,11 @@ enum IconSize: Int, CaseIterable, CustomStringConvertible {
 	var description: String {
 		switch self {
 		case .small:
-			return "Small"
+			return Bundle.main.localizedString(forKey: "SMALL_ICON_SIZE", value: nil, table: "Settings")
 		case .medium:
-			return "Medium"
+			return Bundle.main.localizedString(forKey: "MEDIUM_ICON_SIZE", value: nil, table: "Settings")
 		case .large:
-			return "Large"
+			return Bundle.main.localizedString(forKey: "LARGE_ICON_SIZE", value: nil, table: "Settings")
 		}
 	}
 
