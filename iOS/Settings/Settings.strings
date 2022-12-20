@@ -41,6 +41,8 @@
 "GROUP_BY_FEED" = "Group by Feed";
 "REFRESH_TO_CLEAR_READ_ARTICLES" = "Refresh to Clear Articles";
 "TIMELINE_LAYOUT" = "Timeline Layout";
+"ICON_SIZE" = "Icon Size";
+"NUMBER_OF_LINES" = "Number of Lines";
 "ARTICLE_THEME" = "Article Theme";
 "CONFIRM_MARK_ALL_AS_READ" = "Confirm Mark All as Read";
 "OPEN_LINKS_IN_APP" = "Open Links in NetNewsWire";

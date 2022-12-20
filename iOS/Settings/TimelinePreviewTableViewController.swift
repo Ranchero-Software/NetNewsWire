@@ -8,6 +8,23 @@
 
 import UIKit
 import Articles
+import SwiftUI
+
+struct TimelinePreviewWrapper: UIViewControllerRepresentable {
+	
+	func makeUIViewController(context: Context) -> TimelinePreviewTableViewController {
+		let controller = UIStoryboard.settings.instantiateViewController(withIdentifier: "TimelinePreviewTableViewController") as! TimelinePreviewTableViewController
+		return controller
+	}
+	
+	func updateUIViewController(_ uiViewController: TimelinePreviewTableViewController, context: Context) {
+		//
+	}
+	
+	typealias UIViewControllerType = TimelinePreviewTableViewController
+	
+}
+
 
 class TimelinePreviewTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 

@@ -144,7 +144,9 @@ struct SettingsViewRows {
 	/// This row, when tapped, will push the the Timeline Layout screen
 	/// in to view.
 	static var timelineLayout: some View {
-		NavigationLink(destination: TimelineCustomizerWrapper().edgesIgnoringSafeArea(.all).navigationTitle(Text("TIMELINE_LAYOUT", tableName: "Settings"))) {
+		NavigationLink {
+			TimelineCustomizerView()
+		} label: {
 			Text("TIMELINE_LAYOUT", tableName: "Settings")
 		}
 	}

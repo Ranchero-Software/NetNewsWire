@@ -855,6 +855,7 @@
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
 		DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
+		DF84E563295122BA0045C334 /* TimelineCustomizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */; };
 		DFB3497A294A962D00BC81AD /* AddAccountListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34979294A962D00BC81AD /* AddAccountListView.swift */; };
 		DFB34980294B085100BC81AD /* AccountInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3497F294B085100BC81AD /* AccountInspectorView.swift */; };
 		DFB34982294B0B9B00BC81AD /* Inspector.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34981294B0B9B00BC81AD /* Inspector.strings */; };
@@ -1620,6 +1621,7 @@
 		DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsManagementView.swift; sourceTree = "<group>"; };
 		DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsManagementView.swift; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
+		DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerView.swift; sourceTree = "<group>"; };
 		DFB34979294A962D00BC81AD /* AddAccountListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountListView.swift; sourceTree = "<group>"; };
 		DFB3497F294B085100BC81AD /* AccountInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInspectorView.swift; sourceTree = "<group>"; };
 		DFB34981294B0B9B00BC81AD /* Inspector.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Inspector.strings; sourceTree = "<group>"; };
@@ -3042,6 +3044,7 @@
 			children = (
 				DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */,
 				DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */,
+				DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */,
 			);
 			path = Appearance;
 			sourceTree = "<group>";
@@ -4368,6 +4371,7 @@
 				51C4529B22650A1000C03939 /* FaviconDownloader.swift in Sources */,
 				84DEE56622C32CA4005FC42C /* SmartFeedDelegate.swift in Sources */,
 				DF28B44F294ED92F00C4D8CA /* NewsBlurAddAccountView.swift in Sources */,
+				DF84E563295122BA0045C334 /* TimelineCustomizerView.swift in Sources */,
 				512E09012268907400BDCFDD /* MasterFeedTableViewSectionHeader.swift in Sources */,
 				512392BF24E33A3C00F11704 /* RedditSelectSortTableViewController.swift in Sources */,
 				516AE9E02372269A007DEEAA /* IconImage.swift in Sources */,

@@ -231,6 +231,7 @@ final class AppDefaults: ObservableObject {
 		}
 		set {
 			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)
+			objectWillChange.send()
 		}
 	}
 	
@@ -241,6 +242,7 @@ final class AppDefaults: ObservableObject {
 		}
 		set {
 			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconDimension)
+			objectWillChange.send()
 		}
 	}
 	
