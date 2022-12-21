@@ -34,7 +34,7 @@ struct SettingsView: View {
 					SettingsViewRows.addAccount
 					SettingsViewRows.manageExtensions
 					SettingsViewRows.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
-						.confirmationDialog(Text("Import OPML", comment: "Import OPML confirmation title."),
+						.confirmationDialog(Text("Choose an account to receive the imported feeds and folders", comment: "Import OPML confirmation title."),
 											isPresented: $viewModel.showImportActionSheet,
 											titleVisibility: .visible) {
 							ForEach(AccountManager.shared.sortedActiveAccounts, id: \.self) { account in
@@ -46,7 +46,7 @@ struct SettingsView: View {
 						}
 					
 					SettingsViewRows.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
-						.confirmationDialog(Text("Export OPML", comment: "Export OPML confirmation title."),
+						.confirmationDialog(Text("Choose an account with the subscriptions to export", comment: "Export OPML confirmation title."),
 											isPresented: $viewModel.showExportActionSheet,
 											titleVisibility: .visible) {
 							ForEach(AccountManager.shared.sortedAccounts, id: \.self) { account in
