@@ -200,7 +200,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Logging {
 					}
 					task.resume()
 				} else {
-					print("No theme URL")
+					self.logger.debug("No theme URL.")
 					return
 				}
 			} else {

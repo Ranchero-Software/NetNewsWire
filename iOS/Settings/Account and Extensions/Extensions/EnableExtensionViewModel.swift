@@ -145,7 +145,7 @@ public final class EnableExtensionViewModel: NSObject, ObservableObject, OAuthSw
 			}
 
 			if case ASWebAuthenticationSessionError.canceledLogin = error {
-				print("Login cancelled.")
+				self.logger.debug("Login cancelled.")
 			} else {
 				self.showExtensionError = (error, true)
 			}
@@ -153,7 +153,7 @@ public final class EnableExtensionViewModel: NSObject, ObservableObject, OAuthSw
 		
 		session.presentationContextProvider = self
 		if !session.start() {
-			print("Session failed to start!!!")
+			logger.debug("Session failed to start!!!")
 		}
 	}
 	

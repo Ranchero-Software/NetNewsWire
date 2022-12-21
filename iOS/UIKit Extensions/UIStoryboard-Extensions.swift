@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import RSCore
 
-extension UIStoryboard {
+extension UIStoryboard: Logging {
 	
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 	
@@ -44,7 +45,7 @@ extension UIStoryboard {
 		
 		let storyboardId = String(describing: type)
 		guard let viewController = instantiateViewController(withIdentifier: storyboardId) as? T else {
-			print("Unable to load view with Scene Identifier: \(storyboardId)")
+			logger.error("Unable to load view with Scene Identifier: \(storyboardId)")
 			fatalError()
 		}
 		
