@@ -13,6 +13,7 @@ import RSCore
 public final class AddAccountListViewModel: ObservableObject, OAuthAccountAuthorizationOperationDelegate {
 	
 	@Published public var showAddAccountSheet: (Bool, accountType: AccountType) = (false, .onMyMac)
+	@Published public var showAddAccountError: (Error?, Bool) = (nil, false)
 	public var webAccountTypes: [AccountType] {
 		if AppDefaults.shared.isDeveloperBuild {
 			return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
@@ -55,7 +56,7 @@ public final class AddAccountListViewModel: ObservableObject, OAuthAccountAuthor
 	}
 	
 	public func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
-		//presentError(error)
+		showAddAccountError = (error, true)
 	}
 }
 
@@ -99,6 +100,16 @@ struct AddAccountListView: View {
 					Text(viewModel.showAddAccountSheet.accountType.localizedAccountName())
 				}
 			}
+			.alert(Text("ERROR_TITLE", tableName: "Errors"),
+				   isPresented: $viewModel.showAddAccountError.1, actions: {
+				Button {
+					//
+				} label: {
+					Text("DISMISS_BUTTON_TITLE", tableName: "Buttons")
+				}
+			}, message: {
+				Text("\(viewModel.showAddAccountError.0?.localizedDescription ?? "Unknown Error")")
+			})
 			.dismissOnAccountAdd()
 		}
     }
