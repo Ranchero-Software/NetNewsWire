@@ -60,21 +60,12 @@ struct NewsBlurAddAccountView: View, Logging {
 	
 	func retreiveCredentials() {
 		if let account = account {
-			do {
-				let credentials = try account.retrieveCredentials(type: .newsBlurBasic)
-				if let credentials = credentials {
-					self.accountUserName = credentials.username
-					self.accountPassword = credentials.secret
-				} else {
-					print("No cred")
-				}
-			} catch {
-				print(error.localizedDescription)
+			let credentials = try? account.retrieveCredentials(type: .newsBlurBasic)
+			if let credentials = credentials {
+				self.accountUserName = credentials.username
+				self.accountPassword = credentials.secret
 			}
-		} else {
-			print("No account")
 		}
-		
 	}
 	
 	var accountDetails: some View {

@@ -13,9 +13,10 @@ import OAuthSwift
 import Secrets
 import RSCore
 
-@MainActor
+
 public final class EnableExtensionViewModel: NSObject, ObservableObject, OAuthSwiftURLHandlerType, ASWebAuthenticationPresentationContextProviding, Logging {
 	
+	@Published public var showExtensionError: (Error?, Bool) = (nil, false)
 	private var extensionPointType: ExtensionPoint.Type?
 	private var oauth: OAuthSwift?
 	private var callbackURL: URL? = nil
@@ -146,7 +147,7 @@ public final class EnableExtensionViewModel: NSObject, ObservableObject, OAuthSw
 			if case ASWebAuthenticationSessionError.canceledLogin = error {
 				print("Login cancelled.")
 			} else {
-				//self.presentError(error)
+				self.showExtensionError = (error, true)
 			}
 		})
 		
