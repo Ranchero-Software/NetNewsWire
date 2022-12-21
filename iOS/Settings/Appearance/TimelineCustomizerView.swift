@@ -59,9 +59,7 @@ struct TimelineCustomizerView: View {
 		}
 		.listStyle(.grouped)
 		.navigationTitle(Text("Timeline Layout", comment: "Navigation bar title for Timeline Layout"))
-		.onAppear {
-			
-		}
+		
     }
 	
 	var timeLinePreviewRow: some View {
