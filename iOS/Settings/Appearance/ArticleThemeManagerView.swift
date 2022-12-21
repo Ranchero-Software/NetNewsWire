@@ -19,21 +19,21 @@ struct ArticleThemeManagerView: View {
 	
 	var body: some View {
 		Form {
-			Section(header: Text("INSTALLED_THEMES", tableName: "Settings")) {
+			Section(header: Text("Installed Themes", comment: "Section header for installed themes")) {
 				articleThemeRow("Default")
 				ForEach(themeManager.themeNames, id: \.self) {theme in
 					articleThemeRow(theme)
 				}
 			}
 		}
-		.navigationTitle(Text("ARTICLE_THEMES_TITLE", tableName: "Settings"))
+		.navigationTitle(Text("Article Themes", comment: "Navigation bar title for Article Themes"))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
 					showImportThemeView = true
 				} label: {
 					Label {
-						Text("IMPORT_THEME_BUTTON_TITLE", tableName: "Buttons")
+						Text("Import Theme", comment: "Button title")
 					} icon: {
 						Image(systemName: "plus")
 					}
@@ -57,23 +57,23 @@ struct ArticleThemeManagerView: View {
 				showImportErrorAlert = (failure, true)
 			}
 		}
-		.alert(Text("DELETE_THEME_ALERT_TITLE_\(showDeleteConfirmation.0)", tableName: "Settings"),
+		.alert(Text("Are you sure you want to delete “\(showDeleteConfirmation.0)”?", comment: "Alert title: confirm theme deletion"),
 			   isPresented: $showDeleteConfirmation.1, actions: {
 			Button(role: .destructive) {
 				themeManager.deleteTheme(themeName: showDeleteConfirmation.0)
 			} label: {
-				Text("DELETE_THEME_BUTTON_TITLE", tableName: "Buttons")
+				Text("Delete Theme", comment: "Button title")
 			}
 			
 			Button(role: .cancel) {
 				
 			} label: {
-				Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
+				Text("Cancel", comment: "Button title")
 			}
 		}, message: {
-			Text("DELETE_THEME_ALERT_MESSAGE", tableName: "Settings")
+			Text("Are you sure you want to delete this theme? This action cannot be undone.", comment: "Alert message: confirm theme deletion")
 		})
-		.alert(Text("IMPORT_THEME_CONFIRMATION_TITLE", tableName: "Settings"),
+		.alert(Text("Import Theme", comment: "Alert title: confirm theme import"),
 			   isPresented: $showImportConfirmationAlert.1,
 			   actions: {
 					Button {
@@ -95,43 +95,43 @@ struct ArticleThemeManagerView: View {
 					} label: {
 						let exists = themeManager.themeExists(filename: showImportConfirmationAlert.0?.path ?? "")
 						if exists == true {
-							Text("IMPORT_AND_OVERWRITE_THEME_BUTTON_TITLE", tableName: "Buttons")
+							Text("Overwrite", comment: "Button title")
 						} else {
-							Text("IMPORT_THEME_BUTTON_TITLE", tableName: "Buttons")
+							Text("Import Theme", comment: "Button title")
 						}
 					}
 					
 					Button(role: .cancel) {
 						
 					} label: {
-						Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
+						Text("Cancel", comment: "Button title")
 					}
 		}, message: {
 			let exists = themeManager.themeExists(filename: showImportConfirmationAlert.0?.path ?? "")
 			if exists {
-				Text("IMPORT_AND_OVERWRITE_THEME_CONFIRMATION_MESSAGE_\(showImportConfirmationAlert.0?.name ?? "")", tableName: "Settings")
+				Text("The theme “\(showImportConfirmationAlert.0?.name ?? "")” already exists. Do you want to overwrite it?", comment: "Alert message: confirm theme import and overwrite of existing theme")
 			} else {
-				Text("IMPORT_THEME_CONFIRMATION_MESSAGE_\(showImportConfirmationAlert.0?.name ?? "")_\(showImportConfirmationAlert.0?.creatorName ?? "")", tableName: "Settings")
+				Text("Are you sure you want to import “\(showImportConfirmationAlert.0?.name ?? "")” by \(showImportConfirmationAlert.0?.creatorName ?? "")?", comment: "Alert message: confirm theme import")
 			}
 		})
-		.alert(Text("IMPORT_THEME_SUCCESS_TITLE", tableName: "Settings"),
+		.alert(Text("Imported Successfully", comment: "Alert title: theme imported successfully"),
 			   isPresented: $showImportSuccessAlert,
 			   actions: {
 					Button(role: .cancel) {
 						
 					} label: {
-						Text("DISMISS_BUTTON_TITLE", tableName: "Buttons")
+						Text("Dismiss", comment: "Button title")
 					}
 		}, message: {
-			Text("IMPORT_THEME_SUCCESS_MESSAGE_\(showImportConfirmationAlert.0?.name ?? "")", tableName: "Settings")
+			Text("The theme “\(showImportConfirmationAlert.0?.name ?? "")” has been imported.", comment: "Alert message: theme imported successfully")
 		})
-		.alert(Text("ERROR_TITLE", tableName: "Errors"),
+		.alert(Text("Error", comment: "Alert title: Error"),
 			   isPresented: $showImportErrorAlert.1,
 			   actions: {
 					Button(role: .cancel) {
 						
 					} label: {
-						Text("DISMISS_BUTTON_TITLE", tableName: "Buttons")
+						Text("Dismiss", comment: "Button title")
 					}
 		}, message: {
 			Text("\(showImportErrorAlert.0?.localizedDescription ?? "")")
@@ -147,7 +147,7 @@ struct ArticleThemeManagerView: View {
 					Text(theme)
 						.foregroundColor(.primary)
 					if let articleTheme = try? themeManager.articleThemeWithThemeName(theme) {
-						Text("ARTICLE_THEME_CREATOR_\(articleTheme.creatorName)", tableName: "Settings")
+						Text("Created by \(articleTheme.creatorName)", comment: "Article theme creator byline.")
 							.font(.caption)
 							.foregroundColor(.secondary)
 					}
@@ -158,6 +158,7 @@ struct ArticleThemeManagerView: View {
 						.foregroundColor(Color(uiColor: AppAssets.primaryAccentColor))
 				}
 			}
+			
 		}
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
 			if theme == themeManager.currentThemeName { }
@@ -166,7 +167,7 @@ struct ArticleThemeManagerView: View {
 					Button {
 						showDeleteConfirmation = (theme, true)
 					} label: {
-						Text("DELETE_BUTTON_TITLE", tableName: "Buttons")
+						Text("Delete", comment: "Button title")
 						Image(systemName: "trash")
 					}
 					.tint(.red)

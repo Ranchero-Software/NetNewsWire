@@ -21,15 +21,15 @@ struct CloudKitAddAccountView: View {
 				Section { createCloudKitAccount }
 				Section(footer: cloudKitExplainer) {}
 			}
-			.navigationTitle(Text("CLOUDKIT", tableName: "Account"))
+			.navigationTitle(Text(verbatim: "iCloud"))
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
-					Button(action: { dismiss() }, label: { Text("CANCEL_BUTTON_TITLE", tableName: "Buttons") })
+					Button(action: { dismiss() }, label: { Text("Cancel", comment: "Button title") })
 				}
 			}
-			.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $accountError.1) {
-				Button(action: {}, label: { Text("DISMISS_BUTTON_TITLE", tableName: "Buttons") })
+			.alert(Text("Error", comment: "Alert title: Error"), isPresented: $accountError.1) {
+				Button(action: {}, label: { Text("Dismiss", comment: "Button title") })
 			} message: {
 				Text(accountError.0?.localizedDescription ?? "Unknown Error")
 			}
@@ -48,7 +48,7 @@ struct CloudKitAddAccountView: View {
 		} label: {
 			HStack {
 				Spacer()
-				Text("USE_CLOUDKIT_BUTTON_TITLE", tableName: "Buttons")
+				Text("Use iCloud", comment: "Button title")
 				Spacer()
 			}
 		}
@@ -58,9 +58,9 @@ struct CloudKitAddAccountView: View {
 		VStack(spacing: 4) {
 			if !AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit }) {
 				// The explainer is only shown when a CloudKit account doesn't exist.
-				Text("CLOUDKIT_FOOTER_EXPLAINER", tableName: "Account") 
+				Text("NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices.", comment: "iCloud account explanatory text")
 			}
-			Text("CLOUDKIT_LIMITATIONS_TITLE", tableName: "Inspector")
+			Text("[iCloud Syncing Limitations & Solutions](https://netnewswire.com/help/iCloud)", comment: "Link which opens webpage describing iCloud syncing limitations.")
 		}.multilineTextAlignment(.center)
 	}
 	

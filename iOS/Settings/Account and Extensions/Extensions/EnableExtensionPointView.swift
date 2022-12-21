@@ -21,8 +21,8 @@ struct EnableExtensionPointView: View  {
 			Section(footer: extensionExplainer) {}
 			Section { enableButton }
 		}
-		.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $extensionError.1, actions: {
-			Button(action: {}, label: { Text("DISMISS_BUTTON_TITLE", tableName: "Buttons") })
+		.alert(Text("Error", comment: "Alert title: Error"), isPresented: $extensionError.1, actions: {
+			Button(action: {}, label: { Text("Dismiss", comment: "Button title") })
 		}, message: {
 			Text(extensionError.0?.localizedDescription ?? "Unknown Error")
 		})
@@ -53,7 +53,7 @@ struct EnableExtensionPointView: View  {
 		} label: {
 			HStack {
 				Spacer()
-				Text("ENABLE_EXTENSION_BUTTON_TITLE", tableName: "Buttons")
+				Text("Enable Extension", comment: "Button title")
 				Spacer()
 			}
 			

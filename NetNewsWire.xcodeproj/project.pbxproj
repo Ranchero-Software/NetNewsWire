@@ -836,7 +836,6 @@
 		DF28B453294FE6C600C4D8CA /* EnableExtensionPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B452294FE6C600C4D8CA /* EnableExtensionPointView.swift */; };
 		DF28B455294FE74A00C4D8CA /* ExtensionSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B454294FE74A00C4D8CA /* ExtensionSectionHeader.swift */; };
 		DF28B4572950163F00C4D8CA /* EnableExtensionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF28B4562950163F00C4D8CA /* EnableExtensionViewModel.swift */; };
-		DF32ABEB29494CF1008E3A12 /* Settings.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF32ABEA29494CF0008E3A12 /* Settings.strings */; };
 		DF3630EB2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630EC2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
 		DF3630ED2936183D00326FB8 /* OPMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3630EA2936183D00326FB8 /* OPMLDocument.swift */; };
@@ -851,17 +850,12 @@
 		DF84E563295122BA0045C334 /* TimelineCustomizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */; };
 		DFB3497A294A962D00BC81AD /* AddAccountListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34979294A962D00BC81AD /* AddAccountListView.swift */; };
 		DFB34980294B085100BC81AD /* AccountInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3497F294B085100BC81AD /* AccountInspectorView.swift */; };
-		DFB34982294B0B9B00BC81AD /* Inspector.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34981294B0B9B00BC81AD /* Inspector.strings */; };
-		DFB34984294B3AFF00BC81AD /* Buttons.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34983294B3AFF00BC81AD /* Buttons.strings */; };
 		DFB34988294B447F00BC81AD /* InjectedNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */; };
 		DFB3498A294B45AC00BC81AD /* ExtensionInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */; };
 		DFB3498C294B4CA700BC81AD /* WebFeedInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */; };
-		DFB34993294C0B7400BC81AD /* Account.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34992294C0B7400BC81AD /* Account.strings */; };
 		DFB34994294C0E3900BC81AD /* ReaderAPIAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */; };
 		DFB34996294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */; };
 		DFB34997294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */; };
-		DFB34999294C4F1D00BC81AD /* Errors.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34998294C4F1D00BC81AD /* Errors.strings */; };
-		DFB3499A294C4F1D00BC81AD /* Errors.strings in Resources */ = {isa = PBXBuildFile; fileRef = DFB34998294C4F1D00BC81AD /* Errors.strings */; };
 		DFB3499E294C5D5000BC81AD /* CloudKitAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3499D294C5D5000BC81AD /* CloudKitAddAccountView.swift */; };
 		DFB349A0294E87B700BC81AD /* LocalAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */; };
 		DFB349A2294E90B500BC81AD /* FeedbinAddAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB349A1294E90B500BC81AD /* FeedbinAddAccountView.swift */; };
@@ -1602,7 +1596,6 @@
 		DF28B452294FE6C600C4D8CA /* EnableExtensionPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionPointView.swift; sourceTree = "<group>"; };
 		DF28B454294FE74A00C4D8CA /* ExtensionSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionSectionHeader.swift; sourceTree = "<group>"; };
 		DF28B4562950163F00C4D8CA /* EnableExtensionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableExtensionViewModel.swift; sourceTree = "<group>"; };
-		DF32ABEA29494CF0008E3A12 /* Settings.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Settings.strings; sourceTree = "<group>"; };
 		DF3630EA2936183D00326FB8 /* OPMLDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPMLDocument.swift; sourceTree = "<group>"; };
 		DF3630EE293618A900326FB8 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		DF394EFF29357A180081EB6E /* NewArticleNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArticleNotificationsView.swift; sourceTree = "<group>"; };
@@ -1614,15 +1607,11 @@
 		DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerView.swift; sourceTree = "<group>"; };
 		DFB34979294A962D00BC81AD /* AddAccountListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccountListView.swift; sourceTree = "<group>"; };
 		DFB3497F294B085100BC81AD /* AccountInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountInspectorView.swift; sourceTree = "<group>"; };
-		DFB34981294B0B9B00BC81AD /* Inspector.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Inspector.strings; sourceTree = "<group>"; };
-		DFB34983294B3AFF00BC81AD /* Buttons.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Buttons.strings; sourceTree = "<group>"; };
 		DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectedNavigationView.swift; sourceTree = "<group>"; };
 		DFB34989294B45AC00BC81AD /* ExtensionInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionInspectorView.swift; sourceTree = "<group>"; };
 		DFB3498B294B4CA700BC81AD /* WebFeedInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebFeedInspectorView.swift; sourceTree = "<group>"; };
 		DFB34990294C0B2200BC81AD /* ReaderAPIAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderAPIAddAccountView.swift; sourceTree = "<group>"; };
-		DFB34992294C0B7400BC81AD /* Account.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Account.strings; sourceTree = "<group>"; };
 		DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedNetNewsWireError.swift; sourceTree = "<group>"; };
-		DFB34998294C4F1D00BC81AD /* Errors.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Errors.strings; sourceTree = "<group>"; };
 		DFB3499D294C5D5000BC81AD /* CloudKitAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitAddAccountView.swift; sourceTree = "<group>"; };
 		DFB3499F294E87B700BC81AD /* LocalAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAddAccountView.swift; sourceTree = "<group>"; };
 		DFB349A1294E90B500BC81AD /* FeedbinAddAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbinAddAccountView.swift; sourceTree = "<group>"; };
@@ -2969,11 +2958,6 @@
 		DFB34985294B3B0800BC81AD /* Localizations */ = {
 			isa = PBXGroup;
 			children = (
-				DFB34992294C0B7400BC81AD /* Account.strings */,
-				DFB34983294B3AFF00BC81AD /* Buttons.strings */,
-				DFB34998294C4F1D00BC81AD /* Errors.strings */,
-				DFB34981294B0B9B00BC81AD /* Inspector.strings */,
-				DF32ABEA29494CF0008E3A12 /* Settings.strings */,
 				DFB34995294C4DCB00BC81AD /* LocalizedNetNewsWireError.swift */,
 			);
 			path = Localizations;
@@ -3575,25 +3559,20 @@
 				51C452862265093600C03939 /* Add.storyboard in Resources */,
 				511D43EF231FBDE900FB1562 /* LaunchScreenPad.storyboard in Resources */,
 				511D43D2231FA62C00FB1562 /* GlobalKeyboardShortcuts.plist in Resources */,
-				DFB34993294C0B7400BC81AD /* Account.strings in Resources */,
 				84C9FCA12262A1B300D921D6 /* Main.storyboard in Resources */,
 				51BB7C312335ACDE008E8144 /* page.html in Resources */,
-				DFB34982294B0B9B00BC81AD /* Inspector.strings in Resources */,
 				512392C324E3451400F11704 /* TwitterAdd.storyboard in Resources */,
 				51077C5A27A86D16000C71DB /* Hyperlegible.nnwtheme in Resources */,
 				DDF9E1D928EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
-				DF32ABEB29494CF1008E3A12 /* Settings.strings in Resources */,
 				51DEE81A26FBFF84006DAA56 /* Promenade.nnwtheme in Resources */,
 				1768140B2564BB8300D98635 /* NetNewsWire_iOSwidgetextension_target.xcconfig in Resources */,
 				5103A9B424216A4200410853 /* blank.html in Resources */,
-				DFB3499A294C4F1D00BC81AD /* Errors.strings in Resources */,
 				51D0214826ED617100FF2E0F /* core.css in Resources */,
 				84C9FCA42262A1B800D921D6 /* LaunchScreenPhone.storyboard in Resources */,
 				511D43D1231FA62800FB1562 /* SidebarKeyboardShortcuts.plist in Resources */,
 				51C452AB22650DC600C03939 /* template.html in Resources */,
 				84A3EE61223B667F00557320 /* DefaultFeeds.opml in Resources */,
 				B27EEBFB244D15F3000932E6 /* stylesheet.css in Resources */,
-				DFB34984294B3AFF00BC81AD /* Buttons.strings in Resources */,
 				511D43CF231FA62200FB1562 /* DetailKeyboardShortcuts.plist in Resources */,
 				49F40DF92335B71000552BF4 /* newsfoot.js in Resources */,
 				512392C024E33A3C00F11704 /* RedditAdd.storyboard in Resources */,
@@ -3628,7 +3607,6 @@
 				DFCE4F9128EF26F100405869 /* About.plist in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
 				B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */,
-				DFB34999294C4F1D00BC81AD /* Errors.strings in Resources */,
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				DDF9E1D728EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,

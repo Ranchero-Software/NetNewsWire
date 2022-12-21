@@ -20,7 +20,7 @@ struct ExtensionsManagementView: View {
 		List {
 			activeExtensionsSection
 		}
-		.navigationTitle(Text("MANAGE_EXTENSIONS", tableName: "Settings"))
+		.navigationTitle(Text("Manage Extensions", comment: "Navigation title: Manage Extensions"))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
@@ -33,23 +33,23 @@ struct ExtensionsManagementView: View {
 		.sheet(isPresented: $showAddExtensionView) {
 			AddExtensionListView()
 		}
-		.alert(Text("DEACTIVATE_EXTENSION_TITLE", tableName: "Settings"),
+		.alert(Text("Deactivate Extension", comment: "Alert title: confirm deactivate extension"),
 			   isPresented: $showDeactivateAlert) {
 			
 			Button(role: .destructive) {
 				ExtensionPointManager.shared.deactivateExtensionPoint(extensionToDeactivate!.value.extensionPointID)
 			} label: {
-				Text("DEACTIVATE", tableName: "Settings")
+				Text("Deactivate", comment: "Button: deactivate extension.")
 			}
 
 			Button(role: .cancel) {
 				extensionToDeactivate = nil
 			} label: {
-				Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
+				Text("Cancel", comment: "Button title")
 			}
 
 		} message: {
-			Text("DEACTIVATE_EXTENSION \(extensionToDeactivate?.value.title ?? "")", tableName: "Settings")
+			Text("Are you sure you want to deactivate the “\(extensionToDeactivate?.value.title ?? "")” extension?", comment: "Alert message: confirm deactivation of extension.")
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange)) { _ in
 			availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
@@ -58,7 +58,7 @@ struct ExtensionsManagementView: View {
     }
 	
 	private var activeExtensionsSection: some View {
-		Section(header: Text("ACTIVE_EXTENSIONS", tableName: "Settings")) {
+		Section(header: Text("Active Extensions", comment: "Active Extensions section header")) {
 			ForEach(0..<ExtensionPointManager.shared.activeExtensionPoints.count, id: \.self) { i in
 				let point = Array(ExtensionPointManager.shared.activeExtensionPoints)[i]
 				NavigationLink {
@@ -74,7 +74,7 @@ struct ExtensionsManagementView: View {
 						extensionToDeactivate = point
 						showDeactivateAlert = true
 					} label: {
-						Text("DEACTIVATE", tableName: "Settings")
+						Text("Deactivate", comment: "Button: deactivates extension")
 						Image(systemName: "minus.circle")
 					}.tint(.red)
 				}

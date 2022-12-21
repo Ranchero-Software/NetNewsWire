@@ -26,24 +26,24 @@ struct ExtensionInspectorView: View {
 				Button(role: .destructive) {
 					showDeactivateConfirmation = true
 				} label: {
-					Text("DEACTIVATE_EXTENSION_BUTTON_TITLE", tableName: "Buttons")
+					Text("Deactivate Extension", comment: "Button title")
 				}
-				.confirmationDialog(Text("DEACTIVATE_EXTENSION_TITLE", tableName: "Settings") , isPresented: $showDeactivateConfirmation, titleVisibility: .visible) {
+				.confirmationDialog(Text("Deactivate Extension", comment: "Deactivate Extension confirmation title") , isPresented: $showDeactivateConfirmation, titleVisibility: .visible) {
 					
 					Button(role: .destructive) {
 						ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint!.extensionPointID)
 						dismiss()
 					} label: {
-						Text("DEACTIVATE_EXTENSION_BUTTON_TITLE", tableName: "Buttons")
+						Text("Deactivate Extension", comment: "Button title")
 					}
 
 					Button(role: .cancel) {
 						 //
 					} label: {
-						Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
+						Text("Cancel", comment: "Button title")
 					}
 				} message: {
-					Text("DEACTIVATE_EXTENSION \(extensionPoint?.title ?? "")", tableName: "Settings")
+					Text("Are you sure you want to deactivate the “\(extensionPoint?.title ?? "")” extension?)", comment: "Confirmation text regarding deactivation on an extension.")
 				}
 				Spacer()
 			}

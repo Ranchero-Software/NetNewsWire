@@ -43,18 +43,18 @@ struct ReaderAPIAddAccountView: View {
 			}
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
-					Button(action: { dismiss() }, label: { Text("CANCEL_BUTTON_TITLE", tableName: "Buttons") })
+					Button(action: { dismiss() }, label: { Text("Cancel", comment: "Button title") })
 						.disabled(showProgressIndicator)
 				}
 				ToolbarItem(placement: .navigationBarTrailing) {
 					if showProgressIndicator { ProgressView() }
 				}
 			}
-			.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $accountError.1) {
+			.alert(Text("Error", comment: "Alert title: Error"), isPresented: $accountError.1) {
 				Button(role: .cancel) {
 					//
 				} label: {
-					Text("DISMISS_BUTTON_TITLE", tableName: "Buttons")
+					Text("Dismiss", comment: "Button title")
 				}
 			} message: {
 				Text(accountError.0?.localizedDescription ?? "")
@@ -69,13 +69,13 @@ struct ReaderAPIAddAccountView: View {
 		if accountType == nil { return Text("").multilineTextAlignment(.center) }
 		switch accountType! {
 		case .bazQux:
-			return Text("BAZQUX_FOOTER_EXPLAINER", tableName: "Account").multilineTextAlignment(.center)
+			return Text("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account? [Sign Up Here](https://bazqux.com)", comment: "Explanatory text describing the BazQux account").multilineTextAlignment(.center)
 		case .inoreader:
-			return Text("INOREADER_FOOTER_EXPLAINER", tableName: "Account").multilineTextAlignment(.center)
+			return Text("Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? [Sign Up Here](https://www.inoreader.com)", comment: "Explanatory text describing the Inoreader account").multilineTextAlignment(.center)
 		case .theOldReader:
-			return Text("OLDREADER_FOOTER_EXPLAINER", tableName: "Account").multilineTextAlignment(.center)
+			return Text("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? [Sign Up Here](https://theoldreader.com)", comment: "Explanatory text describing The Old Reader account").multilineTextAlignment(.center)
 		case .freshRSS:
-			return Text("FRESHRSS_FOOTER_EXPLAINER", tableName: "Account").multilineTextAlignment(.center)
+			return Text("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance? [Sign Up Here](https://freshrss.org)", comment: "Explanatory text describing the FreshRSS account").multilineTextAlignment(.center)
 		default:
 			return Text("").multilineTextAlignment(.center)
 		}
@@ -120,9 +120,9 @@ struct ReaderAPIAddAccountView: View {
 				HStack {
 					Spacer()
 					if accountCredentials == nil {
-						Text("ADD_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
+						Text("Add Account", comment: "Button title")
 					} else {
-						Text("UPDATE_CREDENTIALS_BUTTON_TITLE", tableName: "Buttons")
+						Text("Update Credentials", comment: "Button title")
 					}
 					Spacer()
 				}

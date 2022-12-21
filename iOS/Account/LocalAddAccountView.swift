@@ -24,7 +24,7 @@ struct LocalAddAccountView: View {
 			}
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
-					Button(action: { dismiss() }, label: { Text("CANCEL_BUTTON_TITLE", tableName: "Buttons") })
+					Button(action: { dismiss() }, label: { Text("Cancel", comment: "Button title") })
 				}
 			}
 			.navigationTitle(deviceAccountName())
@@ -37,7 +37,7 @@ struct LocalAddAccountView: View {
 	var accountNameSection: some View {
 		TextField("Name",
 				  text: $accountName,
-				  prompt: Text("ACCOUNT_NAME", tableName: "Account"))
+				  prompt: Text("Name", comment: "Textfield placeholder for the name of the account."))
 		.autocorrectionDisabled()
 		.autocapitalization(.none)
 	}
@@ -49,7 +49,7 @@ struct LocalAddAccountView: View {
 		} label: {
 			HStack {
 				Spacer()
-				Text("ADD_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
+				Text("Add Account", comment: "Button title")
 				Spacer()
 			}
 		}
@@ -58,7 +58,7 @@ struct LocalAddAccountView: View {
 	var accountFooterView: some View {
 		HStack {
 			Spacer()
-			Text("LOCAL_FOOTER_EXPLAINER", tableName: "Account")
+			Text("Local accounts do not sync your feeds across devices.", comment: "Explanatory text describing the local account.")
 				.multilineTextAlignment(.center)
 			Spacer()
 		}
@@ -73,9 +73,9 @@ struct LocalAddAccountView: View {
 	
 	private func deviceAccountName() -> Text {
 		if UIDevice.current.userInterfaceIdiom == .pad {
-			return Text("LOCAL_ACCOUNT_NAME_PAD", tableName: "Account")
+			return Text("On My iPad", comment: "Account name for iPad")
 		}
-		return Text("LOCAL_ACCOUNT_NAME_PHONE", tableName: "Account")
+		return Text("On My iPhone", comment: "Account name for iPhone")
 	}
 }
 

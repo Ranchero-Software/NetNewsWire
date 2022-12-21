@@ -73,13 +73,13 @@ struct AccountInspectorView: View {
 				get: { account.name ?? account.defaultName },
 				set: { account.name = $0 }),
 					  prompt: Text(account.defaultName)) {
-				Text("ACCOUNT_NAME", tableName: "Inspector")
+				Text("Name", comment: "Textfield for the user to enter account name.")
 			}
 			
 			Toggle(isOn: Binding(get: {
 				account.isActive
 			}, set: { account.isActive = $0 })) {
-				Text("ACTIVE", tableName: "Inspector")
+				Text("Active", comment: "Toggle denoting if the account is active.")
 			}
 		}
 	}
@@ -91,7 +91,7 @@ struct AccountInspectorView: View {
 			} label: {
 				HStack {
 					Spacer()
-					Text("CREDENTIALS_BUTTON_TITLE", tableName: "Buttons")
+					Text("Credentials", comment: "Button title")
 					Spacer()
 				}
 			}
@@ -105,29 +105,29 @@ struct AccountInspectorView: View {
 			} label: {
 				HStack {
 					Spacer()
-					Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
+					Text("Remove Account", comment: "Button title")
 					Spacer()
 				}
 			}
-			.confirmationDialog(Text("REMOVE_ACCOUNT_TITLE", tableName: "Inspector"), isPresented: $showRemoveAccountAlert, titleVisibility: .visible) {
+			.confirmationDialog(Text("Remove Account", comment: "Remove account alert title"), isPresented: $showRemoveAccountAlert, titleVisibility: .visible) {
 				Button(role: .destructive) {
 					AccountManager.shared.deleteAccount(account)
 					dismiss()
 				} label: {
-					Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
+					Text("Remove Account", comment: "Button title")
 				}
 				
 				Button(role: .cancel) {
 					//
 				} label: {
-					Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
+					Text("Cancel", comment: "Button title")
 				}
 
 			} message: {
 				if account.type == .feedly {
-					Text("REMOVE_FEEDLY_MESSAGE", tableName: "Inspector")
+					Text("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Confirmation of the impacts of deleting the Feedly account.")
 				} else {
-					Text("REMOVE_ACCOUNT_MESSAGE", tableName: "Inspector")
+					Text("Are you sure you want to remove this account? This cannot be undone.", comment: "Confirmation of the impacts of deleting the account.")
 				}
 			}
 		}
@@ -136,7 +136,7 @@ struct AccountInspectorView: View {
 	var cloudKitLimitations: some View {
 		HStack {
 			Spacer()
-			Text("CLOUDKIT_LIMITATIONS_LINK", tableName: "Inspector")
+			Text("[iCloud Syncing Limitations & Solutions](https://netnewswire.com/help/iCloud)", comment: "Link to the NetNewsWire iCloud syncing limitations and soltutions website.")
 			Spacer()
 		}
 	}

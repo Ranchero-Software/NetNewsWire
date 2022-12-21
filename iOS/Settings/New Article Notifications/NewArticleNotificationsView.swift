@@ -23,7 +23,7 @@ struct NewArticleNotificationsView: View, Logging {
 						.id(feed.webFeedID)
 				}
 			}
-			.navigationTitle(Text("NEW_ARTICLE_NOTIFICATIONS_TITLE", tableName: "Settings"))
+			.navigationTitle(Text("New Article Notifications", comment: "Navigation title: New Article Notifications"))
 			.navigationBarTitleDisplayMode(.inline)
 			
 		}

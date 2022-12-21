@@ -31,7 +31,7 @@ struct NewsBlurAddAccountView: View, Logging {
 			}
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
-					Button(action: { dismiss() }, label: { Text("CANCEL_BUTTON_TITLE", tableName: "Buttons") })
+					Button(action: { dismiss() }, label: { Text("Cancel", comment: "Button title") })
 						.disabled(showProgressIndicator)
 				}
 				ToolbarItem(placement: .navigationBarTrailing) {
@@ -43,11 +43,11 @@ struct NewsBlurAddAccountView: View, Logging {
 			.task {
 				retreiveCredentials()
 			}
-			.alert(Text("ERROR_TITLE", tableName: "Errors"), isPresented: $accountError.1) {
+			.alert(Text("Error", comment: "Alert title: Error"), isPresented: $accountError.1) {
 				Button(role: .cancel) {
 					//
 				} label: {
-					Text("DISMISS_BUTTON_TITLE", tableName: "Buttons")
+					Text("Dismiss", comment: "Button title")
 				}
 			} message: {
 				Text(accountError.0?.localizedDescription ?? "")
@@ -79,11 +79,11 @@ struct NewsBlurAddAccountView: View, Logging {
 	
 	var accountDetails: some View {
 		Section {
-			TextField("Email", text: $accountUserName, prompt: Text("ACCOUNT_USERNAME_OR_EMAIL_PROMPT", tableName: "Account"))
+			TextField("Email", text: $accountUserName, prompt: Text("Username or Email", comment: "Textfield for the user to enter their account username or email."))
 				.autocorrectionDisabled()
 				.autocapitalization(.none)
 				.textContentType(.username)
-			SecureField("Password", text: $accountPassword, prompt: Text("ACCOUNT_PASSWORD_PROMPT", tableName: "Account"))
+			SecureField("Password", text: $accountPassword, prompt: Text("Password", comment: "Textfield for the user to enter their account password."))
 				.textContentType(.password)
 		}
 	}
@@ -109,9 +109,9 @@ struct NewsBlurAddAccountView: View, Logging {
 				HStack{
 					Spacer()
 					if account == nil {
-						Text("ADD_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
+						Text("Add Account", comment: "Button title")
 					} else {
-						Text("UPDATE_CREDENTIALS_BUTTON_TITLE", tableName: "Buttons")
+						Text("Update Credentials", comment: "Button title")
 					}
 					Spacer()
 				}
@@ -120,7 +120,11 @@ struct NewsBlurAddAccountView: View, Logging {
 	}
 	
 	var newsBlurAccountExplainer: some View {
-		Text(account == nil ? "NEWSBLUR_FOOTER_EXPLAINER" : "", tableName: "Account").multilineTextAlignment(.center)
+		if account == nil {
+			return Text("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account? [Sign Up Here](https://newsblur.com)", comment: "Explanatory text describing the NewsBlur account")
+				.multilineTextAlignment(.center)
+		}
+		return Text("").multilineTextAlignment(.center)
 	}
 	
 	private func executeAccountCredentials() async throws {

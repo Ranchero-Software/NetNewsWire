@@ -68,19 +68,19 @@ struct AccountsManagementView: View {
 	
 	var body: some View {
 		List {
-			Section(header: Text("ACTIVE_ACCOUNTS_HEADER", tableName: "Settings")) {
+			Section(header: Text("Active Accounts", comment: "Active accounts section header")) {
 				ForEach(viewModel.sortedActiveAccounts, id: \.self) { account in
 					accountRow(account)
 				}
 			}
 			
-			Section(header: Text("INACTIVE_ACCOUNTS_HEADER", tableName: "Settings")) {
+			Section(header: Text("Inactive Accounts", comment: "Inactive accounts section header")) {
 				ForEach(viewModel.sortedInactiveAccounts, id: \.self) { account in
 					accountRow(account)
 				}
 			}
 		}
-		.navigationTitle(Text("MANAGE_ACCOUNTS", tableName: "Settings"))
+		.navigationTitle(Text("Manage Accounts", comment: "Navigation title: Manage Accounts"))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
@@ -93,18 +93,18 @@ struct AccountsManagementView: View {
 		.sheet(isPresented: $viewModel.showAddAccountSheet) {
 			AddAccountListView()
 		}
-		.alert(Text("ACCOUNT_REMOVE \(viewModel.accountToDelete?.nameForDisplay ?? "")", tableName: "Settings"),
+		.alert(Text("Are you sure you want to remove “\(viewModel.accountToDelete?.nameForDisplay ?? "")”?", comment: "Alert title: confirm account removal"),
 			   isPresented: $viewModel.showAccountDeletionAlert) {
 			Button(role: .destructive) {
 				AccountManager.shared.deleteAccount(viewModel.accountToDelete!)
 			} label: {
-				Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
+				Text("Remove Account", comment: "Button title")
 			}
 			
 			Button(role: .cancel) {
 				viewModel.restoreAccount(viewModel.accountToDelete!)
 			} label: {
-				Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
+				Text("Cancel", comment: "Button title")
 			}
 		} message: {
 			switch viewModel.accountToDelete {
@@ -113,9 +113,9 @@ struct AccountsManagementView: View {
 			case .some(let account):
 				switch account.type {
 				case .feedly:
-					Text("REMOVE_FEEDLY_CONFIRMATION", tableName: "Settings")
+					Text("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Alert message: remove Feedly account confirmation")
 				default:
-					Text("REMOVE_ACCOUNT_CONFIRMATION", tableName: "Settings")
+					Text("Are you sure you want to remove this account? This cannot be undone.", comment: "Alert message: remove account confirmation")
 				}
 			}
 		}
@@ -137,7 +137,7 @@ struct AccountsManagementView: View {
 					viewModel.temporarilyDeleteAccount(account)
 				} label: {
 					Label {
-						Text("REMOVE_ACCOUNT_BUTTON_TITLE", tableName: "Buttons")
+						Text("Remove Account", comment: "Button title")
 					} icon: {
 						Image(systemName: "trash")
 					}

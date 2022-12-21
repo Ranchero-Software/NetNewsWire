@@ -74,7 +74,7 @@ struct AddAccountListView: View {
 				webAccountSection
 				selfHostedSection
 			}
-			.navigationTitle(Text("ADD_ACCOUNT", tableName: "Settings"))
+			.navigationTitle(Text("Add Account", comment: "Navigation title: Add Account"))
 			.navigationBarTitleDisplayMode(.inline)
 			.listItemTint(.primary)
 			.toolbar {
@@ -82,7 +82,7 @@ struct AddAccountListView: View {
 					Button(role: .cancel) {
 						dismiss()
 					} label: {
-						Text("CANCEL_BUTTON_TITLE", tableName: "Buttons")
+						Text("Cancel", comment: "Button title")
 					}
 				}
 			}
@@ -100,12 +100,12 @@ struct AddAccountListView: View {
 					Text(viewModel.showAddAccountSheet.accountType.localizedAccountName())
 				}
 			}
-			.alert(Text("ERROR_TITLE", tableName: "Errors"),
+			.alert(Text("Error", comment: "Alert title: Error"),
 				   isPresented: $viewModel.showAddAccountError.1, actions: {
 				Button {
 					//
 				} label: {
-					Text("DISMISS_BUTTON_TITLE", tableName: "Buttons")
+					Text("Dismiss", comment: "Button title")
 				}
 			}, message: {
 				Text("\(viewModel.showAddAccountError.0?.localizedDescription ?? "Unknown Error")")
@@ -129,9 +129,9 @@ struct AddAccountListView: View {
 				}
 			}
 		} header: {
-			Text("ADD_LOCAL_ACCOUNT_HEADER", tableName: "Settings")
+			Text("Local", comment: "Add Account: Local account section header")
 		} footer: {
-			Text("ADD_LOCAL_ACCOUNT_FOOTER", tableName: "Settings")
+			Text("Local accounts do not sync your feeds across devices", comment: "Local account section footer")
 		}
 	}
 	
@@ -152,9 +152,9 @@ struct AddAccountListView: View {
 			}
 			.disabled(interactionDisabled(for: .cloudKit))
 		} header: {
-			Text("ADD_CLOUDKIT_ACCOUNT_HEADER", tableName: "Settings")
+			Text("iCloud", comment: "Add Account: iCloud section header")
 		} footer: {
-			Text("ADD_CLOUDKIT_ACCOUNT_FOOTER", tableName: "Settings")
+			Text("Your iCloud account syncs your feeds across your Mac and iOS devices", comment: "Add Account: iCloud section footer")
 		}
 	}
 	
@@ -184,9 +184,9 @@ struct AddAccountListView: View {
 				}
 			}
 		} header: {
-			Text("ADD_WEB_ACCOUNT_HEADER", tableName: "Settings")
+			Text("Web Account", comment: "Add Account: Web Account section header")
 		} footer: {
-			Text("ADD_WEB_ACCOUNT_FOOTER", tableName: "Settings")
+			Text("Web accounts sync your feeds across all your devices", comment: "Add Account: Web Account section footer")
 		}
 	}
 	
@@ -206,9 +206,9 @@ struct AddAccountListView: View {
 				}
 			}
 		} header: {
-			Text("ADD_SELFHOSTED_ACCOUNT_HEADER", tableName: "Settings")
+			Text("Self-Hosted", comment: "Add Accont: Self-hosted section header")
 		} footer: {
-			Text("ADD_SELFHOSTED_ACCOUNT_FOOTER", tableName: "Settings")
+			Text("Self-hosted accounts sync your feeds across all your devices", comment: "Add Account: Self-hosted section footer")
 		}
 	}
 	

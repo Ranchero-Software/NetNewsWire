@@ -23,18 +23,18 @@ struct SettingsView: View {
 		NavigationView {
 			List {
 				// Device Permissions
-				Section(header: Text("DEVICE_PERMISSIONS_HEADER", tableName: "Settings"),
-						footer: Text("DEVICE_PERMISSIONS_FOOTER", tableName: "Settings")) {
+				Section(header: Text("Device Permissions", comment: "Settings: Device Permissions section header."),
+						footer: Text("Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.", comment: "Settings: Device Permissions section footer.")) {
 					SettingsViewRows.openSystemSettings
 				}
 				
 				// Account/Extensions/OPML Management
-				Section(header: Text("ACCOUNTS_EXTENSIONS_HEADER", tableName: "Settings"),
-						footer: Text("ACCOUNTS_EXTENSIONS_FOOTER", tableName: "Settings")) {
+				Section(header: Text("Accounts & Extensions", comment: "Settings: Accounts and Extensions section header."),
+						footer: Text("Add, delete, enable, or disable accounts and extensions.", comment: "Settings: Accounts and Extensions section footer.")) {
 					SettingsViewRows.addAccount
 					SettingsViewRows.manageExtensions
 					SettingsViewRows.importOPML(showImportActionSheet: $viewModel.showImportActionSheet)
-						.confirmationDialog(Text("IMPORT_OPML_CONFIRMATION", tableName: "Settings"),
+						.confirmationDialog(Text("Import OPML", comment: "Import OPML confirmation title."),
 											isPresented: $viewModel.showImportActionSheet,
 											titleVisibility: .visible) {
 							ForEach(AccountManager.shared.sortedActiveAccounts, id: \.self) { account in
@@ -46,7 +46,7 @@ struct SettingsView: View {
 						}
 					
 					SettingsViewRows.exportOPML(showExportActionSheet: $viewModel.showExportActionSheet)
-						.confirmationDialog(Text("EXPORT_OPML_CONFIRMATION", tableName: "Settings"),
+						.confirmationDialog(Text("Export OPML", comment: "Export OPML confirmation title."),
 											isPresented: $viewModel.showExportActionSheet,
 											titleVisibility: .visible) {
 							ForEach(AccountManager.shared.sortedAccounts, id: \.self) { account in
@@ -65,8 +65,8 @@ struct SettingsView: View {
 				}
 				
 				// Appearance
-				Section(header: Text("APPEARANCE_HEADER", tableName: "Settings"),
-						footer: Text("APPEARANCE_FOOTER", tableName: "Settings")) {
+				Section(header: Text("Appearance", comment: "Settings: Appearance section header."),
+						footer: Text("Manage the look, feel, and behavior of NetNewsWire.", comment: "Settings: Appearance section footer.")) {
 					SettingsViewRows.configureAppearance($isConfigureAppearanceShown)
 					if viewModel.notificationPermissions == .authorized {
 						SettingsViewRows.configureNewArticleNotifications
@@ -83,11 +83,11 @@ struct SettingsView: View {
 			}
 			.tint(Color(uiColor: AppAssets.primaryAccentColor))
 			.listStyle(.insetGrouped)
-			.navigationTitle(Text("SETTINGS_TITLE", tableName: "Settings"))
+			.navigationTitle(Text("Settings", comment: "Navigation bar title for Settings."))
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading, content: {
-					Button(action: { dismiss() }, label: { Text("DONE_BUTTON_TITLE", tableName: "Buttons") })
+					Button(action: { dismiss() }, label: { Text("Done", comment: "Button title") })
 				})
 			}
 			.sheet(isPresented: $viewModel.showAddAccountView) {
@@ -144,15 +144,15 @@ struct SettingsView: View {
 					viewModel.showImportExportError = true
 				}
 			})
-			.alert(Text("IMPORT_OPML_SUCCESS_TITLE", tableName: "Settings"),
+			.alert(Text("Imported Successfully", comment: "Alert title: imported OPML file successfully."),
 				   isPresented: $viewModel.showImportSuccess,
 				   actions: {},
-				   message: { Text("IMPORT_OPML_SUCCESS_MESSAGE \(viewModel.importAccount?.nameForDisplay ?? "")", tableName: "Settings") })
-			.alert(Text("EXPORT_OPML_SUCCESS_TITLE", tableName: "Settings"),
+				   message: { Text("Subscriptions have been imported to your \(viewModel.importAccount?.nameForDisplay ?? "") account.", tableName: "Alert message: imported OPML file successfully.") })
+			.alert(Text("Exported Successfully", comment: "Alert title: exported OPML file successfully."),
 				   isPresented: $viewModel.showExportSuccess,
 				   actions: {},
-				   message: { Text("EXPORT_OPML_SUCCESS_MESSAGE", tableName: "Settings") })
-			.alert(Text("ERROR_TITLE", tableName: "Errors"),
+				   message: { Text("Your OPML file has been successfully exported.", comment: "Alert message: exported OPML file successfully.") })
+			.alert(Text("Error", comment: "Alert title: Error"),
 				   isPresented: $viewModel.showImportExportError,
 				   actions: {},
 				   message: { Text(viewModel.importExportError?.localizedDescription ?? "Import/Export Error") } )

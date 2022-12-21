@@ -15,7 +15,7 @@ struct TimelineCustomizerView: View {
 	
     var body: some View {
 		List {
-			Section(header: Text("ICON_SIZE", tableName: "Settings")) {
+			Section(header: Text("Icon Size", comment: "Timline Customiser: Icon size section header")) {
 				
 				ZStack {
 					TickMarkSliderView(minValue: 1, maxValue: 3, currentValue: Binding(get: {
@@ -34,7 +34,7 @@ struct TimelineCustomizerView: View {
 			.listRowBackground(Color.clear)
 			.listRowSeparator(.hidden)
 			
-			Section(header: Text("NUMBER_OF_LINES", tableName: "Settings")) {
+			Section(header: Text("Number of Lines", comment: "Timeline customiser: Number of lines section header")) {
 				ZStack {
 					TickMarkSliderView(minValue: 1, maxValue: 5, currentValue: Binding(get: {
 						Float(appDefaults.timelineNumberOfLines)
@@ -61,7 +61,7 @@ struct TimelineCustomizerView: View {
 			}
 		}
 		.listStyle(.grouped)
-		.navigationTitle(Text("TIMELINE_LAYOUT", tableName: "Settings"))
+		.navigationTitle(Text("Timeline Layout", comment: "Navigation bar title for Timeline Layout"))
 		.onAppear {
 			
 		}
@@ -88,11 +88,11 @@ struct TimelineCustomizerView: View {
 					.bold()
 					.lineLimit(appDefaults.timelineNumberOfLines)
 				HStack {
-					Text("Feed name")
+					Text("Feed name", comment: "Feed name placeholder used in timeline preview")
 						.foregroundColor(.secondary)
 						.font(.caption)
 					Spacer()
-					Text("08:51")
+					Text("08:51", comment: "Sample time used in timeline preview")
 						.foregroundColor(.secondary)
 						.font(.caption)
 				}.padding(0)

@@ -30,17 +30,17 @@ public enum LocalizedNetNewsWireError: LocalizedError {
 	public var errorDescription: String? {
 		switch self {
 		case .duplicateAccount:
-			return Bundle.main.localizedString(forKey: "DUPLICATE_ACCOUNT_ERROR", value: nil, table: "Errors")
+			return String(localized: "There is already an account of that type with that username created.", comment: "Error message: duplicate account with same username.")
 		case .iCloudDriveMissing:
-			return Bundle.main.localizedString(forKey: "CLOUDKIT_NOT_ENABLED_ERROR", value: nil, table: "Errors")
+			return String(localized: "Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.", comment: "Error message: The user cannot enable the iCloud account becasue iCloud or iCloud Drive isn't enabled in Settings.")
 		case .userNameAndPasswordRequired:
-			return Bundle.main.localizedString(forKey: "USERNAME_AND_PASSWORD_REQUIRED", value: nil, table: "Errors")
+			return String(localized: "Username and password required", comment: "Error message: The user must provide a username and password.")
 		case .invalidUsernameOrPassword:
-			return Bundle.main.localizedString(forKey: "INVALID_USERNAME_PASSWORD", value: nil, table: "Errors")
+			return String(localized: "Invalid username or password", comment: "Error message: The user provided an invalid username or password.")
 		case .keychainError:
-			return Bundle.main.localizedString(forKey: "KEYCHAIN_ERROR", value: nil, table: "Errors")
+			return String(localized: "Keychain error while storing credentials.", comment: "Error message: Unable to save due a Keychain error.")
 		case .duplicateDefaultTheme:
-			return Bundle.main.localizedString(forKey: "DUPLICATE_DEFAULT_THEME", value: nil, table: "Errors")
+			return String(localized: "You cannot import a theme that shares the same name as a provided theme.", comment: "Error message: cannot import theme as this is a duplicate of a provided theme.")
 		}
 	}
 }
