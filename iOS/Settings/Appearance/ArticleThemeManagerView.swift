@@ -16,17 +16,29 @@ struct ArticleThemeManagerView: View {
 	@State private var showImportConfirmationAlert: (ArticleTheme?, Bool) = (nil, false)
 	@State private var showImportErrorAlert: (Error?, Bool) = (nil, false)
 	@State private var showImportSuccessAlert: Bool = false
+	@State private var installedFirstPartyThemes: [ArticleTheme] = []
+	@State private var installedThirdPartyThemes: [ArticleTheme] = []
 	
 	var body: some View {
 		Form {
-			Section(header: Text("Installed Themes", comment: "Section header for installed themes")) {
-				articleThemeRow("Default")
-				ForEach(themeManager.themeNames, id: \.self) {theme in
-					articleThemeRow(theme)
+			Section(header: Text("Ranchero Software Themes", comment: "Section header for installed themes"), footer: Text("These themes cannot be deleted.", comment: "Section footer for installed themes.")) {
+				articleThemeRow(try! themeManager.articleThemeWithThemeName("Default"))
+				ForEach(0..<installedFirstPartyThemes.count, id: \.self) { i in
+					articleThemeRow(installedFirstPartyThemes[i])
 				}
 			}
+			
+			Section(header: Text("Third Party Themes", comment: "Section header for third party themes")) {
+				ForEach(0..<installedThirdPartyThemes.count, id: \.self) { i in
+					articleThemeRow(installedThirdPartyThemes[i])
+				}
+			}
+			
 		}
 		.navigationTitle(Text("Article Themes", comment: "Navigation bar title for Article Themes"))
+		.task {
+			updateThemesArrays()
+		}
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
@@ -136,24 +148,25 @@ struct ArticleThemeManagerView: View {
 		}, message: {
 			Text("\(showImportErrorAlert.0?.localizedDescription ?? "")")
 		})
+		.onReceive(themeManager.objectWillChange) { _ in
+			updateThemesArrays()
+		}
     }
 	
-	func articleThemeRow(_ theme: String) -> some View {
+	func articleThemeRow(_ theme: ArticleTheme) -> some View {
 		Button {
-			themeManager.currentThemeName = theme
+			themeManager.currentThemeName = theme.name
 		} label: {
 			HStack {
 				VStack(alignment: .leading) {
-					Text(theme)
+					Text(theme.name)
 						.foregroundColor(.primary)
-					if let articleTheme = try? themeManager.articleThemeWithThemeName(theme) {
-						Text("Created by \(articleTheme.creatorName)", comment: "Article theme creator byline.")
-							.font(.caption)
-							.foregroundColor(.secondary)
-					}
+					Text("Created by \(theme.creatorName)", comment: "Article theme creator byline.")
+						.font(.caption)
+						.foregroundColor(.secondary)
 				}
 				Spacer()
-				if themeManager.currentThemeName == theme {
+				if themeManager.currentThemeName == theme.name {
 					Image(systemName: "checkmark")
 						.foregroundColor(Color(uiColor: AppAssets.primaryAccentColor))
 				}
@@ -161,19 +174,24 @@ struct ArticleThemeManagerView: View {
 			
 		}
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
-			if theme == themeManager.currentThemeName { }
-			if let currentTheme = try? themeManager.articleThemeWithThemeName(theme) {
-				if currentTheme.isAppTheme { } else {
-					Button {
-						showDeleteConfirmation = (theme, true)
-					} label: {
-						Text("Delete", comment: "Button title")
-						Image(systemName: "trash")
-					}
-					.tint(.red)
+			if theme.isAppTheme || theme.name == themeManager.currentThemeName {
+				
+			} else {
+				Button {
+					showDeleteConfirmation = (theme.name, true)
+				} label: {
+					Text("Delete", comment: "Button title")
+					Image(systemName: "trash")
 				}
+				.tint(.red)
 			}
 		}
+	}
+	
+	private func updateThemesArrays() {
+		installedFirstPartyThemes = themeManager.themeNames.map({ try? themeManager.articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ $0.isAppTheme }).sorted(by: { $0.name < $1.name })
+		
+		installedThirdPartyThemes = themeManager.themeNames.map({ try? themeManager.articleThemeWithThemeName($0) }).compactMap({ $0 }).filter({ !$0.isAppTheme }).sorted(by: { $0.name < $1.name })
 	}
 }
 
