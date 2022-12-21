@@ -53,11 +53,8 @@ struct TimelineCustomizerView: View {
 			.listRowSeparator(.hidden)
 		
 			Section {
-				withAnimation {
-					timeLinePreviewRow
-						.listRowInsets(EdgeInsets(top: 8, leading: 4, bottom: 4, trailing: 24))
-				}
-				
+				timeLinePreviewRow
+					.listRowInsets(EdgeInsets(top: 8, leading: 4, bottom: 4, trailing: 24))
 			}
 		}
 		.listStyle(.grouped)
