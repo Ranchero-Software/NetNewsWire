@@ -26,7 +26,7 @@ struct DisplayAndBehaviorsView: View {
 				SettingsViewRows.timelineLayout
 			}
 			
-			Section(header: Text("Artilces", comment: "Display & Behaviours: Articles section header")) {
+			Section(header: Text("Articles", comment: "Display & Behaviours: Articles section header")) {
 				SettingsViewRows.themeSelection
 				SettingsViewRows.confirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
 				SettingsViewRows.openLinksInNetNewsWire(Binding<Bool>(
