@@ -99,6 +99,7 @@ struct FeedbinAddAccountView: View {
 					Spacer()
 				}
 			}
+			.disabled(!validateCredentials())
 		}
 	}
 	
@@ -108,6 +109,13 @@ struct FeedbinAddAccountView: View {
 				.multilineTextAlignment(.center)
 		}
 		return Text("").multilineTextAlignment(.center)
+	}
+	
+	private func validateCredentials() -> Bool {
+		if (accountEmail.trimmingWhitespace.count == 0) || (accountPassword.trimmingWhitespace.count == 0) {
+			return false
+		}
+		return true
 	}
 	
 	private func retrieveCredentials() {

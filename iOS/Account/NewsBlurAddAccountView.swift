@@ -116,6 +116,7 @@ struct NewsBlurAddAccountView: View, Logging {
 					Spacer()
 				}
 			}
+			.disabled(!validateCredentials())
 		}
 	}
 	
@@ -125,6 +126,13 @@ struct NewsBlurAddAccountView: View, Logging {
 				.multilineTextAlignment(.center)
 		}
 		return Text("").multilineTextAlignment(.center)
+	}
+	
+	private func validateCredentials() -> Bool {
+		if (accountUserName.trimmingWhitespace.count == 0) || (accountPassword.trimmingWhitespace.count == 0) {
+			return false
+		}
+		return true
 	}
 	
 	private func executeAccountCredentials() async throws {
