@@ -44,8 +44,12 @@ struct ArticleThemeManagerView: View {
 			switch result {
 			case .success(let success):
 				do {
-					let theme = try ArticleTheme(path: success.path, isAppTheme: false)
-					showImportConfirmationAlert = (theme, true)
+					let url = URL(fileURLWithPath: success.path)
+					if url.startAccessingSecurityScopedResource() {
+						let theme = try ArticleTheme(path: success.path, isAppTheme: false)
+						showImportConfirmationAlert = (theme, true)
+						url.stopAccessingSecurityScopedResource()
+					}
 				} catch {
 					showImportErrorAlert = (error, true)
 				}

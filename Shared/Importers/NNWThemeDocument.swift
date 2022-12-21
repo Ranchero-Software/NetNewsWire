@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import Account
 import UniformTypeIdentifiers
 
 public struct NNWThemeDocument: FileDocument {
@@ -21,7 +20,10 @@ public struct NNWThemeDocument: FileDocument {
 	}
 	
 	public init(configuration: ReadConfiguration) throws {
-		
+		guard let _ = configuration.file.regularFileContents else {
+			throw CocoaError(.fileReadCorruptFile)
+		}
+		return
 	}
 	
 	public func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {

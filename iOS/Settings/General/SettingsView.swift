@@ -117,13 +117,17 @@ struct SettingsView: View {
 			.fileImporter(isPresented: $viewModel.showImportView, allowedContentTypes: OPMLDocument.readableContentTypes) { result in
 				switch result {
 				case .success(let url):
-					viewModel.importAccount!.importOPML(url) { importResult in
-						switch importResult {
-						case .success(_):
-							viewModel.showImportSuccess = true
-						case .failure(let error):
-							viewModel.importExportError = error
-							viewModel.showImportExportError = true
+					if url.startAccessingSecurityScopedResource() {
+						viewModel.importAccount!.importOPML(url) { importResult in
+							switch importResult {
+							case .success(_):
+								viewModel.showImportSuccess = true
+								url.stopAccessingSecurityScopedResource()
+							case .failure(let error):
+								viewModel.importExportError = error
+								viewModel.showImportExportError = true
+								url.stopAccessingSecurityScopedResource()
+							}
 						}
 					}
 				case .failure(let error):
