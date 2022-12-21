@@ -52,7 +52,7 @@ struct FeedbinAddAccountView: View {
 			} message: {
 				Text(accountError.0?.localizedDescription ?? "Error")
 			}
-			.navigationTitle(Text(account?.type.localizedAccountName() ?? ""))
+			.navigationTitle(Text(account?.type.localizedAccountName() ?? "Feedbin"))
 			.navigationBarTitleDisplayMode(.inline)
 			.interactiveDismissDisabled(showProgressIndicator)
 			.dismissOnExternalContextLaunch()

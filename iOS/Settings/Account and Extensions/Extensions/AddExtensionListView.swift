@@ -13,6 +13,7 @@ struct AddExtensionListView: View {
 	
 	@State private var availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
 	@Environment(\.dismiss) var dismiss
+	@State private var showExtensionPointView: (ExtensionPoint.Type?, Bool) = (nil, false)
 	
 	var body: some View {
 		NavigationView {
@@ -20,8 +21,8 @@ struct AddExtensionListView: View {
 				Section(header: Text("FEED_PROVIDER_HEADER", tableName: "Settings"),
 						footer: Text("FEED_PROVIDER_FOOTER", tableName: "Settings")) {
 					ForEach(0..<availableExtensionPointTypes.count, id: \.self) { i in
-						NavigationLink {
-							EnableExtensionPointView(extensionPoint: availableExtensionPointTypes[i])
+						Button {
+							showExtensionPointView = (availableExtensionPointTypes[i], true)
 						} label: {
 							Image(uiImage: availableExtensionPointTypes[i].image)
 								.resizable()
@@ -35,6 +36,11 @@ struct AddExtensionListView: View {
 			}
 			.navigationBarTitleDisplayMode(.inline)
 			.navigationTitle(Text("ADD_EXTENSIONS_TITLE", tableName: "Settings"))
+			.sheet(isPresented: $showExtensionPointView.1, content: {
+				if showExtensionPointView.0 != nil {
+					EnableExtensionPointView(extensionPoint: showExtensionPointView.0!)
+				}
+			})
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
 					Button(role: .cancel) {
