@@ -15,18 +15,15 @@ struct TimelineCustomizerView: View {
 	
     var body: some View {
 		List {
-			Section {
+			Section(header: Text("ICON_SIZE", tableName: "Settings")) {
+				
 				ZStack {
-					Picker(selection: $appDefaults.timelineIconSize) {
-						ForEach(IconSize.allCases, id: \.self) { size in
-							Text(size.description)
-						}
-					} label: {
-						Text("ICON_SIZE", tableName: "Settings")
-					}
+					TickMarkSliderView(minValue: 1, maxValue: 3, currentValue: Binding(get: {
+						Float(appDefaults.timelineIconSize.rawValue)
+					}, set: { AppDefaults.shared.timelineIconSize = IconSize(rawValue: Int($0))! }))
 				}
 				.padding(.horizontal, 16)
-				.padding(.vertical, 4)
+				.padding(.vertical, 8)
 				.listRowInsets(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
 				.background(
 					RoundedRectangle(cornerRadius: 8)
@@ -37,18 +34,14 @@ struct TimelineCustomizerView: View {
 			.listRowBackground(Color.clear)
 			.listRowSeparator(.hidden)
 			
-			Section {
+			Section(header: Text("NUMBER_OF_LINES", tableName: "Settings")) {
 				ZStack {
-					Picker(selection: $appDefaults.timelineNumberOfLines) {
-						ForEach(1...5, id: \.self) { size in
-							Text("\(size)")
-						}
-					} label: {
-						Text("NUMBER_OF_LINES", tableName: "Settings")
-					}
+					TickMarkSliderView(minValue: 1, maxValue: 5, currentValue: Binding(get: {
+						Float(appDefaults.timelineNumberOfLines)
+					}, set: { appDefaults.timelineNumberOfLines = Int($0) }))
 				}
 				.padding(.horizontal, 16)
-				.padding(.vertical, 4)
+				.padding(.vertical, 8)
 				.listRowInsets(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
 				.background(
 					RoundedRectangle(cornerRadius: 8)
