@@ -28,7 +28,7 @@ struct ExtensionInspectorView: View {
 				} label: {
 					Text("Deactivate Extension", comment: "Button title")
 				}
-				.confirmationDialog(Text("Deactivate Extension", comment: "Deactivate Extension confirmation title") , isPresented: $showDeactivateConfirmation, titleVisibility: .visible) {
+				.alert(Text("Are you sure you want to deactivate “\(extensionPoint?.title ?? "")?", comment: "Alert title: confirm deactivate extension") , isPresented: $showDeactivateConfirmation) {
 					
 					Button(role: .destructive) {
 						ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint!.extensionPointID)
@@ -43,7 +43,7 @@ struct ExtensionInspectorView: View {
 						Text("Cancel", comment: "Button title")
 					}
 				} message: {
-					Text("Are you sure you want to deactivate the “\(extensionPoint?.title ?? "")” extension?)", comment: "Confirmation text regarding deactivation on an extension.")
+					Text("This action cannot be undone.", comment: "Alert message: remove account confirmation")
 				}
 				Spacer()
 			}

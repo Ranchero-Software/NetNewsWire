@@ -109,7 +109,7 @@ struct AccountInspectorView: View {
 					Spacer()
 				}
 			}
-			.confirmationDialog(Text("Remove Account", comment: "Remove account alert title"), isPresented: $showRemoveAccountAlert, titleVisibility: .visible) {
+			.alert(Text("Are you sure you want to remove “\(account.nameForDisplay)”?", comment: "Alert title: confirm account removal"), isPresented: $showRemoveAccountAlert) {
 				Button(role: .destructive) {
 					AccountManager.shared.deleteAccount(account)
 					dismiss()
@@ -124,11 +124,7 @@ struct AccountInspectorView: View {
 				}
 
 			} message: {
-				if account.type == .feedly {
-					Text("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Confirmation of the impacts of deleting the Feedly account.")
-				} else {
-					Text("Are you sure you want to remove this account? This cannot be undone.", comment: "Confirmation of the impacts of deleting the account.")
-				}
+				Text("This action cannot be undone.", comment: "Alert message: remove account confirmation")
 			}
 		}
 	}

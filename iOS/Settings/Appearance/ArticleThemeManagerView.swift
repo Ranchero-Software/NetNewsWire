@@ -83,7 +83,7 @@ struct ArticleThemeManagerView: View {
 				Text("Cancel", comment: "Button title")
 			}
 		}, message: {
-			Text("Are you sure you want to delete this theme? This action cannot be undone.", comment: "Alert message: confirm theme deletion")
+			Text("This action cannot be undone.", comment: "Alert message: confirm theme deletion")
 		})
 		.alert(Text("Import Theme", comment: "Alert title: confirm theme import"),
 			   isPresented: $showImportConfirmationAlert.1,

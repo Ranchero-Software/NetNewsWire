@@ -107,17 +107,7 @@ struct AccountsManagementView: View {
 				Text("Cancel", comment: "Button title")
 			}
 		} message: {
-			switch viewModel.accountToDelete {
-			case .none:
-			    Text("")
-			case .some(let account):
-				switch account.type {
-				case .feedly:
-					Text("Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again.", comment: "Alert message: remove Feedly account confirmation")
-				default:
-					Text("Are you sure you want to remove this account? This cannot be undone.", comment: "Alert message: remove account confirmation")
-				}
-			}
+			Text("This action cannot be undone.", comment: "Alert message: remove account confirmation")
 		}
     }
 	

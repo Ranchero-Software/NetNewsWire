@@ -33,7 +33,7 @@ struct ExtensionsManagementView: View {
 		.sheet(isPresented: $showAddExtensionView) {
 			AddExtensionListView()
 		}
-		.alert(Text("Deactivate Extension", comment: "Alert title: confirm deactivate extension"),
+		.alert(Text("Are you sure you want to deactivate “\(extensionToDeactivate?.value.title ?? "")?", comment: "Alert title: confirm deactivate extension"),
 			   isPresented: $showDeactivateAlert) {
 			
 			Button(role: .destructive) {
@@ -49,7 +49,7 @@ struct ExtensionsManagementView: View {
 			}
 
 		} message: {
-			Text("Are you sure you want to deactivate the “\(extensionToDeactivate?.value.title ?? "")” extension?", comment: "Alert message: confirm deactivation of extension.")
+			Text("This action cannot be undone.", comment: "Alert message: confirmation that deactivation of extension cannot be undone.")
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .ActiveExtensionPointsDidChange)) { _ in
 			availableExtensionPointTypes = ExtensionPointManager.shared.availableExtensionPointTypes.sorted(by: { $0.title < $1.title })
