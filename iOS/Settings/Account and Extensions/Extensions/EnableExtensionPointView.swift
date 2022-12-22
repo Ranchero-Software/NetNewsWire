@@ -22,12 +22,10 @@ struct EnableExtensionPointView: View  {
 			Section { enableButton }
 		}
 		.alert(Text("Error", comment: "Alert title: Error"), isPresented: $extensionError.1, actions: {
-			Button(action: {}, label: { Text("Dismiss", comment: "Button title") })
 		}, message: {
 			Text(extensionError.0?.localizedDescription ?? "Unknown Error")
 		})
 		.alert(Text("Error", comment: "Alert title: Error"), isPresented: $viewModel.showExtensionError.1, actions: {
-			Button(action: {}, label: { Text("Dismiss", comment: "Button title") })
 		}, message: {
 			Text(viewModel.showExtensionError.0?.localizedDescription ?? "Unknown Error")
 		})

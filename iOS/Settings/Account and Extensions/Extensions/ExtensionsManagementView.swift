@@ -39,7 +39,7 @@ struct ExtensionsManagementView: View {
 			Button(role: .destructive) {
 				ExtensionPointManager.shared.deactivateExtensionPoint(extensionToDeactivate!.value.extensionPointID)
 			} label: {
-				Text("Deactivate", comment: "Button: deactivate extension.")
+				Text("Deactivate Extension", comment: "Button: deactivate extension.")
 			}
 
 			Button(role: .cancel) {

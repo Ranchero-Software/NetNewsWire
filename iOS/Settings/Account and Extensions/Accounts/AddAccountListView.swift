@@ -101,13 +101,9 @@ struct AddAccountListView: View {
 				}
 			}
 			.alert(Text("Error", comment: "Alert title: Error"),
-				   isPresented: $viewModel.showAddAccountError.1, actions: {
-				Button {
-					//
-				} label: {
-					Text("Dismiss", comment: "Button title")
-				}
-			}, message: {
+				   isPresented: $viewModel.showAddAccountError.1,
+				   actions: { },
+				   message: {
 				Text("\(viewModel.showAddAccountError.0?.localizedDescription ?? "Unknown Error")")
 			})
 			.dismissOnAccountAdd()

@@ -107,7 +107,7 @@ struct ArticleThemeManagerView: View {
 					} label: {
 						let exists = themeManager.themeExists(filename: showImportConfirmationAlert.0?.path ?? "")
 						if exists == true {
-							Text("Overwrite", comment: "Button title")
+							Text("Overwrite Theme", comment: "Button title")
 						} else {
 							Text("Import Theme", comment: "Button title")
 						}
@@ -139,13 +139,7 @@ struct ArticleThemeManagerView: View {
 		})
 		.alert(Text("Error", comment: "Alert title: Error"),
 			   isPresented: $showImportErrorAlert.1,
-			   actions: {
-					Button(role: .cancel) {
-						
-					} label: {
-						Text("Dismiss", comment: "Button title")
-					}
-		}, message: {
+			   actions: { }, message: {
 			Text("\(showImportErrorAlert.0?.localizedDescription ?? "")")
 		})
 		.onReceive(themeManager.objectWillChange) { _ in
