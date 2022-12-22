@@ -16,19 +16,12 @@ struct TimelineCustomizerView: View {
     var body: some View {
 		List {
 			Section(header: Text("Icon Size", comment: "Timline Customiser: Icon size section header")) {
-				
 				ZStack {
 					TickMarkSliderView(minValue: 1, maxValue: 3, currentValue: Binding(get: {
 						Float(appDefaults.timelineIconSize.rawValue)
 					}, set: { AppDefaults.shared.timelineIconSize = IconSize(rawValue: Int($0))! }))
 				}
-				.padding(.horizontal, 16)
-				.padding(.vertical, 8)
-				.listRowInsets(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
-				.background(
-					RoundedRectangle(cornerRadius: 8)
-						.foregroundColor(Color(uiColor: UIColor.secondarySystemGroupedBackground))
-				)
+				.customInsetGroupedRowStyle()
 			}
 			.listRowInsets(EdgeInsets(top: 0, leading: 30, bottom: 0, trailing: 30))
 			.listRowBackground(Color.clear)
@@ -40,13 +33,7 @@ struct TimelineCustomizerView: View {
 						Float(appDefaults.timelineNumberOfLines)
 					}, set: { appDefaults.timelineNumberOfLines = Int($0) }))
 				}
-				.padding(.horizontal, 16)
-				.padding(.vertical, 8)
-				.listRowInsets(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
-				.background(
-					RoundedRectangle(cornerRadius: 8)
-						.foregroundColor(Color(uiColor: UIColor.secondarySystemGroupedBackground))
-				)
+				.customInsetGroupedRowStyle()
 			}
 			.listRowInsets(EdgeInsets(top: 0, leading: 30, bottom: 0, trailing: 30))
 			.listRowBackground(Color.clear)

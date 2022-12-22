@@ -878,6 +878,7 @@
 		DFD406FA291FB5E400C02962 /* SettingsRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406F9291FB5E400C02962 /* SettingsRows.swift */; };
 		DFD406FC291FB63B00C02962 /* SettingsHelpSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */; };
 		DFD406FF291FDC0C00C02962 /* DisplayAndBehaviorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */; };
+		DFE522A32953DEF400376B77 /* CustomInsetGroupedRowStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE522A22953DEF400376B77 /* CustomInsetGroupedRowStyle.swift */; };
 		DFFB8FC2279B75E300AC21D7 /* Account in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 51BC2F4A24D343A500E90810 /* Account */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		DFFC4E7428E95C01006B82AF /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC4E7328E95C01006B82AF /* AboutView.swift */; };
 		FF3ABF13232599810074C542 /* ArticleSorterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3ABF09232599450074C542 /* ArticleSorterTests.swift */; };
@@ -1629,6 +1630,7 @@
 		DFD406FB291FB63B00C02962 /* SettingsHelpSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpSheets.swift; sourceTree = "<group>"; };
 		DFD406FE291FDC0C00C02962 /* DisplayAndBehaviorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayAndBehaviorsView.swift; sourceTree = "<group>"; };
 		DFD6AACB27ADE80900463FAD /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
+		DFE522A22953DEF400376B77 /* CustomInsetGroupedRowStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomInsetGroupedRowStyle.swift; sourceTree = "<group>"; };
 		DFFC4E7328E95C01006B82AF /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		FF3ABF09232599450074C542 /* ArticleSorterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorterTests.swift; sourceTree = "<group>"; };
 		FF3ABF1423259DDB0074C542 /* ArticleSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSorter.swift; sourceTree = "<group>"; };
@@ -2966,11 +2968,12 @@
 		DFB34986294B446300BC81AD /* SwiftUI Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */,
 				DFB349A3294E914D00BC81AD /* AccountSectionHeader.swift */,
+				DFE522A22953DEF400376B77 /* CustomInsetGroupedRowStyle.swift */,
 				DF28B454294FE74A00C4D8CA /* ExtensionSectionHeader.swift */,
-				DF28B44C294ED52700C4D8CA /* View+DismissOnExternalContext.swift */,
+				DFB34987294B447F00BC81AD /* InjectedNavigationView.swift */,
 				DF28B450294EFC6C00C4D8CA /* View+DismissOnAccountAdd.swift */,
+				DF28B44C294ED52700C4D8CA /* View+DismissOnExternalContext.swift */,
 			);
 			path = "SwiftUI Extensions";
 			sourceTree = "<group>";
@@ -4296,6 +4299,7 @@
 				518651DA235621840078E021 /* ImageTransition.swift in Sources */,
 				51C266EA238C334800F53014 /* ContextMenuPreviewViewController.swift in Sources */,
 				173A642C2547BE9600267F6E /* AccountType+Helpers.swift in Sources */,
+				DFE522A32953DEF400376B77 /* CustomInsetGroupedRowStyle.swift in Sources */,
 				51627A6923861DED007B3B4B /* MasterFeedViewController+Drop.swift in Sources */,
 				514219372352510100E07E2C /* ImageScrollView.swift in Sources */,
 				516AE9B32371C372007DEEAA /* MasterFeedTableViewSectionHeaderLayout.swift in Sources */,
