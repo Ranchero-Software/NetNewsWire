@@ -18,7 +18,7 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 		return FeedIdentifier.smartFeed(String(describing: TodayFeedDelegate.self))
 	}
 	
-	let nameForDisplay = NSLocalizedString("Today", comment: "Today pseudo-feed title")
+	let nameForDisplay = NSLocalizedString("smartfeed.title.today", comment: "Today pseudo-feed title")
 	let fetchType = FetchType.today(nil)
 	var smallIcon: IconImage? {
 		return AppAssets.todayFeedImage

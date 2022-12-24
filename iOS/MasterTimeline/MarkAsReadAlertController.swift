@@ -46,11 +46,10 @@ struct MarkAsReadAlertController {
 							  completion: @escaping (UIAlertAction) -> Void) -> UIAlertController where T: MarkAsReadAlertControllerSourceType  {
 		
 		
-		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
-		let message = NSLocalizedString("You can turn this confirmation off in Settings.",
-										comment: "You can turn this confirmation off in Settings.")
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		let settingsTitle = NSLocalizedString("Open Settings", comment: "Open Settings")
+		let title = NSLocalizedString("alert.title.markasread", comment: "Mark As Read")
+		let message = NSLocalizedString("alert.message.markasread.turnoffconfirmation", comment: "Message that indicates a user can turn off the Mark As Read confirmation in Settings.")
+		let cancelTitle = NSLocalizedString("button.title.cancel", comment: "Cancel")
+		let settingsTitle = NSLocalizedString("button.title.opensettings", comment: "Open Settings")
 		
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in

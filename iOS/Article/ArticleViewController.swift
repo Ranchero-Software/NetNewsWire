@@ -267,7 +267,7 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 			themeActions.append(action)
 		}
 		
-		let defaultThemeAction = UIAction(title: NSLocalizedString("Default", comment: "Default"),
+		let defaultThemeAction = UIAction(title: NSLocalizedString("button.title.default", comment: "Button title: Default"),
 										  image: nil,
 										  identifier: nil,
 										  discoverabilityTitle: nil,
@@ -313,13 +313,13 @@ class ArticleViewController: UIViewController, MainControllerIdentifiable, Loggi
 		}
 		
 		appearanceBarButtonItem.image = AppAssets.articleAppearanceImage
-		appearanceBarButtonItem.menu = UIMenu(title: NSLocalizedString("Article Appearance", comment: "Appearance"), children: appearanceChildren)
+		appearanceBarButtonItem.menu = UIMenu(title: NSLocalizedString("menu.title.articleappearance", comment: "Article Appearance menu title"), children: appearanceChildren)
 	}
 	
 	private func configureArticleExtractorMenu() {
 		if let feed = article?.webFeed {
 			let extractorOn = feed.isArticleExtractorAlwaysOn ?? false
-			let readerAction = UIAction(title: NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View"),
+			let readerAction = UIAction(title: NSLocalizedString("button.title.alwaysusreaderview", comment: "Button title: Always Use Reader View"),
 										image: AppAssets.articleExtractorOffSF,
 										identifier: nil,
 										discoverabilityTitle: nil,

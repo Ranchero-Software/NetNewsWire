@@ -29,8 +29,8 @@ class ImageViewController: UIViewController {
         super.viewDidLoad()
 		
 		closeButton.imageView?.contentMode = .scaleAspectFit
-		closeButton.accessibilityLabel = NSLocalizedString("Close", comment: "Close")
-		shareButton.accessibilityLabel = NSLocalizedString("Share", comment: "Share")
+		closeButton.accessibilityLabel = NSLocalizedString("button.title.close", comment: "Close")
+		shareButton.accessibilityLabel = NSLocalizedString("button.title.share", comment: "Share")
 		
         imageScrollView.setup()
         imageScrollView.imageScrollViewDelegate = self

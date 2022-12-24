@@ -147,7 +147,7 @@ struct SettingsView: View {
 			.alert(Text("Imported Successfully", comment: "Alert title: imported OPML file successfully."),
 				   isPresented: $viewModel.showImportSuccess,
 				   actions: {},
-				   message: { Text("Subscriptions have been imported to your \(viewModel.importAccount?.nameForDisplay ?? "") account.", tableName: "Alert message: imported OPML file successfully.") })
+				   message: { Text("Subscriptions have been imported to your \(viewModel.importAccount?.nameForDisplay ?? "") account.", comment: "Alert message: imported OPML file successfully.") })
 			.alert(Text("Exported Successfully", comment: "Alert title: exported OPML file successfully."),
 				   isPresented: $viewModel.showExportSuccess,
 				   actions: {},

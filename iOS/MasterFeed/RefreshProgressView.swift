@@ -141,12 +141,12 @@ private extension RefreshProgressModel {
 				let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 				relativeDateTimeFormatter.dateTimeStyle = .named
 				let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
-				let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
+				let localizedRefreshText = NSLocalizedString("label.text.updatedat.%@", comment: "Relative time that the account was last refreshed. The variable is a named relative time. Example: Updated 8 minutes ago")
 				let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
 				label = refreshText
 
 			} else {
-				label = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+				label = NSLocalizedString("label.text.updatednow", comment: "Text indicating that feeds have just been updated. Example: Updated Just Now")
 			}
 
 		} else {
