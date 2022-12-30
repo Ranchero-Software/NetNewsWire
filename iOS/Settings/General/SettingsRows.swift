@@ -18,7 +18,7 @@ struct SettingsViewRows {
 	/// This row, when tapped, will open iOS System Settings.
 	static var openSystemSettings: some View {
 		Label {
-			Text("Open System Settings", comment: "Button: opens device Settings app.")
+			Text("button.title.open-system-settings", comment: "Open System Settings")
 		} icon: {
 			Image("system.settings")
 				.resizable()
@@ -36,7 +36,7 @@ struct SettingsViewRows {
 	static var configureNewArticleNotifications: some View {
 		NavigationLink(destination: NewArticleNotificationsView()) {
 			Label {
-				Text("New Article Notifications", comment: "Button: opens New Article Notifications view")
+				Text("button.title.new-article-notifications", comment: "New Article Notifications")
 			} icon: {
 				Image("notifications.sounds")
 					.resizable()
@@ -51,7 +51,7 @@ struct SettingsViewRows {
 	static var addAccount: some View {
 		NavigationLink(destination: AccountsManagementView()) {
 			Label {
-				Text("Manage Accounts", comment: "Button: opens Accounts Management view")
+				Text("button.title.manage-accounts", comment: "Manage Accounts")
 			} icon: {
 				Image("app.account")
 					.resizable()
@@ -66,7 +66,7 @@ struct SettingsViewRows {
 	static var manageExtensions: some View {
 		NavigationLink(destination: ExtensionsManagementView()) {
 			Label {
-				Text("Manage Extensions", comment: "Button: opens Extensions Management view")
+				Text("button.title.manage-extensions", comment: "Manage Extensions")
 			} icon: {
 				Image("app.extension")
 					.resizable()
@@ -83,7 +83,7 @@ struct SettingsViewRows {
 			showImportActionSheet.wrappedValue.toggle()
 		} label: {
 			Label {
-				Text("Import Subscriptions", comment: "Button: opens import subscriptions view")
+				Text("button.title.import-subscriptions", comment: "Import Subscriptions")
 					.foregroundColor(.primary)
 				
 			} icon: {
@@ -102,7 +102,7 @@ struct SettingsViewRows {
 			showExportActionSheet.wrappedValue.toggle()
 		} label: {
 			Label {
-				Text("Export Subscriptions", comment: "Button: opens Export Subscriptions view")
+				Text("button.title.export-subscriptions", comment: "Export Subscriptions")
 					.foregroundColor(.primary)
 				
 			} icon: {
@@ -119,7 +119,7 @@ struct SettingsViewRows {
 	/// - Returns: `Toggle`
 	static func sortOldestToNewest(_ preference: Binding<Bool>) -> some View {
 		Toggle(isOn: preference) {
-			Text("Sort Oldest to Newest", comment: "Toggle: Sort articles from oldest to newest when enabled.")
+			Text("toggle.title.sort-oldest-to-newest", comment: "Sort Oldest to Newest")
 		}
 	}
 	
@@ -128,7 +128,7 @@ struct SettingsViewRows {
 	/// - Returns: `Toggle`
 	static func groupByFeed(_ preference: Binding<Bool>) -> some View {
 		Toggle(isOn: preference) {
-			Text("Group by Feed", comment: "Toggle: groups articles by feed when enabled.")
+			Text("toggle.title.group-by-feed", comment: "Group by Feed")
 		}
 	}
 	
@@ -137,7 +137,7 @@ struct SettingsViewRows {
 	/// - Returns: `Toggle`
 	static func refreshToClearReadArticles(_ preference: Binding<Bool>) -> some View {
 		Toggle(isOn: preference) {
-			Text("Refresh to Clear Read Articles", comment: "Toggle: when enabled, articles will be cleared when the timeline is refreshed")
+			Text("toggle.title.refresh-to-clear-articles", comment: "Refresh to Clear Articles")
 		}
 	}
 	
@@ -147,7 +147,7 @@ struct SettingsViewRows {
 		NavigationLink {
 			TimelineCustomizerView()
 		} label: {
-			Text("Timeline Layout", comment: "Button: opens the timeline customiser")
+			Text("button.title.timeline-layout", comment: "Timeline Layout")
 		}
 	}
 	
@@ -156,7 +156,7 @@ struct SettingsViewRows {
 	static var themeSelection: some View {
 		NavigationLink(destination: ArticleThemeManagerView()) {
 			HStack {
-				Text("Article Theme", comment: "Button: opens the Article Theme manager view")
+				Text("button.title.artice-themes", comment: "Article Themes")
 				Spacer()
 				Text(ArticleThemesManager.shared.currentTheme.name)
 					.font(.callout)
@@ -170,7 +170,7 @@ struct SettingsViewRows {
 	/// - Returns: `Toggle`
 	static func confirmMarkAllAsRead(_ preference: Binding<Bool>) -> some View {
 		Toggle(isOn: preference) {
-			Text("Confirm Mark All as Read", comment: "Toggle: when enabled, the app will confirm whether to mark all items as read")
+			Text("toggle.title.confirm-mark-all-as-read", comment: "Confirm Mark All as Read")
 		}
 	}
 	
@@ -179,7 +179,7 @@ struct SettingsViewRows {
 	/// - Returns: `Toggle`
 	static func openLinksInNetNewsWire(_ preference: Binding<Bool>) -> some View {
 		Toggle(isOn: preference) {
-			Text("Open Links in NetNewsWire", comment: "Toggle: when enabled, links will open in NetNewsWire")
+			Text("toggle.title.open-links-in-netnewswire", comment: "Open Links in NetNewsWire")
 		}
 	}
 	
@@ -190,7 +190,7 @@ struct SettingsViewRows {
 	static func configureAppearance(_ isShown: Binding<Bool>) -> some View {
 		NavigationLink(destination: DisplayAndBehaviorsView(), isActive: isShown) {
 			Label {
-				Text("Display & Behaviours", comment: "Button: opens the Display and Appearance view.")
+				Text("button.title.display-and-behaviors", comment: "Display & Behaviors")
 			} icon: {
 				Image("app.appearance")
 					.resizable()
@@ -228,7 +228,7 @@ struct SettingsViewRows {
 			AboutView()
 		} label: {
 			Label {
-				Text("About", comment: "Button: opens the NetNewsWire about view.")
+				Text("button.title.about", comment: "About")
 			} icon: {
 				Image(systemName: "info.circle")
 					.resizable()

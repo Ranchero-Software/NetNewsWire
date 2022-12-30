@@ -14,19 +14,19 @@ struct DisplayAndBehaviorsView: View {
 	
 	var body: some View {
 		List {
-			Section(header: Text("Application", comment: "Display & Behaviours: Application section header")) {
+			Section(header: Text("label.text.application", comment: "Application")) {
 				ColorPaletteSelectorView()
 				.listRowBackground(Color.clear)
 			}
 			
-			Section(header: Text("Timeline", comment: "Display & Behaviours: Timeline section header")) {
+			Section(header: Text("label.text.timeline", comment: "Timeline")) {
 				SettingsViewRows.sortOldestToNewest($appDefaults.timelineSortDirectionBool)
 				SettingsViewRows.groupByFeed($appDefaults.timelineGroupByFeed)
 				SettingsViewRows.refreshToClearReadArticles($appDefaults.refreshClearsReadArticles)
 				SettingsViewRows.timelineLayout
 			}
 			
-			Section(header: Text("Articles", comment: "Display & Behaviours: Articles section header")) {
+			Section(header: Text("label.text.articles", comment: "Articles")) {
 				SettingsViewRows.themeSelection
 				SettingsViewRows.confirmMarkAllAsRead($appDefaults.confirmMarkAllAsRead)
 				SettingsViewRows.openLinksInNetNewsWire(Binding<Bool>(
@@ -36,7 +36,7 @@ struct DisplayAndBehaviorsView: View {
 				// TODO: Add Reader Mode Defaults here. See #3684.
 			}
 		}
-		.navigationTitle(Text("Display & Behaviors", comment: "Navigation title for Display & Behaviours"))
+		.navigationTitle(Text("navigation.title.display-and-behaviors", comment: "Display & Behaviors"))
 		.tint(Color(uiColor: AppAssets.primaryAccentColor))
     }
 	

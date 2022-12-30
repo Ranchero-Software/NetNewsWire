@@ -49,7 +49,7 @@ struct MarkAsReadAlertController {
 		let title = NSLocalizedString("alert.title.markasread", comment: "Mark As Read")
 		let message = NSLocalizedString("alert.message.markasread.turnoffconfirmation", comment: "Message that indicates a user can turn off the Mark As Read confirmation in Settings.")
 		let cancelTitle = NSLocalizedString("button.title.cancel", comment: "Cancel")
-		let settingsTitle = NSLocalizedString("button.title.opensettings", comment: "Open Settings")
+		let settingsTitle = NSLocalizedString("button.title.open-settings", comment: "Open Settings")
 		
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in

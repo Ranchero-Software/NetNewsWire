@@ -43,21 +43,17 @@ struct ReaderAPIAddAccountView: View {
 			}
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
-					Button(action: { dismiss() }, label: { Text("Cancel", comment: "Button title") })
+					Button(action: { dismiss() }, label: { Text("button.title.cancel", comment: "Cancel") })
 						.disabled(showProgressIndicator)
 				}
 				ToolbarItem(placement: .navigationBarTrailing) {
 					if showProgressIndicator { ProgressView() }
 				}
 			}
-			.alert(Text("Error", comment: "Alert title: Error"), isPresented: $accountError.1) {
-				Button(role: .cancel) {
-					//
-				} label: {
-					Text("Dismiss", comment: "Button title")
-				}
+			.alert(Text("alert.title.error", comment: "Error"), isPresented: $accountError.1) {
+				
 			} message: {
-				Text(accountError.0?.localizedDescription ?? "")
+				Text(verbatim: accountError.0?.localizedDescription ?? "")
 			}
 			.interactiveDismissDisabled(showProgressIndicator)
 			.dismissOnExternalContextLaunch()
@@ -69,15 +65,15 @@ struct ReaderAPIAddAccountView: View {
 		if accountType == nil { return Text("").multilineTextAlignment(.center) }
 		switch accountType! {
 		case .bazQux:
-			return Text("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account? [Sign Up Here](https://bazqux.com)", comment: "Explanatory text describing the BazQux account").multilineTextAlignment(.center)
+			return Text("label.text.bazqux-explainer", comment: "Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account? [Sign Up Here](https://bazqux.com)").multilineTextAlignment(.center)
 		case .inoreader:
-			return Text("Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? [Sign Up Here](https://www.inoreader.com)", comment: "Explanatory text describing the Inoreader account").multilineTextAlignment(.center)
+			return Text("label.text.inoreader-explainer", comment: "Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? [Sign Up Here](https://www.inoreader.com)").multilineTextAlignment(.center)
 		case .theOldReader:
-			return Text("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? [Sign Up Here](https://theoldreader.com)", comment: "Explanatory text describing The Old Reader account").multilineTextAlignment(.center)
+			return Text("label.text.theoldreader-explainer", comment: "Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? [Sign Up Here](https://theoldreader.com)").multilineTextAlignment(.center)
 		case .freshRSS:
-			return Text("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance? [Sign Up Here](https://freshrss.org)", comment: "Explanatory text describing the FreshRSS account").multilineTextAlignment(.center)
+			return Text("label.text.freshrss-explainer", comment: "Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance? [Sign Up Here](https://freshrss.org)").multilineTextAlignment(.center)
 		default:
-			return Text("").multilineTextAlignment(.center)
+			return Text(verbatim: "").multilineTextAlignment(.center)
 		}
 	}
 	
@@ -85,14 +81,14 @@ struct ReaderAPIAddAccountView: View {
 	
 	var accountDetails: some View {
 		Section {
-			TextField("Username", text: $accountUserName)
+			TextField("Username", text: $accountUserName, prompt: Text("textfield.placeholder.username", comment: "Username"))
 				.autocorrectionDisabled()
 				.autocapitalization(.none)
 				.textContentType(.username)
-			SecureField("Password", text: $accountSecret)
+			SecureField("Password", text: $accountSecret, prompt: Text("textfield.placeholder.password", comment: "Password"))
 				.textContentType(.password)
 			if accountType == .freshRSS && accountCredentials == nil {
-				TextField("FreshRSS URL", text: $accountAPIUrl, prompt: Text("fresh.rss.net/api/greader.php"))
+				TextField("FreshRSS URL", text: $accountAPIUrl, prompt: Text(verbatim: "fresh.rss.net/api/greader.php"))
 					.autocorrectionDisabled()
 					.autocapitalization(.none)
 			}
@@ -120,9 +116,9 @@ struct ReaderAPIAddAccountView: View {
 				HStack {
 					Spacer()
 					if accountCredentials == nil {
-						Text("Add Account", comment: "Button title")
+						Text("button.title.add-account", comment: "Add Account")
 					} else {
-						Text("Update Credentials", comment: "Button title")
+						Text("button.title.update-credentials", comment: "Update Credentials")
 					}
 					Spacer()
 				}

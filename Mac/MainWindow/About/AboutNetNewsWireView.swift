@@ -30,7 +30,7 @@ struct AboutNetNewsWireView: View {
 				Text("By Brent Simmons and the NetNewsWire team.")
 					.font(.subheadline)
 				
-				Text("[netnewswire.com](https://netnewswire.com)")
+				Text("label.markdown.netnewswire-website", comment: "Markdown formatted link to netnewswire.com")
 					.font(.callout)
 				
 				Spacer()

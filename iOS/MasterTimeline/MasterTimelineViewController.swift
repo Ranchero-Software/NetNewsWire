@@ -160,7 +160,7 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 	}
 	
 	@IBAction func markAllAsRead(_ sender: Any) {
-		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		let title = NSLocalizedString("button.title.mark-all-as-read.titlecase", comment: "Mark All as Read")
 		
 		if let source = sender as? UIBarButtonItem {
 			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: source) { [weak self] in
@@ -275,8 +275,8 @@ class MasterTimelineViewController: UITableViewController, UndoableCommandRunner
 
 		// Set up the read action
 		let readTitle = article.status.read ?
-		NSLocalizedString("button.title.markasunread", comment: "Mark as Unread. Used to mark an article unread") :
-		NSLocalizedString("button.title.markasread", comment: "Mark as Read. Used to mark an article Read")
+		NSLocalizedString("button.title.mark-as-unread.titlecase", comment: "Mark as Unread. Used to mark an article unread") :
+		NSLocalizedString("button.title.mark-as-read.titlecase", comment: "Mark as Read. Used to mark an article Read")
 		
 		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completion) in
 			self?.coordinator.toggleRead(article)
@@ -658,10 +658,10 @@ private extension MasterTimelineViewController {
 		
 		if coordinator.isReadArticlesFiltered {
 			filterButton?.image = AppAssets.filterActiveImage
-			filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
+			filterButton?.accLabelText = NSLocalizedString("label.accessibility.selected-filter-read-artciles", comment: "Selected - Filter Read Articles")
 		} else {
 			filterButton?.image = AppAssets.filterInactiveImage
-			filterButton?.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
+			filterButton?.accLabelText = NSLocalizedString("label.accessibility.filter-read-artciles", comment: "Filter Read Articles")
 		}
 
 		tableView.selectRow(at: nil, animated: false, scrollPosition: .top)
@@ -753,8 +753,8 @@ private extension MasterTimelineViewController {
 		guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
 		
 		let title = article.status.read ?
-		NSLocalizedString("button.title.markasunread", comment: "Mark as Unread. Used to mark an article unread") :
-		NSLocalizedString("button.title.markasread", comment: "Mark as Read. Used to mark an article Read")
+		NSLocalizedString("button.title.mark-as-unread.titlecase", comment: "Mark as Unread. Used to mark an article unread") :
+		NSLocalizedString("button.title.mark-as-read.titlecase", comment: "Mark as Read. Used to mark an article Read")
 		let image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
@@ -767,8 +767,8 @@ private extension MasterTimelineViewController {
 	func toggleArticleStarStatusAction(_ article: Article) -> UIAction {
 
 		let title = article.status.starred ?
-		NSLocalizedString("button.title.markasunstarred", comment: "Mark as Unstarred. Used to mark an article as unstarred") :
-		NSLocalizedString("button.title.markasstarred", comment: "Mark as Starred. Used to mark an article as starred")
+		NSLocalizedString("button.title.mark-as-unstarred.titlecase", comment: "Mark as Unstarred. Used to mark an article as unstarred") :
+		NSLocalizedString("button.title.mark-as-starred.titlecase", comment: "Mark as Starred. Used to mark an article as starred")
 		let image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
@@ -783,7 +783,7 @@ private extension MasterTimelineViewController {
 			return nil
 		}
 		
-		let title = NSLocalizedString("button.title.markaboveasread", comment: "Mark Above as Read. Used to mark articles above the current article as read.")
+		let title = NSLocalizedString("button.title.mark-above-as-read.titlecase", comment: "Mark Above as Read. Used to mark articles above the current article as read.")
 		let image = AppAssets.markAboveAsReadImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -798,7 +798,7 @@ private extension MasterTimelineViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("button.title.markbelowasread", comment: "Mark Below as Read. Used to mark articles below the current article as read.")
+		let title = NSLocalizedString("button.title.mark-below-as-read.titlecase", comment: "Mark Below as Read. Used to mark articles below the current article as read.")
 		let image = AppAssets.markBelowAsReadImage
 		let action = UIAction(title: title, image: image) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -813,7 +813,7 @@ private extension MasterTimelineViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("button.title.markaboveasread", comment: "Mark Above as Read. Used to mark articles above the current article as read.")
+		let title = NSLocalizedString("button.title.mark-above-as-read.titlecase", comment: "Mark Above as Read. Used to mark articles above the current article as read.")
 		let cancel = {
 			completion(true)
 		}
@@ -832,7 +832,7 @@ private extension MasterTimelineViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("button.title.markbelowasread", comment: "Mark Below as Read. Used to mark articles below the current article as read.")
+		let title = NSLocalizedString("button.title.mark-below-as-read.titlecase", comment: "Mark Below as Read. Used to mark articles below the current article as read.")
 		let cancel = {
 			completion(true)
 		}
@@ -850,7 +850,7 @@ private extension MasterTimelineViewController {
 		guard let webFeed = article.webFeed,
 			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 		
-		let title = NSLocalizedString("button.title.gotofeed", comment: "Go To Feed. Use to navigate to the user to the article list for a feed.")
+		let title = NSLocalizedString("button.title.go-to-feed.titlecase", comment: "Go To Feed. Use to navigate to the user to the article list for a feed.")
 		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
 			self?.coordinator.discloseWebFeed(webFeed, animations: [.scroll, .navigation])
 		}
@@ -861,7 +861,7 @@ private extension MasterTimelineViewController {
 		guard let webFeed = article.webFeed,
 			!coordinator.timelineFeedIsEqualTo(webFeed) else { return nil }
 
-		let title = NSLocalizedString("button.title.gotofeed", comment: "Go To Feed. Use to navigate to the user to the article list for a feed.")
+		let title = NSLocalizedString("button.title.go-to-feed", comment: "Go To Feed. Use to navigate to the user to the article list for a feed.")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.discloseWebFeed(webFeed, animations: [.scroll, .navigation])
 			completion(true)
@@ -881,7 +881,7 @@ private extension MasterTimelineViewController {
 		}
 		
 		
-		let localizedMenuText = NSLocalizedString("button.title.markallasread.%@", comment: "Mark All as Read in ”feed”. The variable name is the feed name.")
+		let localizedMenuText = NSLocalizedString("button.title.mark-all-as-read.%@", comment: "Mark All as Read in ”feed”. The variable name is the feed name.")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
@@ -903,7 +903,7 @@ private extension MasterTimelineViewController {
 			return nil
 		}
 		
-		let localizedMenuText = NSLocalizedString("button.title.markallasread.%@", comment: "Mark All as Read in ”feed”. The variable name is the feed name.")
+		let localizedMenuText = NSLocalizedString("button.title.mark-all-as-read.%@", comment: "Mark All as Read in ”feed”. The variable name is the feed name.")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, webFeed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
@@ -920,7 +920,7 @@ private extension MasterTimelineViewController {
 	
 	func copyArticleURLAction(_ article: Article) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
-		let title = NSLocalizedString("button.title.copyarticleurl", comment: "Copy Article URL")
+		let title = NSLocalizedString("button.title.copy-article-url", comment: "Copy Article URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
@@ -929,7 +929,7 @@ private extension MasterTimelineViewController {
 	
 	func copyExternalURLAction(_ article: Article) -> UIAction? {
 		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
-		let title = NSLocalizedString("button.title.copyexternalurl", comment: "Copy External URL")
+		let title = NSLocalizedString("button.title.copy-external-url", comment: "Copy External URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
@@ -939,7 +939,7 @@ private extension MasterTimelineViewController {
 
 	func openInBrowserAction(_ article: Article) -> UIAction? {
 		guard let _ = article.preferredURL else { return nil }
-		let title = NSLocalizedString("button.title.openinbrowser", comment: "Open In Browser")
+		let title = NSLocalizedString("button.title.open-in-browser", comment: "Open In Browser")
 		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
 			self?.coordinator.showBrowserForArticle(article)
 		}
@@ -949,7 +949,7 @@ private extension MasterTimelineViewController {
 	func openInBrowserAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let _ = article.preferredURL else { return nil }
 
-		let title = NSLocalizedString("button.title.openinbrowser", comment: "Open In Browser")
+		let title = NSLocalizedString("button.title.open-in-browser", comment: "Open In Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showBrowserForArticle(article)
 			completion(true)

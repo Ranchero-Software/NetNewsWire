@@ -13,7 +13,7 @@ extension RedditFeedProvider: ExtensionPoint {
 	
 	static var isSinglton = false
 	static var isDeveloperBuildRestricted = true
-	static var title = NSLocalizedString("Reddit", comment: "Reddit")
+	static var title = "Reddit" // not localized - product name
 	static var image = AppAssets.extensionPointReddit
 	static var description: NSAttributedString = {
 		return RedditFeedProvider.makeAttrString("This extension enables you to subscribe to Reddit URLs as if they were RSS feeds. It only works with \(Account.defaultLocalAccountName) or iCloud accounts.")

@@ -31,7 +31,7 @@ struct NewsBlurAddAccountView: View, Logging {
 			}
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
-					Button(action: { dismiss() }, label: { Text("Cancel", comment: "Button title") })
+					Button(action: { dismiss() }, label: { Text("button.title.cancel", comment: "Cancel") })
 						.disabled(showProgressIndicator)
 				}
 				ToolbarItem(placement: .navigationBarTrailing) {
@@ -43,14 +43,9 @@ struct NewsBlurAddAccountView: View, Logging {
 			.task {
 				retreiveCredentials()
 			}
-			.alert(Text("Error", comment: "Alert title: Error"), isPresented: $accountError.1) {
-				Button(role: .cancel) {
-					//
-				} label: {
-					Text("Dismiss", comment: "Button title")
-				}
+			.alert(Text("alert.title.error", comment: "Error"), isPresented: $accountError.1) {
 			} message: {
-				Text(accountError.0?.localizedDescription ?? "")
+				Text(verbatim: accountError.0?.localizedDescription ?? "")
 			}
 			.interactiveDismissDisabled(showProgressIndicator)
 			.dismissOnExternalContextLaunch()
@@ -70,11 +65,11 @@ struct NewsBlurAddAccountView: View, Logging {
 	
 	var accountDetails: some View {
 		Section {
-			TextField("Email", text: $accountUserName, prompt: Text("Username or Email", comment: "Textfield for the user to enter their account username or email."))
+			TextField("Email", text: $accountUserName, prompt: Text("textfield.placeholder.username-or-email", comment: "Username or Email"))
 				.autocorrectionDisabled()
 				.autocapitalization(.none)
 				.textContentType(.username)
-			SecureField("Password", text: $accountPassword, prompt: Text("Password", comment: "Textfield for the user to enter their account password."))
+			SecureField("Password", text: $accountPassword, prompt: Text("textfield.placeholder.password", comment: "Password"))
 				.textContentType(.password)
 		}
 	}
@@ -100,9 +95,9 @@ struct NewsBlurAddAccountView: View, Logging {
 				HStack{
 					Spacer()
 					if account == nil {
-						Text("Add Account", comment: "Button title")
+						Text("button.title.add-account", comment: "Add Account")
 					} else {
-						Text("Update Credentials", comment: "Button title")
+						Text("button.title.update-credentials", comment: "Update Credentials")
 					}
 					Spacer()
 				}
@@ -113,7 +108,7 @@ struct NewsBlurAddAccountView: View, Logging {
 	
 	var newsBlurAccountExplainer: some View {
 		if account == nil {
-			return Text("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account? [Sign Up Here](https://newsblur.com)", comment: "Explanatory text describing the NewsBlur account")
+			return Text("label.text.newsblur-explainer", comment: "Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account? [Sign Up Here](https://newsblur.com)")
 				.multilineTextAlignment(.center)
 		}
 		return Text("").multilineTextAlignment(.center)

@@ -68,19 +68,19 @@ struct AccountsManagementView: View {
 	
 	var body: some View {
 		List {
-			Section(header: Text("Active Accounts", comment: "Active accounts section header")) {
+			Section(header: Text("label.text.active-accounts", comment: "Active Accounts")) {
 				ForEach(viewModel.sortedActiveAccounts, id: \.self) { account in
 					accountRow(account)
 				}
 			}
 			
-			Section(header: Text("Inactive Accounts", comment: "Inactive accounts section header")) {
+			Section(header: Text("label.text.inactive-accounts", comment: "Inactive Accounts")) {
 				ForEach(viewModel.sortedInactiveAccounts, id: \.self) { account in
 					accountRow(account)
 				}
 			}
 		}
-		.navigationTitle(Text("Manage Accounts", comment: "Navigation title: Manage Accounts"))
+		.navigationTitle(Text("navigation.title.manage-accounts", comment: "Manage Accounts"))
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				Button {
@@ -93,21 +93,21 @@ struct AccountsManagementView: View {
 		.sheet(isPresented: $viewModel.showAddAccountSheet) {
 			AddAccountListView()
 		}
-		.alert(Text("Are you sure you want to remove “\(viewModel.accountToDelete?.nameForDisplay ?? "")”?", comment: "Alert title: confirm account removal"),
+		.alert(Text("alert.title.remove-account.\(viewModel.accountToDelete?.nameForDisplay ?? "")", comment: "Are you sure you want to remove “%@“?"),
 			   isPresented: $viewModel.showAccountDeletionAlert) {
 			Button(role: .destructive) {
 				AccountManager.shared.deleteAccount(viewModel.accountToDelete!)
 			} label: {
-				Text("Remove Account", comment: "Button title")
+				Text("button.title.remove-account", comment: "Remove Account")
 			}
 			
 			Button(role: .cancel) {
 				viewModel.restoreAccount(viewModel.accountToDelete!)
 			} label: {
-				Text("Cancel", comment: "Button title")
+				Text("button.title.cancel", comment: "Cancel")
 			}
 		} message: {
-			Text("This action cannot be undone.", comment: "Alert message: remove account confirmation")
+			Text("alert.message.cannot-undo-action", comment: "The action cannot be undone.")
 		}
     }
 	
@@ -119,7 +119,7 @@ struct AccountsManagementView: View {
 				.resizable()
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 25, height: 25)
-			Text(account.nameForDisplay)
+			Text(verbatim: account.nameForDisplay)
 		}
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
 			if account != AccountManager.shared.defaultAccount {
@@ -127,21 +127,27 @@ struct AccountsManagementView: View {
 					viewModel.temporarilyDeleteAccount(account)
 				} label: {
 					Label {
-						Text("Remove Account", comment: "Button title")
+						Text("button.title.remove-account", comment: "Remove Account")
 					} icon: {
 						Image(systemName: "trash")
 					}
 				}
 			}
 			Button {
-				withAnimation {
-					account.isActive.toggle()
-				}
+				account.isActive.toggle()
 			} label: {
-				if account.isActive {
-					Image(systemName: "minus.circle")
-				} else {
-					Image(systemName: "togglepower")
+				Label {
+					if account.isActive {
+						Text("button.title.deactivate-account", comment: "Deactivate Account")
+					} else {
+						Text("button.title.activate-account", comment: "Activate Account")
+					}
+				} icon: {
+					if account.isActive {
+						Image(systemName: "minus.circle")
+					} else {
+						Image(systemName: "togglepower")
+					}
 				}
 			}.tint(account.isActive ? .yellow : Color(uiColor: AppAssets.primaryAccentColor))
 		}

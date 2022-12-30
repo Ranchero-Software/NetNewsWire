@@ -1,0 +1,754 @@
+/* Cancel */
+"action.title.cancel" = "Cancel";
+
+/* Delete */
+"action.title.delete" = "Delete";
+
+/* More */
+"action.title.more" = "More";
+
+/* Rename */
+"action.title.rename" = "Rename";
+
+/* Choose an account to receive the imported feeds and folders */
+"actionsheet.title.choose-opml-destination" = "Choose an account to receive the imported feeds and folders";
+
+/* Choose an account with the subscriptions to export */
+"actionsheet.title.choose-opml-export-account" = "Choose an account with the subscriptions to export";
+
+/* Find in Article */
+"activity.title.find-in-article.titlecase" = "Find in Article";
+
+/* Open in Browser */
+"activity.title.open-in-browser" = "Open in Browser";
+
+/* The variable is the author's home page. In English, the alert message is: Author‘s website:\n%@ */
+"alert.message.author-website.%@" = "Author's website:\n%@";
+
+/* The action cannot be undone.
+   This action cannot be undone. */
+"alert.message.cannot-undo-action" = "This action cannot be undone.";
+
+/* Asks the user for confirmation that they wish to delete a folder. The variable provided is the folder name. In English, the message is: Are you sure you want to delete the “%@” feed? */
+"alert.message.delete-feed.%@" = "Are you sure you want to delete the “%@” feed?";
+
+/* Asks the user for confirmation that they wish to delete a folder. The variable provided is the folder name. In English, the message is: Are you sure you want to delete the “%@” folder? */
+"alert.message.delete-folder.%@" = "Are you sure you want to delete the “%@” folder?";
+
+/* This device cannot send emails. */
+"alert.message.device-cannot-send-email" = "This device cannot send emails.";
+
+/* In English: The theme “%@” already exists. Do you want to overwrite it?
+   This message details that this theme is a duplicate and gives the user the option to overwrite the existing theme. In English, the message is: The theme “%@” already exists. Overwrite it? */
+"alert.message.duplicate-theme.%@" = "The theme “%@” already exists. Overwrite it?";
+
+/* To exit Full Screen mode tap the top of the screen.\n\nYou'll only see this message once. */
+"alert.message.exit-full-screen" = "To exit Full Screen mode tap the top of the screen.\n\nYou'll only see this message once.";
+
+/* Are you sure you want to import “%@” by %@ */
+"alert.message.import-theme.%@.%@" = "Are you sure you want to import “%@” by %@?";
+
+/* The theme “%@” has been imported. */
+"alert.message.imported-theme-successfully.%@" = "The theme “%@” has been imported.";
+
+/* Message that indicates a user can turn off the Mark As Read confirmation in Settings. */
+"alert.message.markasread.turnoffconfirmation" = "You can turn off this confirmation in Settings.";
+
+/* Subscriptions have been imported to your “%@“ account. */
+"alert.message.opml-import-success.%@" = "Subscriptions have been imported to your “%@“ account.";
+
+/* Your subscriptions have been exported successfully. */
+"alert.message.opml.opml-export-success" = "Your subscriptions have been exported successfully.";
+
+/* Error message when theme data is corrupted. The variable is a description provided by Apple. In English, the message is: This theme cannot be used because of data corruption in the Info.plist. %@. */
+"alert.message.theme-data-corrupted.%@" = "This theme cannot be used because of data corruption in the Info.plist. %@.";
+
+/* This alert message provides confirmation that the theme has been installed. In English, the message is: The theme “%@” has been installed. */
+"alert.message.theme-installed.%@" = "The theme “%@” has been installed.";
+
+/* Error message when a key is missing. In English, the message is: This theme cannot be used because the the key—“%@”—is not found in the Info.plist. */
+"alert.message.theme-key-missing.%@" = "This theme cannot be used because the the key—“%@”—is not found in the Info.plist.";
+
+/* Error message when a type is mismatched. In English, the message is: This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist. */
+"alert.message.theme-type-mismatch.%@" = "This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist.";
+
+/* Error message when a value is missing. In English, the message is: This theme cannot be used because the the value—“%@”—is not found in the Info.plist. */
+"alert.message.theme-value-missing.%@" = "This theme cannot be used because the the value—“%@”—is not found in the Info.plist.";
+
+/* Are you sure you want to deactivate “%@“? */
+"alert.title.deactivate-extension.%@" = "Are you sure you want to deactivate “%@“?";
+
+/* Delete folder */
+"alert.title.delete-folder" = "Delete Folder";
+
+/* In English: Are you sure you want to delete “%@”? */
+"alert.title.delete-theme.%@" = "Are you sure you want to delete “%@”?";
+
+/* Duplicate Theme */
+"alert.title.duplicate-theme" = "Duplicate Theme";
+
+/* Alert Error
+   Error */
+"alert.title.error" = "Error";
+
+/* Full Screen */
+"alert.title.exit-full-screen" = "Exit Full Screen";
+
+/* Import Theme */
+"alert.title.import-theme" = "Import Theme";
+
+/* Imported Successfully */
+"alert.title.imported-theme-succesfully" = "Imported Successfully";
+
+/* Install Theme */
+"alert.title.install-theme" = "Install Theme";
+
+/* Variable ordering is theme name; author name. In English, the alert title is: Install theme “%@” by %@? */
+"alert.title.install-theme.%@.%@" = "Install theme “%@” by %@?";
+
+/* Mark As Read */
+"alert.title.markasread" = "Mark As Read";
+
+/* Alert title: Exported Successfully */
+"alert.title.opml.opml-export-success" = "Exported Successfully";
+
+/* Alert title: Imported Successfully */
+"alert.title.opml.opml-import-success" = "Imported Successfully";
+
+/* Are you sure you want to remove “%@“? */
+"alert.title.remove-account.%@" = "Are you sure you want to remove “%@“?";
+
+/* Rename feed. The variable provided is the feed name. In English: Rename “%@” */
+"alert.title.rename-feed.%@" = "Rename “%@”";
+
+/* Theme installed */
+"alert.title.theme-installed" = "Theme Installed";
+
+/* Automatic */
+"appdefaults.colorpalette.automatic" = "Automatic";
+
+/* Dark */
+"appdefaults.colorpalette.dark" = "Dark";
+
+/* Light */
+"appdefaults.colorpalette.light" = "Light";
+
+/* Error - Reader View */
+"button.accessibility.title.error-readerview" = "Error - Reader View";
+
+/* Processing - Reader View */
+"button.accessibility.title.processing-readerview" = "Processing - Reader View";
+
+/* Reader View */
+"button.accessibility.title.readerview" = "Reader View";
+
+/* Selected - Reader View */
+"button.accessibility.title.selected-readerview" = "Selected - Reader View";
+
+/* About */
+"button.title.about" = "About";
+
+/* Activate Account */
+"button.title.activate-account" = "Activate Account";
+
+/* Add Account */
+"button.title.add-account" = "Add Account";
+
+/* Add Folder */
+"button.title.add-folder" = "Add Folder";
+
+/* Add Item */
+"button.title.add-item" = "Add Item";
+
+/* Add Reddit Feed */
+"button.title.add-reddit-feed" = "Add Reddit Feed";
+
+/* Add Web Feed */
+"button.title.add-web-feed" = "Add Web Feed";
+
+/* Add Twitter Feed */
+"button.title.addtwitterfeed" = "Add Twitter Feed";
+
+/* Button title: Always Use Reader View */
+"button.title.always-use-reader-view" = "Always Use Reader View";
+
+/* Article Themes */
+"button.title.artice-themes" = "Article Themes";
+
+/* Button title
+   Cancel */
+"button.title.cancel" = "Cancel";
+
+/* Close */
+"button.title.close" = "Close";
+
+/* Copy Article URL */
+"button.title.copy-article-url" = "Copy Article URL";
+
+/* Copy External URL */
+"button.title.copy-external-url" = "Copy External URL";
+
+/* Copy Feed URL */
+"button.title.copy-feed-url" = "Copy Feed URL";
+
+/* Copy Home Page URL */
+"button.title.copy-home-pageurl" = "Copy Home Page URL";
+
+/* Credentials */
+"button.title.credentials" = "Credentials";
+
+/* Deactivate */
+"button.title.deactivate" = "Deactivate";
+
+/* Deactivate Extension */
+"button.title.deactivate-extension" = "Deactivate Extension";
+
+/* Deactivate Account */
+"button.title.deactivate-account" = "Deactivate Account";
+
+/* Button title: Default */
+"button.title.default" = "Default";
+
+/* Delete
+   Delete Feed */
+"button.title.delete" = "Delete";
+
+/* Delete feed */
+"button.title.delete-feed" = "Delete Feed";
+
+/* Delete Theme */
+"button.title.delete-theme" = "Delete Theme";
+
+/* Dismiss */
+"button.title.dismiss" = "Dismiss";
+
+/* Display & Behaviors */
+"button.title.display-and-behaviors" = "Display & Behaviors";
+
+/* Done */
+"button.title.done" = "Done";
+
+/* Enable Extension */
+"button.title.enable-extension" = "Enable Extension";
+
+/* Export Subscriptions */
+"button.title.export-subscriptions" = "Export Subscriptions";
+
+/* Full Screen */
+"button.title.full-screen" = "Full Screen";
+
+/* Get Info */
+"button.title.get-info" = "Get Info";
+
+/* Go To Feed. Use to navigate to the user to the article list for a feed. */
+"button.title.go-to-feed" = "Go To Feed";
+
+/* Go To Feed. Use to navigate to the user to the article list for a feed. */
+"button.title.go-to-feed.titlecase" = "Go to Feed";
+
+/* Import Subscriptions */
+"button.title.import-subscriptions" = "Import Subscriptions";
+
+/* Import Theme */
+"button.title.import-theme" = "Import Theme";
+
+/* Manage Accounts */
+"button.title.manage-accounts" = "Manage Accounts";
+
+/* Manage Extensions */
+"button.title.manage-extensions" = "Manage Extensions";
+
+/* Mark Above as Read. Used to mark articles above the current article as read. */
+"button.title.mark-above-as-read.titlecase" = "Mark Above as Read";
+
+/* Mark All as Read */
+"button.title.mark-all-as-read" = "Mark All as Read";
+
+/* Mark All as Read in ”feed”. The variable name is the feed name. */
+"button.title.mark-all-as-read.%@" = "Mark All as Read in “%@“";
+
+/* Mark All as Read */
+"button.title.mark-all-as-read.titlecase" = "Mark All as Read";
+
+/* Mark Article Unread */
+"button.title.mark-article-unread" = "Mark Article Unread";
+
+/* Mark as Read
+   Mark as Read. Used to mark an article Read */
+"button.title.mark-as-read.titlecase" = "Mark as Read";
+
+/* Mark as Starred
+   Mark as Starred. Used to mark an article as starred */
+"button.title.mark-as-starred.titlecase" = "Mark as Starred";
+
+/* Mark as Unread
+   Mark as Unread. Used to mark an article unread */
+"button.title.mark-as-unread.titlecase" = "Mark as Unread";
+
+/* Mark as Unstarred
+   Mark as Unstarred. Used to mark an article as unstarred */
+"button.title.mark-as-unstarred.titlecase" = "Mark as Unstarred";
+
+/* Mark Below as Read. Used to mark articles below the current article as read. */
+"button.title.mark-below-as-read.titlecase" = "Mark Below as Read";
+
+/* More */
+"button.title.more" = "More";
+
+/* NetNewsWire Help */
+"button.title.netnewswire-help" = "NetNewsWire Help";
+
+/* NetNewsWire Website */
+"button.title.netnewswire-website" = "NetNewsWire Website";
+
+/* New Article Notifications */
+"button.title.new-article-notifications" = "New Article Notifications";
+
+/* Next */
+"button.title.next" = "Next";
+
+/* Next Article */
+"button.title.next-article" = "Next Article";
+
+/* Next Result */
+"button.title.next-result" = "Next Result";
+
+/* Next Unread Article */
+"button.title.next-unread-article" = "Next Unread Article";
+
+/* Open Home Page */
+"button.title.open-home-page" = "Open Home Page";
+
+/* Open In Browser */
+"button.title.open-in-browser" = "Open In Browser";
+
+/* Open Settings */
+"button.title.open-settings" = "Open Settngs";
+
+/* Open System Settings */
+"button.title.open-system-settings" = "Open System Settings";
+
+/* Overwrite */
+"button.title.overwrite" = "Overwrite";
+
+/* Overwrite Theme */
+"button.title.overwrite-theme" = "Overwrite Theme";
+
+/* Previous Article */
+"button.title.previous-article" = "Previous Article";
+
+/* Previous Result */
+"button.title.previous-result" = "Previous Result";
+
+/* Remove Account */
+"button.title.remove-account" = "Remove Account";
+
+/* Rename */
+"button.title.rename" = "Rename";
+
+/* Selected - Mark Article Unread */
+"button.title.selected-mark-article-unread" = "Selected - Mark Article Unread";
+
+/* Selected - Star Article */
+"button.title.selected-star-article" = "Selected - Star Article";
+
+/* Share */
+"button.title.share" = "Share";
+
+/* Show Feed Article */
+"button.title.show-feed-article" = "Show Feed Article";
+
+/* Show Reader View */
+"button.title.show-reader-view" = "Show Read View";
+
+/* Show Website */
+"button.title.show-website" = "Show Website";
+
+/* Star. Used when marking an article as starred. */
+"button.title.star" = "Star";
+
+/* Star Article */
+"button.title.star-article" = "Star Article";
+
+/* Timeline Layout */
+"button.title.timeline-layout" = "Timeline Layout";
+
+/* Unstar. Used when removing the starred status from an article */
+"button.title.unstar" = "Unstar";
+
+/* Update Credentials */
+"button.title.update-credentials" = "Update Credentials";
+
+/* Use iCloud */
+"button.title.use-cloudkit" = "Use iCloud";
+
+/* Unable to communicate with NetNewsWire. */
+"errordescription.localized.communication-failure" = "Unable to communicate with NetNewsWire.";
+
+/* Add Feed */
+"homescreen.action.add-feed" = "Add Feed";
+
+/* First Unread */
+"homescreen.action.first-unread" = "First Unread";
+
+/* Search */
+"homescreen.action.search" = "Search";
+
+/* Article Search */
+"keyboard.command.article-search" = "Article Search";
+
+/* Clean Up */
+"keyboard.command.clean-up" = "Clean Up";
+
+/* Find in Article */
+"keyboard.command.find-in-article" = "Find in Article";
+
+/* Get Feed Info */
+"keyboard.command.get-feed-info" = "Get Feed Info";
+
+/* Go To All Unread */
+"keyboard.command.go-to-all-unread" = "Go To All Unread";
+
+/* Go To Settings */
+"keyboard.command.go-to-settings" = "Go To Settings";
+
+/* Go To Starred */
+"keyboard.command.go-to-starred" = "Go To Starred";
+
+/* Go To Today */
+"keyboard.command.go-to-today" = "Go To Today";
+
+/* Mark Above as Read */
+"keyboard.command.mark-above-as-read" = "Mark Above as Read";
+
+/* Mark All as Read */
+"keyboard.command.mark-all-as-read" = "Mark All as Read";
+
+/* Mark Below as Read */
+"keyboard.command.mark-below-as-read" = "Mark Below as Read";
+
+/* New Folder */
+"keyboard.command.new-folder" = "New Folder";
+
+/* New Web Feed */
+"keyboard.command.new-web-feed" = "New Web Feed";
+
+/* Next Unread */
+"keyboard.command.next-unread" = "Next Unread";
+
+/* Open In Browser */
+"keyboard.command.open-in-browser" = "Open In Browser";
+
+/* Refresh */
+"keyboard.command.refresh" = "Refresh";
+
+/* Select Next Down */
+"keyboard.command.select-next-down" = "Select Next Down";
+
+/* Select Next Up */
+"keyboard.command.select-next-up" = "Select Next Up";
+
+/* Toggle Read Articles Filter */
+"keyboard.command.toggle-read-articles-filter" = "Toggle Read Articles Filter";
+
+/* Toggle Reader View */
+"keyboard.command.toggle-reader-view" = "Toggle Reader View";
+
+/* Toggle Read Feeds Filter */
+"keyboard.command.toggle-read-feeds-filter" = "Toggle Read Feeds Filter";
+
+/* Toggle Read Status */
+"keyboard.command.toggle-read-status" = "Toggle Read Status";
+
+/* Toggle Sidebar */
+"keyboard.command.toggle-sidebar" = "Toggle Sidebar";
+
+/* Toggle Starred Status */
+"keyboard.command.toggle-starred-status" = "Toggle Starred Status";
+
+/* Collapse Folder */
+"label.accessibility.collapse-folder" = "Collapse Folder";
+
+/* Disclosure button collapsed state for accessibility */
+"label.accessibility.collapsed" = "Collapsed";
+
+/* Expand Folder */
+"label.accessibility.expand-folder" = "Expand Folder";
+
+/* Disclosure button expanded state for accessibility */
+"label.accessibility.expanded" = "Expanded";
+
+/* Filter Read Articles */
+"label.accessibility.filter-read-artciles" = "Filter Read Articles";
+
+/* Selected - Filter Read Articles */
+"label.accessibility.selected-filter-read-artciles" = "Selected - Filter Read Articles";
+
+/* Unread label for accessiblity */
+"label.accessibility.unread" = "Unread";
+
+/* Markdown formatted link to netnewswire.com */
+"label.markdown.netnewswire-website" = "[netnewswire.com](https://netnewswire.com)";
+
+/* Feed name */
+"label.placeholder.feed-name" = "Feed name";
+
+/* In English, this shows the current search result selection out of the total number of search results. Example: 3 of 5. The variables are ordered as current selection, total search results count. */
+"label.search-results.%i.%i" = "%1$i of %2$i";
+
+/* Add, delete, enable, or disable accounts and extensions. */
+"label.text.account-and-extensions-explainer" = "Add, delete, enable, or disable accounts and extensions.";
+
+/* Settings: Accounts & Extensions section header. */
+"label.text.accounts-and-extensions" = "Account & Extensions";
+
+/* Active Accounts */
+"label.text.active-accounts" = "Active Account";
+
+/* Active Extensions */
+"label.text.active-extensions" = "Active Extensions";
+
+/* Additional Contributors */
+"label.text.additional-contributors" = "Additional Contributors";
+
+/* Settings: Appearance section header. */
+"label.text.appearance" = "Appearance";
+
+/* Manage the look, feel, and behavior of NetNewsWire. */
+"label.text.appearance-explainer" = "Manage the look, feel, and behavior of NetNewsWire.";
+
+/* Application */
+"label.text.application" = "Application";
+
+/* Articles */
+"label.text.articles" = "Articles";
+
+/* Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account? [Sign Up Here](https://bazqux.com) */
+"label.text.bazqux-explainer" = "Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account? \n\n[Sign Up Here](https://bazqux.com)";
+
+/* iCloud */
+"label.text.cloudkit-account" = "iCloud";
+
+/* Your iCloud account syncs your feeds across your Mac and iOS devices */
+"label.text.cloudkit-account-footer" = "Your iCloud account syncs your feeds across your Mac and iOS devices";
+
+/* NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices. */
+"label.text.cloudkit-explainer" = "NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices.";
+
+/* Default Themes */
+"label.text.default-themes" = "Default Themes";
+
+/* These themes cannot be deleted. */
+"label.text.default-themes-explainer" = "These themes cannot be deleted.";
+
+/* Device Permissions */
+"label.text.device-permissions" = "Device Permissions";
+
+/* Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more. */
+"label.text.device-permissions-explainer" = "Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.";
+
+/* Feed Providers */
+"label.text.feed-providers" = "Feed Providers";
+
+/* Feed Providers allow you to subscribe to some pages as if they were RSS feeds */
+"label.text.feed-providers-explainer" = "Feed Providers allow you to subscribe to some pages as if they were RSS feeds.";
+
+/* Feed URL */
+"label.text.feed-url" = "Feed URL";
+
+/* Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account? [Sign Up Here](https://feedbin.com/signup) */
+"label.text.feedbin-explainer" = "Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account? \n\n[Sign Up Here](https://feedbin.com/signup)";
+
+/* Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance? [Sign Up Here](https://freshrss.org) */
+"label.text.freshrss-explainer" = "Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance? \n\n[Sign Up Here](https://freshrss.org)";
+
+/* Home Page */
+"label.text.home-page" = "Home Page";
+
+/* Icon Size */
+"label.text.icon-size" = "Icon Size";
+
+/* Inactive Accounts */
+"label.text.inactive-accounts" = "Inactive Account";
+
+/* Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? [Sign Up Here](https://www.inoreader.com) */
+"label.text.inoreader-explainer" = "Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? \n\n[Sign Up Here](https://www.inoreader.com)";
+
+/* Local Account */
+"label.text.local-account" = "Local Account";
+
+/* Local accounts do not sync your feeds across devices */
+"label.text.local-account-explainer" = "Local accounts do not sync your feeds across devices";
+
+/* By Brent Simmons and the Ranchero Software team. */
+"label.text.netnewswire-byline" = "By Brent Simmons and the Ranchero Software team.";
+
+/* Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account? [Sign Up Here](https://newsblur.com) */
+"label.text.newsblur-explainer" = "Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account?\n\n[Sign Up Here](https://newsblur.com)";
+
+/* No results */
+"label.text.no-results" = "No results";
+
+/* (No Text) */
+"label.text.no-text" = "(No Text)";
+
+/* Number of Lines */
+"label.text.number-of-lines" = "Number of Lines";
+
+/* Primary Contributors */
+"label.text.primary-contributors" = "Primary Contributors";
+
+/* Self-Hosted Accounts */
+"label.text.self-hosted-accounts" = "Self-Hosted Accounts";
+
+/* Self-hosted accounts sync your feeds across all your devices */
+"label.text.self-hosted-accounts-explainer" = "Self-hosted accounts sync your feeds across all your devices";
+
+/* Thanks */
+"label.text.thanks" = "Thanks";
+
+/* Created by %@ */
+"label.text.theme-created-byline.%@" = "Created by %@";
+
+/* Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? [Sign Up Here](https://theoldreader.com) */
+"label.text.theoldreader-explainer" = "Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account? \n\n[Sign Up Here](https://theoldreader.com)";
+
+/* Third Party Themes */
+"label.text.third-party-themes" = "Third Party Themes";
+
+/* Timeline */
+"label.text.timeline" = "Timeline";
+
+/* Relative time that the account was last refreshed. The variable is a named relative time. Example: Updated 8 minutes ago */
+"label.text.updatedat.%@" = "Updated %@";
+
+/* Text indicating that feeds have just been updated. Example: Updated Just Now */
+"label.text.updatednow" = "Updated Just Now";
+
+/* Always Dark */
+"label.text.use-dark-appearance" = "Always Dark";
+
+/* Use Device */
+"label.text.use-device-appearance" = "Use Device";
+
+/* Always Light */
+"label.text.use-light-appearance" = "Always Light";
+
+/* Web Account */
+"label.text.web-account" = "Web Account";
+
+/* Web accounts sync your feeds across all your devices */
+"label.text.web-account-explainer" = "Web accounts sync your feeds across all your devices";
+
+/* Link to the NetNewsWire iCloud syncing limitations and soltutions website.
+   Link which opens webpage describing iCloud syncing limitations. */
+"link.markdown.icloud-limitations" = "[iCloud Syncing Limitations & Solutions](https://netnewswire.com/help/iCloud)";
+
+/* Article Appearance menu title */
+"menu.title.articleappearance" = "Article Appearance";
+
+/* About */
+"navigation.title.about" = "About";
+
+/* Add Account */
+"navigation.title.add-account" = "Add Account";
+
+/* Add Extensions */
+"navigation.title.add-extensions" = "Add Extensions";
+
+/* Add Reddit Feed */
+"navigation.title.add-reddit-feed" = "Add Reddit Feed";
+
+/* Add Twitter Feed */
+"navigation.title.add-twitter-feed" = "Add Twitter Feed";
+
+/* Article Themes */
+"navigation.title.article-themes" = "Article Themes";
+
+/* Display & Behaviors */
+"navigation.title.display-and-behaviors" = "Display & Behaviors";
+
+/* Enter Name */
+"navigation.title.enter-name" = "Enter Name";
+
+/* Manage Accounts */
+"navigation.title.manage-accounts" = "Manage Accounts";
+
+/* Manage Extensions */
+"navigation.title.manage-extensions" = "Manage Extensions";
+
+/* New Article Notifications */
+"navigation.title.new-article-notifications" = "New Article Notifications";
+
+/* Settings */
+"navigation.title.settings" = "Settings";
+
+/* Timeline Layout */
+"navigation.title.timeline-layout" = "Timeline Layout";
+
+/* Search Articles */
+"searchbar.placeholder.searcharticles" = "Search Articles";
+
+/* Title used when desribing the search when scoped to all articles. */
+"searchbar.scope.allarticles" = "All Articles";
+
+/* Title used when describing the search when scoped to the current timeline. */
+"searchbar.scope.here" = "Here";
+
+/* All Unread pseudo-feed title */
+"smartfeed.title.allunread" = "All Unread";
+
+/* Starred pseudo-feed title */
+"smartfeed.title.starred" = "Starred";
+
+/* Today pseudo-feed title */
+"smartfeed.title.today" = "Today";
+
+/* Smart Feeds group title */
+"smartfeeds.title" = "Smart Feeds";
+
+/* Email Address */
+"textfield.placeholder.email-address" = "Email Address";
+
+/* Name */
+"textfield.placeholder.name" = "Name";
+
+/* Password */
+"textfield.placeholder.password" = "Password";
+
+/* Screen Name */
+"textfield.placeholder.screen-name" = "Screen Name";
+
+/* Search Term or #hashtag */
+"textfield.placeholder.search-term-hashtag" = "Search Term or #hashtag";
+
+/* Username */
+"textfield.placeholder.username" = "Username";
+
+/* Username or Email */
+"textfield.placeholder.username-or-email" = "Username or Email";
+
+/* Active */
+"toggle.account.active" = "Active";
+
+/* Always Show Reader View */
+"toggle.title.always-show-reader-view" = "Always Show Reader View";
+
+/* Confirm Mark All as Read */
+"toggle.title.confirm-mark-all-as-read" = "Confirm Mark All as Read";
+
+/* Group by Feed */
+"toggle.title.group-by-feed" = "Group by Feed";
+
+/* New Article Notifications */
+"toggle.title.notify-about-new-articles" = "New Article Notifications";
+
+/* Open Links in NetNewsWire */
+"toggle.title.open-links-in-netnewswire" = "Open Links in NetNewsWire";
+
+/* Refresh to Clear Articles */
+"toggle.title.refresh-to-clear-articles" = "Refresh to Clear Articles";
+
+/* Sort Oldest to Newest */
+"toggle.title.sort-oldest-to-newest" = "Sort Oldest to Newest";
+

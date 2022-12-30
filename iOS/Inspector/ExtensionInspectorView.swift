@@ -26,24 +26,24 @@ struct ExtensionInspectorView: View {
 				Button(role: .destructive) {
 					showDeactivateConfirmation = true
 				} label: {
-					Text("Deactivate Extension", comment: "Button title")
+					Text("button.title.deactivate-extension", comment: "Deactivate Extension")
 				}
-				.alert(Text("Are you sure you want to deactivate “\(extensionPoint?.title ?? "")?", comment: "Alert title: confirm deactivate extension") , isPresented: $showDeactivateConfirmation) {
+				.alert(Text("alert.title.deactivate-extension.\(extensionPoint?.title ?? "")", comment: "Are you sure you want to deactivate “%@“?"), isPresented: $showDeactivateConfirmation) {
 					
 					Button(role: .destructive) {
 						ExtensionPointManager.shared.deactivateExtensionPoint(extensionPoint!.extensionPointID)
 						dismiss()
 					} label: {
-						Text("Deactivate Extension", comment: "Button title")
+						Text("button.title.deactivate-extension", comment: "Deactivate Extension")
 					}
 
 					Button(role: .cancel) {
 						 //
 					} label: {
-						Text("Cancel", comment: "Button title")
+						Text("button.title.cancel", comment: "Cancel")
 					}
 				} message: {
-					Text("This action cannot be undone.", comment: "Alert message: remove account confirmation")
+					Text("alert.message.cannot-undo-action", comment: "This action cannot be undone.")
 				}
 				Spacer()
 			}

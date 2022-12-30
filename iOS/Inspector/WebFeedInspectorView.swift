@@ -29,19 +29,19 @@ struct WebFeedInspectorView: View {
 						  prompt: nil)
 
 				Toggle(isOn: Binding(get: { webFeed.isNotifyAboutNewArticles ?? false }, set: { webFeed.isNotifyAboutNewArticles = $0 })) {
-					Text("Notify About New Articles", comment: "Toggle denoting whether the user has enabled new article notifications for this feed.")
+					Text("toggle.title.notify-about-new-articles", comment: "New Article Notifications")
 				}
 
 				if webFeed.isFeedProvider == false {
 					Toggle(isOn: Binding(
 						get: { webFeed.isArticleExtractorAlwaysOn ?? false },
 						set: { webFeed.isArticleExtractorAlwaysOn = $0 })) {
-						Text("Always Show Reader View", comment: "Toggle denoting whether the user has enabled Reader view for this feed.")
+						Text("toggle.title.always-show-reader-view", comment: "Always Show Reader View")
 					}
 				}
 			}
 			
-			Section(header: Text("Home Page", comment: "Home Page section header in the Feed inspector.")) {
+			Section(header: Text("label.text.home-page", comment: "Home Page")) {
 				HStack {
 					Text(webFeed.homePageURL?.decodedURLString ?? "")
 					Spacer()
@@ -54,7 +54,7 @@ struct WebFeedInspectorView: View {
 				}
 			}
 
-			Section(header: Text("Feed URL", comment: "Feed URL section header in the Feed inspector.")) {
+			Section(header: Text("label.text.feed-url", comment: "Feed URL")) {
 				Text(webFeed.url.description)
 			}
 		}

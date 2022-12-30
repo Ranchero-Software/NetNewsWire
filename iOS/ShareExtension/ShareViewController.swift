@@ -140,7 +140,7 @@ class ShareViewController: SLComposeServiceViewController, ShareFolderPickerCont
 			
 			let folderPickerController = ShareFolderPickerController()
 			
-			folderPickerController.navigationController?.title = NSLocalizedString("Folder", comment: "Folder")
+			folderPickerController.navigationController?.title = NSLocalizedString("navigation.title.folder", comment: "Folder")
 			folderPickerController.delegate = self
 			folderPickerController.containers = self.flattenedContainers
 			folderPickerController.selectedContainerID = self.selectedContainer?.containerID

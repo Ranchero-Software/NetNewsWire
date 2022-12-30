@@ -72,14 +72,14 @@ struct AccountInspectorView: View {
 			TextField(text: Binding(
 				get: { account.name ?? account.defaultName },
 				set: { account.name = $0 }),
-					  prompt: Text(account.defaultName)) {
-				Text("Name", comment: "Textfield for the user to enter account name.")
+					  prompt: Text(verbatim: account.defaultName)) {
+				Text("textfield.placeholder.name", comment: "Name")
 			}
 			
 			Toggle(isOn: Binding(get: {
 				account.isActive
 			}, set: { account.isActive = $0 })) {
-				Text("Active", comment: "Toggle denoting if the account is active.")
+				Text("toggle.account.active", comment: "Active")
 			}
 		}
 	}
@@ -91,7 +91,7 @@ struct AccountInspectorView: View {
 			} label: {
 				HStack {
 					Spacer()
-					Text("Credentials", comment: "Button title")
+					Text("button.title.credentials", comment: "Credentials")
 					Spacer()
 				}
 			}
@@ -105,26 +105,26 @@ struct AccountInspectorView: View {
 			} label: {
 				HStack {
 					Spacer()
-					Text("Remove Account", comment: "Button title")
+					Text("button.title.remove-account", comment: "Remove Account")
 					Spacer()
 				}
 			}
-			.alert(Text("Are you sure you want to remove “\(account.nameForDisplay)”?", comment: "Alert title: confirm account removal"), isPresented: $showRemoveAccountAlert) {
+			.alert(Text("alert.title.remove-account.\(account.nameForDisplay)", comment: "Are you sure you want to remove “%@“?"), isPresented: $showRemoveAccountAlert) {
 				Button(role: .destructive) {
 					AccountManager.shared.deleteAccount(account)
 					dismiss()
 				} label: {
-					Text("Remove Account", comment: "Button title")
+					Text("button.title.remove-account", comment: "Remove Account")
 				}
 				
 				Button(role: .cancel) {
 					//
 				} label: {
-					Text("Cancel", comment: "Button title")
+					Text("button.title.cancel", comment: "Cancel")
 				}
 
 			} message: {
-				Text("This action cannot be undone.", comment: "Alert message: remove account confirmation")
+				Text("alert.message.cannot-undo-action", comment: "This action cannot be undone.")
 			}
 		}
 	}
@@ -132,7 +132,7 @@ struct AccountInspectorView: View {
 	var cloudKitLimitations: some View {
 		HStack {
 			Spacer()
-			Text("[iCloud Syncing Limitations & Solutions](https://netnewswire.com/help/iCloud)", comment: "Link to the NetNewsWire iCloud syncing limitations and soltutions website.")
+			Text("link.markdown.icloud-limitations", comment: "Link to the NetNewsWire iCloud syncing limitations and soltutions website.")
 			Spacer()
 		}
 	}

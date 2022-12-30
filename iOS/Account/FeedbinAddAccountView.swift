@@ -36,21 +36,16 @@ struct FeedbinAddAccountView: View {
 			}
 			.toolbar {
 				ToolbarItem(placement: .navigationBarLeading) {
-					Button(action: { dismiss() }, label: { Text("Cancel", comment: "Button title") })
+					Button(action: { dismiss() }, label: { Text("button.title.cancel", comment: "Cancel") })
 						.disabled(showProgressIndicator)
 				}
 				ToolbarItem(placement: .navigationBarTrailing) {
 					if showProgressIndicator { ProgressView() }
 				}
 			}
-			.alert(Text("Error", comment: "Alert title: Error"), isPresented: $accountError.1) {
-				Button(role: .cancel) {
-					//
-				} label: {
-					Text("Dismiss", comment: "Button title")
-				}
+			.alert(Text("alert.title.error", comment: "Error"), isPresented: $accountError.1) {
 			} message: {
-				Text(accountError.0?.localizedDescription ?? "Error")
+				Text(verbatim: accountError.0?.localizedDescription ?? "Error")
 			}
 			.navigationTitle(Text(verbatim: account?.type.localizedAccountName() ?? "Feedbin"))
 			.navigationBarTitleDisplayMode(.inline)
@@ -62,11 +57,11 @@ struct FeedbinAddAccountView: View {
 	
 	var accountDetails: some View {
 		Section {
-			TextField("Email", text: $accountEmail, prompt: Text("Email Address", comment: "Textfield for the user to enter their account email address."))
+			TextField("Email", text: $accountEmail, prompt: Text("textfield.placeholder.email-address", comment: "Email Address"))
 				.autocorrectionDisabled()
 				.autocapitalization(.none)
 				.textContentType(.username)
-			SecureField("Password", text: $accountPassword, prompt: Text("Password", comment: "Textfield for the user to enter their account password."))
+			SecureField("Password", text: $accountPassword, prompt: Text("textfield.placeholder.password", comment: "Password"))
 				.textContentType(.password)
 		}
 	}
@@ -92,9 +87,9 @@ struct FeedbinAddAccountView: View {
 				HStack{
 					Spacer()
 					if account == nil {
-						Text("Add Account", comment: "Button title")
+						Text("button.title.add-account", comment: "Add Account")
 					} else {
-						Text("Update Credentials", comment: "Button title")
+						Text("button.title.update-credentials", comment: "Update Credentials")
 					}
 					Spacer()
 				}
@@ -105,7 +100,7 @@ struct FeedbinAddAccountView: View {
 	
 	var feedbinAccountExplainer: some View {
 		if account == nil {
-			return Text("Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account? [Sign Up Here](https://feedbin.com/signup)", comment: "Explanatory text describing the Feedbin account.")
+			return Text("label.text.feedbin-explainer", comment: "Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account? [Sign Up Here](https://feedbin.com/signup)")
 				.multilineTextAlignment(.center)
 		}
 		return Text("").multilineTextAlignment(.center)

@@ -507,7 +507,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 			return
 		}
 
-		let title = NSLocalizedString("button.title.markallasread", comment: "Mark All as Read")
+		let title = NSLocalizedString("button.title.mark-all-as-read", comment: "Mark All as Read")
 		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 			self?.coordinator.markAllAsReadInTimeline()
 		}
@@ -623,7 +623,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		
 		var menuItems: [UIAction] = []
 		
-		let addWebFeedActionTitle = NSLocalizedString("button.title.addwebfeed", comment: "Add Web Feed")
+		let addWebFeedActionTitle = NSLocalizedString("button.title.add-web-feed", comment: "Add Web Feed")
 		let addWebFeedAction = UIAction(title: addWebFeedActionTitle, image: AppAssets.plus) { _ in
 			self.coordinator.showAddWebFeed()
 		}
@@ -631,7 +631,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 		
 		if AccountManager.shared.activeAccounts.contains(where: { $0.type == .onMyMac || $0.type == .cloudKit }) {
 			if ExtensionPointManager.shared.isRedditEnabled {
-				let addRedditFeedActionTitle = NSLocalizedString("button.title.addredditfeed", comment: "Add Reddit Feed")
+				let addRedditFeedActionTitle = NSLocalizedString("button.title.add-reddit-feed", comment: "Add Reddit Feed")
 				let addRedditFeedAction = UIAction(title: addRedditFeedActionTitle, image: AppAssets.contextMenuReddit.tinted(color: .label)) { _ in
 					self.coordinator.showAddRedditFeed()
 				}
@@ -646,14 +646,14 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 			}
 		}
 					
-		let addWebFolderActionTitle = NSLocalizedString("button.title.addfolder", comment: "Add Folder")
+		let addWebFolderActionTitle = NSLocalizedString("button.title.add-folder", comment: "Add Folder")
 		let addWebFolderAction = UIAction(title: addWebFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
 			self.coordinator.showAddFolder()
 		}
 		
 		menuItems.append(addWebFolderAction)
 		
-		let contextMenu = UIMenu(title: NSLocalizedString("button.title.additem", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
+		let contextMenu = UIMenu(title: NSLocalizedString("button.title.add-item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
 		
 		self.addNewItemButton.menu = contextMenu
 	}
@@ -976,7 +976,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 		
-		let title = NSLocalizedString("button.title.openhomepage", comment: "Open Home Page")
+		let title = NSLocalizedString("button.title.open-home-page", comment: "Open Home Page")
 		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
 			self?.coordinator.showBrowserForFeed(indexPath)
 		}
@@ -988,7 +988,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("button.title.openhomepage", comment: "Open Home Page")
+		let title = NSLocalizedString("button.title.open-home-page", comment: "Open Home Page")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showBrowserForFeed(indexPath)
 			completion(true)
@@ -1002,7 +1002,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let title = NSLocalizedString("button.title.copyfeedurl", comment: "Copy Feed URL")
+		let title = NSLocalizedString("button.title.copy-feed-url", comment: "Copy Feed URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
@@ -1015,7 +1015,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 
-		let title = NSLocalizedString("button.title.copyfeedurl", comment: "Copy Feed URL")
+		let title = NSLocalizedString("button.title.copy-feed-url", comment: "Copy Feed URL")
 		let action = UIAlertAction(title: title, style: .default) { action in
 			UIPasteboard.general.url = url
 			completion(true)
@@ -1030,7 +1030,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let title = NSLocalizedString("button.title.copyhomepageurl", comment: "Copy Home Page URL")
+		let title = NSLocalizedString("button.title.copy-home-pageurl", comment: "Copy Home Page URL")
 		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
 			UIPasteboard.general.url = url
 		}
@@ -1044,7 +1044,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 
-		let title = NSLocalizedString("button.title.copyhomepageurl", comment: "Copy Home Page URL")
+		let title = NSLocalizedString("button.title.copy-home-pageurl", comment: "Copy Home Page URL")
 		let action = UIAlertAction(title: title, style: .default) { action in
 			UIPasteboard.general.url = url
 			completion(true)
@@ -1059,7 +1059,7 @@ private extension MasterFeedViewController {
 				return nil
 		}
 		
-		let title = NSLocalizedString("button.title.markallasread", comment: "Mark All as Read")
+		let title = NSLocalizedString("button.title.mark-all-as-read.titlecase", comment: "Mark All as Read")
 		let cancel = {
 			completion(true)
 		}
@@ -1084,7 +1084,7 @@ private extension MasterFeedViewController {
 	}
 	
 	func renameAction(indexPath: IndexPath) -> UIAction {
-		let title = NSLocalizedString("button.title.rename", comment: "Rename Feed")
+		let title = NSLocalizedString("button.title.rename", comment: "Rename")
 		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] action in
 			self?.rename(indexPath: indexPath)
 		}
@@ -1096,7 +1096,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 		
-		let title = NSLocalizedString("button.title.getinfo", comment: "Get Info")
+		let title = NSLocalizedString("button.title.get-info", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: webFeed)
 		}
@@ -1104,7 +1104,7 @@ private extension MasterFeedViewController {
 	}
 
 	func getAccountInfoAction(account: Account) -> UIAction {
-		let title = NSLocalizedString("button.title.getinfo", comment: "Get Info")
+		let title = NSLocalizedString("button.title.get-info", comment: "Get Info")
 		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
 			self?.coordinator.showAccountInspector(for: account)
 		}
@@ -1124,7 +1124,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("button.title.getinfo", comment: "Get Info")
+		let title = NSLocalizedString("button.title.get-info", comment: "Get Info")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: webFeed)
 			completion(true)
@@ -1139,7 +1139,7 @@ private extension MasterFeedViewController {
 				  return nil
 			  }
 		
-		let title = NSLocalizedString("button.title.markallasread", comment: "Mark All as Read")
+		let title = NSLocalizedString("button.title.mark-all-as-read.titlecase", comment: "Mark All as Read")
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				if let articles = try? feed.fetchUnreadArticles() {
@@ -1156,7 +1156,7 @@ private extension MasterFeedViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("button.title.markallasread", comment: "Mark All as Read")
+		let title = NSLocalizedString("button.title.mark-all-as-read.titlecase", comment: "Mark All as Read")
 		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
@@ -1175,7 +1175,7 @@ private extension MasterFeedViewController {
 	func rename(indexPath: IndexPath) {
 		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else { return	}
 
-		let formatString = NSLocalizedString("button.title.renamefeed.%@", comment: "Rename feed. The variable provided is the feed name.")
+	let formatString = NSLocalizedString("alert.title.rename-feed.%@", comment: "Rename feed. The variable provided is the feed name. In English: Rename “%@”")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, feed.nameForDisplay) as String
 		
 		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
@@ -1232,12 +1232,12 @@ private extension MasterFeedViewController {
 		let title: String
 		let message: String
 		if feed is Folder {
-			title = NSLocalizedString("button.title.deletefolder", comment: "Delete folder")
-			let localizedInformativeText = NSLocalizedString("alert.message.deletefolder.%@", comment: "Asks the user for confirmation that they wish to delete a folder. The variable provided is the folder name.")
+			title = NSLocalizedString("alert.title.delete-folder", comment: "Delete folder")
+			let localizedInformativeText = NSLocalizedString("alert.message.delete-folder.%@", comment: "Asks the user for confirmation that they wish to delete a folder. The variable provided is the folder name. In English, the message is: Are you sure you want to delete the “%@” folder?")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
 		} else  {
-			title = NSLocalizedString("button.title.deletefeed", comment: "Delete feed")
-			let localizedInformativeText = NSLocalizedString("alert.message.deletefeed.%@", comment: "Asks the user for confirmation that they wish to delete a feed. The variable provided is the feed name.")
+			title = NSLocalizedString("button.title.delete-feed", comment: "Delete feed")
+			let localizedInformativeText = NSLocalizedString("alert.message.delete-feed.%@", comment: "Asks the user for confirmation that they wish to delete a folder. The variable provided is the folder name. In English, the message is: Are you sure you want to delete the “%@” feed?")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, feed.nameForDisplay) as String
 		}
 		

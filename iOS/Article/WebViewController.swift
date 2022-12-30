@@ -389,8 +389,8 @@ extension WebViewController: WKNavigationDelegate {
 				if UIApplication.shared.canOpenURL(url) {
 					UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
 				} else {
-					let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
-					alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
+					let alert = UIAlertController(title: NSLocalizedString("alert.title.error", comment: "Alert Error"), message: NSLocalizedString("alert.message.device-cannot-send-email", comment: "This device cannot send emails."), preferredStyle: .alert)
+					alert.addAction(.init(title: NSLocalizedString("button.title.dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
 					self.present(alert, animated: true, completion: nil)
 				}
 			} else if components?.scheme == "tel" {
@@ -726,7 +726,7 @@ private extension WebViewController {
 	
 	func prevArticleAction() -> UIAction? {
 		guard coordinator.isPrevArticleAvailable else { return nil }
-		let title = NSLocalizedString("Previous Article", comment: "Previous Article")
+		let title = NSLocalizedString("button.title.previous-article", comment: "Previous Article")
 		return UIAction(title: title, image: AppAssets.prevArticleImage) { [weak self] action in
 			self?.coordinator.selectPrevArticle()
 		}
@@ -734,7 +734,7 @@ private extension WebViewController {
 	
 	func nextArticleAction() -> UIAction? {
 		guard coordinator.isNextArticleAvailable else { return nil }
-		let title = NSLocalizedString("Next Article", comment: "Next Article")
+		let title = NSLocalizedString("button.title.next-article", comment: "Next Article")
 		return UIAction(title: title, image: AppAssets.nextArticleImage) { [weak self] action in
 			self?.coordinator.selectNextArticle()
 		}
@@ -743,7 +743,7 @@ private extension WebViewController {
 	func toggleReadAction() -> UIAction? {
 		guard let article = article, !article.status.read || article.isAvailableToMarkUnread else { return nil }
 		
-		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
+		let title = article.status.read ? NSLocalizedString("button.title.mark-as-unread.titlecase", comment: "Mark as Unread") : NSLocalizedString("button.title.mark-as-read.titlecase", comment: "Mark as Read")
 		let readImage = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
 		return UIAction(title: title, image: readImage) { [weak self] action in
 			self?.coordinator.toggleReadForCurrentArticle()
@@ -752,7 +752,7 @@ private extension WebViewController {
 
 	func toggleStarredAction() -> UIAction {
 		let starred = article?.status.starred ?? false
-		let title = starred ? NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") : NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
+		let title = starred ? NSLocalizedString("button.title.mark-as-unstarred.titlecase", comment: "Mark as Unstarred") : NSLocalizedString("button.title.mark-as-starred.titlecase", comment: "Mark as Starred")
 		let starredImage = starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
 		return UIAction(title: title, image: starredImage) { [weak self] action in
 			self?.coordinator.toggleStarredForCurrentArticle()
@@ -761,7 +761,7 @@ private extension WebViewController {
 
 	func nextUnreadArticleAction() -> UIAction? {
 		guard coordinator.isAnyUnreadAvailable else { return nil }
-		let title = NSLocalizedString("Next Unread Article", comment: "Next Unread Article")
+		let title = NSLocalizedString("button.title.next-unread-article", comment: "Next Unread Article")
 		return UIAction(title: title, image: AppAssets.nextUnreadArticleImage) { [weak self] action in
 			self?.coordinator.selectNextUnread()
 		}
@@ -769,7 +769,7 @@ private extension WebViewController {
 	
 	func toggleArticleExtractorAction() -> UIAction {
 		let extracted = articleExtractorButtonState == .on
-		let title = extracted ? NSLocalizedString("Show Feed Article", comment: "Show Feed Article") : NSLocalizedString("Show Reader View", comment: "Show Reader View")
+		let title = extracted ? NSLocalizedString("button.title.show-feed-article", comment: "Show Feed Article") : NSLocalizedString("button.title.show-reader-view", comment: "Show Reader View")
 		let extractorImage = extracted ? AppAssets.articleExtractorOffSF : AppAssets.articleExtractorOnSF
 		return UIAction(title: title, image: extractorImage) { [weak self] action in
 			self?.toggleArticleExtractor()
@@ -777,7 +777,7 @@ private extension WebViewController {
 	}
 
 	func shareAction() -> UIAction {
-		let title = NSLocalizedString("Share", comment: "Share")
+		let title = NSLocalizedString("button.title.share", comment: "Share")
 		return UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
 			self?.showActivityDialog()
 		}
