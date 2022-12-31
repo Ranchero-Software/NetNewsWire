@@ -26,7 +26,7 @@ class MasterFeedViewController: UITableViewController, UndoableCommandRunner, Ma
 	let refreshProgressModel = RefreshProgressModel()
 	lazy var progressBarViewController = UIHostingController(rootView: RefreshProgressView(progressBarMode: refreshProgressModel))
 	
-	var mainControllerIdentifer = MainControllerIdentifier.masterFeed
+	var mainControllerIdentifier = MainControllerIdentifier.masterFeed
 	
 	weak var coordinator: SceneCoordinator!
 	var undoableCommands = [UndoableCommand]()

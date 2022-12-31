@@ -181,7 +181,7 @@ class ReaderAPIAccountViewController: UITableViewController, Logging {
 							case .success:
 								break
 							case .failure(let error):
-								self.showError(NSLocalizedString(error.localizedDescription, comment: "Accoount Refresh Error"))
+								self.showError(NSLocalizedString(error.localizedDescription, comment: "Account Refresh Error"))
 							}
 						}
 						
