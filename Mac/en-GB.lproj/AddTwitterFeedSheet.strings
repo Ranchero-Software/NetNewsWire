@@ -1,0 +1,51 @@
+
+/* Class = "NSMenuItem"; title = "Search"; ObjectID = "0gG-oY-8yR"; */
+"0gG-oY-8yR.title" = "Search";
+
+/* Class = "NSMenuItem"; title = "Mentions"; ObjectID = "177-F8-Esj"; */
+"177-F8-Esj.title" = "Mentions";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "5AA-um-oEb"; */
+"5AA-um-oEb.title" = "Label";
+
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "6NK-Ql-drk"; */
+"6NK-Ql-drk.title" = "Add";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "8ca-Qp-BkT"; */
+"8ca-Qp-BkT.title" = "Name:";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "APc-af-7Um"; */
+"APc-af-7Um.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Screen Name"; ObjectID = "DBZ-RV-FfV"; */
+"DBZ-RV-FfV.title" = "Screen Name";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "Dop-HC-6Q9"; */
+"Dop-HC-6Q9.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Folder:"; ObjectID = "Kwx-7B-CIu"; */
+"Kwx-7B-CIu.title" = "Folder:";
+
+/* Class = "NSTextFieldCell"; title = "Account:"; ObjectID = "LFf-JL-Ahl"; */
+"LFf-JL-Ahl.title" = "Account:";
+
+/* Class = "NSWindow"; title = "Add Twitter Feed"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Add Twitter Feed";
+
+/* Class = "NSMenuItem"; title = "@username"; ObjectID = "Tfk-aQ-RKg"; */
+"Tfk-aQ-RKg.title" = "@username";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "j09-9b-bGs"; */
+"j09-9b-bGs.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "pLP-pL-5R5"; */
+"pLP-pL-5R5.placeholderString" = "Optional";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "qto-IO-a1j"; */
+"qto-IO-a1j.title" = "Type:";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "tLJ-zY-CcZ"; */
+"tLJ-zY-CcZ.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Home Timeline"; ObjectID = "uE6-1a-w5g"; */
+"uE6-1a-w5g.title" = "Home Timeline";
