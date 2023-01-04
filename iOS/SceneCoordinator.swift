@@ -352,6 +352,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner, Logging {
 					}
 				}
 			}
+			
+			if let isSidebarHidden = windowState[UserInfoKey.isSidebarHidden] as? Bool, isSidebarHidden {
+				DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+					self.rootSplitViewController.preferredDisplayMode = .secondaryOnly
+				}
+			}
 
 			rebuildBackingStores(initialLoad: true)
 
@@ -2124,7 +2130,8 @@ private extension SceneCoordinator {
 		return [
 			UserInfoKey.readFeedsFilterState: isReadFeedsFiltered,
 			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
-			UserInfoKey.readArticlesFilterState: readArticlesFilterState
+			UserInfoKey.readArticlesFilterState: readArticlesFilterState,
+			UserInfoKey.isSidebarHidden: rootSplitViewController.displayMode == .secondaryOnly
 		]
 	}
 	
