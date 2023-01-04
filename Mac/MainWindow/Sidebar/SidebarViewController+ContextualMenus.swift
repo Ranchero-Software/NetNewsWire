@@ -395,15 +395,15 @@ private extension SidebarViewController {
 	}
 
 	func catchUpSubMenu(_ objects: [Any]) -> NSMenu {
-		let menu = NSMenu(title: "Catch up to articles older than...")
+		let menu = NSMenu(title: NSLocalizedString("menu.title.catch-up-to-articles", comment: "Catch up to articles older than..."))
 
-		menu.addItem(menuItem(NSLocalizedString("1 day", comment: "Command"), #selector(markObjectsReadOlderThanOneDayFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("2 days", comment: "Command"), #selector(markObjectsReadOlderThanTwoDaysFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("3 days", comment: "Command"), #selector(markObjectsReadOlderThanThreeDaysFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("1 week", comment: "Command"), #selector(markObjectsReadOlderThanOneWeekFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("2 weeks", comment: "Command"), #selector(markObjectsReadOlderThanTwoWeeksFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("1 month", comment: "Command"), #selector(markObjectsReadOlderThanOneMonthFromContextualMenu(_:)), objects))
-		menu.addItem(menuItem(NSLocalizedString("1 year", comment: "Command"), #selector(markObjectsReadOlderThanOneYearFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("button.title.1-day", comment: "1 day"), #selector(markObjectsReadOlderThanOneDayFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("button.title.2-days", comment: "2 days"), #selector(markObjectsReadOlderThanTwoDaysFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("button.title.3-days", comment: "3 days"), #selector(markObjectsReadOlderThanThreeDaysFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("button.title.1-week", comment: "1 week"), #selector(markObjectsReadOlderThanOneWeekFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("button.title.2-weeks", comment: "2 weeks"), #selector(markObjectsReadOlderThanTwoWeeksFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("button.title.1-month", comment: "1 month"), #selector(markObjectsReadOlderThanOneMonthFromContextualMenu(_:)), objects))
+		menu.addItem(menuItem(NSLocalizedString("button.title.1-year", comment: "1 year"), #selector(markObjectsReadOlderThanOneYearFromContextualMenu(_:)), objects))
 
 		return menu
 	}

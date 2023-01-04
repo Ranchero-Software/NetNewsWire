@@ -164,8 +164,29 @@
 /* Mark Below as Read */
 "button.title-mark-below-as-read.titlecase" = "Mark Below as Read";
 
+/* 1 day */
+"button.title.1-day" = "1 day";
+
+/* 1 month */
+"button.title.1-month" = "1 month";
+
+/* 1 week */
+"button.title.1-week" = "1 week";
+
+/* 1 year */
+"button.title.1-year" = "1 year";
+
+/* 2 days */
+"button.title.2-days" = "2 days";
+
 /* Every 2 Hours */
 "button.title.2-hours" = "Every 2 Hours";
+
+/* 2 weeks */
+"button.title.2-weeks" = "2 weeks";
+
+/* 3 days */
+"button.title.3-days" = "3 days";
 
 /* Every 4 Hours */
 "button.title.4-hours" = "Every 4 Hours";
@@ -581,6 +602,9 @@
 
 /* Web accounts sync your feeds across all your devices */
 "label.text.web-account-explainer" = "Web accounts sync your feeds across all your devices";
+
+/* Catch up to articles older than... */
+"menu.title.catch-up-to-articles" = "Catch up to articles older than...";
 
 /* Choose a location for the exported OPML file. */
 "panel.message.export-opml" = "Choose a location for the exported OPML file.";

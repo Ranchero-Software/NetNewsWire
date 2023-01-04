@@ -19,9 +19,6 @@
 /* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
 "3rS-ZA-NoH.title" = "Speech";
 
-/* Class = "NSMenuItem"; title = "Slack Group"; ObjectID = "4eb-qF-n9S"; */
-"4eb-qF-n9S.title" = "Slack Group";
-
 /* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
 "4EN-yA-p0u.title" = "Find";
 
@@ -72,9 +69,6 @@
 
 /* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
 "AYu-sK-qS6.title" = "Main Menu";
-
-/* Class = "NSMenuItem"; title = "Release Notes"; ObjectID = "b5s-xg-B1w"; */
-"b5s-xg-B1w.title" = "Release Notes";
 
 /* Class = "NSMenuItem"; title = "Hide Read Articles"; ObjectID = "b10-sA-Yzi"; */
 "b10-sA-Yzi.title" = "Hide Read Articles";
@@ -196,9 +190,6 @@
 /* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
 "Kd2-mp-pUS.title" = "Show All";
 
-/* Class = "NSMenuItem"; title = "How To Support NetNewsWire"; ObjectID = "kfC-NQ-g3E"; */
-"kfC-NQ-g3E.title" = "How To Support NetNewsWire";
-
 /* Class = "NSMenuItem"; title = "New Twitter Feed…"; ObjectID = "ki4-7l-tM6"; */
 "ki4-7l-tM6.title" = "New Twitter Feed…";
 
@@ -213,9 +204,6 @@
 
 /* Class = "NSMenuItem"; title = "Main Window"; ObjectID = "LSZ-ci-Jb5"; */
 "LSZ-ci-Jb5.title" = "Main Window";
-
-/* Class = "NSMenuItem"; title = "Bug Tracker"; ObjectID = "mE2-pM-rQF"; */
-"mE2-pM-rQF.title" = "Bug Tracker";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "Check Grammar With Spelling";
@@ -247,9 +235,6 @@
 /* Class = "NSMenuItem"; title = "Hide NetNewsWire"; ObjectID = "Olw-nP-bQN"; */
 "Olw-nP-bQN.title" = "Hide NetNewsWire";
 
-/* Class = "NSMenuItem"; title = "Technotes"; ObjectID = "Ou5-Cc-iCb"; */
-"Ou5-Cc-iCb.title" = "Technotes";
-
 /* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
 "OwM-mh-QMV.title" = "Find Previous";
 
@@ -274,7 +259,7 @@
 /* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Ppm-uh-K5n"; */
 "Ppm-uh-K5n.title" = "Refresh";
 
-/* Class = "NSMenuItem"; title = "Website"; ObjectID = "q2Z-9K-GBd"; */
+/* Class = "NSMenuItem"; title = "NetNewsWire Website"; ObjectID = "q2Z-9K-GBd"; */
 "q2Z-9K-GBd.title" = "Website";
 
 /* Class = "NSMenuItem"; title = "Next Unread"; ObjectID = "q3p-nE-m2k"; */
@@ -282,9 +267,6 @@
 
 /* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
 "q09-fT-Sye.title" = "Find Next";
-
-/* Class = "NSMenuItem"; title = "GitHub Repository"; ObjectID = "QfD-Xw-sdF"; */
-"QfD-Xw-sdF.title" = "GitHub Repository";
 
 /* Class = "NSMenuItem"; title = "Copy Article URL"; ObjectID = "qNk-By-jKp"; */
 "qNk-By-jKp.title" = "Copy Article URL";
