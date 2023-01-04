@@ -1,38 +1,57 @@
+/* (No Comment) */
 "4xjRes" = "You must supply a URL.";
 
+/* (No Comment) */
 "5CYbGL" = "There are ${count} options matching ‘${folderName}’.";
 
+/* (No Comment) */
 "BCHr23" = "URL";
 
+/* (No Comment) */
 "CSrgUY" = "Account Name";
 
-"ExjqcE" = "Unable to communicate with NetNewsWire.";
-
-"HHiZUh" = "Just to confirm, you wanted ‘${accountName}’?";
-
-"IbqUVS" = "There are ${count} options matching ‘${accountName}’.";
-
-"IuAbef" = "Add a web feed";
-
-"JGkCuS" = "A valid Account Name is required.";
-
+/* (No Comment) */
 "dkSFD2" = "Add ${url} to ${folderName} in ${accountName}";
 
+/* (No Comment) */
 "ef5kBt" = "A valid Folder Name is required.";
 
+/* (No Comment) */
+"ExjqcE" = "Unable to communicate with NetNewsWire.";
+
+/* (No Comment) */
 "fWs3li" = "Which one?";
 
+/* (No Comment) */
 "gEzXaM" = "Which one?";
 
+/* (No Comment) */
+"HHiZUh" = "Just to confirm, you wanted ‘${accountName}’?";
+
+/* (No Comment) */
+"IbqUVS" = "There are ${count} options matching ‘${accountName}’.";
+
+/* (No Comment) */
+"IuAbef" = "Add a web feed";
+
+/* (No Comment) */
+"JGkCuS" = "A valid Account Name is required.";
+
+/* (No Comment) */
 "jLLidQ" = "What is the ${url} you would like add?";
 
+/* (No Comment) */
 "k5GTo0" = "Just to confirm, you wanted ‘${folderName}’?";
 
+/* (No Comment) */
 "kaKsEY" = "Add ${url} to ${accountName}";
 
+/* (No Comment) */
 "oV681v" = "Add Web Feed";
 
+/* (No Comment) */
 "uSfloN" = "Unable to communicate with NetNewsWire.";
 
+/* (No Comment) */
 "zXhMPF" = "Folder Name";
 

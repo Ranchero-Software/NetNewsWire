@@ -1,4 +1,3 @@
-
 /* Class = "NSButtonCell"; title = "Add"; ObjectID = "6NK-Ql-drk"; */
 "6NK-Ql-drk.title" = "Add";
 
@@ -14,20 +13,21 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "Dop-HC-6Q9"; */
 "Dop-HC-6Q9.title" = "Cancel";
 
-/* Class = "NSTextFieldCell"; title = "Folder:"; ObjectID = "Kwx-7B-CIu"; */
-"Kwx-7B-CIu.title" = "Folder:";
-
-/* Class = "NSWindow"; title = "Add Web Feed"; ObjectID = "QvC-M9-y7g"; */
-"QvC-M9-y7g.title" = "Add Web Feed";
-
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "j09-9b-bGs"; */
 "j09-9b-bGs.title" = "Item 3";
 
+/* Class = "NSTextFieldCell"; title = "Folder:"; ObjectID = "Kwx-7B-CIu"; */
+"Kwx-7B-CIu.title" = "Folder:";
+
 /* Class = "NSTextFieldCell"; placeholderString = "Optional"; ObjectID = "pLP-pL-5R5"; */
 "pLP-pL-5R5.placeholderString" = "Optional";
+
+/* Class = "NSWindow"; title = "Add Web Feed"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Add Web Feed";
 
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "tLJ-zY-CcZ"; */
 "tLJ-zY-CcZ.title" = "Item 1";
 
 /* Class = "NSButtonCell"; title = "Open Feed Directory"; ObjectID = "wKl-a9-7FY"; */
 "wKl-a9-7FY.title" = "Open Feed Directory";
+

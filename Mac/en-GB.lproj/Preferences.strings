@@ -1,4 +1,3 @@
-
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "2C0-LP-36T"; */
 "2C0-LP-36T.title" = "Preferences";
 
@@ -23,8 +22,17 @@
 /* Class = "NSTextFieldCell"; title = "Browser:"; ObjectID = "CgU-dE-Qtb"; */
 "CgU-dE-Qtb.title" = "Browser:";
 
+/* Class = "NSMenuItem"; title = "Large"; ObjectID = "ckZ-0Q-rNz"; */
+"ckZ-0Q-rNz.title" = "Large";
+
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Djh-3Q-J0Q"; */
 "Djh-3Q-J0Q.title" = "Text Cell";
+
+/* Class = "NSButtonCell"; title = "Check automatically"; ObjectID = "dm8-Xy-0Ba"; */
+"dm8-Xy-0Ba.title" = "Check automatically";
+
+/* Class = "NSMenuItem"; title = "Manually only"; ObjectID = "doa-Wq-4Uq"; */
+"doa-Wq-4Uq.title" = "Manually only";
 
 /* Class = "NSTextFieldCell"; title = "Press the Shift key to do the opposite."; ObjectID = "EMq-9M-zTJ"; */
 "EMq-9M-zTJ.title" = "Press the Shift key to do the opposite.";
@@ -38,35 +46,11 @@
 /* Class = "NSButtonCell"; title = "Release builds"; ObjectID = "F8M-rS-und"; */
 "F8M-rS-und.title" = "Release builds";
 
-/* Class = "NSButtonCell"; title = "Test builds"; ObjectID = "Fuf-rU-D6M"; */
-"Fuf-rU-D6M.title" = "Test builds";
-
-/* Class = "NSTextFieldCell"; title = "Article Theme:"; ObjectID = "MQe-Za-N8J"; */
-"MQe-Za-N8J.title" = "Article Theme:";
-
-/* Class = "NSMenuItem"; title = "Safari"; ObjectID = "ObP-qK-qDJ"; */
-"ObP-qK-qDJ.title" = "Safari";
-
-/* Class = "NSMenuItem"; title = "Default"; ObjectID = "Pkl-EA-Goa"; */
-"Pkl-EA-Goa.title" = "Default";
-
-/* Class = "NSMenuItem"; title = "Every hour"; ObjectID = "Qjt-qr-WER"; */
-"Qjt-qr-WER.title" = "Every hour";
-
-/* Class = "NSButtonCell"; title = "Open feeds in default news reader"; ObjectID = "SkZ-tE-blK"; */
-"SkZ-tE-blK.title" = "Open feeds in default news reader";
-
-/* Class = "NSMenuItem"; title = "Large"; ObjectID = "ckZ-0Q-rNz"; */
-"ckZ-0Q-rNz.title" = "Large";
-
-/* Class = "NSButtonCell"; title = "Check automatically"; ObjectID = "dm8-Xy-0Ba"; */
-"dm8-Xy-0Ba.title" = "Check automatically";
-
-/* Class = "NSMenuItem"; title = "Manually only"; ObjectID = "doa-Wq-4Uq"; */
-"doa-Wq-4Uq.title" = "Manually only";
-
 /* Class = "NSTextFieldCell"; title = "If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss."; ObjectID = "fOZ-zv-QTc"; */
 "fOZ-zv-QTc.title" = "If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss.";
+
+/* Class = "NSButtonCell"; title = "Test builds"; ObjectID = "Fuf-rU-D6M"; */
+"Fuf-rU-D6M.title" = "Test builds";
 
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "goO-QG-kk7"; */
 "goO-QG-kk7.title" = "Table View Cell";
@@ -80,23 +64,38 @@
 /* Class = "NSButtonCell"; title = "Send automatically"; ObjectID = "jnc-C5-4oI"; */
 "jnc-C5-4oI.title" = "Send automatically";
 
+/* Class = "NSTextFieldCell"; title = "Article Theme:"; ObjectID = "MQe-Za-N8J"; */
+"MQe-Za-N8J.title" = "Article Theme:";
+
 /* Class = "NSMenuItem"; title = "Every 2 hours"; ObjectID = "o1h-xo-elW"; */
 "o1h-xo-elW.title" = "Every 2 hours";
 
-/* Class = "NSMenuItem"; title = "Extra Large"; ObjectID = "qMe-6g-Vme"; */
-"qMe-6g-Vme.title" = "Extra Large";
+/* Class = "NSMenuItem"; title = "Safari"; ObjectID = "ObP-qK-qDJ"; */
+"ObP-qK-qDJ.title" = "Safari";
+
+/* Class = "NSMenuItem"; title = "Default"; ObjectID = "Pkl-EA-Goa"; */
+"Pkl-EA-Goa.title" = "Default";
 
 /* Class = "NSTextFieldCell"; title = "Crash logs:"; ObjectID = "qcq-fU-Ks0"; */
 "qcq-fU-Ks0.title" = "Crash logs:";
 
+/* Class = "NSMenuItem"; title = "Every hour"; ObjectID = "Qjt-qr-WER"; */
+"Qjt-qr-WER.title" = "Every hour";
+
+/* Class = "NSMenuItem"; title = "Extra Large"; ObjectID = "qMe-6g-Vme"; */
+"qMe-6g-Vme.title" = "Extra Large";
+
 /* Class = "NSTextFieldCell"; title = "Privacy Policy"; ObjectID = "rJu-r1-AW4"; */
 "rJu-r1-AW4.title" = "Privacy Policy";
+
+/* Class = "NSMenuItem"; title = "Small"; ObjectID = "roB-Mu-Ht7"; */
+"roB-Mu-Ht7.title" = "Small";
 
 /* Class = "NSMenuItem"; title = "Every 30 minutes"; ObjectID = "rZU-Tg-xwo"; */
 "rZU-Tg-xwo.title" = "Every 30 minutes";
 
-/* Class = "NSMenuItem"; title = "Small"; ObjectID = "roB-Mu-Ht7"; */
-"roB-Mu-Ht7.title" = "Small";
+/* Class = "NSButtonCell"; title = "Open feeds in default news reader"; ObjectID = "SkZ-tE-blK"; */
+"SkZ-tE-blK.title" = "Open feeds in default news reader";
 
 /* Class = "NSButtonCell"; title = "Open web pages in background in browser"; ObjectID = "t0a-LN-rCv"; */
 "t0a-LN-rCv.title" = "Open web pages in background in browser";
@@ -118,3 +117,4 @@
 
 /* Class = "NSTextFieldCell"; title = "App Updates:"; ObjectID = "zqG-X2-E9b"; */
 "zqG-X2-E9b.title" = "App Updates:";
+

@@ -47,7 +47,7 @@
 "alert.error.theme-value-missing.%@" = "This theme cannot be used because the the value—“%@”—is not found in the Info.plist.";
 
 /* The account type in invalid. */
-"alert.error.unrecognized-account" = "The account type is not recognized.";
+"alert.error.unrecognized-account" = "The account type is not recognised.";
 
 /* Error message: The user must provide a username and password. */
 "alert.error.username-and-password-required" = "A username and password are required.";
@@ -102,7 +102,7 @@
 "alert.message.feed-not-found" = "Can’t add a feed because no feed was found.";
 
 /* A web browser will open the Feedly login for you to authorize access. */
-"alert.message.feedly-web-browser-information" = "A web browser will open the Feedly login for you to authorize access.";
+"alert.message.feedly-web-browser-information" = "A web browser will open the Feedly login for you to authorise access.";
 
 /* The theme “%@” has been installed. */
 "alert.message.theme-installed.%@" = "The theme “%@” has been installed.";

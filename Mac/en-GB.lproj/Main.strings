@@ -1,18 +1,14 @@
-
-/* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
-"1UK-8n-QPP.title" = "Customize Toolbar…";
-
-/* Class = "NSMenuItem"; title = "NetNewsWire"; ObjectID = "1Xt-HY-uBw"; */
-"1Xt-HY-uBw.title" = "NetNewsWire";
-
 /* Class = "NSMenu"; title = "Find"; ObjectID = "1b7-l0-nxx"; */
 "1b7-l0-nxx.title" = "Find";
 
 /* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "1nF-7O-aKU"; */
 "1nF-7O-aKU.title" = "Check for Updates…";
 
-/* Class = "NSMenuItem"; title = "Info"; ObjectID = "24r-2i-fXR"; */
-"24r-2i-fXR.title" = "Info";
+/* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
+"1UK-8n-QPP.title" = "Customize Toolbar…";
+
+/* Class = "NSMenuItem"; title = "NetNewsWire"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "NetNewsWire";
 
 /* Class = "NSMenuItem"; title = "Transformations"; ObjectID = "2oI-Rn-ZJC"; */
 "2oI-Rn-ZJC.title" = "Transformations";
@@ -23,224 +19,71 @@
 /* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
 "3rS-ZA-NoH.title" = "Speech";
 
-/* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
-"4EN-yA-p0u.title" = "Find";
-
-/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
-"4J7-dP-txa.title" = "Enter Full Screen";
-
 /* Class = "NSMenuItem"; title = "Slack Group"; ObjectID = "4eb-qF-n9S"; */
 "4eb-qF-n9S.title" = "Slack Group";
+
+/* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
+"4EN-yA-p0u.title" = "Find";
 
 /* Class = "NSMenuItem"; title = "Open in Browser"; ObjectID = "4iQ-1v-dTa"; */
 "4iQ-1v-dTa.title" = "Open in Browser";
 
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
+"4J7-dP-txa.title" = "Enter Full Screen";
+
 /* Class = "NSMenuItem"; title = "Quit NetNewsWire"; ObjectID = "4sb-4s-VLi"; */
 "4sb-4s-VLi.title" = "Quit NetNewsWire";
-
-/* Class = "NSMenu"; title = "Article"; ObjectID = "57V-gv-vEw"; */
-"57V-gv-vEw.title" = "Article";
-
-/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
-"5QF-Oa-p0T.title" = "Edit";
 
 /* Class = "NSMenuItem"; title = "About NetNewsWire"; ObjectID = "5kV-Vb-QxS"; */
 "5kV-Vb-QxS.title" = "About NetNewsWire";
 
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
+"5QF-Oa-p0T.title" = "Edit";
+
 /* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
 "6dh-zS-Vam.title" = "Redo";
-
-/* Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "78Y-hA-62v"; */
-"78Y-hA-62v.title" = "Correct Spelling Automatically";
-
-/* Class = "NSMenuItem"; title = "All Unread"; ObjectID = "8ZT-ew-JNc"; */
-"8ZT-ew-JNc.title" = "All Unread";
 
 /* Class = "NSMenuItem"; title = "Mark Below as Read"; ObjectID = "8lZ-XI-I4y"; */
 "8lZ-XI-I4y.title" = "Mark Below as Read";
 
-/* Class = "NSMenuItem"; title = "Debug Search"; ObjectID = "9Ot-wC-s5U"; */
-"9Ot-wC-s5U.title" = "Debug Search";
+/* Class = "NSMenuItem"; title = "All Unread"; ObjectID = "8ZT-ew-JNc"; */
+"8ZT-ew-JNc.title" = "All Unread";
 
 /* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
 "9ic-FL-obx.title" = "Substitutions";
 
+/* Class = "NSMenuItem"; title = "Debug Search"; ObjectID = "9Ot-wC-s5U"; */
+"9Ot-wC-s5U.title" = "Debug Search";
+
 /* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
 "9yt-4B-nSM.title" = "Smart Copy/Paste";
 
-/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
-"AYu-sK-qS6.title" = "Main Menu";
+/* Class = "NSMenuItem"; title = "Info"; ObjectID = "24r-2i-fXR"; */
+"24r-2i-fXR.title" = "Info";
 
-/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
-"BOF-NM-1cW.title" = "Preferences…";
+/* Class = "NSMenu"; title = "Article"; ObjectID = "57V-gv-vEw"; */
+"57V-gv-vEw.title" = "Article";
 
-/* Class = "NSMenuItem"; title = "Item"; ObjectID = "CZA-zr-llF"; */
-"CZA-zr-llF.title" = "Item";
-
-/* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "DVo-aG-piG"; */
-"DVo-aG-piG.title" = "Close Window";
-
-/* Class = "NSMenu"; title = "Share"; ObjectID = "Dbl-YW-bmb"; */
-"Dbl-YW-bmb.title" = "Share";
-
-/* Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "Dv1-io-Yv7"; */
-"Dv1-io-Yv7.title" = "Spelling and Grammar";
-
-/* Class = "NSMenuItem"; title = "Hide Read Feeds"; ObjectID = "E9K-zV-nLv"; */
-"E9K-zV-nLv.title" = "Hide Read Feeds";
-
-/* Class = "NSMenuItem"; title = "Open in Browser Inverted"; ObjectID = "EjD-X9-Pjf"; */
-"EjD-X9-Pjf.title" = "Open in Browser Inverted";
-
-/* Class = "NSMenuItem"; title = "Enable Web Inspector"; ObjectID = "EwI-z4-ZA3"; */
-"EwI-z4-ZA3.title" = "Enable Web Inspector";
-
-/* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
-"F2S-fz-NVQ.title" = "Help";
-
-/* Class = "NSMenuItem"; title = "NetNewsWire Help"; ObjectID = "FKE-Sm-Kum"; */
-"FKE-Sm-Kum.title" = "NetNewsWire Help";
-
-/* Class = "NSMenuItem"; title = "Go"; ObjectID = "FPs-q4-hLT"; */
-"FPs-q4-hLT.title" = "Go";
-
-/* Class = "NSMenuItem"; title = "Mark as Read"; ObjectID = "Fc9-c7-2AY"; */
-"Fc9-c7-2AY.title" = "Mark as Read";
-
-/* Class = "NSMenu"; title = "Substitutions"; ObjectID = "FeM-D8-WVr"; */
-"FeM-D8-WVr.title" = "Substitutions";
-
-/* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
-"H8h-7b-M4v.title" = "View";
-
-/* Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "HFQ-gK-NFA"; */
-"HFQ-gK-NFA.title" = "Text Replacement";
-
-/* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
-"HFo-cy-zxI.title" = "Show Spelling and Grammar";
-
-/* Class = "NSMenuItem"; title = "Mark All as Read"; ObjectID = "HdN-Ks-cwh"; */
-"HdN-Ks-cwh.title" = "Mark All as Read";
-
-/* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
-"HyV-fh-RgO.title" = "View";
-
-/* Class = "NSMenuItem"; title = "Clean Up Articles"; ObjectID = "J5h-uQ-57w"; */
-"J5h-uQ-57w.title" = "Clean Up Articles";
-
-/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
-"Kd2-mp-pUS.title" = "Show All";
-
-/* Class = "NSMenuItem"; title = "Today"; ObjectID = "L20-jv-7c9"; */
-"L20-jv-7c9.title" = "Today";
-
-/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
-"LE2-aR-0XJ.title" = "Bring All to Front";
-
-/* Class = "NSMenuItem"; title = "Main Window"; ObjectID = "LSZ-ci-Jb5"; */
-"LSZ-ci-Jb5.title" = "Main Window";
-
-/* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
-"NMo-om-nkz.title" = "Services";
-
-/* Class = "NSMenu"; title = "Debug"; ObjectID = "NOT-8E-ykF"; */
-"NOT-8E-ykF.title" = "Debug";
-
-/* Class = "NSMenu"; title = "Go"; ObjectID = "NQW-Ph-lw2"; */
-"NQW-Ph-lw2.title" = "Go";
-
-/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
-"OY7-WF-poV.title" = "Minimize";
-
-/* Class = "NSMenu"; title = "Sort Articles By"; ObjectID = "OlJ-93-6OP"; */
-"OlJ-93-6OP.title" = "Sort Articles By";
-
-/* Class = "NSMenuItem"; title = "Hide NetNewsWire"; ObjectID = "Olw-nP-bQN"; */
-"Olw-nP-bQN.title" = "Hide NetNewsWire";
-
-/* Class = "NSMenuItem"; title = "Technotes"; ObjectID = "Ou5-Cc-iCb"; */
-"Ou5-Cc-iCb.title" = "Technotes";
-
-/* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
-"OwM-mh-QMV.title" = "Find Previous";
-
-/* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
-"Oyz-dy-DGm.title" = "Stop Speaking";
-
-/* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Ppm-uh-K5n"; */
-"Ppm-uh-K5n.title" = "Refresh";
-
-/* Class = "NSMenuItem"; title = "GitHub Repository"; ObjectID = "QfD-Xw-sdF"; */
-"QfD-Xw-sdF.title" = "GitHub Repository";
-
-/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
-"R4o-n2-Eq4.title" = "Zoom";
-
-/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
-"Ruw-6m-B2m.title" = "Select All";
-
-/* Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "S0p-oC-mLd"; */
-"S0p-oC-mLd.title" = "Jump to Selection";
-
-/* Class = "NSMenuItem"; title = "Newest Article on Top"; ObjectID = "TNS-TV-n0U"; */
-"TNS-TV-n0U.title" = "Newest Article on Top";
-
-/* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
-"Td7-aD-5lo.title" = "Window";
-
-/* Class = "NSMenuItem"; title = "Article"; ObjectID = "TzI-3g-N0v"; */
-"TzI-3g-N0v.title" = "Article";
-
-/* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
-"UEZ-Bs-lqG.title" = "Capitalize";
-
-/* Class = "NSMenuItem"; title = "Debug"; ObjectID = "UqE-mp-gtV"; */
-"UqE-mp-gtV.title" = "Debug";
-
-/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
-"Vdr-fp-XzO.title" = "Hide Others";
-
-/* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Veh-SV-KWy"; */
-"Veh-SV-KWy.title" = "Refresh";
-
-/* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
-"W48-6f-4Dl.title" = "Edit";
-
-/* Class = "NSMenuItem"; title = "New Web Feed…"; ObjectID = "Was-JA-tGl"; */
-"Was-JA-tGl.title" = "New Web Feed…";
-
-/* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
-"WeT-3V-zwk.title" = "Paste and Match Style";
-
-/* Class = "NSMenuItem"; title = "Test Crash Log Sender"; ObjectID = "XJG-gO-OKi"; */
-"XJG-gO-OKi.title" = "Test Crash Log Sender";
-
-/* Class = "NSMenuItem"; title = "Export Subscriptions…"; ObjectID = "Xy2-v8-Lj8"; */
-"Xy2-v8-Lj8.title" = "Export Subscriptions…";
-
-/* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
-"Xz5-n4-O0W.title" = "Find…";
-
-/* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "Ynk-f8-cLZ"; */
-"Ynk-f8-cLZ.title" = "Start Speaking";
-
-/* Class = "NSMenuItem"; title = "Starred"; ObjectID = "ZRx-me-QXO"; */
-"ZRx-me-QXO.title" = "Starred";
-
-/* Class = "NSMenuItem"; title = "Group By Feed"; ObjectID = "Zxm-O6-NRE"; */
-"Zxm-O6-NRE.title" = "Group By Feed";
+/* Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "78Y-hA-62v"; */
+"78Y-hA-62v.title" = "Correct Spelling Automatically";
 
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
 "aUF-d1-5bR.title" = "Window";
 
-/* Class = "NSMenuItem"; title = "Hide Read Articles"; ObjectID = "b10-sA-Yzi"; */
-"b10-sA-Yzi.title" = "Hide Read Articles";
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
+"AYu-sK-qS6.title" = "Main Menu";
 
 /* Class = "NSMenuItem"; title = "Release Notes"; ObjectID = "b5s-xg-B1w"; */
 "b5s-xg-B1w.title" = "Release Notes";
 
+/* Class = "NSMenuItem"; title = "Hide Read Articles"; ObjectID = "b10-sA-Yzi"; */
+"b10-sA-Yzi.title" = "Hide Read Articles";
+
 /* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
 "bib-Uj-vzu.title" = "File";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
+"BOF-NM-1cW.title" = "Preferences…";
 
 /* Class = "NSMenuItem"; title = "Drop Conditional Get Info"; ObjectID = "btO-Tb-2qS"; */
 "btO-Tb-2qS.title" = "Drop Conditional Get Info";
@@ -257,8 +100,14 @@
 /* Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "cwL-P1-jid"; */
 "cwL-P1-jid.title" = "Smart Links";
 
+/* Class = "NSMenuItem"; title = "Item"; ObjectID = "CZA-zr-llF"; */
+"CZA-zr-llF.title" = "Item";
+
 /* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
 "d9M-CD-aMd.title" = "Make Lower Case";
+
+/* Class = "NSMenu"; title = "Share"; ObjectID = "Dbl-YW-bmb"; */
+"Dbl-YW-bmb.title" = "Share";
 
 /* Class = "NSMenuItem"; title = "File"; ObjectID = "dMs-cI-mzQ"; */
 "dMs-cI-mzQ.title" = "File";
@@ -266,11 +115,41 @@
 /* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Yzg"; */
 "dRJ-4n-Yzg.title" = "Undo";
 
+/* Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "Dv1-io-Yv7"; */
+"Dv1-io-Yv7.title" = "Spelling and Grammar";
+
+/* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "DVo-aG-piG"; */
+"DVo-aG-piG.title" = "Close Window";
+
+/* Class = "NSMenuItem"; title = "Hide Read Feeds"; ObjectID = "E9K-zV-nLv"; */
+"E9K-zV-nLv.title" = "Hide Read Feeds";
+
+/* Class = "NSMenuItem"; title = "Open in Browser Inverted"; ObjectID = "EjD-X9-Pjf"; */
+"EjD-X9-Pjf.title" = "Open in Browser Inverted";
+
 /* Class = "NSMenuItem"; title = "Import NNW 3 Subscriptions…"; ObjectID = "ely-yi-STg"; */
 "ely-yi-STg.title" = "Import NNW 3 Subscriptions…";
 
+/* Class = "NSMenuItem"; title = "Enable Web Inspector"; ObjectID = "EwI-z4-ZA3"; */
+"EwI-z4-ZA3.title" = "Enable Web Inspector";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
+"F2S-fz-NVQ.title" = "Help";
+
+/* Class = "NSMenuItem"; title = "Mark as Read"; ObjectID = "Fc9-c7-2AY"; */
+"Fc9-c7-2AY.title" = "Mark as Read";
+
+/* Class = "NSMenu"; title = "Substitutions"; ObjectID = "FeM-D8-WVr"; */
+"FeM-D8-WVr.title" = "Substitutions";
+
+/* Class = "NSMenuItem"; title = "NetNewsWire Help"; ObjectID = "FKE-Sm-Kum"; */
+"FKE-Sm-Kum.title" = "NetNewsWire Help";
+
 /* Class = "NSMenuItem"; title = "Copy External URL"; ObjectID = "fOF-99-6Iv"; */
 "fOF-99-6Iv.title" = "Copy External URL";
+
+/* Class = "NSMenuItem"; title = "Go"; ObjectID = "FPs-q4-hLT"; */
+"FPs-q4-hLT.title" = "Go";
 
 /* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
 "gVA-U4-sdL.title" = "Paste";
@@ -281,8 +160,23 @@
 /* Class = "NSMenuItem"; title = "Force Crash"; ObjectID = "gVt-cz-eoJ"; */
 "gVt-cz-eoJ.title" = "Force Crash";
 
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
+"H8h-7b-M4v.title" = "View";
+
+/* Class = "NSMenuItem"; title = "Mark All as Read"; ObjectID = "HdN-Ks-cwh"; */
+"HdN-Ks-cwh.title" = "Mark All as Read";
+
+/* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
+"HFo-cy-zxI.title" = "Show Spelling and Grammar";
+
+/* Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "HFQ-gK-NFA"; */
+"HFQ-gK-NFA.title" = "Text Replacement";
+
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
 "hQb-2v-fYv.title" = "Smart Quotes";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
+"HyV-fh-RgO.title" = "View";
 
 /* Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "hz2-CU-CR7"; */
 "hz2-CU-CR7.title" = "Check Document Now";
@@ -293,17 +187,32 @@
 /* Class = "NSMenuItem"; title = "Oldest Article on Top"; ObjectID = "iii-kP-qoF"; */
 "iii-kP-qoF.title" = "Oldest Article on Top";
 
+/* Class = "NSMenuItem"; title = "Clean Up Articles"; ObjectID = "J5h-uQ-57w"; */
+"J5h-uQ-57w.title" = "Clean Up Articles";
+
 /* Class = "NSMenuItem"; title = "Share"; ObjectID = "jaf-gh-gSi"; */
 "jaf-gh-gSi.title" = "Share";
 
-/* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
-"kIP-vf-haE.title" = "Show Sidebar";
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
+"Kd2-mp-pUS.title" = "Show All";
 
 /* Class = "NSMenuItem"; title = "How To Support NetNewsWire"; ObjectID = "kfC-NQ-g3E"; */
 "kfC-NQ-g3E.title" = "How To Support NetNewsWire";
 
 /* Class = "NSMenuItem"; title = "New Twitter Feed…"; ObjectID = "ki4-7l-tM6"; */
 "ki4-7l-tM6.title" = "New Twitter Feed…";
+
+/* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
+"kIP-vf-haE.title" = "Show Sidebar";
+
+/* Class = "NSMenuItem"; title = "Today"; ObjectID = "L20-jv-7c9"; */
+"L20-jv-7c9.title" = "Today";
+
+/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
+"LE2-aR-0XJ.title" = "Bring All to Front";
+
+/* Class = "NSMenuItem"; title = "Main Window"; ObjectID = "LSZ-ci-Jb5"; */
+"LSZ-ci-Jb5.title" = "Main Window";
 
 /* Class = "NSMenuItem"; title = "Bug Tracker"; ObjectID = "mE2-pM-rQF"; */
 "mE2-pM-rQF.title" = "Bug Tracker";
@@ -320,8 +229,35 @@
 /* Class = "NSMenuItem"; title = "Sort Articles By"; ObjectID = "nLP-fa-KUi"; */
 "nLP-fa-KUi.title" = "Sort Articles By";
 
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
+"NMo-om-nkz.title" = "Services";
+
+/* Class = "NSMenu"; title = "Debug"; ObjectID = "NOT-8E-ykF"; */
+"NOT-8E-ykF.title" = "Debug";
+
+/* Class = "NSMenu"; title = "Go"; ObjectID = "NQW-Ph-lw2"; */
+"NQW-Ph-lw2.title" = "Go";
+
 /* Class = "NSMenuItem"; title = "Clear Image Caches"; ObjectID = "o1k-E6-ctu"; */
 "o1k-E6-ctu.title" = "Clear Image Caches";
+
+/* Class = "NSMenu"; title = "Sort Articles By"; ObjectID = "OlJ-93-6OP"; */
+"OlJ-93-6OP.title" = "Sort Articles By";
+
+/* Class = "NSMenuItem"; title = "Hide NetNewsWire"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "Hide NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Technotes"; ObjectID = "Ou5-Cc-iCb"; */
+"Ou5-Cc-iCb.title" = "Technotes";
+
+/* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
+"OwM-mh-QMV.title" = "Find Previous";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
+"OY7-WF-poV.title" = "Minimize";
+
+/* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
+"Oyz-dy-DGm.title" = "Stop Speaking";
 
 /* Class = "NSMenuItem"; title = "Mark Above as Read"; ObjectID = "p1o-EG-Uo8"; */
 "p1o-EG-Uo8.title" = "Mark Above as Read";
@@ -329,14 +265,14 @@
 /* Class = "NSMenuItem"; title = "Show Reader View"; ObjectID = "p5x-Xq-1fW"; */
 "p5x-Xq-1fW.title" = "Show Reader View";
 
-/* Class = "NSMenuItem"; title = "New Window"; ObjectID = "pGg-Gc-PU2"; */
-"pGg-Gc-PU2.title" = "New Window";
-
 /* Class = "NSMenuItem"; title = "Delete"; ObjectID = "pa3-QI-u2k"; */
 "pa3-QI-u2k.title" = "Delete";
 
-/* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
-"q09-fT-Sye.title" = "Find Next";
+/* Class = "NSMenuItem"; title = "New Window"; ObjectID = "pGg-Gc-PU2"; */
+"pGg-Gc-PU2.title" = "New Window";
+
+/* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Ppm-uh-K5n"; */
+"Ppm-uh-K5n.title" = "Refresh";
 
 /* Class = "NSMenuItem"; title = "Website"; ObjectID = "q2Z-9K-GBd"; */
 "q2Z-9K-GBd.title" = "Website";
@@ -344,11 +280,17 @@
 /* Class = "NSMenuItem"; title = "Next Unread"; ObjectID = "q3p-nE-m2k"; */
 "q3p-nE-m2k.title" = "Next Unread";
 
+/* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
+"q09-fT-Sye.title" = "Find Next";
+
+/* Class = "NSMenuItem"; title = "GitHub Repository"; ObjectID = "QfD-Xw-sdF"; */
+"QfD-Xw-sdF.title" = "GitHub Repository";
+
 /* Class = "NSMenuItem"; title = "Copy Article URL"; ObjectID = "qNk-By-jKp"; */
 "qNk-By-jKp.title" = "Copy Article URL";
 
-/* Class = "NSMenuItem"; title = "Import Subscriptions…"; ObjectID = "rSl-F4-qo7"; */
-"rSl-F4-qo7.title" = "Import Subscriptions…";
+/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
+"R4o-n2-Eq4.title" = "Zoom";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
 "rbD-Rh-wIN.title" = "Check Spelling While Typing";
@@ -359,17 +301,47 @@
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
 "rgM-f4-ycn.title" = "Smart Dashes";
 
+/* Class = "NSMenuItem"; title = "Import Subscriptions…"; ObjectID = "rSl-F4-qo7"; */
+"rSl-F4-qo7.title" = "Import Subscriptions…";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
+"Ruw-6m-B2m.title" = "Select All";
+
+/* Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "S0p-oC-mLd"; */
+"S0p-oC-mLd.title" = "Jump to Selection";
+
 /* Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "snW-S8-Cw5"; */
 "snW-S8-Cw5.title" = "Show Toolbar";
 
+/* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
+"Td7-aD-5lo.title" = "Window";
+
+/* Class = "NSMenuItem"; title = "Newest Article on Top"; ObjectID = "TNS-TV-n0U"; */
+"TNS-TV-n0U.title" = "Newest Article on Top";
+
 /* Class = "NSMenuItem"; title = "Data Detectors"; ObjectID = "tRr-pd-1PS"; */
 "tRr-pd-1PS.title" = "Data Detectors";
+
+/* Class = "NSMenuItem"; title = "Article"; ObjectID = "TzI-3g-N0v"; */
+"TzI-3g-N0v.title" = "Article";
+
+/* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
+"UEZ-Bs-lqG.title" = "Capitalize";
+
+/* Class = "NSMenuItem"; title = "Debug"; ObjectID = "UqE-mp-gtV"; */
+"UqE-mp-gtV.title" = "Debug";
 
 /* Class = "NSMenu"; title = "NetNewsWire"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "NetNewsWire";
 
 /* Class = "NSMenuItem"; title = "Cut"; ObjectID = "uRl-iY-unG"; */
 "uRl-iY-unG.title" = "Cut";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
+"Vdr-fp-XzO.title" = "Hide Others";
+
+/* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Veh-SV-KWy"; */
+"Veh-SV-KWy.title" = "Refresh";
 
 /* Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "vmV-6d-7jI"; */
 "vmV-6d-7jI.title" = "Make Upper Case";
@@ -380,6 +352,15 @@
 /* Class = "NSMenuItem"; title = "Keyboard Shortcuts"; ObjectID = "w6o-j8-cda"; */
 "w6o-j8-cda.title" = "Keyboard Shortcuts";
 
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
+"W48-6f-4Dl.title" = "Edit";
+
+/* Class = "NSMenuItem"; title = "New Web Feed…"; ObjectID = "Was-JA-tGl"; */
+"Was-JA-tGl.title" = "New Web Feed…";
+
+/* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
+"WeT-3V-zwk.title" = "Paste and Match Style";
+
 /* Class = "NSMenuItem"; title = "New Folder…"; ObjectID = "wkh-LX-Xp1"; */
 "wkh-LX-Xp1.title" = "New Folder…";
 
@@ -389,8 +370,27 @@
 /* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x3v-GG-iWU"; */
 "x3v-GG-iWU.title" = "Copy";
 
+/* Class = "NSMenuItem"; title = "Test Crash Log Sender"; ObjectID = "XJG-gO-OKi"; */
+"XJG-gO-OKi.title" = "Test Crash Log Sender";
+
 /* Class = "NSMenuItem"; title = "Speech"; ObjectID = "xrE-MZ-jX0"; */
 "xrE-MZ-jX0.title" = "Speech";
 
+/* Class = "NSMenuItem"; title = "Export Subscriptions…"; ObjectID = "Xy2-v8-Lj8"; */
+"Xy2-v8-Lj8.title" = "Export Subscriptions…";
+
+/* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
+"Xz5-n4-O0W.title" = "Find…";
+
+/* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "Ynk-f8-cLZ"; */
+"Ynk-f8-cLZ.title" = "Start Speaking";
+
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
 "z6F-FW-3nz.title" = "Show Substitutions";
+
+/* Class = "NSMenuItem"; title = "Starred"; ObjectID = "ZRx-me-QXO"; */
+"ZRx-me-QXO.title" = "Starred";
+
+/* Class = "NSMenuItem"; title = "Group By Feed"; ObjectID = "Zxm-O6-NRE"; */
+"Zxm-O6-NRE.title" = "Group By Feed";
+

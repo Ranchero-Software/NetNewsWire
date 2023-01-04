@@ -44,7 +44,7 @@
 "alert.error.theme-duplicate-of-provided" = "This theme shares the same name as a provided theme and cannot be imported.";
 
 /* The account type in invalid. */
-"alert.error.unrecognized-account" = "The account type is not recognized.";
+"alert.error.unrecognized-account" = "The account type is not recognised.";
 
 /* Error message: The user must provide a username and password. */
 "alert.error.username-and-password-required" = "A username and password are required.";
@@ -259,7 +259,7 @@
 "button.title.dismiss" = "Dismiss";
 
 /* Display & Behaviors */
-"button.title.display-and-behaviors" = "Display & Behaviors";
+"button.title.display-and-behaviors" = "Display & Behaviours";
 
 /* Done */
 "button.title.done" = "Done";
@@ -551,7 +551,7 @@
 "label.text.appearance" = "Appearance";
 
 /* Manage the look, feel, and behavior of NetNewsWire. */
-"label.text.appearance-explainer" = "Manage the look, feel, and behavior of NetNewsWire.";
+"label.text.appearance-explainer" = "Manage the look, feel, and behaviour of NetNewsWire.";
 
 /* Application */
 "label.text.application" = "Application";
@@ -702,7 +702,7 @@
 "navigation.title.article-themes" = "Article Themes";
 
 /* Display & Behaviors */
-"navigation.title.display-and-behaviors" = "Display & Behaviors";
+"navigation.title.display-and-behaviors" = "Display & Behaviours";
 
 /* Enter Name */
 "navigation.title.enter-name" = "Enter Name";

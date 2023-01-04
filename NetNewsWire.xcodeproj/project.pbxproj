@@ -1626,6 +1626,25 @@
 		DFB349A3294E914D00BC81AD /* AccountSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSectionHeader.swift; sourceTree = "<group>"; };
 		DFB616A82965300400A359AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DFB616AB2965300400A359AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DFB616AE29653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Main.strings"; sourceTree = "<group>"; };
+		DFB616AF29653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/MainWindow.strings"; sourceTree = "<group>"; };
+		DFB616B029653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../../../en-GB.lproj/RenameSheet.strings"; sourceTree = "<group>"; };
+		DFB616B129653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/AddRedditFeedSheet.strings"; sourceTree = "<group>"; };
+		DFB616B229653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/AddTwitterFeedSheet.strings"; sourceTree = "<group>"; };
+		DFB616B329653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/AddWebFeedSheet.strings"; sourceTree = "<group>"; };
+		DFB616B429653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../../en-GB.lproj/AddFolderSheet.strings"; sourceTree = "<group>"; };
+		DFB616B529653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "../en-GB.lproj/Preferences.strings"; sourceTree = "<group>"; };
+		DFB616B629653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/SafariExtensionViewController.strings"; sourceTree = "<group>"; };
+		DFB616B729653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/ShareViewController.strings"; sourceTree = "<group>"; };
+		DFB616B829653A0600A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/LaunchScreenPhone.strings"; sourceTree = "<group>"; };
+		DFB616B929653A0700A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/LaunchScreenPad.strings"; sourceTree = "<group>"; };
+		DFB616BA29653A0700A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Main.strings"; sourceTree = "<group>"; };
+		DFB616BB29653A0700A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Intents.strings"; sourceTree = "<group>"; };
+		DFB616BC29653A0700A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/MainInterface.strings"; sourceTree = "<group>"; };
+		DFB616BD29653A0700A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		DFB616BE29653A0700A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		DFB616BF29653A0700A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		DFB616C029653A0700A359AB /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		DFBB4EAB2951BC0200639228 /* NNWThemeDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NNWThemeDocument.swift; sourceTree = "<group>"; };
 		DFBB4EAF2951BCAC00639228 /* ArticleThemeManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleThemeManagerView.swift; sourceTree = "<group>"; };
 		DFC14F0E28EA55BD00F6EE86 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
@@ -3402,6 +3421,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"en-GB",
 			);
 			mainGroup = 849C64571ED37A5D003D8FC0;
 			packageReferences = (
@@ -4631,6 +4651,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				1701E1B62568983D009453D8 /* en */,
+				DFB616C029653A0700A359AB /* en-GB */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4639,6 +4660,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				510C416324E5CDE3008226FD /* Base */,
+				DFB616B729653A0600A359AB /* en-GB */,
 			);
 			name = ShareViewController.xib;
 			sourceTree = "<group>";
@@ -4648,6 +4670,7 @@
 			children = (
 				511D43EE231FBDE800FB1562 /* Base */,
 				DF332716295BBBBF00BFD911 /* en */,
+				DFB616B929653A0700A359AB /* en-GB */,
 			);
 			name = LaunchScreenPad.storyboard;
 			sourceTree = "<group>";
@@ -4657,6 +4680,7 @@
 			children = (
 				51314706235C41FC00387FDC /* Base */,
 				51314714235C420900387FDC /* en */,
+				DFB616BB29653A0700A359AB /* en-GB */,
 			);
 			name = Intents.intentdefinition;
 			sourceTree = "<group>";
@@ -4665,6 +4689,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				51333D3A2468615D00EB5C91 /* Base */,
+				DFB616B129653A0600A359AB /* en-GB */,
 			);
 			name = AddRedditFeedSheet.xib;
 			sourceTree = "<group>";
@@ -4673,6 +4698,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				513C5CEB232571C2003D4054 /* Base */,
+				DFB616BC29653A0700A359AB /* en-GB */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -4681,6 +4707,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				514A8980244FD63F0085E65D /* Base */,
+				DFB616B229653A0600A359AB /* en-GB */,
 			);
 			name = AddTwitterFeedSheet.xib;
 			sourceTree = "<group>";
@@ -4689,6 +4716,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				6581C73C20CED60100F4AD34 /* Base */,
+				DFB616B629653A0600A359AB /* en-GB */,
 			);
 			name = SafariExtensionViewController.xib;
 			sourceTree = "<group>";
@@ -4697,6 +4725,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				848363012262A3BC00DA1D35 /* Base */,
+				DFB616B329653A0600A359AB /* en-GB */,
 			);
 			name = AddWebFeedSheet.xib;
 			sourceTree = "<group>";
@@ -4705,6 +4734,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				848363042262A3CC00DA1D35 /* Base */,
+				DFB616B429653A0600A359AB /* en-GB */,
 			);
 			name = AddFolderSheet.xib;
 			sourceTree = "<group>";
@@ -4713,6 +4743,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				848363072262A3DD00DA1D35 /* Base */,
+				DFB616AE29653A0600A359AB /* en-GB */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -4721,6 +4752,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8483630A2262A3F000DA1D35 /* Base */,
+				DFB616B029653A0600A359AB /* en-GB */,
 			);
 			name = RenameSheet.xib;
 			sourceTree = "<group>";
@@ -4729,6 +4761,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8483630D2262A3FE00DA1D35 /* Base */,
+				DFB616AF29653A0600A359AB /* en-GB */,
 			);
 			name = MainWindow.storyboard;
 			sourceTree = "<group>";
@@ -4737,6 +4770,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				84C9FC8122629E4800D921D6 /* Base */,
+				DFB616B529653A0600A359AB /* en-GB */,
 			);
 			name = Preferences.storyboard;
 			sourceTree = "<group>";
@@ -4746,6 +4780,7 @@
 			children = (
 				84C9FCA02262A1B300D921D6 /* Base */,
 				DF332714295BBBB900BFD911 /* en */,
+				DFB616BA29653A0700A359AB /* en-GB */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -4755,6 +4790,7 @@
 			children = (
 				84C9FCA32262A1B800D921D6 /* Base */,
 				DF332718295BBBC200BFD911 /* en */,
+				DFB616B829653A0600A359AB /* en-GB */,
 			);
 			name = LaunchScreenPhone.storyboard;
 			sourceTree = "<group>";
@@ -4763,6 +4799,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				DFB616A82965300400A359AB /* en */,
+				DFB616BE29653A0700A359AB /* en-GB */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4771,6 +4808,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				DFB616AB2965300400A359AB /* en */,
+				DFB616BD29653A0700A359AB /* en-GB */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4779,6 +4817,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				DFD86797295D553D0070D62D /* en */,
+				DFB616BF29653A0700A359AB /* en-GB */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -4930,6 +4969,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Debug;
 		};
@@ -4937,6 +4977,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Release;
 		};
