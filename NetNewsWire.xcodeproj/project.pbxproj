@@ -4969,7 +4969,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDD2002F0BE005947E5 /* NetNewsWire_project_debug.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Debug;
 		};
@@ -4977,7 +4976,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D5907CDC2002F0BE005947E5 /* NetNewsWire_project_release.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Release;
 		};
