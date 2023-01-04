@@ -1458,7 +1458,7 @@ private extension MainWindowController {
 		menu.addItem(newTwitterFeedItem)
 		
 		let newFolderFeedItem = NSMenuItem()
-		newFolderFeedItem.title = NSLocalizedString("button.title.new-folder", comment: "New Folder...")
+		newFolderFeedItem.title = NSLocalizedString("button.title.open-new-folder", comment: "New Folder...")
 		newFolderFeedItem.action = Selector(("showAddFolderWindow:"))
 		menu.addItem(newFolderFeedItem)
 		

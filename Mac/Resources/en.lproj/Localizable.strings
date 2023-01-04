@@ -383,6 +383,9 @@
 /* Open in Browser in Foreground */
 "button.title.open-in-foreground" = "Open in Browser in Foreground";
 
+/* New Folder... */
+"button.title.open-new-folder" = "New Folder...";
+
 /* Open Settings */
 "button.title.open-settings" = "Open Settings";
 
