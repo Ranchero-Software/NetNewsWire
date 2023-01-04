@@ -1,0 +1,18 @@
+/* Automatic */
+"appdefaults.colorpalette.automatic" = "Automatic";
+
+/* Dark */
+"appdefaults.colorpalette.dark" = "Dark";
+
+/* Light */
+"appdefaults.colorpalette.light" = "Light";
+
+/* Add Feed */
+"button.title.add-feed" = "Add Feed";
+
+/* Folder */
+"navigation.title.folder" = "Folder";
+
+/* Feed Name (Optional) */
+"textfield.placeholder.feed-name" = "Feed Name (Optional)";
+

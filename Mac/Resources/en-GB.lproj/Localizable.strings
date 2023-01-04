@@ -301,6 +301,9 @@
 /* Install Theme */
 "button.title.install-theme" = "Install Theme";
 
+/* Manually */
+"button.title.manually" = "Manually";
+
 /* Mark Above as Read */
 "button.title.mark-above-as-read.titlecase" = "Mark Above as Read";
 
@@ -431,6 +434,9 @@
 
 /* Show notifications for new articles */
 "checkbox.title.show-new-article-notifications" = "Show notifications for new articles";
+
+/* No comment provided by engineer. */
+"Continue" = "Continue";
 
 /* Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings. */
 "error.description.cloudkit-unavailable" = "Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.";
@@ -638,6 +644,9 @@
 
 /* Smart Feeds group title */
 "smartfeeds.title" = "Smart Feeds";
+
+/* Search: */
+"textfield.placeholder.search" = "Search:";
 
 /* Search Term or #hashtag */
 "textfield.placeholder.search-term-hashtag" = "Search Term or #hashtag";

@@ -1,3 +1,18 @@
+/* No comment provided by engineer. */
+"%@" = "%@";
+
+/* No comment provided by engineer. */
+"%@ (%@)" = "%1$@ (%2$@)";
+
+/* On My iPad */
+"account.name.ipad" = "On My iPad";
+
+/* On My iPhone */
+"account.name.iphone" = "On My iPhone";
+
+/* On My Mac */
+"account.name.mac" = "On My Mac";
+
 /* Cancel */
 "action.title.cancel" = "Cancel";
 
@@ -21,6 +36,12 @@
 
 /* Open in Browser */
 "activity.title.open-in-browser" = "Open in Browser";
+
+/* See articles in “%@” */
+"activity.title.see-article-in.folder.%@" = "See articles in “%@”";
+
+/* See first unread article */
+"activity.title.see-first-unread-article" = "See first unread article";
 
 /* Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings. */
 "alert.error.cloudkit-missing" = "Unable to add iCloud Account. Please make sure you have iCloud and iCloud Drive enabled in System Settings.";
@@ -181,6 +202,21 @@
 /* Selected - Reader View */
 "button.accessibility.title.selected-readerview" = "Selected - Reader View";
 
+/* Every 2 Hours */
+"button.title.2-hours" = "Every 2 Hours";
+
+/* Every 4 Hours */
+"button.title.4-hours" = "Every 4 Hours";
+
+/* Every 8 Hours */
+"button.title.8-hours" = "Every 8 Hours";
+
+/* Every 10 Minutes */
+"button.title.10-minutes" = "Every 10 Minutes";
+
+/* Every 30 Minutes */
+"button.title.30-minutes" = "Every 30 Minutes";
+
 /* About */
 "button.title.about" = "About";
 
@@ -252,6 +288,18 @@
 /* Delete feed */
 "button.title.delete-feed" = "Delete Feed";
 
+/* Delete Feeds */
+"button.title.delete-feeds" = "Delete Feeds";
+
+/* Delete Feeds and Folders */
+"button.title.delete-feeds-and-folders" = "Delete Feeds and Folders";
+
+/* Delete Folder */
+"button.title.delete-folder" = "Delete Folder";
+
+/* Delete Folders */
+"button.title.delete-folders" = "Delete Folders";
+
 /* Delete Theme */
 "button.title.delete-theme" = "Delete Theme";
 
@@ -266,6 +314,9 @@
 
 /* Enable Extension */
 "button.title.enable-extension" = "Enable Extension";
+
+/* Every Hour */
+"button.title.every-hour" = "Every Hour";
 
 /* Export Subscriptions */
 "button.title.export-subscriptions" = "Export Subscriptions";
@@ -294,6 +345,9 @@
 /* Manage Extensions */
 "button.title.manage-extensions" = "Manage Extensions";
 
+/* Manually */
+"button.title.manually" = "Manually";
+
 /* Mark Above as Read. Used to mark articles above the current article as read. */
 "button.title.mark-above-as-read.titlecase" = "Mark Above as Read";
 
@@ -309,9 +363,15 @@
 /* Mark Article Unread */
 "button.title.mark-article-unread" = "Mark Article Unread";
 
+/* Mark as Read */
+"button.title.mark-as-read" = "Mark as Read";
+
 /* Mark as Read
    Mark as Read. Used to mark an article Read */
 "button.title.mark-as-read.titlecase" = "Mark as Read";
+
+/* Mark as Starred */
+"button.title.mark-as-starred" = "Mark as Starred";
 
 /* Mark as Starred
    Mark as Starred. Used to mark an article as starred */
@@ -327,6 +387,18 @@
 
 /* Mark Below as Read. Used to mark articles below the current article as read. */
 "button.title.mark-below-as-read.titlecase" = "Mark Below as Read";
+
+/* Mark Read */
+"button.title.mark-read" = "Mark Read";
+
+/* Mark Starred */
+"button.title.mark-starred" = "Mark Starred";
+
+/* Mark Unread */
+"button.title.mark-unread" = "Mark Unread";
+
+/* Mark Unstarred */
+"button.title.mark-unstarred" = "Mark Unstarred";
 
 /* More */
 "button.title.more" = "More";
@@ -351,6 +423,9 @@
 
 /* Next Unread Article */
 "button.title.next-unread-article" = "Next Unread Article";
+
+/* Open */
+"button.title.open" = "Open";
 
 /* Open Home Page */
 "button.title.open-home-page" = "Open Home Page";
@@ -418,8 +493,20 @@
 /* Use iCloud */
 "button.title.use-cloudkit" = "Use iCloud";
 
+/* Button title */
+"Cancel" = "Cancel";
+
+/* Button title */
+"Done" = "Done";
+
+/* Unable to create extension. */
+"error.message.unable-to-create-extension" = "Unable to create extension.";
+
 /* Unable to communicate with NetNewsWire. */
 "errordescription.localized.communication-failure" = "Unable to communicate with NetNewsWire.";
+
+/* Filter Read Feeds */
+"Filter Read Feeds" = "Filter Read Feeds";
 
 /* Add Feed */
 "homescreen.action.add-feed" = "Add Feed";
@@ -583,6 +670,12 @@
 /* Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more. */
 "label.text.device-permissions-explainer" = "Configure NetNewsWire's access to Siri, background app refresh, mobile data, and more.";
 
+/* XX-Large */
+"label.text.extra-extra-large" = "XX-Large";
+
+/* X-Large */
+"label.text.extra-large" = "X-Large";
+
 /* Feed Providers */
 "label.text.feed-providers" = "Feed Providers";
 
@@ -610,11 +703,20 @@
 /* Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? [Sign Up Here](https://www.inoreader.com) */
 "label.text.inoreader-explainer" = "Sign in to your InoReader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an InoReader account? \n\n[Sign Up Here](https://www.inoreader.com)";
 
+/* Large */
+"label.text.large" = "Large";
+
+/* Link: */
+"label.text.link" = "Link:";
+
 /* Local Account */
 "label.text.local-account" = "Local Account";
 
 /* Local accounts do not sync your feeds across devices */
 "label.text.local-account-explainer" = "Local accounts do not sync your feeds across devices";
+
+/* Medium */
+"label.text.medium" = "Medium";
 
 /* By Brent Simmons and the Ranchero Software team. */
 "label.text.netnewswire-byline" = "By Brent Simmons and the Ranchero Software team.";
@@ -639,6 +741,9 @@
 
 /* Self-hosted accounts sync your feeds across all your devices */
 "label.text.self-hosted-accounts-explainer" = "Self-hosted accounts sync your feeds across all your devices";
+
+/* Small */
+"label.text.small" = "Small";
 
 /* Thanks */
 "label.text.thanks" = "Thanks";
@@ -679,6 +784,9 @@
 /* Link to the NetNewsWire iCloud syncing limitations and soltutions website.
    Link which opens webpage describing iCloud syncing limitations. */
 "link.markdown.icloud-limitations" = "[iCloud Syncing Limitations & Solutions](https://netnewswire.com/help/iCloud)";
+
+/* Command */
+"Mark as Read Older Than" = "Mark as Read Older Than";
 
 /* Article Appearance menu title */
 "menu.title.articleappearance" = "Article Appearance";
@@ -734,6 +842,9 @@
 /* Title used when describing the search when scoped to the current timeline. */
 "searchbar.scope.here" = "Here";
 
+/* Selected - Filter Read Feeds */
+"Selected - Filter Read Feeds" = "Selected - Filter Read Feeds";
+
 /* All Unread pseudo-feed title */
 "smartfeed.title.allunread" = "All Unread";
 
@@ -746,6 +857,9 @@
 /* Smart Feeds group title */
 "smartfeeds.title" = "Smart Feeds";
 
+/* Starred article for accessibility */
+"Starred" = "Starred";
+
 /* Email Address */
 "textfield.placeholder.email-address" = "Email Address";
 
@@ -757,6 +871,9 @@
 
 /* Screen Name */
 "textfield.placeholder.screen-name" = "Screen Name";
+
+/* Search: */
+"textfield.placeholder.search" = "Search:";
 
 /* Search Term or #hashtag */
 "textfield.placeholder.search-term-hashtag" = "Search Term or #hashtag";
@@ -790,4 +907,10 @@
 
 /* Sort Oldest to Newest */
 "toggle.title.sort-oldest-to-newest" = "Sort Oldest to Newest";
+
+/* Unread label for accessiblity */
+"unread" = "unread";
+
+/* Unread */
+"Unread" = "Unread";
 

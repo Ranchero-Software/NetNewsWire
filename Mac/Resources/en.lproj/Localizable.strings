@@ -298,6 +298,9 @@
 /* Install Theme */
 "button.title.install-theme" = "Install Theme";
 
+/* Manually */
+"button.title.manually" = "Manually";
+
 /* Mark Above as Read */
 "button.title.mark-above-as-read.titlecase" = "Mark Above as Read";
 
@@ -635,6 +638,9 @@
 
 /* Smart Feeds group title */
 "smartfeeds.title" = "Smart Feeds";
+
+/* Search: */
+"textfield.placeholder.search" = "Search:";
 
 /* Search Term or #hashtag */
 "textfield.placeholder.search-term-hashtag" = "Search Term or #hashtag";

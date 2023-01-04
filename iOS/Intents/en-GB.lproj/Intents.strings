@@ -5,6 +5,9 @@
 "5CYbGL" = "There are ${count} options matching ‘${folderName}’.";
 
 /* (No Comment) */
+"Ac5RHN" = "Title";
+
+/* (No Comment) */
 "BCHr23" = "URL";
 
 /* (No Comment) */
@@ -24,6 +27,9 @@
 
 /* (No Comment) */
 "IbqUVS" = "There are ${count} options matching ‘${accountName}’.";
+
+/* (No Comment) */
+"IGNcSh" = "What is the ${title}of the feed?";
 
 /* (No Comment) */
 "IuAbef" = "Add a web feed";

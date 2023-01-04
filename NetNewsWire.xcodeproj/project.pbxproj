@@ -845,6 +845,19 @@
 		DF59F072292085B800ACD33D /* ColorPaletteSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */; };
 		DF59F0742920DB5100ACD33D /* AccountsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */; };
 		DF5AD10128D6922200CA3BF7 /* SmartFeedSummaryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768144D2564BCE000D98635 /* SmartFeedSummaryWidget.swift */; };
+		DF6DE50A2965907A002EC085 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE5082965907A002EC085 /* Localizable.strings */; };
+		DF6DE50D2965924C002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE50B2965924C002EC085 /* InfoPlist.strings */; };
+		DF6DE5102965924C002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE50E2965924C002EC085 /* InfoPlist.strings */; };
+		DF6DE5142965924C002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE5122965924C002EC085 /* InfoPlist.strings */; };
+		DF6DE5152965924C002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE5122965924C002EC085 /* InfoPlist.strings */; };
+		DF6DE5182965924C002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE5162965924C002EC085 /* InfoPlist.strings */; };
+		DF6DE5192965924C002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE5162965924C002EC085 /* InfoPlist.strings */; };
+		DF6DE51C2965924C002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE51A2965924C002EC085 /* InfoPlist.strings */; };
+		DF6DE51D2965924C002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE51A2965924C002EC085 /* InfoPlist.strings */; };
+		DF6DE5202965924D002EC085 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE51E2965924C002EC085 /* Localizable.strings */; };
+		DF6DE5212965924D002EC085 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE51E2965924C002EC085 /* Localizable.strings */; };
+		DF6DE52529659443002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE52329659443002EC085 /* InfoPlist.strings */; };
+		DF6DE5282965971A002EC085 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF6DE5262965971A002EC085 /* InfoPlist.strings */; };
 		DF766FED29377FD9006FBBE2 /* ExtensionsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */; };
 		DF790D6228E990A900455FC7 /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF790D6128E990A900455FC7 /* AboutData.swift */; };
 		DF84E563295122BA0045C334 /* TimelineCustomizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */; };
@@ -1610,6 +1623,17 @@
 		DF47CDB1294803AB00FCD57E /* AddExtensionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExtensionListView.swift; sourceTree = "<group>"; };
 		DF59F071292085B800ACD33D /* ColorPaletteSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteSelectorView.swift; sourceTree = "<group>"; };
 		DF59F0732920DB5100ACD33D /* AccountsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsManagementView.swift; sourceTree = "<group>"; };
+		DF6DE5092965907A002EC085 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DF6DE50C2965924C002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		DF6DE50F2965924C002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		DF6DE5112965924C002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		DF6DE5132965924C002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		DF6DE5172965924C002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		DF6DE51B2965924C002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		DF6DE51F2965924D002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		DF6DE5222965937C002EC085 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DF6DE52429659443002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		DF6DE5272965971A002EC085 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		DF766FEC29377FD9006FBBE2 /* ExtensionsManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsManagementView.swift; sourceTree = "<group>"; };
 		DF790D6128E990A900455FC7 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
 		DF84E562295122BA0045C334 /* TimelineCustomizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCustomizerView.swift; sourceTree = "<group>"; };
@@ -1832,6 +1856,7 @@
 				176814792564BE3C00D98635 /* Resources */,
 				176813FB2564BB2D00D98635 /* Assets.xcassets */,
 				176813FD2564BB2D00D98635 /* Info.plist */,
+				DF6DE5262965971A002EC085 /* InfoPlist.strings */,
 			);
 			path = Widget;
 			sourceTree = "<group>";
@@ -1885,6 +1910,8 @@
 				510C416024E5CDE3008226FD /* ShareViewController.swift */,
 				510C416224E5CDE3008226FD /* ShareViewController.xib */,
 				510C416524E5CDE3008226FD /* Info.plist */,
+				DF6DE51E2965924C002EC085 /* Localizable.strings */,
+				DF6DE51A2965924C002EC085 /* InfoPlist.strings */,
 				510C416624E5CDE3008226FD /* ShareExtension.entitlements */,
 			);
 			path = ShareExtension;
@@ -1977,6 +2004,7 @@
 			children = (
 				51314666235A7E4600387FDC /* IntentHandler.swift */,
 				51314665235A7E4600387FDC /* Info.plist */,
+				DF6DE50B2965924C002EC085 /* InfoPlist.strings */,
 				DFB616A72965300400A359AB /* Localizable.strings */,
 				51314684235A7EB900387FDC /* NetNewsWire_iOS_IntentsExtension.entitlements */,
 			);
@@ -1993,6 +2021,8 @@
 				51A9A5E52380C8B20033AADF /* ShareFolderPickerFolderCell.xib */,
 				513C5CEA232571C2003D4054 /* MainInterface.storyboard */,
 				513C5CED232571C2003D4054 /* Info.plist */,
+				DF6DE52329659443002EC085 /* InfoPlist.strings */,
+				DF6DE5082965907A002EC085 /* Localizable.strings */,
 				515D4FCD2325909200EE1167 /* NetNewsWire_iOS_ShareExtension.entitlements */,
 			);
 			path = ShareExtension;
@@ -2277,6 +2307,7 @@
 				6581C73920CED60100F4AD34 /* SafariExtensionViewController.swift */,
 				6581C73B20CED60100F4AD34 /* SafariExtensionViewController.xib */,
 				6581C73E20CED60100F4AD34 /* Info.plist */,
+				DF6DE5162965924C002EC085 /* InfoPlist.strings */,
 				6581C73F20CED60100F4AD34 /* netnewswire-subscribe-to-feed.js */,
 				6581C74120CED60100F4AD34 /* ToolbarItemIcon.pdf */,
 				6581C74320CED60100F4AD34 /* Subscribe_to_Feed.entitlements */,
@@ -2726,6 +2757,7 @@
 				84C9FC9022629ECB00D921D6 /* NetNewsWire.entitlements */,
 				51F805D32428499E0022C792 /* NetNewsWire-dev.entitlements */,
 				84C9FC9122629F2200D921D6 /* Info.plist */,
+				DF6DE5122965924C002EC085 /* InfoPlist.strings */,
 				DFB616AA2965300400A359AB /* Localizable.strings */,
 				65ED409F235DEFF00081F399 /* container-migration.plist */,
 				17192AE12567B3FE00AAEACA /* org.sparkle-project.Downloader.xpc */,
@@ -2789,6 +2821,7 @@
 				17D7586C2679C21700B17787 /* NetNewsWire-iOS-Bridging-Header.h */,
 				84C9FC9B2262A1A900D921D6 /* Assets.xcassets */,
 				84C9FC9C2262A1A900D921D6 /* Info.plist */,
+				DF6DE50E2965924C002EC085 /* InfoPlist.strings */,
 				84BB0F812333426400DED65E /* NetNewsWire.entitlements */,
 				51F805ED24284C1C0022C792 /* NetNewsWire-dev.entitlements */,
 			);
@@ -3463,6 +3496,7 @@
 				1701E1B52568983D009453D8 /* Localizable.strings in Resources */,
 				1768147B2564BE5400D98635 /* widget-sample.json in Resources */,
 				17D0682C2564F47E00C0B37E /* Localizable.stringsdict in Resources */,
+				DF6DE5282965971A002EC085 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3470,7 +3504,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF6DE5212965924D002EC085 /* Localizable.strings in Resources */,
 				510C416424E5CDE3008226FD /* ShareViewController.xib in Resources */,
+				DF6DE51D2965924C002EC085 /* InfoPlist.strings in Resources */,
 				5132779F2591034D0064F1E7 /* icon.icns in Resources */,
 				51EFDA1B24E6D16A0085C3D6 /* SafariExt.js in Resources */,
 			);
@@ -3481,6 +3517,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DFB616A92965300400A359AB /* Localizable.strings in Resources */,
+				DF6DE50D2965924C002EC085 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3489,6 +3526,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				515D4FCC2325815A00EE1167 /* SafariExt.js in Resources */,
+				DF6DE52529659443002EC085 /* InfoPlist.strings in Resources */,
+				DF6DE50A2965907A002EC085 /* Localizable.strings in Resources */,
 				51A9A5E62380C8B20033AADF /* ShareFolderPickerFolderCell.xib in Resources */,
 				51A9A5E42380C8880033AADF /* ShareFolderPickerAccountCell.xib in Resources */,
 				513C5CEC232571C2003D4054 /* MainInterface.storyboard in Resources */,
@@ -3507,7 +3546,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF6DE5202965924D002EC085 /* Localizable.strings in Resources */,
 				653813502680E2DA007A082C /* ShareViewController.xib in Resources */,
+				DF6DE51C2965924C002EC085 /* InfoPlist.strings in Resources */,
 				653813512680E2DA007A082C /* icon.icns in Resources */,
 				653813522680E2DA007A082C /* SafariExt.js in Resources */,
 			);
@@ -3518,6 +3559,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6581C74220CED60100F4AD34 /* ToolbarItemIcon.pdf in Resources */,
+				DF6DE5182965924C002EC085 /* InfoPlist.strings in Resources */,
 				6581C73D20CED60100F4AD34 /* SafariExtensionViewController.xib in Resources */,
 				6581C74020CED60100F4AD34 /* netnewswire-subscribe-to-feed.js in Resources */,
 			);
@@ -3536,6 +3578,7 @@
 				5137C2E526F3F52D009EFEDB /* Sepia.nnwtheme in Resources */,
 				65ED4056235DEF6C0081F399 /* NetNewsWire.sdef in Resources */,
 				65ED4057235DEF6C0081F399 /* AccountsDetail.xib in Resources */,
+				DF6DE5152965924C002EC085 /* InfoPlist.strings in Resources */,
 				65ED4058235DEF6C0081F399 /* main.js in Resources */,
 				65ED40A1235DEFF00081F399 /* container-migration.plist in Resources */,
 				65ED4059235DEF6C0081F399 /* AccountsAddLocal.xib in Resources */,
@@ -3580,6 +3623,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65ED4096235DEF770081F399 /* ToolbarItemIcon.pdf in Resources */,
+				DF6DE5192965924C002EC085 /* InfoPlist.strings in Resources */,
 				65ED4097235DEF770081F399 /* SafariExtensionViewController.xib in Resources */,
 				65ED4098235DEF770081F399 /* netnewswire-subscribe-to-feed.js in Resources */,
 			);
@@ -3620,6 +3664,7 @@
 				514219582353C28900E07E2C /* main_ios.js in Resources */,
 				DFCE4F9528EF278300405869 /* Thanks.md in Resources */,
 				51DEE81426FB9233006DAA56 /* Appanoose.nnwtheme in Resources */,
+				DF6DE5102965924C002EC085 /* InfoPlist.strings in Resources */,
 				51E36E8C239D6765006F47A5 /* AddFeedSelectFolderTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3647,6 +3692,7 @@
 				DFCE4F9128EF26F100405869 /* About.plist in Resources */,
 				84C9FC8C22629E8F00D921D6 /* KeyboardShortcuts.html in Resources */,
 				B27EEBF9244D15F3000932E6 /* stylesheet.css in Resources */,
+				DF6DE5142965924C002EC085 /* InfoPlist.strings in Resources */,
 				5144EA3B227A379E00D19003 /* ImportOPMLSheet.xib in Resources */,
 				844B5B691FEA20DF00C7C76A /* SidebarKeyboardShortcuts.plist in Resources */,
 				DDF9E1D728EDF2FC000BC355 /* notificationSoundBlip.mp3 in Resources */,
@@ -4793,6 +4839,80 @@
 				DFB616B829653A0600A359AB /* en-GB */,
 			);
 			name = LaunchScreenPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		DF6DE5082965907A002EC085 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE5092965907A002EC085 /* en */,
+				DF6DE5112965924C002EC085 /* en-GB */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		DF6DE50B2965924C002EC085 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE50C2965924C002EC085 /* en-GB */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DF6DE50E2965924C002EC085 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE50F2965924C002EC085 /* en-GB */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DF6DE5122965924C002EC085 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE5132965924C002EC085 /* en-GB */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DF6DE5162965924C002EC085 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE5172965924C002EC085 /* en-GB */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DF6DE51A2965924C002EC085 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE51B2965924C002EC085 /* en-GB */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DF6DE51E2965924C002EC085 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE51F2965924D002EC085 /* en-GB */,
+				DF6DE5222965937C002EC085 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		DF6DE52329659443002EC085 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE52429659443002EC085 /* en-GB */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DF6DE5262965971A002EC085 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF6DE5272965971A002EC085 /* en-GB */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 		DFB616A72965300400A359AB /* Localizable.strings */ = {
